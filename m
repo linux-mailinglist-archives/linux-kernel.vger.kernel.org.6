@@ -1,79 +1,67 @@
-Return-Path: <linux-kernel+bounces-205957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B0F90029C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:50:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3094890029D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D061C230B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53C328BED0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324A418FC8E;
-	Fri,  7 Jun 2024 11:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AE9190672;
+	Fri,  7 Jun 2024 11:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIfOgY4O"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Za6uMNgs"
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEFC18C328
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191B518C35E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717761034; cv=none; b=RncqHI04t92N0amyTwpmWELscbzQJX8EGY3ItENL96rfA3aaKAT1eY9BWqXCuPf01UWjemUDy8RNYfSVjbjogLaACvK8T1EfYWI33dpCEdzT6OvChsCZr0DU50D8q0fFJEiQ9gpud9IENtvfjdsFrP5L8Len194uimmGzyRFCDg=
+	t=1717761036; cv=none; b=H8Cn1qDIZzE1fjmtO05YIjICcDbKk/z/FPEDUJPTx5Lw4YzDNNTaSS7/ja8KNaaegSTDszjfEO/OqvBdLtkVoBa/cQdg6T0yN6CsFZkuPvK+LXkS4uSX9nEU05Fmndzer9rJeVdUp2wBq0320+r5JsKG4rNdOrXOEYxwrISzWBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717761034; c=relaxed/simple;
-	bh=wwGWvexxsp5XY5L70dQnxGHTPS4bWU8DrXd4gNmOcAI=;
+	s=arc-20240116; t=1717761036; c=relaxed/simple;
+	bh=mToYEPLef2RyybsAYtlIyhPGJxWFMKSIt5YEX6Z/q28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVjbiQ5U7bNSFe82eS1iR0HFYtQgexk4dF0d6ek5gIGpMB5p+zJa6+KFdJMLYBkB9I5SDWBTduWSbtUBIpFd65yelDrrRuM1xBzfUyijjnR4cmW2KlyVExRrzYtVbvlPJdFd+6nB+CDrQqZsyoG9PHpjAa9AD0D5bzXKenyNlHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UIfOgY4O; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc335e49aso76529e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:50:32 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jC1X/wAvx3XGo+qkGeMUyma8CdRceAva+hsJ/dQoHDsWgofdBsqgb/rbaXKQmHuv0CglZvAZhE46A5NYbX3bgrWqlb5QQFc4VS+XR+pOzwQp2Lr7mNqMiHHixbIanhE5K62ZxM8CsU5V/XFzPIMcZlGUOihtUWOTV789xIULnss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Za6uMNgs; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717761031; x=1718365831; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8YSZ1xf3JS020wtDYuRSc4/MIriNLZ3fkqQQXeB5h0=;
-        b=UIfOgY4OwsUBgYVsw0Cpe7LtJy9xXiLoTy9ULEH1KtPYaIsj1KSp2uJhimHGhLV98E
-         PLRjZS1/oP9nQDvFLSkJj4oGvgtaIj6/t6QmWnU1he7xnf9KFLm79o5Gv2jY+eBYIAfW
-         inVEcWoSdGurppGEvVD/4p8S5UUI6ixJbHXNfZCHoWBFSii6mUG7/SNwk8/BYS4vGtQL
-         1bcThBCbo+tXFLkxIxTLaPOm6nkEhd8zO4uJOHGrn8OGJo05rUvMZCfzZrGhHoVlJhZN
-         b0FkhbB1DwGdPYweIrgg7UBTJSGFj9+lqAYbBJ4vsfK9uDamd6UgXr37WhfUctjgxVDV
-         lxgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717761031; x=1718365831;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8YSZ1xf3JS020wtDYuRSc4/MIriNLZ3fkqQQXeB5h0=;
-        b=aMcMl3t/ylgJ0TO/yngN0Z6RtbBmuiY63rrbEI0K0bRB9Lg7pZol22zV1buYEnM0PK
-         zn1qVW3y4zzxaGPJxiEmeELA+m7tQgxiL4Uo/XSJVGrG16DGiJVzb6OfFARvUlz/yTX2
-         1tvkI+SM+1sGkhGxAbvLDdfWWF5O5DH3R31NG21xL4liP/0dbUMx6Vy1ZM5E8Ecjhst1
-         lDwENnk45oxj2h+40P+/Mbg2qIC79Zcpfpj0WBgDc8L6baRqKxAED1TjrAtHmZ/T+j1G
-         e9tNEZlKbM+U0ntwMoDptAtcYaEYrgByuGsJjh0HFkD7mEIP9QFVL3ARrsXn4zsIqGbG
-         yLhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ93OV3N5omxinPvdbf4ZEic6VA/RhinWDOyU5n2ooesbYbpTY8wfq8AWK9hFpf3/A81vsYOawpEb58nZqJfGXesZFbXyFAKTjg+iU
-X-Gm-Message-State: AOJu0YzC8VMOBka4JAzn31brUlDzthSITfl7W3lNmJ7rSUSgHXD60ydF
-	kaPgmBhEkpG87VQgv4QzZs4j4lfr7DZwzTeto8mZ2BndN9HAMdzkaMpH7cyYGws=
-X-Google-Smtp-Source: AGHT+IH1fnzWJzSRWiOc9TKw1sMxf6+hh+r01uOIlWbPCeTM2eFUdTm3MFGz4e2qPlT0qozxajJK/g==
-X-Received: by 2002:a05:6512:3e07:b0:52b:8435:8f22 with SMTP id 2adb3069b0e04-52bb9f84ca9mr1871221e87.36.1717761031014;
-        Fri, 07 Jun 2024 04:50:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb433c4fdsm505724e87.264.2024.06.07.04.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:50:30 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:50:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com
-Subject: Re: [PATCH v4 00/11] Add missing features to FastRPC driver
-Message-ID: <fc3q4tp6sbmwgfpvi3eqavxnw74mc7czhf473dkbkvl2nzf4qe@i2lrfulyfaz4>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
+  d=sony.com; s=s1jp; t=1717761035; x=1749297035;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h0nbU2pDdu8rUUiGBO74R8RNqqy2YEu2aAXfrEo5Mw0=;
+  b=Za6uMNgsrm+fKGJgJZ1wKS7uWHpIEEEk9xevZj20vxsXyA95rGwB6BSW
+   s+9OtdIz54cG/EKhqu4Xbkb+4YEJdN/oiwFWYVKpSMbikD5s9jru1c/E0
+   VhnAPNP4U5X9pjIu9+X5oBC1SH04ye//7x7AlO0mDi9kPKNqxqMRrd9O8
+   v4ily9mEMtuO8jPkofhZECNxNCTu9OXU13fASe0I8fDw3Ht5S2uYg3PMd
+   Y/I3HS2+RR0Q17hA1fqEJMUm+0q0QiYhVE1HbXBHTGaXRb/D9jGJmlT+j
+   IEfoP883MivUgEryJVruwDrSu32lu9HszLvLTgV4GoA1NeiJ4VH0sH3Sq
+   Q==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 20:50:33 +0900
+X-IronPort-AV: E=Sophos;i="6.08,221,1712588400"; 
+   d="scan'208";a="421152400"
+Received: from unknown (HELO LXJ00013166) ([IPv6:2001:cf8:2:f100:2ef0:5dff:fe04:1f0f])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 07 Jun 2024 20:50:33 +0900
+Date: Fri, 7 Jun 2024 11:50:32 +0000
+From: Khasnis Soumya <soumya.khasnis@sony.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+	festevam@denx.de, lee@kernel.org, benjamin.bara@skidata.com,
+	dmitry.osipenko@collabora.com, ldmldm05@gmail.com,
+	soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com,
+	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
+	keita.aihara@sony.com, masaya.takahashi@sony.com
+Subject: Re: [PATCH v3] driver core: Add timeout for device shutdown
+Message-ID: <20240607115032.GA31351@sony.com>
+References: <20240606085003.GA118950@sony.com>
+ <2024060637-imposing-ahoy-b8bb@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,45 +70,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
+In-Reply-To: <2024060637-imposing-ahoy-b8bb@gregkh>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Thu, Jun 06, 2024 at 10:29:20PM +0530, Ekansh Gupta wrote:
-> This patch series adds the listed features that have been missing
-> in upstream fastRPC driver.
-> - Add missing bug fixes.
-> - Add static PD restart support for audio and sensors PD using
->   PDR framework.
-> - Redesign and improve remote heap management.
-> - Add fixes for unsigned PD. Unsigned PD can be enabled
->   using userspace API:
->   https://git.codelinaro.org/linaro/qcomlt/fastrpc/-/blob/master/src/fastrpc_apps_user.c?ref_type=heads#L1173
-> 
-> Changes in v2:
-> - Added separate patch to add newlines in dev_err.
-> - Added a bug fix in fastrpc capability function.
-> - Added a new patch to save and restore interrupted context.
-> - Fixed config dependency for PDR support.
-> 
-> Changes in v3:
-> - Dropped interrupted context patch.
-> - Splitted few of the bug fix patches.
-> - Added Fixes tag wherever applicable.
-> - Updated proper commit message for few of the patches.
-> 
-> Changes in v4:
-> - Dropped untrusted process and system unsigned PD patches.
-> - Updated proper commit message for few of the patches.
-> - Splitted patches in more meaningful way.
-> - Added helped functions for fastrpc_req_mmap.
-> 
+On Thu, Jun 06, 2024 at 10:52:14PM +0200, Greg KH wrote:
+> On Thu, Jun 06, 2024 at 08:50:03AM +0000, Soumya Khasnis wrote:
+> > The device shutdown callbacks invoked during shutdown/reboot
+> > are prone to errors depending on the device state or mishandling
+> > by one or more driver. In order to prevent a device hang in such
+> > scenarios, we bail out after a timeout while dumping a meaningful
+> > call trace of the shutdown callback to kernel logs, which blocks
+> > the shutdown or reboot process.
+> > 
+> > Signed-off-by: Soumya Khasnis <soumya.khasnis@sony.com>
+> > Signed-off-by: Srinavasa Nagaraju <Srinavasa.Nagaraju@sony.com>
+> > ---
+> > Changes in v3:
+> >   -fix review comments
+Sorry for inconvenience caused Greg, i will update details properly.
+here are changes i did in patchset-3(v3)
+ 1. added help text
+ 2. set configuration by default "y"
+ 3. added range for timeout value(DEVICE_SHUTDOWN_TIMEOUT_SEC)
+ 4. moved #define's to base.h file
+ 5. moved timeout functionality to device_shutdown() driver/base/core.c from reboot.c
 
-I'd suggest to land patches 1-4, they seem to be fine.
+> 
+> What ones?  In what way?  This really doesn't help, sorry.  Would you
+> like to see this type of response if you were to review other people's
+> code?
+> 
+> >   -updated commit message
+> 
+ 1. added information of where call trace is logged.
+ 2. changed patch subject from "reboot:" to "driver core:"
 
-The rest of the series needs more rework. Please start by reordering the
-patches, so that fixes come first. Think about the people who will
-backport them to earlier kernels.
-
--- 
-With best wishes
-Dmitry
+> In what way?
+> 
+> confused,
+>
+Sorry again for inconvenience caused. 
+> greg k-h
+Thanks and Regards,
+soumya.
 
