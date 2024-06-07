@@ -1,155 +1,429 @@
-Return-Path: <linux-kernel+bounces-206439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0705F9009C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766F79009BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A6A1C22031
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D81C2825A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDE519A29F;
-	Fri,  7 Jun 2024 15:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A2odiTsw"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB84119414D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299A199EA0;
+	Fri,  7 Jun 2024 15:58:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205E419414D;
+	Fri,  7 Jun 2024 15:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775903; cv=none; b=dqgyvhSDnoBpN4k4ZhP6HkHayTyQb+yHgXnkVWBLdQ4UIn1nd16Jp61t2yVRsCTuuUPBQHP6GhPk9Mj+Zrds3PdkBXeEPWCXVDfW3uG68LlfMAgy7fsb5OApwK6e9wyx80A3dP7Li4Tfp17FtV282/7gnUOHNZ73aIrcKm7Rffk=
+	t=1717775897; cv=none; b=DVQRBI9jc9ZTl3gziuTzhVdgMTfgMb1lyETUvYPs6L5yPfsJ0e9dySDt0f95uu6P/Dcr2a/e31QOqXkpRn2A4t/FOnr5zMf4WwUjf/aO6FYsN9KDVGtuozhrwW8S5YT0A1on6aUjnlfmXEHXEcQgZBue/lVcEyG3Jfhls9ehLxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775903; c=relaxed/simple;
-	bh=s1JvENtGfwCSbl34GscOC+aW3XbtXE7cv0+2CV0e8uQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fDm+daHkNUTOVfy9FaZ0+6p+stG4gWVgElrXE4iNIohaMe+/PEW+AU5bwTFNfdSoY+av/WtRGAI2MrX7YCyPzfwE6a4NMAmSjzM5RLbpU3uaFI7lh+yl93XMv2XoIscdBOAkbGanISWULntXivxmo8z3dRw522OaktLxhbj/cvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A2odiTsw; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d200c45db5so1273958b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717775901; x=1718380701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TEadrKSLCgbuFYvra79wv6BZ/tbvq8SfRbQUE/5o6is=;
-        b=A2odiTsw9WFX43GAf7A9LjVbjJdaFzR84DJqUae0HCzxhGNwD43rmMZmIHfC1zpb3j
-         1+yc2z6db0GsA+Po7fstjDRkYnOb/HDQk6RrAF3qSvOlAq1JaOKiSG+EGQBjY/YnxL/c
-         nv/i0lB4AfcSBRl95ur9XjHYLbTvrN9/+tcIc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717775901; x=1718380701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TEadrKSLCgbuFYvra79wv6BZ/tbvq8SfRbQUE/5o6is=;
-        b=vgEbfRZSBYdFG80FgCMnCPtkh293vGAHj6RCBkRyqkarrsgVxAXgWytIp6noToXuQO
-         kFxfszd9wURrFFILDE4eNgafQTZDz5/k2C281xio32E9EobJlmGR9ommgxzaf6BsjZ6g
-         y+xcnPep++XYtyyR3zQXoeVkec2H/LjHI9gCvqC7YvWFVFRtCKe/3JBiPLCgNYMVdFF3
-         PUK1y3im/zpZZ19w1cNSpnWVpt+uGdzbwKe7/iwuBEYPsMDbwIXipxqekfcwRFxpAUVW
-         yH1O5Iwo1ySk7HQD1ZmEpoDzYU4RQ6ownINuIkKH5yxUE75gn5r74rJt6I00dQPykCsz
-         2fNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXC3w7hWps0TJGGmtE3S6K7tW6qrmJCWpVO9enLr/u2j1hssVmzDHkMte8UNYWkZHw/cxI7b81vNYjopLk60o0A0sVDJpj6CqNvQIG9
-X-Gm-Message-State: AOJu0YzPLHMzpTUbncOhObz9tsF31fSW8w17bMP5VeixPGVvA4g6GKp1
-	K8H/wAltFK9ZfXr6feYyi0e0/kP1dACQD3XmUr7/KhVs/CxdyiblpzRASCcpKvjEw9t40xfif28
-	UBaitsIvki9VJYBP8ZjimqNYmlQPA1v0v9p6lDWYOX4e9xDA=
-X-Google-Smtp-Source: AGHT+IH/nK4F4tRexrZp1VOlLuPeWYKcpRRXCgXdkWdzR5d80ML7hH7jCR2Ex7YNQ9Ay6MVBijqvI9/8yMfwBjsXrRM=
-X-Received: by 2002:a05:6871:289:b0:254:8bb9:d0c2 with SMTP id
- 586e51a60fabf-2548bba70dbmr376857fac.33.1717775900892; Fri, 07 Jun 2024
- 08:58:20 -0700 (PDT)
+	s=arc-20240116; t=1717775897; c=relaxed/simple;
+	bh=wLmEPnGiH2sWjtpPH5jP3Z6lrRzcGqIBWkF60wZBWhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fy5V0rnDwxqhtKTT+zxLCJVkVtvjTvIAkdq0Gk3CE7wxwJXaZxuazDBZi3wg5vs/kfCroPQll6Vz3hUshUBq+gUPTmNrLf4kSZAJx6JgdR1bz67VZ/7gcLsNX/OiDFdMVFVxSo8qXuUW+SbWzuzOrfgvdD5k4EpiaMz6ZQdWfRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01F4315A1;
+	Fri,  7 Jun 2024 08:58:39 -0700 (PDT)
+Received: from [10.57.70.171] (unknown [10.57.70.171])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB6B43F64C;
+	Fri,  7 Jun 2024 08:58:12 -0700 (PDT)
+Message-ID: <c803199b-7e0a-4086-96de-00cf95bae2fd@arm.com>
+Date: Fri, 7 Jun 2024 16:58:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
- <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
- <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
- <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com> <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
- <CALmYWFtedtEnfGFp5DYacHYOE7+GB8yoQC-iyw7JAxySmgQ7vw@mail.gmail.com>
- <f880562e-9521-4270-82e2-c6fb14dc853a@app.fastmail.com> <CALmYWFuPBEM2DE97mQvB2eEgSO9Dvt=uO9OewMhGfhGCY66Hbw@mail.gmail.com>
- <1e1edbdc-f91f-4106-baa6-b765b78e6abc@app.fastmail.com>
-In-Reply-To: <1e1edbdc-f91f-4106-baa6-b765b78e6abc@app.fastmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 7 Jun 2024 08:58:08 -0700
-Message-ID: <CABi2SkUMppyL_LRKJV6BfgGu=1GpGCEOdZ5VHCENMUtzHcRTkA@mail.gmail.com>
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-To: David Rheinsberg <david@readahead.eu>
-Cc: Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	=?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	dmitry.torokhov@gmail.com, Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, 
-	jorgelo@chromium.org, skhan@linuxfoundation.org, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/7] coresight: tmc-etr: Add support to use reserved
+ trace memory
+Content-Language: en-GB
+To: Linu Cherian <lcherian@marvell.com>, mike.leach@linaro.org,
+ james.clark@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
+ Anil Kumar Reddy <areddy3@marvell.com>
+References: <20240605081725.622953-1-lcherian@marvell.com>
+ <20240605081725.622953-3-lcherian@marvell.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240605081725.622953-3-lcherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+Hi Linu
 
-On Fri, Jun 7, 2024 at 1:38=E2=80=AFAM David Rheinsberg <david@readahead.eu=
-> wrote:
->
-> Hi
->
-> On Tue, May 28, 2024, at 7:13 PM, Jeff Xu wrote:
-> >> > Another solution is to change memfd to be by-default sealable,
-> >> > although that will be an api change, but what side effect  will it b=
-e
-> >> > ?
-> >> > If we are worried about the memfd being sealed by an attacker, the
-> >> > malicious code could also overwrite the content since memfd is not
-> >> > sealed.
-> >>
-> >> You cannot change the default-seals retrospectively. There are existin=
-g shmem-users that share file-descriptors and *expect* the other party to b=
-e able to override data, but do *not* expect the other party to be able to =
-apply seals. Note that these models explicitly *want* shared, writable acce=
-ss to the buffer (e.g., render-client shares a buffer with the display serv=
-er for scanout), so just because you can *write* to a shmem-file does not m=
-ean that sharing is unsafe (e.g., using SIGBUS+mmap can safely deal with pa=
-ge-faults).
-> >>
-> > If the other party is controlled by an attacker, the attacker can
-> > write garbage to the shm-file/memfd, that is already the end of the
-> > game, at that point, sealing is no longer a concern, right?
->
-> No. If a graphics client shares a buffer with a graphics server, the clie=
-nt is free to write garbage into the buffer. This is not unsafe. The graphi=
-cs server will display whatever the client writes into the buffer. This is =
-completely safe, without sealing and with a writable buffer.
->
-> > If the threat-model is preventing attacker on the other side to write
-> > the garbage data, then F_SEAL_WRITE|F_SEAL_SHRINK|F_SEAL_GROW can be
-> > applied, in that case, default-sealable seems preferable because of
-> > less code change.
->
-> Again, the threat-model is *NOT* concerned with writes.
->
-> Graphics clients/servers are a good example where *ANY* data is valid and=
- can be processed by the privileged server. Hence, *ANY* writes are allowed=
- and safe. No need for any seals. Those setups existed way before `memfd_cr=
-eate` was added (including seals).
->
-> However, when windows are resized, graphic buffers need to be resized as =
-well. In those setups, the graphics server might call `ftruncate(2)`. If yo=
-u suddenly make shmem-files sealable by default, a client can set `F_SEAL_S=
-HRINK/GROW` and the privileged graphics server will get an error from `ftru=
-ncate(2)`, which it might not be able to handle, as it correctly never expe=
-cted this to happen.
->
+On 05/06/2024 09:17, Linu Cherian wrote:
+> Add support to use reserved memory for coresight ETR trace buffer.
+> 
+> Introduce a new ETR buffer mode called ETR_MODE_RESRV, which
+> becomes available when ETR device tree node is supplied with a valid
+> reserved memory region.
+> 
+> ETR_MODE_RESRV can be selected only by explicit user request.
+> 
+> $ echo resrv >/sys/bus/coresight/devices/tmc_etr<N>/buf_mode_preferred
+> 
+> Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> Reviewed-by: James Clark <james.clark@arm.com>
 
-The graphic buffer  is a good example for shmem-files of
-not-sealable-by-default. Thanks for the details.
-
--Jeff
+Some minor comments below.
 
 
-> Thanks
-> David
+> ---
+> Changelog from v8:
+> Added Reviewed-by tag.
+> 
+>   .../hwtracing/coresight/coresight-tmc-core.c  | 47 +++++++++++
+>   .../hwtracing/coresight/coresight-tmc-etr.c   | 79 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tmc.h   | 27 +++++++
+>   3 files changed, 153 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index 741ce1748e75..6beb69d74d0a 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/spinlock.h>
+>   #include <linux/pm_runtime.h>
+>   #include <linux/of.h>
+> +#include <linux/of_address.h>
+>   #include <linux/coresight.h>
+>   #include <linux/amba/bus.h>
+>   #include <linux/platform_device.h>
+> @@ -400,6 +401,50 @@ static inline bool tmc_etr_has_non_secure_access(struct tmc_drvdata *drvdata)
+>   
+>   static const struct amba_id tmc_ids[];
+>   
+> +static struct device_node *tmc_get_region_byname(struct device_node *node,
+> +						 char *name)
+> +{
+> +	int index;
+> +
+> +	index = of_property_match_string(node, "memory-region-names", name);
+> +	if (index < 0)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return of_parse_phandle(node, "memory-region", index);
+> +}
+> +
+> +static void tmc_get_reserved_region(struct device *parent)
+> +{
+> +	struct tmc_drvdata *drvdata = dev_get_drvdata(parent);
+> +	struct device_node *node;
+> +	struct resource res;
+> +	int rc;
+> +
+> +	node = tmc_get_region_byname(parent->of_node, "tracedata");
+> +	if (IS_ERR_OR_NULL(node)) {
+> +		dev_dbg(parent, "No reserved trace buffer specified\n");
+> +		return;
+> +	}
+> +
+> +	rc = of_address_to_resource(node, 0, &res);
+
+This sequence is repeated again in the metadat area, where :
+
+1. We get region by name.
+2. Read the resource details.
+
+Could we not make "the helper" do both and move the "of_node_put()" 
+inside the helper ?
+
+static int of_tmc_get_reserved_resource_by_name(struct device *dev,
+					        const char *name,
+					        struct resource *res)
+{
+
+ > +	int index, rc = -ENODEV;
+ > +	struct device_node *node;
+
+	if (!is_of_node(dev_fwnode(dev->fwnode)))
+		return -ENODEV;
+ > +
+ > +	index = of_property_match_string(dev->of_node, 
+"memory-region-names", name);
+ > +	if (index < 0)
+ > +		return rc;
+ > +
+ > +	node = of_parse_phandle(node, "memory-region", index);
+	if (!node)
+		return rc;
+
+	if (!of_address_to_resource(node, 0, res) &&
+	    res->start != 0 && resource_size(res) != 0)
+		rc = 0;
+	of_node_put(node);
+	
+	return rc;
+}
+
+
+> +	of_node_put(node);
+> +	if (rc || res.start == 0 || resource_size(&res) == 0) {
+> +		dev_err(parent, "Reserved trace buffer memory is invalid\n");
+> +		return;
+> +	}
+
+and the caller does :
+
+	if (of_tmc_get_reserved_area_by_name(parent, "tracedata", &res))
+		return;
+
+> +
+> +	drvdata->crash_tbuf.vaddr = memremap(res.start,
+> +						resource_size(&res),
+> +						MEMREMAP_WC);
+> +	if (IS_ERR_OR_NULL(drvdata->crash_tbuf.vaddr)) {
+> +		dev_err(parent, "Reserved trace buffer mapping failed\n");
+> +		return;
+> +	}
+> +
+> +	drvdata->crash_tbuf.paddr = res.start;
+> +	drvdata->crash_tbuf.size  = resource_size(&res);
+> +}
+> +
+>   /* Detect and initialise the capabilities of a TMC ETR */
+>   static int tmc_etr_setup_caps(struct device *parent, u32 devid,
+>   			      struct csdev_access *access)
+> @@ -510,6 +555,8 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+>   		drvdata->size = readl_relaxed(drvdata->base + TMC_RSZ) * 4;
+>   	}
+>   
+> +	tmc_get_reserved_region(dev);
+> +
+>   	desc.dev = dev;
+>   
+>   	switch (drvdata->config_type) {
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index e75428fa1592..041c428dd7cd 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -30,6 +30,7 @@ struct etr_buf_hw {
+>   	bool	has_iommu;
+>   	bool	has_etr_sg;
+>   	bool	has_catu;
+> +	bool	has_resrv;
+>   };
+>   
+>   /*
+> @@ -694,6 +695,75 @@ static const struct etr_buf_operations etr_flat_buf_ops = {
+>   	.get_data = tmc_etr_get_data_flat_buf,
+>   };
+>   
+> +/*
+> + * tmc_etr_alloc_resrv_buf: Allocate a contiguous DMA buffer from reserved region.
+> + */
+> +static int tmc_etr_alloc_resrv_buf(struct tmc_drvdata *drvdata,
+> +				  struct etr_buf *etr_buf, int node,
+> +				  void **pages)
+> +{
+> +	struct etr_flat_buf *resrv_buf;
+> +	struct device *real_dev = drvdata->csdev->dev.parent;
+> +
+> +	/* We cannot reuse existing pages for resrv buf */
+> +	if (pages)
+> +		return -EINVAL;
+> +
+> +	resrv_buf = kzalloc(sizeof(*resrv_buf), GFP_KERNEL);
+> +	if (!resrv_buf)
+> +		return -ENOMEM;
+> +
+> +	resrv_buf->daddr = dma_map_resource(real_dev, drvdata->crash_tbuf.paddr,
+> +					   drvdata->crash_tbuf.size,
+> +					   DMA_FROM_DEVICE, 0);
+> +	if (dma_mapping_error(real_dev, resrv_buf->daddr)) {
+> +		dev_err(real_dev, "failed to map source buffer address\n");
+> +		kfree(resrv_buf);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	resrv_buf->vaddr = drvdata->crash_tbuf.vaddr;
+> +	resrv_buf->size = etr_buf->size = drvdata->crash_tbuf.size;
+> +	resrv_buf->dev = &drvdata->csdev->dev;
+> +	etr_buf->hwaddr = resrv_buf->daddr;
+> +	etr_buf->mode = ETR_MODE_RESRV;
+> +	etr_buf->private = resrv_buf;
+> +	return 0;
+> +}
+> +
+> +static void tmc_etr_free_resrv_buf(struct etr_buf *etr_buf)
+> +{
+> +	struct etr_flat_buf *resrv_buf = etr_buf->private;
+> +
+> +	if (resrv_buf && resrv_buf->daddr) {
+
+
+> +		struct device *real_dev = resrv_buf->dev->parent;
+> +
+> +		dma_unmap_resource(real_dev, resrv_buf->daddr,
+> +				resrv_buf->size, DMA_FROM_DEVICE, 0);
+> +	}
+> +	kfree(resrv_buf);
+> +}
+> +
+> +static void tmc_etr_sync_resrv_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
+> +{
+> +	/*
+> +	 * Adjust the buffer to point to the beginning of the trace data
+> +	 * and update the available trace data.
+> +	 */
+> +	etr_buf->offset = rrp - etr_buf->hwaddr;
+> +	if (etr_buf->full)
+> +		etr_buf->len = etr_buf->size;
+> +	else
+> +		etr_buf->len = rwp - rrp;
+> +}
+> +
+> +static const struct etr_buf_operations etr_resrv_buf_ops = {
+> +	.alloc = tmc_etr_alloc_resrv_buf,
+> +	.free = tmc_etr_free_resrv_buf,
+> +	.sync = tmc_etr_sync_resrv_buf,
+> +	.get_data = tmc_etr_get_data_flat_buf,
+> +};
+> +
+>   /*
+>    * tmc_etr_alloc_sg_buf: Allocate an SG buf @etr_buf. Setup the parameters
+>    * appropriately.
+> @@ -800,6 +870,7 @@ static const struct etr_buf_operations *etr_buf_ops[] = {
+>   	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
+>   	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
+>   	[ETR_MODE_CATU] = NULL,
+> +	[ETR_MODE_RESRV] = &etr_resrv_buf_ops
+>   };
+>   
+>   void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu)
+> @@ -825,6 +896,7 @@ static inline int tmc_etr_mode_alloc_buf(int mode,
+>   	case ETR_MODE_FLAT:
+>   	case ETR_MODE_ETR_SG:
+>   	case ETR_MODE_CATU:
+> +	case ETR_MODE_RESRV:
+>   		if (etr_buf_ops[mode] && etr_buf_ops[mode]->alloc)
+>   			rc = etr_buf_ops[mode]->alloc(drvdata, etr_buf,
+>   						      node, pages);
+> @@ -843,6 +915,7 @@ static void get_etr_buf_hw(struct device *dev, struct etr_buf_hw *buf_hw)
+>   	buf_hw->has_iommu = iommu_get_domain_for_dev(dev->parent);
+>   	buf_hw->has_etr_sg = tmc_etr_has_cap(drvdata, TMC_ETR_SG);
+>   	buf_hw->has_catu = !!tmc_etr_get_catu_device(drvdata);
+> +	buf_hw->has_resrv = is_tmc_reserved_region_valid(dev->parent);
+
+Minor nit: In line with the other helpers, please could we rename this to :
+
+tmc_has_reserved_buffer(drvdata) ?
+
+We already have access to drvdata and we can pass that directly instead 
+of passing the dev->parent and then fetch drvdata again.
+
+>   }
+>   
+>   static bool etr_can_use_flat_mode(struct etr_buf_hw *buf_hw, ssize_t etr_buf_size)
+> @@ -1830,6 +1903,7 @@ static const char *const buf_modes_str[] = {
+>   	[ETR_MODE_FLAT]		= "flat",
+>   	[ETR_MODE_ETR_SG]	= "tmc-sg",
+>   	[ETR_MODE_CATU]		= "catu",
+> +	[ETR_MODE_RESRV]	= "resrv",
+>   	[ETR_MODE_AUTO]		= "auto",
+>   };
+>   
+> @@ -1848,6 +1922,9 @@ static ssize_t buf_modes_available_show(struct device *dev,
+>   	if (buf_hw.has_catu)
+>   		size += sysfs_emit_at(buf, size, "%s ", buf_modes_str[ETR_MODE_CATU]);
+>   
+> +	if (buf_hw.has_resrv)
+> +		size += sysfs_emit_at(buf, size, "%s ", buf_modes_str[ETR_MODE_RESRV]);
+> +
+>   	size += sysfs_emit_at(buf, size, "\n");
+>   	return size;
+>   }
+> @@ -1875,6 +1952,8 @@ static ssize_t buf_mode_preferred_store(struct device *dev,
+>   		drvdata->etr_mode = ETR_MODE_ETR_SG;
+>   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_CATU]) && buf_hw.has_catu)
+>   		drvdata->etr_mode = ETR_MODE_CATU;
+> +	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_RESRV]) && buf_hw.has_resrv)
+> +		drvdata->etr_mode = ETR_MODE_RESRV;
+>   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_AUTO]))
+>   		drvdata->etr_mode = ETR_MODE_AUTO;
+>   	else
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index c77763b49de0..c23dc9917ab9 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -135,6 +135,7 @@ enum etr_mode {
+>   	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
+>   	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
+>   	ETR_MODE_CATU,		/* Use SG mechanism in CATU */
+> +	ETR_MODE_RESRV,		/* Use reserved region contiguous buffer */
+>   	ETR_MODE_AUTO,		/* Use the default mechanism */
+>   };
+>   
+> @@ -164,6 +165,17 @@ struct etr_buf {
+>   	void				*private;
+>   };
+>   
+> +/**
+> + * @paddr	: Start address of reserved memory region.
+> + * @vaddr	: Corresponding CPU virtual address.
+> + * @size	: Size of reserved memory region.
+> + */
+> +struct tmc_resrv_buf {
+> +	phys_addr_t     paddr;
+> +	void		*vaddr;
+> +	size_t		size;
+> +};
+> +
+>   /**
+>    * struct tmc_drvdata - specifics associated to an TMC component
+>    * @pclk:	APB clock if present, otherwise NULL
+> @@ -188,6 +200,10 @@ struct etr_buf {
+>    * @idr_mutex:	Access serialisation for idr.
+>    * @sysfs_buf:	SYSFS buffer for ETR.
+>    * @perf_buf:	PERF buffer for ETR.
+> + * @crash_tbuf:	Used by ETR as hardware trace buffer and for trace data
+> + *		retention (after crash) only when ETR_MODE_RESRV buffer
+> + *		mode is enabled. Used by ETF for trace data retention
+> + *		(after crash) by default.
+
+Minor nit: This need not be called crash_tbuf, could instead be
+resrv_buf as we use it everywhere.
+
+Suzuki
+
+
+>    */
+>   struct tmc_drvdata {
+>   	struct clk		*pclk;
+> @@ -213,6 +229,7 @@ struct tmc_drvdata {
+>   	struct mutex		idr_mutex;
+>   	struct etr_buf		*sysfs_buf;
+>   	struct etr_buf		*perf_buf;
+> +	struct tmc_resrv_buf	crash_tbuf;
+>   };
+>   
+>   struct etr_buf_operations {
+> @@ -330,6 +347,16 @@ tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
+>   	return (unsigned long)sg_table->data_pages.nr_pages << PAGE_SHIFT;
+>   }
+>   
+> +static inline bool is_tmc_reserved_region_valid(struct device *dev)
+> +{
+> +	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
+> +
+> +	if (drvdata->crash_tbuf.paddr &&
+> +		drvdata->crash_tbuf.size)
+> +		return true;
+> +	return false;
+> +}
+> +
+>   struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
+>   
+>   void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
+
 
