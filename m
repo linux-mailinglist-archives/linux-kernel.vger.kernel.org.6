@@ -1,283 +1,261 @@
-Return-Path: <linux-kernel+bounces-205959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216E49002A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8D39002A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999A91F23D13
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:51:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EF11F24FC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F0618FC87;
-	Fri,  7 Jun 2024 11:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CC5190675;
+	Fri,  7 Jun 2024 11:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UqHaMq4A"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+sMPRiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C230218C328
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7D5187358;
+	Fri,  7 Jun 2024 11:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717761084; cv=none; b=hiupxrfd7aat7er30+J7CXWkQxAz/LrtdA95JD0y+YwlwWqS2aqC+BeGo2SXCmtBX6Bioi3VXX/ixCFprSP7MFWMpJvv2Gpr9o/31AcKyFzg7bDr8jhHo6fLWVfeSVWaCmdPXyNALDDdgoalTybD/WPkrxM6aW500TYxPPjZyRI=
+	t=1717761094; cv=none; b=OfJxCnE+OvY8pgcZc1LYeFhU4K46fbSKg/Aznub2Osl1Mr/5tgLWFxrNMR3eW3/NAV7B1+ryG0QlgTV3cALK7LruAk5fL11TgfN3bWJAhW35s1TM6x7YezEchzd+FpO2H78Av4q9w+ZP3eM9MJUmPFNFfEKeJNAJGjQqkFgRf28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717761084; c=relaxed/simple;
-	bh=GgzpSRH/N9fSw1yTpnmL96kyot+u5LT5SjP7/wnOYLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CHFn3fIWwv5CKwnRykBnPy1zkrXjhzfmf3NTNaV9NndCOpO3XL0389hFxy2GSmLSAr6ED8zP0XT0H/T7KoWiNyk1Y9JM2sYizWoDGX8NIUTAo853g02G87SEp8RfOTAnhavCMPFaiZ0YHxSYkpXEELmxuxQB9/phV0QhjCY8bws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UqHaMq4A; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b950aa47bso3048922e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717761081; x=1718365881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EhDrz62n+ztyqmEd4RfJ3EmQklHy8GEz9uvsxkZobnQ=;
-        b=UqHaMq4AkPcvTWtWOpr/q+DnGVRVhJ0/y50aprk1l8yr7YOEEW84Q4Lh9w49DNEsrk
-         3cWynKswryD/uSaXTntaQMkhnYy128/hOIbna6PTWQUdDpaBl8LsLXmbIi9VI1Zi5FO0
-         eFEpD+8jGLvLiSZoUN0/nshrZ6R6JKnjnd7cZZYL8YfNVHr0i1t4KErGxLRyYpbeVhtG
-         35wLC5n/Ei6irI3xJVDRW7dyiOGKNy3+/INWnJFaJGnyWsYuq9x7ds0olWLL8PwNlyle
-         jyVvzeo7uI5K2lI3QzC0uJeJST9uQDsVXlwXQqxi3Qka+O6e776CcSwztbAxbUqS23Th
-         ga4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717761081; x=1718365881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EhDrz62n+ztyqmEd4RfJ3EmQklHy8GEz9uvsxkZobnQ=;
-        b=JVLU8q0BSAj+ESPAeKgFge9GIk9vcRpH+L9ZuPHk+Rl2LmRe/qwFa2Ems1TVG4Z0HS
-         5rlrGG1ovx5WkJU/AuICJ2wSH0pswWAp3jq5h56psKizV2WlgB+zgpI2Xt/jPkSYgwgS
-         9BT+2K8sjT+ARRgzz4iQ6lSl9QnLt/OE4mlNx0GLvlT4hPpYiLMavGVZdxeo2cDhkk6l
-         mOqbAarc0x26IlLOc+fV/rPFoReOxNAxGiwjK7MJuC6Y7PESTlnQpNnsVGiwoSfVD5Ba
-         rJ0wh1NAHcaxZgZgSYKzGQO/RxWA5H6k1hjqcAbn7PwyqQF1o8Ek82bvdEXA38oRj6rW
-         544Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxCHvmfVd/wLAKj+LVu8QCEVEppvYU0MrwYsqCi9qzeMYPzOVl8Noue39DQsxSqxgasEjOyGDpN9v50qKyRXwsIVkRyvmwPXnZOjdk
-X-Gm-Message-State: AOJu0Yx/puEi5a4lOY85Qq+x7fVjS0lFufutaBxeh5bo1Vgr9/dfmuFb
-	+9nIoI4HZQJLnsJcQs1+kLYfCcK7UD96Z/5ku/wW24TDqAFi0M2WB9uwyny/WOlSfbQP2QOKP0y
-	tevepjz2baC5yh9K90mXowk7b/PU5AYXO/rgzuw==
-X-Google-Smtp-Source: AGHT+IFBK0heFzeF0N2SPKbri8wRDMU9LXSUwP3Gak+5PRtaL+LlYKTsBI/+mzGL7GE1f/AoyiE9LJqIAQwz/pvIXuU=
-X-Received: by 2002:a2e:bea4:0:b0:2de:7cc5:7a27 with SMTP id
- 38308e7fff4ca-2eadce1f0dfmr17452241fa.5.1717761080827; Fri, 07 Jun 2024
- 04:51:20 -0700 (PDT)
+	s=arc-20240116; t=1717761094; c=relaxed/simple;
+	bh=dKbuqX1WzQnhzGio5Hp05zIP0ds5xQhsfvuXhuegNCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LcTry/nyryARmmOw6o3VJjxFrZMVaAYg/2IXD3EhK7OTiweMgbENv+T/4Hn534HtZcUgODvswpIahqPbVE7v771S6m2HPzY2UK+lXVDrMJGDTmxNFdAtOrMW2ZrQ/Iz+bAP4LU62BoqQmJZov1tp47GOwETAX6SrtT9X7pM1v9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+sMPRiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ED1C32782;
+	Fri,  7 Jun 2024 11:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717761092;
+	bh=dKbuqX1WzQnhzGio5Hp05zIP0ds5xQhsfvuXhuegNCI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D+sMPRiRZIqYQXZJhrmRX4QFozqIHizzeEglrctFy8B38cUSrJcozsue+UADh08eb
+	 yNl7yrQmdE4+TbFqVq3x9+HoFJIyN93/H8YvCEygecIbCXWTWSkDL9C6YU8HTDcqsz
+	 ow4WDID293NpLzZ8njFiObMS91MXgmQpeVvOfMDRe0Ti/ApGZA2Qd0hjp1QqH0UAdW
+	 nF3WaTEx8HJ1J7fXTKx/JOikRWtLmunw9neizQcCbepXILWrf/nTtTe3XsR6IQWjFd
+	 /JXSv5+2ON2Q5LRXqODtn116q5rl9wjNg/KXe/7Y6uYolkBQfE8Muz3cFTOvj8apSF
+	 6eSvGktwCAgmA==
+Message-ID: <045e3716-3c3a-4238-b38a-3616c8974e2c@kernel.org>
+Date: Fri, 7 Jun 2024 13:51:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240601084528.22502-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240601084528.22502-5-lvzhaoxiong@huaqin.corp-partner.google.com> <5yz4uct3dnxqflij34zasu6fhr42gyl6kjfjobftrwpsl6j4y6@3kzp4s3dxktw>
-In-Reply-To: <5yz4uct3dnxqflij34zasu6fhr42gyl6kjfjobftrwpsl6j4y6@3kzp4s3dxktw>
-From: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Date: Fri, 7 Jun 2024 19:51:09 +0800
-Message-ID: <CA+6=WdSpHp6WRwZ3ta6ZR585ON9XSjWB5s1EjbhpBnWGWmhRAw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] drm/panel: starry: add new panel driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 net-next 14/15] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Daniel Bristot de Oliveira <bristot@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
+References: <20240607070427.1379327-1-bigeasy@linutronix.de>
+ <20240607070427.1379327-15-bigeasy@linutronix.de>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240607070427.1379327-15-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-hi Dmitry
 
-These two panels are not the same IC but their timing is the same,
-only the init cmd and panel parameters are different, so I made it
-compatible on the kingdisplay driver.
+On 07/06/2024 08.53, Sebastian Andrzej Siewior wrote:
+[...]
+> 
+> Create a struct bpf_net_context which contains struct bpf_redirect_info.
+> Define the variable on stack, use bpf_net_ctx_set() to save a pointer to
+> it, bpf_net_ctx_clear() removes it again.
+> The bpf_net_ctx_set() may nest. For instance a function can be used from
+> within NET_RX_SOFTIRQ/ net_rx_action which uses bpf_net_ctx_set() and
+> NET_TX_SOFTIRQ which does not. Therefore only the first invocations
+> updates the pointer.
+> Use bpf_net_ctx_get_ri() as a wrapper to retrieve the current struct
+> bpf_redirect_info.
+> 
+> The pointer to bpf_net_context is saved task's task_struct. Using
+> always the bpf_net_context approach has the advantage that there is
+> almost zero differences between PREEMPT_RT and non-PREEMPT_RT builds.
+> 
+[...]
+> ---
+>   include/linux/filter.h | 43 ++++++++++++++++++++++++++++++++++-------
+>   include/linux/sched.h  |  3 +++
+>   kernel/bpf/cpumap.c    |  3 +++
+>   kernel/bpf/devmap.c    |  9 ++++++++-
+>   kernel/fork.c          |  1 +
+>   net/bpf/test_run.c     | 11 ++++++++++-
+>   net/core/dev.c         | 26 ++++++++++++++++++++++++-
+>   net/core/filter.c      | 44 ++++++++++++------------------------------
+>   net/core/lwt_bpf.c     |  3 +++
+>   9 files changed, 101 insertions(+), 42 deletions(-)
+> 
+> diff --git a/include/linux/filter.h b/include/linux/filter.h
+> index b02aea291b7e8..2ff1c394dcf0c 100644
+> --- a/include/linux/filter.h
+> +++ b/include/linux/filter.h
+> @@ -744,7 +744,38 @@ struct bpf_redirect_info {
+>   	struct bpf_nh_params nh;
+>   };
+>   
+> -DECLARE_PER_CPU(struct bpf_redirect_info, bpf_redirect_info);
+> +struct bpf_net_context {
+> +	struct bpf_redirect_info ri;
+> +};
+> +
+> +static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_context *bpf_net_ctx)
+> +{
+> +	struct task_struct *tsk = current;
+> +
+> +	if (tsk->bpf_net_context != NULL)
+> +		return NULL;
+> +	memset(&bpf_net_ctx->ri, 0, sizeof(bpf_net_ctx->ri));
 
-Similar to this driver:  panel-boe-tv101wum-nl6.c
+It annoys me that we have to clear this memory every time.
+(This is added in net_rx_action() that *all* RX packets traverse).
 
-thanks
+The feature and memory is only/primarily used for XDP and TC redirects,
+but we take the overhead of clearing even when these features are not used.
 
-On Sun, Jun 2, 2024 at 12:26=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Sat, Jun 01, 2024 at 04:45:28PM +0800, Zhaoxiong Lv wrote:
-> > This Starry panel has the same timing as the Kingdisplay panel,
-> > so add starry configuration in the Kingdisplay driver.
->
-> Do these two panels share the same driver IC? Programming sequences do
-> not seem common, so it might be better to have a separate driver for
-> this panel.
->
-> >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
->
-> > ---
-> >
-> > Chage since V2:
-> >
-> > -  Add compatible for Starry er88577 in panel-kingdisplay-kd101ne3 driv=
-ers.
-> >
-> > ---
-> >  .../drm/panel/panel-kingdisplay-kd101ne3.c    | 92 +++++++++++++++++++
-> >  1 file changed, 92 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c b/drive=
-rs/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
-> > index 8994a1c9afb5..b614d28475a6 100644
-> > --- a/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
-> > +++ b/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
-> > @@ -267,6 +267,67 @@ static int kingdisplay_kd101ne3_init(struct kingdi=
-splay_panel *kingdisplay)
-> >       return 0;
-> >  };
-> >
-> > +static int starry_er88577_init(struct kingdisplay_panel *kingdisplay)
-> > +{
-> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D kingdisplay-=
->dsi };
-> > +
-> > +     /* T5:HWreset to init_code >=3D 120ms */
-> > +     msleep(120);
-> > +
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0xab, 0xba);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0xba, 0xab);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb1, 0x10, 0x01, 0x47, 0x=
-ff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2, 0x0c, 0x14, 0x04, 0x=
-50, 0x50, 0x14);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb3, 0x56, 0x53, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb4, 0x33, 0x30, 0x04);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0xb0, 0x00, 0x00, 0x=
-10, 0x00, 0x10, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x05, 0x12, 0x29, 0x=
-49, 0x40);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb9, 0x7c, 0x61, 0x4f, 0x=
-42, 0x3e, 0x2d, 0x31,
-> > +                                  0x1a, 0x33, 0x33, 0x33, 0x52, 0x40, =
-0x47, 0x38, 0x34, 0x26,
-> > +                                  0x0e, 0x06, 0x7c, 0x61, 0x4f, 0x42, =
-0x3e, 0x2d, 0x31, 0x1a,
-> > +                                  0x33, 0x33, 0x33, 0x52, 0x40, 0x47, =
-0x38, 0x34, 0x26, 0x0e,
-> > +                                  0x06);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc0, 0xcc, 0x76, 0x12, 0x=
-34, 0x44, 0x44, 0x44,
-> > +                                  0x44, 0x98, 0x04, 0x98, 0x04, 0x0f, =
-0x00, 0x00, 0xc1);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc1, 0x54, 0x94, 0x02, 0x=
-85, 0x9f, 0x00, 0x6f,
-> > +                                  0x00, 0x54, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x17, 0x09, 0x08, 0x=
-89, 0x08, 0x11, 0x22,
-> > +                                  0x20, 0x44, 0xff, 0x18, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc3, 0x87, 0x47, 0x05, 0x=
-05, 0x1c, 0x1c, 0x1d,
-> > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f, =
-0x0f, 0x0f, 0x0d, 0x0d,
-> > +                                  0x13, 0x13, 0x11, 0x11, 0x24);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc4, 0x06, 0x06, 0x04, 0x=
-04, 0x1c, 0x1c, 0x1d,
-> > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f, =
-0x0e, 0x0e, 0x0c, 0x0c,
-> > +                                  0x12, 0x12, 0x10, 0x10, 0x24);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x21, 0x00, 0x31, 0x=
-42, 0x34, 0x16);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca, 0xcb, 0x43);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcd, 0x0e, 0x4b, 0x4b, 0x=
-20, 0x19, 0x6b, 0x06,
-> > +                                  0xb3);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd2, 0xe3, 0x2b, 0x38, 0x=
-08);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x00, 0x01, 0x00, 0x=
-0e, 0x04, 0x44, 0x08,
-> > +                                  0x10, 0x00, 0x00, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x80, 0x09, 0xff, 0x=
-ff, 0xff, 0xff, 0xff,
-> > +                                  0xff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x12, 0x03, 0x20, 0x=
-00, 0xff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf3, 0x00);
-> > +     if (dsi_ctx.accum_err)
-> > +             return dsi_ctx.accum_err;
-> > +
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_EXIT_SLEEP_MODE);
-> > +     if (dsi_ctx.accum_err)
-> > +             return dsi_ctx.accum_err;
-> > +
-> > +     msleep(120);
-> > +
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_DISPLAY_ON);
-> > +     if (dsi_ctx.accum_err)
-> > +             return dsi_ctx.accum_err;
-> > +
-> > +     msleep(20);
->
-> Most of the comments from the patch 2 apply:
-> - drop conditions
-> - use mipi_dsi_dcs_set_display_on_multi(),
->   mipi_dsi_dcs_exit_sleep_mode_multi() and mipi_dsi_msleep().
->
-> > +
-> > +     return 0;
-> > +};
-> > +
-> >  static inline struct kingdisplay_panel *to_kingdisplay_panel(struct dr=
-m_panel *panel)
-> >  {
-> >       return container_of(panel, struct kingdisplay_panel, base);
-> > @@ -391,6 +452,34 @@ static const struct panel_desc kingdisplay_kd101ne=
-3_40ti_desc =3D {
-> >       .lp11_before_reset =3D true,
-> >  };
-> >
-> > +static const struct drm_display_mode starry_er88577_default_mode =3D {
-> > +     .clock =3D 77380,
-> > +     .hdisplay =3D 800,
-> > +     .hsync_start =3D 800 + 80,
-> > +     .hsync_end =3D 800 + 80 + 20,
-> > +     .htotal =3D 800 + 80 + 20 + 80,
-> > +     .vdisplay =3D 1280,
-> > +     .vsync_start =3D 1280 + 20,
-> > +     .vsync_end =3D 1280 + 20 + 4,
-> > +     .vtotal =3D 1280 + 20 + 4 + 12,
-> > +     .type =3D DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-> > +};
-> > +
-> > +static const struct panel_desc starry_er88577_desc =3D {
-> > +     .modes =3D &starry_er88577_default_mode,
-> > +     .bpc =3D 8,
-> > +     .size =3D {
-> > +             .width_mm =3D 135,
-> > +             .height_mm =3D 216,
-> > +     },
-> > +     .lanes =3D 4,
-> > +     .format =3D MIPI_DSI_FMT_RGB888,
-> > +     .mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PU=
-LSE |
-> > +                   MIPI_DSI_MODE_LPM,
-> > +     .init =3D starry_er88577_init,
-> > +     .lp11_before_reset =3D true,
-> > +};
-> > +
-> >  static int kingdisplay_panel_get_modes(struct drm_panel *panel,
-> >                              struct drm_connector *connector)
-> >  {
-> > @@ -514,6 +603,9 @@ static const struct of_device_id kingdisplay_of_mat=
-ch[] =3D {
-> >       { .compatible =3D "kingdisplay,kd101ne3-40ti",
-> >         .data =3D &kingdisplay_kd101ne3_40ti_desc
-> >       },
-> > +     { .compatible =3D "starry,er88577",
-> > +       .data =3D &starry_er88577_desc
-> > +     },
-> >       { /* sentinel */ }
-> >  };
-> >  MODULE_DEVICE_TABLE(of, kingdisplay_of_match);
-> > --
-> > 2.17.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+Netstack does bulking in most of the cases this is used, so in our/your
+benchmarks this overhead doesn't show.  But we need to be aware that
+this is a "paper-cut" for single network packet processing.
+
+Idea: We could postpone clearing until code calls bpf_net_ctx_get() ?
+See below.
+
+> +	tsk->bpf_net_context = bpf_net_ctx;
+> +	return bpf_net_ctx;
+> +}
+> +
+> +static inline void bpf_net_ctx_clear(struct bpf_net_context *bpf_net_ctx)
+> +{
+> +	if (bpf_net_ctx)
+> +		current->bpf_net_context = NULL;
+> +}
+> +
+> +static inline struct bpf_net_context *bpf_net_ctx_get(void)
+> +{
+
+> +	return current->bpf_net_context;
+> +}
+> +
+> +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
+> +{
+> +	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+> +
+
+if (bpf_net_ctx->ri->kern_flags & BPF_RI_F_NEEDS_INIT) {
+   memset + init_list (intro in patch 15)
+}
+
+Maybe even postpone the init_list calls to the "get" helpers introduced 
+in patch 15.
+
+
+> +	return &bpf_net_ctx->ri;
+> +}
+>   
+[...]
+
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 2c3f86c8cd176..73965dff1b30f 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+[...]
+> @@ -6881,10 +6902,12 @@ static __latent_entropy void net_rx_action(struct softirq_action *h)
+
+The function net_rx_action() is core to the network stack.
+
+>   	struct softnet_data *sd = this_cpu_ptr(&softnet_data);
+>   	unsigned long time_limit = jiffies +
+>   		usecs_to_jiffies(READ_ONCE(net_hotdata.netdev_budget_usecs));
+> +	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+>   	int budget = READ_ONCE(net_hotdata.netdev_budget);
+>   	LIST_HEAD(list);
+>   	LIST_HEAD(repoll);
+>   
+> +	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+>   start:
+>   	sd->in_net_rx_action = true;
+>   	local_irq_disable();
+> @@ -6937,7 +6960,8 @@ static __latent_entropy void net_rx_action(struct softirq_action *h)
+>   		sd->in_net_rx_action = false;
+>   
+>   	net_rps_action_and_irq_enable(sd);
+> -end:;
+> +end:
+> +	bpf_net_ctx_clear(bpf_net_ctx);
+>   }
+
+
+The memset can be further optimized as it currently clears 64 bytes, but
+it only need to clear 40 bytes, see pahole below.
+
+Replace memset with something like:
+  memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
+
+This is an optimization, because with 64 bytes this result in a rep-stos
+(repeated string store operation) that on Intel touch CPU-flags (to be
+IRQ safe) which is slow, while clearing 40 bytes doesn't cause compiler
+to use this instruction, which is faster.  Memset benchmarked with [1]
+
+[1] 
+https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/time_bench_memset.c
+
+--Jesper
+
+$ pahole -C bpf_redirect_info vmlinux
+struct bpf_redirect_info {
+	u64                        tgt_index;            /*     0     8 */
+	void *                     tgt_value;            /*     8     8 */
+	struct bpf_map *           map;                  /*    16     8 */
+	u32                        flags;                /*    24     4 */
+	u32                        kern_flags;           /*    28     4 */
+	u32                        map_id;               /*    32     4 */
+	enum bpf_map_type          map_type;             /*    36     4 */
+	struct bpf_nh_params       nh;                   /*    40    20 */
+
+	/* size: 64, cachelines: 1, members: 8 */
+	/* padding: 4 */
+};
+
+
+
+The full struct:
+
+$ pahole -C bpf_net_context vmlinux
+struct bpf_net_context {
+	struct bpf_redirect_info   ri;                   /*     0    64 */
+
+	/* XXX last struct has 4 bytes of padding */
+
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	struct list_head           cpu_map_flush_list;   /*    64    16 */
+	struct list_head           dev_map_flush_list;   /*    80    16 */
+	struct list_head           xskmap_map_flush_list; /*    96    16 */
+
+	/* size: 112, cachelines: 2, members: 4 */
+	/* paddings: 1, sum paddings: 4 */
+	/* last cacheline: 48 bytes */
+};
+
+
 
