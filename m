@@ -1,205 +1,205 @@
-Return-Path: <linux-kernel+bounces-205235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDBC8FF9BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343538FF9C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8D61F2429B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7307E28296B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D611CBD;
-	Fri,  7 Jun 2024 01:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DF3125B9;
+	Fri,  7 Jun 2024 01:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKeP1E21"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuuQ7iwo"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880334C76
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754864C76;
+	Fri,  7 Jun 2024 01:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717725064; cv=none; b=hmjHezhobntzCmoJnwX583sWqqFsJTycevQQFfS08Ht5a9NyhdAvJRt2FIRaCmlLfmLkV0lXBQpncNnK6/tFpMo9IcZS28gDvyH0R/FGkHDcfa91u1dX3r8JTBXHbj/EXmSaVdPouApQYHNqDdzc5SJ7CY6RkPcLVwjl72Y2HE8=
+	t=1717725132; cv=none; b=owgFUFV5Lvo5litYoxhaibJ1FWxt2BNiScBW8xuDhWtuKOo/mYqiXt8B3bJle8okBWHaXlj076pypPfkFJQG7cHUr97epL7K+AgOGgLzVunDQLw0EMqahAQzEPGvhlPovYxqnMWos8eBD4Xzl9gcz/05djgl5a5FWvF8qOn8nAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717725064; c=relaxed/simple;
-	bh=Dr3s28YKkK4NkE1XnCpVsZ9voy/Ar7EnjhVk8e4B8is=;
+	s=arc-20240116; t=1717725132; c=relaxed/simple;
+	bh=Ft9K5tqBcGHPfK6ue+b6pgSwXcSkS7vdLQtR+6Ntohs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uHiZTDLx/Xm1+Kx7TJWLktTj55OfBsocgN3OlZHbuSX4af4mSn6yN+8CCGAjtAV5dk7HBHoaLyeawxhuMOdcoBeIiAbPuGydSR3hSoUR8XsKGwIWEKfBCune3NJgNBw8BS8SQrAEAOPAUTLgU2vxPCMnUrSJC/L758jGWmIwcKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKeP1E21; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=cZMFIAVVxgKNmM3lnvcKAisVGot0Izdu/YNZfbzuexRSVX+68zu+t2Asay03pdfqffcksQwbKT6B3rZz4GU1uJQhAX03sGER2A3/l2d5l2+Pnq6eAU2GqdNsr+CBN+aZ4EJGGyllsKG57wwSif1yXBQD9vLmvjfxal3O9FF+XSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuuQ7iwo; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so1698480a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 18:51:02 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b962c4bb6so2291845e87.3;
+        Thu, 06 Jun 2024 18:52:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717725061; x=1718329861; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717725128; x=1718329928; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5jgyEjE44lnwVIp+Vzkq3Lwb3VBd6jriok/nTPf4IRI=;
-        b=HKeP1E21LYLFBGAQv8cVJIIcNPRl0hkDL/O6qCcPoDJLvJwSDFjYUeUpMl2FQU4oO3
-         wXQ9KxdEHL3bE2zHzrEwXXVyxr4PoGTlfeYZSBYdNEFoI8TLQohB+l0JuymJ1fEaEcJ0
-         bmV0vSy4VDveu2aleQ5H5dY3NP7tnDSzp+zXyLf/xfJK1XtWRNXtv4+2V8Hb3hXpprLr
-         B4GvhZeDHmtQdtv4Cc4WL6lX/6FTGFIiDIMGpN0zUnCtFhWaAaXcxr9n5iH7iJq1XSPQ
-         iZOiXzSIy0lBrTNl7W3/F9YS+50anfOOXyKo2Hhnb+GiuY4viKg0yj+XoMzuw9npKLpb
-         XXmQ==
+        bh=feKQLMNR2OCkrvMLmagnriZF6/TtRYUMMPipPVIqagk=;
+        b=TuuQ7iwoKs8fSj8EWyKJjvo2Vyq2L7DQejYwXan4A3sKRkD0+stHxCAJkNo7fRwTNC
+         gCHwEMrLoXw6ah3hTJTH5aBIqm5QArtkDsSRVRwLyLGghjllLdM1NiJIR25A+Bu40iZ4
+         7yJGDWjZF1Ae1Vlg4DXHKoGEq47/4GXnfCEUHENtygA7PUA94noSxcDxVUHlpG/Q82tJ
+         cANqzfYmWwiSCxRgiYzWFeIc9LnPESLRdWIyaUfPkUxFd/2gqTECn1asoxKx0KAGEh3B
+         ahUhRRLFCGvGkOEoaL6JptkDrE0bEPLuQttCR+oe3jngYoguBaP17RQG5TCm4eY+nEc6
+         0Tnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717725061; x=1718329861;
+        d=1e100.net; s=20230601; t=1717725128; x=1718329928;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5jgyEjE44lnwVIp+Vzkq3Lwb3VBd6jriok/nTPf4IRI=;
-        b=cGYi+UHwKDUdGq1Zo8oUHHcu1Zapr04KVSsGaRDmjHSg8LT5A/hPsgStuaO7L4AC8A
-         2xjnwNbGE60x5BjIszsFfDo5+SUzoz8JCL+yAxDcPCqqdWFZgBW0axybZtKIWpwGgIN7
-         8H1/hMzhdREEuaZ5nlWFPoHAkQTGG/cVehHdqG0/OQ1Gm8SSZbxV+SRN7pmzH4LOjmYm
-         S+VwSk+ShG78jFgSBuVB6ppFkkfBF53phMI6CMVZIAl2lLAOJ/qAvFtvrJOICuWieaeg
-         boCTxaz3kmfiC2iRs3pXLtq0yF/tQrKD0x+ZTsuM6AUMej/YISGRQwMv1F/2VdjxNZW6
-         pX2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Z7Wze2tR4gdgWHa8z4dzaFGxGpuoB6irF2V13lrRCGS/0e1NrD6XxS5hB+50LEgsgpSIK9WJVZoIh01dpiHAKWfPH7JMYALcjLYt
-X-Gm-Message-State: AOJu0YxGPUZpDeiSC4EmNGWpr8DXim7pHT1/5fNTwtrPNNNTZCDyE7XI
-	rWs7AGq0IYacdGbGni+aREQzsrg66jpE469fwruze34HsP90mnIDJy+/qQailPNbI45JJaTldEp
-	ed4Gl8XeSUv7gQqu6y88B7nPkwTY=
-X-Google-Smtp-Source: AGHT+IHI75h04SIf4Rmmtl46mN7kSxQnN/OGrsFpteG6StVtG1VO6ZHry9J2NeT6hJcXAn65twmP+sjd9qdh36qj3Hc=
-X-Received: by 2002:a50:99c9:0:b0:578:6901:7454 with SMTP id
- 4fb4d7f45d1cf-57c5089a10amr487540a12.15.1717725060550; Thu, 06 Jun 2024
- 18:51:00 -0700 (PDT)
+        bh=feKQLMNR2OCkrvMLmagnriZF6/TtRYUMMPipPVIqagk=;
+        b=nTMrr2mK5o0Q2I6JbVJSQC3NOv3AqTbt/8UWh/LzjgDRDl5/fymiqRSmoEwCK9Oan6
+         TCLTkbZNoiVwDhf4BKHVkPp7ZRUQQPu2ygQKj/pVtXaIsn+eX+tdwheX/RwfluTXR7zW
+         zZeVyrFSAbBh5Y91HugLgTOmzfIamEIM3Q2BOTHpuDz1xEFWn3P0bUyqheCt1WO2mhct
+         WbZ83P+0sHuNgTEDKBPBokcbxbjcNU92tQv+y/lWOquQhsdaW04eae7rPRlrR/aK4UPR
+         v4zHrZ75O9scFNSd3gcpBNrZJxa3r4XYvxRNivoaIgwaSBtu7lxANg7Y64ka4xKDY+/J
+         ZuQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uKl9HZ3B7qsJOUyiPsNwGAXmE2vDIWptiQUTC51/yJspjRdVhBUQ6UGY67rWAMKh07vU9HwKZMevzUrYcs6zaJB4ZrbCB4q1YuKIRJFo5Svuj3Nx34gc2vf3wXW7XzMh
+X-Gm-Message-State: AOJu0Yw4JdVvBapra4lOOrMEUoJ0g40GF5RngYcQCnULmMZmEQOInrff
+	C4QrW0bOZ+s3MdLtZRVFcJO5Rcg3IApw53r1w9xHr6IjMj0ooc0IPI+khywprt2DIWmNcaNjJQu
+	Z6kXMkR+pQBbuTfFGpwK61UlHTIs=
+X-Google-Smtp-Source: AGHT+IE70XrJkjRuPIhSRl0W6yWUryDU1Bd4WSoWyxJjq2t0jbQIcSTuI5G78mq3z9NseE8K6bZD1urRowmDxy21wPs=
+X-Received: by 2002:ac2:4c25:0:b0:52b:940d:b3d with SMTP id
+ 2adb3069b0e04-52bb9fc62f4mr869612e87.50.1717725128163; Thu, 06 Jun 2024
+ 18:52:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521040244.48760-1-ioworker0@gmail.com> <20240521040244.48760-3-ioworker0@gmail.com>
- <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com> <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
- <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com> <CAK1f24kKra71RSQdFOpQecU6+yMELC748irKUt54Kg64-P=4-A@mail.gmail.com>
- <758f7be7-c17e-46d1-879f-83340ec85749@redhat.com> <5a728148-ed93-4d68-a86f-9be3612dedbb@redhat.com>
- <CAK1f24nMbW_UvCTq=K0aFu9=7psYZ9wmHq47J=AK7VYmpCpC4Q@mail.gmail.com> <2a6a1b50-e711-42c2-91f4-42881a6057e9@redhat.com>
-In-Reply-To: <2a6a1b50-e711-42c2-91f4-42881a6057e9@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Fri, 7 Jun 2024 09:50:49 +0800
-Message-ID: <CAK1f24nT429ZdEcFUv0r0Sbihjum-Z8ghoYxML=tzaDpVWZk-w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
-	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
-	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
-	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-3-paulmck@kernel.org> <ZmCTvMVlOMFv0-zd@localhost.localdomain>
+ <CAFwiDX8yGCEiZE-VC0i=VoGByQArQkwG7beVvQO5wRGsK8rdPQ@mail.gmail.com> <beb31a51-253e-4bc4-a73c-456f2bf2fd06@paulmck-laptop>
+In-Reply-To: <beb31a51-253e-4bc4-a73c-456f2bf2fd06@paulmck-laptop>
+From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Date: Fri, 7 Jun 2024 07:21:55 +0530
+Message-ID: <CAFwiDX-x4=_N2szD2QZhAEkU+kx_eTscz2bcyHqikHq7m=rkpQ@mail.gmail.com>
+Subject: Re: [PATCH rcu 3/9] rcu/tree: Reduce wake up for synchronize_rcu()
+ common case
+To: paulmck@kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, rostedt@goodmis.org, 
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>, Uladzislau Rezki <urezki@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 6, 2024 at 5:41=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
+On Thu, Jun 6, 2024 at 11:42=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
 >
-> On 06.06.24 11:38, Lance Yang wrote:
-> > On Thu, Jun 6, 2024 at 4:06=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 06.06.24 10:01, David Hildenbrand wrote:
-> >>> On 06.06.24 05:55, Lance Yang wrote:
-> >>>> On Wed, Jun 5, 2024 at 10:28=E2=80=AFPM David Hildenbrand <david@red=
-hat.com> wrote:
-> >>>>>
-> >>>>> On 05.06.24 16:20, Lance Yang wrote:
-> >>>>>> Hi David,
-> >>>>>>
-> >>>>>> On Wed, Jun 5, 2024 at 8:46=E2=80=AFPM David Hildenbrand <david@re=
-dhat.com> wrote:
-> >>>>>>>
-> >>>>>>> On 21.05.24 06:02, Lance Yang wrote:
-> >>>>>>>> In preparation for supporting try_to_unmap_one() to unmap PMD-ma=
-pped
-> >>>>>>>> folios, start the pagewalk first, then call split_huge_pmd_addre=
-ss() to
-> >>>>>>>> split the folio.
-> >>>>>>>>
-> >>>>>>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we =
-might
-> >>>>>>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED ra=
-nge during
-> >>>>>>>> the page walk. It=E2=80=99s probably necessary to mlock this THP=
- to prevent it from
-> >>>>>>>> being picked up during page reclaim.
-> >>>>>>>>
-> >>>>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
-> >>>>>>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> >>>>>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> >>>>>>>> ---
-> >>>>>>>
-> >>>>>>> [...] again, sorry for the late review.
-> >>>>>>
-> >>>>>> No worries at all, thanks for taking time to review!
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
-> >>>>>>>> index ddffa30c79fb..08a93347f283 100644
-> >>>>>>>> --- a/mm/rmap.c
-> >>>>>>>> +++ b/mm/rmap.c
-> >>>>>>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio =
-*folio, struct vm_area_struct *vma,
-> >>>>>>>>           if (flags & TTU_SYNC)
-> >>>>>>>>                   pvmw.flags =3D PVMW_SYNC;
-> >>>>>>>>
-> >>>>>>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
-> >>>>>>>> -             split_huge_pmd_address(vma, address, false, folio)=
-;
-> >>>>>>>> -
-> >>>>>>>>           /*
-> >>>>>>>>            * For THP, we have to assume the worse case ie pmd fo=
-r invalidation.
-> >>>>>>>>            * For hugetlb, it could be much worse if we need to d=
-o pud
-> >>>>>>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct foli=
-o *folio, struct vm_area_struct *vma,
-> >>>>>>>>           mmu_notifier_invalidate_range_start(&range);
-> >>>>>>>>
-> >>>>>>>>           while (page_vma_mapped_walk(&pvmw)) {
-> >>>>>>>> -             /* Unexpected PMD-mapped THP? */
-> >>>>>>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
-> >>>>>>>> -
-> >>>>>>>>                   /*
-> >>>>>>>>                    * If the folio is in an mlock()d vma, we must=
- not swap it out.
-> >>>>>>>>                    */
-> >>>>>>>>                   if (!(flags & TTU_IGNORE_MLOCK) &&
-> >>>>>>>>                       (vma->vm_flags & VM_LOCKED)) {
-> >>>>>>>>                           /* Restore the mlock which got missed =
-*/
-> >>>>>>>> -                     if (!folio_test_large(folio))
-> >>>>>>>> +                     if (!folio_test_large(folio) ||
-> >>>>>>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_=
-PMD)))
-> >>>>>>>>                                   mlock_vma_folio(folio, vma);
+> On Thu, Jun 06, 2024 at 11:28:07AM +0530, Neeraj upadhyay wrote:
+> > On Wed, Jun 5, 2024 at 10:05=E2=80=AFPM Frederic Weisbecker <frederic@k=
+ernel.org> wrote:
+> > >
+> > > Le Tue, Jun 04, 2024 at 03:23:49PM -0700, Paul E. McKenney a =C3=A9cr=
+it :
+> > > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > > >
+> > > > In the synchronize_rcu() common case, we will have less than
+> > > > SR_MAX_USERS_WAKE_FROM_GP number of users per GP. Waking up the kwo=
+rker
+> > > > is pointless just to free the last injected wait head since at that=
+ point,
+> > > > all the users have already been awakened.
+> > > >
+> > > > Introduce a new counter to track this and prevent the wakeup in the
+> > > > common case.
+> > > >
+> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > ---
+> > > >  kernel/rcu/tree.c | 35 ++++++++++++++++++++++++++++++-----
+> > > >  kernel/rcu/tree.h |  1 +
+> > > >  2 files changed, 31 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index 6ba36d9c09bde..2fe08e6186b4d 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -96,6 +96,7 @@ static struct rcu_state rcu_state =3D {
+> > > >       .ofl_lock =3D __ARCH_SPIN_LOCK_UNLOCKED,
+> > > >       .srs_cleanup_work =3D __WORK_INITIALIZER(rcu_state.srs_cleanu=
+p_work,
+> > > >               rcu_sr_normal_gp_cleanup_work),
+> > > > +     .srs_cleanups_pending =3D ATOMIC_INIT(0),
+> > > >  };
+> > > >
+> > > >  /* Dump rcu_node combining tree at boot to verify correct setup. *=
+/
+> > > > @@ -1633,8 +1634,11 @@ static void rcu_sr_normal_gp_cleanup_work(st=
+ruct work_struct *work)
+> > > >        * the done tail list manipulations are protected here.
+> > > >        */
+> > > >       done =3D smp_load_acquire(&rcu_state.srs_done_tail);
+> > > > -     if (!done)
+> > > > +     if (!done) {
+> > > > +             /* See comments below. */
+> > > > +             atomic_dec_return_release(&rcu_state.srs_cleanups_pen=
+ding);
+> > >
+> > > This condition is not supposed to happen. If the work is scheduled,
+> > > there has to be a wait_queue in rcu_state.srs_done_tail. And decremen=
+ting
+> > > may make things worse.
+> > >
 > >
-> > Should we still keep the '!pvmw.pte' here? Something like:
+> > I also don't see a scenario where this can happen. However, if we are
+> > returning from here, given that for every queued work we do an
+> > increment of rcu_state.srs_cleanups_pending, I think it's safer to
+> > decrement in this
+> > case, as that counter tracks only the work queuing and execution counts=
+.
 > >
-> > if (!folio_test_large(folio) || !pvmw.pte)
-> >      mlock_vma_folio(folio, vma);
+> >     atomic_inc(&rcu_state.srs_cleanups_pending);
+> >     if (!queue_work(sync_wq, &rcu_state.srs_cleanup_work))
+> >         atomic_dec(&rcu_state.srs_cleanups_pending);
 >
-> I was wondering the same the whole time ...
+> Linus Torvald's general rule is that if you cannot imagine how a bug
+> can happen, don't attempt to clean up after it.  His rationale (which
+> is *almost* always a good one) is that not knowing how the bug happens
+> means that attempts to clean up will usually just make matters worse.
+> And all too often, the clean-up code makes debugging more difficult.
 >
-> >
-> > We can mlock the THP to prevent it from being picked up during page rec=
-laim.
-> >
-> > David, I=E2=80=99d like to hear your thoughts on this ;)
->
-> but I think there is no need to for now, in the context of your patchset.=
- :)
 
-Agreed. Let's drop it for now :)
+Ok. Thanks for sharing this info!
 
-Thanks a lot for your thoughts!
-Lance
+> One example exception to this rule is when debug-objects detects a
+> duplicate call_rcu().  In that case, we ignore that second call_rcu().
+> But the reason is that experience has shown that the usual cause really
+> is someone doing a duplicate call_rcu(), and also that ignoring the
+> second call_rcu() makes debugging easier.
+>
+> So what is it that Frederic and I are missing here?
+>
 
+Maybe nothing. As kworker context does not modify srs_done_tail and
+invalid values
+of srs_done_tail  can only be caused by the GP kthread manipulations
+of  srs_done_tail , my thought here was, we can keep the pending
+rcu_sr_normal_gp_cleanup_work count consistent with the number of
+queue_work() and kworker executions, even when we see unexpected
+srs_done_tail values like these. However, as you described the general rule
+is to not attempt any clean up for such scenarios.
+
+Thanks
+Neeraj
+
+
+
+>                                                         Thanx, Paul
 >
-> --
-> Cheers,
->
-> David / dhildenb
->
+> > Thanks
+> > Neeraj
+> >
+> > > So this should be:
+> > >
+> > > if (WARN_ON_ONCE(!done))
+> > >    return;
+> > >
+> > > Thanks.
+> > >
+> >
 
