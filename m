@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-205344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A258FFAB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:42:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6618FFAD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954021C24863
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16012861CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1D715E5D0;
-	Fri,  7 Jun 2024 04:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3CD15AACA;
+	Fri,  7 Jun 2024 04:27:58 +0000 (UTC)
 Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8D115ADA5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CCA167278
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734453; cv=none; b=Fv6PhEk+ECpDUT37xdGxfimJtmMG7cegaNAex3JVkDfLC74fUJOW8b6Hg2Q/LsWkH6XXA+wJdbA34L1WhW7e9UMUabOoDZfU60eEnbh7uYCIJoDjCaY8TAUFZnGQAbO5ZUw93tr8uwTMkx4ml24S507p+D9EGm9vnJ2jYAIVVgI=
+	t=1717734474; cv=none; b=lkQPMsPYsrRU7m+VCQwF0OfbYNy2ijqTGVQK2SD0fXUvoFr4VYorU9L+mjVejzZaxNyXtjFNuNMNsPoFLj3C8Av7dNtY6F3gl76/4YiWePxA6AW9LW3md06AS3lVZvTpXAi3tLXeLtd4J/Q35OHRkJbnvMmOwj6waDmwW5syfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734453; c=relaxed/simple;
-	bh=X008Pgw+qU8sTBy41rVjAJN0OkshQtjKI1ja8sYelZ8=;
+	s=arc-20240116; t=1717734474; c=relaxed/simple;
+	bh=acgRyEiik7BAVD2+r8jV4SIG8Fqee3e44SQuTb5HEQ4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o6E9zYZ099JIkEMj4icUE/sOqJmEHVrIku2lyfkAmKv/kunu3UgAPAe1kiq7dWAT3zimOTKgzP7aBNV6ryIAVYVHSRbb41XskNVyH7mmsv9aTbqqho2IxtcCORfHamv13cS7YtB5PXhOlGQM7Oz9/jReSZqxNqoUPIQT3YgnN6s=
+	 MIME-Version:Content-Type; b=j15eBCBfGTxlwesRQOswJoFhBQFEEbwGzH0IrCobdPVdoRlorm9bvRj9EF3SSxe7jPiytmt1oSbn3Hmd0JBPa3FjEZzpjBXu0kl7lrqIwAhb6OxDXDF/sP5vOysVh5dfP81iml9OhY4oZLQ0slj6184Hf6ja0rN/44igUZy6kyk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VwSk768mlz1SB5L;
-	Fri,  7 Jun 2024 12:23:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VwSkZ1Dt4z1SB5Q;
+	Fri,  7 Jun 2024 12:23:50 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 94960180AA6;
-	Fri,  7 Jun 2024 12:27:26 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id E569D14040F;
+	Fri,  7 Jun 2024 12:27:33 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
- 2024 12:27:19 +0800
+ 2024 12:27:20 +0800
 From: Zhihao Cheng <chengzhihao1@huawei.com>
 To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 071/110] fsck.ubifs: rebuild_fs: Create new root dir if there are no scanned files
-Date: Fri, 7 Jun 2024 12:25:36 +0800
-Message-ID: <20240607042615.2069840-72-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 072/110] fsck.ubifs: rebuild_fs: Build TNC
+Date: Fri, 7 Jun 2024 12:25:37 +0800
+Message-ID: <20240607042615.2069840-73-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,293 +60,429 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-This is a preparation for building TNC, there must at least one file
-in filesystem, if not, just create new root dir.
+This is the 9/12 step of repairing. Construct TNC according to scanned
+files, and write TNC on flash, just like mkfs does.
+Building TNC can effectively solve many failed mounting problems caused
+by bad TNC (eg. bad node pointed by TNC, bad key order in znode, etc.).
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/fsck.ubifs/fsck.ubifs.h |   6 +
- ubifs-utils/fsck.ubifs/rebuild_fs.c | 213 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 217 insertions(+), 2 deletions(-)
+ ubifs-utils/fsck.ubifs/rebuild_fs.c | 283 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 262 insertions(+), 21 deletions(-)
 
-diff --git a/ubifs-utils/fsck.ubifs/fsck.ubifs.h b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-index f027ec3f..bc1d7503 100644
---- a/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-+++ b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-@@ -183,11 +183,17 @@ struct scanned_file {
-  * @used_lebs: a bitmap used for recording used lebs
-  * @lpts: lprops table
-  * @scanned_files: tree of all scanned files
-+ * @write_buf: write buffer for LEB @head_lnum
-+ * @head_lnum: current writing LEB number
-+ * @head_offs: current writing position in LEB @head_lnum
-  */
- struct ubifs_rebuild_info {
- 	unsigned long *used_lebs;
- 	struct ubifs_lprops *lpts;
- 	struct rb_root scanned_files;
-+	void *write_buf;
-+	int head_lnum;
-+	int head_offs;
- };
- 
- /**
 diff --git a/ubifs-utils/fsck.ubifs/rebuild_fs.c b/ubifs-utils/fsck.ubifs/rebuild_fs.c
-index 1b03d6c0..62bd4128 100644
+index 62bd4128..e1d1957f 100644
 --- a/ubifs-utils/fsck.ubifs/rebuild_fs.c
 +++ b/ubifs-utils/fsck.ubifs/rebuild_fs.c
-@@ -65,9 +65,17 @@ static int init_rebuild_info(struct ubifs_info *c)
- 		log_err(c, errno, "can not allocate lpts");
- 		goto free_used_lebs;
- 	}
-+	FSCK(c)->rebuild->write_buf = vmalloc(c->leb_size);
-+	if (!FSCK(c)->rebuild->write_buf) {
-+		err = -ENOMEM;
-+		goto free_lpts;
-+	}
-+	FSCK(c)->rebuild->head_lnum = -1;
+@@ -34,6 +34,29 @@ struct scanned_info {
+ 	struct rb_root del_dents;
+ };
  
- 	return 0;
- 
-+free_lpts:
-+	kfree(FSCK(c)->rebuild->lpts);
- free_used_lebs:
- 	kfree(FSCK(c)->rebuild->used_lebs);
- free_rebuild:
-@@ -79,6 +87,7 @@ free_sbuf:
- 
- static void destroy_rebuild_info(struct ubifs_info *c)
++/**
++ * struct idx_entry - index entry.
++ * @list: link in the list index entries for building index tree
++ * @key: key
++ * @name: directory entry name used for sorting colliding keys by name
++ * @lnum: LEB number
++ * @offs: offset
++ * @len: length
++ *
++ * The index is recorded as a linked list which is sorted and used to create
++ * the bottom level of the on-flash index tree. The remaining levels of the
++ * index tree are each built from the level below.
++ */
++struct idx_entry {
++	struct list_head list;
++	union ubifs_key key;
++	char *name;
++	int name_len;
++	int lnum;
++	int offs;
++	int len;
++};
++
+ static int init_rebuild_info(struct ubifs_info *c)
  {
-+	vfree(FSCK(c)->rebuild->write_buf);
- 	kfree(FSCK(c)->rebuild->lpts);
- 	kfree(FSCK(c)->rebuild->used_lebs);
- 	kfree(FSCK(c)->rebuild);
-@@ -661,6 +670,197 @@ static void extract_dentry_tree(struct ubifs_info *c)
- 	}
+ 	int err;
+@@ -146,6 +169,17 @@ static int insert_or_update_ino_node(struct ubifs_info *c,
+ 	return 0;
  }
  
-+static void init_root_ino(struct ubifs_info *c, struct ubifs_ino_node *ino)
++static int namecmp(const char *a, int la, const char *b, int lb)
 +{
-+#define S_IRUGO		(S_IRUSR|S_IRGRP|S_IROTH)
-+#define S_IXUGO		(S_IXUSR|S_IXGRP|S_IXOTH)
-+	__le64 tmp_le64;
++	int cmp, len = min(la, lb);
 +
-+	/* Create default root inode */
-+	ino_key_init_flash(c, &ino->key, UBIFS_ROOT_INO);
-+	ino->ch.node_type = UBIFS_INO_NODE;
-+	ino->creat_sqnum = cpu_to_le64(++c->max_sqnum);
-+	ino->nlink = cpu_to_le32(2);
-+	tmp_le64 = cpu_to_le64(time(NULL));
-+	ino->atime_sec   = tmp_le64;
-+	ino->ctime_sec   = tmp_le64;
-+	ino->mtime_sec   = tmp_le64;
-+	ino->atime_nsec  = 0;
-+	ino->ctime_nsec  = 0;
-+	ino->mtime_nsec  = 0;
-+	ino->mode = cpu_to_le32(S_IFDIR | S_IRUGO | S_IWUSR | S_IXUGO);
-+	ino->size = cpu_to_le64(UBIFS_INO_NODE_SZ);
-+	/* Set compression enabled by default */
-+	ino->flags = cpu_to_le32(UBIFS_COMPR_FL);
++	cmp = memcmp(a, b, len);
++	if (cmp)
++		return cmp;
++
++	return la - lb;
 +}
 +
-+/**
-+ * get_free_leb - get a free LEB according to @FSCK(c)->rebuild->used_lebs.
-+ * @c: UBIFS file-system description object
-+ *
-+ * This function tries to find a free LEB, %0 is returned if found, otherwise
-+ * %ENOSPC is returned.
-+ */
-+static int get_free_leb(struct ubifs_info *c)
-+{
-+	int lnum, err;
+ /**
+  * insert_or_update_dent_node - insert or update dentry node.
+  * @c: UBIFS file-system description object
+@@ -160,7 +194,7 @@ static int insert_or_update_dent_node(struct ubifs_info *c,
+ 				      struct scanned_dent_node *new_dent,
+ 				      struct rb_root *tree)
+ {
+-	int cmp, nlen;
++	int cmp;
+ 	struct scanned_dent_node *dent_node, *old_dent_node = NULL;
+ 	struct rb_node **p, *parent = NULL;
+ 
+@@ -174,9 +208,8 @@ static int insert_or_update_dent_node(struct ubifs_info *c,
+ 		} else if (cmp > 0) {
+ 			p = &(*p)->rb_right;
+ 		} else {
+-			nlen = min(new_dent->nlen, dent_node->nlen);
+-			cmp = strncmp(new_dent->name, dent_node->name, nlen) ? :
+-				      new_dent->nlen - dent_node->nlen;
++			cmp = namecmp(new_dent->name, new_dent->nlen,
++				      dent_node->name, dent_node->nlen);
+ 			if (cmp < 0) {
+ 				p = &(*p)->rb_left;
+ 			} else if (cmp > 0) {
+@@ -424,7 +457,7 @@ static struct scanned_dent_node *
+ lookup_valid_dent_node(struct ubifs_info *c, struct scanned_info *si,
+ 		       struct scanned_dent_node *target)
+ {
+-	int cmp, nlen;
++	int cmp;
+ 	struct scanned_dent_node *dent_node;
+ 	struct rb_node *p;
+ 
+@@ -437,9 +470,8 @@ lookup_valid_dent_node(struct ubifs_info *c, struct scanned_info *si,
+ 		} else if (cmp > 0) {
+ 			p = p->rb_right;
+ 		} else {
+-			nlen = min(target->nlen, dent_node->nlen);
+-			cmp = strncmp(target->name, dent_node->name, nlen) ? :
+-				      target->nlen - dent_node->nlen;
++			cmp = namecmp(target->name, target->nlen,
++				      dent_node->name, dent_node->nlen);
+ 			if (cmp < 0) {
+ 				p = p->rb_left;
+ 			} else if (cmp > 0) {
+@@ -885,9 +917,12 @@ static const char *get_file_name(struct ubifs_info *c, struct scanned_file *file
+ 	return name;
+ }
+ 
+-static void parse_node_location(struct ubifs_info *c, struct scanned_node *sn)
++static int parse_node_info(struct ubifs_info *c, struct scanned_node *sn,
++			   union ubifs_key *key, char *name, int name_len,
++			   struct list_head *idx_list, int *idx_cnt)
+ {
+ 	int lnum, pos;
++	struct idx_entry *e;
+ 
+ 	lnum = sn->lnum - c->main_first;
+ 	pos = sn->offs + ALIGN(sn->len, 8);
+@@ -895,11 +930,184 @@ static void parse_node_location(struct ubifs_info *c, struct scanned_node *sn)
+ 	set_bit(lnum, FSCK(c)->rebuild->used_lebs);
+ 	FSCK(c)->rebuild->lpts[lnum].end = max_t(int,
+ 					FSCK(c)->rebuild->lpts[lnum].end, pos);
 +
-+	lnum = find_next_zero_bit(FSCK(c)->rebuild->used_lebs, c->main_lebs, 0);
-+	if (lnum >= c->main_lebs) {
-+		ubifs_err(c, "No space left.");
-+		return -ENOSPC;
-+	}
-+	set_bit(lnum, FSCK(c)->rebuild->used_lebs);
-+	lnum += c->main_first;
-+
-+	err = ubifs_leb_unmap(c, lnum);
-+	if (err)
-+		return err;
-+
-+	FSCK(c)->rebuild->head_lnum = lnum;
-+	FSCK(c)->rebuild->head_offs = 0;
-+
-+	return 0;
-+}
-+
-+/**
-+ * flush_write_buf - flush write buffer.
-+ * @c: UBIFS file-system description object
-+ *
-+ * This function flush write buffer to LEB @FSCK(c)->rebuild->head_lnum, then
-+ * set @FSCK(c)->rebuild->head_lnum to '-1'.
-+ */
-+static int flush_write_buf(struct ubifs_info *c)
-+{
-+	int len, pad, err;
-+
-+	if (!FSCK(c)->rebuild->head_offs)
++	if (idx_cnt == NULL)
++		/* Skip truncation node. */
 +		return 0;
 +
-+	len = ALIGN(FSCK(c)->rebuild->head_offs, c->min_io_size);
-+	pad = len - FSCK(c)->rebuild->head_offs;
-+	if (pad)
-+		ubifs_pad(c, FSCK(c)->rebuild->write_buf +
-+			  FSCK(c)->rebuild->head_offs, pad);
++	e = kmalloc(sizeof(struct idx_entry), GFP_KERNEL);
++	if (!e)
++		return -ENOMEM;
 +
-+	err = ubifs_leb_write(c, FSCK(c)->rebuild->head_lnum,
-+			      FSCK(c)->rebuild->write_buf, 0, len);
++	key_copy(c, key, &e->key);
++	e->name = name;
++	e->name_len = name_len;
++	e->lnum = sn->lnum;
++	e->offs = sn->offs;
++	e->len = sn->len;
++	list_add_tail(&e->list, idx_list);
++	*idx_cnt = *idx_cnt + 1;
++
++	return 0;
++}
++
++static int add_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
++			union ubifs_key *key, int child_cnt,
++			struct idx_entry *e)
++{
++	int err, lnum, offs, len;
++
++	len = ubifs_idx_node_sz(c, child_cnt);
++	ubifs_prepare_node(c, idx, len, 0);
++
++	err = reserve_space(c, len, &lnum, &offs);
 +	if (err)
 +		return err;
 +
-+	FSCK(c)->rebuild->head_lnum = -1;
++	copy_node_data(c, idx, offs, len);
 +
-+	return 0;
-+}
++	c->calc_idx_sz += ALIGN(len, 8);
 +
-+/**
-+ * reserve_space - reserve enough space to write data.
-+ * @c: UBIFS file-system description object
-+ * @len: the length of written data
-+ * @lnum: the write LEB number is returned here
-+ * @offs: the write pos in LEB is returned here
-+ *
-+ * This function finds target position <@lnum, @offs> to write data with
-+ * length of @len.
-+ */
-+static int reserve_space(struct ubifs_info *c, int len, int *lnum, int *offs)
-+{
-+	int err;
++	/* The last index node written will be the root */
++	c->zroot.lnum = lnum;
++	c->zroot.offs = offs;
++	c->zroot.len = len;
 +
-+	if (FSCK(c)->rebuild->head_lnum == -1) {
-+get_new:
-+		err = get_free_leb(c);
-+		if (err)
-+			return err;
-+	}
++	key_copy(c, key, &e->key);
++	e->lnum = lnum;
++	e->offs = offs;
++	e->len = len;
 +
-+	if (len > c->leb_size - FSCK(c)->rebuild->head_offs) {
-+		err = flush_write_buf(c);
-+		if (err)
-+			return err;
-+
-+		goto get_new;
-+	}
-+
-+	*lnum = FSCK(c)->rebuild->head_lnum;
-+	*offs = FSCK(c)->rebuild->head_offs;
-+	FSCK(c)->rebuild->head_offs += ALIGN(len, 8);
-+
-+	return 0;
-+}
-+
-+static void copy_node_data(struct ubifs_info *c, void *node, int offs, int len)
-+{
-+	memcpy(FSCK(c)->rebuild->write_buf + offs, node, len);
-+	memset(FSCK(c)->rebuild->write_buf + offs + len, 0xff, ALIGN(len, 8) - len);
-+}
-+
-+/**
-+ * create_root - create root dir.
-+ * @c: UBIFS file-system description object
-+ *
-+ * This function creates root dir.
-+ */
-+static int create_root(struct ubifs_info *c)
-+{
-+	int err, lnum, offs;
-+	struct ubifs_ino_node *ino;
-+	struct scanned_file *file;
-+
-+	ino = kzalloc(ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size), GFP_KERNEL);
-+	if (!ino)
-+		return -ENOMEM;
-+
-+	c->max_sqnum = 0;
-+	c->highest_inum = UBIFS_FIRST_INO;
-+	init_root_ino(c, ino);
-+	err = ubifs_prepare_node_hmac(c, ino, UBIFS_INO_NODE_SZ, -1, 1);
-+	if (err)
-+		goto out;
-+
-+	err = reserve_space(c, UBIFS_INO_NODE_SZ, &lnum, &offs);
-+	if (err)
-+		goto out;
-+
-+	copy_node_data(c, ino, offs, UBIFS_INO_NODE_SZ);
-+
-+	err = flush_write_buf(c);
-+	if (err)
-+		goto out;
-+
-+	file = kzalloc(sizeof(struct scanned_file), GFP_KERNEL);
-+	if (!file) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	file->inum = UBIFS_ROOT_INO;
-+	file->dent_nodes = RB_ROOT;
-+	file->data_nodes = RB_ROOT;
-+	INIT_LIST_HEAD(&file->list);
-+
-+	file->ino.header.exist = true;
-+	file->ino.header.lnum = lnum;
-+	file->ino.header.offs = offs;
-+	file->ino.header.len = UBIFS_INO_NODE_SZ;
-+	file->ino.header.sqnum = le64_to_cpu(ino->ch.sqnum);
-+	ino_key_init(c, &file->ino.key, UBIFS_ROOT_INO);
-+	file->ino.is_xattr = le32_to_cpu(ino->flags) & UBIFS_XATTR_FL;
-+	file->ino.mode = le32_to_cpu(ino->mode);
-+	file->calc_nlink = file->ino.nlink = le32_to_cpu(ino->nlink);
-+	file->calc_xcnt = file->ino.xcnt = le32_to_cpu(ino->xattr_cnt);
-+	file->calc_xsz = file->ino.xsz = le32_to_cpu(ino->xattr_size);
-+	file->calc_xnms = file->ino.xnms = le32_to_cpu(ino->xattr_names);
-+	file->calc_size = file->ino.size = le64_to_cpu(ino->size);
-+
-+	rb_link_node(&file->rb, NULL, &FSCK(c)->rebuild->scanned_files.rb_node);
-+	rb_insert_color(&file->rb, &FSCK(c)->rebuild->scanned_files);
-+
-+out:
-+	kfree(ino);
 +	return err;
 +}
 +
- static const char *get_file_name(struct ubifs_info *c, struct scanned_file *file)
- {
- 	static char name[UBIFS_MAX_NLEN + 1];
-@@ -741,9 +941,10 @@ static void record_file_used_lebs(struct ubifs_info *c,
-  *
-  * This function traverses all nodes from valid files and does following
-  * things:
-- * 1. Record all used LEBs which may hold useful nodes, then left unused
-+ * 1. If there are no scanned files, create default empty filesystem.
-+ * 2. Record all used LEBs which may hold useful nodes, then left unused
-  *    LEBs could be taken for storing new index tree.
-- * 2. Re-write data to prevent failed gc scanning in the subsequent mounting
-+ * 3. Re-write data to prevent failed gc scanning in the subsequent mounting
-  *    process caused by corrupted data.
-  */
- static int traverse_files_and_nodes(struct ubifs_info *c)
-@@ -753,6 +954,14 @@ static int traverse_files_and_nodes(struct ubifs_info *c)
- 	struct scanned_file *file;
- 	struct rb_root *tree = &FSCK(c)->rebuild->scanned_files;
++static int cmp_idx(void *priv, const struct list_head *a,
++		   const struct list_head *b)
++{
++	int cmp;
++	struct ubifs_info *c = priv;
++	struct idx_entry *ia, *ib;
++
++	if (a == b)
++		return 0;
++
++	ia = list_entry(a, struct idx_entry, list);
++	ib = list_entry(b, struct idx_entry, list);
++
++	cmp = keys_cmp(c, &ia->key, &ib->key);
++	if (cmp)
++		return cmp;
++
++	return namecmp(ia->name, ia->name_len, ib->name, ib->name_len);
++}
++
++/**
++ * build_tnc - construct TNC and write it into flash.
++ * @c: UBIFS file-system description object
++ * @lower_idxs: leaf entries of TNC
++ * @lower_cnt: the count of @lower_idxs
++ *
++ * This function builds TNC according to @lower_idxs and writes all index
++ * nodes into flash.
++ */
++static int build_tnc(struct ubifs_info *c, struct list_head *lower_idxs,
++		     int lower_cnt)
++{
++	int i, j, err, upper_cnt, child_cnt, idx_sz, level = 0;
++	struct idx_entry *pe, *tmp_e, *e = NULL;
++	struct ubifs_idx_node *idx;
++	struct ubifs_branch *br;
++	union ubifs_key key;
++	LIST_HEAD(upper_idxs);
++
++	idx_sz = ubifs_idx_node_sz(c, c->fanout);
++	idx = kmalloc(idx_sz, GFP_KERNEL);
++	if (!idx)
++		return -ENOMEM;
++
++	list_sort(c, lower_idxs, cmp_idx);
++
++	ubifs_assert(c, lower_cnt != 0);
++
++	do {
++		upper_cnt = lower_cnt / c->fanout;
++		if (lower_cnt % c->fanout)
++			upper_cnt += 1;
++		e = list_first_entry(lower_idxs, struct idx_entry, list);
++
++		for (i = 0; i < upper_cnt; i++) {
++			if (i == upper_cnt - 1) {
++				child_cnt = lower_cnt % c->fanout;
++				if (child_cnt == 0)
++					child_cnt = c->fanout;
++			} else
++				child_cnt = c->fanout;
++
++			key_copy(c, &e->key, &key);
++			memset(idx, 0, idx_sz);
++			idx->ch.node_type = UBIFS_IDX_NODE;
++			idx->child_cnt = cpu_to_le16(child_cnt);
++			idx->level = cpu_to_le16(level);
++			for (j = 0; j < child_cnt; j++) {
++				ubifs_assert(c,
++				    !list_entry_is_head(e, lower_idxs, list));
++				br = ubifs_idx_branch(c, idx, j);
++				key_write_idx(c, &e->key, &br->key);
++				br->lnum = cpu_to_le32(e->lnum);
++				br->offs = cpu_to_le32(e->offs);
++				br->len = cpu_to_le32(e->len);
++				e = list_next_entry(e, list);
++			}
++
++			pe = kmalloc(sizeof(struct idx_entry), GFP_KERNEL);
++			if (!pe) {
++				err = -ENOMEM;
++				goto out;
++			}
++
++			err = add_idx_node(c, idx, &key, child_cnt, pe);
++			if (err) {
++				kfree(pe);
++				goto out;
++			}
++
++			list_add_tail(&pe->list, &upper_idxs);
++		}
++
++		level++;
++		list_for_each_entry_safe(e, tmp_e, lower_idxs, list) {
++			list_del(&e->list);
++			kfree(e);
++		}
++		list_splice_init(&upper_idxs, lower_idxs);
++		lower_cnt = upper_cnt;
++	} while (lower_cnt > 1);
++
++	/* Set the index head */
++	c->ihead_lnum = FSCK(c)->rebuild->head_lnum;
++	c->ihead_offs = ALIGN(FSCK(c)->rebuild->head_offs, c->min_io_size);
++
++	/* Flush the last index LEB */
++	err = flush_write_buf(c);
++
++out:
++	list_for_each_entry_safe(e, tmp_e, lower_idxs, list) {
++		list_del(&e->list);
++		kfree(e);
++	}
++	list_for_each_entry_safe(e, tmp_e, &upper_idxs, list) {
++		list_del(&e->list);
++		kfree(e);
++	}
++	kfree(idx);
++	return err;
+ }
  
-+	if (rb_first(tree) == NULL) {
-+		/* No scanned files. Create root dir. */
-+		log_out(c, "No files found, create empty filesystem");
-+		err = create_root(c);
+-static void record_file_used_lebs(struct ubifs_info *c,
+-				  struct scanned_file *file)
++static int record_file_used_lebs(struct ubifs_info *c,
++				 struct scanned_file *file,
++				 struct list_head *idx_list, int *idx_cnt)
+ {
++	int err;
+ 	struct rb_node *node;
+ 	struct scanned_file *xattr_file;
+ 	struct scanned_dent_node *dent_node;
+@@ -911,28 +1119,46 @@ static void record_file_used_lebs(struct ubifs_info *c,
+ 		 ubifs_get_type_name(ubifs_get_dent_type(file->ino.mode)),
+ 		 c->dev_name);
+ 
+-	parse_node_location(c, &file->ino.header);
++	err = parse_node_info(c, &file->ino.header, &file->ino.key,
++			      NULL, 0, idx_list, idx_cnt);
++	if (err)
++		return err;
+ 
+-	if (file->trun.header.exist)
+-		parse_node_location(c, &file->trun.header);
++	if (file->trun.header.exist) {
++		err = parse_node_info(c, &file->trun.header, NULL, NULL,
++				      0, idx_list, NULL);
 +		if (err)
 +			return err;
 +	}
+ 
+ 	for (node = rb_first(&file->data_nodes); node; node = rb_next(node)) {
+ 		data_node = rb_entry(node, struct scanned_data_node, rb);
+ 
+-		parse_node_location(c, &data_node->header);
++		err = parse_node_info(c, &data_node->header, &data_node->key,
++				      NULL, 0, idx_list, idx_cnt);
++		if (err)
++			return err;
+ 	}
+ 
+ 	for (node = rb_first(&file->dent_nodes); node; node = rb_next(node)) {
+ 		dent_node = rb_entry(node, struct scanned_dent_node, rb);
+ 
+-		parse_node_location(c, &dent_node->header);
++		err = parse_node_info(c, &dent_node->header, &dent_node->key,
++				      dent_node->name, dent_node->nlen,
++				      idx_list, idx_cnt);
++		if (err)
++			return err;
+ 	}
+ 
+ 	for (node = rb_first(&file->xattr_files); node; node = rb_next(node)) {
+ 		xattr_file = rb_entry(node, struct scanned_file, rb);
+ 
+-		record_file_used_lebs(c, xattr_file);
++		err = record_file_used_lebs(c, xattr_file, idx_list, idx_cnt);
++		if (err)
++			return err;
+ 	}
 +
- 	log_out(c, "Record used LEBs");
++	return err;
+ }
+ 
+ /**
+@@ -946,13 +1172,16 @@ static void record_file_used_lebs(struct ubifs_info *c,
+  *    LEBs could be taken for storing new index tree.
+  * 3. Re-write data to prevent failed gc scanning in the subsequent mounting
+  *    process caused by corrupted data.
++ * 4. Build TNC.
+  */
+ static int traverse_files_and_nodes(struct ubifs_info *c)
+ {
+-	int i, err = 0;
++	int i, err = 0, idx_cnt = 0;
+ 	struct rb_node *node;
+ 	struct scanned_file *file;
+ 	struct rb_root *tree = &FSCK(c)->rebuild->scanned_files;
++	struct idx_entry *ie, *tmp_ie;
++	LIST_HEAD(idx_list);
+ 
+ 	if (rb_first(tree) == NULL) {
+ 		/* No scanned files. Create root dir. */
+@@ -966,7 +1195,9 @@ static int traverse_files_and_nodes(struct ubifs_info *c)
  	for (node = rb_first(tree); node; node = rb_next(node)) {
  		file = rb_entry(node, struct scanned_file, rb);
+ 
+-		record_file_used_lebs(c, file);
++		err = record_file_used_lebs(c, file, &idx_list, &idx_cnt);
++		if (err)
++			goto out_idx_list;
+ 	}
+ 
+ 	/* Re-write data. */
+@@ -985,16 +1216,25 @@ static int traverse_files_and_nodes(struct ubifs_info *c)
+ 
+ 		err = ubifs_leb_read(c, lnum, c->sbuf, 0, len, 0);
+ 		if (err && err != -EBADMSG)
+-			return err;
++			goto out_idx_list;
+ 
+ 		if (len > end)
+ 			ubifs_pad(c, c->sbuf + end, len - end);
+ 
+ 		err = ubifs_leb_change(c, lnum, c->sbuf, len);
+ 		if (err)
+-			return err;
++			goto out_idx_list;
+ 	}
+ 
++	/* Build TNC. */
++	log_out(c, "Build TNC");
++	err = build_tnc(c, &idx_list, idx_cnt);
++
++out_idx_list:
++	list_for_each_entry_safe(ie, tmp_ie, &idx_list, list) {
++		list_del(&ie->list);
++		kfree(ie);
++	}
+ 	return err;
+ }
+ 
+@@ -1059,6 +1299,7 @@ int ubifs_rebuild_filesystem(struct ubifs_info *c)
+ 	/*
+ 	 * Step 7: Record used LEBs.
+ 	 * Step 8: Re-write data to clean corrupted data.
++	 * Step 9: Build TNC.
+ 	 */
+ 	err = traverse_files_and_nodes(c);
+ 	if (err)
 -- 
 2.13.6
 
