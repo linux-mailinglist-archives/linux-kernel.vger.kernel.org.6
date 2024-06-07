@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-205325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA598FFA9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:37:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E038FFA9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34E41F261E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489E11C24041
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85164158D6C;
-	Fri,  7 Jun 2024 04:27:22 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259DA156F3F;
+	Fri,  7 Jun 2024 04:27:20 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E37155724
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2678B155728
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734438; cv=none; b=cLbtKf+mWOhEVXs9lj7+yqmDR28OF9GtYIh79ZZTnbzgAy2Pn5WgSwdHxrazek++hnk1c9HtMjn9BdawD/+CB2hlJM3UeYFspwBM9x2JCECxSTXQNSZSoZIZsQPiNzYhJUVXC3XKEr0kYx1TQt7kfmUuGPsVlD6W2ZrM+EeQW9Q=
+	t=1717734437; cv=none; b=ua1UHCAsR0AcWPnzKpzNMaLnSGRZl60TVHvfHzlQQ4oMQLZQQVjL/Ws55FyGD4Dv1mZppNiNpYxKcPSic6R+IdNYAQ4p4xT3Pb9Zk+lIyrVMf0FikihPuC5xsQFeZZioGIJq+ev98Y4IA+KN+8VZEGNapvS0W4eGzd0RwmtRVrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734438; c=relaxed/simple;
-	bh=wchf+pKMvt+Zd5XD41E3OE2Eni5M59ToTbX87wXTIO0=;
+	s=arc-20240116; t=1717734437; c=relaxed/simple;
+	bh=kJRgCjjddJHIfURRxIqIu+FEMjwdX1MV+8c177Ck37w=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MzMdwkz5Y4WxoUWIc6rnu/cJUwK3+/w+HM4Xtt94ZXGanr8zEkkzAd65RsyHsNkWnXAEdqUn7yylytbMFwx2+oGszM24S6agWPnrm1KSJU5CfrqG6rHruvsANl9yYOAwAI4abCXm0m/6qbektVDsuHuCxxlg4bOU7F9zgPKy3EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	 MIME-Version:Content-Type; b=ZsLVeuO6KjsB7QCLEtZN8OIMdYc2QTPgR5DxujfrOv4hPseL4tZH7JNcSx/X6Oy5PVu4yCSa10Ovhyi3oQI/wYCy8c47Crww+OjEaAzPYiWoCQX92JmcfsgZyEkYvKhkYj9M9MpLnvPJDNIEHB84OxsZzYC/gMaQYz27XqFulTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VwSjr37tyz1S9y9;
-	Fri,  7 Jun 2024 12:23:12 +0800 (CST)
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VwSj730RTzmYRk;
+	Fri,  7 Jun 2024 12:22:35 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2CB4818007E;
+	by mail.maildlp.com (Postfix) with ESMTPS id 3ED71180085;
 	Fri,  7 Jun 2024 12:27:11 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
@@ -43,9 +43,9 @@ To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 041/110] ubifs-utils: Adapt sb.c in libubifs
-Date: Fri, 7 Jun 2024 12:25:06 +0800
-Message-ID: <20240607042615.2069840-42-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 042/110] ubifs-utils: Adapt auth.c in libubifs
+Date: Fri, 7 Jun 2024 12:25:07 +0800
+Message-ID: <20240607042615.2069840-43-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,587 +60,615 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-Adapt sb.c in libubifs, compared with linux kernel implementations:
- 1. Remove authentication related implementations
-    (eg. authenticate_sb_node), authentication is not supported in fsck
-    for now.
- 2. Remove some functions(eg. create_default_filesystem) which won't be
-    used in fsck/mkfs.
- 3. Modify ubifs_read_superblock(), remove some assignments which won't
-    be used in mkfs/fsck.
- 4. Apapt fixup_leb to ignore %-EBADMSG, subsequent steps will check
-    all areas carefully.
+Adapt auth.c in libubifs, compared with linux kernel implementations:
+ 1. Only keep implementations used by mkfs, other implementations
+    are removed.
+ 2. Adapt functions based on implementations in common/sign.c.
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/libubifs/sb.c | 482 ++--------------------------------------------
- 1 file changed, 18 insertions(+), 464 deletions(-)
+ ubifs-utils/libubifs/auth.c | 534 +++++++-------------------------------------
+ 1 file changed, 82 insertions(+), 452 deletions(-)
 
-diff --git a/ubifs-utils/libubifs/sb.c b/ubifs-utils/libubifs/sb.c
-index e7693b94..312661d6 100644
---- a/ubifs-utils/libubifs/sb.c
-+++ b/ubifs-utils/libubifs/sb.c
-@@ -14,358 +14,18 @@
-  * change it. The superblock node mostly contains geometry information.
+diff --git a/ubifs-utils/libubifs/auth.c b/ubifs-utils/libubifs/auth.c
+index 0d561ecb..fab1dba4 100644
+--- a/ubifs-utils/libubifs/auth.c
++++ b/ubifs-utils/libubifs/auth.c
+@@ -9,13 +9,51 @@
+  * This file implements various helper functions for UBIFS authentication support
   */
  
+-#include <linux/verification.h>
+-#include <crypto/hash.h>
+-#include <crypto/utils.h>
+-#include <keys/user-type.h>
+-#include <keys/asymmetric-type.h>
+-
 +#include "linux_err.h"
-+#include "bitops.h"
-+#include "kmem.h"
  #include "ubifs.h"
--#include <linux/slab.h>
--#include <linux/math64.h>
--#include <linux/uuid.h>
--
--/*
-- * Default journal size in logical eraseblocks as a percent of total
-- * flash size.
-- */
--#define DEFAULT_JNL_PERCENT 5
--
--/* Default maximum journal size in bytes */
--#define DEFAULT_MAX_JNL (32*1024*1024)
--
--/* Default indexing tree fanout */
--#define DEFAULT_FANOUT 8
--
--/* Default number of data journal heads */
--#define DEFAULT_JHEADS_CNT 1
--
--/* Default positions of different LEBs in the main area */
--#define DEFAULT_IDX_LEB  0
--#define DEFAULT_DATA_LEB 1
--#define DEFAULT_GC_LEB   2
++#include "sign.h"
 +#include "defs.h"
-+#include "debug.h"
-+#include "key.h"
-+#include "misc.h"
++
++int ubifs_shash_init(const struct ubifs_info *c,
++		     __unused struct shash_desc *desc)
++{
++	if (ubifs_authenticated(c))
++		return hash_digest_init();
++	else
++		return 0;
++}
++
++int ubifs_shash_update(const struct ubifs_info *c,
++		       __unused struct shash_desc *desc,
++		       const void *buf, unsigned int len)
++{
++	int err = 0;
++
++	if (ubifs_authenticated(c)) {
++		err = hash_digest_update(buf, len);
++		if (err < 0)
++			return err;
++	}
++
++	return 0;
++}
++
++int ubifs_shash_final(const struct ubifs_info *c,
++		      __unused struct shash_desc *desc, u8 *out)
++{
++	return ubifs_authenticated(c) ? hash_digest_final(out) : 0;
++}
++
++struct shash_desc *ubifs_hash_get_desc(const struct ubifs_info *c)
++{
++	int err;
++
++	err = ubifs_shash_init(c, NULL);
++	if (err)
++		return ERR_PTR(err);
++
++	return NULL;
++}
  
- /* Default number of LEB numbers in LPT's save table */
- #define DEFAULT_LSAVE_CNT 256
+ /**
+  * ubifs_node_calc_hash - calculate the hash of a UBIFS node
+@@ -25,101 +63,47 @@
+  *
+  * Returns 0 for success or a negative error code otherwise.
+  */
+-int __ubifs_node_calc_hash(const struct ubifs_info *c, const void *node,
+-			    u8 *hash)
++int __ubifs_node_calc_hash(__unused const struct ubifs_info *c,
++			   const void *node, u8 *hash)
+ {
+ 	const struct ubifs_ch *ch = node;
  
--/* Default reserved pool size as a percent of maximum free space */
--#define DEFAULT_RP_PERCENT 5
--
--/* The default maximum size of reserved pool in bytes */
--#define DEFAULT_MAX_RP_SIZE (5*1024*1024)
--
--/* Default time granularity in nanoseconds */
--#define DEFAULT_TIME_GRAN 1000000000
--
--static int get_default_compressor(struct ubifs_info *c)
+-	return crypto_shash_tfm_digest(c->hash_tfm, node, le32_to_cpu(ch->len),
+-				       hash);
++	return hash_digest(node, le32_to_cpu(ch->len), hash);
+ }
+ 
+ /**
+- * ubifs_hash_calc_hmac - calculate a HMAC from a hash
+- * @c: UBIFS file-system description object
+- * @hash: the node to calculate a HMAC for
+- * @hmac: the returned HMAC
+- *
+- * Returns 0 for success or a negative error code otherwise.
+- */
+-static int ubifs_hash_calc_hmac(const struct ubifs_info *c, const u8 *hash,
+-				 u8 *hmac)
 -{
--	if (ubifs_compr_present(c, UBIFS_COMPR_ZSTD))
--		return UBIFS_COMPR_ZSTD;
--
--	if (ubifs_compr_present(c, UBIFS_COMPR_LZO))
--		return UBIFS_COMPR_LZO;
--
--	if (ubifs_compr_present(c, UBIFS_COMPR_ZLIB))
--		return UBIFS_COMPR_ZLIB;
--
--	return UBIFS_COMPR_NONE;
+-	return crypto_shash_tfm_digest(c->hmac_tfm, hash, c->hash_len, hmac);
 -}
 -
 -/**
-- * create_default_filesystem - format empty UBI volume.
+- * ubifs_prepare_auth_node - Prepare an authentication node
 - * @c: UBIFS file-system description object
++ * ubifs_master_node_calc_hash - calculate the hash of a UBIFS master node
+  * @node: the node to calculate a hash for
+- * @inhash: input hash of previous nodes
 - *
-- * This function creates default empty file-system. Returns zero in case of
-- * success and a negative error code in case of failure.
-- */
--static int create_default_filesystem(struct ubifs_info *c)
--{
--	struct ubifs_sb_node *sup;
--	struct ubifs_mst_node *mst;
--	struct ubifs_idx_node *idx;
--	struct ubifs_branch *br;
--	struct ubifs_ino_node *ino;
--	struct ubifs_cs_node *cs;
--	union ubifs_key key;
--	int err, tmp, jnl_lebs, log_lebs, max_buds, main_lebs, main_first;
--	int lpt_lebs, lpt_first, orph_lebs, big_lpt, ino_waste, sup_flags = 0;
--	int min_leb_cnt = UBIFS_MIN_LEB_CNT;
--	int idx_node_size;
--	long long tmp64, main_bytes;
--	__le64 tmp_le64;
--	struct timespec64 ts;
--	u8 hash[UBIFS_HASH_ARR_SZ];
--	u8 hash_lpt[UBIFS_HASH_ARR_SZ];
--
--	/* Some functions called from here depend on the @c->key_len filed */
--	c->key_len = UBIFS_SK_LEN;
--
--	/*
--	 * First of all, we have to calculate default file-system geometry -
--	 * log size, journal size, etc.
--	 */
--	if (c->leb_cnt < 0x7FFFFFFF / DEFAULT_JNL_PERCENT)
--		/* We can first multiply then divide and have no overflow */
--		jnl_lebs = c->leb_cnt * DEFAULT_JNL_PERCENT / 100;
--	else
--		jnl_lebs = (c->leb_cnt / 100) * DEFAULT_JNL_PERCENT;
--
--	if (jnl_lebs < UBIFS_MIN_JNL_LEBS)
--		jnl_lebs = UBIFS_MIN_JNL_LEBS;
--	if (jnl_lebs * c->leb_size > DEFAULT_MAX_JNL)
--		jnl_lebs = DEFAULT_MAX_JNL / c->leb_size;
--
--	/*
--	 * The log should be large enough to fit reference nodes for all bud
--	 * LEBs. Because buds do not have to start from the beginning of LEBs
--	 * (half of the LEB may contain committed data), the log should
--	 * generally be larger, make it twice as large.
--	 */
--	tmp = 2 * (c->ref_node_alsz * jnl_lebs) + c->leb_size - 1;
--	log_lebs = tmp / c->leb_size;
--	/* Plus one LEB reserved for commit */
--	log_lebs += 1;
--	if (c->leb_cnt - min_leb_cnt > 8) {
--		/* And some extra space to allow writes while committing */
--		log_lebs += 1;
--		min_leb_cnt += 1;
--	}
--
--	max_buds = jnl_lebs - log_lebs;
--	if (max_buds < UBIFS_MIN_BUD_LEBS)
--		max_buds = UBIFS_MIN_BUD_LEBS;
--
--	/*
--	 * Orphan nodes are stored in a separate area. One node can store a lot
--	 * of orphan inode numbers, but when new orphan comes we just add a new
--	 * orphan node. At some point the nodes are consolidated into one
--	 * orphan node.
--	 */
--	orph_lebs = UBIFS_MIN_ORPH_LEBS;
--	if (c->leb_cnt - min_leb_cnt > 1)
--		/*
--		 * For debugging purposes it is better to have at least 2
--		 * orphan LEBs, because the orphan subsystem would need to do
--		 * consolidations and would be stressed more.
--		 */
--		orph_lebs += 1;
--
--	main_lebs = c->leb_cnt - UBIFS_SB_LEBS - UBIFS_MST_LEBS - log_lebs;
--	main_lebs -= orph_lebs;
--
--	lpt_first = UBIFS_LOG_LNUM + log_lebs;
--	c->lsave_cnt = DEFAULT_LSAVE_CNT;
--	c->max_leb_cnt = c->leb_cnt;
--	err = ubifs_create_dflt_lpt(c, &main_lebs, lpt_first, &lpt_lebs,
--				    &big_lpt, hash_lpt);
--	if (err)
--		return err;
--
--	dbg_gen("LEB Properties Tree created (LEBs %d-%d)", lpt_first,
--		lpt_first + lpt_lebs - 1);
--
--	main_first = c->leb_cnt - main_lebs;
--
--	sup = kzalloc(ALIGN(UBIFS_SB_NODE_SZ, c->min_io_size), GFP_KERNEL);
--	mst = kzalloc(c->mst_node_alsz, GFP_KERNEL);
--	idx_node_size = ubifs_idx_node_sz(c, 1);
--	idx = kzalloc(ALIGN(idx_node_size, c->min_io_size), GFP_KERNEL);
--	ino = kzalloc(ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size), GFP_KERNEL);
--	cs = kzalloc(ALIGN(UBIFS_CS_NODE_SZ, c->min_io_size), GFP_KERNEL);
--
--	if (!sup || !mst || !idx || !ino || !cs) {
--		err = -ENOMEM;
--		goto out;
--	}
--
--	/* Create default superblock */
--
--	tmp64 = (long long)max_buds * c->leb_size;
--	if (big_lpt)
--		sup_flags |= UBIFS_FLG_BIGLPT;
--	if (ubifs_default_version > 4)
--		sup_flags |= UBIFS_FLG_DOUBLE_HASH;
--
--	if (ubifs_authenticated(c)) {
--		sup_flags |= UBIFS_FLG_AUTHENTICATION;
--		sup->hash_algo = cpu_to_le16(c->auth_hash_algo);
--		err = ubifs_hmac_wkm(c, sup->hmac_wkm);
--		if (err)
--			goto out;
--	} else {
--		sup->hash_algo = cpu_to_le16(0xffff);
--	}
--
--	sup->ch.node_type  = UBIFS_SB_NODE;
--	sup->key_hash      = UBIFS_KEY_HASH_R5;
--	sup->flags         = cpu_to_le32(sup_flags);
--	sup->min_io_size   = cpu_to_le32(c->min_io_size);
--	sup->leb_size      = cpu_to_le32(c->leb_size);
--	sup->leb_cnt       = cpu_to_le32(c->leb_cnt);
--	sup->max_leb_cnt   = cpu_to_le32(c->max_leb_cnt);
--	sup->max_bud_bytes = cpu_to_le64(tmp64);
--	sup->log_lebs      = cpu_to_le32(log_lebs);
--	sup->lpt_lebs      = cpu_to_le32(lpt_lebs);
--	sup->orph_lebs     = cpu_to_le32(orph_lebs);
--	sup->jhead_cnt     = cpu_to_le32(DEFAULT_JHEADS_CNT);
--	sup->fanout        = cpu_to_le32(DEFAULT_FANOUT);
--	sup->lsave_cnt     = cpu_to_le32(c->lsave_cnt);
--	sup->fmt_version   = cpu_to_le32(ubifs_default_version);
--	sup->time_gran     = cpu_to_le32(DEFAULT_TIME_GRAN);
--	if (c->mount_opts.override_compr)
--		sup->default_compr = cpu_to_le16(c->mount_opts.compr_type);
--	else
--		sup->default_compr = cpu_to_le16(get_default_compressor(c));
--
--	generate_random_uuid(sup->uuid);
--
--	main_bytes = (long long)main_lebs * c->leb_size;
--	tmp64 = div_u64(main_bytes * DEFAULT_RP_PERCENT, 100);
--	if (tmp64 > DEFAULT_MAX_RP_SIZE)
--		tmp64 = DEFAULT_MAX_RP_SIZE;
--	sup->rp_size = cpu_to_le64(tmp64);
--	sup->ro_compat_version = cpu_to_le32(UBIFS_RO_COMPAT_VERSION);
--
--	dbg_gen("default superblock created at LEB 0:0");
--
--	/* Create default master node */
--
--	mst->ch.node_type = UBIFS_MST_NODE;
--	mst->log_lnum     = cpu_to_le32(UBIFS_LOG_LNUM);
--	mst->highest_inum = cpu_to_le64(UBIFS_FIRST_INO);
--	mst->cmt_no       = 0;
--	mst->root_lnum    = cpu_to_le32(main_first + DEFAULT_IDX_LEB);
--	mst->root_offs    = 0;
--	tmp = ubifs_idx_node_sz(c, 1);
--	mst->root_len     = cpu_to_le32(tmp);
--	mst->gc_lnum      = cpu_to_le32(main_first + DEFAULT_GC_LEB);
--	mst->ihead_lnum   = cpu_to_le32(main_first + DEFAULT_IDX_LEB);
--	mst->ihead_offs   = cpu_to_le32(ALIGN(tmp, c->min_io_size));
--	mst->index_size   = cpu_to_le64(ALIGN(tmp, 8));
--	mst->lpt_lnum     = cpu_to_le32(c->lpt_lnum);
--	mst->lpt_offs     = cpu_to_le32(c->lpt_offs);
--	mst->nhead_lnum   = cpu_to_le32(c->nhead_lnum);
--	mst->nhead_offs   = cpu_to_le32(c->nhead_offs);
--	mst->ltab_lnum    = cpu_to_le32(c->ltab_lnum);
--	mst->ltab_offs    = cpu_to_le32(c->ltab_offs);
--	mst->lsave_lnum   = cpu_to_le32(c->lsave_lnum);
--	mst->lsave_offs   = cpu_to_le32(c->lsave_offs);
--	mst->lscan_lnum   = cpu_to_le32(main_first);
--	mst->empty_lebs   = cpu_to_le32(main_lebs - 2);
--	mst->idx_lebs     = cpu_to_le32(1);
--	mst->leb_cnt      = cpu_to_le32(c->leb_cnt);
--	ubifs_copy_hash(c, hash_lpt, mst->hash_lpt);
--
--	/* Calculate lprops statistics */
--	tmp64 = main_bytes;
--	tmp64 -= ALIGN(ubifs_idx_node_sz(c, 1), c->min_io_size);
--	tmp64 -= ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size);
--	mst->total_free = cpu_to_le64(tmp64);
--
--	tmp64 = ALIGN(ubifs_idx_node_sz(c, 1), c->min_io_size);
--	ino_waste = ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size) -
--			  UBIFS_INO_NODE_SZ;
--	tmp64 += ino_waste;
--	tmp64 -= ALIGN(ubifs_idx_node_sz(c, 1), 8);
--	mst->total_dirty = cpu_to_le64(tmp64);
--
--	/*  The indexing LEB does not contribute to dark space */
--	tmp64 = ((long long)(c->main_lebs - 1) * c->dark_wm);
--	mst->total_dark = cpu_to_le64(tmp64);
--
--	mst->total_used = cpu_to_le64(UBIFS_INO_NODE_SZ);
--
--	dbg_gen("default master node created at LEB %d:0", UBIFS_MST_LNUM);
--
--	/* Create the root indexing node */
--
--	c->key_fmt = UBIFS_SIMPLE_KEY_FMT;
--	c->key_hash = key_r5_hash;
--
--	idx->ch.node_type = UBIFS_IDX_NODE;
--	idx->child_cnt = cpu_to_le16(1);
--	ino_key_init(c, &key, UBIFS_ROOT_INO);
--	br = ubifs_idx_branch(c, idx, 0);
--	key_write_idx(c, &key, &br->key);
--	br->lnum = cpu_to_le32(main_first + DEFAULT_DATA_LEB);
--	br->len  = cpu_to_le32(UBIFS_INO_NODE_SZ);
--
--	dbg_gen("default root indexing node created LEB %d:0",
--		main_first + DEFAULT_IDX_LEB);
--
--	/* Create default root inode */
--
--	ino_key_init_flash(c, &ino->key, UBIFS_ROOT_INO);
--	ino->ch.node_type = UBIFS_INO_NODE;
--	ino->creat_sqnum = cpu_to_le64(++c->max_sqnum);
--	ino->nlink = cpu_to_le32(2);
--
--	ktime_get_coarse_real_ts64(&ts);
--	tmp_le64 = cpu_to_le64(ts.tv_sec);
--	ino->atime_sec   = tmp_le64;
--	ino->ctime_sec   = tmp_le64;
--	ino->mtime_sec   = tmp_le64;
--	ino->atime_nsec  = 0;
--	ino->ctime_nsec  = 0;
--	ino->mtime_nsec  = 0;
--	ino->mode = cpu_to_le32(S_IFDIR | S_IRUGO | S_IWUSR | S_IXUGO);
--	ino->size = cpu_to_le64(UBIFS_INO_NODE_SZ);
--
--	/* Set compression enabled by default */
--	ino->flags = cpu_to_le32(UBIFS_COMPR_FL);
--
--	dbg_gen("root inode created at LEB %d:0",
--		main_first + DEFAULT_DATA_LEB);
--
--	/*
--	 * The first node in the log has to be the commit start node. This is
--	 * always the case during normal file-system operation. Write a fake
--	 * commit start node to the log.
--	 */
--
--	cs->ch.node_type = UBIFS_CS_NODE;
--
--	err = ubifs_write_node_hmac(c, sup, UBIFS_SB_NODE_SZ, 0, 0,
--				    offsetof(struct ubifs_sb_node, hmac));
--	if (err)
--		goto out;
--
--	err = ubifs_write_node(c, ino, UBIFS_INO_NODE_SZ,
--			       main_first + DEFAULT_DATA_LEB, 0);
--	if (err)
--		goto out;
--
--	ubifs_node_calc_hash(c, ino, hash);
--	ubifs_copy_hash(c, hash, ubifs_branch_hash(c, br));
--
--	err = ubifs_write_node(c, idx, idx_node_size, main_first + DEFAULT_IDX_LEB, 0);
--	if (err)
--		goto out;
--
--	ubifs_node_calc_hash(c, idx, hash);
--	ubifs_copy_hash(c, hash, mst->hash_root_idx);
--
--	err = ubifs_write_node_hmac(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM, 0,
--		offsetof(struct ubifs_mst_node, hmac));
--	if (err)
--		goto out;
--
--	err = ubifs_write_node_hmac(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM + 1,
--			       0, offsetof(struct ubifs_mst_node, hmac));
--	if (err)
--		goto out;
--
--	err = ubifs_write_node(c, cs, UBIFS_CS_NODE_SZ, UBIFS_LOG_LNUM, 0);
--	if (err)
--		goto out;
--
--	ubifs_msg(c, "default file-system created");
--
--	err = 0;
--out:
--	kfree(sup);
--	kfree(mst);
--	kfree(idx);
--	kfree(ino);
--	kfree(cs);
--
--	return err;
--}
--
- /**
-  * validate_sb - validate superblock node.
-  * @c: UBIFS file-system description object
-@@ -419,9 +79,9 @@ static int validate_sb(struct ubifs_info *c, struct ubifs_sb_node *sup)
- 	min_leb_cnt = UBIFS_SB_LEBS + UBIFS_MST_LEBS + c->log_lebs;
- 	min_leb_cnt += c->lpt_lebs + c->orph_lebs + c->jhead_cnt + 6;
- 
--	if (c->leb_cnt < min_leb_cnt || c->leb_cnt > c->vi.size) {
-+	if (c->leb_cnt < min_leb_cnt || c->leb_cnt > c->vi.rsvd_lebs) {
- 		ubifs_err(c, "bad LEB count: %d in superblock, %d on UBI volume, %d minimum required",
--			  c->leb_cnt, c->vi.size, min_leb_cnt);
-+			  c->leb_cnt, c->vi.rsvd_lebs, min_leb_cnt);
- 		goto failed;
- 	}
- 
-@@ -537,72 +197,19 @@ static struct ubifs_sb_node *ubifs_read_sb_node(struct ubifs_info *c)
- 	return sup;
- }
- 
--static int authenticate_sb_node(struct ubifs_info *c,
-+static int authenticate_sb_node(__unused struct ubifs_info *c,
- 				const struct ubifs_sb_node *sup)
+- * This function prepares an authentication node for writing onto flash.
+- * It creates a HMAC from the given input hash and writes it to the node.
+- *
+- * Returns 0 for success or a negative error code otherwise.
++ * @hash: the returned hash
+  */
+-int ubifs_prepare_auth_node(struct ubifs_info *c, void *node,
+-			     struct shash_desc *inhash)
++int ubifs_master_node_calc_hash(const struct ubifs_info *c, const void *node,
++				uint8_t *hash)
  {
- 	unsigned int sup_flags = le32_to_cpu(sup->flags);
--	u8 hmac_wkm[UBIFS_HMAC_ARR_SZ];
- 	int authenticated = !!(sup_flags & UBIFS_FLG_AUTHENTICATION);
--	int hash_algo;
+-	struct ubifs_auth_node *auth = node;
+-	u8 hash[UBIFS_HASH_ARR_SZ];
 -	int err;
 -
--	if (c->authenticated && !authenticated) {
--		ubifs_err(c, "authenticated FS forced, but found FS without authentication");
--		return -EINVAL;
--	}
+-	{
+-		SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
 -
--	if (!c->authenticated && authenticated) {
--		ubifs_err(c, "authenticated FS found, but no key given");
--		return -EINVAL;
--	}
+-		hash_desc->tfm = c->hash_tfm;
+-		ubifs_shash_copy_state(c, inhash, hash_desc);
 -
--	ubifs_msg(c, "Mounting in %sauthenticated mode",
--		  c->authenticated ? "" : "un");
--
--	if (!c->authenticated)
--		return 0;
- 
--	if (!IS_ENABLED(CONFIG_UBIFS_FS_AUTHENTICATION))
-+	if (authenticated) {
-+		// To be implemented
-+		ubifs_err(c, "not support authentication");
- 		return -EOPNOTSUPP;
--
--	hash_algo = le16_to_cpu(sup->hash_algo);
--	if (hash_algo >= HASH_ALGO__LAST) {
--		ubifs_err(c, "superblock uses unknown hash algo %d",
--			  hash_algo);
--		return -EINVAL;
--	}
--
--	if (strcmp(hash_algo_name[hash_algo], c->auth_hash_name)) {
--		ubifs_err(c, "This filesystem uses %s for hashing,"
--			     " but %s is specified", hash_algo_name[hash_algo],
--			     c->auth_hash_name);
--		return -EINVAL;
- 	}
- 
--	/*
--	 * The super block node can either be authenticated by a HMAC or
--	 * by a signature in a ubifs_sig_node directly following the
--	 * super block node to support offline image creation.
--	 */
--	if (ubifs_hmac_zero(c, sup->hmac)) {
--		err = ubifs_sb_verify_signature(c, sup);
--	} else {
--		err = ubifs_hmac_wkm(c, hmac_wkm);
+-		err = crypto_shash_final(hash_desc, hash);
 -		if (err)
 -			return err;
--		if (ubifs_check_hmac(c, hmac_wkm, sup->hmac_wkm)) {
--			ubifs_err(c, "provided key does not fit");
--			return -ENOKEY;
--		}
--		err = ubifs_node_verify_hmac(c, sup, sizeof(*sup),
--					     offsetof(struct ubifs_sb_node,
--						      hmac));
 -	}
 -
+-	err = ubifs_hash_calc_hmac(c, hash, auth->hmac);
 -	if (err)
--		ubifs_err(c, "Failed to authenticate superblock: %d", err);
+-		return err;
++	if (!ubifs_authenticated(c))
++		return 0;
+ 
+-	auth->ch.node_type = UBIFS_AUTH_NODE;
+-	ubifs_prepare_node(c, auth, ubifs_auth_node_sz(c), 0);
+-	return 0;
++	return hash_digest(node + sizeof(struct ubifs_ch),
++			   UBIFS_MST_NODE_SZ - sizeof(struct ubifs_ch), hash);
+ }
+ 
+-static struct shash_desc *ubifs_get_desc(const struct ubifs_info *c,
+-					 struct crypto_shash *tfm)
++int ubifs_sign_superblock_node(struct ubifs_info *c, void *node)
+ {
+-	struct shash_desc *desc;
+-	int err;
++	int err, len;
++	struct ubifs_sig_node *sig = node + UBIFS_SB_NODE_SZ;
+ 
+ 	if (!ubifs_authenticated(c))
+-		return NULL;
 -
--	return err;
+-	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(tfm), GFP_KERNEL);
+-	if (!desc)
+-		return ERR_PTR(-ENOMEM);
+-
+-	desc->tfm = tfm;
++		return 0;
+ 
+-	err = crypto_shash_init(desc);
+-	if (err) {
+-		kfree(desc);
+-		return ERR_PTR(err);
+-	}
++	err = hash_sign_node(c->auth_key_filename, c->auth_cert_filename, node,
++			     &len, sig + 1);
++	if (err)
++		return err;
+ 
+-	return desc;
+-}
++	sig->type = UBIFS_SIGNATURE_TYPE_PKCS7;
++	sig->len = cpu_to_le32(len);
++	sig->ch.node_type  = UBIFS_SIG_NODE;
+ 
+-/**
+- * __ubifs_hash_get_desc - get a descriptor suitable for hashing a node
+- * @c: UBIFS file-system description object
+- *
+- * This function returns a descriptor suitable for hashing a node. Free after use
+- * with kfree.
+- */
+-struct shash_desc *__ubifs_hash_get_desc(const struct ubifs_info *c)
+-{
+-	return ubifs_get_desc(c, c->hash_tfm);
 +	return 0;
  }
  
  /**
-@@ -638,12 +245,6 @@ int ubifs_read_superblock(struct ubifs_info *c)
- 	int err, sup_flags;
- 	struct ubifs_sb_node *sup;
- 
--	if (c->empty) {
--		err = create_default_filesystem(c);
--		if (err)
--			return err;
--	}
--
- 	sup = ubifs_read_sb_node(c);
- 	if (IS_ERR(sup))
- 		return PTR_ERR(sup);
-@@ -672,13 +273,6 @@ int ubifs_read_superblock(struct ubifs_info *c)
- 				err = -EINVAL;
- 			goto out;
- 		}
--
--		/*
--		 * The FS is mounted R/O, and the media format is
--		 * R/O-compatible with the UBIFS implementation, so we can
--		 * mount.
--		 */
--		c->rw_incompat = 1;
- 	}
- 
- 	if (c->fmt_version < 3) {
-@@ -722,14 +316,9 @@ int ubifs_read_superblock(struct ubifs_info *c)
- 	c->fanout        = le32_to_cpu(sup->fanout);
- 	c->lsave_cnt     = le32_to_cpu(sup->lsave_cnt);
- 	c->rp_size       = le64_to_cpu(sup->rp_size);
--	c->rp_uid        = make_kuid(&init_user_ns, le32_to_cpu(sup->rp_uid));
--	c->rp_gid        = make_kgid(&init_user_ns, le32_to_cpu(sup->rp_gid));
- 	sup_flags        = le32_to_cpu(sup->flags);
--	if (!c->mount_opts.override_compr)
--		c->default_compr = le16_to_cpu(sup->default_compr);
-+	c->default_compr = le16_to_cpu(sup->default_compr);
- 
--	c->vfs_sb->s_time_gran = le32_to_cpu(sup->time_gran);
--	memcpy(&c->uuid, &sup->uuid, 16);
- 	c->big_lpt = !!(sup_flags & UBIFS_FLG_BIGLPT);
- 	c->space_fixup = !!(sup_flags & UBIFS_FLG_SPACE_FIXUP);
- 	c->double_hash = !!(sup_flags & UBIFS_FLG_DOUBLE_HASH);
-@@ -746,18 +335,11 @@ int ubifs_read_superblock(struct ubifs_info *c)
- 		goto out;
- 	}
- 
--	if (!IS_ENABLED(CONFIG_FS_ENCRYPTION) && c->encrypted) {
--		ubifs_err(c, "file system contains encrypted files but UBIFS"
--			     " was built without crypto support.");
--		err = -EINVAL;
--		goto out;
--	}
--
- 	/* Automatically increase file system size to the maximum size */
--	if (c->leb_cnt < c->vi.size && c->leb_cnt < c->max_leb_cnt) {
-+	if (c->leb_cnt < c->vi.rsvd_lebs && c->leb_cnt < c->max_leb_cnt) {
- 		int old_leb_cnt = c->leb_cnt;
- 
--		c->leb_cnt = min_t(int, c->max_leb_cnt, c->vi.size);
-+		c->leb_cnt = min_t(int, c->max_leb_cnt, c->vi.rsvd_lebs);
- 		sup->leb_cnt = cpu_to_le32(c->leb_cnt);
- 
- 		c->superblock_need_write = 1;
-@@ -807,7 +389,7 @@ static int fixup_leb(struct ubifs_info *c, int lnum, int len)
- 
- 	dbg_mnt("fixup LEB %d, data len %d", lnum, len);
- 	err = ubifs_leb_read(c, lnum, c->sbuf, 0, len, 1);
--	if (err)
-+	if (err && err != -EBADMSG)
- 		return err;
- 
- 	return ubifs_leb_change(c, lnum, c->sbuf, len);
-@@ -926,31 +508,3 @@ int ubifs_fixup_free_space(struct ubifs_info *c)
- 	ubifs_msg(c, "free space fixup complete");
- 	return err;
+@@ -150,103 +134,6 @@ void ubifs_bad_hash(const struct ubifs_info *c, const void *node, const u8 *hash
  }
+ 
+ /**
+- * __ubifs_node_check_hash - check the hash of a node against given hash
+- * @c: UBIFS file-system description object
+- * @node: the node
+- * @expected: the expected hash
+- *
+- * This function calculates a hash over a node and compares it to the given hash.
+- * Returns 0 if both hashes are equal or authentication is disabled, otherwise a
+- * negative error code is returned.
+- */
+-int __ubifs_node_check_hash(const struct ubifs_info *c, const void *node,
+-			    const u8 *expected)
+-{
+-	u8 calc[UBIFS_HASH_ARR_SZ];
+-	int err;
 -
--int ubifs_enable_encryption(struct ubifs_info *c)
+-	err = __ubifs_node_calc_hash(c, node, calc);
+-	if (err)
+-		return err;
+-
+-	if (ubifs_check_hash(c, expected, calc))
+-		return -EPERM;
+-
+-	return 0;
+-}
+-
+-/**
+- * ubifs_sb_verify_signature - verify the signature of a superblock
+- * @c: UBIFS file-system description object
+- * @sup: The superblock node
+- *
+- * To support offline signed images the superblock can be signed with a
+- * PKCS#7 signature. The signature is placed directly behind the superblock
+- * node in an ubifs_sig_node.
+- *
+- * Returns 0 when the signature can be successfully verified or a negative
+- * error code if not.
+- */
+-int ubifs_sb_verify_signature(struct ubifs_info *c,
+-			      const struct ubifs_sb_node *sup)
 -{
 -	int err;
--	struct ubifs_sb_node *sup = c->sup_node;
+-	struct ubifs_scan_leb *sleb;
+-	struct ubifs_scan_node *snod;
+-	const struct ubifs_sig_node *signode;
 -
--	if (!IS_ENABLED(CONFIG_FS_ENCRYPTION))
--		return -EOPNOTSUPP;
--
--	if (c->encrypted)
--		return 0;
--
--	if (c->ro_mount || c->ro_media)
--		return -EROFS;
--
--	if (c->fmt_version < 5) {
--		ubifs_err(c, "on-flash format version 5 is needed for encryption");
--		return -EINVAL;
+-	sleb = ubifs_scan(c, UBIFS_SB_LNUM, UBIFS_SB_NODE_SZ, c->sbuf, 0);
+-	if (IS_ERR(sleb)) {
+-		err = PTR_ERR(sleb);
+-		return err;
 -	}
 -
--	sup->flags |= cpu_to_le32(UBIFS_FLG_ENCRYPTION);
+-	if (sleb->nodes_cnt == 0) {
+-		ubifs_err(c, "Unable to find signature node");
+-		err = -EINVAL;
+-		goto out_destroy;
+-	}
 -
--	err = ubifs_write_sb_node(c, sup);
--	if (!err)
--		c->encrypted = 1;
+-	snod = list_first_entry(&sleb->nodes, struct ubifs_scan_node, list);
+-
+-	if (snod->type != UBIFS_SIG_NODE) {
+-		ubifs_err(c, "Signature node is of wrong type");
+-		err = -EINVAL;
+-		goto out_destroy;
+-	}
+-
+-	signode = snod->node;
+-
+-	if (le32_to_cpu(signode->len) > snod->len + sizeof(struct ubifs_sig_node)) {
+-		ubifs_err(c, "invalid signature len %d", le32_to_cpu(signode->len));
+-		err = -EINVAL;
+-		goto out_destroy;
+-	}
+-
+-	if (le32_to_cpu(signode->type) != UBIFS_SIGNATURE_TYPE_PKCS7) {
+-		ubifs_err(c, "Signature type %d is not supported\n",
+-			  le32_to_cpu(signode->type));
+-		err = -EINVAL;
+-		goto out_destroy;
+-	}
+-
+-	err = verify_pkcs7_signature(sup, sizeof(struct ubifs_sb_node),
+-				     signode->sig, le32_to_cpu(signode->len),
+-				     NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
+-				     NULL, NULL);
+-
+-	if (err)
+-		ubifs_err(c, "Failed to verify signature");
+-	else
+-		ubifs_msg(c, "Successfully verified super block signature");
+-
+-out_destroy:
+-	ubifs_scan_destroy(sleb);
 -
 -	return err;
 -}
+-
+-/**
+  * ubifs_init_authentication - initialize UBIFS authentication support
+  * @c: UBIFS file-system description object
+  *
+@@ -254,292 +141,35 @@ out_destroy:
+  */
+ int ubifs_init_authentication(struct ubifs_info *c)
+ {
+-	struct key *keyring_key;
+-	const struct user_key_payload *ukp;
+-	int err;
+-	char hmac_name[CRYPTO_MAX_ALG_NAME];
++	int err, hash_len, hash_algo;
+ 
+-	if (!c->auth_hash_name) {
+-		ubifs_err(c, "authentication hash name needed with authentication");
+-		return -EINVAL;
+-	}
++	if (!c->auth_key_filename && !c->auth_cert_filename && !c->hash_algo_name)
++		return 0;
+ 
+-	c->auth_hash_algo = match_string(hash_algo_name, HASH_ALGO__LAST,
+-					 c->auth_hash_name);
+-	if ((int)c->auth_hash_algo < 0) {
+-		ubifs_err(c, "Unknown hash algo %s specified",
+-			  c->auth_hash_name);
++	if (!c->auth_key_filename) {
++		ubifs_err(c, "authentication key not given (--auth-key)");
+ 		return -EINVAL;
+ 	}
+ 
+-	snprintf(hmac_name, CRYPTO_MAX_ALG_NAME, "hmac(%s)",
+-		 c->auth_hash_name);
+-
+-	keyring_key = request_key(&key_type_logon, c->auth_key_name, NULL);
+-
+-	if (IS_ERR(keyring_key)) {
+-		ubifs_err(c, "Failed to request key: %ld",
+-			  PTR_ERR(keyring_key));
+-		return PTR_ERR(keyring_key);
+-	}
+-
+-	down_read(&keyring_key->sem);
+-
+-	if (keyring_key->type != &key_type_logon) {
+-		ubifs_err(c, "key type must be logon");
+-		err = -ENOKEY;
+-		goto out;
+-	}
+-
+-	ukp = user_key_payload_locked(keyring_key);
+-	if (!ukp) {
+-		/* key was revoked before we acquired its semaphore */
+-		err = -EKEYREVOKED;
+-		goto out;
+-	}
+-
+-	c->hash_tfm = crypto_alloc_shash(c->auth_hash_name, 0, 0);
+-	if (IS_ERR(c->hash_tfm)) {
+-		err = PTR_ERR(c->hash_tfm);
+-		ubifs_err(c, "Can not allocate %s: %d",
+-			  c->auth_hash_name, err);
+-		goto out;
+-	}
+-
+-	c->hash_len = crypto_shash_digestsize(c->hash_tfm);
+-	if (c->hash_len > UBIFS_HASH_ARR_SZ) {
+-		ubifs_err(c, "hash %s is bigger than maximum allowed hash size (%d > %d)",
+-			  c->auth_hash_name, c->hash_len, UBIFS_HASH_ARR_SZ);
+-		err = -EINVAL;
+-		goto out_free_hash;
+-	}
+-
+-	c->hmac_tfm = crypto_alloc_shash(hmac_name, 0, 0);
+-	if (IS_ERR(c->hmac_tfm)) {
+-		err = PTR_ERR(c->hmac_tfm);
+-		ubifs_err(c, "Can not allocate %s: %d", hmac_name, err);
+-		goto out_free_hash;
+-	}
+-
+-	c->hmac_desc_len = crypto_shash_digestsize(c->hmac_tfm);
+-	if (c->hmac_desc_len > UBIFS_HMAC_ARR_SZ) {
+-		ubifs_err(c, "hmac %s is bigger than maximum allowed hmac size (%d > %d)",
+-			  hmac_name, c->hmac_desc_len, UBIFS_HMAC_ARR_SZ);
+-		err = -EINVAL;
+-		goto out_free_hmac;
+-	}
+-
+-	err = crypto_shash_setkey(c->hmac_tfm, ukp->data, ukp->datalen);
+-	if (err)
+-		goto out_free_hmac;
+-
+-	c->authenticated = true;
+-
+-	c->log_hash = ubifs_hash_get_desc(c);
+-	if (IS_ERR(c->log_hash)) {
+-		err = PTR_ERR(c->log_hash);
+-		goto out_free_hmac;
+-	}
+-
+-	err = 0;
+-
+-out_free_hmac:
+-	if (err)
+-		crypto_free_shash(c->hmac_tfm);
+-out_free_hash:
+-	if (err)
+-		crypto_free_shash(c->hash_tfm);
+-out:
+-	up_read(&keyring_key->sem);
+-	key_put(keyring_key);
+-
+-	return err;
+-}
+-
+-/**
+- * __ubifs_exit_authentication - release resource
+- * @c: UBIFS file-system description object
+- *
+- * This function releases the authentication related resources.
+- */
+-void __ubifs_exit_authentication(struct ubifs_info *c)
+-{
+-	if (!ubifs_authenticated(c))
+-		return;
+-
+-	crypto_free_shash(c->hmac_tfm);
+-	crypto_free_shash(c->hash_tfm);
+-	kfree(c->log_hash);
+-}
+-
+-/**
+- * ubifs_node_calc_hmac - calculate the HMAC of a UBIFS node
+- * @c: UBIFS file-system description object
+- * @node: the node to insert a HMAC into.
+- * @len: the length of the node
+- * @ofs_hmac: the offset in the node where the HMAC is inserted
+- * @hmac: returned HMAC
+- *
+- * This function calculates a HMAC of a UBIFS node. The HMAC is expected to be
+- * embedded into the node, so this area is not covered by the HMAC. Also not
+- * covered is the UBIFS_NODE_MAGIC and the CRC of the node.
+- */
+-static int ubifs_node_calc_hmac(const struct ubifs_info *c, const void *node,
+-				int len, int ofs_hmac, void *hmac)
+-{
+-	SHASH_DESC_ON_STACK(shash, c->hmac_tfm);
+-	int hmac_len = c->hmac_desc_len;
+-	int err;
+-
+-	ubifs_assert(c, ofs_hmac > 8);
+-	ubifs_assert(c, ofs_hmac + hmac_len < len);
+-
+-	shash->tfm = c->hmac_tfm;
+-
+-	err = crypto_shash_init(shash);
+-	if (err)
+-		return err;
+-
+-	/* behind common node header CRC up to HMAC begin */
+-	err = crypto_shash_update(shash, node + 8, ofs_hmac - 8);
+-	if (err < 0)
+-		return err;
+-
+-	/* behind HMAC, if any */
+-	if (len - ofs_hmac - hmac_len > 0) {
+-		err = crypto_shash_update(shash, node + ofs_hmac + hmac_len,
+-			    len - ofs_hmac - hmac_len);
+-		if (err < 0)
+-			return err;
++	if (!c->hash_algo_name) {
++		ubifs_err(c, "Hash algorithm not given (--hash-algo)");
++		return -EINVAL;
+ 	}
+ 
+-	return crypto_shash_final(shash, hmac);
+-}
+-
+-/**
+- * __ubifs_node_insert_hmac - insert a HMAC into a UBIFS node
+- * @c: UBIFS file-system description object
+- * @node: the node to insert a HMAC into.
+- * @len: the length of the node
+- * @ofs_hmac: the offset in the node where the HMAC is inserted
+- *
+- * This function inserts a HMAC at offset @ofs_hmac into the node given in
+- * @node.
+- *
+- * This function returns 0 for success or a negative error code otherwise.
+- */
+-int __ubifs_node_insert_hmac(const struct ubifs_info *c, void *node, int len,
+-			    int ofs_hmac)
+-{
+-	return ubifs_node_calc_hmac(c, node, len, ofs_hmac, node + ofs_hmac);
+-}
+-
+-/**
+- * __ubifs_node_verify_hmac - verify the HMAC of UBIFS node
+- * @c: UBIFS file-system description object
+- * @node: the node to insert a HMAC into.
+- * @len: the length of the node
+- * @ofs_hmac: the offset in the node where the HMAC is inserted
+- *
+- * This function verifies the HMAC at offset @ofs_hmac of the node given in
+- * @node. Returns 0 if successful or a negative error code otherwise.
+- */
+-int __ubifs_node_verify_hmac(const struct ubifs_info *c, const void *node,
+-			     int len, int ofs_hmac)
+-{
+-	int hmac_len = c->hmac_desc_len;
+-	u8 *hmac;
+-	int err;
+-
+-	hmac = kmalloc(hmac_len, GFP_NOFS);
+-	if (!hmac)
+-		return -ENOMEM;
+-
+-	err = ubifs_node_calc_hmac(c, node, len, ofs_hmac, hmac);
++	err = init_authentication(c->hash_algo_name, &hash_len, &hash_algo);
+ 	if (err) {
+-		kfree(hmac);
++		ubifs_err(c, "Init authentication failed");
+ 		return err;
+ 	}
+ 
+-	err = crypto_memneq(hmac, node + ofs_hmac, hmac_len);
+-
+-	kfree(hmac);
+-
+-	if (!err)
+-		return 0;
+-
+-	return -EPERM;
+-}
+-
+-int __ubifs_shash_copy_state(const struct ubifs_info *c, struct shash_desc *src,
+-			     struct shash_desc *target)
+-{
+-	u8 *state;
+-	int err;
+-
+-	state = kmalloc(crypto_shash_descsize(src->tfm), GFP_NOFS);
+-	if (!state)
+-		return -ENOMEM;
+-
+-	err = crypto_shash_export(src, state);
+-	if (err)
+-		goto out;
+-
+-	err = crypto_shash_import(target, state);
+-
+-out:
+-	kfree(state);
+-
+-	return err;
+-}
+-
+-/**
+- * ubifs_hmac_wkm - Create a HMAC of the well known message
+- * @c: UBIFS file-system description object
+- * @hmac: The HMAC of the well known message
+- *
+- * This function creates a HMAC of a well known message. This is used
+- * to check if the provided key is suitable to authenticate a UBIFS
+- * image. This is only a convenience to the user to provide a better
+- * error message when the wrong key is provided.
+- *
+- * This function returns 0 for success or a negative error code otherwise.
+- */
+-int ubifs_hmac_wkm(struct ubifs_info *c, u8 *hmac)
+-{
+-	SHASH_DESC_ON_STACK(shash, c->hmac_tfm);
+-	int err;
+-	const char well_known_message[] = "UBIFS";
+-
+-	if (!ubifs_authenticated(c))
+-		return 0;
+-
+-	shash->tfm = c->hmac_tfm;
+-
+-	err = crypto_shash_init(shash);
+-	if (err)
+-		return err;
+-
+-	err = crypto_shash_update(shash, well_known_message,
+-				  sizeof(well_known_message) - 1);
+-	if (err < 0)
+-		return err;
++	c->hash_len = hash_len;
++	c->hash_algo = hash_algo;
++	c->authenticated = 1;
+ 
+-	err = crypto_shash_final(shash, hmac);
+-	if (err)
+-		return err;
+ 	return 0;
+ }
+ 
+-/*
+- * ubifs_hmac_zero - test if a HMAC is zero
+- * @c: UBIFS file-system description object
+- * @hmac: the HMAC to test
+- *
+- * This function tests if a HMAC is zero and returns true if it is
+- * and false otherwise.
+- */
+-bool ubifs_hmac_zero(struct ubifs_info *c, const u8 *hmac)
++void __ubifs_exit_authentication(__unused struct ubifs_info *c)
+ {
+-	return !memchr_inv(hmac, 0, c->hmac_desc_len);
++	exit_authentication();
+ }
 -- 
 2.13.6
 
