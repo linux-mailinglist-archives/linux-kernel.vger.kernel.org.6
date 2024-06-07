@@ -1,273 +1,135 @@
-Return-Path: <linux-kernel+bounces-205961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959DE9002A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCD59002AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128851F24D50
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1F31F25310
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9C190668;
-	Fri,  7 Jun 2024 11:51:52 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191715DBB6;
+	Fri,  7 Jun 2024 11:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdjoH8kC"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFD9187358;
-	Fri,  7 Jun 2024 11:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306D481AC4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717761112; cv=none; b=IdeNJRy0j/5CHfZ26hspvUT3OOiV6HNX23AoG48PW7R98hAdzf0TFd6Cr7TYjgqC59zwOCIr+E/moliGExDXa3vF/oU//wCt4u+C/jEqV7KI0YTnI/PZYDu9ToKW9fDGTmxGEwC0C1YH5p85XFsBTVzhOrD4Zj3MHKy+kRfLdPA=
+	t=1717761155; cv=none; b=EJqUfWsQoE7ow17B6OMs3zxav/3Nc/UCgipRoje2RZ0AxNUTrVATXjMo1jvtlrtk8KJAU99XI0Xkv5AGs+lmTJO4XfOlp28M+mmiM1vZsyYkr1kfhbw2qXwZFY1BUr1pSJw0AAn4N5r7zkAG8/4dnH8mHk2ayTIxrz/KrWxKalE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717761112; c=relaxed/simple;
-	bh=GnXWztmBlVx1nxLihLb597i2xbfK7pMcpc9w3/QoxVs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hiwb6okXt+OqtqTuWc7lnIdxB/NAAmD6e9TQ6EZYmuvqgFrFM1vIorXYwT0u1nOD9iJdWpBcIlkWKMpWDonV9A3aBHEyIIW3gJHuwHc06xo6yPJROMCKMYwsKgu/z9WqpdlujZr8Wqt1WY30wHGLRE679Vxx8JwWURQm2Q4rHts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwfZp5jCFzsTYC;
-	Fri,  7 Jun 2024 19:47:46 +0800 (CST)
-Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id C8B3418007E;
-	Fri,  7 Jun 2024 19:51:45 +0800 (CST)
-Received: from localhost.localdomain (10.67.175.61) by
- dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 7 Jun 2024 19:51:45 +0800
-From: Zheng Yejian <zhengyejian1@huawei.com>
-To: <rostedt@goodmis.org>, <mcgrof@kernel.org>, <mhiramat@kernel.org>,
-	<mark.rutland@arm.com>, <mathieu.desnoyers@efficios.com>,
-	<jpoimboe@kernel.org>, <peterz@infradead.org>
-CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<zhengyejian1@huawei.com>
-Subject: [RFC PATCH] ftrace: Skip __fentry__ location of overridden weak functions
-Date: Fri, 7 Jun 2024 19:52:11 +0800
-Message-ID: <20240607115211.734845-1-zhengyejian1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717761155; c=relaxed/simple;
+	bh=fdeqPpnAPXCFODbGLL/diIQAGBeosl713q3KkJA/Vi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZ/1Db/aPBBOH/m5MI6P+IJQhc5zs8pT/iWUqIKZWs3gJJ7Z12Yzh+wWkDbOZ6hlZ0697ETsMC5Ln5nFMNU2CV1OcYJo4RsWyOiDqexLa5lHtryxJp4gqqDAZUGX8DDXZxxI6bttmGpBVOfmq6lA35ayQMB0DFiKb7784HFdcAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdjoH8kC; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so269988e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:52:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717761152; x=1718365952; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LfxTauYnQKQisjXwxnNunMTLSl53yMGzyCyy7lURrtQ=;
+        b=KdjoH8kC+QYJK2zX2WdE4jNk7g0877KusHfjLaqEM0l4CgeLc61Dxto0QPz9me0xUX
+         Zwmb0nwpqUg1vt2J3cc36U9UK54jg839gXBs+xHD81y30DkS0NGpnLdGRN0oV9OxlIr9
+         VaeHT8flbB5CfpSIXvCkyRCFchOTOcarg0uuwby8FxI/vzzAawVGCKmGw5VUIAByHbdy
+         GzMpBLE6b3dEupeJMCcrdLSiCZ9sJmDIpzto3BPDWUhUe/ZkuWtRUo9g4CRHENzEeFJt
+         4ZimpqrD2orye5c4C1eOh2/5ok8UGqetwj/tldDQoyTdbfPxcb0PqTfk1KewmIo6ceKI
+         da+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717761152; x=1718365952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LfxTauYnQKQisjXwxnNunMTLSl53yMGzyCyy7lURrtQ=;
+        b=qD1V37hnuGZTuBjjVuLK7N1sj1vUteVPZGqkwmVshUylppWFFz4hQoi3FmA47eNPqz
+         zHJFPZZI259VyuoofYWlhzmyaBfc1vDnXqx6m3A8uUxebfd57UbJv/aExBFNepigXDiJ
+         HSAva47PW9UsJqzYxJ6QGBA/zS9NXH2o7wWpfGLir3M5jXv3VgDO6VhM9aiMtf8znUM4
+         K+OpXFXqcOeKYr1qvFzntma9ZQuQcH/3PY7Zl63xp4EXh+RWUa1Xz2mvW6vXnJUX1OG/
+         7J0fvdfDLJi6G5wze+jFjPk62zvKyhh9ngRuJiPQhbl7evhKckER8xvSH5GM8zTspPjQ
+         YWug==
+X-Forwarded-Encrypted: i=1; AJvYcCXvuXGEXdDDuI52qhvsqtC1+rbOu40GZpwBLudLROjctqc2r1jqLGz/8sH/AffQohN6OlI1OAw/Nm/EEJKYdnaCIxE4ohbJgijdO2nA
+X-Gm-Message-State: AOJu0YwbBWrJ1ktHqEO06sY+zq1Sshbq+6lnkfAkCmvOG/+22d0PK81N
+	fwFD8+nMmxYQopOIkczGVqS5Q2o6rdWi1X81vST/OT+yEwAGn2De+25zjRXDsWg=
+X-Google-Smtp-Source: AGHT+IEzmS8xVuepYdRPEOD54V7+IMoDbdrIJFm4dNUKsWDnLdcZnTpTFA8AyCQj83pGyC6jsDsDdA==
+X-Received: by 2002:a05:6512:404:b0:52b:8ad9:cf0a with SMTP id 2adb3069b0e04-52bb9fc5e89mr1695052e87.51.1717761152337;
+        Fri, 07 Jun 2024 04:52:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb4216536sm508426e87.129.2024.06.07.04.52.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 04:52:32 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:52:30 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qdu1000: Add secure qfprom node
+Message-ID: <mjkxgytrdzm7gz6jjjbe3tjemussrcqyvz52n4o4cwhdr6y557@h4im5qv4itpc>
+References: <20240607113445.2909-1-quic_kbajaj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500012.china.huawei.com (7.185.36.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607113445.2909-1-quic_kbajaj@quicinc.com>
 
-ftrace_location() was changed to not only return the __fentry__ location
-when called for the __fentry__ location, but also when called for the
-sym+0 location after commit aebfd12521d9 ("x86/ibt,ftrace: Search for
-__fentry__ location"). That is, if sym+0 location is not __fentry__,
-ftrace_location() would find one over the entire size of the sym.
+On Fri, Jun 07, 2024 at 05:04:45PM +0530, Komal Bajaj wrote:
+> Add secure qfprom node and also add properties for multi channel
+> DDR. This will be required for LLCC driver to pick the correct
+> LLCC configuration.
 
-However, there is case that more than one __fentry__ exist in the sym
-range (described below) and ftrace_location() would find wrong __fentry__
-location by binary searching, which would cause its users like livepatch/
-kprobe/bpf to not work properly on this sym!
 
-The case is that, based on current compiler behavior, suppose:
- - function A is followed by weak function B1 in same binary file;
- - weak function B1 is overridden by function B2;
-Then in the final binary file:
- - symbol B1 will be removed from symbol table while its instructions are
-   not removed;
- - __fentry__ of B1 will be still in __mcount_loc table;
- - function size of A is computed by substracting the symbol address of
-   A from its next symbol address (see kallsyms_lookup_size_offset()),
-   but because symbol info of B1 is removed, the next symbol of A is
-   originally the next symbol of B1. See following example, function
-   sizeof A will be (symbol_address_C - symbol_address_A):
+'will be' or 'is' ?
 
-     symbol_address_A
-     symbol_address_B1 (Not in symbol table)
-     symbol_address_C
+> 
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> index 7a77f7a55498..d8df1bab63d5 100644
+> --- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> @@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
+>  			reg-names = "llcc0_base",
+>  				    "llcc_broadcast_base";
+>  			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			nvmem-cell-names = "multi-chan-ddr";
+> +			nvmem-cells = <&multi_chan_ddr>;
+> +		};
+> +
+> +		sec_qfprom: efuse@221c8000 {
+> +			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
+> +			reg = <0 0x221c8000 0 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			multi_chan_ddr: multi-chan-ddr@12b {
+> +				reg = <0x12b 0x1>;
+> +				bits = <0 2>;
+> +			};
+>  		};
+>  	};
+> 
+> --
+> 2.42.0
+> 
 
-The weak function issue has been discovered in commit b39181f7c690
-("ftrace: Add FTRACE_MCOUNT_MAX_OFFSET to avoid adding weak function")
-but it didn't resolve the issue in ftrace_location().
-
-There may be following resolutions:
-
-1. Shrink the search range when __fentry__ is not a sym+0 location,
-   for example use the macro FTRACE_MCOUNT_MAX_OFFSET. This need every
-   arch to define its own FTRACE_MCOUNT_MAX_OFFSET:
-
-   ftrace_location() {
-     ...
-     if (!offset)
-       loc = ftrace_location_range(ip, ip + FTRACE_MCOUNT_MAX_OFFSET + 1);
-     ...
-  }
-
-2. Define arch-specific arch_ftrace_location() based on its own
-   different cases of __fentry__ position, for example:
-
-   ftrace_location() {
-     ...
-     if (!offset)
-       loc = arch_ftrace_location(ip);
-     ...
-  }
-
-3. Skip __fentry__ of non-override weak function in ftrace_process_locs()
-   then all records in ftrace_pages are valid. The reason why this scheme
-   may work is that both __mcount_loc and symbol table are sorted and it
-   can be assumed that one function has only one __fentry__ location. Then
-   commit b39181f7c690 ("ftrace: Add FTRACE_MCOUNT_MAX_OFFSET to avoid
-   adding weak function") can be reverted (not do in this patch). However,
-   looking up size and offset of every record in __mount_loc table will
-   slow down system boot and module load.
-
-Solution 1 and 2 need every arch to handle the complex fentry location
-case, I use solution 3 as RFC.
-
-Fixes: aebfd12521d9 ("x86/ibt,ftrace: Search for __fentry__ location")
-Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
----
- include/linux/module.h   |  8 ++++++++
- kernel/module/kallsyms.c | 23 +++++++++++++++++------
- kernel/trace/ftrace.c    | 20 +++++++++++++-------
- 3 files changed, 38 insertions(+), 13 deletions(-)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index ffa1c603163c..3d5a2165160d 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -954,6 +954,9 @@ unsigned long module_kallsyms_lookup_name(const char *name);
- 
- unsigned long find_kallsyms_symbol_value(struct module *mod, const char *name);
- 
-+int find_kallsyms_symbol(struct module *mod, unsigned long addr,
-+			 unsigned long *size, unsigned long *offset);
-+
- #else	/* CONFIG_MODULES && CONFIG_KALLSYMS */
- 
- static inline int module_kallsyms_on_each_symbol(const char *modname,
-@@ -997,6 +1000,11 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
- 	return 0;
- }
- 
-+static inline int find_kallsyms_symbol(struct module *mod, unsigned long addr,
-+				       unsigned long *size, unsigned long *offset)
-+{
-+	return 0;
-+}
- #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
- 
- #endif /* _LINUX_MODULE_H */
-diff --git a/kernel/module/kallsyms.c b/kernel/module/kallsyms.c
-index 62fb57bb9f16..d70fb4ead794 100644
---- a/kernel/module/kallsyms.c
-+++ b/kernel/module/kallsyms.c
-@@ -253,10 +253,10 @@ static const char *kallsyms_symbol_name(struct mod_kallsyms *kallsyms, unsigned
-  * Given a module and address, find the corresponding symbol and return its name
-  * while providing its size and offset if needed.
-  */
--static const char *find_kallsyms_symbol(struct module *mod,
--					unsigned long addr,
--					unsigned long *size,
--					unsigned long *offset)
-+static const char *__find_kallsyms_symbol(struct module *mod,
-+					  unsigned long addr,
-+					  unsigned long *size,
-+					  unsigned long *offset)
- {
- 	unsigned int i, best = 0;
- 	unsigned long nextval, bestval;
-@@ -311,6 +311,17 @@ static const char *find_kallsyms_symbol(struct module *mod,
- 	return kallsyms_symbol_name(kallsyms, best);
- }
- 
-+int find_kallsyms_symbol(struct module *mod, unsigned long addr,
-+			 unsigned long *size, unsigned long *offset)
-+{
-+	const char *ret;
-+
-+	preempt_disable();
-+	ret = __find_kallsyms_symbol(mod, addr, size, offset);
-+	preempt_enable();
-+	return !!ret;
-+}
-+
- void * __weak dereference_module_function_descriptor(struct module *mod,
- 						     void *ptr)
- {
-@@ -344,7 +355,7 @@ const char *module_address_lookup(unsigned long addr,
- #endif
- 		}
- 
--		ret = find_kallsyms_symbol(mod, addr, size, offset);
-+		ret = __find_kallsyms_symbol(mod, addr, size, offset);
- 	}
- 	/* Make a copy in here where it's safe */
- 	if (ret) {
-@@ -367,7 +378,7 @@ int lookup_module_symbol_name(unsigned long addr, char *symname)
- 		if (within_module(addr, mod)) {
- 			const char *sym;
- 
--			sym = find_kallsyms_symbol(mod, addr, NULL, NULL);
-+			sym = __find_kallsyms_symbol(mod, addr, NULL, NULL);
- 			if (!sym)
- 				goto out;
- 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 65208d3b5ed9..3c56be753ae8 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -6488,6 +6488,7 @@ static int ftrace_process_locs(struct module *mod,
- 	unsigned long addr;
- 	unsigned long flags = 0; /* Shut up gcc */
- 	int ret = -ENOMEM;
-+	unsigned long last_func = 0;
- 
- 	count = end - start;
- 
-@@ -6538,6 +6539,8 @@ static int ftrace_process_locs(struct module *mod,
- 	pg = start_pg;
- 	while (p < end) {
- 		unsigned long end_offset;
-+		unsigned long cur_func, off;
-+
- 		addr = ftrace_call_adjust(*p++);
- 		/*
- 		 * Some architecture linkers will pad between
-@@ -6549,6 +6552,16 @@ static int ftrace_process_locs(struct module *mod,
- 			skipped++;
- 			continue;
- 		}
-+		if (mod)
-+			WARN_ON_ONCE(!find_kallsyms_symbol(mod, addr, NULL, &off));
-+		else
-+			WARN_ON_ONCE(!kallsyms_lookup_size_offset(addr, NULL, &off));
-+		cur_func = addr - off;
-+		if (cur_func == last_func) {
-+			skipped++;
-+			continue;
-+		}
-+		last_func = cur_func;
- 
- 		end_offset = (pg->index+1) * sizeof(pg->records[0]);
- 		if (end_offset > PAGE_SIZE << pg->order) {
-@@ -6860,13 +6873,6 @@ void ftrace_module_enable(struct module *mod)
- 		if (!within_module(rec->ip, mod))
- 			break;
- 
--		/* Weak functions should still be ignored */
--		if (!test_for_valid_rec(rec)) {
--			/* Clear all other flags. Should not be enabled anyway */
--			rec->flags = FTRACE_FL_DISABLED;
--			continue;
--		}
--
- 		cnt = 0;
- 
- 		/*
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
