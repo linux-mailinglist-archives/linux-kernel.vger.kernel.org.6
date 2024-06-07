@@ -1,91 +1,172 @@
-Return-Path: <linux-kernel+bounces-206052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40449003A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1178D9003AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691C4289D14
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9104828A88C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786011922F2;
-	Fri,  7 Jun 2024 12:31:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69351922D2;
-	Fri,  7 Jun 2024 12:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5A6192B68;
+	Fri,  7 Jun 2024 12:32:34 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA115748C;
+	Fri,  7 Jun 2024 12:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763509; cv=none; b=HDngPPmyez7MsVmq5glfEMglr9I1+l+AXXX0a2OTi0vrOhI2qnnXD/eoLqDZymQq7lFCjXL5o3Rmt9pW3IRnV2v9dojq0qxTp1kjMKwGxKG0tBZnJcAP+zbnnsd3fpsxwCHAt9X/Ip68x/LI5ufTxm4gDLKzVVcRY8+c+FO6z/Q=
+	t=1717763554; cv=none; b=uXElYorFM9Eixmqn0YMIQrqFGByuR+C+xqT3ICtl+us2LL6JKtUvXuHY5Mh+EiY0WVlW1J37v81qXWTVwCp7m0g2zPZ1uvRA9JArLmfBx6JZ4aBe4dCuQiLMPA9S8bave0w7fephXBnKKCS2eaiwQptfs72gCMvmxYmPc68VWg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763509; c=relaxed/simple;
-	bh=KxD8ye48WFLc/fQFO71SyxJ80T5LeRBbVkF9mrX1+/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IyNDj2BE9czE+78TRwx7G11Ws3Ivd6lE50mOb2OjDIQ6dAqb2mYJ1tsMeHe0sfBEicy/wlwCIMYc8UT+QioFxyi+KdRjinsjlJUv59gXNCF2ZGOlQ/3+uK2y7cVn0IWQzVapK8sqb+ZkTzr18CUwd1eM3q0VHBol9RI6NVEJ6i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD9CD13D5;
-	Fri,  7 Jun 2024 05:32:11 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.8])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C06CA3F64C;
-	Fri,  7 Jun 2024 05:31:42 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: alx@kernel.org,
-	linux-man@vger.kernel.org
-Cc: mingo@kernel.org,
-	tglx@linutronix.de,
-	mark.rutland@arm.com,
-	ryan.roberts@arm.com,
-	broonie@kernel.org,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com,
-	AneeshKumar.KizhakeVeetil@arm.com,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] signal.7: Fix wrong mention of sigprocmask
-Date: Fri,  7 Jun 2024 18:01:19 +0530
-Message-Id: <20240607123119.769044-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240607123119.769044-1-dev.jain@arm.com>
-References: <20240607123119.769044-1-dev.jain@arm.com>
+	s=arc-20240116; t=1717763554; c=relaxed/simple;
+	bh=fDJy+Jwnw3LyhLHgSM3+xzzik78ArJtMK97aZ3fIwuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C9BGpNV0lotuEzPfMGdNLuPVyrsb2J2g37lL8A7kYRKWGZWI8d7px7j6J6oK0gQlkOiAp5Cz+0FY23Apl4iwdUXC8B2g9qBgVfGaxGwbdOdcmmu4gloH4OiKbeOmYbxcHGSokPnLcqoMy6WBSfRiAEFmflwCICdYjiEA6ZE4OEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from [213.70.33.226] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sFYlc-0002sh-3l; Fri, 07 Jun 2024 14:32:24 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Huang-Huang Bao <i@eh5.me>,
+ kever.yang@rock-chips.com
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Huang-Huang Bao <i@eh5.me>
+Subject:
+ Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328 GPIO3-B pins
+Date: Fri, 07 Jun 2024 14:32:22 +0200
+Message-ID: <4786379.ElGaqSPkdT@phil>
+In-Reply-To: <20240606125755.53778-3-i@eh5.me>
+References:
+ <20240606125755.53778-1-i@eh5.me> <20240606125755.53778-3-i@eh5.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-The handler is registered with sigaction(), not sigprocmask(). Even if the
-purpose of writing sigprocmask() here was to mention blocked signals, the
-statement currently concerns the "addition" of blocked signals; signals
-blocked through sigprocmask() would already be present in the thread
-context of blocked signals.
+Am Donnerstag, 6. Juni 2024, 14:57:53 CEST schrieb Huang-Huang Bao:
+> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
+> specified in RK3328 TRM, however we can get hint from pad name and its
+> correspinding IOMUX setting for pins in interface descriptions. The
+> correspinding IOMIX settings for these pins can be found in the same
+> row next to occurrences of following pad names in RK3328 TRM.
+> 
+> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
+> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
+> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
+> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
+> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
+> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
+> 
+> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
+> these pins does not follow rockchip convention.
+> 
+> Signed-off-by: Huang-Huang Bao <i@eh5.me>
 
-Fixes: e7a5700 (getcontext.3, signal.7: tfix)
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- man/man7/signal.7 | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This matches the information that I found in my TRM, thanks to your
+detailed explanation.
 
-diff --git a/man/man7/signal.7 b/man/man7/signal.7
-index 17e75c86d..09d30c678 100644
---- a/man/man7/signal.7
-+++ b/man/man7/signal.7
-@@ -295,7 +295,7 @@ execution of the handler.)
- Any signals specified in
- .I act\->sa_mask
- when registering the handler with
--.BR sigprocmask (2)
-+.BR sigaction (2)
- are added to the thread's signal mask.
- The signal being delivered is also
- added to the signal mask, unless
--- 
-2.34.1
+Though I of course can't say if the TRM is just wrong or the hardware
+changed after the pads-description was written.
+
+Did you test the usage of these pins on your board?
+
+
+Heiko
+
+
+
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 51 ++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 78dcf4daccde..23531ea0d088 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -634,17 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
+>  
+>  static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
+>  	{
+> +		/* gpio2_b7_sel */
+>  		.num = 2,
+>  		.pin = 15,
+>  		.reg = 0x28,
+>  		.bit = 0,
+>  		.mask = 0x7
+>  	}, {
+> +		/* gpio2_c7_sel */
+>  		.num = 2,
+>  		.pin = 23,
+>  		.reg = 0x30,
+>  		.bit = 14,
+>  		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b1_sel */
+> +		.num = 3,
+> +		.pin = 9,
+> +		.reg = 0x44,
+> +		.bit = 2,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b2_sel */
+> +		.num = 3,
+> +		.pin = 10,
+> +		.reg = 0x44,
+> +		.bit = 4,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b3_sel */
+> +		.num = 3,
+> +		.pin = 11,
+> +		.reg = 0x44,
+> +		.bit = 6,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b4_sel */
+> +		.num = 3,
+> +		.pin = 12,
+> +		.reg = 0x44,
+> +		.bit = 8,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b5_sel */
+> +		.num = 3,
+> +		.pin = 13,
+> +		.reg = 0x44,
+> +		.bit = 10,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b6_sel */
+> +		.num = 3,
+> +		.pin = 14,
+> +		.reg = 0x44,
+> +		.bit = 12,
+> +		.mask = 0x3
+> +	}, {
+> +		/* gpio3_b7_sel */
+> +		.num = 3,
+> +		.pin = 15,
+> +		.reg = 0x44,
+> +		.bit = 14,
+> +		.mask = 0x3
+>  	},
+>  };
+>  
+> 
+
+
+
 
 
