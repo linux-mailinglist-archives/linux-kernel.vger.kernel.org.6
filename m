@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-206309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384039007A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50839007B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7574B28B44
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A4B1C23B4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17631993AB;
-	Fri,  7 Jun 2024 14:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAEC199E8F;
+	Fri,  7 Jun 2024 14:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t2nYRtGx"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b="mALkROfw"
+Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696CF199398
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 14:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD118732F;
+	Fri,  7 Jun 2024 14:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771794; cv=none; b=AFmw0Jyt6pocJV/KyJ9Ul0kI6k/8CH7nmw8JWzLywolL78A7Fa+VXLan1b8cx1rh6W7SkzhzWKFk0JZfdSbxUDREOuInhEMAqP/YAl2NNfJn4XR1jpEk/dOMU+SnAMVNx4LBnPXye+yihQDhgSM9XXLs/oDS331FQXbiXvMlWXQ=
+	t=1717771939; cv=none; b=c0eSprP8vZ1rmNMPw0D2g4wMqLH6bbz7CWSR5SK4TDSvWQGURTIsu9wug/TR/9G4M0tgdJUnMp09ZCVbLmx9tiMa1D9zLCGMiCeKZ4uj0pEeyY1IZtvUORA3T78pY8a8rTmbmqvx+z1qkstwxy2r9T8/WV11h9kja8c5wuBM2IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771794; c=relaxed/simple;
-	bh=dNcfbEn/4dwttuD6duwT+dnalxogOxKSbIawfyls7tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtDc+NOw3+FeFmRJs+O/0nbLOyUxclrOeDUjYlj0W1E475xC9keT0I8ibTzl4JOc2JymABhrE6CHt0xxBRwYHVdTMYxfkMqRlP5+nh9ptQqV79M+Q4bM0cK0AzyUq3VrXTpPJeylg1VfSIUmmQMrJEbWpRlIiw/pjVnRoU6Ph9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t2nYRtGx; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b88335dd7so2772799e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 07:49:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717771790; x=1718376590; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YeBDr4hz46MDwNO029hqLbhPu5de9UVwtLyZV8A2Etw=;
-        b=t2nYRtGxE9aAFb/ukNSKwCKzUC9o74+snoq3IgLStY6L+dpw2e6DxbOuetpDq1stD3
-         H2VZP8+2eaxKl6myIdO+jua+jHwasvIdn1m3hfNFtLmgxPB/9IRXwHofPaoZ0PuX4yvM
-         YjOA3olXMgrDuCUB6F2+qahqUUAmJvprv6Xbh+HotNmBwmfq2XZLqtdTwmocijGngcB6
-         flQYsgOiV18Nv1QglqwWoK+aBkcfL9RN1FfFzZ+4gLok3C02eOI+iUjq9N5Ft6USqIfs
-         MYInO9drL35HSuYRPCzZd6Usj2K075Joa+WPC/dMG/okJeAL+PQt4WTH0E21TECcj08D
-         Odjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717771790; x=1718376590;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YeBDr4hz46MDwNO029hqLbhPu5de9UVwtLyZV8A2Etw=;
-        b=sUO3e/aE0/f1gaiY7cy4xpDS19IEV6hsYy2tXoIl3LjxsffZ13eI2h2pCiHIjjx7rz
-         3AV/EKaTZEB5anvyYEUoaisK83GlgGdQdgKn1/qYFsBPyxIfzgX4goP5tQgxoMPaFpKl
-         r+fKs5jrWv7bRTTqtpnpS0bpkvMIR06zNUErsx86AfopyfUJ5VO9NnCefEuHTqsNf1lp
-         HlJ2nudbnBDTsdzuWXrg7uDmP5AhAt3FzQN5Po2S/BRsZX2BUq4WK9Wo6BXRH+YDRSLm
-         4DLiXyRMSfG50ArkpqqHjGtXC3pOJeh1gCjKAJ8R7OJNMvOJOjXWSYs4vWnix17U5VPl
-         Vwdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCYszBFZANJItpFkU+3JNDFNVrp3grgng3PWSEvjYJ7McDhiPz/Uz6dG18jQdBvuZ67ubzYX/0HdzCKxQ/S7h1gHOFWHf4crGYMhNX
-X-Gm-Message-State: AOJu0YyPmJmYGX2TyoJac3LpXhKypzK/sQUWGWUs4P4u6aGrliuCoZRP
-	KIL2ReOvF+3PhAloJbKYpNmeN4KPJ3ltEe5L/2zzCoRGR0vPI/bghwP0xY3qDGA=
-X-Google-Smtp-Source: AGHT+IG0AZxjWYuE+muWD8kWSB/kMaubH3h5PiaJkS3Te9HOfhANYploBcOkSprTh7bH9wAMG+Cozg==
-X-Received: by 2002:a05:6512:3b99:b0:52b:c1cc:5d51 with SMTP id 2adb3069b0e04-52bc1cc5daamr1208817e87.63.1717771790525;
-        Fri, 07 Jun 2024 07:49:50 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41ee0c1sm557650e87.66.2024.06.07.07.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 07:49:50 -0700 (PDT)
-Date: Fri, 7 Jun 2024 17:49:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] usb: typec-mux: nb7vpq904m: unregister typec
- switch on probe error and remove
-Message-ID: <dltdptcgqtg6ffyajiompniag6otgrib73p4jbiskxaieagjqs@jtqse45u3gh5>
-References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
- <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-2-c6f6eae479c3@linaro.org>
- <cnqpgfjcqqedk3xqkfbjacjikc5jwktev6c3kwmbq7cwut3eyk@xqyhgi5xgzgf>
- <ac155efa-de85-4bc0-9af3-2190d4d1a60d@linaro.org>
+	s=arc-20240116; t=1717771939; c=relaxed/simple;
+	bh=j2UtZvnfethoTFHwn5s9iGaN6lSq9VkOWo0P2Bvb8Ho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IWTtyN+Xvsie+J92xzuAcqf5UUivzbJupGRTL/5Hea5lbWa5ZEZN2VErS/hh4bA8Ovjo+1iGb6/8nvyDjlJcn+9Afv3kr+AMqC4poX4gYbSN/cMg/+6wL0hq5ceP00qig0XWad4RT7DPBL4nJ1m5iKi/wO7O2v3uKqgNzguTP84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in; spf=pass smtp.mailfrom=lexina.in; dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b=mALkROfw; arc=none smtp.client-ip=185.250.0.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lexina.in
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E6F8D105B34;
+	Fri,  7 Jun 2024 17:51:55 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lexina.in; s=dkim;
+	t=1717771923; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=geCYlXiO0IWtdW5F32VwIPOBGEnsd+xctEzn2zYkT+Q=;
+	b=mALkROfww//auwXsXckN7RnBgbpRARuAQO54gWBvcmpHminERhO/pKBKkhW/pNqaEJB6yZ
+	lBVDM28GVNkz/hPbPqWCNBVPARmoBbPBd2PuNnJkO5kCm7UY7GMnj4Ok9c++lhwer5Sc+A
+	vibn8v8eCzV65Xs6pKFWs4GHZ5zt2TpFB5LII9VHwwO0JjpioZQQJdBHO8ri8zaWIsbIhR
+	K8EQH+XVsmsA6IEJ285aKv0pSN5zSHjV9paZNVpIaDrQs7x06BXwnC3jzz6oFb7yMaC3Hv
+	2UtpdIB0OzsgYuX2mp5qEk+rb6/dOK2M+hzeE5lvDZ3lsSy1g5JIKb8OF78mrQ==
+From: Viacheslav Bocharov <adeep@lexina.in>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 0/2] arm64: meson: add support for JetHome JetHub D2
+Date: Fri,  7 Jun 2024 17:50:02 +0300
+Message-ID: <20240607145148.2246990-1-adeep@lexina.in>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac155efa-de85-4bc0-9af3-2190d4d1a60d@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Jun 07, 2024 at 04:00:22PM +0200, Neil Armstrong wrote:
-> On 07/06/2024 07:50, Dmitry Baryshkov wrote:
-> > On Thu, Jun 06, 2024 at 03:11:14PM +0200, Neil Armstrong wrote:
-> > > Add the missing call to typec_switch_put() when probe fails and
-> > > the nb7vpq904m_remove() call is called.
-> > > 
-> > > Fixes: 348359e7c232 ("usb: typec: nb7vpq904m: Add an error handling path in nb7vpq904m_probe()")
-> > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > ---
-> > >   drivers/usb/typec/mux/nb7vpq904m.c | 7 ++++++-
-> > >   1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > I'd say:
-> > 
-> > Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
-> 
-> I should add both yes, it won't apply with only 88d8f3ac9c67
+Add support for new controller.
+JetHome Jethub D2 (j200) is a home automation controller with the following
+features:
+  - DIN Rail Mounting
+  - Amlogic S905X3 (ARM Cortex-A55) quad-core
+  - micro-HDMI video out
+  - 4GB LPDDR4
+  - 32GB eMMC flash
+  - 1 x USB 2.0
+  - 1 x 10/100/1000Mbps ethernet
+  - two module slots for radio/wire interface cards
+  - 2 x gpio LEDS
+  - 1 x 1-Wire
+  - 1 x RS-485
+  - 3 x dry contact digital GPIO inputs
+  - 2 x relay GPIO outputs
+  - DC 9-36V power source with battery UPS on board option
 
-That's fine. The issue is still present in the original commit. In the
-worst case you'll get a 'please backport' request.
+Viacheslav Bocharov (2):
+  dt-bindings: arm: amlogic: add binding for JetHome JetHub D2
+  arm64: dts: meson-axg: add support for JetHome JetHub D2 (j200)
 
-> 
-> > 
-> > Nevertheless:
-> > 
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > 
-> > 
-> > 
-> 
+ .../devicetree/bindings/arm/amlogic.yaml      |   1 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../amlogic/meson-sm1-jethome-jethub-j200.dts | 614 ++++++++++++++++++
+ 3 files changed, 616 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dts
 
+
+base-commit: 32f88d65f01bf6f45476d7edbe675e44fb9e1d58
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
