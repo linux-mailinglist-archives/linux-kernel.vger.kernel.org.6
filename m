@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-205674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9176D8FFEB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290488FFE9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC5FB2135F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:06:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930A51F233E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B8815B98A;
-	Fri,  7 Jun 2024 09:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F0215B966;
+	Fri,  7 Jun 2024 09:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Icz7oD97"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3dzJLte"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7E215B543
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A4315B553;
+	Fri,  7 Jun 2024 09:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717751161; cv=none; b=qDbPtEStKppXyDvxXOwEYvZcjJTllzoC8/+zLR00PkYHRy868XjdYFSVP+zDZcvemM3raYDIfPOXPDgzSKle63tqxarhttwm39w6XnUzTClq1iIDom3i2CMjZgkgU7Ttwjk9c3htwzddPozI4sFThC+6dhsjurj69cN905CSrBE=
+	t=1717750970; cv=none; b=DWb7myDJtnbc94f7zihCTSxhYKOoGkb/osMtFykfbzh42QvE6TWmD/hsjIIhUTJH+ITfHbTCEUWhYYwPDRXY9S2VeZT8iM3IDKVklagkQ+4grU9h480c1yvf/zdDgW8hAmSBgqirKdcVlxJ7j6p71xxcUobUwX0hu1lfV46+q5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717751161; c=relaxed/simple;
-	bh=TTK1GYtFtsVo48+qOHmmrbUdupYD8dUd916fpZW2CU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YyTuy7qRVLqnVqaXyoU5031/ME9JYnUSiw9U/qfqfzS+Naq8F75SoFQlMP9XsjcggU+FTEqp86sAzx5FxqhE5NJr4k+Br56veFnZcgELXyDKxVwhAwtiXxUG0dib5gL76OGGiOzEXnY3ZKUsIYESHTWOpAsL7WHi3IS4gv8gzao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Icz7oD97; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717751158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dGYDizRf/2C0sa0+xp/HL0cUgtFnHVaSqzQ3tVH7lxg=;
-	b=Icz7oD97R0bNENKMbn/YzpvNUeyn+0vuBmEoXZrJmRXRlw/MrTUh8xGblMcPQDvLKR/fUM
-	uv5F4zbq6122VYa/TCsGLFFHMK/vKsRjKnDhfa+QqrvyAquoMTwZOPzoF2Xl2BOp1KUdxU
-	6DnotyZCASqQslIbcJJJmlxglWBzU1c=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-150-nifmnnaxNcujG65iewTmMg-1; Fri, 07 Jun 2024 05:05:56 -0400
-X-MC-Unique: nifmnnaxNcujG65iewTmMg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6e37310ebaso11787466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:05:55 -0700 (PDT)
+	s=arc-20240116; t=1717750970; c=relaxed/simple;
+	bh=gph2vTnyaKmegcHhIalKFsjOJL8aWTh9ZxQdX5E6tgY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Plt0qf1EoDIj+wvvf/y2a8VHiZaojVZzRYSTTb5OTccazx8GFWjEkGb3uW0Hylp/58Bc3xX+MlCvvZCsxTxS9kB60RAYwXVrSrTjh0K3ZpK2wUtf6LjAW7dC/zZtDfH/7ZPVAkHv5wMyGSMMBnh+WnYmFjeBrhBkf2CP3pDZ4Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3dzJLte; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57aa64c6bbfso1931623a12.3;
+        Fri, 07 Jun 2024 02:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717750967; x=1718355767; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B3OXk47KN1vRbsGCOqgQ0IPGonivWWX75uqXRl216dY=;
+        b=g3dzJLteszWWi4BGCeVGirG8NKtsZL5W7noINYv2M7kmYXoSueiqUM5S6jd6uwlLmi
+         5wCgm0qybEmksQXtXi7emzHk2NABnrJ0QS1ICR6AuvKBf3XJTT+B1MmEHsCRhyKBMZrk
+         Ejul6nkZo+xJu+Ehn18Wf2TwoyCxP0umt0R8GXOSA/pgicj6Y10sKSDc5T34rQ4G/mCW
+         KVJgmMJnlzm9H5zinVGhFi+JPVqK9zZPlUm3Dl2jQfht+QGZaDB5T9J50Pzt2i8yo8vq
+         YrFo56YFlbl1DL1xDY61l0C2yzAI/u2qtjMw/aZpt2ddcKZyPrTpMiYZ3662dBfIYuWj
+         ZZfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717751153; x=1718355953;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dGYDizRf/2C0sa0+xp/HL0cUgtFnHVaSqzQ3tVH7lxg=;
-        b=r9NuF9lmBMlQkQirAfyfJUydZuzLBF19HvOvTZZEDcdorMfjG+22nWu7dwZ3pWt0LO
-         VYsNlRIt58te3E/F0p/2bFFgnZ/GN3WTVYH4fOsB4XcjzAXAa+v5sIupLd814DtU6Oha
-         VXTWUzqcvHjjLargPooX5O4IXbezYxHWIOejNNitZefzkYB2NuBEXLu/L0kmHIUjKIao
-         Y+Z/QSLSHFnC/D6iXRqCJ21E6mt0gU+uddRvp1oHl41WF8tJT/TaPXUTPYkSRrMHW0AI
-         gSr85zzluKaMT/5i8EfEYJPcKMll+mFEvgfxBN+GOyt7f2tZAxodyo98f7uelwJH9+1q
-         /k6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVw1qKdK3/qJ+pGJWAFdAuU4IoIuurOEG1WdcAttwaGfvMRk8M/Qii6bh808zja8iQowKF55YsZy6N8LgWBXKt8yGblutkq+TCWA8tA
-X-Gm-Message-State: AOJu0YxgFZNKSAnttSih3qnGIecDFAz6u8yZn8moCYwt0z9WbJRdGYJw
-	4tweeKeuomKD07dOmQy9KX779kCjKNfkvTq2XL2UKH8wrBHjCgBEWymHZ84iRLT8JcXVyNC3qTB
-	RM4jBmFRWEUUo4LbVMC4v2HGzNlJjO0qerwnZ9uLF6Mfo6N86mXH2j1osjXybyIhHvCWQYA==
-X-Received: by 2002:a17:906:e1b:b0:a6d:e0dd:f7 with SMTP id a640c23a62f3a-a6de0dd0399mr70566866b.52.1717751153242;
-        Fri, 07 Jun 2024 02:05:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDIn9rSgHARHfYV/cxRs9YgwJvZSg1qSEkxYVv4VWP1Sp5NzmUd4BO6G+TOihp5MZeIbXWww==
-X-Received: by 2002:a17:906:e1b:b0:a6d:e0dd:f7 with SMTP id a640c23a62f3a-a6de0dd0399mr70564966b.52.1717751152868;
-        Fri, 07 Jun 2024 02:05:52 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80581746sm217030166b.21.2024.06.07.02.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 02:05:52 -0700 (PDT)
-Message-ID: <179d5111-5cc8-4a17-b735-84f02e0144f5@redhat.com>
-Date: Fri, 7 Jun 2024 11:05:51 +0200
+        d=1e100.net; s=20230601; t=1717750967; x=1718355767;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B3OXk47KN1vRbsGCOqgQ0IPGonivWWX75uqXRl216dY=;
+        b=Z9IVrfBVUgXsMMf9LWq2UeJ91PbSbUbaZ9xzBWolkP5u0Me14rIusY7pXwdViLdvgr
+         9ovIWTaSIJo9Ir8dzs5fX97u4YTHJ1BBkqjSvJfyH7R56tQa+3q+1Vf00XIKc0eXVWsM
+         Jz++x+4erWSv4zwB3uCncg+SH3mhm9u/p9ub8qbeW1Sf1bAitFQteQunM2QOmj2mzLTt
+         bh2iS5OCFCRVqAT57E8b1zEjk1ABEEnGZhFGVk4EiMwBaVNaCxSuMrlbjyxDV6lMtAHD
+         yNKFnm2qKBDOrMwJK9cH1cE9/uPZVgz6KpO+Z95Dr8PsfhqPgTHXB9Dh1FlhOHQGB01Y
+         xi8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzen7B+Ayi+enuZzj3l9uSWXtIJ6L6A0oFLwmYpDTAd73tPb+f3BHgSZH7cq8/z20L5TfCo5ytSyWFPHMsKxNGy50enAVU0fIL2UXH9cEfEjERGJCSthvC5Apx8MIGEXRqS2Iyfnwss7XtKnf+S5NWHIGjH3YZTSiYiugcBtj61l/Rww==
+X-Gm-Message-State: AOJu0YwBWW4qMfbFtEsTCo3K8ngvgrKXVdHQSRM9snCUFaGYYjYlJAKN
+	kD1A0zsEcnv9BEyLvdnVUZwp7fbYdJYzqqwmLxcB0eoXnYeRPJzd
+X-Google-Smtp-Source: AGHT+IGR1LaE6jacB8mFU7IYxmRZC0Sme4xtJm192W3JIo7nEukO7iZOkSUi/z11sXt7W3y77dOAKg==
+X-Received: by 2002:a17:906:2e82:b0:a68:379d:d623 with SMTP id a640c23a62f3a-a6cd7a84203mr124427866b.36.1717750967417;
+        Fri, 07 Jun 2024 02:02:47 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072a101sm214435266b.201.2024.06.07.02.02.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 02:02:47 -0700 (PDT)
+Message-ID: <822eec36a530f659e4924886ad8d2bf272accd59.camel@gmail.com>
+Subject: Re: [PATCH v6 6/9] iio: adc: ad7173: add support for special inputs
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>
+Date: Fri, 07 Jun 2024 11:06:34 +0200
+In-Reply-To: <20240606-ad4111-v6-6-573981fb3e2e@analog.com>
+References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
+	 <20240606-ad4111-v6-6-573981fb3e2e@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] ACPI: PMIC: a small refactoring
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Andy Shevchenko <andy@kernel.org>
-References: <20240606205712.3187675-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240606205712.3187675-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi,
+On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>=20
+> =C2=A0Add support for selecting REF+ and REF- inputs on all models.
+> =C2=A0Add support for selecting ((AVDD1 =E2=88=92 AVSS)/5) inputs
+> =C2=A0 on supported models.
+>=20
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+> =C2=A0drivers/iio/adc/ad7173.c | 29 +++++++++++++++++++++++++++--
+> =C2=A01 file changed, 27 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index 4040edbd1c32..d16fa081a285 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -66,6 +66,13 @@
+> =C2=A0	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+> =C2=A0#define AD7173_AIN_TEMP_POS	17
+> =C2=A0#define AD7173_AIN_TEMP_NEG	18
+> +#define AD7173_AIN_POW_MON_POS	19
+> +#define AD7173_AIN_POW_MON_NEG	20
+> +#define AD7173_AIN_REF_POS	21
+> +#define AD7173_AIN_REF_NEG	22
+> +
+> +#define AD7173_IS_REF_INPUT(x)		((x) =3D=3D AD7173_AIN_REF_POS || \
+> +					(x) =3D=3D AD7173_AIN_REF_NEG)
+> =C2=A0
+> =C2=A0#define AD7172_2_ID			0x00d0
+> =C2=A0#define AD7175_ID			0x0cd0
+> @@ -146,6 +153,8 @@ struct ad7173_device_info {
+> =C2=A0	unsigned int id;
+> =C2=A0	char *name;
+> =C2=A0	bool has_temp;
+> +	/* ((AVDD1 =E2=88=92 AVSS)/5) */
+> +	bool has_pow_supply_monitoring;
+> =C2=A0	bool has_input_buf;
+> =C2=A0	bool has_int_ref;
+> =C2=A0	bool has_ref2;
+> @@ -216,6 +225,7 @@ static const struct ad7173_device_info
+> ad7173_device_info[] =3D {
+> =C2=A0		.has_temp =3D true,
+> =C2=A0		.has_input_buf =3D true,
+> =C2=A0		.has_int_ref =3D true,
+> +		.has_pow_supply_monitoring =3D true,
+> =C2=A0		.clock =3D 2 * HZ_PER_MHZ,
+> =C2=A0		.sinc5_data_rates =3D ad7173_sinc5_data_rates,
+> =C2=A0		.num_sinc5_data_rates =3D ARRAY_SIZE(ad7173_sinc5_data_rates),
+> @@ -230,6 +240,7 @@ static const struct ad7173_device_info
+> ad7173_device_info[] =3D {
+> =C2=A0		.has_temp =3D false,
+> =C2=A0		.has_input_buf =3D true,
+> =C2=A0		.has_ref2 =3D true,
+> +		.has_pow_supply_monitoring =3D true,
+> =C2=A0		.clock =3D 2 * HZ_PER_MHZ,
+> =C2=A0		.sinc5_data_rates =3D ad7173_sinc5_data_rates,
+> =C2=A0		.num_sinc5_data_rates =3D ARRAY_SIZE(ad7173_sinc5_data_rates),
+> @@ -245,6 +256,7 @@ static const struct ad7173_device_info
+> ad7173_device_info[] =3D {
+> =C2=A0		.has_input_buf =3D true,
+> =C2=A0		.has_int_ref =3D true,
+> =C2=A0		.has_ref2 =3D true,
+> +		.has_pow_supply_monitoring =3D false,
 
-On 6/6/24 10:54 PM, Andy Shevchenko wrote:
-> Use sizeof(), dev_err()/dev_warn(), and regmap bulk read
-> where it makes sense.
-> 
-> In v4:
-> - dropped controversial changes (Hans)
-
-Thanks, the whole series looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-for the series.
-
-Regards,
-
-Hans
+No need to set the 'false' cases...
 
 
-
-
-> 
-> Andy Shevchenko (3):
->   ACPI: PMIC: Use sizeof() instead of hard coded value
->   ACPI: PMIC: Convert pr_*() to dev_*() printing macros
->   ACPI: PMIC: Replace open coded be16_to_cpu()
-> 
->  drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 13 ++++++++-----
->  drivers/acpi/pmic/intel_pmic_chtwc.c    |  5 +++--
->  drivers/acpi/pmic/intel_pmic_xpower.c   |  7 ++++---
->  3 files changed, 15 insertions(+), 10 deletions(-)
-> 
-
+- Nuno S=C3=A1
 
