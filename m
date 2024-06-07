@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-205589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E088FFDE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425578FFDE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D35B217C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59BA1F239BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B468C15ADAD;
-	Fri,  7 Jun 2024 08:13:27 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF1B15ADB3;
+	Fri,  7 Jun 2024 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FRGdCAEJ"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD28313E043;
-	Fri,  7 Jun 2024 08:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A8213E043;
+	Fri,  7 Jun 2024 08:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748007; cv=none; b=lZ8wFnmVwFvk0bpyQcLjLlebYdjKigvJc+ZzzCi+LN1WWIuFtuiKyQUXgxOVN1Y2K1Hduv5eKXrZGxXpVFDMH529DoVCgrOXiiP8E8aV6VIKsmZaU117l45H+6T2JqtRvJzJN3eDcYC5m854WPXT2onAnf5V3eBkQmRBqkjmQC4=
+	t=1717748043; cv=none; b=MtOJCT7JZwDApkt9vnwlaW+f4W4Pef2Qt7/EDLYOivjDPLcbqY1VAcDeAxEjXFcy6dcsSdeqCDEKb8pNrSGWVOjdGeZI/mrKE3Sg0h9NDhuK0TKPPnffD28JqD/jCk4qDqi1t3SEoG2B/y85eZ4aMR/S20FlnTV5w3WGgYgLpRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748007; c=relaxed/simple;
-	bh=VIzFG9SjjjS21ocqaupIRcoydDcwg7MVYn9fi3MKjaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZYazl8lZaDk0S7K27RsZlqfweL/IjyML/eYAITk5k7CK1OV7HUgM6hPtwoUdROPIse2oHpqQ9z4h1FVR0iM6Bkx2NnKUDfjkwXQOhsuNQW5RB9oBcqwc5xFhU0+TGTQeFwXAYszsIhGQNIY6mTw01I0C5jmABooC3wOXAUUq4BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFUif-0000XX-SI; Fri, 07 Jun 2024 10:13:05 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
-Date: Fri, 07 Jun 2024 10:13:04 +0200
-Message-ID: <8182279.JRmrKFJ9eK@diego>
-In-Reply-To: <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
-References:
- <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717748043; c=relaxed/simple;
+	bh=kra66mxB0q4iY/DDpaAHpvNHtIpyAm2YT0Vp97A28w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=db7IZ/exXC5ccR9JUAf2md4RdUvQf49aGci0LeIxsfHjKPC18khKhDmCU5LIkRPiaoLZrJmoGTqByJQiEcAwqS2hlhR92huX7oMWavnCf4evqnHePIdQNhgxPS3pLokqoCPJNPS9oZbW8cJzBw4Vkh9EyKeSHjh6SndHDGly4oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FRGdCAEJ; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D2DFC20005;
+	Fri,  7 Jun 2024 08:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717748039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZXKmOZS+PQZzg5AMCG0XJBn+K8xjGx6LJU8WQ9B0p50=;
+	b=FRGdCAEJSyXTggHVMudoJ28SRqrGunmHCbwlR06soLlU/wTAqeQnCh2Rgnfpe9pu3jt7qi
+	4ezZQ+fYHwEAqIwDmqL46BxyOlSu2bsbnw7yLdQFK6uU/EuGU8nXxV2jvfzl3ikn9sCzsS
+	4hAiDv8ckBC3NvSgxiq+s8ks73bDuES1NKNM2aZyH3Dy38OFlQ2vNIxPierDbmm9F3J48G
+	Z9tVZT6PNGCxbYdgrkftJsO6gbamPWB1VbpMFew1e7mm07HWZRT65ViOuPdtgXGLMIEB9Y
+	m/T5rvIsDCA9cJjRohhf5hrlAe8nZt+S7fG/If/5sSDHOnPiY/IV9lLPt7sY3A==
+Date: Fri, 7 Jun 2024 10:13:56 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter
+ Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 07/10] irqdomain: Allow giving name suffix for domain
+Message-ID: <20240607101356.3ede2a17@bootlin.com>
+In-Reply-To: <045828bd-4aeb-4d8d-b152-44a816a07221@gmail.com>
+References: <cover.1717486682.git.mazziesaccount@gmail.com>
+	<bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com>
+	<87plst28yk.ffs@tglx>
+	<045828bd-4aeb-4d8d-b152-44a816a07221@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Andy,
+Hi Matti,
 
-Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/clk/rockchip/clk-cpu.c | 5 ++---
->  drivers/clk/rockchip/clk-pll.c | 8 ++++----
->  2 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-> index 6ea7fba9f9e5..398a226ad34e 100644
-> --- a/drivers/clk/rockchip/clk-cpu.c
-> +++ b/drivers/clk/rockchip/clk-cpu.c
-> @@ -369,9 +369,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
->  
->  	if (nrates > 0) {
->  		cpuclk->rate_count = nrates;
-> -		cpuclk->rate_table = kmemdup(rates,
-> -					     sizeof(*rates) * nrates,
-> -					     GFP_KERNEL);
-> +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
-> +						   GFP_KERNEL);
+On Fri, 7 Jun 2024 09:38:31 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-are you sure the param order is correct?
+...
 
-According to [0], it's (src, element_size, count, gfp), while above
-(and below) element_size and count seems switched in the
-kmemdup_array calls.
-
-
-Heiko
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
-
->  		if (!cpuclk->rate_table) {
->  			ret = -ENOMEM;
->  			goto unregister_notifier;
-> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-> index 2d42eb628926..606ce5458f54 100644
-> --- a/drivers/clk/rockchip/clk-pll.c
-> +++ b/drivers/clk/rockchip/clk-pll.c
-> @@ -1136,10 +1136,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
->  			len++;
->  
->  		pll->rate_count = len;
-> -		pll->rate_table = kmemdup(rate_table,
-> -					pll->rate_count *
-> -					sizeof(struct rockchip_pll_rate_table),
-> -					GFP_KERNEL);
-> +		pll->rate_table = kmemdup_array(rate_table,
-> +						pll->rate_count,
-> +						sizeof(*pll->rate_table),
-> +						GFP_KERNEL);
->  		WARN(!pll->rate_table,
->  			"%s: could not allocate rate table for %s\n",
->  			__func__, name);
+> Herve, do you have any idea when you plan to do further sketching on 
+> this? Do you want me to try seeing if I can add the struct 
+> irq_domain_info and maybe use that in the __irq_domain_add() to get the 
+> name-suffix added? I might be able to send one version out during next 
+> week - but then I plan to be offline for couple of weeks ... so it may 
+> be I am not much of a help here.
 > 
 
+On my side, I plan to work on it next week too.
+If you are off a couple of weeks after, I think I can start and move forward
+on this topic.
 
+Best regards,
+Hervé
 
-
+-- 
+Hervé Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
