@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-206494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716A4900A8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:36:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C071F900A8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BF11F2434D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:36:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13AAEB22258
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE5319B3E1;
-	Fri,  7 Jun 2024 16:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DA019B59B;
+	Fri,  7 Jun 2024 16:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpxuIGBk"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhb/g4TH"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB12B19A2A9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606A19007A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778037; cv=none; b=TlfMrOCcjigonRpuEub4MMaYp6Wn8Z/kCcnDM/KQBAyzWb68pzovjBBVuD5c1aiw1gsrxQJhAFBf2u/bUE7VQDudzpgnuTddxdVeiZUlBP4KLiRXR78oZ4im515O6E3pf10SuDoZMCdYf62DhKXnvdPVWPY4EdF8f+h2HcNIm5Q=
+	t=1717778039; cv=none; b=JD19MlMzDxyFsVvveA/3UGGGrIKfEkWrKqlmHdoSLk4wnM8I0Oy/qxiiwn+PIdSqccePRucT/B1iJtGo85Goj4W9DrIEya9CY+smDZEtNU2NySLFtG16VNpsicmW0K8vzGNMJHj2EEA/Q+ZRysrb8jZ1UogWNHJiZzsO1dY8tTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778037; c=relaxed/simple;
-	bh=hpqtB7TwtNEw7I0Oo+om2IRl2mZx/RvnFsItv/asbMM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DOq221M+p1iqm5qPiiGCjJLZ3ZMPTAJlHKh9DS/fDYXaby63rmwnZk0GXG3jmJ4hkR3VVSdi0hyF7YOqhD2N2jDjHZiWnsImioCUukhJ/WsRUFkzKmIxGhycP2PLMKfgJVoyG65WUdcOTsgbCCecL0OYZMByCcwBeOG7fTEJCkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpxuIGBk; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1717778039; c=relaxed/simple;
+	bh=BNC1Z95f8uiQ8K8aPXBGm6Vdmian+P1RGAxtQhFOi80=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PMO5wUStQ7yQ+Gy8IJLygYxSZnnma1XEwOio9hKm3BT/lX8ltaspgrNbqC8Dt5Lud/v2uMhtdEuQqDEPq4zH8xcpO5lacFI8Qb++Bq/3cdIHXGDkpfkiPGrVMbVfjJDeVY7E7IT5R73/3AytVp9u3AQL8rssBsQ7iLn6tnsdTG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhb/g4TH; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a52dfd081so2803632a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 09:33:55 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eaa80cb573so26993541fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 09:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717778034; x=1718382834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2V8454kYmhOLRa5CXXOXDL36kSfmPqZMgZ9QCsrOhe4=;
-        b=GpxuIGBkZveDFKqIDh7wljYR7DFNjizJd6fMvQ2plUEyMrwg9ctO+TnrNW2h2DTcrb
-         DuX3YT4nAblTUVZflBpx2u0T+Tm0G4ESZO1QXXQ4xmYD2Me8gN4Z5eJ4fVDQDY/NJRqz
-         CjPAjycRr/kXdlbNYfq5g8XYR1hhNJDhyzmZzTDp0cmbeXRaZdq/SY/5BmoDgT27n0Tv
-         WL1tnBiIvLR1OA7wA9aopeqL5oAqHJ+FIPSishVJ1XUCBy0BrEH2I61Bg+wzm2jPqIoO
-         R//+rJFssxBL/OpI1o0EWzVmFQ4CcvjaZPP4SXSdvgwoGAttcUcYPfRRXv6eA5sDDs9R
-         M62A==
+        d=gmail.com; s=20230601; t=1717778036; x=1718382836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ktuw6zxI+M+O56fZozxk8JtRul2b0L3ekJGX5mYuYns=;
+        b=nhb/g4THEEwG08LYa6YucV78tVjnA3PhXnDHqT+TTcX+DRo2gcYm5Kl0NQlNemRP0S
+         f+yR6+tp/ZZFgOzK4gM7ieOAYnPuBj+3NwEFt7TFnFEDaGWbw/RgZe5BxNdrWbwiQDf+
+         MSRnEGVGd+BhSdYKhlMX3uI78bM9GQRie9DLXAL8KBl2uQBcSYGWQIbNVp/KlnAQXss+
+         mDPnhF9Ggv5j/lmXBOPwfGvZnL4V6jQZlAAR4TH6I0V3UhuoZ5bHcHPRkE/Bh8IKTEYs
+         jSa6f0fPAgU4B5TIiAtMLPZSIZjReTU4a2CYNL+2eiyKEhNP+2x/PVArbk+MYozUqptI
+         pzyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717778034; x=1718382834;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2V8454kYmhOLRa5CXXOXDL36kSfmPqZMgZ9QCsrOhe4=;
-        b=FGsHmXjQsbHF/VVd3uoOzltYnLiMBtylG+WD2zoF0hKooQKQ2iQrQA4JdSIESdx5iY
-         3Oz0wxsXbpf06R8N6AAjGn20jWsp7zA5F6f8ryUYBOCSzd1vp33vpewLT+sovsfwWjxw
-         hwAPjwbF6QNb1zRv0rI3vUPZ5V4n3v1CCPI9XjwbCTEyH2shVsb1B/rsR5TwGM3UEPHv
-         wM76Fuxt48bEBn8vSSz06jSL5E68xN7C4MSRyefIBspEGYU1EFMgERB4FsFi1jvE2y9t
-         IV+PyEuaYSpi9QR01/Wfc4afQrMv+O8qeOPfKR/O8A6qiMga4i8jMUNtKRMlMVsZAnzx
-         mRwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWM4fMnL9t9QzWIgDOqBLEGB1XIxDRrBki1RhqV9wRmAi12YJnemrCylCP4PTzhyD5SBM66V6L8E1kJdTZV3c0FnGqzroTmW/24YGda
-X-Gm-Message-State: AOJu0YxzmavLWyGzrZbbcrfUSuCTcuJTaOMW2UDcKkTlKlqRg90g80z/
-	KT6RS8lJ+/nj9NCcRSCEAxsRnNh5OCHd5MI2U2RkirwoEgaURQCS
-X-Google-Smtp-Source: AGHT+IGIcig7PECSJi+Qz8Gwa/+FRLovxwp17awCKsIo1kQUlOR0w+eFmFrHd/F90OlirCR/eWuaXQ==
-X-Received: by 2002:a50:9314:0:b0:57c:5f8a:26f8 with SMTP id 4fb4d7f45d1cf-57c5f8a27aemr1025758a12.27.1717778033761;
-        Fri, 07 Jun 2024 09:33:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717778036; x=1718382836;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ktuw6zxI+M+O56fZozxk8JtRul2b0L3ekJGX5mYuYns=;
+        b=bST3xy1pSb7v6y2oR8wTJAja+ubNRXuAuyRsOy9eSeApnTishf9n1sIHFZ4PCPSn1V
+         R32uddmcUSTF6S1dfiIDXs4pfy7zL3pZrobvAKuddGL4F3nAi0s2YXXb/g83jHXf2i7B
+         esr/HTwTq+HvxbEW7ilv/LtkKZrxWoXkDkp2dqZa0nRocKIdduMmsLCPAecZ8a7BfX42
+         l7HZ2cpON1LPvBKo/mgLWmbd+wa9VRbLknLBUaguFa++gWWWJFPga0eXS5467HVYbwcL
+         8jYJoDG0enimr8CL7eziUhiXYspeDFJuK/uDIYpcrsxSHkGsNbZcTdjQEyUZnuDPPsL+
+         aefQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5lgnmOcE2rkOTdHiMro6BCbOGNoXYFj+FT4Xz+BMIRO920Hk2oEViv5KS/885W8ZuX5ZMrBGQkTcb+l7YTw8f5WKL6vnbAom2jrZ5
+X-Gm-Message-State: AOJu0YyVA2PJXx92YUiv4WZKCM0FMl46/OX7ERaWGO82gL+gGhdQ+J0o
+	KOsBEOt21mRP20ryO6sZhnJL8rmvnJ47tWwZTti3+lkWmv+UPYug
+X-Google-Smtp-Source: AGHT+IEOYrqwvr0uEqyvOCJYjOz3auyroh/ag3BaxTAiF5HPtxeqBq73ZOyZ01c275WEGA5c+e21lA==
+X-Received: by 2002:a2e:a443:0:b0:2e9:768a:12ae with SMTP id 38308e7fff4ca-2eadce33be3mr19533271fa.22.1717778035376;
+        Fri, 07 Jun 2024 09:33:55 -0700 (PDT)
 Received: from localhost.localdomain ([2001:b07:ac9:e686:17a2:25c2:1b0c:3c07])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc355sm3032715a12.33.2024.06.07.09.33.52
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc355sm3032715a12.33.2024.06.07.09.33.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 09:33:53 -0700 (PDT)
+        Fri, 07 Jun 2024 09:33:54 -0700 (PDT)
 From: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -73,10 +75,12 @@ Cc: vincenzo.mezzela@gmail.com,
 	julia.lawall@inria.fr,
 	linux-kernel@vger.kernel.org,
 	skhan@linuxfoundation.org
-Subject: [PATCH 0/2 v4 RESEND] drivers: arch_topology: introduce automatic cleanup feature
-Date: Fri,  7 Jun 2024 18:33:48 +0200
-Message-Id: <20240607163350.392971-1-vincenzo.mezzela@gmail.com>
+Subject: [PATCH 1/2 v4 RESEND] drivers: arch_topology: Refactor do-while loops
+Date: Fri,  7 Jun 2024 18:33:49 +0200
+Message-Id: <20240607163350.392971-2-vincenzo.mezzela@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240607163350.392971-1-vincenzo.mezzela@gmail.com>
+References: <20240607163350.392971-1-vincenzo.mezzela@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,91 +89,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
-I am resending this patch series rebased on top of -rc2 as the old one [1] might 
-have got lost deep in the mailbox.
+Refactor do-while loops to move break condition within the loop's scope.
+This modification is in preparation to move the declaration of the
+device_node directly within the loop and take advantage of the automatic
+cleanup feature provided by the __free(device_node) attribute.
 
-This patch series introduces the automatic cleanup feature using the __free
-attribute. With this modification, resources allocated with __free are 
-automatically released at the end of the scope.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
+---
+ drivers/base/arch_topology.c | 107 ++++++++++++++++++-----------------
+ 1 file changed, 55 insertions(+), 52 deletions(-)
 
-In some cases, modifying the structure of loops is necessary to utilize the
-__free attribute effectively. For example:
-
-```
-struct device_node *t;
-
-do {
-    t = of_get_child_by_name(..);
-    if (t) {
-        
-        // some code here
-
-        of_node_put(t);
-    }
-    i++;
-
-} while (t);
-
-//       ^
-//       |
-//  device_node here
-```
-
-To use the __free attribute here, we need to move the declaration of the device_node
-within the loop, otherwise the automatic cleanup is called only at the end of the
-function, and not at end of each iteration of the loop, being it scope-based. 
-
-However, moving the declaration of the device_node within the loop, we can no
-longer check the exit condition in the loop statement, being it outside
-the loop's scope.
-
-Therefore, this work is split into two patches. The first patch moves the exit
-condition of the loop directly within the loop's scope with an explicit break
-statement:
-
-```
-struct device_node *t;
-
-do {
-    t = of_get_child_by_name(..);
-    if (!t)
-        break;
-
-    // some code here
-
-    of_node_put(t);
-    i++;
-
-} while (1);
-```
-The second patch eliminates all of_node_put() calls, introducing the __free 
-attribute to the device_node.
-
-
-changes in v2:
-    - check loop exit condition within the loop
-    - add cleanup.h header
-
-changes in v3:
-    - split patch in two
-    - fix misalignment
-    - fix checkpatch warnings
-    - replace break with return statement where possible
-
-changes in v4:
-    - fix commit subject
-    - fix coding style 
-
-- [1] https://lore.kernel.org/all/Zl2CjZ9mCpK1ylMf@bogus/
-
-Vincenzo Mezzela (2):
-  drivers: arch_topology: Refactor do-while loops
-  drivers: arch_topology: use __free attribute instead of of_node_put()
-
- drivers/base/arch_topology.c | 145 +++++++++++++++++------------------
- 1 file changed, 72 insertions(+), 73 deletions(-)
-
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index c66d070207a0..583f11bd4d2e 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -543,23 +543,24 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 	do {
+ 		snprintf(name, sizeof(name), "thread%d", i);
+ 		t = of_get_child_by_name(core, name);
+-		if (t) {
+-			leaf = false;
+-			cpu = get_cpu_for_node(t);
+-			if (cpu >= 0) {
+-				cpu_topology[cpu].package_id = package_id;
+-				cpu_topology[cpu].cluster_id = cluster_id;
+-				cpu_topology[cpu].core_id = core_id;
+-				cpu_topology[cpu].thread_id = i;
+-			} else if (cpu != -ENODEV) {
+-				pr_err("%pOF: Can't get CPU for thread\n", t);
+-				of_node_put(t);
+-				return -EINVAL;
+-			}
++		if (!t)
++			break;
++
++		leaf = false;
++		cpu = get_cpu_for_node(t);
++		if (cpu >= 0) {
++			cpu_topology[cpu].package_id = package_id;
++			cpu_topology[cpu].cluster_id = cluster_id;
++			cpu_topology[cpu].core_id = core_id;
++			cpu_topology[cpu].thread_id = i;
++		} else if (cpu != -ENODEV) {
++			pr_err("%pOF: Can't get CPU for thread\n", t);
+ 			of_node_put(t);
++			return -EINVAL;
+ 		}
++		of_node_put(t);
+ 		i++;
+-	} while (t);
++	} while (1);
+ 
+ 	cpu = get_cpu_for_node(core);
+ 	if (cpu >= 0) {
+@@ -599,48 +600,48 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
+ 	do {
+ 		snprintf(name, sizeof(name), "cluster%d", i);
+ 		c = of_get_child_by_name(cluster, name);
+-		if (c) {
+-			leaf = false;
+-			ret = parse_cluster(c, package_id, i, depth + 1);
+-			if (depth > 0)
+-				pr_warn("Topology for clusters of clusters not yet supported\n");
+-			of_node_put(c);
+-			if (ret != 0)
+-				return ret;
+-		}
++		if (!c)
++			break;
++
++		leaf = false;
++		ret = parse_cluster(c, package_id, i, depth + 1);
++		if (depth > 0)
++			pr_warn("Topology for clusters of clusters not yet supported\n");
++		of_node_put(c);
++		if (ret != 0)
++			return ret;
+ 		i++;
+-	} while (c);
++	} while (1);
+ 
+ 	/* Now check for cores */
+ 	i = 0;
+ 	do {
+ 		snprintf(name, sizeof(name), "core%d", i);
+ 		c = of_get_child_by_name(cluster, name);
+-		if (c) {
+-			has_cores = true;
+-
+-			if (depth == 0) {
+-				pr_err("%pOF: cpu-map children should be clusters\n",
+-				       c);
+-				of_node_put(c);
+-				return -EINVAL;
+-			}
++		if (!c)
++			break;
+ 
+-			if (leaf) {
+-				ret = parse_core(c, package_id, cluster_id,
+-						 core_id++);
+-			} else {
+-				pr_err("%pOF: Non-leaf cluster with core %s\n",
+-				       cluster, name);
+-				ret = -EINVAL;
+-			}
++		has_cores = true;
+ 
++		if (depth == 0) {
++			pr_err("%pOF: cpu-map children should be clusters\n", c);
+ 			of_node_put(c);
+-			if (ret != 0)
+-				return ret;
++			return -EINVAL;
+ 		}
++
++		if (leaf) {
++			ret = parse_core(c, package_id, cluster_id, core_id++);
++		} else {
++			pr_err("%pOF: Non-leaf cluster with core %s\n",
++			       cluster, name);
++			ret = -EINVAL;
++		}
++
++		of_node_put(c);
++		if (ret != 0)
++			return ret;
+ 		i++;
+-	} while (c);
++	} while (1);
+ 
+ 	if (leaf && !has_cores)
+ 		pr_warn("%pOF: empty cluster\n", cluster);
+@@ -658,15 +659,17 @@ static int __init parse_socket(struct device_node *socket)
+ 	do {
+ 		snprintf(name, sizeof(name), "socket%d", package_id);
+ 		c = of_get_child_by_name(socket, name);
+-		if (c) {
+-			has_socket = true;
+-			ret = parse_cluster(c, package_id, -1, 0);
+-			of_node_put(c);
+-			if (ret != 0)
+-				return ret;
+-		}
++		if (!c)
++			break;
++
++		has_socket = true;
++		ret = parse_cluster(c, package_id, -1, 0);
++		of_node_put(c);
++		if (ret != 0)
++			return ret;
++
+ 		package_id++;
+-	} while (c);
++	} while (1);
+ 
+ 	if (!has_socket)
+ 		ret = parse_cluster(socket, 0, -1, 0);
 -- 
 2.34.1
 
