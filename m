@@ -1,639 +1,272 @@
-Return-Path: <linux-kernel+bounces-205264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F26C8FFA1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:14:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E488FFA1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 05:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C095E285071
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF3F1F248ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162841B27D;
-	Fri,  7 Jun 2024 03:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D489179BF;
+	Fri,  7 Jun 2024 03:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNuWIh0o"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b="Na8wNpdX"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2100.outbound.protection.outlook.com [40.107.244.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48F117BBA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 03:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717730080; cv=none; b=m0mn+FQBtrizwWS2aY+1fPGgoIXXCiOEgt+jjl/7T2dAl7V05FAgfDMgMKQxLsYn8DEqLfaS9cx/jyeHVf7pK/o9yMKhQjAyFUAgl7V9iRBZoNlJOrWa/z1vUhWHK7Ln7FW+Fh1ztCSZoLigopqU0RXj5gCAqW8qhlXSnTDbZVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717730080; c=relaxed/simple;
-	bh=f+eNVJse7pWYfTCncjFT4wT88ALxdREYpXmNJs+gULU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=TxbSNjyPh/ms/cyGfP642uIBGOfEHwhe5OcwNGb1OEOUJg+WfDoHd5CQibWbRJOsO+NS0tKz+7bSFtUsgz1lnbA0VrYN0uc2MpbiIEzBrqfWjYJaaUxyVtIgHDjPxzD4aORtUddXHwGK2mhlQjDwjgxoJyyHqP99G/K+jePsBzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNuWIh0o; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f480624d0dso16069095ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 20:14:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A7214269;
+	Fri,  7 Jun 2024 03:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717730077; cv=fail; b=p1Pt+bXwwOPYQf/phPFb28P0Mx4oJaTsh5Zhrgi9KZx1Hxdx5mQtCT3O8q/AJQU+ljh1r3YulxiQVZalbqYS20mohRk6jIggP1n2eDuWIsfF5aUW7iHjIwZBrWOtWA6KzheGTJQX/KWDubsnPiKcb7qkEmhkeJVFHF9KkHNAhzg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717730077; c=relaxed/simple;
+	bh=R8XpW7F6OTmUGjXdCtwtDqsN6cuh11ciDdJDwIu8qzI=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JLX+fpBanJLvPANqUpEv60m/RN73aZbBrfw/OsmG3Hbefl1a5zJZA0fQ8PKLbzFPo/v3Nfb9EHOzBjEXVz9wMzvo82FadromU4WOCUjVlOIUYPyIwD0e7eSJR95AtQqVB1/IkS4pXrEcS3fPChMXqroRfHR3T20UypTqEljcON8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b=Na8wNpdX; arc=fail smtp.client-ip=40.107.244.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in-advantage.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ja5SJG6W1Qr4ukC0IWXAScBaYCmmbh7x44c32+wM9KYWz1bFWx+eIdDzXNrAS4I0qk1Fwvs2q6QzHmScV1wjg95DD/yAqBcwfQheZXRoI097D2vErEhwVYj7MMWSSMeKQU6RDEL60XiisIjHqR03pbZySHJTTsWdOoaVJtXf/e5G01GSeiDqTfuxS86/VRQdpTTjc1YVQNBytdponRskl0cWqaQ7HpVhWgsxBRH0qoh0v7XasDzIsCr1druQ5gukiZ9JQCLlt7Vw2/mHVdT8bT1NBo1OUrs115ArEWt03IjacjAG9e7BWOVMfhmClZDNgnw42iONa9nhHWyJmBmwIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YAlU0DnR/RRQyGGBPBnfA8UtDmjDM1xPSREZsuJd6EM=;
+ b=fVPaLvrQkoXA945lV2+4aXs3t18SRhoSibVW6KFEnuw2hJ2MbkegT96GyTQyOrprenyYzITAn+eJ6gNLzcqkBIq3Ox987M0m5XcyN+MYSr5emXPKwBaZ5IxXYP9VW4FBE26CnpshLLgpbYyYKLpa/oJ9Xqfyb/Nffy91z7hRfB4n0zTghGezYc07Tst8jleGJqHskbKgm8zfu/WrICBu4y6dwWhnX0xvwq1wxVx4qCRT8Z9v3bQzmmaAnCVyi/1i+VrdQ1I494/S01MTNCzmpQh1j4KRIhCAEVKaqEOvy5XTavspdZXbTjoQzdbduIbU43+yxSy1BlInBbJDGFTXCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717730078; x=1718334878; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S6sq1v/HYVth5hgL6aHLmT9s4dMG30DKkez74RK4Byw=;
-        b=jNuWIh0oYhff4XQV+pgjo/LK2l42xzj8YWwSJmRvao/1IBDYClOumMGthXI1aY0WTk
-         BW8/Aft4L7Vv4bbE5ySoqEkG3zQzYHfzRv16gkGHnENjkMRFgHLPigqK+CX3cedLyXep
-         fjBCXHTC2/PRo8cuB96676UrOEPTiZbFH+4LkgKORocW3+Cg6a/LaiW622wMhPnmjFPX
-         UM7jre31cIaeSD2zRxFqgoGrOBV8dfxsi1duvXTc91gGIcqD7z23NnqBZuSwcD+2bt82
-         RPoU2aRBI39FrsQ2vjByX36XY9Uw1WWv7WpdpAS/8+uhHC9symVwhDMsCPAADS0bq+At
-         959A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717730078; x=1718334878;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S6sq1v/HYVth5hgL6aHLmT9s4dMG30DKkez74RK4Byw=;
-        b=csA0OphVHQWeOuniPJyRKfza9w5EAGNPbQouxNoSdOo6z/wIudxNym5H1hGKJ3OUak
-         OXQf5sZMbA+pqM+rUUEpzjcltQwqciA8+Ueryse4nHtQO+MT56r5KUAfv1Ry/hwT/T0R
-         qbnCGtlsdbtXZ3sypCwWb4CV4e59fyoswX8erPrFEt6zk0ymq1wwoTbR7pVhg40YZHFV
-         sMJMGwayZ25xZYu0Vm3lXWXBfonBnueZNuk3hHZMzAyDV2/iNuq/Z8pBA2G6OENfPPM4
-         YfNVh5SKpdE1rppgiVlEKujYQqeb58BTj+E70DmT2FtmWKoLGC0RnL14Xv33V7da3nlC
-         95LA==
-X-Forwarded-Encrypted: i=1; AJvYcCXT+QZkrZTidGd1YNpe+8yFy3THwF54kE30mifeDL1CQYHiBlEgKrYu9ml0RxLc2iAj7jjLMCNVFU2a/YZs9RuWEgLNFYTzObevjtqP
-X-Gm-Message-State: AOJu0YxPrQ3jjGMSdsJrCyHq1XkVPT5VPGFAS4H0gXWxAu01QxqundZF
-	R87pY0xkXhy6oth+kHDWnpcbj2LJtYFN82lBHnelXMBqf8kD79Xy
-X-Google-Smtp-Source: AGHT+IGVLbOop05kbtCd0vA2QzX1cxZyTlSfbXjA3G457nSL5A9bMH4Wmsybo0Hjsa4Y5lzdKheiWA==
-X-Received: by 2002:a17:902:ea0b:b0:1f6:92f1:b01c with SMTP id d9443c01a7336-1f6d03b9604mr16907795ad.69.1717730077750;
-        Thu, 06 Jun 2024 20:14:37 -0700 (PDT)
-Received: from localhost.localdomain (c-67-161-114-176.hsd1.wa.comcast.net. [67.161.114.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7f7ec1sm23027405ad.271.2024.06.06.20.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 20:14:37 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: robin.murphy@arm.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	jgross@suse.com,
-	sstabellini@kernel.org,
-	oleksandr_tyshchenko@epam.com,
-	hch@lst.de,
-	m.szyprowski@samsung.com,
-	petr@tesarici.cz,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org
-Subject: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Date: Thu,  6 Jun 2024 20:14:21 -0700
-Message-Id: <20240607031421.182589-1-mhklinux@outlook.com>
-X-Mailer: git-send-email 2.25.1
-Reply-To: mhklinux@outlook.com
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YAlU0DnR/RRQyGGBPBnfA8UtDmjDM1xPSREZsuJd6EM=;
+ b=Na8wNpdXkWZydT3mme/byaSWOvcgEl45zpBr8HNNPip+cFGSX2aKQUk1tXXC7QTYjOplkrI1O3s3gPS9hfzq5W/V5LgcFouLF4lhTatdnGa5FTniW0jiVoKbKul4VvNWN4OaL24fY/uFqoNAacnpqV22uaZjcxpoxGevm2ESkrY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from DS0PR10MB6974.namprd10.prod.outlook.com (2603:10b6:8:148::12)
+ by PH7PR10MB5769.namprd10.prod.outlook.com (2603:10b6:510:125::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Fri, 7 Jun
+ 2024 03:14:31 +0000
+Received: from DS0PR10MB6974.namprd10.prod.outlook.com
+ ([fe80::7603:d234:e4ab:3fea]) by DS0PR10MB6974.namprd10.prod.outlook.com
+ ([fe80::7603:d234:e4ab:3fea%7]) with mapi id 15.20.7633.018; Fri, 7 Jun 2024
+ 03:14:31 +0000
+Date: Thu, 6 Jun 2024 22:14:27 -0500
+From: Colin Foster <colin.foster@in-advantage.com>
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com
+Subject: Re: omap2-mcspi multi mode
+Message-ID: <ZmJ7E305ow91ez2U@euler>
+References: <Zl/V0dU6SjAMkpLG@colin-ia-desktop>
+ <ZmFt7yfZFFJdsZuJ@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmFt7yfZFFJdsZuJ@localhost.localdomain>
+X-ClientProxiedBy: MN2PR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::12) To DS0PR10MB6974.namprd10.prod.outlook.com
+ (2603:10b6:8:148::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB6974:EE_|PH7PR10MB5769:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c708c58-04e4-44e2-aff5-08dc869ff29b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UUs3MVJOY2dPMjBRMVltR2srY0tIYkhmZG5jNDk0QU55ZDFJTllsUTJ4dlV1?=
+ =?utf-8?B?bzRCMC9GRDFsQjBqTHdoa0Vxbnp6RjBhM1o1K2dpVXcwWklUMWFXZFZSVnp0?=
+ =?utf-8?B?aDhabi9kc3VUT043V3JKdXBRaEkxbW9UUUZZRlFtS1FFNDB6cmJ6Zy9NeWZp?=
+ =?utf-8?B?ejlDaTQ5WUc2VmtrMEpIcG9IakdKckVtb3NkWlRuNFQ3N2p1MEtBREVlZ2Ft?=
+ =?utf-8?B?YldTek5qVXlQMUlDdEpFMURsRDR1Zjd0cHF1cUtBN3psMWZiRy9JeC9lVnky?=
+ =?utf-8?B?TXE0MWlBQ2IzMFd4dGEyRzNhRXFqeWVwOWRIWjZCZjVBQnZLTjVnUEV0K2N1?=
+ =?utf-8?B?V1F5UkJYM05JL0djL0xJYi9UNHhqbTl2QzBGenI2UGFvS2NwdCsxK0Q4WUNz?=
+ =?utf-8?B?R1N1RE9yclEweVhlUjNzNEE0aDBHR0dPb1d0OHdDVVpWb3J0Ry9BZkRJR29w?=
+ =?utf-8?B?VEZwU2pDQWpobE05WWpzcWxUQlJxMUdpY0QzSWZ6UmkwanMvdUJrVmZ6WnRY?=
+ =?utf-8?B?MGlXc2Qzb3JzaHlTdW4vMHkwU0dHYUxnS2dqZUJPT1ptTjM5czVLZ0hvby96?=
+ =?utf-8?B?R3NrWTB1RG56TGFnbUc2blNxSXM5bC94Q0o1ZHZMK1hEb2RGbm5GTndSK05s?=
+ =?utf-8?B?eVd1MlhkU0dacytid0huN1ErbkhEeXRqazBFOGFVaUJ1NVpGVnRwTXFFTEc4?=
+ =?utf-8?B?ZUZnQXA3YnRZMHplRDhrRHErUWgwME8wWHdFN08rcU1admNHeUhSd09FWkJM?=
+ =?utf-8?B?OVhJRlh5Sk8wTXZCQzk3a0VuSktPWUxBTzR6Vjd4WkVha3l1eHpabjZ0bzha?=
+ =?utf-8?B?ais3VmdNVGpsV0hXWkJwYnNyTldkWWJWR2I2b1NZVVY1aHpucWRHSnZZNC9W?=
+ =?utf-8?B?M0kwcEN3WWU5dkxOQUVrMHBQMFErSDljeGNwemhGK2FobzN1LzEzNzYxMk1F?=
+ =?utf-8?B?YlVTYks4L3BlNjc2Q2NrK2lQaVFrSUhTcGd6OUZQenV5MWZSVEV3eGoxb1E4?=
+ =?utf-8?B?blVhNG5nVkpsTC9HTmJES3lRbThhdGRMMGtWdk1CM294ZmcwZGQ0VmQybzA2?=
+ =?utf-8?B?cCtoTW90MC9hNTNqNlBpZ3lLS3BDWXJWZTRCK3pKUk9KZkFmaG4ySnpLdW1O?=
+ =?utf-8?B?TklYM3ZNQVpaTC9FR3JBMnlmL0xYMUFFSVdoakxaNW9qT01DbGFTWE9XRHIr?=
+ =?utf-8?B?RlYwQnNsMms4amFvaEp0WWRIdDYzS3NoODBjZnFMa0wxbVVwZHdOWnkzOXJS?=
+ =?utf-8?B?UjlwTVJnYTdYNWhhZGpmSTRnQWdMQ1pBcHF6Q2E2c3JMY1VoaUtzMnBRcVQv?=
+ =?utf-8?B?V2VYcTVVeU4xWGZFT3FqWkxHQ3UxQ3E3N2FrNjhMbEt5YzlFS1c0aTBEM3NI?=
+ =?utf-8?B?SnZ3N3loOXVyek5LRmE0SkVmMFgrd1gydVVZczNWa25NWXdFVGdJdHBEcVQ3?=
+ =?utf-8?B?OVorSE9WWXJma215aUVuVFhYVkFWTDdyRmVMSXNaM2RDbXVCbGVzbU1sMHFK?=
+ =?utf-8?B?S3l6S2pMWkNGV2xLbFVKdWZMdTFCT1RNd2ZOZytyQXNJQ2l4OE1EU1lZRHB3?=
+ =?utf-8?B?S3dZODBYYjlHNi91NTNoaXNPNFRvZHJVdjNTNXRFR2UwZWFnb2hXcGhFQnVj?=
+ =?utf-8?B?c0NvYk1ubWtobXo0cnpMQ2d0cFhOaW1XQUpxSEsvUitIL211VllMUkpLUHNp?=
+ =?utf-8?Q?XsOp8NYxXpLHDjmWsyM1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6974.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NUduZ0VJWkE4NVQ0RFkwbWl0bGJ5ZFdMaDRxVmNFZ1J6czYvVU5IWHVlN0Jy?=
+ =?utf-8?B?d2E1TFBCZ1F4cHhEUmg4WXV4L2NqUU91Z2pvMGxGUmdBaENwMEFOeWVxUFFl?=
+ =?utf-8?B?elBSSnVCcHozWWg3ZXFtVXMwcXZLYm9NdlJTNCs2V1gxejJvNmZFeGRYM3Zx?=
+ =?utf-8?B?d2d1WENsR0pRZkZLVGdNeitPR0VUYXVlY0JtVngyRmxSeExlQnhvTE1RTnZm?=
+ =?utf-8?B?Mk9nK0pJUWZrU0FaaytiMGVrZnVtV0doVjJJMXRzTXNoTURIV2lmblhLRHhV?=
+ =?utf-8?B?Rno2TGVsczhUVFF6T080N0hVMjZlL2tZdG45cWhZeUFxcDVSVFplbSt0NkNV?=
+ =?utf-8?B?RkpaNGJnb0E2aFlCSHVVT1IyKzJYdmxRbmFsNDRQYVl2Ty8rbXNPVGh5ZkJx?=
+ =?utf-8?B?Rmlpd3FvT2drNjJ5R1FuWi9ObG9OLzBFak5rZEZ3YitNbnhFTFQ4RDN0Wlkz?=
+ =?utf-8?B?SnF5eDNta21QeVdTaVRQWXdHbkJBaEJncVgraXJvYkl5VENzemhoei9GNjhY?=
+ =?utf-8?B?SGFRSFFJZmI4YTcrNVpDWFBkRE5FRmtuTnVXTnNOcWtEYVZtaHl5eU1aaVZ6?=
+ =?utf-8?B?MFhhYVg2Vk5qYjBobkZVMUJ0dVZtMXE3ZDJzRTRDNGszQWFaTldveW1HNHBu?=
+ =?utf-8?B?NWpsQ2phbTBENzRrMzFIM2xYZW9raVdWRVhQK2VYaS9lZ1JUUXNoeGxFbGl0?=
+ =?utf-8?B?ZUNwL051MFo1eXBaYlJqR0pHNnhXd3lhN08vcEU1MDE2OFhsZEdjOWlWcXd5?=
+ =?utf-8?B?WElEb1VhbFpuWnVoQkRqazdNMlNnOVgvR1A0Y0VkNEZTNVVCcUlZS1QyQkI3?=
+ =?utf-8?B?QktrbFkxLytCVkV0dXB4Q3o3bUI2UnVQQWNkTE9KbVdQaHNJa0ZacmFqTE52?=
+ =?utf-8?B?aGVuRGdSZVZJQUdFWWtpSkE3cmszM1hsSjdWUmhjUTBValFXL2ptWXJJVUNS?=
+ =?utf-8?B?bk1UZm5Sd2tucjJmYm1GQ2RFK200cTNZUmw4RXNTcndLNE9XQmlFeTUrN24y?=
+ =?utf-8?B?Y3hkK0FwMTFHQWhXNFRVaDBZK3oyd1pJOUlFQTJWdzJpSUUxeFYvQzJWNUo3?=
+ =?utf-8?B?SmlCSU5xbms2cGZxeHBJdGhzKzZuY0IrOFhpTnpLVE1BS0R5Q05OMm94emlZ?=
+ =?utf-8?B?cHRROTZhU0hlWlV1ekYzMWIzb01hcVZNQzFEMmdXbUVWcTBBSzNhYmthdFRw?=
+ =?utf-8?B?NEZ0YkZIK2xXUStkY3k0V0EvR0JVcnpka3JWaW5ISEZpTEl5dlRLMTBmK005?=
+ =?utf-8?B?M3Z1ckdsbGZRd0xMNnhqblNoNktGa1lNZ0s0bThCUHRMT2VOMURaVGRMaWFE?=
+ =?utf-8?B?NFJPR3dkZ0lMa2NVcFZiYnhCWFJCVTg0SjZsOE90UWwrVzNDZmFNaDIzNnpH?=
+ =?utf-8?B?RzdjUkx1R3V0c1Y2eURuY2xuWUU1MUFnVVQ5eXZlN3BDc2xCclFoRXYrWnFa?=
+ =?utf-8?B?TU5hM1RsZW13WmJ0ODUvaGR2Q1ZnL1lLUmVmRjhHcFVpUUlKQlRSVFU5Wml5?=
+ =?utf-8?B?Sm83YXNFTW14Y3VNd2xWaUlXdTd2VXhSNWNEdUI5NTBWNnk4VEpQSTk3NXdQ?=
+ =?utf-8?B?Yys0aXU3TGg1ZVlNSjVXZ1VqaksydkQ0L2NheHNWZEJSbys2WTRERzN4UldC?=
+ =?utf-8?B?Rnc0emVHcEdQMWcrL2M5UzdDcWZzZXlNK1lxRC9jL2hPcnNWNDkya2VDa1JW?=
+ =?utf-8?B?VGVUYUFoSkxNbWk1c3JKMlZDWDRsR0E3VTlmUXJjb1B2YnY1RmNsVy8zR0ZE?=
+ =?utf-8?B?TjJyckp3V0gwNExsUWJLOTJiQ3IrS0lIaHkvRlZUTHpIR2ZXblhGb01VKzAr?=
+ =?utf-8?B?bDJBNmxTSFk2aHlSZzRTRUl5MXhzVGhSUnNBU0VFZFBXSTUxdisxM1Jvc3Fh?=
+ =?utf-8?B?MnJaSloxRWFKcDhaR0l2VTVZc25NZGdCc3l4Ui95RXVyemJzMlI1NFZNdllk?=
+ =?utf-8?B?VHJRbmVPNzlpMjNNYkpkeDRUNnRkVUsrL0dSY21GNUdmS2piNUJoRmhZRHVM?=
+ =?utf-8?B?ZVhvenFQUTNUSzRmQUlOdlpSYzNRZlRnRjY2SnFEMGEwM3Nrb1BUbG05di9L?=
+ =?utf-8?B?Y1AwYWREeGtCSmQ1bTRicDRUMXZFVmkrR2lvVEIwYnp5ZHFoQldmRzZ5cy9V?=
+ =?utf-8?B?cHgyTmc5R212dXVTQ1RkemgwZzFMR3lKL2d0TmRNdkJ4eEwrZk9CaDRFTFFR?=
+ =?utf-8?Q?O/di7PDXYVa7eYNe9SXS5PA=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c708c58-04e4-44e2-aff5-08dc869ff29b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6974.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 03:14:30.9462
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jr9XkjuBO9RQe309dGQc/PCPW03uWM+fQysfUU0mrfXWiaTZbhBms70kiprvauNCgt798nX/QUk0uTHlYNZaijeTRvo5c+eVG6QRzP05sVc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5769
 
-From: Michael Kelley <mhklinux@outlook.com>
+Hi Louis,
 
-With CONFIG_SWIOTLB_DYNAMIC enabled, each round-trip map/unmap pair
-in the swiotlb results in 6 calls to swiotlb_find_pool(). In multiple
-places, the pool is found and used in one function, and then must
-found again in the next function that is called because only the
-tlb_addr is passed as an argument. These are the six call sites:
+On Thu, Jun 06, 2024 at 10:06:07AM +0200, Louis Chauvet wrote:
+> Le 04/06/24 - 22:04, Colin Foster a écrit :
+> > Hi Louis,
+> 
+> Hi,
+>  
+> > I found that commit e64d3b6fc9a3 ("spi: omap2-mcpsi: Enable MULTI-mode
+> > in more situations") caused a regression in the ocelot_mfd driver. It
+> > essentially causes the boot to hang during probe of the SPI device.
+> 
+> I don't know what can cause this. My patch can "compact" few words into 
+> only a bigger one, so the signal on the cable can change, but it follows 
+> the SPI specification and the device should have the same behavior.
+> 
+> Instead of two very distinct words (for example two 8 bits words):
+> 
+>   <-- first word -->             <-- second word -->
+>    _   _   _   _   _              _   _   _   _   _
+> __| |_| |_| ... |_| |____________| |_| |_| ... |_| |_
+> 
+> The signal on the wire will be merged into one bigger (one 16 bits word):
+> 
+>   <-- first word -->  <-- second word -->
+>    _   _   _   _   _   _   _   _   _   _
+> __| |_| |_| ... |_| |_| |_| |_| ... |_| |_
+> 
+> > The following patch restores functionality. I can hook up a logic
+> > analyzer tomorrow to get some more info, but I wanted to see if you had
+> > any ideas.
+>  
+> I don't understand the link between the solution and my patch, can you 
+> share the logic analyzer results?
+> 
+> Maybe the issue is the same as [1]? Does it solves the issue?
+> 
+> [1]: https://lore.kernel.org/all/20240506-fix-omap2-mcspi-v2-1-d9c77ba8b9c7@bootlin.com/
 
-dma_direct_map_page:
-1. swiotlb_map->swiotlb_tbl_map_single->swiotlb_bounce
+I took three measurements:
 
-dma_direct_unmap_page:
-2. dma_direct_sync_single_for_cpu->is_swiotlb_buffer
-3. dma_direct_sync_single_for_cpu->swiotlb_sync_single_for_cpu->
-	swiotlb_bounce
-4. is_swiotlb_buffer
-5. swiotlb_tbl_unmap_single->swiotlb_del_transient
-6. swiotlb_tbl_unmap_single->swiotlb_release_slots
+1. My patch added
+2. No patches
+3. The 'fix' patch applied from [1]
 
-Reduce the number of calls by finding the pool at a higher level, and
-passing it as an argument instead of searching again. A key change is
-for is_swiotlb_buffer() to return a pool pointer instead of a boolean,
-and then pass this pool pointer to subsequent swiotlb functions.
-With these changes, a round-trip map/unmap pair requires only 2 calls
-to swiotlb_find_pool():
+2 and 3 appear to behave the same for me. But CS is certainly the issue
+I'm seeing. Here's a quick description:
 
-dma_direct_unmap_page:
-1. dma_direct_sync_single_for_cpu->is_swiotlb_buffer
-2. is_swiotlb_buffer
+A write on this chip is seven bytes - three bytes address and four bytes
+data. Every write in 1, 2, and 3 starts with a CS assertion, 7 bytes,
+and a CS de-assertion. Writes work.
 
-These changes come from noticing the inefficiencies in a code review,
-not from performance measurements. With CONFIG_SWIOTLB_DYNAMIC,
-swiotlb_find_pool() is not trivial, and it uses an RCU read lock,
-so avoiding the redundant calls helps performance in a hot path.
-When CONFIG_SWIOTLB_DYNAMIC is *not* set, the code size reduction
-is minimal and the perf benefits are likely negligible, but no
-harm is done.
+A read is 8 bytes - three for address, one padding, and four data.
+Writes in 1 start and end with CS asserting and de-asserting. Reads in
+2 and 3 assert CS and combine multiple writes, which fails. Reads no
+longer work as a result.
 
-No functional change is intended.
+I thought maybe the lack of cs_change might be the culprit, but this
+didn't resolve the issue either:
 
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
----
-This patch trades off making many of the core swiotlb APIs take
-an additional argument in order to avoid duplicating calls to
-swiotlb_find_pool(). The current code seems rather wasteful in
-making 6 calls per round-trip, but I'm happy to accept others'
-judgment as to whether getting rid of the waste is worth the
-additional code complexity.
+@@ -172,8 +175,13 @@ static int ocelot_spi_regmap_bus_write(void *context, const void *data, size_t c
+ {
+        struct device *dev = context;
+        struct spi_device *spi = to_spi_device(dev);
++       struct spi_transfer     t = {
++                       .tx_buf         = data,
++                       .len            = count,
++                       .cs_change      = 1,
++               };
 
- drivers/iommu/dma-iommu.c | 27 ++++++++++++++------
- drivers/xen/swiotlb-xen.c | 25 +++++++++++-------
- include/linux/swiotlb.h   | 54 +++++++++++++++++++++------------------
- kernel/dma/direct.c       | 12 ++++++---
- kernel/dma/direct.h       | 18 ++++++++-----
- kernel/dma/swiotlb.c      | 43 ++++++++++++++++---------------
- 6 files changed, 106 insertions(+), 73 deletions(-)
+-       return spi_write(spi, data, count);
++       return spi_sync_transfer(spi, &t, 1);
+ }
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index f731e4b2a417..ab6bc37ecf90 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -1073,6 +1073,7 @@ static void iommu_dma_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t phys;
-+	struct io_tlb_pool *pool;
- 
- 	if (dev_is_dma_coherent(dev) && !dev_use_swiotlb(dev, size, dir))
- 		return;
-@@ -1081,21 +1082,25 @@ static void iommu_dma_sync_single_for_cpu(struct device *dev,
- 	if (!dev_is_dma_coherent(dev))
- 		arch_sync_dma_for_cpu(phys, size, dir);
- 
--	if (is_swiotlb_buffer(dev, phys))
--		swiotlb_sync_single_for_cpu(dev, phys, size, dir);
-+	pool = is_swiotlb_buffer(dev, phys);
-+	if (pool)
-+		swiotlb_sync_single_for_cpu(dev, phys, size, dir, pool);
- }
- 
- static void iommu_dma_sync_single_for_device(struct device *dev,
- 		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t phys;
-+	struct io_tlb_pool *pool;
- 
- 	if (dev_is_dma_coherent(dev) && !dev_use_swiotlb(dev, size, dir))
- 		return;
- 
- 	phys = iommu_iova_to_phys(iommu_get_dma_domain(dev), dma_handle);
--	if (is_swiotlb_buffer(dev, phys))
--		swiotlb_sync_single_for_device(dev, phys, size, dir);
-+
-+	pool = is_swiotlb_buffer(dev, phys);
-+	if (pool)
-+		swiotlb_sync_single_for_device(dev, phys, size, dir, pool);
- 
- 	if (!dev_is_dma_coherent(dev))
- 		arch_sync_dma_for_device(phys, size, dir);
-@@ -1189,8 +1194,12 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
- 		arch_sync_dma_for_device(phys, size, dir);
- 
- 	iova = __iommu_dma_map(dev, phys, size, prot, dma_mask);
--	if (iova == DMA_MAPPING_ERROR && is_swiotlb_buffer(dev, phys))
--		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
-+	if (iova == DMA_MAPPING_ERROR) {
-+		struct io_tlb_pool *pool = is_swiotlb_buffer(dev, phys);
-+
-+		if (pool)
-+			swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs, pool);
-+	}
- 	return iova;
- }
- 
-@@ -1199,6 +1208,7 @@ static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
- {
- 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
- 	phys_addr_t phys;
-+	struct io_tlb_pool *pool;
- 
- 	phys = iommu_iova_to_phys(domain, dma_handle);
- 	if (WARN_ON(!phys))
-@@ -1209,8 +1219,9 @@ static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
- 
- 	__iommu_dma_unmap(dev, dma_handle, size);
- 
--	if (unlikely(is_swiotlb_buffer(dev, phys)))
--		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
-+	pool = is_swiotlb_buffer(dev, phys);
-+	if (unlikely(pool))
-+		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs, pool);
- }
- 
- /*
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 6579ae3f6dac..7af8c8466e1d 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -88,7 +88,7 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
- 	return 0;
- }
- 
--static int is_xen_swiotlb_buffer(struct device *dev, dma_addr_t dma_addr)
-+static struct io_tlb_pool *is_xen_swiotlb_buffer(struct device *dev, dma_addr_t dma_addr)
- {
- 	unsigned long bfn = XEN_PFN_DOWN(dma_to_phys(dev, dma_addr));
- 	unsigned long xen_pfn = bfn_to_local_pfn(bfn);
-@@ -100,7 +100,7 @@ static int is_xen_swiotlb_buffer(struct device *dev, dma_addr_t dma_addr)
- 	 */
- 	if (pfn_valid(PFN_DOWN(paddr)))
- 		return is_swiotlb_buffer(dev, paddr);
--	return 0;
-+	return NULL;
- }
- 
- #ifdef CONFIG_X86
-@@ -228,7 +228,8 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
- 	 */
- 	if (unlikely(!dma_capable(dev, dev_addr, size, true))) {
- 		swiotlb_tbl_unmap_single(dev, map, size, dir,
--				attrs | DMA_ATTR_SKIP_CPU_SYNC);
-+				attrs | DMA_ATTR_SKIP_CPU_SYNC,
-+				swiotlb_find_pool(dev, map));
- 		return DMA_MAPPING_ERROR;
- 	}
- 
-@@ -254,6 +255,7 @@ static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
- 	phys_addr_t paddr = xen_dma_to_phys(hwdev, dev_addr);
-+	struct io_tlb_pool *pool;
- 
- 	BUG_ON(dir == DMA_NONE);
- 
-@@ -265,8 +267,9 @@ static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
- 	}
- 
- 	/* NOTE: We use dev_addr here, not paddr! */
--	if (is_xen_swiotlb_buffer(hwdev, dev_addr))
--		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs);
-+	pool = is_xen_swiotlb_buffer(hwdev, dev_addr);
-+	if (pool)
-+		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs, pool);
- }
- 
- static void
-@@ -274,6 +277,7 @@ xen_swiotlb_sync_single_for_cpu(struct device *dev, dma_addr_t dma_addr,
- 		size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t paddr = xen_dma_to_phys(dev, dma_addr);
-+	struct io_tlb_pool *pool;
- 
- 	if (!dev_is_dma_coherent(dev)) {
- 		if (pfn_valid(PFN_DOWN(dma_to_phys(dev, dma_addr))))
-@@ -282,8 +286,9 @@ xen_swiotlb_sync_single_for_cpu(struct device *dev, dma_addr_t dma_addr,
- 			xen_dma_sync_for_cpu(dev, dma_addr, size, dir);
- 	}
- 
--	if (is_xen_swiotlb_buffer(dev, dma_addr))
--		swiotlb_sync_single_for_cpu(dev, paddr, size, dir);
-+	pool = is_xen_swiotlb_buffer(dev, dma_addr);
-+	if (pool)
-+		swiotlb_sync_single_for_cpu(dev, paddr, size, dir, pool);
- }
- 
- static void
-@@ -291,9 +296,11 @@ xen_swiotlb_sync_single_for_device(struct device *dev, dma_addr_t dma_addr,
- 		size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t paddr = xen_dma_to_phys(dev, dma_addr);
-+	struct io_tlb_pool *pool;
- 
--	if (is_xen_swiotlb_buffer(dev, dma_addr))
--		swiotlb_sync_single_for_device(dev, paddr, size, dir);
-+	pool = is_xen_swiotlb_buffer(dev, dma_addr);
-+	if (pool)
-+		swiotlb_sync_single_for_device(dev, paddr, size, dir, pool);
- 
- 	if (!dev_is_dma_coherent(dev)) {
- 		if (pfn_valid(PFN_DOWN(dma_to_phys(dev, dma_addr))))
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 14bc10c1bb23..ce8651949123 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -42,24 +42,6 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
- 	int (*remap)(void *tlb, unsigned long nslabs));
- extern void __init swiotlb_update_mem_attributes(void);
- 
--phys_addr_t swiotlb_tbl_map_single(struct device *hwdev, phys_addr_t phys,
--		size_t mapping_size,
--		unsigned int alloc_aligned_mask, enum dma_data_direction dir,
--		unsigned long attrs);
--
--extern void swiotlb_tbl_unmap_single(struct device *hwdev,
--				     phys_addr_t tlb_addr,
--				     size_t mapping_size,
--				     enum dma_data_direction dir,
--				     unsigned long attrs);
--
--void swiotlb_sync_single_for_device(struct device *dev, phys_addr_t tlb_addr,
--		size_t size, enum dma_data_direction dir);
--void swiotlb_sync_single_for_cpu(struct device *dev, phys_addr_t tlb_addr,
--		size_t size, enum dma_data_direction dir);
--dma_addr_t swiotlb_map(struct device *dev, phys_addr_t phys,
--		size_t size, enum dma_data_direction dir, unsigned long attrs);
--
- #ifdef CONFIG_SWIOTLB
- 
- /**
-@@ -168,12 +150,12 @@ static inline struct io_tlb_pool *swiotlb_find_pool(struct device *dev,
-  * * %true if @paddr points into a bounce buffer
-  * * %false otherwise
-  */
--static inline bool is_swiotlb_buffer(struct device *dev, phys_addr_t paddr)
-+static inline struct io_tlb_pool *is_swiotlb_buffer(struct device *dev, phys_addr_t paddr)
- {
- 	struct io_tlb_mem *mem = dev->dma_io_tlb_mem;
- 
- 	if (!mem)
--		return false;
-+		return NULL;
- 
- #ifdef CONFIG_SWIOTLB_DYNAMIC
- 	/*
-@@ -187,10 +169,13 @@ static inline bool is_swiotlb_buffer(struct device *dev, phys_addr_t paddr)
- 	 * This barrier pairs with smp_mb() in swiotlb_find_slots().
- 	 */
- 	smp_rmb();
--	return READ_ONCE(dev->dma_uses_io_tlb) &&
--		swiotlb_find_pool(dev, paddr);
-+	if (READ_ONCE(dev->dma_uses_io_tlb))
-+		return swiotlb_find_pool(dev, paddr);
-+	return NULL;
- #else
--	return paddr >= mem->defpool.start && paddr < mem->defpool.end;
-+	if (paddr >= mem->defpool.start && paddr < mem->defpool.end)
-+		return &mem->defpool;
-+	return NULL;
- #endif
- }
- 
-@@ -201,6 +186,25 @@ static inline bool is_swiotlb_force_bounce(struct device *dev)
- 	return mem && mem->force_bounce;
- }
- 
-+phys_addr_t swiotlb_tbl_map_single(struct device *hwdev, phys_addr_t phys,
-+		size_t mapping_size,
-+		unsigned int alloc_aligned_mask, enum dma_data_direction dir,
-+		unsigned long attrs);
-+
-+extern void swiotlb_tbl_unmap_single(struct device *hwdev,
-+				     phys_addr_t tlb_addr,
-+				     size_t mapping_size,
-+				     enum dma_data_direction dir,
-+				     unsigned long attrs,
-+				     struct io_tlb_pool *pool);
-+
-+void swiotlb_sync_single_for_device(struct device *dev, phys_addr_t tlb_addr,
-+		size_t size, enum dma_data_direction dir, struct io_tlb_pool *pool);
-+void swiotlb_sync_single_for_cpu(struct device *dev, phys_addr_t tlb_addr,
-+		size_t size, enum dma_data_direction dir, struct io_tlb_pool *pool);
-+dma_addr_t swiotlb_map(struct device *dev, phys_addr_t phys,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs);
-+
- void swiotlb_init(bool addressing_limited, unsigned int flags);
- void __init swiotlb_exit(void);
- void swiotlb_dev_init(struct device *dev);
-@@ -219,9 +223,9 @@ static inline void swiotlb_dev_init(struct device *dev)
- {
- }
- 
--static inline bool is_swiotlb_buffer(struct device *dev, phys_addr_t paddr)
-+static inline struct io_tlb_pool *is_swiotlb_buffer(struct device *dev, phys_addr_t paddr)
- {
--	return false;
-+	return NULL;
- }
- static inline bool is_swiotlb_force_bounce(struct device *dev)
- {
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 4d543b1e9d57..50689afb0ffd 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -399,14 +399,16 @@ void dma_direct_sync_sg_for_device(struct device *dev,
- 		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
- {
- 	struct scatterlist *sg;
-+	struct io_tlb_pool *pool;
- 	int i;
- 
- 	for_each_sg(sgl, sg, nents, i) {
- 		phys_addr_t paddr = dma_to_phys(dev, sg_dma_address(sg));
- 
--		if (unlikely(is_swiotlb_buffer(dev, paddr)))
-+		pool = is_swiotlb_buffer(dev, paddr);
-+		if (unlikely(pool))
- 			swiotlb_sync_single_for_device(dev, paddr, sg->length,
--						       dir);
-+						       dir, pool);
- 
- 		if (!dev_is_dma_coherent(dev))
- 			arch_sync_dma_for_device(paddr, sg->length,
-@@ -422,6 +424,7 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
- 		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
- {
- 	struct scatterlist *sg;
-+	struct io_tlb_pool *pool;
- 	int i;
- 
- 	for_each_sg(sgl, sg, nents, i) {
-@@ -430,9 +433,10 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
- 		if (!dev_is_dma_coherent(dev))
- 			arch_sync_dma_for_cpu(paddr, sg->length, dir);
- 
--		if (unlikely(is_swiotlb_buffer(dev, paddr)))
-+		pool = is_swiotlb_buffer(dev, paddr);
-+		if (unlikely(pool))
- 			swiotlb_sync_single_for_cpu(dev, paddr, sg->length,
--						    dir);
-+						    dir, pool);
- 
- 		if (dir == DMA_FROM_DEVICE)
- 			arch_dma_mark_clean(paddr, sg->length);
-diff --git a/kernel/dma/direct.h b/kernel/dma/direct.h
-index 18d346118fe8..72aa65558e07 100644
---- a/kernel/dma/direct.h
-+++ b/kernel/dma/direct.h
-@@ -57,9 +57,11 @@ static inline void dma_direct_sync_single_for_device(struct device *dev,
- 		dma_addr_t addr, size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t paddr = dma_to_phys(dev, addr);
-+	struct io_tlb_pool *pool;
- 
--	if (unlikely(is_swiotlb_buffer(dev, paddr)))
--		swiotlb_sync_single_for_device(dev, paddr, size, dir);
-+	pool = is_swiotlb_buffer(dev, paddr);
-+	if (unlikely(pool))
-+		swiotlb_sync_single_for_device(dev, paddr, size, dir, pool);
- 
- 	if (!dev_is_dma_coherent(dev))
- 		arch_sync_dma_for_device(paddr, size, dir);
-@@ -69,14 +71,16 @@ static inline void dma_direct_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t addr, size_t size, enum dma_data_direction dir)
- {
- 	phys_addr_t paddr = dma_to_phys(dev, addr);
-+	struct io_tlb_pool *pool;
- 
- 	if (!dev_is_dma_coherent(dev)) {
- 		arch_sync_dma_for_cpu(paddr, size, dir);
- 		arch_sync_dma_for_cpu_all();
- 	}
- 
--	if (unlikely(is_swiotlb_buffer(dev, paddr)))
--		swiotlb_sync_single_for_cpu(dev, paddr, size, dir);
-+	pool = is_swiotlb_buffer(dev, paddr);
-+	if (unlikely(pool))
-+		swiotlb_sync_single_for_cpu(dev, paddr, size, dir, pool);
- 
- 	if (dir == DMA_FROM_DEVICE)
- 		arch_dma_mark_clean(paddr, size);
-@@ -117,12 +121,14 @@ static inline void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
- 	phys_addr_t phys = dma_to_phys(dev, addr);
-+	struct io_tlb_pool *pool;
- 
- 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
- 		dma_direct_sync_single_for_cpu(dev, addr, size, dir);
- 
--	if (unlikely(is_swiotlb_buffer(dev, phys)))
-+	pool = is_swiotlb_buffer(dev, phys);
-+	if (unlikely(pool))
- 		swiotlb_tbl_unmap_single(dev, phys, size, dir,
--					 attrs | DMA_ATTR_SKIP_CPU_SYNC);
-+					 attrs | DMA_ATTR_SKIP_CPU_SYNC, pool);
- }
- #endif /* _KERNEL_DMA_DIRECT_H */
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index fe1ccb53596f..59b3e333651d 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -855,9 +855,8 @@ static unsigned int swiotlb_align_offset(struct device *dev,
-  * Bounce: copy the swiotlb buffer from or back to the original dma location
-  */
- static void swiotlb_bounce(struct device *dev, phys_addr_t tlb_addr, size_t size,
--			   enum dma_data_direction dir)
-+			   enum dma_data_direction dir, struct io_tlb_pool *mem)
- {
--	struct io_tlb_pool *mem = swiotlb_find_pool(dev, tlb_addr);
- 	int index = (tlb_addr - mem->start) >> IO_TLB_SHIFT;
- 	phys_addr_t orig_addr = mem->slots[index].orig_addr;
- 	size_t alloc_size = mem->slots[index].alloc_size;
-@@ -1435,13 +1434,13 @@ phys_addr_t swiotlb_tbl_map_single(struct device *dev, phys_addr_t orig_addr,
- 	 * hardware behavior.  Use of swiotlb is supposed to be transparent,
- 	 * i.e. swiotlb must not corrupt memory by clobbering unwritten bytes.
- 	 */
--	swiotlb_bounce(dev, tlb_addr, mapping_size, DMA_TO_DEVICE);
-+	swiotlb_bounce(dev, tlb_addr, mapping_size, DMA_TO_DEVICE, pool);
- 	return tlb_addr;
- }
- 
--static void swiotlb_release_slots(struct device *dev, phys_addr_t tlb_addr)
-+static void swiotlb_release_slots(struct device *dev, phys_addr_t tlb_addr,
-+				  struct io_tlb_pool *mem)
- {
--	struct io_tlb_pool *mem = swiotlb_find_pool(dev, tlb_addr);
- 	unsigned long flags;
- 	unsigned int offset = swiotlb_align_offset(dev, 0, tlb_addr);
- 	int index, nslots, aindex;
-@@ -1505,11 +1504,9 @@ static void swiotlb_release_slots(struct device *dev, phys_addr_t tlb_addr)
-  *
-  * Return: %true if @tlb_addr belonged to a transient pool that was released.
-  */
--static bool swiotlb_del_transient(struct device *dev, phys_addr_t tlb_addr)
-+static bool swiotlb_del_transient(struct device *dev, phys_addr_t tlb_addr,
-+				  struct io_tlb_pool *pool)
- {
--	struct io_tlb_pool *pool;
--
--	pool = swiotlb_find_pool(dev, tlb_addr);
- 	if (!pool->transient)
- 		return false;
- 
-@@ -1522,7 +1519,8 @@ static bool swiotlb_del_transient(struct device *dev, phys_addr_t tlb_addr)
- #else  /* !CONFIG_SWIOTLB_DYNAMIC */
- 
- static inline bool swiotlb_del_transient(struct device *dev,
--					 phys_addr_t tlb_addr)
-+					 phys_addr_t tlb_addr,
-+					 struct io_tlb_pool *pool)
- {
- 	return false;
- }
-@@ -1534,34 +1532,34 @@ static inline bool swiotlb_del_transient(struct device *dev,
-  */
- void swiotlb_tbl_unmap_single(struct device *dev, phys_addr_t tlb_addr,
- 			      size_t mapping_size, enum dma_data_direction dir,
--			      unsigned long attrs)
-+			      unsigned long attrs, struct io_tlb_pool *pool)
- {
- 	/*
- 	 * First, sync the memory before unmapping the entry
- 	 */
- 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
- 	    (dir == DMA_FROM_DEVICE || dir == DMA_BIDIRECTIONAL))
--		swiotlb_bounce(dev, tlb_addr, mapping_size, DMA_FROM_DEVICE);
-+		swiotlb_bounce(dev, tlb_addr, mapping_size, DMA_FROM_DEVICE, pool);
- 
--	if (swiotlb_del_transient(dev, tlb_addr))
-+	if (swiotlb_del_transient(dev, tlb_addr, pool))
- 		return;
--	swiotlb_release_slots(dev, tlb_addr);
-+	swiotlb_release_slots(dev, tlb_addr, pool);
- }
- 
- void swiotlb_sync_single_for_device(struct device *dev, phys_addr_t tlb_addr,
--		size_t size, enum dma_data_direction dir)
-+		size_t size, enum dma_data_direction dir, struct io_tlb_pool *pool)
- {
- 	if (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL)
--		swiotlb_bounce(dev, tlb_addr, size, DMA_TO_DEVICE);
-+		swiotlb_bounce(dev, tlb_addr, size, DMA_TO_DEVICE, pool);
- 	else
- 		BUG_ON(dir != DMA_FROM_DEVICE);
- }
- 
- void swiotlb_sync_single_for_cpu(struct device *dev, phys_addr_t tlb_addr,
--		size_t size, enum dma_data_direction dir)
-+		size_t size, enum dma_data_direction dir, struct io_tlb_pool *pool)
- {
- 	if (dir == DMA_FROM_DEVICE || dir == DMA_BIDIRECTIONAL)
--		swiotlb_bounce(dev, tlb_addr, size, DMA_FROM_DEVICE);
-+		swiotlb_bounce(dev, tlb_addr, size, DMA_FROM_DEVICE, pool);
- 	else
- 		BUG_ON(dir != DMA_TO_DEVICE);
- }
-@@ -1586,7 +1584,8 @@ dma_addr_t swiotlb_map(struct device *dev, phys_addr_t paddr, size_t size,
- 	dma_addr = phys_to_dma_unencrypted(dev, swiotlb_addr);
- 	if (unlikely(!dma_capable(dev, dma_addr, size, true))) {
- 		swiotlb_tbl_unmap_single(dev, swiotlb_addr, size, dir,
--			attrs | DMA_ATTR_SKIP_CPU_SYNC);
-+			attrs | DMA_ATTR_SKIP_CPU_SYNC,
-+			swiotlb_find_pool(dev, swiotlb_addr));
- 		dev_WARN_ONCE(dev, 1,
- 			"swiotlb addr %pad+%zu overflow (mask %llx, bus limit %llx).\n",
- 			&dma_addr, size, *dev->dma_mask, dev->bus_dma_limit);
-@@ -1774,11 +1773,13 @@ struct page *swiotlb_alloc(struct device *dev, size_t size)
- bool swiotlb_free(struct device *dev, struct page *page, size_t size)
- {
- 	phys_addr_t tlb_addr = page_to_phys(page);
-+	struct io_tlb_pool *pool;
- 
--	if (!is_swiotlb_buffer(dev, tlb_addr))
-+	pool = is_swiotlb_buffer(dev, tlb_addr);
-+	if (!pool)
- 		return false;
- 
--	swiotlb_release_slots(dev, tlb_addr);
-+	swiotlb_release_slots(dev, tlb_addr, pool);
- 
- 	return true;
- }
--- 
-2.25.1
 
+The relevant documentation on cs_change:
+
+ * (ii) When the transfer is the last one in the message, the chip may
+ * stay selected until the next transfer.  On multi-device SPI busses
+ * with nothing blocking messages going to other devices, this is just
+ * a performance hint; starting a message to another device deselects
+ * this one.  But in other cases, this can be used to ensure correctness.
+ * Some devices need protocol transactions to be built from a series of
+ * spi_message submissions, where the content of one message is determined
+ * by the results of previous messages and where the whole transaction
+ * ends when the chipselect goes inactive.
+
+And relevant code around cs_change:
+https://elixir.bootlin.com/linux/v6.10-rc2/source/drivers/spi/spi.c#L1715
+
+
+So I think the question I have is:
+
+Should the CS line be de-asserted at the end of "spi_write"?
+
+If yes, the multi mode patch seems to break this on 8-byte transfers.
+
+If no, then how can I ensure this?
+
+
+Thanks
+
+Colin Foster
 
