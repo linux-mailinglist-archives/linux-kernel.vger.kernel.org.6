@@ -1,185 +1,192 @@
-Return-Path: <linux-kernel+bounces-205736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C648C8FFF95
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF0B8FFFF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A572B27739
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A551C2259C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E0615B122;
-	Fri,  7 Jun 2024 09:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F0815821E;
+	Fri,  7 Jun 2024 09:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AvRW6NBs"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jFlAfDAU"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3765578C9A;
-	Fri,  7 Jun 2024 09:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1A113C69B;
+	Fri,  7 Jun 2024 09:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752782; cv=none; b=OvP4AfralGXGrI0dRhZwkEbhGGDo3SGwM12Uy+duvH36K0zbfjaozlkJM+iMXYNEhZU56v/9blLBpJnmTRy+tKn1eGcG7/1mxcRskG9lKuY9ptlKlshAQBk6Hpmp193D1VM3ZAHLE6OVreW1PyA/Rva/Y9ICqZCrUUgQag1xiYI=
+	t=1717754363; cv=none; b=cnmNhYPF9gikNwJtxLYHaJgfZJByRD87Y5NElgKHHH1p67O36XWQLmL6MPfAauT4lETLIeJuq3DmYD8BjHNyNYTMGzpKTjQvRPDJlu8he6kuSTXDnSAogyIgOvIkF5vpR9veTJECDgugoeyMx5Vn1rVBu0VSaIIKwn6VAO728PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752782; c=relaxed/simple;
-	bh=YwZQL96Sr6Wg4n/MXoBB/SdxflmBRDM7A6rSw2lWBfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B6cIoal/C97yj3+YxvLtFdiA/mm2Z8XQTibIDCgWV5lT+HAaeW20oqq2nMB4r7GwQfcwUCh7p/OKb4U8mtEeLkggLxZ6M4oEN5WhsoBZLaNicxQjdHaMTK1uLOcWTpZJkFqHf3Z8PK4agt3sX/8DNNncNqSmHxAW8ZQkm+z5xhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AvRW6NBs; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gWnrC7NDDktySlmiwzkRSDu8snwjoIIvcpKg/dauVxw=; b=AvRW6NBswRQlMvSZORf258DJSA
-	TF7SutfyxKVrrkm7N7gJDKgs9JGCVm6xj9QhNcTJMwl1Uq09l5iAhEeItmifKVx5jd0TUy8RIjWaf
-	TTS2dorjk/0lWWG1Npp8e/A6lQnyHIDwsWS3gQIrtUfHl6qmABXA8/LB0mJB7BZSzwmWFzNiZcAr1
-	95slUe9f9ooB775eW78RDLmiG+8BktmaQ+NAqy7NS8UiUeYW5zsqfFy59PRgfPR6uir5nIqzb9Pyu
-	7Q7kZi9hNN/xcA8T6Rs+5G3V1ZKGDxXirIpeGaV3dsy3sdghoFCtzlQbt3JPp5+Av15OlHZkyH45i
-	80726C/w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sFVxv-00000004gtr-1KVQ;
-	Fri, 07 Jun 2024 09:32:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EC32D30047C; Fri,  7 Jun 2024 11:32:54 +0200 (CEST)
-Date: Fri, 7 Jun 2024 11:32:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ben Gainey <ben.gainey@arm.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	james.clark@arm.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] perf: Support PERF_SAMPLE_READ with inherit
-Message-ID: <20240607093254.GN8774@noisy.programming.kicks-ass.net>
-References: <20240606144059.365633-1-ben.gainey@arm.com>
- <20240606144059.365633-2-ben.gainey@arm.com>
+	s=arc-20240116; t=1717754363; c=relaxed/simple;
+	bh=xzhpGqQlNRFrOfTXkeddU4gZLytnj1t2Acd7LONh7w8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kKcD/hYoA1HkWN8OU43MGAh0QCgi/MNjTXZcS76WyXHRZNOd7RSiFI3IyW/Dv/9HHN/myG50+8k8TMXwg2xgqJbaSMYO9AHukkMddDWyjQ0Nqq+GAqqDLEVxgOp/4WXHo8Xr0xLnrOfzfP2tvpQenxY9HdntihGoRcbwC/3Vfs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jFlAfDAU; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45792avx010983;
+	Fri, 7 Jun 2024 11:35:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=FD717BMLYpy8Xa7UyDGXqP
+	dvjHhDg1P08LvrXSeUecs=; b=jFlAfDAUDOzmLqttO3S9PK2tXMMvvMBFSp+hiU
+	YNxSyfWq1NNAgu3zzJdKUVjQ3MeKTBh7e56bmgbh8khUX9MW+Mih/Hwi23pcFmcA
+	bwpSvuUJOHCL2/mnNTpdEPdro0pFHCVvUxAMUquVCMwMGOc6m6lz7YKfl4Yi9gkd
+	KlR4cDM+n8Y/kHkpUJXDWsqOkX/+8tnvJgeI33xxFvkr1HxIwH8CKsojqwfnv1qY
+	nIU3NND+rVuoKkl/Ui/CoiLZ12WKwXPgJ2vttQfxVsxYQH6C61V85Q0UCe2ULOqU
+	j/IjLoAPuuAl5djDPcV/30vqx3RpdTD/L4c0s+Xx2F19xPMA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ykbv549t5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 11:35:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7B51A40044;
+	Fri,  7 Jun 2024 11:34:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 80A08214525;
+	Fri,  7 Jun 2024 11:34:05 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
+ 2024 11:34:05 +0200
+Received: from localhost (10.252.5.235) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
+ 2024 11:34:05 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v6 0/5] Introduction of a remoteproc tee to load signed firmware
+Date: Fri, 7 Jun 2024 11:33:21 +0200
+Message-ID: <20240607093326.369090-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606144059.365633-2-ben.gainey@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_04,2024-06-06_02,2024-05-17_01
 
-On Thu, Jun 06, 2024 at 03:40:56PM +0100, Ben Gainey wrote:
-> This change allows events to use PERF_SAMPLE READ with inherit
-> so long as PERF_SAMPLE_TID is also set.
-> 
-> In this configuration, an event will be inherited into any
-> child processes / threads, allowing convenient profiling of a
-> multiprocess or multithreaded application, whilst allowing
-> profiling tools to collect per-thread samples, in particular
-> of groups of counters.
+Main updates from the previous version [1][2]:
+------------------------------------------
 
-Perhaps a few words on *WHY* this is important.
+1) Rework resource table management
+  - Rework tee_rproc_parse_fw to temporary map the resource table address
+    to create a cached_table (similar to what is done in
+    rproc_elf_load_rsc_table()).
+  - Rename tee_rproc_get_loaded_rsc_table to tee_rproc_find_loaded_rsc_table
+  - Introduce rproc_pa_to_va() allowing to translate the resource table
+    physical address to virtual address based on remoteproc carveouts.
 
-> The read_format field of both PERF_RECORD_READ and PERF_RECORD_SAMPLE
-> are changed by this new configuration, but calls to `read()` on the same
-> event file descriptor are unaffected and continue to return the
-> cumulative total.
+2) Merge the 2 "st,stm32-rproc.yaml" bindings patch in one
+   As the st,rproc-id" is linked to the introduction of the
+   "st,stm32mp1-m4-tee" compatible, merge following patches to address
+   Krzysztof concern.
+   - [PATCH v5 2/7] dt-bindings: remoteproc: Add compatibility for TEE support
+   - [PATCH v5 3/7] dt-bindings: remoteproc: Add processor identifier property
 
-This is unfortunate. Up to this point they were the same. Also, I see no
-change to the uapi file. So were you trying to say that only
-read_format::value is changed to be the thread local value as opposed to
-the hierarchy total?
+More details on updates are listed in commits messages.
 
-Please fix the wording to be unambiguous as to what is actually meant.
-Also try and justify why it is okay to break this symmetry.
+[1] https://lore.kernel.org/lkml/Zlil4YSjHxb0FRgf@p14s/T/
+[2] https://lore.kernel.org/lkml/20240521122458.3517054-1-arnaud.pouliquen@foss.st.com/
 
-> @@ -3532,11 +3544,18 @@ perf_event_context_sched_out(struct task_struct *task, struct task_struct *next)
->  			perf_ctx_disable(ctx, false);
->  
->  			/* PMIs are disabled; ctx->nr_pending is stable. */
-> -			if (local_read(&ctx->nr_pending) ||
-> +			if (ctx->nr_inherit_read ||
-> +			    next_ctx->nr_inherit_read ||
-> +			    local_read(&ctx->nr_pending) ||
->  			    local_read(&next_ctx->nr_pending)) {
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 
-This seems unfortunate, nr_pending and nr_inherit_read are both used
-exclusively to inhibit this context switch optimization. Surely they can
-share the exact same counter.
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
 
-That is, rename nr_pending and use it for both?
+1) Principle:
 
->  				/*
->  				 * Must not swap out ctx when there's pending
->  				 * events that rely on the ctx->task relation.
-> +				 *
-> +				 * Likewise, when a context contains inherit +
-> +				 * SAMPLE_READ events they should be switched
-> +				 * out using the slow path so that they are
-> +				 * treated as if they were distinct contexts.
->  				 */
->  				raw_spin_unlock(&next_ctx->lock);
->  				rcu_read_unlock();
-> @@ -4552,11 +4571,19 @@ static void __perf_event_read(void *info)
->  	raw_spin_unlock(&ctx->lock);
->  }
->  
-> -static inline u64 perf_event_count(struct perf_event *event)
-> +static inline u64 perf_event_count_cumulative(struct perf_event *event)
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
 
-I don't think you need this -- overly long and hard to type function
-name...
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
 
->  {
->  	return local64_read(&event->count) + atomic64_read(&event->child_count);
->  }
->  
-> +static inline u64 perf_event_count(struct perf_event *event, bool self_value_only)
-> +{
-> +	if (self_value_only && has_inherit_and_sample_read(&event->attr))
-> +		return local64_read(&event->count);
+2) Format of the signed image:
 
-... if this @self_value_only argument was actually used as such -- it
-isn't, see how you use 'from_sample' which is something else entirely.
-Which then also caused to you fix it up and make a mess with that &&
-has_inherit_and_sample_read() nonsense. (also, shorter function names,
-more good)
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
 
-> +
-> +	return perf_event_count_cumulative(event);
-> +}
+3) OP-TEE trusted application API:
 
-That is, I would really rather you had:
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
 
-static inline u64 perf_event_count(struct perf_event *event, bool self)
-{
-	if (self)
-		return local64_read(&event->count);
+4) OP-TEE signature script
 
-	return local64_read(&event->count) + local64_read(&event->child_count);
-}
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
 
-And then actually use that argument as intended.
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
 
-> @@ -7205,13 +7232,14 @@ void perf_event__output_id_sample(struct perf_event *event,
->  
->  static void perf_output_read_one(struct perf_output_handle *handle,
->  				 struct perf_event *event,
-> -				 u64 enabled, u64 running)
-> +				 u64 enabled, u64 running,
-> +				 bool from_sample)
->  {
->  	u64 read_format = event->attr.read_format;
->  	u64 values[5];
->  	int n = 0;
->  
-> -	values[n++] = perf_event_count(event);
-> +	values[n++] = perf_event_count(event, from_sample);
 
-...observe the fail... from_sample != self-value-only
+5) Impact on User space Application
 
->  	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED) {
->  		values[n++] = enabled +
->  			atomic64_read(&event->child_total_time_enabled);
+No sysfs impact.the user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (5):
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Add TEE support
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 ++-
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  74 ++-
+ drivers/remoteproc/stm32_rproc.c              | 147 ++++--
+ drivers/remoteproc/tee_remoteproc.c           | 451 ++++++++++++++++++
+ include/linux/remoteproc.h                    |   7 +
+ include/linux/tee_remoteproc.h                |  99 ++++
+ 8 files changed, 801 insertions(+), 46 deletions(-)
+ create mode 100644 drivers/remoteproc/tee_remoteproc.c
+ create mode 100644 include/linux/tee_remoteproc.h
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+-- 
+2.25.1
 
 
