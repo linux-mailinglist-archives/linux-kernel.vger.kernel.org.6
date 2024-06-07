@@ -1,200 +1,154 @@
-Return-Path: <linux-kernel+bounces-205223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F1B8FF99E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BE18FF9A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 03:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5BA1F23C8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6722284638
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 01:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1F610799;
-	Fri,  7 Jun 2024 01:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4B0101E6;
+	Fri,  7 Jun 2024 01:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dyTbjZxx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198D7DDA8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HaIlV1/7"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FA4846F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 01:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717724151; cv=none; b=YJmQvZRau66Qg07lg70DaW+PeW3lE/DNcMDPrfalKU31FcxpIRVQ/WeKe87JDETlELFUq+IkfOQCGYFDP3uQJbk9ERtYsY91MH0+Otq4815RYiTj/LWNZ5Nfo+d5NNNoPOtVUwGvcmjsDZcUey+BBKRAxON8niAYLeZfuSSO/HQ=
+	t=1717724239; cv=none; b=SXQtX8Xoogop29IHx5U8tYlyPCFJeyFZYbOCxb5pxIg5SGERcn8sHJ5/BJWjEofixz1/rJTeOSVly71sYnLd0xL0v1tBBeJYJpO98Em/20uRELYScSMfQgWrOQnK12SEAn7VakxokE4S90rkBPW8BxG8al2/eN8gXQi+BFxWmMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717724151; c=relaxed/simple;
-	bh=nbNXKfKbjYDltK/b3As9mQn/en5qyoVcynRwZ2z1XUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4WfeLVENvVklUMBvOTgnIStH7GcZuoGl+PVyiZqYmgiUhMAkZVpyvieiOc8oXq2PPt9Yg2dYRaWm/bIGeNTQyYIIaQRCw+g6/D7ExR0WCEA4OKFECsKjCJL0dM2vyQqRNrwEnxfSNOGB+wQqFv3vTdtj0mBIwDXiLd9xpMRCrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dyTbjZxx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717724149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rBaLMXiInNNf5xIzjvC1p4XJ2cYBqJyAmUopOl6hQjE=;
-	b=dyTbjZxx9t1stvGZs9XkLI2zICvPDKfUortgwqi+v0+sRsNwGtNN9d/63l44fKVB7IMoDr
-	nezQjECLjL9ddtGeAQUe86YUF1Qvp4o6mPvOPnlClQXfKlEqn7OZY8V53soaEPBp8iXzCG
-	D4CjhszC6g92kYotbLVjIQtUyiaPPuE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-288-AOwFYOxBN-2iH6qDlkwu5w-1; Thu,
- 06 Jun 2024 21:35:46 -0400
-X-MC-Unique: AOwFYOxBN-2iH6qDlkwu5w-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 527E2196CE3A;
-	Fri,  7 Jun 2024 01:35:44 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.45])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8EC683001E83;
-	Fri,  7 Jun 2024 01:35:39 +0000 (UTC)
-Date: Fri, 7 Jun 2024 09:35:32 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: yebin <yebin@huaweicloud.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ye Bin <yebin10@huawei.com>
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-Message-ID: <ZmJj5C4gz+gT9C4m@fedora>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
- <ZmJQwvBXfm3zw+Xs@fedora>
- <6662632D.7020000@huaweicloud.com>
+	s=arc-20240116; t=1717724239; c=relaxed/simple;
+	bh=A1WfXqByJ4xuJ/wejRCVBPrP0DTQANQn81SgBjIMhvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BoWnGvqiHahAk79Ivwx0R6pSvtKhMDDmzrIAImb81M+r7Vmw3Yv0Xbct99wwtxBgg50m1bljtZXKRlpXn5fL4ozb91TnzwBWGDt1aC7bx+jspCvLPqLJnnm4VeNI2RmtyqamPb93FodQcmmh4y3k60adk1PUoLVXUTWdOB3QQ84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HaIlV1/7; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Qfl0U
+	CymRtBzUyGemEPimXVzpDc6BxR0DGTzZciDn+0=; b=HaIlV1/7yap04VYWcMSY8
+	T2joXeTLv8LxpIfPbSRMa5SmszWsUmmlmBVk+bSvSXfFkDOiJF+HmGOniGLoe2aD
+	N4kHYRqeAV9Yll9bu2QwzY37s/JRAAtb34dNA6Ua7ANv2tas/CsfTF3NUTmYfgwm
+	6UUDG75SXU3a+K6ZYSoOg8=
+Received: from localhost.localdomain (unknown [193.203.214.57])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3v+ASZGJmDPvEDg--.14050S4;
+	Fri, 07 Jun 2024 09:36:19 +0800 (CST)
+From: ran xiaokai <ranxiaokai627@163.com>
+To: 21cnbao@gmail.com
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mhocko@kernel.org,
+	ran.xiaokai@zte.com.cn,
+	v-songbaohua@oppo.com,
+	si.hao@zte.com.cn,
+	xu.xin16@zte.com.cn,
+	yang.yang29@zte.com.cn,
+	ziy@nvidia.com
+Subject: Re: [PATCH linux-next v2] mm: huge_memory: fix misused mapping_large_folio_support() for anon folios
+Date: Fri,  7 Jun 2024 01:36:17 +0000
+Message-Id: <20240607013617.913054-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAGsJ_4x=v0fDN_QVjdHSGVykH2+o_f81NnN_0-SUL+iwe+v84g@mail.gmail.com>
+References: <CAGsJ_4x=v0fDN_QVjdHSGVykH2+o_f81NnN_0-SUL+iwe+v84g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6662632D.7020000@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v+ASZGJmDPvEDg--.14050S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWFyUGFW5Jr45Aw4xurWruFg_yoW5tF43pF
+	97G3Z3GFWkZF9I9rnFqr1qyF1FqrWvgayUAa47G3s8A3Z8Ja1v9FZrA3Z8Z34UZrW3AF4x
+	XF4UXFy5WFn8tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZZUUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRj2TGVOAtAJyAAAsz
 
-On Fri, Jun 07, 2024 at 09:32:29AM +0800, yebin wrote:
+> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >
+> > When I did a large folios split test, a WARNING
+> > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
+> > was triggered. But the test cases are only for anonmous folios.
+> > while mapping_large_folio_support() is only reasonable for page
+> > cache folios.
+> >
+> > In split_huge_page_to_list_to_order(), the folio passed to
+> > mapping_large_folio_support() maybe anonmous folio. The
+> > folio_test_anon() check is missing. So the split of the anonmous THP
+> > is failed. This is also the same for shmem_mapping(). We'd better add
+> > a check for both. But the shmem_mapping() in __split_huge_page() is
+> > not involved, as for anonmous folios, the end parameter is set to -1, so
+> > (head[i].index >= end) is always false. shmem_mapping() is not called.
+> >
+> > Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
+> > for anon mapping, So we can detect the wrong use more easily.
+> >
+> > THP folios maybe exist in the pagecache even the file system doesn't
+> > support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
+> > is enabled, khugepaged will try to collapse read-only file-backed pages
+> > to THP. But the mapping does not actually support multi order
+> > large folios properly.
+> >
+> > Using /sys/kernel/debug/split_huge_pages to verify this, with this
+> > patch, large anon THP is successfully split and the warning is ceased.
+> >
+> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> > ---
+> >  include/linux/pagemap.h |  4 ++++
+> >  mm/huge_memory.c        | 27 ++++++++++++++++-----------
+> >  2 files changed, 20 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> > index ee633712bba0..59f1df0cde5a 100644
+> > --- a/include/linux/pagemap.h
+> > +++ b/include/linux/pagemap.h
+> > @@ -381,6 +381,10 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+> >   */
+> >  static inline bool mapping_large_folio_support(struct address_space *mapping)
+> >  {
+> > +       /* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache folios */
+> > +       VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
+> > +                       "Anonymous mapping always supports large folio");
+> > +
+> >         return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+> >                 test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> >  }
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 317de2afd371..62d57270b08e 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -3009,30 +3009,35 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+> >         if (new_order >= folio_order(folio))
+> >                 return -EINVAL;
+> >
+> > -       /* Cannot split anonymous THP to order-1 */
+> > -       if (new_order == 1 && folio_test_anon(folio)) {
+> > -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> > -               return -EINVAL;
+> > -       }
+> > -
+> > -       if (new_order) {
+> > -               /* Only swapping a whole PMD-mapped folio is supported */
+> > -               if (folio_test_swapcache(folio))
+> > +       if (folio_test_anon(folio)) {
+> > +               /* Cannot split anonymous THP to order-1 */
 > 
+> This is simply what the code is indicating. Shouldn't we phrase
+> it differently to explain "why" but not "how"? for example, anon
+> order-1 mTHP is not supported?
+
+Hi, Barry,
+Good comments, thanks.
+Is "order-1 is not a anonymouns mTHP suitable order." better?
+ 
+> Otherwise, it looks good to me.
 > 
-> On 2024/6/7 8:13, Ming Lei wrote:
-> > On Thu, Jun 06, 2024 at 02:26:55PM +0800, Ye Bin wrote:
-> > > From: Ye Bin <yebin10@huawei.com>
-> > > 
-> > > There's a issue as follows when do format NVME with IO:
-> > > BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-> > > PGD 101727f067 P4D 1011fae067 PUD fbed78067 PMD 0
-> > > Oops: 0000 [#1] SMP NOPTI
-> > > RIP: 0010:kfree+0x4f/0x160
-> > > RSP: 0018:ff705a800912b910 EFLAGS: 00010247
-> > > RAX: 0000000000000000 RBX: 0d06d30000000000 RCX: ff4fb320260ad990
-> > > RDX: ff4fb30ee7acba40 RSI: 0000000000000000 RDI: 00b04cff80000000
-> > > RBP: ff4fb30ee7acba40 R08: 0000000000000200 R09: ff705a800912bb60
-> > > R10: 0000000000000000 R11: ff4fb3103b67c750 R12: ffffffff9a62d566
-> > > R13: ff4fb30aa0530000 R14: 0000000000000000 R15: 000000000000000a
-> > > FS:  00007f4399b6b700(0000) GS:ff4fb31040140000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000000000000008 CR3: 0000001014cd4002 CR4: 0000000000761ee0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-> > > PKRU: 55555554
-> > > Call Trace:
-> > >   bio_integrity_free+0xa6/0xb0
-> > >   __bio_integrity_endio+0x8c/0xa0
-> > >   bio_endio+0x2b/0x130
-> > >   blk_update_request+0x78/0x2b0
-> > >   blk_mq_end_request+0x1a/0x140
-> > >   blk_mq_try_issue_directly+0x5d/0xc0
-> > >   blk_mq_make_request+0x46b/0x540
-> > >   generic_make_request+0x121/0x300
-> > >   submit_bio+0x6c/0x140
-> > >   __blkdev_direct_IO_simple+0x1ca/0x3a0
-> > >   blkdev_direct_IO+0x3d9/0x460
-> > >   generic_file_read_iter+0xb4/0xc60
-> > >   new_sync_read+0x121/0x170
-> > >   vfs_read+0x89/0x130
-> > >   ksys_read+0x52/0xc0
-> > >   do_syscall_64+0x5d/0x1d0
-> > >   entry_SYSCALL_64_after_hwframe+0x65/0xca
-> > > 
-> > > Assuming a 512 byte directIO is issued, the initial logical block size of
-> > > the state block device is 512 bytes, and then modified to 4096 bytes.
-> > > Above issue may happen as follows:
-> > >           Direct read                    format NVME
-> > > __blkdev_direct_IO_simple(iocb, iter, nr_pages);
-> > >    if ((pos | iov_iter_alignment(iter)) & (bdev_logical_block_size(bdev) - 1))
-> > > 	-->The logical block size is 512, and the IO issued is 512 bytes,
-> > > 	   which can be checked
-> > >      return -EINVAL;
-> > >    submit_bio(&bio);
-> > >                                        nvme_dev_ioctl
-> > >                                          case NVME_IOCTL_RESCAN:
-> > >                                            nvme_queue_scan(ctrl);
-> > >                                               ...
-> > >                                              nvme_update_disk_info(disk, ns, id);
-> > >                                                blk_queue_logical_block_size(disk->queue, bs);
-> > >                                                  --> 512->4096
-> > >       blk_queue_enter(q, flags)
-> > >       blk_mq_make_request(q, bio)
-> > >         bio_integrity_prep(bio)
-> > > 	 len = bio_integrity_bytes(bi, bio_sectors(bio));
-> > > 	   -->At this point, because the logical block size has increased to
-> > > 	      4096 bytes, the calculated 'len' here is 0
-> > >           buf = kmalloc(len, GFP_NOIO | q->bounce_gfp);
-> > > 	   -->Passed in len=0 and returned buf=16
-> > >           end = (((unsigned long) buf) + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > >           start = ((unsigned long) buf) >> PAGE_SHIFT;
-> > >           nr_pages = end - start;  -->nr_pages == 1
-> > >           bip->bip_flags |= BIP_BLOCK_INTEGRITY;
-> > >           for (i = 0 ; i < nr_pages ; i++) {
-> > >             if (len <= 0)
-> > >                -->Not initializing the bip_vec of bio_integrity, will result
-> > > 		 in null pointer access during subsequent releases. Even if
-> > > 		 initialized, it will still cause subsequent releases access
-> > > 		 null pointer because the buffer address is incorrect.
-> > >               break;
-> > > 
-> > > Firstly, it is unreasonable to format NVME in the presence of IO. It is also
-> > > possible to see IO smaller than the logical block size in the block layer for
-> > > this type of concurrency. It is expected that this type of IO device will
-> > > return an error, so exception handling should also be done for this type of
-> > > IO to prevent null pointer access from causing system crashes.
-> > Actually unaligned IO handling is one mess for nvme hardware. Yes, IO may fail,
-> > but it is observed that meta buffer is overwrite by DMA in read IO.
-> > 
-> > Ye and Yi, can you test the following patch in your 'nvme format' & IO workload?
-> > 
-> > 
-> > diff --git a/block/blk-core.c b/block/blk-core.c
-> > index 82c3ae22d76d..a41ab4a3a398 100644
-> > --- a/block/blk-core.c
-> > +++ b/block/blk-core.c
-> > @@ -336,6 +336,19 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
-> >   	return 0;
-> >   }
-> > +static bool bio_unaligned(struct bio *bio)
-> > +{
-> > +	unsigned int bs = bdev_logical_block_size(bio->bi_bdev);
-> > +
-> > +	if (bio->bi_iter.bi_size & (bs - 1))
-> > +	        return true;
-> > +
-> > +	if ((bio->bi_iter.bi_sector << SECTOR_SHIFT) & (bs - 1))
-> > +	        return true;
-> > +
-> > +	return false;
-> > +}
-> I think this judgment is a bit incorrect. It should not be sufficient to
-> only determine whether
-> the length and starting sector are logically block aligned.
-
-Can you explain why the two are not enough? Other limits should be handled
-by bio split.
-
-
-Thanks,
-Ming
+> Reviewed-by: Barry Song <baohua@kernel.org>
 
 
