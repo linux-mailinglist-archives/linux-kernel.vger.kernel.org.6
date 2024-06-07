@@ -1,164 +1,214 @@
-Return-Path: <linux-kernel+bounces-205440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483718FFBE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661EF8FFBDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4EF1F22747
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557D61C23B50
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FDE153583;
-	Fri,  7 Jun 2024 06:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B171BC2F;
+	Fri,  7 Jun 2024 06:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R9MzvXSY"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQygzPtb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B5D14F9C6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4523F14EC78;
+	Fri,  7 Jun 2024 06:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717740619; cv=none; b=PqVMVTVrilwKI06aqGp6UKB5UKmjCzzl4f+9F02cQjLqpiCGYZKy9YlTvO8TkEX6HsDsEtXed6vRJD65w5gU825Zi/Z1vxRk9Qb64hGXilWhiUxbHbR1F4tJ3cWdEbs4NxLbTUYoIO/yIXe5KZgn0F/STBEJ0hYgG1ydlESEig8=
+	t=1717740611; cv=none; b=anAJVFcN1gpV/pOiE/BpBL5DDzXTKRVeVNZDAoQHIiUopQsN6bkSQm0ilV8+7RBaEPMMxC43NooYeGWCmD74VGCCmFOTbGBWe1Z7qjxUBy1thfnXmsTEW+pwrYd1zdVthTEMka+6tnlB0XKjjArHcEEXrSsFXU6uitDz21SHQ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717740619; c=relaxed/simple;
-	bh=+yNnUVafWEFHM6Vfhx3c/ikYL4GjYaVR1FLvegx+GN4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iuXWj9fbnM0nlhk9Pw5BtbWs8C/JWRAgPA0AVHadckGUpHzdsZ0S5sOScTgL0i+ZbHz5J3S/8os7QYGnsQfarZJuEvL4CaPLUwUDTmuy4gX0DJqvq8y/F7c6lVZ+tD+50DRTWFbsZZ67cdYEfNBSN1KVQtsowbwflWI9fDfVPHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R9MzvXSY; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f682e7079bso23275565ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717740617; x=1718345417; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3IaxqkxoUHKrRAhQLcm0mCsfS9ca+q5nOq+ZwxnZnJs=;
-        b=R9MzvXSYGb3XeaVN1xdzz+MCDkgUmbY4+HIIo/RQfvh7ymY3hI+0Z/HXAR/2BppW+U
-         5vI+yoeRoK8jDlaigB87oZHfX38N7xfAM3I94o9yymeRjXPWq+TVF+6q+JB7GRT/VdNw
-         3XXrAZj6aAAJ1KpI3mRgk6PWeNQpA5jw21l9xPXY9cFhhC+0fZvEJYH5K1UYiQfxP193
-         uZZYdQM86gCONXjwMBdSiDOm/HT8z8bcss86ECIulVjcTo40v5Y8ybZCYPc92hxtGZ1T
-         WLE7y4aNRcVi3wasyo9VcGrgIXEGTLWtvrA9mps+tOMSeWAMJeemcgu3UlbI/fkRn221
-         eJrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717740617; x=1718345417;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3IaxqkxoUHKrRAhQLcm0mCsfS9ca+q5nOq+ZwxnZnJs=;
-        b=ubm/G0JLcPbHryafs307BqUNaInK0p+vwODpWs0eY7U4DrRxKKO18RDaxNXOst7YmJ
-         CtJsVhLx8eZZrx1a5P9OIfImM5BtuuksFQoNp0uUrV9nHtxQZD7payNaW6AO5/gwBMV0
-         Zg2hrRvtl+7j/JHNo2+yiDXW5n5RwePRmc+X89iqLip9/39Vi9bXYFdk/ENmQmNhG7Fs
-         yqNzMofkp0gOMY9aT21y1Ftc1syqNxRUzZlBSmnBlhNht8tjIGluBCPo9HemkbTdEayu
-         tumtD1/X8Vln+JvOaxMfmStBeGv2NCj/VovbVVEepj/N5EhTq+3XK17+IEltNnFB06y2
-         fJdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Iz+dM1hh86PRfD0KcyrzAK1v52qC2UF/YDndGABkfX4Sy+AxZXZPzfeaXVTlzZmLV8PzhX/F0Mpwb4f+ehDDeiFbIhJVHTGZKq7J
-X-Gm-Message-State: AOJu0YwP6/Yj++8+9kJDbII8TZr8nZmo13yxIazZGnVr8trhSQskwH+h
-	5Gt6bX7EkGqwKc0b1/5aqRn1tZWacPbac5EHhMdhCtqPKvCLerJrxMVeNwzft5Ql6/6lo7TvgKc
-	0hTvvUH/csw==
-X-Google-Smtp-Source: AGHT+IF0A60X0eGYChsWehMsLUt65JdkRv2Yk1dsUtkseIs2rFVb0B3papVQSfoUqB4VpiwZFIWs5WPQpoeOtg==
-X-Received: from joshwash.sea.corp.google.com ([2620:15c:11c:202:a3cf:7d53:6a60:be07])
- (user=joshwash job=sendgmr) by 2002:a17:902:d488:b0:1f6:13fd:2473 with SMTP
- id d9443c01a7336-1f6d02fc466mr1480655ad.10.1717740616671; Thu, 06 Jun 2024
- 23:10:16 -0700 (PDT)
-Date: Thu,  6 Jun 2024 23:09:47 -0700
-In-Reply-To: <20240606192139.1872461-1-joshwash@google.com>
+	s=arc-20240116; t=1717740611; c=relaxed/simple;
+	bh=MT9Gl/3nWYkiLESuDf2i06kzDPa0fika+gNfL63dSRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nc1CkH54WOolh5ky14DTY9rpBkyihaIF8KZ7PjhCdEkeJAY7CLcJQQ/jvc+8+2d4Y4eQlPFzJ8DRlyutQ4B5XtbgJGxVTZMflwfez+U61RKPzJSPQvM0IMK/ukksT2W+JWfSTilO0ql6SToVjMXVyEer+3wVoOrcsBIanKq6+2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQygzPtb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E248C2BBFC;
+	Fri,  7 Jun 2024 06:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717740610;
+	bh=MT9Gl/3nWYkiLESuDf2i06kzDPa0fika+gNfL63dSRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oQygzPtbWxg8NHnX55eodLzOzgCvMC4qGMwckQc8HdzV21YZMrXCKKyB92dSSBMn6
+	 E+GPRHtj2uf1fRoy8PnqhTms6VV9coBEYeuAxvE/rgA2okMRmpT5ixNA8goFNluJOp
+	 bZ31CgHs8In4aytAC7QR24xIkZBltl3sNOViINTi27fxorOQJN+oximu//gK6Xhp+d
+	 uaxoGui8nnRVRG5MwMMpRlivOx/GBmn1pRsHDFx/wFXusHJNm8udVkRdXxdcDVxg9+
+	 c8mITOrUvC6ptFD5ZD0zbQI8AhnAAa4+Z+PHpV1jaLJiPym0V5jFGLy/Y53y+LDlnV
+	 ryhyg9EC0tHVw==
+Date: Thu, 6 Jun 2024 23:10:08 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@arm.com>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+Message-ID: <ZmKkQIUPqU8YTzbj@google.com>
+References: <Zld3dlJHjFMFG02v@x1>
+ <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
+ <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
+ <aee9254e-81c1-464a-8a28-f971615baffc@arm.com>
+ <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
+ <ZlkC_Tm6kKIL3Phc@google.com>
+ <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
+ <CAP-5=fUq6jLCtjPNb0gngtR0cXopG+-mJ-+CnEOAXeG7VShh8A@mail.gmail.com>
+ <CAM9d7cjPe68PMb1hnbypMOQUQOybpisdqH3eTH1B9G-KG5rKXw@mail.gmail.com>
+ <f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240606192139.1872461-1-joshwash@google.com>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240607060958.2789886-1-joshwash@google.com>
-Subject: [PATCH net v2] gve: ignore nonrelevant GSO type bits when processing
- TSO headers
-From: joshwash@google.com
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net, kuba@kernel.org, stable@kernel.org, 
-	Joshua Washington <joshwash@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Eric Dumazet <edumazet@google.com>, Andrei Vagin <avagin@gmail.com>, 
-	Jeroen de Borst <jeroendb@google.com>, Shailend Chand <shailend@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Rushil Gupta <rushilg@google.com>, Bailey Forrest <bcf@google.com>, 
-	Catherine Sullivan <csully@google.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com>
 
-From: Joshua Washington <joshwash@google.com>
+Hello,
 
-TSO currently fails when the skb's gso_type field has more than one bit
-set.
+On Thu, Jun 06, 2024 at 10:42:33AM +0100, James Clark wrote:
+> 
+> 
+> On 06/06/2024 08:09, Namhyung Kim wrote:
+> > On Wed, Jun 5, 2024 at 4:02 PM Ian Rogers <irogers@google.com> wrote:
+> >>
+> >> On Wed, Jun 5, 2024 at 1:29 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >>>
+> >>> On Thu, May 30, 2024 at 3:52 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >>>>
+> >>>> On Thu, May 30, 2024 at 06:46:08AM -0700, Ian Rogers wrote:
+> >>>>> On Thu, May 30, 2024 at 5:48 AM James Clark <james.clark@arm.com> wrote:
+> >>>>>>
+> >>>>>> On 30/05/2024 06:35, Namhyung Kim wrote:
+> >>>>>>> It might not be a perfect solution but it could be a simple one.
+> >>>>>>> Ideally I think it'd be nice if the kernel exports more information
+> >>>>>>> about the PMUs like sampling and exclude capabilities.
+> >>>>>>>> Thanks,
+> >>>>>>> Namhyung
+> >>>>>>
+> >>>>>> That seems like a much better suggestion. Especially with the ever
+> >>>>>> expanding retry/fallback mechanism that can never really take into
+> >>>>>> account every combination of event attributes that can fail.
+> >>>>>
+> >>>>> I think this approach can work but we may break PMUs.
+> >>>>>
+> >>>>> Rather than use `is_core` on `struct pmu` we could have say a
+> >>>>> `supports_sampling` and we pass to parse_events an option to exclude
+> >>>>> any PMU that doesn't have that flag. Now obviously more than just core
+> >>>>> PMUs support sampling. All software PMUs, tracepoints, probes. We have
+> >>>>> an imprecise list of these in perf_pmu__is_software. So we can set
+> >>>>> supports_sampling for perf_pmu__is_software and is_core.
+> >>>>
+> >>>> Yep, we can do that if the kernel provides the info.  But before that
+> >>>> I think it's practical to skip uncore PMUs and hope other PMUs don't
+> >>>> have event aliases clashing with the legacy names. :)
+> >>>>
+> >>>>>
+> >>>>> I think the problem comes for things like the AMD IBS PMUs, intel_bts
+> >>>>> and intel_pt. Often these only support sampling but aren't core. There
+> >>>>> may be IBM S390 PMUs or other vendor PMUs that are similar. If we can
+> >>>>> make a list of all these PMU names then we can use that to set
+> >>>>> supports_sampling and not break event parsing for these PMUs.
+> >>>>>
+> >>>>> The name list sounds somewhat impractical, let's say we lazily compute
+> >>>>> the supports_sampling on a PMU. We need the sampling equivalent of
+> >>>>> is_event_supported:
+> >>>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/print-events.c?h=perf-tools-next#n242
+> >>>>> is_event_supported has had bugs, look at the exclude_guest workaround
+> >>>>> for Apple PMUs. It also isn't clear to me how we choose the event
+> >>>>> config that we're going to probe to determine whether sampling works.
+> >>>>> The perf_event_open may reject the test because of a bad config and
+> >>>>> not because sampling isn't supported.
+> >>>>>
+> >>>>> So I think we can make the approach work if we had either:
+> >>>>> 1) a list of PMUs that support sampling,
+> >>>>> 2) a reliable "is_sampling_supported" test.
+> >>>>>
+> >>>>> I'm not sure of the advantages of doing (2) rather than just creating
+> >>>>> the set of evsels and ignoring those that fail to open. Ignoring
+> >>>>> evsels that fail to open seems more unlikely to break anything as the
+> >>>>> user is giving the events/config values for the PMUs they care about.
+> >>>>
+> >>>> Yep, that's also possible.  I'm ok if you want to go that direction.
+> >>>
+> >>> Hmm.. I thought about this again.  But it can be a problem if we ignore
+> >>> any failures as it can be a real error due to other reason - e.g. not
+> >>> supported configuration or other user mistakes.
+> >>
+> >> Right, we have two not good choices:
+> >>
+> >> 1) Try to detect whether sampling is supported, but any test doing
+> >> this needs to guess at a configuration and we'll need to deflake this
+> >> on off platforms like those that don't allow things like exclude
+> >> guest.
+> > 
+> > I believe we don't need to try so hard to detect if sampling is
+> > supported or not.  I hope we will eventually add that to the
+> > kernel.  Also this is just an additional defense line, it should
+> > work without it in most cases.  It'll just protect from a few edge
+> > cases like uncore PMUs having events of legacy name.  For
+> > other events or PMUs, I think it's ok to fail.
+> > 
+> > 
+> >> 2) Ignore failures, possibly hiding user errors.
+> >>
+> >> I would prefer for (2) the errors were pr_err rather than pr_debug,
+> >> something the user can clean up by getting rid of warned about PMUs.
+> >> This will avoid hiding the error, but then on Neoverse cycles will
+> >> warn about the arm_dsu PMU's cycles event for exactly Linus' test
+> >> case. My understanding is that this is deemed a regression, hence
+> >> Arnaldo proposing pr_debug to hide it.
+> > 
+> > Right, if we use pr_err() then users will complain.  If we use
+> > pr_debug() then errors will be hidden silently.
+> > 
+> > Thanks,
+> > Namhyung
+> 
+> I'm not sure if anyone would really complain about warnings for
+> attempting to open but not succeeding, as long as the event that they
+> really wanted is there. I'm imagining output like this:
+> 
+>   $ perf record -e cycles -- ls
+> 
+>   Warning: skipped arm_dsu/cycles/ event(s), recording on
+>     armv8_pmuv3_0/cycles/, armv8_pmuv3_1/cycles/
 
-TSO packets can be passed from userspace using PF_PACKET, TUNTAP and a
-few others, using virtio_net_hdr (e.g., PACKET_VNET_HDR). This includes
-virtualization, such as QEMU, a real use-case.
+This looks good, but I guess arm_dsu (or others maybe..) has multiple
+instances like arm_dsu_0, arm_dsu_1, and so on.  Then it should merge
+the similar PMUs and print once.  Same thing for armv8_pmuv3.
 
-The gso_type and gso_size fields as passed from userspace in
-virtio_net_hdr are not trusted blindly by the kernel. It adds gso_type
-|= SKB_GSO_DODGY to force the packet to enter the software GSO stack
-for verification.
+But I think it's better to skip the events if we know the PMU doesn't
+support sampling for sure.
 
-This issue might similarly come up when the CWR bit is set in the TCP
-header for congestion control, causing the SKB_GSO_TCP_ECN gso_type bit
-to be set.
+> 
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.008 MB perf.data (30 samples) ]
+> 
+> You only really need to worry when no events can be opened, but
+> presumably that was a warning anyway.
 
-Fixes: a57e5de476be ("gve: DQO: Add TX path")
-Signed-off-by: Joshua Washington <joshwash@google.com>
-Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Andrei Vagin <avagin@gmail.com>
----
- drivers/net/ethernet/google/gve/gve_tx_dqo.c | 21 +++++---------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+Right, this is a problem but I'm not sure it handles the case
+specifically as it just reported warning on any failures first.
 
-diff --git a/drivers/net/ethernet/google/gve/gve_tx_dqo.c b/drivers/net/ethernet/google/gve/gve_tx_dqo.c
-index fe1b26a4d736..a76b407a981b 100644
---- a/drivers/net/ethernet/google/gve/gve_tx_dqo.c
-+++ b/drivers/net/ethernet/google/gve/gve_tx_dqo.c
-@@ -551,32 +551,21 @@ static int gve_prep_tso(struct sk_buff *skb)
- 	 * - Hypervisor enforces a limit of 9K MTU
- 	 * - Kernel will not produce a TSO larger than 64k
- 	 */
--
- 	if (unlikely(skb_shinfo(skb)->gso_size < GVE_TX_MIN_TSO_MSS_DQO))
- 		return -1;
- 
-+	if (!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6)))
-+		return -EINVAL;
-+
- 	/* Needed because we will modify header. */
- 	err = skb_cow_head(skb, 0);
- 	if (err < 0)
- 		return err;
- 
- 	tcp = tcp_hdr(skb);
--
--	/* Remove payload length from checksum. */
- 	paylen = skb->len - skb_transport_offset(skb);
--
--	switch (skb_shinfo(skb)->gso_type) {
--	case SKB_GSO_TCPV4:
--	case SKB_GSO_TCPV6:
--		csum_replace_by_diff(&tcp->check,
--				     (__force __wsum)htonl(paylen));
--
--		/* Compute length of segmentation header. */
--		header_len = skb_tcp_all_headers(skb);
--		break;
--	default:
--		return -EINVAL;
--	}
-+	csum_replace_by_diff(&tcp->check, (__force __wsum)htonl(paylen));
-+	header_len = skb_tcp_all_headers(skb);
- 
- 	if (unlikely(header_len > GVE_TX_MAX_HDR_SIZE_DQO))
- 		return -EINVAL;
--- 
-2.45.2.505.gda0bf45e8d-goog
+Thanks,
+Namhyung
 
+> 
+> And in stat mode I wouldn't expect any warnings.
 
