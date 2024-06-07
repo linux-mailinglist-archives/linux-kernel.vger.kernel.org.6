@@ -1,129 +1,178 @@
-Return-Path: <linux-kernel+bounces-206425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DFC900991
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479A900997
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182BB1F228C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213011F230BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA8B199384;
-	Fri,  7 Jun 2024 15:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070DC199E83;
+	Fri,  7 Jun 2024 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPht3ab5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eBXPt1Sc"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF5D15B97E;
-	Fri,  7 Jun 2024 15:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEC81990D0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775437; cv=none; b=G0SvWH319LwSOL7VebCYkfjtaEuVsjQJ+XltT6gLVeCYsS7OoitkfWTfSf3rvMr/xMMX6CyQKFCi1SR4ShSFbGfemyAG3kY3TSj3icEm9mPS4w0EMyNqIndac+KNhNWXxhe6ktPoRfuO8TkwQRcbil9s0LXwLxhLXEEAYGNFscM=
+	t=1717775477; cv=none; b=U53idO4TjM5Meu+aWfk9wWf1t5eooWawk4KUUBXEx8KSVXKV+Vw1qvh/63vCUHkrgUbzDqKYyQ8QkTLTkExCE0THeZ6NiOaqGVllgaS8gwkVT3ii+CpX/79mE6XpNVZeIXGHC8foQJFyjYd4RsW3t2UlNtaQHGHINI2Xzs0hajw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775437; c=relaxed/simple;
-	bh=RHJJ3hHRw9MCGURxtRp+9Ljf9/vHiyGx16Yi9WA7n2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fgAwt8c3o4lUvkG2pefDfDhHNpcvvTbAwmhRr9gobDScQQrpzytxMvtuGpgEm041FMxag7LJu09Fy9OvU8cLyjHpSilU9soQm1Xaf0NRRhMXyYAjGfztCddbZFtB+vd8HGQlw9umH1D8KB6RjWI/XOCmM8MPJ3pP8331BfXYUkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPht3ab5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060D0C2BBFC;
-	Fri,  7 Jun 2024 15:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717775437;
-	bh=RHJJ3hHRw9MCGURxtRp+9Ljf9/vHiyGx16Yi9WA7n2k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oPht3ab56xI2iqkxY3Dvk+KGUvJTSi4VBE+EokZ8ceVBx5gBPQzG4PH2aZDN+LUkU
-	 BFkjKHtutojnt6Rct5H1MvNax2hK+87YVKczIoafCG8dxcLJK5vgFjfNSQizvG55+J
-	 K9OmDItxqvQMyYgbtbZbr2KYL5058/8JksQDvtJoZovM74aC5AagLH/dTue6by05+N
-	 iAhIZvMhPJW0kKzSZZ2Gc4QN12utZmnrO/U6YXWpvb6A5AWMGhBLRRFSMlxqBZawsd
-	 LpKjcBthFW4Qr3iejToBeSf5kj1pHhNIrBN/nDUokiLa7y7SGT/ijDVs9PWX1BqUAR
-	 1Knd07eYvij9A==
-From: Conor Dooley <conor@kernel.org>
-To: linux-media@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrey Konovalov <andrey.konovalov@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] media: i2c: imx219: fix msr access command sequence
-Date: Fri,  7 Jun 2024 16:50:23 +0100
-Message-ID: <20240607-trimmer-pummel-b452ed15e103@spud>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717775477; c=relaxed/simple;
+	bh=B/nWxWSuvalMGnUtnURKHG5HNXcPjMpI5YfholgjWCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P057HRe3vpFkyMVIL/lBcM9MW0AOnHAWWLEOZsZfH69gq96IFpUFnYlM9v7DOM8YxJhiPnEuZqQitKXsWwcMg3aV6qPDZV2E5vvT5LAXo24+DLfP2bfgBBvP41gXFh+LhWalMcn5uRSY53tBGYkQ6J/2vwgoDyeMN2ZXvsEXo5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eBXPt1Sc; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c5ec83886so9944a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717775472; x=1718380272; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KPvYVfHAHLIq4Iro9sltEbUBk0XQCsjazy7jWcwOLxU=;
+        b=eBXPt1ScTIT0K0Oz4PFoIrcoQL1W3t9usM9cleIFx2nMSSUC+QQkpsVRz2i96oz0aL
+         HfMF2jIzUq7YBE8qC+pon9LqjG0uYqX+g7huL54eNMsMtTf70WEzDdVn5Vu3hlnLyAP1
+         EZD+u7hMINh6sje92yG9ynhQaLo6t+pwGPi85OcqEr548YiPOy6j009YEwG97KU9gYCN
+         8vgdKxii6v45tli8riidUXqvNpwAA3kV0dXC7x5GlGM84Pyhr/Xwl8DWcDV1Jl9pvCb5
+         RNb46uriv1RN3ntuNKW4P+9YpmXJwmUYJqHtGJM2Vpc+v5LUM6DPBunLK8d6RDfRRmUa
+         7hGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717775472; x=1718380272;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KPvYVfHAHLIq4Iro9sltEbUBk0XQCsjazy7jWcwOLxU=;
+        b=Mirb9aC5wV8uOivys+qWW4WLZlxFQ7U4ViRmwvvB0aSKXO8SQZzKU7sgc5Z2cOdGU7
+         nMqkKWLQppWsROk8mpiUGFWWho5SOgf+TiIihYxYiklmX+f6aUI/cByImMn0IEtlXJay
+         MFcPxT4C38VNXPjEBn6NFuH5K7E7pQ6C78oH31FYG6O58IgRM22axG8kEhZME4P1QDcS
+         qqCc7QHLexK3WC4HslbDj2sEHXhZr1xu729eXvZJ6eGQho/SBxgyZUQnUAsq1IE/W6qg
+         PhyPQ6SZchlQB5+mXL3lfI8AOZr59Twf3gBK5Qe31RiM4ntASqwNY/dJKekpkOGzomwg
+         2/dQ==
+X-Gm-Message-State: AOJu0YwSHwo6Yf+r6dp1OZEb0NqqDa/LVKqaSWA5VMlIQPFmpRBrylFx
+	KPplZCUtRDPf+hDQuvv/dCkZSfmho5rf67FLD569oK0MbxJn/sBTdo3dZvSesmH7VriaMq66Nof
+	TonUJccUWiKPcGeQ63NII8jYmNDcbvyoS5fFF
+X-Google-Smtp-Source: AGHT+IFeaOng9QTrsWteV8BPFpGm8tSsyktUl7ikHk3iad/5dvNpRpMcHTMxQVUYRtOOO2V2JmvFuTBVrMMVB25rokM=
+X-Received: by 2002:aa7:c0c5:0:b0:57c:5ffb:9917 with SMTP id
+ 4fb4d7f45d1cf-57c5ffb99b5mr135769a12.4.1717775472242; Fri, 07 Jun 2024
+ 08:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2493; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jDbtFqgud1z2Vv704WZGxMNivT/JS93Y91PLV/vhOm8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnJOvYVR6xdTTiu84pyLApduziC9cGOnJdKZyJXrPwqp nNQZ216RykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACbyS43hn+bR+B1rtlqvZ61k O5TCuVd1ZaZylZbx4hSxgH6JLSuzbBgZzm8Jnv3TZ/eZ2k55nupv96tC2RK1ZrhpPPCrPmgyse8 KKwA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+References: <20240528122352.2485958-1-Jason@zx2c4.com> <20240528122352.2485958-2-Jason@zx2c4.com>
+ <CAG48ez0P3EDXC0uLLPjSjx3i6qB3fcdZbL2kYyuK6fZ_nJeN5w@mail.gmail.com>
+ <Zlm-26QuqOSpXQg7@zx2c4.com> <CAG48ez3VhWpJnzHHn4NAJdrsd1Ts9hs0zvHa6Pqwatu4wV63Kw@mail.gmail.com>
+ <ZmMamtll1Yq1yfxc@zx2c4.com> <CAG48ez0pan8aLGjHtoDdrpiP+e5YrGeuD_RzDXgzUwkUvWYLjA@mail.gmail.com>
+In-Reply-To: <CAG48ez0pan8aLGjHtoDdrpiP+e5YrGeuD_RzDXgzUwkUvWYLjA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 7 Jun 2024 17:50:34 +0200
+Message-ID: <CAG48ez1k0J013tYLfmnT8NXRpG_5BR10xnH8r-yRvTLpJe-nLA@mail.gmail.com>
+Subject: Re: [PATCH v16 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de, 
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Fri, Jun 7, 2024 at 5:12=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> On Fri, Jun 7, 2024 at 4:35=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.co=
+m> wrote:
+> > On Fri, May 31, 2024 at 03:00:26PM +0200, Jann Horn wrote:
+> > > On Fri, May 31, 2024 at 2:13=E2=80=AFPM Jason A. Donenfeld <Jason@zx2=
+c4.com> wrote:
+> > > > On Fri, May 31, 2024 at 12:48:58PM +0200, Jann Horn wrote:
+> > > > > On Tue, May 28, 2024 at 2:24=E2=80=AFPM Jason A. Donenfeld <Jason=
+@zx2c4.com> wrote:
+> > > > > > c) If there's not enough memory to service a page fault, it's n=
+ot fatal.
+> > > > > [...]
+> > > > > > @@ -5689,6 +5689,10 @@ vm_fault_t handle_mm_fault(struct vm_are=
+a_struct *vma, unsigned long address,
+> > > > > >
+> > > > > >         lru_gen_exit_fault();
+> > > > > >
+> > > > > > +       /* If the mapping is droppable, then errors due to OOM =
+aren't fatal. */
+> > > > > > +       if (vma->vm_flags & VM_DROPPABLE)
+> > > > > > +               ret &=3D ~VM_FAULT_OOM;
+> > > > >
+> > > > > Can you remind me how this is supposed to work? If we get an OOM
+> > > > > error, and the error is not fatal, does that mean we'll just keep
+> > > > > hitting the same fault handler over and over again (until we happ=
+en to
+> > > > > have memory available again I guess)?
+> > > >
+> > > > Right, it'll just keep retrying. I agree this isn't great, which is=
+ why
+> > > > in the 2023 patchset, I had additional code to simply skip the faul=
+ting
+> > > > instruction, and then the userspace code would notice the inconsist=
+ency
+> > > > and fallback to the syscall. This worked pretty well. But it meant
+> > > > decoding the instruction and in general skipping instructions is we=
+ird,
+> > > > and that made this patchset very very contentious. Since the skippi=
+ng
+> > > > behavior isn't actually required by the /security goals/ of this, I
+> > > > figured I'd just drop that. And maybe we can all revisit it togethe=
+r
+> > > > sometime down the line. But for now I'm hoping for something a litt=
+le
+> > > > easier to swallow.
+> > >
+> > > In that case, since we need to be able to populate this memory to mak=
+e
+> > > forward progress, would it make sense to remove the parts of the patc=
+h
+> > > that treat the allocation as if it was allowed to silently fail (the
+> > > "__GFP_NOWARN | __GFP_NORETRY" and the "ret &=3D ~VM_FAULT_OOM")? I
+> > > think that would also simplify this a bit by making this type of
+> > > memory a little less special.
+> >
+> > The whole point, though, is that it needs to not fail or warn. It's
+> > memory that can be dropped/zeroed at any moment, and the code is
+> > deliberately robust to that.
+>
+> Sure - but does it have to be more robust than accessing a newly
+> allocated piece of memory [which hasn't been populated with anonymous
+> pages yet] or bringing a swapped-out page back from swap?
+>
+> I'm not an expert on OOM handling, but my understanding is that the
+> kernel tries _really_ hard to avoid failing low-order GFP_KERNEL
+> allocations, with the help of the OOM killer. My understanding is that
+> those allocations basically can't fail with a NULL return unless the
+> process has already been killed or it is in a memcg_kmem cgroup that
+> contains only processes that have been marked as exempt from OOM
+> killing. (Or if you're using error injection to explicitly tell the
+> kernel to fail the allocation.)
+> My understanding is that normal outcomes of an out-of-memory situation
+> are things like the OOM killer killing processes (including
+> potentially the calling one) to free up memory, or the OOM killer
+> panic()ing the whole system as a last resort; but getting a NULL
+> return from page_alloc(GFP_KERNEL) without getting killed is not one
+> of those outcomes.
 
-It was reported to me that the imx219 didn't work on one of our
-development kits partly because the access sequence is incorrect.
-The datasheet I could find [1] for this camera has the access sequence:
-Seq. No. Address (Hex) data
-1        30EB          05
-2        30EB          0C
-3        300A          FF
-4        300B          FF
-5        30EB          05
-6        30EB          09
-
-but the driver swaps the first two elements. Laurent pointed out on IRC
-that the original code used the correct sequence for 1920x1080 but the
-current sequence for 3280x2464 and 1640x1232. During refactoring of the
-init sequence the current order was used for all formats.
-
-Switch to using the documented sequence.
-
-Link: https://www.opensourceinstruments.com/Electronics/Data/IMX219PQ.pdf [1]
-Fixes: 8508455961d5 ("media: i2c: imx219: Split common registers from mode tables")
-Fixes: 1283b3b8f82b ("media: i2c: Add driver for Sony IMX219 sensor")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-I got the report of this third hand, I don't have a device and can't
-test this. I do wonder why the RPis get away with the sequence that
-seemingly doesn't work for the guy that reported this to me. My theory
-is either that they noticed the sequence was wrong while adding some
-other MSR access that is needed on this board while either cross
-checking the values written or because the other MSR accesses didn't
-take effect.
-
-CC: Dave Stevenson <dave.stevenson@raspberrypi.com>
-CC: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Adam Ford <aford173@gmail.com>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Andrey Konovalov <andrey.konovalov@linaro.org>
-CC: linux-media@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/media/i2c/imx219.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 51ebf5453fce..e78a80b2bb2e 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -162,8 +162,8 @@ static const struct cci_reg_sequence imx219_common_regs[] = {
- 	{ IMX219_REG_MODE_SELECT, 0x00 },	/* Mode Select */
- 
- 	/* To Access Addresses 3000-5fff, send the following commands */
--	{ CCI_REG8(0x30eb), 0x0c },
- 	{ CCI_REG8(0x30eb), 0x05 },
-+	{ CCI_REG8(0x30eb), 0x0c },
- 	{ CCI_REG8(0x300a), 0xff },
- 	{ CCI_REG8(0x300b), 0xff },
- 	{ CCI_REG8(0x30eb), 0x05 },
--- 
-2.43.0
-
+Or, from a different angle: You're trying to allocate memory, and you
+can't make forward progress until that memory has been allocated
+(unless the process is killed). That's what GFP_KERNEL is for. Stuff
+like "__GFP_NOWARN | __GFP_NORETRY" is for when you have a backup plan
+that lets you make progress (perhaps in a slightly less efficient way,
+or by dropping some incoming data, or something like that), and it
+hints to the page allocator that it doesn't have to try hard to
+reclaim memory if it can't find free memory quickly.
 
