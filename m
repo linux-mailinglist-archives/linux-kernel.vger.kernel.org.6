@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-205919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B47E900229
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75706900233
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA771F26592
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EA61F2729B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD9418FDD2;
-	Fri,  7 Jun 2024 11:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02337190663;
+	Fri,  7 Jun 2024 11:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd2x7JA5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQSQfIhV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3549B13FD7D;
-	Fri,  7 Jun 2024 11:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6ED18734E;
+	Fri,  7 Jun 2024 11:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717759834; cv=none; b=lbItVauEy3cSWS3pGf/Tm62SV/ZVKWsXcLQwoQiTGdk+ekCxkVbrK40y1BNvQoDokGbZvOgDhOkLfulNJQBdxi+uWwK7eUadrI30r0Wi63V1IeJjaggxIZ33xpHkLOjBa/wgo7c9E8F7Jx9muOEqpMMlsjUYmkhMrwUGJoyuRjU=
+	t=1717759877; cv=none; b=Z2ke6BkriU3iNFzrdwFpU2W0e/Xhux2yoQbzJERb7npvCVypm1lqxcH22+XS2IlSGsCFvh7UrqPpK5NA2omE4xVPI92XS/OTcUOAFEp6fojML0WW28a3NhesjZwOhETjMtM29qbDbL6fxZaW5MG3oYJTfJLUSARBeOEavsyJ7qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717759834; c=relaxed/simple;
-	bh=enrwhfG18wfm5gqaqtyOjWSrtHc3M17cSZkl014723U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VN+fRJC7++ANivlwXQuPqX35YSm0DVv7GU+c1sw7p+RVgUBYpygGjTUZKQQiy2M6ZZrbEqF0gCkKF1qbQQHmMafK5WAg5nrgWBYaNPWKtzYbJc3tKrzvtD6NP5LHfsS1ARG/5NzHJWR2koQZs6gBISda2dOcwTfSzXz3K0l5ZVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd2x7JA5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABEACC4AF08;
-	Fri,  7 Jun 2024 11:30:33 +0000 (UTC)
+	s=arc-20240116; t=1717759877; c=relaxed/simple;
+	bh=Nkzv4hcPPvps22qWpC47FSwYdykZx12iKlrS0Wd94wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdKQXFPeicDJB4d+/47WFVDTa9mCYsv6JXmuu7+kWHJeMy6wHtYEsPpHaeYpZeE3LhAJDwamU1Rq5UpJ0l5zk6NBPYvaEP8mkSZiGl8MJC+NG5UJ5eUCM5z8i4tGTpw7ZEq1Ee3mdXgjwhG60Hy8ukOKExEEYwVNyzEvQCpo5ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQSQfIhV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD8CC2BBFC;
+	Fri,  7 Jun 2024 11:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717759833;
-	bh=enrwhfG18wfm5gqaqtyOjWSrtHc3M17cSZkl014723U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nd2x7JA5lOY//2wdXfGxstCw4W3sv1SkcQlZJ31ZeOh7+LPenN/EmWo1UDnP0hDau
-	 9TtFHET8KYdf3IDHaZpJU7pdTo85nVXnrRvJzFyNTLJ8Av4zpKQTknPzj8pFDYbbnJ
-	 mZA5Z2I3m5jD03Co9aE0qeMaRCp9o/3di0CaqH2vX/nDvWcEBfo3CrrPzVq/g6X6KO
-	 2u9Tfr3CTY40pM+m4mXglzX/tz9suNMj2cYQp1MbesvFtTckvqwTIEtd9hyA7jp1a/
-	 HGYTGVWcxII2P6RQMxYeYuTR7H0lw7MyI5cdtuz0uFZxc4yTYiv6aPTp640WYYnY6K
-	 vx27qCSqk2a6g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A100CC43168;
-	Fri,  7 Jun 2024 11:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1717759876;
+	bh=Nkzv4hcPPvps22qWpC47FSwYdykZx12iKlrS0Wd94wA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cQSQfIhVy92SkTaaGnvSgGOmaOrGPEO9ebOslY3tPDyGu2jF1GTJI9arb4XK29his
+	 0BLTfM2LZthM3JHTsdnQHQt0Z4GQiN7MUermB1jSdlNyTlO1ebFCHNF2nXBVU7sbDs
+	 N9dCpUgXtuB9ixdap7wO+KFbjkfX+Fe6eWjl+w1HdJ7rrbqG6mvqzpIHR+sxpLYEBy
+	 h7g2mVnP6NnWsT3CayAWQbJNEjj4VeA41bOhubBCrmLD+Op1b9G/fVnN4BqtzwWJmv
+	 zYcpo16xMyADhz6EMSN1zwreNy5aX1bROtpuyJXMk6eS6rivF7GgpBMYO/OFEV4fJP
+	 Bj9egWQZQQb8g==
+Date: Fri, 7 Jun 2024 12:31:11 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Jochen Henneberg <jh@henneberg-systemdesign.com>,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>, Andrew Halaney <ahalaney@redhat.com>
+Subject: Re: [PATCH net v2] net: stmmac: dwmac-qcom-ethqos: Configure host
+ DMA width
+Message-ID: <20240607113111.GA27689@kernel.org>
+References: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/2] There are some bugfix for the HNS3 ethernet driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171775983365.24248.8058677044176070765.git-patchwork-notify@kernel.org>
-Date: Fri, 07 Jun 2024 11:30:33 +0000
-References: <20240605072058.2027992-1-shaojijie@huawei.com>
-In-Reply-To: <20240605072058.2027992-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- shenjian15@huawei.com, wangjie125@huawei.com, liuyonglong@huawei.com,
- chenhao418@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed, 5 Jun 2024 15:20:56 +0800 you wrote:
-> There are some bugfix for the HNS3 ethernet driver
+On Wed, Jun 05, 2024 at 11:57:18AM -0700, Sagar Cheluvegowda wrote:
+> Commit 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA
+> address width") added support in the stmmac driver for platform drivers
+> to indicate the host DMA width, but left it up to authors of the
+> specific platforms to indicate if their width differed from the addr64
+> register read from the MAC itself.
 > 
-> Jie Wang (1):
->   net: hns3: add cond_resched() to hns3 ring buffer init process
+> Qualcomm's EMAC4 integration supports only up to 36 bit width (as
+> opposed to the addr64 register indicating 40 bit width). Let's indicate
+> that in the platform driver to avoid a scenario where the driver will
+> allocate descriptors of size that is supported by the CPU which in our
+> case is 36 bit, but as the addr64 register is still capable of 40 bits
+> the device will use two descriptors as one address.
 > 
-> Yonglong Liu (1):
->   net: hns3: fix kernel crash problem in concurrent scenario
-> 
-> [...]
+> Fixes: 8c4d92e82d50 ("net: stmmac: dwmac-qcom-ethqos: add support for emac4 on sa8775p platforms")
+> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> ---
+> Changes in v2:
+> Fix commit message to include a commit body
+> Replace the proper fixes tag
+> Remove the change-Id
+> - Link to v1: https://lore.kernel.org/r/20240529-configure_ethernet_host_dma_width-v1-1-3f2707851adf@quicinc.com
 
-Here is the summary with links:
-  - [net,1/2] net: hns3: fix kernel crash problem in concurrent scenario
-    https://git.kernel.org/netdev/net/c/12cda920212a
-  - [net,2/2] net: hns3: add cond_resched() to hns3 ring buffer init process
-    https://git.kernel.org/netdev/net/c/968fde83841a
+Thanks,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+this change looks good to me - the usage of dma_addr_width is in line with
+my understanding of how it is intended to be used.
 
+And, AFAICS, the changes in v2 address the review of v1.
 
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
 
