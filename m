@@ -1,165 +1,177 @@
-Return-Path: <linux-kernel+bounces-205746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196838FFFBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA7B8FFFC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D5E288E9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:41:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E06B28303E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D584515B96E;
-	Fri,  7 Jun 2024 09:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B9B15B990;
+	Fri,  7 Jun 2024 09:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Qo806YPB"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDd3z6yk"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C815B148
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF3F746E;
+	Fri,  7 Jun 2024 09:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717753262; cv=none; b=rDHYOV6rKwvUVbAaBpwlRNYI3W+Uib0htzQbFt/Nc8CSgKhtwNS4odDznTYVFQvMWQwnZszZlSm0wzfye/8c2aubDE94qHehytXdzvyc/oZLVD3MTI/GbTe78M38maXI9fmH/5UICxspCuTeJvyRfMN5RvtQKW0Q6eKCjiDH1Og=
+	t=1717753308; cv=none; b=k51hDmGFng+6ZfklI4z/kKMfBqvhcsuDwZGya56G31PAbjbg9CYP66XdhE0SeTbwDB3HiK7kDGfbA9Ssn6fz6+lAFBZrRteOMgIbeMk5Fr72HhYE5FmIipMXKPr42S+ogpVcKjXqNJJUR7VHv4FFyNEGkxt/dGjuhRK6LBQdK5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717753262; c=relaxed/simple;
-	bh=vWwn6fNTvMlK4pId9dgBxn2n1khNlEr7ww85MkEHGS8=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=QD+WUIAMNqLmaokyAJNw7MCXm8GLmZ6OiDCnXqNy5ktKIULNBod1Zpfy9Uvyvhijzlci3WVCrKNjJzb991BrRvDOMJJUmR+yt5l8sDgusdF9w206H6J+YUoUeok3q7Pz/omAG5wVMKFg34vUOZmX0uuf0mtzrDdeTKjaeEswNxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Qo806YPB; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240607094058euoutp02a21d4dcb44468a5e9c64a5fd68ad251d~Wr3y74hvf2116021160euoutp02e
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:40:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240607094058euoutp02a21d4dcb44468a5e9c64a5fd68ad251d~Wr3y74hvf2116021160euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717753258;
-	bh=IWBCTkTZYPMlXek+QLQnRtmei3pBxY66TSKRUwCX7y8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Qo806YPBBApPQSUUojUP0ElA8uFxl87EscLJQYzOLefki6qT/FaKyC3atk4EbwHb8
-	 oruuA5dT+UJW/KPW0eGDiC0gQe6K6oG/W33GZmsTn9X1/QUD0bFleOuZqeLqlqx8bh
-	 UzA66eHYnMhXXOxbIymQK21mqqvgGY1cCiMLPdi8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240607094058eucas1p2ddec8dec2da0a2ae46c33052d7041555~Wr3y1Ye_F0862708627eucas1p2D;
-	Fri,  7 Jun 2024 09:40:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 97.D6.09875.9A5D2666; Fri,  7
-	Jun 2024 10:40:57 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240607094057eucas1p262bd4506f596be24b2b007839e2ab57e~Wr3yW3bw30860708607eucas1p2I;
-	Fri,  7 Jun 2024 09:40:57 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240607094057eusmtrp21988e5378a46975292758c82cdd44b70~Wr3yWLCAF0665006650eusmtrp2M;
-	Fri,  7 Jun 2024 09:40:57 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-08-6662d5a99504
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.66.08810.9A5D2666; Fri,  7
-	Jun 2024 10:40:57 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240607094057eusmtip2689723000433c216154645e2c28afa6e~Wr3yLqkRB1609616096eusmtip22;
-	Fri,  7 Jun 2024 09:40:57 +0000 (GMT)
-Received: from localhost (106.210.248.166) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 7 Jun 2024 10:40:56 +0100
-Date: Fri, 7 Jun 2024 11:40:53 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-CC: Luis Chamberlain <mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: Current state of the sysctl constification effort
-Message-ID: <20240607094053.x3cmkhmrgaw6jqd3@joelS2.panther.com>
+	s=arc-20240116; t=1717753308; c=relaxed/simple;
+	bh=ynvlvVbo/tWkOIken/yYFOvDfSVzxKWB8fQuH4Z+Q54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OsC1OjDh4ZV2U6vHZS54FDamQGqljpIOeKlsSb7URrEVTPA7kGS7Z4fX58QKNzsyk943Ka4Ve08QHRYSiYfdeiO128BBbsyKPdwMxgSKXcNR7n+uG1BPDWb9r8llYZQajge0k6TEqNOKFqzMlYchMAM3PsEOWHXSjgNbDoHxYz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDd3z6yk; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a626919d19dso551960666b.0;
+        Fri, 07 Jun 2024 02:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717753305; x=1718358105; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iHthyJxfQWG9RW2oiS/t6zGoou7lw4UFn78RRn4Kbbo=;
+        b=hDd3z6ykQ7ewoMES4zYloy15EVnXfP3OsvSYJYESsk2cfn4u+TJBYVR0/FISWp77lA
+         +q6ouGRDEJCAe3xFjCGipilVMVPSPtTQO23++aNuNhOUh4qI10Roi7LqDcVjj9T3pfz9
+         sSgi0caqBxz+yeVCDoMXmAi1kHuR2jvR0JqeF4V3ovFokszJV2n1ZrsLqr9z+NwSgDES
+         bw0+ky6HaOMLgXZgyepArkZlyu4NxTH13WBH49gkeSeMXDq8d6iubEInaluKXwMPNbFe
+         k2GzkJe4LvTre0Pfg8V4dhtTLSl76//R/1Z+7yz07CVtZMxbLfDzIiPHwb/EVWbsVST1
+         3XuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717753305; x=1718358105;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iHthyJxfQWG9RW2oiS/t6zGoou7lw4UFn78RRn4Kbbo=;
+        b=oC2NbdUbIfvSohsqe+LRkyq/oMd0P2TLNnBUZ8fcikMetBGrX9Sd+Wl7j0uD3OozH0
+         6Mwnz39/szG+pvKeqeqe320cBUERWCp+OqIMZnxIrodMHeaB7zFCuUt0b2Pz5lCVBdLJ
+         2w9Zek5GtdHGE1prM3aosHYKgvgNYlSxspzahibdQz4zBQE8AKbffzdFSSxezi3XTGLS
+         tVSrwfJ5aMEm49lHwKpCM602/W7m4xC+eYR8PErmLVbCp+65yGrsQ5ZJSFBedZGXiYbE
+         vQCIkrOfMTgCqskMC15bmGJL6sOQ5zDiQbUFi6BDmNeudwqZSpZ8JoQg1zgq7a3SZQiK
+         Dl3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXbTs7zq+pr1w/V0DZC1scWxEhbo1R2+hjQVM+SH+QdAC6EYAWhvRNSGZzoZU/2j/8kcsbpUCTZEg9rlwTlQVmtDie8dCAvdMhlhjArXbEkkNgbdXC3WFD/Q8wY2ITUP77VwGxvduxGYz6Ti3iOtFZpjGKQeJvj4cjtabajaTC+ROPQXA==
+X-Gm-Message-State: AOJu0YyIo5sN2E6ULwx91REJo7BnVdyY2CNvpTUm8u9ES1+Facne262U
+	mbg8vMnszD1dkx6KwUrOTx2Ggu0q23tS8wKw2bHFPyJJDXPm/Ung
+X-Google-Smtp-Source: AGHT+IF3iq8j3f7Ft+xnRNqD2FMzh7+5wrp83qD5WemFIuZYfqTXJxrAZ5OB7zdPhvJmFFEuZnHiAQ==
+X-Received: by 2002:a17:906:e56:b0:a6e:372f:5783 with SMTP id a640c23a62f3a-a6e372f5b4dmr59107566b.4.1717753304658;
+        Fri, 07 Jun 2024 02:41:44 -0700 (PDT)
+Received: from [192.168.0.220] ([83.103.132.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80727e1esm218698066b.190.2024.06.07.02.41.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:41:44 -0700 (PDT)
+Message-ID: <1c6d409b-ba9e-4a19-a6cb-e06209a24154@gmail.com>
+Date: Fri, 7 Jun 2024 12:41:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 9/9] iio: adc: ad7173: Add support for AD411x devices
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
+ <20240606-ad4111-v6-9-573981fb3e2e@analog.com>
+ <389546877ae11b18928b432e86710acf83974f67.camel@gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <389546877ae11b18928b432e86710acf83974f67.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduznOd2VV5PSDH5vsLA4051rcXnXHDaL
-	GxOeMlocejudzYHFY3bDRRaPTas62TxmL7nB4vF5k1wASxSXTUpqTmZZapG+XQJXxqv72gX3
-	OCse3lzA3MD4j72LkZNDQsBEYkXvVOYuRi4OIYEVjBJNL6awgSSEBL4wSqx8GwmR+MwocaX7
-	MVAHB1jHgZnZEPHljBLnmm+xQDQAFV2erQmR2MIosbVrFytIgkVARWLF8ydgU9kEdCTOv7nD
-	DGKLCJhL3Dk4G8xmFsiVmHepG+wkYQE7iT0bloPZvAIOEss/9zJC2IISJ2c+YYGo15O4MRXk
-	Ug4gW1pi+T8OiLC8RPNWiJGcAjYSM/bvYoP4Ulni1KppUHatxNpjZ9hB7pQQuMAhceHsKhaI
-	hIvE6cO9rBC2sMSr41ugQSQj8X/nfCaIhsmMEvv/fYDqXs0osazxKxNElbVEy5UnUB2OEise
-	LmeDBBefxI23ghDX8UlM2jadGSLMK9HRJjSBUWUWktdmIXltFsJrs5C8toCRZRWjeGppcW56
-	arFRXmq5XnFibnFpXrpecn7uJkZgWjn97/iXHYzLX33UO8TIxMF4iFGCg1lJhNevOD5NiDcl
-	sbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJg1Oqgcnfe+u3y1uLv09k
-	UJ/k8/CWxUOLa0djv7GVBDJr9AXFWbk9nWIsqie6YqPDrPi0Aru3H25+qNl3g1n63XlBuXUm
-	4mutV0RuND+kcuXY6UL12KLfcov3ax8+o7uQe8NnxyjJgJlnrp1reBZmHs3LIXDjW6zaulvr
-	/y77+qewMoVp0ZTHu9dv+Xs7p/rnrdp6+e2sc0Oc8pav4jZdsKdNVmSpZ6qUdtRJ3pPr5V0j
-	1rw9ffq4+Y1Nf3bN2vvDKe6a6bVco+wbQs+Z7Cau3Tc1MtrRLXZWYUbe/E88X6rTD2h1TLGo
-	M3vl8e9B8SO/Ei2rEkfJXln+4r7Fy4w4X+XodIuZ/PB3UdBi+uNyd2VSZ6wSS3FGoqEWc1Fx
-	IgAMSsWymgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsVy+t/xe7orryalGdz7IW1xpjvX4vKuOWwW
-	NyY8ZbQ49HY6mwOLx+yGiywem1Z1snnMXnKDxePzJrkAlig9m6L80pJUhYz84hJbpWhDCyM9
-	Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jFf3tQvucVY8vLmAuYHxH3sXIweHhICJ
-	xIGZ2V2MXBxCAksZJaY2zWPtYuQEistIbPxyFcoWlvhzrYsNougjo8SLq80sEM4WRonfGy6x
-	gVSxCKhIrHj+BMxmE9CROP/mDjOILSJgLnHn4Gwwm1kgV+LtiflgtrCAncSeDcvZQWxeAQeJ
-	5Z97GSGG9jNK3Hk2hREiIShxcuYTFohmPYkbU6ewgZzNLCAtsfwfB0RYXqJ5K8R8TgEbiRn7
-	d7FBXK0scWrVNCi7VuLV/d2MExhFZiGZOgvJ1FkIU2chmbqAkWUVo0hqaXFuem6xoV5xYm5x
-	aV66XnJ+7iZGYNxtO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMLrVxyfJsSbklhZlVqUH19UmpNa
-	fIjRFBhEE5mlRJPzgZGfVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TB
-	KdXA5HmhPztv2teZto62zfktd/xNwkzZwuddD3G690BYwymO3bbMvnzhtGuqv1l0WZL+XJaO
-	KHd9F+DgrMBYp3zsmve7m7uvGs60lNIPCDsqujb03/fu11sq0sTqO4w2rUmfYjk51WZuF6/3
-	n28PM1Nu375ezXe+jbFzvv5vm4nyc4qiTrik3wiwMF4gPY+TtYLxDq/9Bb+2L092M2wrSpG3
-	DTBKvj9N6dXXxyvCbH6ctDb+tXB5iGRTkQqPbPbZr5d/8/efYagzUzmn8O1HpVpS8xsj1d8z
-	XFf/Cf1xO4v3x/owcdGApM3KLzUnnWzJKBY9v8vy+L4tcW5nrxi9/OmuxFAq6p2X/8ziB9eG
-	l3VKLMUZiYZazEXFiQBop8OaRAMAAA==
-X-CMS-MailID: 20240607094057eucas1p262bd4506f596be24b2b007839e2ab57e
-X-Msg-Generator: CA
-X-RootMTR: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
-References: <CGME20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2@eucas1p1.samsung.com>
-	<7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
 
-On Fri, May 31, 2024 at 12:50:32PM +0200, Thomas Wei�schuh wrote:
-> Hi Joel, Hi Luis,
+On 07/06/2024 12:20, Nuno Sá wrote:
+> On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>
+>> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
+>>
+>> The AD411X family encompasses a series of low power, low noise, 24-bit,
+>> sigma-delta analog-to-digital converters that offer a versatile range of
+>> specifications.
+>>
+>> This family of ADCs integrates an analog front end suitable for processing
+>> both fully differential and single-ended, bipolar voltage inputs
+>> addressing a wide array of industrial and instrumentation requirements.
+>>
+>> - All ADCs have inputs with a precision voltage divider with a division
+>>   ratio of 10.
+>> - AD4116 has 5 low level inputs without a voltage divider.
+>> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
+>>   shunt resistor.
+>>
+>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>> ---
+>>  drivers/iio/adc/ad7173.c | 317 ++++++++++++++++++++++++++++++++++++++++++----
+>> -
+>>  1 file changed, 285 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>> index 58da5717fd36..cfcd12447e24 100644
+>> --- a/drivers/iio/adc/ad7173.c
+>> +++ b/drivers/iio/adc/ad7173.c
+>>
+> ...
 > 
-> most of the sysctl handler preparation patches have been picked up by
-> the subsystem maintainers and are available in -next.
+>>  static const struct ad7173_device_info ad7172_2_device_info = {
+>>  	.name = "ad7172-2",
+>>  	.id = AD7172_2_ID,
+>> -	.num_inputs = 5,
+>> +	.num_voltage_in = 5,
+>>  	.num_channels = 4,
+>>  	.num_configs = 4,
+>>  	.num_gpios = 2,
+>> +	.higher_gpio_bits = false,
 > 
-> Only two are missing:
+> No need to explicitly set to 'false'. Ditto for the other places...
 > 
-> * utsname: constify ctl_table arguments of utility function [0]
-> * sysctl: constify ctl_table arguments of utility function [1]
+> ...
 > 
-> Both of them are going through the sysctl tree anyways.
+>>
+>>  static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>>  					      unsigned int ain0, unsigned int
+>> ain1)
+>>  {
+>> @@ -946,15 +1145,30 @@ static int ad7173_validate_voltage_ain_inputs(struct
+>> ad7173_state *st,
+>>  	    st->info->has_pow_supply_monitoring)
+>>  		return 0;
+>>  
+>> -	special_input0 = AD7173_IS_REF_INPUT(ain0);
+>> -	special_input1 = AD7173_IS_REF_INPUT(ain1);
+>> +	special_input0 = AD7173_IS_REF_INPUT(ain0) ||
+>> +			 (ain0 == AD4111_VINCOM_INPUT && st->info-
+>>> has_vincom_input);
+>> +	special_input1 = AD7173_IS_REF_INPUT(ain1) ||
+>> +			 (ain1 == AD4111_VINCOM_INPUT && st->info-
+>>> has_vincom_input);
+>> +
 > 
-> With this done it should be possible to also queue up 
-> sysctl: treewide: constify the ctl_table argument of handlers [2]
-> for the bots to chew on in -next.
+> Wondering... can ain1 (or ain0) be AD4111_VINCOM_INPUT and !st->info-
+>> has_vincom_input? Would that actually be acceptable? It would assume it's not
+> so we should check that right? Or am I missing something?
 > 
-> My local builds are still succeeding on the last submitted version of
-> the patch.
+> - Nuno Sá
 > 
-> 
-> Thomas
-> 
-> [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-utsname-v1-1-27a6c8813620@weissschuh.net/
-> [1] https://lore.kernel.org/lkml/20240513-jag-constfy_sysctl_proc_args-v1-1-bba870a480d5@samsung.com/
-> [2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net/
 
-All this is coming together nicely. Is there anything left to do besides
-what is being discussed in this mail, to start changing the ctl_tables
-to `static const`?
+It will fail when we check for the number of voltage inputs:
+(ain0 >= st->info->num_voltage_in && !special_input0) 
+as special_input will not be true if has_vincom_input is false
 
-Best
+Indeed this check is a bit hidden, should it be more explicit?
 
--- 
-
-Joel Granados
 
