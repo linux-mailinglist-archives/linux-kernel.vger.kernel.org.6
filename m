@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-206440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7395E9009C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0705F9009C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B789287EB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A6A1C22031
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA43919AA53;
-	Fri,  7 Jun 2024 15:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDE519A29F;
+	Fri,  7 Jun 2024 15:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="nwZm3TPK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A2odiTsw"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290AD19414D;
-	Fri,  7 Jun 2024 15:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB84119414D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 15:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717775909; cv=none; b=tSw2GIxgyPR8pHoIf5Urjfqq3EIzx0VA5Pn0nSCyBp0XKeVqFIe6JCtJU1hJgUYnqQ4YPn089Hkm53ckDrH877pPeSFwtEOQwaIkvyNyhahp99m9ZVmlFIm0GueWUVWtkUJ0O9Sfxpj/XMZ32AEDDYqMWLCJcl/LHVkQ8t+n0qQ=
+	t=1717775903; cv=none; b=dqgyvhSDnoBpN4k4ZhP6HkHayTyQb+yHgXnkVWBLdQ4UIn1nd16Jp61t2yVRsCTuuUPBQHP6GhPk9Mj+Zrds3PdkBXeEPWCXVDfW3uG68LlfMAgy7fsb5OApwK6e9wyx80A3dP7Li4Tfp17FtV282/7gnUOHNZ73aIrcKm7Rffk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717775909; c=relaxed/simple;
-	bh=UD03nI/JRp+yg2q6GDAap0jrnL8NaMPnmCL+NxM4aTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SenmaHzgj/Hhv0eQwsGJN5REseFB9q9apTAiJAwBqLnFH3z/q8FffPshlpZR7cHTrFUovO41fHM2VnHkZpxjgVWqoupHEZXa0t30T2aJzvVjgKP4YX+KAUOG3/vura9vQ1qLMd3KaBvJYtYVcZYH/UzdNbpb35sgLiCrtNf076A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=nwZm3TPK; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717775877; x=1718380677; i=w_armin@gmx.de;
-	bh=LIQ5gm/XO9PGANyCnfv3D1QIlEG8awN23+y/zDLgCNs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=nwZm3TPK3DyPglzuwo/s2RE9GzD7bO5d6HQ3U2qectprdRCxPcQJYjt5Tzsue5Eo
-	 o/sarPDGrE7fNEsPbwnQcUx1MhapS760VFSbf23mCd8NT77Auvctu4u4SgoYZaUWP
-	 oPogiAcFMaqzoTJGx/BUTGgLC5plJL7rDsq0zI6b1JJuCswbYKdhp95w+yw8xa5Ds
-	 KLdDGy1l4eSS3/aLo0utmJueNCQuyoUn2sGSyABVfJWOoO4ni+oLCA1/iXCOXS3c3
-	 fOUzpqbHhhEn6u5MTFHsxo3TJjvqyEyEMM7VQobgNySZ7CQqiO/SxrV18IEX+u6d/
-	 CoipfdpNAnEqDXdORg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M9nxt-1sKqm03Puv-00BxhP; Fri, 07
- Jun 2024 17:57:57 +0200
-Message-ID: <59485024-f5d0-4553-b567-2a04ec3d2606@gmx.de>
-Date: Fri, 7 Jun 2024 17:57:57 +0200
+	s=arc-20240116; t=1717775903; c=relaxed/simple;
+	bh=s1JvENtGfwCSbl34GscOC+aW3XbtXE7cv0+2CV0e8uQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fDm+daHkNUTOVfy9FaZ0+6p+stG4gWVgElrXE4iNIohaMe+/PEW+AU5bwTFNfdSoY+av/WtRGAI2MrX7YCyPzfwE6a4NMAmSjzM5RLbpU3uaFI7lh+yl93XMv2XoIscdBOAkbGanISWULntXivxmo8z3dRw522OaktLxhbj/cvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A2odiTsw; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d200c45db5so1273958b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 08:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717775901; x=1718380701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TEadrKSLCgbuFYvra79wv6BZ/tbvq8SfRbQUE/5o6is=;
+        b=A2odiTsw9WFX43GAf7A9LjVbjJdaFzR84DJqUae0HCzxhGNwD43rmMZmIHfC1zpb3j
+         1+yc2z6db0GsA+Po7fstjDRkYnOb/HDQk6RrAF3qSvOlAq1JaOKiSG+EGQBjY/YnxL/c
+         nv/i0lB4AfcSBRl95ur9XjHYLbTvrN9/+tcIc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717775901; x=1718380701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TEadrKSLCgbuFYvra79wv6BZ/tbvq8SfRbQUE/5o6is=;
+        b=vgEbfRZSBYdFG80FgCMnCPtkh293vGAHj6RCBkRyqkarrsgVxAXgWytIp6noToXuQO
+         kFxfszd9wURrFFILDE4eNgafQTZDz5/k2C281xio32E9EobJlmGR9ommgxzaf6BsjZ6g
+         y+xcnPep++XYtyyR3zQXoeVkec2H/LjHI9gCvqC7YvWFVFRtCKe/3JBiPLCgNYMVdFF3
+         PUK1y3im/zpZZ19w1cNSpnWVpt+uGdzbwKe7/iwuBEYPsMDbwIXipxqekfcwRFxpAUVW
+         yH1O5Iwo1ySk7HQD1ZmEpoDzYU4RQ6ownINuIkKH5yxUE75gn5r74rJt6I00dQPykCsz
+         2fNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXC3w7hWps0TJGGmtE3S6K7tW6qrmJCWpVO9enLr/u2j1hssVmzDHkMte8UNYWkZHw/cxI7b81vNYjopLk60o0A0sVDJpj6CqNvQIG9
+X-Gm-Message-State: AOJu0YzPLHMzpTUbncOhObz9tsF31fSW8w17bMP5VeixPGVvA4g6GKp1
+	K8H/wAltFK9ZfXr6feYyi0e0/kP1dACQD3XmUr7/KhVs/CxdyiblpzRASCcpKvjEw9t40xfif28
+	UBaitsIvki9VJYBP8ZjimqNYmlQPA1v0v9p6lDWYOX4e9xDA=
+X-Google-Smtp-Source: AGHT+IH/nK4F4tRexrZp1VOlLuPeWYKcpRRXCgXdkWdzR5d80ML7hH7jCR2Ex7YNQ9Ay6MVBijqvI9/8yMfwBjsXrRM=
+X-Received: by 2002:a05:6871:289:b0:254:8bb9:d0c2 with SMTP id
+ 586e51a60fabf-2548bba70dbmr376857fac.33.1717775900892; Fri, 07 Jun 2024
+ 08:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] hwmon: (spd5118) Add suspend/resume support
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-4-linux@roeck-us.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20240604040237.1064024-4-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
+ <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
+ <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
+ <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com> <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
+ <CALmYWFtedtEnfGFp5DYacHYOE7+GB8yoQC-iyw7JAxySmgQ7vw@mail.gmail.com>
+ <f880562e-9521-4270-82e2-c6fb14dc853a@app.fastmail.com> <CALmYWFuPBEM2DE97mQvB2eEgSO9Dvt=uO9OewMhGfhGCY66Hbw@mail.gmail.com>
+ <1e1edbdc-f91f-4106-baa6-b765b78e6abc@app.fastmail.com>
+In-Reply-To: <1e1edbdc-f91f-4106-baa6-b765b78e6abc@app.fastmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 7 Jun 2024 08:58:08 -0700
+Message-ID: <CABi2SkUMppyL_LRKJV6BfgGu=1GpGCEOdZ5VHCENMUtzHcRTkA@mail.gmail.com>
+Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+To: David Rheinsberg <david@readahead.eu>
+Cc: Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	=?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	dmitry.torokhov@gmail.com, Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, 
+	jorgelo@chromium.org, skhan@linuxfoundation.org, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LJoUkpB8DPisSiKti1MMbMgSWcI7GsvoiWg7nZeNNhGF6uE+/zq
- nnBwf/zfLMyoSJY/atgT4C+020xT5qquiLP0Dc4udy+RRCNempCKcjCHyUzVFBwTGSKPaZM
- q7tH+g9vZOuc+jlyeil5xBhe9VwjFNF3fWABEUWp5nHHai3tRKTPOcwnzs0IMNVnBV9DOPZ
- KS0Mh4DlsK9HpOtpC30Kg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2HKnl6As2Oc=;uXBA4dqF+su/aqsWgUUHwiY1Z/S
- 0qWWDY20Qrtra1yFm12pFn4EI9WxbRymN109n+HxXaRD8Ju77jLH/46sLspiXOEscCdDlCSEc
- 7glh3bEUuRspDqDnbWRL0IPW8ys4SafpsmeGFFZYtjS3QaW9r53JFJ73EqKX8iCy58YHLcYLo
- MZwucYY8GatM1USmcWTe4W9Zb7OA+RoUk8mGz9DqYXIQbReYiy4/gUjX1i0I/Ls+IscNItU/y
- 7SEgpmoEiXTeRBZihLFwfPjHBC/SzGSV1NWIeLbABMv80mWhj2r5UhsbWa8apSV5DxIUuQ/bK
- AHdV4BlF9Zfte7onJ8iI9hRaL5Y43COzSU5/PhzMrpio+OoB9NFHqmFczlqWj6PBHRtfgDjLr
- 9+iNxEJmVOFCrjB2sIdZciwsZrfptMTisqKz+GJ0e/bLakx4VcA3SyELdsKkt/ePHSH2N5x2M
- 9/AqgkfWZqhzjl0+hm9K26Y6v/gDFtzg8MNu2URQ8RW7wc8MfRlxOyRp9yKTwbpYKU8hYBR72
- G8Z5ZoEwL/j2GWCqxjZvLPuOB5HmdoVwpFRQ+R2Qkv011rF5bWyNgQQlN64lcecFgLan0OGIQ
- bjn/DAV0AZYpTFoNuAFFLSgVLj3O8xowsWv42BEXHxS/0+5N33CEc5YFFfcOIrtjfVXEskreN
- U9FCy3+gm0TdBxfRL8GHs3Wt9UDicOQhpPn25s61aBD6IrPImw2v6QmsAcVpc6ocaz5cJVM87
- JFcHJ3fiBqkJjTVcWtYSAg+db/HZqIsX2ROtVPE6e+KWhJXCaUvj+D2SnXqaCcsWhoQvyhYvQ
- UqSjji8eECvEEdS6jpc+n6oUYLjrBlkuCEAEVA0uJ/4oA=
 
-Am 04.06.24 um 06:02 schrieb Guenter Roeck:
+Hi David,
 
-> Add suspend/resume support to ensure that limit and configuration
-> registers are updated and synchronized after a suspend/resume cycle.
+On Fri, Jun 7, 2024 at 1:38=E2=80=AFAM David Rheinsberg <david@readahead.eu=
+> wrote:
+>
+> Hi
+>
+> On Tue, May 28, 2024, at 7:13 PM, Jeff Xu wrote:
+> >> > Another solution is to change memfd to be by-default sealable,
+> >> > although that will be an api change, but what side effect  will it b=
+e
+> >> > ?
+> >> > If we are worried about the memfd being sealed by an attacker, the
+> >> > malicious code could also overwrite the content since memfd is not
+> >> > sealed.
+> >>
+> >> You cannot change the default-seals retrospectively. There are existin=
+g shmem-users that share file-descriptors and *expect* the other party to b=
+e able to override data, but do *not* expect the other party to be able to =
+apply seals. Note that these models explicitly *want* shared, writable acce=
+ss to the buffer (e.g., render-client shares a buffer with the display serv=
+er for scanout), so just because you can *write* to a shmem-file does not m=
+ean that sharing is unsafe (e.g., using SIGBUS+mmap can safely deal with pa=
+ge-faults).
+> >>
+> > If the other party is controlled by an attacker, the attacker can
+> > write garbage to the shm-file/memfd, that is already the end of the
+> > game, at that point, sealing is no longer a concern, right?
+>
+> No. If a graphics client shares a buffer with a graphics server, the clie=
+nt is free to write garbage into the buffer. This is not unsafe. The graphi=
+cs server will display whatever the client writes into the buffer. This is =
+completely safe, without sealing and with a writable buffer.
+>
+> > If the threat-model is preventing attacker on the other side to write
+> > the garbage data, then F_SEAL_WRITE|F_SEAL_SHRINK|F_SEAL_GROW can be
+> > applied, in that case, default-sealable seems preferable because of
+> > less code change.
+>
+> Again, the threat-model is *NOT* concerned with writes.
+>
+> Graphics clients/servers are a good example where *ANY* data is valid and=
+ can be processed by the privileged server. Hence, *ANY* writes are allowed=
+ and safe. No need for any seals. Those setups existed way before `memfd_cr=
+eate` was added (including seals).
+>
+> However, when windows are resized, graphic buffers need to be resized as =
+well. In those setups, the graphics server might call `ftruncate(2)`. If yo=
+u suddenly make shmem-files sealable by default, a client can set `F_SEAL_S=
+HRINK/GROW` and the privileged graphics server will get an error from `ftru=
+ncate(2)`, which it might not be able to handle, as it correctly never expe=
+cted this to happen.
+>
 
-Tested-by: Armin Wolf <W_Armin@gmx.de>
+The graphic buffer  is a good example for shmem-files of
+not-sealable-by-default. Thanks for the details.
 
->
-> Cc: Armin Wolf <W_Armin@gmx.de>
-> Cc: Stephen Horvath <s.horvath@outlook.com.au>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> v4: Fix bug seen if the enable attribute was never read prior
->      to a suspend/resume cycle.
->
-> v3: No change
->
-> v2: New patch
->
->   drivers/hwmon/spd5118.c | 39 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
->
-> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
-> index d3fc0ae17743..d55c073ff5fd 100644
-> --- a/drivers/hwmon/spd5118.c
-> +++ b/drivers/hwmon/spd5118.c
-> @@ -20,6 +20,7 @@
->   #include <linux/i2c.h>
->   #include <linux/hwmon.h>
->   #include <linux/module.h>
-> +#include <linux/pm.h>
->   #include <linux/regmap.h>
->   #include <linux/units.h>
->
-> @@ -432,6 +433,8 @@ static int spd5118_probe(struct i2c_client *client)
->   	if (!spd5118_vendor_valid(bank, vendor))
->   		return -ENODEV;
->
-> +	dev_set_drvdata(dev, regmap);
-> +
->   	hwmon_dev =3D devm_hwmon_device_register_with_info(dev, "spd5118",
->   							 regmap, &spd5118_chip_info,
->   							 NULL);
-> @@ -449,6 +452,41 @@ static int spd5118_probe(struct i2c_client *client)
->   	return 0;
->   }
->
-> +static int spd5118_suspend(struct device *dev)
-> +{
-> +	struct regmap *regmap =3D dev_get_drvdata(dev);
-> +	u32 regval;
-> +	int err;
-> +
-> +	/*
-> +	 * Make sure the configuration register in the regmap cache is current
-> +	 * before bypassing it.
-> +	 */
-> +	err =3D regmap_read(regmap, SPD5118_REG_TEMP_CONFIG, &regval);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	regcache_cache_bypass(regmap, true);
-> +	regmap_update_bits(regmap, SPD5118_REG_TEMP_CONFIG, SPD5118_TS_DISABLE=
-,
-> +			   SPD5118_TS_DISABLE);
-> +	regcache_cache_bypass(regmap, false);
-> +
-> +	regcache_cache_only(regmap, true);
-> +	regcache_mark_dirty(regmap);
-> +
-> +	return 0;
-> +}
-> +
-> +static int spd5118_resume(struct device *dev)
-> +{
-> +	struct regmap *regmap =3D dev_get_drvdata(dev);
-> +
-> +	regcache_cache_only(regmap, false);
-> +	return regcache_sync(regmap);
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(spd5118_pm_ops, spd5118_suspend, spd511=
-8_resume);
-> +
->   static const struct i2c_device_id spd5118_id[] =3D {
->   	{ "spd5118", 0 },
->   	{ }
-> @@ -466,6 +504,7 @@ static struct i2c_driver spd5118_driver =3D {
->   	.driver =3D {
->   		.name	=3D "spd5118",
->   		.of_match_table =3D spd5118_of_ids,
-> +		.pm =3D pm_sleep_ptr(&spd5118_pm_ops),
->   	},
->   	.probe		=3D spd5118_probe,
->   	.id_table	=3D spd5118_id,
+-Jeff
+
+
+> Thanks
+> David
 
