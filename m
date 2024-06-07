@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-205864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F3590017B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:03:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD321900189
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD9E288A87
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ECCDB249C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C88186E4E;
-	Fri,  7 Jun 2024 11:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB3C1862AD;
+	Fri,  7 Jun 2024 11:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFZVGfkL"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qRFcj5rr"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B487014F9C9;
-	Fri,  7 Jun 2024 11:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B44A186E2E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758205; cv=none; b=cQBPZr2uF+h4XeQZKyO460ewIMVfWtb7gSXpOWOkJNMMzJSTyyeD0n14808LYV1OOGNIH9mps8U4vnn13VdHKf2p0JNKouKpS0JSk2cvST2GS2wkbBiHs8jjvkQFZNcn1DJP27SG0lFlkeBGHNXcT/cc8r3ALRlcXC7xxO8KMfA=
+	t=1717758237; cv=none; b=A9QmzpFNv0tLW4OVUmdQsymEHv5q8cYUECzbKCb9X2/82wo7VxRwxUmc1K19ciFjt7LvCuI7Wsx0IkBUerlR3kYsWXlbfGheOW2wc/FzjahEpI2A1HoYttVVyKA8GggmGjQ8q8MVzD7pE4EU7rsbviUKbsSDcy7YhTWpevdLvqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717758205; c=relaxed/simple;
-	bh=8nw5+9QSvd75ODQl6YA/tY9wEOPBMobwqxnZqMlfGis=;
+	s=arc-20240116; t=1717758237; c=relaxed/simple;
+	bh=iqK4sXvyXYzwRawxLH7Qmttv0TpUxcESQppaLdEEsnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQlcrMrE0fcMfQixnTlLx0h2apN/tkFyiwwyc6aUA10qmCAfHEPV+HiayIjXFJ2OjzFGYDqIuezvsV9Auhy+Nxu5LxK986NHS7kT5bsIkRCZTpbba4I6ZTkMnK3j6Bp3jeZtH0qgSIzPQ6rJfcFvth2kBLvE2jt+9BC+7bOQckg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFZVGfkL; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68b54577aaso255928566b.3;
-        Fri, 07 Jun 2024 04:03:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+a0ZG5f8m3FjmkAKoaE829kd5tFRyTTNOp6b/uNAu8vSN18vwpGWwR/zyKxEszOKdqpUdXU8lrw3gMN9N1naGGL3uhCX2Woxjy3DL5uyNZZfvNvYjluDVjbgP+vWX3cb0sopiscjjp8BXZy0c4XRIVb8LMrUTiZh4OjWXKNFlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qRFcj5rr; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaa80cb573so22384451fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 04:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717758202; x=1718363002; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717758232; x=1718363032; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+86wNrn4HfmmxGyr0WWPH87gKM8bg6dMGDirFSvqGQ=;
-        b=eFZVGfkLjsVO+SanAeCf9+MN1dv+1Yhrc/dVzQ0Ygd0U8hQghO5LBxobnLeFzmbDyp
-         RKdNKDB4G2qp2Ghu4B/zSCD2PR7NCpgMDvCd6+UetBy/GzXaOvzxk/zwbjWIJaOjXx2K
-         2/TPuAF6nI9PBL5FSWue5NtRph8AuBPWWp3YLW1DS2UUJtpZlX8XsZ6Se7qEYQjxMV3U
-         ocRiPhA2c//Y3MBLaK9EvPxYb58VWN0XjFG4qV8AazDoZNpZsBbXqZvVZYcpY85IwfV3
-         6pseFWgvamFlXWBE/yUmxDKJdfVp9An4uY23n7LaxvkTmxvYtHf6Ra0oKh7BjzTMrg78
-         fG4Q==
+        bh=ELTaPx5YTbXM+uNiIF/L+aaSl4VA6PsxXQKScV0FjyM=;
+        b=qRFcj5rrNpkwu8qTh0QvsfXZVkTMy4kDDQ3RkXJjmD1VO2xKhFQP7leyC85BrgWDS2
+         dXX0M96UEeisdO8au9tek2pdOhctbSZauyOx9WMDrvjw8DHmwYFGXIwizn+8IiGw2gcF
+         l8nk6LfmKu9ssJsFDKduG8RWFSnzOoj3LRVFd6r1ovM9v+EjveE+dYnhQ2Z60YhUHUrA
+         oyiZMqaTLxpObQZRLaXnSHdIi00biHJYgkfw9g5zP+QuQ+/oFnoyeZHj4P9k2i12faEz
+         3QAa0hGmjOeNMa5hdeUXhZTtFaWxSlNKH2/W/ofdSwb/526x2Vv78876S4kOdL4Vt39+
+         T2ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717758202; x=1718363002;
+        d=1e100.net; s=20230601; t=1717758232; x=1718363032;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V+86wNrn4HfmmxGyr0WWPH87gKM8bg6dMGDirFSvqGQ=;
-        b=LPJeNbITW8REZfXLQHZkWJrqnpqz01noILxBn3n12RQyuJu4oK24imVf6ILtK4SqLD
-         TEU1e8wEbBDE+cUWDzRM0a3p6SIb5mEjC9Gv0dpvREbjK/MITecSc1B/i2s32/Qmk0rB
-         kGqu5qRyX0WUHxn6Ukv7hHesUQ6Jgjw36B/5m96h13vbRGzMtyX7TYRkP/xIAMUhJ1S6
-         jo+xZxqIl5bMwgiKTj7uHW/fT7qA7LYSBixT0CIM77BtZickw9WevdrVvpjkxxJN+q1i
-         QzKqd96oDDuJXX7zN+Ps3xLA6Fs7Ia57IUAkkgmuObKPIDRZiqJZBjrwqlXGli0nQmRS
-         qKHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz0jfwKx13aV6wAZVHqevH1zp0k8WPC/S/XCLqUCZFBWvN1KUxLngEi2NBtBea7JpbHI+gvVMsZqDY+kbrF6fQ2juc6KLNYB0cIvih57D1Ek2HqLlAAhvmDqf3PjSZZrH95ck8+nD9nMf8GIuqy0zkczu7edOKK9NKnn4JwyQc1A==
-X-Gm-Message-State: AOJu0Yziq0PSos0jKRUvus14VjFcrBz/z6bS8GPjG936n3+eNun99AZ9
-	OkBVhscX5uYUjwn4XnYCfrn3iKfXA5YreGAyotbNeDlV3h9onEUY
-X-Google-Smtp-Source: AGHT+IH3/WlA2+Ku0SBN45ZdbPjdWwdhtqhWDCqJW88WoCxPrg6Ehh5A+2AcrjeIKVwaX7V1QKW8Hw==
-X-Received: by 2002:a17:906:7f16:b0:a68:8a2b:6e5b with SMTP id a640c23a62f3a-a6cdb000b03mr157480266b.58.1717758201768;
-        Fri, 07 Jun 2024 04:03:21 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805cbca9sm229440066b.65.2024.06.07.04.03.19
+        bh=ELTaPx5YTbXM+uNiIF/L+aaSl4VA6PsxXQKScV0FjyM=;
+        b=W9RiWqhbv5womgLRkjAVuLHDh/9kIrSTLZvEOdCDIcGDqUpXpV6HIB4kd+eUgV/CIO
+         TsXeAbm8rP8KP0WjRxscUeSM9b1bDsBQD5mlubzHC8woMgRxH0hCAoEa4SC8Na2oSbMU
+         A6/un8jNq2a2sEe8ct1JezJOLCPdjUPIE9jmLaRgmZCSNhrT1/tkEpGY6NyXBuOr4tS3
+         encJFLXhDMzaVkNkyZ1dYgjTaJgtst6ydY+naNi6nO6fv2qMzF+ouNGu0m9x2d5GIbR0
+         6qreS9jcc/8F+L6ZDAkH0H1tu+YOHJN1kpv5EhDYSl6zUSK86lu0uz7riAHD8S2eVdGe
+         60Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyF0fgskp1NY+AK1nKAZv+J3wftR1IGOTmd0o1b7oGVna/f25HzBA63wMeWb+t2N5dLUZTF5LoaKfFOe8PssxMaKg9OAdTXj3tOMfE
+X-Gm-Message-State: AOJu0YzE8FuXbMDt4hT4xEqBO4nZ4UqZBYZMbqrOf8R0ZF/MM7hLwTxq
+	O8zKWyrpx2KrVUrGJMbEoiwsmNwKW389EUrLZQ9SoZfePo4dOUdTWOwk6sNp3/c=
+X-Google-Smtp-Source: AGHT+IEhWGOMR5X97P8Fo2mgAd+J/etXVja+ifCzLsW/ZWUAvf+VNwo9A9i6JB4oljzk7wS6Jg1shA==
+X-Received: by 2002:a2e:2c19:0:b0:2e9:84f9:3e17 with SMTP id 38308e7fff4ca-2eadce9253dmr14699141fa.50.1717758232226;
+        Fri, 07 Jun 2024 04:03:52 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eae2c7e33esm1351191fa.0.2024.06.07.04.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:03:21 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:03:18 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
-	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 02/13] net: dsa: lantiq_gswip: Only allow
- phy-mode = "internal" on the CPU port
-Message-ID: <20240607110318.jujco3liryl7om3v@skbuf>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-3-ms@dev.tdt.de>
+        Fri, 07 Jun 2024 04:03:51 -0700 (PDT)
+Date: Fri, 7 Jun 2024 14:03:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, perex@perex.cz, lgirdwood@gmail.com, 
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	krzk+dt@kernel.org, neil.armstrong@linaro.org, krzysztof.kozlowski@linaro.org
+Subject: Re: [PATCH v2 2/2] ASoC: codec: lpass-rx-macro: add suppor for 2.5
+ codec version
+Message-ID: <qjyuvejxvjfanhqi3xpgobqjuugh52okxiutdprprx43emee7t@gzh7go6yc77z>
+References: <20240606122559.116698-1-srinivas.kandagatla@linaro.org>
+ <20240606122559.116698-3-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,19 +84,329 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606085234.565551-3-ms@dev.tdt.de>
+In-Reply-To: <20240606122559.116698-3-srinivas.kandagatla@linaro.org>
 
-On Thu, Jun 06, 2024 at 10:52:23AM +0200, Martin Schiller wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Thu, Jun 06, 2024 at 01:25:59PM +0100, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> Add the CPU port to gswip_xrx200_phylink_get_caps() and
-> gswip_xrx300_phylink_get_caps(). It connects through a SoC-internal bus,
-> so the only allowed phy-mode is PHY_INTERFACE_MODE_INTERNAL.
+> LPASS Codec v2.5 has significant changes in the rx register offsets.
+> Due to this headset playback on SM8550, SM8650, x1e80100 and all SoCs
+> after SM8450 have only Left working.
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> This patch adjusts the registers to accomdate 2.5 changes. With this
+> fixed now L and R are functional on Headset playback.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
+>  sound/soc/codecs/lpass-rx-macro.c | 565 ++++++++++++++++++++++--------
+>  1 file changed, 410 insertions(+), 155 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
+> index f35187d69cac..bb8ede0e7076 100644
+> --- a/sound/soc/codecs/lpass-rx-macro.c
+> +++ b/sound/soc/codecs/lpass-rx-macro.c
+> @@ -158,7 +158,7 @@
+>  #define CDC_RX_INTR_CTRL_LEVEL0		(0x03C0)
+>  #define CDC_RX_INTR_CTRL_BYPASS0	(0x03C8)
+>  #define CDC_RX_INTR_CTRL_SET0		(0x03D0)
+> -#define CDC_RX_RXn_RX_PATH_CTL(n)	(0x0400 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_CTL(rx, n)	(0x0400  + rx->rxn_reg_offset * n)
 
-This is for the case where those CPU port device tree properties are
-present, right? In the device trees in current circulation they are not,
-and DSA skips phylink registration.
+It's probably a stride or pitch, not an offset.
+
+>  #define CDC_RX_RX0_RX_PATH_CTL		(0x0400)
+>  #define CDC_RX_PATH_RESET_EN_MASK	BIT(6)
+>  #define CDC_RX_PATH_CLK_EN_MASK		BIT(5)
+> @@ -166,45 +166,47 @@
+>  #define CDC_RX_PATH_PGA_MUTE_MASK	BIT(4)
+>  #define CDC_RX_PATH_PGA_MUTE_ENABLE	BIT(4)
+>  #define CDC_RX_PATH_PCM_RATE_MASK	GENMASK(3, 0)
+> -#define CDC_RX_RXn_RX_PATH_CFG0(n)	(0x0404 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_CFG0(rx, n)	(0x0404  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RXn_COMP_EN_MASK		BIT(1)
+>  #define CDC_RX_RX0_RX_PATH_CFG0		(0x0404)
+>  #define CDC_RX_RXn_CLSH_EN_MASK		BIT(6)
+>  #define CDC_RX_DLY_ZN_EN_MASK		BIT(3)
+>  #define CDC_RX_DLY_ZN_ENABLE		BIT(3)
+>  #define CDC_RX_RXn_HD2_EN_MASK		BIT(2)
+> -#define CDC_RX_RXn_RX_PATH_CFG1(n)	(0x0408 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_CFG1(rx, n)	(0x0408  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RXn_SIDETONE_EN_MASK	BIT(4)
+>  #define CDC_RX_RX0_RX_PATH_CFG1		(0x0408)
+>  #define CDC_RX_RX0_HPH_L_EAR_SEL_MASK	BIT(1)
+> -#define CDC_RX_RXn_RX_PATH_CFG2(n)	(0x040C + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_CFG2(rx, n)	(0x040C  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RXn_HPF_CUT_FREQ_MASK	GENMASK(1, 0)
+>  #define CDC_RX_RX0_RX_PATH_CFG2		(0x040C)
+> -#define CDC_RX_RXn_RX_PATH_CFG3(n)	(0x0410 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_CFG3(rx, n)	(0x0410  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RX0_RX_PATH_CFG3		(0x0410)
+>  #define CDC_RX_DC_COEFF_SEL_MASK	GENMASK(1, 0)
+>  #define CDC_RX_DC_COEFF_SEL_TWO		0x2
+> -#define CDC_RX_RXn_RX_VOL_CTL(n)	(0x0414 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_VOL_CTL(rx, n)	(0x0414  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RX0_RX_VOL_CTL		(0x0414)
+> -#define CDC_RX_RXn_RX_PATH_MIX_CTL(n)	(0x0418 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_MIX_CTL(rx, n)	(0x0418  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RXn_MIX_PCM_RATE_MASK	GENMASK(3, 0)
+>  #define CDC_RX_RXn_MIX_RESET_MASK	BIT(6)
+>  #define CDC_RX_RXn_MIX_RESET		BIT(6)
+>  #define CDC_RX_RXn_MIX_CLK_EN_MASK	BIT(5)
+>  #define CDC_RX_RX0_RX_PATH_MIX_CTL	(0x0418)
+>  #define CDC_RX_RX0_RX_PATH_MIX_CFG	(0x041C)
+> -#define CDC_RX_RXn_RX_VOL_MIX_CTL(n)	(0x0420 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_VOL_MIX_CTL(rx, n)	(0x0420  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RX0_RX_VOL_MIX_CTL	(0x0420)
+>  #define CDC_RX_RX0_RX_PATH_SEC1		(0x0424)
+>  #define CDC_RX_RX0_RX_PATH_SEC2		(0x0428)
+>  #define CDC_RX_RX0_RX_PATH_SEC3		(0x042C)
+> +#define CDC_RX_RXn_RX_PATH_SEC3(rx, n)	(0x042c  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RX0_RX_PATH_SEC4		(0x0430)
+>  #define CDC_RX_RX0_RX_PATH_SEC7		(0x0434)
+> +#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)	(0x0434  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_DSM_OUT_DELAY_SEL_MASK	GENMASK(2, 0)
+>  #define CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE	0x2
+>  #define CDC_RX_RX0_RX_PATH_MIX_SEC0	(0x0438)
+>  #define CDC_RX_RX0_RX_PATH_MIX_SEC1	(0x043C)
+> -#define CDC_RX_RXn_RX_PATH_DSM_CTL(n)	(0x0440 + 0x80 * n)
+> +#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	(0x0440  + rx->rxn_reg_offset * n)
+>  #define CDC_RX_RXn_DSM_CLK_EN_MASK	BIT(0)
+>  #define CDC_RX_RX0_RX_PATH_DSM_CTL	(0x0440)
+>  #define CDC_RX_RX0_RX_PATH_DSM_DATA1	(0x0444)
+> @@ -213,6 +215,7 @@
+>  #define CDC_RX_RX0_RX_PATH_DSM_DATA4	(0x0450)
+>  #define CDC_RX_RX0_RX_PATH_DSM_DATA5	(0x0454)
+>  #define CDC_RX_RX0_RX_PATH_DSM_DATA6	(0x0458)
+> +/* RX offsets prior to 2.5 codec version */
+>  #define CDC_RX_RX1_RX_PATH_CTL		(0x0480)
+>  #define CDC_RX_RX1_RX_PATH_CFG0		(0x0484)
+>  #define CDC_RX_RX1_RX_PATH_CFG1		(0x0488)
+> @@ -259,10 +262,58 @@
+>  #define CDC_RX_RX2_RX_PATH_MIX_SEC0	(0x0544)
+>  #define CDC_RX_RX2_RX_PATH_MIX_SEC1	(0x0548)
+>  #define CDC_RX_RX2_RX_PATH_DSM_CTL	(0x054C)
+> +
+> +/* LPASS CODEC version 2.5 rx reg offsets */
+
+Please separate 2.5 support into a separate patch.
+
+> +#define CDC_2_5_RX_RX1_RX_PATH_CTL		(0x04c0)
+> +#define CDC_2_5_RX_RX1_RX_PATH_CFG0		(0x04c4)
+> +#define CDC_2_5_RX_RX1_RX_PATH_CFG1		(0x04c8)
+> +#define CDC_2_5_RX_RX1_RX_PATH_CFG2		(0x04cC)
+> +#define CDC_2_5_RX_RX1_RX_PATH_CFG3		(0x04d0)
+> +#define CDC_2_5_RX_RX1_RX_VOL_CTL		(0x04d4)
+> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_CTL		(0x04d8)
+> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_CFG		(0x04dC)
+> +#define CDC_2_5_RX_RX1_RX_VOL_MIX_CTL		(0x04e0)
+> +#define CDC_2_5_RX_RX1_RX_PATH_SEC1		(0x04e4)
+> +#define CDC_2_5_RX_RX1_RX_PATH_SEC2		(0x04e8)
+> +#define CDC_2_5_RX_RX1_RX_PATH_SEC3		(0x04eC)
+> +#define CDC_2_5_RX_RX1_RX_PATH_SEC4		(0x04f0)
+> +#define CDC_2_5_RX_RX1_RX_PATH_SEC7		(0x04f4)
+> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0		(0x04f8)
+> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1		(0x04fC)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_CTL		(0x0500)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1	(0x0504)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2	(0x0508)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3	(0x050C)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4	(0x0510)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5	(0x0514)
+> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6	(0x0518)
+> +
+> +#define CDC_2_5_RX_RX2_RX_PATH_CTL		(0x0580)
+> +#define CDC_2_5_RX_RX2_RX_PATH_CFG0		(0x0584)
+> +#define CDC_2_5_RX_RX2_RX_PATH_CFG1		(0x0588)
+> +#define CDC_2_5_RX_RX2_RX_PATH_CFG2		(0x058C)
+> +#define CDC_2_5_RX_RX2_RX_PATH_CFG3		(0x0590)
+> +#define CDC_2_5_RX_RX2_RX_VOL_CTL		(0x0594)
+> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_CTL		(0x0598)
+> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_CFG		(0x059C)
+> +#define CDC_2_5_RX_RX2_RX_VOL_MIX_CTL		(0x05a0)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC0		(0x05a4)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC1		(0x05a8)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC2		(0x05aC)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC3		(0x05b0)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC4		(0x05b4)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC5		(0x05b8)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC6		(0x05bC)
+> +#define CDC_2_5_RX_RX2_RX_PATH_SEC7		(0x05c0)
+> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0		(0x05c4)
+> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1		(0x05c8)
+> +#define CDC_2_5_RX_RX2_RX_PATH_DSM_CTL		(0x05cC)
+> +
+>  #define CDC_RX_IDLE_DETECT_PATH_CTL	(0x0780)
+>  #define CDC_RX_IDLE_DETECT_CFG0		(0x0784)
+>  #define CDC_RX_IDLE_DETECT_CFG1		(0x0788)
+>  #define CDC_RX_IDLE_DETECT_CFG2		(0x078C)
+> +
+>  #define CDC_RX_IDLE_DETECT_CFG3		(0x0790)
+>  #define CDC_RX_COMPANDERn_CTL0(n)	(0x0800 + 0x40 * n)
+>  #define CDC_RX_COMPANDERn_CLK_EN_MASK	BIT(0)
+> @@ -598,6 +649,8 @@ struct rx_macro {
+>  	int rx_mclk_users;
+>  	int clsh_users;
+>  	int rx_mclk_cnt;
+> +	int codec_version;
+> +	int rxn_reg_offset;
+>  	bool is_ear_mode_on;
+>  	bool hph_pwr_mode;
+>  	bool hph_hd2_mode;
+> @@ -755,11 +808,15 @@ static SOC_ENUM_SINGLE_DECL(rx_int1_2_interp_enum, SND_SOC_NOPM, 0,
+>  			    rx_int1_2_interp_mux_text);
+>  static SOC_ENUM_SINGLE_DECL(rx_int2_2_interp_enum, SND_SOC_NOPM, 0,
+>  			    rx_int2_2_interp_mux_text);
+> +
+
+unrelated?
+
+>  static SOC_ENUM_SINGLE_DECL(rx_int0_dem_inp_enum, CDC_RX_RX0_RX_PATH_CFG1, 0,
+>  			    rx_int_dem_inp_mux_text);
+>  static SOC_ENUM_SINGLE_DECL(rx_int1_dem_inp_enum, CDC_RX_RX1_RX_PATH_CFG1, 0,
+>  			    rx_int_dem_inp_mux_text);
+>  
+> +static SOC_ENUM_SINGLE_DECL(rx_2_5_int1_dem_inp_enum, CDC_2_5_RX_RX1_RX_PATH_CFG1, 0,
+> +			    rx_int_dem_inp_mux_text);
+> +
+>  static SOC_ENUM_SINGLE_DECL(rx_macro_rx0_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
+>  static SOC_ENUM_SINGLE_DECL(rx_macro_rx1_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
+>  static SOC_ENUM_SINGLE_DECL(rx_macro_rx2_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
+
+[skipped all split default + add 2.5] chunks
+
+>  static int rx_macro_component_probe(struct snd_soc_component *component)
+>  {
+> +	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
+>  	struct rx_macro *rx = snd_soc_component_get_drvdata(component);
+> +	const struct snd_soc_dapm_widget *widgets;
+> +	const struct snd_kcontrol_new *controls;
+> +	unsigned int num_controls;
+> +	int ret, num_widgets;
+>  
+>  	snd_soc_component_init_regmap(component, rx->regmap);
+>  
+> -	snd_soc_component_update_bits(component, CDC_RX_RX0_RX_PATH_SEC7,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_SEC7(rx, 0),
+>  				      CDC_RX_DSM_OUT_DELAY_SEL_MASK,
+>  				      CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE);
+> -	snd_soc_component_update_bits(component, CDC_RX_RX1_RX_PATH_SEC7,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_SEC7(rx, 1),
+>  				      CDC_RX_DSM_OUT_DELAY_SEL_MASK,
+>  				      CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE);
+> -	snd_soc_component_update_bits(component, CDC_RX_RX2_RX_PATH_SEC7,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_SEC7(rx, 2),
+>  				      CDC_RX_DSM_OUT_DELAY_SEL_MASK,
+>  				      CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE);
+> -	snd_soc_component_update_bits(component, CDC_RX_RX0_RX_PATH_CFG3,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_CFG3(rx, 0),
+>  				      CDC_RX_DC_COEFF_SEL_MASK,
+>  				      CDC_RX_DC_COEFF_SEL_TWO);
+> -	snd_soc_component_update_bits(component, CDC_RX_RX1_RX_PATH_CFG3,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_CFG3(rx, 1),
+>  				      CDC_RX_DC_COEFF_SEL_MASK,
+>  				      CDC_RX_DC_COEFF_SEL_TWO);
+> -	snd_soc_component_update_bits(component, CDC_RX_RX2_RX_PATH_CFG3,
+> +	snd_soc_component_update_bits(component, CDC_RX_RXn_RX_PATH_CFG3(rx, 2),
+>  				      CDC_RX_DC_COEFF_SEL_MASK,
+>  				      CDC_RX_DC_COEFF_SEL_TWO);
+>  
+> +	if (rx->codec_version >= LPASS_CODEC_VERSION_2_5) {
+> +		controls = rx_macro_2_5_snd_controls;
+> +		num_controls = ARRAY_SIZE(rx_macro_2_5_snd_controls);
+> +		widgets = rx_macro_2_5_dapm_widgets;
+> +		num_widgets = ARRAY_SIZE(rx_macro_2_5_dapm_widgets);
+> +	} else {
+> +		controls = rx_macro_def_snd_controls;
+> +		num_controls = ARRAY_SIZE(rx_macro_def_snd_controls);
+> +		widgets = rx_macro_def_dapm_widgets;
+> +		num_widgets = ARRAY_SIZE(rx_macro_def_dapm_widgets);
+> +	}
+> +
+>  	rx->component = component;
+>  
+> -	return 0;
+> +	ret = snd_soc_add_component_controls(component, controls, num_controls);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return snd_soc_dapm_new_controls(dapm, widgets, num_widgets);
+>  }
+>  
+>  static int swclk_gate_enable(struct clk_hw *hw)
+> @@ -3523,11 +3748,12 @@ static const struct snd_soc_component_driver rx_macro_component_drv = {
+>  
+>  static int rx_macro_probe(struct platform_device *pdev)
+>  {
+> +	struct reg_default *reg_defaults;
+>  	struct device *dev = &pdev->dev;
+>  	kernel_ulong_t flags;
+>  	struct rx_macro *rx;
+>  	void __iomem *base;
+> -	int ret;
+> +	int ret, def_count;
+>  
+>  	flags = (kernel_ulong_t)device_get_match_data(dev);
+>  
+> @@ -3567,6 +3793,33 @@ static int rx_macro_probe(struct platform_device *pdev)
+>  		goto err;
+>  	}
+>  
+> +	rx->codec_version = lpass_macro_get_codec_version();
+
+What guarantees that VA macro has been probed already? If I'm not
+mistaken, we might easily get a default '0' here instead of a correct
+version.
+
+> +	switch (rx->codec_version) {
+> +	case LPASS_CODEC_VERSION_2_5 ... LPASS_CODEC_VERSION_2_8:
+> +		rx->rxn_reg_offset = 0xc0;
+> +		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
+> +		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
+> +		if (!reg_defaults)
+> +			return -ENOMEM;
+> +		memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
+> +		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
+> +				rx_2_5_defaults, sizeof(rx_2_5_defaults));
+> +		break;
+> +	default:
+> +		rx->rxn_reg_offset = 0x80;
+> +		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
+> +		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
+> +		if (!reg_defaults)
+> +			return -ENOMEM;
+> +		memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
+> +		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
+> +				rx_pre_2_5_defaults, sizeof(rx_pre_2_5_defaults));
+> +		break;
+> +	}
+> +
+> +	rx_regmap_config.reg_defaults = reg_defaults,
+> +	rx_regmap_config.num_reg_defaults = def_count;
+> +
+>  	rx->regmap = devm_regmap_init_mmio(dev, base, &rx_regmap_config);
+>  	if (IS_ERR(rx->regmap)) {
+>  		ret = PTR_ERR(rx->regmap);
+> @@ -3629,6 +3882,7 @@ static int rx_macro_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_clkout;
+>  
+> +	kfree(reg_defaults);
+>  	return 0;
+>  
+>  err_clkout:
+> @@ -3642,6 +3896,7 @@ static int rx_macro_probe(struct platform_device *pdev)
+>  err_dcodec:
+>  	clk_disable_unprepare(rx->macro);
+>  err:
+> +	kfree(reg_defaults);
+>  	lpass_macro_pds_exit(rx->pds);
+>  
+>  	return ret;
+> -- 
+> 2.21.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
