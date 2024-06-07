@@ -1,139 +1,96 @@
-Return-Path: <linux-kernel+bounces-205246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870CC8FF9EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:27:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0178FF9EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDDFB21F86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E171A28661B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 02:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12612B77;
-	Fri,  7 Jun 2024 02:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0380112B77;
+	Fri,  7 Jun 2024 02:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afh4I9jx"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="cWqA0PGA"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCCDDAB;
-	Fri,  7 Jun 2024 02:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926CC33C0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 02:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717727228; cv=none; b=TkUt855CLqE9VlUY2tu5C0AztTII1O+85skTsnrjAhPyjiakQCb3fv4N+T20sfTbgzzYespMnuTEhonqS6kYu4sZPTEGS+vrVK5KqrIkU9o7n+TFoRqVlsYLp30OqhcUuA85ukHkSOoOKIcAogFMxEXhyMKLcrQJhrkUm6rN/LI=
+	t=1717727336; cv=none; b=bVvw4ZUFNkymag0Z5+VzQUOR+9fTsrOpq8rsEDn42VFeviJJZgR7cssnfbsuE/uDgR44mV2bVVM/WhxPhFz+IzboqPBI3qSDqwhexdZZaTI2Jv5x9cMOk5tLTaphd60RU6vMfLubV9s4utTT+Xuo3KDDN2cW67NLHlMQ5XljaLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717727228; c=relaxed/simple;
-	bh=FMviLWiM9TAuVnien3DOdHoozNOjUgtoS3TQejc5Dsw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=k5nr7x2rxRijUoCqP5lW4LJe4qlqfeXWQz1qylb5QRdLss71XpbRN36dd/+PGXHithYolzXGyu+E4xuhw0IX6Oo2yVunwUy+hVDZyWZxkJlf74MQvpmE3iqlzQWczxlVgcMERxdHdvD18xquU/1AH6BrQetcSO/GQM4UPryfqag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afh4I9jx; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c2bab8d69cso439431a91.0;
-        Thu, 06 Jun 2024 19:27:06 -0700 (PDT)
+	s=arc-20240116; t=1717727336; c=relaxed/simple;
+	bh=NR2BjMyojSNVzVA3wiNKVKPivX6F/0FiMK6KwEP4tQk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uI0TjeYzQhTh8YtYFgHahzLj5ZPAsglujnx30mkBQYyg2cwS7sR5TuYi4u5hJxz+t7xCEiA6+BkmlGUWmE+1xkYOn3sIcfjaVzCFp2KXohUGurJ4085qCE7vf8PLy968d9d8B9Bu3SPvO1e43oQvv3FiJLf6nf/ByYOpqQ4vAcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=cWqA0PGA; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 350C320075;
+	Fri,  7 Jun 2024 10:28:37 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717727226; x=1718332026; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0PRTAWrhjr+QRdN9ZBsFIxqJeIplqLVctoeE5yPLMKA=;
-        b=Afh4I9jxNnEqCbp47P43mQ+JCNYok5cqTNlxHnNHDyXqlwPBd2kEtaXdUga+uec8Xd
-         fibr1kBL05LK6jgDb8FNWM3blQt0nq0NhoSmxmwvvpvDKUp93OVSB415hPnMwYVeDPSt
-         NJ2k3HqLbP02cDCZefoHCZzFNiQozGD1lXT8a25+SEOd0YPb7EOnYTZUhs7g5nnyfgw7
-         7eww/nrIBr2kdVBDsUvSxgeW6NLD/CH/KhCYmAUA+5vWD6XZ6OX+P+Hsu1hK5nihgjB3
-         /qUUI4HThCVJym1vD0+ZeUfI6KETAvvjX6aqOxrdxKqlGFAcQZM3dihkBbdBOH1LcFdY
-         mWLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717727226; x=1718332026;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0PRTAWrhjr+QRdN9ZBsFIxqJeIplqLVctoeE5yPLMKA=;
-        b=bN7msbrloLvjg8kU9cfuH/ft+H5mHBigtw3k3MoD5+ZtYf+7ex79gIxuTq1//x66t9
-         OlKlcoj32c9bSrXwgKF+mCNXVQiM4JpxT/bmqG5JdANQXSizfZnxuuv0hxSgcHY07LZK
-         p+cjt1O6HD9/Fyc+e4qumie8fiX9YD5j/Iuthw4ZcYgwOTlgUteqhRcCRbwipV9Hcvqh
-         v3h2zxfBRMqovGyG1Be1BoVoNuMMqIF748pVlI9tmRTvdArT8yoTi5lM9QxYN7pDpcn3
-         1CPCnXBEp33bwzuULmGPNobdQQjvuKfz8PLeaUk7SKU7GTQ5+ZhxI9OT2aLME8l/1OFi
-         SZHg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Z35T48VVDMe7wSQpP+VjM3I2DyBQUxh87evjX5FF3DAx9VW/S9yfKgnMTZyXPC8yiCpWAQd/x6fuPf9GrPpBaWEUIbB/BLFHS3ibz+lkRYhXo/qJ54h/0PKCGAlt8KbRVz8HGS0ODqjovQ==
-X-Gm-Message-State: AOJu0YxUrAMyfADdOm7BbRLjmsID1bC2Wtcty5g36/ZGQtftqv3wSpen
-	fyaXQq8Ed6TuS1B+dCnftqMsyTCDsFKu3TZVVIOF5llNIiWIrBxH
-X-Google-Smtp-Source: AGHT+IFrzSv1SVs70dIStUa/t69Z7VUyPkuWZwNdij5/ygL0LC3+cC6DXCNw5z9wTu9xTAXSiKO42Q==
-X-Received: by 2002:a17:90a:1157:b0:2c1:9e9e:a751 with SMTP id 98e67ed59e1d1-2c2bcc0b514mr1242592a91.22.1717727225818;
-        Thu, 06 Jun 2024 19:27:05 -0700 (PDT)
-Received: from smtpclient.apple ([47.89.225.180])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806398afsm4344667a91.1.2024.06.06.19.27.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2024 19:27:05 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	d=codeconstruct.com.au; s=2022a; t=1717727319;
+	bh=NR2BjMyojSNVzVA3wiNKVKPivX6F/0FiMK6KwEP4tQk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=cWqA0PGAUe9qogFTf92p1oVZmk3M3KWt/YqFP1tdjnrTYq6jOfOdCO/E9lMKnGeEo
+	 nDH0uKjE1yDtGg4z7TCjPeODlO0Goy3esRjN1sp0IH/c1Rry1mXBh4fZI9SkLHAB+P
+	 cWu5/8Ve1EeiiC9nApqJIKJtqxJCkWgaEzAn5ptIA/yoD2P0/vtKympeAScFDJq8wJ
+	 +4OD3qfGntNYUIyFkV6mnAo4QsQ8qzDQ5jTolyAeOUQmi7qtFUSW7F32arbckTMewR
+	 sJiN6a6TafVyoW5jWwYPvZuOXS3xXru/KBpq3T78BICSozOmdZwxbe4U2J1yiEKEbM
+	 MCMiGnRfreOxQ==
+Message-ID: <3c6c319f3aaa60428fd28f4d95c71dc9a8150081.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] i3c: dw: Fix IBI intr signal programming
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Aniket <aniketmaurya@google.com>, Alexandre Belloni
+	 <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Billy Tsai
+	 <billy_tsai@aspeedtech.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Fri, 07 Jun 2024 10:28:42 +0800
+In-Reply-To: <20240606124816.723630-1-aniketmaurya@google.com>
+References: <20240606124816.723630-1-aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <930d7361-64e9-a0fc-eb04-79d9bf9267fa@redhat.com>
-Date: Fri, 7 Jun 2024 10:26:49 +0800
-Cc: Miroslav Benes <mbenes@suse.cz>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E4079557-7518-44E3-8C43-3DB055D541A4@gmail.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <Zloh/TbRFIX6UtA+@redhat.com>
- <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
- <Zl8mqq6nFlZL+6sb@redhat.com>
- <92FCCE66-8CE5-47B4-A20C-31DC16EE3DE0@gmail.com>
- <930d7361-64e9-a0fc-eb04-79d9bf9267fa@redhat.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
 
-
-
-> On Jun 6, 2024, at 23:01, Joe Lawrence <joe.lawrence@redhat.com> =
-wrote:
->=20
-> Hi Wardenjohn,
->=20
-> To follow up, Red Hat kpatch QE pointed me toward this test:
->=20
-> =
-https://gitlab.com/redhat/centos-stream/tests/kernel/kernel-tests/-/tree/m=
-ain/general/kpatch/kpatch-trace?ref_type=3Dheads
->=20
-> which reports a few interesting things via systemd service and ftrace:
->=20
-> - Patched functions
-> - Traced functions
-> - Code that was modified, but didn't run
-> - Other code that ftrace saw, but is not listed in the sysfs directory
->=20
-> The code looks to be built on top of the same basic ftrace commands =
-that
-> I sent the other day.  You may be able to reuse/copy/etc bits from the
-> scripts if they are handy.
->=20
-> --
-> Joe
->=20
-
-Thank you so much, you really helped me, Joe!
-
-I will try to learn the script and make it suitable for our system.
-
-Again, thank you, Joe!
-
-Regards,
-Wardenjohn
+SGkgQW5pa2V0LAoKPiBJQklfU0lSX1JFUV9SRUpFQ1QgcmVnaXN0ZXIgaXMgbm90IHByZXNlbnQg
+aWYgdGhlIElQCj4gaGFzIElDX0hBU19JQklfREFUQSA9IDEgc2V0LgoKSSBkb24ndCBoYXZlIGFu
+eSBhY2Nlc3MgdG8gdGhlIElQIGl0c2VsZiwgYnV0IEkgdW5kZXJzdGFuZCB0aGVyZSBhcmUgYQpm
+ZXcgZGlmZmVyZW50IGNvbmZpZ3VyYXRpb24gc2V0dGluZ3MgaW4gdGhlIElQIHRoYXQgbWF5IGFm
+ZmVjdCB0aGUKcmVnaXN0ZXIgaW50ZXJmYWNlLgoKSSB0aGluayB3ZSdyZSBPSyBpbiB0aGlzIGNh
+c2UgKGp1c3Qgbm90IHJlYWRpbmcgdGhlIHZhbHVlIG91dCBvZiB0aGUKU0lSX1JFUV9SRUpFQ1Qg
+cmVnaXN0ZXIpLCBidXQgYW55IHRob3VnaHRzIG9uIGFkZGluZyBjb3JyZXNwb25kaW5nCnN3aXRj
+aGVzIGluIHRoZSBkcml2ZXIgc28gd2UgY2FuIHN1cHBvcnQgdGhvc2UgY29uZmlndXJhdGlvbnM/
+IFRoZXNlCndvdWxkIGJlIHJlcHJlc2VudGVkIGFzIERUIGNvbmZpZyBvZiB0aGUgc3BlY2lmaWMg
+aGFyZHdhcmUgaW5zdGFuY2UgLSBhdAp0aGUgbW9zdCBncmFudWxhciwganVzdCBieSB0aGUgc3Bl
+Y2lmaWMgY29tcGF0aWJsZSBzdHJpbmcuCgo+IGR3X2kzY19tYXN0ZXJfc2V0X3Npcl9lbmFibGVk
+KHN0cnVjdCBkd19pM2NfbWFzdGVyICptYXN0ZXIsCj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgcmVn
+ID0gcmVhZGwobWFzdGVyLT5yZWdzICsgSUJJX1NJUl9SRVFfUkVKRUNUKTsKPiDCoMKgwqDCoMKg
+wqDCoMKgaWYgKGVuYWJsZSkgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9i
+YWwgPSByZWcgPT0gMHhmZmZmZmZmZjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+Z2xvYmFsID0gIW1hc3Rlci0+c2lyX2VuX2NudCsrOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcmVnICY9IH5CSVQoaWR4KTsKPiDCoMKgwqDCoMKgwqDCoMKgfSBlbHNlIHsKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJvb2wgaGpfcmVqZWN0ZWQgPSAhIShyZWFk
+bChtYXN0ZXItPnJlZ3MgKyBERVZJQ0VfQ1RSTCkgJiBERVZfQ1RSTF9IT1RfSk9JTl9OQUNLKTsK
+PiDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnIHw9IEJJVChpZHgpOwo+
+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9iYWwgPSAocmVnID09IDB4ZmZmZmZm
+ZmYpICYmIGhqX3JlamVjdGVkOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnbG9i
+YWwgPSAoIS0tbWFzdGVyLT5zaXJfZW5fY250KSAmJiBoal9yZWplY3RlZDsKPiDCoMKgwqDCoMKg
+wqDCoMKgfQoKQ291bGQgd2UgdXNlIHRoZSBTSVIgbWFzayBmb3IgdGhpcywgYnV0IGp1c3QgcmVh
+ZCBpdCBmcm9tIGEgZmllbGQgaW4gdGhlCnN0cnVjdCBkd19pM2NfbWFzdGVyLCBpbnN0ZWFkIG9m
+IElCSV9TSVJfUkVRX1JFSkVDVD8KClRoaXMgd291bGQgbWVhbiB0aGF0IHRoZXJlJ3Mgbm8gcG9z
+c2liaWxpdHkgb2YgdGhlIGNvdW50ZXIgZ29pbmcgb3V0IG9mCnN5bmMgZnJvbSB0aGUgU0lSIHNl
+dHRpbmdzIC0gc2F5LCBvbiB1bmRlcmZsb3cgaWYgd2UgZ2V0IGEgc3B1cmlvdXMKZGlzYWJsZS4K
+CkNoZWVycywKCgpKZXJlbXkK
 
 
