@@ -1,81 +1,70 @@
-Return-Path: <linux-kernel+bounces-206689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8E9900CC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:14:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DF8900CC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E54A285565
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:13:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5541EB2299A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 20:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816B414D45B;
-	Fri,  7 Jun 2024 20:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D18A14A4C3;
+	Fri,  7 Jun 2024 20:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mdImtPvk"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NBHhDVRe"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18B04315F;
-	Fri,  7 Jun 2024 20:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717791230; cv=fail; b=gi0EGsrO8MlpwHvicUeae4RB0v+wriOyMaW9xrT6yUMmyG6wfKf95UcHo8AVM8rs/SwgJzTcORnw4dQT5375UD5TMCm48g7C+eOt1ifAZPkb4PMCPZiHq+rRI569wGFVcZUx3Z+gsdJYpdMV34WwQ8h2qYzDSEaRGvb4eNCzSyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717791230; c=relaxed/simple;
-	bh=uVVVMo8JIdPn201vfklbFybtOQ0cP6mBgQ5eNXHU6Oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q6ylpsnf0EIx9XNx+lGLa4ZcXGPfCzcbqkoZrQduu+lgeX94J7e+VXcbT70mQDOvG1fe+hdwNWavy6oWvLt/X/vsx2+NMSj0PTQx8H46j5T4ptgCQUJgFCrUHa1NWlzpBsoY4Gl83LvTfe7q0/JqbS6G2ACS7Oy1ETLdL+r5KE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mdImtPvk; arc=fail smtp.client-ip=40.107.94.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dyzpnJBEMGfjWdjYEMCkntiqdDCWTzd5xP8Ks+8vDk62lnheT17qlVk1zyXslfPX3uRDVBIKMiEZuyJ6tuqif96eGq9xtARzXJV6DKqcHezkBYLKzpnVDAbpDa4PoG2i+FisB5zLsXaCO/kkTMQwsntEErWI9pkgdxofuTg0qhkfrsrFC50td7UABUzDAXofuMjUTZbXkHXRoYiGBLHG2uf0IqjfMOHfbNU8kBPnFWFGNRX3W2UItUr7ov+dpqc24i7PvmXhMrgTFNZxdIWAAr81RAuJN+w9ldNUm0jD+Sfc+xVbrDVXukLkdpnPIlzrDc5WJhdO2eNlBEHf5SkIrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iq8MPn4ZyXSkqVzEOk9v8MpJqc/2LWQ3ZEGCz42n4Hw=;
- b=Qm/9tc8XA72CIVghVGIo4feJzts5BXFsspIH8t8t2iJ4zQZyi7YUa9/TsocNECvYXn7YinybRZSTiPnwdzC+SxhzAuVJVbUM2RDdJ2X6Tx0bBOcT3mZRRzAZKkEz7gFTmjUD4l2EKGDLD1rPdUoi+MeQbDN9WCLX4TcVxAP0S0sWeGYFMxnxksU6K0sp9t5pJ6ohxwQFY6WYI4TO4FRUxWuMuYfQDdY0C9FPJ+yUwT8PAg18ldBfuTCLMcYsRq+YufbkZcIyM79FIWMwfcbYv0I8fPnziFkPi1yG5ktagqbQP/7ywJL9+lFjXw1aCypnSPmwfV/wLr49Vel+3+nWnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iq8MPn4ZyXSkqVzEOk9v8MpJqc/2LWQ3ZEGCz42n4Hw=;
- b=mdImtPvk2LAt78MUteuh1lmLTjxPrxp5MUgdVdClTu/hxMsz7QgEsyF2eqQOROGVXM4omfkXsoTzkdfMXzPe7fiH06yPro0sd4i4B6diNPKgf+fVmOsMeI+vEPhRn152POR9X43j9RDkskuHloqktuGOnhOFHWe8B5iWQoDGVp4FZivEfUDdkZR1iILOZrpX19iAF+cK4btUSRR2nvkaXxKJYgU71auLEqNKFuVGpIWNxvg5lBsxPQqMKistptb4Re7X0BKnyL6qJlxEniSrIJHJsM1uRV7Epmp3/a61sLV1ISe2F+knlb2f59y7tUARlwiwymUJTrMZTP7pynRmQg==
-Received: from MW4P220CA0009.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::14)
- by LV3PR12MB9093.namprd12.prod.outlook.com (2603:10b6:408:19d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Fri, 7 Jun
- 2024 20:13:43 +0000
-Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
- (2603:10b6:303:115:cafe::f5) by MW4P220CA0009.outlook.office365.com
- (2603:10b6:303:115::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.21 via Frontend
- Transport; Fri, 7 Jun 2024 20:13:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 20:13:42 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 13:13:25 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 13:13:24 -0700
-Message-ID: <6b32399f-d9c6-4df5-b1e5-755ef4acf25d@nvidia.com>
-Date: Fri, 7 Jun 2024 13:13:23 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF99C79DC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 20:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717791336; cv=none; b=GKz2k+EODiMGPEHvPrH4UbP86Aul9DmGq0YieQUCqfQOCuBP+E0yHLA7ea503jLBW+0F0jjo7Z2isDXGBsN7mCjb77JTfjnH4faFWYOwJ4aIMOTXlRerodzQU9TIYwM8lc1m2OnU+7wEhe+RMiMjLs7TmXH8mDBbTanAK137v3w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717791336; c=relaxed/simple;
+	bh=8ZFQFPCQ4XXTULP5PE2A/hOB45BjJEr+QOidNYQ3gh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bphk6oWUaLfUqxP+fXer1hbQiV1+oqbZczlgFVV6yTsePH9BiBXJDzcDpsuViCo/VmizhCF+ID1smC2RcWb0FSlX4cMmENXCBqaonGaUahD84hGwy6Ic4j8eS94zSC/uj5fjkxOScaKR9RG3WCv9TjrP2lpGBSARoPBKZb6916s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NBHhDVRe; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7eb358b6f3cso5075739f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 13:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1717791334; x=1718396134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+8Xxh/Ngaec4PNLmxPRy2PuypzgB45wSzw/ULqzPxUA=;
+        b=NBHhDVReq3YMh3TdZuiV5vhoMwPCrmqLFAZnaL2zUWP4/Jw7C4AqqmNJdTlSaRvn+g
+         9/vi6bhI3rlIDPWT+VTjQw0065I9sz1jFMj3+PzSksRry5a9XMbNBtaUKeX+uc637wsR
+         GFNhV8Iq6osfwU2BeHV5diFCmEVaWr9Sn6eSY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717791334; x=1718396134;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+8Xxh/Ngaec4PNLmxPRy2PuypzgB45wSzw/ULqzPxUA=;
+        b=F0qJQJIgPWIMM8Kc5NAJdmYeHfSDSStK3nwgtEkY/XviZA8WvGPXS+Jh3NLvF9Mecb
+         vvi707kAp6Ps/qNr/pJp/ujFsWvepQ3Idosb2i1u92tEynyllMXFhAxim3QbtpC9nqRz
+         5B5/S1cMgDX5ACV8Zdr5a4vWa/NAE981TD29yEyinpL6KbN2rkMtrUSoqDoY0nAQEAk/
+         XYcYK7wx+PFv/yJP76ZJA7NnUdc7QzjdLaZM1g/+/97sS1FvWKFe3hCc6o6oIrRbZJ+G
+         Q5F1n3lxg87s1rVd9bketvVls/7EleXkBcke0Fx/rkUjH1eezSWieNo26Xh9eEjJfcyi
+         jk8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXPuuozjqmZPGucNYp83Lk34DBrvSLka50WYLm93lQZXvoNeet/qpn72s3ZSMK4bopv97zXw7MSyONautOWbuCEVuP0cHdLw9z/JJwM
+X-Gm-Message-State: AOJu0Yx6/TJOMA/F6WaGlvWEFPA2fGPHcT5EAyxDKOwJp/HSf7B8DFhj
+	B5QVJq0hPu+yKZwQZUMLW3vLk4P66nX0TbC+IQ/fFl8n2NI7p28ABt/V+u6mYxg=
+X-Google-Smtp-Source: AGHT+IFjt9n7MceFJ56j5EGGZXyZHBAx91KrQNRWYlCOUZsx281CbKYOqAW30JkztIFgbDxHIMIxrg==
+X-Received: by 2002:a05:6602:8ca:b0:7eb:2c80:5354 with SMTP id ca18e2360f4ac-7eb5712c5a8mr362495539f.0.1717791333928;
+        Fri, 07 Jun 2024 13:15:33 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b7a2386dc6sm1006305173.85.2024.06.07.13.15.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 13:15:33 -0700 (PDT)
+Message-ID: <b1f1302f-faa2-4081-a73d-b57f9c924e23@linuxfoundation.org>
+Date: Fri, 7 Jun 2024 14:15:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,147 +72,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] selftests/lib.mk: handle both LLVM=1 and CC=clang
- builds
-To: Nathan Chancellor <nathan@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>
-CC: Mark Brown <broonie@kernel.org>, Shuah Khan <shuah@kernel.org>, "Muhammad
- Usama Anjum" <usama.anjum@collabora.com>, Beau Belgrave
-	<beaub@linux.microsoft.com>, Steven Rostedt <rostedt@goodmis.org>, "Naresh
- Kamboju" <naresh.kamboju@linaro.org>, Nick Desaulniers
-	<ndesaulniers@google.com>, Justin Stitt <justinstitt@google.com>, "Bill
- Wendling" <morbo@google.com>, sunliming <sunliming@kylinos.cn>, "Masami
- Hiramatsu" <mhiramat@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>
-References: <20240531183751.100541-1-jhubbard@nvidia.com>
- <20240531183751.100541-2-jhubbard@nvidia.com>
- <306eebf8-bb5d-4e1a-9fa3-ad3f4ea11b9c@sirena.org.uk>
- <20240603224706.GA245774@thelio-3990X>
- <2c57be33-77b8-419b-a708-e99aa9b44395@nvidia.com>
- <0d3fd536-5036-40e7-9783-80533914e32d@arm.com>
- <20240607171533.GA2636750@thelio-3990X>
+Subject: Re: [PATCH 1/4] kselftests: vdso: vdso_test_clock_getres: conform
+ test to TAP output
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, Colin Ian King <colin.i.king@gmail.com>,
+ Tiezhu Yang <yangtiezhu@loongson.cn>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240529072454.2522495-1-usama.anjum@collabora.com>
+ <20240529072454.2522495-2-usama.anjum@collabora.com>
 Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240607171533.GA2636750@thelio-3990X>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240529072454.2522495-2-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|LV3PR12MB9093:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd7b5c24-cba7-4ee3-72b2-08dc872e5419
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|7416005|1800799015|376005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RWhwZTFsbkpobVdMNlJkREZoQ01iZ3J4SnJJN3lCbFhZak5WQmc1VVAwS3Nv?=
- =?utf-8?B?S3VqYkZzQVBMVDk1SllITlFPcmRjcGJRNWlIR1FlYmhhaTBXY1VnTkV0cjZV?=
- =?utf-8?B?YTU4LzBWVFM3WVFMbHNqK29BbnlUenYzNVlvMkFKYU00ZFVqdUtLc1lORy9F?=
- =?utf-8?B?cGQ4VzRwZEdQU3RrS1RqUjcxRlpHeXBGZTJMRnRGTk5kdWRHa2p5a2lmV1Bl?=
- =?utf-8?B?cEVJUytTRnJDTjQ3cVp6T3NtZ2pNWDdpUkd3OXl1b3krU0JxVHBUemRqMGNq?=
- =?utf-8?B?Y1JMQUVTM0thM1VCcENGTGRYb3pVMTJuYy9jclU3YWhQdWIzNUk0NFJnUjhn?=
- =?utf-8?B?bXB4RHRJRGFhRm5KNmZUZDdMOXl4djJyM3Rkd1ZNUHZZaERBNzVIbC9ld2ZG?=
- =?utf-8?B?bVgwWUVJU0h2OHpLd1h6dG5TbkNLMXh2SVlHb1VRV1QzTG9DSytEeXpESm1Y?=
- =?utf-8?B?YUlQWlJaZVBSTVRzZzlvS2h5akttYzUzalRrSVhoR3hyZE9PV1JTek5IY1B5?=
- =?utf-8?B?dkJubFpIandkYlNLZFVqcG50T0dydndLUVRpZEYyWlBPbG92NElUY09SK05l?=
- =?utf-8?B?c3I3UkF2cm8wQ09udkRSaGttWWFSUUdjMFNiWE4rTkp0a3cwSFMraytraGV2?=
- =?utf-8?B?WGg5SG9lTGxRUExWVHkvVktWS0JjMmM4dFZvZ2JQWHBwRDdmVFFIZlRXdGQ2?=
- =?utf-8?B?d2llTE5vMGdQUlM3WkI1UmlkRFRuNnk3TjZsbVVCUHdHVWw0bW5zdlRtZktr?=
- =?utf-8?B?WG0zZmVic1RMM1R0SHR1MEoxcHRKcXQzUlBiYjNvdFlFS09rbXA0TzB6RUIr?=
- =?utf-8?B?RzFQUXNyWWdoN0gyUVFQQ1h5TkxFL05FaHJEeTZjazFOa3lCcTNsMHBncUJa?=
- =?utf-8?B?ZFo2WXNRcnZqZE1HNUc5RUpYcThSY08rams3dTVVdmhIcExNQTdYMXQvZWZZ?=
- =?utf-8?B?NUxadXEyenN6WHJrRHNOdVA1Zi82ckVlNm1ONFphUWZwM093d3ZQQnB0SXUy?=
- =?utf-8?B?dldhSDhjUDU0dGoyS25VZjZKWW1sWXVTL2pPZlJHQXlGQkhaU3JUaCtWMXQw?=
- =?utf-8?B?aTZDcXkvaEUvUlc5S3hCd2ZtUldpWmhMdkM4OVhDaEJwZDlVK0VVemNQcGdl?=
- =?utf-8?B?Z2UvdEJkOUdkdEZLaEtpdGxxOHNjaFJDZklNbWc5dEdtdWlsbVdZRWU2N2ZL?=
- =?utf-8?B?Tm5pdW9CczRjVis0OGx3WGdBblVHVnB3OThBcTBYSEhCQ2lwUlI1dS9zUmwx?=
- =?utf-8?B?aThKUXJiY3FUZ09jdFlmVmdScjN5ek5GNFJPbVYrL2RSbXNyWEs0YmE1VkRu?=
- =?utf-8?B?WG55U1daMWl4ZDZxZFhyTkRsRUhLM2ttV0hsUW1CV0NjdkZsbm5lemlPdmFC?=
- =?utf-8?B?VmFKZjJsSXRDM29lWHNvKzNMUHFPQkNWaHhpUEJpN2hNb1VadnV0QWw0Nnpx?=
- =?utf-8?B?ZmRxcjlJajZOTVp6ckdLb3BsSms3MWFoeDI5bUt3SVV1OXRqQ3htNWo1aERZ?=
- =?utf-8?B?UjRhenphbzlYRWJKWTIrQ0J1UDNrYk0yNHJwMDJmU2UwMnpjUlVKaDV0bVZ2?=
- =?utf-8?B?alltOTdndjc0YTAzVDZWOFVURklwdG1meit6T2hoVjJtcVFYUGUzQ3B2VmQx?=
- =?utf-8?B?QUY4OXRDVS9ndzNJN0xJRkVJeDk5NVBVc3JhcVlkc1hiVXhXNW1NdWl2d0E0?=
- =?utf-8?B?c3ZKdW1Qc3J2Mi9SYkJhVndyY012bm9OYldDa21CK1VucjBpTlAzODF6ZmY5?=
- =?utf-8?B?cXBkOHhseTByZVpFMUIzM2ZpaVg3QzNWQ1JjaERxbFBpTWZGUjc3N3c0SlFz?=
- =?utf-8?B?SXQwL29tTVNzYnZmTHdOcm93QTFuOEN0ZkhCb3htS3pmTlVJM2RqRWNsYm5C?=
- =?utf-8?B?ZnhpTUp6bGtJbStWRFFZbm1SMlV2Qk5RWUZJbnhtNEFSak9nZnZhaGZPdklF?=
- =?utf-8?Q?rLiDX0UWUiE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(1800799015)(376005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 20:13:42.7560
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd7b5c24-cba7-4ee3-72b2-08dc872e5419
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044EE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9093
 
-On 6/7/24 10:15 AM, Nathan Chancellor wrote:
-> On Fri, Jun 07, 2024 at 12:12:19PM +0100, Ryan Roberts wrote:
->> On 04/06/2024 05:55, John Hubbard wrote:
->>> On 6/3/24 3:47 PM, Nathan Chancellor wrote:
-...
->> If we are concluding that CC=clang is an invalid way to do this, then I guess we
->> should report that back to [1]?
->>
->> [1] https://lore.kernel.org/all/202404141807.LgsqXPY5-lkp@intel.com/
->> [2]
->> https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
+On 5/29/24 01:24, Muhammad Usama Anjum wrote:
+> Conform the layout, informational and status messages to TAP. No
+> functional change is intended other than the layout of output messages.
 > 
-> I can only speak from the perspective of the main kernel build, as I
-> don't really know much if anything about the selftests, but I think
-> CC=clang and LLVM=1 should both be valid. Ideally, they would behave as
-> they do for the main kernel build (i.e., CC=clang just uses clang for
-> the compiler and LLVM=1 uses the entire LLVM tools). I realize that for
-> the selftests, there is probably little use for tools other than the
-> compiler, assembler, and linker but I think consistency is desirable
-> here.
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
+The message doesn't match the change. This patch converts the
+test to use kselftest_harness.h
+
+Please fix the message to indicate what changes are being made and
+why.
+
+> ---
+>   .../selftests/vDSO/vdso_test_clock_getres.c   | 68 +++++++++----------
+>   1 file changed, 33 insertions(+), 35 deletions(-)
 > 
-> I am not at all familiar with the selftests build system, which is
-> completely different from Kbuild, but I would ack a patch that does
-> that. Otherwise, I think having a different meaning or handling of
-> CC=clang or LLVM=1 is the end of the world, but I do think that it
-> should be documented.
-> 
-
-OK, that can be easily done, as shown below. And there are so far only
-a handful of selftests that key off of LLVM (plus a few of my pending
-patches). I can post this, plus a few patches (and patch updates for
-pending patches) to use the new CC_IS_CLANG where appropriate:
-
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 429535816dbd..ea643d1a65dc 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -43,6 +43,15 @@ else
-  CC := $(CROSS_COMPILE)gcc
-  endif # LLVM
-  
-+# CC might have been set above (by inferring it from LLVM==1), or CC might have
-+# been set from the environment. In either case, if CC is an invocation of clang
-+# in any form, set CC_IS_CLANG. This allows subsystem selftests to selectively
-+# control clang-specific behavior, such as, in particular, compiler warnings.
-+CC_IS_CLANG := 0
-+ifeq ($(findstring clang,$(CC)),clang)
-+    CC_IS_CLANG := 1
-+endif
-+
-  ifeq (0,$(MAKELEVEL))
-      ifeq ($(OUTPUT),)
-         OUTPUT := $(shell pwd)
-
-
+> diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> index 38d46a8bf7cba..c1ede40521f05 100644
+> --- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> +++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> @@ -25,7 +25,7 @@
+>   #include <unistd.h>
+>   #include <sys/syscall.h>
+>   
+> -#include "../kselftest.h"
+> +#include "../kselftest_harness.h"
+>   
+>   static long syscall_clock_getres(clockid_t _clkid, struct timespec *_ts)
+>   {
+> @@ -54,18 +54,8 @@ const char *vdso_clock_name[12] = {
+>   /*
+>    * This function calls clock_getres in vdso and by system call
+>    * with different values for clock_id.
+> - *
+> - * Example of output:
+> - *
+> - * clock_id: CLOCK_REALTIME [PASS]
+> - * clock_id: CLOCK_BOOTTIME [PASS]
+> - * clock_id: CLOCK_TAI [PASS]
+> - * clock_id: CLOCK_REALTIME_COARSE [PASS]
+> - * clock_id: CLOCK_MONOTONIC [PASS]
+> - * clock_id: CLOCK_MONOTONIC_RAW [PASS]
+> - * clock_id: CLOCK_MONOTONIC_COARSE [PASS]
+>    */
+> -static inline int vdso_test_clock(unsigned int clock_id)
+> +static inline void vdso_test_clock(struct __test_metadata *_metadata, unsigned int clock_id)
+>   {
+>   	struct timespec x, y;
+>   
+> @@ -73,52 +63,60 @@ static inline int vdso_test_clock(unsigned int clock_id)
+>   	clock_getres(clock_id, &x);
+>   	syscall_clock_getres(clock_id, &y);
+>   
+> -	if ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)) {
+> -		printf(" [FAIL]\n");
+> -		return KSFT_FAIL;
+> -	}
+> -
+> -	printf(" [PASS]\n");
+> -	return KSFT_PASS;
+> +	ASSERT_EQ(0, ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)));
+>   }
+>   
+> -int main(int argc, char **argv)
+> -{
+> -	int ret = 0;
+> -
+>   #if _POSIX_TIMERS > 0
+>   
+>   #ifdef CLOCK_REALTIME
+> -	ret += vdso_test_clock(CLOCK_REALTIME);
+> +TEST(clock_realtime)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_REALTIME);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_BOOTTIME
+> -	ret += vdso_test_clock(CLOCK_BOOTTIME);
+> +TEST(clock_boottime)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_BOOTTIME);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_TAI
+> -	ret += vdso_test_clock(CLOCK_TAI);
+> +TEST(clock_tai)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_TAI);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_REALTIME_COARSE
+> -	ret += vdso_test_clock(CLOCK_REALTIME_COARSE);
+> +TEST(clock_realtime_coarse)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_REALTIME_COARSE);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_MONOTONIC
+> -	ret += vdso_test_clock(CLOCK_MONOTONIC);
+> +TEST(clock_monotonic)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_MONOTONIC_RAW
+> -	ret += vdso_test_clock(CLOCK_MONOTONIC_RAW);
+> +TEST(clock_monotonic_raw)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC_RAW);
+> +}
+>   #endif
+>   
+>   #ifdef CLOCK_MONOTONIC_COARSE
+> -	ret += vdso_test_clock(CLOCK_MONOTONIC_COARSE);
+> +TEST(clock_monotonic_coarse)
+> +{
+> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC_COARSE);
+> +}
+>   #endif
+>   
+> -#endif
+> -	if (ret > 0)
+> -		return KSFT_FAIL;
+> +#endif /* _POSIX_TIMERS > 0 */
+>   
+> -	return KSFT_PASS;
+> -}
+> +TEST_HARNESS_MAIN
 
 thanks,
--- 
-John Hubbard
-NVIDIA
-
+-- Shuah
 
