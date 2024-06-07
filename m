@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-205819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D137F9000C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:26:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164379000CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC3701C22353
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D821C22168
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24F515D5BD;
-	Fri,  7 Jun 2024 10:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC6815D5D6;
+	Fri,  7 Jun 2024 10:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHc1N2ZT"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ1RE9Cq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3799A15B99E;
-	Fri,  7 Jun 2024 10:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6744B15D5BD;
+	Fri,  7 Jun 2024 10:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755952; cv=none; b=DgYgxzbsdeqh814VK/mlWsE3VjfdSXG2v8DJrOJXnv7ve0Z/b4+NU0N0GyYXcGe4K8EOilh4Z+LyjLbErNmun1yOmxTkRTPvGApB95xNrb1mYy7ratT0hirPL4kTM1HgoX+J6zMsxWWZ0nJc2/7ZK8YjnBEGqdmqFUWGaz3CzbY=
+	t=1717756202; cv=none; b=cHASspIXKZp4AO7b0lAG12bnckTMEmusVjx/ZTPQjQfFzeQQKjqj++IEXth9eFMlQYLdVVFch8tlwH+j9pv2UnDGzJS5Y/iOthTRnwpoO9PdAkUYDuEifj3sRbfqjI5zq6gyxRHDJq/rhSRgcx46Fr36/ApsmlTQKpivM6dBo9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755952; c=relaxed/simple;
-	bh=ePR5L9uzRmGZ2/l+rPY5V4sHdGShw3JNbFQ1NXJMV+o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qiOnJMIElL4qCpp+NcvQqBMjjK8GiTS/YKVVliGh4D5tp21+cxzMug6T4xc2jbgPOa0VZXEPmHnWIAcXAsxECQh7qPJbE34ibB6tltTGiBXnb5Bgx5ntKuuuJ45y2TUgK5UKvQq5PSEWi6BN6h0ZRCb7k4/75Jsckf3qZzF7t68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHc1N2ZT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a30b3a6cbso2454796a12.1;
-        Fri, 07 Jun 2024 03:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717755949; x=1718360749; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9D6hlcUsTO5fR/09Mtgz61tNe8CVO0ndZCfy91DgDB0=;
-        b=lHc1N2ZTBoIAGVloFmO2BfyPjqOCzMUG4x3couPWcL9etx/ipM3MYc/VlrXA9ZAfSi
-         jnURkJ754YrtKS4Sr1CI4FSEo/7hcwlD463Kx2xP4xj6y4DrtZGXw6a7kptz36OAHwms
-         C2ekbwHDJZAchZaavcNpwwhiGBu9bUty88INgz9h0aiSoHha2T09yE/mU980w3N1+zAI
-         GW5qMOZLfYPHRwDRe6S6IddmnUWybr8ZcNIzKxzlVrcTDUpSwEQLbObEPrHIg/Pm9AD5
-         IROWcs9Fsb6dcQSvx4/OFlHQE1DsfoWD5uAohyHVek22G8N5eRDxjB/5d2VYzp/BH08v
-         ELHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717755949; x=1718360749;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9D6hlcUsTO5fR/09Mtgz61tNe8CVO0ndZCfy91DgDB0=;
-        b=Ehx+WDobzSrcrTdiF78ownzhtg6nCXhoR79aNBUO8TpbjOYN+j+/sBgQab34xmy4Bu
-         bTZj6n81dAkKT1XP1/6JfgMBzLiQA5sV77+dVZFG8ZLYhzpioozEuZGlLbGzq5HvfLk7
-         HyKI5BBZM23ano3DHqpEDK5u73ALz6Om7uySEWq58LBWQ9QdICFtHgGVHG3rk4tZGgOK
-         fNOTksKQeN0Uy4ldGWwpg+uVyjDQTBbj0OFRuZWic2LEUWieAevC2xEHf0WBvYG3qF8X
-         VqlLGAiPS2FzPD94FZhRXxVYvATjwc4cu8Y0cniDTGsOjSBrlD+aQv/wuNK3KRJ7Q4N9
-         Dg5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVam7xIN+zQttdeRlAWFi5fPSMin6QT0lbdovE+FBKprZs1Dt+DXCP8enL2pl4sh8xbV7lpewNUjpKwFGbrs0j4gEK20KLEoYSdf0sqiSncWOVZvbtYyAA9s/tAZ3l0dX8qnsYnNoZcUq8Valc9J7D7x1Z6nVXhcSXjD0oEPzGcAuIvmA==
-X-Gm-Message-State: AOJu0YxEmefc36Uj2vlziWBksueMmFs2Ln2RcsWSwFhHyut+z2rMZ54W
-	zeaTd29CD1+NR1jH25Z2VrQTfNbVGAZr1/cBHAiVvdhgwn1xC53rWX30QZj8zc6PRw==
-X-Google-Smtp-Source: AGHT+IETzgA5SSY2Hwey7XPCbUjqrSKhmAlMmV1eOarp7bzm8WNZyAKTCO5swlmZ+ii88i49P4s5YA==
-X-Received: by 2002:a50:bb28:0:b0:57a:2330:ebc5 with SMTP id 4fb4d7f45d1cf-57c508292d3mr1124854a12.9.1717755949236;
-        Fri, 07 Jun 2024 03:25:49 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae202341sm2516373a12.70.2024.06.07.03.25.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 03:25:49 -0700 (PDT)
-Message-ID: <4b1d0a0cc9f05f68d586e9ac8d40b8028a96e341.camel@gmail.com>
-Subject: Re: [PATCH v6 6/9] iio: adc: ad7173: add support for special inputs
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Fri, 07 Jun 2024 12:29:36 +0200
-In-Reply-To: <849357a8-848e-4b9f-9683-1db2eeda39af@gmail.com>
-References: <20240606-ad4111-v6-0-573981fb3e2e@analog.com>
-	 <20240606-ad4111-v6-6-573981fb3e2e@analog.com>
-	 <822eec36a530f659e4924886ad8d2bf272accd59.camel@gmail.com>
-	 <849357a8-848e-4b9f-9683-1db2eeda39af@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717756202; c=relaxed/simple;
+	bh=y5IwuyaQDrnSDBJYNI75IW6lnQ2FscwzbDOcz+9Y8e8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=f3aaAqjOkDHHFajdjFmnonFbMDil48nW30pX+XNBDBoMzRb16qFU0xU58jA5ugdF2VRuqHkVzXjfbvjcfUULBUO9pzPdp9eWfBE9JfJl3QdYRbLuoAST27+JQoGMVz4fYObX8OrqqnwjPRTp74XSx5tyjLvjcXPJnHXaaXf2h+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ1RE9Cq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C12BC2BBFC;
+	Fri,  7 Jun 2024 10:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717756201;
+	bh=y5IwuyaQDrnSDBJYNI75IW6lnQ2FscwzbDOcz+9Y8e8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=fJ1RE9CqPShL6jkbKXg+pN7edrFIkH+1YdVP8jV6lMOgeGixIMhQhGsfGUVooRVUW
+	 WmgNapo5D+ms1MWzt+u3mB9cpwxFqmhz7Pqr9P4P3ETbUKrjcAhZYL/EA6w1ODhhw7
+	 7dPcgs3WcpwrdSvMbppWn1J3TBDtmSPvIWk3tPxGCFNBB4A6A/TXOfkcXzduFpuzvu
+	 m0y3pxWD3hkRTsTmRTsPb694fsUjmEZwPK3NPUGs65ClmYdsrQRduRT9B/rKuCwI/L
+	 3q8F9PKtseEOA5mYea/nvkBXuzOPI75ZQze/eHPIMGJPNA1AcGB43HdeH1xIaZq67p
+	 1Y+1kWG3vvAyQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,  Johannes Berg
+ <johannes@sipsolutions.net>,  Wireless <linux-wireless@vger.kernel.org>,
+  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,  Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+References: <20240603110023.23572803@canb.auug.org.au>
+	<875xuquyyb.fsf@kernel.org> <87tti6qt5o.fsf@kernel.org>
+	<317b515f-30fb-4b18-bb99-b65091449ec4@bootlin.com>
+Date: Fri, 07 Jun 2024 13:29:58 +0300
+In-Reply-To: <317b515f-30fb-4b18-bb99-b65091449ec4@bootlin.com> ("Alexis
+	=?utf-8?Q?Lothor=C3=A9=22's?= message of "Fri, 7 Jun 2024 11:44:10 +0200")
+Message-ID: <87frtpoxjt.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-06-07 at 12:34 +0300, Ceclan, Dumitru wrote:
-> On 07/06/2024 12:06, Nuno S=C3=A1 wrote:
-> > On Thu, 2024-06-06 at 19:07 +0300, Dumitru Ceclan via B4 Relay wrote:
-> > > From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> > >=20
-> > > =C2=A0Add support for selecting REF+ and REF- inputs on all models.
-> > > =C2=A0Add support for selecting ((AVDD1 =E2=88=92 AVSS)/5) inputs
-> > > =C2=A0 on supported models.
-> > >=20
-> > > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> > > ---
-> > > =C2=A0drivers/iio/adc/ad7173.c | 29 +++++++++++++++++++++++++++--
-> > > =C2=A01 file changed, 27 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> > > index 4040edbd1c32..d16fa081a285 100644
-> > > --- a/drivers/iio/adc/ad7173.c
-> > > +++ b/drivers/iio/adc/ad7173.c
-> > > @@ -66,6 +66,13 @@
-> > > =C2=A0	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
-> > > =C2=A0#define AD7173_AIN_TEMP_POS	17
-> > > =C2=A0#define AD7173_AIN_TEMP_NEG	18
-> > > +#define AD7173_AIN_POW_MON_POS	19
-> > > +#define AD7173_AIN_POW_MON_NEG	20
-> > > +#define AD7173_AIN_REF_POS	21
-> > > +#define AD7173_AIN_REF_NEG	22
-> > > +
-> > > +#define AD7173_IS_REF_INPUT(x)		((x) =3D=3D AD7173_AIN_REF_POS || \
-> > > +					(x) =3D=3D AD7173_AIN_REF_NEG)
-> > > =C2=A0
-> > > =C2=A0#define AD7172_2_ID			0x00d0
-> > > =C2=A0#define AD7175_ID			0x0cd0
-> > > @@ -146,6 +153,8 @@ struct ad7173_device_info {
-> > > =C2=A0	unsigned int id;
-> > > =C2=A0	char *name;
-> > > =C2=A0	bool has_temp;
-> > > +	/* ((AVDD1 =E2=88=92 AVSS)/5) */
-> > > +	bool has_pow_supply_monitoring;
-> > > =C2=A0	bool has_input_buf;
-> > > =C2=A0	bool has_int_ref;
-> > > =C2=A0	bool has_ref2;
-> > > @@ -216,6 +225,7 @@ static const struct ad7173_device_info
-> > > ad7173_device_info[] =3D {
-> > > =C2=A0		.has_temp =3D true,
-> > > =C2=A0		.has_input_buf =3D true,
-> > > =C2=A0		.has_int_ref =3D true,
-> > > +		.has_pow_supply_monitoring =3D true,
-> > > =C2=A0		.clock =3D 2 * HZ_PER_MHZ,
-> > > =C2=A0		.sinc5_data_rates =3D ad7173_sinc5_data_rates,
-> > > =C2=A0		.num_sinc5_data_rates =3D
-> > > ARRAY_SIZE(ad7173_sinc5_data_rates),
-> > > @@ -230,6 +240,7 @@ static const struct ad7173_device_info
-> > > ad7173_device_info[] =3D {
-> > > =C2=A0		.has_temp =3D false,
-> > > =C2=A0		.has_input_buf =3D true,
-> > > =C2=A0		.has_ref2 =3D true,
-> > > +		.has_pow_supply_monitoring =3D true,
-> > > =C2=A0		.clock =3D 2 * HZ_PER_MHZ,
-> > > =C2=A0		.sinc5_data_rates =3D ad7173_sinc5_data_rates,
-> > > =C2=A0		.num_sinc5_data_rates =3D
-> > > ARRAY_SIZE(ad7173_sinc5_data_rates),
-> > > @@ -245,6 +256,7 @@ static const struct ad7173_device_info
-> > > ad7173_device_info[] =3D {
-> > > =C2=A0		.has_input_buf =3D true,
-> > > =C2=A0		.has_int_ref =3D true,
-> > > =C2=A0		.has_ref2 =3D true,
-> > > +		.has_pow_supply_monitoring =3D false,
-> >=20
-> > No need to set the 'false' cases...
-> >=20
-> >=20
-> > - Nuno S=C3=A1
->=20
-> This was suggested by David Lechner to ensure consistency with has_temp
-> regarding another field, I considered that it would apply here as well.
-> https://lore.kernel.org/all/CAMknhBGaJxXvsQ8cZkgDsKLVjOY5y2pzox-99hdOCrUa=
-oZdsxg@mail.gmail.com/
->=20
+Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> writes:
 
-Well, I would argue that the has_temp flag being set to 0 is also unneeded =
-and
-can be removed (in another patch).
-> This would also increase visibility towards what features does a specific
-> model support as it is clearly stated with "=3D false" rather than lookin=
-g
-> for what fields are not set within the struct.
+> Hello Kalle, Stephen,
+>
+> On 6/6/24 12:09, Kalle Valo wrote:
+>> Kalle Valo <kvalo@kernel.org> writes:
+>>=20
+>>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>>>
+>>>> Hi all,
+>>>>
+>>>> Today's linux-next merge of the wireless-next tree got a conflict in:
+>>>>
+>>>>   drivers/net/wireless/microchip/wilc1000/netdev.c
+>>>>
+>>>> between commit:
+>>>>
+>>>>   ebfb5e8fc8b4 ("Revert "wifi: wilc1000: convert list management to RC=
+U"")
+>>>>
+>>>> from the wireless tree and commit:
+>>>>
+>>>>   6fe46d5c0a84 ("wifi: wilc1000: set net device registration as last
+>>>> step during interface creation")
+>>>>
+>>>> from the wireless-next tree.
+>>>>
+>>>> I fixed it up (see below) and can carry the fix as necessary. This
+>>>> is now fixed as far as linux-next is concerned, but any non trivial
+>>>> conflicts should be mentioned to your upstream maintainer when your tr=
+ee
+>>>> is submitted for merging.  You may also want to consider cooperating
+>>>> with the maintainer of the conflicting tree to minimise any particular=
+ly
+>>>> complex conflicts.
+>>>
+>>> Thanks. We need to figure out how we solve this conflict, most probably
+>>> we'll ask network maintainers to fix it when they pull wireless-next.
+>>=20
+>> Alexis, you know wilc1000 the best. Could you double check the conflict
+>> resolution, it somewhat complicated:>
+>> https://lore.kernel.org/all/20240603110023.23572803@canb.auug.org.au/
+>>=20
+>
+> LGTM, and some quick testing on the linux-next tree with the correspondin=
+g merge
+> commit showed no issue (no RCU warning, and mac address loading fix behav=
+ing
+> properly)
 
-IMO, the omission of the flag is already pretty clear that the feature is n=
-ot
-available. Typically we don't initialize things that do not need to be
-initialized (less LOC)...
+Excellent, thank you so much.
 
-- Nuno S=C3=A1
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
