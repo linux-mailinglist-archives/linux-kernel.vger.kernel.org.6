@@ -1,368 +1,173 @@
-Return-Path: <linux-kernel+bounces-205567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1515A8FFD8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77F18FFD90
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189CD1C228A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712911F2263F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 07:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D6415B10D;
-	Fri,  7 Jun 2024 07:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DADA15AACA;
+	Fri,  7 Jun 2024 07:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2G07Qca5"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDF2+yqQ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8517215B0E4;
-	Fri,  7 Jun 2024 07:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717746701; cv=fail; b=QR5pe8c0jKrBuRZ+0qF7dheBhr8alCDxXrIUIWhnFq5z7cf9lg5I86JJUXR+oe2sbZ2VPY9i4juh+co7Kp8yxeVCd9KbnYKv4LbqZ4R+6fMO1wdFJLljJeafWz2r8vzzffiv3c4oXUv5y++A8bhSuznn7V+quKhtboDMJtodqRg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717746701; c=relaxed/simple;
-	bh=T23VkWvshxlWVWCczPRlYV6OpBVSvNBTd9na8w0qgVM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BdNS0XzLQ1qRRUje43wwNvSx+ibkiV598PH8w1t3/SD42qti2AUc/TZYy+V0Y0GkA9QPStCXtdQ4NXd9ufHMvu+z1DCljxKWtGutVxTXb16inY7Q+7cgshjiRc1Fr9IQ2qIgkhNriq3+rrmuudi4oH+lG1OGj0JhOci5k4dI2wM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2G07Qca5; arc=fail smtp.client-ip=40.107.92.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PN8D4JTyF3+mf9JWWnT7I+aTgDsZQwjahjPtaYkaOeUx16pB0ixzCh4lTCD4X0tCUuO+0jc2TV/PwSc+D4wyKjZfjdaf2E5egV/met1TVuMzx1sHN2m7YpyfjiJZdOInOXiXtbv9gnKNIvWzWnhehxqHkoloOk5ov/pCZgH76UFXH1jo+rKJYJ9tqKZvI6Qs6PSUwqRGQgpBtURuAxUmwEj64arK7EFbE9EvXAYNTmKghJkwT7sDZokAqEIZeH8h0GQBYF+VT5OUMio8Z/bJNyXjwMSL3OcTROhcuvJ02umD6IzVTrAQbHFRwMY3u9xlIhV60FyOTjY7wC6dZFSH1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qtwVEw1eqAZTxz5ZOltSmokorN9ksIbbFVkKSMPl8Yw=;
- b=FQK7f7aYZmxCjaxp5beBd9BOyzXmN/z7nbInaHAybKZraYOpQUQ6vAa8/S4Yhe7C77sgkBPuORfubel8QPXruS3CHzsQe6Hk3o+MKReOWc4iFB+Keo/ZGMEyI5MciuhIvX2nWwyfmzbU9a8Nj8GG4g/k+j80eamDQsaFc/TE2ZmK3+dghF8szPQfEnGCXwuHz7GGfzFAI+RnbtpEwKxwGKIrtGaGFvC5DG5pybh1TnOZ8mDXcn9ypTziOoDiIMhmH+QVaPtCgsLqxgM6fIkmksWztaMI1kBE8ECNVm2Tt6jBNEZnLTIPdkCgXh4n6BueMbN+0Vna5p4j4Odp5KZPrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qtwVEw1eqAZTxz5ZOltSmokorN9ksIbbFVkKSMPl8Yw=;
- b=2G07Qca5v/z8aLxsjbak/bX9ggG0nDq3oW2L2nTngx9L37jEjFZ5WTKatNlYuP78km67+V7ws4zi1BsKtoGCkhS6JzXnGgafDUIgIhDpvizr7L8V14hH23KB4DQpuqmGAG+YOPFG2vMeZH1Wj5VC7IMze/MHus1zUyBxHjYcpb4=
-Received: from SN6PR16CA0054.namprd16.prod.outlook.com (2603:10b6:805:ca::31)
- by MW4PR12MB6976.namprd12.prod.outlook.com (2603:10b6:303:20a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
- 2024 07:51:37 +0000
-Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
- (2603:10b6:805:ca:cafe::89) by SN6PR16CA0054.outlook.office365.com
- (2603:10b6:805:ca::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.21 via Frontend
- Transport; Fri, 7 Jun 2024 07:51:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 07:51:36 +0000
-Received: from cjq-desktop.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 7 Jun
- 2024 02:51:33 -0500
-From: Jiqian Chen <Jiqian.Chen@amd.com>
-To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J .
- Wysocki" <rafael@kernel.org>, =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?=
-	<roger.pau@citrix.com>
-CC: <xen-devel@lists.xenproject.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>, Huang Rui
-	<Ray.Huang@amd.com>, Jiqian Chen <Jiqian.Chen@amd.com>, Huang Rui
-	<ray.huang@amd.com>
-Subject: [RFC KERNEL PATCH v8 3/3] xen/privcmd: Add new syscall to get gsi from dev
-Date: Fri, 7 Jun 2024 15:51:09 +0800
-Message-ID: <20240607075109.126277-4-Jiqian.Chen@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240607075109.126277-1-Jiqian.Chen@amd.com>
-References: <20240607075109.126277-1-Jiqian.Chen@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0C15A869;
+	Fri,  7 Jun 2024 07:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717746725; cv=none; b=IL8uv2+iUq23eNlatHu7XdUd1/I26aWX7V7i1iQTqb+6wrzUL55uK0qqCFYIoNtnGQvSihMbt3ODdI8m4P3AxpOqZ7nhVdnXZh+dfFGC+fmwjoqsfpQ3BMmnj8c1mLBpQiDeJcv5Ta3BXPih+RmK0OHkUF6PlGyio7GXlVc64J0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717746725; c=relaxed/simple;
+	bh=gn/fI6h9C1pAG5/3ooyTbLTKOd+/BUZX7VYHZhXdeNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spCS9AVxT5ip2Uxcu10CrJO/viGEdIAw+QTGgQbNNG7mOiFUTQLcp5eZyfJRaW7kc3TZDdwyO9fIUwLwxi84iOKgHH0DaA9asZ+fOcYW5DRHMu6eG2xpNVhRL/iYP/FZUY03X1EVUOMPxWqeZ3X3X4nU9wuf/An5Nf+7ej1fzMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDF2+yqQ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35dca73095aso1604422f8f.0;
+        Fri, 07 Jun 2024 00:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717746722; x=1718351522; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fhX0elXnOul8qpEh6FTKOxypSbbABlDAy/thil42Oyk=;
+        b=BDF2+yqQefzkk6kphjzXQDZe+qzK9k3JvU6y60F5UyYAJUpGYYuabm2X/H231a5xeS
+         7uvS+9yNbhpWOdYr65XR4v5eSdkkSFgct5Jc3Sqimv/b0EhbRiQXJytj58u3RUB99G1s
+         OJc/A51mwb/Ff4nYyc/fM6uDGXnKZrdSHf3FzF9TZRGS1U/P0rPyRrHM59sBeFOfgWsF
+         +N3pt4jlg8pseflT5WAdU2Kb5P50X2wBCINC12zVJVPEVVxs4wOCqaFGWPugUycXm251
+         byFBSJVwXGvL497tpez+wltFzdEQbRGWR+SQOUwPIFb9Sixh+vFYbNelmq3zjwJa9FKO
+         DXog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717746722; x=1718351522;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fhX0elXnOul8qpEh6FTKOxypSbbABlDAy/thil42Oyk=;
+        b=ZtlsMcUsVDYh0TNYvVG3hI37NKiEpVzkscojKwiJayOZ46zOg3lAe0odw99kaiAbXY
+         FOvjovvU/I4zqlFhuAuFeWqq8o33zHa8//IXqfQO8Z5Ajfino4peLLBUO9HGAfKdGBFF
+         KapkZbZgU9oNo07QxxZ3Ulm6ro4Ria4AvvDqCmebgLJemYHqCvxgrB5ocXKd0jWQjPzO
+         /lu+5WIVBNhqAJr9wydxFdyWUXMVHjauVirM0wrFu9sC4LHPgAWbTnafvRD76rquGKtU
+         x6mD3DhmDJZrRBXmIYAEaJfuUyjUXybHBS64FZE/Rc3CNL6yjQptwlJab8mZuAnoFJoz
+         hGfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSVzbs9lvXeYJmF70wO1UQXe/+xnGROpvBvdmumK/+QgGgSZeRUnwJzvpXwt1GqSDcdKpefbPI6r7W1WAwI+qOTRugkE8y3a6jx47ICdV8zT6ksxS2odm24gSCaopf7iLg8vGXGxUimovqmg==
+X-Gm-Message-State: AOJu0YwAgJZZ20c80539YxzArh1sfLZ4rR25gl4/vVHWB5/E1EF1oYfT
+	vdZ3qtU8ynWkxtoC7+U1pN7yTTp3x5CiJq0n88J9xXn2qyQaTIjurC3vpQ==
+X-Google-Smtp-Source: AGHT+IFg9iF/oTWeOXiIFEiNK+m4SDlsgwxzKh0cyRGOKLbgNfPK0aCpqzfgXTRg5OoGuvepK+081w==
+X-Received: by 2002:a05:6000:45:b0:34d:837a:9d08 with SMTP id ffacd0b85a97d-35efedfaf0dmr1296688f8f.61.1717746721955;
+        Fri, 07 Jun 2024 00:52:01 -0700 (PDT)
+Received: from f (cst-prg-5-143.cust.vodafone.cz. [46.135.5.143])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc169fsm3393990f8f.94.2024.06.07.00.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 00:52:01 -0700 (PDT)
+Date: Fri, 7 Jun 2024 09:51:51 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
+ <ZmJqyrgPXXjY2Iem@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|MW4PR12MB6976:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1cd1c8d0-2273-4bef-1fff-08dc86c6a86e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|36860700004|1800799015|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W10QbVwI0ESCViUv3Ii94tlHOF04G1t1XaKMzDJwvWIei6ZRoBVVQsF8DHAS?=
- =?us-ascii?Q?jp5FNXJaXFMzBhfZcHJGyRl1yikEpoq7gliavCNdHNnjwOircVWumM121L5Q?=
- =?us-ascii?Q?Physf5TpaOKbm2oeFPsZavDUg9h/3afwvxbam4yytxGhZ8QdJFUpZHB8z9pX?=
- =?us-ascii?Q?nhhfVxxg4vpTadv2z8gB0EqYRVgYzMrsggqrNPiOY+2Ntdg7ZtGNDGWgOAVC?=
- =?us-ascii?Q?sYQ8g5LXYH+sBY6p/uy+tbMEeGB0wYgRc830CKDP2aCXLN/HhHdSEZRQsWsE?=
- =?us-ascii?Q?PayNlfB+lOOsuynANnsRlQ6Rdpt0dhkxlvAZKg8cQLaBNANce1W4Xfcs15QU?=
- =?us-ascii?Q?xjtbZnIdO36Ge9gJODvIiKjkm1tooUvKBcOrkrBWyaz1FIXzYzLihYhzQ+J3?=
- =?us-ascii?Q?Z3oJO1altQfC36CJ/lCmISTICSJ3FFLcKKnxJiK/jXhdJe9ssO6gy/WJ9Jg7?=
- =?us-ascii?Q?KqBIlH5vmIRNnaEyqsIBToXKLVwJXaP2XgClBgledru+H3/bp8cZXt9yTuy8?=
- =?us-ascii?Q?GebOGnTV9EIOr+7Xbp5ObYLJs+DQlthjyKyDH5OqQDZky/ly9SjBLSds/7hl?=
- =?us-ascii?Q?rhxpyroXOC6GMJptQHQruVNLxvS/UNcT2N4qGcWekx8sCX4nGTcoMTmXDPwt?=
- =?us-ascii?Q?PhCMOoBDIkuD9Std0a5Vy2TR9i8ouzEytPplvPNEKQ+MXXCGc4XxM/oyf4k0?=
- =?us-ascii?Q?axz0/x6PY5sIs2BECmR0bqqfMMozOhGXfoIl2aQuBUIDirGR5rCm7WzIt5XK?=
- =?us-ascii?Q?LgX2KEJCtNbFcljF81HH6L+bOOTfXR6fk4ITjizWBkB84Nqwr9DIqXaps2qP?=
- =?us-ascii?Q?HNqZ3nnT4heeXylWF50repNLWCkKjI9Lm0GmCEtlvTsvUv3/rraF8ZplnKSG?=
- =?us-ascii?Q?Pf4IO94dCXU2YMsVntBzLBVt4mAE1pMr00N555AduSnOcDq7kL01Aw8gM1rj?=
- =?us-ascii?Q?cYGJjOW1sxGjLmeHNhOvKz4TXrigE7GmorktKb9JXIA05gcinta2qUSNIqWZ?=
- =?us-ascii?Q?yyKFSxOJV3r2KZgKlPKzrlg1gweGIkJzZfFmRdH21SwaoL5bNkeVKJv1q+Ns?=
- =?us-ascii?Q?KU16n3D3MaO69HiuG+GlTbqnDc5izn1prO2nAejwg+IcwoyeSF44GgdTBwOr?=
- =?us-ascii?Q?XSlyREjTFGrY26vzBYYBCppR7jF7VYu5P6S5h5tLwNqqEDaDdqfjtMdOPRLj?=
- =?us-ascii?Q?uChFoN1gcNpnXw7/7m+++VbgFd5H5N0DdId5lRdAwqc6xt+yiXe4/z5u+TF0?=
- =?us-ascii?Q?zNltBnHBMdbqabf1TNDt3/QLlJLx9T8j6FEteEzv/MhHkmjhH3fTDyO39zbY?=
- =?us-ascii?Q?uFVJj7PjT6Gpr1+0K3Spls/w6KuQ+MnHKh+V+Jz2LJrOYXSnMvh0kqnA3a+j?=
- =?us-ascii?Q?PpShbrfV2QFmDmPzyT+RMvSfv5mkfJpU+tizNim9u4zQ2ZzvnA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 07:51:36.6266
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cd1c8d0-2273-4bef-1fff-08dc86c6a86e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF0000150A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6976
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmJqyrgPXXjY2Iem@dread.disaster.area>
 
-In PVH dom0, it uses the linux local interrupt mechanism,
-when it allocs irq for a gsi, it is dynamic, and follow
-the principle of applying first, distributing first. And
-the irq number is alloced from small to large, but the
-applying gsi number is not, may gsi 38 comes before gsi 28,
-it causes the irq number is not equal with the gsi number.
-And when passthrough a device, QEMU will use device's gsi
-number to do pirq mapping, but the gsi number is got from
-file /sys/bus/pci/devices/<sbdf>/irq, irq!= gsi, so it will
-fail when mapping.
-And in current linux codes, there is no method to get gsi
-for userspace.
+On Fri, Jun 07, 2024 at 12:04:58PM +1000, Dave Chinner wrote:
+> On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
+> > Instantiating a new inode normally takes the global inode hash lock
+> > twice:
+> > 1. once to check if it happens to already be present
+> > 2. once to add it to the hash
+> > 
+> > The back-to-back lock/unlock pattern is known to degrade performance
+> > significantly, which is further exacerbated if the hash is heavily
+> > populated (long chains to walk, extending hold time). Arguably hash
+> > sizing and hashing algo need to be revisited, but that's beyond the
+> > scope of this patch.
+> > 
+> > A long term fix would introduce fine-grained locking, this was attempted
+> > in [1], but that patchset was already posted several times and appears
+> > stalled.
+> 
+> Why not just pick up those patches and drive them to completion?
+> 
 
-For above purpose, record gsi of pcistub devices when init
-pcistub and add a new syscall into privcmd to let userspace
-can get gsi when they have a need.
+Time constraints on my end aside.
 
-Signed-off-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
----
-RFC: it need review and need to wait for previous patch of this series to be merged.
----
- drivers/xen/privcmd.c              | 28 ++++++++++++++++++++++
- drivers/xen/xen-pciback/pci_stub.c | 38 +++++++++++++++++++++++++++---
- include/uapi/xen/privcmd.h         |  7 ++++++
- include/xen/acpi.h                 |  9 +++++++
- 4 files changed, 79 insertions(+), 3 deletions(-)
+From your own e-mail [1] last year problems are:
 
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 67dfa4778864..5809b3168f25 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -45,6 +45,9 @@
- #include <xen/page.h>
- #include <xen/xen-ops.h>
- #include <xen/balloon.h>
-+#ifdef CONFIG_XEN_ACPI
-+#include <xen/acpi.h>
-+#endif
- 
- #include "privcmd.h"
- 
-@@ -842,6 +845,27 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
- 	return rc;
- }
- 
-+static long privcmd_ioctl_gsi_from_dev(struct file *file, void __user *udata)
-+{
-+#ifdef CONFIG_XEN_ACPI
-+	struct privcmd_gsi_from_dev kdata;
-+
-+	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+	kdata.gsi = pcistub_get_gsi_from_sbdf(kdata.sbdf);
-+	if (kdata.gsi == -1)
-+		return -EINVAL;
-+
-+	if (copy_to_user(udata, &kdata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+	return 0;
-+#else
-+	return -EINVAL;
-+#endif
-+}
-+
- #ifdef CONFIG_XEN_PRIVCMD_EVENTFD
- /* Irqfd support */
- static struct workqueue_struct *irqfd_cleanup_wq;
-@@ -1529,6 +1553,10 @@ static long privcmd_ioctl(struct file *file,
- 		ret = privcmd_ioctl_ioeventfd(file, udata);
- 		break;
- 
-+	case IOCTL_PRIVCMD_GSI_FROM_DEV:
-+		ret = privcmd_ioctl_gsi_from_dev(file, udata);
-+		break;
-+
- 	default:
- 		break;
- 	}
-diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-index 6b22e45188f5..9d791d7a8098 100644
---- a/drivers/xen/xen-pciback/pci_stub.c
-+++ b/drivers/xen/xen-pciback/pci_stub.c
-@@ -56,6 +56,9 @@ struct pcistub_device {
- 
- 	struct pci_dev *dev;
- 	struct xen_pcibk_device *pdev;/* non-NULL if struct pci_dev is in use */
-+#ifdef CONFIG_XEN_ACPI
-+	int gsi;
-+#endif
- };
- 
- /* Access to pcistub_devices & seized_devices lists and the initialize_devices
-@@ -88,6 +91,9 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
- 
- 	kref_init(&psdev->kref);
- 	spin_lock_init(&psdev->lock);
-+#ifdef CONFIG_XEN_ACPI
-+	psdev->gsi = -1;
-+#endif
- 
- 	return psdev;
- }
-@@ -220,6 +226,25 @@ static struct pci_dev *pcistub_device_get_pci_dev(struct xen_pcibk_device *pdev,
- 	return pci_dev;
- }
- 
-+#ifdef CONFIG_XEN_ACPI
-+int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
-+{
-+	struct pcistub_device *psdev;
-+	int domain = (sbdf >> 16) & 0xffff;
-+	int bus = PCI_BUS_NUM(sbdf);
-+	int slot = PCI_SLOT(sbdf);
-+	int func = PCI_FUNC(sbdf);
-+
-+	psdev = pcistub_device_find(domain, bus, slot, func);
-+
-+	if (!psdev)
-+		return -1;
-+
-+	return psdev->gsi;
-+}
-+EXPORT_SYMBOL_GPL(pcistub_get_gsi_from_sbdf);
-+#endif
-+
- struct pci_dev *pcistub_get_pci_dev_by_slot(struct xen_pcibk_device *pdev,
- 					    int domain, int bus,
- 					    int slot, int func)
-@@ -367,14 +392,20 @@ static int pcistub_match(struct pci_dev *dev)
- 	return found;
- }
- 
--static int pcistub_init_device(struct pci_dev *dev)
-+static int pcistub_init_device(struct pcistub_device *psdev)
- {
- 	struct xen_pcibk_dev_data *dev_data;
-+	struct pci_dev *dev;
- #ifdef CONFIG_XEN_ACPI
- 	int gsi, trigger, polarity;
- #endif
- 	int err = 0;
- 
-+	if (!psdev)
-+		return -EINVAL;
-+
-+	dev = psdev->dev;
-+
- 	dev_dbg(&dev->dev, "initializing...\n");
- 
- 	/* The PCI backend is not intended to be a module (or to work with
-@@ -448,6 +479,7 @@ static int pcistub_init_device(struct pci_dev *dev)
- 		dev_err(&dev->dev, "Fail to get gsi info!\n");
- 		goto config_release;
- 	}
-+	psdev->gsi = gsi;
- 
- 	if (xen_initial_domain() && xen_pvh_domain()) {
- 		err = xen_pvh_setup_gsi(gsi, trigger, polarity);
-@@ -495,7 +527,7 @@ static int __init pcistub_init_devices_late(void)
- 
- 		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
- 
--		err = pcistub_init_device(psdev->dev);
-+		err = pcistub_init_device(psdev);
- 		if (err) {
- 			dev_err(&psdev->dev->dev,
- 				"error %d initializing device\n", err);
-@@ -565,7 +597,7 @@ static int pcistub_seize(struct pci_dev *dev,
- 		spin_unlock_irqrestore(&pcistub_devices_lock, flags);
- 
- 		/* don't want irqs disabled when calling pcistub_init_device */
--		err = pcistub_init_device(psdev->dev);
-+		err = pcistub_init_device(psdev);
- 
- 		spin_lock_irqsave(&pcistub_devices_lock, flags);
- 
-diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
-index 8b8c5d1420fe..220e7670a113 100644
---- a/include/uapi/xen/privcmd.h
-+++ b/include/uapi/xen/privcmd.h
-@@ -126,6 +126,11 @@ struct privcmd_ioeventfd {
- 	__u8 pad[2];
- };
- 
-+struct privcmd_gsi_from_dev {
-+	__u32 sbdf;
-+	int gsi;
-+};
-+
- /*
-  * @cmd: IOCTL_PRIVCMD_HYPERCALL
-  * @arg: &privcmd_hypercall_t
-@@ -157,5 +162,7 @@ struct privcmd_ioeventfd {
- 	_IOW('P', 8, struct privcmd_irqfd)
- #define IOCTL_PRIVCMD_IOEVENTFD					\
- 	_IOW('P', 9, struct privcmd_ioeventfd)
-+#define IOCTL_PRIVCMD_GSI_FROM_DEV				\
-+	_IOC(_IOC_NONE, 'P', 10, sizeof(struct privcmd_gsi_from_dev))
- 
- #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
-diff --git a/include/xen/acpi.h b/include/xen/acpi.h
-index 9b50027113f3..d6315fd559a9 100644
---- a/include/xen/acpi.h
-+++ b/include/xen/acpi.h
-@@ -83,4 +83,13 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
- 						  int *gsi_out,
- 						  int *trigger_out,
- 						  int *polarity_out);
-+
-+#ifdef CONFIG_XEN_PCI_STUB
-+int pcistub_get_gsi_from_sbdf(unsigned int sbdf);
-+#else
-+static inline int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
-+{
-+	return -1;
-+}
-+#endif
- #endif	/* _XEN_ACPI_H */
--- 
-2.34.1
+> - A lack of recent validation against ext4, btrfs and other
+> filesystems.
+> - the loss of lockdep coverage by moving to bit locks
+> - it breaks CONFIG_PREEMPT_RT=y because we nest other spinlocks
+>   inside the inode_hash_lock and we can't do that if we convert the
+>   inode hash to bit locks because RT makes spinlocks sleeping locks.
+> - There's been additions for lockless RCU inode hash lookups from
+>   AFS and ext4 in weird, uncommon corner cases and I have no idea
+>   how to validate they still work correctly with hash-bl. I suspect
+>   they should just go away with hash-bl, but....
 
+> There's more, but these are the big ones.
+
+I did see the lockdep and preempt_rt problem were patched up in a later
+iteration ([2]).
+
+What we both agree on is that the patchset adds enough complexity that
+it needs solid justification. I assumed one was there on your end when
+you posted it.
+
+For that entire patchset I don't have one. I can however justify the
+comparatively trivial thing I posted in this thread.
+
+That aside if I had to make the entire thing scale I would approach
+things differently, most notably in terms of locking granularity. Per
+your own statement things can be made to look great in microbenchmarks,
+but that does not necessarily mean they help. A lot of it is a tradeoff
+and making everything per-cpu for this particular problem may be taking
+it too far.
+
+For the inode hash it may be the old hack of having a lock array would
+do it more than well enough -- say 32 locks (or some other number
+dependent on hash size) each covering a dedicated subset. This very
+plausibly would scale well enough even in a microbenchmark with a high
+core count. Also note having regular spinlocks there would would retain
+all lockdep and whatnot coverage, while having smaller memory footprint
+than the variant coming in [2] which adds regular spinlocks for each
+bucket.
+
+In a similar spirit I'm not convinced per-cpu lists for super blocks are
+warranted either. Instead, some number per numa domain or core count,
+with backing area allocated from respective domain would probably do the
+trick well enough. Even if per-cpu granularity is needed, a mere array
+allocation as seen in the dlist patch warrants adjustment:
++	dlist->heads = kcalloc(nr_cpu_ids, sizeof(struct dlock_list_head),
++			       GFP_KERNEL);
+
+that is it should alloc separate arrays per domain, but then everything
+else has to be adjusted to also know which array to index into. Maybe it
+should use the alloc_percpu machinery.
+
+All that said, if someone(tm) wants to pick up your patchset and even
+commit it the way it is right now I'm not going to protest anything.
+
+I don't have time nor justification to do full work My Way(tm).
+
+I did have time to hack up the initial rcu lookup, which imo does not
+require much to justify inclusion and does help the case I'm interested
+in.
+
+[1] https://lore.kernel.org/linux-fsdevel/ZUautmLUcRyUqZZ+@dread.disaster.area/
+[2] https://lore.kernel.org/linux-fsdevel/20231206060629.2827226-11-david@fromorbit.com/
 
