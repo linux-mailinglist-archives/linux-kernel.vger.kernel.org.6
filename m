@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-206053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1178D9003AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:32:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C859003AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9104828A88C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:32:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 415B0B25348
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5A6192B68;
-	Fri,  7 Jun 2024 12:32:34 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D170B1922F9;
+	Fri,  7 Jun 2024 12:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tsBm8jaj"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA115748C;
-	Fri,  7 Jun 2024 12:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B312E1847;
+	Fri,  7 Jun 2024 12:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717763554; cv=none; b=uXElYorFM9Eixmqn0YMIQrqFGByuR+C+xqT3ICtl+us2LL6JKtUvXuHY5Mh+EiY0WVlW1J37v81qXWTVwCp7m0g2zPZ1uvRA9JArLmfBx6JZ4aBe4dCuQiLMPA9S8bave0w7fephXBnKKCS2eaiwQptfs72gCMvmxYmPc68VWg0=
+	t=1717763598; cv=none; b=pv2qDZvnxa3Rczi2ysYUlJIUf9Hbq0eAlK8sZ+9fENK4g1moLp9sgx1dVdAnKkweyyLvu/bKh3uurjU4ZCiV1na7ZAKhf1RjFv/toB2S+7cjAqCez0snZMWqpFSXqAyM7Qhy3szlvSWmxfrTmaMvWcz6sNdExRbr12tEVJX7qQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717763554; c=relaxed/simple;
-	bh=fDJy+Jwnw3LyhLHgSM3+xzzik78ArJtMK97aZ3fIwuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C9BGpNV0lotuEzPfMGdNLuPVyrsb2J2g37lL8A7kYRKWGZWI8d7px7j6J6oK0gQlkOiAp5Cz+0FY23Apl4iwdUXC8B2g9qBgVfGaxGwbdOdcmmu4gloH4OiKbeOmYbxcHGSokPnLcqoMy6WBSfRiAEFmflwCICdYjiEA6ZE4OEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [213.70.33.226] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFYlc-0002sh-3l; Fri, 07 Jun 2024 14:32:24 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>, Huang-Huang Bao <i@eh5.me>,
- kever.yang@rock-chips.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Huang-Huang Bao <i@eh5.me>
-Subject:
- Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328 GPIO3-B pins
-Date: Fri, 07 Jun 2024 14:32:22 +0200
-Message-ID: <4786379.ElGaqSPkdT@phil>
-In-Reply-To: <20240606125755.53778-3-i@eh5.me>
-References:
- <20240606125755.53778-1-i@eh5.me> <20240606125755.53778-3-i@eh5.me>
+	s=arc-20240116; t=1717763598; c=relaxed/simple;
+	bh=AR9GXoON3/k2badnWF2BeKHHrn98BVtFh4OO3pVN4/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PtCCB4wvaZ807++/9+hQ+Jzk6I3807njj4GgpMDklMe9XSAjeHZ57X4od7Mq5/KZWerFPsZ5bNvUjU2JduG8WqXjVcpX1gxmS2gXp4fpiuRWQPK07RwoK4ejXNMrn6OOEieQBxQbd8015Ws0b6kPhtuB4lFQJu1iz3CCBP5fQs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tsBm8jaj; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VwgbH6Yd3zlgMVV;
+	Fri,  7 Jun 2024 12:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717763589; x=1720355590; bh=J6oK6LXjhpnidqJtTp/dzjp8
+	NhFpbd/C54hDc6t/sNQ=; b=tsBm8jajqKEOJVfn4/sQlYWUtE7PmiAHzZdgat6b
+	abuFihYxAZ4BIk0JmZpPspv/M/LAOk11t49HVFNITArlDGgvYAjUfiWby9k3Axsv
+	9Bi2vEBIsGubsukmh7oS+4VypS2gD4iljFLnflYB8IT2EtQ9bEsFSJtL/27LarvB
+	RClZFSrXTwnZQ5gm36Lbvy/oq05ePJhRF6T6rHtvfPrZHOTWS0Tzx0Q1nuNEwVd4
+	eyXU6m6HYMGhI7ClHJCCks3B7CWWuhhJuLIvPxfDj7u0iBJ4vvJ5/ejtuKbWIOFI
+	06OsHv60O98llRu4tz1mAogwBM51PehbRmu+Cfjq2I7Jjw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 7iwW5zoGjqgu; Fri,  7 Jun 2024 12:33:09 +0000 (UTC)
+Received: from [192.168.132.235] (unknown [65.117.37.195])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vwgb50k80zlgMVS;
+	Fri,  7 Jun 2024 12:33:04 +0000 (UTC)
+Message-ID: <7ba3bbb8-a5c3-4ecd-9c2a-c9586c9d6bf2@acm.org>
+Date: Fri, 7 Jun 2024 06:33:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
+ pending cmds
+To: Ziqi Chen <quic_ziqichen@quicinc.com>, quic_cang@quicinc.com,
+ mani@kernel.org, beanhuo@micron.com, avri.altman@wdc.com,
+ junwoo80.lee@samsung.com, martin.petersen@oracle.com,
+ quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_rampraka@quicinc.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ Peter Wang <peter.wang@mediatek.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Maramaina Naresh <quic_mnaresh@quicinc.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Donnerstag, 6. Juni 2024, 14:57:53 CEST schrieb Huang-Huang Bao:
-> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
-> specified in RK3328 TRM, however we can get hint from pad name and its
-> correspinding IOMUX setting for pins in interface descriptions. The
-> correspinding IOMIX settings for these pins can be found in the same
-> row next to occurrences of following pad names in RK3328 TRM.
-> 
-> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
-> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
-> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
-> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
-> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
-> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
-> 
-> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
-> these pins does not follow rockchip convention.
-> 
-> Signed-off-by: Huang-Huang Bao <i@eh5.me>
+On 6/7/24 04:06, Ziqi Chen wrote:
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 21429ee..1afa862 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -1392,7 +1392,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
+>   	 * make sure that there are no outstanding requests when
+>   	 * clock scaling is in progress
+>   	 */
+> -	ufshcd_scsi_block_requests(hba);
+> +	blk_mq_quiesce_tagset(&hba->host->tag_set);
+>   	mutex_lock(&hba->wb_mutex);
+>   	down_write(&hba->clk_scaling_lock);
+>   
+> @@ -1401,7 +1401,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
+>   		ret = -EBUSY;
+>   		up_write(&hba->clk_scaling_lock);
+>   		mutex_unlock(&hba->wb_mutex);
+> -		ufshcd_scsi_unblock_requests(hba);
+> +		blk_mq_unquiesce_tagset(&hba->host->tag_set);
+>   		goto out;
+>   	}
+>   
+> @@ -1422,7 +1422,7 @@ static void ufshcd_clock_scaling_unprepare(struct ufs_hba *hba, int err, bool sc
+>   
+>   	mutex_unlock(&hba->wb_mutex);
+>   
+> -	ufshcd_scsi_unblock_requests(hba);
+> +	blk_mq_unquiesce_tagset(&hba->host->tag_set);
+>   	ufshcd_release(hba);
+>   }
 
-This matches the information that I found in my TRM, thanks to your
-detailed explanation.
+Why to replace only those ufshcd_scsi_block_requests() /
+ufshcd_scsi_unblock_requests() calls? I don't think that it is ever safe to
+use these functions instead of  blk_mq_quiesce_tagset() /
+blk_mq_unquiesce_tagset(). Please replace all ufshcd_scsi_block_requests() /
+ufshcd_scsi_unblock_requests() calls and remove the
+ufshcd_scsi_*block_requests() functions.
 
-Though I of course can't say if the TRM is just wrong or the hardware
-changed after the pads-description was written.
+Thanks,
 
-Did you test the usage of these pins on your board?
-
-
-Heiko
-
-
-
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 51 ++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 78dcf4daccde..23531ea0d088 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -634,17 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
->  
->  static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
->  	{
-> +		/* gpio2_b7_sel */
->  		.num = 2,
->  		.pin = 15,
->  		.reg = 0x28,
->  		.bit = 0,
->  		.mask = 0x7
->  	}, {
-> +		/* gpio2_c7_sel */
->  		.num = 2,
->  		.pin = 23,
->  		.reg = 0x30,
->  		.bit = 14,
->  		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b1_sel */
-> +		.num = 3,
-> +		.pin = 9,
-> +		.reg = 0x44,
-> +		.bit = 2,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b2_sel */
-> +		.num = 3,
-> +		.pin = 10,
-> +		.reg = 0x44,
-> +		.bit = 4,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b3_sel */
-> +		.num = 3,
-> +		.pin = 11,
-> +		.reg = 0x44,
-> +		.bit = 6,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b4_sel */
-> +		.num = 3,
-> +		.pin = 12,
-> +		.reg = 0x44,
-> +		.bit = 8,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b5_sel */
-> +		.num = 3,
-> +		.pin = 13,
-> +		.reg = 0x44,
-> +		.bit = 10,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b6_sel */
-> +		.num = 3,
-> +		.pin = 14,
-> +		.reg = 0x44,
-> +		.bit = 12,
-> +		.mask = 0x3
-> +	}, {
-> +		/* gpio3_b7_sel */
-> +		.num = 3,
-> +		.pin = 15,
-> +		.reg = 0x44,
-> +		.bit = 14,
-> +		.mask = 0x3
->  	},
->  };
->  
-> 
-
-
-
+Bart.
 
 
