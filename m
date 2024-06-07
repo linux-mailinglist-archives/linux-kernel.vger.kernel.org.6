@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-206471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EF3900A45
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52405900A63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E451C210A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0729E1F2222F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50F119AA65;
-	Fri,  7 Jun 2024 16:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873F719DF49;
+	Fri,  7 Jun 2024 16:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2ifAwwQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VNIx7AMT"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D866D1B9;
-	Fri,  7 Jun 2024 16:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB7119AD46;
+	Fri,  7 Jun 2024 16:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717777655; cv=none; b=b5H+8S6M97063M2L7eqqd6He6557R4MI5QUqSr8p4goAHCxgViqP2xTsdRJWnye1ic7ZGgrchlMPfCNZdLRv+PEl+Q2g78CoqM7FiF78SW0QX+jBdOZY44a6LnMkCD2K0Yu502vTRl1WIiXjh4syuQcwsZ6KtwzEgAp3TRQGY9s=
+	t=1717777737; cv=none; b=IOu/JGTMMQUe1PHuoELxqkcDD+G5tXPp+9alzbrzBvOZySAeLiTdqFIcEWBcR2yR2yNOWkP4VKnyohGNxRo1N3Ssclkim7KqcEs+Gu8XPysrQNzW56F9Y7k2LwHfh/kKoPekVKK7OyOYrHqMiajsqFajuTqmCf9UXpGJfWN8E28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717777655; c=relaxed/simple;
-	bh=70WFcr3YZHLwEEqWuEFYuf3IHamdP8ojcxlq9+pNkuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=f1u9EiKijiv2nKpNWnZfvKM07Of/TW9CY6XTTeR3CEfLS5qHQNIdQiTB1A17OJnmxD8M4LIZQhRCZm2ZWTM+/RlWLWqtBnD/lrvssFernnM9bIaZj5O259e0F+s3NgZKiwO79mxFVv6Nj7OYuVs2Y3XVFk7+DvPOYUnPj7euzmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2ifAwwQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40999C2BBFC;
-	Fri,  7 Jun 2024 16:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717777654;
-	bh=70WFcr3YZHLwEEqWuEFYuf3IHamdP8ojcxlq9+pNkuI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=A2ifAwwQNjMrd1AqtONpXCSyvOdknl6boYk4Pw9p4ikc4NKZ8YGKRR1L0md2nPcPi
-	 m6kH8y2itDxknAKp65Y98T2MRAIXGe2/34JEAEdL5sFSTBzUPtiYUr7tSmPtR5JXNN
-	 9sKDMK7noCTja6zKbf+bDCHf8vENZsjUP9oSyMC3W99xGCTaHJpqsa4ds/kpaHe/8L
-	 euw+xkGrdiSo7cnFx5Dub7MvAlK9gSW4Q+dIrr0kHiKBAOO8TDZn3XnKebWatyMqg3
-	 D0fzdIn8t5StVG25HjdlKm5sgKYCK3KGAAKbDeuskRm3D1EL2GoXXnT0Wn5zhlsLSX
-	 VgvM7A9ZGM8Lw==
-Date: Fri, 7 Jun 2024 11:27:32 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	bhelgaas@google.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com
-Subject: Re: [PATCH V2 1/9] PCI: Introduce PCIe TPH support framework
-Message-ID: <20240607162732.GA848790@bhelgaas>
+	s=arc-20240116; t=1717777737; c=relaxed/simple;
+	bh=9r1L8vpxZoxo2+rCjavv5ZRVk3uQ698rdzteAhQsQXc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oN7qR4Ue/SlYb/SWB1uvUdL3k0LPNOsjhaKM0AjTQMTtPLqzXuqLKG0560nhtRYj7I7ZXGs+lVmSK+Z6fIYWHVD4jcAiL1ZB7/PkmhyewJ6dfBbcxrGmcF+YsxAtdLXXcsV27waC7IekoixANh1XZ6aZnW6uHmj7bkZkQq1040M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VNIx7AMT; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 457GRuu2075995;
+	Fri, 7 Jun 2024 11:27:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717777676;
+	bh=kno6ACLOq8Y9n1TpA0E35jfWU5eoBQgLbX+JqdbSDCA=;
+	h=From:To:CC:Subject:Date;
+	b=VNIx7AMT27XFAmnO7PMzAreOl+ioVwJzyQFCwWNDxzudb/PxOgbew0YBI2SaTp9dw
+	 xzazxmENrODeARNwb/Umgy+YOVUr0l83DP8VF80yFxbYEX1I02DfHkwHTwVJrqymBa
+	 T1dYjYxYngEdywuIxHUEBgdm45hjMpP+eIv7E4P4=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 457GRuxj016585
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Jun 2024 11:27:56 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Jun 2024 11:27:56 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Jun 2024 11:27:55 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 457GRt1g068019;
+	Fri, 7 Jun 2024 11:27:55 -0500
+From: Judith Mendez <jm@ti.com>
+To: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+CC: David Lechner <david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v3 0/8] Enable eQEP DT support for Sitara K3 platforms
+Date: Fri, 7 Jun 2024 11:27:47 -0500
+Message-ID: <20240607162755.366144-1-jm@ti.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531213841.3246055-2-wei.huang2@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 31, 2024 at 04:38:33PM -0500, Wei Huang wrote:
-> This patch implements the framework for PCIe TPH support. It introduces
-> tph.c source file, along with CONFIG_PCIE_TPH, to Linux PCIe subsystem.
-> A new member, named tph_cap, is also introduced in pci_dev to cache TPH
-> capability offset.
+This patch series adds eQEP DT nodes for K3 Sitara devices:
+- AM62x
+- AM62ax
+- AM62px
+- AM64x
 
-s/This patch implements/Implement/
-s/It introduces/Introduce/
-s/is also introduced/Add tph_cap .../
+The series also allows the eQEP driver to be built for K3
+architecture.
 
-https://chris.beams.io/posts/git-commit/
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.9#n94
+Changes since v2:
+- Drop patch 8/8 ("Enable TI eQEP Driver")
+- Enable eQEP0 in k3-am64 SK board
+- Make clock-name optional for ti,am3352-eqep compatible
+ and do not allow for ti,am62-eqep compatible
 
-> +	  This option adds support for PCIE TLP Processing Hints (TPH).
-> +	  TPH allows endpoint devices to provide optimization hints, such as
-> +	  desired caching behavior, for requests that target memory space.
-> +	  These hints, called steering tags, can empower the system hardware
-> +	  to optimize the utilization of platform resources.
+Link to v2: https://lore.kernel.org/linux-devicetree/20240523231516.545085-1-jm@ti.com/
+Link to v1: https://lore.kernel.org/linux-devicetree/20240418221417.1592787-1-jm@ti.com/
 
-s/PCIE TLP/PCIe TLP/ to match context.
+Judith Mendez (8):
+  dt-bindings: counter: Add new ti,am62-eqep compatible
+  counter/ti-eqep: Add new ti-am62-eqep compatible
+  arm64: dts: ti: k3-am62-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62a-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62p-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64x-sk: Enable eQEP
+  counter: ti-eqep: Allow eQEP driver to be built for K3 devices
 
-> +++ b/drivers/pci/pcie/tph.c
+ .../devicetree/bindings/counter/ti-eqep.yaml  | 44 ++++++++++++++++---
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi      | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        | 18 ++++++++
+ drivers/counter/Kconfig                       |  2 +-
+ drivers/counter/ti-eqep.c                     |  1 +
+ 8 files changed, 167 insertions(+), 6 deletions(-)
 
-> +#define pr_fmt(fmt) "TPH: " fmt
-> +#define dev_fmt pr_fmt
+-- 
+2.45.1
 
-Add when used.
-
-> +void pcie_tph_init(struct pci_dev *dev)
-> +{
-> +	dev->tph_cap = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_TPH);
-> +}
-> +
-
-  $ git am m/v2_20240531_wei_huang2_pcie_tph_and_cache_direct_injection_support.mbx
-  Applying: PCI: Introduce PCIe TPH support framework
-  .git/rebase-apply/patch:88: new blank line at EOF.
-  +
-  warning: 1 line adds whitespace errors.
 
