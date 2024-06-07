@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-205362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918128FFACA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0ED8FFACB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D217282EF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A11282D00
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92356167D8B;
-	Fri,  7 Jun 2024 04:27:51 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBB1168C0C;
+	Fri,  7 Jun 2024 04:27:52 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B91B15FA63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD2115FA78
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734468; cv=none; b=j4HYaYwyts19j09dLJ5UQi7zmKFdI5Vuf2/7MHclpAhYNoWatn/kj4yJQPR+o6o47eydOBUmAKhgW1a3DKvh6Is2KANmUAbmtAHy8zJfw79v7sTJYnJnxqeu8nGW8xdXwBDnIVyhZ8lD/mik0W8vPXzfiXZpY7IDTzZ7gaIScsQ=
+	t=1717734468; cv=none; b=X3NTLIQroFxAOdG9oa86h97csrQPhNFHTO8LDTne6Tft+eUTLllUplGUaths8gmfy9A4Y8LSsbJxE9CZ4WdxGF+tiOCFddYmohkitzUI2Jxa4x6WKLHjyYT5NmRjalAkpwEfYexvKzS6SiZPRgeapXCHKn2A9YCJycURv8T8zco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717734468; c=relaxed/simple;
-	bh=dj8XqzCHDgNg+co4aF0kpWYxaXrhkatAyNgzBwesT1w=;
+	bh=y8ElvKpX/zdh0qFJL1BVe/8KgSgB0DT3jAdj/gBG5Lc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bsp+EgO+VW7t61fZRpVj8QswOwgdARx5M0sGZFk215m8X/L+uAUiX06Tj2THk0GTrwDb+0mlFyb3OL+2vEHfytTRMDXx70CPU2KFOUi7wZCLFDgZMm/5Tkw3HMMTS3+jrj90KOLNERXeHEgg0wFs44USWooiteRHeWm6Rm5wRfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 MIME-Version:Content-Type; b=dhQygUqCP6Dq+s9j6IjnfB9ToZbwQv4WquSqcTlZbP2ZmJA0XCCPhFYGSkj2EyvHHH9Mg89af9UIGFLBxLnz0OiIq6jle/1OORP9tlhrRPnq39lqNOJ2tRBfplRGne6K0BfoU81YB6J+rzw3EcQuICYzyVuRCSCT/xbT8g/SRWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VwSjj2g3QzmXv6;
-	Fri,  7 Jun 2024 12:23:05 +0800 (CST)
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwSkQ4KjXzsTSr;
+	Fri,  7 Jun 2024 12:23:42 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id 32D4E180AA6;
+	by mail.maildlp.com (Postfix) with ESMTPS id 43225180085;
 	Fri,  7 Jun 2024 12:27:41 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Jun
- 2024 12:27:30 +0800
+ 2024 12:27:31 +0800
 From: Zhihao Cheng <chengzhihao1@huawei.com>
 To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 086/110] fsck.ubifs: Check and handle unreachable files
-Date: Fri, 7 Jun 2024 12:25:51 +0800
-Message-ID: <20240607042615.2069840-87-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 087/110] fsck.ubifs: Check and correct files' information
+Date: Fri, 7 Jun 2024 12:25:52 +0800
+Message-ID: <20240607042615.2069840-88-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,207 +60,247 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-This is the 9/18 step of fsck. Check and handle unreachable files, the
-checking rule is same as rebuild mode which has been implemented in
-file_is_reachable, but the methods of handling are different:
-1. Move unreachable regular file into disconnected list, let subsequent
-   steps to handle them with lost+found.
-2. Delete unreachable non-regular file.
-3. Delete unreachable directory entries.
+From: Xiang Yang <xiangyang3@huawei.com>
 
+This is the 10/18 step of fsck. Check and handle inconsistent files, the
+checking rule is same as rebuild mode which has been implemented in
+check_and_correct_files, but the methods of handling are different:
+ 1. Correct the file information for safe mode, danger mode and normal
+    mode with 'yes' answer, other modes will exit.
+
+Signed-off-by: Xiang Yang <xiangyang3@huawei.com>
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/fsck.ubifs/check_files.c   | 57 ++++++++++++++++++++++++++++++++++
- ubifs-utils/fsck.ubifs/extract_files.c | 13 ++++++++
- ubifs-utils/fsck.ubifs/fsck.ubifs.c    |  9 ++++++
- ubifs-utils/fsck.ubifs/fsck.ubifs.h    |  3 +-
- ubifs-utils/fsck.ubifs/problem.c       | 14 +++++++++
- 5 files changed, 95 insertions(+), 1 deletion(-)
+ ubifs-utils/fsck.ubifs/extract_files.c | 76 ++++++++++++++++++++++------------
+ ubifs-utils/fsck.ubifs/fsck.ubifs.c    |  8 ++++
+ ubifs-utils/fsck.ubifs/fsck.ubifs.h    |  2 +-
+ ubifs-utils/fsck.ubifs/problem.c       | 16 +++++++
+ 4 files changed, 74 insertions(+), 28 deletions(-)
 
-diff --git a/ubifs-utils/fsck.ubifs/check_files.c b/ubifs-utils/fsck.ubifs/check_files.c
-index c5c606e1..2be96193 100644
---- a/ubifs-utils/fsck.ubifs/check_files.c
-+++ b/ubifs-utils/fsck.ubifs/check_files.c
-@@ -7,6 +7,7 @@
- 
- #include <stdio.h>
- #include <stdlib.h>
-+#include <sys/stat.h>
- 
- #include "linux_err.h"
- #include "bitops.h"
-@@ -442,3 +443,59 @@ int handle_invalid_files(struct ubifs_info *c)
- 
- 	return 0;
- }
-+
-+/**
-+ * handle_dentry_tree - Handle unreachable dentries and files.
-+ * @c: UBIFS file-system description object
-+ *
-+ * This function iterates all directory entries and remove those unreachable
-+ * ones. If file has no directory entries, it becomes unreachable:
-+ * 1. If the unreachable file has non-regular type, delete it;
-+ * 2. If the unreachable file has regular type, move it into the
-+ *    @FSCK(c)->disconnected_files.
-+ * 'Unreachable' means that a directory entry can not be searched from '/'.
-+ *
-+ * Returns zero in case of success, a negative error code in case of failure.
-+ */
-+int handle_dentry_tree(struct ubifs_info *c)
-+{
-+	struct rb_node *node;
-+	struct scanned_file *file;
-+	struct rb_root *tree = &FSCK(c)->scanned_files;
-+	LIST_HEAD(unreachable);
-+
-+	for (node = rb_first(tree); node; node = rb_next(node)) {
-+		file = rb_entry(node, struct scanned_file, rb);
-+
-+		/*
-+		 * Since all xattr files are already attached to corresponding
-+		 * host file, there are only non-xattr files in the file tree.
-+		 */
-+		ubifs_assert(c, !file->ino.is_xattr);
-+		if (!file_is_reachable(c, file, tree))
-+			list_add(&file->list, &unreachable);
-+	}
-+
-+	while (!list_empty(&unreachable)) {
-+		file = list_entry(unreachable.next, struct scanned_file, list);
-+
-+		list_del(&file->list);
-+		if (S_ISREG(file->ino.mode)) {
-+			/*
-+			 * Move regular type unreachable file into the
-+			 * @FSCK(c)->disconnected_files.
-+			 */
-+			list_add(&file->list, &FSCK(c)->disconnected_files);
-+			rb_erase(&file->rb, tree);
-+		} else {
-+			/* Delete non-regular type unreachable file. */
-+			int err = delete_file(c, file);
-+			if (err)
-+				return err;
-+			rb_erase(&file->rb, tree);
-+			kfree(file);
-+		}
-+	}
-+
-+	return 0;
-+}
 diff --git a/ubifs-utils/fsck.ubifs/extract_files.c b/ubifs-utils/fsck.ubifs/extract_files.c
-index 51b83b82..b24445be 100644
+index b24445be..c83d3774 100644
 --- a/ubifs-utils/fsck.ubifs/extract_files.c
 +++ b/ubifs-utils/fsck.ubifs/extract_files.c
-@@ -1247,6 +1247,15 @@ retry:
- 			dent_node = list_entry(path_list.next,
- 					       struct scanned_dent_node, list);
+@@ -1292,8 +1292,8 @@ reachable:
+  * data nodes and truncation node. The calculated informaion will be used
+  * to correct inode node.
+  */
+-static void calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
+-				struct rb_root *file_tree)
++static int calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
++			       struct rb_root *file_tree)
+ {
+ 	int nlink = 0;
+ 	bool corrupted_truncation = false;
+@@ -1306,15 +1306,24 @@ static void calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
  
-+			handle_invalid_file(c, DENTRY_IS_UNREACHABLE,
-+					    dent_node->file, dent_node);
-+			if (FSCK(c)->mode != REBUILD_MODE) {
-+				int err = delete_node(c, &dent_node->key,
-+						      dent_node->header.lnum,
-+						      dent_node->header.offs);
-+				if (err)
-+					return err;
-+			}
- 			dbg_fsck("remove unreachable dentry %s, in %s",
- 				 c->encrypted && !file->ino.is_xattr ?
- 				 "<encrypted>" : dent_node->name, c->dev_name);
-@@ -1260,6 +1269,10 @@ retry:
+ 	for (node = rb_first(&file->xattr_files); node; node = rb_next(node)) {
+ 		xattr_file = rb_entry(node, struct scanned_file, rb);
++		dent_node = rb_entry(rb_first(&xattr_file->dent_nodes),
++				     struct scanned_dent_node, rb);
+ 
++		ubifs_assert(c, xattr_file->ino.is_xattr);
+ 		ubifs_assert(c, !rb_first(&xattr_file->xattr_files));
+-		calculate_file_info(c, xattr_file, file_tree);
++		xattr_file->calc_nlink = 1;
++		xattr_file->calc_size = xattr_file->ino.size;
++
++		file->calc_xcnt += 1;
++		file->calc_xsz += CALC_DENT_SIZE(dent_node->nlen);
++		file->calc_xsz += CALC_XATTR_BYTES(xattr_file->ino.size);
++		file->calc_xnms += dent_node->nlen;
  	}
  
- 	if (!rb_first(&file->dent_nodes)) {
-+		if (S_ISREG(file->ino.mode))
-+			handle_invalid_file(c, FILE_IS_DISCONNECTED, file, NULL);
-+		else
-+			handle_invalid_file(c, FILE_HAS_NO_DENT, file, NULL);
- 		dbg_fsck("file %lu is unreachable, in %s", file->inum, c->dev_name);
- 		return false;
+ 	if (file->inum == UBIFS_ROOT_INO) {
+ 		file->calc_nlink += 2;
+ 		file->calc_size += UBIFS_INO_NODE_SZ;
+-		return;
++		return 0;
  	}
+ 
+ 	if (S_ISDIR(file->ino.mode)) {
+@@ -1326,29 +1335,11 @@ static void calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
+ 		parent_file = lookup_file(file_tree, key_inum(c, &dent_node->key));
+ 		if (!parent_file) {
+ 			ubifs_assert(c, 0);
+-			return;
++			return 0;
+ 		}
+ 		parent_file->calc_nlink += 1;
+ 		parent_file->calc_size += CALC_DENT_SIZE(dent_node->nlen);
+-		return;
+-	}
+-
+-	if (file->ino.is_xattr) {
+-		file->calc_nlink = 1;
+-		file->calc_size = file->ino.size;
+-
+-		dent_node = rb_entry(rb_first(&file->dent_nodes),
+-				     struct scanned_dent_node, rb);
+-		parent_file = lookup_file(file_tree, key_inum(c, &dent_node->key));
+-		if (!parent_file) {
+-			ubifs_assert(c, 0);
+-			return;
+-		}
+-		parent_file->calc_xcnt += 1;
+-		parent_file->calc_xsz += CALC_DENT_SIZE(dent_node->nlen);
+-		parent_file->calc_xsz += CALC_XATTR_BYTES(file->ino.size);
+-		parent_file->calc_xnms += dent_node->nlen;
+-		return;
++		return 0;
+ 	}
+ 
+ 	for (node = rb_first(&file->dent_nodes); node; node = rb_next(node)) {
+@@ -1359,7 +1350,7 @@ static void calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
+ 		parent_file = lookup_file(file_tree, key_inum(c, &dent_node->key));
+ 		if (!parent_file) {
+ 			ubifs_assert(c, 0);
+-			return;
++			return 0;
+ 		}
+ 		parent_file->calc_size += CALC_DENT_SIZE(dent_node->nlen);
+ 	}
+@@ -1368,7 +1359,7 @@ static void calculate_file_info(struct ubifs_info *c, struct scanned_file *file,
+ 	if (!S_ISREG(file->ino.mode)) {
+ 		/* No need to verify i_size for symlink/sock/block/char/fifo. */
+ 		file->calc_size = file->ino.size;
+-		return;
++		return 0;
+ 	}
+ 
+ 	/*
+@@ -1452,10 +1443,22 @@ drop_data:
+ 		data_node = list_entry(drop_list.next, struct scanned_data_node,
+ 				       list);
+ 
++		if (FSCK(c)->mode != REBUILD_MODE) {
++			/*
++			 * Don't ask, inconsistent file correcting will be
++			 * asked in function correct_file_info().
++			 */
++			int err = delete_node(c, &data_node->key,
++				data_node->header.lnum, data_node->header.offs);
++			if (err)
++				return err;
++		}
+ 		list_del(&data_node->list);
+ 		rb_erase(&data_node->rb, &file->data_nodes);
+ 		kfree(data_node);
+ 	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -1490,6 +1493,7 @@ static int correct_file_info(struct ubifs_info *c, struct scanned_file *file)
+ 	    file->calc_size == file->ino.size)
+ 		return 0;
+ 
++	handle_invalid_file(c, FILE_IS_INCONSISTENT, file, NULL);
+ 	lnum = file->ino.header.lnum;
+ 	dbg_fsck("correct file(inum:%lu type:%s), nlink %u->%u, xattr cnt %u->%u, xattr size %u->%u, xattr names %u->%u, size %llu->%llu, at %d:%d, in %s",
+ 		 file->inum, file->ino.is_xattr ? "xattr" :
+@@ -1537,7 +1541,9 @@ int check_and_correct_files(struct ubifs_info *c)
+ 	for (node = rb_first(tree); node; node = rb_next(node)) {
+ 		file = rb_entry(node, struct scanned_file, rb);
+ 
+-		calculate_file_info(c, file, tree);
++		err = calculate_file_info(c, file, tree);
++		if (err)
++			return err;
+ 	}
+ 
+ 	for (node = rb_first(tree); node; node = rb_next(node)) {
+@@ -1548,5 +1554,21 @@ int check_and_correct_files(struct ubifs_info *c)
+ 			return err;
+ 	}
+ 
++	if (list_empty(&FSCK(c)->disconnected_files))
++		return 0;
++
++	ubifs_assert(c, FSCK(c)->mode != REBUILD_MODE);
++	list_for_each_entry(file, &FSCK(c)->disconnected_files, list) {
++		err = calculate_file_info(c, file, tree);
++		if (err)
++			return err;
++
++		/* Reset disconnected file's nlink as one. */
++		file->calc_nlink = 1;
++		err = correct_file_info(c, file);
++		if (err)
++			return err;
++	}
++
+ 	return 0;
+ }
 diff --git a/ubifs-utils/fsck.ubifs/fsck.ubifs.c b/ubifs-utils/fsck.ubifs/fsck.ubifs.c
-index 4b1b35b0..fd4890a0 100644
+index fd4890a0..85a5baf0 100644
 --- a/ubifs-utils/fsck.ubifs/fsck.ubifs.c
 +++ b/ubifs-utils/fsck.ubifs/fsck.ubifs.c
-@@ -453,6 +453,14 @@ static int do_fsck(void)
- 		goto free_used_lebs;
+@@ -460,6 +460,13 @@ static int do_fsck(void)
+ 		goto free_disconnected_files;
  	}
  
-+	log_out(c, "Check and handle unreachable files");
-+	err = handle_dentry_tree(c);
++	log_out(c, "Check and correct files");
++	err = check_and_correct_files(c);
 +	if (err) {
 +		exit_code |= FSCK_ERROR;
 +		goto free_disconnected_files;
 +	}
 +
-+free_disconnected_files:
+ free_disconnected_files:
  	destroy_file_list(c, &FSCK(c)->disconnected_files);
  free_used_lebs:
- 	kfree(FSCK(c)->used_lebs);
-@@ -495,6 +503,7 @@ int main(int argc, char *argv[])
- 	 * Step 6: Traverse tnc and construct files
+@@ -504,6 +511,7 @@ int main(int argc, char *argv[])
  	 * Step 7: Update files' size
  	 * Step 8: Check and handle invalid files
-+	 * Step 9: Check and handle unreachable files
+ 	 * Step 9: Check and handle unreachable files
++	 * Step 10: Check and correct files
  	 */
  	err = do_fsck();
  	if (err && FSCK(c)->try_rebuild) {
 diff --git a/ubifs-utils/fsck.ubifs/fsck.ubifs.h b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
-index 34d300b2..ba4771a3 100644
+index ba4771a3..d1423c01 100644
 --- a/ubifs-utils/fsck.ubifs/fsck.ubifs.h
 +++ b/ubifs-utils/fsck.ubifs/fsck.ubifs.h
 @@ -43,7 +43,7 @@ enum { SB_CORRUPTED = 0, MST_CORRUPTED, LOG_CORRUPTED, BUD_CORRUPTED,
         FILE_HAS_0_NLINK_INODE, FILE_HAS_INCONSIST_TYPE, FILE_HAS_TOO_MANY_DENT,
         FILE_SHOULDNT_HAVE_DATA, FILE_HAS_NO_DENT, XATTR_HAS_NO_HOST,
         XATTR_HAS_WRONG_HOST, FILE_HAS_NO_ENCRYPT, FILE_IS_DISCONNECTED,
--       FILE_ROOT_HAS_DENT };
-+       FILE_ROOT_HAS_DENT, DENTRY_IS_UNREACHABLE };
+-       FILE_ROOT_HAS_DENT, DENTRY_IS_UNREACHABLE };
++       FILE_ROOT_HAS_DENT, DENTRY_IS_UNREACHABLE, FILE_IS_INCONSISTENT };
  
  enum { HAS_DATA_CORRUPTED = 1, HAS_TNC_CORRUPTED = 2 };
  
-@@ -318,5 +318,6 @@ int ubifs_rebuild_filesystem(struct ubifs_info *c);
- int traverse_tnc_and_construct_files(struct ubifs_info *c);
- void update_files_size(struct ubifs_info *c);
- int handle_invalid_files(struct ubifs_info *c);
-+int handle_dentry_tree(struct ubifs_info *c);
- 
- #endif
 diff --git a/ubifs-utils/fsck.ubifs/problem.c b/ubifs-utils/fsck.ubifs/problem.c
-index 9222cba4..0395a34f 100644
+index 0395a34f..e8f08606 100644
 --- a/ubifs-utils/fsck.ubifs/problem.c
 +++ b/ubifs-utils/fsck.ubifs/problem.c
-@@ -58,6 +58,7 @@ static const struct fsck_problem problem_table[] = {
- 	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Encrypted file has no encryption information"},	// FILE_HAS_NO_ENCRYPT
+@@ -59,6 +59,7 @@ static const struct fsck_problem problem_table[] = {
  	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX, "File is disconnected(regular file without dentries)"},	// FILE_IS_DISCONNECTED
  	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Root dir should not have a dentry"},	// FILE_ROOT_HAS_DENT
-+	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Dentry is unreachable"},	// DENTRY_IS_UNREACHABLE
+ 	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX | PROBLEM_DROP_DATA, "Dentry is unreachable"},	// DENTRY_IS_UNREACHABLE
++	{PROBLEM_FIXABLE | PROBLEM_MUST_FIX, "File is inconsistent"},	// FILE_IS_INCONSISTENT
  };
  
  static const char *get_question(const struct fsck_problem *problem,
-@@ -84,6 +85,7 @@ static const char *get_question(const struct fsck_problem *problem,
- 	case XATTR_HAS_WRONG_HOST:
- 	case FILE_HAS_NO_ENCRYPT:
- 	case FILE_ROOT_HAS_DENT:
-+	case DENTRY_IS_UNREACHABLE:
- 		return "Delete it?";
- 	case FILE_HAS_INCONSIST_TYPE:
- 	case FILE_HAS_TOO_MANY_DENT:
-@@ -198,6 +200,18 @@ static void print_problem(const struct ubifs_info *c,
- 			host->ino.is_xattr ? "(xattr)" : "");
+@@ -212,6 +213,21 @@ static void print_problem(const struct ubifs_info *c,
+ 			key_type(c, &dent_node->key) == UBIFS_XENT_KEY ? "(xattr)" : "");
  		break;
  	}
-+	case DENTRY_IS_UNREACHABLE:
++	case FILE_IS_INCONSISTENT:
 +	{
 +		const struct invalid_file_problem *ifp = (const struct invalid_file_problem *)priv;
-+		const struct scanned_dent_node *dent_node = (const struct scanned_dent_node *)ifp->priv;
++		const struct scanned_file *file = ifp->file;
 +
-+		log_out(c, "problem: %s, ino %lu, unreachable dentry %s, type %s%s",
-+			problem->desc, ifp->file->inum,
-+			c->encrypted && !ifp->file->ino.is_xattr ? "<encrypted>" : dent_node->name,
-+			ubifs_get_type_name(dent_node->type),
-+			key_type(c, &dent_node->key) == UBIFS_XENT_KEY ? "(xattr)" : "");
++		log_out(c, "problem: %s, ino %lu type %s, nlink %u xcnt %u xsz %u xnms %u size %llu, "
++			"should be nlink %u xcnt %u xsz %u xnms %u size %llu",
++			problem->desc, file->inum,
++			file->ino.is_xattr ? "xattr" : ubifs_get_type_name(ubifs_get_dent_type(file->ino.mode)),
++			file->ino.nlink, file->ino.xcnt, file->ino.xsz,
++			file->ino.xnms, file->ino.size,
++			file->calc_nlink, file->calc_xcnt, file->calc_xsz,
++			file->calc_xnms, file->calc_size);
 +		break;
 +	}
  	default:
