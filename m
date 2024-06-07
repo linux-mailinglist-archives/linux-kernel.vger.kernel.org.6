@@ -1,101 +1,147 @@
-Return-Path: <linux-kernel+bounces-205596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963C08FFDF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:26:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10298FFDF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442DE1F24034
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:26:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62958B2222D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9AA15B0F3;
-	Fri,  7 Jun 2024 08:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B715B0F9;
+	Fri,  7 Jun 2024 08:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fhIEYSm6"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CgqFsdpl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KFbr+qob";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bV0kaGCL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gHJ2qv4V"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54E15A863
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD0015AAC7;
+	Fri,  7 Jun 2024 08:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717748777; cv=none; b=e4nEoAVUTIIGaUd3jf8zr7Qc5tMPvyPNmb8SQC7AicdSdHbgzAWvtK5I5SetciLaJgqLDoe+CY76sTecsyPwhgtuAcVKcHRbbkmKbafqRdkyBnuEIM2FNdtKEra4liarcujWbz8ZOsca232s3x3r0zqK20zHM+Ga5zcdy4qrLtk=
+	t=1717748798; cv=none; b=Mn3JX3S/+WdPe320qwYRJk4vTO5D8yrF0lSUmLn5v2fHygDp3bvNrprtM4UtlKhH0+Hax8cVLPU6qvSBOlmUn16ujqTz6Rf6fczc8Rn+fbIzyIUKC2yYvCW0q0Z5U4nhfGVcjigM1e6zJB3l8L7TNSuAhF84rb8zKL7eqkuqsng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717748777; c=relaxed/simple;
-	bh=6RYn8Ak83TO778TRb6ww3Lrzb+/vIQANG6vEzYSNBU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJkp+YX5OPnBg8wZg3mTKJq9juKKu6dtGUObrhfWZSQR2m/tQ0wOMFJs/pA4D+19saAoen51ewnsMYPEY5P/ZMizaOFm+teAOqDv8d/X8MlGMj99sVFs+wZ95F0JEy1sSpA0IsFw/owumM0qwmsSQkA9/C0YaqJb4Z1guR7b5Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fhIEYSm6; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sakari.ailus@linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717748771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ORHnZa81MTx79wWzMdPXEmgkK3/n9+FWj6CNynHAa7A=;
-	b=fhIEYSm6XJiVQ/oi4DVYTdIFml931HDUrr7Ti04GWauP8jXhgzYx68/moxavLp0q+dcKSJ
-	fAgBag2bNI2yB0m21NBk+xPpzBWm+6aSaq4pUy587D4svrXClPqc5pU03Qm0d9434FnMjN
-	P7U9NZB7jZAyo8E8uFdFAIf4RWO2Cv8=
-X-Envelope-To: bingbu.cao@intel.com
-X-Envelope-To: tian.shu.qiu@intel.com
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: hverkuil-cisco@xs4all.nl
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: gehao@kylinos.cn
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-To: sakari.ailus@linux.intel.com,
-	bingbu.cao@intel.com,
-	tian.shu.qiu@intel.com,
-	mchehab@kernel.org
-Cc: hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] media: intel/ipu6: Fix a null pointer dereference in ipu6_isys_query_stream_by_source
-Date: Fri,  7 Jun 2024 16:25:42 +0800
-Message-Id: <20240607082542.380166-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1717748798; c=relaxed/simple;
+	bh=izweJl01cfvuZrl5QoPNzU2bZiu04ECAvpb97T2e8+I=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=oDJ/z8OVWPRTgHbgWRU9zUvhiQQ9zsZQbBugWxgWmJ0pGfI/hYBS8TLsNP7Y6YhYz5FfLt+ET9u4fqPS81KP8YiRNBpeSyAiHxgsxxx2NO23Czb3w0/V/nuVcEfb8gWnDG4eEsF+HDYsJNo8l7VJCpNDdGSSYYNGqwrFA7fR9Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CgqFsdpl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KFbr+qob; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bV0kaGCL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gHJ2qv4V; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E8A2F21A76;
+	Fri,  7 Jun 2024 08:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717748795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K4nbpVbxr6IAJzN8S5PEK07maGVoKTCO7IaVjWMJY8=;
+	b=CgqFsdplmAYdlmjeHV1wUix4FXVRpTdf+tB8GF71aND+VuecYNEM+uM4F39Nezmnf07JGo
+	ywahJ36p/2CCoEELHn/LhDm+WkLFDiVOWxk0RpSDOrCNPSHKc3cLItPG9Sq2/o+OAyTecP
+	QRn8dKwn1e5i36iNfU7ySNhTypzD4ro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717748795;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K4nbpVbxr6IAJzN8S5PEK07maGVoKTCO7IaVjWMJY8=;
+	b=KFbr+qobwDtPnMeCgySooe72iMYNioeb30Y70R+0c/TVghH1TqRB7Qz+/25HvEseThFJD2
+	yN497ak3A4eXYLBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717748794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K4nbpVbxr6IAJzN8S5PEK07maGVoKTCO7IaVjWMJY8=;
+	b=bV0kaGCLUOvFoGnob5z0Wm2Ok/gRHjTPWT+z9TIKDvDQlLJUK6hIZQ4DmVV7AY/pnQpJlP
+	8ETVt+7Du0C5V0/hhZ4XOLWHiCiVF57H52SlfNtkVqY8iKe5r7aR/qWunEtGcjYf44tHK0
+	wE91M3R8f12/D4g5fyKzNzmSPQU+dy4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717748794;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K4nbpVbxr6IAJzN8S5PEK07maGVoKTCO7IaVjWMJY8=;
+	b=gHJ2qv4VmCdtXaz/MrOQtKaprH0X28q91GKuPLGFZ3Lfx0SyqpO3OVAVJ020C4nRP+36fP
+	2wBKYesQilgt2aBg==
+Date: Fri, 7 Jun 2024 10:26:33 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
+    Shuah Khan <shuah@kernel.org>, live-patching@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] selftests: livepatch: Test atomic replace against
+ multiple modules
+In-Reply-To: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
+Message-ID: <alpine.LSU.2.21.2406071025160.29080@pobox.suse.cz>
+References: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Flag: NO
+X-Spam-Score: -3.82
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.82 / 50.00];
+	BAYES_HAM(-2.53)[97.88%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.977];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
 
-From: Hao Ge <gehao@kylinos.cn>
+On Mon, 3 Jun 2024, Marcos Paulo de Souza wrote:
 
-stream is NULL when source is less than 0 in
-ipu6_isys_query_stream_by_source. It's a null
-pointer dereference.
+> Adapt the current test-livepatch.sh script to account the number of
+> applied livepatches and ensure that an atomic replace livepatch disables
+> all previously applied livepatches.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+> Changes since v2:
+> * Used variables to stop the name of other livepatches applied to test
+>   the atomic replace. (Joe)
+> 
+> Changes since v1:
+> * Added checks in the existing test-livepatch.sh instead of creating a
+>   new test file. (Joe)
+> * Fixed issues reported by ShellCheck (Joe)
+> ---
+> Changes in v3:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v2: https://lore.kernel.org/r/20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com
+> ---
+>  .../testing/selftests/livepatch/test-livepatch.sh  | 138 +++++++++++++--------
+>  1 file changed, 89 insertions(+), 49 deletions(-)
 
-Actually, this should be isys->adev->auxdev.dev.
+with 's/addtional/additional/' pointed out by Joe
 
-Fixes: 3c1dfb5a69cf ("media: intel/ipu6: input system video nodes and buffer queues")
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- drivers/media/pci/intel/ipu6/ipu6-isys-video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
-diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
-index c8a33e1e910c..06090cc0a476 100644
---- a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
-@@ -943,7 +943,7 @@ ipu6_isys_query_stream_by_source(struct ipu6_isys *isys, int source, u8 vc)
- 		return NULL;
- 
- 	if (source < 0) {
--		dev_err(&stream->isys->adev->auxdev.dev,
-+		dev_err(&isys->adev->auxdev.dev,
- 			"query stream with invalid port number\n");
- 		return NULL;
- 	}
--- 
-2.25.1
+M
 
 
