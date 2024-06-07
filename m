@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-205456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1748FFC4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5E68FFC4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E694285740
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1CE1F2369A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E9115278C;
-	Fri,  7 Jun 2024 06:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7A71527A0;
+	Fri,  7 Jun 2024 06:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U5Me/K+7"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O6Z3qebR"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D314445008
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A55945008
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 06:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717741997; cv=none; b=BrZbzv1NJEvYVnwEn12Dq5q/U42zQrYiwtepyKL8h9UBA7W+VjMvQ2EqmcdY8UG9EZrGTkke/abQOzVnq5RuZHc//cULS/e2VzVpMlILXBFkqdD4sqwON7O7nqhAfy428f/PJa2aPM84je0QKZH9wKZyNo2H2hvHOEMo9lWIFAs=
+	t=1717742148; cv=none; b=dwBLWG7+f+tGjIQT6V85yQf4hIywKYCRYQArgzlaAKOO4ZdpgsX/b8VA2VeRXFSLDa796O5RkASEQLSdgizh0dky4Zi71PHXK2E0HxuO2R9Mqj4grOi2Q0Ln+xX/43A4ZwsqJWNmwB/VuU1p0EZGVt5FFLnEOPJ2A1QdcEQRZqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717741997; c=relaxed/simple;
-	bh=aeeAV18NL5zwnJhyY5Mu0GQcHJndNDUCKeVCW99ZGG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uxNN9hTOz+P9K6OSlBQPywEAjOyNtE7Mb5+sdCVbvVeVv5MmisZbHQRAfFgZQz3uMLQ1RcwAQz8LcNPTitepZuCzdUi4dCx+MV6jT6ZP9KC7+Fy3QsV0fFRP5zIOLsoBl1pFoE5AgCTzdC0nQII/y0hprfjNcHmJi8IZVDDo6fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U5Me/K+7; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: hch@lst.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717741993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uqn98qnbHlEsgzTqMBvOqaHJPzVEiq0rM4rP3bX1Rw8=;
-	b=U5Me/K+7cduPOZrRRjB59q7O7SRFQM2ACruBZevtAGPMJ9H5JNCUSZxtxTGRQovbDSWgfJ
-	VGd2T2T11otqHh3sj2AMIkvuOVM2Jyl5J0PKAfPW9qcYiPmxwSR3OtCW5sLbl93RdT/XpG
-	DLb30vyf6TvHfCINSJ1lHIwTmD+JxJE=
-X-Envelope-To: f.weber@proxmox.com
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: t.lamprecht@proxmox.com
-Message-ID: <1899ff04-f1de-4d1a-be97-a8702ca3cd65@linux.dev>
-Date: Fri, 7 Jun 2024 14:33:07 +0800
+	s=arc-20240116; t=1717742148; c=relaxed/simple;
+	bh=vsF9fVM1//kd5zIx0GTtpB46iJMt9vsqNkPX4bd/w5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChU8Uh/sC8ct728+DRg8Zg/COd3USynhgfA3q1MXZOeVb59D8jxadC1JYSbxOCJEAfz0t5so9pEOkqFPyfbk/lL8buWpFFgx1hRCgwS/ix8uDGK41gyB2GI2EISVcYTWqzyOquK0eNCMfjn8jsGKDiJZCuHEUyv78/DVM9A7QNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O6Z3qebR; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so9593a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2024 23:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717742146; x=1718346946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vsF9fVM1//kd5zIx0GTtpB46iJMt9vsqNkPX4bd/w5Y=;
+        b=O6Z3qebRozuaXrdItPF6U/X0GkPvJTO/BwV0iHOr3HgIdH7VyQMuctWBXynllyqEUb
+         nxcaXZ7YCGM2HmZHsYh03+U9mqnS5LAhAAo2QEFrpOjjRTYlT+gYhw5CzPnbgnWLb3WH
+         NQ0Z1T1GVjlGxTyH3RIVPbJ2XUu2hW5QegI/PQadVWQEb7YT17S50n6I9Wy9GZS4Riqh
+         pyFB+vEy+mY9Wtk3TlzxrbJ9v2NWI7QAJKq7Q7zgCW3IG+4LJJ27RwHOoYQoFrt5Pzyw
+         6c0gZ5uIuvU+PlA1/BDUhz3Gj0UH0S4bjEhKhtNFZbuaQsgX54jMfh2N2cOgCsagnieP
+         WlXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717742146; x=1718346946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vsF9fVM1//kd5zIx0GTtpB46iJMt9vsqNkPX4bd/w5Y=;
+        b=a4VcFX1xtyb/zyB8ScB9GHqAB8s4CurrFRycanNyHpuzJFskUtffZjIWb1SmdhZ5n2
+         JptSqWlYRA3BN+zVWelH2M1MxWRxwKRKQwTG4HnWhuyGkMbeIDygSpM/R8O9Uo4YSRs6
+         KVAUJCHPM3pzcG/9nHhpti93IC5BEm+z+vouz8DMHEuoMQHlxsO359qdeq4C+b5TffN9
+         KeMVHlI2NGjAZtss2hnueeRZ5a4F7+ysLPfEFlUvXNZov0jszrrp8NSPyVIauCRSVRMg
+         QdiqWNIEXZEa/0sLFVNriN0A+21Ld83U7SnAK+ce6mk6J1HoljvHYyzpqEFYIJpd1foQ
+         m51g==
+X-Forwarded-Encrypted: i=1; AJvYcCV02cJ45K1ieyDOp/1W0dUBqYy69VX2JMgJ9QE4sacePy+jYLEI1d/dMi8ZUdD80jhMmO7Qvd3TmpQrV5DqzM+CIJ8i56JVhuNDn2j8
+X-Gm-Message-State: AOJu0YwRXkW9cjKBOUc/Nte6CVTx22KiRfNjmhlZpFf7dIgyKGlbN6d5
+	LyJRQQaoW5laNf4c3C1v/vp3MUX5WIq8ox0g1JD65vKOyhAh8Xw4zaatV6DSV3WTzZWMhDcKMiQ
+	eJR1sQgPstzIn42yIVJ8pY6rsGasvA0HTD8gbY7WFExkhowCpxA==
+X-Google-Smtp-Source: AGHT+IF64JuoiPukSNP2gEYzmiAaRR7C51MbEvSdVrxmayAIXhwe79uUqXfwQeRF4HSgZ8lXBFI/4q1ZrGMcOMdXg/k=
+X-Received: by 2002:aa7:d307:0:b0:57a:3103:9372 with SMTP id
+ 4fb4d7f45d1cf-57aad3278f8mr374926a12.7.1717742145328; Thu, 06 Jun 2024
+ 23:35:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] block: fix request.queuelist usage in flush
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
- ming.lei@redhat.com, bvanassche@acm.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, zhouchengming@bytedance.com,
- Thomas Lamprecht <t.lamprecht@proxmox.com>
-References: <20240604064745.808610-1-chengming.zhou@linux.dev>
- <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
- <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
- <ec27da86-b84a-430b-98aa-9971f90c8c87@proxmox.com>
- <7193e02e-7347-48db-b1a0-67b44730480b@proxmox.com>
- <448721f2-8e0b-4c5a-9764-bde65a5ee981@linux.dev>
- <343166f4-ac11-4f0e-ad13-6dc14dbf573d@proxmox.com>
- <dea87c0a-1c36-4737-bea5-cb7fa273b724@linux.dev>
- <20240607045511.GB2857@lst.de>
- <2223bbb9-8bc8-4566-9c3f-ef6103422068@linux.dev>
- <20240607063101.GA5387@lst.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240607063101.GA5387@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240606192139.1872461-1-joshwash@google.com> <20240607060958.2789886-1-joshwash@google.com>
+In-Reply-To: <20240607060958.2789886-1-joshwash@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 7 Jun 2024 08:35:30 +0200
+Message-ID: <CANn89iLy1qGXzrv_coRcaRDOrOMHKb-NG1xn06Sat0QTvrDwXA@mail.gmail.com>
+Subject: Re: [PATCH net v2] gve: ignore nonrelevant GSO type bits when
+ processing TSO headers
+To: joshwash@google.com
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org, 
+	stable@kernel.org, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Andrei Vagin <avagin@gmail.com>, Jeroen de Borst <jeroendb@google.com>, 
+	Shailend Chand <shailend@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Rushil Gupta <rushilg@google.com>, Bailey Forrest <bcf@google.com>, 
+	Catherine Sullivan <csully@google.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/7 14:31, Christoph Hellwig wrote:
-> On Fri, Jun 07, 2024 at 02:24:52PM +0800, Chengming Zhou wrote:
->> Right, how about add WARN here to catch it? Or just set it to PREFLUSH?
->> Not familiar with dm code, need help if we need to fix it in dm. :)
-> 
-> We'll need to fix dm first.  I'll take a look if I can reproduce it.
-> Let's kept the list_del_init fix in first, I hope I can allocate some
-> time to this soon.
+On Fri, Jun 7, 2024 at 8:10=E2=80=AFAM <joshwash@google.com> wrote:
+>
+> From: Joshua Washington <joshwash@google.com>
+>
+> TSO currently fails when the skb's gso_type field has more than one bit
+> set.
+>
+> TSO packets can be passed from userspace using PF_PACKET, TUNTAP and a
+> few others, using virtio_net_hdr (e.g., PACKET_VNET_HDR). This includes
+> virtualization, such as QEMU, a real use-case.
+>
+> The gso_type and gso_size fields as passed from userspace in
+> virtio_net_hdr are not trusted blindly by the kernel. It adds gso_type
+> |=3D SKB_GSO_DODGY to force the packet to enter the software GSO stack
+> for verification.
+>
+> This issue might similarly come up when the CWR bit is set in the TCP
+> header for congestion control, causing the SKB_GSO_TCP_ECN gso_type bit
+> to be set.
+>
+> Fixes: a57e5de476be ("gve: DQO: Add TX path")
+> Signed-off-by: Joshua Washington <joshwash@google.com>
+> Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Acked-by: Andrei Vagin <avagin@gmail.com>
 
-Ok, it's great, thanks!
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
