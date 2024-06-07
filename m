@@ -1,120 +1,219 @@
-Return-Path: <linux-kernel+bounces-206832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB97900E66
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBA6900E6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6560CB23A52
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:17:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC63B23E27
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330F7130E20;
-	Fri,  7 Jun 2024 23:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4797A13A3E2;
+	Fri,  7 Jun 2024 23:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULru72rS"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="FaO38iqN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iOQRv3OG"
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1222438DE8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 23:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7745A1BC43;
+	Fri,  7 Jun 2024 23:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717802271; cv=none; b=Vttnv+d7zLAAkxJaHUFOWrAAI/WxASkWtr7avup+8oDbQ+LJ8HUtA3AGCgW1Hd8AAcp55pIlTdNd8BLggmSEFBCSoxIxZPWP091IKBN4ZuibWUfij9m2L/ZhScGkOVWAhMZdEGiXMVJ0lWL/h3FB9IsckXuVgInM7QVRLE6eISs=
+	t=1717802679; cv=none; b=pN4OMZdhvsMj/saoZjoqiPk37BUq/AjjllZXwgoy8zGN5BXI90ou/uEgxZaMia+n9sP0pFHBMJZzW+DKIwiBxEDHajUEAMSULrHZ3hSiJ+vYvFpR717PoyeGLI6wOpP3Scune5hIf6PcBTr53ZunRKlgJLXzLPmuwbfMWczfNkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717802271; c=relaxed/simple;
-	bh=MAOu3r5TjNnaMsR0npAw2WjHsVUBpHA2CVLbSqT4c+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rcbTA8CAuHnezQhoy8Q7HcFeyFYUMPTcLs3VX7d/9aqW4b2Ru2NvS7luekq2sVR+a3SH13Yblp3g1X+Ja95eJgT2n/0/Njfq1liSXWc1wc+KZhqdTq1+K2ldPNObZ4kvcmOYh8MFHTNXvQeLyN/lkaRr7sBCDRyVBDEUJ/bqOxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ULru72rS; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52b93370ad0so3633932e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 16:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717802268; x=1718407068; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MAOu3r5TjNnaMsR0npAw2WjHsVUBpHA2CVLbSqT4c+8=;
-        b=ULru72rSuj7M4wpZnsT34Bnjh4GJ+JZ62BhUU1MGVKkLNLZiXRE1bfH84SYGuUJr/q
-         7sMgJJ+EDLxL/IsSJyivmPBG6VrBuHP7mLnnEUJLIOALfKxKefYl7cXtTJzSxztlVqFV
-         TYtPviOqqNpHKmHJYZcxlwMEwVfqU/x1k/3ezk5qAi8CnRurqWnvDQBrcdvfXMcXfT/6
-         n9j1D6UocAENXNEt0KhWUd/AIeyzozygJrhmZMhhBL7UGdiqjeiQ5u9g+K1wcmpZMMHd
-         8XS+AKz/Ouj2pERI0R43lTeh88RTxezQDDk//rn6wmlXzYjmIgUItu8p306zQUl39rR+
-         Dyqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717802268; x=1718407068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MAOu3r5TjNnaMsR0npAw2WjHsVUBpHA2CVLbSqT4c+8=;
-        b=iKDKxsy/J1jlca79E1NWqlAGrDb9TIZrwGgjgyBUNNPNp/l9Sex8YoIdeqHPb7hkYD
-         sz52aMXuSuPIRXq1tZZE0EbOocg3+JOLU5S/2SBgE4E5cRXO9KyQgjHlz0NC8HhQsh7G
-         PDEoBkJEHZg/P6pb01XZkEIIjz1lYCxQMJJlY907EcES3oQGGWGG3L64dc8xq+0GnD27
-         rEIo0fgzZitLJ7U6Ukge/J5/DO39vXgSPwVOd78lrJA8jIUYMAYwCKkaJXGNGedpQTGi
-         sJbSYLEZRJHoRFRQT10iImxN40cp2CYxA96xaxwHu1exe/Dvd/+auVodhnMXFbDcGM6x
-         90Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwxx8k8Q4C5BxYY/ELUheQ/P/MwZ9FjUEf/FM8wdtyTLH6bfLIOkU+mojag8g7I7xJTQ33cgNSmBqS9tj+eedslAQQsI63wOxziWYl
-X-Gm-Message-State: AOJu0YxVFaqHxymUJ1TiWm3jQbUN8JQEzAP5ZFMxroDkHmcB/x+IbBCC
-	tMl1YxMuboEe3Y6CY5sr4zR3uRuQ8v32as4tYxcxIH5WsCkiXLHSxTcas4qiIriV7ExITJORAah
-	Ec2wBtmP8sL3gGlkynt20/gKicmop5chSOwny
-X-Google-Smtp-Source: AGHT+IE2hnTLk1weXhgvCaoD9PboDDewAunIdxaM21zkp3VonPAB2Ox/0fQtE9F/UFsPqRJcNElvIXq0CsHgR7+MzZs=
-X-Received: by 2002:a05:6512:201b:b0:52b:c88e:cec1 with SMTP id
- 2adb3069b0e04-52bc88ed2d5mr1115634e87.33.1717802268046; Fri, 07 Jun 2024
- 16:17:48 -0700 (PDT)
+	s=arc-20240116; t=1717802679; c=relaxed/simple;
+	bh=zIeqne16BwDiZQ1VqsqawTkYKwGdDB54W8llrRudiuA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=DdFTqkvGlKiLPUNltjfaQExmmUz9CLaVWgT/zFLX9z7CJBHbo4FXsJVmhrMn0ACaWU3VAiISYbpzEmqvoBfcblsmdV3GVE4VZ7dyCk2CQhxZmzGVhjnTUqJJ2tfZfPDuR2zqHKtMkus5K9sLRiOq9SXuLfuXm9anBSJii7Q8rFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=FaO38iqN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iOQRv3OG; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 658DD180010B;
+	Fri,  7 Jun 2024 19:24:36 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Fri, 07 Jun 2024 19:24:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1717802676; x=1717889076; bh=D3BVDpFGac
+	nL62lkOUcLI8ChMXesyNkzJLZOKjAF7kM=; b=FaO38iqNKFOQXD5ozxJmCsLWUn
+	aJFZ6uCT4DtWJ+rUL6MvWZt+om/ovudqCWC68rmxt2S8INXIGOuStFHsUnh5vIji
+	rOdxRTbwHL6UWlB+w6MMtqcxhXATQNzOP17aQpvgkMi/kKFh/jQiW9nP9o0fMr1a
+	7UVwlhh5s7PO2kX8bFHAdzA7JQdPpwk6XSrpFTv0BN0QRuvxs97yHJ4EvwIEBzmQ
+	2WIh5xZhHi+P/0GE9Ften36HaSzZHluP5l7bt9tCPRcxeZxAMIN8ctS4fOcGR6PP
+	c4Vsv1a5gafQDeKG84QrUGzzx4oKrix9mQ+BqG4KXTGez34g+wfOu/L514hw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717802676; x=1717889076; bh=D3BVDpFGacnL62lkOUcLI8ChMXes
+	yNkzJLZOKjAF7kM=; b=iOQRv3OGdYiw5MU8hheyjZLWdZ7aVSSgtJruv4wXtO9l
+	eoP4zX8IofklGus8JtwY9StFtw8R0ggKTo8UfA5dUaZxRRtSL11aZtiSUPZ8A5Zg
+	NIw1m8KjD8ElUhw11TDGb3fUevCyRg7llkjqv8m/SZStITNOjno4TaX6aH8lYXfw
+	JM8hT/7M0eEbgdJbLRd0zVd+E1GkxL7Jb/Kx7NDGHNx5icSF1LSO5UsaGCXhRHi8
+	P58Ex4lDZcAOAcJdddB/9YyK/uwxXAxhXc6EIyvJ7RrsYRtyqwVdFnHx4e3FUYk0
+	NNQtmHu5VHBH4EB9efMcbOLTwZNQimHviSKr/sAbAw==
+X-ME-Sender: <xms:s5ZjZl_PPA21X50Zjdur1c_lqHxrdL2T6IrxdEv-tXEmATqqyDQ5hQ>
+    <xme:s5ZjZpvBvRoHlmgoWjUPHyGZna3R4nFvMUwoYmgwnINJM-Mzj8rBhNthl8a2bzy_X
+    JVMF7fNmYe9vgBIbQQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
+    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpedutdelgfdvgeekueeuteevffelfedukeeitedugfdvtdeutdetjeduudeuvdeg
+    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:s5ZjZjAJAbskuz5giznyezVHHBJ-66dPU8cUiLfNnSi8HMawaZQ75g>
+    <xmx:s5ZjZpd11erRylIrkE3X5BpdZgmm5pfGLiaBgHAjEs9c3of339KxUA>
+    <xmx:s5ZjZqN_AFrMln_fBv9apBfbWyvEHqWKYwPSEiSOYj3287aLmM8gag>
+    <xmx:s5ZjZrlmDUrNMPMUtZhjkxZYFzs7khwru6GYVCN3gEZOlVsknVvh8g>
+    <xmx:tJZjZja-sFVJw9rumwGHcakArg6b23QWCf1XMowcF3o7FdXiUunAI0qN>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C03572340082; Fri,  7 Jun 2024 19:24:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606184818.1566920-1-yosryahmed@google.com>
- <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
- <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com> <CAGsJ_4w_dEyLsPhdJCtRMReXDD116p+U979Yk-8EBu=zx5FWgQ@mail.gmail.com>
- <CAJD7tkYnZCvwUSTAx-N-08b+mVF4yHEdDTbp9oqYrVQXX8M1Cw@mail.gmail.com>
- <CAGsJ_4wAYbofjg99iEr7cEAptH9Ve9WcrSXho8A-Sw54vb8Msw@mail.gmail.com>
- <9374758d-9f81-4e4f-8405-1f972234173e@redhat.com> <CAJD7tkZBzSB_6pAZP0n0nq+W=J1XKQGFzZZLzPmSH0apwaqTNg@mail.gmail.com>
- <CAGsJ_4ywmVbO+nrbcxz9YMdzi_y5qSUG3Cg=3oz3kNpQ6gg6iA@mail.gmail.com>
-In-Reply-To: <CAGsJ_4ywmVbO+nrbcxz9YMdzi_y5qSUG3Cg=3oz3kNpQ6gg6iA@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 7 Jun 2024 16:17:11 -0700
-Message-ID: <CAJD7tkZkChE_bGJCnf3u0493PZOe1=+Y8S_nq2=j1uP-BtZ9Mg@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
-To: Barry Song <21cnbao@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <dd0a211a-bef1-4eb2-8d1f-2d63799af94c@app.fastmail.com>
+In-Reply-To: <20240607040532.1074379-2-luke@ljones.dev>
+References: <20240607040532.1074379-1-luke@ljones.dev>
+ <20240607040532.1074379-2-luke@ljones.dev>
+Date: Sat, 08 Jun 2024 11:24:14 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Jiri Kosina" <jikos@kernel.org>
+Cc: "Benjamin Tissoires" <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hid-asus: use hid for brightness control on keyboard
+Content-Type: text/plain
 
-[..]
-> > One problem is that even if zswap was never enabled, the warning will
-> > be emitted just if CONFIG_ZSWAP is on. Perhaps we need a variable or
-> > static key if zswap was "ever" enabled.
-> >
-> > Barry, I suspect your is_zswap_enabled() check is deficient for
-> > similar reasons, zswap could have been enabled before then became
-> > disabled.
->
-> I don't understand this. if zswap was enabled before but is disabled when
-> I am loading data, will I get corrupted data before zswap was once enabled?
-> If not, it seems nothing important.
+I thought this was finalised but I'm still getting conflicting reports.
+Please don't merge until I confirm the fix.
 
-If zswap was enabled and then disabled, some pages may still be in
-zswap. We do not load the pages from zswap when it is disabled, we
-just stop storing new pages.
-
-So if you just rely in checking whether zswap is enabled at swapin
-time to decide whether to use large folios, you may end up with a
-situation where zswap is disabled, yet parts of the large folio you
-are trying to swapin (or all of it) is in zswap.
-
-This is why I think we'll need to track whether zswap was ever enabled
-instead (or if a page was ever stored).
-
->
-> Thanks
-> Barry
+On Fri, 7 Jun 2024, at 4:05 PM, Luke D. Jones wrote:
+> On almost all ASUS ROG series laptops the MCU used for the USB keyboard
+> also has a HID packet used for setting the brightness. This is usually
+> the same as the WMI method. But in some laptops the WMI method either
+> is missing or doesn't work, so we should default to the HID control.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+> drivers/hid/hid-asus.c                     |  7 ++++
+> drivers/platform/x86/asus-wmi.c            |  3 +-
+> include/linux/platform_data/x86/asus-wmi.h | 45 ++++++++++++++++++++++
+> 3 files changed, 54 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 02de2bf4f790..0ed3708ef7e2 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -492,12 +492,19 @@ static void asus_kbd_backlight_work(struct work_struct *work)
+>   */
+> static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+> {
+> + struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> u32 value;
+> int ret;
+>  
+> if (!IS_ENABLED(CONFIG_ASUS_WMI))
+> return false;
+>  
+> + if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
+> + dmi_check_system(asus_use_hid_led_dmi_ids)) {
+> + hid_info(hdev, "using HID for asus::kbd_backlight\n");
+> + return false;
+> + }
+> +
+> ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
+>        ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
+> hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 3f9b6285c9a6..799d928c7d3d 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -1681,7 +1681,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+> goto error;
+> }
+>  
+> - if (!kbd_led_read(asus, &led_val, NULL)) {
+> + if (!kbd_led_read(asus, &led_val, NULL) && !dmi_check_system(asus_use_hid_led_dmi_ids)) {
+> + pr_info("using asus-wmi for asus::kbd_backlight\n");
+> asus->kbd_led_wk = led_val;
+> asus->kbd_led.name = "asus::kbd_backlight";
+> asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 3eb5cd6773ad..6ba0015e4386 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -4,6 +4,7 @@
+>  
+> #include <linux/errno.h>
+> #include <linux/types.h>
+> +#include <linux/dmi.h>
+>  
+> /* WMI Methods */
+> #define ASUS_WMI_METHODID_SPEC         0x43455053 /* BIOS SPECification */
+> @@ -160,4 +161,48 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+> }
+> #endif
+>  
+> +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+> +#if IS_ENABLED(CONFIG_ASUS_WMI)
+> +bool asus_use_hid_led(void);
+> +#else
+> +static inline bool asus_use_hid_led(void)
+> +{
+> + return true;
+> +}
+> +#endif
+> +
+> +static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
+> + },
+> + },
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
+> + },
+> + },
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
+> + },
+> + },
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_BOARD_NAME, "GA403"),
+> + },
+> + },
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_BOARD_NAME, "GU605"),
+> + },
+> + },
+> + {
+> + .matches = {
+> + DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> + },
+> + },
+> + NULL,
+> +};
+> +
+> #endif /* __PLATFORM_DATA_X86_ASUS_WMI_H */
+> -- 
+> 2.45.1
+> 
+> 
 
