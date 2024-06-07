@@ -1,118 +1,181 @@
-Return-Path: <linux-kernel+bounces-206348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6239900837
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050D090083F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 17:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 239FAB22209
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BFF28FA59
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37051195F23;
-	Fri,  7 Jun 2024 15:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F8819A29C;
+	Fri,  7 Jun 2024 15:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqxpoZzC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXdNlQsO"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649D413F42E;
-	Fri,  7 Jun 2024 15:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72FD19A284;
+	Fri,  7 Jun 2024 15:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717772649; cv=none; b=TlsaDyiJxJDinHw3F7VYchXk4vOpRSt0bOWko8FTO3tQZCYzIYKiglxzD7NkCO1oZYDTrpBnCfV7Qwko4/TMYZfPCe0zBtq6tELtIrFf2qAGaUQkGoBpI0xYRww2NEjKIV8M5ENzzlgyRi474hD9AQw3aR3vB8XiNhhSTUgirGQ=
+	t=1717772719; cv=none; b=sZeyQ8+NXxRQ8kL1P7YVUqQyLCg2zyRK0De0kfSExxWmr1iRHcSFj8otnmzVv7PoDvvhIq/hph4Bl4W5DBqdufNvFUtRxoVnVeAsIOmvSSO0qFh0oSprXoo2ZTv+OLS/BKgbn9kCj69eTrfjPw6NQ2deH/DOBjCqfLl8iSJR8Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717772649; c=relaxed/simple;
-	bh=Lzwh59pGqQPMSmXCnv1V9dwU7w38svkd4peyTHM+OsY=;
+	s=arc-20240116; t=1717772719; c=relaxed/simple;
+	bh=lzp9RrGLcphje9tKqdeEIB6pXODtDIlP/2mRhS5elTs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CEirQn2o1Noekp1qh1nN2AhHISHhKgoqQ5m+wzhusy2KHBtnNUNp9FzDJtWjCc+NvBHP9+k+DJpSmjkzA9KtcExWg8oMqmtv/WO/eWoJUfV5/XZZoH43ZxOT1XMPxuOQ/PB3MABoNmOp3ilecARNNPhKy0mXU4Dn3PJY/Sr9eWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqxpoZzC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57512C2BBFC;
-	Fri,  7 Jun 2024 15:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717772648;
-	bh=Lzwh59pGqQPMSmXCnv1V9dwU7w38svkd4peyTHM+OsY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DqxpoZzCjceNF6IHk5AADWZtZKEBqafprQcRML5t4xFHoFegD1sbOUTkcMuO8uHeF
-	 FNUmQZzkRMzcvAa02447Pz9kzQjduNwDkaSNgwCs8VacZVbM5Zs04ppAbITS2DleIg
-	 Trp4YY8MkZoRm1HfvCFfqDPXXu+BDN8e2hygdxtxFQJx9XDwsu7HFIwrMYtT5xyCu6
-	 h49FxhVgBON1h/M7nrVfchUjYAW2ThRnH03dXTpu5znmYh1uQsbtP5AL95AHL1CE3a
-	 9HnDiv79OchJuU4lebNQykIjqnYSJ3zLeQ1ilYcf3XYFlAuFRG9q0y22FmrMQTSkcE
-	 I2tm6465xnRXw==
-From: Christian Brauner <brauner@kernel.org>
-To: Eugen Hristev <eugen.hristev@collabora.com>,
-	ebiggers@google.com,
-	krisman@suse.de
-Cc: Christian Brauner <brauner@kernel.org>,
-	chao@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	kernel@collabora.com,
-	linux-ext4@vger.kernel.org,
+	 MIME-Version:Content-Type; b=pK28MMx12XkhiPVV6VxlzBnFRMSlc8FlAXNB9O0TlIyai7f5wauPfSpQ4NCvNJV/G44UOJ5MCInUK+lCAi4NbWtk4yrX3pAuoq65lZueJKGtoG8y5lsusZubGji5q1YuY0fF4BGIuk91jNAoVeLP9W7W2tBIB72Eo/CRmbLEVO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXdNlQsO; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-702555eb23bso1871533b3a.1;
+        Fri, 07 Jun 2024 08:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717772717; x=1718377517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1IQBttmjUc5XpGJyxQWesF6PULR+7Sc5uHVZnjulosc=;
+        b=EXdNlQsOeVIf3miWl8MbhbMB8c1wf9BHQ1/a/eGQWzsVs7uSscQe1GluAEAaHkTvl4
+         1WuJWqZMK3/Jv8V/oXDsU9A3L4raPdA8fmT26Qzg7ATz6cWzJWtImHqAPBKuJGfvJcRH
+         PRZmOzZXgITRQ4F9JJou5RZV1vSZZM7Da2J9Bf23cxNneiV6oELwSCPZ4v3UKrzEW47K
+         zoW7lP8L3QCwZ7fVKwkj+1sx2thzBF3l8erALmqQWApEjYl3hVuPfxhnKgzqQIQq82W+
+         AxQwRXmGK3KLyOOIoBAz+vLi9EjK9oF7smMK57CQEKu1p+CGMSkeMR9q8Hl7rrC8YYtb
+         iQJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717772717; x=1718377517;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1IQBttmjUc5XpGJyxQWesF6PULR+7Sc5uHVZnjulosc=;
+        b=GF3SaNsOz0Jp7KQiaFf0VxSmoAk9lnDPXTrlW8KIqK1ETan1ApP1ZDDfvREFEV04Jq
+         YZWw4nbIKDkoWS/2cWsCRS4qlK/2M25EzJrazksDeTfkc05YJtTHXbiGuS51r32aqE6V
+         Xaa+ZSf8YhdXLSLjHzULel70FMMwlql/9kuNCl8d7f6NzZq3PrdVOm8GuWnTBNj9F3P5
+         JY9MS1bJ8BRbaVIw4to39zO0/0RvXOFixqR7eHYGQF8wG+1If50f0NIIBeOIXhpsUG4b
+         24yVrhsfifF9VpHJgILaYfGyd906qv5nNghZwbhoVpkjIyBjXSB2dkIk1nP9e8JoXKtv
+         YI/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Xozl/9JH7+LZnYyb/6b9Evv3kYaXNU52fcAVupsGhDLmtL3bH/W/Gmfsnj2SIdRLl1pYMXH3KL0Ga0SoevfjYB3k7ye1e16M7LqqJeLGefD6csTev7cf3fphPH1vMa8W
+X-Gm-Message-State: AOJu0YxTVR7NVFcD3nQvVfVjuAPWBSO5I6dbg4N4cmgqiSxKt7aFs7mY
+	skCQrY451oWSpLpqXuX14bkdsegErq55ztQUAw3Onf94c/zGPfj+
+X-Google-Smtp-Source: AGHT+IESV2QNvPJQDvL0z19+1HqsJgpaaQr/81akm1nmlmUDp4l9ebDGhvMxbOHzb+WQNDMtMacaHg==
+X-Received: by 2002:a05:6a20:5606:b0:1af:ac6c:367f with SMTP id adf61e73a8af0-1b2f9dc2fa8mr2830655637.44.1717772716777;
+        Fri, 07 Jun 2024 08:05:16 -0700 (PDT)
+Received: from localhost.localdomain ([91.199.84.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de265a2ce3sm2370500a12.61.2024.06.07.08.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 08:05:07 -0700 (PDT)
+From: Wei Fu <fuweid89@gmail.com>
+To: oleg@redhat.com
+Cc: Sudhanva.Huruli@microsoft.com,
+	akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	axboe@kernel.dk,
+	boqun.feng@gmail.com,
+	brauner@kernel.org,
+	ebiederm@xmission.com,
+	frederic@kernel.org,
+	fuweid89@gmail.com,
+	j.granados@samsung.com,
+	jiangshanlai@gmail.com,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
 	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	jaegeuk@kernel.org,
-	adilger.kernel@dilger.ca,
-	tytso@mit.edu
-Subject: Re: [PATCH v18 0/7] Case insensitive cleanup for ext4/f2fs
-Date: Fri,  7 Jun 2024 17:03:59 +0200
-Message-ID: <20240607-erziehen-akustik-2600424fea81@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240606073353.47130-1-eugen.hristev@collabora.com>
-References: <20240606073353.47130-1-eugen.hristev@collabora.com>
+	mathieu.desnoyers@efficios.com,
+	michael.christie@oracle.com,
+	mjguzik@gmail.com,
+	neeraj.upadhyay@kernel.org,
+	paulmck@kernel.org,
+	qiang.zhang1211@gmail.com,
+	rachelmenge@linux.microsoft.com,
+	rcu@vger.kernel.org,
+	rostedt@goodmis.org,
+	weifu@microsoft.com
+Subject: Re: [RCU] zombie task hung in synchronize_rcu_expedited
+Date: Fri,  7 Jun 2024 23:04:42 +0800
+Message-ID: <20240607150443.2096063-1-fuweid89@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240607062531.GA30954@redhat.com>
+References: <20240607062531.GA30954@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1888; i=brauner@kernel.org; h=from:subject:message-id; bh=Lzwh59pGqQPMSmXCnv1V9dwU7w38svkd4peyTHM+OsY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQlKyZsql/6SWGLrCefUcj3eZJTpWUOp/A/n/P62dxHu 19KTOLI7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIz1WGf/osalvuLyrme8bg tIZzhW8eP4fDq/b0rmXv8n2E9WKUnzAyNPstaJNK+JcpysxrLZYz8//FPXH+N20dVx0uPlq8q3M 9AwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Thu, 06 Jun 2024 10:33:46 +0300, Eugen Hristev wrote:
-> I am trying to respin the series here :
-> https://www.spinics.net/lists/linux-ext4/msg85081.html
+Hi!
+
 > 
-> I resent some of the v9 patches and got some reviews from Gabriel,
-> I did changes as requested and here is v18.
+> On 06/07, Wei Fu wrote:
+> >
+> > All the kernels disable CONFIG_PREEMPT and PREEMPT_RCU.
 > 
-> Changes in v18:
-> - in patch 2/7 removed the check for folded_name->len
-> - in patch 4/7 simplified the use of generic_ci_match
+> Ah, this can explain both soft-lockup and synchronize_rcu() hang. If my theory
+> is correct.
 > 
-> [...]
+> Can you try the patch I sent?
+> 
+> Oleg.
+> 
 
-Applied to the vfs.casefold branch of the vfs/vfs.git tree.
-Patches in the vfs.casefold branch should appear in linux-next soon.
+Yes. I applied your patch on v5.15.160 and run reproducer for 5 hours.
+I didn't see this issue. Currently, it looks good!. I will continue that test
+on this weekend.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+In last reply, you mentioned TIF_NOTIFY_SIGNAL related to busy-wait loop.
+Would you please explain why flag-clear works here?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Thanks,
+Wei
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+```
+➜  linux git:(v5.15.160) ✗ git --no-pager show
+commit c61bd26ae81a896c8660150b4e356153da30880a (HEAD, tag: v5.15.160, origin/linux-5.15.y)
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Sat May 25 16:20:19 2024 +0200
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.casefold
+    Linux 5.15.160
 
-[1/7] ext4: Simplify the handling of cached casefolded names
-      https://git.kernel.org/vfs/vfs/c/f776f02a2c96
-[2/7] f2fs: Simplify the handling of cached casefolded names
-      https://git.kernel.org/vfs/vfs/c/632f4054b229
-[3/7] libfs: Introduce case-insensitive string comparison helper
-      https://git.kernel.org/vfs/vfs/c/6a79a4e187bd
-[4/7] ext4: Reuse generic_ci_match for ci comparisons
-      https://git.kernel.org/vfs/vfs/c/d76b92f61f3b
-[5/7] f2fs: Reuse generic_ci_match for ci comparisons
-      https://git.kernel.org/vfs/vfs/c/d66858eb0c72
-[6/7] ext4: Move CONFIG_UNICODE defguards into the code flow
-      https://git.kernel.org/vfs/vfs/c/d98c822232f8
-[7/7] f2fs: Move CONFIG_UNICODE defguards into the code flow
-      https://git.kernel.org/vfs/vfs/c/28add38d545f
+    Link: https://lore.kernel.org/r/20240523130327.956341021@linuxfoundation.org
+    Tested-by: SeongJae Park <sj@kernel.org>
+    Tested-by: Mark Brown <broonie@kernel.org>
+    Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+    Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+    Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+    Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+    Tested-by: Ron Economos <re@w6rz.net>
+    Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/Makefile b/Makefile
+index 5cbfe2be72dd..bfc863d71978 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 5
+ PATCHLEVEL = 15
+-SUBLEVEL = 159
++SUBLEVEL = 160
+ EXTRAVERSION =
+ NAME = Trick or Treat
+
+➜  linux git:(v5.15.160) ✗ git --no-pager diff .
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 259fc4ca0d9c..40b011f88067 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -214,6 +214,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
+         */
+        do {
+                clear_thread_flag(TIF_SIGPENDING);
++               clear_thread_flag(TIF_NOTIFY_SIGNAL);
+                rc = kernel_wait4(-1, NULL, __WALL, NULL);
+        } while (rc != -ECHILD);
+
+```
 
