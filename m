@@ -1,273 +1,428 @@
-Return-Path: <linux-kernel+bounces-205459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64218FFC5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455868FFC5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288801F285D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:41:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C731F28216
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D27B153597;
-	Fri,  7 Jun 2024 06:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7251527BC;
+	Fri,  7 Jun 2024 06:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1d+RYtX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="BDsWbsM4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="RxZ88pIN"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3BB14EC79;
-	Fri,  7 Jun 2024 06:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A074CB36;
+	Fri,  7 Jun 2024 06:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717742452; cv=none; b=nO/id2uteDuf760aKgzX/ffSi0wdUfTuEUx4GuYuuWw6ZF86h2yKpHIfsxNK/00kWmnsCfDMpeuC7Yu7ytVXE8eyXA3n6XBgxjt8xcgpc93I3Drtw1OA9t57HMteN+M+JM8clm29w+8vCGGBBsJaMuldCUv7crl6BJjnmBSnzFM=
+	t=1717742515; cv=none; b=Nn38ACX6rGyG5MmgWYedDd8gW9IaXXAPuZcq3yQLFKwSnxU/G7Jy4o3mFc3H84MSISNqcK025UEC8z7IZwXTiaFTuvIL/PyOKUJOp6jXTeiXcKBS9u3BIknKQQiFojrjZfAtkVv/UV7gjlw1EMZr0XNSiRueemShGFhS4ELe9O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717742452; c=relaxed/simple;
-	bh=o4pvJBigImph+/4WxTGAX2YQ/B+mm8RB+o9aqeUkiBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kH34BIMXYXh4FXvVANb4EAyjHl2HUs/DtTWbhm3rJL6ycHHIPCve/dSopl4sLRj5vrAO9z4fcs7Ug9N3/4MF6KQd0LrJilHTlwEjX/n/z40W+w2S8M6uJaJGorRfhGQKxiDC+0PDPco9BB9MV/IQV2CAIpEM95ob5FSLLELcrhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1d+RYtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE1BC2BBFC;
-	Fri,  7 Jun 2024 06:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717742451;
-	bh=o4pvJBigImph+/4WxTGAX2YQ/B+mm8RB+o9aqeUkiBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T1d+RYtXCMgCPqWf0bG8FaiDQ9qYrVNW9jgDiDEa63tl0QR9uvL7Bc6/2j08QP3Wj
-	 F+R2M1U0gLlwFkHy+YoLcQUe3UK3v1ZENu4/g1qpZ71Jz4Tf+AISiq+1wCQBGLn6fO
-	 m/bOnQgZ80INfygz+9JNBm19Yy07j56kuMjRsuivs5RjNQEIhNo0NZWV9KhmD/NUW+
-	 MypX18hbrzyHTyzEI4JOvQXzo/cjwuxtqr+ec5eTBbhOpK5obwam+SbzGL5U4MP71N
-	 YEISl5BFTS3g+Xah2Vh8ChcwVxkkO6bIWZyaZNceH0sstGSvVW38MZDgcK8mfehNfA
-	 sep3CsbS2KZsA==
-Message-ID: <8db01c97-1cb2-4a86-abff-55176449e264@kernel.org>
-Date: Fri, 7 Jun 2024 08:40:45 +0200
+	s=arc-20240116; t=1717742515; c=relaxed/simple;
+	bh=LqwZ1bRhi1S9fntGwGFdpafnrTl4n75QKDz4c8K5wQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJ6pT/GeESWkEjzEKHfFUJqADbyivSFQ23UcvUSVrdkq2fT+RoBS0A5UEyuDhMDc7/Sfdf9AYkOLP6fu4ELzKVSzMnw+0ypZKhEzpJyH06qf/WGmhkpxZkcvxmMGd37lKsn6HSm/7lYJ3chMIfApGPsJ5d5NeSwAq5TMxCxSTTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=BDsWbsM4; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=RxZ88pIN reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717742511; x=1749278511;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oDWXk9Ip84mUFg4/ADwA1LpVB7/h3jEawVahgnt2/Uc=;
+  b=BDsWbsM4Vl+aoU3JjjVxxGFTA9Ck3IPcvXqHS6OhhgXlz1lXZbsTFU+T
+   ElhtUdsiZwXo9kYgXtYuGw9dkYh8+k3tt1lZdaBID8gnSNHTMOj6v7omj
+   yflWdg5bvZHHFV7Hv7lYJRC7vUUrbsMfcP+YoSnkGR7WFZSrdCqgAxK0J
+   5hoeweGkGyTjAUZNtM+S1wevLftPGrLaQ9z45IV362EwWl/GIyfyHq6sd
+   rIGqhDNECGGxet4w0MshSGkYNZeX2btktqLG5chNK3JJz6CPtj69J4Qn1
+   QOI98z1zor2uv6YLBac/naV65cdeb61/7hEn508EPWebVSHtOQbx41HBQ
+   A==;
+X-CSE-ConnectionGUID: 5Kjk5ea1S1+33Ri51/5AbQ==
+X-CSE-MsgGUID: aZeO6HILRgmYG2mb3kahhQ==
+X-IronPort-AV: E=Sophos;i="6.08,220,1712613600"; 
+   d="scan'208";a="37274501"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Jun 2024 08:41:49 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4795E170735;
+	Fri,  7 Jun 2024 08:41:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717742505;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=oDWXk9Ip84mUFg4/ADwA1LpVB7/h3jEawVahgnt2/Uc=;
+	b=RxZ88pIN1B/ayw7taFUeqJxc5cTZM3sOiQj3SMST85ctsblSS+DjPwe46dFLcbrKMLdVlb
+	HieWJHLTUu0M4ceY19Cmr+tFGXMObSWtDA7fBCS/trj5613nQbAffpVQqa50jLzn6IZC+8
+	DXAl4rcjnSe9+cxwEF8OWDCon8pxgQu6ugiN1S4qStOwgqxHoSnS9f/M1Y2uQBPlQdpUll
+	qQhuMVUMXOctQnlmiemriQ2VmA0L6ekvaHb3wOl1IDW29ialDhv0dWuKmGxsXJlsiFC0oB
+	WCT9QfsQKt+9uh9AXAc6rsqcOrhlTxH0zoZ6O0rInT7rnAVn6c8HrWxyYyeD7w==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 2/7] arm64: dts: imx8qm: add mipi subsystem
+Date: Fri, 07 Jun 2024 08:41:44 +0200
+Message-ID: <6638616.G0QQBjFxQf@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240606-imx8qm-dts-usb-v1-2-565721b64f25@nxp.com>
+References: <20240606-imx8qm-dts-usb-v1-0-565721b64f25@nxp.com> <20240606-imx8qm-dts-usb-v1-2-565721b64f25@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
- the ath11k on QCA6390
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kalle Valo <kvalo@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, ath11k@lists.infradead.org,
- linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240605122106.23818-1-brgl@bgdev.pl>
- <20240605122106.23818-2-brgl@bgdev.pl> <87h6e6qjuh.fsf@kernel.org>
- <CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
- <871q5aqiei.fsf@kernel.org>
- <CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
- <87sexqoxm9.fsf@kernel.org>
- <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 06/06/2024 20:08, Bartosz Golaszewski wrote:
-> On Thu, Jun 6, 2024 at 6:16 PM Kalle Valo <kvalo@kernel.org> wrote:
->>
->> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->>
->>> On Thu, Jun 6, 2024 at 4:02 PM Kalle Valo <kvalo@kernel.org> wrote:
->>>
->>>>
->>>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->>>>
->>>>> On Thu, Jun 6, 2024 at 3:30 PM Kalle Valo <kvalo@kernel.org> wrote:
->>>>>
->>>>>>
->>>>>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->>>>>>
->>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>>
->>>>>>> Add a PCI compatible for the ATH11K module on QCA6390 and describe the
->>>>>>> power inputs from the PMU that it consumes.
->>>>>>>
->>>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> +allOf:
->>>>>>> +  - if:
->>>>>>> +      properties:
->>>>>>> +        compatible:
->>>>>>> +          contains:
->>>>>>> +            const: pci17cb,1101
->>>>>>> +    then:
->>>>>>> +      required:
->>>>>>> +        - vddrfacmn-supply
->>>>>>> +        - vddaon-supply
->>>>>>> +        - vddwlcx-supply
->>>>>>> +        - vddwlmx-supply
->>>>>>> +        - vddrfa0p8-supply
->>>>>>> +        - vddrfa1p2-supply
->>>>>>> +        - vddrfa1p7-supply
->>>>>>> +        - vddpcie0p9-supply
->>>>>>> +        - vddpcie1p8-supply
->>>>>>
->>>>>> Not sure if we discussed this before, but based on this I understand
->>>>>> that there can't be an DT entry for device pci17cb,1101 without all the
->>>>>> supply properties? But there are QCA6390 devices with PCI id 17cb:1101
->>>>>> which do not need these supplies and already work. For example, my Dell
->>>>>> XPS 13 x86 laptop is one. Or anyone who manually installs QCA6390 board
->>>>>> to their PCI slot and some of them might want to use DT, for example
->>>>>> setting qcom,ath11k-calibration-variant.
->>>>>>
->>>>>> This is not a blocker for me, just making sure that we are not breaking
->>>>>> any existing setups.
->>>>>>
->>>>>
->>>>> If they are already powered up without the need for the PCI pwrctl
->>>>> driver to do it, then they will work alright. Bindings don't affect
->>>>> functionality.
->>>>
->>>> Sure, I'm not worried about functionality. I'm worried that if I
->>>> there's, for example, an ARM based setup which uses DT and wants to use
->>>> a similar QCA6390 board that I have, and set
->>>> qcom,ath11k-calibration-variant in DT. In other words, I'm worried if
->>>> you are looking at this only for Snapdragon family of boards?
->>>>
->>>
->>> No, what I'm looking at is the entire QCA6390 package. That means WLAN
->>> *and* Bluetooth *and* the PMU that manages power.
->>
->> I think we are just looking at this from different point of views. You
->> are looking at a datasheet (most likely for a Snapdragon based system)
->> and I'm looking what actual devices there are out in the field.
->>
->>> If you're using the QCA6390 on a device-tree system then you should
->>> probably model at least the WLAN node and the PMU and the problem with
->>> supplies is fixed.
->>
->> But why? If there are boards out there who don't need any of this why
->> would they still need to model all this in DT?
->>
-> 
-> Because this is what is there? The goal of the device tree is to
-> describe the hardware. The fact we didn't describe it before doesn't
-> make it correct.
+Hi,
 
-Correct.
-
-Kalle,
-All of the devices out there need these supplies, but they are sometimes
-provided by generic PCI supply and on-board regulators. Basically your
-PCI adapter is not the same as QCA6390 chip on Snapdragon board.
-
-
-> 
->> Based on the discussions I have heard only Snapdragon systems who
->> require all this configuration you describe. Of course there can be
->> other systems but I have not heard about those.
->>
-> 
-> DT is not configuration, it is description of actual hardware. It
-> doesn't matter if Snapdragon systems are the only ones that actually
-> *require* this description to make WLAN/BT functional upstream. The
-> chipset would be the same on any PCIe board, it's just that the host
-> systems wouldn't need to take care with its power sequence. But for a
-> dynamic board like this, you don't need DT.
-> 
-
-Correct.
-
-...
-
-> 
->>> If your detachable board "just works" then it must be wired in a way
->>> that enables WLAN the moment it's plugged in but this doesn't happen
->>> over PCI. The chipset has a power input and GPIOs to enable each
->>> module.
->>
->> I don't know how the boards are implemented but it could be so. But from
->> host system point of view it's just a regular PCI device.
->>
-> 
-> And you don't need DT anyway for this type of devices.
-
-Detechable board, like PCI adapter, derives these supplies from generic
-PCI whatever-3.3v through additional regulators. All these supplies are
-there - on the board.
-
-> 
->>> Also: I doubt you need DT for your detachable board?
->>
->> Sure, I don't need DT but that's not my point. My point is why require
->> these supplies for _all_ devices having PCI id 17cb:1101 (ie. QCA6390)
->> then clearly there are such devices which don't need it? To me that's
->> bad design and, if I'm understanding correctly, prevents use of
->> qcom,ath11k-calibration-variant property. To me having the supplies
->> optional in DT is more approriate.
->>
-> 
-> We require them because *they are physically there*.
-
-I understand that for all known DT QCA6390 hardware, the supplies should
-be provided thus they should be required. If in the future we have
-different design or we represent some pluggable PCI card, then:
-1. Probably that PCI card does not need power sequencing, thus no DT
-description,
-2. If still needs power sequencing, you can always amend bindings and
-un-require the supplies.
-
+thanks for the patch.
+What are your plans regarding imx8xqp? This memory region
+has dual use on imx8qxp mipi/lvds0. I would prefer
+imx8-ss-mipi.dtsi with common parts and a imx8qm-ss-mipi.dtsi
+adding/modifying imx8qm specific things. I'll send my current WIP
+as a response to this.
 
 Best regards,
-Krzysztof
+Alexander
+
+Am Donnerstag, 6. Juni 2024, 20:46:56 CEST schrieb Frank Li:
+> Add irqstear, pwm and i2c in mipi subsystem.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi | 286 ++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/freescale/imx8qm.dtsi         |   1 +
+>  2 files changed, 287 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi b/arch/arm=
+64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
+> new file mode 100644
+> index 0000000000000..bd18468923e52
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-mipi.dtsi
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +/ {
+> +	dsi_ipg_clk: clock-dsi-ipg {
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <120000000>;
+> +		clock-output-names =3D "dsi_ipg_clk";
+> +	};
+> +
+> +	mipi_pll_div2_clk: clock-mipi-div2-pll {
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <432000000>;
+> +		clock-output-names =3D "mipi_pll_div2_clk";
+> +	};
+> +
+> +	mipi0_subsys: bus@56220000 {
+> +		compatible =3D "simple-bus";
+> +		interrupt-parent =3D <&irqsteer_mipi0>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		ranges =3D <0x56220000 0x0 0x56220000 0x10000>;
+> +
+> +		irqsteer_mipi0: interrupt-controller@56220000 {
+> +			compatible =3D "fsl,imx-irqsteer";
+
+compatible =3D "fsl,imx8qxp-irqsteer", "fsl,imx-irqsteer" or even
+compatible =3D "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer". Please refer to [=
+1].
+
+[1] https://lore.kernel.org/all/20240528071141.92003-1-alexander.stein@ew.t=
+q-group.com/
+
+> +			reg =3D <0x56220000 0x1000>;
+> +			interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			interrupt-parent =3D <&gic>;
+> +			#interrupt-cells =3D <1>;
+> +			clocks =3D <&mipi0_lis_lpcg IMX_LPCG_CLK_0>;
+> +			clock-names =3D "ipg";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0>;
+> +			fsl,channel =3D <0>;
+> +			fsl,num-irqs =3D <32>;
+> +		};
+> +
+> +		mipi0_lis_lpcg: clock-controller@56223000 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x56223000 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_lis_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0>;
+> +		};
+> +
+> +		mipi0_pwm_lpcg: clock-controller@5622300c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5622300c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>,
+> +				 <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +			clock-output-names =3D "mipi0_pwm_lpcg_clk",
+> +					     "mipi0_pwm_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
+> +		};
+> +
+> +		mipi0_i2c0_lpcg_ipg_clk: clock-controller@56223014 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x56223014 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&mipi0_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c0_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +		};
+> +
+> +		mipi0_i2c0_lpcg_ipg_s_clk: clock-controller@56223018 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x56223018 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c0_lpcg_ipg_s_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +		};
+> +
+> +		mipi0_i2c0_lpcg_clk: clock-controller@5622301c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5622301c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_0 IMX_SC_PM_CLK_MISC2>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c0_lpcg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +		};
+> +
+> +		mipi0_i2c1_lpcg_ipg_clk: clock-controller@56223024 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x56223024 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&mipi0_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c1_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +		};
+> +
+> +		mipi0_i2c1_lpcg_clk: clock-controller@5622302c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5622302c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_1 IMX_SC_PM_CLK_MISC2>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c1_lpcg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +		};
+> +
+> +		mipi0_i2c1_lpcg_ipg_s_clk: clock-controller@56223028 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x56223028 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi0_i2c1_lpcg_ipg_s_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +		};
+> +
+> +		pwm_mipi0: pwm@56224000 {
+> +			compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
+> +			reg =3D <0x56224000 0x1000>;
+> +			clocks =3D <&mipi0_pwm_lpcg IMX_LPCG_CLK_4>,
+> +				 <&mipi0_pwm_lpcg IMX_LPCG_CLK_0>;
+> +			clock-names =3D "ipg", "per";
+> +			assigned-clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>;
+> +			assigned-clock-rates =3D <24000000>;
+> +			#pwm-cells =3D <3>;
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
+> +			status =3D "disabled";
+> +		};
+> +
+> +		i2c0_mipi0: i2c@56226000 {
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
+> +			reg =3D <0x56226000 0x1000>;
+> +			interrupts =3D <8>;
+> +			clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
+> +				 <&mipi0_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
+> +			clock-names =3D "per", "ipg";
+> +			assigned-clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
+> +			assigned-clock-rates =3D <24000000>;
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +			status =3D "disabled";
+> +		};
+> +	};
+> +
+> +	mipi1_subsys: bus@57220000 {
+> +		compatible =3D "simple-bus";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		ranges =3D <0x57220000 0x0 0x57220000 0x10000>;
+> +
+> +		irqsteer_mipi1: interrupt-controller@57220000 {
+> +			compatible =3D "fsl,imx-irqsteer";
+> +			reg =3D <0x57220000 0x1000>;
+> +			interrupts =3D <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			interrupt-parent =3D <&gic>;
+> +			#interrupt-cells =3D <1>;
+> +			clocks =3D <&mipi1_lis_lpcg IMX_LPCG_CLK_0>;
+> +			clock-names =3D "ipg";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1>;
+> +			fsl,channel =3D <0>;
+> +			fsl,num-irqs =3D <32>;
+> +		};
+> +
+> +		mipi1_lis_lpcg: clock-controller@57223000 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x57223000 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_lis_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1>;
+> +		};
+> +
+> +		mipi1_pwm_lpcg: clock-controller@5722300c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5722300c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>,
+> +				 <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +			clock-output-names =3D "mipi1_pwm_lpcg_clk",
+> +					     "mipi1_pwm_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
+> +		};
+> +
+> +		mipi1_i2c0_lpcg_clk: clock-controller@5722301c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5722301c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_MISC2>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c0_lpcg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +		};
+> +
+> +		mipi1_i2c0_lpcg_ipg_clk: clock-controller@57223014 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x57223014 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&mipi1_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c0_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +		};
+> +
+> +		mipi1_i2c0_lpcg_ipg_s_clk: clock-controller@57223018 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x57223018 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c0_lpcg_ipg_s_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +		};
+> +
+> +		mipi1_i2c1_lpcg_ipg_clk: clock-controller@57223024 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x57223024 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&mipi1_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c1_lpcg_ipg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +		};
+> +
+> +		mipi1_i2c1_lpcg_ipg_s_clk: clock-controller@57223028 {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x57223028 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&dsi_ipg_clk>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c1_lpcg_ipg_s_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +		};
+> +
+> +		mipi1_i2c1_lpcg_clk: clock-controller@5722302c {
+> +			compatible =3D "fsl,imx8qxp-lpcg";
+> +			reg =3D <0x5722302c 0x4>;
+> +			#clock-cells =3D <1>;
+> +			clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_1 IMX_SC_PM_CLK_MISC2>;
+> +			clock-indices =3D <IMX_LPCG_CLK_0>;
+> +			clock-output-names =3D "mipi1_i2c1_lpcg_clk";
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +		};
+> +
+> +		pwm_mipi1: pwm@57224000 {
+> +			compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
+> +			reg =3D <0x57224000 0x1000>;
+> +			clocks =3D <&mipi1_pwm_lpcg IMX_LPCG_CLK_4>,
+> +				 <&mipi1_pwm_lpcg IMX_LPCG_CLK_0>;
+> +			clock-names =3D "ipg", "per";
+> +			assigned-clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>;
+> +			assigned-clock-rates =3D <24000000>;
+> +			#pwm-cells =3D <3>;
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
+> +			status =3D "disabled";
+> +		};
+> +
+> +		i2c0_mipi1: i2c@57226000 {
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
+> +			reg =3D <0x57226000 0x1000>;
+> +			interrupts =3D <8>;
+> +			interrupt-parent =3D <&irqsteer_mipi1>;
+> +			clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
+> +				 <&mipi1_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
+> +			clock-names =3D "per", "ipg";
+> +			assigned-clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
+> +			assigned-clock-rates =3D <24000000>;
+> +			power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +			status =3D "disabled";
+> +		};
+> +	};
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8qm.dtsi
+> index 9f29fe4589668..846b95be22bbe 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> @@ -577,3 +577,4 @@ clk_spdif1_rx: clock-spdif1-rx {
+>  #include "imx8qm-ss-lsio.dtsi"
+>  #include "imx8qm-ss-audio.dtsi"
+>  #include "imx8qm-ss-lvds.dtsi"
+> +#include "imx8qm-ss-mipi.dtsi"
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
