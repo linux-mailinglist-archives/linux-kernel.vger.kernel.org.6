@@ -1,59 +1,85 @@
-Return-Path: <linux-kernel+bounces-206671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E899E900C8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:41:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E95D9900C8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E001F2227B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3E51F222FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E450314EC5B;
-	Fri,  7 Jun 2024 19:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F6114EC4E;
+	Fri,  7 Jun 2024 19:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UH8xLEXV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOF3AI62"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1350C14E2DB;
-	Fri,  7 Jun 2024 19:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB64A4DA08;
+	Fri,  7 Jun 2024 19:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717789253; cv=none; b=mcau+XSFDseANNNPj7j15NztwQCL/CseEGe7+C5dlKnqlggqUfML+nf2eP0RLA33YcxntBcLEPf8BsfOejkGMZfrPlonHa0zxQi6dSsGEhJlUZ30HKVGEkgHwvhu/uFh/5Fjms4AEvpFoMLNi+xgpbqVoRsAgBeJLVA3ncTnzao=
+	t=1717789304; cv=none; b=b9NNDr2220Y3mZfanadLgykKUcSMMGaQAWY1egGLtc6UCmptCQGWGY+oDWgIVHnCmngRMhfS0IwCie7XcBBmvK0e9y1KJDYdCEtnGpyKqwKNz0PWMPBvtEEDNldm6l2tLUHEOkvdoRGz+1ddI980P1nWmY7WoHNEXxtiKS3wh0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717789253; c=relaxed/simple;
-	bh=F0KItqGXcVwfO0z1QHr5qTaW5Ud/D4JEVYpZ2Lqxfl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nl3WERAGT5oYdzJyH+A74q0cZ5iaKvxUdDuBV3ldnipnJFy/UBNv4fxNXnNXOH/2nIoj6ftyT1rwrLQh6vbEWihXlj7xvd0QRcfn1L2n4vPjquPSL9XUE0qToNb7ebxtDOcPLzLToghWyZBFdGcK/VPkEiAMGDggf47udL4RnQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UH8xLEXV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084A0C4AF07;
-	Fri,  7 Jun 2024 19:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717789252;
-	bh=F0KItqGXcVwfO0z1QHr5qTaW5Ud/D4JEVYpZ2Lqxfl0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=UH8xLEXVRzW8+12jdeSBfdtWZiqO6qS8a6ifk4z13FcdXJ1LkQrKPDxObnswKpsGZ
-	 ZlDrb2dF84B1UYD78OKpJ8Ss+lL8g7tZAlTPY6uxOLqtPHmlqbybcW+JSxsSa+S1km
-	 uVg+EhpfXLIpuftxRc/qwA4F3JIldk9yeiS8b3nbG4wW54IQoRnvnVY3oOCsX5hLUx
-	 oE0w6WhLBFp2g7Zy7OE7KE/22Yxxlf8Ev5ftg9cmZ0V8nOQHI3jtKoArenpBAMdlVF
-	 gA1S4ChgHCwBAMtusNe/ZQUrUcgkGHmbprMRYLWtGBOFmorUhr/MAoE6icp7qnd6IL
-	 2+ESRMzvTRgYQ==
-Date: Fri, 7 Jun 2024 14:40:50 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 00/13] Make PCI's devres API more consistent
-Message-ID: <20240607194050.GA857440@bhelgaas>
+	s=arc-20240116; t=1717789304; c=relaxed/simple;
+	bh=B5wpoJOAS1yCcn6AHTzXdnnzuJTU6sZuXi+k2Dj9i+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFOV5DRGsfb7EpQW6e/NAmNVG3xCcxPeZxrHC6T8+iz9uI3xq1OXs1TArCLR5ZE5A1FV92ILG7DpeaaJJzvdHvamIPDIkRwIqEx2ulaU9w/G3JcV/CwkW/LkLRh2DtOzum79a4polaVmjdmwIYM7j/SfriA2kCIts1u/9gat0hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOF3AI62; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47f07acd3so23650615ad.0;
+        Fri, 07 Jun 2024 12:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717789302; x=1718394102; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
+        b=NOF3AI62XrtyTBIES/6hzDoX3p2n36YH3SG2CBvuMUEtDo8CZkXIvsbcqkTwqMQw1W
+         iU1eEk90o7tanzVcv3dFgFAQA57j0qh1TyzafPS2gl7G0itBrIWnM7bBSMXkzPxA0Ej/
+         DTQj1olYtfbcNH16IO0q3R0lsT6WlB/v6o2Oi/SOBhpCp9Qhkx3clU558dwJ9QE5h4D+
+         iBgnVsALFv2PFIihIZGUZVHq7KaajAUOJU/xIiDSudi/OcLXzN2aurDsBhidJ1Ql6oeK
+         +onOGKjbd+DH7BL1tnn8MOEOAf++sueZSgNqVwUJy8AtH4A4xTC0cX6KOyZyqn/o2Ys8
+         GyXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717789302; x=1718394102;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
+        b=bPjrYQu2Sv7znyXP9kQ1NMaYZNTpmOFs/JNsr8U4fZ4Mi4rEYk1rY+Pwo/cB5svXGj
+         GiAc/7DlbBXIkjcVVKoHK9H/fOpTfdcr6FHa9YtfmjJtQt1uTf2n/15C95HC4ilcHz6g
+         MN3plOuaGkER/oSz4zmvFr3hZUmGBsf5FKul+Cuj7nRSPar5w7SMw0SBzWyILQB9H3Nh
+         Cl7CnxuLYMHspwb4rXOThEA7aqGb2s0hMNcMKYjcsQbt+Mj0lZNB+l/FJQwWsKv747WG
+         kksT0jeXiJxSMch9YL+/9MTG4FI8h271Kz3tSbK12HI0M0wRkQQaIdgGOTrbRChIdZnd
+         bKmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfwBc6f5SJ7dogp5Jvj0O9V8Dh6n1gv9dRRyxS/YTUuqIpWb+J97jhEjaMvfZDFtn9SpuTEHzL8H+VUp9xUMkHxxEoskV3vrTox5CBF5yrl2kSQJ9Nvn4vLcpPnwINK4tASrieROBQToZGXELx+bgOr+iHf0K7WkNYdg8gYm9xrVVl02bftdLyP/wh
+X-Gm-Message-State: AOJu0Yw0FluOPucJcnmDCDXUsSBAYpZA5QFDzlJRSVAdIzr4A+k8xI7B
+	FWL3KYOA/jLDXALA2yvX8q01fL+qBUqABmLS1L43OCSJc4bkAtVa
+X-Google-Smtp-Source: AGHT+IGscUbgi37qbqXXc5w7y2H8tq5p/gmvxvvmo71C1+DhTMvyNutUQJaTF7RIefH0R+RKzJ5Hlw==
+X-Received: by 2002:a17:903:2445:b0:1f6:70fe:76bf with SMTP id d9443c01a7336-1f6d02d1a99mr41772155ad.14.1717789301946;
+        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd769a2esm38410355ad.66.2024.06.07.12.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
+Date: Fri, 7 Jun 2024 13:41:39 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <ZmLEoBfHyUR3nKAV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,157 +89,192 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240605081605.18769-2-pstanner@redhat.com>
+In-Reply-To: <ZmLEoBfHyUR3nKAV@google.com>
 
-On Wed, Jun 05, 2024 at 10:15:52AM +0200, Philipp Stanner wrote:
-> Hello Bjorn,
+On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
+> Hello Tahera!
 > 
-> I tried to meet your requests from the last feedback round as much as
-> possible. Especially, I removed a lot of code, made almost all
-> interfaces private and cut the series into smaller chunks where
-> possible.
-> 
-> Splitting it even smaller is unfortunately not possible because of the
-> Linux kernel build chain's rule on dead / unused code.
-> 
-> See also the changelog below.
-> 
-> Please tell me if that's enough to move forward here.
-> 
-> Regards,
-> P.
-> 
-> 
-> Changes in v7:
->   - Split the entire series in smaller, more atomic chunks / patches
->     (Bjorn)
->   - Remove functions (such as pcim_iomap_region_range()) that do not yet
->     have a user (Bjorn)
->   - Don't export interfaces publicly anymore, except for
->     pcim_iomap_range(), needed by vboxvideo (Bjorn)
->   - Mention the actual (vboxvideo) bug in "PCI: Warn users..." commit
->     (Bjorn)
->   - Drop docstring warnings on PCI-internal functions (Bjorn)
->   - Rework docstring warnings
->   - Fix spelling in a few places. Rewrapp paragraphs (Bjorn)
-> 
-> Changes in v6:
->   - Restructure the cleanup in pcim_iomap_regions_request_all() so that
->     it doesn't trigger a (false positive) test robot warning. No
->     behavior change intended. (Dan Carpenter)
-> 
-> Changes in v5:
->   - Add Hans's Reviewed-by to vboxvideo patch (Hans de Goede)
->   - Remove stable-kernel from CC in vboxvideo patch (Hans de Goede)
-> 
-> Changes in v4:
->   - Rebase against linux-next
-> 
-> Changes in v3:
->   - Use the term "PCI devres API" at some forgotten places.
->   - Fix more grammar errors in patch #3.
->   - Remove the comment advising to call (the outdated) pcim_intx() in pci.c
->   - Rename __pcim_request_region_range() flags-field "exclusive" to
->     "req_flags", since this is what the int actually represents.
->   - Remove the call to pcim_region_request() from patch #10. (Hans)
-> 
-> Changes in v2:
->   - Make commit head lines congruent with PCI's style (Bjorn)
->   - Add missing error checks for devm_add_action(). (Andy)
->   - Repair the "Returns: " marks for docu generation (Andy)
->   - Initialize the addr_devres struct with memset(). (Andy)
->   - Make pcim_intx() a PCI-internal function so that new drivers won't
->     be encouraged to use the outdated pci_intx() mechanism.
->     (Andy / Philipp)
->   - Fix grammar and spelling (Bjorn)
->   - Be more precise on why pcim_iomap_table() is problematic (Bjorn)
->   - Provide the actual structs' and functions' names in the commit
->     messages (Bjorn)
->   - Remove redundant variable initializers (Andy)
->   - Regroup PM bitfield members in struct pci_dev (Andy)
->   - Make pcim_intx() visible only for the PCI subsystem so that new    
->     drivers won't use this outdated API (Andy, Myself)
->   - Add a NOTE to pcim_iomap() to warn about this function being the    onee
->     xception that does just return NULL.
->   - Consistently use the term "PCI devres API"; also in Patch #10 (Bjorn)
-> 
-> 
-> ¡Hola!
-> 
-> PCI's devres API suffers several weaknesses:
-> 
-> 1. There are functions prefixed with pcim_. Those are always managed
->    counterparts to never-managed functions prefixed with pci_ – or so one
->    would like to think. There are some apparently unmanaged functions
->    (all region-request / release functions, and pci_intx()) which
->    suddenly become managed once the user has initialized the device with
->    pcim_enable_device() instead of pci_enable_device(). This "sometimes
->    yes, sometimes no" nature of those functions is confusing and
->    therefore bug-provoking. In fact, it has already caused a bug in DRM.
->    The last patch in this series fixes that bug.
-> 2. iomappings: Instead of giving each mapping its own callback, the
->    existing API uses a statically allocated struct tracking one mapping
->    per bar. This is not extensible. Especially, you can't create
->    _ranged_ managed mappings that way, which many drivers want.
-> 3. Managed request functions only exist as "plural versions" with a
->    bit-mask as a parameter. That's quite over-engineered considering
->    that each user only ever mapps one, maybe two bars.
-> 
-> This series:
-> - add a set of new "singular" devres functions that use devres the way
->   its intended, with one callback per resource.
-> - deprecates the existing iomap-table mechanism.
-> - deprecates the hybrid nature of pci_ functions.
-> - preserves backwards compatibility so that drivers using the existing
->   API won't notice any changes.
-> - adds documentation, especially some warning users about the
->   complicated nature of PCI's devres.
-> 
-> 
-> Note that this series is based on my "unify pci_iounmap"-series from a
-> few weeks ago. [1]
-> 
-> I tested this on a x86 VM with a simple pci test-device with two
-> regions. Operates and reserves resources as intended on my system.
-> Kasan and kmemleak didn't find any problems.
-> 
-> I believe this series cleans the API up as much as possible without
-> having to port all existing drivers to the new API. Especially, I think
-> that this implementation is easy to extend if the need for new managed
-> functions arises :)
-> 
-> Greetings,
-> P.
-> 
-> Philipp Stanner (13):
->   PCI: Add and use devres helper for bit masks
->   PCI: Add devres helpers for iomap table
->   PCI: Reimplement plural devres functions
->   PCI: Deprecate two surplus devres functions
->   PCI: Make devres region requests consistent
->   PCI: Warn users about complicated devres nature
+> Thanks for sending another revision of your patch set!
+Hello Günther, 
+Thanks for your feedback.
 
-Applied the above to pci/devres for v6.11 with minor comment and
-whitespace tweaks.  Will watch for updates for the ones below to 
-consolidate "enabled" and "enable_cnt".
+> On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without on a filesystem. Currently a sandboxed process can connect to a
+> > socket outside of the sandboxed environment, since landlock has no
+> > restriction for connecting to a unix socket in the abstract namespace.
+> > Access to such sockets for a sandboxed process should be scoped the same
+> > way ptrace is limited.
+> > 
+> > Because of compatibility reasons and since landlock should be flexible,
+> > we extend the user space interface by adding a new "scoped" field. This
+> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> > specify that the ruleset will deny any connection from within the
+> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> > 
+> > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > -------
+> > V3: Added "scoped" field to landlock_ruleset_attr
+> > V2: Remove wrapper functions
+> > 
+> > -------
+> > ---
+> >  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
+> >  security/landlock/limits.h    |  5 ++++
+> >  security/landlock/ruleset.c   | 15 ++++++++----
+> >  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
+> >  security/landlock/syscalls.c  | 12 +++++++---
+> >  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
+> >  6 files changed, 121 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 68625e728f43..d887e67dc0ed 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+> >  	 * rule explicitly allow them.
+> >  	 */
+> >  	__u64 handled_access_net;
+> > +	/**
+> > +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+> > +	 * that is handled by this ruleset and should be permitted
+> > +	 * by default if no rule explicitly deny them.
+> > +	 */
+> > +	__u64 scoped;
+> 
+> I have trouble understanding what this docstring means.
+> 
+> If those are "handled" things, shouldn't the name also start with "handled_", in
+> line with the other fields?  Also, I don't see any way to manipulate these
+> rights with a Landlock rule in this ?
 
->   PCI: Move dev-enabled status bit to struct pci_dev
->   PCI: Move pinned status bit to struct pci_dev
->   PCI: Give pcim_set_mwi() its own devres callback
->   PCI: Give pci(m)_intx its own devres callback
->   PCI: Remove legacy pcim_release()
->   PCI: Add pcim_iomap_range()
->   drm/vboxvideo: fix mapping leaks
+.scoped attribute is not defined as .handled_scope since there is no
+rule to handle/manipulate it, simply because this attribute shows either
+action is permitted or denied. 
+
+> How about:
 > 
->  drivers/gpu/drm/vboxvideo/vbox_main.c |  20 +-
->  drivers/pci/devres.c                  | 897 +++++++++++++++++++++-----
->  drivers/pci/iomap.c                   |  16 +
->  drivers/pci/pci.c                     | 107 ++-
->  drivers/pci/pci.h                     |  23 +-
->  include/linux/pci.h                   |   6 +-
->  6 files changed, 864 insertions(+), 205 deletions(-)
+> /**
+>  * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
+>  * which are confined to only affect the current Landlock domain.
+>  */
+
+This is a good docstring. I will use it. 
+
+> __u64 handled_scoped;
 > 
-> -- 
-> 2.45.0
+> >  };
+> >  
+> >  /*
+> > @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> >  /* clang-format on */
+> > +
+> > +/**
+> > + * DOC: scoped
+> > + *
+> > + * Scoped handles a set of restrictions on kernel IPCs.
+> > + *
+> > + * Scope access flags
+> 
+> Scoped with a "d"?
+Scoped meant to point to .scoped attribute.  
+> > + * ~~~~~~~~~~~~~~~~~~~~
+> > + * 
+> > + * These flags enable to restrict a sandboxed process from a set of
+> > + * inter-process communications actions. Setting a flag in a landlock
+> > + * domain will isolate the Landlock domain to forbid connections
+> > + * to resources outside the domain.
+> > + *
+> > + * IPCs with scoped actions:
+> > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
+> > + *   connect to a process outside of the sandbox domain through abstract
+> > + *   unix sockets.
+> > + */
+> > +/* clang-format off */
+> > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+> 
+> Should the name of this #define indicate the direction that we are restricting?
+
+Since the domain of a process specifies if a process can connect or not,
+the direction of the connection does not matter. This restriction is the
+same as ptrace.
+
+> If I understand your documentation correctly, this is about *connecting out* of
+> the current Landlock domain, but incoming connections from more privileged
+> domains are OK, right?
+
+Yes, Incoming connections are allowed if they are from a higher
+privileged domain (or no domain). Consider two process P1 and P2 where
+P1 wants to connect to P2. If P1 is not landlocked, it can connect to P2
+regardless of whether P2 has a domain. If P1 is landlocked, it must have
+an equal or less domain than P2 to connect to P2. We disscussed about
+direction in [2]
+https://lore.kernel.org/outreachy/20240603.Quaes2eich5f@digikod.net/T/#m6d5c5e65e43eaa1c8c38309f1225d169be3d6f87
+
+> 
+> Also:
+> 
+> Is it intentional that you are both restricting the connection and the sending
+> with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
+> gets passed in to a program from the outside (e.g. as stdout), shouldn't it
+> still be possible that the program enables a Landlock policy and then still
+> writes to it?  (Does that work?  Am I mis-reading the patch?)
+
+security_unix_may_send checks if AF_UNIX socket can send datagrams, so
+connecting and sending datagrams happens at the same state. I am not
+sure if I understand your example correctly. Can you please explain a
+bit more?
+
+> The way that write access is normally checked for other files is at the time
+> when you open the file, not during write(), and I believe it would be more in
+> line with that normal "check at open" behaviour if we did the same here?
+
+It checks the ability to connect to a unix socket at the point of
+connecting, so I think it is aligned with the "check at point"
+behaviour. This security check is called right before finalizing the
+connection. 
+
+> 
+> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > index 20fdb5ff3514..7b794b81ef05 100644
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -28,6 +28,11 @@
+> >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+> >  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+> >  
+> > +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> > +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
+> > +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
+> > +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
+>                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> I believe this #define has the wrong value, and as a consequence, the code
+> suffers from the same problem as we already had on the other patch set from
+> Mikhail Ivanov -- see [1] for that discussion.
+
+Thanks for the hint. I will definitly check this. 
+
+> The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position of
+> your flag in the access_masks_t type, where all access masks are combined
+> together in one big bit vector.  If you are defining this the same for _SCOPE as
+> for _NET, I believe that we will start using the same bits in that vector for
+> both the _NET flags and the _SCOPE flags, and that will manifest in unwanted
+> interactions between the different types of restrictions.  (e.g. you will create
+> a policy to restrict _SCOPE, and you will find yourself unable to do some things
+> with TCP ports)
+> 
+> Please also see the other thread for more discussions about how we can avoid
+> such problems in the future.  (This code is easy to get wrong,
+> apparently... When we don't test what happens across multiple types of
+> restrictions, everything looks fine.)
+> 
+> [1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com/
+> 
+> —Günther
 > 
 
