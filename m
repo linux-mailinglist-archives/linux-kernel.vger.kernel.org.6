@@ -1,250 +1,148 @@
-Return-Path: <linux-kernel+bounces-206211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8879005D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A39005CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E537C1F22BC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93B4286A54
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99DA19751E;
-	Fri,  7 Jun 2024 14:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97610195B2E;
+	Fri,  7 Jun 2024 14:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K921WjHJ"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pWqigHdY"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09156196C6D;
-	Fri,  7 Jun 2024 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034F8FC0A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 14:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768833; cv=none; b=EXzPo4pS1jnXZrL7Rae+LArpzHH6IkL4Nml9cmb/uUTnkgt9II3JFczrCcwLLsX78Wy5ApVWOtIvXBqAIXetR4aKm/x030U+iA0P7FYLjHs3AWaa5wTkCoHnTq8L4W2+3UiUO4CsQholymFRccB3p82dmDWVeJ+iTmuypa4ZdGU=
+	t=1717768827; cv=none; b=hAaU4oGG7O2cg5tKxLPAlzdrXDYs2+7e1MUOOLyfAV81+FXztIqv2H0HPRWUTQ7kz+V4FOA1CzDam558AblAM1a/RgfYIrZfww8nQyjP13Ky5Ixhm8PXFWQlIhSu0yjBlpLLIOLKKhbdMP5QHdN4VcZ8coB7ZpBScdlw9kGg+oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768833; c=relaxed/simple;
-	bh=19tlOcfJuT/2kVzSY/jYIvVZ6Y8DgteEDTklyfN/YSM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BG2hTWdlPzp9CC5XIyMdWOtxdVTzEZ4M1zv4M8GBdB5f70RVQnAdjTZPk/UOSiYr95I4DL+bVjJvS5OGkWTf/X4O14OI5KB+SkaiCXZ4VeRABlLkyR4bmZ0u57XCJj5WM0j3Wwv5SAo7jbUDr+HHbWBHkR7XxO7QS/jNBz4BIas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K921WjHJ; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eabd22d441so33661741fa.2;
-        Fri, 07 Jun 2024 07:00:30 -0700 (PDT)
+	s=arc-20240116; t=1717768827; c=relaxed/simple;
+	bh=OOA1+hRiYDrMPbwUCoHpN5UM+d1N1dzdE5Ks/+ep6J0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IfZVD8cudzfGkx7k1BRzJzsgslBTdEuriU9xegrHjuikEfCZjiDmGw4TujsLqaqK3leLND2Y+ClQknAeKAarIB278dUZEyNBAlvmQgK88DPUUhjMDpgf7abk0coZjwKZpteQv3qclTD1PLcAKhEgAHIggubNpn/vcTwI7jd88ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pWqigHdY; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-356c4e926a3so2039291f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 07:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717768829; x=1718373629; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=smHlXdeijHe0Qv4gdPnMjOi/H4/3+n74NUKh1ac6v1Y=;
-        b=K921WjHJ4rDEKHHrTK9NQrh8UwCELZeLSpXeN8p420h7OVro3zpFzTZNSUITvaOvbQ
-         +3v6vGg/p988EY98GxV8kEX5dHyBMPrLuZqabyKudb03fy2b1GZk+Svwl6kXgupi7hWu
-         +omNkHplOccoi6lZc6RoVJgkeQBTlQXjmC3+rNG3YRO0RcQGK2ubH4xGsCerOAPQjA7w
-         Sy6OdOy9u4PPkw7g9L6z54VsCTYeMpygsoO1UKOtnOyDM1hrybhTcwWJY2mGd6fXWS2K
-         LtqICjfsv1GajEyojn29G3i25DK0EHoENkrhTT7HBJDxJw7P+4BDmJNrCm+TIEC+BBRQ
-         lQoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717768829; x=1718373629;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717768824; x=1718373624; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=smHlXdeijHe0Qv4gdPnMjOi/H4/3+n74NUKh1ac6v1Y=;
-        b=nJbwlMjRathn9AqUSBeDtsEwyqLRrKKYwem9LFKP5ewx4RTG1HJu5AP8E5kbz6XYud
-         4OxVpDrqg2hCIteWPwmaPJjsI+ZFmifWIM3IQboi8a5pxDAo8hZb/1bjHXP7nuNRroms
-         1tRUCYqRnAW/x2fGQ+0+1N3OhzgbbgVNVjXE8SwLoFl9UOUhNvGXiMs3SRSpAync1fNO
-         sgD3Xi4kAwzMF1ksnhT45ckQ31eqgYRDcdExeNHoGgWulU4Poo1opTm43v8WSmWVXaMn
-         acYAEVvAD76jVz330VY+vsdXHiUPNe00L3uts15Qv5BdJItKfd9Pmc3dwO2lOuR5TV6d
-         iRDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWz9nFnavPo8I8BCj4WJ6v0qsB4mdk//Yg955vgnqscwdaxl+i1Q1iTaFvCKucR3oBbUdOiTFcbmA1JOcyK0Y4da+tBzob0/gJoXZVu
-X-Gm-Message-State: AOJu0Yy0xDFqRuIOWIruT3UDuvnyejOCAkO6BPd3JaEinwT0SXPg2D2R
-	aCKWv90cjNCg6Uf7MNz+fw7Q1MbFxQTsHXwrs5H1rJkCTke8csMt
-X-Google-Smtp-Source: AGHT+IHR81iKUplsByiF1E+L/92JPbJTbqeGnU4taIDP/6XaWJzNK7gYiRIkjw6lHphiKZY7veQvQA==
-X-Received: by 2002:a05:651c:a0f:b0:2ea:79b2:1839 with SMTP id 38308e7fff4ca-2eadce281d4mr29893421fa.2.1717768828808;
-        Fri, 07 Jun 2024 07:00:28 -0700 (PDT)
-Received: from kali.localhost (static.47.50.88.23.clients.your-server.de. [23.88.50.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ec844sm252472566b.120.2024.06.07.07.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 07:00:28 -0700 (PDT)
-From: Kiarash Hajian <kiarash8112hajian@gmail.com>
-Date: Fri, 07 Jun 2024 10:00:04 -0400
-Subject: [PATCH] drm/msm/a6xx: request memory region
+        bh=jKigPxOyIsTI2bSkZ71iXyzsI+rxMVn90vvi1arrb7c=;
+        b=pWqigHdY7H5UzJb/4d65Yp+BMSKX/xXgd1rRa1S1p+YwyfnSeY93A1qkWMz6rYWCuR
+         edM8qysAVJr5/J+hP43jx2spRHu3dDYmFyX5Y1b9y4hYi48MADKZAI7a2sBqfwynfWz7
+         LDKRlcAS5DQb7Y/al7xE/4Oh+f8Ub7b8ZMGbBrAoIZUod394XwL98xys6zgk1VWNkekr
+         YbVJ66BfBFv9a/3VG/C+2DLV49U8nO0OqdKisx2d5lIeWT8vn8jxSfc0p4kDesuvFTpC
+         WuqfFr4iGhiQS6avYKl3e/qL7J+7qpQVd2U/Ssg9zm0ySFlTJ7QRPi/9FdygkbYo5BKz
+         R+1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717768824; x=1718373624;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jKigPxOyIsTI2bSkZ71iXyzsI+rxMVn90vvi1arrb7c=;
+        b=dIq4OuT/nD026L8DHSS7Z4t18NPucnMZYH0jSJKDPWgRwWeAYmG+T1b86khA49Eksf
+         8Dn0h669M7r1zOV6WjWBrK/xrmM0rBO9YNUR1CwvSE/n65UMcyJCzM8MI+iPSOHnjn9F
+         0cliIOmQDtFQBUxxRbQ3ceGURXqWxecmxYaKtpEAym3GGJUyZ5vvQ7To+OpNQCb4kqIu
+         xFZFFF5ymgyMqRSF/nTd3MsyjsSe9u+42G5W+Cd3nTitpTNG7YddDlr9cpVBKh/TrbFz
+         SQuRTVSfY+YQOgwvLGZ9O8M3B9cFkjXFtDbbLkn1pNgus/YYN74+5qIhQKFKSjr0Aq1+
+         ajKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt6WQ2YfbrRvJdp5tf8UWNI41O+jS5yDPZPfyGOhqyFZVLlHfjzCQ/k0bgEoJaI0ApEj0gBzCAVQIC553u4p7pw17xidG/0BV2sFXL
+X-Gm-Message-State: AOJu0YwFafOPYezIou+hlB1a1lcWF7BeZU0qHApQ9Apx1GrY/mT3ozIT
+	K+jRhlEINNQx2eB1SyJ4FG/aSMvf1dqca7cPPIht5OStNmTcRRQpVFmr4haLJeg=
+X-Google-Smtp-Source: AGHT+IGmS4HUnGooP5PlDCBfYxj44NfY1lReEaODhxoscoFCiBWltIk+cWqWgfLs0yNvpSTRw/DqfQ==
+X-Received: by 2002:a5d:4acb:0:b0:354:f142:65b0 with SMTP id ffacd0b85a97d-35efed534c9mr1907495f8f.37.1717768824112;
+        Fri, 07 Jun 2024 07:00:24 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404? ([2a01:e0a:982:cbb0:7e4b:b0d3:6a34:6404])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc11fcsm4056145f8f.99.2024.06.07.07.00.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 07:00:23 -0700 (PDT)
+Message-ID: <ac155efa-de85-4bc0-9af3-2190d4d1a60d@linaro.org>
+Date: Fri, 7 Jun 2024 16:00:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240607-memory-v1-1-8664f52fc2a1@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGMSY2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMwNz3dzU3PyiSl0T01RD46Qkg+QUQzMloOKCotS0zAqwQdGxtbUAG2Q
- NnlgAAAA=
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Kiarash Hajian <kiarash8112hajian@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717768825; l=4856;
- i=kiarash8112hajian@gmail.com; s=20240409; h=from:subject:message-id;
- bh=19tlOcfJuT/2kVzSY/jYIvVZ6Y8DgteEDTklyfN/YSM=;
- b=LovuAN+Yw05fo0LE4TjWvASYbGMde0nyU+ekFhEVleLCWxzSTpZLgPrOfhHwJkda4m0uefexE
- MQuMdmXQJmgAXSDd4LqRKtWw7WuMsDBrkwMhDt5JBPig0U5aBohe2hn
-X-Developer-Key: i=kiarash8112hajian@gmail.com; a=ed25519;
- pk=ehVBr28gPcA8cMB/wneVh0Mj6WGkqZoyYRdRNi5+aI0=
-
-The driver's memory regions are currently just ioremap()ed, but not
-reserved through a request. That's not a bug, but having the request is
-a little more robust.
-
-Implement the region-request through the corresponding managed
-devres-function.
-
-Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
----
-To: Rob Clark <robdclark@gmail.com>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/4] usb: typec-mux: nb7vpq904m: unregister typec
+ switch on probe error and remove
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sean Paul <sean@poorly.run>
-To: Marijn Suijten <marijn.suijten@somainline.org>
-To: David Airlie <airlied@gmail.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Andersson <andersson@kernel.org>, Luca Weiss
+ <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
+ <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-2-c6f6eae479c3@linaro.org>
+ <cnqpgfjcqqedk3xqkfbjacjikc5jwktev6c3kwmbq7cwut3eyk@xqyhgi5xgzgf>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <cnqpgfjcqqedk3xqkfbjacjikc5jwktev6c3kwmbq7cwut3eyk@xqyhgi5xgzgf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Changes in v5:
-    - Fix errorhanlding problems.
-    - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
-    
-    Changes in v4:
-    - Combine v3 commits into a singel commit
-    - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
-    
-    Changes in v3:
-    - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
-    
-    Changes in v2:
-    - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
----
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+On 07/06/2024 07:50, Dmitry Baryshkov wrote:
+> On Thu, Jun 06, 2024 at 03:11:14PM +0200, Neil Armstrong wrote:
+>> Add the missing call to typec_switch_put() when probe fails and
+>> the nb7vpq904m_remove() call is called.
+>>
+>> Fixes: 348359e7c232 ("usb: typec: nb7vpq904m: Add an error handling path in nb7vpq904m_probe()")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/usb/typec/mux/nb7vpq904m.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> I'd say:
+> 
+> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 8bea8ef26f77..35323bf2d844 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -635,10 +635,12 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
- 	a6xx_rpmh_stop(gmu);
- 
- err:
--	if (!IS_ERR_OR_NULL(pdcptr))
--		iounmap(pdcptr);
--	if (!IS_ERR_OR_NULL(seqptr))
--		iounmap(seqptr);
-+	if (!IS_ERR_OR_NULL(pdcptr)){
-+        return ERR_PTR(-EINVAL);
-+	}
-+	if (!IS_ERR_OR_NULL(seqptr)){
-+        return ERR_PTR(-EINVAL);
-+	}
- }
- 
- /*
-@@ -1503,7 +1505,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	ret = ioremap(res->start, resource_size(res));
-+	ret = devm_ioremap_resource(&pdev->dev, res);
- 	if (!ret) {
- 		DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s registers\n", name);
- 		return ERR_PTR(-EINVAL);
-@@ -1613,13 +1615,13 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 	gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
- 	if (IS_ERR(gmu->mmio)) {
- 		ret = PTR_ERR(gmu->mmio);
--		goto err_mmio;
-+		goto err_cleanup;
- 	}
- 
- 	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
- 	if (IS_ERR(gmu->cxpd)) {
- 		ret = PTR_ERR(gmu->cxpd);
--		goto err_mmio;
-+		goto err_cleanup;
- 	}
- 
- 	if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
-@@ -1635,7 +1637,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
- 	if (IS_ERR(gmu->gxpd)) {
- 		ret = PTR_ERR(gmu->gxpd);
--		goto err_mmio;
-+		goto err_cleanup;
- 	}
- 
- 	gmu->initialized = true;
-@@ -1645,9 +1647,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- detach_cxpd:
- 	dev_pm_domain_detach(gmu->cxpd, false);
- 
--err_mmio:
--	iounmap(gmu->mmio);
--
-+err_cleanup:
- 	/* Drop reference taken in of_find_device_by_node */
- 	put_device(gmu->dev);
- 
-@@ -1762,7 +1762,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 		gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
- 		if (IS_ERR(gmu->rscc)) {
- 			ret = -ENODEV;
--			goto err_mmio;
-+			goto err_cleanup;
- 		}
- 	} else {
- 		gmu->rscc = gmu->mmio + 0x23000;
-@@ -1774,13 +1774,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 
- 	if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
- 		ret = -ENODEV;
--		goto err_mmio;
-+		goto err_cleanup;
- 	}
- 
- 	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
- 	if (IS_ERR(gmu->cxpd)) {
- 		ret = PTR_ERR(gmu->cxpd);
--		goto err_mmio;
-+		goto err_cleanup;
- 	}
- 
- 	link = device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME);
-@@ -1824,10 +1824,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- detach_cxpd:
- 	dev_pm_domain_detach(gmu->cxpd, false);
- 
--err_mmio:
--	iounmap(gmu->mmio);
--	if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
--		iounmap(gmu->rscc);
-+err_cleanup:
- 	free_irq(gmu->gmu_irq, gmu);
- 	free_irq(gmu->hfi_irq, gmu);
- 
+I should add both yes, it won't apply with only 88d8f3ac9c67
 
----
-base-commit: 1b294a1f35616977caddaddf3e9d28e576a1adbc
-change-id: 20240607-memory-45e13bb0cd16
-
-Best regards,
--- 
-Kiarash Hajian <kiarash8112hajian@gmail.com>
+> 
+> Nevertheless:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> 
+> 
 
 
