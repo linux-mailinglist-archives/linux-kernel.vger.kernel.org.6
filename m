@@ -1,147 +1,199 @@
-Return-Path: <linux-kernel+bounces-206829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2101900E5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21501900E63
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0466A282FB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ACEF1F234B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 23:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54A74E11;
-	Fri,  7 Jun 2024 23:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2662673455;
+	Fri,  7 Jun 2024 23:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9UOmWtR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t6PoD1Xf"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761914EB38;
-	Fri,  7 Jun 2024 23:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949D84F5EC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 23:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717802035; cv=none; b=F4+96QW8iZvylShbj80M3GHyl4WzOcLJTs4her3T2oh3S7sXRezlN6DTtNDyP+GB7YKF0xRL1IXP6imEhrFPfIAFCuBdKILUAeW4NQgpcJQGiV0ALv2ec6SKwLiwDNqbvwmMF+Gtry19A0IEjJp99TEV/ZYpbiLL+Kcx+arBIWc=
+	t=1717802095; cv=none; b=YKNQHfCRJvfIrazZ6A4MJZtw1DIi0pfhm6b4khTYsYnG2Ht+vakwi1aR5AtUFOJN8LnI0NHlZOWyobfUthTrNEof9DEV7XTL9tr5ov0jC4lFKcUSYazeLW/5aMZ8OLW8pj0pFpeEpZzzHluQsmn1One9gc5pu697JBSBiCVlQJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717802035; c=relaxed/simple;
-	bh=2q2MxS0PnAoB7ta6Xve9stwAf+iHBMYFHvuKsBomFdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubV4p4FAZbrJ9Y9YAztTjPK0LXH6EByXgY2Ja3N6wov0b8ImA483s71xb5STzN+AaGaJmWIm47C+thl1OJxmsNqGyytIA8eQVUpmk3kWJJ3u6h3ccWowJ7Pb+As3KjvNukgSxarsSxLadr8lPnrYbFu10rHZOn+mzKCLcXLjct8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9UOmWtR; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717802033; x=1749338033;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2q2MxS0PnAoB7ta6Xve9stwAf+iHBMYFHvuKsBomFdo=;
-  b=U9UOmWtRjtg/fPW4q397VyAU8O54g5GmBLaIZpEzV4QJtY+xKrJ5W+q3
-   f5ZaKIowPMzD00/K3sq+soh3si6JowkfyZ0nYylkkakVzCZCoRdkAIjxe
-   99qg7tYRpwgPWRrBrK+l/YLRsfK/RozMNUxmP8nazKTtq54+9gXzYjD+U
-   lOaaqrcj6+xjeVFsy1QcBxzpkDMuNWqkvZf3jGIceE6UrGsOkI34IedKK
-   mRRz9YkraxIBuR87tFNEpSGQpi9M/3B3ljJJauM46l/3KKGfW2sJ/SQw/
-   UX5eGAyN7QoP55o3Yq69nXZ1q5RHkAsr5+hueBtFz19Q3bbPaZZ5xdwCJ
-   Q==;
-X-CSE-ConnectionGUID: XgxktWHkQvCTH/NzAvGoeg==
-X-CSE-MsgGUID: I4JLj3aQQRWBWjOJfxOvvg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14779161"
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="14779161"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 16:13:53 -0700
-X-CSE-ConnectionGUID: gS9eduv5R+2Zina7itibXA==
-X-CSE-MsgGUID: huPaYgdESsWna5lAxNy27Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="75957644"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 Jun 2024 16:13:50 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFimK-0000g2-0A;
-	Fri, 07 Jun 2024 23:13:48 +0000
-Date: Sat, 8 Jun 2024 07:13:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
-Message-ID: <202406080603.d9mWzFV2-lkp@intel.com>
-References: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
+	s=arc-20240116; t=1717802095; c=relaxed/simple;
+	bh=CmRjzypL0SqMkOxrilenn4psfDasUJ2Rr80DHbSvYqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LI1TmiZPz+V+0VhBlJHJQHEpGmHEgJdHWEmY2hJdtdthfap7qEUkaVpySrONJ5JEzN6LE6ZUV+Hlk5c4JsSBrUss2kzesgp4iP0YiZTKdsfTarXRbuDdYMjQBI0aY8P4WHg+4YwlZsQDOUt9n7VNZKx3Sng7fTuXToNLenDyok0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t6PoD1Xf; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c6011d75dso923703a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 16:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717802092; x=1718406892; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/NFoZRrQ3Oe99jHYpj59voH3AVeMqlDyxoL8EDvsTQ=;
+        b=t6PoD1Xf1CvGmvm5BlY9BHv/+TO9p+eVBeu4FQKK6YSJ33PVe2F4whuUOlS9WkrEHW
+         BUZb+cDAlN9sTIe9CXN7EEkXPIh2kpMW9auh3yBqo6ugOMJ1H2NhyVO/FjtYTfIzZXki
+         FJ63OnB0j3/0kH01fsRCqHBTmS+rTxckbWw/9hFjDHcVdtpBzh0c61Bd3+6dRdES6s5x
+         dzCT7xfotSamdCcZePZNWs9rOtnypKGkyFFhbsXYyauhnV4zVOfTmS7YzVG4okIHlvrk
+         83AiAeQfwQac9BRfMFDVYWv7daR8LPn+zhxYrE1VbLRnVHyMF8ihMNZFe6igmP6cN6gr
+         RtYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717802092; x=1718406892;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y/NFoZRrQ3Oe99jHYpj59voH3AVeMqlDyxoL8EDvsTQ=;
+        b=WjiUowq4p4d6+0EiKaCmPUjrbuFMSpFyE2NZzZKurXXBbdiN/j4vp3nthQNc77wJ8r
+         3VDkkMFLBmYuSWAUaYVFOty1GE0oNrMIylS5FNzv0BCNzsFMkXV/+/0vXFC3jvnEJfEL
+         vYmD+1ILloW7AHA8fjG6v9hwSJ5Bk2MMCqqivi5Pz2bdHP7XXYhFFfCYduzLlCLXz5wm
+         sLZ16Uo3eE4wA8iOFuO8Njy898rsnHS47FnkMYCGE/QGcZ4VUm4pNqikQcQMoX5zfUUE
+         kL9k87W2Py4YLcPTOruePfeuiwcUGj2gLsp3p+aQHwufld9Ak9TzooKpyRil0U37Y6Vp
+         6+Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLUb2K9poPf7wrt76vF5BIsLuYxAsvLVtowpMW7BdVq9SfGmcLpxiJk/lSpSN2VXIcNczGzbI+Y6LtA3soFFaIwb3rEfeQIbJpsykd
+X-Gm-Message-State: AOJu0YwFpotVa6BhlukBGUn6wlvN0jXa+5GCPY22oKOwkwAn2lpISGWa
+	AVI+u8YiWpoM1tcMDVNPJZ7NdkrSlFwx9lSYVXELGNaq+dzWLtZPCcUIvW0YRD09JFnFswkn4gQ
+	uO/eGLOS1ik4dP0B8eqY+ZFNYnYoDmbKOryZC
+X-Google-Smtp-Source: AGHT+IGPrEWf1WL85cQqKtIbRvg/yPmsdJLHLXreQl2erm5kBz9tMNMEwFX/Ccjrv9JfJcfXifhcai345+M447MIZto=
+X-Received: by 2002:a17:906:7705:b0:a6e:b1f:5e17 with SMTP id
+ a640c23a62f3a-a6e0b1f5e6bmr154507366b.54.1717802091519; Fri, 07 Jun 2024
+ 16:14:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
+References: <20240606184818.1566920-1-yosryahmed@google.com>
+ <84d78362-e75c-40c8-b6c2-56d5d5292aa7@redhat.com> <CAJD7tkZH9C21nx75W9Erun=oUvmad5ujmDyGYWRRHEwPCCizUw@mail.gmail.com>
+ <7507d075-9f4d-4a9b-836c-1fbb2fbd2257@redhat.com> <CAGsJ_4w_dEyLsPhdJCtRMReXDD116p+U979Yk-8EBu=zx5FWgQ@mail.gmail.com>
+ <CAJD7tkYnZCvwUSTAx-N-08b+mVF4yHEdDTbp9oqYrVQXX8M1Cw@mail.gmail.com>
+ <CAGsJ_4wAYbofjg99iEr7cEAptH9Ve9WcrSXho8A-Sw54vb8Msw@mail.gmail.com>
+ <9374758d-9f81-4e4f-8405-1f972234173e@redhat.com> <CAJD7tkZBzSB_6pAZP0n0nq+W=J1XKQGFzZZLzPmSH0apwaqTNg@mail.gmail.com>
+ <424c6430-e40d-4a60-8297-438fc33056c9@redhat.com> <CAJD7tkbaX-8OQm0JispxWWbuzX+PJrH=HN6yqEjqL2yxRcu=Aw@mail.gmail.com>
+ <CANeU7QkrXyv8f4JE+iUte2iTUg-dP_Q1==g2JwMjS4TEyiLovA@mail.gmail.com>
+In-Reply-To: <CANeU7QkrXyv8f4JE+iUte2iTUg-dP_Q1==g2JwMjS4TEyiLovA@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 7 Jun 2024 16:14:13 -0700
+Message-ID: <CAJD7tkY2zNQs4Er4jkE+peYv1POv44+zV4zPuAq6OtJHT5rY+g@mail.gmail.com>
+Subject: Re: [PATCH] mm: zswap: add VM_BUG_ON() if large folio swapin is attempted
+To: Chris Li <chrisl@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Neil,
+[..]
+> > > >
+> > > > How about something like the following (untested), it is the minimal
+> > > > recovery we can do but should work for a lot of cases, and does
+> > > > nothing beyond a warning if we can swapin the large folio from disk:
+> > > >
+> > > > diff --git a/mm/page_io.c b/mm/page_io.c
+> > > > index f1a9cfab6e748..8f441dd8e109f 100644
+> > > > --- a/mm/page_io.c
+> > > > +++ b/mm/page_io.c
+> > > > @@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct
+> > > > swap_iocb **plug)
+> > > >          delayacct_swapin_start();
+> > > >
+> > > >          if (zswap_load(folio)) {
+> > > > -               folio_mark_uptodate(folio);
+> > > >                  folio_unlock(folio);
+> > > >          } else if (data_race(sis->flags & SWP_FS_OPS)) {
+> > > >                  swap_read_folio_fs(folio, plug);
+> > > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > > index 6007252429bb2..cc04db6bb217e 100644
+> > > > --- a/mm/zswap.c
+> > > > +++ b/mm/zswap.c
+> > > > @@ -1557,6 +1557,22 @@ bool zswap_load(struct folio *folio)
+> > > >
+> > > >          VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > > >
+> > > > +       /*
+> > > > +        * Large folios should not be swapped in while zswap is being used, as
+> > > > +        * they are not properly handled.
+> > > > +        *
+> > > > +        * If any of the subpages are in zswap, reading from disk would result
+> > > > +        * in data corruption, so return true without marking the folio uptodate
+> > > > +        * so that an IO error is emitted (e.g. do_swap_page() will sigfault).
+> > > > +        *
+> > > > +        * Otherwise, return false and read the folio from disk.
+> > > > +        */
+> > > > +       if (WARN_ON_ONCE(folio_test_large(folio))) {
+> > > > +               if (xa_find(tree, &offset, offset +
+> > > > folio_nr_pages(folio) - 1, 0))
+> > > > +                       return true;
+> > > > +               return false;
+> > > > +       }
+> > > > +
+> > > >          /*
+> > > >           * When reading into the swapcache, invalidate our entry. The
+> > > >           * swapcache can be the authoritative owner of the page and
+> > > > @@ -1593,7 +1609,7 @@ bool zswap_load(struct folio *folio)
+> > > >                  zswap_entry_free(entry);
+> > > >                  folio_mark_dirty(folio);
+> > > >          }
+> > > > -
+> > > > +       folio_mark_uptodate(folio);
+> > > >          return true;
+> > > >   }
+> > > >
+> > > > One problem is that even if zswap was never enabled, the warning will
+> > > > be emitted just if CONFIG_ZSWAP is on. Perhaps we need a variable or
+> > > > static key if zswap was "ever" enabled.
+> > >
+> > > We should use WARN_ON_ONCE() only for things that cannot happen. So if
+> > > there are cases where this could be triggered today, it would be
+> > > problematic -- especially if it can be triggered from unprivileged user
+> > > space. But if we're concerned of other code messing up our invariant in
+> > > the future (e.g., enabling large folios without taking proper care about
+> > > zswap etc), we're good to add it.
+> >
+> > Right now I can't see any paths allocating large folios for swapin, so
+> > I think it cannot happen. Once someone tries adding it, the warning
+> > will fire if CONFIG_ZSWAP is used, even if zswap is disabled.
+> > At this point we will have several options:
+>
+> Here is my take on this:
+>
+> > - Make large folios swapin depend on !CONFIG_ZSWAP for now.
+>
+> I think a WARON or BUG_ON is better. I would need to revert this
+> change when I am working on 3).  It is a make up rule, not a real
+> dependency any way.
 
-kernel test robot noticed the following build warnings:
+I am intending to send a new version with WARN_ON_ONCE() and some
+attempt to recover.
 
-[auto build test WARNING on c3f38fa61af77b49866b006939479069cd451173]
+It is not a rule, it is just that we don't have the support for it today.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Neil-Armstrong/ASoC-dt-bindings-convert-tas571x-txt-to-dt-schema/20240607-175726
-base:   c3f38fa61af77b49866b006939479069cd451173
-patch link:    https://lore.kernel.org/r/20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1%40linaro.org
-patch subject: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-dtschema version: 2024.6.dev1+g833054f
-reproduce: (https://download.01.org/0day-ci/archive/20240608/202406080603.d9mWzFV2-lkp@intel.com/reproduce)
+>
+> > - Keep track if zswap was ever enabled and make the warning
+> > conditional on it. We should also always fallback to order-0 if zswap
+> > was ever enabled.
+>
+> IMHO, falling back to order-0 inside zswap is not desired because it
+> complicates the zswap code. We should not pass large folio to zswap if
+> zswap is not ready to handle large folio. The core swap already has
+> the fall back to order-0. If we get to 3), then this fall back in
+> zswap needs to be removed. It is a transitional thing then maybe not
+> introduce it in the first place.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406080603.d9mWzFV2-lkp@intel.com/
+We cannot split the folio inside zswap. What I meant is that the
+swapin code should fallback to order-0 if zswap is being used, to
+avoid passing large folios to zswap.
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:263.22-266.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:268.22-273.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:275.24-278.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:280.22-283.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:285.22-288.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:290.29-293.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:305.11-309.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:311.11-315.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
->> arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: audio-codec@1d: Unevaluated properties are not allowed ('port' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
-   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
-   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
-   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
---
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:396.22-399.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:401.22-406.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:408.24-411.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:413.22-416.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:418.22-421.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:423.29-426.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:438.11-442.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:444.11-448.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
->> arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: audio-codec@1b: Unevaluated properties are not allowed ('port' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/usb@65a00000: failed to match any schema with compatible: ['socionext,uniphier-dwc3', 'snps,dwc3']
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
-   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> > - Properly handle large folio swapin with zswap.
+> That obviously is ideal.
+>
+> Chris
 
