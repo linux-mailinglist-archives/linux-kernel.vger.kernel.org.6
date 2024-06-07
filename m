@@ -1,55 +1,50 @@
-Return-Path: <linux-kernel+bounces-205871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A69790019C
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA12090019D
 	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D02F1C20FF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:08:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F1DB2465D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF62C188CC5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B48188CAE;
 	Fri,  7 Jun 2024 11:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b="Gexfb3JH"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b="XitJNlei"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5B2187347
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 11:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4930B187350;
+	Fri,  7 Jun 2024 11:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717758478; cv=none; b=oZJmCjMy+wBqXFXBBbaanIpsbrkRo/cDCh874OIjtCegTfru3zgxITCCw5rUy9TrRwURcvnnpSDd5NzSzyueqs5SsVRhn8qiU1b3Gb8nKDeh82/3vcgtCF3WRd5BBfuu+lEDRSg0ADKode4SC8cc5n2/6Ut46g2ezNx+VgXO+e8=
+	t=1717758478; cv=none; b=sIyrFhsBLK3IgjWJZK2PmYW5Ppdty+ZmWJw965NfOVfWbesLyMlgWi43os6QiYZVYmGVP9RIBUYKElB/vkPX0t30I7EaAZi9BYPCrSOVTsDsgbJNW12ZZyTbWbOrJBKmviSzt0BoNq6uOtw9ixB3lcuU3mOnmrD6+zn4x8YEHM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717758478; c=relaxed/simple;
-	bh=2YY9nJ9us6W8sg8R/K99i1gxDwm586BvWRkpL2Ei9Cc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bB0WDeXkTwPn6cvhuQzfMpXlsCTdhgxI4+e3x4vjt+GXYfT23+RzDpBL7FyuS3TzITKX6Wp1cZtk5D/48CpHcqWcETVNx4GCNhWYcEGIokluliqbvdI0loSXKWSSJ+Zt1QimJTLifs/t8W4bU0JPRQPoP0Lh1MCalniHsebQsNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net; spf=pass smtp.mailfrom=malaika-12.net; dkim=pass (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b=Gexfb3JH; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=malaika-12.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=malaika-12.net; s=ds202404; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4XVwT+1xZpy/lG8yfKHYuh7fLl01Y2uuzW0Fd0rqGks=; b=Gexfb3JHbr4rq9nfeqnRQXNVaR
-	S15amrB0CJg/G5eP+j3yNEMEGDP88sVz4c3OtlvAuiqJpE567QMoQ60GXqidS7ErSvHX84hGiAF+K
-	qEs3y190mveyYXJTcVS+TPwDl+YFMbkdBp2IacX17rLK+PNMBLJtkOF3k9mOHpL+sDS30tqkPKL2M
-	SwTIAclmQaxNfxVUprjtAMSZ150xe1YLbSTFTFPgaQZ6/JfxiOuClQNivj6HSysZXhb9mB7UA7L6J
-	f9o4of9wiDxvUrXFsTZy/SAIySVU9P474afuk+nwIWMqTf3y1v/PKF4Q+spNP045zgdBVXxVkccdx
-	uIicKWmg==;
-Received: from [2a02:fe1:716d:5f00:20ea:232d:8efa:3ff6] (port=63347)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <BIT@malaika-12.net>)
-	id 1sFXRk-00831Q-Iq
-	for linux-kernel@vger.kernel.org;
-	Fri, 07 Jun 2024 13:07:48 +0200
-Message-ID: <a9f241ec-5885-456d-97cf-895c680abfce@malaika-12.net>
+	bh=n0Kvyk+T+RtB/i+4T/qp6gEW7032T5bG4AfcmuA3ORA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qhlNmmYrX/4o1wUfT3f+JlnLrPiMZiGtqdKIbeUNBKE3KBKVpnT8Ome0GrewcGjsTvyd7hNCsup/Fnu79JYYD+RZDV8e7xqio5jdUySCXooXAd1X3OuiHTgFmJjr5IyDY4SNTp7lzBRWBEaDeYJMCsGvZyGaWUNJ+4RbyzdTCh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io; spf=pass smtp.mailfrom=gtucker.io; dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b=XitJNlei; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gtucker.io
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C1BC1BF204;
+	Fri,  7 Jun 2024 11:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gtucker.io; s=gm1;
+	t=1717758468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CJUCbM546q0LNVWlhbxcY9aawRMHmngLwnBnq4OdBYc=;
+	b=XitJNlei8F6drUPTvnCYDL/f93y60prNCd9OHDeWV92QxHGeTgQTsd6f9bCuk9DLPWMbSq
+	26ziB2MEtIT20BO8XyGai8wQ/nV67nEMAC8Uj+DHPO309VXac1msGXy7Dg/SXSvE7WFrXW
+	Aupejt5cq9TCsgf39zkzzzwfhYrpq7/Iove7FNg2sikueRw8aplSP0GRNYwdVNFHrmLAhF
+	+5KjvYE0TWkAcsOVmb8xfDfmLuRb5xg9d/9nFZrrNuT1eDz4Ky2iHY5JF0ga1mphGl66GQ
+	gz7iU9aDQg88jwBw2ngoXr1RwK/iD2FgPrg72sDPPiOBpJrk5b5y4Lwi6aPJSw==
+Message-ID: <e7ca4831-4e4a-4a7a-a310-459f102154e5@gtucker.io>
 Date: Fri, 7 Jun 2024 13:07:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,23 +53,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <BIT@malaika-12.net>
-Subject: "Gay" vs(!?) Islam (The Vast X, was Fair Pay Philosophy, Low Jitter)
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: Kernel Testing & Dependability Micro-Conference at LPC 2024
+From: Guillaume Tucker <gtucker@gtucker.io>
+To: automated-testing@lists.yoctoproject.org, kernelci@lists.linux.dev,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kunit-dev@googlegroups.com
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>
+References: <aba2b2c0-ebb9-45e3-b14a-2321b7770e03@gtucker.io>
+Content-Language: en-GB
+Organization: gtucker.io
+In-Reply-To: <aba2b2c0-ebb9-45e3-b14a-2321b7770e03@gtucker.io>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: gtucker@gtucker.io
 
-The debate seems polarized on "Gay".
+On 10/05/2024 20:43, Guillaume Tucker wrote:
+> Hello,
+> 
+> We're pleased to announce the return of the Kernel Testing &
+> Dependability Micro-Conference at Linux Plumbers 2024:
+> 
+>   https://lpc.events/event/18/contributions/1665/
+> 
+> You can already submit proposals by selecting the micro-conf in
+> the Track drop-down list:
+> 
+>   https://lpc.events/login/?next=/event/18/abstracts/%23submit-abstract
+> 
+> Please note that the deadline for submissions is *Sunday 16th June*
 
-In Islam and The Quran, one may consider esoteric referances to Lut, a 
-prophet of Sodom/Gomorrah, in modern times, 2nd millennium, where many 
-people consider "gay" a normalicy.
+The deadline has now been extended to *Sunday 14th July*
 
-There is indeed no conflict here.
+This is to be better aligned with other MCs and to give more time
+to submit topics.  The reason for having a rather early deadline
+was based on the feedback that it helps to have a response early,
+especially for those who need approval to book their trip.
 
-More awareness to this please, on the topic.
+So the new deadline is when we'll start finalising the schedule
+to submit to the LPC organisers (Steven).  If you do require any
+earlier feedback then please let us know when sending your
+proposal and we'll take a look on a case-by-case basis.
 
-The Light Be With You.
+> The event description contains a list of suggested topics
+> inherited from past editions.  Is there anything in particular
+> you would like to see discussed this year?
+> 
+> Knowing people's interests helps with triaging proposals and
+> making the micro-conf as relevant as possible.  See you there!
 
+Thanks,
+Guillaume
 
 
