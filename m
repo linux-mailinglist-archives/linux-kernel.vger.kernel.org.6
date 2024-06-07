@@ -1,108 +1,174 @@
-Return-Path: <linux-kernel+bounces-205951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BB0900288
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550F890028A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752D6289F3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C967B1F25062
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD62C1922E5;
-	Fri,  7 Jun 2024 11:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A094C18FDB2;
+	Fri,  7 Jun 2024 11:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j23Vd2yJ"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWAuWg/v"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8F5190677;
-	Fri,  7 Jun 2024 11:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E7E187358;
+	Fri,  7 Jun 2024 11:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717760703; cv=none; b=REGd/ny2lx13wE1O9UMBOJdU2DAEZprLvRg1VCQVaAI/FYeWI5qlmRrm7rDrQ0OcuuOQxZ02Tx4lVIhsh+xFLeYnXCKcuiwyiTMdMNWtnkcWm3Nx8sj2Ow3/BnaLm4c8reSmh9QUDURiaU0ESINVy5zLuX1cxe829oJpMLCKFtM=
+	t=1717760791; cv=none; b=RtFltLRBznglxpQTKm0zYKEG/bVkhRFZg6vTyB/14z6MhryMZ3ogEPbK01BPcuMBBadTWNvQC6MAnmv2m+mG0xpKxRht3W6DgZBRcbIMoEdcC/TeAvhiicTj7a+KvdHgD7L4dBwqJpIVEODE3MLuStjPkJJ4Hl4faBZv9KkwTOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717760703; c=relaxed/simple;
-	bh=oH7JSpB3Cd38sZyLfT7KUft20euD8fi4ppXRSN6PghA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nB2uSyq8mi72R6SRpr//N9qDFj9lXr7APZ0BWTtQkC0vTkGtVLxH1zWdGinehyr7z13UaUUXdvLpvLBwZKWFGsMGhHo5mVvn5HlU1WBqad/Iu6CyVPchP9rw3+B0yraXpvxoX2oPOr47xUxu0dr7mI3lqXyJbGGS3qIdySxYS/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j23Vd2yJ; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1717760791; c=relaxed/simple;
+	bh=MksdrsbJ5svjzf6jDBrszTDyTVTa0+EnUEUUE1OZVxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lMvmjVzp0LMTgQFU8v1A/hheYxs7lTLx73uIAKDENhZVaYAx1NkOKLCisSGOT75tsSQ51Nq0CHpllIEbXskfIukONFRIFyEvV4cxCPYnJIRmLo/l4G5mgZHdZy65oUXgAaP5tuFi92bjvrRd6Gd0Dt3s17EDO8rWdoGs9ADHD5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWAuWg/v; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a526c6a2cso2309038a12.2;
-        Fri, 07 Jun 2024 04:45:01 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c28d50f16aso1442021a91.0;
+        Fri, 07 Jun 2024 04:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717760700; x=1718365500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IoQecm4ayqWX0WKHZ3t6ORIyRBXsFm7NqUI7shHNHGE=;
-        b=j23Vd2yJqEmI4hAY8ne2biN5WXtAEjec4tRLsJ5j/Zp+FtgRgeEWVP1hQsddLZASuZ
-         /kHrFDo2dG8xmQ36gPNw7q3FDEX2REOWhfpuZviqdZFr2XoPfNI2ReKSFPy5AORHwU7T
-         8yzHZ7XlNBcKEha9B0d/VDRhJ1hLjQFXiPhDCv8ETktz2zHA7sMhT9SXK58uPYZCwGfc
-         tmLy6bS0gDX6pbBxKPPw7alR05T/RandozoC8C13ABRPdEUgnJ/ru/YHQ6dER6d8TAdh
-         pdefuyEtUfjqGjCQIZFqABIrkIBVbXyMX7pphmyRS1zs6o0FpG4ZGB8erJG+uXE7VYnp
-         x57g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717760700; x=1718365500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717760790; x=1718365590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IoQecm4ayqWX0WKHZ3t6ORIyRBXsFm7NqUI7shHNHGE=;
-        b=p9KwZrZQjzMt1j26p0ULqUU5UeXcP0balOY8QfXdBUL2jr8KOLa9S5sG17auFeRzmW
-         DDdp4Ue0ZbxGSiFWK1by4fKwN0gHh+cnrsJ4LEA2zf2Wyt6GAc2oZIxUAqZW/RLq3aKm
-         GKUP8oqL72oBziZ8FI0M0tDAL+xKuWvq45nHh/h91mLNn2Sms9Gabw6v4+iZRD5zn9yR
-         QFdZFyi0ouesIRTHor5rqwV4ImXlI+GPvLxSjQPI8uX9kilLjvpm5V8jzALMWgE1M9R3
-         kSUGij49dpYRRhXI9Q7tm8QBefYi+PNsRfOw0Ak45LIOoH1Rp0MNmHEY0YaIQFTeZJeO
-         X/vA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO5ksBjtDfUj8xOUXzrt2BIGbJ6grDqa5P0JwS8q30b307dvoDM0y2PqB/KEppx0zc0bs3eQeBr7oAmkXYtjvu7+8jy9wrC09h8U5c2TbaYQ18c7RjtYNe1go1kNw3h3aHfVtHGf1MfMIc7Pgb4cf/mxcLOJXzicTPWJjB3z8Htg==
-X-Gm-Message-State: AOJu0YzOUKDWLQXsRfp1Tz9rdw0tro/tqUX7A3G+7d9pqKKFM7QY717K
-	sJJMDq1+GBi1J/fS0/JA+dXBkBXFw+IzFsxLzFhPX6W2JavFbp6t
-X-Google-Smtp-Source: AGHT+IFERkzOKrN8hPfwdgNs5OTSWrRA125xle8uF1PHtkoUGnXz1RZetl0nvFP95frkRyFdnkc6Yw==
-X-Received: by 2002:a50:9b4b:0:b0:57c:5f88:d066 with SMTP id 4fb4d7f45d1cf-57c5f88d07cmr597884a12.8.1717760699756;
-        Fri, 07 Jun 2024 04:44:59 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae201d09sm2617442a12.75.2024.06.07.04.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 04:44:59 -0700 (PDT)
-Date: Fri, 7 Jun 2024 14:44:56 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
-	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 11/13] net: dsa: lantiq_gswip: Fix comments in
- gswip_port_vlan_filtering()
-Message-ID: <20240607114456.sm2wwtu4aqbyn3sk@skbuf>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-12-ms@dev.tdt.de>
+        bh=FAkUIoGQHtxZMPQO45fRmdhKtMVjNeA1ZhO0yG7ZitE=;
+        b=hWAuWg/v2CX35DmdlG0GSWFmJGZCOVsp021pgw6ESucr3PUd9gKh+Ty5MGli4STDxI
+         CI3qrInjN5f/LDdaqPW+36XVhw32qusjsO6GvixcVX7G1tNkWZJvOE07jnl2fJdhwq+y
+         82fJMGgU1RBc2icGZLNFzBMG7W+0buhIt1L7V1WBwWV/UjRMNg/JyyAmi0WbJKR4s/cN
+         HLc6wmxovcEf6TXsURBPjEXsk2GFHWccRrAp2PVeap+JVzWk56iGw31WorfR7PQMcRBO
+         Gm1CXzEcURztJ5OfERVshPP6oDpzyxyO8yeOT3uo+YOsrDXjVYyxFp2l7b7F0CpqVd9u
+         ixMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717760790; x=1718365590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FAkUIoGQHtxZMPQO45fRmdhKtMVjNeA1ZhO0yG7ZitE=;
+        b=cTeoLUtKN5j0+tRWrgd+LFWXegIIKsWIaQIbBi9zsmbJVZc4ybJuOOcDcn+8pLaDz8
+         chxyYZzG7Xexg+hpNHdtYNYQ7LD2+Rt5bH4P2NIALUMvvwvzRQwTQbSwvf6X0xOBBBeE
+         Y7V59QGb0EObiFn4kG+CbvZU9pL7JXqAlMcQuaN15ZSlm76BMjq8gQKYFCwO9m2BOdPq
+         liYjDhyWfC+HANUBxfftTJb1UdqLgE2zCZesa16vchJ9A2KqnWje/YlotKPQSvwz8wSg
+         jHMwZGUGumHX17LyeRqWy7+KEmmtxvpbSduTdNMwXkfD17hPugBZmsrfJXXzzeZGqGm7
+         WVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKGnNV0OCYBiDPn9IG0TmSuZRCkRlB6be2W5CxWKTMOCJmT6+2zl3s0jRLmuHho6Z3jPSoNwYyWhttDp2PsFUAO/OYCynpgbqs5Ex9czjkVVgKU/k7UgP6SU414L70rQhzWP8V657EOJ1u5e0NWZDpM5KmpYxKGtH98I01LXN4tkZErWQpz1gxdJG4ow5dbn0=
+X-Gm-Message-State: AOJu0YwP3fdXGi1UYcBA2cYBEz+6yLYuBR9yC0E65zi3ne0dVLkDQVh3
+	KZab/9xp8Y90tpg42fBQMlSzlGXHLqNbgFAOXlbAoD+BBRgXAz5cL1KHQNLRUR/qd+GDMxeHam/
+	ZRsvpA9/c3uKnI5yEuqPQaGxM0Hs=
+X-Google-Smtp-Source: AGHT+IF6/OJhB7sayOU4uVkxQbEc9EJA8bdBUJ3pZJ8OjFRI0rIXJFvSLeMQYgIiS1t0pohJABV53TlTzJelBVh0v7o=
+X-Received: by 2002:a17:90b:b07:b0:2c2:4107:4cb1 with SMTP id
+ 98e67ed59e1d1-2c299a4764cmr6660301a91.24.1717760788894; Fri, 07 Jun 2024
+ 04:46:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606085234.565551-12-ms@dev.tdt.de>
+References: <20240606193318.GK8774@noisy.programming.kicks-ass.net>
+ <20240607094329.3878781-1-aliceryhl@google.com> <20240607105232.GP8774@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240607105232.GP8774@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 7 Jun 2024 13:46:16 +0200
+Message-ID: <CANiq72=4y84CrmkP-QsrW7YYNbpNJRim3oFK=kfEE8oin38pMQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: add static_call support
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, a.hindborg@samsung.com, alex.gaynor@gmail.com, 
+	ardb@kernel.org, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, jbaron@akamai.com, 
+	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, ojeda@kernel.org, rostedt@goodmis.org, 
+	rust-for-linux@vger.kernel.org, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 10:52:32AM +0200, Martin Schiller wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> Update the comments in gswip_port_vlan_filtering() so it's clear that
-> there are two separate cases, one for "tag based VLAN" and another one
-> for "port based VLAN".
-> 
-> Suggested-by: Martin Schiller <ms@dev.tdt.de>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
+On Fri, Jun 7, 2024 at 12:52=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> I'm sorry, but 30+ years of reading ! as NOT (or factorial) isn't going
+> to go away. So I'm reading your macros do NOT rule.
 
-Here and in whatever the previous patch turns into: please make more
-careful use of the word "fix". It carries connotations of addressing
-bugs which must be backported. Various automated tools scan the git tree
-for bug fixes which were apparently "not properly submitted" and mark
-them for auto-selection to stable. You don't want to cause that for a
-minor comment.
+It makes it clear what is macro call or not. They could have gone for
+UPPERCASE names (for instance), yes. On the other hand, they do not
+work like C macros and are ~hygienic, so it also makes sense to avoid
+confusion here.
+
+I mean, I am not suggesting to do a CPP-pass to Rust files, but if
+someone really, really wanted to mix them in a single file, it would
+be nice to not confuse the two kinds. :)
+
+Generally they feel "closer" to the language (given what they
+do/support) compared to the CPP ones, so it also makes sense they
+don't "shout" so much compared to UPPERCASE, if that makes sense.
+
+> The above exaple fails, because the next token is :ident, whatever the
+> heck that might be. Also, extra points for line-noise due to lack of
+> whitespace.
+
+$name:ident means "match what Rust would consider an identifier here
+and call it $name for the purposes of this macro".
+
+So, for instance, $x:ident matches:
+
+    a
+    a2
+    a_b
+
+But it would not match:
+
+    2a
+    a-b
+    a _b
+
+For the usual reasons why those are not identifiers.
+
+https://godbolt.org/z/G7v4j67dc
+
+    fn f(x: i32) -> i32 {
+        x * 2
+    }
+
+    macro_rules! f {
+        ($x:ident) =3D> { $x * 2 }
+    }
+
+    fn main() {
+        let a =3D 42;
+
+        let b =3D f(a);       // Function.
+        let c =3D f!(a);      // Macro.
+
+        //let c =3D f!(a2);   // Works, but the variable does not exist.
+        //let c =3D f!(2a);   // Error: no rules expected the token `2a`.
+
+        //let c =3D f!(a_b);  // Works, but the variable does not exist.
+        //let c =3D f!(a-b);  // Error: no rules expected the token `-`.
+        //let c =3D f!(a_ b); // Error: no rules expected the token `b`.
+
+        println!("{a} {b} {c}");
+    }
+
+I hope this makes it clearer.
+
+> You just need to extend the rust thing to be able to consume C header
+> files.
+
+I agree, because in practice it is quite useful for a language like
+Rust that consuming C header files is "natively" supported.
+
+Though it also has downsides and is a big decision, which is why, like
+Alice mentioned, some people agree, and some people don't.
+Nevertheless, we have been doing our best for a long time to get the
+best we can for the kernel -- just 2 days ago we told the Rust project
+in one of our meetings that it would be nice to see that particular
+"project goal" from that document realized (among others).
+
+Cheers,
+Miguel
 
