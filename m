@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-205326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059118FFA9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:37:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E86F8FFA9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 06:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13EC1C23F8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB7228B070
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 04:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC854481DB;
-	Fri,  7 Jun 2024 04:27:23 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2480A156F3D;
+	Fri,  7 Jun 2024 04:27:20 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15295249EB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD936155725
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 04:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717734438; cv=none; b=SHPf1rnGlm7gZTb8ckUN0uwloV0igQM+QVPasbDKqNViwTQZQ00O5Se3Pf/NMb6kJAlJO4/lvx5CcuYjE58Tsh3JyV4V/zAM9hCK/fcIvUyVYCxA5bvRJh9Iw4n8raqfmoFBOUNa0AGTqaq7Dhv1ynCfBRvTDCQHtYtE0aaqiHc=
+	t=1717734437; cv=none; b=b9AJVH07G9wjN6kEqbMYJBr+/sSwyuWObtqEnlnCsvvZxBrXC1+YWDUn1yhSGEy3g9u4OUGGBNYwxKBmxndycXqVjOXUiKOEQwHzQv5sJaZZ+9nOfIHKHn8ikzc5AjpfaFHcrV0oUCLaY+I1j2PSjua8Vfli6mSH8G9fIyMXCQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717734438; c=relaxed/simple;
-	bh=TGMuAjRvyi3YZyVNnvdRhTSdRzZ4jwA4rrb5ytNGWHY=;
+	s=arc-20240116; t=1717734437; c=relaxed/simple;
+	bh=0ekW811BJTAdhH3L6Rh9dqVnWqig5l1/Fqnxj0JnUzA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VBB05aioXWwvRICFWxY+/C4sRYkcsypefgk/O5Xc8iCz7x4vDtXmWqjU7MPwKHsUMw6aU3yfNp6r/b9P9eMHkxEAFJxgyHGOzeMXWQ9pAv5DAT2/Lr55IbF5Rz+oTOVux5orii7FFKG/atbeh30gnIFlBI86CJcwnXXXWubd7JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=qQ2On0zNew1ZsahS/pGeFlxOO/rV/aRnE4DtCXV7+I18vFcI+L1qDEcbLJy8xP0BOEkBkNohlk0m7QrmSMFncEEYaZTs1LDCJe+gCSUt8niF/F91y4HF0JT7zmWWxVnQwZ/2AYy3q5TH5rT/c8atIda6lKOVnd33p6343RZdCMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VwSkb4Lq2zPpnC;
-	Fri,  7 Jun 2024 12:23:51 +0800 (CST)
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VwSj7191czmYSJ;
+	Fri,  7 Jun 2024 12:22:35 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id D8B5618007E;
+	by mail.maildlp.com (Postfix) with ESMTPS id EF14A180085;
 	Fri,  7 Jun 2024 12:27:10 +0800 (CST)
 Received: from huawei.com (10.175.104.67) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
@@ -43,9 +43,9 @@ To: <richard@nod.at>, <david.oberhollenzer@sigma-star.at>,
 	<miquel.raynal@bootlin.com>, <yi.zhang@huawei.com>, <xiangyang3@huawei.com>,
 	<huangxiaojia2@huawei.com>
 CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH mtd-utils 037/110] ubifs-utils: Adapt lpt subsystem in libubifs
-Date: Fri, 7 Jun 2024 12:25:02 +0800
-Message-ID: <20240607042615.2069840-38-chengzhihao1@huawei.com>
+Subject: [RFC PATCH mtd-utils 038/110] ubifs-utils: Adapt tnc subsystem in libubifs
+Date: Fri, 7 Jun 2024 12:25:03 +0800
+Message-ID: <20240607042615.2069840-39-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607042615.2069840-1-chengzhihao1@huawei.com>
 References: <20240607042615.2069840-1-chengzhihao1@huawei.com>
@@ -60,1362 +60,875 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 
-Adapt lpt subsystem(lpt.c,lprops.c,lpt_commit.c) in libubifs, compared
+Adapt tnc subsystem(tnc.c,tnc_misc.c,tnc_commit.c) in libubifs, compared
 with linux kernel implementations:
- 1. Remove debug related functions(eg. dbg_chk_lpt_sz, dbg_chk_pnode),
-    some of debug functions are not needed by fsck, because fsck will
-    check fs in another way.
- 2. Remove some functions(eg. ubifs_create_dflt_lpt) which won't be used
+ 1. Remove debug related functions(eg. dbg_check_inode_size), debug
+    functions are not needed by fsck, because fsck will check fs in
+    another way.
+ 2. Remove some functions(eg. ubifs_tnc_bulk_read) which won't be used
     in fsck/mkfs.
- 3. Adapt do_calc_lpt_geom() to mkfs/fsck situations.
- 4. Adapt calc_dflt_lpt_geom to support the mkfs tool, and export it.
- 5. Adapt ubifs_create_lpt() according to create_lpt(mkfs), make sure that
-    the height of created lpt is right.
+ 3. Adapt tnc_delete and ubifs_search_zbranch to handle empty TNC case,
+    which could happen in fsck.
+ 4. Don't skip checking the length of non-leaf index node's branch in
+    read_znode.
+ 5. Adapt try_read_node to ignore %-EBADMSG, subsequent steps will check
+    nodes carefully.
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- ubifs-utils/libubifs/lprops.c     | 484 +-------------------------------------
- ubifs-utils/libubifs/lpt.c        | 381 +++++++++---------------------
- ubifs-utils/libubifs/lpt_commit.c | 235 ++----------------
- 3 files changed, 136 insertions(+), 964 deletions(-)
+ ubifs-utils/libubifs/tnc.c        | 590 +-------------------------------------
+ ubifs-utils/libubifs/tnc_commit.c |  18 +-
+ ubifs-utils/libubifs/tnc_misc.c   | 108 ++-----
+ 3 files changed, 43 insertions(+), 673 deletions(-)
 
-diff --git a/ubifs-utils/libubifs/lprops.c b/ubifs-utils/libubifs/lprops.c
-index 6d6cd85c..84cdb353 100644
---- a/ubifs-utils/libubifs/lprops.c
-+++ b/ubifs-utils/libubifs/lprops.c
-@@ -16,7 +16,13 @@
-  * an empty LEB for the journal, or a very dirty LEB for garbage collection.
+diff --git a/ubifs-utils/libubifs/tnc.c b/ubifs-utils/libubifs/tnc.c
+index 0fabecd9..12c56e0a 100644
+--- a/ubifs-utils/libubifs/tnc.c
++++ b/ubifs-utils/libubifs/tnc.c
+@@ -18,9 +18,15 @@
+  * the mutex locked.
   */
  
+-#include <linux/crc32.h>
+-#include <linux/slab.h>
 +#include "linux_err.h"
 +#include "bitops.h"
 +#include "kmem.h"
++#include "crc32.h"
  #include "ubifs.h"
 +#include "defs.h"
 +#include "debug.h"
++#include "key.h"
 +#include "misc.h"
  
- /**
-  * get_heap_comp_val - get the LEB properties value for heap comparisons.
-@@ -47,7 +53,8 @@ static int get_heap_comp_val(struct ubifs_lprops *lprops, int cat)
-  * is either the amount of free space or the amount of dirty space, depending
-  * on the category.
-  */
--static void move_up_lpt_heap(struct ubifs_info *c, struct ubifs_lpt_heap *heap,
-+static void move_up_lpt_heap(__unused struct ubifs_info *c,
-+			     struct ubifs_lpt_heap *heap,
- 			     struct ubifs_lprops *lprops, int cat)
+ static int try_read_node(const struct ubifs_info *c, void *buf, int type,
+ 			 struct ubifs_zbranch *zbr);
+@@ -488,7 +494,7 @@ static int try_read_node(const struct ubifs_info *c, void *buf, int type,
+ 	dbg_io("LEB %d:%d, %s, length %d", lnum, offs, dbg_ntype(type), len);
+ 
+ 	err = ubifs_leb_read(c, lnum, buf, offs, len, 1);
+-	if (err) {
++	if (err && err != -EBADMSG) {
+ 		ubifs_err(c, "cannot read node type %d from LEB %d:%d, error %d",
+ 			  type, lnum, offs, err);
+ 		return err;
+@@ -929,7 +935,7 @@ static int fallible_resolve_collision(struct ubifs_info *c,
+ 				      int adding)
  {
- 	int val1, val2, hpos;
-@@ -84,7 +91,8 @@ static void move_up_lpt_heap(struct ubifs_info *c, struct ubifs_lpt_heap *heap,
-  * greater.  In the case of LPT's category heaps, the value is either the amount
-  * of free space or the amount of dirty space, depending on the category.
-  */
--static void adjust_lpt_heap(struct ubifs_info *c, struct ubifs_lpt_heap *heap,
-+static void adjust_lpt_heap(__unused struct ubifs_info *c,
-+			    struct ubifs_lpt_heap *heap,
- 			    struct ubifs_lprops *lprops, int hpos, int cat)
- {
- 	int val1, val2, val3, cpos;
-@@ -191,16 +199,13 @@ static int add_to_lpt_heap(struct ubifs_info *c, struct ubifs_lprops *lprops,
- 			lprops->hpos = cpos;
- 			heap->arr[cpos] = lprops;
- 			move_up_lpt_heap(c, heap, lprops, cat);
--			dbg_check_heap(c, heap, cat, lprops->hpos);
- 			return 1; /* Added to heap */
- 		}
--		dbg_check_heap(c, heap, cat, -1);
- 		return 0; /* Not added to heap */
- 	} else {
- 		lprops->hpos = heap->cnt++;
- 		heap->arr[lprops->hpos] = lprops;
- 		move_up_lpt_heap(c, heap, lprops, cat);
--		dbg_check_heap(c, heap, cat, lprops->hpos);
- 		return 1; /* Added to heap */
- 	}
- }
-@@ -226,7 +231,6 @@ static void remove_from_lpt_heap(struct ubifs_info *c,
- 		heap->arr[hpos]->hpos = hpos;
- 		adjust_lpt_heap(c, heap, heap->arr[hpos], hpos, cat);
- 	}
--	dbg_check_heap(c, heap, cat, -1);
+ 	struct ubifs_znode *o_znode = NULL, *znode = *zn;
+-	int o_n, err, cmp, unsure = 0, nn = *n;
++	int err, cmp, o_n = 0, unsure = 0, nn = *n;
+ 
+ 	cmp = fallible_matches_name(c, &znode->zbranch[nn], nm);
+ 	if (unlikely(cmp < 0))
+@@ -1427,42 +1433,6 @@ static int lookup_level0_dirty(struct ubifs_info *c, const union ubifs_key *key,
  }
  
  /**
-@@ -837,471 +841,3 @@ const struct ubifs_lprops *ubifs_fast_find_frdi_idx(struct ubifs_info *c)
- 	ubifs_assert(c, lprops->free + lprops->dirty == c->leb_size);
- 	return lprops;
- }
--
--/*
-- * Everything below is related to debugging.
+- * maybe_leb_gced - determine if a LEB may have been garbage collected.
+- * @c: UBIFS file-system description object
+- * @lnum: LEB number
+- * @gc_seq1: garbage collection sequence number
+- *
+- * This function determines if @lnum may have been garbage collected since
+- * sequence number @gc_seq1. If it may have been then %1 is returned, otherwise
+- * %0 is returned.
 - */
+-static int maybe_leb_gced(struct ubifs_info *c, int lnum, int gc_seq1)
+-{
+-	int gc_seq2, gced_lnum;
+-
+-	gced_lnum = c->gced_lnum;
+-	smp_rmb();
+-	gc_seq2 = c->gc_seq;
+-	/* Same seq means no GC */
+-	if (gc_seq1 == gc_seq2)
+-		return 0;
+-	/* Different by more than 1 means we don't know */
+-	if (gc_seq1 + 1 != gc_seq2)
+-		return 1;
+-	/*
+-	 * We have seen the sequence number has increased by 1. Now we need to
+-	 * be sure we read the right LEB number, so read it again.
+-	 */
+-	smp_rmb();
+-	if (gced_lnum != c->gced_lnum)
+-		return 1;
+-	/* Finally we can check lnum */
+-	if (gced_lnum == lnum)
+-		return 1;
+-	return 0;
+-}
 -
 -/**
-- * dbg_check_cats - check category heaps and lists.
+  * ubifs_tnc_locate - look up a file-system node and return it and its location.
+  * @c: UBIFS file-system description object
+  * @key: node key to lookup
+@@ -1512,300 +1482,6 @@ out:
+ }
+ 
+ /**
+- * ubifs_tnc_get_bu_keys - lookup keys for bulk-read.
 - * @c: UBIFS file-system description object
+- * @bu: bulk-read parameters and results
 - *
-- * This function returns %0 on success and a negative error code on failure.
+- * Lookup consecutive data node keys for the same inode that reside
+- * consecutively in the same LEB. This function returns zero in case of success
+- * and a negative error code in case of failure.
+- *
+- * Note, if the bulk-read buffer length (@bu->buf_len) is known, this function
+- * makes sure bulk-read nodes fit the buffer. Otherwise, this function prepares
+- * maximum possible amount of nodes for bulk-read.
 - */
--int dbg_check_cats(struct ubifs_info *c)
+-int ubifs_tnc_get_bu_keys(struct ubifs_info *c, struct bu_info *bu)
 -{
--	struct ubifs_lprops *lprops;
--	struct list_head *pos;
--	int i, cat;
+-	int n, err = 0, lnum = -1, offs;
+-	int len;
+-	unsigned int block = key_block(c, &bu->key);
+-	struct ubifs_znode *znode;
 -
--	if (!dbg_is_chk_gen(c) && !dbg_is_chk_lprops(c))
+-	bu->cnt = 0;
+-	bu->blk_cnt = 0;
+-	bu->eof = 0;
+-
+-	mutex_lock(&c->tnc_mutex);
+-	/* Find first key */
+-	err = ubifs_lookup_level0(c, &bu->key, &znode, &n);
+-	if (err < 0)
+-		goto out;
+-	if (err) {
+-		/* Key found */
+-		len = znode->zbranch[n].len;
+-		/* The buffer must be big enough for at least 1 node */
+-		if (len > bu->buf_len) {
+-			err = -EINVAL;
+-			goto out;
+-		}
+-		/* Add this key */
+-		bu->zbranch[bu->cnt++] = znode->zbranch[n];
+-		bu->blk_cnt += 1;
+-		lnum = znode->zbranch[n].lnum;
+-		offs = ALIGN(znode->zbranch[n].offs + len, 8);
+-	}
+-	while (1) {
+-		struct ubifs_zbranch *zbr;
+-		union ubifs_key *key;
+-		unsigned int next_block;
+-
+-		/* Find next key */
+-		err = tnc_next(c, &znode, &n);
+-		if (err)
+-			goto out;
+-		zbr = &znode->zbranch[n];
+-		key = &zbr->key;
+-		/* See if there is another data key for this file */
+-		if (key_inum(c, key) != key_inum(c, &bu->key) ||
+-		    key_type(c, key) != UBIFS_DATA_KEY) {
+-			err = -ENOENT;
+-			goto out;
+-		}
+-		if (lnum < 0) {
+-			/* First key found */
+-			lnum = zbr->lnum;
+-			offs = ALIGN(zbr->offs + zbr->len, 8);
+-			len = zbr->len;
+-			if (len > bu->buf_len) {
+-				err = -EINVAL;
+-				goto out;
+-			}
+-		} else {
+-			/*
+-			 * The data nodes must be in consecutive positions in
+-			 * the same LEB.
+-			 */
+-			if (zbr->lnum != lnum || zbr->offs != offs)
+-				goto out;
+-			offs += ALIGN(zbr->len, 8);
+-			len = ALIGN(len, 8) + zbr->len;
+-			/* Must not exceed buffer length */
+-			if (len > bu->buf_len)
+-				goto out;
+-		}
+-		/* Allow for holes */
+-		next_block = key_block(c, key);
+-		bu->blk_cnt += (next_block - block - 1);
+-		if (bu->blk_cnt >= UBIFS_MAX_BULK_READ)
+-			goto out;
+-		block = next_block;
+-		/* Add this key */
+-		bu->zbranch[bu->cnt++] = *zbr;
+-		bu->blk_cnt += 1;
+-		/* See if we have room for more */
+-		if (bu->cnt >= UBIFS_MAX_BULK_READ)
+-			goto out;
+-		if (bu->blk_cnt >= UBIFS_MAX_BULK_READ)
+-			goto out;
+-	}
+-out:
+-	if (err == -ENOENT) {
+-		bu->eof = 1;
+-		err = 0;
+-	}
+-	bu->gc_seq = c->gc_seq;
+-	mutex_unlock(&c->tnc_mutex);
+-	if (err)
+-		return err;
+-	/*
+-	 * An enormous hole could cause bulk-read to encompass too many
+-	 * page cache pages, so limit the number here.
+-	 */
+-	if (bu->blk_cnt > UBIFS_MAX_BULK_READ)
+-		bu->blk_cnt = UBIFS_MAX_BULK_READ;
+-	/*
+-	 * Ensure that bulk-read covers a whole number of page cache
+-	 * pages.
+-	 */
+-	if (UBIFS_BLOCKS_PER_PAGE == 1 ||
+-	    !(bu->blk_cnt & (UBIFS_BLOCKS_PER_PAGE - 1)))
 -		return 0;
+-	if (bu->eof) {
+-		/* At the end of file we can round up */
+-		bu->blk_cnt += UBIFS_BLOCKS_PER_PAGE - 1;
+-		return 0;
+-	}
+-	/* Exclude data nodes that do not make up a whole page cache page */
+-	block = key_block(c, &bu->key) + bu->blk_cnt;
+-	block &= ~(UBIFS_BLOCKS_PER_PAGE - 1);
+-	while (bu->cnt) {
+-		if (key_block(c, &bu->zbranch[bu->cnt - 1].key) < block)
+-			break;
+-		bu->cnt -= 1;
+-	}
+-	return 0;
+-}
 -
--	list_for_each_entry(lprops, &c->empty_list, list) {
--		if (lprops->free != c->leb_size) {
--			ubifs_err(c, "non-empty LEB %d on empty list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--		if (lprops->flags & LPROPS_TAKEN) {
--			ubifs_err(c, "taken LEB %d on empty list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
+-/**
+- * read_wbuf - bulk-read from a LEB with a wbuf.
+- * @wbuf: wbuf that may overlap the read
+- * @buf: buffer into which to read
+- * @len: read length
+- * @lnum: LEB number from which to read
+- * @offs: offset from which to read
+- *
+- * This functions returns %0 on success or a negative error code on failure.
+- */
+-static int read_wbuf(struct ubifs_wbuf *wbuf, void *buf, int len, int lnum,
+-		     int offs)
+-{
+-	const struct ubifs_info *c = wbuf->c;
+-	int rlen, overlap;
+-
+-	dbg_io("LEB %d:%d, length %d", lnum, offs, len);
+-	ubifs_assert(c, wbuf && lnum >= 0 && lnum < c->leb_cnt && offs >= 0);
+-	ubifs_assert(c, !(offs & 7) && offs < c->leb_size);
+-	ubifs_assert(c, offs + len <= c->leb_size);
+-
+-	spin_lock(&wbuf->lock);
+-	overlap = (lnum == wbuf->lnum && offs + len > wbuf->offs);
+-	if (!overlap) {
+-		/* We may safely unlock the write-buffer and read the data */
+-		spin_unlock(&wbuf->lock);
+-		return ubifs_leb_read(c, lnum, buf, offs, len, 0);
 -	}
 -
--	i = 0;
--	list_for_each_entry(lprops, &c->freeable_list, list) {
--		if (lprops->free + lprops->dirty != c->leb_size) {
--			ubifs_err(c, "non-freeable LEB %d on freeable list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--		if (lprops->flags & LPROPS_TAKEN) {
--			ubifs_err(c, "taken LEB %d on freeable list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--		i += 1;
+-	/* Don't read under wbuf */
+-	rlen = wbuf->offs - offs;
+-	if (rlen < 0)
+-		rlen = 0;
+-
+-	/* Copy the rest from the write-buffer */
+-	memcpy(buf + rlen, wbuf->buf + offs + rlen - wbuf->offs, len - rlen);
+-	spin_unlock(&wbuf->lock);
+-
+-	if (rlen > 0)
+-		/* Read everything that goes before write-buffer */
+-		return ubifs_leb_read(c, lnum, buf, offs, rlen, 0);
+-
+-	return 0;
+-}
+-
+-/**
+- * validate_data_node - validate data nodes for bulk-read.
+- * @c: UBIFS file-system description object
+- * @buf: buffer containing data node to validate
+- * @zbr: zbranch of data node to validate
+- *
+- * This functions returns %0 on success or a negative error code on failure.
+- */
+-static int validate_data_node(struct ubifs_info *c, void *buf,
+-			      struct ubifs_zbranch *zbr)
+-{
+-	union ubifs_key key1;
+-	struct ubifs_ch *ch = buf;
+-	int err, len;
+-
+-	if (ch->node_type != UBIFS_DATA_NODE) {
+-		ubifs_err(c, "bad node type (%d but expected %d)",
+-			  ch->node_type, UBIFS_DATA_NODE);
+-		goto out_err;
 -	}
--	if (i != c->freeable_cnt) {
--		ubifs_err(c, "freeable list count %d expected %d", i,
--			  c->freeable_cnt);
+-
+-	err = ubifs_check_node(c, buf, zbr->len, zbr->lnum, zbr->offs, 0, 0);
+-	if (err) {
+-		ubifs_err(c, "expected node type %d", UBIFS_DATA_NODE);
+-		goto out;
+-	}
+-
+-	err = ubifs_node_check_hash(c, buf, zbr->hash);
+-	if (err) {
+-		ubifs_bad_hash(c, buf, zbr->hash, zbr->lnum, zbr->offs);
+-		return err;
+-	}
+-
+-	len = le32_to_cpu(ch->len);
+-	if (len != zbr->len) {
+-		ubifs_err(c, "bad node length %d, expected %d", len, zbr->len);
+-		goto out_err;
+-	}
+-
+-	/* Make sure the key of the read node is correct */
+-	key_read(c, buf + UBIFS_KEY_OFFSET, &key1);
+-	if (!keys_eq(c, &zbr->key, &key1)) {
+-		ubifs_err(c, "bad key in node at LEB %d:%d",
+-			  zbr->lnum, zbr->offs);
+-		dbg_tnck(&zbr->key, "looked for key ");
+-		dbg_tnck(&key1, "found node's key ");
+-		goto out_err;
+-	}
+-
+-	return 0;
+-
+-out_err:
+-	err = -EINVAL;
+-out:
+-	ubifs_err(c, "bad node at LEB %d:%d", zbr->lnum, zbr->offs);
+-	ubifs_dump_node(c, buf, zbr->len);
+-	dump_stack();
+-	return err;
+-}
+-
+-/**
+- * ubifs_tnc_bulk_read - read a number of data nodes in one go.
+- * @c: UBIFS file-system description object
+- * @bu: bulk-read parameters and results
+- *
+- * This functions reads and validates the data nodes that were identified by the
+- * 'ubifs_tnc_get_bu_keys()' function. This functions returns %0 on success,
+- * -EAGAIN to indicate a race with GC, or another negative error code on
+- * failure.
+- */
+-int ubifs_tnc_bulk_read(struct ubifs_info *c, struct bu_info *bu)
+-{
+-	int lnum = bu->zbranch[0].lnum, offs = bu->zbranch[0].offs, len, err, i;
+-	struct ubifs_wbuf *wbuf;
+-	void *buf;
+-
+-	len = bu->zbranch[bu->cnt - 1].offs;
+-	len += bu->zbranch[bu->cnt - 1].len - offs;
+-	if (len > bu->buf_len) {
+-		ubifs_err(c, "buffer too small %d vs %d", bu->buf_len, len);
 -		return -EINVAL;
 -	}
 -
--	i = 0;
--	list_for_each(pos, &c->idx_gc)
--		i += 1;
--	if (i != c->idx_gc_cnt) {
--		ubifs_err(c, "idx_gc list count %d expected %d", i,
--			  c->idx_gc_cnt);
--		return -EINVAL;
+-	/* Do the read */
+-	wbuf = ubifs_get_wbuf(c, lnum);
+-	if (wbuf)
+-		err = read_wbuf(wbuf, bu->buf, len, lnum, offs);
+-	else
+-		err = ubifs_leb_read(c, lnum, bu->buf, offs, len, 0);
+-
+-	/* Check for a race with GC */
+-	if (maybe_leb_gced(c, lnum, bu->gc_seq))
+-		return -EAGAIN;
+-
+-	if (err && err != -EBADMSG) {
+-		ubifs_err(c, "failed to read from LEB %d:%d, error %d",
+-			  lnum, offs, err);
+-		dump_stack();
+-		dbg_tnck(&bu->key, "key ");
+-		return err;
 -	}
 -
--	list_for_each_entry(lprops, &c->frdi_idx_list, list) {
--		if (lprops->free + lprops->dirty != c->leb_size) {
--			ubifs_err(c, "non-freeable LEB %d on frdi_idx list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--		if (lprops->flags & LPROPS_TAKEN) {
--			ubifs_err(c, "taken LEB %d on frdi_idx list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--		if (!(lprops->flags & LPROPS_INDEX)) {
--			ubifs_err(c, "non-index LEB %d on frdi_idx list (free %d dirty %d flags %d)",
--				  lprops->lnum, lprops->free, lprops->dirty,
--				  lprops->flags);
--			return -EINVAL;
--		}
--	}
--
--	for (cat = 1; cat <= LPROPS_HEAP_CNT; cat++) {
--		struct ubifs_lpt_heap *heap = &c->lpt_heap[cat - 1];
--
--		for (i = 0; i < heap->cnt; i++) {
--			lprops = heap->arr[i];
--			if (!lprops) {
--				ubifs_err(c, "null ptr in LPT heap cat %d", cat);
--				return -EINVAL;
--			}
--			if (lprops->hpos != i) {
--				ubifs_err(c, "bad ptr in LPT heap cat %d", cat);
--				return -EINVAL;
--			}
--			if (lprops->flags & LPROPS_TAKEN) {
--				ubifs_err(c, "taken LEB in LPT heap cat %d", cat);
--				return -EINVAL;
--			}
--		}
+-	/* Validate the nodes read */
+-	buf = bu->buf;
+-	for (i = 0; i < bu->cnt; i++) {
+-		err = validate_data_node(c, buf, &bu->zbranch[i]);
+-		if (err)
+-			return err;
+-		buf = buf + ALIGN(bu->zbranch[i].len, 8);
 -	}
 -
 -	return 0;
 -}
 -
--void dbg_check_heap(struct ubifs_info *c, struct ubifs_lpt_heap *heap, int cat,
--		    int add_pos)
--{
--	int i = 0, j, err = 0;
--
--	if (!dbg_is_chk_gen(c) && !dbg_is_chk_lprops(c))
--		return;
--
--	for (i = 0; i < heap->cnt; i++) {
--		struct ubifs_lprops *lprops = heap->arr[i];
--		struct ubifs_lprops *lp;
--
--		if (i != add_pos)
--			if ((lprops->flags & LPROPS_CAT_MASK) != cat) {
--				err = 1;
--				goto out;
--			}
--		if (lprops->hpos != i) {
--			err = 2;
--			goto out;
--		}
--		lp = ubifs_lpt_lookup(c, lprops->lnum);
--		if (IS_ERR(lp)) {
--			err = 3;
--			goto out;
--		}
--		if (lprops != lp) {
--			ubifs_err(c, "lprops %zx lp %zx lprops->lnum %d lp->lnum %d",
--				  (size_t)lprops, (size_t)lp, lprops->lnum,
--				  lp->lnum);
--			err = 4;
--			goto out;
--		}
--		for (j = 0; j < i; j++) {
--			lp = heap->arr[j];
--			if (lp == lprops) {
--				err = 5;
--				goto out;
--			}
--			if (lp->lnum == lprops->lnum) {
--				err = 6;
--				goto out;
--			}
--		}
--	}
--out:
--	if (err) {
--		ubifs_err(c, "failed cat %d hpos %d err %d", cat, i, err);
--		dump_stack();
--		ubifs_dump_heap(c, heap, cat);
--	}
--}
--
 -/**
-- * scan_check_cb - scan callback.
-- * @c: the UBIFS file-system description object
-- * @lp: LEB properties to scan
-- * @in_tree: whether the LEB properties are in main memory
-- * @lst: lprops statistics to update
-- *
-- * This function returns a code that indicates whether the scan should continue
-- * (%LPT_SCAN_CONTINUE), whether the LEB properties should be added to the tree
-- * in main memory (%LPT_SCAN_ADD), or whether the scan should stop
-- * (%LPT_SCAN_STOP).
-- */
--static int scan_check_cb(struct ubifs_info *c,
--			 const struct ubifs_lprops *lp, int in_tree,
--			 struct ubifs_lp_stats *lst)
+  * do_lookup_nm- look up a "hashed" node.
+  * @c: UBIFS file-system description object
+  * @key: node key to lookup
+@@ -1892,110 +1568,6 @@ int ubifs_tnc_lookup_nm(struct ubifs_info *c, const union ubifs_key *key,
+ 	return do_lookup_nm(c, key, node, nm);
+ }
+ 
+-static int search_dh_cookie(struct ubifs_info *c, const union ubifs_key *key,
+-			    struct ubifs_dent_node *dent, uint32_t cookie,
+-			    struct ubifs_znode **zn, int *n, int exact)
 -{
--	struct ubifs_scan_leb *sleb;
--	struct ubifs_scan_node *snod;
--	int cat, lnum = lp->lnum, is_idx = 0, used = 0, free, dirty, ret;
--	void *buf = NULL;
+-	int err;
+-	struct ubifs_znode *znode = *zn;
+-	struct ubifs_zbranch *zbr;
+-	union ubifs_key *dkey;
 -
--	cat = lp->flags & LPROPS_CAT_MASK;
--	if (cat != LPROPS_UNCAT) {
--		cat = ubifs_categorize_lprops(c, lp);
--		if (cat != (lp->flags & LPROPS_CAT_MASK)) {
--			ubifs_err(c, "bad LEB category %d expected %d",
--				  (lp->flags & LPROPS_CAT_MASK), cat);
--			return -EINVAL;
--		}
--	}
--
--	/* Check lp is on its category list (if it has one) */
--	if (in_tree) {
--		struct list_head *list = NULL;
--
--		switch (cat) {
--		case LPROPS_EMPTY:
--			list = &c->empty_list;
--			break;
--		case LPROPS_FREEABLE:
--			list = &c->freeable_list;
--			break;
--		case LPROPS_FRDI_IDX:
--			list = &c->frdi_idx_list;
--			break;
--		case LPROPS_UNCAT:
--			list = &c->uncat_list;
--			break;
--		}
--		if (list) {
--			struct ubifs_lprops *lprops;
--			int found = 0;
--
--			list_for_each_entry(lprops, list, list) {
--				if (lprops == lp) {
--					found = 1;
--					break;
--				}
--			}
--			if (!found) {
--				ubifs_err(c, "bad LPT list (category %d)", cat);
--				return -EINVAL;
--			}
--		}
--	}
--
--	/* Check lp is on its category heap (if it has one) */
--	if (in_tree && cat > 0 && cat <= LPROPS_HEAP_CNT) {
--		struct ubifs_lpt_heap *heap = &c->lpt_heap[cat - 1];
--
--		if ((lp->hpos != -1 && heap->arr[lp->hpos]->lnum != lnum) ||
--		    lp != heap->arr[lp->hpos]) {
--			ubifs_err(c, "bad LPT heap (category %d)", cat);
--			return -EINVAL;
--		}
--	}
--
--	/*
--	 * After an unclean unmount, empty and freeable LEBs
--	 * may contain garbage - do not scan them.
--	 */
--	if (lp->free == c->leb_size) {
--		lst->empty_lebs += 1;
--		lst->total_free += c->leb_size;
--		lst->total_dark += ubifs_calc_dark(c, c->leb_size);
--		return LPT_SCAN_CONTINUE;
--	}
--	if (lp->free + lp->dirty == c->leb_size &&
--	    !(lp->flags & LPROPS_INDEX)) {
--		lst->total_free  += lp->free;
--		lst->total_dirty += lp->dirty;
--		lst->total_dark  +=  ubifs_calc_dark(c, c->leb_size);
--		return LPT_SCAN_CONTINUE;
--	}
--
--	buf = __vmalloc(c->leb_size, GFP_NOFS);
--	if (!buf)
--		return -ENOMEM;
--
--	sleb = ubifs_scan(c, lnum, 0, buf, 0);
--	if (IS_ERR(sleb)) {
--		ret = PTR_ERR(sleb);
--		if (ret == -EUCLEAN) {
--			ubifs_dump_lprops(c);
--			ubifs_dump_budg(c, &c->bi);
--		}
--		goto out;
--	}
--
--	is_idx = -1;
--	list_for_each_entry(snod, &sleb->nodes, list) {
--		int found, level = 0;
--
--		cond_resched();
--
--		if (is_idx == -1)
--			is_idx = (snod->type == UBIFS_IDX_NODE) ? 1 : 0;
--
--		if (is_idx && snod->type != UBIFS_IDX_NODE) {
--			ubifs_err(c, "indexing node in data LEB %d:%d",
--				  lnum, snod->offs);
--			goto out_destroy;
--		}
--
--		if (snod->type == UBIFS_IDX_NODE) {
--			struct ubifs_idx_node *idx = snod->node;
--
--			key_read(c, ubifs_idx_key(c, idx), &snod->key);
--			level = le16_to_cpu(idx->level);
--		}
--
--		found = ubifs_tnc_has_node(c, &snod->key, level, lnum,
--					   snod->offs, is_idx);
--		if (found) {
--			if (found < 0)
--				goto out_destroy;
--			used += ALIGN(snod->len, 8);
--		}
--	}
--
--	free = c->leb_size - sleb->endpt;
--	dirty = sleb->endpt - used;
--
--	if (free > c->leb_size || free < 0 || dirty > c->leb_size ||
--	    dirty < 0) {
--		ubifs_err(c, "bad calculated accounting for LEB %d: free %d, dirty %d",
--			  lnum, free, dirty);
--		goto out_destroy;
--	}
--
--	if (lp->free + lp->dirty == c->leb_size &&
--	    free + dirty == c->leb_size)
--		if ((is_idx && !(lp->flags & LPROPS_INDEX)) ||
--		    (!is_idx && free == c->leb_size) ||
--		    lp->free == c->leb_size) {
--			/*
--			 * Empty or freeable LEBs could contain index
--			 * nodes from an uncompleted commit due to an
--			 * unclean unmount. Or they could be empty for
--			 * the same reason. Or it may simply not have been
--			 * unmapped.
--			 */
--			free = lp->free;
--			dirty = lp->dirty;
--			is_idx = 0;
--		    }
--
--	if (is_idx && lp->free + lp->dirty == free + dirty &&
--	    lnum != c->ihead_lnum) {
--		/*
--		 * After an unclean unmount, an index LEB could have a different
--		 * amount of free space than the value recorded by lprops. That
--		 * is because the in-the-gaps method may use free space or
--		 * create free space (as a side-effect of using ubi_leb_change
--		 * and not writing the whole LEB). The incorrect free space
--		 * value is not a problem because the index is only ever
--		 * allocated empty LEBs, so there will never be an attempt to
--		 * write to the free space at the end of an index LEB - except
--		 * by the in-the-gaps method for which it is not a problem.
--		 */
--		free = lp->free;
--		dirty = lp->dirty;
--	}
--
--	if (lp->free != free || lp->dirty != dirty)
--		goto out_print;
--
--	if (is_idx && !(lp->flags & LPROPS_INDEX)) {
--		if (free == c->leb_size)
--			/* Free but not unmapped LEB, it's fine */
--			is_idx = 0;
--		else {
--			ubifs_err(c, "indexing node without indexing flag");
--			goto out_print;
--		}
--	}
--
--	if (!is_idx && (lp->flags & LPROPS_INDEX)) {
--		ubifs_err(c, "data node with indexing flag");
--		goto out_print;
--	}
--
--	if (free == c->leb_size)
--		lst->empty_lebs += 1;
--
--	if (is_idx)
--		lst->idx_lebs += 1;
--
--	if (!(lp->flags & LPROPS_INDEX))
--		lst->total_used += c->leb_size - free - dirty;
--	lst->total_free += free;
--	lst->total_dirty += dirty;
--
--	if (!(lp->flags & LPROPS_INDEX)) {
--		int spc = free + dirty;
--
--		if (spc < c->dead_wm)
--			lst->total_dead += spc;
--		else
--			lst->total_dark += ubifs_calc_dark(c, spc);
--	}
--
--	ubifs_scan_destroy(sleb);
--	vfree(buf);
--	return LPT_SCAN_CONTINUE;
--
--out_print:
--	ubifs_err(c, "bad accounting of LEB %d: free %d, dirty %d flags %#x, should be free %d, dirty %d",
--		  lnum, lp->free, lp->dirty, lp->flags, free, dirty);
--	ubifs_dump_leb(c, lnum);
--out_destroy:
--	ubifs_scan_destroy(sleb);
--	ret = -EINVAL;
--out:
--	vfree(buf);
--	return ret;
--}
--
--/**
-- * dbg_check_lprops - check all LEB properties.
-- * @c: UBIFS file-system description object
-- *
-- * This function checks all LEB properties and makes sure they are all correct.
-- * It returns zero if everything is fine, %-EINVAL if there is an inconsistency
-- * and other negative error codes in case of other errors. This function is
-- * called while the file system is locked (because of commit start), so no
-- * additional locking is required. Note that locking the LPT mutex would cause
-- * a circular lock dependency with the TNC mutex.
-- */
--int dbg_check_lprops(struct ubifs_info *c)
--{
--	int i, err;
--	struct ubifs_lp_stats lst;
--
--	if (!dbg_is_chk_lprops(c))
--		return 0;
--
--	/*
--	 * As we are going to scan the media, the write buffers have to be
--	 * synchronized.
--	 */
--	for (i = 0; i < c->jhead_cnt; i++) {
--		err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
+-	if (!exact) {
+-		err = tnc_next(c, &znode, n);
 -		if (err)
 -			return err;
 -	}
 -
--	memset(&lst, 0, sizeof(struct ubifs_lp_stats));
--	err = ubifs_lpt_scan_nolock(c, c->main_first, c->leb_cnt - 1,
--				    (ubifs_lpt_scan_callback)scan_check_cb,
--				    &lst);
--	if (err && err != -ENOSPC)
--		goto out;
+-	for (;;) {
+-		zbr = &znode->zbranch[*n];
+-		dkey = &zbr->key;
 -
--	if (lst.empty_lebs != c->lst.empty_lebs ||
--	    lst.idx_lebs != c->lst.idx_lebs ||
--	    lst.total_free != c->lst.total_free ||
--	    lst.total_dirty != c->lst.total_dirty ||
--	    lst.total_used != c->lst.total_used) {
--		ubifs_err(c, "bad overall accounting");
--		ubifs_err(c, "calculated: empty_lebs %d, idx_lebs %d, total_free %lld, total_dirty %lld, total_used %lld",
--			  lst.empty_lebs, lst.idx_lebs, lst.total_free,
--			  lst.total_dirty, lst.total_used);
--		ubifs_err(c, "read from lprops: empty_lebs %d, idx_lebs %d, total_free %lld, total_dirty %lld, total_used %lld",
--			  c->lst.empty_lebs, c->lst.idx_lebs, c->lst.total_free,
--			  c->lst.total_dirty, c->lst.total_used);
--		err = -EINVAL;
--		goto out;
+-		if (key_inum(c, dkey) != key_inum(c, key) ||
+-		    key_type(c, dkey) != key_type(c, key)) {
+-			return -ENOENT;
+-		}
+-
+-		err = tnc_read_hashed_node(c, zbr, dent);
+-		if (err)
+-			return err;
+-
+-		if (key_hash(c, key) == key_hash(c, dkey) &&
+-		    le32_to_cpu(dent->cookie) == cookie) {
+-			*zn = znode;
+-			return 0;
+-		}
+-
+-		err = tnc_next(c, &znode, n);
+-		if (err)
+-			return err;
 -	}
--
--	if (lst.total_dead != c->lst.total_dead ||
--	    lst.total_dark != c->lst.total_dark) {
--		ubifs_err(c, "bad dead/dark space accounting");
--		ubifs_err(c, "calculated: total_dead %lld, total_dark %lld",
--			  lst.total_dead, lst.total_dark);
--		ubifs_err(c, "read from lprops: total_dead %lld, total_dark %lld",
--			  c->lst.total_dead, c->lst.total_dark);
--		err = -EINVAL;
--		goto out;
--	}
--
--	err = dbg_check_cats(c);
--out:
--	return err;
 -}
-diff --git a/ubifs-utils/libubifs/lpt.c b/ubifs-utils/libubifs/lpt.c
-index 1889170b..92b3fec8 100644
---- a/ubifs-utils/libubifs/lpt.c
-+++ b/ubifs-utils/libubifs/lpt.c
-@@ -31,10 +31,13 @@
-  * mounted.
-  */
- 
-+#include "linux_err.h"
-+#include "bitops.h"
-+#include "kmem.h"
-+#include "crc16.h"
- #include "ubifs.h"
--#include <linux/crc16.h>
--#include <linux/math64.h>
--#include <linux/slab.h>
-+#include "defs.h"
-+#include "debug.h"
- 
- /**
-  * do_calc_lpt_geom - calculate sizes for the LPT area.
-@@ -48,8 +51,20 @@ static void do_calc_lpt_geom(struct ubifs_info *c)
- 	int i, n, bits, per_leb_wastage, max_pnode_cnt;
- 	long long sz, tot_wastage;
- 
--	n = c->main_lebs + c->max_leb_cnt - c->leb_cnt;
--	max_pnode_cnt = DIV_ROUND_UP(n, UBIFS_LPT_FANOUT);
-+	if (c->program_type != MKFS_PROGRAM_TYPE) {
-+		n = c->main_lebs + c->max_leb_cnt - c->leb_cnt;
-+		max_pnode_cnt = DIV_ROUND_UP(n, UBIFS_LPT_FANOUT);
-+	} else {
-+		/*
-+		 * Different from linux kernel.
-+		 *
-+		 * We change it, because 'c->leb_cnt' is not initialized in
-+		 * mkfs.ubifs when do_calc_lpt_geom() is invoked, 'c->main_lebs'
-+		 * is calculated by 'c->max_leb_cnt', so the 'c->lpt_hght'
-+		 * should be calculated by 'c->main_lebs'.
-+		 */
-+		max_pnode_cnt = DIV_ROUND_UP(c->main_lebs, UBIFS_LPT_FANOUT);
-+	}
- 
- 	c->lpt_hght = 1;
- 	n = UBIFS_LPT_FANOUT;
-@@ -148,7 +163,7 @@ int ubifs_calc_lpt_geom(struct ubifs_info *c)
- }
- 
- /**
-- * calc_dflt_lpt_geom - calculate default LPT geometry.
-+ * ubifs_calc_dflt_lpt_geom - calculate default LPT geometry.
-  * @c: the UBIFS file-system description object
-  * @main_lebs: number of main area LEBs is passed and returned here
-  * @big_lpt: whether the LPT area is "big" is returned here
-@@ -159,8 +174,7 @@ int ubifs_calc_lpt_geom(struct ubifs_info *c)
-  *
-  * This function returns %0 on success and a negative error code on failure.
-  */
--static int calc_dflt_lpt_geom(struct ubifs_info *c, int *main_lebs,
--			      int *big_lpt)
-+int ubifs_calc_dflt_lpt_geom(struct ubifs_info *c, int *main_lebs, int *big_lpt)
- {
- 	int i, lebs_needed;
- 	long long sz;
-@@ -275,7 +289,7 @@ uint32_t ubifs_unpack_bits(const struct ubifs_info *c, uint8_t **addr, int *pos,
- 	const int k = 32 - nrbits;
- 	uint8_t *p = *addr;
- 	int b = *pos;
--	uint32_t val;
-+	uint32_t val = 0;
- 	const int bytes = (nrbits + b + 7) >> 3;
- 
- 	ubifs_assert(c, nrbits > 0);
-@@ -638,8 +652,13 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 	lnum = c->lpt_first;
- 	p = buf;
- 	len = 0;
--	/* Number of leaf nodes (pnodes) */
--	cnt = c->pnode_cnt;
-+	/*
-+	 * Different from linux kernel. The number of leaf nodes (pnodes) should
-+	 * be calculated by the number of current main LEBs. The 'c->pnode_cnt'
-+	 * may not be equal to 'DIV_ROUND_UP(c->main_lebs, UBIFS_LPT_FANOUT)' in
-+	 * mkfs when 'c->leb_cnt != c->max_leb_cnt' is true.
-+	 */
-+	cnt = DIV_ROUND_UP(c->main_lebs, UBIFS_LPT_FANOUT);
- 
- 	/*
- 	 * To calculate the internal node branches, we keep information about
-@@ -655,8 +674,19 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 		if (len + c->pnode_sz > c->leb_size) {
- 			alen = ALIGN(len, c->min_io_size);
- 			set_ltab(c, lnum, c->leb_size - alen, alen - len);
--			memset(p, 0xff, alen - len);
--			err = ubifs_leb_change(c, lnum++, buf, alen);
-+			/*
-+			 * Different from linux kernel.
-+			 * The mkfs may partially write data into a certain LEB
-+			 * of file image, the left unwritten area in the LEB
-+			 * should be filled with '0xFF'.
-+			 */
-+			if (c->libubi) {
-+				memset(p, 0xff, alen - len);
-+				err = ubifs_leb_change(c, lnum++, buf, alen);
-+			} else {
-+				memset(p, 0xff, c->leb_size - len);
-+				err = ubifs_leb_change(c, lnum++, buf, c->leb_size);
-+			}
- 			if (err)
- 				goto out;
- 			p = buf;
-@@ -691,27 +721,45 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 		pnode->num += 1;
- 	}
- 
--	row = 0;
--	for (i = UBIFS_LPT_FANOUT; cnt > i; i <<= UBIFS_LPT_FANOUT_SHIFT)
--		row += 1;
-+	/*
-+	 * Different from linux kernel. The 'c->lpt_hght' is calculated by the
-+	 * 'c->max_leb_cnt', according to the implementation of function
-+	 * ubifs_pnode_lookup(), there are at least 'c->lpt_hght' cnodes should
-+	 * be created, otherwise the LPT looking up could be failed after
-+	 * mouting.
-+	 */
-+	row = c->lpt_hght - 1;
- 	/* Add all nnodes, one level at a time */
- 	while (1) {
- 		/* Number of internal nodes (nnodes) at next level */
- 		cnt = DIV_ROUND_UP(cnt, UBIFS_LPT_FANOUT);
-+		if (cnt == 0)
-+			cnt = 1;
- 		for (i = 0; i < cnt; i++) {
- 			if (len + c->nnode_sz > c->leb_size) {
- 				alen = ALIGN(len, c->min_io_size);
- 				set_ltab(c, lnum, c->leb_size - alen,
- 					    alen - len);
--				memset(p, 0xff, alen - len);
--				err = ubifs_leb_change(c, lnum++, buf, alen);
-+				/*
-+				 * Different from linux kernel.
-+				 * The mkfs may partially write data into a certain LEB
-+				 * of file image, the left unwritten area in the LEB
-+				 * should be filled with '0xFF'.
-+				 */
-+				if (c->libubi) {
-+					memset(p, 0xff, alen - len);
-+					err = ubifs_leb_change(c, lnum++, buf, alen);
-+				} else {
-+					memset(p, 0xff, c->leb_size - len);
-+					err = ubifs_leb_change(c, lnum++, buf, c->leb_size);
-+				}
- 				if (err)
- 					goto out;
- 				p = buf;
- 				len = 0;
- 			}
- 			/* Only 1 nnode at this level, so it is the root */
--			if (cnt == 1) {
-+			if (row == 0) {
- 				c->lpt_lnum = lnum;
- 				c->lpt_offs = len;
- 			}
-@@ -736,8 +784,8 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 			p += c->nnode_sz;
- 			len += c->nnode_sz;
- 		}
--		/* Only 1 nnode at this level, so it is the root */
--		if (cnt == 1)
-+		/* Row zero  is the top row */
-+		if (row == 0)
- 			break;
- 		/* Update the information about the level below */
- 		bcnt = cnt;
-@@ -750,8 +798,19 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 		if (len + c->lsave_sz > c->leb_size) {
- 			alen = ALIGN(len, c->min_io_size);
- 			set_ltab(c, lnum, c->leb_size - alen, alen - len);
--			memset(p, 0xff, alen - len);
--			err = ubifs_leb_change(c, lnum++, buf, alen);
-+			/*
-+			 * Different from linux kernel.
-+			 * The mkfs may partially write data into a certain LEB
-+			 * of file image, the left unwritten area in the LEB
-+			 * should be filled with '0xFF'.
-+			 */
-+			if (c->libubi) {
-+				memset(p, 0xff, alen - len);
-+				err = ubifs_leb_change(c, lnum++, buf, alen);
-+			} else {
-+				memset(p, 0xff, c->leb_size - len);
-+				err = ubifs_leb_change(c, lnum++, buf, c->leb_size);
-+			}
- 			if (err)
- 				goto out;
- 			p = buf;
-@@ -775,8 +834,19 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 	if (len + c->ltab_sz > c->leb_size) {
- 		alen = ALIGN(len, c->min_io_size);
- 		set_ltab(c, lnum, c->leb_size - alen, alen - len);
--		memset(p, 0xff, alen - len);
--		err = ubifs_leb_change(c, lnum++, buf, alen);
-+		/*
-+		 * Different from linux kernel.
-+		 * The mkfs may partially write data into a certain LEB
-+		 * of file image, the left unwritten area in the LEB
-+		 * should be filled with '0xFF'.
-+		 */
-+		if (c->libubi) {
-+			memset(p, 0xff, alen - len);
-+			err = ubifs_leb_change(c, lnum++, buf, alen);
-+		} else {
-+			memset(p, 0xff, c->leb_size - len);
-+			err = ubifs_leb_change(c, lnum++, buf, c->leb_size);
-+		}
- 		if (err)
- 			goto out;
- 		p = buf;
-@@ -795,11 +865,25 @@ int ubifs_create_lpt(struct ubifs_info *c, struct ubifs_lprops *lps, int lp_cnt,
- 	p += c->ltab_sz;
- 
- 	/* Write remaining buffer */
--	memset(p, 0xff, alen - len);
--	err = ubifs_leb_change(c, lnum, buf, alen);
-+	/*
-+	 * Different from linux kernel.
-+	 * The mkfs may partially write data into a certain LEB
-+	 * of file image, the left unwritten area in the LEB
-+	 * should be filled with '0xFF'.
-+	 */
-+	if (c->libubi) {
-+		memset(p, 0xff, alen - len);
-+		err = ubifs_leb_change(c, lnum, buf, alen);
-+	} else {
-+		memset(p, 0xff, c->leb_size - len);
-+		err = ubifs_leb_change(c, lnum, buf, c->leb_size);
-+	}
- 	if (err)
- 		goto out;
- 
-+	if (c->big_lpt && c->lsave)
-+		memcpy(c->lsave, lsave, c->lsave_cnt * sizeof(int));
-+
- 	err = ubifs_shash_final(c, desc, hash);
- 	if (err)
- 		goto out;
-@@ -837,54 +921,6 @@ out:
- }
- 
- /**
-- * ubifs_create_dflt_lpt - create default LPT.
-- * @c: UBIFS file-system description object
-- * @main_lebs: number of main area LEBs is passed and returned here
-- * @lpt_first: LEB number of first LPT LEB
-- * @lpt_lebs: number of LEBs for LPT is passed and returned here
-- * @big_lpt: use big LPT model is passed and returned here
-- * @hash: hash of the LPT is returned here
-- *
-- * This function returns %0 on success and a negative error code on failure.
-- */
--int ubifs_create_dflt_lpt(struct ubifs_info *c, int *main_lebs, int lpt_first,
--			  int *lpt_lebs, int *big_lpt, u8 *hash)
+-
+-static int do_lookup_dh(struct ubifs_info *c, const union ubifs_key *key,
+-			struct ubifs_dent_node *dent, uint32_t cookie)
 -{
--	int node_sz, iopos, err = 0;
--	struct ubifs_lprops lps[2];
+-	int n, err;
+-	struct ubifs_znode *znode;
+-	union ubifs_key start_key;
 -
--	err = calc_dflt_lpt_geom(c, main_lebs, big_lpt);
--	if (err)
--		return err;
--	*lpt_lebs = c->lpt_lebs;
+-	ubifs_assert(c, is_hash_key(c, key));
 -
--	/* Needed by 'ubifs_pack_nnode()' and 'set_ltab()' */
--	c->lpt_first = lpt_first;
--	/* Needed by 'set_ltab()' */
--	c->lpt_last = lpt_first + c->lpt_lebs - 1;
--	/* Needed by 'ubifs_pack_lsave()' */
--	c->main_first = c->leb_cnt - *main_lebs;
+-	lowest_dent_key(c, &start_key, key_inum(c, key));
 -
--	/*
--	 * The first pnode contains the LEB properties for the LEBs that contain
--	 * the root inode node and the root index node of the index tree.
--	 */
--	node_sz = ALIGN(ubifs_idx_node_sz(c, 1), 8);
--	iopos = ALIGN(node_sz, c->min_io_size);
--	lps[0].free = c->leb_size - iopos;
--	lps[0].dirty = iopos - node_sz;
--	lps[0].flags = LPROPS_INDEX;
+-	mutex_lock(&c->tnc_mutex);
+-	err = ubifs_lookup_level0(c, &start_key, &znode, &n);
+-	if (unlikely(err < 0))
+-		goto out_unlock;
 -
--	node_sz = UBIFS_INO_NODE_SZ;
--	iopos = ALIGN(node_sz, c->min_io_size);
--	lps[1].free = c->leb_size - iopos;
--	lps[1].dirty = iopos - node_sz;
--	lps[1].flags = 0;
+-	err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
 -
--	return ubifs_create_lpt(c, lps, 2, hash);
+-out_unlock:
+-	mutex_unlock(&c->tnc_mutex);
+-	return err;
 -}
 -
 -/**
-  * update_cats - add LEB properties of a pnode to LEB category lists and heaps.
+- * ubifs_tnc_lookup_dh - look up a "double hashed" node.
+- * @c: UBIFS file-system description object
+- * @key: node key to lookup
+- * @node: the node is returned here
+- * @cookie: node cookie for collision resolution
+- *
+- * This function looks up and reads a node which contains name hash in the key.
+- * Since the hash may have collisions, there may be many nodes with the same
+- * key, so we have to sequentially look to all of them until the needed one
+- * with the same cookie value is found.
+- * This function returns zero in case of success, %-ENOENT if the node
+- * was not found, and a negative error code in case of failure.
+- */
+-int ubifs_tnc_lookup_dh(struct ubifs_info *c, const union ubifs_key *key,
+-			void *node, uint32_t cookie)
+-{
+-	int err;
+-	const struct ubifs_dent_node *dent = node;
+-
+-	if (!c->double_hash)
+-		return -EOPNOTSUPP;
+-
+-	/*
+-	 * We assume that in most of the cases there are no name collisions and
+-	 * 'ubifs_tnc_lookup()' returns us the right direntry.
+-	 */
+-	err = ubifs_tnc_lookup(c, key, node);
+-	if (err)
+-		return err;
+-
+-	if (le32_to_cpu(dent->cookie) == cookie)
+-		return 0;
+-
+-	/*
+-	 * Unluckily, there are hash collisions and we have to iterate over
+-	 * them look at each direntry with colliding name hash sequentially.
+-	 */
+-	return do_lookup_dh(c, key, node, cookie);
+-}
+-
+ /**
+  * correct_parent_keys - correct parent znodes' keys.
   * @c: UBIFS file-system description object
-  * @pnode: pnode
-@@ -2254,198 +2290,3 @@ out:
- 	kfree(path);
+@@ -2540,6 +2112,10 @@ static int tnc_delete(struct ubifs_info *c, struct ubifs_znode *znode, int n)
+ 	if (znode->child_cnt > 0)
+ 		return 0;
+ 
++	/* Different with linux kernel, TNC could become empty. */
++	if (!znode->parent)
++		return 0;
++
+ 	/*
+ 	 * This was the last zbranch, we have to delete this znode from the
+ 	 * parent.
+@@ -2697,74 +2273,6 @@ out_unlock:
+ }
+ 
+ /**
+- * ubifs_tnc_remove_dh - remove an index entry for a "double hashed" node.
+- * @c: UBIFS file-system description object
+- * @key: key of node
+- * @cookie: node cookie for collision resolution
+- *
+- * Returns %0 on success or negative error code on failure.
+- */
+-int ubifs_tnc_remove_dh(struct ubifs_info *c, const union ubifs_key *key,
+-			uint32_t cookie)
+-{
+-	int n, err;
+-	struct ubifs_znode *znode;
+-	struct ubifs_dent_node *dent;
+-	struct ubifs_zbranch *zbr;
+-
+-	if (!c->double_hash)
+-		return -EOPNOTSUPP;
+-
+-	mutex_lock(&c->tnc_mutex);
+-	err = lookup_level0_dirty(c, key, &znode, &n);
+-	if (err <= 0)
+-		goto out_unlock;
+-
+-	zbr = &znode->zbranch[n];
+-	dent = kmalloc(UBIFS_MAX_DENT_NODE_SZ, GFP_NOFS);
+-	if (!dent) {
+-		err = -ENOMEM;
+-		goto out_unlock;
+-	}
+-
+-	err = tnc_read_hashed_node(c, zbr, dent);
+-	if (err)
+-		goto out_free;
+-
+-	/* If the cookie does not match, we're facing a hash collision. */
+-	if (le32_to_cpu(dent->cookie) != cookie) {
+-		union ubifs_key start_key;
+-
+-		lowest_dent_key(c, &start_key, key_inum(c, key));
+-
+-		err = ubifs_lookup_level0(c, &start_key, &znode, &n);
+-		if (unlikely(err < 0))
+-			goto out_free;
+-
+-		err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
+-		if (err)
+-			goto out_free;
+-	}
+-
+-	if (znode->cnext || !ubifs_zn_dirty(znode)) {
+-		znode = dirty_cow_bottom_up(c, znode);
+-		if (IS_ERR(znode)) {
+-			err = PTR_ERR(znode);
+-			goto out_free;
+-		}
+-	}
+-	err = tnc_delete(c, znode, n);
+-
+-out_free:
+-	kfree(dent);
+-out_unlock:
+-	if (!err)
+-		err = dbg_check_tnc(c, 0);
+-	mutex_unlock(&c->tnc_mutex);
+-	return err;
+-}
+-
+-/**
+  * key_in_range - determine if a key falls within a range of keys.
+  * @c: UBIFS file-system description object
+  * @key: key to check
+@@ -2905,9 +2413,7 @@ int ubifs_tnc_remove_ino(struct ubifs_info *c, ino_t inum)
+ 		dbg_tnc("xent '%s', ino %lu", xent->name,
+ 			(unsigned long)xattr_inum);
+ 
+-		ubifs_evict_xattr_inode(c, xattr_inum);
+-
+-		fname_name(&nm) = xent->name;
++		fname_name(&nm) = (const char *)xent->name;
+ 		fname_len(&nm) = le16_to_cpu(xent->nlen);
+ 		err = ubifs_tnc_remove_nm(c, &key1, &nm);
+ 		if (err) {
+@@ -3485,69 +2991,3 @@ out_unlock:
+ 	mutex_unlock(&c->tnc_mutex);
  	return err;
  }
 -
 -/**
-- * dbg_chk_pnode - check a pnode.
-- * @c: the UBIFS file-system description object
-- * @pnode: pnode to check
-- * @col: pnode column
+- * dbg_check_inode_size - check if inode size is correct.
+- * @c: UBIFS file-system description object
+- * @inode: inode to check
+- * @size: inode size
 - *
-- * This function returns %0 on success and a negative error code on failure.
+- * This function makes sure that the inode size (@size) is correct and it does
+- * not have any pages beyond @size. Returns zero if the inode is OK, %-EINVAL
+- * if it has a data page beyond @size, and other negative error code in case of
+- * other errors.
 - */
--static int dbg_chk_pnode(struct ubifs_info *c, struct ubifs_pnode *pnode,
--			 int col)
+-int dbg_check_inode_size(struct ubifs_info *c, const struct inode *inode,
+-			 loff_t size)
 -{
--	int i;
+-	int err, n;
+-	union ubifs_key from_key, to_key, *key;
+-	struct ubifs_znode *znode;
+-	unsigned int block;
 -
--	if (pnode->num != col) {
--		ubifs_err(c, "pnode num %d expected %d parent num %d iip %d",
--			  pnode->num, col, pnode->parent->num, pnode->iip);
--		return -EINVAL;
--	}
--	for (i = 0; i < UBIFS_LPT_FANOUT; i++) {
--		struct ubifs_lprops *lp, *lprops = &pnode->lprops[i];
--		int lnum = (pnode->num << UBIFS_LPT_FANOUT_SHIFT) + i +
--			   c->main_first;
--		int found, cat = lprops->flags & LPROPS_CAT_MASK;
--		struct ubifs_lpt_heap *heap;
--		struct list_head *list = NULL;
--
--		if (lnum >= c->leb_cnt)
--			continue;
--		if (lprops->lnum != lnum) {
--			ubifs_err(c, "bad LEB number %d expected %d",
--				  lprops->lnum, lnum);
--			return -EINVAL;
--		}
--		if (lprops->flags & LPROPS_TAKEN) {
--			if (cat != LPROPS_UNCAT) {
--				ubifs_err(c, "LEB %d taken but not uncat %d",
--					  lprops->lnum, cat);
--				return -EINVAL;
--			}
--			continue;
--		}
--		if (lprops->flags & LPROPS_INDEX) {
--			switch (cat) {
--			case LPROPS_UNCAT:
--			case LPROPS_DIRTY_IDX:
--			case LPROPS_FRDI_IDX:
--				break;
--			default:
--				ubifs_err(c, "LEB %d index but cat %d",
--					  lprops->lnum, cat);
--				return -EINVAL;
--			}
--		} else {
--			switch (cat) {
--			case LPROPS_UNCAT:
--			case LPROPS_DIRTY:
--			case LPROPS_FREE:
--			case LPROPS_EMPTY:
--			case LPROPS_FREEABLE:
--				break;
--			default:
--				ubifs_err(c, "LEB %d not index but cat %d",
--					  lprops->lnum, cat);
--				return -EINVAL;
--			}
--		}
--		switch (cat) {
--		case LPROPS_UNCAT:
--			list = &c->uncat_list;
--			break;
--		case LPROPS_EMPTY:
--			list = &c->empty_list;
--			break;
--		case LPROPS_FREEABLE:
--			list = &c->freeable_list;
--			break;
--		case LPROPS_FRDI_IDX:
--			list = &c->frdi_idx_list;
--			break;
--		}
--		found = 0;
--		switch (cat) {
--		case LPROPS_DIRTY:
--		case LPROPS_DIRTY_IDX:
--		case LPROPS_FREE:
--			heap = &c->lpt_heap[cat - 1];
--			if (lprops->hpos < heap->cnt &&
--			    heap->arr[lprops->hpos] == lprops)
--				found = 1;
--			break;
--		case LPROPS_UNCAT:
--		case LPROPS_EMPTY:
--		case LPROPS_FREEABLE:
--		case LPROPS_FRDI_IDX:
--			list_for_each_entry(lp, list, list)
--				if (lprops == lp) {
--					found = 1;
--					break;
--				}
--			break;
--		}
--		if (!found) {
--			ubifs_err(c, "LEB %d cat %d not found in cat heap/list",
--				  lprops->lnum, cat);
--			return -EINVAL;
--		}
--		switch (cat) {
--		case LPROPS_EMPTY:
--			if (lprops->free != c->leb_size) {
--				ubifs_err(c, "LEB %d cat %d free %d dirty %d",
--					  lprops->lnum, cat, lprops->free,
--					  lprops->dirty);
--				return -EINVAL;
--			}
--			break;
--		case LPROPS_FREEABLE:
--		case LPROPS_FRDI_IDX:
--			if (lprops->free + lprops->dirty != c->leb_size) {
--				ubifs_err(c, "LEB %d cat %d free %d dirty %d",
--					  lprops->lnum, cat, lprops->free,
--					  lprops->dirty);
--				return -EINVAL;
--			}
--			break;
--		}
--	}
--	return 0;
--}
--
--/**
-- * dbg_check_lpt_nodes - check nnodes and pnodes.
-- * @c: the UBIFS file-system description object
-- * @cnode: next cnode (nnode or pnode) to check
-- * @row: row of cnode (root is zero)
-- * @col: column of cnode (leftmost is zero)
-- *
-- * This function returns %0 on success and a negative error code on failure.
-- */
--int dbg_check_lpt_nodes(struct ubifs_info *c, struct ubifs_cnode *cnode,
--			int row, int col)
--{
--	struct ubifs_nnode *nnode, *nn;
--	struct ubifs_cnode *cn;
--	int num, iip = 0, err;
--
--	if (!dbg_is_chk_lprops(c))
+-	if (!S_ISREG(inode->i_mode))
+-		return 0;
+-	if (!dbg_is_chk_gen(c))
 -		return 0;
 -
--	while (cnode) {
--		ubifs_assert(c, row >= 0);
--		nnode = cnode->parent;
--		if (cnode->level) {
--			/* cnode is a nnode */
--			num = calc_nnode_num(row, col);
--			if (cnode->num != num) {
--				ubifs_err(c, "nnode num %d expected %d parent num %d iip %d",
--					  cnode->num, num,
--					  (nnode ? nnode->num : 0), cnode->iip);
--				return -EINVAL;
--			}
--			nn = (struct ubifs_nnode *)cnode;
--			while (iip < UBIFS_LPT_FANOUT) {
--				cn = nn->nbranch[iip].cnode;
--				if (cn) {
--					/* Go down */
--					row += 1;
--					col <<= UBIFS_LPT_FANOUT_SHIFT;
--					col += iip;
--					iip = 0;
--					cnode = cn;
--					break;
--				}
--				/* Go right */
--				iip += 1;
--			}
--			if (iip < UBIFS_LPT_FANOUT)
--				continue;
--		} else {
--			struct ubifs_pnode *pnode;
+-	block = (size + UBIFS_BLOCK_SIZE - 1) >> UBIFS_BLOCK_SHIFT;
+-	data_key_init(c, &from_key, inode->i_ino, block);
+-	highest_data_key(c, &to_key, inode->i_ino);
 -
--			/* cnode is a pnode */
--			pnode = (struct ubifs_pnode *)cnode;
--			err = dbg_chk_pnode(c, pnode, col);
--			if (err)
--				return err;
--		}
--		/* Go up and to the right */
--		row -= 1;
--		col >>= UBIFS_LPT_FANOUT_SHIFT;
--		iip = cnode->iip + 1;
--		cnode = (struct ubifs_cnode *)nnode;
+-	mutex_lock(&c->tnc_mutex);
+-	err = ubifs_lookup_level0(c, &from_key, &znode, &n);
+-	if (err < 0)
+-		goto out_unlock;
+-
+-	if (err) {
+-		key = &from_key;
+-		goto out_dump;
 -	}
--	return 0;
+-
+-	err = tnc_next(c, &znode, &n);
+-	if (err == -ENOENT) {
+-		err = 0;
+-		goto out_unlock;
+-	}
+-	if (err < 0)
+-		goto out_unlock;
+-
+-	ubifs_assert(c, err == 0);
+-	key = &znode->zbranch[n].key;
+-	if (!key_in_range(c, key, &from_key, &to_key))
+-		goto out_unlock;
+-
+-out_dump:
+-	block = key_block(c, key);
+-	ubifs_err(c, "inode %lu has size %lld, but there are data at offset %lld",
+-		  (unsigned long)inode->i_ino, size,
+-		  ((loff_t)block) << UBIFS_BLOCK_SHIFT);
+-	mutex_unlock(&c->tnc_mutex);
+-	ubifs_dump_inode(c, inode);
+-	dump_stack();
+-	return -EINVAL;
+-
+-out_unlock:
+-	mutex_unlock(&c->tnc_mutex);
+-	return err;
 -}
-diff --git a/ubifs-utils/libubifs/lpt_commit.c b/ubifs-utils/libubifs/lpt_commit.c
-index c4d07932..b00f75f0 100644
---- a/ubifs-utils/libubifs/lpt_commit.c
-+++ b/ubifs-utils/libubifs/lpt_commit.c
-@@ -13,10 +13,14 @@
-  * subsystem.
-  */
+diff --git a/ubifs-utils/libubifs/tnc_commit.c b/ubifs-utils/libubifs/tnc_commit.c
+index a55e0482..d797006e 100644
+--- a/ubifs-utils/libubifs/tnc_commit.c
++++ b/ubifs-utils/libubifs/tnc_commit.c
+@@ -10,8 +10,14 @@
  
--#include <linux/crc16.h>
--#include <linux/slab.h>
+ /* This file implements TNC functions for committing */
+ 
 -#include <linux/random.h>
 +#include "linux_err.h"
 +#include "bitops.h"
 +#include "kmem.h"
-+#include "crc16.h"
  #include "ubifs.h"
 +#include "defs.h"
 +#include "debug.h"
++#include "key.h"
 +#include "misc.h"
  
- static int dbg_populate_lsave(struct ubifs_info *c);
- 
-@@ -1030,7 +1034,8 @@ static int get_lpt_node_len(const struct ubifs_info *c, int node_type)
-  * @buf: buffer
-  * @len: length of buffer
-  */
--static int get_pad_len(const struct ubifs_info *c, uint8_t *buf, int len)
-+static int get_pad_len(const struct ubifs_info *c, __unused uint8_t *buf,
-+		       int len)
- {
- 	int offs, pad_len;
- 
-@@ -1593,9 +1598,6 @@ static int dbg_check_ltab_lnum(struct ubifs_info *c, int lnum)
- 	int ret;
- 	void *buf, *p;
- 
--	if (!dbg_is_chk_lprops(c))
--		return 0;
--
- 	buf = p = __vmalloc(c->leb_size, GFP_NOFS);
- 	if (!buf) {
- 		ubifs_err(c, "cannot allocate memory for ltab checking");
-@@ -1646,190 +1648,12 @@ static int dbg_check_ltab_lnum(struct ubifs_info *c, int lnum)
- 		len -= node_len;
+ /**
+  * make_idx_node - make an index node for fill-the-gaps method of TNC commit.
+@@ -546,8 +552,8 @@ static int layout_in_empty_space(struct ubifs_info *c)
+ 		break;
  	}
  
--	err = 0;
- out:
- 	vfree(buf);
- 	return err;
- }
+-	c->dbg->new_ihead_lnum = lnum;
+-	c->dbg->new_ihead_offs = buf_offs;
++	c->new_ihead_lnum = lnum;
++	c->new_ihead_offs = buf_offs;
  
- /**
-- * dbg_check_ltab - check the free and dirty space in the ltab.
-- * @c: the UBIFS file-system description object
-- *
-- * This function returns %0 on success and a negative error code on failure.
-- */
--int dbg_check_ltab(struct ubifs_info *c)
--{
--	int lnum, err, i, cnt;
--
--	if (!dbg_is_chk_lprops(c))
--		return 0;
--
--	/* Bring the entire tree into memory */
--	cnt = DIV_ROUND_UP(c->main_lebs, UBIFS_LPT_FANOUT);
--	for (i = 0; i < cnt; i++) {
--		struct ubifs_pnode *pnode;
--
--		pnode = ubifs_pnode_lookup(c, i);
--		if (IS_ERR(pnode))
--			return PTR_ERR(pnode);
--		cond_resched();
--	}
--
--	/* Check nodes */
--	err = dbg_check_lpt_nodes(c, (struct ubifs_cnode *)c->nroot, 0, 0);
--	if (err)
--		return err;
--
--	/* Check each LEB */
--	for (lnum = c->lpt_first; lnum <= c->lpt_last; lnum++) {
--		err = dbg_check_ltab_lnum(c, lnum);
--		if (err) {
--			ubifs_err(c, "failed at LEB %d", lnum);
--			return err;
--		}
--	}
--
--	dbg_lp("succeeded");
--	return 0;
--}
+ 	return 0;
+ }
+@@ -700,7 +706,7 @@ static int alloc_idx_lebs(struct ubifs_info *c, int cnt)
+ 		c->ilebs[c->ileb_cnt++] = lnum;
+ 		dbg_cmt("LEB %d", lnum);
+ 	}
+-	if (dbg_is_chk_index(c) && !get_random_u32_below(8))
++	if (dbg_is_chk_index(c))
+ 		return -ENOSPC;
+ 	return 0;
+ }
+@@ -1011,8 +1017,8 @@ static int write_index(struct ubifs_info *c)
+ 		break;
+ 	}
+ 
+-	if (lnum != c->dbg->new_ihead_lnum ||
+-	    buf_offs != c->dbg->new_ihead_offs) {
++	if (lnum != c->new_ihead_lnum ||
++	    buf_offs != c->new_ihead_offs) {
+ 		ubifs_err(c, "inconsistent ihead");
+ 		return -EINVAL;
+ 	}
+diff --git a/ubifs-utils/libubifs/tnc_misc.c b/ubifs-utils/libubifs/tnc_misc.c
+index d3f8a6aa..8c38f153 100644
+--- a/ubifs-utils/libubifs/tnc_misc.c
++++ b/ubifs-utils/libubifs/tnc_misc.c
+@@ -15,97 +15,14 @@
+  * putting it all in one file would make that file too big and unreadable.
+  */
+ 
++#include "linux_err.h"
++#include "bitops.h"
++#include "kmem.h"
+ #include "ubifs.h"
 -
 -/**
-- * dbg_chk_lpt_free_spc - check LPT free space is enough to write entire LPT.
-- * @c: the UBIFS file-system description object
+- * ubifs_tnc_levelorder_next - next TNC tree element in levelorder traversal.
+- * @c: UBIFS file-system description object
+- * @zr: root of the subtree to traverse
+- * @znode: previous znode
 - *
-- * This function returns %0 on success and a negative error code on failure.
+- * This function implements levelorder TNC traversal. The LNC is ignored.
+- * Returns the next element or %NULL if @znode is already the last one.
 - */
--int dbg_chk_lpt_free_spc(struct ubifs_info *c)
+-struct ubifs_znode *ubifs_tnc_levelorder_next(const struct ubifs_info *c,
+-					      struct ubifs_znode *zr,
+-					      struct ubifs_znode *znode)
 -{
--	long long free = 0;
--	int i;
+-	int level, iip, level_search = 0;
+-	struct ubifs_znode *zn;
 -
--	if (!dbg_is_chk_lprops(c))
--		return 0;
+-	ubifs_assert(c, zr);
 -
--	for (i = 0; i < c->lpt_lebs; i++) {
--		if (c->ltab[i].tgc || c->ltab[i].cmt)
+-	if (unlikely(!znode))
+-		return zr;
+-
+-	if (unlikely(znode == zr)) {
+-		if (znode->level == 0)
+-			return NULL;
+-		return ubifs_tnc_find_child(zr, 0);
+-	}
+-
+-	level = znode->level;
+-
+-	iip = znode->iip;
+-	while (1) {
+-		ubifs_assert(c, znode->level <= zr->level);
+-
+-		/*
+-		 * First walk up until there is a znode with next branch to
+-		 * look at.
+-		 */
+-		while (znode->parent != zr && iip >= znode->parent->child_cnt) {
+-			znode = znode->parent;
+-			iip = znode->iip;
+-		}
+-
+-		if (unlikely(znode->parent == zr &&
+-			     iip >= znode->parent->child_cnt)) {
+-			/* This level is done, switch to the lower one */
+-			level -= 1;
+-			if (level_search || level < 0)
+-				/*
+-				 * We were already looking for znode at lower
+-				 * level ('level_search'). As we are here
+-				 * again, it just does not exist. Or all levels
+-				 * were finished ('level < 0').
+-				 */
+-				return NULL;
+-
+-			level_search = 1;
+-			iip = -1;
+-			znode = ubifs_tnc_find_child(zr, 0);
+-			ubifs_assert(c, znode);
+-		}
+-
+-		/* Switch to the next index */
+-		zn = ubifs_tnc_find_child(znode->parent, iip + 1);
+-		if (!zn) {
+-			/* No more children to look at, we have walk up */
+-			iip = znode->parent->child_cnt;
 -			continue;
--		if (i + c->lpt_first == c->nhead_lnum)
--			free += c->leb_size - c->nhead_offs;
--		else if (c->ltab[i].free == c->leb_size)
--			free += c->leb_size;
--	}
--	if (free < c->lpt_sz) {
--		ubifs_err(c, "LPT space error: free %lld lpt_sz %lld",
--			  free, c->lpt_sz);
--		ubifs_dump_lpt_info(c);
--		ubifs_dump_lpt_lebs(c);
--		dump_stack();
--		return -EINVAL;
--	}
--	return 0;
--}
+-		}
 -
--/**
-- * dbg_chk_lpt_sz - check LPT does not write more than LPT size.
-- * @c: the UBIFS file-system description object
-- * @action: what to do
-- * @len: length written
-- *
-- * This function returns %0 on success and a negative error code on failure.
-- * The @action argument may be one of:
-- *   o %0 - LPT debugging checking starts, initialize debugging variables;
-- *   o %1 - wrote an LPT node, increase LPT size by @len bytes;
-- *   o %2 - switched to a different LEB and wasted @len bytes;
-- *   o %3 - check that we've written the right number of bytes.
-- *   o %4 - wasted @len bytes;
-- */
--int dbg_chk_lpt_sz(struct ubifs_info *c, int action, int len)
--{
--	struct ubifs_debug_info *d = c->dbg;
--	long long chk_lpt_sz, lpt_sz;
--	int err = 0;
+-		/* Walk back down to the level we came from ('level') */
+-		while (zn->level != level) {
+-			znode = zn;
+-			zn = ubifs_tnc_find_child(zn, 0);
+-			if (!zn) {
+-				/*
+-				 * This path is not too deep so it does not
+-				 * reach 'level'. Try next path.
+-				 */
+-				iip = znode->iip;
+-				break;
+-			}
+-		}
 -
--	if (!dbg_is_chk_lprops(c))
--		return 0;
--
--	switch (action) {
--	case 0:
--		d->chk_lpt_sz = 0;
--		d->chk_lpt_sz2 = 0;
--		d->chk_lpt_lebs = 0;
--		d->chk_lpt_wastage = 0;
--		if (c->dirty_pn_cnt > c->pnode_cnt) {
--			ubifs_err(c, "dirty pnodes %d exceed max %d",
--				  c->dirty_pn_cnt, c->pnode_cnt);
--			err = -EINVAL;
+-		if (zn) {
+-			ubifs_assert(c, zn->level >= 0);
+-			return zn;
 -		}
--		if (c->dirty_nn_cnt > c->nnode_cnt) {
--			ubifs_err(c, "dirty nnodes %d exceed max %d",
--				  c->dirty_nn_cnt, c->nnode_cnt);
--			err = -EINVAL;
--		}
--		return err;
--	case 1:
--		d->chk_lpt_sz += len;
--		return 0;
--	case 2:
--		d->chk_lpt_sz += len;
--		d->chk_lpt_wastage += len;
--		d->chk_lpt_lebs += 1;
--		return 0;
--	case 3:
--		chk_lpt_sz = c->leb_size;
--		chk_lpt_sz *= d->chk_lpt_lebs;
--		chk_lpt_sz += len - c->nhead_offs;
--		if (d->chk_lpt_sz != chk_lpt_sz) {
--			ubifs_err(c, "LPT wrote %lld but space used was %lld",
--				  d->chk_lpt_sz, chk_lpt_sz);
--			err = -EINVAL;
--		}
--		if (d->chk_lpt_sz > c->lpt_sz) {
--			ubifs_err(c, "LPT wrote %lld but lpt_sz is %lld",
--				  d->chk_lpt_sz, c->lpt_sz);
--			err = -EINVAL;
--		}
--		if (d->chk_lpt_sz2 && d->chk_lpt_sz != d->chk_lpt_sz2) {
--			ubifs_err(c, "LPT layout size %lld but wrote %lld",
--				  d->chk_lpt_sz, d->chk_lpt_sz2);
--			err = -EINVAL;
--		}
--		if (d->chk_lpt_sz2 && d->new_nhead_offs != len) {
--			ubifs_err(c, "LPT new nhead offs: expected %d was %d",
--				  d->new_nhead_offs, len);
--			err = -EINVAL;
--		}
--		lpt_sz = (long long)c->pnode_cnt * c->pnode_sz;
--		lpt_sz += (long long)c->nnode_cnt * c->nnode_sz;
--		lpt_sz += c->ltab_sz;
--		if (c->big_lpt)
--			lpt_sz += c->lsave_sz;
--		if (d->chk_lpt_sz - d->chk_lpt_wastage > lpt_sz) {
--			ubifs_err(c, "LPT chk_lpt_sz %lld + waste %lld exceeds %lld",
--				  d->chk_lpt_sz, d->chk_lpt_wastage, lpt_sz);
--			err = -EINVAL;
--		}
--		if (err) {
--			ubifs_dump_lpt_info(c);
--			ubifs_dump_lpt_lebs(c);
--			dump_stack();
--		}
--		d->chk_lpt_sz2 = d->chk_lpt_sz;
--		d->chk_lpt_sz = 0;
--		d->chk_lpt_wastage = 0;
--		d->chk_lpt_lebs = 0;
--		d->new_nhead_offs = len;
--		return err;
--	case 4:
--		d->chk_lpt_sz += len;
--		d->chk_lpt_wastage += len;
--		return 0;
--	default:
--		return -EINVAL;
 -	}
 -}
--
--/**
-  * dump_lpt_leb - dump an LPT LEB.
-  * @c: UBIFS file-system description object
-  * @lnum: LEB number to dump
-@@ -1844,7 +1668,7 @@ static void dump_lpt_leb(const struct ubifs_info *c, int lnum)
- 	int err, len = c->leb_size, node_type, node_num, node_len, offs;
- 	void *buf, *p;
- 
--	pr_err("(pid %d) start dumping LEB %d\n", current->pid, lnum);
-+	pr_err("(pid %d) start dumping LEB %d\n", getpid(), lnum);
- 	buf = p = __vmalloc(c->leb_size, GFP_NOFS);
- 	if (!buf) {
- 		ubifs_err(c, "cannot allocate memory to dump LPT");
-@@ -1930,7 +1754,7 @@ static void dump_lpt_leb(const struct ubifs_info *c, int lnum)
- 		len -= node_len;
- 	}
- 
--	pr_err("(pid %d) finish dumping LEB %d\n", current->pid, lnum);
-+	pr_err("(pid %d) finish dumping LEB %d\n", getpid(), lnum);
- out:
- 	vfree(buf);
- 	return;
-@@ -1947,10 +1771,10 @@ void ubifs_dump_lpt_lebs(const struct ubifs_info *c)
- {
- 	int i;
- 
--	pr_err("(pid %d) start dumping all LPT LEBs\n", current->pid);
-+	pr_err("(pid %d) start dumping all LPT LEBs\n", getpid());
- 	for (i = 0; i < c->lpt_lebs; i++)
- 		dump_lpt_leb(c, i + c->lpt_first);
--	pr_err("(pid %d) finish dumping all LPT LEBs\n", current->pid);
-+	pr_err("(pid %d) finish dumping all LPT LEBs\n", getpid());
- }
++#include "defs.h"
++#include "debug.h"
++#include "key.h"
++#include "misc.h"
  
  /**
-@@ -1962,36 +1786,7 @@ void ubifs_dump_lpt_lebs(const struct ubifs_info *c)
-  * Returns zero if lsave has not been populated (this debugging feature is
-  * disabled) an non-zero if lsave has been populated.
-  */
--static int dbg_populate_lsave(struct ubifs_info *c)
-+static int dbg_populate_lsave(__unused struct ubifs_info *c)
- {
--	struct ubifs_lprops *lprops;
--	struct ubifs_lpt_heap *heap;
--	int i;
--
--	if (!dbg_is_chk_gen(c))
--		return 0;
--	if (get_random_u32_below(4))
--		return 0;
--
--	for (i = 0; i < c->lsave_cnt; i++)
--		c->lsave[i] = c->main_first;
--
--	list_for_each_entry(lprops, &c->empty_list, list)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = lprops->lnum;
--	list_for_each_entry(lprops, &c->freeable_list, list)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = lprops->lnum;
--	list_for_each_entry(lprops, &c->frdi_idx_list, list)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = lprops->lnum;
--
--	heap = &c->lpt_heap[LPROPS_DIRTY_IDX - 1];
--	for (i = 0; i < heap->cnt; i++)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = heap->arr[i]->lnum;
--	heap = &c->lpt_heap[LPROPS_DIRTY - 1];
--	for (i = 0; i < heap->cnt; i++)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = heap->arr[i]->lnum;
--	heap = &c->lpt_heap[LPROPS_FREE - 1];
--	for (i = 0; i < heap->cnt; i++)
--		c->lsave[get_random_u32_below(c->lsave_cnt)] = heap->arr[i]->lnum;
--
--	return 1;
-+	return 0;
- }
+  * ubifs_search_zbranch - search znode branch.
+@@ -130,6 +47,12 @@ int ubifs_search_zbranch(const struct ubifs_info *c,
+ 	int cmp;
+ 	const struct ubifs_zbranch *zbr = &znode->zbranch[0];
+ 
++	if (!end) {
++		/* Different with linux kernel, TNC could become empty. */
++		*n = -1;
++		return 0;
++	}
++
+ 	ubifs_assert(c, end > beg);
+ 
+ 	while (end > beg) {
+@@ -360,9 +283,10 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
+ 		}
+ 
+ 		if (znode->level)
+-			continue;
++			type = UBIFS_IDX_NODE;
++		else
++			type = key_type(c, &zbr->key);
+ 
+-		type = key_type(c, &zbr->key);
+ 		if (c->ranges[type].max_len == 0) {
+ 			if (zbr->len != c->ranges[type].len) {
+ 				ubifs_err(c, "bad target node (type %d) length (%d)",
 -- 
 2.13.6
 
