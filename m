@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-206171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCFD900512
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97093900511
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 15:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE911C22DA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F6428DBD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 13:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88086194C71;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B01850B7;
 	Fri,  7 Jun 2024 13:33:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5D919048A;
-	Fri,  7 Jun 2024 13:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KJHFk5Yl"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F419415D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 13:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717767188; cv=none; b=p4yrCdIH18WLRSnPZbMMkU8n/X5kEJ6u+NK2K9Y2KUqu+55kKni8tVnD6XbyreyFtz/sGvXOew+so/SN2vW5kNSlPLfRl1pPgJogE8Nu86C+PISf1N5EaQpQ9oaI3CPYoTiV/i9vFUPX/nrGb6nA3mypTWm/uajH5u+Ql+93CzY=
+	t=1717767187; cv=none; b=qZiJU9Sd0xqrErgV4uxHuFHKxHaIDHvmWhlIpMZDt72gzHcMosXA2hA8S5zOlvcMleuFRYRi8fqXdH5aSnMPAJIZoVdtB86QbjVIaPVfPeW2Vh3PQdjspkKEHnLgD9j8Qrrq0YLmBk0gQ6WeSNd6EomrZG1D33jEb7pOS71m994=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717767188; c=relaxed/simple;
-	bh=2Ktr9J43Oe4hlTFBzJRV2+RE98k1HCB3MTdBSiY4z+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MWNiqKFs/WMHh6tQKopaotqZ/yyq712T96mUTv4J8inbQ7qewAyzQGVRCOxaMiSCtQu+R2gTT8xY9Y1KeCRds6ZdpX2iZImt4kEyVtKscWJWnfa4PR13LjxAwjArX4Fz7aSqgB8LNgzBelXgzZDDgFrIWF6MbtUEQ1f7vRwjs6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6318E153B;
-	Fri,  7 Jun 2024 06:33:29 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B2903F792;
-	Fri,  7 Jun 2024 06:33:03 -0700 (PDT)
-Message-ID: <4a174cd7-7b52-40f8-b190-dc8fe90a7e39@arm.com>
-Date: Fri, 7 Jun 2024 14:33:01 +0100
+	s=arc-20240116; t=1717767187; c=relaxed/simple;
+	bh=jRjpn/aCZiZBz0Aqn7IkINUMJj2UiFOycXcGc9CYR1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atQ4lYr05ipRpcoNunNrRgMEWTSUu86fJHp/kch/2zCGVjvii8tx1U/aqhucfHRddRPHCCHZu6iGZ1Wp9GbZuAvtkr38x2KkTSHfiDrx51SDPz9VGBFEMRKZYPBXnWbCpYsar8W1Ie593F13AHnYXf+GvJHcH+jYjFFKU5KnBhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KJHFk5Yl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PcY+IMjQpk0PL4/bmmieIepic/SgBBF32UMJe2Qyub0=; b=KJHFk5Yl2xkpDxC6WonNt/UB7P
+	+qlM+bli9bb3xGiCC8qffan2T7bDtw9DgUbGWU5Hz84acTNc0GCBbmQSCmtjEVvWcNDSY24fzSOre
+	hgD/aFQJ6iAMGFT7JuGAXaS/zz3yiE4AsNdbtJ25bR9foaWNbeMlXtRTCXb/qfFwJIvdLP7gIFI+n
+	R2xAyncyOpK/515eFn97bWb+vYQGafbVNACL5Rvr+6NCV1hVuwIg/DqUGzWmLmFweaGm5XQx73rR0
+	u+rnLsty4M7KIsTs4TrdL/4kq6+3MSBS+JNEor2XuHS7BLFOTqthUJPowoVUBokchD6HlJu49musL
+	0Z76zymw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sFZiJ-00000006HUe-3L41;
+	Fri, 07 Jun 2024 13:33:03 +0000
+Date: Fri, 7 Jun 2024 14:33:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: get rid of buffer_head use
+Message-ID: <ZmMMDy9eeCU2igqj@casper.infradead.org>
+References: <20240607101829.389015-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/6] perf: build: Only link libebl.a for old libdw
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>,
- Ian Rogers <irogers@google.com>, "Liang, Kan" <kan.liang@linux.intel.com>,
- Nick Terrell <terrelln@fb.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Changbin Du <changbin.du@huawei.com>, Fangrui Song <maskray@google.com>,
- Mateusz Kowalczyk <fuuzetsu@fuuzetsu.co.uk>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240604093223.1934236-1-leo.yan@arm.com>
- <20240604093223.1934236-5-leo.yan@arm.com> <ZmH0nCxLm5_Xl3Yo@google.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <ZmH0nCxLm5_Xl3Yo@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607101829.389015-1-chao@kernel.org>
 
-On 6/6/24 18:40, Namhyung Kim wrote:
+On Fri, Jun 07, 2024 at 06:18:29PM +0800, Chao Yu wrote:
+> @@ -1990,6 +1989,12 @@ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+>  	return (struct f2fs_super_block *)(sbi->raw_super);
+>  }
+>  
+> +static inline struct f2fs_super_block *F2FS_SUPER_BLOCK(struct folio *folio)
+> +{
+> +	return (struct f2fs_super_block *)(page_address(folio_page(folio, 0)) +
+> +							F2FS_SUPER_OFFSET);
+> +}
 
-[...]
+This assumes that the superblock is in the first page of the folio.
+That's not necessarily guaranteed; let's say you have a 64KiB folio
+that covers the start of the bdev.
 
->> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
->> index 6f52f892f9a3..2f4cfb7b8c14 100644
->> --- a/tools/build/feature/Makefile
->> +++ b/tools/build/feature/Makefile
->> @@ -159,7 +159,17 @@ $(OUTPUT)test-libopencsd.bin:
->>
->>   DWARFLIBS := -ldw
->>   ifeq ($(findstring -static,${LDFLAGS}),-static)
->> -DWARFLIBS += -lelf -lebl -lz -llzma -lbz2
->> +  DWARFLIBS += -lelf -lz -llzma -lbz2
->> +
->> +  LIBDW_VERSION := $(shell $(PKG_CONFIG) --modversion libdw)
->> +  LIBDW_VERSION_1 := $(word 1, $(subst ., ,$(LIBDW_VERSION)))
->> +  LIBDW_VERSION_2 := $(word 2, $(subst ., ,$(LIBDW_VERSION)))
->> +
->> +  # Elfutils merged libebl.a into libdw.a starting from version 0.177,
->> +  # Link libebl.a only if libdw is older than this version.
->> +  ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
->> +    DWARFLIBS += -lebl
->> +  endif
->>   endif
-> 
-> Is there a better way to collect required libraries using pkg-config?
-> I guess that's what we want to with the pkg-config in the first place.
-> Maybe `pkg-config --print-requires-private libdw` ?
+I don't quite know how to write this because f2fs defines its block size
+in terms of PAGE_SIZE, which just seems like nonsense to me.  If you
+format a filesystem on a 16KiB PAGE_SIZE machine and then try to mount
+it on a machine with a 4KiB PAGE_SIZE, it's going to go horribly wrong.
 
-Unfortunately, `pkg-config --print-requires-private libdw` does not work 
-for the libebl.a after checked on Debian:buster.
+You'd need to pass in something that indicates whether you're trying to
+access the first or second superblock; there's no way to tell from the
+folio which one it is.
 
-   # pkg-config --modversion libdw
-   0.176
+> +static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
+> +								bool update)
+>  {
+> -	lock_buffer(bh);
+> -	if (super)
+> -		memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
+> -	set_buffer_dirty(bh);
+> -	unlock_buffer(bh);
+> -
+> +	struct bio *bio;
+>  	/* it's rare case, we can do fua all the time */
+> -	return __sync_dirty_buffer(bh, REQ_SYNC | REQ_PREFLUSH | REQ_FUA);
+> +	blk_opf_t opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH | REQ_FUA;
+> +	int ret;
+> +
+> +	folio_lock(folio);
+> +	folio_wait_writeback(folio);
+> +	if (update)
+> +		memcpy(F2FS_SUPER_BLOCK(folio), F2FS_RAW_SUPER(sbi),
+> +					sizeof(struct f2fs_super_block));
+> +	folio_mark_dirty(folio);
+> +	folio_clear_dirty_for_io(folio);
+> +	folio_start_writeback(folio);
+> +	folio_unlock(folio);
+> +
+> +	bio = bio_alloc(sbi->sb->s_bdev, 1, opf, GFP_NOFS);
+> +
+> +	/* it doesn't need to set crypto context for superblock update */
+> +	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(folio_index(folio));
+> +
+> +	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0))
+> +		f2fs_bug_on(sbi, 1);
 
-   # pkg-config --print-requires-private libdw
-   zlib
-   liblzma
+Better make that folio_size(folio) to support bs>PS.
 
-   # pkg-config --libs-only-l libdw
-   -ldw -lelf
-
-   # ldd /usr/lib/x86_64-linux-gnu/libdw.so
-	linux-vdso.so.1 (0x00007fff733e3000)
-	libelf.so.1 => /usr/lib/x86_64-linux-gnu/libelf.so.1 (0x0000702e24ec6000)
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x0000702e24ec1000)
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x0000702e24ea3000)
-	liblzma.so.5 => /lib/x86_64-linux-gnu/liblzma.so.5 (0x0000702e24e7b000)
-	libbz2.so.1.0 => /lib/x86_64-linux-gnu/libbz2.so.1.0 (0x0000702e24e68000)
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x0000702e24ca8000)
-	/lib64/ld-linux-x86-64.so.2 (0x0000702e24f3e000)
-	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-(0x0000702e24c85000)
-
-
-I think libdw.pc cannot reflect the required dependencies, we still need 
-to use a way liked in this patch (it is a bit ugly :) to link '-lebl'.
-
-Thanks,
-Leo
 
