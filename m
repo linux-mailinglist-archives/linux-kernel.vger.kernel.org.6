@@ -1,214 +1,156 @@
-Return-Path: <linux-kernel+bounces-205655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5308FFE83
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:58:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCAC8FFE90
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F751C20D54
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 08:58:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22518B20ED4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1770F15B134;
-	Fri,  7 Jun 2024 08:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mXMAKFXd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8zD9PuLK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mXMAKFXd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8zD9PuLK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3183915B0FC;
+	Fri,  7 Jun 2024 09:01:39 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424038D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 08:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438E417C6C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717750699; cv=none; b=coNc9EURFpUmepddBGEwvX363pumKwhBvGbxSR7DEVzUOppp9TnwAPdsCuZNP1q1PsFyN9rgEITu6qhb1to4suWDeP2DVUrRokCstUOAd1tvtLkOgcrdvkqY02R+uAs3zPYr7cv467FcB8KRIttq3VeACljtoJpkWKrGUNFHbjE=
+	t=1717750898; cv=none; b=MdkrdSYnF5hN5GtOVyGg9Gykz57QmUpzgKKTXS9+wf0DsLDp+NBby6JyGLHSETB4Vh7VUoY4mGE8hCgMmpVqhjX3VGkFOXvP36CdsPY7o629Y+FFFb/ElA3tbIljhfrr0oalIPCQ/hZ9N7Q0bEwtXQohNQpw8rJtZQIf7RhaFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717750699; c=relaxed/simple;
-	bh=hmExR3uv2Ntk+jYSZJmh+BprqiDIdaybAdi91DukSWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q8h1rnHZIslsGBt7by66EPNtkK29I5rCx4TQEF7qBnb7Bhpw5pAS1H74Mf01j+xMXuidbeBRxM0QvGG4iBOlQo4glrhs34Uiru12T8VO9FQ0yOFuNe3WyhgXM76/jNyf9GrzWk6wIM2Bizqr/MP3rgHMCGSilSkaBYllm6POHc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mXMAKFXd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8zD9PuLK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mXMAKFXd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8zD9PuLK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45C5D1FB8E;
-	Fri,  7 Jun 2024 08:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717750695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U2bfCmFU6J95yjEZ2GgDnCsnnuBBOizhhetPYhTJkZo=;
-	b=mXMAKFXdUl6MwWdW5OiO17ldWWreA5WF6XLw2Fk+86/CCk1ysogc9UM45V8f2BR5KxSVyo
-	HsvREcBGJTGuHk1CCIc+1oIzcO6nNNPtq1k4qf1PfJ2CdhPu2xOc95paDMZWe+Mqk3MiCh
-	GDIttzBWRzSu2vWX1rED3bsJIC0i5IQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717750695;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U2bfCmFU6J95yjEZ2GgDnCsnnuBBOizhhetPYhTJkZo=;
-	b=8zD9PuLKUrQ8XAmWUh5KVdhcp8JIGFoJ39Eg/ZB3OMGhNX+Mmyn0WztY6hr9+FMebGflG9
-	QEh3Rg2ulv5z1YCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mXMAKFXd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8zD9PuLK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717750695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U2bfCmFU6J95yjEZ2GgDnCsnnuBBOizhhetPYhTJkZo=;
-	b=mXMAKFXdUl6MwWdW5OiO17ldWWreA5WF6XLw2Fk+86/CCk1ysogc9UM45V8f2BR5KxSVyo
-	HsvREcBGJTGuHk1CCIc+1oIzcO6nNNPtq1k4qf1PfJ2CdhPu2xOc95paDMZWe+Mqk3MiCh
-	GDIttzBWRzSu2vWX1rED3bsJIC0i5IQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717750695;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U2bfCmFU6J95yjEZ2GgDnCsnnuBBOizhhetPYhTJkZo=;
-	b=8zD9PuLKUrQ8XAmWUh5KVdhcp8JIGFoJ39Eg/ZB3OMGhNX+Mmyn0WztY6hr9+FMebGflG9
-	QEh3Rg2ulv5z1YCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 82AA313A42;
-	Fri,  7 Jun 2024 08:58:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0rpCH6bLYmYfFwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 07 Jun 2024 08:58:14 +0000
-Message-ID: <412071b4-19cf-4b6c-bc91-1560f1dfb609@suse.cz>
-Date: Fri, 7 Jun 2024 10:58:13 +0200
+	s=arc-20240116; t=1717750898; c=relaxed/simple;
+	bh=WKtUVRZ3BEvjG0aZ2Mn4jkpRzDVrYF1ttd++DRwKSJc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fJE47djvvSGiCdsuF/cWj9zarX8CxYmQryOv5kuzIWn37WSS5clCyVRJMMg69Ks5eXvXPrdDnrzYYnZJUIfB1oBTYbTBFOUt0gCwPbm706eV920drFhinTcOzAt4HL9oeTRyklX7NAocJULLyXEaRtFXX7j/0wAAStD4wHvSsXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 45790osD077378;
+	Fri, 7 Jun 2024 17:00:50 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VwZnV1WLkz2QcKjm;
+	Fri,  7 Jun 2024 16:56:46 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 7 Jun 2024 17:00:48 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH V2] f2fs: enable atgc dynamically if conditions are met
+Date: Fri, 7 Jun 2024 17:00:30 +0800
+Message-ID: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] slab: make check_object() more consistent
-Content-Language: en-US
-To: Chengming Zhou <chengming.zhou@linux.dev>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev>
- <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 45C5D1FB8E
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 45790osD077378
 
-On 6/7/24 10:40 AM, Chengming Zhou wrote:
-> Now check_object() calls check_bytes_and_report() multiple times to
-> check every section of the object it cares about, like left and right
-> redzones, object poison, paddings poison and freepointer. It will
-> abort the checking process and return 0 once it finds an error.
-> 
-> There are two inconsistencies in check_object(), which are alignment
-> padding checking and object padding checking. We only print the error
-> messages but don't return 0 to tell callers that something is wrong
-> and needs to be handled. Please see alloc_debug_processing() and
-> free_debug_processing() for details.
-> 
-> We want to do all checks without skipping, so use a local variable
-> "ret" to save each check result and change check_bytes_and_report() to
-> only report specific error findings. Then at end of check_object(),
-> print the trailer once if any found an error.
-> 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+Now atgc can only be enabled when umounted->mounted device
+even related conditions have reached. If the device has not
+be umounted->mounted for a long time, atgc can not work.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+So enable atgc dynamically when atgc_age_threshold is less than
+elapsed_time and ATGC mount option is on.
 
-Thanks.
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+v2: try to enabe atgc in cp to avoid some race cases
+---
+---
+ fs/f2fs/checkpoint.c |  1 +
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/segment.c    | 27 ++++++++++++++++++++++++---
+ 3 files changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 55d444be..7cfe4e0 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1718,6 +1718,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	}
+ 
+ 	f2fs_restore_inmem_curseg(sbi);
++	f2fs_reinit_atgc_curseg(sbi);
+ 	stat_inc_cp_count(sbi);
+ stop:
+ 	unblock_operations(sbi);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9688df3..8d385a1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3693,6 +3693,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
+ bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno);
+ int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
++int f2fs_reinit_atgc_curseg(struct f2fs_sb_info *sbi);
+ void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
+ void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
+ int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6e8a4b3..362cfb5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2931,12 +2931,12 @@ static int get_atssr_segment(struct f2fs_sb_info *sbi, int type,
+ 	return ret;
+ }
+ 
+-static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
++static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi, bool force)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_ALL_DATA_ATGC);
+ 	int ret = 0;
+ 
+-	if (!sbi->am.atgc_enabled)
++	if (!sbi->am.atgc_enabled && !force)
+ 		return 0;
+ 
+ 	f2fs_down_read(&SM_I(sbi)->curseg_lock);
+@@ -2953,9 +2953,30 @@ static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
+ 	f2fs_up_read(&SM_I(sbi)->curseg_lock);
+ 	return ret;
+ }
++
+ int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
+ {
+-	return __f2fs_init_atgc_curseg(sbi);
++	return __f2fs_init_atgc_curseg(sbi, false);
++}
++
++int f2fs_reinit_atgc_curseg(struct f2fs_sb_info *sbi)
++{
++	int ret;
++
++	if (!test_opt(sbi, ATGC))
++		return 0;
++	if (sbi->am.atgc_enabled)
++		return 0;
++	if (le64_to_cpu(F2FS_CKPT(sbi)->elapsed_time) <
++			sbi->am.age_threshold)
++		return 0;
++
++	ret = __f2fs_init_atgc_curseg(sbi, true);
++	if (!ret) {
++		sbi->am.atgc_enabled = true;
++		f2fs_info(sbi, "reenabled age threshold GC");
++	}
++	return ret;
+ }
+ 
+ static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int type)
+-- 
+1.9.1
 
 
