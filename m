@@ -1,400 +1,413 @@
-Return-Path: <linux-kernel+bounces-206508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6BE900AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:48:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE3900ABB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 18:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB6C1F20F65
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB39528493A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 16:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4742D134B2;
-	Fri,  7 Jun 2024 16:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55019AD51;
+	Fri,  7 Jun 2024 16:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="wafvOiCX"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2090.outbound.protection.outlook.com [40.107.94.90])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QD13S1gv"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5075C19A2AC;
-	Fri,  7 Jun 2024 16:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778876; cv=fail; b=HksXCRh627ESH9L4zQ2KxZMknjZB+KwJbyDWUy+siXropG9cLJe8zRsz/vdLOWMlorFJIsiIvEP44lmSwNqwvzp9MFRZaDrMNI4FKUXSxsxUtFwkI+r+NdFiVcNHEN5oLWA8zrUhjbCZbbNJnbDH/WV7kV9ySuLaE8Zs8DzCJU8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778876; c=relaxed/simple;
-	bh=OcAv1lDvtx8Cv7dKkR8ceBjCdWlb1vbrIcOm9kwXVjU=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=F4/VgYkSiqaWYq3wbiAZFdxp4PJ/NjMrC1CEpCO1rPBwT3q7+OgbpKX9fOQ5vlGT3ffttT31BGxmpIOD1XXoeQ9p3bkmUKwzwDnDSQNn5d5EMEcRJpplVYbpZMOv5zpKsXKnWSyUyTwtiEMzjxWKeAp2Fd7f9/sETAYP5HuYA9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=wafvOiCX reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.94.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WJ7H2ZP9KWxMKi96drrREq1jwEvsTLztcfie/QPXZNOLu/+8PfAv4CKC6ei/G4nNj/Sz32BQWX3Cne2KmMVCT1a0IvJu6vCJfW6U6W8Enyrmu4EMaL2C7xL2gqtwGsbaFAOdKFB8XCYPZ4jecJKPjtIT2P71sioXJCpWOWIqr8yiyMwyCXl/shFb1hjLZROVSWeowygv7ijTsDynVzkSptoWFr5VjWoVAelem6obApqwlBzS/0o2SbS0XWxmIYnu9RNgm/m9N54wh/mYZ76zvpCT5nl5rXaM1CeFO92lTWvmyWtpA0S5uF8Tb1bzmKhTzaLas0LP82of45ammxTrpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CC8+WZ2qDUoV97sFTXJS9LY3VcfKKCug1RP6VoiOtNA=;
- b=OHKwX3TJQQxGAGdl+0PaLqCqTo6ow/zZ2lh6i81OAAlfDgxBxq+h/dz4qIBeCbnZAjEfWvz85QBLUPu562W5P28Kb8lgE/Kmm7ndqmjWLEahu4UupJxFbCsc/kJl97+LEOzNIUgo72qLPkK4AwnOIjcnFW6Uzh6BCCpR8gKWYhkY8cuQe0Y3s0vCgntXFbZcxWZdyqyVApcO4Z0AFCEVuv6wqHEcJiT3/tLQSTkHXoBMILtmDWPg0wWIwVs3Q5GubSuJG7rwpbdp1JZQyRRyMkSZiIsLI9iqH7Cov6IUQAZ6HGYN+5kjHTKbm5m1DA5cjwJGNFaDezF0favGAhWH7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CC8+WZ2qDUoV97sFTXJS9LY3VcfKKCug1RP6VoiOtNA=;
- b=wafvOiCXZuHWOjwBGtHH8fb9S1khjyxtupKda8UNeAmoNtY0QN4m31CABcLweSVr7ZmS4PqxZDe6ZMSw1pFPNGjyfr1ftw4M6Z0Xil2Xe2p/K+ADhsFGpxRTwH0KwPzg2SUewiZQQ89I9gFl+tWxnwnJDuipeiAP2JpWABI3EFg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from DM6PR01MB5947.prod.exchangelabs.com (2603:10b6:5:1dd::12) by
- CH0PR01MB7051.prod.exchangelabs.com (2603:10b6:610:10c::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.34; Fri, 7 Jun 2024 16:47:51 +0000
-Received: from DM6PR01MB5947.prod.exchangelabs.com
- ([fe80::919c:7d6a:2069:b0ca]) by DM6PR01MB5947.prod.exchangelabs.com
- ([fe80::919c:7d6a:2069:b0ca%3]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
- 16:47:51 +0000
-Message-ID: <e15695d6-b1b1-472a-8288-dcdfba5d619d@amperemail.onmicrosoft.com>
-Date: Fri, 7 Jun 2024 23:47:42 +0700
-User-Agent: Mozilla Thunderbird
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: hwmon: max31790: Add
- maxim,pwmout-pin-as-tach-input property
-To: Conor Dooley <conor@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
- <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240414042246.8681-4-chanh@os.amperecomputing.com>
- <13b195e6-cbbd-4f74-a6fa-d874cb4aaa45@linaro.org>
- <065243cc-09cf-4087-8842-bd4394fb324f@amperemail.onmicrosoft.com>
- <d549cf2b-a7fa-4644-8fcb-3c420503ee01@amperemail.onmicrosoft.com>
- <20240423-gallantly-slurp-24adbfbd6f09@spud>
- <ab5cfd8c-0e88-4194-a77e-5ffbb6890319@amperemail.onmicrosoft.com>
- <396b47f5-9604-44ab-881f-94d0664bcab8@roeck-us.net>
- <0dcc8788-604a-49c1-8c6b-fdbfa9192039@amperemail.onmicrosoft.com>
- <da94fde6-3286-44eb-a543-c2ac4d11cd32@roeck-us.net>
- <8fb38eb3-bb94-49cc-b5bc-80989d7876b9@amperemail.onmicrosoft.com>
- <20240508-onward-sedation-621cc48fa83f@spud>
-Content-Language: en-US
-In-Reply-To: <20240508-onward-sedation-621cc48fa83f@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0037.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::13) To DM6PR01MB5947.prod.exchangelabs.com
- (2603:10b6:5:1dd::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290AB19007A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 16:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717778959; cv=none; b=sJbgUuQK0Hx/oX0xdoiGfxB1f/0QVa/zbn1E81bf93CMsgSYi7YlLB7I7+9HUKtfOSFA8pf/ZSQUvg1FZiFHEtV6IA4XFUevLik5Sz38uNkd3KmgDotSMm61RHp2NA9Z7h80nIviIy01Jz4dy5ikxnrr+8Ahca0XTd+M+8Ku89Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717778959; c=relaxed/simple;
+	bh=Di5A8LPnmhwJzeMLt1uEvLIy5ioqrIfxl0SdvcNbxZY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UfcVaKtIOXC2zElLGkTEZPaGHpurMmvZxS4vQsQKjp4CBjss2W3xBp0AfFERO1hwyaiKijh/i8HWiJqfep84MMkAe7a1K1b2UXOvDXnCoA/DYp6Kc0F9Db3c0ewfx3TOUpp+2HF123RrO7WRyQXW75tiKmKY3miVYu8ASkLuIIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QD13S1gv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457GFI2P012334;
+	Fri, 7 Jun 2024 16:48:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=WFeEPbzwDYfzW5+rKmDa6gD+6sj3N898ljKT8Dy9bGg=;
+ b=QD13S1gv8fu4ba7P2OgJ9oSfe3KHgsUqsrR0nGe6g/LyscbFxDIYkqlLGbT5YTEsil9L
+ 9Lv2VW81QVkp+UeSP8riSijidl19noAKHAS45Rekvcvub4G6XFCNtIQz5o72zMc2lmS2
+ PtJri2/2il6I7KEtGgRkLx2UDkJegfeIMMKXsUdt/098T9d7Xbu2CcJpqOiQQ0HMExk2
+ vrEdormZdBA7K7gczePxwhbyHsriI6xDzF9XOk/Lsi6YpfcOcS3FRc3ewSDz8mPI6gTQ
+ 3G+KPZHccP0bpZwE2W26D4keu0hZUPxJxVkiKAp+Un6dcy8RWb4dQBZ9I9I/+IgtPvVZ ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym5j4g3d1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 16:48:41 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 457GmeOr004818;
+	Fri, 7 Jun 2024 16:48:40 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ym5j4g3cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 16:48:40 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 457Gk8h2022835;
+	Fri, 7 Jun 2024 16:48:39 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6mshsc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 16:48:39 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 457Gmbxm56230392
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Jun 2024 16:48:39 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 089E55806D;
+	Fri,  7 Jun 2024 16:48:37 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5A5158054;
+	Fri,  7 Jun 2024 16:48:32 +0000 (GMT)
+Received: from [9.195.40.55] (unknown [9.195.40.55])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Jun 2024 16:48:32 +0000 (GMT)
+Message-ID: <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
+Date: Fri, 7 Jun 2024 22:18:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR01MB5947:EE_|CH0PR01MB7051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c30221b-62e4-4224-7fa7-08dc87119206
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGxhLzF1ME1mVUgyMURrS2pwa29PZ1dqRTYvOW9pTnVqdTRoZnJheVFHMzRo?=
- =?utf-8?B?UFBtSFRCYnlQNmhrL3NFNmZXZnpWL3d0bncxaVIzTld3UlJQcE5jS2prMGQy?=
- =?utf-8?B?YzhRbjJSQmNxR0NNdjNhVWVHVGNvTG42Qm5wdUdUa21LbC95MEV4T1RQeFJ0?=
- =?utf-8?B?SlhRV2VrVVp0UU8yTE9ZcU81ZzBKV1BFVE1RWXBod3hzdnJ2YjkwSWhzbXZB?=
- =?utf-8?B?ODJZVSswdExGVU52L2xNaVF3WDI3Qys0RTF2ZUdJU1V0c1lWUUUvTHhORkZ2?=
- =?utf-8?B?SFR5OFhLSFB0WjU5VEVncWFVSitlUit1OVdMZDVnbFZ3bmNJbWhCWGR4a2l5?=
- =?utf-8?B?QmxsY2lyWnFUbTU4NU1CRUZpUGk5WHd3Vjd5dkZXRjFSUUoySGI5THEwRGor?=
- =?utf-8?B?cFFOeFdCY1NQME9nNUpDOGhMSlk2S2hTZjY5d1RwQzZhbHRDcjk5T0E3T0hZ?=
- =?utf-8?B?SXk5Z1k0eFp3R2JDKzl1K0oraTQrUVFXV3RoVVpLZ3FuTEl6d09Eb1RhOXdK?=
- =?utf-8?B?OVR6bTBOWFd1RisvNjVYSERkalBjRERIc0dRUEorSXdMMVh6V1RLZHZlWnR6?=
- =?utf-8?B?TmpnZDlOV1llYzBramM0OGcvdzZGVEFMVnNZYmM4cWltZW9uYVY4R1lHb3Z4?=
- =?utf-8?B?M3ppQncrWjU0b0VDNVZOakxubEpxb0h6OHRCeUJvYURDQ2RJeFV4c1VYK0ZN?=
- =?utf-8?B?Q3U4NEt6V0h1S0E0dXZXa055MjMzSUk2dnRNN3U0UHdVczA0RlVkQ0ZTRmhK?=
- =?utf-8?B?emVZWnZlbk5sVEh3WmZNb2lZYXlLN042Zm50QmMwcXltZEdrOFFkTU9BYnRm?=
- =?utf-8?B?Q25aSkFTQi9DT3hzM01zYUhJcUFxVGltQkpiK0NlamFBaHM3WVZ0cXNyT1NK?=
- =?utf-8?B?OWtYbDhrYlBPZTNkRWxrd1V2Y0NZODhKTk1YcWIycEN1eWtVNG1rd1ZsS3lC?=
- =?utf-8?B?OVFHOVlWK28vL0xwU2tSYnRnYzZpSWdTR2YzZVV6eDI0SnBSVkQ5aGEwbUJV?=
- =?utf-8?B?UTBmb3d5NE80U1ZTQ29Wa1p6WStCT1liS29NQWVMS05ETmJkaWtjdWo3RHhG?=
- =?utf-8?B?cXVJb2ZYSE9ScC91bW9WQjNCcS8wckNMUlU2bmxlQThMUzc3VFloUXljMXdK?=
- =?utf-8?B?KzBVS2lia2k3b00wUU1GVmlrSGdlRm5DLzJacVdJamhDQlNDMzNMU2tTeTJZ?=
- =?utf-8?B?M2FucWVuc29sdUVpRU1DS1g3b0RVRkFUZFhsRGJzU1RtY1M5akF0dVhxQnNu?=
- =?utf-8?B?OXE5cUF1TjlSYmEvSG04UjFQdmJnS0pUMzgrL2xLMDFwa0RQNW4xOG8xRGVY?=
- =?utf-8?B?TjFLaWRQbFc4ZzN4WnMxclFSZnd5dm1XZ296T1R4aFphZUFJZ0dOQjY3VGxP?=
- =?utf-8?B?TTJVYi95U2UzZXdKZDlQTzNWY0dLS2htay9IZWRPdXBvSFlTenlnZjRxSCtN?=
- =?utf-8?B?T0dCMFlaU0t5MXUyNHp4VVNWeWtJVWNqRDhVQzM5blRBdUFmeEpPekNHc2ww?=
- =?utf-8?B?WFd5cmJ1ajVYWUxCQnlyTk5QVEN4b2ZyM210QkcxT2t2eno4NS9UOGsxcmhm?=
- =?utf-8?B?V0xycFJYS3QzTTFCYVplN3FmWG5Hc09kMGcyeVk4c0dIT3lWcDh0OFB5Uzdz?=
- =?utf-8?B?RENVdnRXR2VBSmdMQUYzaXFyOFhVaVVhVHRpMnQrSUtQKy9oeVJJQmI5b1N5?=
- =?utf-8?B?MHBTcnBVUXg2R2lEV2ozTmtJa3YxSDhHNU1ldnlhVWJQYkVONEt2NEZ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR01MB5947.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NTgxaTV6RU1DV3FkS1hyR0tsbDBiTjc1bFV2NXJQdWNHWVNQbDc4RFBIaUVT?=
- =?utf-8?B?dzRDcHN0Z1dZaWt1UzlXR09ZcEJNb0FZeDVyQ3FqN2MyVWJQMC81eG9aNEtz?=
- =?utf-8?B?L3R2UW4xQXF3VHo0WXNEbEcyTXp4U3lFM3VwMGV5TlZQZDRrL1NFeDV2MmVn?=
- =?utf-8?B?ZFdlcTYvNXUvbGRvYkVPYW9TOWxVOE0wREpQNHNLZzl1c0FLajBZNkdhMHRJ?=
- =?utf-8?B?VExZbzZLTnRqTlUvQkZ6RTcxWjhKMGZ0enV3NUdoKzlRbmF0cXRldEJ1Q2I3?=
- =?utf-8?B?dDNNcHNwalVGZzZOWjB2TjdlSlhGczVrTDFCZnRKdWMzRitGL3lqNnovMVBa?=
- =?utf-8?B?QkxhNHlJc1ZXaU43U3IrNnJmaDQ1UmFvenc3RWI5V0lLeDBXTW9IL2ZTOHJB?=
- =?utf-8?B?bGQvUFIxckRsSFRzNzNpaGhOMUlwVEpEdnpLbDQvd0tOM2dDMkhHeEI0c0lo?=
- =?utf-8?B?SUp2K2wxMnQwUjQ4UGRBdmROT0kvcU16MnhLR2hJdllSRnQvUEJnZnJwTUVW?=
- =?utf-8?B?ZVlCLzNpVFVGZDJJZFI1NFRacGhGSzVQM3lxdEtyYUdKTGg0YUZzc2lXdWpU?=
- =?utf-8?B?NTg0TmhDTjF2Yy92RTgxWlBTdTd0ZDZQNEppdUQxajZzeVVKUUpDN1J4UGVF?=
- =?utf-8?B?K0N0VTJrcmRpTk0wZjh3bjhEVkN6aWhBVHg0Y3MvU3ZYV1JXeVhlRG02b3pJ?=
- =?utf-8?B?eEZvc0dlMFUzZVl6S1NabmhwZGN0cFpzVWMrZVRvdG9EUnV6Sk1PWHFqS2pB?=
- =?utf-8?B?Z2lxRHY1WWt3cUowdkNIMGV3UGJaTXhtQUZqSlY2OXhhbjB3dnJPZ3lpMm8w?=
- =?utf-8?B?QXk3NGRnUXlXM3cycGxZUXBqaEEzRDJ4UjZXeVJ1U0JOSjJENEFpeGo0OGRF?=
- =?utf-8?B?RjVYaCtzSGNtdUFQMlFaVHFnaXdIRlMvNmJjNEY1N2lRRGdnY2tQNkZ6MnVq?=
- =?utf-8?B?cVVadFF6OHhUUGdlNm1HQTFPemM5bVAwNUFsODVjV3RkSUsvKzZjQXd3eG15?=
- =?utf-8?B?dWR4VjcvZkJWT0VLa1N4ay9seWpZSm55RmdoSk5SN254SlFLeVBXQldBMENF?=
- =?utf-8?B?elJnSGVzNjUvT1hvOHJURmFtQkRkNGlDei9xNVgwK2Jwa3crQVZFL1hheXNu?=
- =?utf-8?B?L3NNK0hWWjRyY3VTQy9PU2EzYm40NWlRNXBrSDV0dUNVNDd3NFk0dmR5azla?=
- =?utf-8?B?NzIvakFFVnNmaTdXamZseHhGNEdndEROMjdYSExqQnBjeWFpU3FqOFlaQmZM?=
- =?utf-8?B?bFZEdjllMWhMWUp2ejQwZjJKQTdvd0Rob3RONm1lZlFtT1RuQzFOc1VreFlu?=
- =?utf-8?B?SHRkUkpGNk1PMUtVYkVpMmcwbnNTakx0cjY1dkZZcjB3UWs2V0VsQnhtaXla?=
- =?utf-8?B?YXBDTW52NFg1TnF0RytYcSs1Q2FSeFZmWlJvQjZteUVpZzczUmtYUDZUMmEy?=
- =?utf-8?B?ejlFa0YxeEFSWm94YW8yRUhncmt3L1hhTmd3UzlWTGlUUzlEVG1lZjRFZmFF?=
- =?utf-8?B?RUJCOGZzUzNGem9FS2twcWY2alF1YmQxYlJ1OWsxUHowdWNRTDRyS3NyTkls?=
- =?utf-8?B?TjVqVWR1RXJiMkFGc09wUnN2aFlFL09yOGVyVHZVYTRyYi91S0pZWURTRm9u?=
- =?utf-8?B?QWpKTnZFeXIwb2NQeXNMQ1JzRmRtYitLblFFbXNpYWFhMi8yakluWlpJaHNT?=
- =?utf-8?B?bTFod3VoNkJ5eUhjbkhqUXBRcnpRTVBhU0RJOGNHdHZrK3g2MkFHRzZBbTE5?=
- =?utf-8?B?L0ZQemJmc0l1ME96aklUL3BmYjRGSkczYVZtZE9iejAwbFE5ZkZFckFRd1VP?=
- =?utf-8?B?UVY1MzFoN1dxSm9nbDZPZmRvdm8zR1pzSWhXR1ppTGlGWE9hZTgyd0ZCbjRB?=
- =?utf-8?B?cCtvcVVGenJhUnVCZkY2MXlmUGdXOXg1aHZBeExoNG9Hcm5MN1BaOTlzd2p1?=
- =?utf-8?B?NlFMb1ZCVXdhUEZBbUQyQ0xpbEExQ0htcnprbWFzS01iVXB5VEhjcXpSOXAw?=
- =?utf-8?B?NW13Vi9ObEp5eTJMNUlWRzVKczFDN285blZDTlRML1FVakRPYlZNMmM4Wjll?=
- =?utf-8?B?U2hDekZQTEZTZHViUWRVN09LbG9CL2tKZ1RCQjMzRkZOcG5ObjFrSlBOWWk3?=
- =?utf-8?B?QjFVcWd5OUdnakRROUNhVnVaUTVCdUdwcVhrcHBhUVZlWEZaR0YxejJyYnl4?=
- =?utf-8?Q?ldicyhm0Fveks1QwUkpYh9s=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c30221b-62e4-4224-7fa7-08dc87119206
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR01MB5947.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 16:47:51.7019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fDIKC3S6b5jiQJrHO4PI65tRRNmvPMcGlX4pDbBYwB+3N9fTjNrAp0iwHbAL6X1JVV/wCVM92IUDcwoU4URNjKnw2N6UrRDU+m+q0ziFTVOIb6HMjNk5J1bNW92PdnsP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB7051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
+        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
+        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
+ <8734pw51he.fsf@oracle.com>
+ <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: A4k5-a5BaDfWxnsTCmzn1ciBq9U-N50S
+X-Proofpoint-GUID: 4oSboUBhM73G8sthSfZ-vgIMYyreEG_C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_10,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 impostorscore=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406070124
 
 
 
-On 08/05/2024 23:47, Conor Dooley wrote:
-> On Wed, May 08, 2024 at 10:44:34AM +0700, Chanh Nguyen wrote:
->> On 05/05/2024 22:40, Guenter Roeck wrote:
->>> On 5/5/24 03:08, Chanh Nguyen wrote:
->>>> On 25/04/2024 21:05, Guenter Roeck wrote:
->>>>> On 4/25/24 03:33, Chanh Nguyen wrote:
->>>>>
->>>>> pwm outputs on MAX31790 are always tied to the matching
->>>>> tachometer inputs
->>>>> (pwm1 <--> tach1 etc) and can not be reconfigured, meaning tach-ch for
->>>>> channel X would always be X.
->>>>>
->>>>>> I would like to open a discussion about whether we should
->>>>>> use the tach-ch property on the fan-common.yaml
->>>>>>
->>>>>> I'm looking forward to hearing comments from everyone. For
->>>>>> me, both tach-ch and vendor property are good.
->>>>>>
->>>>>
->>>>> I am not even sure how to define tach-ch to mean "use the pwm output pin
->>>>> associated with this tachometer input channel not as pwm output
->>>>> but as tachometer input". That would be a boolean, not a number.
->>>>>
+On 6/4/24 1:02 PM, Shrikanth Hegde wrote:
+> 
+> 
+> On 6/1/24 5:17 PM, Ankur Arora wrote:
+>>
+>> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+>>
+>>> On 5/28/24 6:04 AM, Ankur Arora wrote:
+>>>> Hi,
 >>>>
->>>> Thank Guenter,
+>>>> This series adds a new scheduling model PREEMPT_AUTO, which like
+>>>> PREEMPT_DYNAMIC allows dynamic switching between a none/voluntary/full
+>>>> preemption model. Unlike, PREEMPT_DYNAMIC, it doesn't depend
+>>>> on explicit preemption points for the voluntary models.
 >>>>
->>>> I reviewed again the "tach-ch" property, which is used in the https://elixir.bootlin.com/linux/v6.9-rc6/source/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml#L68
->>>> and https://elixir.bootlin.com/linux/v6.9-rc6/source/drivers/hwmon/aspeed-g6-pwm-tach.c#L434
+>>>> The series is based on Thomas' original proposal which he outlined
+>>>> in [1], [2] and in his PoC [3].
 >>>>
->>>> That is something completely different from my purpose.
+>>>> v2 mostly reworks v1, with one of the main changes having less
+>>>> noisy need-resched-lazy related interfaces.
+>>>> More details in the changelog below.
 >>>>
 >>>
->>> Based on its definition, tach-ch is associated with fans, and it looks
->>> like the .yaml file groups multiple sets of fans into a single
->>> fan node.
+>>> Hi Ankur. Thanks for the series.
 >>>
->>> In the simple case that would be
->>>       tach-ch = <1>
->>> ...
->>>       tach-ch = <12>
+>>> nit: had to manually patch 11,12,13 since it didnt apply cleanly on
+>>> tip/master and tip/sched/core. Mostly due some word differences in the change.
 >>>
->>> or, if all fans are controlled by a single pwm
->>>       tach-ch = <1 2 3 4 5 6 8 9 10 11 12>
+>>> tip/master was at:
+>>> commit e874df84d4a5f3ce50b04662b62b91e55b0760fc (HEAD -> master, origin/master, origin/HEAD)
+>>> Merge: 5d145493a139 47ff30cc1be7
+>>> Author: Ingo Molnar <mingo@kernel.org>
+>>> Date:   Tue May 28 12:44:26 2024 +0200
 >>>
->>> The existence of tachometer channel 7..12 implies that pwm channel
->>> (tachometer
->>> channel - 6) is used as tachometer channel. That should be sufficient to
->>> program
->>> the chip for that channel. All you'd have to do is to ensure that pwm
->>> channel
->>> "X" is not listed as tachometer channel "X + 6", and program pwm channel
->>> "X - 6"
->>> for tachometer channels 7..12 as tachometer channels.
+>>>     Merge branch into tip/master: 'x86/percpu'
 >>>
->>
->> Hi Guenter,
->>
->> I applied the patch [2/3] in my patch series (https://lore.kernel.org/lkml/20240414042246.8681-3-chanh@os.amperecomputing.com/)
->>
->> My device tree is configured as below, I would like to configure PWMOUT pins
->> 5 and 6 to become the tachometer input pins.
->>
->>         fan-controller@20 {
->>           compatible = "maxim,max31790";
->>           reg = <0x20>;
->>           maxim,pwmout-pin-as-tach-input = /bits/ 8 <0 0 0 0 1 1>;
->>         };
-> 
-> Why are you still operating off a binding that looks like this? I
-> thought that both I and Krzysztof told you to go and take a look at how
-> the aspeed,g6-pwm-tach.yaml binding looped and do something similar
-> here. You'd end up with something like:
-> 
->          fan-controller@20 {
->            compatible = "maxim,max31790";
->            reg = <0x20>;
-> 
->            fan-0 {
->              pwms = <&pwm-provider ...>;
->              tach-ch = 6;
->          };
-> 
->            fan-1 {
->              pwms = <&pwm-provider ...>;
->              tach-ch = 7;
->          };
-> };
-> 
-> You can, as tach-ch or pwms do not need to be unique, set multiple
-> channels up as using the same tachs and/or pwms.
-> In the case of this particular fan controller, I think that the max31790
-> is actually the pwm provider so you'd modify it something like:
-> 
->          pwm-provider: fan-controller@20 {
->            compatible = "maxim,max31790";
->            reg = <0x20>;
-> 	  #pwm-cells = <N>;
-> 
->            fan-0 {
->              pwms = <&pwm-provider ...>;
->              tach-ch = <6>;
->          };
-> 
->            fan-1 {
->              pwms = <&pwm-provider ...>;
->              tach-ch = <7>;
->          };
-> };
-> 
-> I just wrote this in my mail client's editor, so it may not be not
-> valid, but it is how the fan bindings expect you to represent this kind
-> of scenario.
-> 
-
-My apologies for the late reply.
-
-Thank you, Conor, for your recommendation!
-
-I spend more time checking the aspeed,g6-pwm-tach.yaml . Finally, I'll 
-support the child nodes by having different tach-ch values. My system is 
-designed similar to Figure 6 (8 Tach Monitors, 4PMWs).
-
-I'm going to push the patch series v3 soon.
-
-This is a brief binding.
-....
-properties:
-   compatible:
-     const: maxim,max31790
-
-   reg:
-     maxItems: 1
-
-   clocks:
-     maxItems: 1
-
-   resets:
-     maxItems: 1
-
-patternProperties:
-   "^fan-[0-9]+$":
-     $ref: fan-common.yaml#
-     unevaluatedProperties: false
-
-required:
-   - compatible
-   - reg
-
-additionalProperties: false
-
-examples:
-   - |
-     i2c {
-       #address-cells = <1>;
-       #size-cells = <0>;
-
-       pwm_provider: fan-controller@20 {
-         compatible = "maxim,max31790";
-         reg = <0x20>;
-         clocks = <&sys_clk>;
-         resets = <&reset 0>;
-
-         fan-0 {
-           pwms = <&pwm_provider 1>;
-           tach-ch = <1 2>;
-         };
-
-         fan-1 {
-           pwms = <&pwm_provider 2>;
-           tach-ch = <7 8>;
-         };
-       };
-     };
-
-
-As your example, I saw the #pwm-cells = <N> . Please let me know, what's 
-the purpose of this property?
-
-Thanks!
-
-Chanh Ng
-
-
-> Cheers,
-> Conor.
-> 
->>
->> The sysfs is generated by the max31790 driver are shown below. We can see
->> the PWM5 and PWM6 are not visible, and the fan11 and fan12 are visible. And
->> all FAN devices are on my system, which worked as expected.
->>
->> root@my-platform:/sys/class/hwmon/hwmon14# ls
->> device       fan12_input  fan1_target  fan2_target  fan3_target fan4_target
->> fan6_enable  of_node      pwm2         pwm4
->> fan11_fault  fan1_enable  fan2_enable  fan3_enable  fan4_enable fan5_enable
->> fan6_fault   power        pwm2_enable  pwm4_enable
->> fan11_input  fan1_fault   fan2_fault   fan3_fault   fan4_fault fan5_fault
->> fan6_input   pwm1         pwm3         subsystem
->> fan12_fault  fan1_input   fan2_input   fan3_input   fan4_input fan5_input
->> name         pwm1_enable  pwm3_enable  uevent
->>
->> Please share your comments!
->>
->>> Hope this helps,
->>> Guenter
 >>>
+>>>
+>>>> The v1 of the series is at [4] and the RFC at [5].
+>>>>
+>>>> Design
+>>>> ==
+>>>>
+>>>> PREEMPT_AUTO works by always enabling CONFIG_PREEMPTION (and thus
+>>>> PREEMPT_COUNT). This means that the scheduler can always safely
+>>>> preempt. (This is identical to CONFIG_PREEMPT.)
+>>>>
+>>>> Having that, the next step is to make the rescheduling policy dependent
+>>>> on the chosen scheduling model. Currently, the scheduler uses a single
+>>>> need-resched bit (TIF_NEED_RESCHED) which it uses to state that a
+>>>> reschedule is needed.
+>>>> PREEMPT_AUTO extends this by adding an additional need-resched bit
+>>>> (TIF_NEED_RESCHED_LAZY) which, with TIF_NEED_RESCHED now allows the
+>>>> scheduler to express two kinds of rescheduling intent: schedule at
+>>>> the earliest opportunity (TIF_NEED_RESCHED), or express a need for
+>>>> rescheduling while allowing the task on the runqueue to run to
+>>>> timeslice completion (TIF_NEED_RESCHED_LAZY).
+>>>>
+>>>> The scheduler decides which need-resched bits are chosen based on
+>>>> the preemption model in use:
+>>>>
+>>>> 	       TIF_NEED_RESCHED        TIF_NEED_RESCHED_LAZY
+>>>>
+>>>> none		never   		always [*]
+>>>> voluntary       higher sched class	other tasks [*]
+>>>> full 		always                  never
+>>>>
+>>>> [*] some details elided.
+>>>>
+>>>> The last part of the puzzle is, when does preemption happen, or
+>>>> alternately stated, when are the need-resched bits checked:
+>>>>
+>>>>                  exit-to-user    ret-to-kernel    preempt_count()
+>>>>
+>>>> NEED_RESCHED_LAZY     Y               N                N
+>>>> NEED_RESCHED          Y               Y                Y
+>>>>
+>>>> Using NEED_RESCHED_LAZY allows for run-to-completion semantics when
+>>>> none/voluntary preemption policies are in effect. And eager semantics
+>>>> under full preemption.
+>>>>
+>>>> In addition, since this is driven purely by the scheduler (not
+>>>> depending on cond_resched() placement and the like), there is enough
+>>>> flexibility in the scheduler to cope with edge cases -- ex. a kernel
+>>>> task not relinquishing CPU under NEED_RESCHED_LAZY can be handled by
+>>>> simply upgrading to a full NEED_RESCHED which can use more coercive
+>>>> instruments like resched IPI to induce a context-switch.
+>>>>
+>>>> Performance
+>>>> ==
+>>>> The performance in the basic tests (perf bench sched messaging, kernbench,
+>>>> cyclictest) matches or improves what we see under PREEMPT_DYNAMIC.
+>>>> (See patches
+>>>>   "sched: support preempt=none under PREEMPT_AUTO"
+>>>>   "sched: support preempt=full under PREEMPT_AUTO"
+>>>>   "sched: handle preempt=voluntary under PREEMPT_AUTO")
+>>>>
+>>>> For a macro test, a colleague in Oracle's Exadata team tried two
+>>>> OLTP benchmarks (on a 5.4.17 based Oracle kernel, with the v1 series
+>>>> backported.)
+>>>>
+>>>> In both tests the data was cached on remote nodes (cells), and the
+>>>> database nodes (compute) served client queries, with clients being
+>>>> local in the first test and remote in the second.
+>>>>
+>>>> Compute node: Oracle E5, dual socket AMD EPYC 9J14, KVM guest (380 CPUs)
+>>>> Cells (11 nodes): Oracle E5, dual socket AMD EPYC 9334, 128 CPUs
+>>>>
+>>>>
+>>>> 				  PREEMPT_VOLUNTARY                        PREEMPT_AUTO
+>>>> 				                                        (preempt=voluntary)
+>>>>                               ==============================      =============================
+>>>>                       clients  throughput    cpu-usage            throughput     cpu-usage         Gain
+>>>>                                (tx/min)    (utime %/stime %)      (tx/min)    (utime %/stime %)
+>>>> 		      -------  ----------  -----------------      ----------  -----------------   -------
+>>>>
+>>>>
+>>>>   OLTP                  384     9,315,653     25/ 6                9,253,252       25/ 6            -0.7%
+>>>>   benchmark	       1536    13,177,565     50/10               13,657,306       50/10            +3.6%
+>>>>  (local clients)       3456    14,063,017     63/12               14,179,706       64/12            +0.8%
+>>>>
+>>>>
+>>>>   OLTP                   96     8,973,985     17/ 2                8,924,926       17/ 2            -0.5%
+>>>>   benchmark	        384    22,577,254     60/ 8               22,211,419       59/ 8            -1.6%
+>>>>  (remote clients,      2304    25,882,857     82/11               25,536,100       82/11            -1.3%
+>>>>   90/10 RW ratio)
+>>>>
+>>>>
+>>>> (Both sets of tests have a fair amount of NW traffic since the query
+>>>> tables etc are cached on the cells. Additionally, the first set,
+>>>> given the local clients, stress the scheduler a bit more than the
+>>>> second.)
+>>>>
+>>>> The comparative performance for both the tests is fairly close,
+>>>> more or less within a margin of error.
+>>>>
+>>>> Raghu KT also tested v1 on an AMD Milan (2 node, 256 cpu,  512GB RAM):
+>>>>
+>>>> "
+>>>>  a) Base kernel (6.7),
+>>>>  b) v1, PREEMPT_AUTO, preempt=voluntary
+>>>>  c) v1, PREEMPT_DYNAMIC, preempt=voluntary
+>>>>  d) v1, PREEMPT_AUTO=y, preempt=voluntary, PREEMPT_RCU = y
+>>>>
+>>>>  Workloads I tested and their %gain,
+>>>>                     case b           case c       case d
+>>>>  NAS                +2.7%              +1.9%         +2.1%
+>>>>  Hashjoin,          +0.0%              +0.0%         +0.0%
+>>>>  Graph500,          -6.0%              +0.0%         +0.0%
+>>>>  XSBench            +1.7%              +0.0%         +1.2%
+>>>>
+>>>>  (Note about the Graph500 numbers at [8].)
+>>>>
+>>>>  Did kernbench etc test from Mel's mmtests suite also. Did not notice
+>>>>  much difference.
+>>>> "
+>>>>
+>>>> One case where there is a significant performance drop is on powerpc,
+>>>> seen running hackbench on a 320 core system (a test on a smaller system is
+>>>> fine.) In theory there's no reason for this to only happen on powerpc
+>>>> since most of the code is common, but I haven't been able to reproduce
+>>>> it on x86 so far.
+>>>>
+>>>> All in all, I think the tests above show that this scheduling model has legs.
+>>>> However, the none/voluntary models under PREEMPT_AUTO are conceptually
+>>>> different enough from the current none/voluntary models that there
+>>>> likely are workloads where performance would be subpar. That needs more
+>>>> extensive testing to figure out the weak points.
+>>>>
+>>>>
+>>>>
+>>> Did test it again on PowerPC. Unfortunately numbers shows there is regression
+>>> still compared to 6.10-rc1. This is done with preempt=none. I tried again on the
+>>> smaller system too to confirm. For now I have done the comparison for the hackbench
+>>> where highest regression was seen in v1.
+>>>
+>>> perf stat collected for 20 iterations show higher context switch and higher migrations.
+>>> Could it be that LAZY bit is causing more context switches? or could it be something
+>>> else? Could it be that more exit-to-user happens in PowerPC? will continue to debug.
+>>
+>> Thanks for trying it out.
+>>
+>> As you point out, context-switches and migrations are signficantly higher.
+>>
+>> Definitely unexpected. I ran the same test on an x86 box
+>> (Milan, 2x64 cores, 256 threads) and there I see no more than a ~4% difference.
+>>
+>>   6.9.0/none.process.pipe.60:       170,719,761      context-switches          #    0.022 M/sec                    ( +-  0.19% )
+>>   6.9.0/none.process.pipe.60:        16,871,449      cpu-migrations            #    0.002 M/sec                    ( +-  0.16% )
+>>   6.9.0/none.process.pipe.60:      30.833112186 seconds time elapsed                                          ( +-  0.11% )
+>>
+>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:       177,889,639      context-switches          #    0.023 M/sec                    ( +-  0.21% )
+>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:        17,426,670      cpu-migrations            #    0.002 M/sec                    ( +-  0.41% )
+>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:      30.731126312 seconds time elapsed                                          ( +-  0.07% )
+>>
+>> Clearly there's something different going on powerpc. I'm travelling
+>> right now, but will dig deeper into this once I get back.
+>>
+>> Meanwhile can you check if the increased context-switches are voluntary or
+>> involuntary (or what the division is)?
+> 
+> 
+> Used "pidstat -w -p ALL 1 10" to capture 10 seconds data at 1 second interval for 
+> context switches per second while running "hackbench -pipe 60 process 100000 loops" 
+> 
+> 
+> preempt=none				6.10			preempt_auto
+> =============================================================================
+> voluntary context switches	    	7632166.19	        9391636.34(+23%)
+> involuntary context switches		2305544.07		3527293.94(+53%)
+> 
+> Numbers vary between multiple runs. But trend seems to be similar. Both the context switches increase 
+> involuntary seems to increase at higher rate. 
+> 
+> 
+
+
+Continued data from hackbench regression. preempt=none in both the cases.
+From mpstat, I see slightly higher idle time and more irq time with preempt_auto. 
+
+6.10-rc1:
+=========
+10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+09:45:23 AM  all    4.14    0.00   77.57    0.00   16.92    0.00    0.00    0.00    0.00    1.37
+09:45:24 AM  all    4.42    0.00   77.62    0.00   16.76    0.00    0.00    0.00    0.00    1.20
+09:45:25 AM  all    4.43    0.00   77.45    0.00   16.94    0.00    0.00    0.00    0.00    1.18
+09:45:26 AM  all    4.45    0.00   77.87    0.00   16.68    0.00    0.00    0.00    0.00    0.99
+
+PREEMPT_AUTO:
+===========
+10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+10:09:56 AM  all    3.11    0.00   72.59    0.00   21.34    0.00    0.00    0.00    0.00    2.96
+10:09:57 AM  all    3.31    0.00   73.10    0.00   20.99    0.00    0.00    0.00    0.00    2.60
+10:09:58 AM  all    3.40    0.00   72.83    0.00   20.85    0.00    0.00    0.00    0.00    2.92
+10:10:00 AM  all    3.21    0.00   72.87    0.00   21.19    0.00    0.00    0.00    0.00    2.73
+10:10:01 AM  all    3.02    0.00   72.18    0.00   21.08    0.00    0.00    0.00    0.00    3.71
+
+Used bcc tools hardirq and softirq to see if irq are increasing. softirq implied there are more 
+timer,sched softirq. Numbers vary between different samples, but trend seems to be similar. 
+
+6.10-rc1:
+=========
+SOFTIRQ          TOTAL_usecs
+tasklet                   71
+block                    145
+net_rx                  7914
+rcu                   136988
+timer                 304357
+sched                1404497
+
+
+
+PREEMPT_AUTO:
+===========
+SOFTIRQ          TOTAL_usecs
+tasklet                   80
+block                    139
+net_rx                  6907
+rcu                   223508
+timer                 492767
+sched                1794441
+
+
+Would any specific setting of RCU matter for this? 
+This is what I have in config. 
+
+# RCU Subsystem
+#
+CONFIG_TREE_RCU=y
+# CONFIG_RCU_EXPERT is not set
+CONFIG_TREE_SRCU=y
+CONFIG_NEED_SRCU_NMI_SAFE=y
+CONFIG_TASKS_RCU_GENERIC=y
+CONFIG_NEED_TASKS_RCU=y
+CONFIG_TASKS_RCU=y
+CONFIG_TASKS_RUDE_RCU=y
+CONFIG_TASKS_TRACE_RCU=y
+CONFIG_RCU_STALL_COMMON=y
+CONFIG_RCU_NEED_SEGCBLIST=y
+CONFIG_RCU_NOCB_CPU=y
+# CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
+# CONFIG_RCU_LAZY is not set
+# end of RCU Subsystem
+
+
+# Timers subsystem
+#
+CONFIG_TICK_ONESHOT=y
+CONFIG_NO_HZ_COMMON=y
+# CONFIG_HZ_PERIODIC is not set
+# CONFIG_NO_HZ_IDLE is not set
+CONFIG_NO_HZ_FULL=y
+CONFIG_CONTEXT_TRACKING_USER=y
+# CONFIG_CONTEXT_TRACKING_USER_FORCE is not set
+CONFIG_NO_HZ=y
+CONFIG_HIGH_RES_TIMERS=y
+# end of Timers subsystem
+
 
