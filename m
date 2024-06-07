@@ -1,159 +1,184 @@
-Return-Path: <linux-kernel+bounces-205704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CEB8FFF18
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA20E8FFF1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 11:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607CD28675E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EDB028664F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 09:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7475915B150;
-	Fri,  7 Jun 2024 09:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9EC15B15F;
+	Fri,  7 Jun 2024 09:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFUjB55B"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj2f/I4S"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29F13A40F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA80C13A40F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 09:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717751926; cv=none; b=DXLDAEdwK0LxxTBK12Tf9zkof4T1xHYmspAvfpxsUj9/NTb25bSiaNjlrqIwCjs09UbkkTWWVTSt/T8q4CCjgpXEZsKLZuFbewWI4EEwQTCMl1iYcxT4i+l+NTQv+38oOEE00Wr52H9ZmXpBbjNAaGxiX//pGE8W6CgHZ/1UeC4=
+	t=1717751940; cv=none; b=rUSlUWP8cFnFMyhlmTj0DONmS+Q7z+gj5L3GCe7caqxGTzEEkKXoBNkt8KwhGydBnSUFjbjRFcoz+39gSuDAvn81AL31qqSna4Yo8mMxQI2zWDVUvcbRUPGtQ1IALmazi7jb3bYBrfqNqCm1TNKoLl6muxU8QWydjpyX8JkAxVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717751926; c=relaxed/simple;
-	bh=QmYVPjiMxKlMx4Wi3ggC4rjBK0tNb+Mg6c81XQQdyNU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Kzi+8IeUc7Xp79VCkAoOfHLVWI1fv2mJska5hwU0tXzYqFBW97+wV47Yuybod4uXeDQdYb80j9C/NOI7zrpIjloy9A/ffhhDetC7YC8LK05VYs9WavyIxh3/quFPpuVDcpNycMz1dwqGkkzQPzwhEpeqoPTTIIzIl/yqO2Jirmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFUjB55B; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1717751940; c=relaxed/simple;
+	bh=GGBwkNwaKLuAZt/gpy69pFlBu9B1OahtS1M1l1qbKpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pkz17iPPSQTyZ5g7b0X2MkQWc0i1vShUOmqTxiUZJvXtQUG+jYPux3/OGGACZWiEpnKS4ffIAcXRpMG/FIql92wWPX3tpZEeyn2wtJ1DhJVSTDvzZaLDu0vfcjtKLPHBVb/YVcOwVQSJTmG9bb4v9BOkmIEad2klkD+29doZ+Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj2f/I4S; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42166eb31b2so4341945e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:18:44 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b840cfecdso2229032e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 02:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717751923; x=1718356723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lc1anBJkTUjNMfHbklFybf/ydEv1AmoaOOCKkC7EYg0=;
-        b=IFUjB55BZoCAxmTUUeNl0PGcrwJ1YzfDSqywS+2xIHs7bVppVZciftUUizLkhIBl0w
-         TpHf2Gbm4Hq7dDZy0QDXY3a5Mqd3yGPpo/G8TbDGmYiXns0zxEpJJR+TI9F2AhZx45Zg
-         nJngJRndRg47WZNGd+2ds85MLroiYHszKSmQ0kSgLfUavRk1zPPOA9N+TD9Nmbrq3nkD
-         9cIOJ2PDo2V/0lR6wF6zP3DnPsm9OHgv1ngklQQiO+lIiNELBuVQTqCJ6+w8qX74i/nB
-         KIpNFbdQUyGJ0JC64bK7iSzlH9dSn7IFYppUN1mDPr54+5kctsccOKpnHXHY2Ec8D3ks
-         4gug==
+        d=linaro.org; s=google; t=1717751937; x=1718356737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDOvdQG4G5HM3mc6kbrR9DttpzyvecPUDpSffGUSbyw=;
+        b=Dj2f/I4SPJUrM3xIIFU29m1RycEmZCvrXV5EmyYOyRUnJHBvM5ro3r+D8z93XJ5rIc
+         XW2KJRaVcndz3mXukkeR0wu1KEGDoMtid1nGCYNZmuMtQDXouEN6DnmhxVbN0YDYxlWB
+         HxGnitYgzRmumJmTqG2Jyh1oFji2EqHHmpRnw7dVtgisV/MuhKcDZtWzDiVfTN+1Jctf
+         Mg5FstwStxRtIUQyDcjI2SHmY7Rh2YRGrN0+iVzF1BYuVTKc6ydi8WEGHicual3AjtiD
+         06pkHj6Ny5JbcIV/36vYi9sH8QAyJ/JEPblVNeNpqzQX6egcfBFa4N+ZjXfZlng4Ica9
+         oKcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717751923; x=1718356723;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lc1anBJkTUjNMfHbklFybf/ydEv1AmoaOOCKkC7EYg0=;
-        b=fpLhKAMhQJxFcLN7TNpKB05k6XFaH9T+/xQUzwzpFrjXV6V2qfnkaDKL/X8tukjxCd
-         ZR92yAeZEnNFuqaNwoywO0bjLq9s7kJnLDakgOMBZOhj347JHt4S7OyIcpcGd9uPfiQR
-         QD+Jo+vJfrZpe+R26jlaergYHfq68PFdqWCAZQYQFtF6uTs590yvAs/53xiJFQuxnJDF
-         4gJJxcMJ+fmcIKdjW7wyB2CnxfQCFYvJVfjqiiDX23OtC2wQbuVUPZBqa1dWKNqXmZm7
-         RB8fEOsb4RKK65UcYTypWiKFtIxVn9hmgcFUJKzVUdAXpVspoX7yqa3Aw7N7KEySyofK
-         Jhgg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0cWkNVF721ZIJXVpkYCqLNzIHZOW21GVvFEEvI7rxmmFjJ3S75CCCD96xE+o2Za5vr+sHb8e8G2sm+Pbu5Us83Pyn1noafMcEXpov
-X-Gm-Message-State: AOJu0YxRsJPrY9fGUGp6xMZvAdn7UP/hlfl8xOPiBiggeVquM9wAHav4
-	ext/2cHtqMhWDI5OUSOvRN1eE9dbKp8+bFuTRFK1+aIZ/X1HJnu835r9hr6JFMI=
-X-Google-Smtp-Source: AGHT+IE0A5LvzXh/9B0zg4BZupJ8VQsgR+oICmqezeGO79jFKoxLUaz0F68c7mLS+i9vKZRr2GtwdA==
-X-Received: by 2002:a05:6000:e01:b0:35d:a567:4dda with SMTP id ffacd0b85a97d-35efedf2a13mr1356563f8f.49.1717751923108;
-        Fri, 07 Jun 2024 02:18:43 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc169fsm3573066f8f.94.2024.06.07.02.18.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 02:18:42 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-References: <20240606-topic-amlogic-upstream-bindings-fixes-dts-v1-0-62e812729541@linaro.org>
-Subject: Re: (subset) [PATCH 00/12] arm64: meson: bunch of DT fixes, take 4
- (final one ??)
-Message-Id: <171775192240.1064805.3116303977641331374.b4-ty@linaro.org>
-Date: Fri, 07 Jun 2024 11:18:42 +0200
+        d=1e100.net; s=20230601; t=1717751937; x=1718356737;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDOvdQG4G5HM3mc6kbrR9DttpzyvecPUDpSffGUSbyw=;
+        b=eo+YIGi55Yk9fmPc5Gb0NHGKsdcl83DF4vgFg0fDM3YSZ4kEEWm1J5c3aZ+AmOW6qW
+         huJohZbAc5WswANPTlKOhZsFo0BPGokfbcotaJZ7YRmpgQ7Y2NMSgUfcflaVRMftEH8d
+         vXT4Gurya6Dt1659mABmkfqsBpKL9r7tpWSiay6OhiZ5QXjlBu1GXO9ORY75BPDEu00R
+         C2OcbofJCQBtIUHHc066ipv6zTlFuC2hY5woqVmU5ZGllaOot9p9rQ7TKkDQ4XkyBviR
+         1zFXP7i0i0jWhX35GITU6dFHayRPzb/VHPx6UWKUGOdKf6YNoCdmhkIe5lAEymvxN2GW
+         Yr5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW6es4Uz2OAtTS/BK2fJ75xFYswt7SpHSVxUvMh2zP3pr3vMOFttaOA08sYXDusaGBqfICa3DFUF7WTLI+L1RfG04apDtEMi7mKIVbT
+X-Gm-Message-State: AOJu0Yw0QUCGMr5UPk+ow5aR3v6FTWQS3aZmCUVxVPxdIN6gbGxLHOCl
+	OxEX+qrUQz4ZaTErv0dsO6PoUNP8G2kQSgCf8nuHxMLu/8x1c9QDcinNPhNOu0k=
+X-Google-Smtp-Source: AGHT+IFy8Jc8e6kLiNxq4Z/D9xjF6XZElG+SeUuG9+pQP3ajt90IUj6L089W6JHTDMeW7DZxVtTZ+Q==
+X-Received: by 2002:a05:6512:3c81:b0:523:da2d:6b8a with SMTP id 2adb3069b0e04-52bb9f7cdc4mr1563602e87.24.1717751936643;
+        Fri, 07 Jun 2024 02:18:56 -0700 (PDT)
+Received: from [192.168.2.24] ([110.93.11.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2cd247sm48597545e9.40.2024.06.07.02.18.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jun 2024 02:18:56 -0700 (PDT)
+Message-ID: <69e1a5b1-e5ce-4bcc-a0c4-2d02e777c296@linaro.org>
+Date: Fri, 7 Jun 2024 11:18:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] iio: accel: adxl313: simplify with
+ spi_get_device_match_data()
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Lucas Stankus <lucas.p.stankus@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
+ Ramona Bolboaca <ramona.bolboaca@analog.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>,
+ Marius Cristea <marius.cristea@microchip.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240606-spi-match-data-v1-0-320b291ee1fe@linaro.org>
+ <20240606-spi-match-data-v1-1-320b291ee1fe@linaro.org>
+ <7ecabb8e342b9bd4fc2552bce29dc8c7a98971ee.camel@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <7ecabb8e342b9bd4fc2552bce29dc8c7a98971ee.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On Thu, 06 Jun 2024 10:48:07 +0200, Neil Armstrong wrote:
-> Along with the following:
-> - https://lore.kernel.org/all/20240422-t7-reset-v2-1-cb82271d3296@amlogic.com/
-> - https://lore.kernel.org/all/20240513224552.800153-1-jan.dakinevich@salutedevices.com/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-spifc-v1-1-380f29ba4a16@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-convert-spdif-receiver-v1-1-262465adbac2@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-mmc-v1-1-4acbb8cc2626@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-phy-v1-1-c819b0ecd8c8@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-rng-v1-1-0a55a7ba55e4@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-v1-1-65bd7cc2e09b@linaro.org/
-> - https://lore.kernel.org/all/20240605-topic-amlogic-upstream-bindings-fixes-power-domains-sardac-v1-1-40a8de6baa59@linaro.org/
-> - https://lore.kernel.org/all/20240606-topic-amlogic-upstream-bindings-convert-g12a-tohdmitx-v2-1-70d44fa30790@linaro.org/
+On 07/06/2024 10:57, Nuno Sá wrote:
+> On Thu, 2024-06-06 at 16:26 +0200, Krzysztof Kozlowski wrote:
+>> Use spi_get_device_match_data() helper to simplify a bit the driver.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  drivers/iio/accel/adxl313_spi.c | 8 +-------
+>>  1 file changed, 1 insertion(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/iio/accel/adxl313_spi.c b/drivers/iio/accel/adxl313_spi.c
+>> index b7cc15678a2b..6f8d73f6e5a9 100644
+>> --- a/drivers/iio/accel/adxl313_spi.c
+>> +++ b/drivers/iio/accel/adxl313_spi.c
+>> @@ -72,13 +72,7 @@ static int adxl313_spi_probe(struct spi_device *spi)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	/*
+>> -	 * Retrieves device specific data as a pointer to a
+>> -	 * adxl313_chip_info structure
+>> -	 */
+>> -	chip_data = device_get_match_data(&spi->dev);
+>> -	if (!chip_data)
+>> -		chip_data = (const struct adxl313_chip_info
+>> *)spi_get_device_id(spi)->driver_data;
+>> +	chip_data = spi_get_device_match_data(spi);
+>>  
 > 
-> [...]
+> I understand you're sticking with the original code but since you're doing this,
+> could we maybe add proper error checking for the call? Maybe Jonathan can even
+> tweak that while applying...
+> 
+> (same comment for patch 3)
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
+I consider that a separate patch/work, because it would have functional
+impact.
 
-[01/12] arm64: dts: amlogic: meson-g12b-bananapi: remove invalid fan on wrong pwm_cd controller
-        https://git.kernel.org/amlogic/c/1095ad0e92175d19cb7f0b5256af300c921a2d63
-[02/12] arm64: dts: amlogic: move ao_pinctrl into aobus
-        https://git.kernel.org/amlogic/c/cf42ea27fd7f087b43da27b709267211e7e0e8c4
-[04/12] arm64: dts: amlogic: sm1: fix tdm audio-controller clock order
-        https://git.kernel.org/amlogic/c/2478d7bee215cdf6a3a581239d12a17407e30771
-[05/12] arm64: dts: amlogic: sm1: fix tdm controllers compatible
-        https://git.kernel.org/amlogic/c/94befcb819d47b155554997ccfac52354d1b4380
-[06/12] arm64: dts: amlogic: g12a-u200: drop invalid sound-dai-cells
-        https://git.kernel.org/amlogic/c/4b7df533684032233f65ea1157ec94215ab3f3da
-[07/12] arm64: dts: amlogic: g12a-u200: add missing AVDD-supply to acodec
-        https://git.kernel.org/amlogic/c/5dab35f183b30c40fb7fb99015811edde96f90d6
-[08/12] arm64: dts: amlogic: axg: fix tdm audio-controller clock order
-        https://git.kernel.org/amlogic/c/0cb2a3b0d10a3938df546913d738bca121667455
-[09/12] arm64: dts: amlogic: c3: use correct compatible for gpio_intc node
-        https://git.kernel.org/amlogic/c/e5d4d006a8c5504dfebce7f090ddfb75444491ba
-[10/12] arm64: dts: amlogic: a1: use correct node name for mmc controller
-        https://git.kernel.org/amlogic/c/ea99706a438f19cf352242ffabab46bbc76a03d3
-[11/12] arm64: dts: amlogic: a1: drop the invalid reset-name for usb@fe004400
-        https://git.kernel.org/amlogic/c/edc15ee0e43948568fa5380c9147feb9a767ae67
-[12/12] arm64: dts: amlogic: gxbb-odroidc2: fix invalid reset-gpio property
-        https://git.kernel.org/amlogic/c/e822ce43968daf9da4368617d2c948c22ccf93f9
-
-These changes has been applied on the intermediate git tree [1].
-
-The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
--- 
-Neil
+Best regards,
+Krzysztof
 
 
