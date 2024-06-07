@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-206642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99442900C38
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:06:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94777900C3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 21:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1779DB22E07
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089B01F2371E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 19:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A04143865;
-	Fri,  7 Jun 2024 19:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AF8145353;
+	Fri,  7 Jun 2024 19:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uc2J6KzB"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T0YJQbpI"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2155333EE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 19:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6952161FF6;
+	Fri,  7 Jun 2024 19:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717787153; cv=none; b=AC1NVVx4cXtCKUfLdYs/H+iG1X6NCAyHSiIyXVGjZcF+2ld32pfm0r5qWs71TlmKKfvpRclLBcuXWJgTwKUeFQljIhwKHnNQNhrGlLkSn5GfvScCczsaCxRyp8CqMZXQQA60Skf0lp/3FNYYYnZPS+jr6zAHsOu85yFlXLO7clo=
+	t=1717787184; cv=none; b=hnYCEqSyCV2FHGYPsf0HXz3jB9EPNPK3+tXs9bNwBcq+LXcHD9HkEkg6zHFbRlzf8qSu5MhHDj630keaUGVm4kCuCXgGF1ocB0x9KPYX2h4nxxX0VPIAUYqyf1R8gqWhWgzydIdaWI+iq60k9vR1y3/+aWAVqtOI/2XzTA+Pp5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717787153; c=relaxed/simple;
-	bh=ngIRetO5CkzK9IehqPyRMoWnWCmFj8wR8sAvGODMxoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGvNJE/Bosnu6DXxC2FmnhzKCbos/bkkFeA2BFifGXDzpRXFj+m6/6CL9Bif7A31KhbSC8xjkOQq8Bl4wkE0qcREzI6NGYQGOpr1pxv7wXpDvzUo6cJWtQXGJPudJZutWwWhtPFRhCzaFjRYpR3LZ9d6TVUa+TG3gbgTuMLrD2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uc2J6KzB; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b976b5d22so3490754e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 12:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717787148; x=1718391948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxA1BM/AGy1NJKtSG9weBu/7I9Z1wHNH2yZVYRhiSUs=;
-        b=uc2J6KzB0KGOJZsAZru7aXcHjV6viq0bWYprxqt86vuwkWDOBcbDunnO6Orp6I9L7R
-         Loo2bIc/h/fUwf/g/l3bRZvZoyue8gezZym/hPWKMgasZ1bqqOIj9UJgFIlg8Ka3QIve
-         AaJL9Rk4V7xJa0CSaLaFWf4I+2vwo3Wx8dkNOTJVHmrCY3ZMx9XC8RFX2oFRo0Z3fYov
-         gLU0XYbyAb4droaYIA4xEb2uqklQpJ+yVF9slSvBX3iqdmHSDQkOdWQTa44uhhVn5fqV
-         GUxmhKv4DgMgTIcTk7YMkS/u91KjNyEyLnuiis/knCyvfhkNOWpKU1F/PbLHxTVnI51e
-         M8Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717787148; x=1718391948;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxA1BM/AGy1NJKtSG9weBu/7I9Z1wHNH2yZVYRhiSUs=;
-        b=XUdCvl6YQxxVcQZtB8S02hr2jo17P3t/+nsa2A8G4U2XTsuuEbGUte5Ac/AOcvAhYF
-         th84KgAZ/XTxMCJAbvwVJbbMh3IpdYpEND+oHgmTBdy6zRIODAp9KKdwVEAW4q4f5RCP
-         f5YNqwkrlA8o3UOYg7Q6ifGmDh/qiJHQPnQLb2bst10/NbYyB2lfUcUqGAtoZP52ZiM9
-         qJhw4dY2IBtvcRLAUqoyIMiVAP7mk3t2jo+buIqCrTjaH+WAdHjtv+cbYOBda6YkEpzl
-         3A2U6TrIxZUFpld3e5GJlR7hvUAMfdYyBhHC+uJYefYSmUbwUgTXdKxAOZzgx6veVzca
-         X2hA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPveDn7KF1IrX4YNmOMnTEHDGGxRZ+uLGPBfRsuDI+fk7kym9ql8tnWtOSRTkAMMJCWYz6OAqJYE6p+GZfReY87s9J1ZxrwAQOk9Aw
-X-Gm-Message-State: AOJu0Yw1jGLsOdg0NtcTQoQxVqPa/mbRgd2L8b423YgWfyHPKJPNj0SF
-	wvCPNFrJn1Cp44hJDYuVYdEQJxd1779RcHGLuA8v6IrHBrAiRAm+7qzNlhrJnJ0=
-X-Google-Smtp-Source: AGHT+IHVKb+PdYi2LkaUjU+Hnrgq0RwwwvnqIkhYpv6Wpv6EPxqYa+IjzsJMUHeSRfkORqd071am5Q==
-X-Received: by 2002:a05:6512:6c9:b0:52b:51f9:a37d with SMTP id 2adb3069b0e04-52bb9fd2d5amr2767729e87.56.1717787148108;
-        Fri, 07 Jun 2024 12:05:48 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:69a7:93d5:5355:af67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215811d49esm91861115e9.27.2024.06.07.12.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 12:05:47 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-X-Google-Original-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio: fixes for v6.10-rc3
-Date: Fri,  7 Jun 2024 21:05:40 +0200
-Message-ID: <20240607190540.30622-1-bartosz.golaszewski@linaro.org>
+	s=arc-20240116; t=1717787184; c=relaxed/simple;
+	bh=POh3YrHn4q54h+Qa6SohM8DHib0BNm73vJtFcOXO9c4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BjnuYvu0KsQcIccVNIRhI/DSIv/MoqTmtjYIH9DdxvcC0NMsvvWX5H9Gcd3BGBl2sH0ITT+N7deQ6vG3DXcomd/3wrqVaeO0VyuJNjvYkJaXT6DUfXRlUVX7IBX706hXbajyO9ie/QsYANbZsH+rXdj8Ol5MkqATWMTXga2ZTUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T0YJQbpI; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 457CuVjQ023604;
+	Fri, 7 Jun 2024 19:06:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
+ content-transfer-encoding : date : from : message-id : mime-version :
+ subject : to; s=corp-2023-11-20;
+ bh=bavZSgWNlH5AnIMvg1whudm4Kfg9OnMmT+mI9SLCa5U=;
+ b=T0YJQbpI7dYm0rus9Kl4t81q/Czx64VkApsS40l/bzqlw+3wW5vuERSxQnzZKcnfQ/kl
+ H+aXxMekGknuj6wlKJUu69KiU/FxQQGZ0E+DrRPVlEqeQP4GHtB+obpp3JEm9XbmHs4u
+ kdL/z5xchvIBa4/X6bZ2SNw4risilVg6yvB0fAys8XnIhkfq8Xp5VJglFbyX9mRQ+b/l
+ Kb8RJPeK0Ii/4kbAUE/MBCkLVqK6I+6NkqLzXuAzw6nNY7kn0DLX4rbPoKWNjSoITsPk
+ cSGz//EXKijq6HM3A2QcolxP5Y54+uoxUqWvBrvVnftnLR+eVyQuGePVyzarQxB5zR2l Tg== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbrse68b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Jun 2024 19:06:09 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 457HVcLm015675;
+	Fri, 7 Jun 2024 19:06:08 GMT
+Received: from gms-ol9-loop-1.osdevelopmeniad.oraclevcn.com (gms-ol9-loop-1.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.252.182])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ygrjh0we9-1;
+	Fri, 07 Jun 2024 19:06:08 +0000
+From: Gulam Mohamed <gulam.mohamed@oracle.com>
+To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, hch@lst.de, axboe@kernel.dk
+Subject: [PATCH V4 for-6.10/block] loop: Fix a race between loop detach and loop open
+Date: Fri,  7 Jun 2024 19:06:07 +0000
+Message-ID: <20240607190607.17705-1-gulam.mohamed@oracle.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,51 +65,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_12,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406070139
+X-Proofpoint-ORIG-GUID: -zGvZEA1eWq0U0JukinkUsG3FlJmG7VZ
+X-Proofpoint-GUID: -zGvZEA1eWq0U0JukinkUsG3FlJmG7VZ
 
-Linus,
+1. Userspace sends the command "losetup -d" which uses the open() call
+   to open the device
+2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
+   function loop_clr_fd()
+3. If LOOP_CLR_FD is the first command received at the time, then the
+   AUTOCLEAR flag is not set and deletion of the
+   loop device proceeds ahead and scans the partitions (drop/add
+   partitions)
 
-Please pull the following set of driver fixes for the next RC. Most of the
-diff concerns a single driver - gpio-tqmx86. Details are in the signed tag.
+        if (disk_openers(lo->lo_disk) > 1) {
+                lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+                loop_global_unlock(lo, true);
+                return 0;
+        }
 
-Bartosz
+ 4. Before scanning partitions, it will check to see if any partition of
+    the loop device is currently opened
+ 5. If any partition is opened, then it will return EBUSY:
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+    if (disk->open_partitions)
+                return -EBUSY;
+ 6. So, after receiving the "LOOP_CLR_FD" command and just before the above
+    check for open_partitions, if any other command
+    (like blkid) opens any partition of the loop device, then the partition
+    scan will not proceed and EBUSY is returned as shown in above code
+ 7. But in "__loop_clr_fd()", this EBUSY error is not propagated
+ 8. We have noticed that this is causing the partitions of the loop to
+    remain stale even after the loop device is detached resulting in the
+    IO errors on the partitions
+Fix:
+Defer the detach of loop device to release function, which is called
+when the last close happens, by setting the lo_flags to LO_FLAGS_AUTOCLEAR
+at the time of detach i.e in loop_clr_fd() function.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+Test case involves the following two scripts:
 
-are available in the Git repository at:
+script1.sh:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.10-rc3
+while [ 1 ];
+do
+        losetup -P -f /home/opt/looptest/test10.img
+        blkid /dev/loop0p1
+done
 
-for you to fetch changes up to 64054eb716db52e4246527dc9414377c5bc5b01d:
+script2.sh:
 
-  gpio: add missing MODULE_DESCRIPTION() macros (2024-06-07 10:05:21 +0200)
+while [ 1 ];
+do
+        losetup -d /dev/loop0
+done
 
-----------------------------------------------------------------
-gpio updates for v6.10-rc3
+Without fix, the following IO errors have been observed:
 
-- set of interrupt handling and Kconfig fixes for gpio-tqmx86
-- add a buffer for storing output values in gpio-tqmx86 as reading back the
-  registers always returns the input values
-- add missing MODULE_DESCRIPTION()s to several GPIO drivers
+kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
+kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
+        phys_seg 1 prio class 0
+kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
+        phys_seg 1 prio class 0
+kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
+        read
 
-----------------------------------------------------------------
-Gregor Herburger (1):
-      gpio: tqmx86: fix typo in Kconfig label
+Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+---
+v4<-v3:
+1. Defer the loop detach to last close of loop device
+2. Removed the use of lo_open due to following reasons:
 
-Jeff Johnson (1):
-      gpio: add missing MODULE_DESCRIPTION() macros
+Setting the lo_state to Lo_rundown in loop_clr_fd() may not help in
+stopping the incoming open(), when the loop is being detached, as the
+open() could invoke the lo_open() before the lo_state is set to Lo_rundown
+and increment the disk_openers refcnt later.
+As the actual cleanup is deferred to last close, in release, there is no
+chance for the open() to kick in to take the reference. Because both open()
+and release() are protected by open_mutex and hence they cannot run in
+parallel.
+So, lo_open() and setting lo_state to Lo_rundown is not needed. Removing
+the loop state Lo_rundown as its not used anymore.
 
-Matthias Schiffer (3):
-      gpio: tqmx86: introduce shadow register for GPIO output value
-      gpio: tqmx86: store IRQ trigger type and unmask status separately
-      gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH interrupt type
+ drivers/block/loop.c | 44 ++++++++------------------------------------
+ 1 file changed, 8 insertions(+), 36 deletions(-)
 
- drivers/gpio/Kconfig        |   2 +-
- drivers/gpio/gpio-gw-pld.c  |   1 +
- drivers/gpio/gpio-mc33880.c |   1 +
- drivers/gpio/gpio-pcf857x.c |   1 +
- drivers/gpio/gpio-pl061.c   |   1 +
- drivers/gpio/gpio-tqmx86.c  | 110 ++++++++++++++++++++++++++++++++------------
- 6 files changed, 85 insertions(+), 31 deletions(-)
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 28a95fd366fe..4936cadc1a63 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -41,7 +41,6 @@
+ enum {
+ 	Lo_unbound,
+ 	Lo_bound,
+-	Lo_rundown,
+ 	Lo_deleting,
+ };
+ 
+@@ -1131,7 +1130,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+ 	return error;
+ }
+ 
+-static void __loop_clr_fd(struct loop_device *lo, bool release)
++static void __loop_clr_fd(struct loop_device *lo)
+ {
+ 	struct file *filp;
+ 	gfp_t gfp = lo->old_gfp_mask;
+@@ -1139,14 +1138,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
+ 	if (test_bit(QUEUE_FLAG_WC, &lo->lo_queue->queue_flags))
+ 		blk_queue_write_cache(lo->lo_queue, false, false);
+ 
+-	/*
+-	 * Freeze the request queue when unbinding on a live file descriptor and
+-	 * thus an open device.  When called from ->release we are guaranteed
+-	 * that there is no I/O in progress already.
+-	 */
+-	if (!release)
+-		blk_mq_freeze_queue(lo->lo_queue);
+-
+ 	spin_lock_irq(&lo->lo_lock);
+ 	filp = lo->lo_backing_file;
+ 	lo->lo_backing_file = NULL;
+@@ -1164,8 +1155,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
+ 	mapping_set_gfp_mask(filp->f_mapping, gfp);
+ 	/* This is safe: open() is still holding a reference. */
+ 	module_put(THIS_MODULE);
+-	if (!release)
+-		blk_mq_unfreeze_queue(lo->lo_queue);
+ 
+ 	disk_force_media_change(lo->lo_disk);
+ 
+@@ -1180,11 +1169,7 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
+ 		 * must be at least one and it can only become zero when the
+ 		 * current holder is released.
+ 		 */
+-		if (!release)
+-			mutex_lock(&lo->lo_disk->open_mutex);
+ 		err = bdev_disk_changed(lo->lo_disk, false);
+-		if (!release)
+-			mutex_unlock(&lo->lo_disk->open_mutex);
+ 		if (err)
+ 			pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
+ 				__func__, lo->lo_number, err);
+@@ -1232,25 +1217,8 @@ static int loop_clr_fd(struct loop_device *lo)
+ 		loop_global_unlock(lo, true);
+ 		return -ENXIO;
+ 	}
+-	/*
+-	 * If we've explicitly asked to tear down the loop device,
+-	 * and it has an elevated reference count, set it for auto-teardown when
+-	 * the last reference goes away. This stops $!~#$@ udev from
+-	 * preventing teardown because it decided that it needs to run blkid on
+-	 * the loopback device whenever they appear. xfstests is notorious for
+-	 * failing tests because blkid via udev races with a losetup
+-	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
+-	 * command to fail with EBUSY.
+-	 */
+-	if (disk_openers(lo->lo_disk) > 1) {
+-		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+-		loop_global_unlock(lo, true);
+-		return 0;
+-	}
+-	lo->lo_state = Lo_rundown;
++	lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+ 	loop_global_unlock(lo, true);
+-
+-	__loop_clr_fd(lo, false);
+ 	return 0;
+ }
+ 
+@@ -1724,15 +1692,19 @@ static void lo_release(struct gendisk *disk)
+ 	if (disk_openers(disk) > 0)
+ 		return;
+ 
++	/*
++	 * Clear the backing device information if this is the last close of
++	 * a device that's been marked for auto clear, or on which LOOP_CLR_FD
++	 * has been called.
++	 */
+ 	mutex_lock(&lo->lo_mutex);
+ 	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR)) {
+-		lo->lo_state = Lo_rundown;
+ 		mutex_unlock(&lo->lo_mutex);
+ 		/*
+ 		 * In autoclear mode, stop the loop thread
+ 		 * and remove configuration after last close.
+ 		 */
+-		__loop_clr_fd(lo, true);
++		__loop_clr_fd(lo);
+ 		return;
+ 	}
+ 	mutex_unlock(&lo->lo_mutex);
+-- 
+2.43.0
+
 
