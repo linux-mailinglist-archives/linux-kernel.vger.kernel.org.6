@@ -1,332 +1,147 @@
-Return-Path: <linux-kernel+bounces-205803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-205804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34F7900082
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:18:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D521A900087
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 12:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796561F213A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71BD0B228EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 10:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9172B15A4B0;
-	Fri,  7 Jun 2024 10:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BBA15B0E0;
+	Fri,  7 Jun 2024 10:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6beQo6V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBA4TkDI"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B110C433C7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2024 10:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF1224D5;
+	Fri,  7 Jun 2024 10:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755516; cv=none; b=ARvviFpPDuJXKLmtrTd5Q9yp2GW+ly+NTnZUCAIqhrN2U7r6rMos5wuLYH2VGMjuVI/S+c4ThLQuWTdLXzrBF6fGExCRy3G77rVV1VHrwl+17iWfffQzwYujl52ojCSqCcg5ya/lzNWLnGw+KT2A/d90QqX8qZ3/qScSSdF928s=
+	t=1717755557; cv=none; b=nelkmYV4yOW2wW/HJa7fyLK8aiMxsNEjMbK9LXLUzb3lgC0FaxYtYw8q0Yf6Uq7dnxKs6Bsf66lkwUAdex8sjB9RmI1wOUg4OhoC8NdoQizMbhC0izd7fIegBKX21eCPV/xloKa8zSRgzTs0Efx/UeLIGRKfjATjG5dEjg6WpR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755516; c=relaxed/simple;
-	bh=TW2wiTfuTlbYUnpER0Vim/g+rQKIAPfrDih2M9Ix9Ac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pCPQf8hHB6oISvW00JU00AytRboq1c5dL9YUac/1eIthC1Gn1pcksd8hMSmqnnRtXtjbHNU/IJNiTdfK1omhgst1JPK8dYQm/3Yi2QCtkeLe7ByA/W2lkHfZlyiryL5zMdMjjrknUyF2mzxfS8vPfdI1BeBfI+rVcXZwWzLD7IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6beQo6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B07FC2BBFC;
-	Fri,  7 Jun 2024 10:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717755516;
-	bh=TW2wiTfuTlbYUnpER0Vim/g+rQKIAPfrDih2M9Ix9Ac=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k6beQo6VAwPxVAevZapDPBPbidCRK3/WHQM8luCpgrWAljreQMyI6Ox2oza1bs/+0
-	 bTCbD8/u7wYMtyre5V6TehFIt3y7be2MWU70oyXWa3K7PQLExmJMWU1UgWDa+zOeJQ
-	 F2NQ1kH/e/wCm67sQQtlm6l134HELjqUFty9xhHIfyEeehEEwkzjjhjnSObYFVSqGY
-	 U4L/tLd7A/rTdrVctl/Gxpwfri5CyuEdiMpFuJ7O4eH4ct3cx+DIcHw2dpDoF0aWkS
-	 spBEbAU8/IhKyPJYFdSig7COjPITkFeFKsy/9Y8CM+zQnMIereC3Xc0aRFaTgvx4SB
-	 t55Bu2G4CiMDA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2] f2fs: get rid of buffer_head use
-Date: Fri,  7 Jun 2024 18:18:29 +0800
-Message-Id: <20240607101829.389015-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1717755557; c=relaxed/simple;
+	bh=QCZHpWK3iHF9Nj6nDnoKMCz5HjK1CLECoGyNt9nPBhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZ5lf6D02qn4gv5YKIHXNfy3sauD4aKfOXnlTtYQ1AhKmOsKTf6olOy6f5e7mdYkBeTMLUqbUB7noXV/KiaP3Hn7sN34wAPnCRHb4J+RVqU5RRkVhVQAr6B0mbnN8H2/pg1G7R6n5HRZmqop0E110kxd/cLI2kh6Ivv2catdIXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBA4TkDI; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c29c487a94so1429403a91.1;
+        Fri, 07 Jun 2024 03:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717755556; x=1718360356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxYrxOo+Bm8pOYfTxpDq7GYqUsxkUBuHF4IE+q+WX9o=;
+        b=aBA4TkDISEa8cXwk4YOzwZvvtLDS3D0Ei0w0FLY0NMN3WjFZAye9sWkihUew+YeKjJ
+         Are5tYOEZpFSFaVyKbPdKaP3CRKz0Doli8mu0xDUX1d4JQfh/M1Cy73BTLwSF8rK7A1D
+         MRk3kjdrKs0/K8Ns5A+xC+QybI8f9lP+Cnf6703wJK+78kUaHmC9v+0d/ztmAxSdJ9Ck
+         YDaEVDiTAgzhKZgTstntOfRkre0jHSfuqjS0aKW8rex7bDw+wNb4eMNxwQW7jb/bQar2
+         fekOkbs5VS/5quiQEy16XgJRWHrkXCRbl4GJTgVPtSP0s/mMjUqtezzh7pD8Kci/T0ov
+         GEoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717755556; x=1718360356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxYrxOo+Bm8pOYfTxpDq7GYqUsxkUBuHF4IE+q+WX9o=;
+        b=mxReJ4u+VF8/dNk+pB8pK7W3oBZnSWe0aH7UC0/Smho2yZEzKNv68K5XGygNruJi6e
+         kDoTjVjk6xZigpq0iSOoy+dkv+GfFCWGwS0VHDs/x+/pyUY+IddaRXK+kcj1noiecgP5
+         og86I3B66nLq30cZ7981wRukhRqaZAqiNCYEjay+tCWBcnuFbvsptvUJZii6O40lsETF
+         8rCh8GliHuAupqAZmSRApJLTx+B9Z+TCZdiBEPEHlEJMnhimKpVXo+BBkF6OoG9f+y58
+         uhQaUW0Pw9xndJtxzOYOCdQu3lhcQH/DnNeLQauFDcnLpdOC6hqV0EXEIgbdYPkxPWcM
+         x45A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmvjCCvwc2omAaIfTkgI9NWpbCFQRhPjYGMu0wO7eymNpwF8ai2m2UXPGVa9jDfdzJp9uhLDm5Mi6scisbPcc4lKuxvWsmR/TFBpQg7MzDI9/v01Br2xAVny0shReTE47sTLKrWQhs
+X-Gm-Message-State: AOJu0YwIs7/DFsbktVDJ+1HSHTYWH9krk+XTmHMLspTjsawrClioYg8c
+	e41pIKFYrEBD/uEPTLnSmFOrBhkpg8t/R/NkaNhhQYedBcaF75GggRbXIA==
+X-Google-Smtp-Source: AGHT+IEm6c/Q5B9vJIw8FRzlSd8REJszxYs3hm4a4v+zd3OtWa6JASXKZc2z9En4cJnl7UZ+lWaQ0Q==
+X-Received: by 2002:a17:90a:bd0a:b0:2c2:b2a0:169c with SMTP id 98e67ed59e1d1-2c2bcad0d81mr1915629a91.3.1717755555453;
+        Fri, 07 Jun 2024 03:19:15 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2a2430365sm2856187a91.54.2024.06.07.03.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 03:19:14 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8D4A71A023F27; Fri, 07 Jun 2024 17:19:11 +0700 (WIB)
+Date: Fri, 7 Jun 2024 17:19:10 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: lakshmi.sowjanya.d@intel.com, tglx@linutronix.de, giometti@enneenne.com,
+	corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+	eddie.dong@intel.com, christopher.s.hall@intel.com,
+	pandith.n@intel.com, subramanian.mohan@intel.com,
+	thejesh.reddy.t.r@intel.com
+Subject: Re: [PATCH v9 2/3] Documentation: driver-api: pps: Add Intel Timed
+ I/O PPS generator
+Message-ID: <ZmLenotdvHdCQRcz@archie.me>
+References: <20240605153554.11584-1-lakshmi.sowjanya.d@intel.com>
+ <20240605153554.11584-3-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9BD94tjZXN0vDobM"
+Content-Disposition: inline
+In-Reply-To: <20240605153554.11584-3-lakshmi.sowjanya.d@intel.com>
 
-Convert to use folio and related functionality.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- convert to use folio rather than page suggested by Matthew.
- fs/f2fs/data.c  |  1 -
- fs/f2fs/f2fs.h  |  7 +++-
- fs/f2fs/file.c  |  1 -
- fs/f2fs/inode.c |  1 -
- fs/f2fs/super.c | 94 +++++++++++++++++++++++++++++--------------------
- 5 files changed, 62 insertions(+), 42 deletions(-)
+--9BD94tjZXN0vDobM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b9b0debc6b3d..ad495ea87b32 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -7,7 +7,6 @@
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
--#include <linux/buffer_head.h>
- #include <linux/sched/mm.h>
- #include <linux/mpage.h>
- #include <linux/writeback.h>
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9688df332147..c82d2050890d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -11,7 +11,6 @@
- #include <linux/uio.h>
- #include <linux/types.h>
- #include <linux/page-flags.h>
--#include <linux/buffer_head.h>
- #include <linux/slab.h>
- #include <linux/crc32.h>
- #include <linux/magic.h>
-@@ -1990,6 +1989,12 @@ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
- 	return (struct f2fs_super_block *)(sbi->raw_super);
- }
- 
-+static inline struct f2fs_super_block *F2FS_SUPER_BLOCK(struct folio *folio)
-+{
-+	return (struct f2fs_super_block *)(page_address(folio_page(folio, 0)) +
-+							F2FS_SUPER_OFFSET);
-+}
-+
- static inline struct f2fs_checkpoint *F2FS_CKPT(struct f2fs_sb_info *sbi)
- {
- 	return (struct f2fs_checkpoint *)(sbi->ckpt);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c50213da474d..efc676bc7800 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -8,7 +8,6 @@
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/stat.h>
--#include <linux/buffer_head.h>
- #include <linux/writeback.h>
- #include <linux/blkdev.h>
- #include <linux/falloc.h>
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index dbfebbddf675..87982e06bbe7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -7,7 +7,6 @@
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
--#include <linux/buffer_head.h>
- #include <linux/writeback.h>
- #include <linux/sched/mm.h>
- #include <linux/lz4.h>
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4a1bc8f40f9a..f14eba4cbbf7 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -11,7 +11,6 @@
- #include <linux/fs_context.h>
- #include <linux/sched/mm.h>
- #include <linux/statfs.h>
--#include <linux/buffer_head.h>
- #include <linux/kthread.h>
- #include <linux/parser.h>
- #include <linux/mount.h>
-@@ -3333,24 +3332,42 @@ loff_t max_file_blocks(struct inode *inode)
- 	return result;
- }
- 
--static int __f2fs_commit_super(struct buffer_head *bh,
--			struct f2fs_super_block *super)
-+static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
-+								bool update)
- {
--	lock_buffer(bh);
--	if (super)
--		memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
--	set_buffer_dirty(bh);
--	unlock_buffer(bh);
--
-+	struct bio *bio;
- 	/* it's rare case, we can do fua all the time */
--	return __sync_dirty_buffer(bh, REQ_SYNC | REQ_PREFLUSH | REQ_FUA);
-+	blk_opf_t opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH | REQ_FUA;
-+	int ret;
-+
-+	folio_lock(folio);
-+	folio_wait_writeback(folio);
-+	if (update)
-+		memcpy(F2FS_SUPER_BLOCK(folio), F2FS_RAW_SUPER(sbi),
-+					sizeof(struct f2fs_super_block));
-+	folio_mark_dirty(folio);
-+	folio_clear_dirty_for_io(folio);
-+	folio_start_writeback(folio);
-+	folio_unlock(folio);
-+
-+	bio = bio_alloc(sbi->sb->s_bdev, 1, opf, GFP_NOFS);
-+
-+	/* it doesn't need to set crypto context for superblock update */
-+	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(folio_index(folio));
-+
-+	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0))
-+		f2fs_bug_on(sbi, 1);
-+
-+	ret = submit_bio_wait(bio);
-+	folio_end_writeback(folio);
-+
-+	return ret;
- }
- 
- static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
--					struct buffer_head *bh)
-+							struct folio *folio)
- {
--	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
--					(bh->b_data + F2FS_SUPER_OFFSET);
-+	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio);
- 	struct super_block *sb = sbi->sb;
- 	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
- 	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
-@@ -3425,7 +3442,7 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- 			set_sbi_flag(sbi, SBI_NEED_SB_WRITE);
- 			res = "internally";
- 		} else {
--			err = __f2fs_commit_super(bh, NULL);
-+			err = __f2fs_commit_super(sbi, folio, false);
- 			res = err ? "failed" : "done";
- 		}
- 		f2fs_info(sbi, "Fix alignment : %s, start(%u) end(%llu) block(%u)",
-@@ -3438,12 +3455,11 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- }
- 
- static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
--				struct buffer_head *bh)
-+						struct folio *folio)
- {
- 	block_t segment_count, segs_per_sec, secs_per_zone, segment_count_main;
- 	block_t total_sections, blocks_per_seg;
--	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
--					(bh->b_data + F2FS_SUPER_OFFSET);
-+	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio);
- 	size_t crc_offset = 0;
- 	__u32 crc = 0;
- 
-@@ -3601,7 +3617,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
--	if (sanity_check_area_boundary(sbi, bh))
-+	if (sanity_check_area_boundary(sbi, folio))
- 		return -EFSCORRUPTED;
- 
- 	return 0;
-@@ -3948,7 +3964,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- {
- 	struct super_block *sb = sbi->sb;
- 	int block;
--	struct buffer_head *bh;
-+	struct folio *folio;
- 	struct f2fs_super_block *super;
- 	int err = 0;
- 
-@@ -3957,32 +3973,32 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- 		return -ENOMEM;
- 
- 	for (block = 0; block < 2; block++) {
--		bh = sb_bread(sb, block);
--		if (!bh) {
-+		folio = read_mapping_folio(sb->s_bdev->bd_inode->i_mapping,
-+								block, NULL);
-+		if (IS_ERR(folio)) {
- 			f2fs_err(sbi, "Unable to read %dth superblock",
- 				 block + 1);
--			err = -EIO;
-+			err = PTR_ERR(folio);
- 			*recovery = 1;
- 			continue;
- 		}
- 
- 		/* sanity checking of raw super */
--		err = sanity_check_raw_super(sbi, bh);
-+		err = sanity_check_raw_super(sbi, folio);
- 		if (err) {
- 			f2fs_err(sbi, "Can't find valid F2FS filesystem in %dth superblock",
- 				 block + 1);
--			brelse(bh);
-+			folio_put(folio);
- 			*recovery = 1;
- 			continue;
- 		}
- 
- 		if (!*raw_super) {
--			memcpy(super, bh->b_data + F2FS_SUPER_OFFSET,
--							sizeof(*super));
-+			memcpy(super, F2FS_SUPER_BLOCK(folio), sizeof(*super));
- 			*valid_super_block = block;
- 			*raw_super = super;
- 		}
--		brelse(bh);
-+		folio_put(folio);
- 	}
- 
- 	/* No valid superblock */
-@@ -3996,7 +4012,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- 
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- {
--	struct buffer_head *bh;
-+	struct folio *folio;
- 	__u32 crc = 0;
- 	int err;
- 
-@@ -4014,22 +4030,24 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- 	}
- 
- 	/* write back-up superblock first */
--	bh = sb_bread(sbi->sb, sbi->valid_super_block ? 0 : 1);
--	if (!bh)
--		return -EIO;
--	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
--	brelse(bh);
-+	folio = read_mapping_folio(sbi->sb->s_bdev->bd_inode->i_mapping,
-+				sbi->valid_super_block ? 0 : 1, NULL);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	err = __f2fs_commit_super(sbi, folio, true);
-+	folio_put(folio);
- 
- 	/* if we are in recovery path, skip writing valid superblock */
- 	if (recover || err)
- 		return err;
- 
- 	/* write current valid superblock */
--	bh = sb_bread(sbi->sb, sbi->valid_super_block);
--	if (!bh)
--		return -EIO;
--	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
--	brelse(bh);
-+	folio = read_mapping_folio(sbi->sb->s_bdev->bd_inode->i_mapping,
-+					sbi->valid_super_block, NULL);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	err = __f2fs_commit_super(sbi, folio, true);
-+	folio_put(folio);
- 	return err;
- }
- 
--- 
-2.40.1
+On Wed, Jun 05, 2024 at 09:05:53PM +0530, lakshmi.sowjanya.d@intel.com wrot=
+e:
+> +Usage of Intel Timed I/O as PPS generator:
+> +
+> +Start generating PPS signal::
+> +        $echo 1 > /sys/devices/platform/INTCxxxx\:00/enable
+> +
+> +Stop generating PPS signal::
+> +        $echo 0 > /sys/devices/platform/INTCxxxx\:00/enable
 
+You forget to separate literal blocks above:
+
+---- >8 ----
+diff --git a/Documentation/driver-api/pps.rst b/Documentation/driver-api/pp=
+s.rst
+index c812d1cb760eee..75f7b094f9635e 100644
+--- a/Documentation/driver-api/pps.rst
++++ b/Documentation/driver-api/pps.rst
+@@ -264,7 +264,9 @@ the PPS signal to an external device.
+ Usage of Intel Timed I/O as PPS generator:
+=20
+ Start generating PPS signal::
++
+         $echo 1 > /sys/devices/platform/INTCxxxx\:00/enable
+=20
+ Stop generating PPS signal::
++
+         $echo 0 > /sys/devices/platform/INTCxxxx\:00/enable
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--9BD94tjZXN0vDobM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZmLemQAKCRD2uYlJVVFO
+o8BtAP9yWtBFjjePAasesCSU8ZZwSkjdM+8zMU9DQBCtz9lQUwD+IOIeje551r1X
+MXasa+JpV4hSyT+AUSn2TK4lgVUIGgo=
+=ZdMc
+-----END PGP SIGNATURE-----
+
+--9BD94tjZXN0vDobM--
 
