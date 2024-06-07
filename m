@@ -1,202 +1,144 @@
-Return-Path: <linux-kernel+bounces-206807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27109900E00
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B263900E0D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42DB28704F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:23:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34DD2860CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2024 22:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ABD155382;
-	Fri,  7 Jun 2024 22:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED907155C98;
+	Fri,  7 Jun 2024 22:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tkg1FErc"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bvTbd5vw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4F502BE;
-	Fri,  7 Jun 2024 22:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717799011; cv=fail; b=fmGECHU471ihh4B/krBRxoKgQyBgJc2icOSUnKZIROIprQm2E7kbT5A4bb6L70JJHogKGRuwfuC5fWm3VktFrdqVxnXe4Fc5cAABcwfVJymBlBc3tagF2MpAnfNhQp1knnYSIqluMH/BbVv+drriRlKHtaSAfLmv8/R1cWtiTwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717799011; c=relaxed/simple;
-	bh=Sbmll9+qAjdrNPRjrpAl0I2Z8ln8LKF67udN3txIwcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=utzm1SeLZCfYYkc+T9Yx0CZGX7TjrgOKsIcaRHFlQCDH9k0s9yQvbxdPdajN/0LK1FNJq64ltR4RK/1i9w2ikgjao7Diihmt93o7YZ8KrtuhiMKxKLT4yqelSpIi7aXHqmoz8m1Tjf6OkLbrUHnTUEv/1Ar0S5zeMj1RoSWustA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tkg1FErc; arc=fail smtp.client-ip=40.107.237.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kpX8TXTVqjg7wAiwhFxKQ6p+tl2n/+Ct7wHdVpNDs0BwYBpfKyQren9t7lQyr9dH59mnhErenj3nQwGQz6FA4N2Th5/pLDqxVRfqj1ibgXh6UXLavmtWLm6CarRjjp7Zv8Sp7n5oVlq9t9JyTQNLdY/gwunnIFFwpDAZe9/+Dk9ZLe/kZGVb43xiZV7Zk/1KAUEyyfwkWi5PPqaPXXMsMegchehzJ9Jcx5NC+WgaHU3U8EbZja6imW8jkQMf9LhAezdpvbGluvMZQcR1uYmA1Afint3gYj9CQT9jtgKaF4T0ej/NDz1RfkzPmYOhiulq+1GsI9BNzjKea8nOHWtIdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ffxxUmOl1qnu0YnFTRASpyfarCuN9RBn0Wjuir1F72E=;
- b=lSyo3cN6V2hR1dJSV1JXnT23t4IoPDZQowFXgcfRYldP0bweMtopdbA96pXD/pss+p4EhnZlD3qDWWQmkV/1mpYpHq/aeN2YSsgHvV7pUbC37hpn/VtNTkbZEsTCHxliYTfxnZj2MR8IKuZ3+Nr5q3Xfh0OQqRursqD6ThRT0K8RIGMiAMMS8BHEDcSAXu51v7Xi7jBhGPORoF3PKQUYTE/W7rDx+oZYs5RbIwpKRwzsMgYVBeBeG1tY9/0BsGMSe9BY81lld9ifZh0CVPRxulz2LT92RwKm8NMJfO+pDR/u7wHMg272oLmNV0+065Qmlnd+afq7uBLy86gGh4Azng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ffxxUmOl1qnu0YnFTRASpyfarCuN9RBn0Wjuir1F72E=;
- b=tkg1FErc1Zh7ONWgFdmUeN2YOgEMGNuFe+XgZYjNN+OCsEddPP39EVrs/OkBWbMSRl13G/qJhsJXsA5XY29IZDd+riV1PtOuMtj59iZ6qX7helUBKyrj6Qc9dJSaLZjdVIE49qv7zWbQbOhKakFaoti0iGbNBKhImUBIqwp3iKvDoCr8QADm0ZFtrzcE2kIbP6cSGQ7Z/CfWslqktyzWC18jfvMNA4fKXh86PRhEjoMxrzA5HQ7o541bYYj1v2fJYB/spLtt+hqDec3KuoAdAq2m0ivlrwILU4q7TAIa2KeY125mcXDMGnINBBDYn/RI0scuD6Y6YAinEOMPz5tv1g==
-Received: from BYAPR05CA0072.namprd05.prod.outlook.com (2603:10b6:a03:74::49)
- by MW5PR12MB5651.namprd12.prod.outlook.com (2603:10b6:303:19f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Fri, 7 Jun
- 2024 22:23:24 +0000
-Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
- (2603:10b6:a03:74:cafe::b5) by BYAPR05CA0072.outlook.office365.com
- (2603:10b6:a03:74::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.14 via Frontend
- Transport; Fri, 7 Jun 2024 22:23:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 22:23:24 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 15:23:12 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 15:23:12 -0700
-Message-ID: <46d5479f-644d-4b38-8643-a4dd1fa221d6@nvidia.com>
-Date: Fri, 7 Jun 2024 15:23:11 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CE5155724;
+	Fri,  7 Jun 2024 22:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717799300; cv=none; b=OgTV+4SyLrIaW+dG1G44HW2VEGBvOvUkqEtzLDijJI7tWPTeoS2pdh6HhrahuJNDou6vO1eSqrx2s/wztl1GELZeGsC/NrmFDqZKewHwApF5rcbMfcK3uKxlo3TxRpEVtR9QTQ6/Fu08KdDXJFiS+IencEk5BY9BB8mbWsUseUg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717799300; c=relaxed/simple;
+	bh=sNjivo9Zvmbdpxv0rjCgyehgb1bPO24dBUGKz6U6QLI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=VRceocoiew0rASQsDuaXljJ4lsMNVC8uUfKyjnr7awnj5m8IGI6HvBekJW99pOF3R/HSSlUWpm204QMTzrPEiD2EBf+XZB+HH+N6uJPCjnbFJZ8SobztnvaaDsyFd94WhwKambX82Iijjw+tRksMUGg5G1JDTa5J2GQsLfAP+ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bvTbd5vw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZhIX028186;
+	Fri, 7 Jun 2024 22:28:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=p4puNrUTPUexUPQ4paUS/w
+	F6E13ce631RWT1AfUA6Yw=; b=bvTbd5vw7LwlAAEMcggwklCV9AOYdJKY2j8h/d
+	vJMaue6MC+8tsUUFZ/TpLtpHVGw5NMl+0C9qYyVvn8OAnZafDRTLxOYxB6AuUW7K
+	i23kUDr0p/KLwYX8UyZGeGXEJQHB+KyCnMVP663QGat20xN6SZeCh9nDyP4MuBwk
+	+oYyy+TP8QA9mhy8E2OA+2lmlSaEOQB6lQwUR5Z7JFKFULOCzleZQLWi+A3fFIJ/
+	AFWRCr9xYY44EkDhdkpJsG3JPY4SZwFkx6k0a6g8rMyRYCqikTYZJeh3gC1ybrir
+	Qb+UqOKWt354S4caCpmPLeVWc4YHTTAYPMCPz5jkr0INraGA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yk3h2wgmk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 22:28:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457MS0dh026576
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 22:28:00 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 15:27:59 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 7 Jun 2024 15:27:59 -0700
+Subject: [PATCH] hwmon: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] selftests/x86: avoid -no-pie warnings from clang
- during compilation
-To: Shuah Khan <shuah@kernel.org>
-CC: angquan yu <angquan21@gmail.com>, "Kirill A . Shutemov"
-	<kirill.shutemov@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Binbin Wu
-	<binbin.wu@linux.intel.com>, Alexey Dobriyan <adobriyan@gmail.com>, "Rick
- Edgecombe" <rick.p.edgecombe@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
-	Yu-cheng Yu <yu-cheng.yu@intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Muhammad Usama Anjum
-	<usama.anjum@collabora.com>, Valentin Obst <kernel@valentinobst.de>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <x86@kernel.org>
-References: <20240531193838.108454-1-jhubbard@nvidia.com>
- <20240531193838.108454-6-jhubbard@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240531193838.108454-6-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|MW5PR12MB5651:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1bcd039-5d95-46e7-fa55-08dc87407245
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|36860700004|376005|1800799015|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S0FHZlpMZ1VjZExiK2VQYnkzSjl0MUxZVWx3T3FkUjY5TkxSek40WGFyNlV0?=
- =?utf-8?B?T1JWVkZHVXRTVWUremQrcmNpQk5tYXZ1NEpjSnVkV0lhbngzTnAwQkpvNFJJ?=
- =?utf-8?B?OUNvb2wwZ3dxVDRubG5WTk5zckJFQWZSbjJQSXpPSFFheUF4bVBNbHBhVEx4?=
- =?utf-8?B?VU1qZHEzQXZlckVpYVRiZG8xTU4wcWNsZjR6RjlVV2ZaZjBOZmIyVzVkWW1j?=
- =?utf-8?B?SURFaHBFdUZHWGxPL2ExajVSRTVoRnYvY2laeXhRUVBjZ1E3R1VEMXNnQUVN?=
- =?utf-8?B?L0xuM0dKYjBmakdvRGRTYUpzTmszWW5rb2pUZVpUWHRLWm9Gc0xOUUlBUFVO?=
- =?utf-8?B?R2V6OFU2cjFmTGtVYWpsZTJtNXNvVFlycjhxSG95dWljdGs2eWduTTg3VGZu?=
- =?utf-8?B?K08vN3MrYTBrQzdQeGNrajI5dVEwa2dsZnd2dDFqa2YwMGsxNkJSSHVtUnht?=
- =?utf-8?B?ZHpVb0pHaC9LeFdzelNBQjVyM1gzUHprRmp2Q1ptL0Y0YTV3Zlg2VXZXWS9k?=
- =?utf-8?B?UHFDb0FQUVkyR096TFVkK0N3UGlIKzNsRXl5eEEwSzY5Y09MUEw2bEhxU2dl?=
- =?utf-8?B?SHRSZjB1RWJZQ3R2bmMvTnkycU1PVm51aVBEdkxzelpNeEVNMTFId1ZJUU42?=
- =?utf-8?B?VHJONkxzMEcvNVRoamNLVGhwVEs5SkI2RG4yVWFaRC9vYUdHYmVta25RVk40?=
- =?utf-8?B?MXpPVXFZbUNWckdXZlZqWm1DL0ozTU8vWUlKdDk4b0NGUkx0SnZteUZkMXgr?=
- =?utf-8?B?VDRqM2dIT2QvMDVrdEVpSXVUS1YvM2M2S3BQUFJSc012YWo5Z0MvcWl3Vllp?=
- =?utf-8?B?aGxEeGhrK3JKUTJ5eHhOT05ta3EzRmpsSXZ5YXVxV0JtUVJwdjNvd28rOWdH?=
- =?utf-8?B?cTlmN1lEVTNITUFlbzVWOXc1Z0RoRjZ4K3lvRDVaNnEyRFlBNGNsek1tQjZy?=
- =?utf-8?B?eXZWOGxHR2lwbGJkTFhvczFoWGc1c3dXbGdJNXBBUEs5Um5ZSmxxWVVYUDFo?=
- =?utf-8?B?UHdTZWltSHcwQXBuRC90cDFCOUc3a1k2c2pRdVBVZXpDeUJXcmFMbHJ3bUpx?=
- =?utf-8?B?YVlJeG5hVm1pV2Y0akhmWFBkV0dRVUVKMkpSQitMWmlEb21KODF1NVdua1hU?=
- =?utf-8?B?bkJXdTk5VTN0UEdIdTVybCtVR2FhZmtJd01Vc3ExTmgwVlBsSHFmZFo4QThI?=
- =?utf-8?B?RGpmbHgrNnZsLytWeFZXQWdNdnM5bk9tTXkxOGMwRG1nN08xK0FQT1R6UXpI?=
- =?utf-8?B?SzNBbElKUElFaFBKbjRDakp3WjJVRFlCNWd2T0NiQ2hLR0ZlWENkV2JKQk5k?=
- =?utf-8?B?d2hwUHdUY3hyTVd6TlFYTzZWWWZNVFExS2hjTWlZNWM5Y01nSTNDV0Y5ditP?=
- =?utf-8?B?ZHNvL3BIbnBmWW5YMThMRmIyVVlFSkVCRzE5TGVSN01aVkRGbE1Kd2JXQTgr?=
- =?utf-8?B?TVBjMlZta0pLenZmcitEVTZicHByMDY5RnQ5eWJxMW1xT3hENmx3MUdLcFBn?=
- =?utf-8?B?MGxMaWZqTUxBYzRpcHFmREd4N2J4bmRENzlaUS9GVDhSd3RwcnRnN1YrZ2g3?=
- =?utf-8?B?blRWK2VJUFlUcUM1Nkh4QnJ5c1NVVkdnbncyTXlYb2d3NDJjMFQ0enR4d2h1?=
- =?utf-8?B?L3lYdnpmOEhsSmQ4YyswdllpWEI3ZHkvYW41aXh6Rk9qUmJWOW9RNXlpbGQ0?=
- =?utf-8?B?NFY1blRybDJ5ODgvTEpxaGZZREJydWFhVExRN2FzUTdUSy9OQm5XZU4remFB?=
- =?utf-8?B?TDlnWGFpdEQ3VTYxOTBSL0Y4MEFNaU84S05DR1V3eXpTNjBJRk5sczNHeWgy?=
- =?utf-8?B?U0xYSi93TmF4RlNSUzJGMEhGRTFFdER0QUVhbGNlbzdaY0k0YTdTSFNVYWNQ?=
- =?utf-8?B?V3I4VnRXWkxGdU1jN1BZODlGQ0RuS3NWUVJDckowSitUQkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(36860700004)(376005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 22:23:24.3675
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1bcd039-5d95-46e7-fa55-08dc87407245
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002314.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5651
+Message-ID: <20240607-md-drivers-hwmon-v1-1-1ea6d6fe61e3@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAG6JY2YC/x3MwQ6CMAyA4VchPdtkLIKZr2I8FFZcEzdMq0hCe
+ Hcnx+/w/xsYq7DBtdlAeRGTuVS0pwbGROXBKLEavPNn17sL5ohRZWE1TN88F+xiCM633UQuQM1
+ eypOsx/J2rx7IGAelMqb/6Cnls2Ime7PCvv8Au8bCnoEAAAA=
+To: Luca Tettamanti <kronos.it@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marius Zachmann <mail@mariuszachmann.de>
+CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wO8xonhjJCmZE-pSvJKvgECHdB9nDrsX
+X-Proofpoint-ORIG-GUID: wO8xonhjJCmZE-pSvJKvgECHdB9nDrsX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_14,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 priorityscore=1501 clxscore=1011
+ suspectscore=0 spamscore=0 mlxlogscore=901 adultscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070167
 
-On 5/31/24 12:38 PM, John Hubbard wrote:
-...
-> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> index d0bb32bd5538..5c8757a25998 100644
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@ -40,6 +40,13 @@ CFLAGS := -O2 -g -std=gnu99 -pthread -Wall $(KHDR_INCLUDES)
->   # call32_from_64 in thunks.S uses absolute addresses.
->   ifeq ($(CAN_BUILD_WITH_NOPIE),1)
->   CFLAGS += -no-pie
-> +
-> +ifneq ($(LLVM),)
-> +# clang only wants to see -no-pie during linking. Here, we don't have a separate
-> +# linking stage, so a compiler warning is unavoidable without (wastefully)
-> +# restructuring the Makefile. Avoid this by simply disabling that warning.
-> +CFLAGS += -Wno-unused-command-line-argument
-> +endif
->   endif
->   
->   define gen-target-rule-32
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/asus_atk0110.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
 
-This actually can be improved slightly, as per our latest tentative
-decision about how to handle both LLVM=1 and CC=clang cases [1].
+Add all missing invocations of the MODULE_DESCRIPTION() macro.
 
-If this series goes via Shuah's next tree, then I can put the
-CC_IS_CLANG fix from [1] on top of previous patches, that will work
-nicely.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/hwmon/asus_atk0110.c | 1 +
+ drivers/hwmon/corsair-cpro.c | 1 +
+ drivers/hwmon/mr75203.c      | 1 +
+ 3 files changed, 3 insertions(+)
 
-In other words, I think we can use this series as-is, and let the
-CC_IS_CLANG fix proceed just after that. Because it gets better a piece
-at a time: first we get rid of the warning for most cases, then we get
-rid of it for the odd "make CC=clang" case as well.
+diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
+index d778a2aaefec..3751c1e3eddd 100644
+--- a/drivers/hwmon/asus_atk0110.c
++++ b/drivers/hwmon/asus_atk0110.c
+@@ -1389,4 +1389,5 @@ static void __exit atk0110_exit(void)
+ module_init(atk0110_init);
+ module_exit(atk0110_exit);
+ 
++MODULE_DESCRIPTION("ASUS ATK0110 driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
+index 3e63666a61bd..370c5a8a1486 100644
+--- a/drivers/hwmon/corsair-cpro.c
++++ b/drivers/hwmon/corsair-cpro.c
+@@ -582,6 +582,7 @@ static struct hid_driver ccp_driver = {
+ };
+ 
+ MODULE_DEVICE_TABLE(hid, ccp_devices);
++MODULE_DESCRIPTION("Corsair Commander Pro controller driver");
+ MODULE_LICENSE("GPL");
+ 
+ static int __init ccp_init(void)
+diff --git a/drivers/hwmon/mr75203.c b/drivers/hwmon/mr75203.c
+index 50a8b9c3f94d..7848198f8996 100644
+--- a/drivers/hwmon/mr75203.c
++++ b/drivers/hwmon/mr75203.c
+@@ -925,4 +925,5 @@ static struct platform_driver moortec_pvt_driver = {
+ };
+ module_platform_driver(moortec_pvt_driver);
+ 
++MODULE_DESCRIPTION("Moortec Semiconductor MR75203 PVT Controller driver");
+ MODULE_LICENSE("GPL v2");
 
-[1] https://lore.kernel.org/6b32399f-d9c6-4df5-b1e5-755ef4acf25d@nvidia.com
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240607-md-drivers-hwmon-5d990215fa09
 
 
