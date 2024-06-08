@@ -1,306 +1,511 @@
-Return-Path: <linux-kernel+bounces-207155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5601F9012F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:19:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D949012FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECA51F2164B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3CBB212FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DA8125D5;
-	Sat,  8 Jun 2024 17:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C7A168B8;
+	Sat,  8 Jun 2024 17:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8rAiRSs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0sKb6Zh"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB121C6A1;
-	Sat,  8 Jun 2024 17:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4019C125D5;
+	Sat,  8 Jun 2024 17:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717867169; cv=none; b=PSgU+tdw5VWZ//w3Y4zfYEuri53kRQs4xYHUqrXJd/XvruvrsrSTL6US5tXK9enTSRjbfJxezdlSQ+wX32RFZIXW86DkBfBMWVfzx48KqIgbWP9/BO2/8z/D7GSeYR4Vc2/154qryH7rnulYQ6IwpFAkTA0lVW1nHnbSkpWnLvo=
+	t=1717867293; cv=none; b=hkNimqDVSUXtnaV9wThK/9rR9PJZ1qX0VgbAiWWFv4+2Oj7eQ3GxlOwTJMY+fm9RmqjcM+bt0bbt5gzyIGRbA9bwNWlwdZMdV/K9Enb+0+iz1w4Pj+x3PHo1pQWqi+sF8H2oAHgsu0ASyv0FZsxGrPY28bPivHn3vTQU3vFHg64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717867169; c=relaxed/simple;
-	bh=B56FAaq/PYbYmgnYVOvmLDSebWiq6CyrUD51qyszBm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UpNRhp6DLu7PWKiKY9/h5CTBgdwuVV6RasjpF48TQ1zEFKRMB25FdqJ9dYruRKdth68pceMt7rmgO6xldGdvdgjarjHdoBowNAw9v0LQUQByzT1FxO21yXbvfd1gkxPHfCtUWWXjvTw5Bmqpqo66Nb25Brz5iNgGfgh42AHH+q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8rAiRSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E49C2BD11;
-	Sat,  8 Jun 2024 17:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717867169;
-	bh=B56FAaq/PYbYmgnYVOvmLDSebWiq6CyrUD51qyszBm8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m8rAiRSsrfnuVYEiKKHz7RHO6c7G5VlZsiGxZ4RwBA2FZ/yF7NO1lISA3M80TAA63
-	 q/ZxlWG1C0aS8oCA/syix8iB0VBlKWC/CI+i7SChJl723c5wRZV9qnjKWLYXorlAZG
-	 tomSNm7CJpZoH0htQfKpSY9qfSx+gde2gf0eOlCWfMcyXMDAummg0lvpY5qr8oPVO2
-	 jzVqj+E4L7gFmXVRBtzQObnJpTHx/EygC9SN+vWN+6kerFN6XFnE3fpG1f4B2wXBC6
-	 lMUkqWZC6hyl6eN6o3eXCLIC/NIvPr5aFqvRTEFt/GBYKX/1ocdPwGRp898bNwfhsl
-	 sA/yUrJsCEBww==
-Date: Sat, 8 Jun 2024 18:19:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- apokusinski@o2.pl
-Subject: Re: [PATCH v2] iio: humidity: si7020: add heater support
-Message-ID: <20240608181922.0e8104df@jic23-huawei>
-In-Reply-To: <20240607141029.51744-1-apokusinski@o2.pl>
-References: <20240607103944.11730-1-apokusinski@o2.pl>
-	<20240607141029.51744-1-apokusinski@o2.pl>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717867293; c=relaxed/simple;
+	bh=IrdI5sjPl5asL5nWXJNR+jzbTys2w3mwkdk7TJZKmmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+uBRtMifL+45O+bgK2H3/S0hyjnDC+2cLJ/rEfh1IH1kjVKdk+6iPxuDKpVio5y93V76aqdbh6JCeHhchUFttc6RzX4GkySZzCC7wg/xS6U44Z8BiFidy3GtqkFHTuZiESag/Y4FZ2FPXkJMSofQBhmVDt3Dg+afLqBvP+ox98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0sKb6Zh; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c254d9bdd6so2725756a91.3;
+        Sat, 08 Jun 2024 10:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717867290; x=1718472090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nMy58J3QA7OYuNsqpVYU1rzQFW3lTrPyfWwmiRLgh2I=;
+        b=i0sKb6Zh4UIOIvhz2pIyGvdDzUVAzz1alb6xWhZRxkSd2Pw3cK082+Zr7fdfmHc3N5
+         suQW7hFfhcDbxf53B2ndzGVxnPjQwSuIPexL0enquQrlPlZRT9iNorG9f2/ffliiwTnA
+         auSUIBu12XrKOQWB+qBeQbn/jSzoNp8RAN8oevPAG+mEUtvbUbpJlD9bmnDeK4G7iN9G
+         R4M5hvLKH6XtfnngNiAMyCpfcX+hrCEUncYPTQt52yMZnOAzWbfR2+6kyIuv/6Pw3myA
+         wQPrmeOdwhO1pF0EOmDVrYNbGQO35geJKGQ8G8N4tEAJ75G8DM1ohAqjAiZdjdB78V3s
+         ggsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717867290; x=1718472090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nMy58J3QA7OYuNsqpVYU1rzQFW3lTrPyfWwmiRLgh2I=;
+        b=Or84dXbOTSfesmVI1MEoIYaCgmv/vHv9CC70UBS7r0caJqilXtxvHu94q6pFeZEf7Q
+         WA/vzEUw3XSKCQmQGAeYm2N+yt83sEkG9n/dAf8qoNDT+NXR3HgAncRfjwSkQrq+vYR7
+         FxHla9KrqunA0XCNFwP36VtiulknhSChkuwUMAbxGG9+kmsPunajmA5SMNEpqCx8zj5D
+         1ZBaeUDhl7BfCGs8UdYsNytmq+u9MMlUEhj4x9j0Pvmolgt/JHVVvZgnv4UTttOrAkWV
+         yXLuGfepPnSy9VcMEkLXUspaKA39ShJlFS48a/QvF2Qbs5d9S9CW4DFzsLyjGGztD9Zy
+         qdhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3HtZTFpEZ/AsCNpkm3ZQMYCIsidmQeCySlfz1VvCoGAhzeLivKdfCO2g8xM+hBIKY7uwastPMkjKqHrT+3O/5RwIAWH//q3jI7vO/mc5h/4bLkjY9MGPz5q21BzuOedxqD399Rz2QqkpgUv8H6MEn7nqMg3zq71jkZE87qtH0hB+I4kxtOR5nprwbeSH5VDbBEd9EzrGbpZA+SGUXZJz0NTOyb1cxNZ+twA==
+X-Gm-Message-State: AOJu0YzrsVZepE2e/IPLosJRsKYKUUhldVPZ2n6ot0APL7RWkBQwTtPd
+	DxKCu7+/4pGHq2DIeE/7mJS7fCwqMvcPAEEWT/3A6+o3cT8ZFF+L
+X-Google-Smtp-Source: AGHT+IGc7lLd9geb8g0L1MRS9I3j9ymtsBD2HMyCZh6CZPb1b1RadJ7IIki74P8G+mW7SLIFjj+dQQ==
+X-Received: by 2002:a17:90b:4b46:b0:2c2:d136:b0fb with SMTP id 98e67ed59e1d1-2c2d136b355mr3753386a91.34.1717867290398;
+        Sat, 08 Jun 2024 10:21:30 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8955:2e84:1464:5333:31d6:6ba3:d747])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2f8e2fbfesm32346a91.34.2024.06.08.10.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Jun 2024 10:21:30 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	brauner@kernel.org,
+	howardchu95@gmail.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] perf trace: Fix syscall untraceable bug
+Date: Sun,  9 Jun 2024 01:21:46 +0800
+Message-ID: <20240608172147.2779890-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri,  7 Jun 2024 16:10:30 +0200
-Antoni Pokusinski <apokusinski01@gmail.com> wrote:
+This is a bug found when implementing pretty-printing for the
+landlock_add_rule system call, I decided to send this patch separately
+because this is a serious bug that should be fixed fast.
 
-> From: Antoni Pokusinski <apokusinski01@gmail.com>
-> 
-> This patch adds support for the integrated on-chip heater that is present
-> on all the devices supported by this driver (si7020, si7021, si7013, th6).
-> In order to configure the heater, the driver interacts with the following
-> device registers:
-> * User Register - the 2nd bit of this register is a "Heater Enable bit"
->   (0 means that the heater is off, 1 means that it's on).
-> * Heater Register - this register is present only on the si70xx devices
->   and controls the current flowing through the heater. The 4 lower bits
->   of this register can be assigned values from 0x0 to 0xF.
-> 
-> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> 
-> --
+I wrote a test program to do landlock_add_rule syscall in a loop,
+yet perf trace -e landlock_add_rule freezes, giving no output.
+
+This bug is introduced by the false understanding of the variable "key"
+below:
+```
+for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+	struct syscall *sc = trace__syscall_info(trace, NULL, key);
+	...
+}
+```
+The code above seems right at the beginning, but when looking at
+syscalltbl.c, I found these lines:
+
+```
+for (i = 0; i <= syscalltbl_native_max_id; ++i)
+	if (syscalltbl_native[i])
+		++nr_entries;
+
+entries = tbl->syscalls.entries = malloc(sizeof(struct syscall) * nr_entries);
+...
+
+for (i = 0, j = 0; i <= syscalltbl_native_max_id; ++i) {
+	if (syscalltbl_native[i]) {
+		entries[j].name = syscalltbl_native[i];
+		entries[j].id = i;
+		++j;
+	}
+}
+```
+
+meaning the key is merely an index to traverse the syscall table,
+instead of the actual syscall id for this particular syscall.
+
+So if one uses key to do trace__syscall_info(trace, NULL, key), because
+key only goes up to trace->sctbl->syscalls.nr_entries, for example, on
+my X86_64 machine, this number is 373, it will end up neglecting all
+the rest of the syscall, in my case, everything after `rseq`, because
+the traversal will stop at 373, and `rseq` is the last syscall whose id
+is lower than 373
+
+in tools/perf/arch/x86/include/generated/asm/syscalls_64.c:
+```
+	...
+	[334] = "rseq",
+	[424] = "pidfd_send_signal",
+	...
+```
+
+The reason why the key is scrambled but perf trace works well is that
+key is used in trace__syscall_info(trace, NULL, key) to do
+trace->syscalls.table[id], this makes sure that the struct syscall returned
+actually has an id the same value as key, making the later bpf_prog
+matching all correct.
+
+After fixing this bug, I can do perf trace on 38 more syscalls, and
+because more syscalls are visible, we get 8 more syscalls that can be
+augmented.
+
+before:
+
+perf $ perf trace -vv --max-events=1 |& grep Reusing
+Reusing "open" BPF sys_enter augmenter for "stat"
+Reusing "open" BPF sys_enter augmenter for "lstat"
+Reusing "open" BPF sys_enter augmenter for "access"
+Reusing "connect" BPF sys_enter augmenter for "accept"
+Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+Reusing "connect" BPF sys_enter augmenter for "bind"
+Reusing "connect" BPF sys_enter augmenter for "getsockname"
+Reusing "connect" BPF sys_enter augmenter for "getpeername"
+Reusing "open" BPF sys_enter augmenter for "execve"
+Reusing "open" BPF sys_enter augmenter for "truncate"
+Reusing "open" BPF sys_enter augmenter for "chdir"
+Reusing "open" BPF sys_enter augmenter for "mkdir"
+Reusing "open" BPF sys_enter augmenter for "rmdir"
+Reusing "open" BPF sys_enter augmenter for "creat"
+Reusing "open" BPF sys_enter augmenter for "link"
+Reusing "open" BPF sys_enter augmenter for "unlink"
+Reusing "open" BPF sys_enter augmenter for "symlink"
+Reusing "open" BPF sys_enter augmenter for "readlink"
+Reusing "open" BPF sys_enter augmenter for "chmod"
+Reusing "open" BPF sys_enter augmenter for "chown"
+Reusing "open" BPF sys_enter augmenter for "lchown"
+Reusing "open" BPF sys_enter augmenter for "mknod"
+Reusing "open" BPF sys_enter augmenter for "statfs"
+Reusing "open" BPF sys_enter augmenter for "pivot_root"
+Reusing "open" BPF sys_enter augmenter for "chroot"
+Reusing "open" BPF sys_enter augmenter for "acct"
+Reusing "open" BPF sys_enter augmenter for "swapon"
+Reusing "open" BPF sys_enter augmenter for "swapoff"
+Reusing "open" BPF sys_enter augmenter for "delete_module"
+Reusing "open" BPF sys_enter augmenter for "setxattr"
+Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+Reusing "open" BPF sys_enter augmenter for "getxattr"
+Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+Reusing "open" BPF sys_enter augmenter for "listxattr"
+Reusing "open" BPF sys_enter augmenter for "llistxattr"
+Reusing "open" BPF sys_enter augmenter for "removexattr"
+Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+Reusing "open" BPF sys_enter augmenter for "mq_open"
+Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+Reusing "open" BPF sys_enter augmenter for "symlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+Reusing "connect" BPF sys_enter augmenter for "accept4"
+Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+Reusing "open" BPF sys_enter augmenter for "memfd_create"
+Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+
+after
+
+perf $ perf trace -vv --max-events=1 |& grep Reusing
+Reusing "open" BPF sys_enter augmenter for "stat"
+Reusing "open" BPF sys_enter augmenter for "lstat"
+Reusing "open" BPF sys_enter augmenter for "access"
+Reusing "connect" BPF sys_enter augmenter for "accept"
+Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+Reusing "connect" BPF sys_enter augmenter for "bind"
+Reusing "connect" BPF sys_enter augmenter for "getsockname"
+Reusing "connect" BPF sys_enter augmenter for "getpeername"
+Reusing "open" BPF sys_enter augmenter for "execve"
+Reusing "open" BPF sys_enter augmenter for "truncate"
+Reusing "open" BPF sys_enter augmenter for "chdir"
+Reusing "open" BPF sys_enter augmenter for "mkdir"
+Reusing "open" BPF sys_enter augmenter for "rmdir"
+Reusing "open" BPF sys_enter augmenter for "creat"
+Reusing "open" BPF sys_enter augmenter for "link"
+Reusing "open" BPF sys_enter augmenter for "unlink"
+Reusing "open" BPF sys_enter augmenter for "symlink"
+Reusing "open" BPF sys_enter augmenter for "readlink"
+Reusing "open" BPF sys_enter augmenter for "chmod"
+Reusing "open" BPF sys_enter augmenter for "chown"
+Reusing "open" BPF sys_enter augmenter for "lchown"
+Reusing "open" BPF sys_enter augmenter for "mknod"
+Reusing "open" BPF sys_enter augmenter for "statfs"
+Reusing "open" BPF sys_enter augmenter for "pivot_root"
+Reusing "open" BPF sys_enter augmenter for "chroot"
+Reusing "open" BPF sys_enter augmenter for "acct"
+Reusing "open" BPF sys_enter augmenter for "swapon"
+Reusing "open" BPF sys_enter augmenter for "swapoff"
+Reusing "open" BPF sys_enter augmenter for "delete_module"
+Reusing "open" BPF sys_enter augmenter for "setxattr"
+Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+Reusing "open" BPF sys_enter augmenter for "getxattr"
+Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+Reusing "open" BPF sys_enter augmenter for "listxattr"
+Reusing "open" BPF sys_enter augmenter for "llistxattr"
+Reusing "open" BPF sys_enter augmenter for "removexattr"
+Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+Reusing "open" BPF sys_enter augmenter for "mq_open"
+Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+Reusing "open" BPF sys_enter augmenter for "symlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+Reusing "connect" BPF sys_enter augmenter for "accept4"
+Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+Reusing "open" BPF sys_enter augmenter for "memfd_create"
+Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+
+TL;DR:
+
+These are the new syscalls that can be augmented
+Reusing "openat" BPF sys_enter augmenter for "open_tree"
+Reusing "openat" BPF sys_enter augmenter for "openat2"
+Reusing "openat" BPF sys_enter augmenter for "mount_setattr"
+Reusing "openat" BPF sys_enter augmenter for "move_mount"
+Reusing "open" BPF sys_enter augmenter for "fsopen"
+Reusing "openat" BPF sys_enter augmenter for "fspick"
+Reusing "openat" BPF sys_enter augmenter for "faccessat2"
+Reusing "openat" BPF sys_enter augmenter for "fchmodat2"
+
+as for the perf trace output:
+
+before
+
+perf $ perf trace -e faccessat2 --max-events=1
+[no output]
+
+after
+
+perf $ ./perf trace -e faccessat2 --max-events=1
+     0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "uevent")                               = 0
+
+P.S. The reason why this bug was not found in the past five years is
+probably because it only happens to the newer syscalls whose id is
+greater, for instance, faccessat2 of id 439, which not a lot of people
+care about when using perf trace.
+
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
 ---
+ tools/perf/builtin-trace.c   | 32 +++++++++++++++++++++-----------
+ tools/perf/util/syscalltbl.c | 21 +++++++++------------
+ tools/perf/util/syscalltbl.h |  5 +++++
+ 3 files changed, 35 insertions(+), 23 deletions(-)
 
-Otherwise this gets picked up in the git log.
-
-Anyhow, I noticed because I was checking b4 picked this one up right.
-
-Excess stuff removed in the description and applied to the togreg
-branch of iio.git which is initially pushed out as testing for
-0-day to see if it can find anything we missed.
-
-Thanks,
-
-Jonathan
-> Changes since v1:
-> * macros: remove unnecessary comments
-> * macros: add more meaningful names
-> * `struct si7020_data`: add comment explaining the mutex
-> * `si7020_update_reg()`: change the control flow to more standard
-> * use `scoped_guard()` instead of `mutex_lock() <...> mutex_unlock()`
-> * `si7020_probe()`: add comment for User Register default value
-> * minor format fixes
-> --
-> Hello, after sending this email I noticed an accidental email mismatch
-> between "From:" and the "Signed-off-by:" therefore I send this email
-> once again with a corrected signature. Sorry for the confusion.
-> ---
->  drivers/iio/humidity/si7020.c | 137 +++++++++++++++++++++++++++++++++-
->  1 file changed, 133 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/humidity/si7020.c b/drivers/iio/humidity/si7020.c
-> index fb1006649328..1215fab7b1a5 100644
-> --- a/drivers/iio/humidity/si7020.c
-> +++ b/drivers/iio/humidity/si7020.c
-> @@ -23,6 +23,7 @@
->  #include <linux/mod_devicetable.h>
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
-> +#include <linux/stat.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -33,17 +34,38 @@
->  #define SI7020CMD_TEMP_HOLD	0xE3
->  /* Software Reset */
->  #define SI7020CMD_RESET		0xFE
-> +#define SI7020CMD_USR_WRITE	0xE6
-> +/* "Heater Enabled" bit in the User Register */
-> +#define SI7020_USR_HEATER_EN	BIT(2)
-> +#define SI7020CMD_HEATER_WRITE	0x51
-> +/* Heater current configuration bits */
-> +#define SI7020_HEATER_VAL	GENMASK(3, 0)
-> +
-> +struct si7020_data {
-> +	struct i2c_client *client;
-> +	/* Lock for cached register values */
-> +	struct mutex lock;
-> +	u8 user_reg;
-> +	u8 heater_reg;
-> +};
-> +
-> +static const int si7020_heater_vals[] = { 0, 1, 0xF };
->  
->  static int si7020_read_raw(struct iio_dev *indio_dev,
->  			   struct iio_chan_spec const *chan, int *val,
->  			   int *val2, long mask)
->  {
-> -	struct i2c_client **client = iio_priv(indio_dev);
-> +	struct si7020_data *data = iio_priv(indio_dev);
->  	int ret;
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_RAW:
-> -		ret = i2c_smbus_read_word_swapped(*client,
-> +		if (chan->type == IIO_CURRENT) {
-> +			*val = data->heater_reg;
-> +			return IIO_VAL_INT;
-> +		}
-> +
-> +		ret = i2c_smbus_read_word_swapped(data->client,
->  						  chan->type == IIO_TEMP ?
->  						  SI7020CMD_TEMP_HOLD :
->  						  SI7020CMD_RH_HOLD);
-> @@ -96,17 +118,118 @@ static const struct iio_chan_spec si7020_channels[] = {
->  		.type = IIO_TEMP,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
->  			BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET),
-> +	},
-> +	{
-> +		.type = IIO_CURRENT,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_RAW),
-> +		.extend_name = "heater",
-> +	}
-> +};
-> +
-> +static int si7020_update_reg(struct si7020_data *data,
-> +				u8 *reg, u8 cmd, u8 mask, u8 val)
-> +{
-> +	u8 new = (*reg & ~mask) | val;
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client, cmd, new);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*reg = new;
-> +
-> +	return 0;
-> +}
-> +
-> +static int si7020_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct si7020_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		if (chan->type != IIO_CURRENT || val2 != 0 ||
-> +			val < si7020_heater_vals[0] || val > si7020_heater_vals[2])
-> +			return -EINVAL;
-> +
-> +		scoped_guard(mutex, &data->lock)
-> +			ret = si7020_update_reg(data, &data->heater_reg,
-> +					SI7020CMD_HEATER_WRITE, SI7020_HEATER_VAL, val);
-> +		return ret;
-> +	default:
-> +		return -EINVAL;
->  	}
-> +}
-> +
-> +static int si7020_read_available(struct iio_dev *indio_dev,
-> +				  struct iio_chan_spec const *chan,
-> +				  const int **vals,
-> +				  int *type, int *length, long mask)
-> +{
-> +	if (mask != IIO_CHAN_INFO_RAW || chan->type != IIO_CURRENT)
-> +		return -EINVAL;
-> +
-> +	*vals = si7020_heater_vals;
-> +	*type = IIO_VAL_INT;
-> +
-> +	return IIO_AVAIL_RANGE;
-> +}
-> +
-> +static ssize_t si7020_show_heater_en(struct device *dev,
-> +				 struct device_attribute *attr, char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct si7020_data *data = iio_priv(indio_dev);
-> +
-> +	return sysfs_emit(buf, "%d\n", !!(data->user_reg & SI7020_USR_HEATER_EN));
-> +}
-> +
-> +static ssize_t si7020_store_heater_en(struct device *dev,
-> +				  struct device_attribute *attr,
-> +				  const char *buf, size_t len)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct si7020_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +	bool val;
-> +
-> +	ret = kstrtobool(buf, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	scoped_guard(mutex, &data->lock)
-> +		ret = si7020_update_reg(data, &data->user_reg, SI7020CMD_USR_WRITE,
-> +				SI7020_USR_HEATER_EN, val ? SI7020_USR_HEATER_EN : 0);
-> +
-> +	return ret < 0 ? ret : len;
-> +}
-> +
-> +static IIO_DEVICE_ATTR(heater_enable, 0644,
-> +		       si7020_show_heater_en, si7020_store_heater_en, 0);
-> +
-> +static struct attribute *si7020_attributes[] = {
-> +	&iio_dev_attr_heater_enable.dev_attr.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group si7020_attribute_group = {
-> +	.attrs = si7020_attributes,
->  };
->  
->  static const struct iio_info si7020_info = {
->  	.read_raw = si7020_read_raw,
-> +	.write_raw = si7020_write_raw,
-> +	.read_avail = si7020_read_available,
-> +	.attrs = &si7020_attribute_group,
->  };
->  
->  static int si7020_probe(struct i2c_client *client)
->  {
->  	struct iio_dev *indio_dev;
-> -	struct i2c_client **data;
-> +	struct si7020_data *data;
->  	int ret;
->  
->  	if (!i2c_check_functionality(client->adapter,
-> @@ -126,7 +249,9 @@ static int si7020_probe(struct i2c_client *client)
->  		return -ENOMEM;
->  
->  	data = iio_priv(indio_dev);
-> -	*data = client;
-> +	i2c_set_clientdata(client, indio_dev);
-> +	data->client = client;
-> +	mutex_init(&data->lock);
->  
->  	indio_dev->name = dev_name(&client->dev);
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> @@ -134,6 +259,10 @@ static int si7020_probe(struct i2c_client *client)
->  	indio_dev->channels = si7020_channels;
->  	indio_dev->num_channels = ARRAY_SIZE(si7020_channels);
->  
-> +	/* All the "reserved" bits in the User Register are 1s by default */
-> +	data->user_reg = 0x3A;
-> +	data->heater_reg = 0x0;
-> +
->  	return devm_iio_device_register(&client->dev, indio_dev);
->  }
->  
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c42bc608954e..5cbe1748911d 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3354,7 +3354,8 @@ static int trace__bpf_prog_sys_exit_fd(struct trace *trace, int id)
+ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
+ {
+ 	struct tep_format_field *field, *candidate_field;
+-	int id;
++	struct __syscall *scs = trace->sctbl->syscalls.entries;
++	int id, _id;
+ 
+ 	/*
+ 	 * We're only interested in syscalls that have a pointer:
+@@ -3368,10 +3369,13 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
+ 
+ try_to_find_pair:
+ 	for (id = 0; id < trace->sctbl->syscalls.nr_entries; ++id) {
+-		struct syscall *pair = trace__syscall_info(trace, NULL, id);
++		struct syscall *pair;
+ 		struct bpf_program *pair_prog;
+ 		bool is_candidate = false;
+ 
++		_id = scs[id].id;
++		pair = trace__syscall_info(trace, NULL, _id);
++
+ 		if (pair == NULL || pair == sc ||
+ 		    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
+ 			continue;
+@@ -3456,23 +3460,26 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+ {
+ 	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
+ 	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
+-	int err = 0, key;
++	int err = 0, key, id;
++	struct __syscall *scs = trace->sctbl->syscalls.entries;
+ 
+ 	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+ 		int prog_fd;
+ 
+-		if (!trace__syscall_enabled(trace, key))
++		id = scs[key].id;
++
++		if (!trace__syscall_enabled(trace, id))
+ 			continue;
+ 
+-		trace__init_syscall_bpf_progs(trace, key);
++		trace__init_syscall_bpf_progs(trace, id);
+ 
+ 		// It'll get at least the "!raw_syscalls:unaugmented"
+-		prog_fd = trace__bpf_prog_sys_enter_fd(trace, key);
+-		err = bpf_map_update_elem(map_enter_fd, &key, &prog_fd, BPF_ANY);
++		prog_fd = trace__bpf_prog_sys_enter_fd(trace, id);
++		err = bpf_map_update_elem(map_enter_fd, &id, &prog_fd, BPF_ANY);
+ 		if (err)
+ 			break;
+-		prog_fd = trace__bpf_prog_sys_exit_fd(trace, key);
+-		err = bpf_map_update_elem(map_exit_fd, &key, &prog_fd, BPF_ANY);
++		prog_fd = trace__bpf_prog_sys_exit_fd(trace, id);
++		err = bpf_map_update_elem(map_exit_fd, &id, &prog_fd, BPF_ANY);
+ 		if (err)
+ 			break;
+ 	}
+@@ -3506,10 +3513,13 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+ 	 * array tail call, then that one will be used.
+ 	 */
+ 	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+-		struct syscall *sc = trace__syscall_info(trace, NULL, key);
++		struct syscall *sc;
+ 		struct bpf_program *pair_prog;
+ 		int prog_fd;
+ 
++		id = scs[key].id;
++		sc = trace__syscall_info(trace, NULL, id);
++
+ 		if (sc == NULL || sc->bpf_prog.sys_enter == NULL)
+ 			continue;
+ 
+@@ -3535,7 +3545,7 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+ 		 * with the fd for the program we're reusing:
+ 		 */
+ 		prog_fd = bpf_program__fd(sc->bpf_prog.sys_enter);
+-		err = bpf_map_update_elem(map_enter_fd, &key, &prog_fd, BPF_ANY);
++		err = bpf_map_update_elem(map_enter_fd, &id, &prog_fd, BPF_ANY);
+ 		if (err)
+ 			break;
+ 	}
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 63be7b58761d..16aa886c40f0 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -44,22 +44,17 @@ const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+ static const char *const *syscalltbl_native = syscalltbl_loongarch;
+ #endif
+ 
+-struct syscall {
+-	int id;
+-	const char *name;
+-};
+-
+ static int syscallcmpname(const void *vkey, const void *ventry)
+ {
+ 	const char *key = vkey;
+-	const struct syscall *entry = ventry;
++	const struct __syscall *entry = ventry;
+ 
+ 	return strcmp(key, entry->name);
+ }
+ 
+ static int syscallcmp(const void *va, const void *vb)
+ {
+-	const struct syscall *a = va, *b = vb;
++	const struct __syscall *a = va, *b = vb;
+ 
+ 	return strcmp(a->name, b->name);
+ }
+@@ -67,13 +62,14 @@ static int syscallcmp(const void *va, const void *vb)
+ static int syscalltbl__init_native(struct syscalltbl *tbl)
+ {
+ 	int nr_entries = 0, i, j;
+-	struct syscall *entries;
++	struct __syscall *entries;
+ 
+ 	for (i = 0; i <= syscalltbl_native_max_id; ++i)
+ 		if (syscalltbl_native[i])
+ 			++nr_entries;
+ 
+-	entries = tbl->syscalls.entries = malloc(sizeof(struct syscall) * nr_entries);
++	entries = tbl->syscalls.entries = malloc(sizeof(struct __syscall) *
++						 nr_entries);
+ 	if (tbl->syscalls.entries == NULL)
+ 		return -1;
+ 
+@@ -85,7 +81,8 @@ static int syscalltbl__init_native(struct syscalltbl *tbl)
+ 		}
+ 	}
+ 
+-	qsort(tbl->syscalls.entries, nr_entries, sizeof(struct syscall), syscallcmp);
++	qsort(tbl->syscalls.entries, nr_entries, sizeof(struct __syscall),
++	      syscallcmp);
+ 	tbl->syscalls.nr_entries = nr_entries;
+ 	tbl->syscalls.max_id	 = syscalltbl_native_max_id;
+ 	return 0;
+@@ -116,7 +113,7 @@ const char *syscalltbl__name(const struct syscalltbl *tbl __maybe_unused, int id
+ 
+ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+ {
+-	struct syscall *sc = bsearch(name, tbl->syscalls.entries,
++	struct __syscall *sc = bsearch(name, tbl->syscalls.entries,
+ 				     tbl->syscalls.nr_entries, sizeof(*sc),
+ 				     syscallcmpname);
+ 
+@@ -126,7 +123,7 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+ int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *syscall_glob, int *idx)
+ {
+ 	int i;
+-	struct syscall *syscalls = tbl->syscalls.entries;
++	struct __syscall *syscalls = tbl->syscalls.entries;
+ 
+ 	for (i = *idx + 1; i < tbl->syscalls.nr_entries; ++i) {
+ 		if (strglobmatch(syscalls[i].name, syscall_glob)) {
+diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
+index a41d2ca9e4ae..6e93a0874c40 100644
+--- a/tools/perf/util/syscalltbl.h
++++ b/tools/perf/util/syscalltbl.h
+@@ -2,6 +2,11 @@
+ #ifndef __PERF_SYSCALLTBL_H
+ #define __PERF_SYSCALLTBL_H
+ 
++struct __syscall {
++	int id;
++	const char *name;
++};
++
+ struct syscalltbl {
+ 	int audit_machine;
+ 	struct {
+-- 
+2.45.2
 
 
