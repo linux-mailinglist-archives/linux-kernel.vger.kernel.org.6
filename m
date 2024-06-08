@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-206922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AAF900FF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188D4900FFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10B71F22A2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F0428425E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D94176ACB;
-	Sat,  8 Jun 2024 07:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84EC1667FA;
+	Sat,  8 Jun 2024 07:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzdvK6E8"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juoPaTWB"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54530433AD
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4125C8495
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717831603; cv=none; b=QNiywXb0Ab97jIMJDntXjN1SzyYW1a8mFWWSKiDQPB7pKn2qFkarCLKxpUJ5TF9o1maOBH5/BUbYURUi0Z766mAFMphqlBX7u1gM42ln64GJaRnV4DdJtCJacwl4Db0hN5LT2+E+Bz/dyKRsJRGFYl0XHy1fXz/+IhOACtwfmas=
+	t=1717831939; cv=none; b=p2hfeALJXy+baF+rC6KwOEN2oWSQAwhMkT1qHXbSxFMdzm/85j/61A2bcgorD/lGy/DSqJ4J0W+B74VBRP8nUWk4UElPs5JVwcApkeczhBCH/tTVZhjbSGJCZK4QxS3gAS9J5CSPpjiieqXRl5MEymb/wRkjBnAKZWjhmVIjZIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717831603; c=relaxed/simple;
-	bh=Oj4lS1B4upVgat/8NPIU2m9kS6m/FhPnfRYzR4Ki0yI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkKciUm5r4vhpP7ezC7SIjIBd9z5DIE/YjAT0uSVVKfSDSJtAnR3eCob5P33Qre/Ac06BTljtVrgL2c25Wqq+WWqOmo6/dp116u+ETefmVfgWNJLdqV/bOuQK7siYFL+pWOQ+iZhtMNG+gapT/dwRJJ1paowsLcKap1HVmpWDD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzdvK6E8; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1717831939; c=relaxed/simple;
+	bh=AZKBFN90tKnMMc/N26fS8u6OF7W3eyf/sCjLniLMvoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPujPDpVFWm0Jd1quRPtkXJCXCmlWREQXI3TyPxCeMr5YlpA5MXHzYFimkVUqdYJS4c4FeVrQEax7jSjX0TnspOTeIP5fKQ1EBiAbS/jFijNwdbC2iZdq3HaBKotJKW5xK7L2zqf8InakiGKb32A/ChXqYHzJSKp1xbyYmBtgEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juoPaTWB; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52c82101407so126150e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:26:41 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so3591520a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717831599; x=1718436399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ni5fFFnVcG2iwTXfOd+vGNAwxVMpjNHfjKy+OgAL7Qk=;
-        b=JzdvK6E8JxI7a6+P8CdjuT1G7co4gwFaeK7754cCipecaSsp93MQM9xFjyDlimjxlz
-         INR2xK+7Qu6mneyvMlrv4OhF0T5XOPsTaO0ESmkQDygs/Uc4lgV2ofrrs0t6dwM24rG1
-         W1329YNFWE2naNa+4UHqUhzwgKGAULp1Is8lc5p+NEF9e1I/6yjTOdTxmEMKZLuZNmFr
-         9YRC9rqUMxY6gloRFnIXhTT2bLRCscH2WpYBmQE5TlSneBNooZ12GMij3eB4UYEUqVPI
-         UHnBJGz6Rac7UCgEZBiGJpQrraR4K8rrFl6J4EjNX3zYhNHqo/nn48R3mhPPDB94KKxD
-         A6Dg==
+        d=gmail.com; s=20230601; t=1717831935; x=1718436735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqNcSIg+6dYdCCgXrXKU0UnjWVh0bWICssUxVg3vCx4=;
+        b=juoPaTWBeNExpcr6KR72EpSj0a5J+JbzEnaVX54J+fZ0y4xu4/yv9SPMc6JYKHWzuZ
+         kp1Ny2Cxy9LmPLgxNLYqRJaaX7XrcrcBQxYnprhJB8+1jmf6W30JLoiylpx1zNTvnsEV
+         UPh3c+TBLszDtIias33mv0CuG+GM1KkN2SMBpSsYPxjZlRuQXK6Y+eHY31SsvlAEYUWi
+         GdogKHnjzauq4NHf4eqb4SgLzHYNpWi8TeadgpAytqNXlpHcZ05KY1JZUJdKVaDzdSmk
+         6k8Dk8FMyGYEM+WnLxgVxSHydeyLeeU8ZoqmTtrHRF0LRQgdXBjk54I86aRtSzCapgTZ
+         pepA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717831599; x=1718436399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ni5fFFnVcG2iwTXfOd+vGNAwxVMpjNHfjKy+OgAL7Qk=;
-        b=MCXGpay+SfLlMG2b4E/mtob3UyYO8+bIQ4UOarPjl2br9DjJvgBJ+BB3sZyM2oNK1H
-         gjK+DfVB9gaZ2TrKTIjZ9vThWMRyYJnzC36heKC6z6LL0yF+vuQ/xK3dx4phZKZzyRM6
-         G1e167rUpC57Dc/y7XYNcUaqZPaeA8rxBh9kpkULEJT+yTTgyZ4FQ9tRQu72E1riRwB8
-         8P+8W083kA8LPFaewNy6mkRjOb5A79rysdeR3gsy1nXeMQNViB2SdlS7niywRfwaibQy
-         sshx3Cvsg0hks+8rCySlIkNd1a3TjBWXAnhw2B/0y6qohftx3wOrcKZOQL2iCmSJlvQi
-         YVfg==
-X-Gm-Message-State: AOJu0YxlKAXNukmH39R2rPhQlyPnGEG0TkA20qHe+y0FwDoYMEptTE+j
-	9oWM8O9XXAWwpxfHK4elILzknoG6cdlwHcY8NCZBYjDC8gTdG2yw
-X-Google-Smtp-Source: AGHT+IFZ+gEWTl0RZmUZnqBi+qAfNr1eqgu2OebdrNpSYFXlQch9tbUkHxwpzYgm+AqYgdy5hPyItQ==
-X-Received: by 2002:ac2:4102:0:b0:52b:79d6:7c08 with SMTP id 2adb3069b0e04-52bb9f78667mr3324764e87.18.1717831599191;
-        Sat, 08 Jun 2024 00:26:39 -0700 (PDT)
-Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6e2e1d4cb8sm174605166b.5.2024.06.08.00.26.38
+        d=1e100.net; s=20230601; t=1717831935; x=1718436735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqNcSIg+6dYdCCgXrXKU0UnjWVh0bWICssUxVg3vCx4=;
+        b=VJAB8o3rw+tSTZkqSQLEJYM23uvt235OoWEy/mzC0U7++GWKWdhV39mHKT8goBinKG
+         dEZnoELtujBmruxgCIUPWgihSYvXBbMoIrGHlygSVKgq60rH/BNyrEUZ0ED6JKaxHnGN
+         WgkPeHC8/elD3uV6LDCcgOKx5laDQhK3lXUBgk/Xhyx1gf4xX8khpankqAZtNZzewhdV
+         JVhDv4703m55khsIQT5yAdOKmYFFTvCnaM68RPUzw4k7CuOoeaJ63vaYvItrZKiYCmle
+         nAMx54Lx9BPRAWlg5I3kyJMlJK7mjLoZ0g4cYwzIyQ6wMIBWu351W4BnXQgRjwIJoxTf
+         kgmw==
+X-Gm-Message-State: AOJu0YyejE2nZZ0v/gzAU2rPHBQOC1rhHFMGo88B2Wz/daXvbkE3Lu+/
+	kRHNFTAq4TNGH8X1qExNsy3kgbGVWHrXfeIvOsPBYo3+8YJYti0j/d6K+2D+
+X-Google-Smtp-Source: AGHT+IEQuFOBC9oPtFcqW44DOAiTv8V56oJrNlu7W93IftDAcZm9vwNJz91TZh3ps1Sz2s5vEaL9jg==
+X-Received: by 2002:a17:906:7705:b0:a6e:b1f:5e17 with SMTP id a640c23a62f3a-a6e0b1f5e6bmr195540066b.54.1717831935042;
+        Sat, 08 Jun 2024 00:32:15 -0700 (PDT)
+Received: from kepler.. (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efe5262cdsm61350466b.117.2024.06.08.00.32.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 00:26:38 -0700 (PDT)
+        Sat, 08 Jun 2024 00:32:14 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 8 Jun 2024 09:26:36 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+To: linux-kernel@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Dave Hansen <dave@sr71.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 2/3] x86/fpu: Remove the thread::fpu pointer
-Message-ID: <ZmQHrHqQUVTRtjSz@gmail.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-3-mingo@kernel.org>
- <20240605133805.GB25006@redhat.com>
- <ZmF5IhYp5JiiMHgv@gmail.com>
- <ZmQAZ-REghlJmax-@gmail.com>
+Subject: [PATCH 00/10, -v4] x86/fpu: Remove thread::fpu
+Date: Sat,  8 Jun 2024 09:31:25 +0200
+Message-ID: <20240608073134.264210-1-mingo@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmQAZ-REghlJmax-@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+This series is one of the dependencies of the fast-headers work,
+which aims to reduce header complexity by removing <asm/processor.h>
+from the <linux/sched.h> dependency chain, which headers are headers
+are fat enough already even if we do not combine them.
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+To achieve that decoupling, one of the key steps is to not embedd any
+C types from <asm/processor.h> into task_struct.
 
-> 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > 
-> > * Oleg Nesterov <oleg@redhat.com> wrote:
-> > 
-> > > On 06/05, Ingo Molnar wrote:
-> > > >
-> > > > @@ -591,13 +591,11 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
-> > > >  	 * This is safe because task_struct size is a multiple of cacheline size.
-> > > >  	 */
-> > > >  	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-> > > > -	struct fpu *src_fpu = current->thread.fpu;
-> > > > +	struct fpu *src_fpu = x86_task_fpu(current);
-> > > 
-> > > I think this patch can also change
-> > > 
-> > > 	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-> > > 
-> > > above to use x86_task_fpu(dst).
-> > 
-> > Yeah, so I'd prefer to keep it open coded, because of the comment and the 
-> > debug check makes a lot more sense if the pointer calculation is visible:
-> 
-> On a second thought I changed it to your suggested variant:
-> 
->         struct fpu *src_fpu = x86_task_fpu(current);
->         struct fpu *dst_fpu = x86_task_fpu(dst);
-> 
-> because you are right, it's in fact easier to read this way.
+The only architecture that relies on that in a serious fashion is x86,
+via the 'struct thread::fpu' variable size structure. The series below
+attempts to resolve it by using a calculated fpu context area address
+value via the x86_task_fpu() helper. The allocation layout of
+task_struct + fpu-save-area doesn't change.
 
-On a third thought, while more readable, this doesn't work in practice with 
-the current scheme, because x86_task_fpu() gets called on kthreads in 
-fpu_clone(), which trips up the new debugging code.
+Changes in -v3:
 
-We could resolve it by special-casing PF_KTHREAD here too, but that weakens 
-the whole readability argument. I'll leave it as-is for now.
+ - Restructure the series to be easier to review
+ - Extend the debug checks to all PF_KTHREAD tasks
+ - A few cleanups on top
+
+The Git tree can be found at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/fpu
 
 Thanks,
 
-	Ingo
+    Ingo
+
+======================>
+
+Ingo Molnar (9):
+      x86/fpu: Introduce the x86_task_fpu() helper method
+      x86/fpu: Convert task_struct::thread.fpu accesses to use x86_task_fpu()
+      x86/fpu: Make task_struct::thread constant size
+      x86/fpu: Remove the thread::fpu pointer
+      x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
+      x86/fpu: Make sure x86_task_fpu() doesn't get called for PF_KTHREAD tasks during exit
+      x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks
+      x86/fpu: Use 'fpstate' variable names consistently
+      x86/fpu: Fix stale comment in ex_handler_fprestore()
+
+ arch/x86/include/asm/fpu/api.h   |  2 +-
+ arch/x86/include/asm/fpu/sched.h |  4 +-
+ arch/x86/include/asm/processor.h | 23 ++++++------
+ arch/x86/kernel/fpu/context.h    |  4 +-
+ arch/x86/kernel/fpu/core.c       | 80 +++++++++++++++++++++++-----------------
+ arch/x86/kernel/fpu/init.c       | 23 +++++++-----
+ arch/x86/kernel/fpu/regset.c     | 22 +++++------
+ arch/x86/kernel/fpu/signal.c     | 18 ++++-----
+ arch/x86/kernel/fpu/xstate.c     | 27 ++++++--------
+ arch/x86/kernel/fpu/xstate.h     |  6 +--
+ arch/x86/kernel/process.c        |  7 +---
+ arch/x86/kernel/signal.c         |  6 +--
+ arch/x86/kernel/traps.c          |  2 +-
+ arch/x86/math-emu/fpu_aux.c      |  2 +-
+ arch/x86/math-emu/fpu_entry.c    |  4 +-
+ arch/x86/math-emu/fpu_system.h   |  2 +-
+ arch/x86/mm/extable.c            |  2 +-
+ include/linux/sched.h            | 13 ++-----
+ 18 files changed, 126 insertions(+), 121 deletions(-)
 
