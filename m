@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-207158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A62901303
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:22:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87E1901307
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A731F21961
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75FD41C20ECC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BDE17547;
-	Sat,  8 Jun 2024 17:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756D21758F;
+	Sat,  8 Jun 2024 17:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rytt0HL9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiKL6VyZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C41F168B8;
-	Sat,  8 Jun 2024 17:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F212B95;
+	Sat,  8 Jun 2024 17:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717867369; cv=none; b=ji0XYCP0tnxq05QKH4tDYDa2RoyUy8yYSv63cVB2UismHiCMsovU3e39yTcVQL8lE3+ba73Ls1Uss0XN9scRTorYncl0FL6MH4DFHIEEnyJ2eTRkjq+9EIo0hDEE7CU25hFVjWvvA5nn4I1GwH/r6a0nzrr0DGd4GXb3msDoXhg=
+	t=1717867537; cv=none; b=C8TMwC/BR8XNLuC1k9bgzowUcGMdczh5TYMhq1sES0iWgeICFKHg+ZGKq5CUyzYbJ1YlWlQivkO4JJH2TUj86YEgKbxYiinnMGFJTLKaLMXso+GjoxCa9vARftiJ1CF2oBkyxf+xAMh5p05jKBlFzUtShTKnWaeLuaYyO6DD3Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717867369; c=relaxed/simple;
-	bh=n9FcOdQmyRPVSwb30UUcTQuU6re91ctYyxj2TcrRaUA=;
+	s=arc-20240116; t=1717867537; c=relaxed/simple;
+	bh=4BGebkcG/0moFKH00E5Mvmq2k1UBfOAWFppbpal6zFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NtF1BsMGx94hXkvO9J89FVGO9PS0+gJZM99OGDLsy+FdR1gJ6bxVFtx186q+HcsqAGi91ryayk3viyEzk6OIHIKwXOygGfDdyYrkAhkmcbq5HPcIxeLJqVk3rrQhMxwWMd9FelMz5eifuFDE8SycX6jcdsrRpvpaJOqyZRe+2fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rytt0HL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709B1C2BD11;
-	Sat,  8 Jun 2024 17:22:44 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Oo3XH91VS8GsUXpDZ4lJASTxt5L5ZB0G81ykGHCXxV3oCRq/VwXQZ0Qh/prJ4MWHL7VOB2OUEJNUN5SlpHkRjB6vQUYkRMOReNCAaeWdQWt5zV409y+2zjBgw2FsIEqGG2eAP+74f3DsCp/AY+OhLKWIb4dYFE8my2+p62PqjU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiKL6VyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E259C2BD11;
+	Sat,  8 Jun 2024 17:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717867369;
-	bh=n9FcOdQmyRPVSwb30UUcTQuU6re91ctYyxj2TcrRaUA=;
+	s=k20201202; t=1717867537;
+	bh=4BGebkcG/0moFKH00E5Mvmq2k1UBfOAWFppbpal6zFw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rytt0HL9O1Fg0TyVehQc/XOutd/VvayrxZx7iBET2X+sQaK3PKb/ydcVjbQZmRUPo
-	 9qyvxFHocleE/VcLZaFoCv/AFjAD365hxV8/lCpPAUR/73UpoGgNyezN3srpf7cAYl
-	 13gengO2/QQTKocYvQB51gxE/N7FnFr/UIzoxI1g5UAQL6n5zvffou1923+Xo/ZllH
-	 3mG43b26A5bvLIqEj+N56jqbueCMKF/R+ulJO9lgwueOUjgnlaaie2E+1b5BQS8lN8
-	 5DOfEOMuQUE6X7kAMVFvMDZjpvMaa4Lt5qdwW4AFwo5VoLwGqGIpiQmZWifGSbUm/D
-	 wijBcLtG67hjA==
-Date: Sat, 8 Jun 2024 18:22:40 +0100
+	b=XiKL6VyZvjTKUoVKHqo133WqRXWS45YMly0SP98LPAsmZpBJG6oUUWM+CnqzqzlSC
+	 Ly+WOvFPcZTKowGVa5x+J1g186xIIiQ+dhXtA0GRP9ah4QHNAqXUTJ6RmdfubYs2s5
+	 vm2OOC286DYMtv3tccYgQlHX/h/jOZObXRXF29LUaUJakChrAbA2FKTysIBJl4yOGI
+	 +XrhQlaXhUofZbg+H6FuT7DHH57r/GxWTbKJqlhXDWVFWR7d3sZqyg+mt8bM43sL22
+	 Hla99sOlLAfN2SDppDtuo5euw8DA1e8gWK3ZPPqxQfLFuSfsOUrcZDYJC68mExuxrk
+	 +Cht3rVpfkYbg==
+Date: Sat, 8 Jun 2024 18:25:29 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lucas Stankus
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Lucas Stankus
  <lucas.p.stankus@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
  Hennerich <Michael.Hennerich@analog.com>, Puranjay Mohan
  <puranjay@kernel.org>, Ramona Bolboaca <ramona.bolboaca@analog.com>,
@@ -51,14 +51,11 @@ Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lucas Stankus
  Tanislav <cosmin.tanislav@analog.com>, Marius Cristea
  <marius.cristea@microchip.com>, linux-iio@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] iio: accel: adxl313: simplify with
- spi_get_device_match_data()
-Message-ID: <20240608182240.1e3a8153@jic23-huawei>
-In-Reply-To: <69e1a5b1-e5ce-4bcc-a0c4-2d02e777c296@linaro.org>
+Subject: Re: [PATCH 0/8] iio: simplify with spi_get_device_match_data()
+Message-ID: <20240608182529.3fc8f30e@jic23-huawei>
+In-Reply-To: <f7196ddf96551114204f7e8ba17b409fd3493202.camel@gmail.com>
 References: <20240606-spi-match-data-v1-0-320b291ee1fe@linaro.org>
-	<20240606-spi-match-data-v1-1-320b291ee1fe@linaro.org>
-	<7ecabb8e342b9bd4fc2552bce29dc8c7a98971ee.camel@gmail.com>
-	<69e1a5b1-e5ce-4bcc-a0c4-2d02e777c296@linaro.org>
+	<f7196ddf96551114204f7e8ba17b409fd3493202.camel@gmail.com>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,58 +66,58 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Jun 2024 11:18:54 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On Fri, 07 Jun 2024 10:55:44 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-> On 07/06/2024 10:57, Nuno S=C3=A1 wrote:
-> > On Thu, 2024-06-06 at 16:26 +0200, Krzysztof Kozlowski wrote: =20
-> >> Use spi_get_device_match_data() helper to simplify a bit the driver.
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> ---
-> >> =C2=A0drivers/iio/accel/adxl313_spi.c | 8 +-------
-> >> =C2=A01 file changed, 1 insertion(+), 7 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/accel/adxl313_spi.c b/drivers/iio/accel/adxl3=
-13_spi.c
-> >> index b7cc15678a2b..6f8d73f6e5a9 100644
-> >> --- a/drivers/iio/accel/adxl313_spi.c
-> >> +++ b/drivers/iio/accel/adxl313_spi.c
-> >> @@ -72,13 +72,7 @@ static int adxl313_spi_probe(struct spi_device *spi)
-> >> =C2=A0	if (ret)
-> >> =C2=A0		return ret;
-> >> =C2=A0
-> >> -	/*
-> >> -	 * Retrieves device specific data as a pointer to a
-> >> -	 * adxl313_chip_info structure
-> >> -	 */
-> >> -	chip_data =3D device_get_match_data(&spi->dev);
-> >> -	if (!chip_data)
-> >> -		chip_data =3D (const struct adxl313_chip_info
-> >> *)spi_get_device_id(spi)->driver_data;
-> >> +	chip_data =3D spi_get_device_match_data(spi);
-> >> =C2=A0 =20
+> On Thu, 2024-06-06 at 16:26 +0200, Krzysztof Kozlowski wrote:
+> > Not tested on hardware, but code looks equivalent and should not have
+> > functional effect.
 > >=20
-> > I understand you're sticking with the original code but since you're do=
-ing this,
-> > could we maybe add proper error checking for the call? Maybe Jonathan c=
-an even
-> > tweak that while applying...
+> > Best regards,
+> > Krzysztof
 > >=20
-> > (same comment for patch 3) =20
+> > ---
+> > Krzysztof Kozlowski (8):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: accel: adxl313: simplify with spi_g=
+et_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: accel: adxl355: simplify with spi_g=
+et_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: max11205: simplify with spi_ge=
+t_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ti-ads131e08: simplify with sp=
+i_get_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ti-tsc2046: simplify with spi_=
+get_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: addac: ad74413r: simplify with spi_=
+get_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: dac: max5522: simplify with spi_get=
+_device_match_data()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: mcp3564: drop redundant open-c=
+oded spi_get_device_match_data()
+> >=20
+> > =C2=A0drivers/iio/accel/adxl313_spi.c |=C2=A0 8 +-------
+> > =C2=A0drivers/iio/accel/adxl355_spi.c | 10 +++-------
+> > =C2=A0drivers/iio/adc/max11205.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
+5 +----
+> > =C2=A0drivers/iio/adc/mcp3564.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 6 ------
+> > =C2=A0drivers/iio/adc/ti-ads131e08.c=C2=A0 |=C2=A0 4 +---
+> > =C2=A0drivers/iio/adc/ti-tsc2046.c=C2=A0=C2=A0=C2=A0 |=C2=A0 7 +------
+> > =C2=A0drivers/iio/addac/ad74413r.c=C2=A0=C2=A0=C2=A0 | 13 +++----------
+> > =C2=A0drivers/iio/dac/max5522.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1=
+1 +++--------
+> > =C2=A08 files changed, 13 insertions(+), 51 deletions(-)
+> > --- =20
 >=20
-> I consider that a separate patch/work, because it would have functional
-> impact.
-
-Agreed. Though error checking on these is normally paranoia / readability t=
-hing
-as we probed from some firmware match and all those entries are present, so
-it should just work.
-
-
+> LGTM, just some minor comments/asks that don't really stop me from:
 >=20
-> Best regards,
-> Krzysztof
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>=20
 >=20
 
+Applied.
+
+Thanks for tidying these up.
+
+Jonathan
 
