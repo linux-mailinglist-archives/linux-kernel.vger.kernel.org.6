@@ -1,123 +1,178 @@
-Return-Path: <linux-kernel+bounces-207124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43FA9012A1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A400B9012A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9391F21904
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C551C20C5A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C979417B400;
-	Sat,  8 Jun 2024 16:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A347A17B401;
+	Sat,  8 Jun 2024 16:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6TKevMO"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yp9Beqws"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6B5524C4;
-	Sat,  8 Jun 2024 16:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538C01E888
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 16:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717862613; cv=none; b=b3ooIILy6lYbck656Qsz/aucUNUFZcX2dc0aH2EuscFmK0ZP2grpMKWIk3W0lXpypiDWGScZ6/Ua05EBPqML+lyqyxDk77xIyWiy8FfVfuELt1+W+YGjspeZKN3x8Hi9SfyXAyC088l1Me/cQ9K/FIG7UAUT6F0Cm2DnlFH7LUM=
+	t=1717862642; cv=none; b=qUQmFCskR3SSaIkhKNF9GTJbwHb61RHGMVzpZ9oS8p0Xe84cym8sNtvAZwfuzc/XGwJBaeTKmjOsgZkLtaPKo2EPX+lDtmLF/xfXW3Tw+rV21oa0cEIZiG8iAvwD9JmSU22KoKXR5BNQidqvYV0Zv6deEYkThMU1r/UPXVzBII0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717862613; c=relaxed/simple;
-	bh=DVCcvAEZkk+J4XLaV4zyh1uIJlCOuy8yqlyWyqCZ1Aw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=crPbMPcrQj07i1RprICzQTwxglNRQbZL082+9mzP6zpVyr1uBS3FtOFPD6bZ8g+pXNRItM4hVkyimCIjn3Z/KJiexz1LThgcv1QIURdAjpmwrvvW81kGcdpfwMihRywsh3FyYiOx8KsIhhy3G61z7l+VFAbvpZwhy9j5FfIfRao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6TKevMO; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so3602495a12.1;
-        Sat, 08 Jun 2024 09:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717862609; x=1718467409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DVCcvAEZkk+J4XLaV4zyh1uIJlCOuy8yqlyWyqCZ1Aw=;
-        b=H6TKevMOZRWB8mSrQOtWdMZPuINN/lm0Tuz6DCkQNo/zNfSdA7UOWX2D3ATtpbWogq
-         sCct5y/rG7K5BET3Riw9TULDZJdVNfq+1sKEgSoqfgvA5Lgk6FCAiP5UPx0JDYMLQ7VO
-         1Al9A5NjSBsTlyjWJspV5opsjTsl2Wf2u6L+57e+i2kA4QbElLKLSM3XNzvo1ChANJA0
-         0HkN4lPNh2aLSyZKW97v1hZqRyCDyTjfcOcmDrF55YHFRJDNiojVnfvfiOVHeGDbECol
-         fGk75AmUsGHgKpi4avcJoEUkl5Wu1P9mtFgDl8ujijwDChHFzyGEllCJdo5fC9mtsH/R
-         /gPQ==
+	s=arc-20240116; t=1717862642; c=relaxed/simple;
+	bh=Cuz5O7o7P/GDYoHaIJ5Jm7qqJSDX3hdIyPx3hjVkLkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NrYSGILgHISglJw5palW2SnluvgTOvOAdNZ2BBA+LzXViNoXJic7Nrj2YNyvs28aFmSpmrpmOWQfe0wlTHgIQd7sNFz5Ur9aJdfVOC3ZgzxX6QLp8oIv/EVtX+HXqxK1AhPipHIu9o4UUTsh1MheYQn5GVn7ZY7GtlRVpflo8vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yp9Beqws; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717862640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qVkfmd0A4LSH9aeoF9S7AqEXOafs58bJBwLWsHiogQU=;
+	b=Yp9BeqwsuXxKC42RbLDAKniC5A+KrTOXFiwb3T6bQ7goskda6O9e6mEqlszofqSxKrwQeo
+	4Izp99G3Piyp7OdwftT+D9yS4QQCoBIUzIUI1h+Dc8bWW7L6uRnqmAepBVxCvu4qGOkWh2
+	WvKECf2B7QEuEZff9CMuYq+CeIN6R98=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-xgb4-x1XPom84P7GNcH5mQ-1; Sat, 08 Jun 2024 12:03:58 -0400
+X-MC-Unique: xgb4-x1XPom84P7GNcH5mQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35dbf83bb20so1947485f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 09:03:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717862609; x=1718467409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DVCcvAEZkk+J4XLaV4zyh1uIJlCOuy8yqlyWyqCZ1Aw=;
-        b=kFfm2q/xUHx+JlOtaP/g6Kx1Atio1ZLdyDLw2BB1mHYyuMp0dc0gnYIx8IGDo225+r
-         Z0zt0lVSg84GmVyQWlFNJvUJQBf/hyqZTT+GsgdZriHagFXJhnz7NqraRlUyiWgTIOvk
-         ++6xjFNX/fo4rAdpmqJkwnG/Exwb5vNM9ugpOf+Ui842vXcLVXkTLVhzdLxHQhNtml3u
-         5kQKVhHtnudJ8KXgpZ9audvf3lPzQUiD5pf6Y4aDvgQNfuje51VCTwHQt2NUH+8i0nml
-         jzrZ06of4XkpxGlOxdI5mLNPFH1YgJI6+uyZY9gN77+2YdhNFhChtXXTJ6rrao9v8V/T
-         am4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmN4oNVOumo6kJ5OKp9JCMBH01OSv5/KGo0vovl79dHVqlSW2I2v9cX33lXGUWTbisDg4qc8K+5+RANX0oqj29a2GlDJvzCuqu1O6OY5WnFtjsjJ0KZlm79iVTnI46Hkrqjmn4
-X-Gm-Message-State: AOJu0YxJxGgZUdUNyBbQ7/1hPxv1H3UTSuvyUiBYV7kX99rn8EpOJbwb
-	WwHvEHHUa68lyw4zEtwFK9HK67KDkbqGTLJXrSgbH0Kbj1v0utFeYnF6Pf40rQPY7zQ4udZnOMR
-	vSY9F+VwN3vi+HaBTuvSDMuhOb9Y=
-X-Google-Smtp-Source: AGHT+IE8MGT+M1jvE75XSLCBtvXLzkQYO+2PWbZTvvHID/fnMt4rNDUADERCPKOhezptB4e0I8ICp1BjpVkB1JunR04=
-X-Received: by 2002:a50:9509:0:b0:57a:339f:1b2d with SMTP id
- 4fb4d7f45d1cf-57c5086e237mr3547214a12.5.1717862608805; Sat, 08 Jun 2024
- 09:03:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717862637; x=1718467437;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qVkfmd0A4LSH9aeoF9S7AqEXOafs58bJBwLWsHiogQU=;
+        b=wmugFn6g+6x3XWqSDcG5NFXrwWyi09fzd7YRuZm1tYntWNLZji3fUjz+mHSBJa+TlG
+         4naY/A+VoeoswhG+2D5jokXxvdnLCIX5P7I17uYi5zeMQZRHF8nTsVg/gFIw6OrwBb9j
+         nCrGEE59Es4taZrV+5ahwT1tdGF41GZe+TjroRkvQ8PHZ8zxvHsm8OTSR7nOTt8C55fk
+         HnU2EYd1UdM+ka2hgir1Y1fXGajFgAIZ1UufF3mDIwQtxuPgJ3qGE5d6RYGQYoO0PN0v
+         NEU2MAlamqSIR7id5TlegzRRtEwvOBxXzxfCfifsb7lMeQn0uDAk5rDzloZsknIcl8/O
+         cn/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUE5YNiSEtyhSk5yYAZsj4Yf4x01Dr9ldhG/5dOTlESWGJNcpmPsMjYka0LNhhvPzXORzKVNH2duMU3KcD7apQXFBC35QDMIgrpinlT
+X-Gm-Message-State: AOJu0Yz5KWWQ9SmEi3L6RR5cpPQZSqF3kCL6Agon/LFaG526mDnuPf7F
+	4Ua9yvEFox5cigBbp6haAgIYF3iSgwyJHjzP33lAHaBRLS43mwJI1zVjxAOd7r5/qjlYO/BNozD
+	IQ9oKRFqpVHV37M0IZGYoZXiijCrzZGyhWT32WdxQ85g1rNvB+7U41ggsQYCNKg==
+X-Received: by 2002:a5d:648c:0:b0:35e:5b3c:b11f with SMTP id ffacd0b85a97d-35efedf69a6mr4136846f8f.58.1717862637317;
+        Sat, 08 Jun 2024 09:03:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6t3CY8lINt/8W7LI84Kb4ZP8m+Ag7Es0XZ9YMGZx68e9mM+O7GkNFhPNxHyppXfZ4VvhQmA==
+X-Received: by 2002:a5d:648c:0:b0:35e:5b3c:b11f with SMTP id ffacd0b85a97d-35efedf69a6mr4136835f8f.58.1717862636892;
+        Sat, 08 Jun 2024 09:03:56 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c725:2c00:2436:de9:dfc8:5e67? (p200300cbc7252c0024360de9dfc85e67.dip0.t-ipconnect.de. [2003:cb:c725:2c00:2436:de9:dfc8:5e67])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0f996ee3sm2535873f8f.71.2024.06.08.09.03.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Jun 2024 09:03:56 -0700 (PDT)
+Message-ID: <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
+Date: Sat, 8 Jun 2024 18:03:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528120424.3353880-1-arnd@kernel.org> <CACRpkdYsFBw907rH4pmgmA6R=0FsOac7-_2xzqP8vu=aVS5JJQ@mail.gmail.com>
-In-Reply-To: <CACRpkdYsFBw907rH4pmgmA6R=0FsOac7-_2xzqP8vu=aVS5JJQ@mail.gmail.com>
-From: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Date: Sat, 8 Jun 2024 13:03:16 -0300
-Message-ID: <CAJq09z7O7v4B50jXCA5ipv73vhtb=yxY-x6Wt_9Tr62st=LQpw@mail.gmail.com>
-Subject: Re: [PATCH] net: dsa: realtek: add LEDS_CLASS dependency
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, 
-	=?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
+To: Matthew Wilcox <willy@infradead.org>, yangge1116 <yangge1116@126.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
+References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
+ <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
+ <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
+ <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
+ <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
+ <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
+ <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
+ <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
+ <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
+ <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
+ <ZmR1dVUB5mE2If9t@casper.infradead.org>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZmR1dVUB5mE2If9t@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On Tue, May 28, 2024 at 2:04=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> w=
-rote:
->
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > This driver fails to link when LED support is disabled:
-> >
-> > ERROR: modpost: "led_init_default_state_get" [drivers/net/dsa/realtek/r=
-tl8366.ko] undefined!
-> > ERROR: modpost: "devm_led_classdev_register_ext" [drivers/net/dsa/realt=
-ek/rtl8366.ko] undefined!
-> >
-> > Add a dependency that prevents this configuration.
-> >
-> > Fixes: 32d617005475 ("net: dsa: realtek: add LED drivers for rtl8366rb"=
-)
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> The QCA driver in drivers/net/dsa/qca/* instead makes the feature
-> optional on LED class, so it is in a separate file with stubs if the
-> LED class is not selected.
+On 08.06.24 17:15, Matthew Wilcox wrote:
+> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
+>> Can we add a PG_lru_batch flag to determine whether a page is in lru batch?
+>> If we can, seems this problem will be easier.
+> 
+> Page flags are in short supply.  You'd need a really good justification.
+> 
 
-That would be great.
+A flag would not be able to handle the "part of multiple LRU batches" 
+that should currently possible (when to clear the flag?). Well, if we 
+have to keep supporting that. If we only to be part in a single LRU 
+batch, a new flag could work and we could still allow isolating a folio 
+from LRU while in some LRU batch.
 
-> Luiz do you wanna try this or should I make a patch like that?
+If we could handle it using the existing flags, that would of course be 
+better (wondering if we could store more information in the existing 
+flags by using a different encoding for the different states).
 
-You can do it. I'm a bit away from programming these days. Thanks.
+The temporary clearing of the LRU flag we do right now tells me that 
+it's already not 100% reliable, so the question is how much more 
+unreliable we can make it before it would hurt :)
 
-> Yours,
-> Linus Walleij
+-- 
+Cheers,
 
-Regards,
+David / dhildenb
 
-Luiz
 
