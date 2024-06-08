@@ -1,357 +1,1144 @@
-Return-Path: <linux-kernel+bounces-207130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81DD9012B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF1A9012BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F302821D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64ADF28229B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2541517966C;
-	Sat,  8 Jun 2024 16:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B4317B4EC;
+	Sat,  8 Jun 2024 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEWWxrTv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny9ckmsc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575C1474B9;
-	Sat,  8 Jun 2024 16:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FB81E888;
+	Sat,  8 Jun 2024 16:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717863613; cv=none; b=UZFL/MEfnzWntuZqGlk+8y+amqC+dYZgRcKNlQcko+JGM+9krdHK3y6kD0zVvS6G5Si3HU9P22vLiW9qDhSBCJEYhRALIAJHrAeQt4RbMHjPx0lxdh8ny0k3PVR5gMxrF3zUx7APzK471EcxUBZlXhEBxSYYXLqxVH91nhHxieQ=
+	t=1717863753; cv=none; b=o5IU1EyXOBs2Ddt3aPyLFxSDkGlUU7pdnX6HFx4mc2ba+FQNe9pB42eyo+FR1ovkSynlSztPgfA/LUST12uQeS4nE+/dVYweHzuGkFV93uVAb3OjdxKZdH8LhA1pmuT+Pi3cYthteAOy0xaAC0/rcr7OkID1bjxE9exTLggODGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717863613; c=relaxed/simple;
-	bh=tlIHue1eVX2KWMUDHuFeU9qzRhgwiAsuAEe22Nyg3Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwjmidOa2aWG2dpBzYsXCJ08aH5D6iXwPWNj9cN3ghuKoeQguci+eHDGbFVGKY4uVGLAy4w4b94qcK5tOZx6XgfmY3pFXP223qSuZv+3+mS5835CncpHhxxUh/ba5GT2DO+zYDW46E1kLvdqs42YeoFS8p0eQFqxWNnv/YoeSZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEWWxrTv; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717863611; x=1749399611;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tlIHue1eVX2KWMUDHuFeU9qzRhgwiAsuAEe22Nyg3Bs=;
-  b=GEWWxrTvMVVNIsYJrU9PrtB40EcSvQO0957PnOhKI3XkXJ/0+Zsr8gRZ
-   UEWrcHKH+1ic1/PlBGxltYSqsFvHZ3Hy2sKyvNOT9BbMM2LYoJavTUFPf
-   att6kQqqbDB8AJd6Felz80FctDZeUJXQowM0z1O8UAPqAWsP0f9fNb6St
-   hPEh9OVWTSOrodRB+sPeoYPxhW9fL1qh4yaaVwkJ3B97UeETqTD9bKUd7
-   gWaJ5Ecbe8mqsjb2KWb5dw9NtR/04TgxP+g/GAt3aKOmXgN1IERS9qZmm
-   AKK0kb/QPKhHcyyRaOPkVv3mPI0pb95ce+iqRTYCPvwWvsW/k5Y7UM7YB
-   w==;
-X-CSE-ConnectionGUID: 2q0kdyhPTB+gGXMBAtYftw==
-X-CSE-MsgGUID: Fr2fWfJhShOpq8pM8q2kaA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="25233104"
-X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
-   d="scan'208";a="25233104"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 09:20:10 -0700
-X-CSE-ConnectionGUID: 3qVkvh99RM+YI/m0X7VmoA==
-X-CSE-MsgGUID: Xr07b/w8Q1GSFyWX9rAizw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
-   d="scan'208";a="69409987"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 08 Jun 2024 09:20:06 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFynT-0000CE-1v;
-	Sat, 08 Jun 2024 16:20:03 +0000
-Date: Sun, 9 Jun 2024 00:19:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tommy Huang <tommy_huang@aspeedtech.com>, brendan.higgins@linux.dev,
-	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
-	andrew@codeconstruct.com.au, wsa@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, BMC-SW@aspeedtech.com
-Subject: Re: [PATCH v2] i2c: aspeed: Update the stop sw state when the bus
- recovery occurs
-Message-ID: <202406090041.5IMjYB8x-lkp@intel.com>
-References: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
+	s=arc-20240116; t=1717863753; c=relaxed/simple;
+	bh=fMr6sMxj7Ht/x9aGUa1SMWlPOlunrLg7azotLZN1TSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tbvqoZvR5EyLN/J0NfLTwLkv7pZoCki/lY1fmadRDYI+hghmnsVdiJ/YJT1rP4wwTGTVGf8Qx5M/Nc0yUAjjpB+XtRY2FidyRWKpb48kMmXZlhMM+fsQPx8JNEP+nkOGI/O3LlB/tAi048qWAVVG/yZpghtTZ7dT4tXmW56jzhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ny9ckmsc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD50C2BD11;
+	Sat,  8 Jun 2024 16:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717863752;
+	bh=fMr6sMxj7Ht/x9aGUa1SMWlPOlunrLg7azotLZN1TSs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ny9ckmscVefvZhw5bAi96kPrEPUlP2/XW8QQihTPJadfgXmlwc+9Qlt2eh0lG92gr
+	 BK7JDtP1AbtBh29iGKcRLHAOqsXYtRVmWeOa9xS12hg6OP8uTRCx7hyLmnKy1hf/AX
+	 VTS/kt0yCK1rNRCFsKfdY/thJ2nVIfhWXrMKbOaAHCeePaSJdagaALXP05Hqo/lk3H
+	 pDf/vCw4hUJnDbnn86JHlCvI66kwbW9EIk5iIrtTnvaB2MYb+rpNffzD7/M65dfwt/
+	 5Lhf17EzcDmgRnZuaPy+LR96JV5ecwLZrtRbCdBoswqa96FIonE+80qGmGAUeSl8YS
+	 ERTJ/HKa7xE/Q==
+Date: Sat, 8 Jun 2024 17:22:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mudit Sharma <muditsharma.info@gmail.com>
+Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ robh@kernel.org, ivan.orlov0322@gmail.com, javier.carrasco.cruz@gmail.com,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
+Message-ID: <20240608172227.17996c75@jic23-huawei>
+In-Reply-To: <20240606162948.83903-2-muditsharma.info@gmail.com>
+References: <20240606162948.83903-1-muditsharma.info@gmail.com>
+	<20240606162948.83903-2-muditsharma.info@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Tommy,
+On Thu,  6 Jun 2024 17:29:42 +0100
+Mudit Sharma <muditsharma.info@gmail.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Add support for BH1745, which is an I2C colour sensor with red, green,
+> blue and clear channels. It has a programmable active low interrupt
+> pin. Interrupt occurs when the signal from the selected interrupt
+> source channel crosses set interrupt threshold high or low level.
+> 
+> This driver includes device attributes to configure the following:
+> - Interrupt pin latch: The interrupt pin can be configured to
+>   be latched (until interrupt register (0x60) is read or initialized)
+>   or update after each measurement.
+> - Interrupt source: The colour channel that will cause the interrupt
+>   when channel will cross the set threshold high or low level.
+> 
+> This driver also includes device attributes to present valid
+> configuration options/values for:
+> - Integration time
+> - Interrupt colour source
+> - Hardware gain
+> 
+> Add myself as the maintainer for this driver in MAINTAINERS.
+> 
+> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-[auto build test ERROR on andi-shyti/i2c/i2c-host]
-[also build test ERROR on linus/master v6.10-rc2 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hi Mudit,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tommy-Huang/i2c-aspeed-Update-the-stop-sw-state-when-the-bus-recovery-occurs/20240608-124429
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20240608043653.4086647-1-tommy_huang%40aspeedtech.com
-patch subject: [PATCH v2] i2c: aspeed: Update the stop sw state when the bus recovery occurs
-config: arm-aspeed_g5_defconfig (https://download.01.org/0day-ci/archive/20240609/202406090041.5IMjYB8x-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406090041.5IMjYB8x-lkp@intel.com/reproduce)
+Welcome to IIO.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406090041.5IMjYB8x-lkp@intel.com/
+Some comments inline.  Some apply more widely than where I've
+called them out, so please look for similar cases and tidy them all
+up for v5.
 
-All error/warnings (new ones prefixed by >>):
+Thanks,
 
->> drivers/i2c/busses/i2c-aspeed.c:28:39: warning: 'struct aspeed_i2c_bus' declared inside parameter list will not be visible outside of this definition or declaration
-      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
-         |                                       ^~~~~~~~~~~~~~
-   drivers/i2c/busses/i2c-aspeed.c: In function 'aspeed_i2c_recover_bus':
->> drivers/i2c/busses/i2c-aspeed.c:192:36: error: passing argument 1 of 'aspeed_i2c_do_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     192 |                 aspeed_i2c_do_stop(bus);
-         |                                    ^~~
-         |                                    |
-         |                                    struct aspeed_i2c_bus *
-   drivers/i2c/busses/i2c-aspeed.c:28:55: note: expected 'struct aspeed_i2c_bus *' but argument is of type 'struct aspeed_i2c_bus *'
-      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
-         |                                ~~~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/i2c/busses/i2c-aspeed.c: At top level:
->> drivers/i2c/busses/i2c-aspeed.c:396:13: error: conflicting types for 'aspeed_i2c_do_stop'; have 'void(struct aspeed_i2c_bus *)'
-     396 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus)
-         |             ^~~~~~~~~~~~~~~~~~
-   drivers/i2c/busses/i2c-aspeed.c:28:13: note: previous declaration of 'aspeed_i2c_do_stop' with type 'void(struct aspeed_i2c_bus *)'
-      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
-         |             ^~~~~~~~~~~~~~~~~~
->> drivers/i2c/busses/i2c-aspeed.c:28:13: warning: 'aspeed_i2c_do_stop' used but never defined
-   cc1: some warnings being treated as errors
+Jonathan
+
+> diff --git a/drivers/iio/light/bh1745.c b/drivers/iio/light/bh1745.c
+> new file mode 100644
+> index 000000000000..7962cf1c4b52
+> --- /dev/null
+> +++ b/drivers/iio/light/bh1745.c
+> @@ -0,0 +1,863 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ROHM BH1745 digital colour sensor driver
+> + *
+> + * Copyright (C) Mudit Sharma <muditsharma.info@gmail.com>
+> + *
+> + * 7-bit I2C slave addresses:
+> + *  0x38 (ADDR pin low)
+> + *  0x39 (ADDR pin high)
+> + *
+This blank line seems unnecessary
+
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/mutex.h>
+> +#include <linux/util_macros.h>
+> +#include <linux/iio/events.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+> +
+> +#define BH1745_MOD_NAME "bh1745"
+Drop this as it's not used and not particularly useful.
+
+> +
+> +/* BH1745 config regs */
+> +#define BH1745_SYS_CTRL 0x40
+> +
+> +#define BH1745_MODE_CTRL_1 0x41
+> +#define BH1745_MODE_CTRL_2 0x42
+> +#define BH1745_MODE_CTRL_3 0x44
+> +
+> +#define BH1745_INTR 0x60
+> +#define BH1745_INTR_STATUS BIT(7)
+> +
+> +#define BH1745_PERSISTENCE 0x61
+> +
+> +#define BH1745_TH_LSB 0x62
+> +#define BH1745_TH_MSB 0x63
+> +
+> +#define BH1745_TL_LSB 0x64
+> +#define BH1745_TL_MSB 0x65
+> +
+> +#define BH1745_THRESHOLD_MAX 0xFFFF
+> +#define BH1745_THRESHOLD_MIN 0x0
+I think these are only used in one place and are 'real' not 'magic' numbers
+so I'd just put the values there.
+
+> +
+> +#define BH1745_MANU_ID 0X92
+
+Reading the manufacturer id back and printing a dev_warn() if it
+doesn't match the expected can be useful for detecting when DT hasn't
+been updated for a new board design and we aren't absolutely sure the
+device is compatible.
+
+> +
+> +/* BH1745 output regs */
+> +#define BH1745_R_LSB 0x50
+I'd spell out RED, GREEN, BLUE, CLEAR
+(CLEAR in particular as I thought it meant color for a while)
+
+> +#define BH1745_R_MSB 0x51
+> +#define BH1745_G_LSB 0x52
+> +#define BH1745_G_MSB 0x53
+> +#define BH1745_B_LSB 0x54
+> +#define BH1745_B_MSB 0x55
+> +#define BH1745_CLR_LSB 0x56
+> +#define BH1745_CLR_MSB 0x57
+> +
+> +#define BH1745_SW_RESET BIT(7)
+> +#define BH1745_INT_RESET BIT(6)
+> +
+> +#define BH1745_MEASUREMENT_TIME_MASK GENMASK(2, 0)
+> +
+> +#define BH1745_RGBC_EN BIT(4)
+> +
+> +#define BH1745_ADC_GAIN_MASK GENMASK(1, 0)
+> +
+> +#define BH1745_INT_ENABLE BIT(0)
+> +#define BH1745_INT_SIGNAL_ACTIVE BIT(7)
+> +
+> +#define BH1745_INT_SIGNAL_LATCHED BIT(4)
+> +#define BH1745_INT_SIGNAL_LATCH_OFFSET 4
+Use FIELD_PREP() and FIELD_GET() through out and all
+you need is the masks as those macros derive offsets
+from the mask.
+
+Then you can drop the defines for offsets.
+
+> +
+> +#define BH1745_INT_SOURCE_MASK GENMASK(3, 2)
+> +#define BH1745_INT_SOURCE_OFFSET 2
+> +
+> +#define BH1745_INT_TIME_AVAILABLE "0.16 0.32 0.64 1.28 2.56 5.12"
+> +#define BH1745_HARDWAREGAIN_AVAILABLE "1 2 16"
+> +#define BH1745_INT_COLOUR_CHANNEL_AVAILABLE \
+> +	"0 (Red Channel) 1 (Green Channel) 2 (Blue channel) 3 (Clear channel)"
+> +
+> +static const int bh1745_int_time[][2] = {
+> +	{ 0, 160000 }, /* 160 ms */
+> +	{ 0, 320000 }, /* 320 ms */
+> +	{ 0, 640000 }, /* 640 ms */
+> +	{ 1, 280000 }, /* 1280 ms */
+> +	{ 2, 560000 }, /* 2560 ms */
+> +	{ 5, 120000 }, /* 5120 ms */
+> +};
+> +
+> +static const u8 bh1745_gain_factor[] = { 1, 2, 16 };
+> +
+> +enum bh1745_int_source {
+> +	BH1745_INT_SOURCE_RED,
+> +	BH1745_INT_SOURCE_GREEN,
+> +	BH1745_INT_SOURCE_BLUE,
+> +	BH1745_INT_SOURCE_CLEAR,
+> +};
+> +
+> +enum bh1745_gain {
+> +	BH1745_ADC_GAIN_1X,
+> +	BH1745_ADC_GAIN_2X,
+> +	BH1745_ADC_GAIN_16X,
+> +};
+> +
+> +enum bh1745_measurement_time {
+> +	BH1745_MEASUREMENT_TIME_160MS,
+> +	BH1745_MEASUREMENT_TIME_320MS,
+> +	BH1745_MEASUREMENT_TIME_640MS,
+> +	BH1745_MEASUREMENT_TIME_1280MS,
+> +	BH1745_MEASUREMENT_TIME_2560MS,
+> +	BH1745_MEASUREMENT_TIME_5120MS,
+> +};
+> +
+> +enum bh1745_presistence_value {
+> +	BH1745_PRESISTENCE_UPDATE_TOGGLE,
+> +	BH1745_PRESISTENCE_UPDATE_EACH_MEASUREMENT,
+> +	BH1745_PRESISTENCE_UPDATE_FOUR_MEASUREMENT,
+> +	BH1745_PRESISTENCE_UPDATE_EIGHT_MEASUREMENT,
+> +};
+> +
+> +struct bh1745_data {
+> +	struct mutex lock;
+
+What data does this lock protect?  Locks should always have a
+comment on this as it is rarely that obvious.
+
+> +	struct regmap *regmap;
+> +	struct i2c_client *client;
+> +	struct iio_trigger *trig;
+> +	u8 mode_ctrl1;
+
+Why do you need to cache them?  If you do, use regmap caching
+to do it for you.
+
+> +	u8 mode_ctrl2;
+> +	u8 int_src;
+> +	u8 int_latch;
+> +	u8 interrupt;
+> +};
+
+> +static const struct iio_event_spec bh1745_event_spec[] = {
+> +	{
+> +		.type = IIO_EV_TYPE_THRESH,
+> +		.dir = IIO_EV_DIR_RISING,
+> +		.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+> +	},
+> +	{
+> +		.type = IIO_EV_TYPE_THRESH,
+> +		.dir = IIO_EV_DIR_FALLING,
+> +		.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+> +	},
+> +	{
+> +		.type = IIO_EV_TYPE_THRESH,
+> +		.dir = IIO_EV_DIR_EITHER,
+> +		.mask_shared_by_type = BIT(IIO_EV_INFO_PERIOD),
+> +	},
+> +};
+> +
+> +#define BH1745_CHANNEL(_colour, _si, _addr)                                   \
+> +	{                                                                     \
+> +		.type = IIO_INTENSITY, .modified = 1,                         \
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
+
+Provide _SCALE instead of HARDWAREGAIN
+As it's an intensity channel (and units are tricky for color sensors given
+frequency dependence etc) all you need to do is ensure that if you halve
+the _scale and measure the same light source, the computed
+_RAW * _SCALE value remains constant.
+
+> +					    BIT(IIO_CHAN_INFO_INT_TIME),      \
+> +		.event_spec = bh1745_event_spec,                              \
+> +		.num_event_specs = ARRAY_SIZE(bh1745_event_spec),             \
+> +		.channel2 = IIO_MOD_LIGHT_##_colour, .address = _addr,        \
+> +		.scan_index = _si,                                            \
+> +		.scan_type = {                                                \
+> +			.sign = 'u',                                          \
+> +			.realbits = 16,                                       \
+> +			.storagebits = 16,                                    \
+> +			.endianness = IIO_CPU,                                \
+> +		},                                                            \
+> +	}
+> +
+> +static const struct iio_chan_spec bh1745_channels[] = {
+> +	BH1745_CHANNEL(RED, 0, BH1745_R_LSB),
+> +	BH1745_CHANNEL(GREEN, 1, BH1745_G_LSB),
+> +	BH1745_CHANNEL(BLUE, 2, BH1745_B_LSB),
+> +	BH1745_CHANNEL(CLEAR, 3, BH1745_CLR_LSB),
+> +	IIO_CHAN_SOFT_TIMESTAMP(4),
+> +};
+> +
+> +static int bh1745_write_value(struct bh1745_data *data, u8 reg, void *value,
+> +			      size_t len)
+> +{
+> +	int ret;
+These wrappers are of limited value. I'd get rid of them and make
+direct regmap calls.
+
+Regmap has a lot of debug print handling etc so no need to print
+your own messages unless they convey more meaning such as 'what'
+the write that failed was about.  That is better known at callers.
+
+In many cases you are only writing one register so you can use
+the simpler regmap_write()
 
 
-vim +/aspeed_i2c_do_stop +192 drivers/i2c/busses/i2c-aspeed.c
+> +
+> +	ret = regmap_bulk_write(data->regmap, reg, value, len);
+> +	if (ret < 0) {
+regmap never returns > 0
+so it is a good idea to just check
+	if (ret)
+through out - that avoids the handling being different for earlier
+calls
+	if (ret < 0)
+		return ret;
+which just leaves postive values in place.
+and final calls
+	return XXX;
+which return the positive.
 
-    27	
-  > 28	static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
-    29	
-    30	/* I2C Register */
-    31	#define ASPEED_I2C_FUN_CTRL_REG				0x00
-    32	#define ASPEED_I2C_AC_TIMING_REG1			0x04
-    33	#define ASPEED_I2C_AC_TIMING_REG2			0x08
-    34	#define ASPEED_I2C_INTR_CTRL_REG			0x0c
-    35	#define ASPEED_I2C_INTR_STS_REG				0x10
-    36	#define ASPEED_I2C_CMD_REG				0x14
-    37	#define ASPEED_I2C_DEV_ADDR_REG				0x18
-    38	#define ASPEED_I2C_BYTE_BUF_REG				0x20
-    39	
-    40	/* Global Register Definition */
-    41	/* 0x00 : I2C Interrupt Status Register  */
-    42	/* 0x08 : I2C Interrupt Target Assignment  */
-    43	
-    44	/* Device Register Definition */
-    45	/* 0x00 : I2CD Function Control Register  */
-    46	#define ASPEED_I2CD_MULTI_MASTER_DIS			BIT(15)
-    47	#define ASPEED_I2CD_SDA_DRIVE_1T_EN			BIT(8)
-    48	#define ASPEED_I2CD_M_SDA_DRIVE_1T_EN			BIT(7)
-    49	#define ASPEED_I2CD_M_HIGH_SPEED_EN			BIT(6)
-    50	#define ASPEED_I2CD_SLAVE_EN				BIT(1)
-    51	#define ASPEED_I2CD_MASTER_EN				BIT(0)
-    52	
-    53	/* 0x04 : I2CD Clock and AC Timing Control Register #1 */
-    54	#define ASPEED_I2CD_TIME_TBUF_MASK			GENMASK(31, 28)
-    55	#define ASPEED_I2CD_TIME_THDSTA_MASK			GENMASK(27, 24)
-    56	#define ASPEED_I2CD_TIME_TACST_MASK			GENMASK(23, 20)
-    57	#define ASPEED_I2CD_TIME_SCL_HIGH_SHIFT			16
-    58	#define ASPEED_I2CD_TIME_SCL_HIGH_MASK			GENMASK(19, 16)
-    59	#define ASPEED_I2CD_TIME_SCL_LOW_SHIFT			12
-    60	#define ASPEED_I2CD_TIME_SCL_LOW_MASK			GENMASK(15, 12)
-    61	#define ASPEED_I2CD_TIME_BASE_DIVISOR_MASK		GENMASK(3, 0)
-    62	#define ASPEED_I2CD_TIME_SCL_REG_MAX			GENMASK(3, 0)
-    63	/* 0x08 : I2CD Clock and AC Timing Control Register #2 */
-    64	#define ASPEED_NO_TIMEOUT_CTRL				0
-    65	
-    66	/* 0x0c : I2CD Interrupt Control Register &
-    67	 * 0x10 : I2CD Interrupt Status Register
-    68	 *
-    69	 * These share bit definitions, so use the same values for the enable &
-    70	 * status bits.
-    71	 */
-    72	#define ASPEED_I2CD_INTR_RECV_MASK			0xf000ffff
-    73	#define ASPEED_I2CD_INTR_SDA_DL_TIMEOUT			BIT(14)
-    74	#define ASPEED_I2CD_INTR_BUS_RECOVER_DONE		BIT(13)
-    75	#define ASPEED_I2CD_INTR_SLAVE_MATCH			BIT(7)
-    76	#define ASPEED_I2CD_INTR_SCL_TIMEOUT			BIT(6)
-    77	#define ASPEED_I2CD_INTR_ABNORMAL			BIT(5)
-    78	#define ASPEED_I2CD_INTR_NORMAL_STOP			BIT(4)
-    79	#define ASPEED_I2CD_INTR_ARBIT_LOSS			BIT(3)
-    80	#define ASPEED_I2CD_INTR_RX_DONE			BIT(2)
-    81	#define ASPEED_I2CD_INTR_TX_NAK				BIT(1)
-    82	#define ASPEED_I2CD_INTR_TX_ACK				BIT(0)
-    83	#define ASPEED_I2CD_INTR_MASTER_ERRORS					       \
-    84			(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
-    85			 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
-    86			 ASPEED_I2CD_INTR_ABNORMAL |				       \
-    87			 ASPEED_I2CD_INTR_ARBIT_LOSS)
-    88	#define ASPEED_I2CD_INTR_ALL						       \
-    89			(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
-    90			 ASPEED_I2CD_INTR_BUS_RECOVER_DONE |			       \
-    91			 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
-    92			 ASPEED_I2CD_INTR_ABNORMAL |				       \
-    93			 ASPEED_I2CD_INTR_NORMAL_STOP |				       \
-    94			 ASPEED_I2CD_INTR_ARBIT_LOSS |				       \
-    95			 ASPEED_I2CD_INTR_RX_DONE |				       \
-    96			 ASPEED_I2CD_INTR_TX_NAK |				       \
-    97			 ASPEED_I2CD_INTR_TX_ACK)
-    98	
-    99	/* 0x14 : I2CD Command/Status Register   */
-   100	#define ASPEED_I2CD_SCL_LINE_STS			BIT(18)
-   101	#define ASPEED_I2CD_SDA_LINE_STS			BIT(17)
-   102	#define ASPEED_I2CD_BUS_BUSY_STS			BIT(16)
-   103	#define ASPEED_I2CD_BUS_RECOVER_CMD			BIT(11)
-   104	
-   105	/* Command Bit */
-   106	#define ASPEED_I2CD_M_STOP_CMD				BIT(5)
-   107	#define ASPEED_I2CD_M_S_RX_CMD_LAST			BIT(4)
-   108	#define ASPEED_I2CD_M_RX_CMD				BIT(3)
-   109	#define ASPEED_I2CD_S_TX_CMD				BIT(2)
-   110	#define ASPEED_I2CD_M_TX_CMD				BIT(1)
-   111	#define ASPEED_I2CD_M_START_CMD				BIT(0)
-   112	#define ASPEED_I2CD_MASTER_CMDS_MASK					       \
-   113			(ASPEED_I2CD_M_STOP_CMD |				       \
-   114			 ASPEED_I2CD_M_S_RX_CMD_LAST |				       \
-   115			 ASPEED_I2CD_M_RX_CMD |					       \
-   116			 ASPEED_I2CD_M_TX_CMD |					       \
-   117			 ASPEED_I2CD_M_START_CMD)
-   118	
-   119	/* 0x18 : I2CD Slave Device Address Register   */
-   120	#define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
-   121	
-   122	enum aspeed_i2c_master_state {
-   123		ASPEED_I2C_MASTER_INACTIVE,
-   124		ASPEED_I2C_MASTER_PENDING,
-   125		ASPEED_I2C_MASTER_START,
-   126		ASPEED_I2C_MASTER_TX_FIRST,
-   127		ASPEED_I2C_MASTER_TX,
-   128		ASPEED_I2C_MASTER_RX_FIRST,
-   129		ASPEED_I2C_MASTER_RX,
-   130		ASPEED_I2C_MASTER_STOP,
-   131	};
-   132	
-   133	enum aspeed_i2c_slave_state {
-   134		ASPEED_I2C_SLAVE_INACTIVE,
-   135		ASPEED_I2C_SLAVE_START,
-   136		ASPEED_I2C_SLAVE_READ_REQUESTED,
-   137		ASPEED_I2C_SLAVE_READ_PROCESSED,
-   138		ASPEED_I2C_SLAVE_WRITE_REQUESTED,
-   139		ASPEED_I2C_SLAVE_WRITE_RECEIVED,
-   140		ASPEED_I2C_SLAVE_STOP,
-   141	};
-   142	
-   143	struct aspeed_i2c_bus {
-   144		struct i2c_adapter		adap;
-   145		struct device			*dev;
-   146		void __iomem			*base;
-   147		struct reset_control		*rst;
-   148		/* Synchronizes I/O mem access to base. */
-   149		spinlock_t			lock;
-   150		struct completion		cmd_complete;
-   151		u32				(*get_clk_reg_val)(struct device *dev,
-   152								   u32 divisor);
-   153		unsigned long			parent_clk_frequency;
-   154		u32				bus_frequency;
-   155		/* Transaction state. */
-   156		enum aspeed_i2c_master_state	master_state;
-   157		struct i2c_msg			*msgs;
-   158		size_t				buf_index;
-   159		size_t				msgs_index;
-   160		size_t				msgs_count;
-   161		bool				send_stop;
-   162		int				cmd_err;
-   163		/* Protected only by i2c_lock_bus */
-   164		int				master_xfer_result;
-   165		/* Multi-master */
-   166		bool				multi_master;
-   167	#if IS_ENABLED(CONFIG_I2C_SLAVE)
-   168		struct i2c_client		*slave;
-   169		enum aspeed_i2c_slave_state	slave_state;
-   170	#endif /* CONFIG_I2C_SLAVE */
-   171	};
-   172	
-   173	static int aspeed_i2c_reset(struct aspeed_i2c_bus *bus);
-   174	
-   175	static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
-   176	{
-   177		unsigned long time_left, flags;
-   178		int ret = 0;
-   179		u32 command;
-   180	
-   181		spin_lock_irqsave(&bus->lock, flags);
-   182		command = readl(bus->base + ASPEED_I2C_CMD_REG);
-   183	
-   184		if (command & ASPEED_I2CD_SDA_LINE_STS) {
-   185			/* Bus is idle: no recovery needed. */
-   186			if (command & ASPEED_I2CD_SCL_LINE_STS)
-   187				goto out;
-   188			dev_dbg(bus->dev, "SCL hung (state %x), attempting recovery\n",
-   189				command);
-   190	
-   191			reinit_completion(&bus->cmd_complete);
- > 192			aspeed_i2c_do_stop(bus);
-   193			spin_unlock_irqrestore(&bus->lock, flags);
-   194	
-   195			time_left = wait_for_completion_timeout(
-   196					&bus->cmd_complete, bus->adap.timeout);
-   197	
-   198			spin_lock_irqsave(&bus->lock, flags);
-   199			if (time_left == 0)
-   200				goto reset_out;
-   201			else if (bus->cmd_err)
-   202				goto reset_out;
-   203			/* Recovery failed. */
-   204			else if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-   205				   ASPEED_I2CD_SCL_LINE_STS))
-   206				goto reset_out;
-   207		/* Bus error. */
-   208		} else {
-   209			dev_dbg(bus->dev, "SDA hung (state %x), attempting recovery\n",
-   210				command);
-   211	
-   212			reinit_completion(&bus->cmd_complete);
-   213			/* Writes 1 to 8 SCL clock cycles until SDA is released. */
-   214			writel(ASPEED_I2CD_BUS_RECOVER_CMD,
-   215			       bus->base + ASPEED_I2C_CMD_REG);
-   216			spin_unlock_irqrestore(&bus->lock, flags);
-   217	
-   218			time_left = wait_for_completion_timeout(
-   219					&bus->cmd_complete, bus->adap.timeout);
-   220	
-   221			spin_lock_irqsave(&bus->lock, flags);
-   222			if (time_left == 0)
-   223				goto reset_out;
-   224			else if (bus->cmd_err)
-   225				goto reset_out;
-   226			/* Recovery failed. */
-   227			else if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-   228				   ASPEED_I2CD_SDA_LINE_STS))
-   229				goto reset_out;
-   230		}
-   231	
-   232	out:
-   233		spin_unlock_irqrestore(&bus->lock, flags);
-   234	
-   235		return ret;
-   236	
-   237	reset_out:
-   238		spin_unlock_irqrestore(&bus->lock, flags);
-   239	
-   240		return aspeed_i2c_reset(bus);
-   241	}
-   242	
+If you make it such that ret is never positive and so just use
+if (ret)
+everything is much more consistent and easier to read.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		dev_err(&data->client->dev,
+> +			"Failed to write to sensor. Reg: 0x%x\n", reg);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int bh1745_read_value(struct bh1745_data *data, u8 reg, void *value,
+> +			     size_t len)
+> +{
+> +	int ret;
+> +
+As for write. I'm not convinced this adds anything beyond making bulk
+calls for single accesses which is not a good thing to do.
+
+> +	ret = regmap_bulk_read(data->regmap, reg, value, len);
+> +	if (ret < 0) {
+> +		dev_err(&data->client->dev,
+> +			"Failed to read from sensor. Reg: 0x%x\n", reg);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t in_interrupt_source_show(struct device *dev,
+> +					struct device_attribute *attr,
+> +					char *buf)
+> +{
+> +	int ret;
+> +	int value;
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	ret = bh1745_read_value(data, BH1745_INTR, &value, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	value &= BH1745_INT_SOURCE_MASK;
+> +
+> +	return sprintf(buf, "%d\n", value >> 2);
+> +}
+> +
+> +static ssize_t in_interrupt_source_store(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 const char *buf, size_t len)
+As mentioned elsewhere I don't see why this can't be done with 4
+event enables and a policy of last one set wins.  
+It's common for devices to support a limited number of events
+at a time so userspace needs to be aware of that and check to
+see whether events it previously enable are still enabled after
+requesting a new one.
+
+
+> +{
+> +	int ret;
+> +	u16 value;
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	ret = kstrtou16(buf, 10, &value);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (value > BH1745_INT_SOURCE_CLEAR) {
+> +		dev_err(dev,
+> +			"Supplied value: '%d' for interrupt source is invalid\n",
+> +			value);
+> +		return -EINVAL;
+> +	}
+> +	guard(mutex)(&data->lock);
+> +	data->int_src = value;
+> +	value = value << BH1745_INT_SOURCE_OFFSET;
+> +	ret = bh1745_read_value(data, BH1745_INTR, &data->interrupt, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	data->interrupt &= ~BH1745_INT_SOURCE_MASK;
+> +	data->interrupt |= value;
+> +	ret = bh1745_write_value(data, BH1745_INTR, &data->interrupt, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t in_interrupt_latch_show(struct device *dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	int ret;
+> +	int value;
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	ret = bh1745_read_value(data, BH1745_INTR, &value, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	value &= BH1745_INT_SIGNAL_LATCHED;
+> +	if (value)
+> +		return sprintf(buf, "1\n");
+> +
+> +	return sprintf(buf, "0\n");
+
+Always enable latch.  We don't want an interrupt storm so
+latch on and level interrupt is probably the best option for a linux driver.
+Note level not edge unless the driver guarantees to drop the interrupt
+line for substantial time after the interrupt is cleared.
+
+Providing userspace control for this is not likely to be very useful.
+
+> +}
+> +
+> +static ssize_t in_interrupt_latch_store(struct device *dev,
+> +					struct device_attribute *attr,
+> +					const char *buf, size_t len)
+> +{
+> +	int ret;
+> +	u16 value;
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	ret = kstrtou16(buf, 10, &value);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (value > 1) {
+> +		dev_err(dev, "Value out of range for latch setup. Supported values '0' or '1'\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	guard(mutex)(&data->lock);
+> +	data->int_latch = value;
+> +	ret = bh1745_read_value(data, BH1745_INTR, &data->interrupt, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (value == 0)
+> +		data->interrupt &= ~BH1745_INT_SIGNAL_LATCHED;
+> +	else
+> +		data->interrupt |= BH1745_INT_SIGNAL_LATCHED;
+> +
+> +	ret = bh1745_write_value(data, BH1745_INTR, &data->interrupt, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t hardwaregain_available_show(struct device *dev,
+> +					   struct device_attribute *attr,
+> +					   char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", BH1745_HARDWAREGAIN_AVAILABLE);
+> +}
+> +
+> +static ssize_t interrupt_source_available_show(struct device *dev,
+> +					       struct device_attribute *attr,
+> +					       char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", BH1745_INT_COLOUR_CHANNEL_AVAILABLE);
+> +}
+> +
+> +static IIO_DEVICE_ATTR_RW(in_interrupt_source, 0);
+
+Why don't he normal event enables work for this?
+
+> +static IIO_DEVICE_ATTR_RW(in_interrupt_latch, 0);
+> +static IIO_DEVICE_ATTR_RO(hardwaregain_available, 0);
+
+Hardware gain is actually rarely seen.  It is intended for cases
+where the gain is independent from the actual type of signal being
+measured. e.g. light gain in a time of flight sensor which is measuring
+distance.
+
+Mostly we map controls of sensor gain to either
+scale, or calibscale (if they are meant to correct for variation
+between sensors coming off the production line).
+
+> +static IIO_DEVICE_ATTR_RO(interrupt_source_available, 0);
+> +static IIO_CONST_ATTR_INT_TIME_AVAIL(BH1745_INT_TIME_AVAILABLE);
+> +
+> +static struct attribute *bh1745_attrs[] = {
+> +	&iio_dev_attr_in_interrupt_source.dev_attr.attr,
+> +	&iio_dev_attr_in_interrupt_latch.dev_attr.attr,
+
+Custom ABI needs documentation. Note that you need a very strong justification
+for it.  So first step is to consider if any existing ABI is appropriate.
+See Documentation/ABI/testing/sysfs-bus-iio*
+
+
+> +	&iio_dev_attr_hardwaregain_available.dev_attr.attr,
+> +	&iio_dev_attr_interrupt_source_available.dev_attr.attr,
+> +	&iio_const_attr_integration_time_available.dev_attr.attr,
+Use the get_avail() callback for the standard ABI.
+
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group bh1745_attr_group = {
+> +	.attrs = bh1745_attrs,
+> +};
+> +
+> +static int bh1745_reset(struct bh1745_data *data)
+> +{
+> +	int ret;
+> +	u8 value;
+> +
+> +	ret = bh1745_read_value(data, BH1745_SYS_CTRL, &value, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	value |= (BH1745_SW_RESET | BH1745_INT_RESET);
+> +
+> +	return bh1745_write_value(data, BH1745_SYS_CTRL, &value, 1);
+This is an example of the different handling for ret depending on whether
+it is the last call or not that I mention above.
+
+	if (ret)
+for all error checks and it becomes consistent.
+
+That way you can do if (ret) to check if hb1745_reset() has failed at call
+sites etc.
+
+
+> +}
+> +
+> +static int bh1745_power_on(struct bh1745_data *data)
+> +{
+> +	int ret;
+> +	u8 value;
+> +
+> +	ret = bh1745_read_value(data, BH1745_MODE_CTRL_2, &value, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	guard(mutex)(&data->lock);
+> +	value |= BH1745_RGBC_EN;
+> +	data->mode_ctrl2 = value;
+> +	ret = bh1745_write_value(data, BH1745_MODE_CTRL_2, &data->mode_ctrl2, 1);
+> +
+> +	return ret;
+
+	return bh1745_write...
+
+> +}
+> +
+> +static int bh1745_power_off(struct bh1745_data *data)
+> +{
+> +	int ret;
+> +	int value;
+> +
+> +	ret = bh1745_read_value(data, BH1745_MODE_CTRL_2, &value, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	guard(mutex)(&data->lock);
+> +	value &= ~BH1745_RGBC_EN;
+> +	data->mode_ctrl2 = value;
+> +	ret = bh1745_write_value(data, BH1745_MODE_CTRL_2, &data->mode_ctrl2, 1);
+> +
+> +	return ret;
+
+same as below. Don't assign to a local variable just to return it on the
+next line.
+
+> +}
+> +
+> +static int bh1745_set_int_time(struct bh1745_data *data, int val, int val2)
+> +{
+> +	int ret;
+> +
+> +	for (u8 i = 0; i < ARRAY_SIZE(bh1745_int_time); i++) {
+> +		if (val == bh1745_int_time[i][0] &&
+> +		    val2 == bh1745_int_time[i][1]) {
+> +			guard(mutex)(&data->lock);
+> +			data->mode_ctrl1 &= ~BH1745_MEASUREMENT_TIME_MASK;
+> +			data->mode_ctrl1 |= i;
+> +			ret = bh1745_write_value(data, BH1745_MODE_CTRL_1,
+> +						 &data->mode_ctrl1, 1);
+> +			return ret;
+			return bh17..
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int bh1745_read_raw(struct iio_dev *indio_dev,
+> +			   struct iio_chan_spec const *chan, int *val,
+> +			   int *val2, long mask)
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +	u16 value;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW: {
+> +		ret = iio_device_claim_direct_mode(indio_dev);
+> +		if (ret)
+> +			return ret;
+> +		ret = bh1745_read_value(data, chan->address, &value, 2);
+> +		if (ret < 0)
+> +			return ret;
+Exited with the device held in direct mode for ever.
+
+Use iio_device_claim_direct_mode_scoped() that deals with this
+for you.
+
+> +		iio_device_release_direct_mode(indio_dev);
+> +		*val = value;
+> +		return IIO_VAL_INT;
+> +	}
+> +
+> +	case IIO_CHAN_INFO_HARDWAREGAIN: {
+> +		guard(mutex)(&data->lock);
+> +		ret = bh1745_read_value(data, BH1745_MODE_CTRL_2,
+> +					&data->mode_ctrl2, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		value = data->mode_ctrl2 & BH1745_ADC_GAIN_MASK;
+
+FIELD_GET() as then we don't need to look to see if GAIN_MASK starts
+at bit 0.
+
+> +		*val = bh1745_gain_factor[value];
+> +		return IIO_VAL_INT;
+> +	}
+> +
+> +	case IIO_CHAN_INFO_INT_TIME: {
+> +		guard(mutex)(&data->lock);
+> +		ret = bh1745_read_value(data, BH1745_MODE_CTRL_1,
+> +					&data->mode_ctrl1, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		value = data->mode_ctrl1 & BH1745_MEASUREMENT_TIME_MASK;
+FIELD_GET() for this and all similar masking or masking and shifting operations.
+
+> +
+> +		*val = bh1745_int_time[value][0];
+> +		*val2 = bh1745_int_time[value][1];
+> +
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	}
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int bh1745_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan, int val, int val2,
+> +			    long mask)
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_HARDWAREGAIN: {
+> +		for (u8 i = 0; i < ARRAY_SIZE(bh1745_gain_factor); i++) {
+> +			if (bh1745_gain_factor[i] == val) {
+Flip logic here.
+			if (bh1745_gain_factor[i] != val)
+				continue;
+
+as reduces indent on the following code whilst remaining almost as easy
+to read.
+
+> +				guard(mutex)(&data->lock);
+> +				data->mode_ctrl2 &= ~BH1745_ADC_GAIN_MASK;
+> +				data->mode_ctrl2 |= i;
+> +				ret = bh1745_write_value(data,
+> +							 BH1745_MODE_CTRL_2,
+> +							 &data->mode_ctrl2, 1);
+> +				return ret;
+
+				return bh17...
+Then ret unused so drop that as well.
+> +			}
+> +		}
+> +		return -EINVAL;
+> +	}
+> +
+> +	case IIO_CHAN_INFO_INT_TIME: {
+> +		return bh1745_set_int_time(data, val, val2);
+> +	}
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int bh1745_read_thresh(struct iio_dev *indio_dev,
+> +			      const struct iio_chan_spec *chan,
+> +			      enum iio_event_type type,
+> +			      enum iio_event_direction dir,
+> +			      enum iio_event_info info, int *val, int *val2)
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (info) {
+> +	case IIO_EV_INFO_VALUE:
+> +		switch (dir) {
+> +		case IIO_EV_DIR_RISING:
+> +			ret = bh1745_read_value(data, BH1745_TH_LSB, val, 2);
+> +			if (ret < 0)
+> +				return ret;
+> +			return IIO_VAL_INT;
+> +		case IIO_EV_DIR_FALLING:
+> +			ret = bh1745_read_value(data, BH1745_TL_LSB, val, 2);
+> +			if (ret < 0)
+> +				return ret;
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +		break;
+
+Unreachable. Drop this break line.
+
+> +	case IIO_EV_INFO_PERIOD:
+> +		ret = bh1745_read_value(data, BH1745_PERSISTENCE, val, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int bh1745_write_thresh(struct iio_dev *indio_dev,
+> +			       const struct iio_chan_spec *chan,
+> +			       enum iio_event_type type,
+> +			       enum iio_event_direction dir,
+> +			       enum iio_event_info info, int val, int val2)
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (info) {
+> +	case IIO_EV_INFO_VALUE:
+> +		if (val < BH1745_THRESHOLD_MIN || val > BH1745_THRESHOLD_MAX)
+> +			return -EINVAL;
+> +		switch (dir) {
+> +		case IIO_EV_DIR_RISING:
+> +			ret = bh1745_write_value(data, BH1745_TH_LSB, &val, 2);
+> +			if (ret < 0)
+> +				return ret;
+> +			return IIO_VAL_INT;
+> +		case IIO_EV_DIR_FALLING:
+> +			ret = bh1745_write_value(data, BH1745_TL_LSB, &val, 2);
+> +			if (ret < 0)
+> +				return ret;
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +		break;
+
+Unreachable so drop this break line
+
+> +	case IIO_EV_INFO_PERIOD:
+> +		if (val < BH1745_PRESISTENCE_UPDATE_TOGGLE ||
+> +		    val > BH1745_PRESISTENCE_UPDATE_EIGHT_MEASUREMENT)
+> +			return -EINVAL;
+> +		ret = bh1745_write_value(data, BH1745_PERSISTENCE, &val, 1);
+> +		if (ret < 0)
+> +			return ret;
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct iio_info bh1745_info = {
+> +	.attrs = &bh1745_attr_group,
+> +	.read_raw = bh1745_read_raw,
+> +	.write_raw = bh1745_write_raw,
+> +	.read_event_value = bh1745_read_thresh,
+> +	.write_event_value = bh1745_write_thresh,
+> +
+
+Drop this blank line.
+
+> +};
+> +
+> +static void bh1745_remove(struct i2c_client *client)
+Remove almost always comes after probe() as that's where readers
+of drivers expect it to be.
+> +{
+> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	if (bh1745_power_off(data) < 0)
+
+This suggests you are mixing devm_ handling with manual handling.
+I'm fairly sure that in this case you turn the device off before the userspace
+interface is removed via devm_ managed cleanup.  That makes little sense.
+
+Use a custom callback and devm_add_action_or_reset()
+
+Also note that you don't turn the power off in error cases in probe().
+Use a devm callback will fix that as well.
+
+> +		dev_err(&data->client->dev, "Failed to turn off device");
+> +
+> +	dev_info(&data->client->dev, "BH1745 driver removed\n");
+
+Drop this.
+
+> +}
+> +
+> +static int bh1745_set_trigger_state(struct iio_trigger *trig, bool state)
+> +{
+> +	int ret;
+> +	u8 value = 0;
+> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +
+> +	guard(mutex)(&data->lock);
+> +	if (state) {
+> +		ret = bh1745_read_value(data, BH1745_INTR, &value, 1);
+
+Seems like you should probably mask out the int_latch and int_src
+before writing those fields.  Whilst you may guarantee they are always
+cleared (I think that happens below) it is more readable to clear them
+explicitly here as well.
+
+
+> +		if (ret < 0)
+> +			return ret;
+> +		value |= (BH1745_INT_ENABLE |
+
+outer brackets not needed.
+
+> +			(data->int_latch << BH1745_INT_SIGNAL_LATCH_OFFSET) |
+> +			(data->int_src << BH1745_INT_SOURCE_OFFSET));
+
+FIELD_PREP() for each of those,
+
+> +		data->interrupt = value;
+> +		ret = bh1745_write_value(data, BH1745_INTR, &data->interrupt, 1);
+		return bh17..
+
+No need to make reader look to see if anything else happens below.
+
+
+> +	} else {
+> +		data->interrupt = value;
+> +		ret = bh1745_write_value(data, BH1745_INTR, &data->interrupt, 1);
+		return
+> +	}
+> +
+> +	return ret;
+> +}
+
+> +static irqreturn_t bh1745_trigger_handler(int interrupt, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	struct {
+> +		u16 chans[4];
+> +		s64 timestamp __aligned(8);
+> +	} scan;
+> +	u16 value;
+> +	int ret;
+> +	int i, j = 0;
+> +
+> +	for_each_set_bit(i, indio_dev->active_scan_mask, indio_dev->masklength) {
+> +		ret = bh1745_read_value(data, BH1745_R_LSB + 2 * i, &value, 2);
+> +		if (ret < 0)
+> +			goto err;
+> +		scan.chans[j++] = value;
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan,
+> +					   iio_get_time_ns(indio_dev));
+> +
+> +err:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bh1745_setup_trigger(struct iio_dev *indio_dev)
+add a struct device *dev or parent.
+> +{
+> +	struct bh1745_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	data->trig = devm_iio_trigger_alloc(indio_dev->dev.parent,
+I'd pass this the parent in separately, as an additional parameter.
+
+What you have here is correct, but relies a little too much on an internal
+detail of the device model and how this IIO device is registered.
+
+> +					    "%sdata-rdy-dev%d", indio_dev->name,
+> +					    iio_device_id(indio_dev));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = &bh1745_trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, indio_dev);
+> +
+> +	ret = devm_iio_trigger_register(&data->client->dev, data->trig);
+> +	if (ret)
+> +		return dev_err_probe(&data->client->dev, ret,
+
+You've mixed and matched how to get this parent. Pick a consistent
+path. I'd just pass it in to this function from probe()
+
+
+> +				     "Trigger registration failed\n");
+> +
+> +	ret = devm_iio_triggered_buffer_setup(indio_dev->dev.parent, indio_dev,
+> +					      NULL, bh1745_trigger_handler,
+> +					      NULL);
+Why is the buffer support dependent on an IRQ?
+
+If it it is I'd expect to see validate callbacks to ensure no other trigger
+is used.  In most cases a sysfs or hrtimer trigger can be used but some
+care is needed in the driver.  Sometimes the coupling is tighter and
+we only allow a device to use it's own trigger.
+
+> +	if (ret)
+> +		return dev_err_probe(&data->client->dev, ret,
+> +				     "Triggered buffer setup failed\n");
+> +
+> +	ret = devm_request_threaded_irq(&data->client->dev, data->client->irq,
+> +					NULL, bh1745_interrupt_handler,
+> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +					"bh1745_interrupt", indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(&data->client->dev, ret,
+> +				     "Request for IRQ failed\n");
+> +
+> +	dev_info(&data->client->dev,
+> +		 "Triggered buffer and IRQ setup successfully");
+To noisy. dev_dbg() at most. Probably no print at all as easy to tell
+if this worked from sysfs
+> +
+> +	return ret;
+> +}
+> +
+> +static int bh1745_init(struct bh1745_data *data)
+> +{
+	struct device *dev = &data->client->data;
+> +	int ret;
+> +
+> +	mutex_init(&data->lock);
+> +	data->mode_ctrl1 = 0;
+> +	data->mode_ctrl2 = 0;
+> +	data->interrupt = 0;
+> +	data->int_src = BH1745_INT_SOURCE_RED;
+> +
+> +	ret = bh1745_reset(data);
+> +	if (ret < 0) {
+> +		dev_err(&data->client->dev, "Failed to reset sensor\n");
+only called from probe I think so 
+	if (ret)
+		return dev_err_probe(dev,
+> +		return ret;
+> +	}
+> +
+> +	ret = bh1745_power_on(data);
+The unwind of this is done manually. It should not (see above)
+so after checking if this succeeded, call
+devm_add_action_or_reset() with a suitable callback that will turn
+the power off again.
+> +	if (ret < 0) {
+	if (ret)
+		return dev_err_probe().
+
+	return 0;
+
+ We know this is the only value, so make it explicit as that helps the reader
+understand which is the good path and what can be returned etc.
+ 
+> +		dev_err(&data->client->dev, "Failed to turn on sensor\n");
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+
+> +}
+> +
+> +static int bh1745_probe(struct i2c_client *client)
+> +{
+> +	int ret;
+> +	struct bh1745_data *data;
+> +	struct iio_dev *indio_dev;
+
+struct device *dev = &client->dev;
+as you use it several times and will shorten some long lines
+
+> +
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	i2c_set_clientdata(client, indio_dev);
+
+Is this ever used?  If not don't set it.
+
+> +	data->client = client;
+> +	indio_dev->info = &bh1745_info;
+> +	indio_dev->name = "bh1745";
+> +	indio_dev->channels = bh1745_channels;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->num_channels = ARRAY_SIZE(bh1745_channels);
+> +
+> +	data->regmap = devm_regmap_init_i2c(client, &bh1745_regmap);
+> +	if (IS_ERR(data->regmap))
+> +		return dev_err_probe(&client->dev, PTR_ERR(data->regmap),
+> +				     "Failed to initialize Regmap\n");
+> +
+> +	ret = bh1745_init(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (client->irq) {
+> +		ret = bh1745_setup_trigger(indio_dev);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	ret = devm_iio_device_register(&client->dev, indio_dev);
+> +	if (ret < 0) {
+> +		dev_err(&data->client->dev, "Failed to register device\n");
+you had client available, so should have used that.
+However add a local dev variable for these.
+> +		return ret;
+		return dev_err_probe(dev, "Failed to register device\n");
+and drop the brackets.
+
+> +	}
+> +
+> +	dev_info(&data->client->dev, "BH1745 driver loaded\n");
+Unnecessary noise. There are lots of other ways to find that out.
+So remove this print.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct i2c_device_id bh1745_idtable[] = {
+> +	{ "bh1745" },
+> +	{},
+> +};
+> +
+> +static const struct of_device_id bh1745_of_match[] = {
+> +	{
+> +		.compatible = "rohm,bh1745",
+> +	},
+> +	{},
+
+No comma on trailing 'NULL' entries as we must never
+add anything after them.
+
+> +};
+This needs appropriate MODULE_DEVICE_TABLE() as well
+
+> +
+> +MODULE_DEVICE_TABLE(i2c, bh1745_idtable);
+Move this to immediately after the idtable (no blank line)
+> +
+> +static struct i2c_driver bh1745_driver = {
+> +	.driver = {
+> +		.name = "bh1745",
+> +		.of_match_table = bh1745_of_match,
+> +	},
+> +	.probe = bh1745_probe,
+> +	.remove = bh1745_remove,
+> +	.id_table = bh1745_idtable,
+> +};
+> +
+> +module_i2c_driver(bh1745_driver);
+> +MODULE_AUTHOR("Mudit Sharma <muditsharma.info@gmail.com>");
+> +MODULE_DESCRIPTION("BH1745 colour sensor driver");
+> +MODULE_LICENSE("GPL");
+
 
