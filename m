@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-207021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7505690115B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:46:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED0390115F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4D55B21237
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89BDC1F22049
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37559140E29;
-	Sat,  8 Jun 2024 11:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A88515572C;
+	Sat,  8 Jun 2024 11:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6dIjkMG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6GINMJk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDFDDF4D;
-	Sat,  8 Jun 2024 11:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F508DF4D;
+	Sat,  8 Jun 2024 11:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717847196; cv=none; b=OcRZLK5ZHSYbgb1aEwkzng+8ENcEiIGSVzjPuqdp73klH1ThrEcaikE9Kg2oHluntR7WBJQ9jQBfRjccXl3mhi8P+tVCENUWIrEokXG96+5YQMh4wV3m6xI6OSbjZsxfxDzNTwsjcT0/txUV+500EhWUtaMnn9IPwt6z2ZaQM6U=
+	t=1717847928; cv=none; b=Hc1DR2Wakm7tWe+qq7G+FWbZx9gmyOsCNzZkzHXopoO80y/Dbm3ebvuLTb3diw/hsCvYbLotvwJAvf42RgtDN38NT8nb2hPV8b46HMljNW/W9CohexPKiSpNPG5bLw+k17RSX+/1koFzYvpcyG6z8wvrmttMDCuBx1cqKm1ED6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717847196; c=relaxed/simple;
-	bh=ie6jFcQd2J/GOk/v84sc6pBtZPWB+m80mdB55vgZF2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U1Mc/Yhe/VrXJsfWKmeBLkaojCWyLX2YLKGFXLSrzX/UGc7BWVtGkkoh7kHJIZIxzYtCIg4sk+3wH7dg4nxa60NlcXD6dEqPGQqjNDxzBL+5HKJ4k5NYdiGD94z9g9Wv4dZRLxHq/Kmsyy270xTNPyoTwhtxewJ0ljfP22YBjeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6dIjkMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57C9C2BD11;
-	Sat,  8 Jun 2024 11:46:35 +0000 (UTC)
+	s=arc-20240116; t=1717847928; c=relaxed/simple;
+	bh=DzZItR/XD7N9LswW4+TMkpca7KLSfzsgxdoa43ZNfDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V8R8CfxNuy6pXnLqByigE7NXTCkhj3wEgSwmQnRpnPggGz3i/kUuoMdWSY0+KTuAveU7yPKXny7t9L9CO5pe7ZeUW7vONX62Op7ntkmMgqb5q9HHsoBOQyGsUlwQCpDIekfik6HfcEMvvpGdUmkW9/NOijXWH4uWUKrmMfy/UiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6GINMJk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BDEC4AF09;
+	Sat,  8 Jun 2024 11:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717847195;
-	bh=ie6jFcQd2J/GOk/v84sc6pBtZPWB+m80mdB55vgZF2M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X6dIjkMGegMNvJr+au2ueNUWyPcq6saiKrll2oR+Rchh16DP68v6GWG7GSrpIj7V3
-	 +ULvP8QjDEtg0ucXa/GOvAlYk1l1tMmluxaCaNZzqZjJQYDPQVz4rBmFmkew+PVnam
-	 grk4IEtzhpotKQlXPKbtR9eVg5hmeY0TKwWSTzLQBP/99AgfFcIWp6pFLhcHiJTgR4
-	 nXI0SdvaM3xBXZjrCAXfKbA/w84vLTrUyg62yjgi0T9kfWpvzcqF+T/Jq8P6/qJGCK
-	 WXWATVchVKEWGE89SI6VVKQvhxL+qdHj/omtEr1Zvf85kyyhsjBBB+lIaCCaqFhOni
-	 SAgBdk0p1Qyag==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sFuWn-0000000060y-3Kbh;
-	Sat, 08 Jun 2024 13:46:34 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	regressions@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH] soc: qcom: pmic_glink: disable UCSI on sc8280xp
-Date: Sat,  8 Jun 2024 13:45:29 +0200
-Message-ID: <20240608114529.23060-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.1
+	s=k20201202; t=1717847928;
+	bh=DzZItR/XD7N9LswW4+TMkpca7KLSfzsgxdoa43ZNfDo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U6GINMJkSlCE41KfeaZzFXTUrtZxDWSXH4JVhX9PcTRg4CT1avrA0pw1g0YxTg+fF
+	 5Lw2IPNc2TvxHCn+i8eJQ1TOt3YG0aFTLFFOIKVFqp0VA2d9XBPYKboK/U2ris6OLJ
+	 VxRnzshbIdkdGrSHwAkXMBmENZDuiPnK8np3YjX532syJvdkUznNMAUhCMVbmX6AES
+	 35YDLDksqui+QvpJqmnVTv6Hj9gwpxaIjXWc55Y6Zi3tbDvy4GUpAYQTnVx5rgTwLU
+	 2rNhqpUkDBpUX82vypdGoTqT7YYRweE5D5YagB39ysDYJRdVKazSaXEmNfFq12Fbsu
+	 femu34yk9gODA==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b97f09cde3so382245eaf.0;
+        Sat, 08 Jun 2024 04:58:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQjrwNBUOfZDZ13o4LEitUBWW72G0G/owKEiOdZ9Jf/zDJloNXm6K3KNb/eGTz9VovtMwLKWShni0h/68/X5hcjZqvJ0PkYKcMmKOsuRlwFEfUuDw4DvdDg7/JoIi6vD85dmmVG985k28Pl3QuD8p42OvVxCA+Hi7GCLd4XtVPW9087fbt
+X-Gm-Message-State: AOJu0YxcQX9QopOmhaCISZqxaU/y/Fa+tRdBa9PkZZMZGU0OpdHuzcbd
+	WgOffJHsDYQpZgwpH8S0smwdP2PGG9zOGMDIc3KZvgHpRxoDiEhUfjhx3BKHhRAs9dl1QVuZFym
+	8Li9XKRIiJoo0MPtE0FYFENrcQIA=
+X-Google-Smtp-Source: AGHT+IHOgfE8EAt38vVrthEz/6qkdGWnaA9HHRM1PPC9eDL1nE44LwGfWGO+Utqm9g98PDm86I2O3dR5lHLvECcfzt4=
+X-Received: by 2002:a05:6820:d13:b0:5ba:ca86:a025 with SMTP id
+ 006d021491bc7-5baca86a2a3mr2925804eaf.0.1717847927247; Sat, 08 Jun 2024
+ 04:58:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240528192936.16180-1-pierre-louis.bossart@linux.intel.com>
+ <20240528192936.16180-2-pierre-louis.bossart@linux.intel.com>
+ <CAJZ5v0g8aW5FBbceYJDvDrMHRxT6i71O_LTWKALb=qr+m1BJ7w@mail.gmail.com> <998d53cf-c22b-4706-93af-ab38802dc531@linux.intel.com>
+In-Reply-To: <998d53cf-c22b-4706-93af-ab38802dc531@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 8 Jun 2024 13:58:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jVpLNLiQ3uHEA9+MWWHv91Yov5hC8uhTg5+z3mK08Yuw@mail.gmail.com>
+Message-ID: <CAJZ5v0jVpLNLiQ3uHEA9+MWWHv91Yov5hC8uhTg5+z3mK08Yuw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ACPI: utils: introduce acpi_get_local_u64_address()
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-sound@vger.kernel.org, 
+	alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org, 
+	vkoul@kernel.org, andriy.shevchenko@linux.intel.com, 
+	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	"open list:ACPI" <linux-acpi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Disconnecting an external display triggers a hypervisor reset on the
-Lenovo ThinkPad X13s since 6.10-rc1 which enabled UCSI. Disable it again
-until the regression has been fixed properly.
+On Fri, Jun 7, 2024 at 10:33=E2=80=AFPM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+>
+> On 6/7/24 20:51, Rafael J. Wysocki wrote:
+> > On Tue, May 28, 2024 at 9:29=E2=80=AFPM Pierre-Louis Bossart
+> > <pierre-louis.bossart@linux.intel.com> wrote:
+> >>
+> >> The ACPI _ADR is a 64-bit value. We changed the definitions in commit
+> >> ca6f998cf9a2 ("ACPI: bus: change _ADR representation to 64 bits") but
+> >> some helpers still assume the value is a 32-bit value.
+> >>
+> >> This patch adds a new helper to extract the full 64-bits. The existing
+> >> 32-bit helper is kept for backwards-compatibility and cases where the
+> >> _ADR is known to fit in a 32-bit value.
+> >>
+> >> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.=
+com>
+> >> Reviewed-by: P=C3=A9ter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> >> Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> >
+> > Do you want me to apply this or do you want me to route it along with
+> > the rest of the series?
+> >
+> > In the latter case feel free to add
+> >
+> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Thanks Rafael. I think it's easier if Mark Brown takes the series in
+> ASoC, I have additional ASoC patches that use the u64 helper.
+>
+> Mark?
+>
+>
+> >>
+> >> +int acpi_get_local_u64_address(acpi_handle handle, u64 *addr)
+> >> +{
+> >> +       acpi_status status;
+> >> +
+> >> +       status =3D acpi_evaluate_integer(handle, METHOD_NAME__ADR, NUL=
+L, addr);
+> >> +       if (ACPI_FAILURE(status))
+> >> +               return -ENODATA;
+> >> +       return 0;
+> >> +}
+> >> +EXPORT_SYMBOL(acpi_get_local_u64_address);
+> >
+> > I'd prefer EXPORT_SYMBOL_GPL() here unless you absolutely cannot live w=
+ith it.
+>
+> I don't mind, but the existing helper was using EXPORT_SYMBOL so I just
+> copied. It'd be odd to have two helpers that only differ by the argument
+> size use a different EXPORT_ macro, no? Not to mention that the
+> get_local address uses EXPORT_SYMBOL but would become a wrapper for an
+> EXPORT_SYMBOL_GPL. That gives me a headache...
 
-Fixes: 3f91a0bf4a0b ("soc: qcom: pmic_glink: reenable UCSI on sc8280xp")
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/soc/qcom/pmic_glink.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-
-Dmitry reported off-list that his X13s was crashing when he disconnected
-an external display and I tracked it down to the enablement of UCSI in
-6.10-rc1.
-
-I have not had time to debug this further, but I'm flagging this as a
-regression and sending an effective so that we have a fall back in case
-this is not fixed in timely manner.
-
-Note that this likely affects other Qualcomm SoCs as well.
-
-Johan
-
-
-#regzbot introduced: 3f91a0bf4a0b
-
-
-
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index 40fb09d69014..65279243072c 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -348,11 +348,15 @@ static void pmic_glink_remove(struct platform_device *pdev)
- 	mutex_unlock(&__pmic_glink_lock);
- }
- 
-+static const unsigned long pmic_glink_sc8280xp_client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
-+							     BIT(PMIC_GLINK_CLIENT_ALTMODE);
-+
- static const unsigned long pmic_glink_sm8450_client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
- 							   BIT(PMIC_GLINK_CLIENT_ALTMODE) |
- 							   BIT(PMIC_GLINK_CLIENT_UCSI);
- 
- static const struct of_device_id pmic_glink_of_match[] = {
-+	{ .compatible = "qcom,sc8280xp-pmic-glink", .data = &pmic_glink_sc8280xp_client_mask },
- 	{ .compatible = "qcom,pmic-glink", .data = &pmic_glink_sm8450_client_mask },
- 	{}
- };
--- 
-2.44.1
-
+OK, fair enough.
 
