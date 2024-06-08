@@ -1,150 +1,172 @@
-Return-Path: <linux-kernel+bounces-207173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DBE901342
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:46:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0595D901345
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB371C20AAF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8E5CB2158E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC1C1865A;
-	Sat,  8 Jun 2024 18:46:26 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DD11F932;
+	Sat,  8 Jun 2024 19:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYRErWMe"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F71BC46
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 18:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F36D1799D;
+	Sat,  8 Jun 2024 19:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717872386; cv=none; b=Nk7ns2pJdyvikSdLgnt4I8TAGK3y6JfgnL8EYaekdjZmrQec2/GfNNYvSqh/s6knJZF431k33FBYOxQLxnCRyGNr6OHb5LzY6NvprRqMf0zbKmCfa8LcuEYxE3iIYB6BKPqFWoneM5wSKNiq6CVUwBiqkD1tXwMmGgBdxDlacWM=
+	t=1717873251; cv=none; b=H33ZmmbfIGAB7sXWNuFEoyGU81JVTGw03IgxnrAQadZ2Yn5jtjK/Ve1UQhfhAHMaZampxWpSxyif8UEL3CdBHALdaIkQjwZM8iwzEHJDuSHEY8jk4BbHnmrFIzTKcCPrr6BxR/P5MaOiK35XLRi84976P3DC5Nk7+T4rI7OPu/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717872386; c=relaxed/simple;
-	bh=FTsEzVY//d7md9QNRchU+SR97aMGSsZHiNUNXTDniYA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hlDjGbod0i1SBbYOGjK4SMVmWslxDveuMFO1ApuRN+EMf2BFt0prGen/Qz4EAjMyUx3t1ngtJFCadGAx9YdoluS0hEtAA/6Bu9AaiudCjOHK2iplJkGZoUVctdYoVBpirqwJxBzFNwplCOmLwYLAvIetddinRJ7oAyg9MI7G7U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb50e42c6aso333596439f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 11:46:24 -0700 (PDT)
+	s=arc-20240116; t=1717873251; c=relaxed/simple;
+	bh=lUKcZ0NOZIGF2roeexyRtcuCwZmnc8vD0aRuMnMXqlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E1wP1OA2h+5D9zz/0tfuIDXrabBfXoiZDhm29xgK0MH9tL86DgdJ2pQRSC8ZH5iUCn9M1ZM9Pr7jqTlX8RTD5bdrxPQBWP+tmAInH9Z0Vx9mSF39Wf60JpOsOe4tEnNPT75NJGjPRN0xd3I9fqZAIfqitH8oJjKQgdgjGYGuQxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYRErWMe; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c27bc473d9so2634560a91.3;
+        Sat, 08 Jun 2024 12:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717873250; x=1718478050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XzPlb+KNnIK84yqsSCymGwCYl+X3d6bDXkoBesrFE4w=;
+        b=ZYRErWMeDVvXikFtbtlzEWWqUMh+RVrnZx8JafCCeIqEUcJbhQPU8MENkk+13rBeJQ
+         XDA3djwsVnOdddi+wtJctlsuCp+eMVz9GkTqbqvD0jhRA1Ls3M/jcqjwFq4ALkBfV09y
+         HWnAGukeYk0ZeyBGFoqIjONr6O84dUiA7ZdBFhUX4k0E1IMb4jmeclWpRfKLHfriDu+k
+         +Pl/aB3xb0XLz63T/20kwLtu4UlGkn9SuOxWHR0ndIbgIZPqLwhs7BT8M/fQBR2Z5/Hi
+         pki5PhcG5FFfd/yeV+EeECoIruI9xccFEOVunZcLnfDxFPbh3ZmSn4HP0HMMK2hCOvI1
+         sXdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717872384; x=1718477184;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W3hCt9io7wd14ZV/rqVycTDv82Iixo5e/5LYZfu/3ew=;
-        b=WIqlQXVdB4nWTIqecyrXGR/GNwAXEB9w2tQzU22/mLW4t5FoRIWJj9zmd8Z2LAkG9S
-         cxOZ//iZoFJxmZwp0cotOMezzBXzu5kKj97fHG3+YZwq2NHSEE5p28UxEEHP8V6lepei
-         rNXNBIi6/hft3dt/TxCAmtP6Rgkzl04ZKcFTPEkaw1wSIDQnOfmZMakFvtgoMT9y7mhu
-         tJ4t/8aifkTQQlUQT4zoJWxosh3nJBKjyrt8/mPpYwq2KVzp00bUMQJGwYUS9fOjoiX9
-         9AEZGLGiUJUx5cksbwSzRSNOUnSftyOW0XO0yOEgYAxakHoQXEA2mTofVMGpfXhqQunF
-         5alg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfKHZ2Qa0yIQTenfA/bTcUVij/nZIY1kT3kTKs5y8ekrP3gWNZZgTrucBfUvSKKiFbQTVwmkvBe+T2THUdNdEP1Y+tQpovbg6M5MlB
-X-Gm-Message-State: AOJu0Yzs9SIJwHEQcXtUNxHM0E5ymBQS4Oq3RoxMNP4WirEMilgXgz08
-	7ik4O2iRtQJ0zWJZHyPpxD7Jxf9aWV6lh6Xc+i0NOFfIMg1YrRr4r2eVaeEzr9ounAJWQBs7sul
-	/rqNHCCwURvSYhbB4gHSdgMGd9QFLxsrUSymKt7mRjc8jKPPf3L03UjI=
-X-Google-Smtp-Source: AGHT+IEVK4W5Nb1TYvUdWpQN+xS2zF4T97HCWd1Niuy5IUFg3CZraESdaOLnJfZCOch9d3QDhnPuUQgsx8a/2k7d8NNKJb1N/0OV
+        d=1e100.net; s=20230601; t=1717873250; x=1718478050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XzPlb+KNnIK84yqsSCymGwCYl+X3d6bDXkoBesrFE4w=;
+        b=L4msxDid0q4YF9pdk3Ey1PzXvwf4FxJpNVjb9cc+gv+kuJwaAP0eamoCuIYSLgvbvd
+         lLVl91NUQXoakZMLnSB0+O4VvDx2mENHQwvzagqXoEcRUl4BI+S5GFtYndH1bu+u3RHm
+         Fkwz60SZExC1MNkbRSW7AEu34nVSMEHqd/nC2njYoGsu6cDlmSIMQrlrj8RjREfCsCd0
+         RrF1w0hVIadwkHrRWKpo1zZGEDNd3YSw+aaMJ6RoT3kQqSnhz3SC85NPTLCxGjhzRPf5
+         gF9UFaOf9TktJNHSX1SKWu9mo9MDrjtTOb9MwYQ84H86VI9+UlXI0iWVQkcuhPVGRZ23
+         6KDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvf7KAYVx7rmvRY6R5MtqV/t6EpftubKo2wvGc1mCK1g8b/pXx06kvsIwQVi9fNSuIBeiF4MemBsjV7au9204qTqPYM5CBlM4PY4KxNaLhw4SVdWLQCyRjfGsTWV3vtr1ROunZcDrpBnF4mBO/
+X-Gm-Message-State: AOJu0YzBV5T59ghe1Azjnqg4Hx82NVBvdZvqncJc8zJG5nYnRSp9e7Vn
+	Be9WwB9PSN9TWiYPD9CPdl+QiGXAL65pRskfwNHxNmipVwvXq01Xu4Po+mW2w9kCzQw1XqeSxZB
+	ii+gU3ilafK1wYRP5kIrqWUwj8nk=
+X-Google-Smtp-Source: AGHT+IHy69wumVASu/61R/Fjf2UyRyAY0w+h+xTzlnA5QSxt9N/pf88fG72ZcV37ZMbk6kGOKqksuj3im194CCMHYPk=
+X-Received: by 2002:a17:90a:f614:b0:2c1:424c:1721 with SMTP id
+ 98e67ed59e1d1-2c2bcad1161mr5292449a91.3.1717873249617; Sat, 08 Jun 2024
+ 12:00:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3790:b0:4b9:942:8f30 with SMTP id
- 8926c6da1cb9f-4b90942968amr41609173.3.1717872383737; Sat, 08 Jun 2024
- 11:46:23 -0700 (PDT)
-Date: Sat, 08 Jun 2024 11:46:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000033d195061a6555c8@google.com>
-Subject: [syzbot] [bpf?] INFO: task hung in bpf_prog_dev_bound_destroy
-From: syzbot <syzbot+638395cff1c05c4a0128@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@google.com, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+References: <20240606183032.684481-1-andreas@kemnade.info> <CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
+ <20240606221941.333a9704@aktux>
+In-Reply-To: <20240606221941.333a9704@aktux>
+From: Adam Ford <aford173@gmail.com>
+Date: Sat, 8 Jun 2024 14:00:38 -0500
+Message-ID: <CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, marcel@holtmann.org, johan@kernel.org, 
+	pmenzel@molgen.mpg.de, jirislaby@kernel.org, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	Tony Lindgren <tony@atomide.com>, tomi.valkeinen@ideasonboard.com, 
+	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, robh@kernel.org, 
+	hns@goldelico.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jun 6, 2024 at 3:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
+o> wrote:
+>
+> Hi Luiz,
+>
+> On Thu, 6 Jun 2024 16:04:10 -0400
+> Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
+>
+> > Hi Andreas,
+> >
+> > On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemnade=
+.info> wrote:
+> > >
+> > > Some of these chips have GNSS support. In some vendor kernels
+> > > a driver on top of misc/ti-st can be found providing a /dev/tigps
+> > > device which speaks the secretive Air Independent Interface (AI2) pro=
+tocol.
 
-syzbot found the following issue on:
+I think you may have sent me a file to test, but I can't find the
+e-mail.   Can you tell me what tool you used to test it?  I can get
+gnss0 to enumerate, so I am close.
 
-HEAD commit:    8a92980606e3 Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e0f5ba980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=638395cff1c05c4a0128
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fa5a3bdc8575/disk-8a929806.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9f37ced39a44/vmlinux-8a929806.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/604ed8ab462f/bzImage-8a929806.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+638395cff1c05c4a0128@syzkaller.appspotmail.com
-
-INFO: task kworker/0:5:5177 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc2-syzkaller-00235-g8a92980606e3 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:5     state:D stack:20752 pid:5177  tgid:5177  ppid:2      flags:0x00004000
-Workqueue: events bpf_prog_free_deferred
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- bpf_prog_dev_bound_destroy+0x76/0x590 kernel/bpf/offload.c:386
- bpf_prog_free_deferred+0x3c5/0x710 kernel/bpf/core.c:2784
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz-executor.2:12871 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc2-syzkaller-00235-g8a92980606e3 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.2  state:D stack:24912 pid:12871 tgid:12870 ppid:12213  flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- do_ip_setsockopt+0x127d/0x3cd0 net/ipv4/ip_sockglue.c:1077
+[   20.759857] hci-ti serial0-0: using DT
+'/ocp@68000000/serial@4806c000/bluetooth-gnss' for 'enable' GPIO
+lookup
+[   20.770263] of_get_named_gpiod_flags: parsed 'enable-gpios'
+property of node '/ocp@68000000/serial@4806c000/bluetooth-gnss[0]' -
+status (0)
+[   29.221588] gnss: GNSS driver registered with major 244
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+adam
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > >
+> > > To be more compatible with userspace send out NMEA by default but
+> > > allow a more raw mode by using a module parameter.
+> > >
+> > > This was tested on the Epson Moverio BT-200.
+> > >
+> > > Who will take this series (1-3)? GNSS with ack from Bluetooth?
+> > >
+> > > Changes since V3:
+> > > - Finally remove the period from 1/4 subject
+> > > - include things directly for get_unaligned_le16() to fix 0-day issue=
+s
+> > >
+> > > Changes since V2:
+> > > - Optimize waits
+> > > - Fix some packet analysis / checksum computation issue
+> > > - Adding a proposal for removing those waits as RFC
+> > > - Minor spell corrections and improved descriptions
+> > >
+> > > Changes since V1:
+> > > - Set up things for NMEA output
+> > > - Powerup/down at open()/close()
+> > > - split out logic between drivers/bluetooth and drivers/gnss
+> > > - leave out drivers/misc/ti-st driver removal to avoid
+> > >   filling up mailboxes during the iterations, this series is
+> > >   still a proof that it is not needed, will take the brush after
+> > >   this series is accepted.
+> > >
+> > >
+> > > Andreas Kemnade (4):
+> > >   gnss: Add AI2 protocol used by some TI combo chips
+> > >   Bluetooth: ti-st: Add GNSS subdevice for TI Wilink chips
+> >
+> > The bluetooth one looks relatively simple so I could take that one and
+> > push to bluetooth-next if there are no dependencies on the other
+> > changes.
+> >
+> There is:
+>
+> include/linux/ti_wilink_st.h |   8 +
+>
+> We have compile time deps here. Patch 3 compile time depends on patch 2. =
+If we
+> cannot take everything in for  6.11, you might opt to take the bluetooth =
+part.
+> That would work.
+>
+> Regards,
+> Andreas
 
