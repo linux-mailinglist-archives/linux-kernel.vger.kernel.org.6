@@ -1,179 +1,148 @@
-Return-Path: <linux-kernel+bounces-207102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E01590126A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6574590126E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A421F2216D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FDE1C214F1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29D517B506;
-	Sat,  8 Jun 2024 15:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9903317A930;
+	Sat,  8 Jun 2024 15:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9iTnJW1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiz+M2NH"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966B1E888;
-	Sat,  8 Jun 2024 15:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7651E888;
+	Sat,  8 Jun 2024 15:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717861727; cv=none; b=jBP8Q0kO7mHehfoiikzSdIdrFOFUExJeE9n71tA2Nqon2chawCfdChfVqi14bRC2ylvgz9O3nQTlgTDhZKFzWjjxxdJ/CrwnPdchc+qcrNEqO5sF40XkrQNZhiwu9tUxWglTkGk3/J3yfcM5A5JEyzmVgZzC3i3H7R7GRIkrANk=
+	t=1717862008; cv=none; b=Qp+iSsGwxGLpU3o7UYrDESJSuOnTKoCgmJvIW6f3SRsE+QoWU58YKN6nWxtlaTKNDuC9dLnAGZ9toCyJBB8BqfC1KTBN0UJiidjvOAcPiJyyac2kAR6G74+hPK2Z1uAZY5AujD9QPfL556qpO8PSiutj4R2X5nzswM8o3UdzgBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717861727; c=relaxed/simple;
-	bh=3p3kxCe/yhGV0q146IRm30LBrdx5GWV65OqRWxDa644=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BmC69hgRHqBOmrbA5+qsC6/CjjHJ3J4rsO0kEpnbDWP9rM6oMFKjQIvwgGdlarwWvLU8CrJ4a0HxjXxmeLa29eOVuAkmtu3YEsLgGk9Ov5TY3RYIEWlI6CxtvTI+bG/0altAH3L9ZDQxw18XCOQ4mSMTPrB17PsNdIaErx/57G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9iTnJW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFEBCC32781;
-	Sat,  8 Jun 2024 15:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717861726;
-	bh=3p3kxCe/yhGV0q146IRm30LBrdx5GWV65OqRWxDa644=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=i9iTnJW1vgPwDQx57ApoXYc9y4CZkj12TYUblreb2RUJQjmkEK4ThrX2dfODGjUcK
-	 jZeTQo+ztRwSue2+nuMM/pul0jQRVLy8ryhfUPZmV924bHQOeayMw6Y/G6eLPPmlzP
-	 yE+u1liBfLzXRpOGD+eqMKRZoHJ/1iB4Y2r4QjZqhDfdpdcj1lSFjO3XDGWks5LiIa
-	 aH5BB7QloSrhf2Z4Thv7lxUg9o3hPuDEdYHQAE3xxW+bPTsiyXN+Sb5MK8dyllUPps
-	 0anRM9maFxEhmetGjQ4FEGaGh2VN/WP04ueKz4ajwZSWjOHLn5qSyZnxiZqbJU9JY+
-	 qcO94RFcuAxUQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 46920CE0C16; Sat,  8 Jun 2024 08:48:46 -0700 (PDT)
-Date: Sat, 8 Jun 2024 08:48:46 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	Marco Elver <elver@google.com>, Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
- mentorship session citation
-Message-ID: <6bb5f789-f143-493c-a804-62b7c81dabb0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
- <20240604221419.2370127-3-paulmck@kernel.org>
- <42fa4660-b3bf-4d09-bbad-064f9d4cc727@gmail.com>
- <f11f7230-7c16-45a3-83be-9aba32e10a3b@paulmck-laptop>
- <3c5a53e2-b5a9-4197-97a3-247abb7f3061@gmail.com>
+	s=arc-20240116; t=1717862008; c=relaxed/simple;
+	bh=vOVkuXFeGSuE1OvKskDxmGpY989Qbt/a1vEPJq4FUYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L2qV0WKUEXjM+HaJEfb/2AF3Sc6KBAQy8q5x+xUd15kIeE4PKqctKucM1cNzwuSURjcVqfe4idGM2jCCKrD8+zfk4p7L+ipPuhjvnbNlyfiObmn7vpoA8WdjZ8vyX9OuuYlaX5ooVfYBazIUQbfsShgobLMmevOi1dTbKiuAYU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiz+M2NH; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7024d571d8eso2607609b3a.0;
+        Sat, 08 Jun 2024 08:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717862006; x=1718466806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9VRrAeGIH91nbJ+l+6EogIiaTtVPhZdGtuhQM+K29k=;
+        b=eiz+M2NHo0WXCoMozSdHeENCa3O0hSXFqlK1bZv2vP683i1Ng1JRrj/mNMmYd7xxni
+         goF1n7Sf9YBN80rkzU3o/99giDHXT46818L0UTZC/l8sDCRPe/184iLJYah888IjtsLF
+         7gK7eS4XndZQ9Z7ukwcsSj6N+99QQ+mQ6jCl5qVMrVivaMgH1pxRsWQtoMB5vR9au2kN
+         fSnCRpP0GCRS50d/jKKnjsVxjZl2QNhimPqkIPwX54dXXxJcuM2PReBUL5DkibVlWmS2
+         B5xlIASYI3ZptatUdRB/xrLeYp2opAP2eV+xuCzHSGqb54zK9OYURkuLD3KnmkFOv94L
+         p8Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717862006; x=1718466806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b9VRrAeGIH91nbJ+l+6EogIiaTtVPhZdGtuhQM+K29k=;
+        b=mLxw+1RbNXWi45j2Nk1y+G9Xv8LfTZjCPC+PDSNBSyHknMcZwttPdWvXbdbaE7h2Jw
+         4iBdBaduC1YZti5OSQjqim3IH2LP6x93xwFtmGIcPkJWyswooVVnAt1MwsQp8rCIMxG1
+         NwM2USYffmxHpCHrP/0WXqL7KAChPr5d5uiIOwVDDFYMaxQC1TivHVfhr5JJa9gXbLeS
+         p9QEMu8MCAyCC5h6c9G2WeWPa1s69mPWYWbTnChhSURcMIaQGzHquNlIChrx0s1FzHsC
+         F7/Uc9206kC5lhZ/eudL25+sB1lR5rrzIQpo620GCblg0TJbDRjKz2RJ+GqxPp+SH7CB
+         05Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+nqQ/rrkL9cImhsmUVz2YZ1JbkPGNa4MaP7/pjCFLhhblctTjk9r1Mm0lrz0IW+vTfhjR5yAs2vDKewv9TMuxSGoyZ/jdgR6AHewk4DEc2K/vlYEmfVh+j7JSrlJGcd6xmFBSvqE1
+X-Gm-Message-State: AOJu0YwMtfSs+WVpxxGstMdEiDkVwAHDqUfdOAWau1O9BOHTmQKDfeuY
+	PY6fhhscBhM83TQsQJo9rcQ78vIeMl+m65R3ZpN4C0D47iXqiUvW
+X-Google-Smtp-Source: AGHT+IFpTRsmPHwSEMhSYb9qhAwknvo0q5iq6AgwuXLmiBVIA78tWwc33X4OMQqkuR/sfFDPXkrUAA==
+X-Received: by 2002:a05:6a00:1396:b0:6ed:de30:9e43 with SMTP id d2e1a72fcca58-7040c754e29mr7200418b3a.32.1717862005667;
+        Sat, 08 Jun 2024 08:53:25 -0700 (PDT)
+Received: from cbuild.srv.usb0.net (uw2.srv.usb0.net. [185.197.30.200])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4d9d8fsm4335209b3a.149.2024.06.08.08.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Jun 2024 08:53:25 -0700 (PDT)
+From: Takero Funaki <flintglass@gmail.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>
+Cc: Takero Funaki <flintglass@gmail.com>,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3]  mm: zswap: global shrinker fix and proactive shrink
+Date: Sat,  8 Jun 2024 15:53:07 +0000
+Message-ID: <20240608155316.451600-1-flintglass@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c5a53e2-b5a9-4197-97a3-247abb7f3061@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 08, 2024 at 08:38:12AM +0900, Akira Yokosawa wrote:
-> On 2024/06/05 13:02, Paul E. McKenney wrote:
-> > On Wed, Jun 05, 2024 at 10:57:27AM +0900, Akira Yokosawa wrote:
-> >> On Tue,  4 Jun 2024 15:14:19 -0700, Paul E. McKenney wrote:
-> >>> Add a citation to Marco's LF mentorship session presentation entitled
-> >>> "The Kernel Concurrency Sanitizer"
-> >>>
-> >>> [ paulmck: Apply Marco Elver feedback. ]
-> >>>
-> >>> Reported-by: Marco Elver <elver@google.com>
-> >>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >>> Cc: Alan Stern <stern@rowland.harvard.edu>
-> >>> Cc: Andrea Parri <parri.andrea@gmail.com>
-> >>> Cc: Will Deacon <will@kernel.org>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Boqun Feng <boqun.feng@gmail.com>
-> >>> Cc: Nicholas Piggin <npiggin@gmail.com>
-> >>> Cc: David Howells <dhowells@redhat.com>
-> >>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> >>> Cc: Luc Maranget <luc.maranget@inria.fr>
-> >>> Cc: Akira Yokosawa <akiyks@gmail.com>
-> >>
-> >> Paul,
-> >>
-> >> While reviewing this, I noticed that
-> >> tools/memory-model/Documentation/README has no mention of
-> >> access-marking.txt.
-> >>
-> >> It has no mention of glossary.txt or locking.txt, either.
-> >>
-> >> I'm not sure where are the right places in README for them.
-> >> Can you update it in a follow-up change?
-> >>
-> >> Anyway, for this change,
-> >>
-> >> Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-> > 
-> > Thank you, and good catch!  Does the patch below look appropriate?
-> 
-> Well, I must say this is not what I expected.
-> Please see below.
+This series addresses two issues and introduces a minor improvement in
+zswap global shrinker:
 
-OK, I was clearly in way too much of a hurry when doing this, and please
-accept my apologies for my inattention.  I am therefore going to do
-what I should have done in the first place, which is to ask you if you
-would like to send a patch fixing this.  If so, I would be quite happy
-to replace mine with yours.
+1. Fix the memcg iteration logic that breaks iteration on offline memcgs.
+2. Fix the error path that aborts on expected error codes.
+3. Add proactive shrinking at 91% full, for 90% accept threshold.
 
-							Thanx, Paul
+These patches need to be applied in this order to avoid potential loops
+caused by the first issue. Patch 3 can be applied independently, but the
+two issues must be resolved to ensure the shrinker can evict pages.
 
-> > ------------------------------------------------------------------------
-> > 
-> > commit 834b22ba762fb59024843a64554d38409aaa82ec
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date:   Tue Jun 4 20:59:35 2024 -0700
-> > 
-> >     tools/memory-model: Add access-marking.txt to README
-> >     
-> >     Given that access-marking.txt exists, this commit makes it easier to find.
-> >     
-> >     Reported-by: Akira Yokosawa <akiyks@gmail.com>
-> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > 
-> > diff --git a/tools/memory-model/Documentation/README b/tools/memory-model/Documentation/README
-> > index db90a26dbdf40..304162743a5b8 100644
-> > --- a/tools/memory-model/Documentation/README
-> > +++ b/tools/memory-model/Documentation/README
-> > @@ -47,6 +47,10 @@ DESCRIPTION OF FILES
-> >  README
-> >  	This file.
-> >  
-> > +access-marking.txt
-> > +	Guidelines for marking intentionally concurrent accesses to
-> > +	shared memory.
-> > +
-> >  cheatsheet.txt
-> >  	Quick-reference guide to the Linux-kernel memory model.
-> >
-> 
-> What I expected was an entry in the bullet list in the upper half
-> of README which mentions access-marking.txt along with the update of
-> alphabetical list of files.
-> 
-> Updating the latter wouldn't worth bothering you.
-> 
-> And you are missing another comment WRT glossary.txt and locking.txt. ;-)
-> 
-> Let me suggest an idea of their positions in the bullet list where the
-> ordering is important.  Looks reasonable to you ?
-> 
->   o   simple.txt
->   o   ordering.txt
->   o   locking.txt               <--new
->   o   litmus-test.txt
->   o   recipes.txt
->   o   control-dependencies.txt
->   o   access-marking.txt        <--new
->   o   cheatsheet.txt
->   o   explanation.txt
->   o   references.txt
->   o   glossary.txt              <--new
-> 
-> Have I made my point clear enough?
-> 
->         Thanks, Akira
+Previously, the zswap pool could be filled with old pages that the
+shrinker failed to evict, leading to zswap rejecting new pages. With
+this series applied, the shrinker will continue to evict pages until the
+pool reaches the accept_thr_percent threshold proactively, as
+documented, and maintain the pool to keep recent pages.
+
+As a side effect of changes in the hysteresis logic, zswap will no
+longer reject pages under the max pool limit.
+
+With this series, reclaims smaller than the proative shrinking amount
+finish instantly and trigger background shrinking. Admins can check if
+new pages are buffered by zswap by monitoring the pool_limit_hit
+counter. 
+
+Changes since v0:
+mm: zswap: fix global shrinker memcg iteration
+- Drop and reacquire spinlock before skipping a memcg.
+- Add some comment to clarify the locking mechanism.
+mm: zswap: proactive shrinking before pool size limit is hit
+- Remove unneeded check before scheduling work.
+- Change shrink start threshold to accept_thr_percent + 1%.
+
+Now it starts shrinking at accept_thr_percent + 1%. Previously, the
+threshold was at the midpoint of 100% to accept_threshold.
+
+If a workload needs 10% space to buffer the average reclaim amount, with
+the previous patch, it required setting the accept_thr_percent to 80%.
+For 50%, it became 0%, which is not acceptable and unclear for admins.
+We can use the accept percent as the shrink threshold directly but that
+sounds shrinker is called too frequently around the accept threshold.  I
+added 1% as a minimum gap to the shrink threshold.
+
+----
+
+Takero Funaki (3):
+  mm: zswap: fix global shrinker memcg iteration
+  mm: zswap: fix global shrinker error handling logic
+  mm: zswap: proactive shrinking before pool size limit is hit
+
+ Documentation/admin-guide/mm/zswap.rst |  17 ++-
+ mm/zswap.c                             | 172 ++++++++++++++++++-------
+ 2 files changed, 136 insertions(+), 53 deletions(-)
+
+-- 
+2.43.0
+
 
