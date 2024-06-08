@@ -1,209 +1,128 @@
-Return-Path: <linux-kernel+bounces-207056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B49E9011D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:16:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C899E9011DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAA21F21E66
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7870928224B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BED17A90F;
-	Sat,  8 Jun 2024 14:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE01717B428;
+	Sat,  8 Jun 2024 14:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bGMlaSGz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FWeJ52Y6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755A827457
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 14:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2187C17A93C;
+	Sat,  8 Jun 2024 14:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717856188; cv=none; b=Jh0glPiydLoo9a/4DWIh6HGV2CR1yjpZBDb6NK8U0KWZFCvb9CtjOlPRXqvJK7ks64QYsc0OFK44Fr/BPU78FABWRYXiJU5B/2ZitLY8albpXVEFy1QmclMfQaO1WR+AhD4v4NWko82ebLpLRusyHU67o4X5VsucOajwgLRbdiU=
+	t=1717856216; cv=none; b=ufuoxQLVDcqzrp7UrAOWwCIJqRAeA2fqht++beF55JX6s5Hpg7Qnm3xCkHAv1LBZ+pemHAU7xbM3F+AGMvV4qlY/IWnqCuISIwncHQvEIg6zGY4gUr/avO6Zhiyg0Dni4Zyu8y6KKUT8P0Ksqz4Nd/hiYn57BgDn5KbecguoCcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717856188; c=relaxed/simple;
-	bh=y1/pdGFNQ4bmBupNSPXczZk3gfpVzHE5/xtJhhxuZEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwOivWlKuPbvVanKgjGRBvMLWXJFvoUqdioXEY/Kv3itCLeTvi6mUaBn/mNkK8Rruh8moEEe9WaIJD7I7JI5Jer3gyzyvLkvhjFD3Gy1MDa9m4SL3eFF8FEAiSjuPCB7kneaG0XQ8zdx5zYZ65lmH8FB/+n96t6MzsXX3cZg3mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bGMlaSGz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717856185;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e4i3eRJmBmN+iQA9CJ+0NHv/UewJVWHJgwRHQO6ZQpM=;
-	b=bGMlaSGz6APPr9zNP1Yot6WMUL439akzptfCVcUxIxPzZeBGOutPqcwcvWsPzlCVVZ5X0h
-	GBolX0+kV72R7SpjeqfE/7Yk+Y+whmZHF/4S+DvEbE9IjcJj0VoOM9g8Cn1rHQRTVrVh4H
-	zSxkvLGTfiQvFdC6Rc25y3P5/CoeVb8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-531-ESfm0zbmO4CqmPNoso-9zA-1; Sat, 08 Jun 2024 10:16:21 -0400
-X-MC-Unique: ESfm0zbmO4CqmPNoso-9zA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 41D21185A780;
-	Sat,  8 Jun 2024 14:16:21 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.37])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 117253C23;
-	Sat,  8 Jun 2024 14:16:14 +0000 (UTC)
-Date: Sat, 8 Jun 2024 22:16:10 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Li Nan <linan666@huaweicloud.com>
-Cc: Changhui Zhong <czhong@redhat.com>, axboe@kernel.dk,
-	ZiyangZhang@linux.alibaba.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com,
-	ming.lei@redhat.com
-Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in
- ublk_ctrl_start_recovery()
-Message-ID: <ZmRnqmiNGW5Y+452@fedora>
-References: <Zl0QpCbYVHIkKa/H@fedora>
- <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
- <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
- <918f128b-f752-2d66-ca60-7d9c711ed928@huaweicloud.com>
- <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
- <ZmA0Se+t/LZihBKp@fedora>
- <CAGVVp+WoBochfQvLgAVbpWFv6JVAfQVkPwWDG8mBxqgGK-NDbg@mail.gmail.com>
- <2c46587e-0621-b21e-fbc1-fd69e87def03@huaweicloud.com>
- <ZmGGzNLLC6WpM9tb@fedora>
- <dd486a95-b7e8-5760-9ff1-7e9c1cfc9873@huaweicloud.com>
+	s=arc-20240116; t=1717856216; c=relaxed/simple;
+	bh=3ZQeW8xyCfO0mF0Lz2gwAXBPIFqpW8xq/6Un+XG7dl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aOM4Xy6cn/KGSbjDtvF0lgGtDIJRlONVlljfpr24iRJ+Dr2cASniX0DYRxf7/dfoCD1BvwdAaPZSu73J0yuMi9W2XDS/EkAP6WVj1tU1fbEjdKQXpaoGOb7Elr5Qo8sy+A+gnMk0uYg13KG7zwtul9lW9XFj/jpXur6QganRRq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FWeJ52Y6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74E1CC67;
+	Sat,  8 Jun 2024 16:16:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1717856201;
+	bh=3ZQeW8xyCfO0mF0Lz2gwAXBPIFqpW8xq/6Un+XG7dl8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FWeJ52Y6LvaMBC28vCdJ58rQuBqpU4C8SI6PL+y5U7gcVCPyg/xD9Wh+0/noL3RNZ
+	 F0zWQwqw6U5C/7jrvkGhZBwNGWrx5YLstlnRWCUchdrLw/hu1MXTlitnV3hDyaCnDt
+	 MlW03w20sCD+5MGzOGdiN9XkuXGxb/Ze1oo376ds=
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Subject: [PATCH v4 0/4] ADP5585 GPIO expander, PWM and keypad controller support
+Date: Sat,  8 Jun 2024 17:16:29 +0300
+Message-ID: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dd486a95-b7e8-5760-9ff1-7e9c1cfc9873@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Sat, Jun 08, 2024 at 02:34:47PM +0800, Li Nan wrote:
-> 
-> 
-> 在 2024/6/6 17:52, Ming Lei 写道:
-> > On Thu, Jun 06, 2024 at 04:05:33PM +0800, Li Nan wrote:
-> > > 
-> > > 
-> > > 在 2024/6/6 12:48, Changhui Zhong 写道:
-> > > 
-> > > [...]
-> > > 
-> > > > > 
-> > > > > Hi Changhui,
-> > > > > 
-> > > > > The hang is actually expected because recovery fails.
-> > > > > 
-> > > > > Please pull the latest ublksrv and check if the issue can still be
-> > > > > reproduced:
-> > > > > 
-> > > > > https://github.com/ublk-org/ublksrv
-> > > > > 
-> > > > > BTW, one ublksrv segfault and two test cleanup issues are fixed.
-> > > > > 
-> > > > > Thanks,
-> > > > > Ming
-> > > > > 
-> > > > 
-> > > > Hi,Ming and Nan
-> > > > 
-> > > > after applying the new patch and pulling the latest ublksrv,
-> > > > I ran the test for 4 hours and did not observe any task hang.
-> > > > the test results looks good！
-> > > > 
-> > > > Thanks，
-> > > > Changhui
-> > > > 
-> > > > 
-> > > > .
-> > > 
-> > > Thanks for you test!
-> > > 
-> > > However, I got a NULL pointer dereference bug with ublksrv. It is not
-> > 
-> > BTW, your patch isn't related with generic/004 which won't touch
-> > recovery code path.
-> > 
-> > > introduced by this patch. It seems io was issued after deleting disk. And
-> > > it can be reproduced by:
-> > > 
-> > >    while true; do make test T=generic/004; done
-> > 
-> > We didn't see that when running such test with linus tree, and usually
-> > Changhui run generic test for hours.
-> > 
-> > > 
-> > > [ 1524.286485] running generic/004
-> > > [ 1529.110875] blk_print_req_error: 109 callbacks suppressed
-> > ...
-> > > [ 1541.171010] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> > > [ 1541.171734] #PF: supervisor write access in kernel mode
-> > > [ 1541.172271] #PF: error_code(0x0002) - not-present page
-> > > [ 1541.172798] PGD 0 P4D 0
-> > > [ 1541.173065] Oops: Oops: 0002 [#1] PREEMPT SMP
-> > > [ 1541.173515] CPU: 0 PID: 43707 Comm: ublk Not tainted
-> > > 6.9.0-next-20240523-00004-g9bc7e95c7323 #454
-> > > [ 1541.174417] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> > > 1.16.1-2.fc37 04/01/2014
-> > > [ 1541.175311] RIP: 0010:io_fallback_tw+0x252/0x300
-> > 
-> > This one looks one io_uring issue.
-> > 
-> > Care to provide which line of source code points to by 'io_fallback_tw+0x252'?
-> > 
-> > gdb> l *(io_fallback_tw+0x252)
-> > 
-> (gdb) list * io_fallback_tw+0x252
-> 0xffffffff81d79dc2 is in io_fallback_tw
-> (./arch/x86/include/asm/atomic64_64.h:25).
-> 20              __WRITE_ONCE(v->counter, i);
-> 21      }
-> 22
-> 23      static __always_inline void arch_atomic64_add(s64 i, atomic64_t *v)
-> 24      {
-> 25              asm volatile(LOCK_PREFIX "addq %1,%0"
-> 26                           : "=m" (v->counter)
-> 27                           : "er" (i), "m" (v->counter) : "memory");
-> 28      }
-> 
-> The corresponding code is:
-> io_fallback_tw
->   percpu_ref_get(&last_ctx->refs);
+Hello,
 
-[ 1541.171010] BUG: kernel NULL pointer dereference, address: 0000000000000000
-...
-[ 1541.175311] RIP: 0010:io_fallback_tw+0x252/0x300
+This patch series introduces support for the Analog Devices ADP5585, a
+GPIO expander, PWM and keyboard controller. It models the chip as an MFD
+device, and includes DT bindings (1/4), an MFD driver (2/4) and drivers
+for the GPIO (3/4) and PWM (4/4) functions.
 
-So looks the 'struct io_ring_ctx' instance is freed and ctx->refs.data
-becomes NULL when calling percpu_ref_get(&last_ctx->refs), not clear how
-it can happen since request grabs one ctx reference.
+Support for the keypad controller is left out, as I have no means to
+test it at the moment. The chip also includes a tiny reset controller,
+as well as a 3-bit input programmable logic block, which I haven't tried
+to support (and also have no means to test).
 
-Maybe you can try kasan and see if more useful info can be dumped.
+The driver is based on an initial version from the NXP BSP kernel, then
+extensively and nearly completely rewritten, with added DT bindings. I
+have nonetheless retained original authorship. Clark, Haibo, if you
+would prefer not being credited and/or listed as authors, please let me
+know.
 
-> 
-> I have the vmcore of this issue. If you have any other needs, please let me
-> know.
+Compared to v3, this version addresses small review comments. I believe
+it is ready to go, pending another review of the PWM side (Uwe reviewed
+a previous version, and to the best of my knowledge, I've addressed all
+his concerns) and the MFD driver. Once the PWM driver gets reviewed, I
+think the simplest course of action is to merge the whole series through
+the MFD tree.
 
-Not try remote vmcore debug yet, will think further if any useful hint
-is needed.
+Clark Wang (1):
+  pwm: adp5585: Add Analog Devices ADP5585 support
 
-> The space of the root path has been filled up by
-> ublksrv(tests/tmpublk_loop_data_xxx), which may the issue be related to this?
+Haibo Chen (2):
+  mfd: adp5585: Add Analog Devices ADP5585 core support
+  gpio: adp5585: Add Analog Devices ADP5585 support
 
-It isn't supposed to be related, since the backing loop image is created by dd
-and it isn't sparse image, and the test runs fio over ublk block
-device only.
+Laurent Pinchart (1):
+  dt-bindings: mfd: Add Analog Devices ADP5585
 
-Thanks,
-Ming
+ .../devicetree/bindings/mfd/adi,adp5585.yaml  |  90 +++++++
+ .../devicetree/bindings/trivial-devices.yaml  |   4 -
+ MAINTAINERS                                   |  11 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-adp5585.c                   | 231 ++++++++++++++++++
+ drivers/mfd/Kconfig                           |  12 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/adp5585.c                         | 199 +++++++++++++++
+ drivers/pwm/Kconfig                           |   7 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-adp5585.c                     | 189 ++++++++++++++
+ include/linux/mfd/adp5585.h                   | 126 ++++++++++
+ 13 files changed, 875 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+ create mode 100644 drivers/gpio/gpio-adp5585.c
+ create mode 100644 drivers/mfd/adp5585.c
+ create mode 100644 drivers/pwm/pwm-adp5585.c
+ create mode 100644 include/linux/mfd/adp5585.h
+
+
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+-- 
+Regards,
+
+Laurent Pinchart
 
 
