@@ -1,276 +1,167 @@
-Return-Path: <linux-kernel+bounces-206886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8CC900F4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 05:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFA3900F50
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 05:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE55EB232EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF331C2116E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDBCE56C;
-	Sat,  8 Jun 2024 03:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B5BE56C;
+	Sat,  8 Jun 2024 03:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nR+7qnKn"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C1qFFM8B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B54C13D
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 03:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65D8BE58;
+	Sat,  8 Jun 2024 03:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717816047; cv=none; b=d484xQbFEc5oY3HKPS5wOpCrxiw3M5aftDI0hDAFF5tNfF/h1mVT/NxDUlCoesTCG9x3+8HFIfmM0beqR47bfgMF2sFrSPUS94jCJx01NVcc4KhSw1RNolv+pZM9dO5PSh/04/ZBjTe0Z3mNd8hJFsEjrN/m8E4L9xWKkzZSlsE=
+	t=1717816808; cv=none; b=Cd4rt30nIJNjbVWPs2sbKPROw7+kVyt+ZNFp1QlrYHzbLUv0wflMtbjmc01swki1ku0uCUcR5tOi/c7aZ+Nnq4LU1P4vZcwXbqjdT4MIr5p9k87kKPGtQtRC2nDK68QNesA3oUpXliXARWrk6dMJihfRgrS9fcZP2W2GPdLV7oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717816047; c=relaxed/simple;
-	bh=YCObB8/eNnw7bH9wygFij4MX3iWIIHfFl8zrZ541hJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvH6X1l5YojhzbYldMCIC9byr7GI+a9VsyqH9aaBCUGkz62vU9twIPdlHCweaGAUi99GkHgqgtnWK0syTgQmp4oKgCsBIyDMf0JusiNhlKtWc6CslzYoCkd/21dF9JjLNBVcB+BEWTSl+oskf6D04zGbDDwtjoxCbVMbRzaBNtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nR+7qnKn; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 19FD33F690
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 03:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717816043;
-	bh=SV2i825P+LfRV4oSqK4GX2whZN31Ww/kuL3Go7+NkF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=nR+7qnKn5UxNYS8M4Yoq/T6FrVbUdCtO7pj/gyulJlQ6A8jONscDj3G91AE6rGxjP
-	 AhPD7FdpOmfb1lNKVgWsLTP2Td1hgSnB6IRcn6v1DeahpZYfssGAW27XUhzWUNlv/i
-	 e0rPL3l25t2Z7mN+nOnPR83vO+NTP7gbvVQkXzZDFqRVAgAsBK8mbpKGnqsosETBBf
-	 GGFiGivobLut26qfKVqvz7P0UVXll5YnXNjQe8gzhGL+DJ9Bcm7Rm2qNTEvvjn5Sgy
-	 za3Z1tOsg5arU/Lb1Du4lSrkjeanXdjo0m+sk3Svb3h41Wtg+vVEH6H5zg5/TywK4u
-	 wD69wjrcAXVtQ==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a68f824c3b4so200042066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 20:07:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717816042; x=1718420842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SV2i825P+LfRV4oSqK4GX2whZN31Ww/kuL3Go7+NkF0=;
-        b=a8HOe2eHtN99D33z+yfB5pmSCYS281VdsCv+IcEcQ/TbqiPcE+dPJbgkPUsuj7xNIk
-         eBoNUFKMekw90jJbByKja4CDBvjLtoI3dFNEjzhRk6sj9Xt1/yoF6MSTqjRnBe2fNF1T
-         E4PCEBwe4wY3b93z32sHdTXcrYo57XffntiY5LdHzmpp8K+RH0ZGIhpCJDLDykSy2IaX
-         piiXjcR8J1IJa8ab/zSY3+jIbE+yL2h4UopM1uVTT2JT1nm7lZyKoPaqMupOEjAE06nF
-         AksdtPJYOausVYugd1KJqzlMYeyNY8CYYXKA5q5GmGO/ZMfF9qyR3czdXhCDFWCjWn8+
-         gQ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDjP0PcfG8ATK8XWmrPl6eIw04xlzorQuRNdlqU34KINSWekfx6deX8HJ427Bg6u7CieX1CwDC+i5xudVwfWofJmuunwb1lXVEEj9Z
-X-Gm-Message-State: AOJu0Ywa/OhshP6uIOXpx+FHJC1Dov5XTr1TYRsa5h9JvBVW1luFFqY5
-	fY4KIHjsv9UFApWiP6YN0xUYyFL6FJmPy+Ffh0UsAT0ZwolVrd8hWsGDyvkC+iRMxME++y37nNp
-	MtNA01Ag2ZgkQjiLeAM+82SaVRss6eFjwmvfcrd/XfcmjlBi2vw6RZzEeYrUt5f7pf22srY4NfC
-	vlTA+/2NFEgIkn0PclnFtziMSzEAJc9XgpNM7cdBE7BflDJlVHvM5r
-X-Received: by 2002:a17:906:1b03:b0:a64:7c8d:96ed with SMTP id a640c23a62f3a-a6cda9ed2f0mr323316266b.54.1717816042188;
-        Fri, 07 Jun 2024 20:07:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHXue1qIPWNKzwrSpiUjmwLUVDiz56tiuygGsbdv/rhDZomoHAj8NYz164W5Sz75yNVDi9rmfP6Lri0MY9Uv2M=
-X-Received: by 2002:a17:906:1b03:b0:a64:7c8d:96ed with SMTP id
- a640c23a62f3a-a6cda9ed2f0mr323313866b.54.1717816041518; Fri, 07 Jun 2024
- 20:07:21 -0700 (PDT)
+	s=arc-20240116; t=1717816808; c=relaxed/simple;
+	bh=N/QluFsTPdH4ayiBRNRvi3l+pA83DLYnSdfF/2R5R6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZX8d9X7gAcH49dHzRyi4rk0YxzvOaN9JBtgE12OOfXzS1D+vBeS5tg+rYjGKRbEgY3YH1JfDcD7c0NUsl1M6BzEb7tq0eD/P3BtM+diWv2z5slyfnOeJhDtYvM2XnqvRzHwBivE0WGc8GIQ1nOxyN6EUWeuGs7TwuWKaRdaUoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C1qFFM8B; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717816807; x=1749352807;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N/QluFsTPdH4ayiBRNRvi3l+pA83DLYnSdfF/2R5R6o=;
+  b=C1qFFM8BYpUEkBtPeZJpDVrwxawCoLUQwbkQhl1n4vfl9JhSr/gOzW9f
+   AgdymqRlaAfdjNZgU2zQfwTruJjhLqWw7WwwrcwREWML89hws/MsLTNj5
+   xZJBFJ6u+561svetTcyn3woFvYW7brTxVPDW6CfZCbPnO6zXniorWFx45
+   YyjS0TWqWUqMbUlY8zy6QxVTAb7wZvdS9/YJtQa0125L9dfMWZQmP2/wg
+   gTcZKzPdxJ3MNRWaGF18pG7et4qFt1HLDCJ8RhmP7q4/Fy5x25CZW4esw
+   I/vTM+TsNfyxeYn6sDtvC9Ee+V6G+nmqlMnbvx6OqtPY3dMUB2eixNpMV
+   A==;
+X-CSE-ConnectionGUID: JNDtfm+jRo2WW27boKXK7Q==
+X-CSE-MsgGUID: LrZJ6gM7TRqwWAZGtJLtcA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25958582"
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="25958582"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 20:20:06 -0700
+X-CSE-ConnectionGUID: 6bfyl3EAQpKRc9QPgfPO4A==
+X-CSE-MsgGUID: hte8po7PTFa71It/m8pO9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="38597428"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 07 Jun 2024 20:20:02 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFmcZ-0000uA-2K;
+	Sat, 08 Jun 2024 03:19:59 +0000
+Date: Sat, 8 Jun 2024 11:19:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	andy.shevchenko@gmail.com, lars@metafoo.de,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nuno.a@analog.com, swboyd@chromium.org,
+	u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com,
+	yasin.lee.x@outlook.com
+Subject: Re: [PATCH v4 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor
+ driver
+Message-ID: <202406081148.j9y5W5Ru-lkp@intel.com>
+References: <SN7PR12MB81017291E79E6B61A8DEC9A5A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608025347.90680-1-chengen.du@canonical.com>
-In-Reply-To: <20240608025347.90680-1-chengen.du@canonical.com>
-From: Chengen Du <chengen.du@canonical.com>
-Date: Sat, 8 Jun 2024 11:07:10 +0800
-Message-ID: <CAPza5qfuNhDbhV9mau9RE=cNKMwGtJcx4pmjkoHNwpfysnw5yw@mail.gmail.com>
-Subject: Re: [PATCH v6] af_packet: Handle outgoing VLAN packets without
- hardware offloading
-To: willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, kaber@trash.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN7PR12MB81017291E79E6B61A8DEC9A5A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
 
-Hi,
+Hi Yasin,
 
-I would like to provide some additional explanations about the patch.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Sat, Jun 8, 2024 at 10:54=E2=80=AFAM Chengen Du <chengen.du@canonical.co=
-m> wrote:
->
-> The issue initially stems from libpcap. The ethertype will be overwritten
-> as the VLAN TPID if the network interface lacks hardware VLAN offloading.
-> In the outbound packet path, if hardware VLAN offloading is unavailable,
-> the VLAN tag is inserted into the payload but then cleared from the sk_bu=
-ff
-> struct. Consequently, this can lead to a false negative when checking for
-> the presence of a VLAN tag, causing the packet sniffing outcome to lack
-> VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
-> tool may be unable to parse packets as expected.
->
-> The TCI-TPID is missing because the prb_fill_vlan_info() function does no=
-t
-> modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
-> payload and not in the sk_buff struct. The skb_vlan_tag_present() functio=
-n
-> only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
-> is stripped, preventing the packet capturing tool from determining the
-> correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
-> which means the packet capturing tool cannot parse the L3 header correctl=
-y.
->
-> Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
-> Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@ca=
-nonical.com/T/#u
-> Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chengen Du <chengen.du@canonical.com>
-> ---
->  net/packet/af_packet.c | 57 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 55 insertions(+), 2 deletions(-)
->
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index ea3ebc160e25..8cffbe1f912d 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -538,6 +538,43 @@ static void *packet_current_frame(struct packet_sock=
- *po,
->         return packet_lookup_frame(po, rb, rb->head, status);
->  }
->
-> +static u16 vlan_get_tci(struct sk_buff *skb)
-> +{
-> +       struct vlan_hdr vhdr, *vh;
-> +       u8 *skb_orig_data =3D skb->data;
-> +       int skb_orig_len =3D skb->len;
-> +
-> +       skb_push(skb, skb->data - skb_mac_header(skb));
-> +       vh =3D skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
-> +       if (skb_orig_data !=3D skb->data) {
-> +               skb->data =3D skb_orig_data;
-> +               skb->len =3D skb_orig_len;
-> +       }
+url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9023s-Add-TYHX-HX9023S-sensor-driver/20240607-194446
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/SN7PR12MB81017291E79E6B61A8DEC9A5A4FB2%40SN7PR12MB8101.namprd12.prod.outlook.com
+patch subject: [PATCH v4 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240608/202406081148.j9y5W5Ru-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081148.j9y5W5Ru-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406081148.j9y5W5Ru-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/proximity/hx9023s.c:666:58: warning: variable 'i' is uninitialized when used here [-Wuninitialized]
+     666 |                                         "Failed to read channel-positive for channel %d\n", i);
+         |                                                                                             ^
+   drivers/iio/proximity/hx9023s.c:652:12: note: initialize the variable 'i' to silence this warning
+     652 |         int ret, i;
+         |                   ^
+         |                    = 0
+   drivers/iio/proximity/hx9023s.c:976:25: warning: variable 'i' is uninitialized when used here [-Wuninitialized]
+     976 |                 data->buffer.channels[i++] =
+         |                                       ^
+   drivers/iio/proximity/hx9023s.c:969:7: note: initialize the variable 'i' to silence this warning
+     969 |         int i;
+         |              ^
+         |               = 0
+   2 warnings generated.
 
 
-The reason for not directly using skb_header_pointer(skb,
-skb_mac_header(skb) + ETH_HLEN, ...) to get the VLAN header is due to
-the check logic in skb_header_pointer. In the SOCK_DGRAM and
-PACKET_OUTGOING scenarios, the offset can be a negative number, which
-causes the check logic (i.e., likely(hlen - offset >=3D len)) in
-__skb_header_pointer() to not work as expected.
+vim +/i +666 drivers/iio/proximity/hx9023s.c
 
-While it is possible to modify __skb_header_pointer() to handle cases
-where the offset is negative, this change could affect a wider range
-of code.
+   649	
+   650	static int hx9023s_property_get(struct hx9023s_data *data)
+   651	{
+   652		int ret, i;
+   653		u32 temp;
+   654		struct fwnode_handle *child;
+   655		struct device *dev = regmap_get_device(data->regmap);
+   656	
+   657		ret = device_property_read_u32(dev, "channel-in-use", &temp);
+   658		if (ret)
+   659			return dev_err_probe(dev, ret, "Failed to read channel-in-use property\n");
+   660		data->chan_in_use = temp;
+   661	
+   662		device_for_each_child_node(dev, child) {
+   663			ret = fwnode_property_read_u32(child, "channel-positive", &temp);
+   664			if (ret)
+   665				return dev_err_probe(dev, ret,
+ > 666						"Failed to read channel-positive for channel %d\n", i);
+   667			data->ch_data[i].channel_positive = temp;
+   668	
+   669			ret = fwnode_property_read_u32(child, "channel-negative", &temp);
+   670			if (ret)
+   671				return dev_err_probe(dev, ret,
+   672						"Failed to read channel-negative for channel %d\n", i);
+   673			data->ch_data[i].channel_negative = temp;
+   674	
+   675			i++;
+   676		}
+   677	
+   678		return 0;
+   679	}
+   680	
 
-Please kindly share your thoughts on this approach.
-
-
-> +       if (unlikely(!vh))
-> +               return 0;
-> +
-> +       return ntohs(vh->h_vlan_TCI);
-> +}
-> +
-> +static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
-> +{
-> +       __be16 proto =3D skb->protocol;
-> +
-> +       if (unlikely(eth_type_vlan(proto))) {
-> +               u8 *skb_orig_data =3D skb->data;
-> +               int skb_orig_len =3D skb->len;
-> +
-> +               skb_push(skb, skb->data - skb_mac_header(skb));
-> +               proto =3D __vlan_get_protocol(skb, proto, NULL);
-> +               if (skb_orig_data !=3D skb->data) {
-> +                       skb->data =3D skb_orig_data;
-> +                       skb->len =3D skb_orig_len;
-> +               }
-> +       }
-> +
-> +       return proto;
-> +}
-> +
->  static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
->  {
->         del_timer_sync(&pkc->retire_blk_timer);
-> @@ -1007,10 +1044,16 @@ static void prb_clear_rxhash(struct tpacket_kbdq_=
-core *pkc,
->  static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
->                         struct tpacket3_hdr *ppd)
->  {
-> +       struct packet_sock *po =3D container_of(pkc, struct packet_sock, =
-rx_ring.prb_bdqc);
-> +
->         if (skb_vlan_tag_present(pkc->skb)) {
->                 ppd->hv1.tp_vlan_tci =3D skb_vlan_tag_get(pkc->skb);
->                 ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->vlan_proto);
->                 ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_=
-TPID_VALID;
-> +       } else if (unlikely(po->sk.sk_type =3D=3D SOCK_DGRAM && eth_type_=
-vlan(pkc->skb->protocol))) {
-> +               ppd->hv1.tp_vlan_tci =3D vlan_get_tci(pkc->skb);
-> +               ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->protocol);
-> +               ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_=
-TPID_VALID;
->         } else {
->                 ppd->hv1.tp_vlan_tci =3D 0;
->                 ppd->hv1.tp_vlan_tpid =3D 0;
-> @@ -2428,6 +2471,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct=
- net_device *dev,
->                         h.h2->tp_vlan_tci =3D skb_vlan_tag_get(skb);
->                         h.h2->tp_vlan_tpid =3D ntohs(skb->vlan_proto);
->                         status |=3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN=
-_TPID_VALID;
-> +               } else if (unlikely(sk->sk_type =3D=3D SOCK_DGRAM && eth_=
-type_vlan(skb->protocol))) {
-> +                       h.h2->tp_vlan_tci =3D vlan_get_tci(skb);
-> +                       h.h2->tp_vlan_tpid =3D ntohs(skb->protocol);
-> +                       status |=3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN=
-_TPID_VALID;
->                 } else {
->                         h.h2->tp_vlan_tci =3D 0;
->                         h.h2->tp_vlan_tpid =3D 0;
-> @@ -2457,7 +2504,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct =
-net_device *dev,
->         sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
->         sll->sll_family =3D AF_PACKET;
->         sll->sll_hatype =3D dev->type;
-> -       sll->sll_protocol =3D skb->protocol;
-> +       sll->sll_protocol =3D (sk->sk_type =3D=3D SOCK_DGRAM) ?
-> +               vlan_get_protocol_dgram(skb) : skb->protocol;
->         sll->sll_pkttype =3D skb->pkt_type;
->         if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
->                 sll->sll_ifindex =3D orig_dev->ifindex;
-> @@ -3482,7 +3530,8 @@ static int packet_recvmsg(struct socket *sock, stru=
-ct msghdr *msg, size_t len,
->                 /* Original length was stored in sockaddr_ll fields */
->                 origlen =3D PACKET_SKB_CB(skb)->sa.origlen;
->                 sll->sll_family =3D AF_PACKET;
-> -               sll->sll_protocol =3D skb->protocol;
-> +               sll->sll_protocol =3D (sock->type =3D=3D SOCK_DGRAM) ?
-> +                       vlan_get_protocol_dgram(skb) : skb->protocol;
->         }
->
->         sock_recv_cmsgs(msg, sk, skb);
-> @@ -3539,6 +3588,10 @@ static int packet_recvmsg(struct socket *sock, str=
-uct msghdr *msg, size_t len,
->                         aux.tp_vlan_tci =3D skb_vlan_tag_get(skb);
->                         aux.tp_vlan_tpid =3D ntohs(skb->vlan_proto);
->                         aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
-> +               } else if (unlikely(sock->type =3D=3D SOCK_DGRAM && eth_t=
-ype_vlan(skb->protocol))) {
-> +                       aux.tp_vlan_tci =3D vlan_get_tci(skb);
-> +                       aux.tp_vlan_tpid =3D ntohs(skb->protocol);
-> +                       aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
->                 } else {
->                         aux.tp_vlan_tci =3D 0;
->                         aux.tp_vlan_tpid =3D 0;
-> --
-> 2.43.0
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
