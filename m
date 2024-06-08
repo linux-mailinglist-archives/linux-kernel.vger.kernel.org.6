@@ -1,189 +1,171 @@
-Return-Path: <linux-kernel+bounces-206981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B589010F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131749010F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 464A6B230F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3091F220CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E00178382;
-	Sat,  8 Jun 2024 09:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E99D176ADA;
+	Sat,  8 Jun 2024 09:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fw+w9GB1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDOqJQTi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396C5178380;
-	Sat,  8 Jun 2024 09:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF4433AD
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717837331; cv=none; b=JJNQCZOBQoZeVVJ3Az+uqJsIpqf7FZa4iKW2yk7+/+/cfUB4ec446i8kpTi8eA89ytbDwuang8VypIpb5Rem0V/H4B3gABH3b8oohqkdDvZKU97WT0QmrR8IjJ0w4hScsrC/QYNpTRKKw0Q+wp+9l1YWycgCtXCyJRbIDxbBiVY=
+	t=1717837721; cv=none; b=FQlPvuJv2RJZVKDI1S5gHogf1pe94fWBqPXhCYBHC6J2pas4Sje7fIyFo+Tgl1+7Gg/2zblrVYUU88YzizD0v1tWJmZrfYnWuuiknCseNYKkiRv44NNrEA8M6tWFkXXXRodRlGJB3gXpGhViYZ6M10JXLczuo8BepF46H/NvRUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717837331; c=relaxed/simple;
-	bh=pn6sRt29wjeooIZHAWfVIge2Odfg9sfeFnnF7t2PQuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XppbbWg0Ns2Qa5HRC2tN8MiUBKrRnQGNE7WKoVlNV2dTuz++pTYjgqn9hFTHyeDwGk9StL7MgEyDf/nb+Xvo4DALImofCWnUtcRlQfa/hCQuvtkWmwogY/ue7gGi03wOGfBpfhb1kACDYxV61mcaDZgbttFlL7gxrExD8I4f2ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fw+w9GB1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA99C3277B;
-	Sat,  8 Jun 2024 09:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717837331;
-	bh=pn6sRt29wjeooIZHAWfVIge2Odfg9sfeFnnF7t2PQuk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fw+w9GB1UmC8TQLf64V1fuur1RM2TjOW/V8lr4NXyEn6EUHIfKYiNfhRMmFPDKmP+
-	 dVge0rIhzSrAw6QofLByJrE/cNLWbUXA32ccna84Yq6XMoIKpkSLMFm/FRRCRLL5xt
-	 BI0LQixNhmeqlU2UP/zxrcwYi2RRk9AUZ3wuLPbwKSa6NPQi/j+zSMcvtUrrZq7o4Y
-	 gW1dHg41ja/7I0eG0rBvW9kIV8U7WVUYdLs5wjOTxY4C6AnJxY/jt43JknorAADdj3
-	 DkzGwbkBRu+j3P0B8NQCLODsqiMLaQ75cXph3YBq9OzU+RXsunrCiKLVIVnXZutifq
-	 H4Sav7rFkWzTg==
-Date: Sat, 8 Jun 2024 14:31:52 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Jianjun Wang <jianjun.wang@mediatek.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	jieyy.yang@mediatek.com, chuanjia.liu@mediatek.com,
-	qizhong.cheng@mediatek.com, jian.yang@mediatek.com,
-	jianguo.zhang@mediatek.com
-Subject: Re: [PATCH v2 1/3] PCI: mediatek: Allocate MSI address with
- dmam_alloc_coherent()
-Message-ID: <20240608090152.GB3282@thinkpad>
-References: <20231211085256.31292-1-jianjun.wang@mediatek.com>
- <20231211085256.31292-2-jianjun.wang@mediatek.com>
+	s=arc-20240116; t=1717837721; c=relaxed/simple;
+	bh=GIRP//dzab7VaRyBtp8xO96ILd6erraF5mLo9wV+U8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQltW0n1eK+LBPSFkTVtwTakje5Gab3TNoa7DozxAtx928f6zGWfW7YB9jBRYAeMwUK+b369eB+sDkyPQrDVQ3UXbN4mCjLdnVZFjwU01OwHETiy6TR1rAs81UtAZ38IJ0HMJf4Z68i0pRCnpAa7Oc8GCelKPpdY53zcxTUy9Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDOqJQTi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717837719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=asBlPx5Iz1CExNOh704ZiH+RVcx5UXxHaSGLztsg/bI=;
+	b=VDOqJQTi/Qid1Yx4l2eQe8VI1NWyST3V8cq3p7/Lq54EScEwRqnQgaVBtN5xrbrfED7L64
+	OwO8X1RDmflbeNOQp119G+YnLB11Fobq2ZkLX4OElc2+taT8mxpvOGpV+aHraXhHM0k5gX
+	Uv6CmhO8g6mhVVha4zku2rzFdMlU6hk=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-a_7bD83CPi6pmMl8wjUp4w-1; Sat, 08 Jun 2024 05:08:36 -0400
+X-MC-Unique: a_7bD83CPi6pmMl8wjUp4w-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-701c82dadc6so2741665b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 02:08:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717837716; x=1718442516;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=asBlPx5Iz1CExNOh704ZiH+RVcx5UXxHaSGLztsg/bI=;
+        b=AOxSoQVWGtCGozxxUo/V5etPRRWBE+qyg3cI74zGAyhpB81ANDCngf6JGm+x2IAmfz
+         BoVLXin3mi7mjYaNCqwcTO/CA5ukseHVMU6UIAKeQTzhIF+U1COBstH4KkO0rl1a4+lG
+         Ak6vr/tWKQBLz84Flk6b6+3vXS5EqT1THBdGL279zHrs510izjwz1VPXCXuU6EnlNyaM
+         sdQmlzTUHh0V9ibA2W8xTrtE83/vkug/V9txg7So+gnVt7tzCbO1cTFDJVWC4i7FlGEb
+         Q3pj6U3n8UPeQL+IgDPrkgwvc8DX0B1pJsdBTGIUR6zyVjrQZWt9NMjnkz/y4bzA4dGD
+         reUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQTS2+qSBiSHXrRN2tQ8CZwvlePy7TqT8vVMXbh6WmWjXDE4zu5l/8ph3IdXCbLi56oH1I7BTJiEHglG7ew71OQpKdTP3yzzr70UKU
+X-Gm-Message-State: AOJu0YycNeKOIQeASP+mLPQmcE6LczH3E1KC3SeS2gIn9gR8Bo6P+EKq
+	YJmS8jEqii9obxjlMyzIasWiIF9OXb/qpctpl/H6NnRIopIJxYAm4quvMpsFBhX5ylGHbrus7pi
+	XvnnJBYNOza9EIFDeP+WKoTXggCAs5Fk0ZxDw9jMZMk8Oegynp/4C9sDJ02QJe9vk6YaneEJEDH
+	Fh8L6BDo4uIedWpct0oEmoWb7XNBIRCYF7cCqR
+X-Received: by 2002:a05:6a20:9708:b0:1b0:18d1:c46c with SMTP id adf61e73a8af0-1b2f9aaf538mr3497919637.27.1717837715780;
+        Sat, 08 Jun 2024 02:08:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsJMcYnCoDb0lbi+a8iMAYVK1/qeH4UoRjYuS06qHskAR4MrsrwIZYHaOUAAPtSqtyfWoiQOMm7faTY2oZNZE=
+X-Received: by 2002:a05:6a20:9708:b0:1b0:18d1:c46c with SMTP id
+ adf61e73a8af0-1b2f9aaf538mr3497906637.27.1717837715440; Sat, 08 Jun 2024
+ 02:08:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231211085256.31292-2-jianjun.wang@mediatek.com>
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com>
+ <20240530210714.364118-7-rick.p.edgecombe@intel.com> <CABgObfZuv45Bphz=VLCO4AF=W+iQbmMbNVk4Q0CAsVd+sqfJLw@mail.gmail.com>
+ <9423e6b83523c0a3828a88f38ffc3275a08e11dd.camel@intel.com>
+In-Reply-To: <9423e6b83523c0a3828a88f38ffc3275a08e11dd.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sat, 8 Jun 2024 11:08:21 +0200
+Message-ID: <CABgObfbGeMoKKEMwY6108Z5UT1y=NzRhg-oBC-jpEpugD5_=Mg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/15] KVM: x86/mmu: Support GFN direct mask
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Aktas, Erdem" <erdemaktas@google.com>, 
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 11, 2023 at 04:52:54PM +0800, Jianjun Wang wrote:
-> Use dmam_alloc_coherent() to allocate the MSI address, instead of using
-> virt_to_phys().
-> 
+On Fri, Jun 7, 2024 at 8:39=E2=80=AFPM Edgecombe, Rick P
+<rick.p.edgecombe@intel.com> wrote:
+> > I think the code need not check kvm_gfn_direct_mask() here? In the old
+> > patches that I have it check kvm_gfn_direct_mask() in the vmx/main.c
+> > callback.
+>
+> You mean a VMX/TDX implementation of flush_remote_tlbs_range that just re=
+turns
+> -EOPNOTSUPP? Which version of the patches is this? I couldn't find anythi=
+ng like
+> that.
 
-What is the reason for this change? So now PCIE_MSI_VECTOR becomes unused?
+Something from Intel's GitHub, roughly June 2023... Looking at the
+whole history, it starts with
 
-- Mani
+     if (!kvm_x86_ops.flush_remote_tlbs_range)
+         return -EOPNOTSUPP;
 
-> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index 66a8f73296fc..2fb9e44369f8 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -178,6 +178,7 @@ struct mtk_pcie_soc {
->   * @phy: pointer to PHY control block
->   * @slot: port slot
->   * @irq: GIC irq
-> + * @msg_addr: MSI message address
->   * @irq_domain: legacy INTx IRQ domain
->   * @inner_domain: inner IRQ domain
->   * @msi_domain: MSI IRQ domain
-> @@ -198,6 +199,7 @@ struct mtk_pcie_port {
->  	struct phy *phy;
->  	u32 slot;
->  	int irq;
-> +	dma_addr_t msg_addr;
->  	struct irq_domain *irq_domain;
->  	struct irq_domain *inner_domain;
->  	struct irq_domain *msi_domain;
-> @@ -394,12 +396,10 @@ static struct pci_ops mtk_pcie_ops_v2 = {
->  static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
->  {
->  	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
-> -	phys_addr_t addr;
->  
->  	/* MT2712/MT7622 only support 32-bit MSI addresses */
-> -	addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
->  	msg->address_hi = 0;
-> -	msg->address_lo = lower_32_bits(addr);
-> +	msg->address_lo = lower_32_bits(port->msg_addr);
->  
->  	msg->data = data->hwirq;
->  
-> @@ -494,6 +494,14 @@ static struct msi_domain_info mtk_msi_domain_info = {
->  static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
->  {
->  	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
-> +	void *msi_vaddr;
-> +
-> +	msi_vaddr = dmam_alloc_coherent(port->pcie->dev, sizeof(dma_addr_t), &port->msg_addr,
-> +					GFP_KERNEL);
-> +	if (!msi_vaddr) {
-> +		dev_err(port->pcie->dev, "failed to alloc and map MSI address\n");
-> +		return -ENOMEM;
-> +	}
->  
->  	mutex_init(&port->lock);
->  
-> @@ -501,6 +509,7 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
->  						      &msi_domain_ops, port);
->  	if (!port->inner_domain) {
->  		dev_err(port->pcie->dev, "failed to create IRQ domain\n");
-> +		dmam_free_coherent(port->pcie->dev, sizeof(dma_addr_t), msi_vaddr, port->msg_addr);
->  		return -ENOMEM;
->  	}
->  
-> @@ -508,6 +517,7 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
->  						     port->inner_domain);
->  	if (!port->msi_domain) {
->  		dev_err(port->pcie->dev, "failed to create MSI domain\n");
-> +		dmam_free_coherent(port->pcie->dev, sizeof(dma_addr_t), msi_vaddr, port->msg_addr);
->  		irq_domain_remove(port->inner_domain);
->  		return -ENOMEM;
->  	}
-> @@ -518,10 +528,8 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
->  static void mtk_pcie_enable_msi(struct mtk_pcie_port *port)
->  {
->  	u32 val;
-> -	phys_addr_t msg_addr;
->  
-> -	msg_addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
-> -	val = lower_32_bits(msg_addr);
-> +	val = lower_32_bits(port->msg_addr);
->  	writel(val, port->base + PCIE_IMSI_ADDR);
->  
->  	val = readl(port->base + PCIE_INT_MASK);
-> @@ -588,7 +596,7 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
->  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->  		ret = mtk_pcie_allocate_msi_domains(port);
->  		if (ret)
-> -			return ret;
-> +			dev_warn(dev, "no MSI supported, only INTx available\n");
->  	}
->  
->  	return 0;
-> @@ -732,7 +740,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  	val &= ~INTX_MASK;
->  	writel(val, port->base + PCIE_INT_MASK);
->  
-> -	if (IS_ENABLED(CONFIG_PCI_MSI))
-> +	if (IS_ENABLED(CONFIG_PCI_MSI) && port->msi_domain)
->  		mtk_pcie_enable_msi(port);
->  
->  	/* Set AHB to PCIe translation windows */
-> -- 
-> 2.18.0
-> 
-> 
+     return static_call(kvm_x86_flush_remote_tlbs_range)(kvm, gfn, nr_pages=
+);
 
--- 
-மணிவண்ணன் சதாசிவம்
+and it only assigns the callback in vmx.c (not main.c); then it adds
+an implementation of the callback for TDX that has:
+
+static int vt_flush_remote_tlbs_range(struct kvm *kvm, gfn_t gfn,
+gfn_t nr_pages)
+{
+        if (is_td(kvm))
+                return tdx_sept_flush_remote_tlbs_range(kvm, gfn, nr_pages)=
+;
+
+        /* fallback to flush_remote_tlbs method */
+        return -EOPNOTSUPP;
+}
+
+where the callback knows that it should flush both private GFN and
+shared GFN. So I didn't remember it correctly, but still there is no
+check for the presence of direct-mapping bits.
+
+> The downside would be wider distribution of the concerns for dealing with
+> multiple aliases for a GFN. Currently, the behavior to have multiple alia=
+ses is
+> implemented in core MMU code. While it's fine to pollute tdx.c with TDX s=
+pecific
+> knowledge of course, removing the handling of this corner from mmu.c migh=
+t make
+> it less understandable for non-tdx readers who are working in MMU code.
+> Basically, if a concept fits into some non-TDX abstraction like this, hav=
+ing it
+> in core code seems the better default to me.
+
+I am not sure why it's an MMU concept that "if you offset the shared
+mappings you cannot implement flush_remote_tlbs_range". It seems more
+like, you need to know what you're doing?
+
+Right now it makes no difference because you don't set the callback;
+but if you ever wanted to implement flush_remote_tlbs_range as an
+optimization you'd have to remove the condition from the "if". So it's
+better not to have it in the first place.
+
+Perhaps add a comment instead, like:
+
+     if (!kvm_x86_ops.flush_remote_tlbs_range)
+         return -EOPNOTSUPP;
+
++    /*
++     * If applicable, the callback should flush GFNs both with and without
++     * the direct-mapping bits.
++     */
+     return static_call(kvm_x86_flush_remote_tlbs_range)(kvm, gfn, nr_pages=
+);
+
+Paolo
+
 
