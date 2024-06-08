@@ -1,511 +1,154 @@
-Return-Path: <linux-kernel+bounces-207156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D949012FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:21:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528A1901300
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3CBB212FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1011F216BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C7A168B8;
-	Sat,  8 Jun 2024 17:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC828168BD;
+	Sat,  8 Jun 2024 17:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0sKb6Zh"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="QtPq22zk"
+Received: from shout12.mail.de (shout12.mail.de [62.201.172.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4019C125D5;
-	Sat,  8 Jun 2024 17:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293C2C13D;
+	Sat,  8 Jun 2024 17:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717867293; cv=none; b=hkNimqDVSUXtnaV9wThK/9rR9PJZ1qX0VgbAiWWFv4+2Oj7eQ3GxlOwTJMY+fm9RmqjcM+bt0bbt5gzyIGRbA9bwNWlwdZMdV/K9Enb+0+iz1w4Pj+x3PHo1pQWqi+sF8H2oAHgsu0ASyv0FZsxGrPY28bPivHn3vTQU3vFHg64=
+	t=1717867338; cv=none; b=huFBhNfaylP0ZpvXu4D7OVqTrdJ+PSx/bk6/Yiuyzu1icmpLSp0qsig1xztn5PTaCn9PUjr7OkwajWlq7BvARKXkS7BPnKAkwBttfowTPeMxdE9A7P2OyeN4A6D9QhlYqddQN29LUGsQa0+aB5kz/BMztBJZvvVfeRmQspJ3O8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717867293; c=relaxed/simple;
-	bh=IrdI5sjPl5asL5nWXJNR+jzbTys2w3mwkdk7TJZKmmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+uBRtMifL+45O+bgK2H3/S0hyjnDC+2cLJ/rEfh1IH1kjVKdk+6iPxuDKpVio5y93V76aqdbh6JCeHhchUFttc6RzX4GkySZzCC7wg/xS6U44Z8BiFidy3GtqkFHTuZiESag/Y4FZ2FPXkJMSofQBhmVDt3Dg+afLqBvP+ox98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0sKb6Zh; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c254d9bdd6so2725756a91.3;
-        Sat, 08 Jun 2024 10:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717867290; x=1718472090; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMy58J3QA7OYuNsqpVYU1rzQFW3lTrPyfWwmiRLgh2I=;
-        b=i0sKb6Zh4UIOIvhz2pIyGvdDzUVAzz1alb6xWhZRxkSd2Pw3cK082+Zr7fdfmHc3N5
-         suQW7hFfhcDbxf53B2ndzGVxnPjQwSuIPexL0enquQrlPlZRT9iNorG9f2/ffliiwTnA
-         auSUIBu12XrKOQWB+qBeQbn/jSzoNp8RAN8oevPAG+mEUtvbUbpJlD9bmnDeK4G7iN9G
-         R4M5hvLKH6XtfnngNiAMyCpfcX+hrCEUncYPTQt52yMZnOAzWbfR2+6kyIuv/6Pw3myA
-         wQPrmeOdwhO1pF0EOmDVrYNbGQO35geJKGQ8G8N4tEAJ75G8DM1ohAqjAiZdjdB78V3s
-         ggsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717867290; x=1718472090;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nMy58J3QA7OYuNsqpVYU1rzQFW3lTrPyfWwmiRLgh2I=;
-        b=Or84dXbOTSfesmVI1MEoIYaCgmv/vHv9CC70UBS7r0caJqilXtxvHu94q6pFeZEf7Q
-         WA/vzEUw3XSKCQmQGAeYm2N+yt83sEkG9n/dAf8qoNDT+NXR3HgAncRfjwSkQrq+vYR7
-         FxHla9KrqunA0XCNFwP36VtiulknhSChkuwUMAbxGG9+kmsPunajmA5SMNEpqCx8zj5D
-         1ZBaeUDhl7BfCGs8UdYsNytmq+u9MMlUEhj4x9j0Pvmolgt/JHVVvZgnv4UTttOrAkWV
-         yXLuGfepPnSy9VcMEkLXUspaKA39ShJlFS48a/QvF2Qbs5d9S9CW4DFzsLyjGGztD9Zy
-         qdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3HtZTFpEZ/AsCNpkm3ZQMYCIsidmQeCySlfz1VvCoGAhzeLivKdfCO2g8xM+hBIKY7uwastPMkjKqHrT+3O/5RwIAWH//q3jI7vO/mc5h/4bLkjY9MGPz5q21BzuOedxqD399Rz2QqkpgUv8H6MEn7nqMg3zq71jkZE87qtH0hB+I4kxtOR5nprwbeSH5VDbBEd9EzrGbpZA+SGUXZJz0NTOyb1cxNZ+twA==
-X-Gm-Message-State: AOJu0YzrsVZepE2e/IPLosJRsKYKUUhldVPZ2n6ot0APL7RWkBQwTtPd
-	DxKCu7+/4pGHq2DIeE/7mJS7fCwqMvcPAEEWT/3A6+o3cT8ZFF+L
-X-Google-Smtp-Source: AGHT+IGc7lLd9geb8g0L1MRS9I3j9ymtsBD2HMyCZh6CZPb1b1RadJ7IIki74P8G+mW7SLIFjj+dQQ==
-X-Received: by 2002:a17:90b:4b46:b0:2c2:d136:b0fb with SMTP id 98e67ed59e1d1-2c2d136b355mr3753386a91.34.1717867290398;
-        Sat, 08 Jun 2024 10:21:30 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8955:2e84:1464:5333:31d6:6ba3:d747])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2f8e2fbfesm32346a91.34.2024.06.08.10.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 10:21:30 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	brauner@kernel.org,
-	howardchu95@gmail.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH] perf trace: Fix syscall untraceable bug
-Date: Sun,  9 Jun 2024 01:21:46 +0800
-Message-ID: <20240608172147.2779890-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1717867338; c=relaxed/simple;
+	bh=nTqQvFr46P0vv3NLlWh3QruttC5WiwbWCLiZjuxYiw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aik9nygMvObun6eyDmnnHA8kAoww/OM68lN4aeMA/WOrhXa+WJLFZbqlKsg3E9OdDrRkk1ToNmuzkd0ZgvdlzyWFudYbE5LXxRwEAibxKdCmJtsHO+My6lWac75uJxudT/oJZnR0/KubsDt+LFbIzTIbwyPlF+/GDUv4k1P+MxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=QtPq22zk; arc=none smtp.client-ip=62.201.172.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
+Received: from shout02.mail.de (unknown [10.0.120.222])
+	by shout12.mail.de (Postfix) with ESMTPS id CD59324195D;
+	Sat,  8 Jun 2024 19:22:07 +0200 (CEST)
+Received: from postfix02.mail.de (postfix02.bt.mail.de [10.0.121.126])
+	by shout02.mail.de (Postfix) with ESMTP id 7CB59240D28;
+	Sat,  8 Jun 2024 19:22:07 +0200 (CEST)
+Received: from smtp01.mail.de (smtp03.bt.mail.de [10.0.121.213])
+	by postfix02.mail.de (Postfix) with ESMTP id 56B9FA00E2;
+	Sat,  8 Jun 2024 19:22:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+	s=mailde202009; t=1717867327;
+	bh=nTqQvFr46P0vv3NLlWh3QruttC5WiwbWCLiZjuxYiw4=;
+	h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
+	b=QtPq22zkCst/3Odw3H+ZrzKPc1+PJfy5CFLdCIEFwWJf+Ty5hUeca2pvr47pY4cQ6
+	 haBxMXq9Ugs0o2vgBln2sBpNoVHcggwHiOUWQ3mO/Q1MDc6YjFK2SQY1IhjiVzSYxw
+	 dQGcHZsD/nDFfUuQ4YlvPcXCq+O6Rnr8/tFqFvfX660fttgMej8ZcQA0FOF9Cw04Sp
+	 7q8+1n0+RTvUKgS6I7+4QpMmUItv++HH3CH0RHDgFGIc7CERs2Sfx98Rj6N2jiDQir
+	 ExM4+gGeZPlqpzkBS+i/9W8EEKtx5AZEjBS8wYbMn6tcoSSm2WhOoF8oY+mTHfnyvi
+	 qUzdmukmKW3lQ==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp01.mail.de (Postfix) with ESMTPSA id E0C8124009E;
+	Sat,  8 Jun 2024 19:22:02 +0200 (CEST)
+Message-ID: <f5cfcf3e-27e5-464a-9adf-261753ad6de7@mail.de>
+Date: Sat, 8 Jun 2024 19:22:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add FriendlyElec CM3588 NAS
+ board
+To: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Space Meyer <me@the-space.agency>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+ Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240602211901.237769-1-seb-dev@mail.de>
+ <20240602202132.2012-2-seb-dev@mail.de>
+ <c4087311-cbd2-415e-a582-3565f2f62e81@the-space.agency>
+ <11747652.CDJkKcVGEf@phil>
+From: Sebastian Kropatsch <seb-dev@mail.de>
+In-Reply-To: <11747652.CDJkKcVGEf@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 2691
+X-purgate-ID: 154282::1717867327-31E241F9-A930B556/0/0
 
-This is a bug found when implementing pretty-printing for the
-landlock_add_rule system call, I decided to send this patch separately
-because this is a serious bug that should be fixed fast.
+Hello,
 
-I wrote a test program to do landlock_add_rule syscall in a loop,
-yet perf trace -e landlock_add_rule freezes, giving no output.
+Am 08.06.2024 um 16:38 schrieb Heiko Stuebner:
+> Am Donnerstag, 6. Juni 2024, 15:13:20 CEST schrieb Space Meyer:
+>> On 02.06.2024 22:20, Sebastian Kropatsch wrote:
+>>> Some RK3588 boards are still using this property, the following quote
+>>> is from rk3588-tiger-haikou.dts for example:
+>>>       &sdmmc {
+>>>           /* while the same pin, sdmmc_det does not detect card changes */
+>>>           cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
+>>>
+>>> I am unsure as to whether this comment from the quote might apply for
+>>> the CM3588 as well. Please let me know if you are able to tell :-)
+>>
+>> I don't quite understand this. However GPIO0_A4 *is* routed to the micro
+>> sd CD according to the NAS schematic, page 16 around A5.
+> 
+> for the actual sdmmc_det functionality ... possibly some pinconfig thing?
+> I.e. pull-whatever settings?
 
-This bug is introduced by the false understanding of the variable "key"
-below:
-```
-for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
-	struct syscall *sc = trace__syscall_info(trace, NULL, key);
-	...
-}
-```
-The code above seems right at the beginning, but when looking at
-syscalltbl.c, I found these lines:
+I have no idea. I just removed the "cd-gpios" line in v2 due to a
+suggestion by Jonas Karlman and then stumbled over this comment.
+So I'm not sure whether to include or not include this property
+for the CM3588 NAS since I don't know the consequences.
+Probably in the end it doesn't even matter :)
 
-```
-for (i = 0; i <= syscalltbl_native_max_id; ++i)
-	if (syscalltbl_native[i])
-		++nr_entries;
+>>> +	vcc_3v3_pcie30: regulator-vcc-3v3-pcie30 {
+>>> +		compatible = "regulator-fixed";
+>>> +		regulator-name = "vcc_3v3_pcie30";
+>>> +		regulator-always-on;
+>>> +		regulator-boot-on;
+>>> +		regulator-min-microvolt = <3300000>;
+>>> +		regulator-max-microvolt = <3300000>;
+>>> +		vin-supply = <&vcc_5v0_sys>;
+>>> +	};
+>>
+>> These are 4 seperate regulators according to the schematic. However, as
+>> they are all fixed, idk if they should be split or kept like this.
+> 
+> personally, I really like the power-diagram to match schematics.
+> I.e. $debugfs/regulator/regulator_summary will produce a really nice
+> graph of all the system's regulators, so it's definitly nice if the
+> hirarchy matches. Also prevents head-scratching later on ;-)
 
-entries = tbl->syscalls.entries = malloc(sizeof(struct syscall) * nr_entries);
-...
+These are indeed 4 different regulators according to the schematic.[1]
+But they don't have any pin to control them separately. I can
+duplicate them 4 times if that's the preferred practice.
 
-for (i = 0, j = 0; i <= syscalltbl_native_max_id; ++i) {
-	if (syscalltbl_native[i]) {
-		entries[j].name = syscalltbl_native[i];
-		entries[j].id = i;
-		++j;
-	}
-}
-```
+But matching the schematics won't be possible either way, since
+e.g. there is only one single 5v regulator acc. to the schematic
+(vcc_5v0_sys), but vcc_5v0_host_20, vcc_5v0_host_30, vbus_5v0_typec
+and so on are needed since each device has a different control pin
+to enable its power. Or is there a better way to solve this while
+having only one 5v regulator node but still being able to set the
+control pins separately for the different USB ports?
 
-meaning the key is merely an index to traverse the syscall table,
-instead of the actual syscall id for this particular syscall.
+Cheers,
+Sebastian
 
-So if one uses key to do trace__syscall_info(trace, NULL, key), because
-key only goes up to trace->sctbl->syscalls.nr_entries, for example, on
-my X86_64 machine, this number is 373, it will end up neglecting all
-the rest of the syscall, in my case, everything after `rseq`, because
-the traversal will stop at 373, and `rseq` is the last syscall whose id
-is lower than 373
-
-in tools/perf/arch/x86/include/generated/asm/syscalls_64.c:
-```
-	...
-	[334] = "rseq",
-	[424] = "pidfd_send_signal",
-	...
-```
-
-The reason why the key is scrambled but perf trace works well is that
-key is used in trace__syscall_info(trace, NULL, key) to do
-trace->syscalls.table[id], this makes sure that the struct syscall returned
-actually has an id the same value as key, making the later bpf_prog
-matching all correct.
-
-After fixing this bug, I can do perf trace on 38 more syscalls, and
-because more syscalls are visible, we get 8 more syscalls that can be
-augmented.
-
-before:
-
-perf $ perf trace -vv --max-events=1 |& grep Reusing
-Reusing "open" BPF sys_enter augmenter for "stat"
-Reusing "open" BPF sys_enter augmenter for "lstat"
-Reusing "open" BPF sys_enter augmenter for "access"
-Reusing "connect" BPF sys_enter augmenter for "accept"
-Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
-Reusing "connect" BPF sys_enter augmenter for "bind"
-Reusing "connect" BPF sys_enter augmenter for "getsockname"
-Reusing "connect" BPF sys_enter augmenter for "getpeername"
-Reusing "open" BPF sys_enter augmenter for "execve"
-Reusing "open" BPF sys_enter augmenter for "truncate"
-Reusing "open" BPF sys_enter augmenter for "chdir"
-Reusing "open" BPF sys_enter augmenter for "mkdir"
-Reusing "open" BPF sys_enter augmenter for "rmdir"
-Reusing "open" BPF sys_enter augmenter for "creat"
-Reusing "open" BPF sys_enter augmenter for "link"
-Reusing "open" BPF sys_enter augmenter for "unlink"
-Reusing "open" BPF sys_enter augmenter for "symlink"
-Reusing "open" BPF sys_enter augmenter for "readlink"
-Reusing "open" BPF sys_enter augmenter for "chmod"
-Reusing "open" BPF sys_enter augmenter for "chown"
-Reusing "open" BPF sys_enter augmenter for "lchown"
-Reusing "open" BPF sys_enter augmenter for "mknod"
-Reusing "open" BPF sys_enter augmenter for "statfs"
-Reusing "open" BPF sys_enter augmenter for "pivot_root"
-Reusing "open" BPF sys_enter augmenter for "chroot"
-Reusing "open" BPF sys_enter augmenter for "acct"
-Reusing "open" BPF sys_enter augmenter for "swapon"
-Reusing "open" BPF sys_enter augmenter for "swapoff"
-Reusing "open" BPF sys_enter augmenter for "delete_module"
-Reusing "open" BPF sys_enter augmenter for "setxattr"
-Reusing "open" BPF sys_enter augmenter for "lsetxattr"
-Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
-Reusing "open" BPF sys_enter augmenter for "getxattr"
-Reusing "open" BPF sys_enter augmenter for "lgetxattr"
-Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
-Reusing "open" BPF sys_enter augmenter for "listxattr"
-Reusing "open" BPF sys_enter augmenter for "llistxattr"
-Reusing "open" BPF sys_enter augmenter for "removexattr"
-Reusing "open" BPF sys_enter augmenter for "lremovexattr"
-Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
-Reusing "open" BPF sys_enter augmenter for "mq_open"
-Reusing "open" BPF sys_enter augmenter for "mq_unlink"
-Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
-Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
-Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
-Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
-Reusing "open" BPF sys_enter augmenter for "symlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
-Reusing "connect" BPF sys_enter augmenter for "accept4"
-Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
-Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
-Reusing "open" BPF sys_enter augmenter for "memfd_create"
-Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
-
-after
-
-perf $ perf trace -vv --max-events=1 |& grep Reusing
-Reusing "open" BPF sys_enter augmenter for "stat"
-Reusing "open" BPF sys_enter augmenter for "lstat"
-Reusing "open" BPF sys_enter augmenter for "access"
-Reusing "connect" BPF sys_enter augmenter for "accept"
-Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
-Reusing "connect" BPF sys_enter augmenter for "bind"
-Reusing "connect" BPF sys_enter augmenter for "getsockname"
-Reusing "connect" BPF sys_enter augmenter for "getpeername"
-Reusing "open" BPF sys_enter augmenter for "execve"
-Reusing "open" BPF sys_enter augmenter for "truncate"
-Reusing "open" BPF sys_enter augmenter for "chdir"
-Reusing "open" BPF sys_enter augmenter for "mkdir"
-Reusing "open" BPF sys_enter augmenter for "rmdir"
-Reusing "open" BPF sys_enter augmenter for "creat"
-Reusing "open" BPF sys_enter augmenter for "link"
-Reusing "open" BPF sys_enter augmenter for "unlink"
-Reusing "open" BPF sys_enter augmenter for "symlink"
-Reusing "open" BPF sys_enter augmenter for "readlink"
-Reusing "open" BPF sys_enter augmenter for "chmod"
-Reusing "open" BPF sys_enter augmenter for "chown"
-Reusing "open" BPF sys_enter augmenter for "lchown"
-Reusing "open" BPF sys_enter augmenter for "mknod"
-Reusing "open" BPF sys_enter augmenter for "statfs"
-Reusing "open" BPF sys_enter augmenter for "pivot_root"
-Reusing "open" BPF sys_enter augmenter for "chroot"
-Reusing "open" BPF sys_enter augmenter for "acct"
-Reusing "open" BPF sys_enter augmenter for "swapon"
-Reusing "open" BPF sys_enter augmenter for "swapoff"
-Reusing "open" BPF sys_enter augmenter for "delete_module"
-Reusing "open" BPF sys_enter augmenter for "setxattr"
-Reusing "open" BPF sys_enter augmenter for "lsetxattr"
-Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
-Reusing "open" BPF sys_enter augmenter for "getxattr"
-Reusing "open" BPF sys_enter augmenter for "lgetxattr"
-Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
-Reusing "open" BPF sys_enter augmenter for "listxattr"
-Reusing "open" BPF sys_enter augmenter for "llistxattr"
-Reusing "open" BPF sys_enter augmenter for "removexattr"
-Reusing "open" BPF sys_enter augmenter for "lremovexattr"
-Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
-Reusing "open" BPF sys_enter augmenter for "mq_open"
-Reusing "open" BPF sys_enter augmenter for "mq_unlink"
-Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
-Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
-Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
-Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
-Reusing "open" BPF sys_enter augmenter for "symlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
-Reusing "connect" BPF sys_enter augmenter for "accept4"
-Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
-Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
-Reusing "open" BPF sys_enter augmenter for "memfd_create"
-Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
-Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
-
-TL;DR:
-
-These are the new syscalls that can be augmented
-Reusing "openat" BPF sys_enter augmenter for "open_tree"
-Reusing "openat" BPF sys_enter augmenter for "openat2"
-Reusing "openat" BPF sys_enter augmenter for "mount_setattr"
-Reusing "openat" BPF sys_enter augmenter for "move_mount"
-Reusing "open" BPF sys_enter augmenter for "fsopen"
-Reusing "openat" BPF sys_enter augmenter for "fspick"
-Reusing "openat" BPF sys_enter augmenter for "faccessat2"
-Reusing "openat" BPF sys_enter augmenter for "fchmodat2"
-
-as for the perf trace output:
-
-before
-
-perf $ perf trace -e faccessat2 --max-events=1
-[no output]
-
-after
-
-perf $ ./perf trace -e faccessat2 --max-events=1
-     0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "uevent")                               = 0
-
-P.S. The reason why this bug was not found in the past five years is
-probably because it only happens to the newer syscalls whose id is
-greater, for instance, faccessat2 of id 439, which not a lot of people
-care about when using perf trace.
-
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c   | 32 +++++++++++++++++++++-----------
- tools/perf/util/syscalltbl.c | 21 +++++++++------------
- tools/perf/util/syscalltbl.h |  5 +++++
- 3 files changed, 35 insertions(+), 23 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c42bc608954e..5cbe1748911d 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3354,7 +3354,8 @@ static int trace__bpf_prog_sys_exit_fd(struct trace *trace, int id)
- static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
- {
- 	struct tep_format_field *field, *candidate_field;
--	int id;
-+	struct __syscall *scs = trace->sctbl->syscalls.entries;
-+	int id, _id;
- 
- 	/*
- 	 * We're only interested in syscalls that have a pointer:
-@@ -3368,10 +3369,13 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
- 
- try_to_find_pair:
- 	for (id = 0; id < trace->sctbl->syscalls.nr_entries; ++id) {
--		struct syscall *pair = trace__syscall_info(trace, NULL, id);
-+		struct syscall *pair;
- 		struct bpf_program *pair_prog;
- 		bool is_candidate = false;
- 
-+		_id = scs[id].id;
-+		pair = trace__syscall_info(trace, NULL, _id);
-+
- 		if (pair == NULL || pair == sc ||
- 		    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
- 			continue;
-@@ -3456,23 +3460,26 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
- {
- 	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
- 	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
--	int err = 0, key;
-+	int err = 0, key, id;
-+	struct __syscall *scs = trace->sctbl->syscalls.entries;
- 
- 	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
- 		int prog_fd;
- 
--		if (!trace__syscall_enabled(trace, key))
-+		id = scs[key].id;
-+
-+		if (!trace__syscall_enabled(trace, id))
- 			continue;
- 
--		trace__init_syscall_bpf_progs(trace, key);
-+		trace__init_syscall_bpf_progs(trace, id);
- 
- 		// It'll get at least the "!raw_syscalls:unaugmented"
--		prog_fd = trace__bpf_prog_sys_enter_fd(trace, key);
--		err = bpf_map_update_elem(map_enter_fd, &key, &prog_fd, BPF_ANY);
-+		prog_fd = trace__bpf_prog_sys_enter_fd(trace, id);
-+		err = bpf_map_update_elem(map_enter_fd, &id, &prog_fd, BPF_ANY);
- 		if (err)
- 			break;
--		prog_fd = trace__bpf_prog_sys_exit_fd(trace, key);
--		err = bpf_map_update_elem(map_exit_fd, &key, &prog_fd, BPF_ANY);
-+		prog_fd = trace__bpf_prog_sys_exit_fd(trace, id);
-+		err = bpf_map_update_elem(map_exit_fd, &id, &prog_fd, BPF_ANY);
- 		if (err)
- 			break;
- 	}
-@@ -3506,10 +3513,13 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
- 	 * array tail call, then that one will be used.
- 	 */
- 	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
--		struct syscall *sc = trace__syscall_info(trace, NULL, key);
-+		struct syscall *sc;
- 		struct bpf_program *pair_prog;
- 		int prog_fd;
- 
-+		id = scs[key].id;
-+		sc = trace__syscall_info(trace, NULL, id);
-+
- 		if (sc == NULL || sc->bpf_prog.sys_enter == NULL)
- 			continue;
- 
-@@ -3535,7 +3545,7 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
- 		 * with the fd for the program we're reusing:
- 		 */
- 		prog_fd = bpf_program__fd(sc->bpf_prog.sys_enter);
--		err = bpf_map_update_elem(map_enter_fd, &key, &prog_fd, BPF_ANY);
-+		err = bpf_map_update_elem(map_enter_fd, &id, &prog_fd, BPF_ANY);
- 		if (err)
- 			break;
- 	}
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 63be7b58761d..16aa886c40f0 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -44,22 +44,17 @@ const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
- static const char *const *syscalltbl_native = syscalltbl_loongarch;
- #endif
- 
--struct syscall {
--	int id;
--	const char *name;
--};
--
- static int syscallcmpname(const void *vkey, const void *ventry)
- {
- 	const char *key = vkey;
--	const struct syscall *entry = ventry;
-+	const struct __syscall *entry = ventry;
- 
- 	return strcmp(key, entry->name);
- }
- 
- static int syscallcmp(const void *va, const void *vb)
- {
--	const struct syscall *a = va, *b = vb;
-+	const struct __syscall *a = va, *b = vb;
- 
- 	return strcmp(a->name, b->name);
- }
-@@ -67,13 +62,14 @@ static int syscallcmp(const void *va, const void *vb)
- static int syscalltbl__init_native(struct syscalltbl *tbl)
- {
- 	int nr_entries = 0, i, j;
--	struct syscall *entries;
-+	struct __syscall *entries;
- 
- 	for (i = 0; i <= syscalltbl_native_max_id; ++i)
- 		if (syscalltbl_native[i])
- 			++nr_entries;
- 
--	entries = tbl->syscalls.entries = malloc(sizeof(struct syscall) * nr_entries);
-+	entries = tbl->syscalls.entries = malloc(sizeof(struct __syscall) *
-+						 nr_entries);
- 	if (tbl->syscalls.entries == NULL)
- 		return -1;
- 
-@@ -85,7 +81,8 @@ static int syscalltbl__init_native(struct syscalltbl *tbl)
- 		}
- 	}
- 
--	qsort(tbl->syscalls.entries, nr_entries, sizeof(struct syscall), syscallcmp);
-+	qsort(tbl->syscalls.entries, nr_entries, sizeof(struct __syscall),
-+	      syscallcmp);
- 	tbl->syscalls.nr_entries = nr_entries;
- 	tbl->syscalls.max_id	 = syscalltbl_native_max_id;
- 	return 0;
-@@ -116,7 +113,7 @@ const char *syscalltbl__name(const struct syscalltbl *tbl __maybe_unused, int id
- 
- int syscalltbl__id(struct syscalltbl *tbl, const char *name)
- {
--	struct syscall *sc = bsearch(name, tbl->syscalls.entries,
-+	struct __syscall *sc = bsearch(name, tbl->syscalls.entries,
- 				     tbl->syscalls.nr_entries, sizeof(*sc),
- 				     syscallcmpname);
- 
-@@ -126,7 +123,7 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
- int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *syscall_glob, int *idx)
- {
- 	int i;
--	struct syscall *syscalls = tbl->syscalls.entries;
-+	struct __syscall *syscalls = tbl->syscalls.entries;
- 
- 	for (i = *idx + 1; i < tbl->syscalls.nr_entries; ++i) {
- 		if (strglobmatch(syscalls[i].name, syscall_glob)) {
-diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
-index a41d2ca9e4ae..6e93a0874c40 100644
---- a/tools/perf/util/syscalltbl.h
-+++ b/tools/perf/util/syscalltbl.h
-@@ -2,6 +2,11 @@
- #ifndef __PERF_SYSCALLTBL_H
- #define __PERF_SYSCALLTBL_H
- 
-+struct __syscall {
-+	int id;
-+	const char *name;
-+};
-+
- struct syscalltbl {
- 	int audit_machine;
- 	struct {
--- 
-2.45.2
+[1] 
+https://wiki.friendlyelec.com/wiki/images/1/15/CM3588_NAS_SDK_2309_SCH.PDF
 
 
