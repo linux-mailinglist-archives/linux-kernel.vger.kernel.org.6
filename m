@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-207167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4172901322
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:58:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D0290132A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43ABAB20A1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31ED92827F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655601757E;
-	Sat,  8 Jun 2024 17:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6D1CD2A;
+	Sat,  8 Jun 2024 18:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL/gTqzJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pI1G8e4R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC691CA9C
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 17:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4C1C2BD;
+	Sat,  8 Jun 2024 18:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717869525; cv=none; b=O0JmmRxt/RTadpDxUJhBf9ZZXweLw3iuO3jmxnrZgo/HoSbXuEhKap0U1cejWB+L6zwmci6QxxiFStk3t+YZhvkZiBmWAcYkK1cHRQwSgbEMsl6zn7UiYkLgK+63h0JQt0J4j6SqOxHFZi/DBKb3rSqaxxzQ0lWduTRyaJLdoy4=
+	t=1717869968; cv=none; b=MRayvKAYH98ajUUnyer6ikP1sfltfZrkvMx9mOePAy8l2jQYQEEmerk3sNuKTk3TtAA3AwA/TRqXyxGuq2re/rysDDBNrl0LzgicAjwyYOkzMSIcYEmKgVUtt2WC+4K2fjAxsUjV/tfM32YuIwEt4CHss5s6K6QUMHrsqx1nNdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717869525; c=relaxed/simple;
-	bh=fZAX2nfLXX5P3YZWQRDshYWd5pMbr2uLK5EPiHB26Ow=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d5eVlDgzVtWV21BZ9Gfl2zYdl5JdkyWmTazY47AKD5TKVFiFfNxyxkE51A9TPWDZ/LupIBNvvAnHTNf13Q4QVyc8RncIs8dMI4UsmHwQ8wOmFqZWAOv/sYT1aIzOwPjCutzzruqBWSSFBq53HQGxtdRL1WO77q3Micaw0EU9SYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL/gTqzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 23C9BC2BD11;
-	Sat,  8 Jun 2024 17:58:45 +0000 (UTC)
+	s=arc-20240116; t=1717869968; c=relaxed/simple;
+	bh=lkZe0nZhvWF0Nm8oZxgbBtz8kQqTGMv4JWMHvMMB8WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qVJFOEnx0ob/FWjHHOt3ePweldcBTIyyTgpnHHubyJO5c2hPK2TMttLOR4eVhDZO0bDvhVtrMakq8JT8Fm5QD3w5wNdeXAAW2XD0LBBSpE82t+tedLe5Yeyp5I/KHdyh59hI96bl5xnO3voI7RE/IaGBBeO7ru1QBzndsPCIT6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pI1G8e4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3482C2BD11;
+	Sat,  8 Jun 2024 18:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717869525;
-	bh=fZAX2nfLXX5P3YZWQRDshYWd5pMbr2uLK5EPiHB26Ow=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=hL/gTqzJOP3ymHCURPkYkCqyXx0+em/LE/pTL9AnqRrjQxpaIeJKztiOIMR+Hb+kL
-	 DSUk+08kxqq0I1nojq2yvk3chEo829ncu5TMA/txAMLX95Jc53PgatNmAWh3wubKpS
-	 rVEhBBotMm+XdRfQA7i+nMOWX4JliZGTJOYuUDJpqEqIrqqjp9xK6x4dVLo72cAx3x
-	 GvYid/469YdH3uCCi+sNo4DwDKKgOX+qiQ9G1jqIwP+aAWUC0vVxFs8/qB7trCTkvm
-	 wrg3IUxYKWov55W4lhwB0sq9KXhsmkSuV1pjW3VczOcswXvQhMzNZB7/41DLWahFFq
-	 pSfo78qolSbEQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0D1E0C43168;
-	Sat,  8 Jun 2024 17:58:45 +0000 (UTC)
-Subject: Re: [GIT PULL] HID fixes for 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <xaohohlelhzbc5a3hmrutryyeth3u77paq5w2skjqyahrusodj@ogoroplzq6uy>
-References: <xaohohlelhzbc5a3hmrutryyeth3u77paq5w2skjqyahrusodj@ogoroplzq6uy>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <xaohohlelhzbc5a3hmrutryyeth3u77paq5w2skjqyahrusodj@ogoroplzq6uy>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024060801
-X-PR-Tracked-Commit-Id: a3a5a37efba11b7cf1a86abe7bccfbcdb521764e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 061d1af7b0305227182bd9da60c7706c079348b7
-Message-Id: <171786952496.31702.2542718315018499056.pr-tracker-bot@kernel.org>
-Date: Sat, 08 Jun 2024 17:58:44 +0000
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
+	s=k20201202; t=1717869967;
+	bh=lkZe0nZhvWF0Nm8oZxgbBtz8kQqTGMv4JWMHvMMB8WI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pI1G8e4R7WTm65VnBEcjWAvTup4XKR4phr6NM/ZpBB3ZguoIf7Tz24uZc3CL5bOrG
+	 1BkFWVnrByOlpWaIHguVCRDoxGiLBjBQ03ramcikt/kucbCnsUvJ8KwIm7goRv70mt
+	 91NPKFDnO9JaBfAIUKnrvG0wv8TNUtzo/DodmCY+rzvLpf7BUtzMhJDmECfyHVz8oK
+	 dCmG5T9wd+WU5bmqwZAstQs4BoZV9hiNZLY7IslmKbK8SJnVuGs+A2UwX+Q+eQCbd5
+	 XSmg9tSNz6Myqz7iECeXm8csrGdQf54uL9Uv1ECh09OWr4lMk7zW//fDAkfvQj7yZp
+	 hunsgbgUCYEZA==
+Date: Sat, 8 Jun 2024 19:06:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno Sa <nuno.sa@analog.com>
+Cc: Petr Mladek <pmladek@suse.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, Jyoti Bhayana
+ <jbhayana@google.com>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>, Chris Down <chris@chrisdown.name>,
+ John Ogness <john.ogness@linutronix.de>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, Andi Shyti <andi.shyti@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
+ dev_err_probe()
+Message-ID: <20240608190600.622dfd7f@jic23-huawei>
+In-Reply-To: <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
+References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
+	<20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sat, 8 Jun 2024 19:42:21 +0200:
+On Thu, 6 Jun 2024 09:22:38 +0200
+Nuno Sa <nuno.sa@analog.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024060801
+> Use dev_err_probe() (and variants) in the probe() path. While at it, made
+> some simple improvements:
+>  * Explicitly included the err.h and errno.h headers;
+>  * Removed some unnecessary line breaks;
+>  * Removed a redundant 'else';
+>  * Added some missing \n to prink.
+> 
+> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
+> ---
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/061d1af7b0305227182bd9da60c7706c079348b7
 
-Thank you!
+> @@ -1296,8 +1268,8 @@ static int ltc2983_reg_access(struct iio_dev *indio_dev,
+>  
+>  	if (readval)
+>  		return regmap_read(st->regmap, reg, readval);
+> -	else
+> -		return regmap_write(st->regmap, reg, writeval);
+> +
+> +	return regmap_write(st->regmap, reg, writeval);
+>  }
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Unrelated.
+
+Otherwise updates look correct to me.
 
