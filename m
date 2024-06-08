@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-207215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C8C9013F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 01:41:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620129013F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 01:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB3A1C20D42
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 23:41:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28CF282277
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 23:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBA3DB89;
-	Sat,  8 Jun 2024 23:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4BE433AB;
+	Sat,  8 Jun 2024 23:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im8AQeD3"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YFiBWifZ"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457B8D2E5;
-	Sat,  8 Jun 2024 23:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C91CFB5;
+	Sat,  8 Jun 2024 23:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717890087; cv=none; b=Bq4xy30cGC0/Bb4zAg9kqPldP3RBOe5/pGTo10IQCUedn89VNVAPCPqjxaQV9ieFS9kX26DsrfubUVQ1pqsiTqr1sW5Fi6n8eeQ4FKbYlpsHXSubCgNQk1TWJ8v34R0t8oIMSWRz89KuU6T7FB2BWOYT/tfBh9w0tRUjIoO5yeM=
+	t=1717890211; cv=none; b=Wdkh65jLg6bNe/5npZGOpnsCDnngytwcRDkEgWlvEN+V9/P+K3dEWzmydCMoXiGWRxo9IP7mTnYB4DFPMjtkNvkPOLSSPEnkhTqhN+aHaTpMm/y+hAUycY7R++UJpLq9ENtRgG/+0XFZfutYPhGGjvm+Fhy3+zF5pd+oEols1aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717890087; c=relaxed/simple;
-	bh=O1B4nByr+fGXuo7Cj+bE7XDB0z9CzQ9nPn+ClxDbnQw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=splsIDLvMm59x/u156osUEGl6n2POuw6pwDMpDxkoe5h84s7eB0dhDZDvwlwZCUzrLuh+a4D1GQTvgoU/s1lOtrn1BiMGum7orMDycJqwHG9tFXDiwFh/52bBk8lQqV49fqZ1hMlBrI5o1wITmYO07oeeagvNRC3YQme+HWixKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im8AQeD3; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5295e488248so3755008e87.2;
-        Sat, 08 Jun 2024 16:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717890084; x=1718494884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7rb8pojIjzKusW/K2QDO8cUOkG5F9hUZO5T+/iX63+s=;
-        b=im8AQeD3LNzPoXl0Q6yPpW382gwiF+u1Q/scaMZ7PYtuyL2b22VV/4xQCjehqqMABj
-         KwyQ/rx2JB3ETjo6V2v5cxT0h4wLF5MocgPxRjJEOFsc9eghbVt2+uBoF9qzV8tBaExq
-         tXdGR8N2W0Ur+byU2cb4SQ8IKZTzRG0hhJT0+EVUPyJLYd/DSfYwULxlcd+ssFFIfLnj
-         lj3hayW8WeEWo9pr6lfmFXM7Nrp7xODK55zxhBDhhMon4bej7odaEdqRcZU1mY28qScp
-         4uIC3VS8wwVDSlhKiGBz1mAwkB+T+jW2gAp2Opif8F4zPCzKm8lYII14yvOS2o3YkGmI
-         kToQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717890084; x=1718494884;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7rb8pojIjzKusW/K2QDO8cUOkG5F9hUZO5T+/iX63+s=;
-        b=SV4QEoxkUGhVVSZ6/12ZNnPkyInGTkx2Uyt5adnDilf43srQALkNQS8ritUgUGC/dt
-         bgW5RGsRGn8wZAHTCE6nQJPY7CaR3UNb3zYbECoVcrOrnk8+lQvlqskcdMtd502h4VB1
-         MYtCYP66Ycuf4BkErNVjc9fL1k/Mp7BD7d1gZZWUFLio4NAXSiS6WrpTF04hvCbEnbaE
-         Gt9QV07KYTteLaRRdtQS4Hc9PSMDRUT5nIWrg7fheG4xKwObKxjsuIcvZ6l248ckG01/
-         jRb0XkVKcDyyFXZW1+qfR3VijGnZ6QpeQUOAWq5t4iEbE9Zu/t6Z5AnW1tV5C28U1bLX
-         YQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp0tOPvCsqKH8QGNmCw8LXGgOhFrqudU/sN9/OsKfdV4XLcn6fhFDvgQCzrbhCpfSfUo8RX71lkyXCavouMcSMZSK66f/h1O5a5Bsz
-X-Gm-Message-State: AOJu0YzQ0jbJYH2Iks7hUIirQw228Zm1PrZsgcJges0h/tsM3WW2duQD
-	gTaB86AViWfjCg6Oy29kG05MqF1/U7HDxxDnR+tMLxSqrk24ogqKX/Hii/lSp3c3AQuI2WQgGfN
-	759EKRmOD/9utMo7hfT0ACS+Kgmc=
-X-Google-Smtp-Source: AGHT+IFWTxKa7uSDFZyQ4Hl9QSXyEbzjD7dYpBqnwcahslpdvL1t8fz+Tcf/5WBLDGHgq3RdKcD9Yjh+OWFR54kw7bY=
-X-Received: by 2002:ac2:4989:0:b0:52c:7fc9:954e with SMTP id
- 2adb3069b0e04-52c7fc9976fmr1329516e87.41.1717890084290; Sat, 08 Jun 2024
- 16:41:24 -0700 (PDT)
+	s=arc-20240116; t=1717890211; c=relaxed/simple;
+	bh=G3oxbVba7chF2PLo/s78i9Xh18ucT7MrDr6l7GlXT5o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=S/Dsk21p7ZkzFL0GXsNeQOe4Z6+SsXWaKQazuSjVnnbG24NwnmE29K+YKpJGTKgWMA+v01xShzCIKq+LJY22jITeUtSbqKcBKkHHEtEMlPqFLBQok/gW8loqEuL9xmqbhLZx6KRF53kjfIgAqNY8CHClMgMcR+K6fzG1JCKL0m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YFiBWifZ; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 3782C138009D;
+	Sat,  8 Jun 2024 19:43:27 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sat, 08 Jun 2024 19:43:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717890207; x=1717976607; bh=rFl7yZds5ak8Ogf5iToJLM1N0ynv
+	YeNb8QKF4g0xTIk=; b=YFiBWifZl85s+4QzuNKRLjtvVIoEk1v57RKPvT7nkYpb
+	2vrFKcg67JmZ/6Q6tZWnYtFzR5VnmMfwedGaBMePFHAn8n+SpP2mWEitz86TaDmF
+	3pXLv9AUmj2AA6iXncfwZBvnLLGbDIArotaaIfY+18dvZD+pY6jvdNuyOfLGpF/P
+	0G0M9loyPC+W4+Gqx7HO1l/4nBRVpsPI5m9clYHFd5zfcOl7w0f7lDf0pLKW2Pqi
+	+xjJBRgAkVEzXb9CXUswWQi7cQhm/vOiKPvKU1elEalKsIChWKvW4eWdBsRbEeD8
+	5KM7GWAs82K2gJR3Xbxppo7X3bKrAKtPM8TRK0OCiA==
+X-ME-Sender: <xms:nuxkZi9XoUEG4BarrC6hf95IG7-tQ2ecmDDi14OQaz4-PvMkanjCsQ>
+    <xme:nuxkZit1UE-P--xUSV7sXHaqXf_ttP_d105fHsH-qFlDShpLPJPUGuldv33cl7TTX
+    Dg9KDZNUHQvt3nIzNM>
+X-ME-Received: <xmr:nuxkZoDdilNcJkQsLef_zRBBkyw75Wq9Uh_U32PRgPLWI9928H6c5chF9F0vEpEhQww7F01QeAHR6si2sOYVuisYJ_6IU7JjCrU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedthedgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
+    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
+    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
+X-ME-Proxy: <xmx:nuxkZqe7BMw3KAf9zfa6miBV7cxWdlpxU_aHEGhhqMu4nOedpEgM3A>
+    <xmx:nuxkZnO00yrGnoGEihARFKbmVfYS6OSDulvNXqPUf3g6P4ScIdu35A>
+    <xmx:nuxkZknDLQW5pGeONEzQSiej_pwbSgjBT_NAEZB7XQdU8EEhjcw3ig>
+    <xmx:nuxkZptN2Rk9YTEcIALf28vIEaE0i5M0ctDUWxAeay825hMoz_FrbQ>
+    <xmx:n-xkZuljFhn1OQaF7xVngPR0g_wzmPO2PGo5UAGzhaU6ugTretQr8wgJ>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 8 Jun 2024 19:43:24 -0400 (EDT)
+Date: Sun, 9 Jun 2024 09:43:36 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: Khalid Aziz <khalid@gonehiking.org>, 
+    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+    "Martin K. Petersen" <martin.petersen@oracle.com>, 
+    Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>, 
+    Michael Schmitz <schmitzmic@gmail.com>, 
+    James Smart <james.smart@broadcom.com>, 
+    Ram Vegesna <ram.vegesna@broadcom.com>, 
+    Artur Paszkiewicz <artur.paszkiewicz@intel.com>, 
+    "Juergen E. Fischer" <fischer@norbit.de>, linux-scsi@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, target-devel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com>
+Message-ID: <b013cb8c-0739-6c04-c479-7021dcb612cc@linux-m68k.org>
+References: <20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 8 Jun 2024 18:41:12 -0500
-Message-ID: <CAH2r5muOwzD0cy_mZ5ydJfQLpmY4MYpKqYsHgAB1Z+qs6Gknmg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-
-Please pull the following changes since commit
-c3f38fa61af77b49866b006939479069cd451173:
-
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
-
-are available in the Git repository at:
-
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc2-smb3-client-fixes
-
-for you to fetch changes up to a88d60903696c01de577558080ec4fc738a70475:
-
-  cifs: Don't advance the I/O iterator before terminating subrequest
-(2024-06-07 01:05:26 -0500)
-
-----------------------------------------------------------------
-Two small smb3 client fixes
-- fix deadlock in umount
-- minor cleanup due to netfs change
-----------------------------------------------------------------
-David Howells (1):
-      cifs: Don't advance the I/O iterator before terminating subrequest
-
-Enzo Matsumiya (1):
-      smb: client: fix deadlock in smb2_find_smb_tcon()
-
- fs/smb/client/smb2pdu.c       | 3 ---
- fs/smb/client/smb2transport.c | 2 +-
- 2 files changed, 1 insertion(+), 4 deletions(-)
+Content-Type: text/plain; charset=US-ASCII
 
 
--- 
-Thanks,
+On Sat, 8 Jun 2024, Jeff Johnson wrote:
 
-Steve
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
+> 
+> Add all missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> This updates all files which have a MODULE_LICENSE() but which do not
+> have a MODULE_DESCRIPTION(), even ones which did not produce the x86
+> allmodconfig warnings.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Acked-by: Finn Thain <fthain@linux-m68k.org>
+
+Thanks.
 
