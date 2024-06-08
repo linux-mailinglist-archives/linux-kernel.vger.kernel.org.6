@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-207097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE68990125A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B5090125E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A489B1C20CC3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF681F21F91
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F72D17995A;
-	Sat,  8 Jun 2024 15:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14485178CCA;
+	Sat,  8 Jun 2024 15:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6anO2Yz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8t8n9g3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCE4524C4;
-	Sat,  8 Jun 2024 15:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C042524C4;
+	Sat,  8 Jun 2024 15:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717860994; cv=none; b=TW4ode8+UrWMESZE6hGmRPRzUchW7pwxh8sqnJYCNt8tRHAAgS+i3BP7f7W5/6GDf+QdhPDgrGE/N/SR9D3i9WtiTG7Tw72ioJFiciBOk86XlRdRgV3p2Ye0JioPplBmgVOSoVYEScbQR030NG4DbsXac7LPWkN/2iIJxjXr2kc=
+	t=1717860999; cv=none; b=cgOUdC1Jm7HkBphHxmBsd9pIx2ICJk/WCv8bD9tUpRzAGTnbJ/c4hY+r8jdFGeUsJZzFDd3xv4mpZznasMKbsX6Z3bvfZ4HLemF/1EPvxk6CixDvi6EywINBMFsB6iwuQa/6xrsLc8+yEeMDhZCHWEUy7VZtdcMZeqVDSEOJqr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717860994; c=relaxed/simple;
-	bh=PPltt7u92wnv+PxGs+e4EpDvJsH07LVd0WQfhfe5Un8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MWpN0r2fPQXuqyEkXwAe1H7bWtxZsrBy+LA19mbeG8P2csDqaB15n3QmyAqMiBiprnIbda00idBZ4SEjk39SCJnxFXNt0rvxhB/JzFMf/5MQekNAQ8QCY5GQamDGE5XNSd8LnN4UIn9ZB9obyBk95JqeIXV3xXa9XYE0okcsDTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6anO2Yz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D72C2BD11;
-	Sat,  8 Jun 2024 15:36:31 +0000 (UTC)
+	s=arc-20240116; t=1717860999; c=relaxed/simple;
+	bh=Lxc8FIGJH9AbsQK8+T8lqmbchM2MCKBlEd2TlFucpn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgBtnkOOBBP5500M3KbB85bkAz3iRen6IvvK90teKhWlpaCqDmnwrSHbbJFiaMbWlRt6iLtud50HfYxXTMyjGr6CoDNGHdbgjWN+xzTH/wA0a5XPkugzV9Y2xw4nvF0DQ02xmlIB6R6ZuS5xD0HFe6NuaZGGirYwCcm+tP5YlTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8t8n9g3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B181CC2BD11;
+	Sat,  8 Jun 2024 15:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717860993;
-	bh=PPltt7u92wnv+PxGs+e4EpDvJsH07LVd0WQfhfe5Un8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=O6anO2YzaaT7ptr+nugSZ/acFRti3oxWsLMR7/hRcp62tul7sVoJlGaqfvvYcYMsF
-	 UiNm5lQnoajnMnltwyXA0aH0ES03sqQJb20UJ4UiF41ecnN+VzUIHF8nlHxdsSn3RJ
-	 h7yxddSv1uE5Z9qd7pwtWRU1Moco/mHTh8zr9ZJu7mcPieomqKWhQXZKv8gNmEtXSl
-	 Gkw3KZ7qhXShfFGE+5r3+XX2JR2X/6/suB4c5Joa6JMJO0IBA06G3JmsG0o08H8MK5
-	 5Q9TU73DyH3bNhD0y0HYabAxn8GA3LfA6vpmR/A/oI8S9tF5AvqT4AX1wMfR6dr8+h
-	 RbLXAjprBj0kg==
-Date: Sat, 8 Jun 2024 17:36:28 +0200
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.10-rc3] media fixes
-Message-ID: <20240608173628.05f15fbc@coco.lan>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1717860998;
+	bh=Lxc8FIGJH9AbsQK8+T8lqmbchM2MCKBlEd2TlFucpn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V8t8n9g3DdnQi6HbzO99CllgnRPCHO0UOdTLP5gY5Pq+6sCOXhFY0hQt145+myUW6
+	 YmU+QPW0vYuZui7LIgfsGPgdc/CwUyKUtCZQZI/i9h7UEUDfjmILlM/J6lenoCUt9a
+	 vUEaES8V4EXvJjBNcUy6HBiLwl867JiPQbeUILCQv9CyzKKhoWeK2usEJwHI/Du2eV
+	 op8s/I6Nf+es87msb+9JE0LoSol1gxnVh3qRXABJYKsRH8jmiSuhJ3ETRtCfrpztSC
+	 eboKEQcXox59QbCdMfdF4QzTs/+DtwFozsipP4+9u3ZSUx/CNDvkKiKHGixK8DjzP3
+	 HciYNAy4c2ofg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sFy7Q-0000000034R-2FCt;
+	Sat, 08 Jun 2024 17:36:37 +0200
+Date: Sat, 8 Jun 2024 17:36:36 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 11/14] dt-bindings: mfd: pm8008: rework binding
+Message-ID: <ZmR6hPVZsYlyC5o5@hovoldconsulting.com>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-12-johan+linaro@kernel.org>
+ <d5omeycp4l3mrzgswga2jkgxydpiayqfdjavwnfswcojawiqkt@zuol3vvkao5r>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5omeycp4l3mrzgswga2jkgxydpiayqfdjavwnfswcojawiqkt@zuol3vvkao5r>
 
-Hi Linus,
+On Wed, Jun 05, 2024 at 11:43:16AM +0300, Dmitry Baryshkov wrote:
+> On Wed, May 29, 2024 at 06:29:55PM +0200, Johan Hovold wrote:
+> > Rework the pm8008 binding by dropping internal details like register
+> > offsets and interrupts and by adding the missing regulator and
+> > temperature alarm properties.
+> > 
+> > Note that child nodes are still used for pinctrl and regulator
+> > configuration.
+> > 
+> > Also note that the pinctrl state definition will be extended later and
+> > could eventually also be shared with other PMICs (e.g. by breaking out
+> > bits of qcom,pmic-gpio.yaml).
+> 
+> Obviously we want to adapt this style of bindings for the other PMICs
+> too. My main concern here are PMICs which have two kinds of controlled
+> pins: GPIOs and MPPs. With the existing bindings style those are
+> declared as two subdevices. What would be your suggested way to support
+> MPPs with the proposed kind of bindings?
 
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v6.10-2
+As far as I understand newer PMICs do not have MPP blocks and we do not
+necessarily want to convert the existing bindings.
 
+That said, if there is ever a need to describe two separate gpio blocks
+this can, for example, be done using subnodes on those PMICs.
 
-For:
-  - some fixes at the new ipu6 driver (and related fixes at mei csi driver);
-  - fix a double debugfs remove logic at mgb4 driver;
-  - a documentation fix.
-
-Regards,
-Mauro
-
----
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v6.10-2
-
-for you to fetch changes up to ffb9072bce200a4d004006e8b40c366933cf517b:
-
-  media: intel/ipu6: add csi2 port sanity check in notifier bound (2024-05-=
-30 16:34:59 +0200)
-
-----------------------------------------------------------------
-media fixes for v6.10-rc3
-
-----------------------------------------------------------------
-Bingbu Cao (3):
-      media: intel/ipu6: fix the buffer flags caused by wrong parentheses
-      media: intel/ipu6: update the maximum supported csi2 port number to 6
-      media: intel/ipu6: add csi2 port sanity check in notifier bound
-
-Christophe JAILLET (3):
-      media: intel/ipu6: Fix some redundant resources freeing in ipu6_pci_r=
-emove()
-      media: intel/ipu6: Move isys_remove() close to isys_probe()
-      media: intel/ipu6: Fix an error handling path in isys_probe()
-
-Martin T=C5=AFma (1):
-      media: mgb4: Fix double debugfs remove
-
-Sakari Ailus (3):
-      media: Documentation: v4l: Fix ACTIVE route flag
-      media: mei: csi: Put the IPU device reference
-      media: mei: csi: Warn less verbosely of a missing device fwnode
-
- .../userspace-api/media/v4l/dev-subdev.rst         |  2 +-
- drivers/media/pci/intel/ipu6/ipu6-isys-queue.c     |  6 +-
- drivers/media/pci/intel/ipu6/ipu6-isys.c           | 71 +++++++++++++-----=
-----
- drivers/media/pci/intel/ipu6/ipu6.c                |  5 +-
- drivers/media/pci/intel/ivsc/mei_csi.c             |  5 +-
- drivers/media/pci/mgb4/mgb4_core.c                 |  7 ++-
- 6 files changed, 56 insertions(+), 40 deletions(-)
-
+Johan
 
