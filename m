@@ -1,128 +1,339 @@
-Return-Path: <linux-kernel+bounces-207182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174D3901358
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:21:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBBD90135F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1721E1C20DB9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:21:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761E81C20DBF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9320323;
-	Sat,  8 Jun 2024 19:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C61208D0;
+	Sat,  8 Jun 2024 19:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="DfWCAf0r"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="izEYON8i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC41C6BE;
-	Sat,  8 Jun 2024 19:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02528134B1;
+	Sat,  8 Jun 2024 19:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717874419; cv=none; b=XhjP8tqDGBb23kFgNjKujLmej5Hu44UARezOAFxDAON05eFofbMdNohXnsa/J+LxFDDrjKnsoEN0SZHOenHnn76hPgDV/ZXFBFygtZTuZw3KG1GMTpRAnL5MZtMH7PQbNLhCVZd9SoVDnaPlocnFC441A2/QrXodGNmBxGoiYF4=
+	t=1717875829; cv=none; b=FPyRkihIPidH6jSyTNt+2CJ/D02P9BFf06WnXsDnfa/iosmwD5TeBWqvaLRFrdtkzNpFWn6BwXwxJ7lv5KdygBDU+i8mSuQug/5PAt2aUa7+TcPRwdYZZcZq3hFE9MFgbVp5e1pjF+xCFbgHVUklceETF0VKnViZQOdwDNqnvgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717874419; c=relaxed/simple;
-	bh=YPBWo/1TW6OyLktEGeZVaCyTmHOZ3JTo2WnUgif8pHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ok7N2gN+t5mKul/MrCBypnkr2CtRw9VJH6yWuiSXLPiWNVpz8QQDpQuVcCmi+DBs/DNtbROVWZGJT4MoFdbuWwLkcMIw8UMwAGAdaVe4W8XXKsRbO1WpsH+pyD/cDX7g9qYfVJBl0ZdAQBt+3TkuR8eojgNAkCal7r+AGuLi1U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=DfWCAf0r; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sG1bk-0001CU-2i;
-	Sat, 08 Jun 2024 21:20:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FMkcj0KhC0yh+Y1ML/8400xCeZKqlnRCVmgyWA2sJsk=; b=DfWCAf0rdnWt3XQ3DjrNOnMdQ+
-	m6jpeBTdDkT0In4UhYtmuPg2QUdFByiCeiNK1IGTIuHFreAnYBTtdADGT2+3dRoMsDKb3tILfS0Nx
-	UILLY754dIm2X6IxfH5jTs2OJCJVBhGm1slwT2iRQMnJOObDVi9JRIrvtyTtneqsMgrpHb6XWNFfy
-	niTRJPt32WnfH9xisYt7at8b1xcURoTg/6kychlEflwe2/bxSohS23Xth9s9aeIauQqCuFdkS1gWT
-	sfZScn6O+3/RcpqvpHZpBaJkDQK3nYzPA+SS/bd44x64ppdIVO7mo07NRXYGHUEintMBwGjbIAPQX
-	Aapzcaww==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sG1bh-002vTe-0S;
-	Sat, 08 Jun 2024 21:20:06 +0200
-Date: Sat, 8 Jun 2024 21:20:04 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Adam Ford <aford173@gmail.com>
-Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, marcel@holtmann.org,
- johan@kernel.org, pmenzel@molgen.mpg.de, jirislaby@kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
- tomi.valkeinen@ideasonboard.com, =?UTF-8?B?UMOpdGVy?= Ujfalusi
- <peter.ujfalusi@gmail.com>, robh@kernel.org, hns@goldelico.com
-Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
-Message-ID: <20240608212004.3707d8ea@aktux>
-In-Reply-To: <CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
-References: <20240606183032.684481-1-andreas@kemnade.info>
-	<CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
-	<20240606221941.333a9704@aktux>
-	<CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717875829; c=relaxed/simple;
+	bh=ASFabXtRa1wFAO6TA1/5iLXPo5NYMXTtx1bqem/hIBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4itQ3OEmqfqkXAJyRHtzhGL7KH+dD3yorGtsYz58fnbkAPkoymmSKk8IZ6eJ3W6HQn43KXGrdeQPZkvVAzR5gCoGfq3dnNHROYOcXSL4WWwOB1jooOUjbMOf7L3mrkD5OvsQdnSAyVSjJhnxjcbccSBLHRwDMAvRPNZY1E/S00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=izEYON8i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F61C2BD11;
+	Sat,  8 Jun 2024 19:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1717875828;
+	bh=ASFabXtRa1wFAO6TA1/5iLXPo5NYMXTtx1bqem/hIBo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=izEYON8irr9+sSFBaMZGvQzmPI7gOpxIrihxApW07s0vI2HhDUUE7icramuCaZoxQ
+	 0BrKHNlLandyhpIcVekjg+rwF01WqCTXZRMHLO1hMM9Jq6sHdXN9ucC5rXuCFoP1IF
+	 VxKvRRSGGhOcadqzzXeQgVepZU229xvse3W282/w=
+From: Linus Torvalds <torvalds@linux-foundation.org>
+To: Peter Anvin <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arch <linux-arch@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] x86: add 'runtime constant' infrastructure
+Date: Sat,  8 Jun 2024 12:35:05 -0700
+Message-ID: <20240608193504.429644-2-torvalds@linux-foundation.org>
+X-Mailer: git-send-email 2.45.1.209.gc6f12300df
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Adam,
+Needs more comments and testing, but it works, and has a generic
+fallback for architectures that don't support it.
 
-On Sat, 8 Jun 2024 14:00:38 -0500
-Adam Ford <aford173@gmail.com> wrote:
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
 
-> On Thu, Jun 6, 2024 at 3:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade.i=
-nfo> wrote:
-> >
-> > Hi Luiz,
-> >
-> > On Thu, 6 Jun 2024 16:04:10 -0400
-> > Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
-> > =20
-> > > Hi Andreas,
-> > >
-> > > On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemna=
-de.info> wrote: =20
-> > > >
-> > > > Some of these chips have GNSS support. In some vendor kernels
-> > > > a driver on top of misc/ti-st can be found providing a /dev/tigps
-> > > > device which speaks the secretive Air Independent Interface (AI2) p=
-rotocol. =20
->=20
-> I think you may have sent me a file to test, but I can't find the
-> e-mail.   Can you tell me what tool you used to test it?  I can get
-> gnss0 to enumerate, so I am close.
->=20
-hmm, /bin/cat is sufficient. It should spit out nmea now by default.
+Notes from the first hack: I renamed the infrastructure from "static
+const" to "runtime const".  We end up having a number of uses of "static
+const" that are related to the C language notion of "static const"
+variables or functions, and "runtime constant" is a bit more descriptive
+anyway. 
 
-For playing around with raw mode, you need the ai2raw parameter
-and then you can play around with read-gps from=20
-https://github.com/akemnade/bt200tools
+And this now is properly abstracted out, so that any architecture can
+choose to implement their own version, but it all falls back on "just
+use the variable".
 
-> [   20.759857] hci-ti serial0-0: using DT
-> '/ocp@68000000/serial@4806c000/bluetooth-gnss' for 'enable' GPIO
-> lookup
-> [   20.770263] of_get_named_gpiod_flags: parsed 'enable-gpios'
-> property of node '/ocp@68000000/serial@4806c000/bluetooth-gnss[0]' -
-> status (0)
-> [   29.221588] gnss: GNSS driver registered with major 244
->=20
-That is nice.
+Josh - sorry for wasting your time on the objtool patch, I ended up
+using the linker functionality that Rasmus pointed out as existing
+instead. 
 
-Regards,
-Andreas
+Rasmus - I've cleaned up my patch a lot, and it now compiles fine on
+other architectures too, although obviously with the fallback of "no
+constant fixup".  As a result, my patch is actually smaller and much
+cleaner, and I ended up liking my approach more than your RAI thing
+after all. 
+
+Ingo / Peter / Borislav - I enabled this for 32-bit x86 too, because it
+was literally trivial (had to remove a "q" from "movq").  I did a
+test-build and it looks find, but I didn't actually try to boot it. 
+
+The x86-64 code is actually tested.  It's not like it has a _lot_ of
+testing, but the patch ends up being pretty small in the end.  Yes, the
+"shift u32 value right by a constant" is a pretty special case, but the
+__d_lookup_rcu() function really is pretty hot.
+
+Or rather it *was* pretty hot.  It's actually looking very good with
+this, imho. 
+
+Build tested with allmodconfig and on arm64, but I'm not claiming that I
+have necessarily found all special case corners.  That said, it's small
+and pretty straightforward. 
+
+Comments?
+
+ arch/x86/include/asm/runtime-const.h | 61 ++++++++++++++++++++++++++++
+ arch/x86/kernel/vmlinux.lds.S        |  3 ++
+ fs/dcache.c                          | 24 +++++++----
+ include/asm-generic/Kbuild           |  1 +
+ include/asm-generic/runtime-const.h  | 15 +++++++
+ include/asm-generic/vmlinux.lds.h    |  8 ++++
+ 6 files changed, 104 insertions(+), 8 deletions(-)
+ create mode 100644 arch/x86/include/asm/runtime-const.h
+ create mode 100644 include/asm-generic/runtime-const.h
+
+diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+new file mode 100644
+index 000000000000..b4f7efc0a554
+--- /dev/null
++++ b/arch/x86/include/asm/runtime-const.h
+@@ -0,0 +1,61 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RUNTIME_CONST_H
++#define _ASM_RUNTIME_CONST_H
++
++#define runtime_const_ptr(sym) ({				\
++	typeof(sym) __ret;					\
++	asm("mov %1,%0\n1:\n"					\
++		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
++		".long 1b - %c2 - .\n\t"			\
++		".popsection"					\
++		:"=r" (__ret)					\
++		:"i" ((unsigned long)0x0123456789abcdefull),	\
++		 "i" (sizeof(long)));				\
++	__ret; })
++
++// The 'typeof' will create at _least_ a 32-bit type, but
++// will happily also take a bigger type and the 'shrl' will
++// clear the upper bits
++#define runtime_const_shift_right_32(val, sym) ({		\
++	typeof(0u+(val)) __ret = (val);				\
++	asm("shrl $12,%k0\n1:\n"				\
++		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
++		".long 1b - 1 - .\n\t"				\
++		".popsection"					\
++		:"+r" (__ret));					\
++	__ret; })
++
++#define runtime_const_init(type, sym, value) do {	\
++	extern s32 __start_runtime_##type##_##sym[];	\
++	extern s32 __stop_runtime_##type##_##sym[];	\
++	runtime_const_fixup(__runtime_fixup_##type,	\
++		(unsigned long)(value), 		\
++		__start_runtime_##type##_##sym,		\
++		__stop_runtime_##type##_##sym);		\
++} while (0)
++
++/*
++ * The text patching is trivial - you can only do this at init time,
++ * when the text section hasn't been marked RO, and before the text
++ * has ever been executed.
++ */
++static inline void __runtime_fixup_ptr(void *where, unsigned long val)
++{
++	*(unsigned long *)where = val;
++}
++
++static inline void __runtime_fixup_shift(void *where, unsigned long val)
++{
++	*(unsigned char *)where = val;
++}
++
++static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
++	unsigned long val, s32 *start, s32 *end)
++{
++	while (start < end) {
++		fn(*start + (void *)start, val);
++		start++;
++	}
++}
++
++#endif
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 3509afc6a672..6e73403e874f 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -357,6 +357,9 @@ SECTIONS
+ 	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
+ #endif
+ 
++	RUNTIME_CONST(shift, d_hash_shift)
++	RUNTIME_CONST(ptr, dentry_hashtable)
++
+ 	. = ALIGN(PAGE_SIZE);
+ 
+ 	/* freed after init ends here */
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 407095188f83..4511e557bf84 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -97,12 +97,14 @@ EXPORT_SYMBOL(dotdot_name);
+  */
+ 
+ static unsigned int d_hash_shift __ro_after_init;
+-
+ static struct hlist_bl_head *dentry_hashtable __ro_after_init;
+ 
+-static inline struct hlist_bl_head *d_hash(unsigned int hash)
++#include <asm/runtime-const.h>
++
++static inline struct hlist_bl_head *d_hash(unsigned long hashlen)
+ {
+-	return dentry_hashtable + (hash >> d_hash_shift);
++	return runtime_const_ptr(dentry_hashtable) +
++		runtime_const_shift_right_32(hashlen, d_hash_shift);
+ }
+ 
+ #define IN_LOOKUP_SHIFT 10
+@@ -495,7 +497,7 @@ static void ___d_drop(struct dentry *dentry)
+ 	if (unlikely(IS_ROOT(dentry)))
+ 		b = &dentry->d_sb->s_roots;
+ 	else
+-		b = d_hash(dentry->d_name.hash);
++		b = d_hash(dentry->d_name.hash_len);
+ 
+ 	hlist_bl_lock(b);
+ 	__hlist_bl_del(&dentry->d_hash);
+@@ -2104,7 +2106,7 @@ static noinline struct dentry *__d_lookup_rcu_op_compare(
+ 	unsigned *seqp)
+ {
+ 	u64 hashlen = name->hash_len;
+-	struct hlist_bl_head *b = d_hash(hashlen_hash(hashlen));
++	struct hlist_bl_head *b = d_hash(hashlen);
+ 	struct hlist_bl_node *node;
+ 	struct dentry *dentry;
+ 
+@@ -2171,7 +2173,7 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
+ {
+ 	u64 hashlen = name->hash_len;
+ 	const unsigned char *str = name->name;
+-	struct hlist_bl_head *b = d_hash(hashlen_hash(hashlen));
++	struct hlist_bl_head *b = d_hash(hashlen);
+ 	struct hlist_bl_node *node;
+ 	struct dentry *dentry;
+ 
+@@ -2277,7 +2279,7 @@ EXPORT_SYMBOL(d_lookup);
+ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
+ {
+ 	unsigned int hash = name->hash;
+-	struct hlist_bl_head *b = d_hash(hash);
++	struct hlist_bl_head *b = d_hash(name->hash_len);
+ 	struct hlist_bl_node *node;
+ 	struct dentry *found = NULL;
+ 	struct dentry *dentry;
+@@ -2397,7 +2399,7 @@ EXPORT_SYMBOL(d_delete);
+ 
+ static void __d_rehash(struct dentry *entry)
+ {
+-	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
++	struct hlist_bl_head *b = d_hash(entry->d_name.hash_len);
+ 
+ 	hlist_bl_lock(b);
+ 	hlist_bl_add_head_rcu(&entry->d_hash, b);
+@@ -3129,6 +3131,9 @@ static void __init dcache_init_early(void)
+ 					0,
+ 					0);
+ 	d_hash_shift = 32 - d_hash_shift;
++
++	runtime_const_init(shift, d_hash_shift, d_hash_shift);
++	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
+ }
+ 
+ static void __init dcache_init(void)
+@@ -3157,6 +3162,9 @@ static void __init dcache_init(void)
+ 					0,
+ 					0);
+ 	d_hash_shift = 32 - d_hash_shift;
++
++	runtime_const_init(shift, d_hash_shift, d_hash_shift);
++	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
+ }
+ 
+ /* SLAB cache for __getname() consumers */
+diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
+index b20fa25a7e8d..052e5c98c105 100644
+--- a/include/asm-generic/Kbuild
++++ b/include/asm-generic/Kbuild
+@@ -46,6 +46,7 @@ mandatory-y += pci.h
+ mandatory-y += percpu.h
+ mandatory-y += pgalloc.h
+ mandatory-y += preempt.h
++mandatory-y += runtime-const.h
+ mandatory-y += rwonce.h
+ mandatory-y += sections.h
+ mandatory-y += serial.h
+diff --git a/include/asm-generic/runtime-const.h b/include/asm-generic/runtime-const.h
+new file mode 100644
+index 000000000000..b54824bd616e
+--- /dev/null
++++ b/include/asm-generic/runtime-const.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RUNTIME_CONST_H
++#define _ASM_RUNTIME_CONST_H
++
++/*
++ * This is the fallback for when the architecture doesn't
++ * support the runtime const operations.
++ *
++ * We just use the actual symbols as-is.
++ */
++#define runtime_const_ptr(sym) (sym)
++#define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
++#define runtime_const_init(type,sym,value) do { } while (0)
++
++#endif
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 5703526d6ebf..389a78415b9b 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -944,6 +944,14 @@
+ #define CON_INITCALL							\
+ 	BOUNDED_SECTION_POST_LABEL(.con_initcall.init, __con_initcall, _start, _end)
+ 
++#define RUNTIME_NAME(t,x) runtime_##t##_##x
++
++#define RUNTIME_CONST(t,x)						\
++	. = ALIGN(8);							\
++	RUNTIME_NAME(t,x) : AT(ADDR(RUNTIME_NAME(t,x)) - LOAD_OFFSET) {	\
++		*(RUNTIME_NAME(t,x));					\
++	}
++
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
+ 		. = ALIGN(8);						\
+-- 
+2.45.1.209.gc6f12300df
+
 
