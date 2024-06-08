@@ -1,251 +1,129 @@
-Return-Path: <linux-kernel+bounces-206947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2823D901029
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 10:14:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B9B901030
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 10:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB81B281DD2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987221F2258D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFF1176FBD;
-	Sat,  8 Jun 2024 08:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8647B176ADB;
+	Sat,  8 Jun 2024 08:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="amJRXPqB"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="OYYyuIoT"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92E5178362;
-	Sat,  8 Jun 2024 08:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3113F17BAF;
+	Sat,  8 Jun 2024 08:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717834376; cv=none; b=Ymb55eDZh5AQosz3cwsequQ1EHvHLk41+L8uZcKviG39Q6KomtVNQpYQ4SuTt8dm2IXI2vigPvGnBI9HRIwHY3MkpIhMg35HpznKwlOGnFrJaqG5KBqtLbvECDfeugsyERm4sgQwYZyzu7/FknY3H72YQQAsCNbyR9Jax5OV7Cw=
+	t=1717835119; cv=none; b=MqaEBef7Nqoss1lVwtM2wA036uPpPrsFc9UKJD5fkpCJ10Rb2slvF8X4NKmaNM2zaGvGyVgTKF6t1w8R78V0LNx0SMUXVo9x94rDmAXQ3S3RyRjH45nCbEP9fUZac+1gPa7Tb7RbdJEBZc1UJjHihmeMzm4TDPTSlSUxwlA1qxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717834376; c=relaxed/simple;
-	bh=nS0VirJKyYW+dk8nu7ljo2kt+g/A4F+QJmGxE892J9I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qLFJW8uSm63vwLtZGrHzFj5rigVlpiZmuXSEIW/qzVSU04htm4g4+jrLfUDlzSvidAi5ssebJ2jRiBfgeXa9P2ozyN0QqedWRV1ZsudApnTcZcFJbHHFnctcCs3/Trb1uaPQdktvY4DN4d4EKeFiMF5V+dgp7qtXjihnpr/i/JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=amJRXPqB; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717834366;
-	bh=nS0VirJKyYW+dk8nu7ljo2kt+g/A4F+QJmGxE892J9I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=amJRXPqBn4lEkEK0kaAX1c495b7B/CEZvd0SVy1YL82RQn8qo0rRHrMfRGd2dyQhB
-	 yU+vmiGcBRZgKJO8+U5eATwjzx8ILmIMx7Kt1y61Whz/D93Q7MkHsOs+BUvr4rtlcR
-	 tde2QYQPm5yDepBSIj1SKa/+D2CDWZnax/p1z0PU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 08 Jun 2024 10:12:47 +0200
-Subject: [PATCH 5/5] hwmon: (cros_ec) Add support for temperature
- thresholds
+	s=arc-20240116; t=1717835119; c=relaxed/simple;
+	bh=NHcCBCkVIG4S20BV+hk5Vde+bCt+RveWygaQATTN7vY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7H8rgXj9ZFuK9F5WsnhmP85kCkcEizvvBAOjT9CxbYU4UkNLyoqdhcj+N1MezUm/HZEnvb9bDHMbi0hQG5gI0EvBguWhhSfCM2fWUsTOfES6GlbrJQdXZm30+R4QALZyCofqy+tPUtqo1S+ngpKZH6YG4d8B9DzGSsrHJhmiQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=OYYyuIoT; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yTLtEsPk7oLK1m4GqjGTNlGn4NBucRzN+JPW/nQ4vXA=; b=OYYyuIoTYtrYySaGH65PZyH8ot
+	+gRjVqDpVMYiU0noV5X2mj2YvtIelGPFNYD160mnHDsAdRtHgSrMylySoJur+XlgmGljlERG2Dv54
+	OECu9VbAQKr0xQsYnRAp57AfVqpJ0PdMnrBFy4lNJ7IQEs8HMSalXuI1m5PzpGEBhKTinS6iB+jdO
+	sG237T574IpSZCVrVZa294fa8lagaXahxJXe2vOfXzoAQ8O5jhcjSnmlMTdzuKqyPfhC1XvfNBpe+
+	qEVlm06PcSvZQVe9C2z5BeZDEyMH4H0yqMRBZtIHhgN8pln0gu2rZbWCRnNtxGFXrzQggPkpyHrPJ
+	z599KfOw==;
+Received: from [2001:9e8:9f5:cb01:3235:adff:fed0:37e6] (port=35328 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sFrNp-00CUUa-GL;
+	Sat, 08 Jun 2024 10:25:05 +0200
+Date: Sat, 8 Jun 2024 10:25:02 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] modpost: bypass module description test on vmlinux.o
+Message-ID: <20240608-certain-potoo-of-agility-cc231c@lindesnes>
+References: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240608-cros_ec-hwmon-pwm-v1-5-d29dfc26fbc3@weissschuh.net>
-References: <20240608-cros_ec-hwmon-pwm-v1-0-d29dfc26fbc3@weissschuh.net>
-In-Reply-To: <20240608-cros_ec-hwmon-pwm-v1-0-d29dfc26fbc3@weissschuh.net>
-To: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
- Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: Dustin Howett <dustin@howett.net>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Stephen Horvath <s.horvath@outlook.com.au>, chrome-platform@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717834365; l=6121;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=nS0VirJKyYW+dk8nu7ljo2kt+g/A4F+QJmGxE892J9I=;
- b=V5V/b7UZ6qurz6h+lVJBextsKc+zDESr+4BKzZqCx/SRGi4RrU7YqVnGRo32ivPUsbr34MEHs
- Ic103Au6TTsBxT6JaCsU8kxRJcn+szSC9XRcLDCmuaVvNq2zfbj6C96
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
 
-Implement reading and writing temperature thresholds through
-EC_CMD_THERMAL_GET_THRESHOLD/EC_CMD_THERMAL_SET_THRESHOLD.
+On Fri, Jun 07, 2024 at 02:42:43PM -0700, Jeff Johnson wrote:
+> When building modules with W=1, modpost will warn if a module is
+> missing a MODULE_DESCRIPTION. Unfortunately, it also performs this
+> test on vmlinux.o:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+> 
+> Relocate the logic so that the test is not performed on vmlinux.o.
+> 
+> Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
 
-Thresholds are mapped as follows between the EC and hwmon:
+Hi Jeff,
 
-hwmon_temp_max       - EC_TEMP_THRESH_WARN
-hwmon_temp_crit      - EC_TEMP_THRESH_HIGH
-hwmon_temp_emergency - EC_TEMP_THRESH_HALT
+you're a few hours too late:
+https://lore.kernel.org/linux-kbuild/20240606183921.1128911-1-masahiroy@kernel.org/
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- Documentation/hwmon/cros_ec_hwmon.rst |  1 +
- drivers/hwmon/cros_ec_hwmon.c         | 82 +++++++++++++++++++++++++++++++++--
- 2 files changed, 80 insertions(+), 3 deletions(-)
+Kind regards,
+Nicolas
 
-diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-index 3cc345425aac..24ff261ae232 100644
---- a/Documentation/hwmon/cros_ec_hwmon.rst
-+++ b/Documentation/hwmon/cros_ec_hwmon.rst
-@@ -29,3 +29,4 @@ Supported features:
-   - Target fan speed (for fan 1 only)
-   - PWM-based fan control
-   - Current temperature
-+  - Temperature thresholds
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index 5cddf78cfe0e..009b94af6df4 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -29,6 +29,7 @@ struct cros_ec_hwmon_priv {
- 	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
- 	u8 usable_fans;
- 	bool has_fan_pwm;
-+	bool has_temp_threshold;
- 	u8 fan_pwm[EC_FAN_SPEED_ENTRIES];
- 	enum cros_ec_hwmon_fan_mode fan_mode[EC_FAN_SPEED_ENTRIES];
- };
-@@ -97,6 +98,42 @@ static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8
- 	return 0;
- }
- 
-+static int cros_ec_hwmon_read_temp_threshold(struct cros_ec_device *cros_ec, u8 index,
-+					     enum ec_temp_thresholds threshold, u32 *temp)
-+{
-+	struct ec_params_thermal_get_threshold_v1 req = {};
-+	struct ec_thermal_config resp;
-+	int ret;
-+
-+	req.sensor_num = index;
-+	ret = cros_ec_cmd(cros_ec, 1, EC_CMD_THERMAL_GET_THRESHOLD,
-+			  &req, sizeof(req), &resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
-+
-+	*temp = resp.temp_host[threshold];
-+	return 0;
-+}
-+
-+static int cros_ec_hwmon_write_temp_threshold(struct cros_ec_device *cros_ec, u8 index,
-+					      enum ec_temp_thresholds threshold, u32 temp)
-+{
-+	struct ec_params_thermal_get_threshold_v1 get_req = {};
-+	struct ec_params_thermal_set_threshold_v1 set_req = {};
-+	int ret;
-+
-+	get_req.sensor_num = index;
-+	ret = cros_ec_cmd(cros_ec, 1, EC_CMD_THERMAL_GET_THRESHOLD,
-+			  &get_req, sizeof(get_req), &set_req.cfg, sizeof(set_req.cfg));
-+	if (ret < 0)
-+		return ret;
-+
-+	set_req.sensor_num = index;
-+	set_req.cfg.temp_host[threshold] = temp;
-+	return cros_ec_cmd(cros_ec, 1, EC_CMD_THERMAL_SET_THRESHOLD,
-+			   &set_req, sizeof(set_req), NULL, 0);
-+}
-+
- static bool cros_ec_hwmon_is_error_fan(u16 speed)
- {
- 	return speed == EC_FAN_SPEED_NOT_PRESENT || speed == EC_FAN_SPEED_STALLED;
-@@ -115,11 +152,24 @@ static long cros_ec_hwmon_temp_to_millicelsius(u8 temp)
- 	return kelvin_to_millicelsius((((long)temp) + EC_TEMP_SENSOR_OFFSET));
- }
- 
-+static enum ec_temp_thresholds cros_ec_hwmon_attr_to_thres(u32 attr)
-+{
-+	if (attr == hwmon_temp_max)
-+		return EC_TEMP_THRESH_WARN;
-+	else if (attr == hwmon_temp_crit)
-+		return EC_TEMP_THRESH_HIGH;
-+	else if (attr == hwmon_temp_emergency)
-+		return EC_TEMP_THRESH_HALT;
-+	else
-+		return 0;
-+}
-+
- static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
- 			      u32 attr, int channel, long *val)
- {
- 	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
- 	int ret = -EOPNOTSUPP;
-+	u32 threshold;
- 	u16 speed;
- 	u8 temp;
- 
-@@ -166,6 +216,14 @@ static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
- 			ret = cros_ec_hwmon_read_temp(priv->cros_ec, channel, &temp);
- 			if (ret == 0)
- 				*val = cros_ec_hwmon_is_error_temp(temp);
-+
-+		} else if (attr == hwmon_temp_max || attr == hwmon_temp_crit ||
-+			   attr == hwmon_temp_emergency) {
-+			ret = cros_ec_hwmon_read_temp_threshold(priv->cros_ec, channel,
-+								cros_ec_hwmon_attr_to_thres(attr),
-+								&threshold);
-+			if (ret == 0)
-+				*val = kelvin_to_millicelsius(threshold);
- 		}
- 	}
- 
-@@ -235,6 +293,10 @@ static int cros_ec_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
- 
- 		else if (attr == hwmon_pwm_enable)
- 			ret = cros_ec_hwmon_write_pwm_enable(priv, channel, val);
-+	} else if (type == hwmon_temp) {
-+		ret = cros_ec_hwmon_write_temp_threshold(priv->cros_ec, channel,
-+							 cros_ec_hwmon_attr_to_thres(attr),
-+							 millicelsius_to_kelvin(val));
- 	}
- 
- 	return ret;
-@@ -259,8 +321,16 @@ static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_type
- 			return 0644;
- 
- 	} else if (type == hwmon_temp) {
--		if (priv->temp_sensor_names[channel])
--			return 0444;
-+		if (priv->temp_sensor_names[channel]) {
-+			if (attr == hwmon_temp_max ||
-+			    attr == hwmon_temp_crit ||
-+			    attr == hwmon_temp_emergency) {
-+				if (priv->has_temp_threshold)
-+					return 0644;
-+			} else {
-+				return 0444;
-+			}
-+		}
- 	}
- 
- 	return 0;
-@@ -278,7 +348,8 @@ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
- 
--#define CROS_EC_HWMON_TEMP_PARAMS (HWMON_T_INPUT | HWMON_T_FAULT | HWMON_T_LABEL)
-+#define CROS_EC_HWMON_TEMP_PARAMS (HWMON_T_INPUT | HWMON_T_FAULT | HWMON_T_LABEL | \
-+				   HWMON_T_MAX | HWMON_T_CRIT | HWMON_T_EMERGENCY)
- 	HWMON_CHANNEL_INFO(temp,
- 			   CROS_EC_HWMON_TEMP_PARAMS,
- 			   CROS_EC_HWMON_TEMP_PARAMS,
-@@ -325,9 +396,14 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
- 	struct ec_params_temp_sensor_get_info req = {};
- 	struct ec_response_temp_sensor_get_info resp;
- 	size_t candidates, i, sensor_name_size;
-+	u32 threshold;
- 	int ret;
- 	u8 temp;
- 
-+	ret = cros_ec_hwmon_read_temp_threshold(priv->cros_ec, 0, EC_TEMP_THRESH_HIGH, &threshold);
-+	if (ret == 0)
-+		priv->has_temp_threshold = 1;
-+
- 	if (thermal_version < 2)
- 		candidates = EC_TEMP_SENSOR_ENTRIES;
- 	else
+
+
+>  scripts/mod/modpost.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 937294ff164f..f48d72d22dc2 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
+>  			namespace = get_next_modinfo(&info, "import_ns",
+>  						     namespace);
+>  		}
+> +
+> +		if (extra_warn && !get_modinfo(&info, "description"))
+> +			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+>  	}
+>  
+> -	if (extra_warn && !get_modinfo(&info, "description"))
+> -		warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+>  	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
+>  		symname = remove_dot(info.strtab + sym->st_name);
+>  
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240607-md-scripts-mod-7f7ff091e02b
+> 
+> 
 
 -- 
-2.45.2
-
+epost|xmpp: nicolas@fjasle.eu          irc://oftc.net/nsc
+↳ gpg: 18ed 52db e34f 860e e9fb  c82b 7d97 0932 55a0 ce7f
+     -- frykten for herren er opphav til kunnskap --
 
