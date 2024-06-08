@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-206914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5B5900FBB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508E7900FBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F7A1F22479
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:41:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81487B22C76
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A592176ABA;
-	Sat,  8 Jun 2024 06:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fe/MMIjY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF207176AB4;
+	Sat,  8 Jun 2024 06:44:18 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F3F37171;
-	Sat,  8 Jun 2024 06:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CEA1FDD;
+	Sat,  8 Jun 2024 06:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717828886; cv=none; b=MD/Zp0BvXiZzxedqV5fe8GAD13I9StuzS1ZN13Q73JoIMVQ5tErgSNn8C8tt/AkkcElKMElX9wIuDwyF1Ui+4jVRi8zx1I6UxL7MI91Kf30/sblzB2VZx1v7DBu8wqwZUS2LSMvESTwdKwuIw8rrE8vmD4RrIIbE/t8V3eiCsIY=
+	t=1717829058; cv=none; b=QlqEGgr3a8zqMK/CYxwErRZKmSTHHvBVvZ+zQ9rCkIzLf5AWOzZk8xtYWpyGEn5QW2eky63zHsMyRR03Zni5uIDpxmf2pJCxQzPqmH2phbUrBFAhb317kK7IW9NqOfQXKztz3wuFb6yB8hFYvxyJdRi63TocWMfRG9CF4AzA+sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717828886; c=relaxed/simple;
-	bh=Pz6JJDnPVbtOuWZggs2YrW4Hk1PhUbc/pSMDPeFzVXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GV6fSGR8uNfbln9pycu2RBnwN6GAOyMWrJJLkCfwikLInlvgoBwg742t2wr+RbfEPnBYC3SgsFyTfzULrLh7o5jgfhQk9s/AprR5Ky0U2pKrvFGixd2ndJ8DiM3AhMPpzwYkyAmSVak2L+8UzWwIv0j6s83S2fAidiCBw80NLAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fe/MMIjY; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717828884; x=1749364884;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Pz6JJDnPVbtOuWZggs2YrW4Hk1PhUbc/pSMDPeFzVXU=;
-  b=Fe/MMIjYj0zjAkBoCRykAShfbUk27ih2UKbKQuCLlC+FgmEqJXVv5TYv
-   Cdh+BlmJoTSnd3cvosLnu5e7iXoWDtwQGtHEZPAq7g6qQb8jc0dOlWooE
-   tBnqvhQMim9bF3kJhCWtsqqeACxyC0AEaMZkTrFIaHZKLpZ4dRoPuANOl
-   fIe94vapiw0/nwEiDsVW2sZZkOnc9gF0pj9y22AXQxV7zSF7gZirMI7ws
-   /kG7tNjVG4pykDu7oDO9L+bw4Ud2C62xwRNGzV6tb1pXFA1LH0DhCviBQ
-   sQ1vuBZmkTe8Hk9U9cmh3+7Jzsav7NrWhKUAN37Y9T4rT5PYOdDc8D58R
-   Q==;
-X-CSE-ConnectionGUID: dDSRFuDxRvSZiZnImSWmqQ==
-X-CSE-MsgGUID: qcRaFsUuRCupiW2Zwa4uqA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25665528"
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="25665528"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 23:41:24 -0700
-X-CSE-ConnectionGUID: rQiIXXhXQLam8mUrsUe/EQ==
-X-CSE-MsgGUID: HQDi8NehR1GPayLwmC8BdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="39212369"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 07 Jun 2024 23:41:21 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFplO-0001CA-1c;
-	Sat, 08 Jun 2024 06:41:18 +0000
-Date: Sat, 8 Jun 2024 14:40:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Von Dentz <luiz.dentz@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Sean Wang <sean.wang@mediatek.com>,
-	Deren Wu <deren.Wu@mediatek.com>,
-	Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-mediatek <linux-mediatek@lists.infradead.org>,
-	Chris Lu <chris.lu@mediatek.com>
-Subject: Re: [PATCH v4 4/4] Bluetooth: btusb: mediatek: add ISO data
- transmission functions
-Message-ID: <202406081451.S72dkwTp-lkp@intel.com>
-References: <20240606114321.30515-5-chris.lu@mediatek.com>
+	s=arc-20240116; t=1717829058; c=relaxed/simple;
+	bh=LIdbb5dyeR0Wcx2MqMie1Vp/1VbGTqntUHGDdy32Le0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDvITtq6Xx6Rn+nbvIFv8bkhvMMTGEaB6qvEFGL6K+AFkF3K0kRnzf2cXedVJBCubLbzwGD2YP7g0kxxq0NrvZx4DeZU3yee13AiwwtADCFjOhnviiJQuA3jtze0Oxb53BNF5xF3czwhklBVapHhcTKzQ9lxyvvuScUgSNIkAqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vx7nn1kwqz4f3jHx;
+	Sat,  8 Jun 2024 14:43:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 0FDA81A0181;
+	Sat,  8 Jun 2024 14:44:07 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP2 (Coremail) with SMTP id Syh0CgAXOQyz_WNmIowPPQ--.42198S3;
+	Sat, 08 Jun 2024 14:44:04 +0800 (CST)
+Message-ID: <30654e55-c639-4caa-af7d-9eea1bcf3cf7@huaweicloud.com>
+Date: Sat, 8 Jun 2024 14:44:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606114321.30515-5-chris.lu@mediatek.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in
+ ublk_ctrl_start_recovery()
+To: Changhui Zhong <czhong@redhat.com>, Li Nan <linan666@huaweicloud.com>
+Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk,
+ ZiyangZhang@linux.alibaba.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ houtao1@huawei.com, yangerkun@huawei.com
+References: <20240529095313.2568595-1-linan666@huaweicloud.com>
+ <Zl0QpCbYVHIkKa/H@fedora>
+ <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
+ <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
+ <918f128b-f752-2d66-ca60-7d9c711ed928@huaweicloud.com>
+ <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
+ <ZmA0Se+t/LZihBKp@fedora>
+ <CAGVVp+WoBochfQvLgAVbpWFv6JVAfQVkPwWDG8mBxqgGK-NDbg@mail.gmail.com>
+ <2c46587e-0621-b21e-fbc1-fd69e87def03@huaweicloud.com>
+ <CAGVVp+WdWxAZdhpuDTuMvb+JvX-Ji9B+A4+Pv49JXLiXM++DHQ@mail.gmail.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <CAGVVp+WdWxAZdhpuDTuMvb+JvX-Ji9B+A4+Pv49JXLiXM++DHQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAXOQyz_WNmIowPPQ--.42198S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar18tw1xKr18GF1DCr4DArb_yoW8XF48pF
+	97Wa13Kr1DGry8GayIv39xu3W2qF4rCrn8WF18Grn3Z3s0vF1IgrW8A3y2kFZ2grykuF1U
+	Z3WDX3ZrJ345GFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1c4S5UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Chris,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on bluetooth-next/master]
-[also build test WARNING on next-20240607]
-[cannot apply to bluetooth/master linus/master v6.10-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth-net-add-hci_iso_hdr-function-for-iso-data/20240606-194619
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-patch link:    https://lore.kernel.org/r/20240606114321.30515-5-chris.lu%40mediatek.com
-patch subject: [PATCH v4 4/4] Bluetooth: btusb: mediatek: add ISO data transmission functions
-config: arm-omap2plus_defconfig (https://download.01.org/0day-ci/archive/20240608/202406081451.S72dkwTp-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081451.S72dkwTp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406081451.S72dkwTp-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/bluetooth/btusb.c:28:
-   drivers/bluetooth/btmtk.h: In function 'btmtk_isopkt_pad':
->> drivers/bluetooth/btmtk.h:259:16: warning: returning 'void *' from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]
-     259 |         return ERR_PTR(-EOPNOTSUPP);
-         |                ^~~~~~~~~~~~~~~~~~~~
 
 
-vim +259 drivers/bluetooth/btmtk.h
+在 2024/6/6 21:43, Changhui Zhong 写道:
+> On Thu, Jun 6, 2024 at 4:05 PM Li Nan <linan666@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> 在 2024/6/6 12:48, Changhui Zhong 写道:
+>>
+>> [...]
+>>
+>>>>
+>>>> Hi Changhui,
+>>>>
+>>>> The hang is actually expected because recovery fails.
+>>>>
+>>>> Please pull the latest ublksrv and check if the issue can still be
+>>>> reproduced:
+>>>>
+>>>> https://github.com/ublk-org/ublksrv
+>>>>
+>>>> BTW, one ublksrv segfault and two test cleanup issues are fixed.
+>>>>
+>>>> Thanks,
+>>>> Ming
+>>>>
+>>>
+>>> Hi,Ming and Nan
+>>>
+>>> after applying the new patch and pulling the latest ublksrv,
+>>> I ran the test for 4 hours and did not observe any task hang.
+>>> the test results looks good！
+>>>
+>>> Thanks，
+>>> Changhui
+>>>
+>>>
+>>> .
+>>
+>> Thanks for you test!
+>>
+>> However, I got a NULL pointer dereference bug with ublksrv. It is not
+>> introduced by this patch. It seems io was issued after deleting disk. And
+>> it can be reproduced by:
+>>
+>>     while true; do make test T=generic/004; done
+>>
+> 
+> Hi,Nan
+> 
+> I can not reproduce this issue with repo
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-next
+> ,
+> which kernel repo do you using for test?
+> 
+> Thanks,
+> Changhui
+> 
 
-   256	
-   257	static int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb)
-   258	{
- > 259		return ERR_PTR(-EOPNOTSUPP);
-   260	}
-   261	
+I tested with the latest block code, commit
+2ab79514109578fc4b6df90633d500cf281eb689, this issue also can be
+reproduced.
+
+The space of the root path has been filled up by
+ublksrv(tests/tmpublk_loop_data_xxx), which may the issue be related to this?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Nan
+
 
