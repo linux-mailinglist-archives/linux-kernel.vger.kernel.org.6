@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-206882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36C6900F3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E38D900F41
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A38B2323A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAE41F2273B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B2DD27A;
-	Sat,  8 Jun 2024 02:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913FBE4D;
+	Sat,  8 Jun 2024 02:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AdtUBxd/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXkazyhQ"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E58C05;
-	Sat,  8 Jun 2024 02:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDF4C14F
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717813386; cv=none; b=AbbD41DL5Kv6BvI1lNRtMuYXLPtqMimzYPWN9uojzM7+ckkKOL+xSSJot9ZuOYC74Dw5HvQAA8TeKGggE/ZX7PmmejTgDtzOA63ccZgsJVfR/WgJZenhKiBqq1rojV9IZck09fpMBBUoiS7nmxUegn5cHLWTheDZk6mOg3181pg=
+	t=1717813425; cv=none; b=mLZVhfubJ8MVgibKO26ROyTG6/wziB51H3Fb7rIrpVuoutZm4oIke0cOU8G/qc17sXZshOubkh8JDepObQTc9NFzMr2dPmdPIzAVFjj+hSFR/3hJ7n8it4cZoLl44OpZAewVYRxa1hihoPLeuojr0D08hzDglTFUrry66208bkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717813386; c=relaxed/simple;
-	bh=jxTmO74D+6vADQ2Xmg68XfWJXA/J18hIQnFFA7Ko9u8=;
+	s=arc-20240116; t=1717813425; c=relaxed/simple;
+	bh=8jjq1gHnAInkHjlnzVHU3k3WOM8rwgC8BW9P44ujf30=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAia10MXgg6lf2X/KhX6QMHyzvrQf33igJcznlnvWk7draYXT4BdZVhtg9YdsYwYSBdmGIlKKMvVoOErsX74tN4gFaa91ve75qkj3stTdz5hKJXfWaU4eHbPhN90llrKQ+kN6+ASda6s6phpIxyuxZeN4nXDr8BnFXOHYIXDNCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AdtUBxd/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717813384; x=1749349384;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jxTmO74D+6vADQ2Xmg68XfWJXA/J18hIQnFFA7Ko9u8=;
-  b=AdtUBxd/1NxVtOraWJAvkU+Vh20opPDfzlRMRgKAOcpJd9onAiFYFoGH
-   2+d6hcWWzCz/Q3dCrVllySKM1xANJUnBGK2AnlETOFsOcr2V1wpy3MKwW
-   KbXkWdO+J1pA4TEUza5R2UmgZ61A+7hcCPbrB87SgMOfiH64F0dTVcBjD
-   1EBPNPfNl0gzPXCLxMrxz8Rv2g19/bvddbFZJ5uTPTmq9itFqHxtduL/L
-   PYIsIuwlLv95YlxRLcrJF9GT17xWnTT8v9FyVVXkXD7xSZ02VF/1DRtGD
-   0o/99ahcE3lVBqzfdmTVv/gDRfQ0s3SLI4GRQOuG1SXOtxN5BerIV5ZkQ
-   A==;
-X-CSE-ConnectionGUID: 02vEoETXRhWNqOt/n/APzQ==
-X-CSE-MsgGUID: Y4EnGjqZRLae/mPaYedPHQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25126116"
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="25126116"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 19:23:03 -0700
-X-CSE-ConnectionGUID: a6eIpv6YTWupXaVjcl4nLQ==
-X-CSE-MsgGUID: 5KjNWwhaRXejfETX6IKdHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="38444895"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 07 Jun 2024 19:23:00 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFljN-0000r6-2F;
-	Sat, 08 Jun 2024 02:22:57 +0000
-Date: Sat, 8 Jun 2024 10:22:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangshuaijie@awinic.com, dmitry.torokhov@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jeff@labundy.com,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, wangshuaijie@awinic.com,
-	liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V2 5/5] Add support for Awinic sar sensor.
-Message-ID: <202406081000.gRWyFGXO-lkp@intel.com>
-References: <20240605091143.163789-6-wangshuaijie@awinic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxKLfu3k3J95vpVBk1atbTWa07Ct66LXzGnRkSP0HxiruyPTHJ0bTMAdt8JVcInmOHURfPz+4WtHT36Iz0p5SG3b6D2K/pK1lKD/JndTO26LlMHLRRoWYWH/g2TbNJjXGTRGtcN8utE7ylOUfkmuSCK8aCp9kLR2Rw72XEvF+HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXkazyhQ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b8b7b8698so3344734e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 19:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717813422; x=1718418222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9V+yvJSOPxV6HkhRzMGuSvkZwjbSgJnARuZIs0WNJg=;
+        b=oXkazyhQpHN69BweMcjQDAgGEPY3kHdVKg51kwW3ykRF0GUBD5v8S2u7ksfCU8gezQ
+         l/SrxUCsVINh7s+HvyPHIQI70IcQciuPQt6xm2rGIJRlDLcxFKKHrvDrQKiZHcoPru2a
+         A+i8PKuhRsdzdk3Q5th5edOqLLdfzfH0qUcHPvrFj+yEsGCWTmDIPapjVSuQt7exwBze
+         ceHTnxaCHwvhrZ77BNnRqbEiOf2qxH016udv61Drw0rilPxSo2VAorMGKbW4Fxa5hiHB
+         8u3kffaKaGWTJeweA7KKeYtqDEmo8UxjiuJhDRG10b2W8d1NPhPGdejl2wha7MbBrJ1y
+         O1+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717813422; x=1718418222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r9V+yvJSOPxV6HkhRzMGuSvkZwjbSgJnARuZIs0WNJg=;
+        b=Cs3l3JJI3aRBE+I4hh1IkkL8azULJ3IxY38Bc/ntWmiMBbWxJLn+204I39M8sALWGD
+         JbtZUDgxjdvOsqZ1khCT2RGk3qJT15tqhaGkW9bNMnQt3cyHUl+2xxCF2JnNTBtf0bdp
+         M/OiKz1zOCwiM/IePEYjh0gxR0LseRsnfBGicilanj5VHivmprpNwQWT1wrwBy5yzLiz
+         M/cB+90wozbOh6dBcm+OZ3jasbO0FZMOkM9918Y/huXk0ZIbUa3E9a+U1IdpK6S2ml/S
+         uzqAdsygdlp/qmSUENS+lEWGrTv0No4i0BpHoTwpJDhOWryMsF9t9FC1hhSJ0zFK2Etd
+         I0pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp6YNRB6SwLb1r3BbtoIJHTlbATEtJ0iJ6aaWr4NMxqflZ9lKNbt0RZ2SeHSbIaOqXIYcdnjT02nfavF2+VQ3qPpUEpdNGcMfQskJe
+X-Gm-Message-State: AOJu0Yw+8EWbhEiG8WMXvY4INNbimQla5rwf7fmlnriP+lNXKZzypuCH
+	SyZKIKFt8C+hiQwMNprJ1Ix9zPWH/5D+4bIcIlcZVFPGF9aOcZjJE24I8DMawpo=
+X-Google-Smtp-Source: AGHT+IErTuWuRC95/TFbpSXncWl4vvSDO39M3dhsa+Ymd9gZ9Y5tyCiwQrYM+fotBE75ODyhxZSJPg==
+X-Received: by 2002:a05:6512:2526:b0:52c:812b:6e72 with SMTP id 2adb3069b0e04-52c812b70acmr60133e87.1.1717813421804;
+        Fri, 07 Jun 2024 19:23:41 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423cf1dsm708744e87.203.2024.06.07.19.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 19:23:41 -0700 (PDT)
+Date: Sat, 8 Jun 2024 05:23:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, perex@perex.cz, lgirdwood@gmail.com, 
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	krzk+dt@kernel.org
+Subject: Re: [PATCH v3 0/4] ASoC: qcom: display port changes
+Message-ID: <i6jwqycgywrq42u4km6pjppgvvhsbvuh7m6mzyqy2qcge32ihy@n3lrowkyouv2>
+References: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,47 +82,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605091143.163789-6-wangshuaijie@awinic.com>
+In-Reply-To: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
 
-Hi,
+On Thu, Jun 06, 2024 at 11:49:18AM +0100, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patchset adds support for.
+> 	1. parse Display Port module tokens from ASoC topology
+> 	2. add support to DP/HDMI Jack events.
+> 	3. fixes a typo in function name in sm8250
+> 
+> Verified these patches on X13s along with changes to tplg in 
+> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
+> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
+> 
+> x1e80100 is verified by Krzysztof with his changes in tplg 
+> 
+> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/merge_requests/7/commits
+> 
+> Thanks,
+> Srini
+> 
 
-kernel test robot noticed the following build errors:
+I have been testing this patchset on X13s, switching between speakers,
+connected and disconnected DP output.
 
-[auto build test ERROR on 32f88d65f01bf6f45476d7edbe675e44fb9e1d58]
+- Once the DSP got into the state, where I could not further get it to
+  work until the reboot:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-input-Add-YAML-to-Awinic-sar-sensor/20240605-172023
-base:   32f88d65f01bf6f45476d7edbe675e44fb9e1d58
-patch link:    https://lore.kernel.org/r/20240605091143.163789-6-wangshuaijie%40awinic.com
-patch subject: [PATCH V2 5/5] Add support for Awinic sar sensor.
-config: arm-randconfig-r061-20240608 (https://download.01.org/0day-ci/archive/20240608/202406081000.gRWyFGXO-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081000.gRWyFGXO-lkp@intel.com/reproduce)
+rohan pipewire[1749]: spa.alsa: set_hw_params: Invalid argument
+rohan pipewire[1749]: pw.node: (alsa_output.platform-sound.HiFi__hw_SC8280XPLENOVOX_1__sink-48) suspended -> error (Start error: Invalid argument)
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
+rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare Graph -22
+rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on WSA_CODEC_DMA_RX_0: -22
+rohan pipewire[1749]: spa.alsa: set_hw_params: Invalid argument
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
+rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare Graph -22
+rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on WSA_CODEC_DMA_RX_0: -22
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
+rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406081000.gRWyFGXO-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+- Once in a while during startup PipeWire will try opening the
+  incorrect DAI and then fail with:
 
->> ld.lld: error: undefined symbol: power_supply_reg_notifier
-   >>> referenced by aw_sar.c
-   >>>               drivers/input/misc/aw_sar/aw_sar.o:(aw_sar_i2c_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: power_supply_unreg_notifier
-   >>> referenced by aw_sar.c
-   >>>               drivers/input/misc/aw_sar/aw_sar.o:(aw_sar_i2c_probe) in archive vmlinux.a
-   >>> referenced by aw_sar.c
-   >>>               drivers/input/misc/aw_sar/aw_sar.o:(aw_sar_i2c_probe) in archive vmlinux.a
-   >>> referenced by aw_sar.c
-   >>>               drivers/input/misc/aw_sar/aw_sar.o:(aw_sar_i2c_probe) in archive vmlinux.a
-   >>> referenced 2 more times
---
->> ld.lld: error: undefined symbol: power_supply_get_property
-   >>> referenced by aw_sar.c
-   >>>               drivers/input/misc/aw_sar/aw_sar.o:(aw_sar_ps_notify_callback) in archive vmlinux.a
+rohan kernel: hdmi-audio-codec hdmi-audio-codec.8.auto: ASoC: error at snd_soc_dai_hw_params on i2s-hifi: -22
+rohan kernel: hdmi-audio-codec hdmi-audio-codec.8.auto: ASoC: error at snd_soc_dai_hw_params on i2s-hifi: -22
+
+  I think this happens if previously I have selected DP as an output,
+  then closed gnome session, unplugged the cable and tried logging in
+  again.
+
+Generally, it looks like even though the Jack is reporting
+'unplugged', sound daemon still can switch to to the disabled output
+(or the audio card can be left in the stale state).  In case of DP
+this frequently results in audio daemon or DSP failures.
+
+So, the DP implementation needs to be made more robust, so that if
+DP output gets selected when the cable is unplugged, the driver will not
+attempt to configure the DSP.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
