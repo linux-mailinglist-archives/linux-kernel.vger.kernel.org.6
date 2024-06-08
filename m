@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-206988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35C8901112
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:17:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2FD901114
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6D21F22B46
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951A31C216B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAF21552FA;
-	Sat,  8 Jun 2024 09:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E751176FB8;
+	Sat,  8 Jun 2024 09:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTSWXWBs"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAuYuNk/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B61D520
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8728D18EA8
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717838234; cv=none; b=Y4fB+MsXV1ipgkTCsSOUHbNWyK9EE/vzsfKdBGH3upbPmyqTwC/jjzw1TP4QIW5Ln8xcYaR4YJo5T60BgTgikQ3NH9oKOcZiHKGIw4xGCgKGuXHOkA8J5OFq2P3BoFJWIvZuHQWD4zP2gCBrziMMDyf1KaYQnsdh4DFMXeLsdbo=
+	t=1717838250; cv=none; b=YnPLuZQ81TyNaFZ+mIXWKljY7kdtYio4AQzUxidFfDmOT5oKUGiMbINe5F8Y0rcz0v/DD/KVZu3hfjSsduqUjiArLQvgck2IKDb2/qoMEBgi3rgIoWhjTz42Pdiii73+sbdaNcrdPXbOWsW7fVQWYON0Eqhp8Ch0Uvsj2Py1tqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717838234; c=relaxed/simple;
-	bh=PiJ+zu82O1Yr/h2y29+smI7m4AO4R2fjy8qWbIMoW/c=;
-	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=l94LWw7w4WiYtTFraALmmlVb8NTviNmbAqgQ78x+ATN+Kv3NH70DtEmdE0bYZP2I3Ol+Y/IGGiF76uUfd5axP/c/Gth35B5mx/llCzUN3DuEkTiGkxD6WdVZ3oKAVKgXidElWnudhGnX730MQ5Z3a/yjQfcjsKNRWl/a3SAwc5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTSWXWBs; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2bda9105902so2105405a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 02:17:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717838232; x=1718443032; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:cc:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDXM+EewCoSYPs6hC+7G17jw1+2eIyZkkdf4bNQYFSY=;
-        b=LTSWXWBsxzswLidV5Nxwe5L1lND9V0J92udUg97PIoBJLUi6jRwFnM8f//DcnBNNMU
-         Bkswx0gZJ0u6EZkzSLwwQ5r/pogS6p/JkASpSXU5BWm3dFxuNhy52R+WOh+jPlUccwCX
-         7WtMF/1Dqkb84nhJlhRH3aiAKEVtsfB8+4T5PttPegvVrnDHIm/FODa+nqvia/FwZo/a
-         wi88gpLoGCP9QnNu9dko+uZxMgfpbTvYv0Dwexdg/7yKTFFTuvLB6o/daJ6/E494v3i1
-         gvIsTpfcscpf6LDqCQ7HlbbPLhwdhpSaN9w/36LoWuo2rFbe7Xn3qYvPJ+l3IPH82vOv
-         4PKw==
+	s=arc-20240116; t=1717838250; c=relaxed/simple;
+	bh=yn+5Ni0OD+DEhhZFp+UeHCOaFS+lfeDdpvC3bDCDk4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZJbpxT3YwEcPcfHL8wfN3hDbqJhaSx5Bolp+G874DOSrWY7PM5gt7UEcYy7P0KWlQ6NAmpqtQahj4FfcrEBPnDgjH29wE55ZMI+7YQMPhowXKmaDlg7ImzmKKPD4mxJ/7nPvZ35hkQexmAHAcCfoHTVA2fjlnAbOlxki7uIIUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAuYuNk/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717838248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yn+5Ni0OD+DEhhZFp+UeHCOaFS+lfeDdpvC3bDCDk4M=;
+	b=fAuYuNk/1fEAr6rUL/FskmdLW3jgf9Gdz3aWc8zC21sJwNHZLOghBVZ0KWUP1q0+EhQFoA
+	9/SImqtELlbXtIKRE+nVDUGg6Xn+7iAuI3eEOnnG1lP9xXZ+per6Uo5b4JfaWK9x1f76Kc
+	KlV7pejmWMm502ThFAu+CYhsQfvgOB4=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94-UblGZ_1gMZW8ib9s6NGVxw-1; Sat, 08 Jun 2024 05:17:23 -0400
+X-MC-Unique: UblGZ_1gMZW8ib9s6NGVxw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c2d89be34cso612226a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 02:17:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717838232; x=1718443032;
-        h=content-transfer-encoding:subject:cc:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hDXM+EewCoSYPs6hC+7G17jw1+2eIyZkkdf4bNQYFSY=;
-        b=IXHeDutC2+bI02ZlBO2yF2QRtEGnIurHFUAWzzpuztCUJrrP/n5WoP+i7hbHIc3ASV
-         gZ+hV73VpenGBhkn0qUd0FECbCia9leVONNyiUgXjETe/UkWAjKVc1eP8PkEiPVUr1Np
-         W52IIy3Bv5pN1kesch8mnXp1CWVC0EYSdk+qVk4VB/SQz2PO/czg6v83C0FDIMf9BehZ
-         Tdejl4ebtaDqw+b9aBpgT2lhdZfeTO+nJ8M2mM7bQB7bahyvzmm6O9R0jg+LKz1pNy0I
-         31TGRIv7t419b2XnFACGqJo9VT4MoDlsC+Ofrg7DyjLkMEHev7ngrbyssoGFPkJQ0LaZ
-         aviA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF+B14GIduncqGntOds4LpDuqKRtrHTT282A7FJXe50LURync8CdqYbF/Ebg+60j829SfNzlSTFsLXjlFahgfkh9/XUxmJvH85+Y4Q
-X-Gm-Message-State: AOJu0YzCRoRgUiK71Vvgm21MHw6VycXrtIIN3NuviWqLXDZYd5sVbABH
-	mlYNKlIzPDugG+CIokVPMjoe4Wlg7q6uCNdD2GKWYFXboL5fvlZI
-X-Google-Smtp-Source: AGHT+IGde/oeFABo2VXZ0vdK//U3/3ON137q78IG1uPwtcXXMD7gDn6JH98DnnKWa1WZhV3lHbGg0Q==
-X-Received: by 2002:a17:90a:17ce:b0:2c2:cd5c:62b2 with SMTP id 98e67ed59e1d1-2c2cd5c6698mr2713077a91.27.1717838232427;
-        Sat, 08 Jun 2024 02:17:12 -0700 (PDT)
-Received: from [10.0.0.19] ([122.172.85.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806398afsm6903463a91.1.2024.06.08.02.17.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 02:17:12 -0700 (PDT)
-Message-ID: <d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmail.com>
-Date: Sat, 8 Jun 2024 14:47:08 +0530
+        d=1e100.net; s=20230601; t=1717838242; x=1718443042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yn+5Ni0OD+DEhhZFp+UeHCOaFS+lfeDdpvC3bDCDk4M=;
+        b=bo/FfqmaJ/N0UNkQGTdS4uPEh2Uqx2w2ouUE78E4x0Y5EnT5630sF5GsyCKaBZsgq1
+         IgHRnFDelkMJQrsEltjHypou6AW4nHhlS3tWYDa2W/HxtDD4ccCpvFWqvlSOoohLvYB0
+         HtQ7bHBb7J7MILKgRkWRvRM9ZbOxJg+omHpFnCNyP0F3/MacJW+jFvUnxBriIuCOklXg
+         lUZcJDpdpoYqTA2PcD5Kjs13vgIkQOS7IeYtQ2I3xGnt5i8VGyJaq8EmY/1OVwvuUrr2
+         ZW3cKpq2Xty6JOEAcixnXkKWhdR+pbiHtW0DCsXFyLGf5ugc9TC64/QmBaToQaOlFyJY
+         dAVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUEIhd4srLPSVKls3bGkd980fbsWsdPitn7oUzGIjo/cj/D0v21B0TnXyUVQZ96AxuVCgoVBMw+awuLRSphlcSakUoOfru5LUI3XFj
+X-Gm-Message-State: AOJu0YyHuRExH8RJxHtIJ0CRxTDQmFZKvVmWRkmvxgMUTtH+c8xL70X7
+	eO288oEuDHm0TGjxcPi5vK3uEGODYQLku5TP1SV4VSXJfcsECpHJAvgES6Y4wO8A2AgvIva5+2V
+	N4YA4zHSlfIaX4l9T+lgbCEBQKIMaxMOCWIM0WMLO3jwNgGCMXgpdWXnBOHPL1UOBH6tH5dBtV+
+	H0Gm/9wmFpS0XZzcrpgsXUnTF7sZuc5qvRYCJH
+X-Received: by 2002:a17:90a:742:b0:2c2:3b32:a1b8 with SMTP id 98e67ed59e1d1-2c2bcac9f74mr4642516a91.17.1717838242014;
+        Sat, 08 Jun 2024 02:17:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvyEuqeUH7Yq3Z7xIB+QPWu94/YeFGsuuW997gf83B/fNXG/k+oroA1mfbvwrCDmVT2Gmd1wZ+PAVo4g+sKX8=
+X-Received: by 2002:a17:90a:742:b0:2c2:3b32:a1b8 with SMTP id
+ 98e67ed59e1d1-2c2bcac9f74mr4642502a91.17.1717838241712; Sat, 08 Jun 2024
+ 02:17:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com
-From: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel : himax-hx83102: fix incorrect argument to
- mipi_dsi_msleep
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com>
+ <20240530210714.364118-16-rick.p.edgecombe@intel.com> <CABgObfbpNN842noAe77WYvgi5MzK2SAA_FYw-=fGa+PcT_Z22w@mail.gmail.com>
+ <af69a8359cd5edf892d68764789de7f357c58d5e.camel@intel.com>
+In-Reply-To: <af69a8359cd5edf892d68764789de7f357c58d5e.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sat, 8 Jun 2024 11:17:08 +0200
+Message-ID: <CABgObfb7mqQhPnm+vE4zdnFdBCYgnYR930=P5x0VsbuarrESUA@mail.gmail.com>
+Subject: Re: [PATCH v2 15/15] KVM: x86/tdp_mmu: Add a helper function to walk
+ down the TDP MMU
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Aktas, Erdem" <erdemaktas@google.com>, 
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jun 8, 2024 at 1:39=E2=80=AFAM Edgecombe, Rick P
+<rick.p.edgecombe@intel.com> wrote:
+> We were discussing starting to do some early public work on the rest of t=
+he MMU
+> series (that includes this patch) and the user API around VM and vCPU cre=
+ation.
+> As in, not have the patches fully ready, but to just work on it in public=
+. This
+> would probably follow finishing this series up.
+>
+> It's all tentative, but just to give some idea of where we're at with the=
+ rest
+> of the series.
 
-From: Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH] drm/panel : himax-hx83102: fix incorrect argument to
- mipi_dsi_msleep
+Yes, I think we're at the point where we can start pipelining.
 
-mipi_dsi_msleep expects struct mipi_dsi_multi_context to be passed as a
-value and not as a reference.
-
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-index 6009a3fe1b8f..ab00fd92cce0 100644
---- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-+++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-@@ -479,7 +479,7 @@ static int hx83102_disable(struct drm_panel *panel)
- 	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
- 	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
- 
--	mipi_dsi_msleep(&dsi_ctx, 150);
-+	mipi_dsi_msleep(dsi_ctx, 150);
- 
- 	return dsi_ctx.accum_err;
- }
--- 
-2.45.2
+Paolo
 
 
