@@ -1,156 +1,131 @@
-Return-Path: <linux-kernel+bounces-207069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA411901209
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:32:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6FE90120A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C8B2823EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716061C20CEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8009617A931;
-	Sat,  8 Jun 2024 14:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CB917A92D;
+	Sat,  8 Jun 2024 14:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVxr6HeC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6HGJuTs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD2B1FBB;
-	Sat,  8 Jun 2024 14:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B54149DED;
+	Sat,  8 Jun 2024 14:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857158; cv=none; b=C1b+WN+vsSHIR1YKYSg1PR+H+Kl2b7edWSIzy7bGiSTc2dWwejgeNlBJ9HwE8+7vJrTrM+YyHn3xDtXSF9E7thcK2jENq9Es4+xwVUS0lO8GWy/Si3YEXkuk1IjOdKAzwOd13CCBV6G0P58ta2kkJ53OXR8kjW3Ass6q5TLpuZw=
+	t=1717857167; cv=none; b=rRdtPzzbvYY1xd03QIF9ySrhZIcyqtuE7ZYGKilJeccSAYHlLenbk0kjMUR23fEMuuCPmV7cB1vGiUsdhUWK3/gSZqk4kepL5pTiaQkv4bTTib6Ck+RJ/Fx7TtCLPPfletDdaTmXdTVKrWEfkmP7ORwfe51e12Qa1IdF9HoGq+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857158; c=relaxed/simple;
-	bh=zGEPcDt853zwTvT5c/vkd82U97Wq4qbke8w4K0IQ1oU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nNXu5WHwCgyQzwbMS/VqspYU9kRV5IkP7LBqljC4dn3Y8RKLp8VNCb8+ZK2kPmCmtDUW+vRn6fJPDsc25h0DLhZV02TkRICO0RToVBigFpA1Iipdrvr1FC5+gHraALk82av/eBF+hmpYXJro51UocuM+vixkUatjP1/PEzyKvFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVxr6HeC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FB9C2BD11;
-	Sat,  8 Jun 2024 14:32:34 +0000 (UTC)
+	s=arc-20240116; t=1717857167; c=relaxed/simple;
+	bh=+mfH5kPRQKjFbiX+1m7cu4HLvr1f9QnlfzdttOt8hto=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CD9D2pekS2cQChhbG+To+I+wvXD33MJmilXsc5zvZnYK7dZBWMIShPT2B4FeILKaQIdiCztgW9StWTb8qo8WAOtthKJAGX+58Slrkio2IMxjjJiLUNEnQq5iP0aS8yXEUWmVj9BNwE4jZkx904MaJCWLhC7cqNF0SGsmvf6O+Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6HGJuTs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D342C2BD11;
+	Sat,  8 Jun 2024 14:32:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717857158;
-	bh=zGEPcDt853zwTvT5c/vkd82U97Wq4qbke8w4K0IQ1oU=;
+	s=k20201202; t=1717857166;
+	bh=+mfH5kPRQKjFbiX+1m7cu4HLvr1f9QnlfzdttOt8hto=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LVxr6HeCpiXGfDae+9YHPzHKV4zTBtFO+V66iRYJuTFltZ/q52Xsuo4CsH6ZXqb4Q
-	 NnOTW6mGV6ix5FBND9wB3pxhJd0VRNbAtHDLMrMsj1p5BV3QX0F6l6eelp0RtOs5QZ
-	 pNevnq6SG2FIOZL50RQYMnsEZNTiOUTRYUfIcM5L/tvwIOhvdWPeb5k8kxuByp/ksr
-	 1NLtI9rqxb+3NlYPkVBFtM2chX5LxJvucRPKQrtF6agpjGVL5QbAR+ybBY2AKCb0eX
-	 bngCHOu8SEkAKs5BwqqWoi1mQrez8+gjucTxGz4GzE+OwT2Y9qf6A8kekrddQI0wOQ
-	 ohkiBTM1LBMuA==
-Date: Sat, 8 Jun 2024 15:32:31 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kim Seer Paller
- <kimseer.paller@analog.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>,
- Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-Message-ID: <20240608153231.02f839fd@jic23-huawei>
-In-Reply-To: <3dadacf8-1349-483d-b264-dcb41d2cc3fc@baylibre.com>
-References: <20240603012200.16589-1-kimseer.paller@analog.com>
-	<20240603012200.16589-5-kimseer.paller@analog.com>
-	<2942a938-19b9-4642-8ed0-8e17e4825bc5@baylibre.com>
-	<c4651a18-316b-42e0-a67b-673fedb05b5a@kernel.org>
-	<3dadacf8-1349-483d-b264-dcb41d2cc3fc@baylibre.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	b=W6HGJuTsLphg3hJwaCcOqeBS/036cr1C35LPh+8S97Y+K7jUszwmKWkgwu5GjXPiK
+	 LoEX3fxAN2Q/2/ElZBXzpd4aO+B05yvV7V/0xf5CQJ0rW/ivN3zUAgcJ1xVbAjnQBD
+	 W6nvC+wkNMVOd/9fbnDQF5SgtqMI6dhEJb5HuzaXEQ7gGjGDqUP8n1QQQluMvNOWTN
+	 S5G3rueKMUiWI1aF74l9jSnB90djcoSqWvUGmZgwf4FDQTcPVokTMvAbBZPfsrKc7P
+	 Roief3NScRkY1DcjAIcx39RO0GwlU0EDKBV9J3kFkmgNIJ3Hp3ddxszlsLDVkf/RvU
+	 OV2DdZ/nqxo1A==
+Date: Sat, 8 Jun 2024 23:32:42 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] function_graph: Rename BYTE_NUMBER to CHAR_NUMBER in
+ selftests
+Message-Id: <20240608233242.414564f51bcc5db9993eb682@kernel.org>
+In-Reply-To: <20240606081846.4cb82dc4@gandalf.local.home>
+References: <20240606081846.4cb82dc4@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 4 Jun 2024 08:53:27 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Thu, 6 Jun 2024 08:18:46 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On 6/4/24 1:47 AM, Krzysztof Kozlowski wrote:
-> > On 03/06/2024 21:59, David Lechner wrote:  
-> >> On 6/2/24 8:21 PM, Kim Seer Paller wrote:  
-> >>> Add documentation for ltc2672.
-> >>>
-> >>> Reported-by: Rob Herring (Arm) <robh@kernel.org>
-> >>> Closes: https://lore.kernel.org/all/171643825573.1037396.2749703571529285460.robh@kernel.org/
-> >>> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> >>> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> >>> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> >>> ---
-> >>>  .../bindings/iio/dac/adi,ltc2672.yaml         | 158 ++++++++++++++++++
-> >>>  MAINTAINERS                                   |   1 +
-> >>>  2 files changed, 159 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..d143a9db7010
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> >>> @@ -0,0 +1,158 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2672.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Analog Devices LTC2672 DAC
-> >>> +
-> >>> +maintainers:
-> >>> +  - Michael Hennerich <michael.hennerich@analog.com>
-> >>> +  - Kim Seer Paller <kimseer.paller@analog.com>
-> >>> +
-> >>> +description: |
-> >>> +  Analog Devices LTC2672 5 channel, 16 bit, 300mA DAC
-> >>> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2672.pdf
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    enum:
-> >>> +      - adi,ltc2672  
-> >>
-> >> The linked datasheet describes 12-bit and 16-bit versions, so should we have
-> >> two compatibles here? adi,ltc2672-12, adi,ltc2672-16  
-> > 
-> > Is their programming model different?
-> >   
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> I replied to myself already with the answer. After looking at it more it
-> does not appear that is the case.
+> The function_graph selftests checks various size variables to pass from
+> the entry of the function to the exit. It tests 1, 2, 4 and 8 byte words.
+> The 1 byte macro was called BYTE_NUMBER but that is used in the sh
+> architecture: arch/sh/include/asm/bitops-op32.h
+> 
+> Just rename the macro to CHAR_NUMBER.
 > 
 
-For a DAC, this is an interesting question.  The wrong impressions of
-precision might be a problem if someone is trying to tune the value.
+Looks good to me.
 
-Say they set it to +15 and look at some other sensor for the affect.
-They expect to see something but get no change at all.  They might
-assume the circuit is broken.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-So I think yes the programming model is different and that should
-be discoverable (ideally from hardware, but if not from the compatible)
-To take an extreme example of extending the logic of these being
-the 'same' from a programming model point of view, would we consider
-a regulator that did 0 and 3V only different from one that did 0V,
-1V, 2V, 3V just because the second bit in the register was ignored?
-I think in that case we'd consider them to have an obviously different
-programming model.
+Thanks,
 
-We have a few cases where we do paper over similar differences in
-resolution, but within one part with different settings rather than
-between devices (so that's a driver limitation, not a DT thing).
+> Fixes: 47c3c70aa3697 ("function_graph: Add selftest for passing local variables")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406061744.rZDXfRrG-lkp@intel.com/
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/trace_selftest.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+> index 369efc569238..adf0f436d84b 100644
+> --- a/kernel/trace/trace_selftest.c
+> +++ b/kernel/trace/trace_selftest.c
+> @@ -758,7 +758,7 @@ trace_selftest_startup_function(struct tracer *trace, struct trace_array *tr)
+>  
+>  #ifdef CONFIG_DYNAMIC_FTRACE
+>  
+> -#define BYTE_NUMBER 123
+> +#define CHAR_NUMBER 123
+>  #define SHORT_NUMBER 12345
+>  #define WORD_NUMBER 1234567890
+>  #define LONG_NUMBER 1234567890123456789LL
+> @@ -789,7 +789,7 @@ static __init int store_entry(struct ftrace_graph_ent *trace,
+>  
+>  	switch (size) {
+>  	case 1:
+> -		*(char *)p = BYTE_NUMBER;
+> +		*(char *)p = CHAR_NUMBER;
+>  		break;
+>  	case 2:
+>  		*(short *)p = SHORT_NUMBER;
+> @@ -830,7 +830,7 @@ static __init void store_return(struct ftrace_graph_ret *trace,
+>  
+>  	switch (fixture->store_size) {
+>  	case 1:
+> -		expect = BYTE_NUMBER;
+> +		expect = CHAR_NUMBER;
+>  		found = *(char *)p;
+>  		break;
+>  	case 2:
+> -- 
+> 2.43.0
+> 
+> 
 
-So I might be persuaded no one cares, but in my view the programming
-model is different in a significant way.
 
-Jonathan
-
-
-
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
