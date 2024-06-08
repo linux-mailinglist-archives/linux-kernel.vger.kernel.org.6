@@ -1,188 +1,76 @@
-Return-Path: <linux-kernel+bounces-206864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250E0900F06
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:52:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7894A900F0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F43F1F22680
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:52:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1FE1C21E38
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFDA8BF8;
-	Sat,  8 Jun 2024 00:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="idl3dvWV"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9B33C5;
-	Sat,  8 Jun 2024 00:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19A98480;
+	Sat,  8 Jun 2024 01:00:16 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 8FF24ED9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 01:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717807959; cv=none; b=cntnIigWMiI5awWt3XjnTYG3Bg9YbhJoybRqzXoHAIhZtXxIaIMnxyiY67zMhHRj6+o9916k4lXiyii9Z9TwlecKXJCbg6tVtqPnwjmYVS+dxtUjmuon6Is3mzntK/q+UT6JAKWspZ/8w0qFigQVAgwBONPf10UPjt4LKYnL/OA=
+	t=1717808416; cv=none; b=RjXfsX88Epc8ML0/DBucR4upRXWe1LqB0SjtCl4e37YoVzrVBeYzY8YRMmlhcTNUnQwyjgA6c5FpfIBonK/JDNp1rxfCqQ4cCGlozzA5xW0yMKdKKMLWgFMgx9W1LQR+CywuOF6ktiW+pWO01PpMZSDC8rdekTjpWhmI3VOzkQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717807959; c=relaxed/simple;
-	bh=eyfpPJgtOIuG1vIFDolKXcOYY3XJke1VYW8FXO8L9lw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MhSQ7qNgjbI5CHrN6Uf3HK+TCJu41IftwanSCY0/Hf2p/mfpL8DYjlgiccrkqKMGaSgD+jOyUvNk49XyuMPRfA4E7ENWo8ueOZU0Ua3WCiN2e0pjZSTIWEW3Y3DGTVxvmG0Ln9Kg6zHNfSMIpoT8kuvJwbLvaUUftDiKInaoEVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=idl3dvWV; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BC0DD1140198;
-	Fri,  7 Jun 2024 20:52:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 07 Jun 2024 20:52:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717807955; x=1717894355; bh=/REvkr6D1X9D70grvQc7R30pDYdS
-	TCpuO5alixbgfuw=; b=idl3dvWVn5I9w3VyjDNA4Ubxji9+IShx8UWBbSp3dhEM
-	uOD2N1vgHND86LvmJBRihlxMeCYK1WzJepAkcxLiWtgXhrTmHwRw34Ih/TCWzS6u
-	9ZhLaCYXQbIAWK7Dp5mfFprAllPPt5749QeMLDyWfwASAtlS3hP0kzUzy/Xry6+H
-	eYsIHDHvKkgvwQ/LV543zkojg0qhviuwHwF9nSdfdmKB3ZNatIFeeQoSvkw9pbLE
-	iUnZyp2h3P0xOOFnW6FF+vIvIPJEmJwicXpI2rEQE6/RRVvg7J6sCnu5BcSIRo4G
-	dKoy/nekllowiW68sOkbYj0gQWs5Zwf75fNfFVI1wQ==
-X-ME-Sender: <xms:UqtjZgh_5tCr0UUD52YExB7Dmu-rk0SCxgVLAhlI7RAFbmeHBFVQfQ>
-    <xme:UqtjZpBim1sa_N1BqSVyXFyan7JSjuo9EEvYDCFIFS3m-G1JkuwkMyH8YwQJc-RMx
-    vhP2I717tLzsedCLxw>
-X-ME-Received: <xmr:UqtjZoGv1k___eQlePsqXz2yJvGJapPTvsPH5oqtpWf0pJCxiryuwNbthkUGo8E-2O68N1Pmt7C7az7SZsA0Qjd4J_K-6bJmOU0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
-    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
-    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
-X-ME-Proxy: <xmx:UqtjZhQM5s0kCbeiPk5CsPlJmN7ITTMh8xeiBFxk_JDU9M_OysraDg>
-    <xmx:UqtjZtzggBDkc0AysPkaRowYF_gJ4hojVed-FOenIUh21MTTpdEuqQ>
-    <xmx:UqtjZv4BnGTTGHp89OAwlx_FBQfsUXkUSpfkcBTIlT8P87DQ0eFzVQ>
-    <xmx:UqtjZqye_IxQsC1wIyykMDZd-kOg45Cf_9LW7faBPJH6WOpSiM41Hw>
-    <xmx:U6tjZiK-f8KeBmUYH9rnubMuOprY4Mp9NaUXO_JR1a4AWObb5NqDScKX>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Jun 2024 20:52:32 -0400 (EDT)
-Date: Sat, 8 Jun 2024 10:52:45 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-cc: Khalid Aziz <khalid@gonehiking.org>, 
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-    "Martin K. Petersen" <martin.petersen@oracle.com>, 
-    Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>, 
-    Michael Schmitz <schmitzmic@gmail.com>, 
-    James Smart <james.smart@broadcom.com>, 
-    Ram Vegesna <ram.vegesna@broadcom.com>, 
-    Artur Paszkiewicz <artur.paszkiewicz@intel.com>, 
-    "Juergen E. Fischer" <fischer@norbit.de>, linux-scsi@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, target-devel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: add missing MODULE_DESCRIPTION() macros
-In-Reply-To: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
-Message-ID: <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
-References: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
+	s=arc-20240116; t=1717808416; c=relaxed/simple;
+	bh=mxbpt/IIjp+zQ1LCt1nVLb4V++Hr8L9etihL8pox+tQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cW6WBG4P61qwFRqvR0mBHYuFywOepKcuyq0a03lDyJ8BMGaPSwez3LjN7IpUL9aPWiNzvReZHJeoPH5HoJexoJg5wQuU+ltJYT39zMJVBbx1mfDNguU67JV1G3N3amV+CvZy/YlBkryyufgl3GKFimZGzDTQlAtnm0yBCQCvOFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 67017 invoked by uid 1000); 7 Jun 2024 21:00:07 -0400
+Date: Fri, 7 Jun 2024 21:00:07 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
+ tools/memory-model
+Message-ID: <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
+ <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
 
+On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
+> 
+> 
+> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
+> > Just to clarify: Your first step encompasses patches 1 - 3, and the
+> > second step is patch 4.  The first three patches can be applied now, but
+> > the last one needs to wait until herd7 has been updated.  Is this all
+> > correct?
+> 
+> Exactly.
 
-On Fri, 7 Jun 2024, Jeff Johnson wrote:
+With regard to patch 4, how much thought have you and Hernan given to 
+backward compatibility?  Once herd7 is changed, old memory model files 
+will no longer work correctly.
 
-> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
-> index 742625ac7d99..4eb5770aeef5 100644
-> --- a/drivers/scsi/atari_scsi.c
-> +++ b/drivers/scsi/atari_scsi.c
-> @@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
->  module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
->  
->  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
-> +MODULE_DESCRIPTION("Atari generic SCSI port driver");
->  MODULE_LICENSE("GPL");
+To avoid being so disruptive, perhaps the changes to herd7 should be 
+under control of a new command-line or config-file switch.  If the 
+switch is enabled, the new simplified code gets used; otherwise herd7 
+would continue to use its old built-in rules for special tags.
 
-"Atari NCR5380 SCSI driver", please. I don't think the word "generic" 
-applies here. It was a reference to the "generic NCR5380 driver by Drew 
-Eckhardt" from which specialized drivers like this one were derived.
-
-> diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
-> index f6305e3e60f4..1bef131664e0 100644
-> --- a/drivers/scsi/g_NCR5380.c
-> +++ b/drivers/scsi/g_NCR5380.c
-> @@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
->  MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
->  
->  MODULE_ALIAS("g_NCR5380_mmio");
-> +MODULE_DESCRIPTION("Generic NCR5380 driver");
->  MODULE_LICENSE("GPL");
->  
->  static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
-
-"Generic NCR5380/NCR53C400 SCSI driver" please.
-
-This driver actually describes itself as "generic generic NCR5380 driver" 
-which appears to be a joke. The term "generic" was used to mean universal 
-i.e. intended to cover every ISA card implementation.
-
-> diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
-> index 625fd547ee60..82d8b8f8293f 100644
-> --- a/drivers/scsi/initio.c
-> +++ b/drivers/scsi/initio.c
-> @@ -2939,6 +2939,7 @@ static void initio_remove_one(struct pci_dev *pdev)
->  	pci_disable_device(pdev);
->  }
->  
-> +MODULE_DESCRIPTION("Initio 9100U(W) driver");
->  MODULE_LICENSE("GPL");
->  
->  static struct pci_device_id initio_pci_tbl[] = {
-> @@ -2961,4 +2962,5 @@ module_pci_driver(initio_pci_driver);
->  
->  MODULE_DESCRIPTION("Initio INI-9X00U/UW SCSI device driver");
->  MODULE_AUTHOR("Initio Corporation");
-> +MODULE_DESCRIPTION("TBD");
->  MODULE_LICENSE("GPL");
-
-There are now three MODULE_DESCRIPTION macros here.
-
-> diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
-> index a402c4dc4645..f74231ca29e5 100644
-> --- a/drivers/scsi/mac_scsi.c
-> +++ b/drivers/scsi/mac_scsi.c
-> @@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
->  module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
->  
->  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
-> +MODULE_DESCRIPTION("Generic Macintosh NCR5380 driver");
->  MODULE_LICENSE("GPL");
-
-
-"Macintosh NCR5380 SCSI driver", please.
-
-> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-> index 7ab000942b97..c4a88f673183 100644
-> --- a/drivers/scsi/sr.c
-> +++ b/drivers/scsi/sr.c
-> @@ -68,6 +68,7 @@
->  
->  
->  MODULE_DESCRIPTION("SCSI cdrom (sr) driver");
-> +MODULE_DESCRIPTION("TBD");
->  MODULE_LICENSE("GPL");
->  MODULE_ALIAS_BLOCKDEV_MAJOR(SCSI_CDROM_MAJOR);
->  MODULE_ALIAS_SCSI_DEVICE(TYPE_ROM);
-> @@ -1007,4 +1008,5 @@ static void __exit exit_sr(void)
->  
->  module_init(init_sr);
->  module_exit(exit_sr);
-> +MODULE_DESCRIPTION("SCSI CDROM driver");
->  MODULE_LICENSE("GPL");
-
-Three macros here also.
+Alan
 
