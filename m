@@ -1,200 +1,235 @@
-Return-Path: <linux-kernel+bounces-206884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3CD900F43
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F256900F49
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82689B22DC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:43:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7030AB2364C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9348CA40;
-	Sat,  8 Jun 2024 02:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32895DDC5;
+	Sat,  8 Jun 2024 02:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yaigSzwL"
-Received: from mail-vk1-f202.google.com (mail-vk1-f202.google.com [209.85.221.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kpQ0bjyf"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8080C7F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F488BF8
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717814618; cv=none; b=p+ecvE3UCe5fuiAQw4axRi3uSCSouQLgf/EMbfZVTUOeYP7jkBg6jK4pqB03LkRDZNLcgJiX0NKjeFNTGpq+syWvoJSee1feq7ksf8E/JevDlFYl5jgr/2gmfi6K6402bdaWHNaluTjYEnF8cHGFbV67hBHCiLVCTUoNQorQqpw=
+	t=1717815259; cv=none; b=B1Yet+I2UvRN9Dal9Gt8+Tklq0wfrNi2vcTbsLsrlT0A/IIpAuSOPzIEuz+7dL/fRT5GcHj5dILVF02ba2lsMbjyZshC9eDGvMekP33lN9uTDpE+bXcu1ASSD26RCY0W2IptgtncGU3QMSB78cxhfq9kwEu2JwhhY5pd+daCSBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717814618; c=relaxed/simple;
-	bh=kEjngn0PaEK02LFHV87D4smKdu4MTq0gHFlSeqq8wtY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LKeDjkFbmqtOUWQh2V7If3ZinCpR8mNY2ueWE2jJrLzJxssv4T6JFodXocr+VdfzR4pLq2o3u91/f0iovjaUkURaWkBA5AC2iOyoz8sV19v4mJJue4A7a/+Z0dpUKmv5f/W846Vd5/snDiXyPul2o/Z5Nz3vVgkIpWdDVldkUWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yaigSzwL; arc=none smtp.client-ip=209.85.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
-Received: by mail-vk1-f202.google.com with SMTP id 71dfb90a1353d-4eb14518c4aso3326532e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 19:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717814615; x=1718419415; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RiSTt00lJmIM9pwkdwoE4isrbgVfqbDGpglyPba/Gok=;
-        b=yaigSzwLPEQIv5MqeZztwdZd2lhnABE3EQbbS/D0fLc/x23s+Tp7lm1DPTJ8dhZQfE
-         uIFo+8seNwc+6czLrm7ZEuHar0otrRsmU2wjN8UnrJSsnj3BS1qU7qOXL0o+CFlfmquM
-         X9tXVkWC9glEHRA7+NdD8facn/+0jx+h79m3LHzdgzzFA7thg9081WTEt98224MMCyL1
-         espL1hWX/zW1NyaQrKv2AsBJvcUvMnYECAKuGN7mMMYaj8+3/d7r7RjYbx5YXVp+wdG3
-         QcA8MRWT9Jcv0f9VyQ8nVOc604dJy6RPMF2APxpOFKESK/0SK51YS6fsZCyPbKYE/z9R
-         y3Dw==
+	s=arc-20240116; t=1717815259; c=relaxed/simple;
+	bh=XCq98BdW69m3pSWZHjycAMDpvLfIsaMbXaCFIS2C+3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oPNk7q5q1gZMbV7NY+uOms21eISDrlPLM6Xo/pRFbhF17s8plfQTtvC9uL/8F+SPeVddrhWknXeOKdzcMVoL39U/gSxp0mU+at5iG/fM0fD7OeEXjn/surn4BUl3U70OJVKpxX0Yl46PR3/0opXeHQ1N+S9R0Hhg4ealxPzU3jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kpQ0bjyf; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 677A13F2D0
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1717815248;
+	bh=eG9eAD1eUsRWubPosFB8FQEEdV1lJ1Ey5T3UFqQEt+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=kpQ0bjyfJ+ZtznV5ozbDDA4WkHYP/w8qNkrfcnE9NsVWM7OtYHFriL4hkRbh2m5tk
+	 uCF8yhQhCKaSvQ0TR0/ohkLMUEidTe3hQ4yK8Cir+T6Lfxc0muObCAu9TsW9BOVnRe
+	 uKxw50LMydJCX9UHKKU5QWTZPFgJHAqtK2B9MuVs5nSNtinZveVs+UXp0nf68SabBA
+	 MSOJWe/K2i2kTXruDl/tfqO8Qv/5QqgYtwZIMoyOiMHx5zn6sG2hvGu0N0OgFSbIGN
+	 If2VwwCFrFh1rStfB0NCLcvD3qWJnWJZrdp+dK1E7OUogxI70ScqJJ9lvvxvWRwQep
+	 lwqIXrrMpRovQ==
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1f656692564so28499575ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 19:54:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717814615; x=1718419415;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RiSTt00lJmIM9pwkdwoE4isrbgVfqbDGpglyPba/Gok=;
-        b=nMt2dmQE6pEYElRPPJYulCmkqaKHDuamtvr+GgaXCDNVGbk7pORv1ax4/9HeOb1MGG
-         YhcMYA4oh4FUcyrACezLgXnnvHpPQ4hje4sBv7DYarCd/iucXgoKM9miLfgVR86ELTSl
-         ictn6SARgkpM4uo28B+rsCFkCzdMxeaut47iGoq1xW0L4PhR5pGEXaxF06akHvxZAX4M
-         nhfxinNz0DOUUOpRIkrIOjT5xXscGTqQIDR+wvmmriNU8VdMOGX2m30Oo85HpKrbwskn
-         0e1gAFJkdTFu0NTGUTH1r92FOIHbPuN6kDTsJxZaOTW3LTyc+SBJi1O84RlVdvSVoMKc
-         7cSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjf2XsHFXuXqeau7h/prhGbvIajx4yWZu2hEI5epyFuayaH/gDtP0227RJCGidsA6s52ShptSNlGpu0DoPDB3CTcNet9jQ4C8fye/R
-X-Gm-Message-State: AOJu0Yw79gJFDtZ+msDn6sOuQi5/Bqc9ihph+JnsiX6bBI9h5LsrJoRJ
-	h3bQ81U3r9aE/VN+cH6+sfEp+/rO+3F588MX8bebUirZ0TWfoY5aVKDpsu3mAD74lyiIrk0ZY47
-	b/Z/LEzRyxmpLzN6KtQ==
-X-Google-Smtp-Source: AGHT+IFfA8mr9lfhDrLYFZf7Onfx5mpbJHVARhxMTc00b+HD8uEOFfV9ZWXuvMVIppVolBKqBMlIaVD8/YnpJlxT
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
- (user=yosryahmed job=sendgmr) by 2002:a17:90b:30c2:b0:2b2:bc19:61f5 with SMTP
- id 98e67ed59e1d1-2c2b8989ebdmr45265a91.1.1717814223591; Fri, 07 Jun 2024
- 19:37:03 -0700 (PDT)
-Date: Sat,  8 Jun 2024 02:36:54 +0000
+        d=1e100.net; s=20230601; t=1717815247; x=1718420047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eG9eAD1eUsRWubPosFB8FQEEdV1lJ1Ey5T3UFqQEt+8=;
+        b=Q2LEJpB0TpHbJ9z0GGPc6qpIHaXAe5Owx/WngvQviRkkJn7jzaVwMWagDjy7zOLeOs
+         8aFrAfPLo1RUuff0vWv+Hoaprx7Zjfa3Fe0p+G4GNxFX15ZkLTobzDW8ROEjJnqmtEQG
+         014F58xbgPewUZQlogLc/ecE33YztzfOHUMNSKNWoqqssE7PHmli7TcPLYmA1evPR0Cx
+         O46xiWRicnOPaC1xiRGvpJP9rR/qH2i54fDBkgImxdoexoHpSkDdooq6+yikhNQdu9ii
+         dm7m34t7DSpiDC1zMrTW6S3lP4Dpemqp3ndLN0iIs6ksasVjClLCxEV94qNB+qI4uQO2
+         4Slw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgbCfViH3JpWU3AIoiOnCnu287KxB4tPYp186TtdPPPaIUac05YV2FIySkoEqBfFAu31bOsihN7LHXc9sFk8i9D7O45zFA8dAU3Glc
+X-Gm-Message-State: AOJu0YxdmytNDucdv37ko0vR0DnhOVqnfgDCN1PA4eLG8qu6c2oi+BnM
+	8FBLe2Usa74Bp9TV+0TcmQWzuIataXg+zUFG8CGtkwOzpwMlv25lZXYVrRV/OU6rXFvVcwvmpxg
+	vq3mCbgDkuuVBetaLKKU/PvfMqDrxH3P82YIaR3YFd7F1Dnv7DwV0peEO5DN9C7fw+oVhaLmnwG
+	m6Dg==
+X-Received: by 2002:a17:902:a3cf:b0:1f6:dfbc:7f1c with SMTP id d9443c01a7336-1f6dfbc819amr23641455ad.35.1717815246673;
+        Fri, 07 Jun 2024 19:54:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8vB8lIDvNuDmz13l9a3GnvHasLxIcGIP48bamhmPvhcSNiJhTktjZFfgapif4JbMagIYpkw==
+X-Received: by 2002:a17:902:a3cf:b0:1f6:dfbc:7f1c with SMTP id d9443c01a7336-1f6dfbc819amr23641255ad.35.1717815245929;
+        Fri, 07 Jun 2024 19:54:05 -0700 (PDT)
+Received: from chengendu.. (2001-b011-381c-b87f-87a2-26e8-842b-6eef.dynamic-ip6.hinet.net. [2001:b011:381c:b87f:87a2:26e8:842b:6eef])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e07edsm41614665ad.214.2024.06.07.19.54.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 19:54:05 -0700 (PDT)
+From: Chengen Du <chengen.du@canonical.com>
+To: willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kaber@trash.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chengen Du <chengen.du@canonical.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v6] af_packet: Handle outgoing VLAN packets without hardware offloading
+Date: Sat,  8 Jun 2024 10:53:47 +0800
+Message-ID: <20240608025347.90680-1-chengen.du@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240608023654.3513385-1-yosryahmed@google.com>
-Subject: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
-From: Yosry Ahmed <yosryahmed@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Zswap does not support storing or loading large folios. Until proper
-support is added, attempts to load large folios from zswap are a bug.
+The issue initially stems from libpcap. The ethertype will be overwritten
+as the VLAN TPID if the network interface lacks hardware VLAN offloading.
+In the outbound packet path, if hardware VLAN offloading is unavailable,
+the VLAN tag is inserted into the payload but then cleared from the sk_buff
+struct. Consequently, this can lead to a false negative when checking for
+the presence of a VLAN tag, causing the packet sniffing outcome to lack
+VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
+tool may be unable to parse packets as expected.
 
-For example, if a swapin fault observes that contiguous PTEs are
-pointing to contiguous swap entries and tries to swap them in as a large
-folio, swap_read_folio() will pass in a large folio to zswap_load(), but
-zswap_load() will only effectively load the first page in the folio. If
-the first page is not in zswap, the folio will be read from disk, even
-though other pages may be in zswap.
+The TCI-TPID is missing because the prb_fill_vlan_info() function does not
+modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
+payload and not in the sk_buff struct. The skb_vlan_tag_present() function
+only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
+is stripped, preventing the packet capturing tool from determining the
+correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
+which means the packet capturing tool cannot parse the L3 header correctly.
 
-In both cases, this will lead to silent data corruption. Proper support
-needs to be added before large folio swapins and zswap can work
-together.
-
-Looking at callers of swap_read_folio(), it seems like they are either
-allocated from __read_swap_cache_async() or do_swap_page() in the
-SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so
-everything is fine for now.
-
-However, there is ongoing work to add to support large folio swapins
-[1]. To make sure new development does not break zswap (or get broken by
-zswap), add minimal handling of incorrect loads of large folios to
-zswap.
-
-First, move the call folio_mark_uptodate() inside zswap_load().
-
-If a large folio load is attempted, and any page in that folio is in
-zswap, return 'true' without calling folio_mark_uptodate(). This will
-prevent the folio from being read from disk, and will emit an IO error
-because the folio is not uptodate (e.g. do_swap_fault() will return
-VM_FAULT_SIGBUS). It may not be reliable recovery in all cases, but it
-is better than nothing.
-
-This was tested by hacking the allocation in __read_swap_cache_async()
-to use order 2 and __GFP_COMP.
-
-In the future, to handle this correctly, the swapin code should:
-(a) Fallback to order-0 swapins if zswap was ever used on the machine,
-because compressed pages remain in zswap after it is disabled.
-(b) Add proper support to swapin large folios from zswap (fully or
-partially).
-
-Probably start with (a) then followup with (b).
-
-[1]https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.com/
-
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
+Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@canonical.com/T/#u
+Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chengen Du <chengen.du@canonical.com>
 ---
+ net/packet/af_packet.c | 57 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 55 insertions(+), 2 deletions(-)
 
-v1: https://lore.kernel.org/lkml/20240606184818.1566920-1-yosryahmed@google.com/
-
-v1 -> v2:
-- Instead of using VM_BUG_ON() use WARN_ON_ONCE() and add some recovery
-  handling (David Hildenbrand).
-
----
- mm/page_io.c |  1 -
- mm/zswap.c   | 22 +++++++++++++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index f1a9cfab6e748..8f441dd8e109f 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 	delayacct_swapin_start();
- 
- 	if (zswap_load(folio)) {
--		folio_mark_uptodate(folio);
- 		folio_unlock(folio);
- 	} else if (data_race(sis->flags & SWP_FS_OPS)) {
- 		swap_read_folio_fs(folio, plug);
-diff --git a/mm/zswap.c b/mm/zswap.c
-index b9b35ef86d9be..ebb878d3e7865 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
- 
- 	VM_WARN_ON_ONCE(!folio_test_locked(folio));
- 
-+	/*
-+	 * Large folios should not be swapped in while zswap is being used, as
-+	 * they are not properly handled. Zswap does not properly load large
-+	 * folios, and a large folio may only be partially in zswap.
-+	 *
-+	 * If any of the subpages are in zswap, reading from disk would result
-+	 * in data corruption, so return true without marking the folio uptodate
-+	 * so that an IO error is emitted (e.g. do_swap_page() will sigfault).
-+	 *
-+	 * Otherwise, return false and read the folio from disk.
-+	 */
-+	if (folio_test_large(folio)) {
-+		if (xa_find(tree, &offset,
-+			    offset + folio_nr_pages(folio) - 1, XA_PRESENT)) {
-+			WARN_ON_ONCE(1);
-+			return true;
-+		}
-+		return false;
-+	}
-+
- 	/*
- 	 * When reading into the swapcache, invalidate our entry. The
- 	 * swapcache can be the authoritative owner of the page and
-@@ -1590,7 +1610,7 @@ bool zswap_load(struct folio *folio)
- 		zswap_entry_free(entry);
- 		folio_mark_dirty(folio);
- 	}
--
-+	folio_mark_uptodate(folio);
- 	return true;
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index ea3ebc160e25..8cffbe1f912d 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -538,6 +538,43 @@ static void *packet_current_frame(struct packet_sock *po,
+ 	return packet_lookup_frame(po, rb, rb->head, status);
  }
  
++static u16 vlan_get_tci(struct sk_buff *skb)
++{
++	struct vlan_hdr vhdr, *vh;
++	u8 *skb_orig_data = skb->data;
++	int skb_orig_len = skb->len;
++
++	skb_push(skb, skb->data - skb_mac_header(skb));
++	vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
++	if (skb_orig_data != skb->data) {
++		skb->data = skb_orig_data;
++		skb->len = skb_orig_len;
++	}
++	if (unlikely(!vh))
++		return 0;
++
++	return ntohs(vh->h_vlan_TCI);
++}
++
++static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
++{
++	__be16 proto = skb->protocol;
++
++	if (unlikely(eth_type_vlan(proto))) {
++		u8 *skb_orig_data = skb->data;
++		int skb_orig_len = skb->len;
++
++		skb_push(skb, skb->data - skb_mac_header(skb));
++		proto = __vlan_get_protocol(skb, proto, NULL);
++		if (skb_orig_data != skb->data) {
++			skb->data = skb_orig_data;
++			skb->len = skb_orig_len;
++		}
++	}
++
++	return proto;
++}
++
+ static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+ {
+ 	del_timer_sync(&pkc->retire_blk_timer);
+@@ -1007,10 +1044,16 @@ static void prb_clear_rxhash(struct tpacket_kbdq_core *pkc,
+ static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
+ 			struct tpacket3_hdr *ppd)
+ {
++	struct packet_sock *po = container_of(pkc, struct packet_sock, rx_ring.prb_bdqc);
++
+ 	if (skb_vlan_tag_present(pkc->skb)) {
+ 		ppd->hv1.tp_vlan_tci = skb_vlan_tag_get(pkc->skb);
+ 		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->vlan_proto);
+ 		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++	} else if (unlikely(po->sk.sk_type == SOCK_DGRAM && eth_type_vlan(pkc->skb->protocol))) {
++		ppd->hv1.tp_vlan_tci = vlan_get_tci(pkc->skb);
++		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->protocol);
++		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+ 	} else {
+ 		ppd->hv1.tp_vlan_tci = 0;
+ 		ppd->hv1.tp_vlan_tpid = 0;
+@@ -2428,6 +2471,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 			h.h2->tp_vlan_tci = skb_vlan_tag_get(skb);
+ 			h.h2->tp_vlan_tpid = ntohs(skb->vlan_proto);
+ 			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++		} else if (unlikely(sk->sk_type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
++			h.h2->tp_vlan_tci = vlan_get_tci(skb);
++			h.h2->tp_vlan_tpid = ntohs(skb->protocol);
++			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+ 		} else {
+ 			h.h2->tp_vlan_tci = 0;
+ 			h.h2->tp_vlan_tpid = 0;
+@@ -2457,7 +2504,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	sll->sll_halen = dev_parse_header(skb, sll->sll_addr);
+ 	sll->sll_family = AF_PACKET;
+ 	sll->sll_hatype = dev->type;
+-	sll->sll_protocol = skb->protocol;
++	sll->sll_protocol = (sk->sk_type == SOCK_DGRAM) ?
++		vlan_get_protocol_dgram(skb) : skb->protocol;
+ 	sll->sll_pkttype = skb->pkt_type;
+ 	if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
+ 		sll->sll_ifindex = orig_dev->ifindex;
+@@ -3482,7 +3530,8 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 		/* Original length was stored in sockaddr_ll fields */
+ 		origlen = PACKET_SKB_CB(skb)->sa.origlen;
+ 		sll->sll_family = AF_PACKET;
+-		sll->sll_protocol = skb->protocol;
++		sll->sll_protocol = (sock->type == SOCK_DGRAM) ?
++			vlan_get_protocol_dgram(skb) : skb->protocol;
+ 	}
+ 
+ 	sock_recv_cmsgs(msg, sk, skb);
+@@ -3539,6 +3588,10 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 			aux.tp_vlan_tci = skb_vlan_tag_get(skb);
+ 			aux.tp_vlan_tpid = ntohs(skb->vlan_proto);
+ 			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++		} else if (unlikely(sock->type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
++			aux.tp_vlan_tci = vlan_get_tci(skb);
++			aux.tp_vlan_tpid = ntohs(skb->protocol);
++			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+ 		} else {
+ 			aux.tp_vlan_tci = 0;
+ 			aux.tp_vlan_tpid = 0;
 -- 
-2.45.2.505.gda0bf45e8d-goog
+2.43.0
 
 
