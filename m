@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-207014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1F90114E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B91901150
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6F31F21BFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E351F21D7A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ECF176AAE;
-	Sat,  8 Jun 2024 11:08:03 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E7917837B;
+	Sat,  8 Jun 2024 11:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmDGbuM4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C569B14F139
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 11:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0B514F139;
+	Sat,  8 Jun 2024 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717844883; cv=none; b=N2MiMsaT9l3xTIFZ7fgKR1NoCpjAaOiYoQtcQKBZRKwV4cvRwoJ3FSA/LyPeJ50s3tS156+VQCG/WbFRZBXX/oD3ws5JsZF935+GjCCPJDOw/+StsL9cgwW9auY8qL3TRID9ZyKHn/gOvu292iGhoa9MALCWFRIfIx54HKf5tUQ=
+	t=1717844985; cv=none; b=Zs7DGd94dyRAsAuN1csB3cPrTdpHOxXTP0i3xSGDcPJP8GbTPbgWoxm2BXbAxBquvs5ntH+SIsVjAW8SoFm1BAnN0NwBhr9s364v9UtBMgf0TicRWmoYF9cIDoGZtPRexKK4uu3dKGSPa2XkQYtljvTcxdU3QYubEBcOXas9zSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717844883; c=relaxed/simple;
-	bh=0rWGcTa2MEDd7Q9eaT+yNU0ZCfGIK2XvrtCzfvdDr8k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qmnWPIJlQFN8KikF/AaazpYB31rFXV7O81xVbm0PQBh8H3G56B6IQrStzpWHkJtIQNHNDgjwsKAILpjavzJynTwHSmNVFkl2NnPMUnbY1rpo/Oqa+tt4TnJVDR7tXA4RVhD362ufkVHCWb9wgvLCqk2wRiOkq39MweAkR1BZGKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af290.dynamic.kabel-deutschland.de [95.90.242.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 12E6161E5FE01;
-	Sat,  8 Jun 2024 13:07:16 +0200 (CEST)
-Message-ID: <754664f9-ac5b-406e-99bd-1b179ea8333b@molgen.mpg.de>
-Date: Sat, 8 Jun 2024 13:07:15 +0200
+	s=arc-20240116; t=1717844985; c=relaxed/simple;
+	bh=wowWc9+njfwW5t2kl62DnHQwLj+9w4BlUoe93ce4FPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=YvGlhQZs4r4UEIEQ9PL9+QkGYumOqtd8yg2bzzhSM0CQlictCuRTeDYR30Tmq8HfMD0SUFk6MCRPviHsxOsMv4u2FerV04JzzMUFxDhUsRiSwnQUf8DBdCyh+C97uU5i6Ay2TmU6T6fpXGKzxhVbatXdf1cFga0ZPm68SzR0qP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmDGbuM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4DB8C2BD11;
+	Sat,  8 Jun 2024 11:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717844984;
+	bh=wowWc9+njfwW5t2kl62DnHQwLj+9w4BlUoe93ce4FPI=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=pmDGbuM4AJocyuzzQinMKUnOcJ25HYEm4iYqj5mdmsYFU4bnb97B0ZakyoAjggBA+
+	 mQTNrA5010kBF2QnmhLR64tDpjR21izgSvH/IM6G4xiDhMhTWkv59tCGLN1TzKclUX
+	 LkBOFrtl2ADj7APSzO+a77IYQg4HBf4nsc8GNegbWnE34fjdCzxhT/9cVg2fC4s3fI
+	 /HGMoPtPm6gIYTtaQZaCWqz9LvMazXLy2EJY6z28p5Qm2hHUOY1/2ijC0hvsUCd4Np
+	 cNx3pj8BoJn7TB9KN5FZkCXDSvSZlT6zVa6P0xbFyhqqwRL8vMxfS/CEuz108nUdY8
+	 U332EgegW8Neg==
+Message-ID: <6720af76-6504-4337-99f4-01db93913d0b@kernel.org>
+Date: Sat, 8 Jun 2024 19:09:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,113 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: DMAR-IR: IRQ remapping was enabled on dmar6 but we are not in
- kdump mode
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <5517f76a-94ad-452c-bae6-34ecc0ec4831@molgen.mpg.de>
- <433452d0-589a-49c8-8044-dcc93d5be90a@linux.intel.com>
- <24bf9a11-6abd-4ccf-9ca1-3cf75c45d374@molgen.mpg.de>
- <42b53bff-4027-4cb6-a457-e26fd62895e5@linux.intel.com>
- <61ce93c7-e89c-4217-8095-dde9fb01763c@molgen.mpg.de>
- <7eb01b85-9233-4f21-865e-6d128f39fb46@linux.intel.com>
- <b12ae551-e7a4-435b-b7ff-368d6c1ae7a1@molgen.mpg.de>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_revalidate_dentry
+To: syzbot <syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com>,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000a66c7705f4578aaa@google.com>
 Content-Language: en-US
-In-Reply-To: <b12ae551-e7a4-435b-b7ff-368d6c1ae7a1@molgen.mpg.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ glider@google.com
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <000000000000a66c7705f4578aaa@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Linux folks,
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git misc
 
-
-Am 15.05.24 um 08:02 schrieb Paul Menzel:
-
-> Am 15.05.24 um 04:13 schrieb Baolu Lu:
->> On 5/15/24 3:46 AM, Paul Menzel wrote:
->>> Am 23.01.24 um 01:55 schrieb Baolu Lu:
->>>> On 2024/1/22 22:53, Paul Menzel wrote:
->>>>> Am 22.01.24 um 13:38 schrieb Baolu Lu:
->>>>>> On 2024/1/19 22:45, Paul Menzel wrote:
->>>>>>>
->>>>>>> On a Dell PowerEdge T640, Linux 5.9 and 6.6.12 warn about kdump:
->>>>>>>
->>>>>>>      [    2.728445] DMAR-IR: IRQ remapping was enabled on dmar6 but we are not in kdump mode
->>>>>>>      [    2.736544] DMAR-IR: IRQ remapping was enabled on dmar5 but we are not in kdump mode
->>>>>>>      [    2.744620] DMAR-IR: IRQ remapping was enabled on dmar4 but we are not in kdump mode
->>>>>>>      [    2.752695] DMAR-IR: IRQ remapping was enabled on dmar3 but we are not in kdump mode
->>>>>>>      [    2.760774] DMAR-IR: IRQ remapping was enabled on dmar2 but we are not in kdump mode
->>>>>>>      [    2.768847] DMAR-IR: IRQ remapping was enabled on dmar1 but we are not in kdump mode
->>>>>>>      [    2.776922] DMAR-IR: IRQ remapping was enabled on dmar0 but we are not in kdump mode
->>>>>>>      [    2.784999] DMAR-IR: IRQ remapping was enabled on dmar7 but we are not in kdump mode
->>>>>>>
->>>>>>> Looking through the logs, this only happens when using kexec to 
->>>>>>> restart the system.
->>>>>>
->>>>>> The code that warned this is,
->>>>>>
->>>>>>   599         if (ir_pre_enabled(iommu)) {
->>>>>>   600                 if (!is_kdump_kernel()) {
->>>>>>   601                         pr_warn("IRQ remapping was enabled on %s but we are not in kdump mode\n",
->>>>>>   602                                 iommu->name);
->>>>>>   603                         clear_ir_pre_enabled(iommu);
->>>>>>   604                         iommu_disable_irq_remapping(iommu);
->>>>>>   605                 }
->>>>>>
->>>>>> The VT-d interrupt remapping is enabled during boot, but this is not a
->>>>>> kdump kernel.
->>>>>>
->>>>>> Do you mind checking whether the disable interrupt remapping callback
->>>>>> was called during kexec reboot?
->>>>>>
->>>>>> 1121 struct irq_remap_ops intel_irq_remap_ops = {
->>>>>> 1122         .prepare                = intel_prepare_irq_remapping,
->>>>>> 1123         .enable                 = intel_enable_irq_remapping,
->>>>>> 1124         .disable                = disable_irq_remapping,
->>>>>> 1125         .reenable               = reenable_irq_remapping,
->>>>>> 1126         .enable_faulting        = enable_drhd_fault_handling,
->>>>>> 1127 };
->>>>>
->>>>> Is there a way to check this without rebuilding the Linux kernel?
->>>>
->>>> I am not sure, but you can check whether any messages are dumped in the
->>>> path of .disable callback? or try to use ftrace?
->>>
->>> With
->>>
->>> ```
->>> diff --git a/drivers/iommu/intel/irq_remapping.c 
->>> b/drivers/iommu/intel/irq_remapping.c
->>> index 712ebfc9870c6..146f19ae5b5f1 100644
->>> --- a/drivers/iommu/intel/irq_remapping.c
->>> +++ b/drivers/iommu/intel/irq_remapping.c
->>> @@ -1030,6 +1030,7 @@ static void disable_irq_remapping(void)
->>>       struct dmar_drhd_unit *drhd;
->>>       struct intel_iommu *iommu = NULL;
->>>
->>> +     pr_warn("XXX: Called %s\n", __func__);
->>>       /*
->>>        * Disable Interrupt-remapping for all the DRHD's now.
->>>        */
->>> ```
->>>
->>> I can’t see anything in the logs, so it does not seem to be called.
->>>
->>> Can you reproduce the issue?
->>
->> How did you reproduce this?
+On 2023/2/10 20:21, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
 > 
-> On a “server” (with Intel Xeon?), in my case Dell PowerEdge T640 and 
-> Dell PowerEdge R930 (Intel E7-8891 v3), run
+> HEAD commit:    8c89ecf5c13b kmsan: silence -Wmissing-prototypes warnings
+> git tree:       https://github.com/google/kmsan.git master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10b53fff480000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=91d3152219aa6b45
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> userspace arch: i386
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1409f0b3480000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c76993480000
 > 
->      kexec /boot/bzImage --initrd=/boot/grub/initramfs.igz --reuse-cmdline
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/fa537cffb53c/disk-8c89ecf5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5b9d03c04a3e/vmlinux-8c89ecf5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/55c166dec3af/bzImage-8c89ecf5.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/b234e4e5c704/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com
+> 
+> =======================================================
+> WARNING: The mand mount option has been deprecated and
+>           and is ignored by this kernel. Remove the mand
+>           option from the mount to silence this warning.
+> =======================================================
+> =====================================================
+> BUG: KMSAN: uninit-value in hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
+> BUG: KMSAN: uninit-value in hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
+>   hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
+>   hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
+>   block_read_full_folio+0x4ff/0x11b0 fs/buffer.c:2271
+>   hfs_read_folio+0x55/0x60 fs/hfs/inode.c:39
+>   filemap_read_folio+0x148/0x4f0 mm/filemap.c:2426
+>   do_read_cache_folio+0x7c8/0xd90 mm/filemap.c:3553
+>   do_read_cache_page mm/filemap.c:3595 [inline]
+>   read_cache_page+0xfb/0x2f0 mm/filemap.c:3604
+>   read_mapping_page include/linux/pagemap.h:755 [inline]
+>   hfs_btree_open+0x928/0x1ae0 fs/hfs/btree.c:78
+>   hfs_mdb_get+0x260c/0x3000 fs/hfs/mdb.c:204
+>   hfs_fill_super+0x1fb1/0x2790 fs/hfs/super.c:406
+>   mount_bdev+0x628/0x920 fs/super.c:1359
+>   hfs_mount+0xcd/0xe0 fs/hfs/super.c:456
+>   legacy_get_tree+0x167/0x2e0 fs/fs_context.c:610
+>   vfs_get_tree+0xdc/0x5d0 fs/super.c:1489
+>   do_new_mount+0x7a9/0x16f0 fs/namespace.c:3145
+>   path_mount+0xf98/0x26a0 fs/namespace.c:3475
+>   do_mount fs/namespace.c:3488 [inline]
+>   __do_sys_mount fs/namespace.c:3697 [inline]
+>   __se_sys_mount+0x919/0x9e0 fs/namespace.c:3674
+>   __ia32_sys_mount+0x15b/0x1b0 fs/namespace.c:3674
+>   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+>   do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+>   do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+>   entry_SYSENTER_compat_after_hwframe+0x70/0x82
+> 
+> Uninit was created at:
+>   __alloc_pages+0x926/0x10a0 mm/page_alloc.c:5572
+>   alloc_pages+0xb4b/0xec0
+>   alloc_slab_page mm/slub.c:1851 [inline]
+>   allocate_slab mm/slub.c:1998 [inline]
+>   new_slab+0x5c5/0x19b0 mm/slub.c:2051
+>   ___slab_alloc+0x132b/0x3790 mm/slub.c:3193
+>   __slab_alloc mm/slub.c:3292 [inline]
+>   __slab_alloc_node mm/slub.c:3345 [inline]
+>   slab_alloc_node mm/slub.c:3442 [inline]
+>   slab_alloc mm/slub.c:3460 [inline]
+>   __kmem_cache_alloc_lru mm/slub.c:3467 [inline]
+>   kmem_cache_alloc_lru+0x72f/0xb80 mm/slub.c:3483
+>   alloc_inode_sb include/linux/fs.h:3119 [inline]
+>   hfs_alloc_inode+0x80/0xf0 fs/hfs/super.c:165
+>   alloc_inode+0xad/0x4b0 fs/inode.c:259
+>   iget_locked+0x340/0xf80 fs/inode.c:1286
+>   hfs_btree_open+0x20d/0x1ae0 fs/hfs/btree.c:38
+>   hfs_mdb_get+0x2519/0x3000 fs/hfs/mdb.c:199
+>   hfs_fill_super+0x1fb1/0x2790 fs/hfs/super.c:406
+>   mount_bdev+0x628/0x920 fs/super.c:1359
+>   hfs_mount+0xcd/0xe0 fs/hfs/super.c:456
+>   legacy_get_tree+0x167/0x2e0 fs/fs_context.c:610
+>   vfs_get_tree+0xdc/0x5d0 fs/super.c:1489
+>   do_new_mount+0x7a9/0x16f0 fs/namespace.c:3145
+>   path_mount+0xf98/0x26a0 fs/namespace.c:3475
+>   do_mount fs/namespace.c:3488 [inline]
+>   __do_sys_mount fs/namespace.c:3697 [inline]
+>   __se_sys_mount+0x919/0x9e0 fs/namespace.c:3674
+>   __ia32_sys_mount+0x15b/0x1b0 fs/namespace.c:3674
+>   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+>   do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+>   do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+>   entry_SYSENTER_compat_after_hwframe+0x70/0x82
+> 
+> CPU: 1 PID: 5015 Comm: syz-executor119 Not tainted 6.2.0-rc7-syzkaller-80760-g8c89ecf5c13b #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+> =====================================================
+> 
 
-Were you able to fit some cycles into reproducing/analyzing this issue?
-
-
-Kind regards,
-
-Paul
 
