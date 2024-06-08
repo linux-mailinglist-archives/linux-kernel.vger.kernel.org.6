@@ -1,163 +1,160 @@
-Return-Path: <linux-kernel+bounces-207128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E7D9012B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:12:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 013F89012B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D9D1F21828
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:12:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB12C1F21B8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F67717995A;
-	Sat,  8 Jun 2024 16:12:34 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8217B4FE;
+	Sat,  8 Jun 2024 16:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A0AHLCrW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1461DA5F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 16:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344CB179675;
+	Sat,  8 Jun 2024 16:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717863153; cv=none; b=UTINB3LPN6VuStFCSwWrGegTM57COLWQ3wYqvfZiYLgQ0f6sr4c+5/1u8tmQ7kqYATl47Klu2sd0RIT6pM9jwnMyDh0M513cAwlKogl3gNouHq0zFSfKxYw+wmIHjEWu3n+5N5nwAM4seAOh5StNOzznbqmSD/5bxg4711fVPv4=
+	t=1717863309; cv=none; b=Z6Q1kRbWwf+CmybdIo8MEJsQlH851K1VAKYIWlXgRb61NPK48rrj73r4Abv9bWBfRhTL48oQ2W0T9erEUpgT0+oTwNf+JwW6X3UCV3MpAe3e6N7f1RcCSLOfVhKFP6LUPsy0IK4VZfJo8Klwmk15j8h61BaHO5D0hi3995Gwvbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717863153; c=relaxed/simple;
-	bh=ESjO9BCz6Qqt2T+vMXVXtCWaCLLgz+dfRZwslkC8UwU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GjnKZwf1BHJQAsMaLeFgQSn/XuyeBkCd9OYE34ut/pqTLCbt2Kx7x7WDhksR96OuLCIprM49MFSKFWrCYZVSQ1kX0BS4wR8uKbj7pfYnqtO/EX/imep8XuKJPH7/x4dTUn5SgERu27Q6Sfcz/0WmiBBkVdPOGwAkhBejIr7x7dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3745fb76682so32324445ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 09:12:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717863151; x=1718467951;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tk5GbmyiMvxlYvX+q1VR0ktSf1neeTNiEoQUv7xtkW8=;
-        b=PqH2SAzLFwHTp6Ijso8CvRb5Ik/Cowonx/nzH/sLrSmGWz5wMpBO2VAHHVNUVtfOqt
-         1vga9zr4VzANJMJx8aWkru4JzXbgA3iynefWr8/RVvd9wz68kycxPfzYswIw/EO5vhFl
-         1rVWRML7R9HbujRg/HzE3FVImkqWPMyrJaRRvp+8mO+Kmx69ByXENbhvSrEk44Zjip4W
-         +HNuMMh/FBxAiVXP/ZaTVhHaE7XjeEvpAalNryWeUVlCX6lzOAB2pUNRBrrCpA7NKfaw
-         LNcYHk8f42wu9eJukWmTWCgPnWOrraLBT3Y0x35Vl2zavClljQoCGMacKUMM0Z7Iem30
-         4QHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFvK+cexXzQXA1e1/FbtPvmRKdiqIkOngmotKdujAYzmQIGAz95CbfLuyJnZWKmVi6x7vc+sywn0IHQa6JGMbPmAGG17vfumRnuE4S
-X-Gm-Message-State: AOJu0YzA1uAkFG/Or8hLqY5A1/LYzOAEgb2+mfsR8D2FCPWRw/h2Y7ez
-	ohQkkq1Ni8wozwAZX3gz9ouy6ODQqC8M0TeM1a7HKgQBcGkoJjxhkFl04Ks6bFKjegERqq6f8Ds
-	NRBuonSrYmIAKut7ivAbN1FSROuhYpQyfyVcrz0InsfkuDtY+c4/y4pQ=
-X-Google-Smtp-Source: AGHT+IECGiuYtCZxZHm2Gqol8LeAkPTSNxzQCgmmp58SkPjFZtO3i+StuzUtB2H/j5kmiFOPtvVALzxDtlioWIVDWZCl8wX59Ezx
+	s=arc-20240116; t=1717863309; c=relaxed/simple;
+	bh=6t8KhUaq2gdgrr+pplXAkboAQ7kJUYZMZNlrL9HX1E0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dFonfBZNX0bbxAzX66bIPCWOXGn39Iz0VBHtuRZk/utQgzSFtczNlhum/31vDqCFjRJGnM5TBCevhS9Wd6UTT3GaEmHG6rbCkANHNsYbh/pPEKZzAnyHdhgkS5jrEdGLEXHdWA8PlYOjGrNzD6rHUJNJUTNt60SKKwDgT17Mdrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A0AHLCrW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 458GBFgO022930;
+	Sat, 8 Jun 2024 16:14:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jCVO1rlcKIt68CFsV2gzjy
+	XhQ0yWTU5oC6XzCiUFPHM=; b=A0AHLCrWSZIwfTDYo9dFpXyoP5+ruuughFOJYB
+	2aaR/NrajduZ9LLVpmuXLv3uHlXD60wNn3bLEFv3ydHlFGHZKbA9uRBEVdLSpnBR
+	WuCuPuY8esVgWI0UIbskjoB325FhZv29cu3B4pmxaW/iB/0ekcpcopNJw/V7irJ9
+	GChxYrq7OqCdWLhAf4guT5+robez1h3v9E2XKLlA308jPLvacAnawTcEzyhQHTF1
+	gcFUO9yPKl6VQJuNmm9+Ap6ER6EVHcbYmvVrD/lUd47RuVSLb6G2F8LZNqel/nrv
+	FaBMldVpLBCR44j77XJX91nq9aeYCK76X2oMjssEDcvluglA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmrv2x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 08 Jun 2024 16:14:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 458GEdb6002661
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 8 Jun 2024 16:14:39 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 8 Jun 2024
+ 09:14:38 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 8 Jun 2024 09:14:37 -0700
+Subject: [PATCH] irqchip: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c70e:0:b0:375:9e28:49b with SMTP id
- e9e14a558f8ab-3759e280992mr6425ab.2.1717863151181; Sat, 08 Jun 2024 09:12:31
- -0700 (PDT)
-Date: Sat, 08 Jun 2024 09:12:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e631fc061a632eae@google.com>
-Subject: [syzbot] [kernel?] WARNING: locking bug in __schedule
-From: syzbot <syzbot+46b40e354b532433eeef@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGyDZGYC/x3MQQrCQAyF4auUrA2MRQfxKuJimkQnYMeaaCmU3
+ t3o8uPx/hVcTMXh3K1gMqvrswX2uw6olnYXVA5Dn/pDyumEIyObzmKOai+qOiEz51iPlDJBHCe
+ Tmy7/6OUaHooLDlYa1V/qoe2z4Fj8LQbb9gWnE/pRgwAAAA==
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Jerome
+ Brunet" <jbrunet@baylibre.com>,
+        Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Gregory
+ Clement" <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Wj7q2II9feNUhcMiywsfcwBYAbQzzmOz
+X-Proofpoint-ORIG-GUID: Wj7q2II9feNUhcMiywsfcwBYAbQzzmOz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-08_09,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406080122
 
-Hello,
+On x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
 
-syzbot found the following issue on:
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE().  This includes a 3rd file,
+irq-mvebu-pic.c, which did not produce a warning with the x86
+allmodconfig, but which may cause this warning with other kernel
+configurations.
 
-HEAD commit:    dc772f8237f9 Merge tag 'mm-hotfixes-stable-2024-06-07-15-2..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1422da8c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=46b40e354b532433eeef
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/irqchip/irq-meson-gpio.c | 1 +
+ drivers/irqchip/irq-mvebu-pic.c  | 1 +
+ drivers/irqchip/irq-ts4800.c     | 1 +
+ 3 files changed, 3 insertions(+)
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3700030c3c13/disk-dc772f82.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e238e5fcc97d/vmlinux-dc772f82.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ee78908acdd/bzImage-dc772f82.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+46b40e354b532433eeef@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4773 [inline]
-WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 __lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
-Modules linked in:
-CPU: 1 PID: 11576 Comm: syz-executor.1 Not tainted 6.10.0-rc2-syzkaller-00315-gdc772f8237f9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4773 [inline]
-RIP: 0010:__lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
-Code: 00 00 83 3d 6e 0c 3b 0e 00 75 23 90 48 c7 c7 20 ba ca 8b 48 c7 c6 c0 bc ca 8b e8 78 e4 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90015a375b0 EFLAGS: 00010046
-RAX: 7003b597e2d67b00 RBX: 0000000000000e50 RCX: ffff888020a60000
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff815857a2 R09: fffffbfff1c39994
-R10: dffffc0000000000 R11: fffffbfff1c39994 R12: 0000000000000001
-R13: ffff888020a60000 R14: 0000000000000000 R15: ffff888020a60b00
-FS:  0000555579285480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3022f000 CR3: 000000001cbf6000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:567
- raw_spin_rq_lock kernel/sched/sched.h:1406 [inline]
- rq_lock kernel/sched/sched.h:1702 [inline]
- __schedule+0x357/0x4a20 kernel/sched/core.c:6653
- preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6924
- preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6948
- preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
- _raw_spin_unlock_irqrestore+0x130/0x140 kernel/locking/spinlock.c:194
- hrtimer_start_expires include/linux/hrtimer.h:289 [inline]
- hrtimer_sleeper_start_expires kernel/time/hrtimer.c:1949 [inline]
- do_nanosleep+0x158/0x600 kernel/time/hrtimer.c:2025
- hrtimer_nanosleep+0x227/0x470 kernel/time/hrtimer.c:2081
- __do_sys_clock_nanosleep kernel/time/posix-timers.c:1396 [inline]
- __se_sys_clock_nanosleep+0x32d/0x3c0 kernel/time/posix-timers.c:1373
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc521ca8375
-Code: 24 0c 89 3c 24 48 89 4c 24 18 e8 f6 b9 ff ff 4c 8b 54 24 18 48 8b 54 24 10 41 89 c0 8b 74 24 0c 8b 3c 24 b8 e6 00 00 00 0f 05 <44> 89 c7 48 89 04 24 e8 4f ba ff ff 48 8b 04 24 48 83 c4 28 f7 d8
-RSP: 002b:00007ffdb0499ff0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e6
-RAX: ffffffffffffffda RBX: 0000000000000052 RCX: 00007fc521ca8375
-RDX: 00007ffdb049a030 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007ffdb049a0ac R08: 0000000000000000 R09: 7fffffffffffffff
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000032
-R13: 0000000000095a92 R14: 0000000000095a43 R15: 0000000000000001
- </TASK>
-
+diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
+index 9a1791908598..27e30ce41db3 100644
+--- a/drivers/irqchip/irq-meson-gpio.c
++++ b/drivers/irqchip/irq-meson-gpio.c
+@@ -608,5 +608,6 @@ IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_of_init)
+ IRQCHIP_PLATFORM_DRIVER_END(meson_gpio_intc)
+ 
+ MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_DESCRIPTION("Meson GPIO Interrupt Multiplexer driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:meson-gpio-intc");
+diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
+index d17d9c0e2880..08b0cc862adf 100644
+--- a/drivers/irqchip/irq-mvebu-pic.c
++++ b/drivers/irqchip/irq-mvebu-pic.c
+@@ -193,6 +193,7 @@ module_platform_driver(mvebu_pic_driver);
+ 
+ MODULE_AUTHOR("Yehuda Yitschak <yehuday@marvell.com>");
+ MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
++MODULE_DESCRIPTION("Marvell Armada 7K/8K PIC driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:mvebu_pic");
+ 
+diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
+index 57f610dab6b8..b5dddb3c1568 100644
+--- a/drivers/irqchip/irq-ts4800.c
++++ b/drivers/irqchip/irq-ts4800.c
+@@ -163,5 +163,6 @@ static struct platform_driver ts4800_ic_driver = {
+ module_platform_driver(ts4800_ic_driver);
+ 
+ MODULE_AUTHOR("Damien Riegel <damien.riegel@savoirfairelinux.com>");
++MODULE_DESCRIPTION("Multiplexed-IRQs driver for TS-4800's FPGA");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:ts4800_irqc");
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240608-md-drivers-irqchip-ddd62405c06c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
