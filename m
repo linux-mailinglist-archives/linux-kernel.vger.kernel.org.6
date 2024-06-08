@@ -1,247 +1,161 @@
-Return-Path: <linux-kernel+bounces-207031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5CA901176
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:33:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038AA901177
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F2F1F21EA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 12:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6C242823AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 12:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0485178383;
-	Sat,  8 Jun 2024 12:33:28 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FAF54670;
+	Sat,  8 Jun 2024 12:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwC4KbLO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8824B2206E;
-	Sat,  8 Jun 2024 12:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717850008; cv=fail; b=ga+eJPlb2jLCcnO6Ovf3AowQVMGC+4Bci9WIBXAsuLIky7Ewv3nLV0711X1ahgyAo5BJ5kKHpmwCH8z6Qc9slyLBY+DQY2mD9+7awkIEnWb7RO9JZROT0ldY4XdwkZlXnvC5LmCgI7i7VOT3MtdKIVlrC0QtyJvOWiD5ST8+rtk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717850008; c=relaxed/simple;
-	bh=77NqC2JvO94Of5OqjtrFes3i9BrflKaGffwKs8P4v1I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SNHTxSBM0xPwfpnhvY/+HwrJ9LuExwwq4vIGuZG7MB6m8JXonEzRURa4q1Sk5EK+Lg8lwj7hCecSVnH2krlbfLT+5K/AiKUwW0vEapIkeZnJT0LdhLFKU7rK6JpbZPzRcMG8MXDrgbTuNL1faB9D7sj5X7sfQ3IrUtxVDPH4/j4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 458CUTdH024420;
-	Sat, 8 Jun 2024 05:32:53 -0700
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3ymjk284p9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 08 Jun 2024 05:32:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZM2dWBvLkb9TNV3/QBVXJ9P01ic8EwrmKb1+Vx/YOVTkMBbphKNpIoM9/1a6zNt4vwhlcOmzhYBhM9lvRxnzQ77L3VxM5of0e34afE1xGE9ShaQmSDDEmALZTgzJfiJFAkDFUiIjth3rJsaMH4OHIwiJzBEdDoA26xRJX4bMQJp4wlpYj3lG2j9CFpW9zmqfMKPqN5Ha27I2kw6ROWrB1ZH0XLbq1Q83lo/LfhcFalBfUc1Bvq8bWpBBY4MYSvluSdfaMEenPmp9xVcCT3JdiNs/cw6p/3q8yvIKv54P713USYbh3gUAeP9vJreR1r62y2MIELK/y2nFGSVMfXFakg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iKMDv2/lvezgtQB/YMLRWs20JmVbgiIsl5tCv2/RYso=;
- b=kTngjQGZOFRRgHUxQ87oKmlQ9oBQ8yz6akW3K7QQmsKMUw6OM/EkZjCWEzul01nGB83L4oC7/Ctl0ZekYLzYH8q6WhsN+VyXFVk1Mcjm5wEzh26IOQQ4LjKa31K2/WLBlouxnkca1WIrsDMIlaRbFzFkaAnzcH2KdJH5GWMXqzMLwPxByU5T1DaI66VwoWDi181qhuyZp4Okqg9NLuIp6PS4G9VxHhm9NHUS7TyKPouA7vL9zaJx8cZA92F6BO5bNywL9XorpVDLcRmVbPUhqmSmvW6I5sxc4d7cHGowVkw+9E1FJ+Y1Ix5yDqFfipeVTLXOcCOVgl62AyernnC9sA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
- by PH0PR11MB5879.namprd11.prod.outlook.com (2603:10b6:510:142::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Sat, 8 Jun
- 2024 12:32:48 +0000
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8%4]) with mapi id 15.20.7633.036; Sat, 8 Jun 2024
- 12:32:47 +0000
-Message-ID: <1394b6f3-b9cc-4526-94da-a1edc361eaf7@windriver.com>
-Date: Sat, 8 Jun 2024 20:32:36 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net v4 PATCH] net: stmmac: replace priv->speed with the
- portTransmitRate from the tc-cbs parameters
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-        wojciech.drewek@intel.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240608044557.1380550-1-xiaolei.wang@windriver.com>
- <20240608111621.oasttwwkhsmpcl4y@skbuf>
-Content-Language: en-US
-From: xiaolei wang <xiaolei.wang@windriver.com>
-In-Reply-To: <20240608111621.oasttwwkhsmpcl4y@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR04CA0007.apcprd04.prod.outlook.com
- (2603:1096:4:197::19) To MW5PR11MB5764.namprd11.prod.outlook.com
- (2603:10b6:303:197::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E263175AA
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 12:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717850090; cv=none; b=lpxUN40J0rHVZgkDxKIWIY2Nsk1g3IKIWN2dHIkfiB9XucoC2U8C6ijzwBzsp4Ioz0rBT160pWmFzksdUnyPXn5WSeuUSC4E1Ly2xzGtiVGVIv6SxpsAt2Iep2yIVI3eu2bIZHtxiWSe7/juf/Fgsbop8Zrtp3Yx8TgjM0wxf+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717850090; c=relaxed/simple;
+	bh=vPnMjqtol+dnoSheDRAOwf/tp0qa9MOgByaRrsa0Kz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t8KGd5HxU6qqzTtuu/4lx4EYWtyQeT9YE7R6QfoklUMasvXpATCcmfBvxohydUdt2DXbIsYsWPFaF/Wypl+Wfs//KKVDjlGAt+I/5YrATWFPfNRQPiifFoB+3fOjylkR32pZkTCLFTFM1ON57bu8tBEc3FNXcFk+0tSm7b8RT9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwC4KbLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E5BC2BD11;
+	Sat,  8 Jun 2024 12:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717850089;
+	bh=vPnMjqtol+dnoSheDRAOwf/tp0qa9MOgByaRrsa0Kz4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DwC4KbLO4rn2JODKiRd5J1mgfZh1CbPIIqTbOa8bxEKdpcHw442Do+yleTF/z2utD
+	 E9oK+JJ8lWeOQ6gkKwwg9SN8AyV9NaAg8cpSLQjwZzKKrYc0111e0676+xGgnP/Lft
+	 LOJc9oksAVQ89z3RZq+JMVFsJwnV3QesH3pi019rt/m8wMqlgQX2ZdbtTnPxRJpCM2
+	 wiWg+3jZ89nom0zb1QEyQBiE380RHyeYltxtXa0GAW60N3tIzORggmuqYH7u1la5wL
+	 CkuAf11ke5Z9YBE0j06noRMapgl9TcIgry362Y6qhk5LkYai1ZpcF9biHuIw/y46Kf
+	 5cpV66feT9wbw==
+Message-ID: <d38a2712-f7cc-4aea-a343-00335a5215a0@kernel.org>
+Date: Sat, 8 Jun 2024 20:34:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|PH0PR11MB5879:EE_
-X-MS-Office365-Filtering-Correlation-Id: 24e81c7d-09b2-429a-55c8-08dc87b71a1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?c01pdGRSR09XVlNPVzNRbVptMXVja0FNa2hKaFNnYTRIUEw1WVpwL3hkT2NJ?=
- =?utf-8?B?QURPRXlEc2Y5dmpRVXpucExGdHJwbmhDN2I4VllyZUdYTStBd3Fsd1g0eHRR?=
- =?utf-8?B?S2hUdTFUVkNiaUpwUFdBeis4aVY5Y25ybkFWblVEaFo4VVlHYnVsempkb2JS?=
- =?utf-8?B?bkhXVGVEeGlHTFEycUIzNENob2dxRkozSk0zUzlmOXlSUi9hVXcvTzI3aFJY?=
- =?utf-8?B?QTdrcitMU2RmblBud2E2V0o1RmVGVlBSU3A5WlgwS2pyd0RycEQ2QVBSclpF?=
- =?utf-8?B?UVFkTUlEN2RBa3dyZHlRcCt4Qi9zU3F4MmVueHVGdm93aEcxTEl3OTZTL2J1?=
- =?utf-8?B?clcvN1Z1VTV4V1YvUTZIQXUwYUtGU1BYVGFsdWpQRkF6ZHEyalZldDRqV2p2?=
- =?utf-8?B?WWh1ZUVrQXZKeEpPd3gxUGJ6ajAwTE0wM3VZdGM4NzFnK2V1V2ZwTlJneDl4?=
- =?utf-8?B?dWpFY2ZkS3ZvQkNCWWdKd3V0VmhncmVFWEJQSkFJbnRSbG83TlRpR3AyWU1Z?=
- =?utf-8?B?SGIzTVVQRkJhR2JTUVk2OW9GdmdnTDhuT0J6Z0V6WHNqdUpPeU1NREdKRE1i?=
- =?utf-8?B?TXg1K0o2N0lJTE1hZ1kwTFlURUw5L0Nnc0FyMkd2NVphTGQybXdCbS9HNkNs?=
- =?utf-8?B?N0poR0dlL3paMS9LRkZvM09sdERKNzlGdWcyRVB6ZTIrSTFjTWk0dHAyYnNG?=
- =?utf-8?B?Z3c0VWgwTGhGcnJmaVFERXZXVXBtcVIxYTN1bS82TzRFSE1WcTI0cmd1Um9w?=
- =?utf-8?B?Y3lNTmtpN0F2MUh6SlB1Nm1iNzAvSWNvWDc2UytCN2lhWkNUSlkxaGphZHAy?=
- =?utf-8?B?UDVKR21uVm9NZjNxN2tZM041RytBdkRsKzN0bXJSOFYxSjFPWTJ5WFFkY2tB?=
- =?utf-8?B?M1ppSXVqcG9FakJZQnlsamZlR0FQOWlRT01QSkVFS3BCUncwQWdKL2JUQ2Fh?=
- =?utf-8?B?OUdQVllDL2lKekJCaHpNcU5nOXhyMTFWMzhHaDlreHZNUFloNjVFZkx4T2Rk?=
- =?utf-8?B?QUFIdFBaeW1wdStzSmdZOFhKREZ6VGdRbEtvWXNmRDdpeTdXTVIvSUhJSXha?=
- =?utf-8?B?SVkxRFZjdk05UWc0bUxJSFVoYTQ4aytHQUNYUWpwdWMzcXJEcmdDRXdNWlBB?=
- =?utf-8?B?cVRub2lZVmV0SWpTWVE2ZmQ3OVhnQ0JDUGsza0owSW56WTFESUEyNG9VblZH?=
- =?utf-8?B?anBOR2xPODVoM1FkekxRY3NRUEZvZDBXWmdxSzRGZnlaUGI1YldhRGdmWHdI?=
- =?utf-8?B?V05qSTlXMWozRkkreXUzb2xFS3BkUGxiblJEcHNHMEtRbnd1c2FuZU1PN2ht?=
- =?utf-8?B?TWRhWXM1WEtCang4d2lISGRwSXp5VGJPSWFXSm13L2lIYVdIaTE1ajQ4SmNY?=
- =?utf-8?B?MjhpcmJsdWFLMzNXaDhMK2tCclE5YjBIN25XT1NHTXB0RUlWdG0vNUFlc0p6?=
- =?utf-8?B?cHNGV1QxWTBVbnZ2SDlOWE9jOGhxbXRyYlBqVU1MS2JweVpwYXhJd3pPWDgw?=
- =?utf-8?B?TDMrRlBsUWpKSHlCMDFBZ1lWa1IzN0s2cWRVVmZ5bFNMVVRodGc5anF1dkJw?=
- =?utf-8?B?Q25mcllEbzBNTERZVDd4ZEtDdVNpV3JGKzRlcUhmRFdxc3VhaStkZWwrZzNV?=
- =?utf-8?B?STdWb3F1MXZxaC9zWUREb2syeE45V1hnU0JjVXBsMDM4eUF4WXhiVE9ubUVx?=
- =?utf-8?Q?LGLYXzjie4j4efDKoYSB?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UFA5bHR1d2x0LzlOdHp5akw1MUhyeDhzbmNPemtYQ1F2aks0UHJOcGt2RFE0?=
- =?utf-8?B?dGNNYlBKZFJ5d2hpYVlQRHBTMWJBM0FhQkhPVTBDWlhXR2JnRkZUeW5lckpD?=
- =?utf-8?B?RkwzQnhGSVE2OHhCdDRhQzViL1JraG1JQ1JHV1krQ29jbHVLN0w1WlRCaUMr?=
- =?utf-8?B?Ty9TNGdMOWJJdld2WGFZN0RBRzh6VDBSUXdpTFlCK1ZPOUZMVVVyU1dmNGpD?=
- =?utf-8?B?bHNVUngzSjNIVGg0dFJLeUc5YkpHb2FQQSs0cVRvanR4NWNnZTRjV0lITktt?=
- =?utf-8?B?bUxLWXUwaS9LWmg5aGFsOVUwWStiZEpXK0hTVXBRM2Y0YUl2N0FKWTl4SzQz?=
- =?utf-8?B?VU4wQnBQTVNlRDBnK0wwVmQwQ3FadUJTS0tJaE94eStJbERSeXJnSUlreVlH?=
- =?utf-8?B?Zmt3cU9pd0VSd1VXczFhYWpkUjRES0t0VDZPdHU1OWVEZFkzcTA5LzJRMjJp?=
- =?utf-8?B?N2NSTDltampsLytmLzRTNUVBamM1MjB0S3ZjWUdCbldxVjZJNXZoV3ppWFNa?=
- =?utf-8?B?TnYvVUxGRUJsNENONXdxc0k2b3psYXEyTnRrUUVZL2FwSHpVNjVCaXl2aEo0?=
- =?utf-8?B?ajRtNjJTemZUcHI3ZWo2bndrN3NpYWV5REhnc0FmRW1heHg4alhiM1Y1aU9j?=
- =?utf-8?B?VnB3NVVQeE03QU56UG84RDFTYTFzSitDMlFDSnI4MFFORHdybUVSNVNWVmpl?=
- =?utf-8?B?bVFqbXg5Wk9YR0pqMExGb0ZpS1pHQXgzUHllWldqeVNWbWNVWWZsNjlTVEZE?=
- =?utf-8?B?NE42U2FUVkFpbUZJYVpiNENocElpOTJJV2RWZnlsTUpxa2psTFRFNjNjcjdr?=
- =?utf-8?B?djFWbGlpMEo4SGVMczkySENGZ3ljRC9IWm5udlFuQjJYcFJ3S1dBcHZSbFZ4?=
- =?utf-8?B?Ym5pK2NqVnRsaU5welltYVpEZENHNmNpWklQajFwN1c1dFVYV29JYlNHNkhh?=
- =?utf-8?B?Z2V5ZDhpWWt5MHRVbXVqZCt3WWhsZFQ2M2ZXTkJiWEcxUkRVWEIvNjZEMmwy?=
- =?utf-8?B?d3VySWoveUNCaFIvVzZNOEJmUi8zWTFXZ2dJUkY4MnluK3U3T3RmN05DSjhr?=
- =?utf-8?B?V0FSOTIzNW9weThPUGF5SFdRSEFzSWZoU1pIWm0yQnd2RXl6eGxJVW4wZWdU?=
- =?utf-8?B?S042Q20xRzFRZmZyeFkwTmVkWFZoRXk1eWxDNFpsQUhDUHZjZnBuNXlLU21n?=
- =?utf-8?B?d29PNmlXWElQRnBRdTV0dkpsWVJueWU4VWpkdGNaME1VM3JLOWdSbzhPZUJn?=
- =?utf-8?B?OVErajdFVjI4YUdva0F0TWpWRk5wVE81MmpHcVl6V0tOcVBRNUZuV25OZGps?=
- =?utf-8?B?T2MwcEpaZkNNcnhBenBUKzZKOUIwUkNqc0RGanNqOUJrak5QczFHK0t5V1dY?=
- =?utf-8?B?YVJ2NG1pOXdpcjhEbFdXdWVESlRRMFhzUml5YWsvbXQxbGt4UUNqM1dyUmJP?=
- =?utf-8?B?NzhreUFETTVtczl5NW4vWjZUMDlJcDRjMklsUk1odFdKTWs0Y2lXM29DYWpl?=
- =?utf-8?B?dzkrU0l0QUxyRHVSK3pDSUh3UXpiN0xDT3hITERFV3JpVHdENDN2ZjBSNmgw?=
- =?utf-8?B?aFpCekVHUXd4Q0M0dENzOG9oZXZPVy9vcy9VSWtHeFpOTmthN2d5SndYbTVh?=
- =?utf-8?B?Z2htRHd1cG9CS0liL3UvOTNYYUx0cnBWdUphOGxhUjZGbzNnV0lUdFFlaTZF?=
- =?utf-8?B?Zm9DYVh4TXdaTW1keEhHZXBpQVVaMEtiS1VPR0xCODNIQWdMWG1aSkxEVHVw?=
- =?utf-8?B?SURXZGFJRndhSVlWYXQrbUxlaWYvSisrTDZZUXFHakxMakJ2cTcrL2N3NEdi?=
- =?utf-8?B?dzhnNC9FcnlqRktkTitqMzlLY1c3Q1FUOVhsdmF5ajZIZXVEaHZBYS84U1Av?=
- =?utf-8?B?SmthSVJxVFVyY0xXZWtPRWxZYUxuNzAyZm9GS1dpQXRTYmZyQ2ZuSVo0MXlu?=
- =?utf-8?B?M24xS3pmM0s3UFdmbHN6RUlKZ2Q5WXdtMmViaDN3cERPTC85TjhYaFR0M0Qx?=
- =?utf-8?B?Z3MvRC9jNGhzU2ZkejlkTVgxSHVHUjcwVTdvd3g0YXE1M0M2clgxUGxwS08w?=
- =?utf-8?B?eDhLRlg3d0R4UGRpdk81bjVKYUUwOFgrWmhWNG55ZXVqZGk4aDlYSnZiaHlO?=
- =?utf-8?B?aVlTZ0o0WW9BNm9wWkNRTGJmbndYZ3Q5M0dWYkNvK2hzWUl2U1poZkJMSUVm?=
- =?utf-8?B?SllVT3ZlT0ZUbWlaTXh5NTRwL25waVZHWm9xZ0ZvK0U2dXJMdmNXb2x1NmJZ?=
- =?utf-8?B?cnZBQWx3ZVQ3WExBb3gxUlViOU5RPT0=?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24e81c7d-09b2-429a-55c8-08dc87b71a1f
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2024 12:32:47.4485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2VGajBKzxTvlTgw1v/LXMyLjr7NzCZ+ewSm1qGcsiPGpVPssuVtPrvuNqbsS3OiFwUuJs4YT3hVC3HqctKwvY0LdlZvticimvpbCPEarAZ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5879
-X-Proofpoint-ORIG-GUID: ug162Y2Dl3m3JFnScRQyZKiTyfw26ISi
-X-Proofpoint-GUID: ug162Y2Dl3m3JFnScRQyZKiTyfw26ISi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-08_06,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2406080093
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] f2fs: fix to add missing sb_{start,end}_intwrite()
+ for ckpt thread
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Daeho Jeong <daehojeong@google.com>
+References: <20240606095213.4087668-1-chao@kernel.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <20240606095213.4087668-1-chao@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2024/6/6 17:52, Chao Yu wrote:
+> After commit 261eeb9c1585 ("f2fs: introduce checkpoint_merge mount
+> option"), checkpoint can be triggered in background thread, it missed
+> to cover f2fs inner checkpoint operation w/ sb_{start,end}_intwrite(),
+> fix it.
 
-On 6/8/24 19:16, Vladimir Oltean wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender and know the content is safe.
->
-> On Sat, Jun 08, 2024 at 12:45:57PM +0800, Xiaolei Wang wrote:
->> The current cbs parameter depends on speed after uplinking,
->> which is not needed and will report a configuration error
->> if the port is not initially connected. The UAPI exposed by
->> tc-cbs requires userspace to recalculate the send slope anyway,
->> because the formula depends on port_transmit_rate (see man tc-cbs),
->> which is not an invariant from tc's perspective. Therefore, we
->> use offload->sendslope and offload->idleslope to derive the
->> original port_transmit_rate from the CBS formula.
->>
->> Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
->> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
->> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
->> ---
->>
->> Change log:
->>
->> v1:
->>      https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240528092010.439089-1-xiaolei.wang@windriver.com/
->> v2:
->>      Update CBS parameters when speed changes after linking up
->>      https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240530061453.561708-1-xiaolei.wang@windriver.com/
->> v3:
->>      replace priv->speed with the  portTransmitRate from the tc-cbs parameters suggested by Vladimir Oltean
->>      link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240607103327.438455-1-xiaolei.wang@windriver.com/
->> v4:
->>      Delete speed_div variable, delete redundant port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope; and update commit log
->>
->>   .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 20 +++++++------------
->>   1 file changed, 7 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
->> index 222540b55480..87af129a6a1d 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
->> @@ -344,10 +344,11 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
->>   {
->>        u32 tx_queues_count = priv->plat->tx_queues_to_use;
->>        u32 queue = qopt->queue;
->> -     u32 ptr, speed_div;
->> +     u32 ptr;
->>        u32 mode_to_use;
->>        u64 value;
->>        int ret;
->> +     s64 port_transmit_rate_kbps;
-> The feedback that came along with Wojciech's review in v3 was to use
-> reverse Christmas tree (RCT) variable ordering. That means to sort
-> variable declarations from longest line to shortest. It is the de facto
-> coding style standard for kernel networking code.
+It needs to use sb_start_intwrite_trylock(), otherwise, it will cause
+deadlock as below:
 
-I will send a new version
+- freeze_super
+  - sb_wait_write(SB_FREEZE_WRITE)
+  - sb_wait_write(SB_FREEZE_PAGEFAULT)
+  - sb_wait_write(SB_FREEZE_FS)
+					- sync
+					 - iterate_supers
+					  - super_lock_shared
+					   - down_read(&sb->s_umount)
+					   - sync_fs_one_sb
+					    - f2fs_sync_fs
+					     - f2fs_issue_checkpoint
+					      - wait_for_completion
+									- issue_checkpoint_thread
+									 - sb_start_intwrite(sbi->sb);
 
-thanks
+- thaw_super
+  - super_lock_excl
+   - down_write(&sb->s_umount)
 
-xiaolei
+Thanks,
 
->
-> pw-bot: changes-requested
+> 
+> Fixes: 261eeb9c1585 ("f2fs: introduce checkpoint_merge mount option")
+> Cc: Daeho Jeong <daehojeong@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>   fs/f2fs/checkpoint.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 55d444bec5c0..66eaad591b60 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1828,8 +1828,11 @@ static int issue_checkpoint_thread(void *data)
+>   	if (kthread_should_stop())
+>   		return 0;
+>   
+> -	if (!llist_empty(&cprc->issue_list))
+> +	if (!llist_empty(&cprc->issue_list)) {
+> +		sb_start_intwrite(sbi->sb);
+>   		__checkpoint_and_complete_reqs(sbi);
+> +		sb_end_intwrite(sbi->sb);
+> +	}
+>   
+>   	wait_event_interruptible(*q,
+>   		kthread_should_stop() || !llist_empty(&cprc->issue_list));
 
