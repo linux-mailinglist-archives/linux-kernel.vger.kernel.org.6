@@ -1,68 +1,70 @@
-Return-Path: <linux-kernel+bounces-206923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188D4900FFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB0D900FFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F0428425E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD1E28415D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84EC1667FA;
-	Sat,  8 Jun 2024 07:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E850176AC7;
+	Sat,  8 Jun 2024 07:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juoPaTWB"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FI6qxPwl"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4125C8495
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D717BAF
 	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717831939; cv=none; b=p2hfeALJXy+baF+rC6KwOEN2oWSQAwhMkT1qHXbSxFMdzm/85j/61A2bcgorD/lGy/DSqJ4J0W+B74VBRP8nUWk4UElPs5JVwcApkeczhBCH/tTVZhjbSGJCZK4QxS3gAS9J5CSPpjiieqXRl5MEymb/wRkjBnAKZWjhmVIjZIo=
+	t=1717831939; cv=none; b=rjZoT5V75rbUdqxwhOO34T/jXsttclR2QMgWEwTmADtByMLiQcYXcC8dRgU2eR5KEVIbfHHUvNZJhBuzvltyXzkQC7gmRSGobV0yzaaYjbVnQTiVaRkcMfOphmAx+EwB8s12xEiMLz1RUrqNykk8MHBrogGyREHBbvrg+zGIoTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717831939; c=relaxed/simple;
-	bh=AZKBFN90tKnMMc/N26fS8u6OF7W3eyf/sCjLniLMvoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPujPDpVFWm0Jd1quRPtkXJCXCmlWREQXI3TyPxCeMr5YlpA5MXHzYFimkVUqdYJS4c4FeVrQEax7jSjX0TnspOTeIP5fKQ1EBiAbS/jFijNwdbC2iZdq3HaBKotJKW5xK7L2zqf8InakiGKb32A/ChXqYHzJSKp1xbyYmBtgEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juoPaTWB; arc=none smtp.client-ip=209.85.208.53
+	bh=rwMiy+Ds8GGaENRlmuBExRRS//ZscoQv/UZrrNuC59A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SgJD1gejs3u8QlklJO+FbgaI5Z4tik9BEkwjCwYSb3WSS7z9fV0KsKOvGmjPcHLaRtZsvUNRVcB+Myz0pTENohllt/BDer75t3kguhmi+WsXTGsbSWAxNIwqiTWvPX3qciAT/bO4kjle8am+o4CelpnWYT9S2p3xwMpj9KlkziI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FI6qxPwl; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so3591520a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:32:16 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a691bbb7031so369458266b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717831935; x=1718436735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqNcSIg+6dYdCCgXrXKU0UnjWVh0bWICssUxVg3vCx4=;
-        b=juoPaTWBeNExpcr6KR72EpSj0a5J+JbzEnaVX54J+fZ0y4xu4/yv9SPMc6JYKHWzuZ
-         kp1Ny2Cxy9LmPLgxNLYqRJaaX7XrcrcBQxYnprhJB8+1jmf6W30JLoiylpx1zNTvnsEV
-         UPh3c+TBLszDtIias33mv0CuG+GM1KkN2SMBpSsYPxjZlRuQXK6Y+eHY31SsvlAEYUWi
-         GdogKHnjzauq4NHf4eqb4SgLzHYNpWi8TeadgpAytqNXlpHcZ05KY1JZUJdKVaDzdSmk
-         6k8Dk8FMyGYEM+WnLxgVxSHydeyLeeU8ZoqmTtrHRF0LRQgdXBjk54I86aRtSzCapgTZ
-         pepA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717831935; x=1718436735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717831936; x=1718436736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cqNcSIg+6dYdCCgXrXKU0UnjWVh0bWICssUxVg3vCx4=;
-        b=VJAB8o3rw+tSTZkqSQLEJYM23uvt235OoWEy/mzC0U7++GWKWdhV39mHKT8goBinKG
-         dEZnoELtujBmruxgCIUPWgihSYvXBbMoIrGHlygSVKgq60rH/BNyrEUZ0ED6JKaxHnGN
-         WgkPeHC8/elD3uV6LDCcgOKx5laDQhK3lXUBgk/Xhyx1gf4xX8khpankqAZtNZzewhdV
-         JVhDv4703m55khsIQT5yAdOKmYFFTvCnaM68RPUzw4k7CuOoeaJ63vaYvItrZKiYCmle
-         nAMx54Lx9BPRAWlg5I3kyJMlJK7mjLoZ0g4cYwzIyQ6wMIBWu351W4BnXQgRjwIJoxTf
-         kgmw==
-X-Gm-Message-State: AOJu0YyejE2nZZ0v/gzAU2rPHBQOC1rhHFMGo88B2Wz/daXvbkE3Lu+/
-	kRHNFTAq4TNGH8X1qExNsy3kgbGVWHrXfeIvOsPBYo3+8YJYti0j/d6K+2D+
-X-Google-Smtp-Source: AGHT+IEQuFOBC9oPtFcqW44DOAiTv8V56oJrNlu7W93IftDAcZm9vwNJz91TZh3ps1Sz2s5vEaL9jg==
-X-Received: by 2002:a17:906:7705:b0:a6e:b1f:5e17 with SMTP id a640c23a62f3a-a6e0b1f5e6bmr195540066b.54.1717831935042;
-        Sat, 08 Jun 2024 00:32:15 -0700 (PDT)
+        bh=/pI8EtYru5hEm3wWcZ31Y1A8dIAXFghS5t8weDUhvo0=;
+        b=FI6qxPwldO915IRRhGiLTVZOadeGS4h+HeCEKQ0pyth6wofMRkfd1c19E/kw0b4GpV
+         Gy8ZXa1BJVgmXtrsj0yRcBgBky8IMJpKNJsW+RvCmeId38TxPDY8VzdGdOZ0npUSDFh3
+         Nw81DR4HDu2GlPom6Bv/5vQT35bH11EvplHJajpI7b6W7WeiXkA/C7X2vhf4WYk6n62T
+         N2Sf7oROGMtRPmEq9j8cVLi/bLGX987JRrD11aTA9lK8g0SUzgkJ9dxRKMUkseRho/tT
+         gTiR7CSL0QjPzvKhYhM3iBzKM8zlTqkrQMyLm1EOx7YNwCNOyFijS10t+FCkU88qlgxw
+         CCoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717831936; x=1718436736;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/pI8EtYru5hEm3wWcZ31Y1A8dIAXFghS5t8weDUhvo0=;
+        b=O3Nci8FgVJ7fRVXjxLV374Jb3gI+klWdU2HG8GgfT+X/oOk095XMWRTxcTdURonjmG
+         IohSQcP3JDzXustz2nonBnqer+12ZfMkMhZXMKt+X7EKZ6yQVvnt8bIuDulgYvfFtWFe
+         EkwVraL+UZ2A/amfWLqp0ZjzOT9WsGuWHAIuA2cpV950Y0JkskZuLECuJ73AKFuxzAHr
+         sKSpe73pk3mvMHW72JjOKukedlmTkighgbwCMSn32+/wbBicCSjFjJ07a/4DrrfbtOJh
+         2f5a4wZjGTsP+SZTVDtjI0UuBeGQ6P0me5iXGYY4or27ZpI6ko6skvYw7s/oHUp9gcsc
+         3lJQ==
+X-Gm-Message-State: AOJu0YwFOIscZuuk6c59d9qk3yftuENHZtdjxW/wZV6oOepF+3Qvsg0U
+	57qgRq6orRkrBjCzszSfd9KRqXzhF2uDHsE5BSKIUFZtu2qwQxU6K92qusOZ
+X-Google-Smtp-Source: AGHT+IGLSLsmiraG6slSjKp2kT1pAOBeQ2+lON9tG4/cw+k2+oIpmECC24jAPuwvRVh4R6pWryvQww==
+X-Received: by 2002:a17:907:6d03:b0:a6e:fb3c:4b59 with SMTP id a640c23a62f3a-a6efb3c4cd6mr109071266b.77.1717831936095;
+        Sat, 08 Jun 2024 00:32:16 -0700 (PDT)
 Received: from kepler.. (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efe5262cdsm61350466b.117.2024.06.08.00.32.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efe5262cdsm61350466b.117.2024.06.08.00.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 00:32:14 -0700 (PDT)
+        Sat, 08 Jun 2024 00:32:15 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
@@ -77,10 +79,12 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH 00/10, -v4] x86/fpu: Remove thread::fpu
-Date: Sat,  8 Jun 2024 09:31:25 +0200
-Message-ID: <20240608073134.264210-1-mingo@kernel.org>
+Subject: [PATCH 1/9] x86/fpu: Introduce the x86_task_fpu() helper method
+Date: Sat,  8 Jun 2024 09:31:26 +0200
+Message-ID: <20240608073134.264210-2-mingo@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240608073134.264210-1-mingo@kernel.org>
+References: <20240608073134.264210-1-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,64 +93,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series is one of the dependencies of the fast-headers work,
-which aims to reduce header complexity by removing <asm/processor.h>
-from the <linux/sched.h> dependency chain, which headers are headers
-are fat enough already even if we do not combine them.
+The per-task FPU context/save area is allocated right
+next to task_struct, currently in a variable-size
+array via task_struct::thread.fpu[], but we plan to
+fully hide it from the C type scope.
 
-To achieve that decoupling, one of the key steps is to not embedd any
-C types from <asm/processor.h> into task_struct.
+Introduce the x86_task_fpu() accessor that gets to the
+FPU context pointer explicitly from the task pointer.
 
-The only architecture that relies on that in a serious fashion is x86,
-via the 'struct thread::fpu' variable size structure. The series below
-attempts to resolve it by using a calculated fpu context area address
-value via the x86_task_fpu() helper. The allocation layout of
-task_struct + fpu-save-area doesn't change.
+Right now this is a simple (task)->thread.fpu wrapper.
 
-Changes in -v3:
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/processor.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
- - Restructure the series to be easier to review
- - Extend the debug checks to all PF_KTHREAD tasks
- - A few cleanups on top
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index cb4f6c513c48..35aa8f652964 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -511,6 +511,8 @@ struct thread_struct {
+ 	 */
+ };
+ 
++#define x86_task_fpu(task) (&(task)->thread.fpu)
++
+ extern void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size);
+ 
+ static inline void arch_thread_struct_whitelist(unsigned long *offset,
+-- 
+2.43.0
 
-The Git tree can be found at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/fpu
-
-Thanks,
-
-    Ingo
-
-======================>
-
-Ingo Molnar (9):
-      x86/fpu: Introduce the x86_task_fpu() helper method
-      x86/fpu: Convert task_struct::thread.fpu accesses to use x86_task_fpu()
-      x86/fpu: Make task_struct::thread constant size
-      x86/fpu: Remove the thread::fpu pointer
-      x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
-      x86/fpu: Make sure x86_task_fpu() doesn't get called for PF_KTHREAD tasks during exit
-      x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks
-      x86/fpu: Use 'fpstate' variable names consistently
-      x86/fpu: Fix stale comment in ex_handler_fprestore()
-
- arch/x86/include/asm/fpu/api.h   |  2 +-
- arch/x86/include/asm/fpu/sched.h |  4 +-
- arch/x86/include/asm/processor.h | 23 ++++++------
- arch/x86/kernel/fpu/context.h    |  4 +-
- arch/x86/kernel/fpu/core.c       | 80 +++++++++++++++++++++++-----------------
- arch/x86/kernel/fpu/init.c       | 23 +++++++-----
- arch/x86/kernel/fpu/regset.c     | 22 +++++------
- arch/x86/kernel/fpu/signal.c     | 18 ++++-----
- arch/x86/kernel/fpu/xstate.c     | 27 ++++++--------
- arch/x86/kernel/fpu/xstate.h     |  6 +--
- arch/x86/kernel/process.c        |  7 +---
- arch/x86/kernel/signal.c         |  6 +--
- arch/x86/kernel/traps.c          |  2 +-
- arch/x86/math-emu/fpu_aux.c      |  2 +-
- arch/x86/math-emu/fpu_entry.c    |  4 +-
- arch/x86/math-emu/fpu_system.h   |  2 +-
- arch/x86/mm/extable.c            |  2 +-
- include/linux/sched.h            | 13 ++-----
- 18 files changed, 126 insertions(+), 121 deletions(-)
 
