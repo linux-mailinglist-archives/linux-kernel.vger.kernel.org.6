@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-206858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD59A900EF7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57533900EFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4A91F21F64
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF3E283F76
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9D17F5;
-	Sat,  8 Jun 2024 00:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BEBBE58;
+	Sat,  8 Jun 2024 00:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VubIbvPv"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BfEDLqWy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3856125
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CA579FD;
+	Sat,  8 Jun 2024 00:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717807506; cv=none; b=JwIYI02Cs10jtfShCbUqV04fcFoGoCkT84g7t+LQPF3ZIqpTEHHTPQd6R2HbFrQIoo9SNACi0ZuHKq1srmXmKRezPsUIPZU3BV/9N/MabnzBYKixEOLTOocIL9mj6XzNJImDMzhyR/nYB/guYlAna2DY4a1DL8SUzeEFAD4lJAI=
+	t=1717807551; cv=none; b=jqI9EV3S5X4qL+p+e+ebyk1qm2AImoZRL3qOgek0i2znEPFEqRHgN9UA5P9Nlsw6HiISwTrTMp+I34nZM0Ry/ixSvzrXipXdFx5+fZLa8XK9h42wrQymQqw/biCJDchRZW1zIiqYiYGX5wWg+jZ9NbnCNFmdYDmiTJU6yB18Wso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717807506; c=relaxed/simple;
-	bh=Wl+2lKNswfZ1UvsEDId1UIIcXxEoxp0W4XsxnEUKq1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6wq50Ut3/yeoXG9ovXrxR/rQl68FxbpncHmt5KUYGeG0QfpT0yhgBsRtNzpHrP0pGMbtenZjjo64TVo6X5FcqfrN/73ESD4jXMuhCg7D/x4eQmFvdGx3RMab7rB9wmb4c7+fsKEHtLjPzKmYb0+/DCbCcm78W5VOmKorMLqfqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VubIbvPv; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so331124566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717807503; x=1718412303; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fee0X3PndXsbwlVs4kMm9LMqHNhfW9Zp37mKixoORPg=;
-        b=VubIbvPvmvCVdAojDa6qKA4SoqOFw1d7GXCGEYmfPHKL7G7s8pR1KwLJbFpVGaghXB
-         SnWBpHWQoy0aGRuLMXgivg0WIRIqNOYdS5NAt9oGoJxMgPREHuOxESXUWpnW+AY7cl7v
-         H4AJ5ODG3kUr5PNqpGjVoIrctP7JxKBclGwR2m/Mx7nTcIHj2RYUeK0DFfMR/rdIw2eM
-         BAL9xQu3a29QdmPAkX0rzSEdr/ECzr0sv8MLSf/uIu0N8LiDfCvJ5YFYZ65sEIwFQc3J
-         dLWkt8FRdBMgZqaZwwvgKfuf6GNt4NWm104sp+nInMlBQgN6z0CZFDw9VNrsVMlFTifl
-         z1Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717807503; x=1718412303;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fee0X3PndXsbwlVs4kMm9LMqHNhfW9Zp37mKixoORPg=;
-        b=eWlO3rfIa1hPB7A4lfV+5YsNyCLovxc5fdEvemejQuj2sdRXayJW/n56PmYBYHBsqB
-         wTKPB7EDf83Li5mBnT+pSvpOAYMpSK4tbVIdYwL3erlhPjUsUYnipl+hm4Y5mSVdSiz8
-         BJtoRj3kK6ePmWQgr1BYZz6U2F8NaRBs3ChNJDjqKrX1SXfc3S/eWNETPf+g5OCXrqoQ
-         HrUVP/a98Mxr8PHnAtE2JXyp22Hm/YJC5jjsCB2OO9/7pgrIZeejjlLXg2Iv0gFMi7QE
-         cBpmU/2w/903CZSVNFE9XM6Kuzd5YGY2i8b9HascBPvpRCSLWi2SgQEuttUi/rRJSQRN
-         R0mg==
-X-Gm-Message-State: AOJu0YwkY3xD1R+KjqkSBaXSOszBhQApC2zH6HWYcxx7vZ9KSlolfO1Z
-	a0I8Xn9k0hFuN/EEc8mL/7Fm6tgOxLA7Kd7+GO6IYSbu6hnhm94xmbPPet6P
-X-Google-Smtp-Source: AGHT+IGQb+i2fGNydYMU+1BA6+rdW15xMO65ktQKpewwZhVK791wlma4PPICgc4lDd+SHIArVAr1cw==
-X-Received: by 2002:a17:906:c1d0:b0:a67:b440:e50e with SMTP id a640c23a62f3a-a6cdb9dc4bfmr247916566b.71.1717807503369;
-        Fri, 07 Jun 2024 17:45:03 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef7913eb8sm77499366b.178.2024.06.07.17.45.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2024 17:45:02 -0700 (PDT)
-Date: Sat, 8 Jun 2024 00:45:02 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v1 0/2] mm/highmem: don't track highmem pages manually
-Message-ID: <20240608004502.bm6pqus3ny2hbxq5@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240607083711.62833-1-david@redhat.com>
+	s=arc-20240116; t=1717807551; c=relaxed/simple;
+	bh=A93ZMViXqg3llgTcbVScfnoF99afhUkTpLe2CB5CfQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HMDF43qExK9UMJAQkLmkm4pS3q/iFd7nFfLvAeiHj3GEQwtfxQjXh+Gp6bOfvnl600DDr2aj7DvNycscCh0Wk/fuGaZVnWsCvdsfawJX6ySYne6BWlQwpZVs7ehYRUiSkZOmFG/Tk8ZNVOs64xSUad4szBOOqCgBEJegzXtY6Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BfEDLqWy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457Ld8vQ025754;
+	Sat, 8 Jun 2024 00:45:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IQDQp+6nMU4hWKAqkAUMA4IpY8FXmCQVVeioTiGBzvI=; b=BfEDLqWypeR+1Vgf
+	H+Bm5oMuB18rAvauyNilFICFlN8iS16XtP8CeW9SmYGZi80sFDrIJ05ZbT8rpP1/
+	T28rrHIqZOPpmpC9+a3s47H/Xo8XMk1cqnGduKxRrhVtxR7r83Qy1KVlIgV06XMb
+	d1+YFZwNZQV5swILrZuAFRjtyCWWdwPw3vPRPSMkk7O9R5hk/JS6x/CJyXsA9W1q
+	my7L/eQHMvwlScOpkpjLEXCnhGPrCw69vyyBJa0AyL2Uc3VGBSlkT8qjgG6A2CVz
+	ci/cyVY5PS+4FDciqcQcjp1ZH4f/D/mgEwMT4mgW0fuevERkWs95r/L4DuHcR8O1
+	dgw3dQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym49w1605-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 08 Jun 2024 00:45:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4580jedT023558
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 8 Jun 2024 00:45:40 GMT
+Received: from [10.110.22.192] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 17:45:39 -0700
+Message-ID: <ebad85d7-b601-42fd-9639-6d2ff189d186@quicinc.com>
+Date: Fri, 7 Jun 2024 17:45:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607083711.62833-1-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/5] soc: qcom: add pd-mapper implementation
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Xilin Wu <wuxilin123@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Steev Klimaszewski <steev@kali.org>,
+        "Alexey
+ Minnekhanov" <alexeymin@postmarketos.org>
+References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
+ <20240512-qcom-pd-mapper-v8-4-5ecbb276fcc0@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240512-qcom-pd-mapper-v8-4-5ecbb276fcc0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YDTUpLcNwqZO7nyc8HbZ6W6UY3P4fT1E
+X-Proofpoint-GUID: YDTUpLcNwqZO7nyc8HbZ6W6UY3P4fT1E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_16,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406080003
 
-On Fri, Jun 07, 2024 at 10:37:09AM +0200, David Hildenbrand wrote:
->Let's remove highmem special-casing from adjust_managed_page_count(),
->to result in less confusion why memblock manually adjusts
->totalram_pages, and __free_pages_core() only adjusts the zone's
->managed pages -- what about the highmem pages that
->adjust_managed_page_count() updates?
->
 
-Thanks David
 
-I have looked into this function and willing to get rid of it, but not found a
-good way.
+On 5/11/2024 2:56 PM, Dmitry Baryshkov wrote:
+> Existing userspace protection domain mapper implementation has several
+> issue. It doesn't play well with CONFIG_EXTRA_FIRMWARE, it doesn't
+> reread JSON files if firmware location is changed (or if firmware was
+> not available at the time pd-mapper was started but the corresponding
+> directory is mounted later), etc.
+> 
+> Provide in-kernel service implementing protection domain mapping
+> required to work with several services, which are provided by the DSP
+> firmware.
+> 
+> This module is loaded automatically by the remoteproc drivers when
+> necessary via the symbol dependency. It uses a root node to match a
+> protection domains map for a particular board. It is not possible to
+> implement it as a 'driver' as there is no corresponding device.
+> 
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Tested-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/soc/qcom/Kconfig          |  11 +
+>   drivers/soc/qcom/Makefile         |   1 +
+>   drivers/soc/qcom/pdr_internal.h   |  14 +
+>   drivers/soc/qcom/qcom_pd_mapper.c | 676 ++++++++++++++++++++++++++++++++++++++
+>   drivers/soc/qcom/qcom_pdr_msg.c   |  34 ++
+>   5 files changed, 736 insertions(+)
+> 
 
-Your change really look nice.
-
->Now, we only maintain totalram_pages and a zone's managed pages
->independent of highmem support. We can derive the number of highmem pages
->simply by looking at the relevant zone's managed pages. I don't think
->there is any particular fast path that needs a maximum-efficient
->totalhigh_pages() implementation.
->
->Note that highmem memory is currently initialized using
->free_highmem_page()->free_reserved_page(), not __free_pages_core(). In the
->future we might want to also use __free_pages_core() to initialize
->highmem memory, to make that less special, and consider moving
->totalram_pages updates into __free_pages_core() [1], so we can just use
->adjust_managed_page_count() in there as well.
->
->Booting a simple kernel in QEMU reveals no highmem accounting change:
->
->Before:
->  Memory: 3095448K/3145208K available (14802K kernel code, 2073K rwdata,
->  5000K rodata, 740K init, 556K bss, 49760K reserved, 0K cma-reserved,
->  2244488K highmem)
->
->After:
->  Memory: 3095276K/3145208K available (14802K kernel code, 2073K rwdata,
->  5000K rodata, 740K init, 556K bss, 49932K reserved, 0K cma-reserved,
->  2244488K highmem)
->
->[1] https://lkml.kernel.org/r/20240601133402.2675-1-richard.weiyang@gmail.com
->
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Wei Yang <richard.weiyang@gmail.com>
->
->David Hildenbrand (2):
->  mm/highmem: reimplement totalhigh_pages() by walking zones
->  mm/highmem: make nr_free_highpages() return "unsigned long"
->
-> include/linux/highmem-internal.h | 17 ++++++-----------
-> include/linux/highmem.h          |  2 +-
-> mm/highmem.c                     | 20 +++++++++++++++-----
-> mm/page_alloc.c                  |  4 ----
-> 4 files changed, 22 insertions(+), 21 deletions(-)
->
->
->base-commit: 19b8422c5bd56fb5e7085995801c6543a98bda1f
->-- 
->2.45.1
-
--- 
-Wei Yang
-Help you, Help me
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
