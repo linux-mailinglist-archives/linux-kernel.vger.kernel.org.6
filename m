@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-207070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6FE90120A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:33:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE42A901237
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716061C20CEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8A31F227C6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CB917A92D;
-	Sat,  8 Jun 2024 14:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1B8179658;
+	Sat,  8 Jun 2024 15:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6HGJuTs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avRfbVYm"
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B54149DED;
-	Sat,  8 Jun 2024 14:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E088015699D;
+	Sat,  8 Jun 2024 15:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857167; cv=none; b=rRdtPzzbvYY1xd03QIF9ySrhZIcyqtuE7ZYGKilJeccSAYHlLenbk0kjMUR23fEMuuCPmV7cB1vGiUsdhUWK3/gSZqk4kepL5pTiaQkv4bTTib6Ck+RJ/Fx7TtCLPPfletDdaTmXdTVKrWEfkmP7ORwfe51e12Qa1IdF9HoGq+I=
+	t=1717859337; cv=none; b=ftyZUCCTiu7uvd/56gEXmDNBrPk1U3QeANtumF2n6QexvI71Hvj1/c6ZzGQ6pFZE8Q9Jil4BHO3AaXPWc4r1d19c1gzODTIBUK3XOIR/0agakhS1e1ToIqGRq0U/6he8rBr99vtvDbqa+erkrQW8r4inbDBKnS0z9OJfN66ahT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857167; c=relaxed/simple;
-	bh=+mfH5kPRQKjFbiX+1m7cu4HLvr1f9QnlfzdttOt8hto=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CD9D2pekS2cQChhbG+To+I+wvXD33MJmilXsc5zvZnYK7dZBWMIShPT2B4FeILKaQIdiCztgW9StWTb8qo8WAOtthKJAGX+58Slrkio2IMxjjJiLUNEnQq5iP0aS8yXEUWmVj9BNwE4jZkx904MaJCWLhC7cqNF0SGsmvf6O+Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6HGJuTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D342C2BD11;
-	Sat,  8 Jun 2024 14:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717857166;
-	bh=+mfH5kPRQKjFbiX+1m7cu4HLvr1f9QnlfzdttOt8hto=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W6HGJuTsLphg3hJwaCcOqeBS/036cr1C35LPh+8S97Y+K7jUszwmKWkgwu5GjXPiK
-	 LoEX3fxAN2Q/2/ElZBXzpd4aO+B05yvV7V/0xf5CQJ0rW/ivN3zUAgcJ1xVbAjnQBD
-	 W6nvC+wkNMVOd/9fbnDQF5SgtqMI6dhEJb5HuzaXEQ7gGjGDqUP8n1QQQluMvNOWTN
-	 S5G3rueKMUiWI1aF74l9jSnB90djcoSqWvUGmZgwf4FDQTcPVokTMvAbBZPfsrKc7P
-	 Roief3NScRkY1DcjAIcx39RO0GwlU0EDKBV9J3kFkmgNIJ3Hp3ddxszlsLDVkf/RvU
-	 OV2DdZ/nqxo1A==
-Date: Sat, 8 Jun 2024 23:32:42 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] function_graph: Rename BYTE_NUMBER to CHAR_NUMBER in
- selftests
-Message-Id: <20240608233242.414564f51bcc5db9993eb682@kernel.org>
-In-Reply-To: <20240606081846.4cb82dc4@gandalf.local.home>
-References: <20240606081846.4cb82dc4@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717859337; c=relaxed/simple;
+	bh=/8Eaz0dOzW2Y/Aqj56RjuuuZa7c4BBPmMKiet5G1VG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myOjKu0KnGEoJptDoOE2RqXtTgQw4BRQ4zuc5XINRbE1w6f4SyoU3ZiCkZltWM5faOtFizgKDYPxk6qHoLvzBEfiBzeDWxaxxWVZ1EhbLcGNYy6aqeBKd9KzISOGmHZqaaGQtRYQuWlYtl4OuQj+VDlHCTBDblHDM9avZUPICd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avRfbVYm; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id Fx9Rs04TztVxQFx9RsAXo1; Sat, 08 Jun 2024 16:34:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1717857283;
+	bh=wdE+q4tYw0Mtn7ZcN10lEjC0L3+XOPxEbNZhXe9vMQQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=avRfbVYm3oI+Q1ijAAVS0vX3w7ecGwso5Kk+KnoGVjGFiOgMHOmeMl+H45CKj5MJA
+	 wPwRR3hnQuYrKqj0XLnQ126JXk4THpYfhecCwfl8JoACIbS8CSob86RnSb10mha9LL
+	 uw7b8Fy+G4mdAkVlwtgBVD/RmDClZhQFcUuS4UtDGcQcutA0WdY49E04fGO49UJaWE
+	 UzhYWymT1ajfeTKTYlO7LLDuKUUKRfSRrWU77MJMCHwiQisRUblrjUADHGmES8dZHQ
+	 wk8pP7xVeXJr0B2FVyafuyidHZEQdZuB4UV1T9xhVETDzvSk+AWX0r+4zt5hpUrbFH
+	 H4K0D2jll+SlQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 08 Jun 2024 16:34:43 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jk@ozlabs.org,
+	joel@jms.id.au,
+	alistair@popple.id.au,
+	eajames@linux.ibm.com,
+	parthiban.veerasooran@microchip.com,
+	christian.gromm@microchip.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org
+Cc: linux-fsi@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH RESEND 0/3] Remove usage of the deprecated ida_simple_xx() API
+Date: Sat,  8 Jun 2024 16:34:17 +0200
+Message-ID: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 6 Jun 2024 08:18:46 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+The small serie removes the *last* usages of the deprecated
+ida_simple_xx() API.
 
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> The function_graph selftests checks various size variables to pass from
-> the entry of the function to the exit. It tests 1, 2, 4 and 8 byte words.
-> The 1 byte macro was called BYTE_NUMBER but that is used in the sh
-> architecture: arch/sh/include/asm/bitops-op32.h
-> 
-> Just rename the macro to CHAR_NUMBER.
-> 
+The 3 patches have received either a R-b or A-b tag but never reached
+-next in the last 2 months.
 
-Looks good to me.
+So, I've added the tags and I'm now adding Andrew Morton in To:, in
+order to help in the merge process.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Thanks,
+2 other patches related to this API are still pending somewhere and are
+not reposted here.
 
-> Fixes: 47c3c70aa3697 ("function_graph: Add selftest for passing local variables")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406061744.rZDXfRrG-lkp@intel.com/
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_selftest.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
-> index 369efc569238..adf0f436d84b 100644
-> --- a/kernel/trace/trace_selftest.c
-> +++ b/kernel/trace/trace_selftest.c
-> @@ -758,7 +758,7 @@ trace_selftest_startup_function(struct tracer *trace, struct trace_array *tr)
->  
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  
-> -#define BYTE_NUMBER 123
-> +#define CHAR_NUMBER 123
->  #define SHORT_NUMBER 12345
->  #define WORD_NUMBER 1234567890
->  #define LONG_NUMBER 1234567890123456789LL
-> @@ -789,7 +789,7 @@ static __init int store_entry(struct ftrace_graph_ent *trace,
->  
->  	switch (size) {
->  	case 1:
-> -		*(char *)p = BYTE_NUMBER;
-> +		*(char *)p = CHAR_NUMBER;
->  		break;
->  	case 2:
->  		*(short *)p = SHORT_NUMBER;
-> @@ -830,7 +830,7 @@ static __init void store_return(struct ftrace_graph_ret *trace,
->  
->  	switch (fixture->store_size) {
->  	case 1:
-> -		expect = BYTE_NUMBER;
-> +		expect = CHAR_NUMBER;
->  		found = *(char *)p;
->  		break;
->  	case 2:
-> -- 
-> 2.43.0
-> 
-> 
+[1] is related to tools/testing/ and will be re-sent as part of the
+final removal, as suggested by Matthew.
+It is A-b, but the name of the function used in the test should be
+updated as well (s/ida_simple_get_remove_test/ida_alloc_remove_test)
 
+[2] is a tiny clean-up of a comment. I'll resend it to the corresponding
+maintainer (Srinivas Kandagatla) later, but won't fight for it.
+
+
+Obviously, you can also pick up one or both of these patches as well :)
+
+CJ
+
+[1]: https://lore.kernel.org/all/81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/032b8035bd1f2dcc13ffc781c8348d9fbdf9e3b2.1713606957.git.christophe.jaillet@wanadoo.fr/
+
+Christophe JAILLET (3):
+  fsi: occ: Remove usage of the deprecated ida_simple_xx() API
+  most: Remove usage of the deprecated ida_simple_xx() API
+  proc: Remove usage of the deprecated ida_simple_xx() API
+
+ drivers/fsi/fsi-occ.c    | 17 ++++++++---------
+ drivers/most/core.c      | 10 +++++-----
+ drivers/most/most_cdev.c |  6 +++---
+ fs/proc/generic.c        |  6 +++---
+ 4 files changed, 19 insertions(+), 20 deletions(-)
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.45.2
+
 
