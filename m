@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-207214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1049013EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 00:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C8C9013F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 01:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7AC1C20F2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 22:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB3A1C20D42
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 23:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2930D3D57A;
-	Sat,  8 Jun 2024 22:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBA3DB89;
+	Sat,  8 Jun 2024 23:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muWYXXKN"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im8AQeD3"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9204FC19;
-	Sat,  8 Jun 2024 22:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457B8D2E5;
+	Sat,  8 Jun 2024 23:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717887511; cv=none; b=AcDJCvmin6zXODPDGmlpyNo21zKmDMD4nbwqsja7MOBQkO2VxKenrzZ7VXSTBz+BqvQExuGAgz8RfYjTZUVWeOC6uHzpoL0Bw6lZCqzpYIBNg+SaQdUJWW322oAOuxnvPPtCyLccrGHCI8hnNxDySjmWoyxS2g4gmWAcrMBL300=
+	t=1717890087; cv=none; b=Bq4xy30cGC0/Bb4zAg9kqPldP3RBOe5/pGTo10IQCUedn89VNVAPCPqjxaQV9ieFS9kX26DsrfubUVQ1pqsiTqr1sW5Fi6n8eeQ4FKbYlpsHXSubCgNQk1TWJ8v34R0t8oIMSWRz89KuU6T7FB2BWOYT/tfBh9w0tRUjIoO5yeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717887511; c=relaxed/simple;
-	bh=XdcWb0sHax8NUfiRR8sBcfY/ZUDS/yJ5K90Wtm2ykyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrWOffoDdHT7S+a18DQocDfWYKwC4fGKEOfThXAGbaFiCuQ03AF8vBZW0bk+D2s91ZRJpGjcQrio6/9Q0BL2sF6n8NRyK2aA7cnT1sX9HXZ479T/yPibyj4+wOSRWBMlzGsDJ6miSTBd5PUPTwiAvorqyA+pZldu2cqClKf8tIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=muWYXXKN; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1717890087; c=relaxed/simple;
+	bh=O1B4nByr+fGXuo7Cj+bE7XDB0z9CzQ9nPn+ClxDbnQw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=splsIDLvMm59x/u156osUEGl6n2POuw6pwDMpDxkoe5h84s7eB0dhDZDvwlwZCUzrLuh+a4D1GQTvgoU/s1lOtrn1BiMGum7orMDycJqwHG9tFXDiwFh/52bBk8lQqV49fqZ1hMlBrI5o1wITmYO07oeeagvNRC3YQme+HWixKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im8AQeD3; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c614c572aso1494065a12.1;
-        Sat, 08 Jun 2024 15:58:29 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5295e488248so3755008e87.2;
+        Sat, 08 Jun 2024 16:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717887508; x=1718492308; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnNwc2LGbMmroe/knes/Yk2//+knIMtvNN3CoAHTpmU=;
-        b=muWYXXKN56dydvYALu9n833MZGWLzTg0tXeeJwuJnE9tArG6FQKlVsN7n+OCZO4Nbh
-         ZDjnuDSfKOMjytmSxYr5jAdcHXvPbbKSYCT66f8JlEVwlxorJHnldH3sw8Dz4Fb0KNBk
-         JZ733ds4UyLirq17jVDts6tClR0IwKIXzjJ+2kSew8d6IdToYbpbkPKxfjUo0dkPlhqZ
-         MtyyVab+dBMVQRZA8dchYgcbjnqowPFQpHUSYWT5gqh1u5KQt++5F1Npj9D0Wk2M4RYe
-         CIfni8sdzk2ODOYhIyUqaYdMocXJJGgGS53iS4Uno4mrx2h9Z6PIKiH5ykFLQc02NAjV
-         rjGQ==
+        d=gmail.com; s=20230601; t=1717890084; x=1718494884; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7rb8pojIjzKusW/K2QDO8cUOkG5F9hUZO5T+/iX63+s=;
+        b=im8AQeD3LNzPoXl0Q6yPpW382gwiF+u1Q/scaMZ7PYtuyL2b22VV/4xQCjehqqMABj
+         KwyQ/rx2JB3ETjo6V2v5cxT0h4wLF5MocgPxRjJEOFsc9eghbVt2+uBoF9qzV8tBaExq
+         tXdGR8N2W0Ur+byU2cb4SQ8IKZTzRG0hhJT0+EVUPyJLYd/DSfYwULxlcd+ssFFIfLnj
+         lj3hayW8WeEWo9pr6lfmFXM7Nrp7xODK55zxhBDhhMon4bej7odaEdqRcZU1mY28qScp
+         4uIC3VS8wwVDSlhKiGBz1mAwkB+T+jW2gAp2Opif8F4zPCzKm8lYII14yvOS2o3YkGmI
+         kToQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717887508; x=1718492308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xnNwc2LGbMmroe/knes/Yk2//+knIMtvNN3CoAHTpmU=;
-        b=p07pot20LqVw20oR8lOuKRFB7P2BirpVkrB6mlgaJ3HZ40IB2wNLF2e74p8rY+YVAN
-         fMzL875LEFSOs/BTsgQNUJKz6Zglaohd4AOASTnJFyzE5PTV1oRp8mW4ay+tIAz+DPk2
-         Errh8K3G3K4bwU+s3WjB6OFq9m5s1BvqQChpOfwfOlZGpwyBIP4hCpb2t7/3fg+769Kk
-         C67Q+ZGll4r5S8UszwQLZ3+EzcdFuTtD42KkeuWqoRFygqg6skFlPWixfwmmOwQ5RzN8
-         /Ix2cDvNC/r6ZeEwTIx5Ws18FUuK79haxEDrLH/mMuHxb/ZaLQdF8sl4YBfWxWm8u/eT
-         E9rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWr4KNxbGcg5uYSCSHEBLMfZF+fJwRq5yPr3qLH80u3EVpBWe7yq/4CtqY3lqHum19vAUrT4SzK7pFEQ4Lr8vuLKke6ZRUgN6lzp4LsOryzxquUoQb02r2bNv30W1SjVa52Wu32
-X-Gm-Message-State: AOJu0YxGr1zOlbOoAb/NtG4+QbXST5USm7oDXLdwtlSAxyNEaTISMEdJ
-	uBYe3Ie7SAhphBncGzGtRQqwfu23qbkOVa/wwuTUQ4peGpoatDvL
-X-Google-Smtp-Source: AGHT+IHzT4dW0AQbWU8Ll27rAW1mMXU6/phWBWaFUZTgEyUAKve+QqneDBv9Atir+V20O1ejYoBo6A==
-X-Received: by 2002:a17:906:495a:b0:a6f:cce:4457 with SMTP id a640c23a62f3a-a6f0cce4ce2mr110771466b.71.1717887507926;
-        Sat, 08 Jun 2024 15:58:27 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f16427842sm21529266b.100.2024.06.08.15.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 15:58:27 -0700 (PDT)
-Date: Sun, 9 Jun 2024 01:58:24 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	wojciech.drewek@intel.com, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net v5 PATCH] net: stmmac: replace priv->speed with the
- portTransmitRate from the tc-cbs parameters
-Message-ID: <20240608225824.nae2ptctjzf5reee@skbuf>
-References: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
- <20240608143524.2065736-1-xiaolei.wang@windriver.com>
+        d=1e100.net; s=20230601; t=1717890084; x=1718494884;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7rb8pojIjzKusW/K2QDO8cUOkG5F9hUZO5T+/iX63+s=;
+        b=SV4QEoxkUGhVVSZ6/12ZNnPkyInGTkx2Uyt5adnDilf43srQALkNQS8ritUgUGC/dt
+         bgW5RGsRGn8wZAHTCE6nQJPY7CaR3UNb3zYbECoVcrOrnk8+lQvlqskcdMtd502h4VB1
+         MYtCYP66Ycuf4BkErNVjc9fL1k/Mp7BD7d1gZZWUFLio4NAXSiS6WrpTF04hvCbEnbaE
+         Gt9QV07KYTteLaRRdtQS4Hc9PSMDRUT5nIWrg7fheG4xKwObKxjsuIcvZ6l248ckG01/
+         jRb0XkVKcDyyFXZW1+qfR3VijGnZ6QpeQUOAWq5t4iEbE9Zu/t6Z5AnW1tV5C28U1bLX
+         YQRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWp0tOPvCsqKH8QGNmCw8LXGgOhFrqudU/sN9/OsKfdV4XLcn6fhFDvgQCzrbhCpfSfUo8RX71lkyXCavouMcSMZSK66f/h1O5a5Bsz
+X-Gm-Message-State: AOJu0YzQ0jbJYH2Iks7hUIirQw228Zm1PrZsgcJges0h/tsM3WW2duQD
+	gTaB86AViWfjCg6Oy29kG05MqF1/U7HDxxDnR+tMLxSqrk24ogqKX/Hii/lSp3c3AQuI2WQgGfN
+	759EKRmOD/9utMo7hfT0ACS+Kgmc=
+X-Google-Smtp-Source: AGHT+IFWTxKa7uSDFZyQ4Hl9QSXyEbzjD7dYpBqnwcahslpdvL1t8fz+Tcf/5WBLDGHgq3RdKcD9Yjh+OWFR54kw7bY=
+X-Received: by 2002:ac2:4989:0:b0:52c:7fc9:954e with SMTP id
+ 2adb3069b0e04-52c7fc9976fmr1329516e87.41.1717890084290; Sat, 08 Jun 2024
+ 16:41:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
- <20240608143524.2065736-1-xiaolei.wang@windriver.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 8 Jun 2024 18:41:12 -0500
+Message-ID: <CAH2r5muOwzD0cy_mZ5ydJfQLpmY4MYpKqYsHgAB1Z+qs6Gknmg@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jun 08, 2024 at 10:35:24PM +0800, Xiaolei Wang wrote:
-> The current cbs parameter depends on speed after uplinking,
-> which is not needed and will report a configuration error
-> if the port is not initially connected. The UAPI exposed by
-> tc-cbs requires userspace to recalculate the send slope anyway,
-> because the formula depends on port_transmit_rate (see man tc-cbs),
-> which is not an invariant from tc's perspective. Therefore, we
-> use offload->sendslope and offload->idleslope to derive the
-> original port_transmit_rate from the CBS formula.
-> 
-> Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-> ---
+Please pull the following changes since commit
+c3f38fa61af77b49866b006939479069cd451173:
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+
+are available in the Git repository at:
+
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc2-smb3-client-fixes
+
+for you to fetch changes up to a88d60903696c01de577558080ec4fc738a70475:
+
+  cifs: Don't advance the I/O iterator before terminating subrequest
+(2024-06-07 01:05:26 -0500)
+
+----------------------------------------------------------------
+Two small smb3 client fixes
+- fix deadlock in umount
+- minor cleanup due to netfs change
+----------------------------------------------------------------
+David Howells (1):
+      cifs: Don't advance the I/O iterator before terminating subrequest
+
+Enzo Matsumiya (1):
+      smb: client: fix deadlock in smb2_find_smb_tcon()
+
+ fs/smb/client/smb2pdu.c       | 3 ---
+ fs/smb/client/smb2transport.c | 2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+
+-- 
+Thanks,
+
+Steve
 
