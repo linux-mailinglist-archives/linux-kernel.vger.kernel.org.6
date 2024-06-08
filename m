@@ -1,78 +1,306 @@
-Return-Path: <linux-kernel+bounces-207154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C459012F4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5601F9012F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED321F2172E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECA51F2164B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF5618C3B;
-	Sat,  8 Jun 2024 17:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DA8125D5;
+	Sat,  8 Jun 2024 17:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC9IBE2y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8rAiRSs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8107817548;
-	Sat,  8 Jun 2024 17:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB121C6A1;
+	Sat,  8 Jun 2024 17:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717867151; cv=none; b=Fkw2AUuIoRhO319bdrpqu/RCABg0rIM+Bnf5e4DRuChK10OoPL/F74JUCxYRJt4qEITxDWpgvqDvzIuGojZyMT+pEe1wRWFcGPo15dAhdmLJRxlJebfBqGFF72juWz9xTTkTAERHTeSZ8EmHz9rmtyd/w29LbG0CMk2nYh2ingI=
+	t=1717867169; cv=none; b=PSgU+tdw5VWZ//w3Y4zfYEuri53kRQs4xYHUqrXJd/XvruvrsrSTL6US5tXK9enTSRjbfJxezdlSQ+wX32RFZIXW86DkBfBMWVfzx48KqIgbWP9/BO2/8z/D7GSeYR4Vc2/154qryH7rnulYQ6IwpFAkTA0lVW1nHnbSkpWnLvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717867151; c=relaxed/simple;
-	bh=lsL/UK808G82EXe60L5jgxbqtB9r8qqN2OCM/Z/GmNc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=S+d+oIXWyafiwooUlLzuVAhgE+PEBhR8G1hAd3IX+mdUwwxhPmY6tISb/nOZYuK/Bk9gQMQQEioGxcrp6ikDg1Rp7vGT8rVbkjDV8oI/4wYSibTHURitklPzSjqnk8oTCmwOGGVKa8yg7udg9nnQAHSvbDnvHkdZBkZYO8BlKbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QC9IBE2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 61E91C32781;
-	Sat,  8 Jun 2024 17:19:11 +0000 (UTC)
+	s=arc-20240116; t=1717867169; c=relaxed/simple;
+	bh=B56FAaq/PYbYmgnYVOvmLDSebWiq6CyrUD51qyszBm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UpNRhp6DLu7PWKiKY9/h5CTBgdwuVV6RasjpF48TQ1zEFKRMB25FdqJ9dYruRKdth68pceMt7rmgO6xldGdvdgjarjHdoBowNAw9v0LQUQByzT1FxO21yXbvfd1gkxPHfCtUWWXjvTw5Bmqpqo66Nb25Brz5iNgGfgh42AHH+q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8rAiRSs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E49C2BD11;
+	Sat,  8 Jun 2024 17:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717867151;
-	bh=lsL/UK808G82EXe60L5jgxbqtB9r8qqN2OCM/Z/GmNc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=QC9IBE2ycOyspPKbqoDHJmMy/TmdyB5u5cWVm5uT3HqQXUBEdqX2swzXQ2/IJvOPh
-	 NF9CbBcb45DsgOSBJZnh6nXJs7uar/J2oa+26Zc/7EqbJFe6nY8p601I6UX3HefJ3/
-	 wYooH3a2hiNvmhUw8EOSvVxbc2o6fGBJ92q5j64EPvmkthzFEfn1+XGmmF0OAsi9po
-	 5VQKSTZe9kGPh2jAGmcn7j8u4jXgHdES+JMy545dKMiytoWSTXpVvok1hAX71hW/lT
-	 JUnAuNDN/bEJ4DASSfyNsN/PaY4Qv4o76+hPba+aBmk4Qpv2r3qmFdhZhY60GRqvlf
-	 8EUlxLIr/GX8Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 58EC8C43168;
-	Sat,  8 Jun 2024 17:19:11 +0000 (UTC)
-Subject: Re: [GIT PULL for v6.10-rc3] media fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240608173628.05f15fbc@coco.lan>
-References: <20240608173628.05f15fbc@coco.lan>
-X-PR-Tracked-List-Id: <linux-media.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240608173628.05f15fbc@coco.lan>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-2
-X-PR-Tracked-Commit-Id: ffb9072bce200a4d004006e8b40c366933cf517b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1e7ccdd3255c9d146cc077d681c56e4559f90cda
-Message-Id: <171786715135.12449.10718238683179978715.pr-tracker-bot@kernel.org>
-Date: Sat, 08 Jun 2024 17:19:11 +0000
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1717867169;
+	bh=B56FAaq/PYbYmgnYVOvmLDSebWiq6CyrUD51qyszBm8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=m8rAiRSsrfnuVYEiKKHz7RHO6c7G5VlZsiGxZ4RwBA2FZ/yF7NO1lISA3M80TAA63
+	 q/ZxlWG1C0aS8oCA/syix8iB0VBlKWC/CI+i7SChJl723c5wRZV9qnjKWLYXorlAZG
+	 tomSNm7CJpZoH0htQfKpSY9qfSx+gde2gf0eOlCWfMcyXMDAummg0lvpY5qr8oPVO2
+	 jzVqj+E4L7gFmXVRBtzQObnJpTHx/EygC9SN+vWN+6kerFN6XFnE3fpG1f4B2wXBC6
+	 lMUkqWZC6hyl6eN6o3eXCLIC/NIvPr5aFqvRTEFt/GBYKX/1ocdPwGRp898bNwfhsl
+	 sA/yUrJsCEBww==
+Date: Sat, 8 Jun 2024 18:19:22 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ apokusinski@o2.pl
+Subject: Re: [PATCH v2] iio: humidity: si7020: add heater support
+Message-ID: <20240608181922.0e8104df@jic23-huawei>
+In-Reply-To: <20240607141029.51744-1-apokusinski@o2.pl>
+References: <20240607103944.11730-1-apokusinski@o2.pl>
+	<20240607141029.51744-1-apokusinski@o2.pl>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sat, 8 Jun 2024 17:36:28 +0200:
+On Fri,  7 Jun 2024 16:10:30 +0200
+Antoni Pokusinski <apokusinski01@gmail.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-2
+> From: Antoni Pokusinski <apokusinski01@gmail.com>
+> 
+> This patch adds support for the integrated on-chip heater that is present
+> on all the devices supported by this driver (si7020, si7021, si7013, th6).
+> In order to configure the heater, the driver interacts with the following
+> device registers:
+> * User Register - the 2nd bit of this register is a "Heater Enable bit"
+>   (0 means that the heater is off, 1 means that it's on).
+> * Heater Register - this register is present only on the si70xx devices
+>   and controls the current flowing through the heater. The 4 lower bits
+>   of this register can be assigned values from 0x0 to 0xF.
+> 
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> 
+> --
+---
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1e7ccdd3255c9d146cc077d681c56e4559f90cda
+Otherwise this gets picked up in the git log.
 
-Thank you!
+Anyhow, I noticed because I was checking b4 picked this one up right.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Excess stuff removed in the description and applied to the togreg
+branch of iio.git which is initially pushed out as testing for
+0-day to see if it can find anything we missed.
+
+Thanks,
+
+Jonathan
+> Changes since v1:
+> * macros: remove unnecessary comments
+> * macros: add more meaningful names
+> * `struct si7020_data`: add comment explaining the mutex
+> * `si7020_update_reg()`: change the control flow to more standard
+> * use `scoped_guard()` instead of `mutex_lock() <...> mutex_unlock()`
+> * `si7020_probe()`: add comment for User Register default value
+> * minor format fixes
+> --
+> Hello, after sending this email I noticed an accidental email mismatch
+> between "From:" and the "Signed-off-by:" therefore I send this email
+> once again with a corrected signature. Sorry for the confusion.
+> ---
+>  drivers/iio/humidity/si7020.c | 137 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 133 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/humidity/si7020.c b/drivers/iio/humidity/si7020.c
+> index fb1006649328..1215fab7b1a5 100644
+> --- a/drivers/iio/humidity/si7020.c
+> +++ b/drivers/iio/humidity/si7020.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/slab.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/stat.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -33,17 +34,38 @@
+>  #define SI7020CMD_TEMP_HOLD	0xE3
+>  /* Software Reset */
+>  #define SI7020CMD_RESET		0xFE
+> +#define SI7020CMD_USR_WRITE	0xE6
+> +/* "Heater Enabled" bit in the User Register */
+> +#define SI7020_USR_HEATER_EN	BIT(2)
+> +#define SI7020CMD_HEATER_WRITE	0x51
+> +/* Heater current configuration bits */
+> +#define SI7020_HEATER_VAL	GENMASK(3, 0)
+> +
+> +struct si7020_data {
+> +	struct i2c_client *client;
+> +	/* Lock for cached register values */
+> +	struct mutex lock;
+> +	u8 user_reg;
+> +	u8 heater_reg;
+> +};
+> +
+> +static const int si7020_heater_vals[] = { 0, 1, 0xF };
+>  
+>  static int si7020_read_raw(struct iio_dev *indio_dev,
+>  			   struct iio_chan_spec const *chan, int *val,
+>  			   int *val2, long mask)
+>  {
+> -	struct i2c_client **client = iio_priv(indio_dev);
+> +	struct si7020_data *data = iio_priv(indio_dev);
+>  	int ret;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> -		ret = i2c_smbus_read_word_swapped(*client,
+> +		if (chan->type == IIO_CURRENT) {
+> +			*val = data->heater_reg;
+> +			return IIO_VAL_INT;
+> +		}
+> +
+> +		ret = i2c_smbus_read_word_swapped(data->client,
+>  						  chan->type == IIO_TEMP ?
+>  						  SI7020CMD_TEMP_HOLD :
+>  						  SI7020CMD_RH_HOLD);
+> @@ -96,17 +118,118 @@ static const struct iio_chan_spec si7020_channels[] = {
+>  		.type = IIO_TEMP,
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+>  			BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET),
+> +	},
+> +	{
+> +		.type = IIO_CURRENT,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_RAW),
+> +		.extend_name = "heater",
+> +	}
+> +};
+> +
+> +static int si7020_update_reg(struct si7020_data *data,
+> +				u8 *reg, u8 cmd, u8 mask, u8 val)
+> +{
+> +	u8 new = (*reg & ~mask) | val;
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client, cmd, new);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*reg = new;
+> +
+> +	return 0;
+> +}
+> +
+> +static int si7020_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +			     int val, int val2, long mask)
+> +{
+> +	struct si7020_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		if (chan->type != IIO_CURRENT || val2 != 0 ||
+> +			val < si7020_heater_vals[0] || val > si7020_heater_vals[2])
+> +			return -EINVAL;
+> +
+> +		scoped_guard(mutex, &data->lock)
+> +			ret = si7020_update_reg(data, &data->heater_reg,
+> +					SI7020CMD_HEATER_WRITE, SI7020_HEATER_VAL, val);
+> +		return ret;
+> +	default:
+> +		return -EINVAL;
+>  	}
+> +}
+> +
+> +static int si7020_read_available(struct iio_dev *indio_dev,
+> +				  struct iio_chan_spec const *chan,
+> +				  const int **vals,
+> +				  int *type, int *length, long mask)
+> +{
+> +	if (mask != IIO_CHAN_INFO_RAW || chan->type != IIO_CURRENT)
+> +		return -EINVAL;
+> +
+> +	*vals = si7020_heater_vals;
+> +	*type = IIO_VAL_INT;
+> +
+> +	return IIO_AVAIL_RANGE;
+> +}
+> +
+> +static ssize_t si7020_show_heater_en(struct device *dev,
+> +				 struct device_attribute *attr, char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct si7020_data *data = iio_priv(indio_dev);
+> +
+> +	return sysfs_emit(buf, "%d\n", !!(data->user_reg & SI7020_USR_HEATER_EN));
+> +}
+> +
+> +static ssize_t si7020_store_heater_en(struct device *dev,
+> +				  struct device_attribute *attr,
+> +				  const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct si7020_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +	bool val;
+> +
+> +	ret = kstrtobool(buf, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	scoped_guard(mutex, &data->lock)
+> +		ret = si7020_update_reg(data, &data->user_reg, SI7020CMD_USR_WRITE,
+> +				SI7020_USR_HEATER_EN, val ? SI7020_USR_HEATER_EN : 0);
+> +
+> +	return ret < 0 ? ret : len;
+> +}
+> +
+> +static IIO_DEVICE_ATTR(heater_enable, 0644,
+> +		       si7020_show_heater_en, si7020_store_heater_en, 0);
+> +
+> +static struct attribute *si7020_attributes[] = {
+> +	&iio_dev_attr_heater_enable.dev_attr.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group si7020_attribute_group = {
+> +	.attrs = si7020_attributes,
+>  };
+>  
+>  static const struct iio_info si7020_info = {
+>  	.read_raw = si7020_read_raw,
+> +	.write_raw = si7020_write_raw,
+> +	.read_avail = si7020_read_available,
+> +	.attrs = &si7020_attribute_group,
+>  };
+>  
+>  static int si7020_probe(struct i2c_client *client)
+>  {
+>  	struct iio_dev *indio_dev;
+> -	struct i2c_client **data;
+> +	struct si7020_data *data;
+>  	int ret;
+>  
+>  	if (!i2c_check_functionality(client->adapter,
+> @@ -126,7 +249,9 @@ static int si7020_probe(struct i2c_client *client)
+>  		return -ENOMEM;
+>  
+>  	data = iio_priv(indio_dev);
+> -	*data = client;
+> +	i2c_set_clientdata(client, indio_dev);
+> +	data->client = client;
+> +	mutex_init(&data->lock);
+>  
+>  	indio_dev->name = dev_name(&client->dev);
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+> @@ -134,6 +259,10 @@ static int si7020_probe(struct i2c_client *client)
+>  	indio_dev->channels = si7020_channels;
+>  	indio_dev->num_channels = ARRAY_SIZE(si7020_channels);
+>  
+> +	/* All the "reserved" bits in the User Register are 1s by default */
+> +	data->user_reg = 0x3A;
+> +	data->heater_reg = 0x0;
+> +
+>  	return devm_iio_device_register(&client->dev, indio_dev);
+>  }
+>  
+
 
