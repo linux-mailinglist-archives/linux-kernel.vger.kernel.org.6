@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-207048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A029011B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:40:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BB69011BE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBA95B21B32
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996B01F21ED5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6378017994C;
-	Sat,  8 Jun 2024 13:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E21717A922;
+	Sat,  8 Jun 2024 13:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQXRtI0F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx6IPojJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2333D15A86A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 13:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B7BE57D;
+	Sat,  8 Jun 2024 13:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717854047; cv=none; b=ZBMt8ebBkpgtwmtOlwvw1EfUoDi/VLV87dSpFAoc/Ey+KeuNKuWXSxnyZcOWjF8Xgvg8JYJShsHqoaiV4IfEqe8mrMKbBuQkuujZOG50o7Asq7/olRMJHQQ7uiCD7fsOyN+NC1ZN/MwRlEUwwwpx5ALOymA6rxd9ZeLQBE4WMZk=
+	t=1717854288; cv=none; b=RrVzRX9STSKTKICGkmNF+C4sMjLcPXiLzdN0hAiCa0DWnrh1+V8NdXguYS4vreRw8gRGrUgPxvzgiar20pG7suFksbwWKbDcAEKr/JA33CDNo2VrnOTAHN/EVlZc/ZbiKdbVfMl3G/deYgKV4NFGri43ndgJzZXN+YYoZ/4lpOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717854047; c=relaxed/simple;
-	bh=nxlyu8p0CmGPfAk0LMwhtYf3/QdjlSKkf/Ec2s2SFc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rlUqh8vyJ9DEZleQK7bYGmFYaCR1LcfwWgRVEwaAQ+9A1ArirME6tDsWHSpO18V54y4HpnX8GFhvhLVgnkEQOPjCq9C+s1opSG7YgeVfxGzgIdTWyiEgnjLn7x3mxNhawpxQPabOQOjS2qGo5bzJx0RI8cKSmyXgu5yEocPMep4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQXRtI0F; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717854043; x=1749390043;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nxlyu8p0CmGPfAk0LMwhtYf3/QdjlSKkf/Ec2s2SFc0=;
-  b=hQXRtI0FljlcUakKkNAZwJBKl2QJ+yx0Ysq3yR+9nmtk6GgDEYqhrvLO
-   Q+fZVVq2si7JYwuTCBW8Yj8hcnCNkBEzAPAdRDGaFWEMc//HKlYRqP3GG
-   mnphjZGNSDOTpSm3GspStgf41GeywgpmO9lV5xNwIpZEtXwWmgAL+SWJr
-   kQdc9O+DykrAwls8y4W8VLtLh/YCeDJc1B3huah7bA5NSODT/3FUQn1vM
-   v6SwDhb+oi3bItimuwU4nUcFTPxaZIX7M6M1vcVVX0O/Jumae2wYTq7I0
-   hSnJjLrdcSl1esat2EftVngpDp+1v1G/8jlzG4KdDGu2RKLyTdS81E2Q8
-   Q==;
-X-CSE-ConnectionGUID: HLwrlq2+Rf6+HzQYGQIx2A==
-X-CSE-MsgGUID: g7h0e2hzQDeHsSLlxbb3Aw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="37098413"
-X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
-   d="scan'208";a="37098413"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 06:40:42 -0700
-X-CSE-ConnectionGUID: Fd1YXlatTYidf8BU70XtuQ==
-X-CSE-MsgGUID: 66N6BsC7S9miif6MtHCQlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
-   d="scan'208";a="38690193"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Jun 2024 06:40:41 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFwJD-0001e6-1C;
-	Sat, 08 Jun 2024 13:40:39 +0000
-Date: Sat, 8 Jun 2024 21:40:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>
-Subject: arch/arm64/boot/dts/ti/k3-am62p5-sk.dts:367.10-376.6: Warning
- (graph_child_address):
- /bus@f0000/i2c@20000000/usb-power-controller@3f/connector/ports: graph node
- has single child node 'port@0', #address-cells/#size-cells are not necessary
-Message-ID: <202406082152.SN1xuMYL-lkp@intel.com>
+	s=arc-20240116; t=1717854288; c=relaxed/simple;
+	bh=u+65EOg95RMG8+T/dZJMqWa8Q0VgKMhpOjWei+5HBZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ku7CSO/jUKTGYxJpON+vQD7DccbKUjG7EDw8k8AvWHCrO0XED2SXr85Hv0/ajtJt212IRXBg8don6ZCY7CvH3ee2m99uU+9jG5AfkjtetvigvWm3oKR7WJ5eTU7JfFHuAMDhhTO6pZOwUamBDCqgzrMnI3O86bZnFRh1DoL+dEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx6IPojJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19676C2BD11;
+	Sat,  8 Jun 2024 13:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717854288;
+	bh=u+65EOg95RMG8+T/dZJMqWa8Q0VgKMhpOjWei+5HBZQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sx6IPojJWoJf8REA79Y8x1+xWnkbHpYIiF3LkPEX5kOfst/F5URLZKKN1qo3gjDLN
+	 hf7ckuKOVZ70M5a8WOcFsbzVaTLXAhYkmqjjq8isnEoMoC8UaO+jq/lw0fn7TjIY3x
+	 oJlsMLf8dBNyUcjuK9HyNguTSgSCJBRCn9aDekvUfbTSialsSQEcBwEu4QtS4YTlqV
+	 /YaZPIKzchX4rjIVWGMqEtw0eVb7mUYM2Fs9dkRyCqW+bM2+fOnfQYZnqLCn8qhrar
+	 aHdAxoGLpQmOqa/DQb/vTm9vZQPi7BPcLkvpU42Gu0zy4kOlh3uX6RiVx5NmXBbANA
+	 qbu4ZlIWe7yOA==
+Date: Sat, 8 Jun 2024 14:44:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-doc@vger.kernel.org, devicetree@vger.kernel.org, corbet@lwn.net,
+ conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, robh@kernel.org,
+ Ramona Gradinariu <ramona.gradinariu@analog.com>
+Subject: Re: [PATCH v2 6/6] docs: iio: add documentation for adis16480
+ driver
+Message-ID: <20240608144439.06889236@jic23-huawei>
+In-Reply-To: <20240528142409.239187-7-ramona.gradinariu@analog.com>
+References: <20240528142409.239187-1-ramona.gradinariu@analog.com>
+	<20240528142409.239187-7-ramona.gradinariu@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
-commit: c1453d3c3e9baf538b5f978c9e7cc24e47cc877e arm64: dts: ti: k3-am62p: add the USB sub-system
-date:   6 weeks ago
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406082152.SN1xuMYL-lkp@intel.com/reproduce)
+On Tue, 28 May 2024 17:24:09 +0300
+Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406082152.SN1xuMYL-lkp@intel.com/
+> Add documentation for adis16480 driver which describes the driver
+> device files and shows how the user may use the ABI for various
+> scenarios (configuration, measurement, etc.).
+> 
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
 
-dtcheck warnings: (new ones prefixed by >>)
->> arch/arm64/boot/dts/ti/k3-am62p5-sk.dts:367.10-376.6: Warning (graph_child_address): /bus@f0000/i2c@20000000/usb-power-controller@3f/connector/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
->> arch/arm64/boot/dts/ti/k3-am62p-main.dtsi:651.22-661.5: Warning (graph_child_address): /bus@f0000/usb@f900000/usb@31000000: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+> +Obtain buffered data:
+> +
+> +.. code-block:: bash
+> +
+> +        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
+> +        ...
+> +        00006aa0  09 62 00 00 ff ff fc a4  00 00 01 69 00 03 3c 08  |.b.........i..<.|
+> +        00006ab0  09 61 00 00 00 00 02 96  00 00 02 8f 00 03 37 50  |.a............7P|
+> +        00006ac0  09 61 00 00 00 00 12 3d  00 00 0b 89 00 03 2c 0b  |.a.....=......,.|
+> +        00006ad0  09 61 00 00 00 00 1e dc  00 00 16 dd 00 03 25 bf  |.a............%.|
+> +        00006ae0  09 61 00 00 00 00 1e e3  00 00 1b bf 00 03 27 0b  |.a............'.|
+> +        00006af0  09 61 00 00 00 00 15 50  00 00 19 44 00 03 30 fd  |.a.....P...D..0.|
+> +        00006b00  09 61 00 00 00 00 09 0e  00 00 14 41 00 03 3d 7f  |.a.........A..=.|
+> +        00006b10  09 61 00 00 ff ff ff f0  00 00 0e bc 00 03 48 d0  |.a............H.|
+> +        00006b20  09 63 00 00 00 00 00 9f  00 00 0f 37 00 03 4c fe  |.c.........7..L.|
+> +        00006b30  09 64 00 00 00 00 0b f6  00 00 18 92 00 03 43 22  |.d............C"|
+> +        00006b40  09 64 00 00 00 00 18 df  00 00 22 33 00 03 33 ab  |.d........"3..3.|
+> +        00006b50  09 63 00 00 00 00 1e 81  00 00 26 be 00 03 29 60  |.c........&...)`|
+> +        00006b60  09 63 00 00 00 00 1b 13  00 00 22 2f 00 03 23 91  |.c........"/..#.|
+> +        ...
+This is tripping up the docs builds on 0-day.
+I'm not going to figure out why, so for now I've just made this an unformatted text block
+via :: and an indent.
 
-vim +367 arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+Documentation/iio/adis16480.rst:419: WARNING: Lexing literal_block 'root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\\:device0\n...\n00006aa0  09 62 00 00 ff ff fc a4  00 00 01 69 00 03 3c 08  |.b.........i..<.|\n00006ab0  09 61 00 00 00 00 02 96  00 00 02 8f 00 03 37 50  |.a............7P|\n00006ac0  09 61 00 00 00 00 12 3d  00 00 0b 89 00 03 2c 0b  |.a.....=......,.|\n00006ad0  09 61 00 00 00 00 1e dc  00 00 16 dd 00 03 25 bf  |.a............%.|\n00006ae0  09 61 00 00 00 00 1e e3  00 00 1b bf 00 03 27 0b  |.a............\'.|\n00006af0  09 61 00 00 00 00 15 50  00 00 19 44 00 03 30 fd  |.a.....P...D..0.|\n00006b00  09 61 00 00 00 00 09 0e  00 00 14 41 00 03 3d 7f  |.a.........A..=.|\n00006b10  09 61 00 00 ff ff ff f0  00 00 0e bc 00 03 48 d0  |.a............H.|\n00006b20  09 63 00 00 00 00 00 9f  00 00 0f 37 00 03 4c fe  |.c.........7..L.|\n00006b30  09 64 00 00 00 00 0b f6  00 00 18 92 00 03 43 22  |.d............C"|\n00006b40  09 64 00 00 00 00 18 df  00 00 22 33 00 03 3
+ 3 ab  |.d........"3..3.|\n00006b50  09 63 00 00 00 00 1e 81  00 00 26 be 00 03 29 60  |.c........&...)`|\n00006b60  09 63 00 00 00 00 1b 13  00 00 22 2f 00 03 23 91  |.c........"/..#.|\n...' as "bash" resulted in an error at token: "'". Retrying in relaxed mode.
 
-   350	
-   351	&main_i2c0 {
-   352		status = "okay";
-   353		pinctrl-names = "default";
-   354		pinctrl-0 = <&main_i2c0_pins_default>;
-   355		clock-frequency = <400000>;
-   356	
-   357		typec_pd0: usb-power-controller@3f {
-   358			compatible = "ti,tps6598x";
-   359			reg = <0x3f>;
-   360	
-   361			connector {
-   362				compatible = "usb-c-connector";
-   363				label = "USB-C";
-   364				self-powered;
-   365				data-role = "dual";
-   366				power-role = "sink";
- > 367				ports {
-   368					#address-cells = <1>;
-   369					#size-cells = <0>;
-   370					port@0 {
-   371						reg = <0>;
-   372						usb_con_hs: endpoint {
-   373							remote-endpoint = <&usb0_hs_ep>;
-   374						};
-   375					};
-   376				};
-   377			};
-   378		};
-   379	};
-   380	
+Introduced by commit
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  d6de8052f4a0 ("docs: iio: add documentation for adis16480 driver")
+
+> +
+> +See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
+> +data is structured.
+> +
+> +4. IIO Interfacing Tools
+> +========================
+> +
+> +See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
+> +interfacing tools.
+> diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
+> index 66fa69102e3a..4c13bfa2865c 100644
+> --- a/Documentation/iio/index.rst
+> +++ b/Documentation/iio/index.rst
+> @@ -19,5 +19,6 @@ Industrial I/O Kernel Drivers
+> 
+>     ad7944
+>     adis16475
+> +   adis16480
+>     bno055
+>     ep93xx_adc
+> --
+> 2.34.1
+> 
+
 
