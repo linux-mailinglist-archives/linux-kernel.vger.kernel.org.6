@@ -1,160 +1,357 @@
-Return-Path: <linux-kernel+bounces-207129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013F89012B2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:15:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81DD9012B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB12C1F21B8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F302821D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8217B4FE;
-	Sat,  8 Jun 2024 16:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2541517966C;
+	Sat,  8 Jun 2024 16:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A0AHLCrW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEWWxrTv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344CB179675;
-	Sat,  8 Jun 2024 16:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575C1474B9;
+	Sat,  8 Jun 2024 16:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717863309; cv=none; b=Z6Q1kRbWwf+CmybdIo8MEJsQlH851K1VAKYIWlXgRb61NPK48rrj73r4Abv9bWBfRhTL48oQ2W0T9erEUpgT0+oTwNf+JwW6X3UCV3MpAe3e6N7f1RcCSLOfVhKFP6LUPsy0IK4VZfJo8Klwmk15j8h61BaHO5D0hi3995Gwvbs=
+	t=1717863613; cv=none; b=UZFL/MEfnzWntuZqGlk+8y+amqC+dYZgRcKNlQcko+JGM+9krdHK3y6kD0zVvS6G5Si3HU9P22vLiW9qDhSBCJEYhRALIAJHrAeQt4RbMHjPx0lxdh8ny0k3PVR5gMxrF3zUx7APzK471EcxUBZlXhEBxSYYXLqxVH91nhHxieQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717863309; c=relaxed/simple;
-	bh=6t8KhUaq2gdgrr+pplXAkboAQ7kJUYZMZNlrL9HX1E0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dFonfBZNX0bbxAzX66bIPCWOXGn39Iz0VBHtuRZk/utQgzSFtczNlhum/31vDqCFjRJGnM5TBCevhS9Wd6UTT3GaEmHG6rbCkANHNsYbh/pPEKZzAnyHdhgkS5jrEdGLEXHdWA8PlYOjGrNzD6rHUJNJUTNt60SKKwDgT17Mdrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A0AHLCrW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 458GBFgO022930;
-	Sat, 8 Jun 2024 16:14:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=jCVO1rlcKIt68CFsV2gzjy
-	XhQ0yWTU5oC6XzCiUFPHM=; b=A0AHLCrWSZIwfTDYo9dFpXyoP5+ruuughFOJYB
-	2aaR/NrajduZ9LLVpmuXLv3uHlXD60wNn3bLEFv3ydHlFGHZKbA9uRBEVdLSpnBR
-	WuCuPuY8esVgWI0UIbskjoB325FhZv29cu3B4pmxaW/iB/0ekcpcopNJw/V7irJ9
-	GChxYrq7OqCdWLhAf4guT5+robez1h3v9E2XKLlA308jPLvacAnawTcEzyhQHTF1
-	gcFUO9yPKl6VQJuNmm9+Ap6ER6EVHcbYmvVrD/lUd47RuVSLb6G2F8LZNqel/nrv
-	FaBMldVpLBCR44j77XJX91nq9aeYCK76X2oMjssEDcvluglA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmrv2x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 08 Jun 2024 16:14:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 458GEdb6002661
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 8 Jun 2024 16:14:39 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 8 Jun 2024
- 09:14:38 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 8 Jun 2024 09:14:37 -0700
-Subject: [PATCH] irqchip: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717863613; c=relaxed/simple;
+	bh=tlIHue1eVX2KWMUDHuFeU9qzRhgwiAsuAEe22Nyg3Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwjmidOa2aWG2dpBzYsXCJ08aH5D6iXwPWNj9cN3ghuKoeQguci+eHDGbFVGKY4uVGLAy4w4b94qcK5tOZx6XgfmY3pFXP223qSuZv+3+mS5835CncpHhxxUh/ba5GT2DO+zYDW46E1kLvdqs42YeoFS8p0eQFqxWNnv/YoeSZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEWWxrTv; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717863611; x=1749399611;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tlIHue1eVX2KWMUDHuFeU9qzRhgwiAsuAEe22Nyg3Bs=;
+  b=GEWWxrTvMVVNIsYJrU9PrtB40EcSvQO0957PnOhKI3XkXJ/0+Zsr8gRZ
+   UEWrcHKH+1ic1/PlBGxltYSqsFvHZ3Hy2sKyvNOT9BbMM2LYoJavTUFPf
+   att6kQqqbDB8AJd6Felz80FctDZeUJXQowM0z1O8UAPqAWsP0f9fNb6St
+   hPEh9OVWTSOrodRB+sPeoYPxhW9fL1qh4yaaVwkJ3B97UeETqTD9bKUd7
+   gWaJ5Ecbe8mqsjb2KWb5dw9NtR/04TgxP+g/GAt3aKOmXgN1IERS9qZmm
+   AKK0kb/QPKhHcyyRaOPkVv3mPI0pb95ce+iqRTYCPvwWvsW/k5Y7UM7YB
+   w==;
+X-CSE-ConnectionGUID: 2q0kdyhPTB+gGXMBAtYftw==
+X-CSE-MsgGUID: Fr2fWfJhShOpq8pM8q2kaA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="25233104"
+X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
+   d="scan'208";a="25233104"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 09:20:10 -0700
+X-CSE-ConnectionGUID: 3qVkvh99RM+YI/m0X7VmoA==
+X-CSE-MsgGUID: Xr07b/w8Q1GSFyWX9rAizw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
+   d="scan'208";a="69409987"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 08 Jun 2024 09:20:06 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFynT-0000CE-1v;
+	Sat, 08 Jun 2024 16:20:03 +0000
+Date: Sun, 9 Jun 2024 00:19:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tommy Huang <tommy_huang@aspeedtech.com>, brendan.higgins@linux.dev,
+	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
+	andrew@codeconstruct.com.au, wsa@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2] i2c: aspeed: Update the stop sw state when the bus
+ recovery occurs
+Message-ID: <202406090041.5IMjYB8x-lkp@intel.com>
+References: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGyDZGYC/x3MQQrCQAyF4auUrA2MRQfxKuJimkQnYMeaaCmU3
- t3o8uPx/hVcTMXh3K1gMqvrswX2uw6olnYXVA5Dn/pDyumEIyObzmKOai+qOiEz51iPlDJBHCe
- Tmy7/6OUaHooLDlYa1V/qoe2z4Fj8LQbb9gWnE/pRgwAAAA==
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Jerome
- Brunet" <jbrunet@baylibre.com>,
-        Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Gregory
- Clement" <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Wj7q2II9feNUhcMiywsfcwBYAbQzzmOz
-X-Proofpoint-ORIG-GUID: Wj7q2II9feNUhcMiywsfcwBYAbQzzmOz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-08_09,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406080122
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
+Hi Tommy,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-files which have a MODULE_LICENSE().  This includes a 3rd file,
-irq-mvebu-pic.c, which did not produce a warning with the x86
-allmodconfig, but which may cause this warning with other kernel
-configurations.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/irqchip/irq-meson-gpio.c | 1 +
- drivers/irqchip/irq-mvebu-pic.c  | 1 +
- drivers/irqchip/irq-ts4800.c     | 1 +
- 3 files changed, 3 insertions(+)
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on linus/master v6.10-rc2 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index 9a1791908598..27e30ce41db3 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -608,5 +608,6 @@ IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_of_init)
- IRQCHIP_PLATFORM_DRIVER_END(meson_gpio_intc)
- 
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_DESCRIPTION("Meson GPIO Interrupt Multiplexer driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:meson-gpio-intc");
-diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
-index d17d9c0e2880..08b0cc862adf 100644
---- a/drivers/irqchip/irq-mvebu-pic.c
-+++ b/drivers/irqchip/irq-mvebu-pic.c
-@@ -193,6 +193,7 @@ module_platform_driver(mvebu_pic_driver);
- 
- MODULE_AUTHOR("Yehuda Yitschak <yehuday@marvell.com>");
- MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
-+MODULE_DESCRIPTION("Marvell Armada 7K/8K PIC driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:mvebu_pic");
- 
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index 57f610dab6b8..b5dddb3c1568 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -163,5 +163,6 @@ static struct platform_driver ts4800_ic_driver = {
- module_platform_driver(ts4800_ic_driver);
- 
- MODULE_AUTHOR("Damien Riegel <damien.riegel@savoirfairelinux.com>");
-+MODULE_DESCRIPTION("Multiplexed-IRQs driver for TS-4800's FPGA");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:ts4800_irqc");
+url:    https://github.com/intel-lab-lkp/linux/commits/Tommy-Huang/i2c-aspeed-Update-the-stop-sw-state-when-the-bus-recovery-occurs/20240608-124429
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240608043653.4086647-1-tommy_huang%40aspeedtech.com
+patch subject: [PATCH v2] i2c: aspeed: Update the stop sw state when the bus recovery occurs
+config: arm-aspeed_g5_defconfig (https://download.01.org/0day-ci/archive/20240609/202406090041.5IMjYB8x-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406090041.5IMjYB8x-lkp@intel.com/reproduce)
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240608-md-drivers-irqchip-ddd62405c06c
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406090041.5IMjYB8x-lkp@intel.com/
 
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-aspeed.c:28:39: warning: 'struct aspeed_i2c_bus' declared inside parameter list will not be visible outside of this definition or declaration
+      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
+         |                                       ^~~~~~~~~~~~~~
+   drivers/i2c/busses/i2c-aspeed.c: In function 'aspeed_i2c_recover_bus':
+>> drivers/i2c/busses/i2c-aspeed.c:192:36: error: passing argument 1 of 'aspeed_i2c_do_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     192 |                 aspeed_i2c_do_stop(bus);
+         |                                    ^~~
+         |                                    |
+         |                                    struct aspeed_i2c_bus *
+   drivers/i2c/busses/i2c-aspeed.c:28:55: note: expected 'struct aspeed_i2c_bus *' but argument is of type 'struct aspeed_i2c_bus *'
+      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
+         |                                ~~~~~~~~~~~~~~~~~~~~~~~^~~
+   drivers/i2c/busses/i2c-aspeed.c: At top level:
+>> drivers/i2c/busses/i2c-aspeed.c:396:13: error: conflicting types for 'aspeed_i2c_do_stop'; have 'void(struct aspeed_i2c_bus *)'
+     396 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus)
+         |             ^~~~~~~~~~~~~~~~~~
+   drivers/i2c/busses/i2c-aspeed.c:28:13: note: previous declaration of 'aspeed_i2c_do_stop' with type 'void(struct aspeed_i2c_bus *)'
+      28 | static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
+         |             ^~~~~~~~~~~~~~~~~~
+>> drivers/i2c/busses/i2c-aspeed.c:28:13: warning: 'aspeed_i2c_do_stop' used but never defined
+   cc1: some warnings being treated as errors
+
+
+vim +/aspeed_i2c_do_stop +192 drivers/i2c/busses/i2c-aspeed.c
+
+    27	
+  > 28	static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
+    29	
+    30	/* I2C Register */
+    31	#define ASPEED_I2C_FUN_CTRL_REG				0x00
+    32	#define ASPEED_I2C_AC_TIMING_REG1			0x04
+    33	#define ASPEED_I2C_AC_TIMING_REG2			0x08
+    34	#define ASPEED_I2C_INTR_CTRL_REG			0x0c
+    35	#define ASPEED_I2C_INTR_STS_REG				0x10
+    36	#define ASPEED_I2C_CMD_REG				0x14
+    37	#define ASPEED_I2C_DEV_ADDR_REG				0x18
+    38	#define ASPEED_I2C_BYTE_BUF_REG				0x20
+    39	
+    40	/* Global Register Definition */
+    41	/* 0x00 : I2C Interrupt Status Register  */
+    42	/* 0x08 : I2C Interrupt Target Assignment  */
+    43	
+    44	/* Device Register Definition */
+    45	/* 0x00 : I2CD Function Control Register  */
+    46	#define ASPEED_I2CD_MULTI_MASTER_DIS			BIT(15)
+    47	#define ASPEED_I2CD_SDA_DRIVE_1T_EN			BIT(8)
+    48	#define ASPEED_I2CD_M_SDA_DRIVE_1T_EN			BIT(7)
+    49	#define ASPEED_I2CD_M_HIGH_SPEED_EN			BIT(6)
+    50	#define ASPEED_I2CD_SLAVE_EN				BIT(1)
+    51	#define ASPEED_I2CD_MASTER_EN				BIT(0)
+    52	
+    53	/* 0x04 : I2CD Clock and AC Timing Control Register #1 */
+    54	#define ASPEED_I2CD_TIME_TBUF_MASK			GENMASK(31, 28)
+    55	#define ASPEED_I2CD_TIME_THDSTA_MASK			GENMASK(27, 24)
+    56	#define ASPEED_I2CD_TIME_TACST_MASK			GENMASK(23, 20)
+    57	#define ASPEED_I2CD_TIME_SCL_HIGH_SHIFT			16
+    58	#define ASPEED_I2CD_TIME_SCL_HIGH_MASK			GENMASK(19, 16)
+    59	#define ASPEED_I2CD_TIME_SCL_LOW_SHIFT			12
+    60	#define ASPEED_I2CD_TIME_SCL_LOW_MASK			GENMASK(15, 12)
+    61	#define ASPEED_I2CD_TIME_BASE_DIVISOR_MASK		GENMASK(3, 0)
+    62	#define ASPEED_I2CD_TIME_SCL_REG_MAX			GENMASK(3, 0)
+    63	/* 0x08 : I2CD Clock and AC Timing Control Register #2 */
+    64	#define ASPEED_NO_TIMEOUT_CTRL				0
+    65	
+    66	/* 0x0c : I2CD Interrupt Control Register &
+    67	 * 0x10 : I2CD Interrupt Status Register
+    68	 *
+    69	 * These share bit definitions, so use the same values for the enable &
+    70	 * status bits.
+    71	 */
+    72	#define ASPEED_I2CD_INTR_RECV_MASK			0xf000ffff
+    73	#define ASPEED_I2CD_INTR_SDA_DL_TIMEOUT			BIT(14)
+    74	#define ASPEED_I2CD_INTR_BUS_RECOVER_DONE		BIT(13)
+    75	#define ASPEED_I2CD_INTR_SLAVE_MATCH			BIT(7)
+    76	#define ASPEED_I2CD_INTR_SCL_TIMEOUT			BIT(6)
+    77	#define ASPEED_I2CD_INTR_ABNORMAL			BIT(5)
+    78	#define ASPEED_I2CD_INTR_NORMAL_STOP			BIT(4)
+    79	#define ASPEED_I2CD_INTR_ARBIT_LOSS			BIT(3)
+    80	#define ASPEED_I2CD_INTR_RX_DONE			BIT(2)
+    81	#define ASPEED_I2CD_INTR_TX_NAK				BIT(1)
+    82	#define ASPEED_I2CD_INTR_TX_ACK				BIT(0)
+    83	#define ASPEED_I2CD_INTR_MASTER_ERRORS					       \
+    84			(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
+    85			 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
+    86			 ASPEED_I2CD_INTR_ABNORMAL |				       \
+    87			 ASPEED_I2CD_INTR_ARBIT_LOSS)
+    88	#define ASPEED_I2CD_INTR_ALL						       \
+    89			(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
+    90			 ASPEED_I2CD_INTR_BUS_RECOVER_DONE |			       \
+    91			 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
+    92			 ASPEED_I2CD_INTR_ABNORMAL |				       \
+    93			 ASPEED_I2CD_INTR_NORMAL_STOP |				       \
+    94			 ASPEED_I2CD_INTR_ARBIT_LOSS |				       \
+    95			 ASPEED_I2CD_INTR_RX_DONE |				       \
+    96			 ASPEED_I2CD_INTR_TX_NAK |				       \
+    97			 ASPEED_I2CD_INTR_TX_ACK)
+    98	
+    99	/* 0x14 : I2CD Command/Status Register   */
+   100	#define ASPEED_I2CD_SCL_LINE_STS			BIT(18)
+   101	#define ASPEED_I2CD_SDA_LINE_STS			BIT(17)
+   102	#define ASPEED_I2CD_BUS_BUSY_STS			BIT(16)
+   103	#define ASPEED_I2CD_BUS_RECOVER_CMD			BIT(11)
+   104	
+   105	/* Command Bit */
+   106	#define ASPEED_I2CD_M_STOP_CMD				BIT(5)
+   107	#define ASPEED_I2CD_M_S_RX_CMD_LAST			BIT(4)
+   108	#define ASPEED_I2CD_M_RX_CMD				BIT(3)
+   109	#define ASPEED_I2CD_S_TX_CMD				BIT(2)
+   110	#define ASPEED_I2CD_M_TX_CMD				BIT(1)
+   111	#define ASPEED_I2CD_M_START_CMD				BIT(0)
+   112	#define ASPEED_I2CD_MASTER_CMDS_MASK					       \
+   113			(ASPEED_I2CD_M_STOP_CMD |				       \
+   114			 ASPEED_I2CD_M_S_RX_CMD_LAST |				       \
+   115			 ASPEED_I2CD_M_RX_CMD |					       \
+   116			 ASPEED_I2CD_M_TX_CMD |					       \
+   117			 ASPEED_I2CD_M_START_CMD)
+   118	
+   119	/* 0x18 : I2CD Slave Device Address Register   */
+   120	#define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
+   121	
+   122	enum aspeed_i2c_master_state {
+   123		ASPEED_I2C_MASTER_INACTIVE,
+   124		ASPEED_I2C_MASTER_PENDING,
+   125		ASPEED_I2C_MASTER_START,
+   126		ASPEED_I2C_MASTER_TX_FIRST,
+   127		ASPEED_I2C_MASTER_TX,
+   128		ASPEED_I2C_MASTER_RX_FIRST,
+   129		ASPEED_I2C_MASTER_RX,
+   130		ASPEED_I2C_MASTER_STOP,
+   131	};
+   132	
+   133	enum aspeed_i2c_slave_state {
+   134		ASPEED_I2C_SLAVE_INACTIVE,
+   135		ASPEED_I2C_SLAVE_START,
+   136		ASPEED_I2C_SLAVE_READ_REQUESTED,
+   137		ASPEED_I2C_SLAVE_READ_PROCESSED,
+   138		ASPEED_I2C_SLAVE_WRITE_REQUESTED,
+   139		ASPEED_I2C_SLAVE_WRITE_RECEIVED,
+   140		ASPEED_I2C_SLAVE_STOP,
+   141	};
+   142	
+   143	struct aspeed_i2c_bus {
+   144		struct i2c_adapter		adap;
+   145		struct device			*dev;
+   146		void __iomem			*base;
+   147		struct reset_control		*rst;
+   148		/* Synchronizes I/O mem access to base. */
+   149		spinlock_t			lock;
+   150		struct completion		cmd_complete;
+   151		u32				(*get_clk_reg_val)(struct device *dev,
+   152								   u32 divisor);
+   153		unsigned long			parent_clk_frequency;
+   154		u32				bus_frequency;
+   155		/* Transaction state. */
+   156		enum aspeed_i2c_master_state	master_state;
+   157		struct i2c_msg			*msgs;
+   158		size_t				buf_index;
+   159		size_t				msgs_index;
+   160		size_t				msgs_count;
+   161		bool				send_stop;
+   162		int				cmd_err;
+   163		/* Protected only by i2c_lock_bus */
+   164		int				master_xfer_result;
+   165		/* Multi-master */
+   166		bool				multi_master;
+   167	#if IS_ENABLED(CONFIG_I2C_SLAVE)
+   168		struct i2c_client		*slave;
+   169		enum aspeed_i2c_slave_state	slave_state;
+   170	#endif /* CONFIG_I2C_SLAVE */
+   171	};
+   172	
+   173	static int aspeed_i2c_reset(struct aspeed_i2c_bus *bus);
+   174	
+   175	static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
+   176	{
+   177		unsigned long time_left, flags;
+   178		int ret = 0;
+   179		u32 command;
+   180	
+   181		spin_lock_irqsave(&bus->lock, flags);
+   182		command = readl(bus->base + ASPEED_I2C_CMD_REG);
+   183	
+   184		if (command & ASPEED_I2CD_SDA_LINE_STS) {
+   185			/* Bus is idle: no recovery needed. */
+   186			if (command & ASPEED_I2CD_SCL_LINE_STS)
+   187				goto out;
+   188			dev_dbg(bus->dev, "SCL hung (state %x), attempting recovery\n",
+   189				command);
+   190	
+   191			reinit_completion(&bus->cmd_complete);
+ > 192			aspeed_i2c_do_stop(bus);
+   193			spin_unlock_irqrestore(&bus->lock, flags);
+   194	
+   195			time_left = wait_for_completion_timeout(
+   196					&bus->cmd_complete, bus->adap.timeout);
+   197	
+   198			spin_lock_irqsave(&bus->lock, flags);
+   199			if (time_left == 0)
+   200				goto reset_out;
+   201			else if (bus->cmd_err)
+   202				goto reset_out;
+   203			/* Recovery failed. */
+   204			else if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
+   205				   ASPEED_I2CD_SCL_LINE_STS))
+   206				goto reset_out;
+   207		/* Bus error. */
+   208		} else {
+   209			dev_dbg(bus->dev, "SDA hung (state %x), attempting recovery\n",
+   210				command);
+   211	
+   212			reinit_completion(&bus->cmd_complete);
+   213			/* Writes 1 to 8 SCL clock cycles until SDA is released. */
+   214			writel(ASPEED_I2CD_BUS_RECOVER_CMD,
+   215			       bus->base + ASPEED_I2C_CMD_REG);
+   216			spin_unlock_irqrestore(&bus->lock, flags);
+   217	
+   218			time_left = wait_for_completion_timeout(
+   219					&bus->cmd_complete, bus->adap.timeout);
+   220	
+   221			spin_lock_irqsave(&bus->lock, flags);
+   222			if (time_left == 0)
+   223				goto reset_out;
+   224			else if (bus->cmd_err)
+   225				goto reset_out;
+   226			/* Recovery failed. */
+   227			else if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
+   228				   ASPEED_I2CD_SDA_LINE_STS))
+   229				goto reset_out;
+   230		}
+   231	
+   232	out:
+   233		spin_unlock_irqrestore(&bus->lock, flags);
+   234	
+   235		return ret;
+   236	
+   237	reset_out:
+   238		spin_unlock_irqrestore(&bus->lock, flags);
+   239	
+   240		return aspeed_i2c_reset(bus);
+   241	}
+   242	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
