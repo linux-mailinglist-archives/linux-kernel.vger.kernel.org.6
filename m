@@ -1,339 +1,286 @@
-Return-Path: <linux-kernel+bounces-207184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBBD90135F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:43:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED86A90135B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761E81C20DBF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0B77B2143D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C61208D0;
-	Sat,  8 Jun 2024 19:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A429220B28;
+	Sat,  8 Jun 2024 19:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="izEYON8i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XBza7czS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02528134B1;
-	Sat,  8 Jun 2024 19:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E781CA9C;
+	Sat,  8 Jun 2024 19:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717875829; cv=none; b=FPyRkihIPidH6jSyTNt+2CJ/D02P9BFf06WnXsDnfa/iosmwD5TeBWqvaLRFrdtkzNpFWn6BwXwxJ7lv5KdygBDU+i8mSuQug/5PAt2aUa7+TcPRwdYZZcZq3hFE9MFgbVp5e1pjF+xCFbgHVUklceETF0VKnViZQOdwDNqnvgA=
+	t=1717875506; cv=none; b=LkgWUfLyF1aA8Vf6IbL1G+3M2QT5GL9X2dcbE36ipJBHzHMWo4PBX1VIlmCIOcENYuUz13lFtzOnA9JxonVzkOjXjH4k7D0Agptow4gjQrhCds2OGAy8L97McIvJJNWC11prV6LkUauqmllyKro97DUawhkUXw6usg+CBYaUzuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717875829; c=relaxed/simple;
-	bh=ASFabXtRa1wFAO6TA1/5iLXPo5NYMXTtx1bqem/hIBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4itQ3OEmqfqkXAJyRHtzhGL7KH+dD3yorGtsYz58fnbkAPkoymmSKk8IZ6eJ3W6HQn43KXGrdeQPZkvVAzR5gCoGfq3dnNHROYOcXSL4WWwOB1jooOUjbMOf7L3mrkD5OvsQdnSAyVSjJhnxjcbccSBLHRwDMAvRPNZY1E/S00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=izEYON8i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F61C2BD11;
-	Sat,  8 Jun 2024 19:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1717875828;
-	bh=ASFabXtRa1wFAO6TA1/5iLXPo5NYMXTtx1bqem/hIBo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=izEYON8irr9+sSFBaMZGvQzmPI7gOpxIrihxApW07s0vI2HhDUUE7icramuCaZoxQ
-	 0BrKHNlLandyhpIcVekjg+rwF01WqCTXZRMHLO1hMM9Jq6sHdXN9ucC5rXuCFoP1IF
-	 VxKvRRSGGhOcadqzzXeQgVepZU229xvse3W282/w=
-From: Linus Torvalds <torvalds@linux-foundation.org>
-To: Peter Anvin <hpa@zytor.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] x86: add 'runtime constant' infrastructure
-Date: Sat,  8 Jun 2024 12:35:05 -0700
-Message-ID: <20240608193504.429644-2-torvalds@linux-foundation.org>
-X-Mailer: git-send-email 2.45.1.209.gc6f12300df
+	s=arc-20240116; t=1717875506; c=relaxed/simple;
+	bh=6+5M3l+iYX0rwNLIVbsCYHIKns4BG4FRt49KUQknk+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDZzY7Y16S7+b+7wYmMlqF+M7/ktsDhdBylqpL6RrEE8ZgMsuYmoW9FplUdzLqiDY41pPWeqEgK+D3T7u+WYzu8BXb/KXcwEdJ0WXaOIh8vOnVXkM5y90fmv22ozX65v3OUf+pMtCIX9nYVZOa0QSvFVf0azFVyRJ5kEj1kNioI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XBza7czS; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717875505; x=1749411505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6+5M3l+iYX0rwNLIVbsCYHIKns4BG4FRt49KUQknk+A=;
+  b=XBza7czSjzm8EcOhS4oAkjTUfzqQOjWQHHWqOOE9AguehRDLBrPotZdu
+   YYKd7T6+pUvDlB8fbAkC7WA+njSLwK35FOfJRocnCBWEpO9bvs9vltH0/
+   1gqyYXHthTsmdxU9LvvilwyxCm1WHws7/s7dSrSYd7+0oTeNuREMCjZgD
+   TxHi1FyM7O05X0fiw2pP3XnJ+5sT7pIxY9x8MgSlRpF3NGwPOxYjW9evR
+   PHuCdM5V8X+sDo/XhNy+909UnShEyVkk49DhXoTQjycMmf6vF0jhqgLFd
+   Ord5Ec3Jp2VobScTgL0jzAVJOMenx8ALdnLE8bigg5KQUWyO/Xpqc4DYI
+   g==;
+X-CSE-ConnectionGUID: G6pQRYflR3aYWvCCqmuL7g==
+X-CSE-MsgGUID: QXb1Vd0qRDuvAmEN4Tjhnw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="14736010"
+X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
+   d="scan'208";a="14736010"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 12:38:24 -0700
+X-CSE-ConnectionGUID: Lo5lv0UQSBecDo1Ex9t5bQ==
+X-CSE-MsgGUID: NpAjYTifTHWNdtdM+slsQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
+   d="scan'208";a="43582555"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 08 Jun 2024 12:38:18 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sG1tI-0000OI-0C;
+	Sat, 08 Jun 2024 19:38:16 +0000
+Date: Sun, 9 Jun 2024 03:37:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 3/9] perf: arm_pmu: Remove event index to counter
+ remapping
+Message-ID: <202406090349.DaD1utFD-lkp@intel.com>
+References: <20240607-arm-pmu-3-9-icntr-v1-3-c7bd2dceff3b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-3-c7bd2dceff3b@kernel.org>
 
-Needs more comments and testing, but it works, and has a generic
-fallback for architectures that don't support it.
+Hi Rob,
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
----
+kernel test robot noticed the following build errors:
 
-Notes from the first hack: I renamed the infrastructure from "static
-const" to "runtime const".  We end up having a number of uses of "static
-const" that are related to the C language notion of "static const"
-variables or functions, and "runtime constant" is a bit more descriptive
-anyway. 
+[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
 
-And this now is properly abstracted out, so that any architecture can
-choose to implement their own version, but it all falls back on "just
-use the variable".
+url:    https://github.com/intel-lab-lkp/linux/commits/Rob-Herring-Arm/perf-arm-Move-32-bit-PMU-drivers-to-drivers-perf/20240608-043509
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240607-arm-pmu-3-9-icntr-v1-3-c7bd2dceff3b%40kernel.org
+patch subject: [PATCH 3/9] perf: arm_pmu: Remove event index to counter remapping
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20240609/202406090349.DaD1utFD-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406090349.DaD1utFD-lkp@intel.com/reproduce)
 
-Josh - sorry for wasting your time on the objtool patch, I ended up
-using the linker functionality that Rasmus pointed out as existing
-instead. 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406090349.DaD1utFD-lkp@intel.com/
 
-Rasmus - I've cleaned up my patch a lot, and it now compiles fine on
-other architectures too, although obviously with the fallback of "no
-constant fixup".  As a result, my patch is actually smaller and much
-cleaner, and I ended up liking my approach more than your RAI thing
-after all. 
+All errors (new ones prefixed by >>):
 
-Ingo / Peter / Borislav - I enabled this for 32-bit x86 too, because it
-was literally trivial (had to remove a "q" from "movq").  I did a
-test-build and it looks find, but I didn't actually try to boot it. 
+         |                                           ^~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:27:22: note: expanded from macro 'ONLY_2_4_6'
+      27 | #define ONLY_2_4_6                      (BIT(2) | BIT(4) | BIT(6))
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:99:32: note: previous initialization is here
+      99 |         [0 ... M1_PMU_PERFCTR_LAST]     = ANY_BUT_0_1,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:25:23: note: expanded from macro 'ANY_BUT_0_1'
+      25 | #define ANY_BUT_0_1                     GENMASK(9, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:128:32: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     128 |         [M1_PMU_PERFCTR_UNKNOWN_f6]     = ONLY_2_4_6,
+         |                                           ^~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:27:22: note: expanded from macro 'ONLY_2_4_6'
+      27 | #define ONLY_2_4_6                      (BIT(2) | BIT(4) | BIT(6))
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:99:32: note: previous initialization is here
+      99 |         [0 ... M1_PMU_PERFCTR_LAST]     = ANY_BUT_0_1,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:25:23: note: expanded from macro 'ANY_BUT_0_1'
+      25 | #define ANY_BUT_0_1                     GENMASK(9, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:129:32: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     129 |         [M1_PMU_PERFCTR_UNKNOWN_f7]     = ONLY_2_4_6,
+         |                                           ^~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:27:22: note: expanded from macro 'ONLY_2_4_6'
+      27 | #define ONLY_2_4_6                      (BIT(2) | BIT(4) | BIT(6))
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:99:32: note: previous initialization is here
+      99 |         [0 ... M1_PMU_PERFCTR_LAST]     = ANY_BUT_0_1,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:25:23: note: expanded from macro 'ANY_BUT_0_1'
+      25 | #define ANY_BUT_0_1                     GENMASK(9, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:130:32: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     130 |         [M1_PMU_PERFCTR_UNKNOWN_f8]     = ONLY_2_TO_7,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:26:23: note: expanded from macro 'ONLY_2_TO_7'
+      26 | #define ONLY_2_TO_7                     GENMASK(7, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:99:32: note: previous initialization is here
+      99 |         [0 ... M1_PMU_PERFCTR_LAST]     = ANY_BUT_0_1,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:25:23: note: expanded from macro 'ANY_BUT_0_1'
+      25 | #define ANY_BUT_0_1                     GENMASK(9, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:131:32: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     131 |         [M1_PMU_PERFCTR_UNKNOWN_fd]     = ONLY_2_4_6,
+         |                                           ^~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:27:22: note: expanded from macro 'ONLY_2_4_6'
+      27 | #define ONLY_2_4_6                      (BIT(2) | BIT(4) | BIT(6))
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:99:32: note: previous initialization is here
+      99 |         [0 ... M1_PMU_PERFCTR_LAST]     = ANY_BUT_0_1,
+         |                                           ^~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:25:23: note: expanded from macro 'ANY_BUT_0_1'
+      25 | #define ANY_BUT_0_1                     GENMASK(9, 2)
+         |                                         ^~~~~~~~~~~~~
+   include/linux/bits.h:35:2: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:136:31: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     136 |         [PERF_COUNT_HW_CPU_CYCLES]      = M1_PMU_PERFCTR_CPU_CYCLES,
+         |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:135:2: note: previous initialization is here
+     135 |         PERF_MAP_ALL_UNSUPPORTED,
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmu.h:40:34: note: expanded from macro 'PERF_MAP_ALL_UNSUPPORTED'
+      40 |         [0 ... PERF_COUNT_HW_MAX - 1] = HW_OP_UNSUPPORTED
+         |                                         ^~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmu.h:35:28: note: expanded from macro 'HW_OP_UNSUPPORTED'
+      35 | #define HW_OP_UNSUPPORTED               0xFFFF
+         |                                         ^~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:137:33: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     137 |         [PERF_COUNT_HW_INSTRUCTIONS]    = M1_PMU_PERFCTR_INSTRUCTIONS,
+         |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/apple_m1_cpu_pmu.c:135:2: note: previous initialization is here
+     135 |         PERF_MAP_ALL_UNSUPPORTED,
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmu.h:40:34: note: expanded from macro 'PERF_MAP_ALL_UNSUPPORTED'
+      40 |         [0 ... PERF_COUNT_HW_MAX - 1] = HW_OP_UNSUPPORTED
+         |                                         ^~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmu.h:35:28: note: expanded from macro 'HW_OP_UNSUPPORTED'
+      35 | #define HW_OP_UNSUPPORTED               0xFFFF
+         |                                         ^~~~~~
+>> drivers/perf/apple_m1_cpu_pmu.c:403:31: error: no member named 'num_events' in 'struct arm_pmu'; did you mean 'hw_events'?
+     403 |         for (idx = 0; idx < cpu_pmu->num_events; idx++) {
+         |                                      ^~~~~~~~~~
+         |                                      hw_events
+   include/linux/perf/arm_pmu.h:106:33: note: 'hw_events' declared here
+     106 |         struct pmu_hw_events    __percpu *hw_events;
+         |                                           ^
+   drivers/perf/apple_m1_cpu_pmu.c:563:11: error: no member named 'num_events' in 'struct arm_pmu'; did you mean 'hw_events'?
+     563 |         cpu_pmu->num_events       = M1_PMU_NR_COUNTERS;
+         |                  ^~~~~~~~~~
+         |                  hw_events
+   include/linux/perf/arm_pmu.h:106:33: note: 'hw_events' declared here
+     106 |         struct pmu_hw_events    __percpu *hw_events;
+         |                                           ^
+   39 warnings and 2 errors generated.
 
-The x86-64 code is actually tested.  It's not like it has a _lot_ of
-testing, but the patch ends up being pretty small in the end.  Yes, the
-"shift u32 value right by a constant" is a pretty special case, but the
-__d_lookup_rcu() function really is pretty hot.
 
-Or rather it *was* pretty hot.  It's actually looking very good with
-this, imho. 
+vim +403 drivers/perf/apple_m1_cpu_pmu.c
 
-Build tested with allmodconfig and on arm64, but I'm not claiming that I
-have necessarily found all special case corners.  That said, it's small
-and pretty straightforward. 
+a639027a1be1d6 Marc Zyngier 2022-02-08  381  
+a639027a1be1d6 Marc Zyngier 2022-02-08  382  static irqreturn_t m1_pmu_handle_irq(struct arm_pmu *cpu_pmu)
+a639027a1be1d6 Marc Zyngier 2022-02-08  383  {
+a639027a1be1d6 Marc Zyngier 2022-02-08  384  	struct pmu_hw_events *cpuc = this_cpu_ptr(cpu_pmu->hw_events);
+a639027a1be1d6 Marc Zyngier 2022-02-08  385  	struct pt_regs *regs;
+a639027a1be1d6 Marc Zyngier 2022-02-08  386  	u64 overflow, state;
+a639027a1be1d6 Marc Zyngier 2022-02-08  387  	int idx;
+a639027a1be1d6 Marc Zyngier 2022-02-08  388  
+a639027a1be1d6 Marc Zyngier 2022-02-08  389  	overflow = read_sysreg_s(SYS_IMP_APL_PMSR_EL1);
+a639027a1be1d6 Marc Zyngier 2022-02-08  390  	if (!overflow) {
+a639027a1be1d6 Marc Zyngier 2022-02-08  391  		/* Spurious interrupt? */
+a639027a1be1d6 Marc Zyngier 2022-02-08  392  		state = read_sysreg_s(SYS_IMP_APL_PMCR0_EL1);
+a639027a1be1d6 Marc Zyngier 2022-02-08  393  		state &= ~PMCR0_IACT;
+a639027a1be1d6 Marc Zyngier 2022-02-08  394  		write_sysreg_s(state, SYS_IMP_APL_PMCR0_EL1);
+a639027a1be1d6 Marc Zyngier 2022-02-08  395  		isb();
+a639027a1be1d6 Marc Zyngier 2022-02-08  396  		return IRQ_NONE;
+a639027a1be1d6 Marc Zyngier 2022-02-08  397  	}
+a639027a1be1d6 Marc Zyngier 2022-02-08  398  
+a639027a1be1d6 Marc Zyngier 2022-02-08  399  	cpu_pmu->stop(cpu_pmu);
+a639027a1be1d6 Marc Zyngier 2022-02-08  400  
+a639027a1be1d6 Marc Zyngier 2022-02-08  401  	regs = get_irq_regs();
+a639027a1be1d6 Marc Zyngier 2022-02-08  402  
+a639027a1be1d6 Marc Zyngier 2022-02-08 @403  	for (idx = 0; idx < cpu_pmu->num_events; idx++) {
+a639027a1be1d6 Marc Zyngier 2022-02-08  404  		struct perf_event *event = cpuc->events[idx];
+a639027a1be1d6 Marc Zyngier 2022-02-08  405  		struct perf_sample_data data;
+a639027a1be1d6 Marc Zyngier 2022-02-08  406  
+a639027a1be1d6 Marc Zyngier 2022-02-08  407  		if (!event)
+a639027a1be1d6 Marc Zyngier 2022-02-08  408  			continue;
+a639027a1be1d6 Marc Zyngier 2022-02-08  409  
+a639027a1be1d6 Marc Zyngier 2022-02-08  410  		armpmu_event_update(event);
+a639027a1be1d6 Marc Zyngier 2022-02-08  411  		perf_sample_data_init(&data, 0, event->hw.last_period);
+a639027a1be1d6 Marc Zyngier 2022-02-08  412  		if (!armpmu_event_set_period(event))
+a639027a1be1d6 Marc Zyngier 2022-02-08  413  			continue;
+a639027a1be1d6 Marc Zyngier 2022-02-08  414  
+a639027a1be1d6 Marc Zyngier 2022-02-08  415  		if (perf_event_overflow(event, &data, regs))
+a639027a1be1d6 Marc Zyngier 2022-02-08  416  			m1_pmu_disable_event(event);
+a639027a1be1d6 Marc Zyngier 2022-02-08  417  	}
+a639027a1be1d6 Marc Zyngier 2022-02-08  418  
+a639027a1be1d6 Marc Zyngier 2022-02-08  419  	cpu_pmu->start(cpu_pmu);
+a639027a1be1d6 Marc Zyngier 2022-02-08  420  
+a639027a1be1d6 Marc Zyngier 2022-02-08  421  	return IRQ_HANDLED;
+a639027a1be1d6 Marc Zyngier 2022-02-08  422  }
+a639027a1be1d6 Marc Zyngier 2022-02-08  423  
 
-Comments?
-
- arch/x86/include/asm/runtime-const.h | 61 ++++++++++++++++++++++++++++
- arch/x86/kernel/vmlinux.lds.S        |  3 ++
- fs/dcache.c                          | 24 +++++++----
- include/asm-generic/Kbuild           |  1 +
- include/asm-generic/runtime-const.h  | 15 +++++++
- include/asm-generic/vmlinux.lds.h    |  8 ++++
- 6 files changed, 104 insertions(+), 8 deletions(-)
- create mode 100644 arch/x86/include/asm/runtime-const.h
- create mode 100644 include/asm-generic/runtime-const.h
-
-diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
-new file mode 100644
-index 000000000000..b4f7efc0a554
---- /dev/null
-+++ b/arch/x86/include/asm/runtime-const.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RUNTIME_CONST_H
-+#define _ASM_RUNTIME_CONST_H
-+
-+#define runtime_const_ptr(sym) ({				\
-+	typeof(sym) __ret;					\
-+	asm("mov %1,%0\n1:\n"					\
-+		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
-+		".long 1b - %c2 - .\n\t"			\
-+		".popsection"					\
-+		:"=r" (__ret)					\
-+		:"i" ((unsigned long)0x0123456789abcdefull),	\
-+		 "i" (sizeof(long)));				\
-+	__ret; })
-+
-+// The 'typeof' will create at _least_ a 32-bit type, but
-+// will happily also take a bigger type and the 'shrl' will
-+// clear the upper bits
-+#define runtime_const_shift_right_32(val, sym) ({		\
-+	typeof(0u+(val)) __ret = (val);				\
-+	asm("shrl $12,%k0\n1:\n"				\
-+		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
-+		".long 1b - 1 - .\n\t"				\
-+		".popsection"					\
-+		:"+r" (__ret));					\
-+	__ret; })
-+
-+#define runtime_const_init(type, sym, value) do {	\
-+	extern s32 __start_runtime_##type##_##sym[];	\
-+	extern s32 __stop_runtime_##type##_##sym[];	\
-+	runtime_const_fixup(__runtime_fixup_##type,	\
-+		(unsigned long)(value), 		\
-+		__start_runtime_##type##_##sym,		\
-+		__stop_runtime_##type##_##sym);		\
-+} while (0)
-+
-+/*
-+ * The text patching is trivial - you can only do this at init time,
-+ * when the text section hasn't been marked RO, and before the text
-+ * has ever been executed.
-+ */
-+static inline void __runtime_fixup_ptr(void *where, unsigned long val)
-+{
-+	*(unsigned long *)where = val;
-+}
-+
-+static inline void __runtime_fixup_shift(void *where, unsigned long val)
-+{
-+	*(unsigned char *)where = val;
-+}
-+
-+static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
-+	unsigned long val, s32 *start, s32 *end)
-+{
-+	while (start < end) {
-+		fn(*start + (void *)start, val);
-+		start++;
-+	}
-+}
-+
-+#endif
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 3509afc6a672..6e73403e874f 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -357,6 +357,9 @@ SECTIONS
- 	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
- #endif
- 
-+	RUNTIME_CONST(shift, d_hash_shift)
-+	RUNTIME_CONST(ptr, dentry_hashtable)
-+
- 	. = ALIGN(PAGE_SIZE);
- 
- 	/* freed after init ends here */
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 407095188f83..4511e557bf84 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -97,12 +97,14 @@ EXPORT_SYMBOL(dotdot_name);
-  */
- 
- static unsigned int d_hash_shift __ro_after_init;
--
- static struct hlist_bl_head *dentry_hashtable __ro_after_init;
- 
--static inline struct hlist_bl_head *d_hash(unsigned int hash)
-+#include <asm/runtime-const.h>
-+
-+static inline struct hlist_bl_head *d_hash(unsigned long hashlen)
- {
--	return dentry_hashtable + (hash >> d_hash_shift);
-+	return runtime_const_ptr(dentry_hashtable) +
-+		runtime_const_shift_right_32(hashlen, d_hash_shift);
- }
- 
- #define IN_LOOKUP_SHIFT 10
-@@ -495,7 +497,7 @@ static void ___d_drop(struct dentry *dentry)
- 	if (unlikely(IS_ROOT(dentry)))
- 		b = &dentry->d_sb->s_roots;
- 	else
--		b = d_hash(dentry->d_name.hash);
-+		b = d_hash(dentry->d_name.hash_len);
- 
- 	hlist_bl_lock(b);
- 	__hlist_bl_del(&dentry->d_hash);
-@@ -2104,7 +2106,7 @@ static noinline struct dentry *__d_lookup_rcu_op_compare(
- 	unsigned *seqp)
- {
- 	u64 hashlen = name->hash_len;
--	struct hlist_bl_head *b = d_hash(hashlen_hash(hashlen));
-+	struct hlist_bl_head *b = d_hash(hashlen);
- 	struct hlist_bl_node *node;
- 	struct dentry *dentry;
- 
-@@ -2171,7 +2173,7 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
- {
- 	u64 hashlen = name->hash_len;
- 	const unsigned char *str = name->name;
--	struct hlist_bl_head *b = d_hash(hashlen_hash(hashlen));
-+	struct hlist_bl_head *b = d_hash(hashlen);
- 	struct hlist_bl_node *node;
- 	struct dentry *dentry;
- 
-@@ -2277,7 +2279,7 @@ EXPORT_SYMBOL(d_lookup);
- struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
- {
- 	unsigned int hash = name->hash;
--	struct hlist_bl_head *b = d_hash(hash);
-+	struct hlist_bl_head *b = d_hash(name->hash_len);
- 	struct hlist_bl_node *node;
- 	struct dentry *found = NULL;
- 	struct dentry *dentry;
-@@ -2397,7 +2399,7 @@ EXPORT_SYMBOL(d_delete);
- 
- static void __d_rehash(struct dentry *entry)
- {
--	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
-+	struct hlist_bl_head *b = d_hash(entry->d_name.hash_len);
- 
- 	hlist_bl_lock(b);
- 	hlist_bl_add_head_rcu(&entry->d_hash, b);
-@@ -3129,6 +3131,9 @@ static void __init dcache_init_early(void)
- 					0,
- 					0);
- 	d_hash_shift = 32 - d_hash_shift;
-+
-+	runtime_const_init(shift, d_hash_shift, d_hash_shift);
-+	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
- }
- 
- static void __init dcache_init(void)
-@@ -3157,6 +3162,9 @@ static void __init dcache_init(void)
- 					0,
- 					0);
- 	d_hash_shift = 32 - d_hash_shift;
-+
-+	runtime_const_init(shift, d_hash_shift, d_hash_shift);
-+	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
- }
- 
- /* SLAB cache for __getname() consumers */
-diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
-index b20fa25a7e8d..052e5c98c105 100644
---- a/include/asm-generic/Kbuild
-+++ b/include/asm-generic/Kbuild
-@@ -46,6 +46,7 @@ mandatory-y += pci.h
- mandatory-y += percpu.h
- mandatory-y += pgalloc.h
- mandatory-y += preempt.h
-+mandatory-y += runtime-const.h
- mandatory-y += rwonce.h
- mandatory-y += sections.h
- mandatory-y += serial.h
-diff --git a/include/asm-generic/runtime-const.h b/include/asm-generic/runtime-const.h
-new file mode 100644
-index 000000000000..b54824bd616e
---- /dev/null
-+++ b/include/asm-generic/runtime-const.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RUNTIME_CONST_H
-+#define _ASM_RUNTIME_CONST_H
-+
-+/*
-+ * This is the fallback for when the architecture doesn't
-+ * support the runtime const operations.
-+ *
-+ * We just use the actual symbols as-is.
-+ */
-+#define runtime_const_ptr(sym) (sym)
-+#define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
-+#define runtime_const_init(type,sym,value) do { } while (0)
-+
-+#endif
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 5703526d6ebf..389a78415b9b 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -944,6 +944,14 @@
- #define CON_INITCALL							\
- 	BOUNDED_SECTION_POST_LABEL(.con_initcall.init, __con_initcall, _start, _end)
- 
-+#define RUNTIME_NAME(t,x) runtime_##t##_##x
-+
-+#define RUNTIME_CONST(t,x)						\
-+	. = ALIGN(8);							\
-+	RUNTIME_NAME(t,x) : AT(ADDR(RUNTIME_NAME(t,x)) - LOAD_OFFSET) {	\
-+		*(RUNTIME_NAME(t,x));					\
-+	}
-+
- /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
- #define KUNIT_TABLE()							\
- 		. = ALIGN(8);						\
 -- 
-2.45.1.209.gc6f12300df
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
