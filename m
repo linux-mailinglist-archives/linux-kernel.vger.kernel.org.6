@@ -1,158 +1,87 @@
-Return-Path: <linux-kernel+bounces-206904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24359900F8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7066C900F8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50561B2355E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36EA71C21369
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED6517C68;
-	Sat,  8 Jun 2024 04:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E4612E6D;
+	Sat,  8 Jun 2024 04:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VM5PdSUR"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A449717984
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 04:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nWCE2ohU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD0A3D68;
+	Sat,  8 Jun 2024 04:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717821628; cv=none; b=QAYLm1UhvLsjfPSIn86e5M1AZvKI/2NyC0NaOQjVe0MXQdGArZDkdgUkwr20WnvOCBx5U/P5quq6eBisMN4ZIVFiwCcgAEap1oJ5jfVFINBHAzu/AlaDYavx6++tpG1QeCN17KZLN11oIzTG7bKsSlnw318oqWJsI4Qi/sUp/mw=
+	t=1717821578; cv=none; b=YgsnoPdDkGrp3OXyHPn3A512PuLHnVv6HTazvuicOUthJoW4B7rPhC5+VSnH3nfe/eYwvY2tXq3TSjkqPuYRO1+3/jZ8NZ3PV0UBWrMg+vMwNkYKKQS3DTi4rmNmFiTJP/to2ykXj331kWUODv0NqoxlK6z/16Z5mvyas1eljY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717821628; c=relaxed/simple;
-	bh=U6oal7Ip+u1M1fmvA60ymB/YCAeCyY5dNC920KcELuI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=De8mFyFMrnfaKc6KgVZ6HN3XdZH43HgoY89+Mh2UXjvLnf5OePcmmjOKpWoV1clgx/NKbAwvIew9+ywZAFeuzky8KITYrqBoeiVAd1iByl81gspeOrn5Ea2jD5h4wDRKn1wPp2SpQa7XnoOJrRQvETqPpzUSOb+y82fsQY4QkuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VM5PdSUR; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
-	Content-Type; bh=H2TmM8IrQ5a7tztR18Cxx5YmBHs5vMZX2tXrmy3VWxc=;
-	b=VM5PdSURfZDLkOyzsWLxMHROk6mml6+/aX40Dt94B0HJlpGXDpXnA8VdmfADCG
-	epTBQFHU+KlccqWsHoogPx4IoF3+dZfUen+b7eLMzJmsNA5Mbb+7wJqC3TNnwVwP
-	WcFSrnv4Q35IkSkUV13aI8G/w7rO1TE77NKS2Cv9R9xRA=
-Received: from [172.21.21.216] (unknown [118.242.3.34])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wD3f0BZ4GNmTrjuBA--.40426S2;
-	Sat, 08 Jun 2024 12:38:51 +0800 (CST)
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <1717498121-20926-1-git-send-email-yangge1116@126.com>
- <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
- <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
-From: yangge1116 <yangge1116@126.com>
-Message-ID: <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
-Date: Sat, 8 Jun 2024 12:38:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1717821578; c=relaxed/simple;
+	bh=0SEMGfwmVBBa9SW6qjrXV4oYQIyBf9H49FvAj7GthAY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eWn4mJ0HZgeLV5STti2Ao+IstFCZv8EncUkd9i0mCYWlan45i5x2+qbxGnpLdVpaG8/3PsOvJnbSMXO4bfQf8XnrOsU0skfHX1q7RzRpbIRe/M4RuMM/85/Uw163Mu4QzHXZPuIMC2HGBg8MjrzJR9Bn+vPg4gMynJqIUyzxweU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nWCE2ohU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6873DC2BD11;
+	Sat,  8 Jun 2024 04:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1717821577;
+	bh=0SEMGfwmVBBa9SW6qjrXV4oYQIyBf9H49FvAj7GthAY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nWCE2ohU0p5JfW06/Z6E8d6Ezt4RMf1Y7XdlACppk1QWxGvyts1ndltbyeYQu8gJo
+	 hIL/OPYc3jTeB5LDlYc5NShzW29jHIQ2ZI2wHYwHsFDfyzOVpIfaexxO65T2w7JYXv
+	 Hx5bKG6I5WZk4V1iij+5PkKR9q2ey9K89F6U13B4=
+Date: Fri, 7 Jun 2024 21:39:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, gost.dev@samsung.com,
+ David Hildenbrand <david@redhat.com>, willy@infradead.org,
+ mcgrof@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zi Yan <zi.yan@sent.com>, Pankaj Raghav
+ <p.raghav@samsung.com>
+Subject: Re: [PATCH v3] selftests/mm: use asm volatile to not optimize mmap
+ read variable
+Message-Id: <20240607213936.a58028617aacdbf6913d3735@linux-foundation.org>
+In-Reply-To: <20240606203619.677276-1-kernel@pankajraghav.com>
+References: <20240606203619.677276-1-kernel@pankajraghav.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f0BZ4GNmTrjuBA--.40426S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFykJFyUJw4kKw4xCry5CFg_yoW5Aw4xpF
-	WrGasFkF4DGa1Yywn7tr1DZr1FyrW8ta43CF1fCr98ZF9YvFyIkrW8Ka1a9F48Aws5Gr40
-	vw4jyFZ7ua4DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bOXocUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWQz3G2VLanpPvgABs3
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu,  6 Jun 2024 20:36:19 +0000 "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> wrote:
 
-
-在 2024/6/6 下午3:56, David Hildenbrand 写道:
->>> Some random thoughts about some folio_test_lru() users:
->>>
->>> mm/khugepaged.c: skips pages if !folio_test_lru(), but would fail skip
->>> it either way if there is the unexpected reference from the LRU batch!
->>>
->>> mm/compaction.c: skips pages if !folio_test_lru(), but would fail skip
->>> it either way if there is the unexpected reference from the LRU batch!
->>>
->>> mm/memory.c: would love to identify this case and to a lru_add_drain()
->>> to free up that reference.
->>>
->>> mm/huge_memory.c: splitting with the additional reference will fail
->>> already. Maybe we'd want to drain the LRU batch.
->>
->> Agree.
->>
->>>
->>> mm/madvise.c: skips pages if !folio_test_lru(). I wonder what happens if
->>> we have the same page twice in an LRU batch with different target 
->>> goals ...
->>
->> IIUC, LRU batch can ignore this folio since it's LRU flag is cleared by
->> folio_isolate_lru(), then will call folios_put() to frop the reference.
->>
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> I think what's interesting to highlight in the current design is that a 
-> folio might end up in multiple LRU batches, and whatever the result will 
-> be is determined by the sequence of them getting flushed. Doesn't sound 
-> quite right but maybe there was a reason for it (which could just have 
-> been "simpler implementation").
+> create_pagecache_thp_and_fd() in split_huge_page_test.c used the
+> variable dummy to perform mmap read.
 > 
->>
->>> Some other users (there are not that many that don't use it for sanity
->>> checks though) might likely be a bit different.
+> However, this test was skipped even on XFS which has large folio
+> support. The issue was compiler (gcc 13.2.0) was optimizing out the
+> dummy variable, therefore, not creating huge page in the page cache.
 > 
-> There are also some PageLRU checks, but not that many.
+> Use asm volatile() trick to force the compiler not to optimize out
+> the loop where we read from the mmaped addr. This is similar to what is
+> being done in other tests (cow.c, etc)
 > 
->>
->> mm/page_isolation.c: fail to set pageblock migratetype to isolate if
->> !folio_test_lru(), then alloc_contig_range_noprof() can be failed. But
->> the original code could set pageblock migratetype to isolate, then
->> calling drain_all_pages() in alloc_contig_range_noprof() to drop
->> reference of the LRU batch.
->>
->> mm/vmscan.c: will call lru_add_drain() before calling
->> isolate_lru_folios(), so seems no impact.
-> 
-> lru_add_drain() will only drain the local CPU. So if the folio would be 
-> stuck on another CPU's LRU batch, right now we could isolate it. When 
-> processing that LRU batch while the folio is still isolated, it would 
-> currently simply skip the operation.
-> 
-> So right now we can call isolate_lru_folios() even if the folio is stuck 
-> on another CPU's LRU batch.
-> 
-> We cannot really reclaim the folio as long is it is in another CPU's LRU 
-> batch, though (unexpected reference).
-> 
->>
->> BTW, we also need to look at the usage of folio_isolate_lru().
-> 
-> Yes.
-> 
->>
->> It doesn’t seem to have major obstacles, but there are many details to
->> analyze :)
-> 
-> Yes, we're only scratching the surface.
-> 
-> Having a way to identify "this folio is very likely some CPU's LRU 
-> batch"  could end up being quite valuable, because likely we don't want 
-> to blindly drain the LRU simply because there is some unexpected 
-> reference on a folio [as we would in this patch].
+> As the variable is now used in the asm statement, remove the unused
+> attribute.
 > 
 
-Can we add a PG_lru_batch flag to determine whether a page is in lru 
-batch? If we can, seems this problem will be easier.
+What are the runtime effects of this change?  An inappropriate test
+failure?  If so, shouldn't we fix 6.9.x kernels also?  And is
+fc4d182316bd ("mm: huge_memory: enable debugfs to split huge pages to
+any order") an appropriate Fixes: target?
 
 
