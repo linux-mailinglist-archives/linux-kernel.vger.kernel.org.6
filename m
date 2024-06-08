@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-207045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E4D9011AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:33:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587499011B5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A231F21E0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716C11C210FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95077178391;
-	Sat,  8 Jun 2024 13:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E111F179665;
+	Sat,  8 Jun 2024 13:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="TCBD6F3e"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UcWsidjU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FD3156220
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 13:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3575415A86A
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 13:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717853606; cv=none; b=scCKykdGMWGZXLfotbBSJqY71a3XyHU/bSYyCjgBIHqk3+zcAVjvhTMRhh7Zz3HF6zPHnagtIQsCg4fCN/MPZi+rrVyzgTedBM9f198YiYJVB8K7qkpoRzc7B3ws8EVS7FN9ywrpyHWXBXsB0H8/U/VkLzI3RRBTlzRodHdSx60=
+	t=1717853964; cv=none; b=cAUfxWwg1NlDBffJ+Ttr7/W2zno0N5AAQHki2INvcaPipxE+WCyCMUIKxzFG4xmjDcg2chTOc+T0rhDKVO99rtophhNLBNzznlcAh4qp/RZqFgrmmQKNjYfLuPX63tyGCmZmXxEylkO0C1uAVJcS/bj3QFtYBKFxvG3da6PHkFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717853606; c=relaxed/simple;
-	bh=2ybfFLVMGLQtZT8gY07xGd6Jr2VmK1ipCNOwcUZnlLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mRE+ThWfFmcgDVw3n9+Ws1ZIpGP4RlObV0c+8gDW6spUBYUD64AEgPApLK6qXWdCA3YLnwn88n0J/dualq54knpaRQOIArOs4hOQYgbDtzVqhWsJHw5ZjRWnaJ0RDGDbrq2AOOKETF6fSn/THdx3wj06sDII8g2YzI3g9oNH8Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=TCBD6F3e; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DE8F31C0004;
-	Sat,  8 Jun 2024 13:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1717853596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=F9RUbVGykbnpeafXzmCWcdAJle5I8sUbSC36sWYm8D0=;
-	b=TCBD6F3e1YZCpB8fzicny8fQQ7jig/qBp7QRgf+yh/8NVfiZG3rlvA8eabL5mauAoeiBjc
-	iKP4W7+9S1sb42ZCp+soIcmNB+JeK9bDruaKMa8kzj01kwyk90cMtcAdV1FBACSy0Tc+7D
-	FpX2fN7SoGqMafXgfVqPJQvmGGfqyfeNmI18NhcUd4JrqHdog+LuiHEZUAmeG6dgHrCNOu
-	x4+/Tc54j+V8hgXxuqBlnGbSR29nh2qaZUuN5pVWq7OFai35vGjdA2Y7DPsGqeAoVC2gw1
-	cEXb23/j4QloSNdZJkzf/2lkwZzEMJZtC/lB5zDF1TmFQnFUlSDlUAwxlgBzwA==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Date: Sat, 08 Jun 2024 15:33:11 +0200
-Subject: [PATCH] mailmap: add entry for Jean-Michel Hautbois
+	s=arc-20240116; t=1717853964; c=relaxed/simple;
+	bh=uaPK4xrTNaoaOY/sggbFJGDdFEFu0GvkAoaczriQjN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNkFn23IgyLEZWwAISge4SjdrhRuhyYcGIQo34Ne0PM+v3ZztVKC240oLatzSgVLW+XM5lkFrGLRTAotxctG+pD8HaMiqNNT27KkoXXzyvXAKPR/+r7wyg/wuvPGBbKDLIwVySYDBYkHMIVsnASCyBlzXXNu/yp9/bhizlf6PR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UcWsidjU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C845540E0176;
+	Sat,  8 Jun 2024 13:39:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CWErTM9s9C7R; Sat,  8 Jun 2024 13:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717853955; bh=PQ29wWCcL69CHNpGbAphn9Hd4o/BHBI19wH67CwMGO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UcWsidjUwXX4R0wVlaFb0Pe3OrC2PNgzvOqIN7tBpmMNM6NYU2wK38mihW/aiKNia
+	 l1YgOF0gXxbplYT3/EHdRhiHNoB4CsDC0svzHOsoGW+aKnr1GRpDLfYr1vRKALbsy2
+	 /cbkcVeWgNv0oJ2eukG8WIH+yBfv6ITR54eWsq4mdalK4PDagweK8e36eDiijWcexK
+	 Gxp4S3HplJQXIGUbLGxdfUttQFRiFmS9WS3yJm5y8ETX0LitF+5wG+TakZ0qp+hbuj
+	 UXZWjLalEWPm3GUAa8HT6rQVcmNMr1peTVoNkGpQheTOfgwKkHl/17MmrMVIvjkcgc
+	 cjFLNM1Q9ApD9RTQlTQxSh4rzWHf96Pc1MDVI3LM1UwOE2ETTwSOOBVcHRXEORybH2
+	 h4zpbJrZ2r6NSPpDsBxk4laAZHs2WcTStGXtHW/8qhXK30mjWDeCcP0Ym+7Rag49ml
+	 Pwu8KpswqJYXnI8ck5P74xfIFY/oFFyZ1+BytzgFOYk8T0eanKwqW7QchKdKya9AFP
+	 diD8PvPLbl9VLNUeE/0aXxhpQN4Ys7YLCkOa7KHDcHhb/U0t6TTEnKHG+mg7iOdQ4s
+	 zyFkuuilq3O4ym7JuSwZM9N2fI9CIhSFPzJHcOlN8DALOFF7NXKWXll/lizCbQzA+v
+	 W38QVOzU2xH0c6E3+8383Da4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8A63840E016A;
+	Sat,  8 Jun 2024 13:39:03 +0000 (UTC)
+Date: Sat, 8 Jun 2024 15:38:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Chatre, Reinette" <reinette.chatre@intel.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v3 1/2] cacheinfo: Add function to get cacheinfo for a
+ given (cpu, cachelevel)
+Message-ID: <20240608133853.GAZmRe7d3Q3IpXhD-l@fat_crate.local>
+References: <20240606164047.318378-1-tony.luck@intel.com>
+ <20240606164047.318378-2-tony.luck@intel.com>
+ <SJ1PR11MB60830475F52F359E116B2274FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <SJ1PR11MB608331168096BFEBBB311EDCFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20240608121207.GEZmRKl3uwP9Bfrx8D@fat_crate.local>
+ <SJ1PR11MB6083ED84B69CABBBD3ED9605FCC42@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240608-jmh-mailmap-v1-1-6cd6b71f4fed@yoseli.org>
-X-B4-Tracking: v=1; b=H4sIAJZdZGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMwML3azcDN3cxMyc3MQCXZM0Y4sUS0NDYzNDIyWgjoKi1LTMCrBp0bG
- 1tQCju0W6XQAAAA==
-To: linux-kernel@vger.kernel.org
-Cc: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717853595; l=1061;
- i=jeanmichel.hautbois@yoseli.org; s=20240608; h=from:subject:message-id;
- bh=2ybfFLVMGLQtZT8gY07xGd6Jr2VmK1ipCNOwcUZnlLs=;
- b=hjtomw5mH/YoDl4SPjr0rydcc1bYSayyMvDuTOZJa4KsDtaH9KPSlgNUdNvbKjooM1Tlm6tzX
- eMQnkE6fUnkA7z6UFUp0zxxhSijpd8PE3/1/lfj48PlRjxY78siPQ5J
-X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
- pk=oMZuYhJzT0j5MI73RlNUVYaA8VdWpFR/Sao0JKz1D2I=
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083ED84B69CABBBD3ED9605FCC42@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-As recent contributions where made with the @ideasonboard.com email, any
-reply would fail. Add the proper address to map this old one.
+On Sat, Jun 08, 2024 at 01:27:30PM +0000, Luck, Tony wrote:
+> Does this look like an OK direction?
 
-Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+Yap, actually pretty nice and straight-forward at a quick glance.
 
-diff --git a/.mailmap b/.mailmap
-index efd9fa867a8e..dd8ff4a02cca 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -284,6 +284,7 @@ Jeff Layton <jlayton@kernel.org> <jlayton@poochiereds.net>
- Jeff Layton <jlayton@kernel.org> <jlayton@primarydata.com>
- Jeff Layton <jlayton@kernel.org> <jlayton@redhat.com>
- Jeffrey Hugo <quic_jhugo@quicinc.com> <jhugo@codeaurora.org>
-+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> <jeanmichel.hautbois@ideasonboard.com>
- Jens Axboe <axboe@kernel.dk> <axboe@suse.de>
- Jens Axboe <axboe@kernel.dk> <jens.axboe@oracle.com>
- Jens Axboe <axboe@kernel.dk> <axboe@fb.com>
+> Any better name for the new header?
 
----
-base-commit: dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
-change-id: 20240608-jmh-mailmap-4f38d9113612
+Considering how we call that machinery "cpuhp" everywhere, I think it
+actually fits perfectly.
 
-Best regards,
+> While I'm moving those declarations, should I zap the "extern " from the
+> function ones to match current fashion for this (checkpatch barfs all over
+> them)?
+
+Yeah, you can ignore checkpatch or simply do another patch ontop which
+does just that. Code movement should be only mechanical movement, with
+no other changes for ease of review.
+
+In any case, thanks for doing that, that looks real good to me.
+
 -- 
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
