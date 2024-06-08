@@ -1,229 +1,165 @@
-Return-Path: <linux-kernel+bounces-206897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449C5900F73
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A7A900F78
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDFA41C20D38
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E37DE1C2161C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACBAFBEA;
-	Sat,  8 Jun 2024 04:19:31 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A6F13AD8;
+	Sat,  8 Jun 2024 04:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dxUFkdXO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E148C1A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 04:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28CEDDC5
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 04:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717820371; cv=none; b=CV/IKkU6lT6tumw2ARo7A/yipVuj4llhX+aQNVCBe9+k5km5cLwmQGf+IxcRYAWms9TuEwHNSqPA76zc2J9IEUfILc6e58jz1pod+CZvKzfaOcqZjxlgHwS2yY7Q6rGfWFR3EtIOBPsvo3L3Fk6D2SKWTn+XhdH54ODGom7GyjU=
+	t=1717820651; cv=none; b=XLDg8GSDOFju6iUe3oNsD1e8EfeNJtAo5MBKYBwWL1QVjZ3dyUnYQ9dXOCTwUlXW5BtfqBA9TMCxLoF4+8i6LjG3QLshH2I2/2TRj1dlLeFXBKYAIhBml0cG/9rRpYrdgaFBauJFx1x1GxNRRpwpcmMGepS+J71sVQn/IJaKtRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717820371; c=relaxed/simple;
-	bh=X0teV559jlfZtNFTdn0vczKwkiEC69CYvIAxRsiPpCA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qUTYB+AXg5HsSJkhdDUAhWYYFRleqSHYEmsj4CS6RKM8YPv3Jgd4dYDdHBU2KaXHNShOTrlA2qRbimNZxznpONkXmkOhtxdXCVPsO0BLKmAu67mPogzv81act3N6TWjedRek4mK8PRPATAAfn2XfCd3YiLVK28ETxn5vNZF63AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3745fb76682so28282325ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 21:19:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717820369; x=1718425169;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aFuJHIowLvdv+S/MY3yW2L+R0NtntumzDdr8pfEPbnA=;
-        b=JkNzaDny4cVL9SI4gdZPjZHNujmC7yple6iO5E7SrqxrNocsFHoGg0npqRnMiBMxim
-         K904tyuuCoMXp2Kx987wUI5u42KH4+prKtzEXV27gGKi0cyRVnOZ3an7SdRkOlj1bLMI
-         3vqVypXi9RmgAlm9OQQ8L0B+tAjRhn2QkXr/bzOYpf5dmayidlgTfO5Py/o9WeTNMqxa
-         kO7KfguHeuNU5D5nveMGwBIldW/fLJr34w+CJ2+H4gvxsk8+Ie/30csZvV1G892UdNw0
-         5Em7EvYpUIVKJbPuiVVgJwJ6OOpet+rb0OoZIWfBsj5XVRvobGqDxOPoRTmk32kliETu
-         1TaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsyTjY8t6wpeDJAQ75wjjgv1GrNnqkFlazCkwQn7lPnlc2rbipoypJkhJ4BudDcdQ0kybTNty1xAtTIMEmldNBbBA6IDEyVnJQhw/G
-X-Gm-Message-State: AOJu0YwAba7DW7QILhXRUKgLuYiA3mh+cZCIu8RE8QkW5JaQu1pxPXB2
-	MSTTY8x4jjveLTHUfhnRyyeR63aO41hhSI8ZzinfOxi8Ho3rjN/6OHiiRlrxiXAxEhS8AMZBYzu
-	TYvrPCUR5E4FGVmZzPKSLu9HEjTMcTR9ioYlzTzjQiLRyS8dbnsL6vcU=
-X-Google-Smtp-Source: AGHT+IG+tBNAsB4soo5Wd1WTLfqHn2iEeP1fHWDV1vVAOHz8Q9oGKp+gOvSsE42TikUV3AwOJ+seTavtBssdIgKSiDfGZXBYwqMc
+	s=arc-20240116; t=1717820651; c=relaxed/simple;
+	bh=djyCoxwdB02mJxnU8dMa7DQUh1mSR9t7kFne7+MeAtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Py8BbttxlShFmko/5A4no22gQ1QpfbnqYA4KewAC6ZT0RWJZKv/qGDf+rsx/mpLXwXmfV5mIxesOv/ng17EI37PnydFUNRdGlSg2KPzi+Qse+4BavJvezphCWG0PSq83aUdrBvs2pgC/4f5wvPp8kMnXYyPYNL1ru5YsNEM/QAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dxUFkdXO; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717820650; x=1749356650;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=djyCoxwdB02mJxnU8dMa7DQUh1mSR9t7kFne7+MeAtI=;
+  b=dxUFkdXOXcu/tkLNvFJPWO5wvnGXpPfnbMEvaBgdcbZMmWi9YjAstB7h
+   /dmWV4o8D3uR5Sc95O2e+BamX+63/K1UI4lFkyCM8/lMQHVRn6DzoOtBb
+   rLpHZoFLrka0y6n/2GZJR9Pg2CCbiXTpY+50tH1X8USnC5G8UfJpc7lC0
+   VBxibZoeIiYIy5GFRqp08tVgpf4iqQ6swds0rJpRMiNXO0Oq/zrNkvqUk
+   ek8vNTyaxG0JKSRJTTgb5OeZsx1lDSXwYjCfgWVugginwI88p0TRFwQ61
+   03Z2t4yfWvUoeq4XzuBuzGCf6cmihV/lXnlWbIRcRpcLlEmgvUNlQnaEL
+   Q==;
+X-CSE-ConnectionGUID: gC0VYnRXQROZp/ICmF8I1A==
+X-CSE-MsgGUID: eSDBRO9nQXWyb1vQB95lsg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25970568"
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="25970568"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 21:24:10 -0700
+X-CSE-ConnectionGUID: NhCpHC2VTRGsG4BYleMG/Q==
+X-CSE-MsgGUID: fnTx+2CBTLaD5CD5MbJziA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="43456635"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 07 Jun 2024 21:24:06 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFncZ-0000yp-0Y;
+	Sat, 08 Jun 2024 04:24:03 +0000
+Date: Sat, 8 Jun 2024 12:23:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Greg KH <greg@kroah.com>,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH v5 1/7] kexec_file: allow to place kexec_buf randomly
+Message-ID: <202406081214.kNbwlJWP-lkp@intel.com>
+References: <20240607122622.167228-2-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4b:b0:369:f7ca:a361 with SMTP id
- e9e14a558f8ab-37580303aebmr3387565ab.1.1717820368771; Fri, 07 Jun 2024
- 21:19:28 -0700 (PDT)
-Date: Fri, 07 Jun 2024 21:19:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de6b81061a5938d6@google.com>
-Subject: [syzbot] [btrfs?] INFO: trying to register non-static key in btrfs_stop_all_workers
-From: syzbot <syzbot+8e86db7d430e87415248@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607122622.167228-2-coxu@redhat.com>
 
-Hello,
+Hi Coiby,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=176b7026980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e86db7d430e87415248
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+[auto build test ERROR on 8a92980606e3585d72d510a03b59906e96755b8a]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Coiby-Xu/kexec_file-allow-to-place-kexec_buf-randomly/20240607-203154
+base:   8a92980606e3585d72d510a03b59906e96755b8a
+patch link:    https://lore.kernel.org/r/20240607122622.167228-2-coxu%40redhat.com
+patch subject: [PATCH v5 1/7] kexec_file: allow to place kexec_buf randomly
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240608/202406081214.kNbwlJWP-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081214.kNbwlJWP-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-f06ce441.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/67a525046331/vmlinux-f06ce441.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/01865e308aa0/bzImage-f06ce441.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406081214.kNbwlJWP-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8e86db7d430e87415248@syzkaller.appspotmail.com
+All errors (new ones prefixed by >>):
 
-BTRFS info (device loop2): last unmount of filesystem 395ef67a-297e-477c-816d-cd80a5b93e5d
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 0 PID: 9630 Comm: syz-executor.2 Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- assign_lock_key kernel/locking/lockdep.c:976 [inline]
- register_lock_class+0xc2a/0x1230 kernel/locking/lockdep.c:1289
- __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
- put_pwq_unlocked kernel/workqueue.c:1662 [inline]
- put_pwq_unlocked kernel/workqueue.c:1655 [inline]
- destroy_workqueue+0x5df/0xaa0 kernel/workqueue.c:5851
- btrfs_stop_all_workers+0x29f/0x370 fs/btrfs/disk-io.c:1804
- close_ctree+0x4e3/0xf90 fs/btrfs/disk-io.c:4365
- generic_shutdown_super+0x159/0x3d0 fs/super.c:642
- kill_anon_super+0x3a/0x60 fs/super.c:1226
- btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72e5579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000ffbeced8 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
-RAX: 0000000000000000 RBX: 00000000ffbecf80 RCX: 0000000000000009
-RDX: 00000000f743bff4 RSI: 00000000f738c361 RDI: 00000000ffbee024
-RBP: 00000000ffbecf80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in kernel/locking/qspinlock.c:131:9
-index 855 is out of range for type 'long unsigned int [8]'
-CPU: 0 PID: 9630 Comm: syz-executor.2 Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x110/0x150 lib/ubsan.c:429
- decode_tail kernel/locking/qspinlock.c:131 [inline]
- __pv_queued_spin_lock_slowpath+0xcb2/0xcc0 kernel/locking/qspinlock.c:468
- pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
- queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x210/0x2c0 kernel/locking/spinlock_debug.c:116
- put_pwq_unlocked kernel/workqueue.c:1662 [inline]
- put_pwq_unlocked kernel/workqueue.c:1655 [inline]
- destroy_workqueue+0x5df/0xaa0 kernel/workqueue.c:5851
- btrfs_stop_all_workers+0x29f/0x370 fs/btrfs/disk-io.c:1804
- close_ctree+0x4e3/0xf90 fs/btrfs/disk-io.c:4365
- generic_shutdown_super+0x159/0x3d0 fs/super.c:642
- kill_anon_super+0x3a/0x60 fs/super.c:1226
- btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72e5579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000ffbeced8 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
-RAX: 0000000000000000 RBX: 00000000ffbecf80 RCX: 0000000000000009
-RDX: 00000000f743bff4 RSI: 00000000f738c361 RDI: 00000000ffbee024
-RBP: 00000000ffbecf80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
----[ end trace ]---
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+>> kernel/kexec_file.c:504:12: error: no member named 'random' in 'struct kexec_buf'
+     504 |         if (kbuf->random)
+         |             ~~~~  ^
+>> kernel/kexec_file.c:505:16: error: call to undeclared function 'kexec_random_start'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     505 |                 temp_start = kexec_random_start(temp_start, end);
+         |                              ^
+   2 errors generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +504 kernel/kexec_file.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+   496	
+   497	static int locate_mem_hole_bottom_up(unsigned long start, unsigned long end,
+   498					     struct kexec_buf *kbuf)
+   499	{
+   500		struct kimage *image = kbuf->image;
+   501		unsigned long temp_start, temp_end;
+   502	
+   503		temp_start = max(start, kbuf->buf_min);
+ > 504		if (kbuf->random)
+ > 505			temp_start = kexec_random_start(temp_start, end);
+   506	
+   507		do {
+   508			temp_start = ALIGN(temp_start, kbuf->buf_align);
+   509			temp_end = temp_start + kbuf->memsz - 1;
+   510	
+   511			if (temp_end > end || temp_end > kbuf->buf_max)
+   512				return 0;
+   513			/*
+   514			 * Make sure this does not conflict with any of existing
+   515			 * segments
+   516			 */
+   517			if (kimage_is_destination_range(image, temp_start, temp_end)) {
+   518				temp_start = temp_start + PAGE_SIZE;
+   519				continue;
+   520			}
+   521	
+   522			/* We found a suitable memory range */
+   523			break;
+   524		} while (1);
+   525	
+   526		/* If we are here, we found a suitable memory range */
+   527		kbuf->mem = temp_start;
+   528	
+   529		/* Success, stop navigating through remaining System RAM ranges */
+   530		return 1;
+   531	}
+   532	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
