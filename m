@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-207028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9A990116B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C1590116C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2400A282C1F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 12:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4604C2819C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 12:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCD81779B8;
-	Sat,  8 Jun 2024 12:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FD0178375;
+	Sat,  8 Jun 2024 12:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="M4NepYWc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfTFPqM6"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8BC17BBA
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 12:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D217BB7;
+	Sat,  8 Jun 2024 12:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717848762; cv=none; b=shTOQJ8nOUa9SVq1Ke6humajWLh0wMFl6nmcyfliDYDlTG0eHyYCzFNpPYDRd4MEaIFBtFTr6CsD6qM6wE4pPrl0CHt55xREhCl2eBBLyTyMIbXrIeCGSxCaM+tw3YMWczcy9D4JdmiaTzqa+XapqmjjHdz9SN+CgMm5oD7KeGM=
+	t=1717848979; cv=none; b=lCd2LDomXwhsMH7UlC+Na4gaYyxnHNCojFy4VnqNwH9cGu293EHMFL77a8jJZ3TXOA5lhyfGGRk5db/BuuHUTTDyBn0g0ADIO8Hahkpql/b3uF+a+sSvwxTuOJ0hR+qf94WFv6Rua5a4ybPP7amgIqJzz9IzvNVIO3nEjOJJOsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717848762; c=relaxed/simple;
-	bh=lJHyYs6KFngB9tGOh1CCfS9tiB1H7RIYFnBeJvDaXDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dec/kIf43JcZaDLPZgGRbAbMkBPGQ1Vk8g+ICjxCb4jdjsmwDlP9ZTdTgubaCMMJr0RumQOUkTdd36AVX6w2glRrenQ+alnWRHyrSE73roNmdPryOYuZERPTF/35OmMk8EqyGO7KIKUT1TKvb2fma45Wryhznp/TlbMcLHt1m0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=M4NepYWc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60DF340E0081;
-	Sat,  8 Jun 2024 12:12:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rxVnFuEr4exZ; Sat,  8 Jun 2024 12:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717848747; bh=fTOv5bq5ICWZ/LQ/EFA61DsEKzHcUTrH0VvURF8uw6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M4NepYWcD/mU6d/KBK3pDSEdy4KRjBxsaoy+82oHYtI7NzN+KmY3W7CKxvfKxEGxc
-	 uC06ePNbcJPa3Jw+7Je8gV7ONg1eB034sHQg2sWwq0njG4m4PwZFMUotGBiVG31iLk
-	 M8HiEFT7+0Xs1UbmmlYdLBDOvvHfvWOgdknjQdtTO5c5+xw341QWQPrldQ/BTyOVBV
-	 DVfugZc+ascJneDOKhi68OrYhifgETkU6Ga75bPf2e3Ilho92Z8JkYxoyQJ1vki8jk
-	 VIKovRtaSar2GhO+Yxe72ksr5G4vXe4ZXp3OhZL+353h6wXW+3kxSt/7bpX3yqdHkZ
-	 9cGRcsYkWWbmb1kA14Q0OlOCgncYoWx/rs5wPuUM9GqHvKwPWvXzlH7eJ9s59CK+nx
-	 rVE36NUQW3Sne1f/A7R7CIeNtK9QBW5nC0eQ1LQB/+hmAZli+2QRMO3vKBW2B0c6pC
-	 kVzxINIkELyDwVOKV7BUquKFSZyy03GFvYmNVr1tADnF4f9esu5aiJUr+5whAiy5ec
-	 pPZxaMkTye2GEGwCx+5h6xe4PpyLaTrUfTcuqbPXG1a0V9gJEaZKhKkQFsr9Q3mAyE
-	 2CJ/f1dA1SemRDLbSKuRLh6dxd5HyqF9TW2eSyJLwWtW83gpypxhYA0j168s2myUHt
-	 O0aFIDjTmMuuvHIWcyo98dU4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5D9B540E00C9;
-	Sat,  8 Jun 2024 12:12:15 +0000 (UTC)
-Date: Sat, 8 Jun 2024 14:12:07 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Chatre, Reinette" <reinette.chatre@intel.com>,
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v3 1/2] cacheinfo: Add function to get cacheinfo for a
- given (cpu, cachelevel)
-Message-ID: <20240608121207.GEZmRKl3uwP9Bfrx8D@fat_crate.local>
-References: <20240606164047.318378-1-tony.luck@intel.com>
- <20240606164047.318378-2-tony.luck@intel.com>
- <SJ1PR11MB60830475F52F359E116B2274FCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <SJ1PR11MB608331168096BFEBBB311EDCFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1717848979; c=relaxed/simple;
+	bh=5/UAPYwcgAe7ZWfUsvTDZ0S/CUfovi6lXYY8woJq+8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=od+pEFM9Zi3biSrSKlE4rm5PJJfFnoggnnAojcZPwfzZLPSko+hAiCedOwxzx7Wgq4RUrdcCOota7Nj0t5IvXV9ph71o14wE/zB+mA+CLJYng0wGx6d1msudHm+xf5rNGvf+ubL1VPr0zvooV03WdvuuWc96jn0EX0o82/qQwBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EfTFPqM6; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-681ad081695so2316998a12.3;
+        Sat, 08 Jun 2024 05:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717848978; x=1718453778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QKSBnGSmzchFpYgSY1/szHPlRvPcQPGig0KHSHqMUl8=;
+        b=EfTFPqM6y2h3bLvXK9eUmS78D4SvVF5fiZdzzeEqoxlhQq3u5wNMBSv7CKymnID/SS
+         ziYs0mHUStlT9olzCzcardCXForae6JhFPbM4wTBWAAQrOifOnq0glz34Sjp96Sr53nU
+         fiIX77oFfVYm6sqIJZkc+/C+zYl6A6x86TYbIBQhHFDxDF0i2fRUus9wREa5q4u6nyE8
+         jvhpD6zufEWfJ8Yn3szdqVMto7itulDRMTQfk3yJk1SA5yfng+C319iqiGt+SlK7L9XA
+         mRDwkE+y00Kbiyiy3lfqqdPCkQ61zQd/T1mT1uBa+4AHZtB7QO2wCLRmesojXLNBr7jD
+         iP0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717848978; x=1718453778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QKSBnGSmzchFpYgSY1/szHPlRvPcQPGig0KHSHqMUl8=;
+        b=uWAhRfOowA2grYa86N9W8KIgTLycEp3YfkDXufrPhyTxcPnIDxYIPKrPR8KAdcm2Oc
+         tXDvAUNCVfGFjuSKXlhyNHaz9wf0GVHzkyritWnRY5C+ctnrV5FNUjWZW96gtkLxMKUX
+         inclYIbUo8GII/nRADplaxobuCuO4ZsNvGEI/bJ/xwC8+/qMBa20SGgiOCqWhZ1zGQaH
+         v2Cw9jhPIYOX/cwjBTqPWFGpYEWRjs0OcbR40e21CXuhjs1ArRW5D/NVQbrBQuHs9nf1
+         z4TA17qslfMqO6Y8QqW4b2mFLfeEHVpfCzSoaLiVobN8Rky0Z3qk/Xr/N3NKJviTEKTs
+         H5JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMuloKjUINsjEFRfRY6esSI1n2lwUrComofeaYrZ5UsNNhTgxG98fAKspxZSFxg3xmuYC2M3I9UunMOrOzmb86hB+u2kMH+z0M70FCylo=
+X-Gm-Message-State: AOJu0YwE4+mpLWY1aIN2WKdvlfVSQCSMTLLPELPOu8VpodaRtKCvtH4I
+	BPVL4EbhbxjLUH21A7tlE0OTQtYUV0g3nB8w7dQMyy2orgqyG1cmB9Xv4/J0L20EXy4k2NpejN9
+	6nsaein1G9WIUUVX5ywYsQ39qzPI=
+X-Google-Smtp-Source: AGHT+IHIYC+jXj7oKSbCIQMn0EzuWo5mO4AS/ZMfyaP7ov3SM8eiT8jgL4H6GyHHSF0xknZrZwBHWyzpxvn1NVg7DR8=
+X-Received: by 2002:a17:90a:8a10:b0:2be:9547:41a8 with SMTP id
+ 98e67ed59e1d1-2c2bcc61b80mr4817088a91.48.1717848977670; Sat, 08 Jun 2024
+ 05:16:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB608331168096BFEBBB311EDCFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <4e0f5932-c7bc-4878-862c-1186cbecd71d@gmail.com>
+In-Reply-To: <4e0f5932-c7bc-4878-862c-1186cbecd71d@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 8 Jun 2024 14:16:05 +0200
+Message-ID: <CANiq72kaVw_t=hCJ-qEr=9ybuOngAR6isnCK717dBEm7CFm2NQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm: rust: Enable Rust support for ARMv7
+To: Christian Schrefl <chrisi.schrefl@gmail.com>, Jamie Cunliffe <jamie.cunliffe@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Sven Van Asbroeck <thesven73@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 06, 2024 at 07:58:29PM +0000, Luck, Tony wrote:
-> So this is #include hell that many others have complained about.
+On Sat, Jun 8, 2024 at 12:30=E2=80=AFAM Christian Schrefl
+<chrisi.schrefl@gmail.com> wrote:
+>
+> This is based on the code by Sven Van Asbroeck from the original
+> rust branch and inspired by the AArch version by Jamie Cunliffe.
 
-Starts much earlier:
+Thanks for mentioning that!
 
-In file included from ./include/linux/cpu.h:17,
-                 from ./include/linux/cacheinfo.h:6,
-                 from ./arch/riscv/include/asm/cacheinfo.h:9,
-                 from ./arch/riscv/include/asm/elf.h:16,
-                 from ./include/linux/elf.h:6,
-                 from ./include/linux/module.h:19,
-                 from ./include/linux/device/driver.h:21,
-                 from ./include/linux/device.h:32,
-                 from ./include/linux/acpi.h:14,
-                 from drivers/irqchip/irqchip.c:11:
-./include/linux/node.h:96:25: error: field 'dev' has incomplete type
-   96 |         struct device   dev;
-      |
+(AArch64 perhaps?)
 
-And yeah, this is an abomination.
+> I have tested the rust samples and a custom simple MMIO module
+> on on hardware (De1SoC FPGA + Arm A9 CPU).
 
-> How much do you *REALLY* want that lockdep_assert_cpus_held() to be in <linux/cacheinfo.h>
+Very nice to have tested it in real hardware, thanks!
 
-If we had an easy fix sure but this really is a nightmare after trying
-it a bit here too.
+(Duplicate "on on").
 
-Oh well, some other time.
+> +``arm``        Maintained        ARMv7 Little Endian only.
 
-Thx.
+How hard would it be to test and maintain other versions, eventually?
+I met Jamie recently, he may have some ideas here.
 
--- 
-Regards/Gruss,
-    Boris.
+> -BINDGEN_TARGET_arm64   :=3D aarch64-linux-gnu
+> +BINDGEN_TARGET_arm64:=3D aarch64-linux-gnu
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Spurious change?
+
+> +# Depending on how the architecute defines ARCH_SLAB_MINALIGN, bindgen m=
+ight generate a binding.
+> +# Disable this here as there is a const that will always be generated in=
+ bindings_helper.c
+
+Typo in "architecute". Also, I guess you mean `.h` instead. Please use
+Markdown formatting for consistency with the rest of the file.
+
+> +        panic!("arm uses the builtin rustc target");
+
+Since ARM64 puts the name of the target in the message, it would be
+nice to do the same (or perhaps it can be removed from the ARM64 one
+otherwise).
+
+Cheers,
+Miguel
 
