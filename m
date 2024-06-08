@@ -1,208 +1,225 @@
-Return-Path: <linux-kernel+bounces-206873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FB8900F25
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DFD900F2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA60C1C2093F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E239628320B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0BBBE58;
-	Sat,  8 Jun 2024 01:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BDE8C05;
+	Sat,  8 Jun 2024 02:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b="hdTzjzyc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WybPuoCO"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFJcFZ1r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8656FC6;
-	Sat,  8 Jun 2024 01:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2833A8BF8
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717811269; cv=none; b=hGiHJU6cwTXveVgaltl4zez+0nF4EMJ/YgIDEALNLLd3Szt5H81+7MfG7eVYpghZpHD3z9ZmSG/WvhC7QSQi86zs7wSZxVrYzCSoxeHQJs48Yh0I9dyBIVMNq8lvMmH7WcSINmPejFanO3+a0sVvNrusTEMeRfXAFQuN0HJTnBs=
+	t=1717812126; cv=none; b=EEfL7RrCbq113h27RJnZuPzY6W2AMPIGuBqIHKCQ5hemwocMg24Y8K11oIrmDJgOhfTR+zzL1JqDhG7Zs7LPMrtrduxDlTfSCxFDb6d6pLgYy3N/DD73PnlnPyn+WX49nJVZJb3nSPQvTaS3aGeqIUNf57PW2Pw1c9EqbrvpRbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717811269; c=relaxed/simple;
-	bh=3hAKft0IpTlaATaf6B4KLpVNg79DZ5h1pzjABHPAuk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NeKIaml8OOHw+iWi1mv2g8CJKlpfg4cBNpia8JlXHN6iJ/jKNzkoxG8GEH/FfJxJge1G7dnE9oOTlXUy2OgbwK1FAUvqufldrZG3B3qxydz3Cm8Kwza3HrzQwPB+ZObGNswBB3anK6oeXCpG153M0ivBOCPpA2f1Dkti5za6nkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au; dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b=hdTzjzyc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WybPuoCO; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 75A13138019E;
-	Fri,  7 Jun 2024 21:47:46 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 07 Jun 2024 21:47:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com.au;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1717811266; x=1717897666; bh=wVtkKE02aG
-	BtUM4XVJj9v4PooiUi8hPGO3tB8GgDw7E=; b=hdTzjzycTW0W5sG4FreOYRTMaF
-	9r3BiaiIiAZoTUa/iDwQlVvTtw2mF5dVk+7uiS+OAoRRWf87LcPi5PER4f/p9l7o
-	+ic2UISgdAfXGoN1veCJfWCvcmAQN41DHRxrAgieont0uIT3Po/bawxhqHw37Rqi
-	ENe//xnQMZb7B6jlq9/vFJ9gRtbS3iSMtyWk8w0oIAAAr9aQh4L/ztEM1spFQAU4
-	1bXrsmnIPetZdE5/IAdb8kvsV9FtiACZ4gCnAvgKM4iwMvrdqrRblMYa97OhOLTo
-	WIv7GylXyQFED8GNk3I2vFZ1FTqeukVTSaTfcBDIM/TAu6joXYTyWjXGqJ/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717811266; x=1717897666; bh=wVtkKE02aGBtUM4XVJj9v4PooiUi
-	8hPGO3tB8GgDw7E=; b=WybPuoCOmiH6K2dnfgpCvA4vI8Z9IkaN4tqIcY5di8Pm
-	RGORf+bfZpi2Q2eopd7ltknL5w28c5A9t/jt2Tczsn3+npD9zpZ4l1AKuQSR81Yz
-	y4+bj6SNKYLn669v9J5GPrnXph20Lie5/YRezb0CKW19o4ApzjaLWz5Mt0nNHcbN
-	kSTTtQLzH0YUhH3Q8MEOZ2pgo1cHHh/WLp7NBt0hjBAw6dgHvFo65EG8DYaiRYiF
-	6I7gTNp82xu6d0qyoI5umfIOy2tZQkwKsH3Hx+wQUdiP9TE4JjYqwn5KvRqPGWb+
-	XKGB378X6bx6mVhVh9vQuu2+05eQqLm/HD1MyAYYug==
-X-ME-Sender: <xms:QbhjZjTTm8Pg0y9AlgwqVYUUdKbMi9sipOYi7Y2youjo3a3bhbDZfQ>
-    <xme:QbhjZkzB_1z1vF0T9ty83Bl-eEGdIAlnycxOE-5RjVcNiI_JwVo4s3HU6wx9JRHZ-
-    YTTFaaKkPjARYG8kg>
-X-ME-Received: <xmr:QbhjZo3t_3GU1qZmgJ__-j7mXL3lca2uCGxcHiWHkXkUNU6F5gzqsmaeRu9v6CsYHl12FFynEPnAqXk7W0KGz5NpZwxdeBSroBGSeQWbXDOXxRdmhAgwSXp-Mg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
-    ertddtnecuhfhrohhmpeflohhhnhcuvfhhohhmshhonhcuoehgihhtsehjohhhnhhthhho
-    mhhsohhnrdhfrghsthhmrghilhdrtghomhdrrghuqeenucggtffrrghtthgvrhhnpeefvd
-    ekveeggfekgeehvdelteeiffehgfeihfelgfdvkeefvdetkeeuueevleehveenucffohhm
-    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepghhithesjhhohhhnthhhohhmshhonhdrfhgrshhtmhgrihhl
-    rdgtohhmrdgruh
-X-ME-Proxy: <xmx:QbhjZjA_RAISdoskpNW2efmv-pAul3XpVgE29J_Kkb7LmOXPmxCNfA>
-    <xmx:QbhjZsjLV2RbFUka9q8VxReyviuwlp_7Z4koRLNU_JxpI6G66j6RoQ>
-    <xmx:QbhjZnoQvmcO9cYfO7ZYhyRaN6jKbkmbIJ7qDuCBoeJa6xwyKY9mXA>
-    <xmx:QbhjZngx0F34ySU9YZ-12hAFsB5jaR6t2A5Y44QP61EdzBjF4cKZRw>
-    <xmx:QrhjZoyLNwbENlmanbnJaMrTKai9grgA6-kNv2CZ8DESQ3u7iFIorhnx>
-Feedback-ID: ic081425d:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Jun 2024 21:47:40 -0400 (EDT)
-From: John Thomson <git@johnthomson.fastmail.com.au>
-To: daniel@makrotopia.org,
-	andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Thomson <git@johnthomson.fastmail.com.au>
-Subject: [RFC net-next] net: dsa: generate port ifname if exists or invalid
-Date: Sat,  8 Jun 2024 11:47:24 +1000
-Message-ID: <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717812126; c=relaxed/simple;
+	bh=OT/F7+S3VuIIrmbZ04tTv9bR+NXRWfie1pThFgPHyJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NytVZDVF1i1hJc/Huvw2bvhoCtW8TnIPbvfrqvxElvYwbk0aE08b+lDGzd5ZMaN0Yzp7qfn9LO6OrG9ByxdW0pGqGCEw3BIZJXpYx7urJ9Nqpcgk3JrqQ83GWba93T1Qib/Yrn/wyP1Cg8QrMdIA9DL5f+ScLa9OZjfOFyhJ7hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFJcFZ1r; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717812121; x=1749348121;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=OT/F7+S3VuIIrmbZ04tTv9bR+NXRWfie1pThFgPHyJQ=;
+  b=TFJcFZ1ryNAj/qIMM1Zt40+gf+c6t3avvtPOCui30ugXykvX9is3vdjB
+   /k0NISvpJYwR7EKGLWKfqCoTTpJK9jUqFPuEPozGFN3stt9TdfglNsoaa
+   zPS8BYZcSOWVSLi9FEp5ym28pssA1bYLwNhLFZTrnAyv2ZfvA+vJ6V87j
+   XjFlo9Ix+aPwq+RdSPhZphWf0RAASn/KZuzA+x6lIt9ku2Nn9QUVfoxEM
+   LmDEYK5NZ3R5McbrS62w7GvY1d+ij2ADcQICh24BZM7tZ+wu/9GaUTXUb
+   T2+fYSQOTWLGZ/LHCmf4+tBI5jYHijB2HCM6qBeP3OplqGmQgvNiVwdbr
+   g==;
+X-CSE-ConnectionGUID: HixSZriTS7qi31SNeY3UEg==
+X-CSE-MsgGUID: nuTQ8QYOSI2isDdwmuF5uQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14353639"
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="14353639"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 19:02:01 -0700
+X-CSE-ConnectionGUID: vJTSjfC5RDqMsjopZ6rplw==
+X-CSE-MsgGUID: zsDYaWHzQ8uZzDE9neQjgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="42944721"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Jun 2024 19:01:59 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFlP2-0000pa-24;
+	Sat, 08 Jun 2024 02:01:56 +0000
+Date: Sat, 8 Jun 2024 10:01:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning
+ (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary
+ #address-cells/#size-cells without "ranges" or child "reg" property
+Message-ID: <202406080939.D1L1ItjD-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In the case where a DSA port (via DTB label) had an interface name
-that collided with an existing netdev name, register_netdevice failed
-with -EEXIST, and the port was not usable. While this did correctly
-identify a configuration error in DTB, rather bringup the port with an
-enumerated interface name, which can be renamed later from userspace
-where required.
-While this does change the implicit expectation that it is an error if
-the DSA port cannot use it's predictable (DTS label) name, there is no
-functionality to stop netdev from allocating one of these (perhaps
-poorly selected) DSA port names to a non-DSA device before the DSA
-device can.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
+commit: 24f0f6a8059c7108d4ee3476c95db1e7ff4feb79 arm64: dts: qcom: msm8994: correct SPMI unit address
+date:   1 year ago
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce: (https://download.01.org/0day-ci/archive/20240608/202406080939.D1L1ItjD-lkp@intel.com/reproduce)
 
-While at it, also test that the port name is a valid interface name,
-before doing the work to setup the device, and use an enumerated name
-otherwise.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406080939.D1L1ItjD-lkp@intel.com/
 
-This was seen recently (for the EdgeRouter X device) in OpenWrt when a
-downstream hack [1] was removed, which had used DTS label for ifname
-in an ethernet device driver, in favour of renaming ifnames in userspace.
-At the time the device was added to OpenWrt, it only used one network
-device driver interface, plus the switch ports, so eth1 (matching physical
-labelling) was used as a switch port label. Since, this device has
-been adjusted to use phy muxing, exposing a switch port instead as the
-second network device, so at bringup for this DSA port, eth1
-(which is later renamed in userspace) exists, and the eth1 labelled
-DSA port cannot be used.
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:628.28-644.5: Warning (avoid_unnecessary_addr_size): /soc/i2c@f9928000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+     also defined at arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami.dtsi:109.13-141.3
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+--
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+--
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/memory@6c00000)
+--
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/hole2@6c00000)
+   arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dts:112.29-115.5: Warning (unique_unit_address_if_enabled): /reserved-memory/audio@cb400000: duplicate unit-address (also used in node /reserved-memory/qseecom@cb400000)
 
-[1]: https://lore.kernel.org/netdev/20210419154659.44096-3-ilya.lipnitskiy@gmail.com/
+vim +132 arch/arm64/boot/dts/qcom/pm8994.dtsi
 
-Signed-off-by: John Thomson <git@johnthomson.fastmail.com.au>
----
+38757eb3ca3436 Stephen Boyd        2015-11-17   32  
+38757eb3ca3436 Stephen Boyd        2015-11-17   33  	pmic@0 {
+38757eb3ca3436 Stephen Boyd        2015-11-17   34  		compatible = "qcom,pm8994", "qcom,spmi-pmic";
+38757eb3ca3436 Stephen Boyd        2015-11-17   35  		reg = <0x0 SPMI_USID>;
+38757eb3ca3436 Stephen Boyd        2015-11-17   36  		#address-cells = <1>;
+38757eb3ca3436 Stephen Boyd        2015-11-17   37  		#size-cells = <0>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17   38  
+27414e41ba5f14 Bjorn Andersson     2017-02-17   39  		rtc@6000 {
+27414e41ba5f14 Bjorn Andersson     2017-02-17   40  			compatible = "qcom,pm8941-rtc";
+27414e41ba5f14 Bjorn Andersson     2017-02-17   41  			reg = <0x6000>, <0x6100>;
+27414e41ba5f14 Bjorn Andersson     2017-02-17   42  			reg-names = "rtc", "alarm";
+27414e41ba5f14 Bjorn Andersson     2017-02-17   43  			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
+27414e41ba5f14 Bjorn Andersson     2017-02-17   44  		};
+27414e41ba5f14 Bjorn Andersson     2017-02-17   45  
+da3a82e35e4b24 Gustave Monce       2021-01-31   46  		pm8994_pon: pon@800 {
+2f74b3db92bef4 Vinod Koul          2018-09-10   47  			compatible = "qcom,pm8916-pon";
+2f74b3db92bef4 Vinod Koul          2018-09-10   48  			reg = <0x800>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   49  			mode-bootloader = <0x2>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   50  			mode-recovery = <0x1>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   51  
+2f74b3db92bef4 Vinod Koul          2018-09-10   52  			pwrkey {
+2f74b3db92bef4 Vinod Koul          2018-09-10   53  				compatible = "qcom,pm8941-pwrkey";
+2f74b3db92bef4 Vinod Koul          2018-09-10   54  				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   55  				debounce = <15625>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   56  				bias-pull-up;
+2f74b3db92bef4 Vinod Koul          2018-09-10   57  				linux,code = <KEY_POWER>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   58  			};
+2f74b3db92bef4 Vinod Koul          2018-09-10   59  
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   60  			pm8994_resin: resin {
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   61  				compatible = "qcom,pm8941-resin";
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   62  				interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   63  				debounce = <15625>;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   64  				bias-pull-up;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   65  				status = "disabled";
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   66  			};
+2f74b3db92bef4 Vinod Koul          2018-09-10   67  		};
+2f74b3db92bef4 Vinod Koul          2018-09-10   68  
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   69  		pm8994_temp: temp-alarm@2400 {
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   70  			compatible = "qcom,spmi-temp-alarm";
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   71  			reg = <0x2400>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   72  			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   73  			io-channels = <&pm8994_vadc VADC_DIE_TEMP>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   74  			io-channel-names = "thermal";
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   75  			#thermal-sensor-cells = <0>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   76  		};
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   77  
+183d4cafa711ac Konrad Dybcio       2020-10-05   78  		pm8994_vadc: adc@3100 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   79  			compatible = "qcom,spmi-vadc";
+183d4cafa711ac Konrad Dybcio       2020-10-05   80  			reg = <0x3100>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   81  			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   82  			#address-cells = <1>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   83  			#size-cells = <0>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   84  			#io-channel-cells = <1>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   85  
+183d4cafa711ac Konrad Dybcio       2020-10-05   86  			adc-chan@7 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   87  				reg = <VADC_VSYS>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   88  				qcom,pre-scaling = <1 3>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   89  				label = "vph_pwr";
+183d4cafa711ac Konrad Dybcio       2020-10-05   90  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   91  			adc-chan@8 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   92  				reg = <VADC_DIE_TEMP>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   93  				label = "die_temp";
+183d4cafa711ac Konrad Dybcio       2020-10-05   94  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   95  			adc-chan@9 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   96  				reg = <VADC_REF_625MV>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   97  				label = "ref_625mv";
+183d4cafa711ac Konrad Dybcio       2020-10-05   98  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   99  			adc-chan@a {
+183d4cafa711ac Konrad Dybcio       2020-10-05  100  				reg = <VADC_REF_1250MV>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  101  				label = "ref_1250mv";
+183d4cafa711ac Konrad Dybcio       2020-10-05  102  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  103  			adc-chan@e {
+183d4cafa711ac Konrad Dybcio       2020-10-05  104  				reg = <VADC_GND_REF>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  105  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  106  			adc-chan@f {
+183d4cafa711ac Konrad Dybcio       2020-10-05  107  				reg = <VADC_VDD_VADC>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  108  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  109  		};
+183d4cafa711ac Konrad Dybcio       2020-10-05  110  
+c95243eeae587c Krzysztof Kozlowski 2022-09-08  111  		pm8994_gpios: gpio@c000 {
+8939304880dee9 Konrad Dybcio       2020-10-05  112  			compatible = "qcom,pm8994-gpio", "qcom,spmi-gpio";
+0804308fdd3cf5 Stephen Boyd        2015-11-17  113  			reg = <0xc000>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  114  			gpio-controller;
+8939304880dee9 Konrad Dybcio       2020-10-05  115  			gpio-ranges = <&pm8994_gpios 0 0 22>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  116  			#gpio-cells = <2>;
+8939304880dee9 Konrad Dybcio       2020-10-05  117  			interrupt-controller;
+8939304880dee9 Konrad Dybcio       2020-10-05  118  			#interrupt-cells = <2>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  119  		};
+0804308fdd3cf5 Stephen Boyd        2015-11-17  120  
+0804308fdd3cf5 Stephen Boyd        2015-11-17  121  		pm8994_mpps: mpps@a000 {
+58d92e6e73250a Dmitry Baryshkov    2021-10-08  122  			compatible = "qcom,pm8994-mpp", "qcom,spmi-mpp";
+0804308fdd3cf5 Stephen Boyd        2015-11-17  123  			reg = <0xa000>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  124  			gpio-controller;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  125  			#gpio-cells = <2>;
+58d92e6e73250a Dmitry Baryshkov    2021-10-08  126  			gpio-ranges = <&pm8994_mpps 0 0 8>;
+8f48ceef5db929 Dmitry Baryshkov    2021-10-08  127  			interrupt-controller;
+8f48ceef5db929 Dmitry Baryshkov    2021-10-08  128  			#interrupt-cells = <2>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  129  		};
+38757eb3ca3436 Stephen Boyd        2015-11-17  130  	};
+38757eb3ca3436 Stephen Boyd        2015-11-17  131  
+38757eb3ca3436 Stephen Boyd        2015-11-17 @132  	pmic@1 {
 
-RFC:
-Not a full solution.
+:::::: The code at line 132 was first introduced by commit
+:::::: 38757eb3ca3436e503a1ab675aad4eb10a65ae0c arm64: dts: qcom: Add pm8994, pmi8994, pm8004 PMIC skeletons
 
-Not sure if supported, I cannot see any users in tree DTS,
-but I guess I would need to skip these checks (and should mark as
-NEM_NAME_ENUM) if port->name contains '%'.
+:::::: TO: Stephen Boyd <sboyd@codeaurora.org>
+:::::: CC: Andy Gross <andy.gross@linaro.org>
 
-name is also used in alloc_netdev_mqs, and I have not worked out if any
-of the functionality between alloc_netdev_mqs and the register_netdevice
-uses name, so I added these test early, but believe without a rntl lock,
-a colliding name could still be allocated to another device between this
-introduced test, and where this device does lock and register_netdevice
-near the end of this function.
-To deal with this looks to require moving the rntl_lock before
-these tests, which would lock around significantly more.
-
-As an alternative, could we possibly always register an enumerated name,
-then (if name valid) dev_change_name (not exported), while still within
-the lock after register_netdevice?
-
-Or could we introduce a parameter or switch-level DTS property that forces
-DSA to ignore port labels, so that all network devices names can be
-managed from userspace (using the existing port DSA label as intended name,
-as this still seems the best place to define device labels, even if the
-driver does not use this label)?
-
-Cheers
----
- net/dsa/user.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index 867c5fe9a4da..347d2d8eb219 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -2684,6 +2684,7 @@ int dsa_user_create(struct dsa_port *port)
- 	struct dsa_switch *ds = port->ds;
- 	struct net_device *user_dev;
- 	struct dsa_user_priv *p;
-+	bool valid_name = false;
- 	const char *name;
- 	int assign_type;
- 	int ret;
-@@ -2692,6 +2693,20 @@ int dsa_user_create(struct dsa_port *port)
- 		ds->num_tx_queues = 1;
- 
- 	if (port->name) {
-+		if (!netdev_name_in_use(&init_net, port->name))
-+			valid_name = true;
-+		else
-+			netdev_warn(conduit, "port %d set name: %s: already in use\n",
-+				    port->index, port->name);
-+		if (dev_valid_name(port->name)) {
-+			valid_name &= true;
-+		} else {
-+			valid_name = false;
-+			netdev_warn(conduit, "port %d set name: %s: is invalid\n",
-+				    port->index, port->name);
-+		}
-+	}
-+	if (valid_name) {
- 		name = port->name;
- 		assign_type = NET_NAME_PREDICTABLE;
- 	} else {
 -- 
-2.45.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
