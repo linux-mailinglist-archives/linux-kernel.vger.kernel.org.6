@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-207127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F29E9012A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E7D9012B0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2661F219E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D9D1F21828
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9DE17B504;
-	Sat,  8 Jun 2024 16:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDv4T1md"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F67717995A;
+	Sat,  8 Jun 2024 16:12:34 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDED17B411;
-	Sat,  8 Jun 2024 16:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1461DA5F
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 16:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717863080; cv=none; b=kqfz5drE7HznFj4AJ80dLxN5DjPPWAzpl/PVp6Fz5DJHYIE8w4Td+4kBpJObTie87Lc54eM/F+tsfEIAGnQY4rLGZL5Wnv/r4a86j9QoUCSiaTzhZAH0TIPPi2B/QJa9gaG319kQxpiv9r1aYAqE6+7gyt6jUo+srJM7j4kJsPc=
+	t=1717863153; cv=none; b=UTINB3LPN6VuStFCSwWrGegTM57COLWQ3wYqvfZiYLgQ0f6sr4c+5/1u8tmQ7kqYATl47Klu2sd0RIT6pM9jwnMyDh0M513cAwlKogl3gNouHq0zFSfKxYw+wmIHjEWu3n+5N5nwAM4seAOh5StNOzznbqmSD/5bxg4711fVPv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717863080; c=relaxed/simple;
-	bh=/uwRUI/YsWFpgfwjwsOyJzuR2HOJ5zMOT3h3yHM7+JU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uCJODW9rNaaHv4P7rRFQRj1dSwgZwRdrUjmgmTK8Y/cQD+hz+iLn5MO9Lprdo/HXwqIVsM2YjxOkcgVi+dI9ae7STmuvMV0Amev36wEAfGwU5iKwMdkLQg1VFAGpbGVD/lQ1Rp0t1hH8geVJ2jHY3Pd/tYjCxgPAhUJzGdasYkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDv4T1md; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AD83C4AF0A;
-	Sat,  8 Jun 2024 16:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717863080;
-	bh=/uwRUI/YsWFpgfwjwsOyJzuR2HOJ5zMOT3h3yHM7+JU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PDv4T1mdEAD6YIw6KhJDrK+44OqV31pIXyBKBjnSw4RhvCBYpool4jpTQGZFDjbqu
-	 3pUe8e4Lv5mwe8HL7D14917qerQjd4jd0+cXIunmWfP1XuZl4AwrUstLDzQm6F+YJm
-	 Y1aUy8ySwLO2GlY6YOHPh1aEG94CMpXEZdHyJITTNtxj8MFVTwIfiWen8xSbjwmcVz
-	 gJg/3rdHsJL6UQaByFBDRDRxL0zy7NcSvQJAD1oddNwHIgpqN5mOBhTXjHAK/xxbSC
-	 FOJ5PIeO5/mOc5VwVHQjKJqhbE75/P2ricR9khxbrwLDksc/wLZJCYVBeXsDqrzpbv
-	 JUYosm/LV5t1g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/31] Clean up thermal zone polling-delay
-Date: Sat,  8 Jun 2024 11:11:16 -0500
-Message-ID: <171786307408.851553.16016904343712298022.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org>
-References: <20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org>
+	s=arc-20240116; t=1717863153; c=relaxed/simple;
+	bh=ESjO9BCz6Qqt2T+vMXVXtCWaCLLgz+dfRZwslkC8UwU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GjnKZwf1BHJQAsMaLeFgQSn/XuyeBkCd9OYE34ut/pqTLCbt2Kx7x7WDhksR96OuLCIprM49MFSKFWrCYZVSQ1kX0BS4wR8uKbj7pfYnqtO/EX/imep8XuKJPH7/x4dTUn5SgERu27Q6Sfcz/0WmiBBkVdPOGwAkhBejIr7x7dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3745fb76682so32324445ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 09:12:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717863151; x=1718467951;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tk5GbmyiMvxlYvX+q1VR0ktSf1neeTNiEoQUv7xtkW8=;
+        b=PqH2SAzLFwHTp6Ijso8CvRb5Ik/Cowonx/nzH/sLrSmGWz5wMpBO2VAHHVNUVtfOqt
+         1vga9zr4VzANJMJx8aWkru4JzXbgA3iynefWr8/RVvd9wz68kycxPfzYswIw/EO5vhFl
+         1rVWRML7R9HbujRg/HzE3FVImkqWPMyrJaRRvp+8mO+Kmx69ByXENbhvSrEk44Zjip4W
+         +HNuMMh/FBxAiVXP/ZaTVhHaE7XjeEvpAalNryWeUVlCX6lzOAB2pUNRBrrCpA7NKfaw
+         LNcYHk8f42wu9eJukWmTWCgPnWOrraLBT3Y0x35Vl2zavClljQoCGMacKUMM0Z7Iem30
+         4QHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFvK+cexXzQXA1e1/FbtPvmRKdiqIkOngmotKdujAYzmQIGAz95CbfLuyJnZWKmVi6x7vc+sywn0IHQa6JGMbPmAGG17vfumRnuE4S
+X-Gm-Message-State: AOJu0YzA1uAkFG/Or8hLqY5A1/LYzOAEgb2+mfsR8D2FCPWRw/h2Y7ez
+	ohQkkq1Ni8wozwAZX3gz9ouy6ODQqC8M0TeM1a7HKgQBcGkoJjxhkFl04Ks6bFKjegERqq6f8Ds
+	NRBuonSrYmIAKut7ivAbN1FSROuhYpQyfyVcrz0InsfkuDtY+c4/y4pQ=
+X-Google-Smtp-Source: AGHT+IECGiuYtCZxZHm2Gqol8LeAkPTSNxzQCgmmp58SkPjFZtO3i+StuzUtB2H/j5kmiFOPtvVALzxDtlioWIVDWZCl8wX59Ezx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c70e:0:b0:375:9e28:49b with SMTP id
+ e9e14a558f8ab-3759e280992mr6425ab.2.1717863151181; Sat, 08 Jun 2024 09:12:31
+ -0700 (PDT)
+Date: Sat, 08 Jun 2024 09:12:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e631fc061a632eae@google.com>
+Subject: [syzbot] [kernel?] WARNING: locking bug in __schedule
+From: syzbot <syzbot+46b40e354b532433eeef@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    dc772f8237f9 Merge tag 'mm-hotfixes-stable-2024-06-07-15-2..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1422da8c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
+dashboard link: https://syzkaller.appspot.com/bug?extid=46b40e354b532433eeef
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3700030c3c13/disk-dc772f82.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e238e5fcc97d/vmlinux-dc772f82.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3ee78908acdd/bzImage-dc772f82.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+46b40e354b532433eeef@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4773 [inline]
+WARNING: CPU: 1 PID: 11576 at kernel/locking/lockdep.c:232 __lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
+Modules linked in:
+CPU: 1 PID: 11576 Comm: syz-executor.1 Not tainted 6.10.0-rc2-syzkaller-00315-gdc772f8237f9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4773 [inline]
+RIP: 0010:__lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
+Code: 00 00 83 3d 6e 0c 3b 0e 00 75 23 90 48 c7 c7 20 ba ca 8b 48 c7 c6 c0 bc ca 8b e8 78 e4 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc90015a375b0 EFLAGS: 00010046
+RAX: 7003b597e2d67b00 RBX: 0000000000000e50 RCX: ffff888020a60000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff815857a2 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: 0000000000000001
+R13: ffff888020a60000 R14: 0000000000000000 R15: ffff888020a60b00
+FS:  0000555579285480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3022f000 CR3: 000000001cbf6000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:567
+ raw_spin_rq_lock kernel/sched/sched.h:1406 [inline]
+ rq_lock kernel/sched/sched.h:1702 [inline]
+ __schedule+0x357/0x4a20 kernel/sched/core.c:6653
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6924
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6948
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+ _raw_spin_unlock_irqrestore+0x130/0x140 kernel/locking/spinlock.c:194
+ hrtimer_start_expires include/linux/hrtimer.h:289 [inline]
+ hrtimer_sleeper_start_expires kernel/time/hrtimer.c:1949 [inline]
+ do_nanosleep+0x158/0x600 kernel/time/hrtimer.c:2025
+ hrtimer_nanosleep+0x227/0x470 kernel/time/hrtimer.c:2081
+ __do_sys_clock_nanosleep kernel/time/posix-timers.c:1396 [inline]
+ __se_sys_clock_nanosleep+0x32d/0x3c0 kernel/time/posix-timers.c:1373
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc521ca8375
+Code: 24 0c 89 3c 24 48 89 4c 24 18 e8 f6 b9 ff ff 4c 8b 54 24 18 48 8b 54 24 10 41 89 c0 8b 74 24 0c 8b 3c 24 b8 e6 00 00 00 0f 05 <44> 89 c7 48 89 04 24 e8 4f ba ff ff 48 8b 04 24 48 83 c4 28 f7 d8
+RSP: 002b:00007ffdb0499ff0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e6
+RAX: ffffffffffffffda RBX: 0000000000000052 RCX: 00007fc521ca8375
+RDX: 00007ffdb049a030 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007ffdb049a0ac R08: 0000000000000000 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000032
+R13: 0000000000095a92 R14: 0000000000095a43 R15: 0000000000000001
+ </TASK>
 
 
-On Fri, 10 May 2024 13:59:23 +0200, Konrad Dybcio wrote:
-> A trivial follow-up on the changes introduced in Commit 488164006a28
-> ("thermal/of: Assume polling-delay(-passive) 0 when absent").
-> 
-> Should probably wait until v6.9-rc1 so that the patch in question is
-> in the base tree, otherwise TZs will fail to register.
-> 
-> FWIW, Compile-tested only (except 8280).
-> 
-> [...]
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Applied, thanks!
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-[01/31] arm64: dts: qcom: ipq6018-*: Remove thermal zone polling delays
-        commit: 28930820bf8928c8247d6b001e042ce7e0037350
-[02/31] arm64: dts: qcom: ipq8074-*: Remove thermal zone polling delays
-        commit: bebd3c6476c97d0aee8985eb9544dfd82f6e8e36
-[03/31] arm64: dts: qcom: ipq9574-*: Remove thermal zone polling delays
-        commit: 88dd10e237ee1cfc70595c0feb37c8a71e521bfc
-[04/31] arm64: dts: qcom: msm8916-*: Remove thermal zone polling delays
-        commit: b3f0d522b548e969b138c48c0fd4098703363c53
-[05/31] arm64: dts: qcom: msm8939-*: Remove thermal zone polling delays
-        commit: 19c658e5bfe71b01ae41e85dab076da051814857
-[06/31] arm64: dts: qcom: msm8953-*: Remove thermal zone polling delays
-        commit: 1a43ff5b5f5a51c2dd0859bc46020e7f1c282414
-[07/31] arm64: dts: qcom: msm8976-*: Remove thermal zone polling delays
-        commit: adfb64b78f2f0e894c2520b8e2ff8bd5f2d49825
-[08/31] arm64: dts: qcom: msm8996-*: Remove thermal zone polling delays
-        commit: 612f017315fb466bc9348fb9a5f1d9506f4b5260
-[09/31] arm64: dts: qcom: msm8998-*: Remove thermal zone polling delays
-        commit: 47d92455f59f7e8414ebc962f60bd7a990563a7c
-[10/31] arm64: dts: qcom: pm7550ba: Remove thermal zone polling delays
-        commit: d96854de5d69a08a893d4a137d69c65f2feb40d5
-[11/31] arm64: dts: qcom: pms405: Remove thermal zone polling delays
-        commit: 1a78b5da8164afc1d60bec7c02b8fd8e6451f0f3
-[12/31] arm64: dts: qcom: pmx75: Remove thermal zone polling delays
-        commit: 8e49df9200591c469dfbdd29c93ee6cbe970aa2a
-[13/31] arm64: dts: qcom: qcm2290-*: Remove thermal zone polling delays
-        commit: d3eb8179f21f86439053745bb1504791236d38bf
-[14/31] arm64: dts: qcom: qcs404-*: Remove thermal zone polling delays
-        commit: 8d7807d24746af11ba966bce854ef3cd8df5267e
-[15/31] arm64: dts: qcom: sa8775p-*: Remove thermal zone polling delays
-        commit: a759962163af22b7f50c8f43ed8b3fc5e09bec19
-[16/31] arm64: dts: qcom: sc7180-*: Remove thermal zone polling delays
-        commit: 7cd2d9080a6eb281701f7303b1699719640380d0
-[17/31] arm64: dts: qcom: sc7280-*: Remove thermal zone polling delays
-        commit: 7747a49db7e54978151d74b22907a373c9b4de1b
-[18/31] arm64: dts: qcom: sc8180x-*: Remove thermal zone polling delays
-        commit: 1f57b1cff485c02678ea2dfe0ff7efa3b9f51e9d
-[19/31] arm64: dts: qcom: sc8280xp-*: Remove thermal zone polling delays
-        commit: e388421387e8b1b51c507883aaf13f40277fe137
-[20/31] arm64: dts: qcom: sdm660-*: Remove thermal zone polling delays
-        commit: 82162bf535a76f87e20a6eece83375d2dd791655
-[21/31] arm64: dts: qcom: sdm845-*: Remove thermal zone polling delays
-        commit: 2e58dbeae40e5fc7b2742bed05957cae32031387
-[22/31] arm64: dts: qcom: sm6115-*: Remove thermal zone polling delays
-        commit: 190f743561a44cf0176707b6e2f37b1a1b7ff367
-[23/31] arm64: dts: qcom: sm6125-*: Remove thermal zone polling delays
-        commit: d1a12560ef38021ce42ac31408fc53d2b8e08cc8
-[24/31] arm64: dts: qcom: sm6350-*: Remove thermal zone polling delays
-        commit: 2aad3fd3820d047fa70b62906565c185d830465c
-[25/31] arm64: dts: qcom: sm6375-*: Remove thermal zone polling delays
-        commit: 088d826d5af3cda20deb04dce406c95ef1ed8563
-[26/31] arm64: dts: qcom: sm8150-*: Remove thermal zone polling delays
-        commit: fc2f92b522019a5bfd464c946b15d180c31b092b
-[27/31] arm64: dts: qcom: sm8250-*: Remove thermal zone polling delays
-        commit: 2d10e2e28df7a690d670b3452d4891b50011dc42
-[28/31] arm64: dts: qcom: sm8350-*: Remove thermal zone polling delays
-        commit: 07fab48327ad0d85c2b2763d26ce56c84043515a
-[29/31] arm64: dts: qcom: sm8450-*: Remove thermal zone polling delays
-        commit: d0730a729f1a723f06e7b9db7f1a540cf72de871
-[30/31] arm64: dts: qcom: sm8550-*: Remove thermal zone polling delays
-        commit: fe5cb7d30795d81ed55888bcfb896086af3adc01
-[31/31] arm64: dts: qcom: sm8650-*: Remove thermal zone polling delays
-        commit: 92332cca0551b7c5c44f4236b8d1ce2828888e92
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
