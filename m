@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-206912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7AD900FB7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:30:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5570900FB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F180FB23702
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED3DC282CFC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC75176AB1;
-	Sat,  8 Jun 2024 06:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHXY3ENL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8557176AA3;
+	Sat,  8 Jun 2024 06:35:02 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D987F13C83E;
-	Sat,  8 Jun 2024 06:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF37D1FDD;
+	Sat,  8 Jun 2024 06:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717828227; cv=none; b=Kmw4TSOqEciKmXLyCnyh2MEaGRQvJoHpmPXZ8rt48qVPW5gil0AdyKmMCLT67V3q2XspqqY+PQcFTPbkf3oJh3cdeqt+hK+bzKF9EakZHgjSY5HsAEeep3t7QNpfOl0NuxRR2rix/j+07giRbgbWDsc4hnLS+KJLG0aramKfs8g=
+	t=1717828502; cv=none; b=Rw4Tg9A7MbYwG/Z7yRGtiwaWzO3T/mvdrkYSW5bOersGOCwKucy60E6ciRn6KivkuBGT+YgiTcsR4r0K0OnGwnM0waGqq9LEU0TcXVGJBdgkVmpzEecG7qHAksbKidLP6cw6hfEpA+SlNgqDAm5Hrx6I9EKFAXY+93VvWcR0U2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717828227; c=relaxed/simple;
-	bh=OVVmvhztRK1B65JgvaZedaE3P8Kz8iPkk9tDYvE0ud4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6mA5NSUS83FPcOibIKUlD+xOcuaIpXVD27Jrpa8iY8pzPaXYQPGtzyxtTuBSgRgpnsfl6HB69rVqTspFhLl4cZ1z16nUYnkb3CkVpW7numaB5W6HFUvx0XbFgyCpnwgPsF/lD8pABKemVT7vjYUcEOBoK9w7FUfrImLwtqo45M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHXY3ENL; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717828225; x=1749364225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OVVmvhztRK1B65JgvaZedaE3P8Kz8iPkk9tDYvE0ud4=;
-  b=bHXY3ENLYQjdtnDja+6Jadh+bNdlhNRkvuYC0IrJh0Fx9R0C9iC/NKl6
-   TtiTTqdMBoEc5YKeUliL2defU5ClIb06pDyUzD5dTBH9mNVI+6r08fNf5
-   7pp0LD+Vp3BP//Ay4yPfdpp/US+onukZ3YSDKRPcBxrKME2KGJIIwIcLE
-   EFYbj/W9D2R+3yhevVE3Ny2b+gdQBSz9ZfZ8LfgUPpAVXY0Ij7AZAn0zP
-   maK8b5QTrCFuGuId30Ccm7jUVeUtap/CJoe4WHbTPMwrtROOJEHQpwpzq
-   sv0B+9SKnpGgXUyP1s3lSzHEMGd4cxPPfmB82wfZzJzWyRenqV7egdz3O
-   w==;
-X-CSE-ConnectionGUID: 5s5cPUgdRtStFEsE9NBZWw==
-X-CSE-MsgGUID: fv1nuds6TqW/01qJbOCckw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14693634"
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="14693634"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 23:30:23 -0700
-X-CSE-ConnectionGUID: zMr/zwMASayxaDCEoS0SSg==
-X-CSE-MsgGUID: bOKnJvd2TR2Kwm6+47teDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="38387654"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 07 Jun 2024 23:30:20 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFpaj-0001As-2X;
-	Sat, 08 Jun 2024 06:30:17 +0000
-Date: Sat, 8 Jun 2024 14:29:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Slark Xiao <slark_xiao@163.com>, manivannan.sadhasivam@linaro.org,
-	loic.poulain@linaro.org, quic_qianyu@quicinc.com
-Cc: oe-kbuild-all@lists.linux.dev, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: Re: [PATCH v1 1/2] bus: mhi: host: Import link_id item
-Message-ID: <202406081406.LxqJw00r-lkp@intel.com>
-References: <20240607100114.452979-1-slark_xiao@163.com>
+	s=arc-20240116; t=1717828502; c=relaxed/simple;
+	bh=DBAl/ILKUEIMjwI+MRt4bavWsNe8hbGt+5PR1aOKcj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iBJlgclKWeMHdCtNYnb61ZA1zOrTqQuxx5c5iyhOXJKVS9DUcakPRlXiazLfXrlCRnfSksWuMT7nyZyDMxrfChkAeixSM7zxw9Wz98kMBmRErczgyxcwIO2tY5O+AnSEgaWubDY1Z1kt0N/59FP4CU+CW/bZGa0d7rvtF49jK1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vx7b15dpVz4f3m6t;
+	Sat,  8 Jun 2024 14:34:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 121AE1A0181;
+	Sat,  8 Jun 2024 14:34:49 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAuH+2NmA+0OPQ--.50205S3;
+	Sat, 08 Jun 2024 14:34:48 +0800 (CST)
+Message-ID: <dd486a95-b7e8-5760-9ff1-7e9c1cfc9873@huaweicloud.com>
+Date: Sat, 8 Jun 2024 14:34:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607100114.452979-1-slark_xiao@163.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in
+ ublk_ctrl_start_recovery()
+To: Ming Lei <ming.lei@redhat.com>, Li Nan <linan666@huaweicloud.com>
+Cc: Changhui Zhong <czhong@redhat.com>, axboe@kernel.dk,
+ ZiyangZhang@linux.alibaba.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ houtao1@huawei.com, yangerkun@huawei.com
+References: <20240529095313.2568595-1-linan666@huaweicloud.com>
+ <Zl0QpCbYVHIkKa/H@fedora>
+ <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
+ <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
+ <918f128b-f752-2d66-ca60-7d9c711ed928@huaweicloud.com>
+ <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
+ <ZmA0Se+t/LZihBKp@fedora>
+ <CAGVVp+WoBochfQvLgAVbpWFv6JVAfQVkPwWDG8mBxqgGK-NDbg@mail.gmail.com>
+ <2c46587e-0621-b21e-fbc1-fd69e87def03@huaweicloud.com>
+ <ZmGGzNLLC6WpM9tb@fedora>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <ZmGGzNLLC6WpM9tb@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAnmAuH+2NmA+0OPQ--.50205S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7Ar1xJF15Jr1UArW5ZFb_yoW5GrWxpa
+	4xG3WDKr4UXryxJa4Iyw4qgFyjqw4SyFZ5Wrn5Jr1fC3Wqg3W8K340kr4jkF9xCr4ku3W2
+	vw4DWwnrKa45C3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOlksUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Slark,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on mani-mhi/mhi-next]
-[also build test WARNING on linus/master v6.10-rc2 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Slark-Xiao/net-wwan-Fix-SDX72-ping-failure-issue/20240607-180828
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git mhi-next
-patch link:    https://lore.kernel.org/r/20240607100114.452979-1-slark_xiao%40163.com
-patch subject: [PATCH v1 1/2] bus: mhi: host: Import link_id item
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240608/202406081406.LxqJw00r-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081406.LxqJw00r-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406081406.LxqJw00r-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/bus/mhi/host/pci_generic.c:57: warning: Function parameter or struct member 'link_default' not described in 'mhi_pci_dev_info'
 
 
-vim +57 drivers/bus/mhi/host/pci_generic.c
+在 2024/6/6 17:52, Ming Lei 写道:
+> On Thu, Jun 06, 2024 at 04:05:33PM +0800, Li Nan wrote:
+>>
+>>
+>> 在 2024/6/6 12:48, Changhui Zhong 写道:
+>>
+>> [...]
+>>
+>>>>
+>>>> Hi Changhui,
+>>>>
+>>>> The hang is actually expected because recovery fails.
+>>>>
+>>>> Please pull the latest ublksrv and check if the issue can still be
+>>>> reproduced:
+>>>>
+>>>> https://github.com/ublk-org/ublksrv
+>>>>
+>>>> BTW, one ublksrv segfault and two test cleanup issues are fixed.
+>>>>
+>>>> Thanks,
+>>>> Ming
+>>>>
+>>>
+>>> Hi,Ming and Nan
+>>>
+>>> after applying the new patch and pulling the latest ublksrv,
+>>> I ran the test for 4 hours and did not observe any task hang.
+>>> the test results looks good！
+>>>
+>>> Thanks，
+>>> Changhui
+>>>
+>>>
+>>> .
+>>
+>> Thanks for you test!
+>>
+>> However, I got a NULL pointer dereference bug with ublksrv. It is not
+> 
+> BTW, your patch isn't related with generic/004 which won't touch
+> recovery code path.
+> 
+>> introduced by this patch. It seems io was issued after deleting disk. And
+>> it can be reproduced by:
+>>
+>>    while true; do make test T=generic/004; done
+> 
+> We didn't see that when running such test with linus tree, and usually
+> Changhui run generic test for hours.
+> 
+>>
+>> [ 1524.286485] running generic/004
+>> [ 1529.110875] blk_print_req_error: 109 callbacks suppressed
+> ...
+>> [ 1541.171010] BUG: kernel NULL pointer dereference, address: 0000000000000000
+>> [ 1541.171734] #PF: supervisor write access in kernel mode
+>> [ 1541.172271] #PF: error_code(0x0002) - not-present page
+>> [ 1541.172798] PGD 0 P4D 0
+>> [ 1541.173065] Oops: Oops: 0002 [#1] PREEMPT SMP
+>> [ 1541.173515] CPU: 0 PID: 43707 Comm: ublk Not tainted
+>> 6.9.0-next-20240523-00004-g9bc7e95c7323 #454
+>> [ 1541.174417] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+>> 1.16.1-2.fc37 04/01/2014
+>> [ 1541.175311] RIP: 0010:io_fallback_tw+0x252/0x300
+> 
+> This one looks one io_uring issue.
+> 
+> Care to provide which line of source code points to by 'io_fallback_tw+0x252'?
+> 
+> gdb> l *(io_fallback_tw+0x252)
+> 
+(gdb) list * io_fallback_tw+0x252
+0xffffffff81d79dc2 is in io_fallback_tw 
+(./arch/x86/include/asm/atomic64_64.h:25).
+20              __WRITE_ONCE(v->counter, i);
+21      }
+22
+23      static __always_inline void arch_atomic64_add(s64 i, atomic64_t *v)
+24      {
+25              asm volatile(LOCK_PREFIX "addq %1,%0"
+26                           : "=m" (v->counter)
+27                           : "er" (i), "m" (v->counter) : "memory");
+28      }
 
-48f98496b1de13 drivers/bus/mhi/host/pci_generic.c Qiang Yu      2024-04-24  32  
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  33  /**
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  34   * struct mhi_pci_dev_info - MHI PCI device specific information
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  35   * @config: MHI controller configuration
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  36   * @name: name of the PCI module
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  37   * @fw: firmware path (if any)
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  38   * @edl: emergency download mode firmware path (if any)
-48f98496b1de13 drivers/bus/mhi/host/pci_generic.c Qiang Yu      2024-04-24  39   * @edl_trigger: capable of triggering EDL mode in the device (if supported)
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  40   * @bar_num: PCI base address register to use for MHI MMIO register space
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  41   * @dma_data_width: DMA transfer word size (32 or 64 bits)
-5c2c85315948c4 drivers/bus/mhi/pci_generic.c      Richard Laing 2021-07-15  42   * @mru_default: default MRU size for MBIM network packets
-56f6f4c4eb2a71 drivers/bus/mhi/pci_generic.c      Bhaumik Bhatt 2021-07-16  43   * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
-56f6f4c4eb2a71 drivers/bus/mhi/pci_generic.c      Bhaumik Bhatt 2021-07-16  44   *		   of inband wake support (such as sdx24)
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  45   */
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  46  struct mhi_pci_dev_info {
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  47  	const struct mhi_controller_config *config;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  48  	const char *name;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  49  	const char *fw;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  50  	const char *edl;
-48f98496b1de13 drivers/bus/mhi/host/pci_generic.c Qiang Yu      2024-04-24  51  	bool edl_trigger;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  52  	unsigned int bar_num;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  53  	unsigned int dma_data_width;
-5c2c85315948c4 drivers/bus/mhi/pci_generic.c      Richard Laing 2021-07-15  54  	unsigned int mru_default;
-56f6f4c4eb2a71 drivers/bus/mhi/pci_generic.c      Bhaumik Bhatt 2021-07-16  55  	bool sideband_wake;
-f749b1f6758869 drivers/bus/mhi/host/pci_generic.c Slark Xiao    2024-06-07  56  	unsigned int link_default;
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21 @57  };
-855a70c12021bd drivers/bus/mhi/pci_generic.c      Loic Poulain  2020-10-21  58  
+The corresponding code is:
+io_fallback_tw
+   percpu_ref_get(&last_ctx->refs);
+
+I have the vmcore of this issue. If you have any other needs, please let me
+know.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Nan
+
 
