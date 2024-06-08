@@ -1,128 +1,538 @@
-Return-Path: <linux-kernel+bounces-207170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2089901338
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BE890133C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 471981C20B56
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696261F2200C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8F91CFB5;
-	Sat,  8 Jun 2024 18:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB52D1CD31;
+	Sat,  8 Jun 2024 18:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="s50xo1m0"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctwTgDsy"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6464CE57E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 18:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3846FC6;
+	Sat,  8 Jun 2024 18:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717870791; cv=none; b=TesPvqXoOoNUqyO1OoF8JbTQpSLKMnAuN5pny3pYvdqWZkXJxYKlLer2TPPg5VK3C1HfwI05pt8Yu/7HhrK8V+CL/KOgC17VuFBUPuF1LUcS1FNOO/0bGGf9DXiCQNXGrDBTQJGOuvEK9iytIkzM4FbMZt4/ztj7Np0/R9NO904=
+	t=1717871342; cv=none; b=N17+8pYF5t4Mo5xZI6a8zHGBhoEdpXbsvXIYctEmMh3xlE3U/QLXITiTxA9MT0CWXdiU00wodQp89ykSWNJJviSsSYIysBTXOFiWmO/jKZTZ8ubJEzgq0Z6fk5JbP5w4LcTsw0oFX8b2/B3FBq2LfxhgZkkZZVqkleabcWXtwWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717870791; c=relaxed/simple;
-	bh=60kDRbMMvgm6QJOHPpiWh1H9Y8+f7TECVQuH+9otJ4I=;
-	h=Date:From:To:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZFyUodafzOy9VtlZilUrSh8I9nJLeL8AHP2dmB1wrSa/KtSNHlAu/FS6oLLPRlW8Z/3Lqw857FCGXvlZJBnFDwmdFJY3Iy7H3xgS+Ba03qjos+KHyNrE/asQU8buE8xnKGbX+OPLv63T5wpN3LYFpREZuorx40USj8UNW2x93Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=s50xo1m0; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so3473595a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 11:19:49 -0700 (PDT)
+	s=arc-20240116; t=1717871342; c=relaxed/simple;
+	bh=r72H5ZdNmR3C8f3b+3az13Jp1Z/mZ69OqWKI5POB724=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvfUobiO3VzwGoVXWacdW1SsGcOk0rLPplcaAt+NOArn6/8xcs41ei+d9vcs3d3LccHlB8vwrUsBriDBAajn24qRDW7f7UZinwKeoaDo6QsKdMDAqGhPYs7/hdpYd9CtzMbufWy8jhGOpnWJGn0/y9oOQejXeAoMq3cU2SSw/fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctwTgDsy; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so27832745e9.1;
+        Sat, 08 Jun 2024 11:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1717870788; x=1718475588; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J3QtwmDL0API+mZdKoSplk54d4aIIr/RT3oeBqPC2kY=;
-        b=s50xo1m0xTUCZuL6ilhQdJwE++gGvAtkPEtM/ZOpGaPCObh341JXiYKR9sXTiUzto5
-         PvfMeywFJw/jZfYu37ordxrGp69ALHfafvBFy33CJf7q0w+3HhegpRQzBpTLmKWSHrdZ
-         XJjij894XIXazbk5uYzleFqc6ZVZJ6xMVHOfyXL4KB777JIXh7PZmlXGg09SWVTbd8mH
-         5lXZRnAq+8cRHHolm2r+onQHymnxIGh8VyyRxj5HqvLiXX0IzwC9VYfIjMe7ko07RgJL
-         UKLEG2/rcLNBSHXGGINEuwwLt++mIWePl9u+unYlP+f+2pSv17AmQCIcdbF9tzN5QScs
-         HM4A==
+        d=gmail.com; s=20230601; t=1717871338; x=1718476138; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2YEtjOYlWexEgJJsvLgOBtWZTXzXSDRZuW01UHOrnf8=;
+        b=ctwTgDsyVDzFj7B/BtBQDO1ALM1j7M5vYqfhS15Qg2olc3uKEiLyrumVBK+xtJ9yK8
+         3wofSWOUwheC+OIMutPlMmIfDYCCovvLOMWyaqE8P+ECvvT99R3qS/o9A6co3g/CC+Ap
+         9YYtXfbt3cUMvTRDjS0o9LOC5EsRuX0CBqdI40jnm15W/WrvcWTbmKe2ydE+SUzKw+SJ
+         dc7Y2IY6gojhpdUxwTLlOCVJRZr3pn5NYhVwM1QtqGdeCsN6yThvmHW2hdGlF9M8Wj6M
+         iUb5BkswlXCHIrGgrOdf7FmUsdgFh44hXwhDUgXbJASajA7rI5BMFGaFTdfy8MYN4W4i
+         DZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717870788; x=1718475588;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=J3QtwmDL0API+mZdKoSplk54d4aIIr/RT3oeBqPC2kY=;
-        b=nH1+/lA6P/qTQtrXUtMSAY8ZTETCcsu/p2Lf3YxxQJAJDs0SxUnXh88Bk9msofay11
-         C4fjNYDySHmuI+ZWtBAoFO/WizmYEpDjKz+jHlgxhOCWl1/kk3t38Wbrl3PjIaubV4LN
-         LWejIS3Jo0NOlBgciTTZ5TBMUCcZHq0VPQYwW2tsdWSIqhaL1mQVOlO2biE0kL1nkK4g
-         doYGuGiPfLlo+Rn2gOaivXDBAGFheQIN0qLH91EpiQGDRN2qKYdnG2uwGCos2YuTJSOn
-         m4FpyaJ6pOVkExW7l+ZNOaaFfjwd5p3S9aFHsz3w5TmFH7Nl2AleYsb6Ur6VEJ1KtFaO
-         tnKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKueNxi1PHEWZan9C6mdsQeN3hVXXYBVWVpa67xGYLie69F5WX0HbO111FK0o48TXAgI9yWlur/VptcpHkpfQiAUjsdQh+iR1MXAQH
-X-Gm-Message-State: AOJu0YzUMOac/CUn8zGQhM/+W2oUVXASCWByvdPUtBgnXG/eC0EAJqYf
-	z49Y8Mw4Gl1f1LzgRSJSJn2oBNDjvqPi4mRQV5LAVffXWPcxHtsaywY1cJEucZgh2VkmR20b09C
-	Jb18=
-X-Google-Smtp-Source: AGHT+IEaFVDSEclURPDGjTFY7NKVfypetqC3fXT4pVooDvUfMianoN2oMx1tOrYoczutiQxbmTo50Q==
-X-Received: by 2002:a50:8a93:0:b0:57a:30fb:57f with SMTP id 4fb4d7f45d1cf-57c509a65efmr2956761a12.40.1717870787671;
-        Sat, 08 Jun 2024 11:19:47 -0700 (PDT)
-Received: from [127.0.0.1] (u13956.alfa-inet.net. [193.33.64.87])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0c9f95sm4516437a12.28.2024.06.08.11.19.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 11:19:47 -0700 (PDT)
-Date: Sat, 08 Jun 2024 21:19:42 +0300
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: syzbot <syzbot+9bbe2de1bc9d470eb5fe@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: =?US-ASCII?Q?Re=3A_=5Bsyzbot=5D_=5Bnet=3F=5D_WARNING=3A_suspici?=
- =?US-ASCII?Q?ous_RCU_usage_in_br=5Fmst=5Fset=5Fstate_=282=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <000000000000cfb785061a64415a@google.com>
-References: <000000000000cfb785061a64415a@google.com>
-Message-ID: <E54F417D-8F71-4A15-8A12-30D21AB3D08D@blackwall.org>
+        d=1e100.net; s=20230601; t=1717871338; x=1718476138;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2YEtjOYlWexEgJJsvLgOBtWZTXzXSDRZuW01UHOrnf8=;
+        b=V/DxNDflyv2PNzAHdqQm3bRYHvkFyxQiFzaqrRwZfazeWTxZESuV0tO8uLKaspmaF6
+         Jz//LwMskJC8nVrgvIf0PtNDVnlAkO1UCKK/m/E02/CUhq1hBDIGiY4QTZppi/795BBk
+         sgjhQ2SGh4dHpXgpj3+mqt9qF3LKbjlPJ4Ev/qkmswdyUVvwYpliOZ23QXaxUpC0Dst/
+         Zux7ThcuCcBlXu3JAC8nvFhE8xSj4T43MswdVdDxL1D7XbZEx29d/I91NuTyy+IMgB8G
+         9rczKuWpsErgOKfkfCT0Lanq45Vg252gzBmjnKkrvWoIMcfdtBbIK8OOG7hgy3x6QiHR
+         v6YA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsoOMxT4GwncXL/pmTAmidhcMYMx6bnWEUeQ88ZvhnEDzeos7G0jJgL/SMSm+cS+th0ncuoLENaD5s2AEFnU2dI8nbbgwi4l/1vvJCvzxlEnDov3Adve3tgL+DqbIZ7VK5ctY+WpGNg9o=
+X-Gm-Message-State: AOJu0Yw4qT4b9MjlW8Yb7dTdNF7gugcwas+kN6TeYjXxXL00TqsSrnle
+	WUFRTsDv3SZHsNCX8LcRaWNfnzvs5WmfZWJmIbmqzHCS9v+XFxxT
+X-Google-Smtp-Source: AGHT+IHRfQalvrjhBk4LUAX34SPJH4ABuSUBsSWP6sRBAqfMjmJVtUVfXWNuiX/0tr5jtd7b5lbfCQ==
+X-Received: by 2002:a05:600c:3503:b0:41a:ff7d:2473 with SMTP id 5b1f17b1804b1-421649e9f54mr45797205e9.4.1717871337946;
+        Sat, 08 Jun 2024 11:28:57 -0700 (PDT)
+Received: from fedora ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421602aa1adsm48851555e9.1.2024.06.08.11.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Jun 2024 11:28:57 -0700 (PDT)
+Date: Sat, 8 Jun 2024 20:28:55 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Fabio Baltieri <fabiobaltieri@chromium.org>,
+	Ivan Gorinov <linux-kernel@altimeter.info>,
+	Johannes Roith <johannes@gnu-linux.rocks>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
+ modules
+Message-ID: <ZmSi5_-4mD4AaIJW@fedora>
+References: <20240529094816.1859073-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529094816.1859073-1-arnd@kernel.org>
 
-On June 8, 2024 8:29:23 PM GMT+03:00, syzbot <syzbot+9bbe2de1bc9d470eb5fe@s=
-yzkaller=2Eappspotmail=2Ecom> wrote:
->Hello,
->
->syzbot found the following issue on:
->
->HEAD commit:    8a92980606e3 Merge tag 'scsi-fixes' of git://git=2Ekernel=
-=2Eor=2E=2E
->git tree:       upstream
->console output: https://syzkaller=2Eappspot=2Ecom/x/log=2Etxt?x=3D14f9eab=
-a980000
->kernel config:  https://syzkaller=2Eappspot=2Ecom/x/=2Econfig?x=3D9a6ac42=
-77fffe3ea
->dashboard link: https://syzkaller=2Eappspot=2Ecom/bug?extid=3D9bbe2de1bc9=
-d470eb5fe
->compiler:       Debian clang version 15=2E0=2E6, GNU ld (GNU Binutils for=
- Debian) 2=2E40
->
->Unfortunately, I don't have any reproducer for this issue yet=2E
->
->Downloadable assets:
->disk image: https://storage=2Egoogleapis=2Ecom/syzbot-assets/e77750e429bf=
-/disk-8a929806=2Eraw=2Exz
->vmlinux: https://storage=2Egoogleapis=2Ecom/syzbot-assets/910e4410cf78/vm=
-linux-8a929806=2Exz
->kernel image: https://storage=2Egoogleapis=2Ecom/syzbot-assets/85542820b0=
-d5/bzImage-8a929806=2Exz
->
->IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
->Reported-by: syzbot+9bbe2de1bc9d470eb5fe@:=20
+Hi Arnd,
 
-Oh, my fix was incomplete, I should've changed the deref helper as well=2E
-I will send a patch tomorrow=2E
+On Wed, May 29, 2024 at 11:48:05AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The hid-uclogic-params.o and hid-uclogic-rdesc.o files are linked
+> into both the driver module and the unit test, which triggers a
+> W=1 warning:
+> 
+> scripts/Makefile.build:236: drivers/hid/Makefile: hid-uclogic-rdesc.o is added to multiple modules: hid-uclogic hid-uclogic-test
+> scripts/Makefile.build:236: drivers/hid/Makefile: hid-uclogic-params.o is added to multiple modules: hid-uclogic hid-uclogic-test
+> 
+> Avoids this by moving these two files into a separate module
+> that is used by the driver and the unit test.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I have made patches for all such warnings in the tree, this is one I'm not
+> sure about, maybe there is a better fix.
+> ---
+>  drivers/hid/Makefile             | 12 ++----
+>  drivers/hid/hid-uclogic-params.c |  8 ++++
+>  drivers/hid/hid-uclogic-rdesc.c  | 72 ++++++++++++++++++++++++++++++++
+>  3 files changed, 84 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index ce71b53ea6c5..864dfbae8ace 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -133,10 +133,8 @@ obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
+>  obj-$(CONFIG_HID_TOPRE)	+= hid-topre.o
+>  obj-$(CONFIG_HID_TWINHAN)	+= hid-twinhan.o
+>  obj-$(CONFIG_HID_U2FZERO)	+= hid-u2fzero.o
+> -hid-uclogic-objs		:= hid-uclogic-core.o \
+> -				   hid-uclogic-rdesc.o \
+> -				   hid-uclogic-params.o
+> -obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
+> +hid-uclogic-objs		:= hid-uclogic-core.o
+> +obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o hid-uclogic-rdesc.o hid-uclogic-params.o
+>  obj-$(CONFIG_HID_UDRAW_PS3)	+= hid-udraw-ps3.o
+>  obj-$(CONFIG_HID_LED)		+= hid-led.o
+>  obj-$(CONFIG_HID_XIAOMI)	+= hid-xiaomi.o
+> @@ -154,10 +152,8 @@ obj-$(CONFIG_HID_WINWING)	+= hid-winwing.o
+>  obj-$(CONFIG_HID_SENSOR_HUB)	+= hid-sensor-hub.o
+>  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR)	+= hid-sensor-custom.o
+>  
+> -hid-uclogic-test-objs		:= hid-uclogic-rdesc.o \
+> -				   hid-uclogic-params.o \
+> -				   hid-uclogic-rdesc-test.o
+> -obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o
+> +hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
+> +obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o hid-uclogic-params.o hid-uclogic-params.o
+>  
+>  obj-$(CONFIG_USB_HID)		+= usbhid/
+>  obj-$(CONFIG_USB_MOUSE)		+= usbhid/
 
-Thanks!
+I tested your patch with:
 
+	hid-uclogic-objs		:= hid-uclogic-core.o \
+					   hid-uclogic-rdesc.o \
+					   hid-uclogic-params.o
+	obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
+	[...]
+	hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
+	obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic.o hid-uclogic-test.o
+
+And I think it is a bit more clear and it looks like it does the trick
+removing the warning.
+
+Also, with that change only "EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);"
+is required. The other EXPORT_SYMBOL_GPL can be removed.
+
+However, I'm not sure about what are the best practices using EXPORT_SYMBOL_GPL
+and if it should be used for each function/data in the .h file. Maybe that's
+why you added them.
+
+Best wishes,
+Jose
+
+> diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
+> index 5bab006ec165..97ae7e4f61e1 100644
+> --- a/drivers/hid/hid-uclogic-params.c
+> +++ b/drivers/hid/hid-uclogic-params.c
+> @@ -133,6 +133,7 @@ void uclogic_params_hid_dbg(const struct hid_device *hdev,
+>  	}
+>  	hid_dbg(hdev, "}\n");
+>  }
+> +EXPORT_SYMBOL_GPL(uclogic_params_hid_dbg);
+>  
+>  /**
+>   * uclogic_params_get_str_desc - retrieve a string descriptor from a HID
+> @@ -660,6 +661,7 @@ void uclogic_params_cleanup(struct uclogic_params *params)
+>  		memset(params, 0, sizeof(*params));
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(uclogic_params_cleanup);
+>  
+>  /**
+>   * uclogic_params_get_desc() - Get a replacement report descriptor for a
+> @@ -732,6 +734,7 @@ int uclogic_params_get_desc(const struct uclogic_params *params,
+>  	kfree(desc);
+>  	return rc;
+>  }
+> +EXPORT_SYMBOL_GPL(uclogic_params_get_desc);
+>  
+>  /**
+>   * uclogic_params_init_invalid() - initialize tablet interface parameters,
+> @@ -1859,7 +1862,12 @@ int uclogic_params_init(struct uclogic_params *params,
+>  	uclogic_params_cleanup(&p);
+>  	return rc;
+>  }
+> +EXPORT_SYMBOL_GPL(uclogic_params_init);
+>  
+>  #ifdef CONFIG_HID_KUNIT_TEST
+>  #include "hid-uclogic-params-test.c"
+>  #endif
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Nikolai Kondrashov");
+> +MODULE_DESCRIPTION("HID driver for UC-Logic devices tablet initialization and parameter retrieval");
+> diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic-rdesc.c
+> index b6dfdf6356a6..d4f1ee79e0a1 100644
+> --- a/drivers/hid/hid-uclogic-rdesc.c
+> +++ b/drivers/hid/hid-uclogic-rdesc.c
+> @@ -59,9 +59,11 @@ __u8 uclogic_rdesc_wp4030u_fixed_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp4030u_fixed_arr);
+>  
+>  const size_t uclogic_rdesc_wp4030u_fixed_size =
+>  			sizeof(uclogic_rdesc_wp4030u_fixed_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp4030u_fixed_size);
+>  
+>  /* Fixed WP5540U report descriptor */
+>  __u8 uclogic_rdesc_wp5540u_fixed_arr[] = {
+> @@ -136,9 +138,11 @@ __u8 uclogic_rdesc_wp5540u_fixed_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp5540u_fixed_arr);
+>  
+>  const size_t uclogic_rdesc_wp5540u_fixed_size =
+>  			sizeof(uclogic_rdesc_wp5540u_fixed_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp5540u_fixed_size);
+>  
+>  /* Fixed WP8060U report descriptor */
+>  __u8 uclogic_rdesc_wp8060u_fixed_arr[] = {
+> @@ -213,9 +217,11 @@ __u8 uclogic_rdesc_wp8060u_fixed_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp8060u_fixed_arr);
+>  
+>  const size_t uclogic_rdesc_wp8060u_fixed_size =
+>  			sizeof(uclogic_rdesc_wp8060u_fixed_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp8060u_fixed_size);
+>  
+>  /* Fixed WP1062 report descriptor */
+>  __u8 uclogic_rdesc_wp1062_fixed_arr[] = {
+> @@ -261,9 +267,11 @@ __u8 uclogic_rdesc_wp1062_fixed_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp1062_fixed_arr);
+>  
+>  const size_t uclogic_rdesc_wp1062_fixed_size =
+>  			sizeof(uclogic_rdesc_wp1062_fixed_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp1062_fixed_size);
+>  
+>  /* Fixed PF1209 report descriptor */
+>  __u8 uclogic_rdesc_pf1209_fixed_arr[] = {
+> @@ -338,9 +346,11 @@ __u8 uclogic_rdesc_pf1209_fixed_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_pf1209_fixed_arr);
+>  
+>  const size_t uclogic_rdesc_pf1209_fixed_size =
+>  			sizeof(uclogic_rdesc_pf1209_fixed_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_pf1209_fixed_size);
+>  
+>  /* Fixed PID 0522 tablet report descriptor, interface 0 (stylus) */
+>  __u8 uclogic_rdesc_twhl850_fixed0_arr[] = {
+> @@ -384,9 +394,11 @@ __u8 uclogic_rdesc_twhl850_fixed0_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed0_arr);
+>  
+>  const size_t uclogic_rdesc_twhl850_fixed0_size =
+>  			sizeof(uclogic_rdesc_twhl850_fixed0_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed0_size);
+>  
+>  /* Fixed PID 0522 tablet report descriptor, interface 1 (mouse) */
+>  __u8 uclogic_rdesc_twhl850_fixed1_arr[] = {
+> @@ -424,9 +436,11 @@ __u8 uclogic_rdesc_twhl850_fixed1_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed1_arr);
+>  
+>  const size_t uclogic_rdesc_twhl850_fixed1_size =
+>  			sizeof(uclogic_rdesc_twhl850_fixed1_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed1_size);
+>  
+>  /* Fixed PID 0522 tablet report descriptor, interface 2 (frame buttons) */
+>  __u8 uclogic_rdesc_twhl850_fixed2_arr[] = {
+> @@ -450,9 +464,11 @@ __u8 uclogic_rdesc_twhl850_fixed2_arr[] = {
+>  	0x80,               /*      Input,                          */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed2_arr);
+>  
+>  const size_t uclogic_rdesc_twhl850_fixed2_size =
+>  			sizeof(uclogic_rdesc_twhl850_fixed2_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed2_size);
+>  
+>  /* Fixed TWHA60 report descriptor, interface 0 (stylus) */
+>  __u8 uclogic_rdesc_twha60_fixed0_arr[] = {
+> @@ -499,9 +515,11 @@ __u8 uclogic_rdesc_twha60_fixed0_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed0_arr);
+>  
+>  const size_t uclogic_rdesc_twha60_fixed0_size =
+>  			sizeof(uclogic_rdesc_twha60_fixed0_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed0_size);
+>  
+>  /* Fixed TWHA60 report descriptor, interface 1 (frame buttons) */
+>  __u8 uclogic_rdesc_twha60_fixed1_arr[] = {
+> @@ -527,9 +545,11 @@ __u8 uclogic_rdesc_twha60_fixed1_arr[] = {
+>  	0x81, 0x01, /*      Input (Constant),       */
+>  	0xC0        /*  End Collection              */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed1_arr);
+>  
+>  const size_t uclogic_rdesc_twha60_fixed1_size =
+>  			sizeof(uclogic_rdesc_twha60_fixed1_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed1_size);
+>  
+>  /* Fixed report descriptor template for (tweaked) v1 pen reports */
+>  const __u8 uclogic_rdesc_v1_pen_template_arr[] = {
+> @@ -581,9 +601,11 @@ const __u8 uclogic_rdesc_v1_pen_template_arr[] = {
+>  	0xC0,                   /*      End Collection,                     */
+>  	0xC0                    /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_pen_template_arr);
+>  
+>  const size_t uclogic_rdesc_v1_pen_template_size =
+>  			sizeof(uclogic_rdesc_v1_pen_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_pen_template_size);
+>  
+>  /* Fixed report descriptor template for (tweaked) v2 pen reports */
+>  const __u8 uclogic_rdesc_v2_pen_template_arr[] = {
+> @@ -647,9 +669,11 @@ const __u8 uclogic_rdesc_v2_pen_template_arr[] = {
+>  	0xC0,                   /*      End Collection,                     */
+>  	0xC0                    /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_pen_template_arr);
+>  
+>  const size_t uclogic_rdesc_v2_pen_template_size =
+>  			sizeof(uclogic_rdesc_v2_pen_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_pen_template_size);
+>  
+>  /*
+>   * Expand to the contents of a generic frame buttons report descriptor.
+> @@ -702,16 +726,22 @@ const size_t uclogic_rdesc_v2_pen_template_size =
+>  const __u8 uclogic_rdesc_v1_frame_arr[] = {
+>  	UCLOGIC_RDESC_FRAME_BUTTONS_BYTES(UCLOGIC_RDESC_V1_FRAME_ID, 8)
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_frame_arr);
+> +
+>  const size_t uclogic_rdesc_v1_frame_size =
+>  			sizeof(uclogic_rdesc_v1_frame_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_frame_size);
+>  
+>  /* Fixed report descriptor for (tweaked) v2 frame button reports */
+>  const __u8 uclogic_rdesc_v2_frame_buttons_arr[] = {
+>  	UCLOGIC_RDESC_FRAME_BUTTONS_BYTES(UCLOGIC_RDESC_V2_FRAME_BUTTONS_ID,
+>  					  12)
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_buttons_arr);
+> +
+>  const size_t uclogic_rdesc_v2_frame_buttons_size =
+>  			sizeof(uclogic_rdesc_v2_frame_buttons_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_buttons_size);
+>  
+>  /* Fixed report descriptor for (tweaked) v2 frame touch ring reports */
+>  const __u8 uclogic_rdesc_v2_frame_touch_ring_arr[] = {
+> @@ -758,8 +788,11 @@ const __u8 uclogic_rdesc_v2_frame_touch_ring_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_ring_arr);
+> +
+>  const size_t uclogic_rdesc_v2_frame_touch_ring_size =
+>  			sizeof(uclogic_rdesc_v2_frame_touch_ring_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_ring_size);
+>  
+>  /* Fixed report descriptor for (tweaked) v2 frame touch strip reports */
+>  const __u8 uclogic_rdesc_v2_frame_touch_strip_arr[] = {
+> @@ -806,8 +839,11 @@ const __u8 uclogic_rdesc_v2_frame_touch_strip_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_strip_arr);
+> +
+>  const size_t uclogic_rdesc_v2_frame_touch_strip_size =
+>  			sizeof(uclogic_rdesc_v2_frame_touch_strip_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_strip_size);
+>  
+>  /* Fixed report descriptor for (tweaked) v2 frame dial reports */
+>  const __u8 uclogic_rdesc_v2_frame_dial_arr[] = {
+> @@ -856,14 +892,22 @@ const __u8 uclogic_rdesc_v2_frame_dial_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_dial_arr);
+> +
+>  const size_t uclogic_rdesc_v2_frame_dial_size =
+>  			sizeof(uclogic_rdesc_v2_frame_dial_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_dial_size);
+>  
+>  const __u8 uclogic_ugee_v2_probe_arr[] = {
+>  	0x02, 0xb0, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_arr);
+> +
+>  const size_t uclogic_ugee_v2_probe_size = sizeof(uclogic_ugee_v2_probe_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_size);
+> +
+>  const int uclogic_ugee_v2_probe_endpoint = 0x03;
+> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_endpoint);
+>  
+>  /* Fixed report descriptor template for UGEE v2 pen reports */
+>  const __u8 uclogic_rdesc_ugee_v2_pen_template_arr[] = {
+> @@ -935,8 +979,11 @@ const __u8 uclogic_rdesc_ugee_v2_pen_template_arr[] = {
+>  	0xc0,               /*      End Collection,                     */
+>  	0xc0,               /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_pen_template_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_v2_pen_template_size =
+>  			sizeof(uclogic_rdesc_ugee_v2_pen_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_pen_template_size);
+>  
+>  /* Fixed report descriptor template for UGEE v2 frame reports (buttons only) */
+>  const __u8 uclogic_rdesc_ugee_v2_frame_btn_template_arr[] = {
+> @@ -964,8 +1011,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_btn_template_arr[] = {
+>  	0xC0,               /*      End Collection,                     */
+>  	0xC0                /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_btn_template_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_v2_frame_btn_template_size =
+>  			sizeof(uclogic_rdesc_ugee_v2_frame_btn_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_btn_template_size);
+>  
+>  /* Fixed report descriptor template for UGEE v2 frame reports (dial) */
+>  const __u8 uclogic_rdesc_ugee_v2_frame_dial_template_arr[] = {
+> @@ -1004,8 +1054,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_dial_template_arr[] = {
+>  	0xC0,               /*      End Collection,                     */
+>  	0xC0                /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_dial_template_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_v2_frame_dial_template_size =
+>  			sizeof(uclogic_rdesc_ugee_v2_frame_dial_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_dial_template_size);
+>  
+>  /* Fixed report descriptor template for UGEE v2 frame reports (mouse) */
+>  const __u8 uclogic_rdesc_ugee_v2_frame_mouse_template_arr[] = {
+> @@ -1038,8 +1091,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_mouse_template_arr[] = {
+>  	0xC0,               /*      End Collection,                     */
+>  	0xC0                /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_mouse_template_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_v2_frame_mouse_template_size =
+>  			sizeof(uclogic_rdesc_ugee_v2_frame_mouse_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_mouse_template_size);
+>  
+>  /* Fixed report descriptor template for UGEE v2 battery reports */
+>  const __u8 uclogic_rdesc_ugee_v2_battery_template_arr[] = {
+> @@ -1072,8 +1128,11 @@ const __u8 uclogic_rdesc_ugee_v2_battery_template_arr[] = {
+>  	0x81, 0x01,         /*      Input (Constant),                   */
+>  	0xC0                /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_battery_template_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_v2_battery_template_size =
+>  			sizeof(uclogic_rdesc_ugee_v2_battery_template_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_battery_template_size);
+>  
+>  /* Fixed report descriptor for Ugee EX07 frame */
+>  const __u8 uclogic_rdesc_ugee_ex07_frame_arr[] = {
+> @@ -1099,8 +1158,11 @@ const __u8 uclogic_rdesc_ugee_ex07_frame_arr[] = {
+>  	0xC0,                   /*      End Collection,                     */
+>  	0xC0                    /*  End Collection                          */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_ex07_frame_arr);
+> +
+>  const size_t uclogic_rdesc_ugee_ex07_frame_size =
+>  			sizeof(uclogic_rdesc_ugee_ex07_frame_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_ex07_frame_size);
+>  
+>  /* Fixed report descriptor for Ugee G5 frame controls */
+>  const __u8 uclogic_rdesc_ugee_g5_frame_arr[] = {
+> @@ -1153,8 +1215,10 @@ const __u8 uclogic_rdesc_ugee_g5_frame_arr[] = {
+>  	0xC0,               /*      End Collection,                 */
+>  	0xC0                /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_g5_frame_arr);
+>  const size_t uclogic_rdesc_ugee_g5_frame_size =
+>  			sizeof(uclogic_rdesc_ugee_g5_frame_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_g5_frame_size);
+>  
+>  /* Fixed report descriptor for XP-Pen Deco 01 frame controls */
+>  const __u8 uclogic_rdesc_xppen_deco01_frame_arr[] = {
+> @@ -1187,9 +1251,11 @@ const __u8 uclogic_rdesc_xppen_deco01_frame_arr[] = {
+>  	0xC0,       /*      End Collection,                 */
+>  	0xC0        /*  End Collection                      */
+>  };
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_xppen_deco01_frame_arr);
+>  
+>  const size_t uclogic_rdesc_xppen_deco01_frame_size =
+>  			sizeof(uclogic_rdesc_xppen_deco01_frame_arr);
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_xppen_deco01_frame_size);
+>  
+>  /**
+>   * uclogic_rdesc_template_apply() - apply report descriptor parameters to a
+> @@ -1242,3 +1308,9 @@ __u8 *uclogic_rdesc_template_apply(const __u8 *template_ptr,
+>  
+>  	return rdesc_ptr;
+>  }
+> +EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Martin Rusko");
+> +MODULE_AUTHOR("Nikolai Kondrashov");
+> +MODULE_DESCRIPTION("HID driver for UC-Logic devices original and fixed report descriptors");
+> -- 
+> 2.39.2
+> 
 
