@@ -1,162 +1,200 @@
-Return-Path: <linux-kernel+bounces-206883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E38D900F41
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:23:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3CD900F43
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAE41F2273B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:23:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82689B22DC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913FBE4D;
-	Sat,  8 Jun 2024 02:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9348CA40;
+	Sat,  8 Jun 2024 02:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXkazyhQ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yaigSzwL"
+Received: from mail-vk1-f202.google.com (mail-vk1-f202.google.com [209.85.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDF4C14F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8080C7F
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 02:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717813425; cv=none; b=mLZVhfubJ8MVgibKO26ROyTG6/wziB51H3Fb7rIrpVuoutZm4oIke0cOU8G/qc17sXZshOubkh8JDepObQTc9NFzMr2dPmdPIzAVFjj+hSFR/3hJ7n8it4cZoLl44OpZAewVYRxa1hihoPLeuojr0D08hzDglTFUrry66208bkA=
+	t=1717814618; cv=none; b=p+ecvE3UCe5fuiAQw4axRi3uSCSouQLgf/EMbfZVTUOeYP7jkBg6jK4pqB03LkRDZNLcgJiX0NKjeFNTGpq+syWvoJSee1feq7ksf8E/JevDlFYl5jgr/2gmfi6K6402bdaWHNaluTjYEnF8cHGFbV67hBHCiLVCTUoNQorQqpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717813425; c=relaxed/simple;
-	bh=8jjq1gHnAInkHjlnzVHU3k3WOM8rwgC8BW9P44ujf30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxKLfu3k3J95vpVBk1atbTWa07Ct66LXzGnRkSP0HxiruyPTHJ0bTMAdt8JVcInmOHURfPz+4WtHT36Iz0p5SG3b6D2K/pK1lKD/JndTO26LlMHLRRoWYWH/g2TbNJjXGTRGtcN8utE7ylOUfkmuSCK8aCp9kLR2Rw72XEvF+HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXkazyhQ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b8b7b8698so3344734e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 19:23:43 -0700 (PDT)
+	s=arc-20240116; t=1717814618; c=relaxed/simple;
+	bh=kEjngn0PaEK02LFHV87D4smKdu4MTq0gHFlSeqq8wtY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LKeDjkFbmqtOUWQh2V7If3ZinCpR8mNY2ueWE2jJrLzJxssv4T6JFodXocr+VdfzR4pLq2o3u91/f0iovjaUkURaWkBA5AC2iOyoz8sV19v4mJJue4A7a/+Z0dpUKmv5f/W846Vd5/snDiXyPul2o/Z5Nz3vVgkIpWdDVldkUWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yaigSzwL; arc=none smtp.client-ip=209.85.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-vk1-f202.google.com with SMTP id 71dfb90a1353d-4eb14518c4aso3326532e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 19:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717813422; x=1718418222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9V+yvJSOPxV6HkhRzMGuSvkZwjbSgJnARuZIs0WNJg=;
-        b=oXkazyhQpHN69BweMcjQDAgGEPY3kHdVKg51kwW3ykRF0GUBD5v8S2u7ksfCU8gezQ
-         l/SrxUCsVINh7s+HvyPHIQI70IcQciuPQt6xm2rGIJRlDLcxFKKHrvDrQKiZHcoPru2a
-         A+i8PKuhRsdzdk3Q5th5edOqLLdfzfH0qUcHPvrFj+yEsGCWTmDIPapjVSuQt7exwBze
-         ceHTnxaCHwvhrZ77BNnRqbEiOf2qxH016udv61Drw0rilPxSo2VAorMGKbW4Fxa5hiHB
-         8u3kffaKaGWTJeweA7KKeYtqDEmo8UxjiuJhDRG10b2W8d1NPhPGdejl2wha7MbBrJ1y
-         O1+g==
+        d=google.com; s=20230601; t=1717814615; x=1718419415; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RiSTt00lJmIM9pwkdwoE4isrbgVfqbDGpglyPba/Gok=;
+        b=yaigSzwLPEQIv5MqeZztwdZd2lhnABE3EQbbS/D0fLc/x23s+Tp7lm1DPTJ8dhZQfE
+         uIFo+8seNwc+6czLrm7ZEuHar0otrRsmU2wjN8UnrJSsnj3BS1qU7qOXL0o+CFlfmquM
+         X9tXVkWC9glEHRA7+NdD8facn/+0jx+h79m3LHzdgzzFA7thg9081WTEt98224MMCyL1
+         espL1hWX/zW1NyaQrKv2AsBJvcUvMnYECAKuGN7mMMYaj8+3/d7r7RjYbx5YXVp+wdG3
+         QcA8MRWT9Jcv0f9VyQ8nVOc604dJy6RPMF2APxpOFKESK/0SK51YS6fsZCyPbKYE/z9R
+         y3Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717813422; x=1718418222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r9V+yvJSOPxV6HkhRzMGuSvkZwjbSgJnARuZIs0WNJg=;
-        b=Cs3l3JJI3aRBE+I4hh1IkkL8azULJ3IxY38Bc/ntWmiMBbWxJLn+204I39M8sALWGD
-         JbtZUDgxjdvOsqZ1khCT2RGk3qJT15tqhaGkW9bNMnQt3cyHUl+2xxCF2JnNTBtf0bdp
-         M/OiKz1zOCwiM/IePEYjh0gxR0LseRsnfBGicilanj5VHivmprpNwQWT1wrwBy5yzLiz
-         M/cB+90wozbOh6dBcm+OZ3jasbO0FZMOkM9918Y/huXk0ZIbUa3E9a+U1IdpK6S2ml/S
-         uzqAdsygdlp/qmSUENS+lEWGrTv0No4i0BpHoTwpJDhOWryMsF9t9FC1hhSJ0zFK2Etd
-         I0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUp6YNRB6SwLb1r3BbtoIJHTlbATEtJ0iJ6aaWr4NMxqflZ9lKNbt0RZ2SeHSbIaOqXIYcdnjT02nfavF2+VQ3qPpUEpdNGcMfQskJe
-X-Gm-Message-State: AOJu0Yw+8EWbhEiG8WMXvY4INNbimQla5rwf7fmlnriP+lNXKZzypuCH
-	SyZKIKFt8C+hiQwMNprJ1Ix9zPWH/5D+4bIcIlcZVFPGF9aOcZjJE24I8DMawpo=
-X-Google-Smtp-Source: AGHT+IErTuWuRC95/TFbpSXncWl4vvSDO39M3dhsa+Ymd9gZ9Y5tyCiwQrYM+fotBE75ODyhxZSJPg==
-X-Received: by 2002:a05:6512:2526:b0:52c:812b:6e72 with SMTP id 2adb3069b0e04-52c812b70acmr60133e87.1.1717813421804;
-        Fri, 07 Jun 2024 19:23:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423cf1dsm708744e87.203.2024.06.07.19.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 19:23:41 -0700 (PDT)
-Date: Sat, 8 Jun 2024 05:23:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, perex@perex.cz, lgirdwood@gmail.com, 
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	krzk+dt@kernel.org
-Subject: Re: [PATCH v3 0/4] ASoC: qcom: display port changes
-Message-ID: <i6jwqycgywrq42u4km6pjppgvvhsbvuh7m6mzyqy2qcge32ihy@n3lrowkyouv2>
-References: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
+        d=1e100.net; s=20230601; t=1717814615; x=1718419415;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RiSTt00lJmIM9pwkdwoE4isrbgVfqbDGpglyPba/Gok=;
+        b=nMt2dmQE6pEYElRPPJYulCmkqaKHDuamtvr+GgaXCDNVGbk7pORv1ax4/9HeOb1MGG
+         YhcMYA4oh4FUcyrACezLgXnnvHpPQ4hje4sBv7DYarCd/iucXgoKM9miLfgVR86ELTSl
+         ictn6SARgkpM4uo28B+rsCFkCzdMxeaut47iGoq1xW0L4PhR5pGEXaxF06akHvxZAX4M
+         nhfxinNz0DOUUOpRIkrIOjT5xXscGTqQIDR+wvmmriNU8VdMOGX2m30Oo85HpKrbwskn
+         0e1gAFJkdTFu0NTGUTH1r92FOIHbPuN6kDTsJxZaOTW3LTyc+SBJi1O84RlVdvSVoMKc
+         7cSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjf2XsHFXuXqeau7h/prhGbvIajx4yWZu2hEI5epyFuayaH/gDtP0227RJCGidsA6s52ShptSNlGpu0DoPDB3CTcNet9jQ4C8fye/R
+X-Gm-Message-State: AOJu0Yw79gJFDtZ+msDn6sOuQi5/Bqc9ihph+JnsiX6bBI9h5LsrJoRJ
+	h3bQ81U3r9aE/VN+cH6+sfEp+/rO+3F588MX8bebUirZ0TWfoY5aVKDpsu3mAD74lyiIrk0ZY47
+	b/Z/LEzRyxmpLzN6KtQ==
+X-Google-Smtp-Source: AGHT+IFfA8mr9lfhDrLYFZf7Onfx5mpbJHVARhxMTc00b+HD8uEOFfV9ZWXuvMVIppVolBKqBMlIaVD8/YnpJlxT
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a17:90b:30c2:b0:2b2:bc19:61f5 with SMTP
+ id 98e67ed59e1d1-2c2b8989ebdmr45265a91.1.1717814223591; Fri, 07 Jun 2024
+ 19:37:03 -0700 (PDT)
+Date: Sat,  8 Jun 2024 02:36:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240608023654.3513385-1-yosryahmed@google.com>
+Subject: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 06, 2024 at 11:49:18AM +0100, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> This patchset adds support for.
-> 	1. parse Display Port module tokens from ASoC topology
-> 	2. add support to DP/HDMI Jack events.
-> 	3. fixes a typo in function name in sm8250
-> 
-> Verified these patches on X13s along with changes to tplg in 
-> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> 
-> x1e80100 is verified by Krzysztof with his changes in tplg 
-> 
-> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/merge_requests/7/commits
-> 
-> Thanks,
-> Srini
-> 
+Zswap does not support storing or loading large folios. Until proper
+support is added, attempts to load large folios from zswap are a bug.
 
-I have been testing this patchset on X13s, switching between speakers,
-connected and disconnected DP output.
+For example, if a swapin fault observes that contiguous PTEs are
+pointing to contiguous swap entries and tries to swap them in as a large
+folio, swap_read_folio() will pass in a large folio to zswap_load(), but
+zswap_load() will only effectively load the first page in the folio. If
+the first page is not in zswap, the folio will be read from disk, even
+though other pages may be in zswap.
 
-- Once the DSP got into the state, where I could not further get it to
-  work until the reboot:
+In both cases, this will lead to silent data corruption. Proper support
+needs to be added before large folio swapins and zswap can work
+together.
 
-rohan pipewire[1749]: spa.alsa: set_hw_params: Invalid argument
-rohan pipewire[1749]: pw.node: (alsa_output.platform-sound.HiFi__hw_SC8280XPLENOVOX_1__sink-48) suspended -> error (Start error: Invalid argument)
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
-rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare Graph -22
-rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on WSA_CODEC_DMA_RX_0: -22
-rohan pipewire[1749]: spa.alsa: set_hw_params: Invalid argument
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
-rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare Graph -22
-rohan kernel: q6apm-lpass-dais 3000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on WSA_CODEC_DMA_RX_0: -22
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001006 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-rohan kernel: qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001001 cmd
-rohan kernel: qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
+Looking at callers of swap_read_folio(), it seems like they are either
+allocated from __read_swap_cache_async() or do_swap_page() in the
+SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so
+everything is fine for now.
 
+However, there is ongoing work to add to support large folio swapins
+[1]. To make sure new development does not break zswap (or get broken by
+zswap), add minimal handling of incorrect loads of large folios to
+zswap.
 
-- Once in a while during startup PipeWire will try opening the
-  incorrect DAI and then fail with:
+First, move the call folio_mark_uptodate() inside zswap_load().
 
-rohan kernel: hdmi-audio-codec hdmi-audio-codec.8.auto: ASoC: error at snd_soc_dai_hw_params on i2s-hifi: -22
-rohan kernel: hdmi-audio-codec hdmi-audio-codec.8.auto: ASoC: error at snd_soc_dai_hw_params on i2s-hifi: -22
+If a large folio load is attempted, and any page in that folio is in
+zswap, return 'true' without calling folio_mark_uptodate(). This will
+prevent the folio from being read from disk, and will emit an IO error
+because the folio is not uptodate (e.g. do_swap_fault() will return
+VM_FAULT_SIGBUS). It may not be reliable recovery in all cases, but it
+is better than nothing.
 
-  I think this happens if previously I have selected DP as an output,
-  then closed gnome session, unplugged the cable and tried logging in
-  again.
+This was tested by hacking the allocation in __read_swap_cache_async()
+to use order 2 and __GFP_COMP.
 
-Generally, it looks like even though the Jack is reporting
-'unplugged', sound daemon still can switch to to the disabled output
-(or the audio card can be left in the stale state).  In case of DP
-this frequently results in audio daemon or DSP failures.
+In the future, to handle this correctly, the swapin code should:
+(a) Fallback to order-0 swapins if zswap was ever used on the machine,
+because compressed pages remain in zswap after it is disabled.
+(b) Add proper support to swapin large folios from zswap (fully or
+partially).
 
-So, the DP implementation needs to be made more robust, so that if
-DP output gets selected when the cable is unplugged, the driver will not
-attempt to configure the DSP.
+Probably start with (a) then followup with (b).
 
+[1]https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.com/
+
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+---
+
+v1: https://lore.kernel.org/lkml/20240606184818.1566920-1-yosryahmed@google.com/
+
+v1 -> v2:
+- Instead of using VM_BUG_ON() use WARN_ON_ONCE() and add some recovery
+  handling (David Hildenbrand).
+
+---
+ mm/page_io.c |  1 -
+ mm/zswap.c   | 22 +++++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/mm/page_io.c b/mm/page_io.c
+index f1a9cfab6e748..8f441dd8e109f 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ 	delayacct_swapin_start();
+ 
+ 	if (zswap_load(folio)) {
+-		folio_mark_uptodate(folio);
+ 		folio_unlock(folio);
+ 	} else if (data_race(sis->flags & SWP_FS_OPS)) {
+ 		swap_read_folio_fs(folio, plug);
+diff --git a/mm/zswap.c b/mm/zswap.c
+index b9b35ef86d9be..ebb878d3e7865 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
+ 
+ 	VM_WARN_ON_ONCE(!folio_test_locked(folio));
+ 
++	/*
++	 * Large folios should not be swapped in while zswap is being used, as
++	 * they are not properly handled. Zswap does not properly load large
++	 * folios, and a large folio may only be partially in zswap.
++	 *
++	 * If any of the subpages are in zswap, reading from disk would result
++	 * in data corruption, so return true without marking the folio uptodate
++	 * so that an IO error is emitted (e.g. do_swap_page() will sigfault).
++	 *
++	 * Otherwise, return false and read the folio from disk.
++	 */
++	if (folio_test_large(folio)) {
++		if (xa_find(tree, &offset,
++			    offset + folio_nr_pages(folio) - 1, XA_PRESENT)) {
++			WARN_ON_ONCE(1);
++			return true;
++		}
++		return false;
++	}
++
+ 	/*
+ 	 * When reading into the swapcache, invalidate our entry. The
+ 	 * swapcache can be the authoritative owner of the page and
+@@ -1590,7 +1610,7 @@ bool zswap_load(struct folio *folio)
+ 		zswap_entry_free(entry);
+ 		folio_mark_dirty(folio);
+ 	}
+-
++	folio_mark_uptodate(folio);
+ 	return true;
+ }
+ 
 -- 
-With best wishes
-Dmitry
+2.45.2.505.gda0bf45e8d-goog
+
 
