@@ -1,178 +1,113 @@
-Return-Path: <linux-kernel+bounces-207125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A400B9012A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762059012A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C551C20C5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200341F21962
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A347A17B401;
-	Sat,  8 Jun 2024 16:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4F517B406;
+	Sat,  8 Jun 2024 16:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yp9Beqws"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLjoMtrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538C01E888
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 16:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980DA178382;
+	Sat,  8 Jun 2024 16:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717862642; cv=none; b=qUQmFCskR3SSaIkhKNF9GTJbwHb61RHGMVzpZ9oS8p0Xe84cym8sNtvAZwfuzc/XGwJBaeTKmjOsgZkLtaPKo2EPX+lDtmLF/xfXW3Tw+rV21oa0cEIZiG8iAvwD9JmSU22KoKXR5BNQidqvYV0Zv6deEYkThMU1r/UPXVzBII0=
+	t=1717863079; cv=none; b=umS22CifFMi+YeU+XPit9HBIOEqvDxsTK+0U+43n4op57Zg/N/lcJCgaOLYVOIMk/SXiYeo5YvwdyDhYFoSJUXb+7Um0ONW7tIKgnX3nsHBTcW5szXAaDE6FniLnmv+FqG8drWSMgXwK7pJSG7bbuxz9U3qk4dCSczdClk9rgKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717862642; c=relaxed/simple;
-	bh=Cuz5O7o7P/GDYoHaIJ5Jm7qqJSDX3hdIyPx3hjVkLkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NrYSGILgHISglJw5palW2SnluvgTOvOAdNZ2BBA+LzXViNoXJic7Nrj2YNyvs28aFmSpmrpmOWQfe0wlTHgIQd7sNFz5Ur9aJdfVOC3ZgzxX6QLp8oIv/EVtX+HXqxK1AhPipHIu9o4UUTsh1MheYQn5GVn7ZY7GtlRVpflo8vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yp9Beqws; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717862640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qVkfmd0A4LSH9aeoF9S7AqEXOafs58bJBwLWsHiogQU=;
-	b=Yp9BeqwsuXxKC42RbLDAKniC5A+KrTOXFiwb3T6bQ7goskda6O9e6mEqlszofqSxKrwQeo
-	4Izp99G3Piyp7OdwftT+D9yS4QQCoBIUzIUI1h+Dc8bWW7L6uRnqmAepBVxCvu4qGOkWh2
-	WvKECf2B7QEuEZff9CMuYq+CeIN6R98=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-xgb4-x1XPom84P7GNcH5mQ-1; Sat, 08 Jun 2024 12:03:58 -0400
-X-MC-Unique: xgb4-x1XPom84P7GNcH5mQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35dbf83bb20so1947485f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 09:03:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717862637; x=1718467437;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qVkfmd0A4LSH9aeoF9S7AqEXOafs58bJBwLWsHiogQU=;
-        b=wmugFn6g+6x3XWqSDcG5NFXrwWyi09fzd7YRuZm1tYntWNLZji3fUjz+mHSBJa+TlG
-         4naY/A+VoeoswhG+2D5jokXxvdnLCIX5P7I17uYi5zeMQZRHF8nTsVg/gFIw6OrwBb9j
-         nCrGEE59Es4taZrV+5ahwT1tdGF41GZe+TjroRkvQ8PHZ8zxvHsm8OTSR7nOTt8C55fk
-         HnU2EYd1UdM+ka2hgir1Y1fXGajFgAIZ1UufF3mDIwQtxuPgJ3qGE5d6RYGQYoO0PN0v
-         NEU2MAlamqSIR7id5TlegzRRtEwvOBxXzxfCfifsb7lMeQn0uDAk5rDzloZsknIcl8/O
-         cn/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUE5YNiSEtyhSk5yYAZsj4Yf4x01Dr9ldhG/5dOTlESWGJNcpmPsMjYka0LNhhvPzXORzKVNH2duMU3KcD7apQXFBC35QDMIgrpinlT
-X-Gm-Message-State: AOJu0Yz5KWWQ9SmEi3L6RR5cpPQZSqF3kCL6Agon/LFaG526mDnuPf7F
-	4Ua9yvEFox5cigBbp6haAgIYF3iSgwyJHjzP33lAHaBRLS43mwJI1zVjxAOd7r5/qjlYO/BNozD
-	IQ9oKRFqpVHV37M0IZGYoZXiijCrzZGyhWT32WdxQ85g1rNvB+7U41ggsQYCNKg==
-X-Received: by 2002:a5d:648c:0:b0:35e:5b3c:b11f with SMTP id ffacd0b85a97d-35efedf69a6mr4136846f8f.58.1717862637317;
-        Sat, 08 Jun 2024 09:03:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6t3CY8lINt/8W7LI84Kb4ZP8m+Ag7Es0XZ9YMGZx68e9mM+O7GkNFhPNxHyppXfZ4VvhQmA==
-X-Received: by 2002:a5d:648c:0:b0:35e:5b3c:b11f with SMTP id ffacd0b85a97d-35efedf69a6mr4136835f8f.58.1717862636892;
-        Sat, 08 Jun 2024 09:03:56 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c725:2c00:2436:de9:dfc8:5e67? (p200300cbc7252c0024360de9dfc85e67.dip0.t-ipconnect.de. [2003:cb:c725:2c00:2436:de9:dfc8:5e67])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0f996ee3sm2535873f8f.71.2024.06.08.09.03.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 09:03:56 -0700 (PDT)
-Message-ID: <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
-Date: Sat, 8 Jun 2024 18:03:55 +0200
+	s=arc-20240116; t=1717863079; c=relaxed/simple;
+	bh=IjZW7s+e5GiUN4hH6yDA8HOWvGUpCfB7ZLtckx4HLJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J8gL3o8z4WT0sed0sB0Obn43l+ksoAZ3qiJ6eSccX3Wt587HOxqW9I8S2RAp0P/1/Y3wyc20MU6zqBxgVAECfA5gN9J8mMtjJrfc9BVNkudg3SNdRYfCBKK0+7maqPgjB39xasoHtfbafkk/wdRcB+wfRnGBIFu4AG/lo0Yb3B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLjoMtrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 640B4C2BD11;
+	Sat,  8 Jun 2024 16:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717863079;
+	bh=IjZW7s+e5GiUN4hH6yDA8HOWvGUpCfB7ZLtckx4HLJI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CLjoMtrKZInJ2kW0BDfDzudCsnYu2dyZF/kcppjD5soOeqOXEG4Znw1p7+jNe6ZId
+	 iZWoIgd0FRklZ4P8eqHQKk4kmrhWqrh9DxbXkuqkqOMM928ebEZNaUvsvL73NMw370
+	 v1AZQyNowQlCxTCtprc4leEnDjvtEJ7h3xkRRu2UD1XekGp2RHrISN6IB6qg52BVdZ
+	 sXSwXQU1+rl45+PPfPtTNYP7DS/gxu4jjCsYkMBXBKU0u+QQg1HlF77RuJ8QwE3WFv
+	 hV2H/WupNAaOj/CJJRJG8XKkko3DmoZYO5veL8Y36D0uUZua6ZpAjCOeHB1pfedl0m
+	 uDFvL+EXhjY6A==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: Re: [PATCH 00/12] Adreno cooling, take 2
+Date: Sat,  8 Jun 2024 11:11:15 -0500
+Message-ID: <171786307409.851553.17581174595985014782.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
+References: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: Matthew Wilcox <willy@infradead.org>, yangge1116 <yangge1116@126.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
- <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
- <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
- <ZmR1dVUB5mE2If9t@casper.infradead.org>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZmR1dVUB5mE2If9t@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 08.06.24 17:15, Matthew Wilcox wrote:
-> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
->> Can we add a PG_lru_batch flag to determine whether a page is in lru batch?
->> If we can, seems this problem will be easier.
+
+On Fri, 10 May 2024 14:58:29 +0200, Konrad Dybcio wrote:
+> For the thermal framework to cool devfreq-managed devices properly,
+> it seems like the following conditions must be met:
 > 
-> Page flags are in short supply.  You'd need a really good justification.
+> 1. the devfreq device has a cooling device associated with it
+> 2. there exists some thermal zone provider
+> 3. the cooling device is referenced in a cooling map
+> 4. the cooling map is associated with a thermal trip point
+> 5. the thermal trip point is of the "passive" kind
+> 6. the "passive" trip point is being updated (via polling or otherwise)
+> 7. the trip point is being hit (i.e. the thing gets hot enough)
 > 
+> [...]
 
-A flag would not be able to handle the "part of multiple LRU batches" 
-that should currently possible (when to clear the flag?). Well, if we 
-have to keep supporting that. If we only to be part in a single LRU 
-batch, a new flag could work and we could still allow isolating a folio 
-from LRU while in some LRU batch.
+Applied, thanks!
 
-If we could handle it using the existing flags, that would of course be 
-better (wondering if we could store more information in the existing 
-flags by using a different encoding for the different states).
+[01/12] arm64: dts: qcom: sc8180x: Throttle the GPU when overheating
+        commit: 7c05517e5e68205c9d5085c029df2ca4e6ad9237
+[02/12] arm64: dts: qcom: sc8280xp: Throttle the GPU when overheating
+        commit: f7fd6d04c1046107a87a0fc883ed044cf8b877a1
+[03/12] arm64: dts: qcom: sdm630: Throttle the GPU when overheating
+        commit: 545fef1e5e43fb73083d16507a13820179726ebe
+[04/12] arm64: dts: qcom: sdm845: Throttle the GPU when overheating
+        commit: b79dd56ed5fcc863f167eb53771b09e8b3d8e317
+[05/12] arm64: dts: qcom: sm6115: Update GPU thermal zone settings
+        commit: c518b5f6def159222d73f3241fb1802bc846a477
+[06/12] arm64: dts: qcom: sm6350: Update GPU thermal zone settings
+        commit: 1a558bbffc2ee9b99226b146fd7928e41db79d41
+[07/12] arm64: dts: qcom: sm8150: Throttle the GPU when overheating
+        commit: c61300433b7b89d5782fddf95bd96a6e819c0377
+[08/12] arm64: dts: qcom: sm8250: Throttle the GPU when overheating
+        commit: c862b78b7203b72dd6806a77c0feff60fe96dee5
+[09/12] arm64: dts: qcom: sm8350: Throttle the GPU when overheating
+        commit: 10a5555220ad20b2f8043060d76b0e7f83ae91fa
+[10/12] arm64: dts: qcom: sm8450: Throttle the GPU when overheating
+        commit: 4be0dd44c39b083148ae9d4c4a7ef6d64e6c0062
+[11/12] arm64: dts: qcom: sm8550: Throttle the GPU when overheating
+        commit: ed979c039ad1c9b02dd7e9fa6a0dd69209bac6ed
+[12/12] arm64: dts: qcom: sm8650: Throttle the GPU when overheating
+        commit: 497624ed550604b3f713f53bc506e49ce5046e5f
 
-The temporary clearing of the LRU flag we do right now tells me that 
-it's already not 100% reliable, so the question is how much more 
-unreliable we can make it before it would hurt :)
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
-
+Bjorn Andersson <andersson@kernel.org>
 
