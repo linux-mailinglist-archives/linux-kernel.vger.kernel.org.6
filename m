@@ -1,206 +1,305 @@
-Return-Path: <linux-kernel+bounces-206866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11DE900F10
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C120E900F13
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E397284674
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D031F22E08
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C763A947E;
-	Sat,  8 Jun 2024 01:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B898465;
+	Sat,  8 Jun 2024 01:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhJyKRi9"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KEfZMRxQ"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CCBED9;
-	Sat,  8 Jun 2024 01:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D3123A9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 01:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717809122; cv=none; b=ebuhnWFpkYOapaIRkMyXmuh+01HHeMa0s4bbDlzGkXRnioEh4NNQPYnN57woQTvv+a3xHcicxJbgIYuIMTgpgD6Egtd6V9LWYC7rWXeBeN5jZsGGi/dN72UAsYBKviLgIh3pRsdXjkLCcU+JxTGoKkRLd2eAEc11MbNZIwRK2AY=
+	t=1717809807; cv=none; b=IYoeFHOvqEgzF8lWrW5t9+t27CXHHInRl9TTuE5HGgkyxGiMwlwlIOoKAj2fOrI/Ifu/6P6hldFl/NuRXL+fnKF/hPb2MXprOP1D4Grtk9G3xdAV/ZLn/BydvS66TLwnjRqKahvwqh8LieJXWPR9xraFhPvhDA2YONHn8c9ecl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717809122; c=relaxed/simple;
-	bh=h+EkJtzki3V5jwqqCQPEnmwVwniwOi6t1nE8K7ajlyc=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=u//bCSCvse3sDC0L0M0P+XBxwhl4so4bKelKSX2JVzYDNhi9WAlIuCFArJ00DIynsygzodKlQvJgEQUcHscL67Z0a7HD9vovUaf2oGE1+KZ3YkA+TeXMGFgiARU7yf8OQsUWA6sjK/yGipvkeGousECk8cQxC9HYwXVLfj57KPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhJyKRi9; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70421e78edcso329949b3a.3;
-        Fri, 07 Jun 2024 18:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717809119; x=1718413919; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JcaT27ASFQz7yWtuXaouA+1bk0Uq2UvYft///b4ctjQ=;
-        b=fhJyKRi9erOyKlo46/hw0o0VzjVOnuLSQuvUVTIogujVJ4fTWacrQaJSxj/Q9MSxGA
-         IfgTC7g3/N2QJj1iCpUEKRMLboGQc33sCjhLY8H/bTjrqVG9eoxepslJ4WHCAhx7Vjl2
-         qEAhF7E/SC0xqqCMNpf4ZautEg4hk0lm3mqXmrR52ARWViFDCO4+S5jb660GIyZ2yx7Y
-         i7kPljUbSJKULV/EqkQuqJQe03qPBwtCOO7oKuNsR+jwHz4nBbuCddVHx17xeC/6soDN
-         mc/5SwVYfpghasoBZjtK6ilAuVCNkd5Av/espEn0Hb3zytuoxN2gACwKO190SnOwErOE
-         ph6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717809119; x=1718413919;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JcaT27ASFQz7yWtuXaouA+1bk0Uq2UvYft///b4ctjQ=;
-        b=IECkvzkPcvZRV/EvN6NBJcws4OTPxJIe3U2CxXyiK0UHcD5p7SJDcn0gxnBiq69zHn
-         ErFzHhspWJxr9BCegkMQRzs4SIYwP+AI/t+W3SmvP+QYqhtDMUHk7LHXwyqn9Hl3CX30
-         w82ZtqBbr3REHojzaiJdaaqQrBnsmqxa0vJZA4L6YiL3lO/GUuqvCBEtdseH/f0dCUNa
-         DiParQxMt5LJhkerqG2Ke7RpdvW8nuLw8Gvz74mEQQ9F1eGMiT3rG5qs2eO1fTw+oLy4
-         3kFUH0X2qDd0OOYeXcMn02wiotzVh6T44blB81mKhVzvdtEpXOFpiXgoJR6bEEDDpudZ
-         YTMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK3ClmHN7Vf9ttE6aOXIuBpcvwA6hUXm0hn4WP7oo9cORTZLQwsKTsNnxghA959dI/uh9LIeakKe8Z+izrIKykV1luIc0GsMQGxBwADhcpeW2J06bzEiPvpOZgrvX3crWl2lbiU4kbayioN2zLOAmm+cKgvullDmQ8fa/MXt08tUuNVYaRFYxLqKVRaybeXKBpsPgVvOTeChtxAraINWO8m+tTIWxJJQ==
-X-Gm-Message-State: AOJu0Yz4r4o48dwg7QlA+G4KB8ShWB+WgnowxMXxoPCIt/PSmzmfzqTu
-	UAu+vtu0/u8y+4XX9QvOHD6IOEhBXMszDD0PUU6R0Y6vlFvujWhigY/GIiFJ
-X-Google-Smtp-Source: AGHT+IG2VoxEIZRtiZa91EW7LyiLX93dO8ax0Mxo186iN+pLzQWOnoUuSO36PvSt83EOFjcMAC0OFg==
-X-Received: by 2002:a05:6a00:1146:b0:702:2749:608e with SMTP id d2e1a72fcca58-7040c3ae1f5mr5386476b3a.0.1717809119392;
-        Fri, 07 Jun 2024 18:11:59 -0700 (PDT)
-Received: from [10.1.1.24] (222-152-175-63-fibre.sparkbb.co.nz. [222.152.175.63])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7041043b2a5sm1640542b3a.148.2024.06.07.18.11.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2024 18:11:58 -0700 (PDT)
-Subject: Re: [PATCH] scsi: add missing MODULE_DESCRIPTION() macros
-To: Finn Thain <fthain@linux-m68k.org>,
- Jeff Johnson <quic_jjohnson@quicinc.com>
-References: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
- <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
-Cc: Khalid Aziz <khalid@gonehiking.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>,
- James Smart <james.smart@broadcom.com>,
- Ram Vegesna <ram.vegesna@broadcom.com>,
- Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
- "Juergen E. Fischer" <fischer@norbit.de>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-From: Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <0d7b4fcd-acaf-bb07-97f1-dcb729b48baf@gmail.com>
-Date: Sat, 8 Jun 2024 13:11:48 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+	s=arc-20240116; t=1717809807; c=relaxed/simple;
+	bh=usmFjaj7bgudJsgMiS5ptxznzZ6dZf47CM2AvCQH8eQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mYkViObLnRQEEHiQCvtPk/p62i6jrGwn37L3b+cYb5+f4kB8V3gCPGDTGLk6mgz07refKp7XshU7Pj/Cl8ZU1tUscr9RNxYF/M59GAl1mJIV1BPIJpzz0AqgHUHwIMC5I5K38WFF8gCIKxem+dl2Wyfegxu3m3O250piCYefLzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KEfZMRxQ; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717809795; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=R6nt7yUK35vsFklJDNutkBwOnv/Drw8k6tMBrEt6hsc=;
+	b=KEfZMRxQ+K+XZHDJhJgHkqB8nWfWwsai4SGSPK77UzWf+Yuep+phJQeCDKoU98LbvLFPIeL/uMZdgEs1YQp+Q9F/5XvRfp8qswTla6msmMYjf/8r79Zx/DzNkWgqsu15hNHpZwLXs/W0h1OWCjrXx0GkiWe3VJIlNl0KT+9LpkI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W80E1-B_1717809794;
+Received: from 30.120.131.238(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0W80E1-B_1717809794)
+          by smtp.aliyun-inc.com;
+          Sat, 08 Jun 2024 09:23:15 +0800
+Message-ID: <b05975f7-aa8a-420a-b639-8650480cc834@linux.alibaba.com>
+Date: Sat, 8 Jun 2024 09:23:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: convert to pr_fmt
+To: Longlong Xia <xialonglong@kylinos.cn>, mark@fasheh.com
+Cc: jlbec@evilplan.org, ocfs2-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240606022823.1296737-1-xialonglong@kylinos.cn>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240606022823.1296737-1-xialonglong@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Jeff,
+Basically I have no objection to do this convert.
+But if we do this in cluster/tcp.c, while leave others unchanged, then
+it looks inconsistent for the whole ocfs2 code.
 
-Am 08.06.2024 um 12:52 schrieb Finn Thain:
->
-> On Fri, 7 Jun 2024, Jeff Johnson wrote:
->
->> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
->> index 742625ac7d99..4eb5770aeef5 100644
->> --- a/drivers/scsi/atari_scsi.c
->> +++ b/drivers/scsi/atari_scsi.c
->> @@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
->>  module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
->>
->>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
->> +MODULE_DESCRIPTION("Atari generic SCSI port driver");
->>  MODULE_LICENSE("GPL");
->
-> "Atari NCR5380 SCSI driver", please. I don't think the word "generic"
-> applies here. It was a reference to the "generic NCR5380 driver by Drew
-> Eckhardt" from which specialized drivers like this one were derived.
+Thanks,
+Joseph
 
-Correct - and "Atari TT/Falcon NCR5380 SCSI driver" would be even more 
-precise.
-
-The generic Atari disk interface was the ACSI interface (somewhat 
-similar to SCSI, but a lot simpler).
-
-Cheers,
-
-	Michael Schmitz
-
->
->> diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
->> index f6305e3e60f4..1bef131664e0 100644
->> --- a/drivers/scsi/g_NCR5380.c
->> +++ b/drivers/scsi/g_NCR5380.c
->> @@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
->>  MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
->>
->>  MODULE_ALIAS("g_NCR5380_mmio");
->> +MODULE_DESCRIPTION("Generic NCR5380 driver");
->>  MODULE_LICENSE("GPL");
->>
->>  static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
->
-> "Generic NCR5380/NCR53C400 SCSI driver" please.
->
-> This driver actually describes itself as "generic generic NCR5380 driver"
-> which appears to be a joke. The term "generic" was used to mean universal
-> i.e. intended to cover every ISA card implementation.
->
->> diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
->> index 625fd547ee60..82d8b8f8293f 100644
->> --- a/drivers/scsi/initio.c
->> +++ b/drivers/scsi/initio.c
->> @@ -2939,6 +2939,7 @@ static void initio_remove_one(struct pci_dev *pdev)
->>  	pci_disable_device(pdev);
->>  }
->>
->> +MODULE_DESCRIPTION("Initio 9100U(W) driver");
->>  MODULE_LICENSE("GPL");
->>
->>  static struct pci_device_id initio_pci_tbl[] = {
->> @@ -2961,4 +2962,5 @@ module_pci_driver(initio_pci_driver);
->>
->>  MODULE_DESCRIPTION("Initio INI-9X00U/UW SCSI device driver");
->>  MODULE_AUTHOR("Initio Corporation");
->> +MODULE_DESCRIPTION("TBD");
->>  MODULE_LICENSE("GPL");
->
-> There are now three MODULE_DESCRIPTION macros here.
->
->> diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
->> index a402c4dc4645..f74231ca29e5 100644
->> --- a/drivers/scsi/mac_scsi.c
->> +++ b/drivers/scsi/mac_scsi.c
->> @@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
->>  module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
->>
->>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
->> +MODULE_DESCRIPTION("Generic Macintosh NCR5380 driver");
->>  MODULE_LICENSE("GPL");
->
->
-> "Macintosh NCR5380 SCSI driver", please.
->
->> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
->> index 7ab000942b97..c4a88f673183 100644
->> --- a/drivers/scsi/sr.c
->> +++ b/drivers/scsi/sr.c
->> @@ -68,6 +68,7 @@
->>
->>
->>  MODULE_DESCRIPTION("SCSI cdrom (sr) driver");
->> +MODULE_DESCRIPTION("TBD");
->>  MODULE_LICENSE("GPL");
->>  MODULE_ALIAS_BLOCKDEV_MAJOR(SCSI_CDROM_MAJOR);
->>  MODULE_ALIAS_SCSI_DEVICE(TYPE_ROM);
->> @@ -1007,4 +1008,5 @@ static void __exit exit_sr(void)
->>
->>  module_init(init_sr);
->>  module_exit(exit_sr);
->> +MODULE_DESCRIPTION("SCSI CDROM driver");
->>  MODULE_LICENSE("GPL");
->
-> Three macros here also.
->
+On 6/6/24 10:28 AM, Longlong Xia wrote:
+> Use the pr_fmt() macro to prefix all the output with "o2net: ".
+> while at it, convert printk(<LEVEL>) to pr_<level>().
+> 
+> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+> ---
+>  fs/ocfs2/cluster/tcp.c | 109 ++++++++++++++++++-----------------------
+>  1 file changed, 49 insertions(+), 60 deletions(-)
+> 
+> diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+> index 2b8fa3e782fb..fc483c7c4fb4 100644
+> --- a/fs/ocfs2/cluster/tcp.c
+> +++ b/fs/ocfs2/cluster/tcp.c
+> @@ -37,6 +37,8 @@
+>   * and only accepts the connection if the higher numbered node is heartbeating.
+>   */
+>  
+> +#define pr_fmt(fmt) "o2net: " fmt
+> +
+>  #include <linux/kernel.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/jiffies.h>
+> @@ -528,18 +530,16 @@ static void o2net_set_nn_state(struct o2net_node *nn,
+>  
+>  	if (was_valid && !valid) {
+>  		if (old_sc)
+> -			printk(KERN_NOTICE "o2net: No longer connected to "
+> -				SC_NODEF_FMT "\n", SC_NODEF_ARGS(old_sc));
+> +			pr_notice("No longer connected to " SC_NODEF_FMT "\n",
+> +				  SC_NODEF_ARGS(old_sc));
+>  		o2net_complete_nodes_nsw(nn);
+>  	}
+>  
+>  	if (!was_valid && valid) {
+>  		o2quo_conn_up(o2net_num_from_nn(nn));
+>  		cancel_delayed_work(&nn->nn_connect_expired);
+> -		printk(KERN_NOTICE "o2net: %s " SC_NODEF_FMT "\n",
+> -		       o2nm_this_node() > sc->sc_node->nd_num ?
+> -		       "Connected to" : "Accepted connection from",
+> -		       SC_NODEF_ARGS(sc));
+> +		pr_notice("%s " SC_NODEF_FMT "\n", o2nm_this_node() > sc->sc_node->nd_num ?
+> +			  "Connected to" : "Accepted connection from", SC_NODEF_ARGS(sc));
+>  	}
+>  
+>  	/* trigger the connecting worker func as long as we're not valid,
+> @@ -629,9 +629,8 @@ static void o2net_state_change(struct sock *sk)
+>  		o2net_sc_queue_work(sc, &sc->sc_connect_work);
+>  		break;
+>  	default:
+> -		printk(KERN_INFO "o2net: Connection to " SC_NODEF_FMT
+> -			" shutdown, state %d\n",
+> -			SC_NODEF_ARGS(sc), sk->sk_state);
+> +		pr_notice("Connection to " SC_NODEF_FMT " shutdown, state %d\n",
+> +			  SC_NODEF_ARGS(sc), sk->sk_state);
+>  		o2net_sc_queue_work(sc, &sc->sc_shutdown_work);
+>  		break;
+>  	}
+> @@ -1260,11 +1259,10 @@ static int o2net_check_handshake(struct o2net_sock_container *sc)
+>  	struct o2net_node *nn = o2net_nn_from_num(sc->sc_node->nd_num);
+>  
+>  	if (hand->protocol_version != cpu_to_be64(O2NET_PROTOCOL_VERSION)) {
+> -		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " Advertised net "
+> -		       "protocol version %llu but %llu is required. "
+> -		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+> -		       (unsigned long long)be64_to_cpu(hand->protocol_version),
+> -		       O2NET_PROTOCOL_VERSION);
+> +		pr_notice(SC_NODEF_FMT " Advertised net protocol version %llu but %llu is required. Disconnecting.\n",
+> +			SC_NODEF_ARGS(sc),
+> +			(unsigned long long)be64_to_cpu(hand->protocol_version),
+> +			O2NET_PROTOCOL_VERSION);
+>  
+>  		/* don't bother reconnecting if its the wrong version. */
+>  		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+> @@ -1278,33 +1276,30 @@ static int o2net_check_handshake(struct o2net_sock_container *sc)
+>  	 */
+>  	if (be32_to_cpu(hand->o2net_idle_timeout_ms) !=
+>  				o2net_idle_timeout()) {
+> -		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a network "
+> -		       "idle timeout of %u ms, but we use %u ms locally. "
+> -		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+> -		       be32_to_cpu(hand->o2net_idle_timeout_ms),
+> -		       o2net_idle_timeout());
+> +		pr_notice(SC_NODEF_FMT " uses a network idle timeout of %u ms, but we use %u ms locally. Disconnecting.\n",
+> +			  SC_NODEF_ARGS(sc),
+> +			  be32_to_cpu(hand->o2net_idle_timeout_ms),
+> +			  o2net_idle_timeout());
+>  		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+>  		return -1;
+>  	}
+>  
+>  	if (be32_to_cpu(hand->o2net_keepalive_delay_ms) !=
+>  			o2net_keepalive_delay()) {
+> -		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a keepalive "
+> -		       "delay of %u ms, but we use %u ms locally. "
+> -		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+> -		       be32_to_cpu(hand->o2net_keepalive_delay_ms),
+> -		       o2net_keepalive_delay());
+> +		pr_notice(SC_NODEF_FMT " uses a keepalive delay of %u ms, but we use %u ms locally. Disconnecting.\n",
+> +			  SC_NODEF_ARGS(sc),
+> +			  be32_to_cpu(hand->o2net_keepalive_delay_ms),
+> +			  o2net_keepalive_delay());
+>  		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+>  		return -1;
+>  	}
+>  
+>  	if (be32_to_cpu(hand->o2hb_heartbeat_timeout_ms) !=
+>  			O2HB_MAX_WRITE_TIMEOUT_MS) {
+> -		printk(KERN_NOTICE "o2net: " SC_NODEF_FMT " uses a heartbeat "
+> -		       "timeout of %u ms, but we use %u ms locally. "
+> -		       "Disconnecting.\n", SC_NODEF_ARGS(sc),
+> -		       be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
+> -		       O2HB_MAX_WRITE_TIMEOUT_MS);
+> +		pr_notice(SC_NODEF_FMT " uses a heartbeat timeout of %u ms, but we use %u ms locally. Disconnecting.\n",
+> +			  SC_NODEF_ARGS(sc),
+> +			  be32_to_cpu(hand->o2hb_heartbeat_timeout_ms),
+> +			  O2HB_MAX_WRITE_TIMEOUT_MS);
+>  		o2net_ensure_shutdown(nn, sc, -ENOTCONN);
+>  		return -1;
+>  	}
+> @@ -1497,9 +1492,8 @@ static void o2net_idle_timer(struct timer_list *t)
+>  	unsigned long msecs = o2net_idle_timeout();
+>  #endif
+>  
+> -	printk(KERN_NOTICE "o2net: Connection to " SC_NODEF_FMT " has been "
+> -	       "idle for %lu.%lu secs.\n",
+> -	       SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
+> +	pr_notice("Connection to " SC_NODEF_FMT " has been idle for %lu.%lu secs.\n",
+> +		  SC_NODEF_ARGS(sc), msecs / 1000, msecs % 1000);
+>  
+>  	/* idle timerout happen, don't shutdown the connection, but
+>  	 * make fence decision. Maybe the connection can recover before
+> @@ -1645,8 +1639,8 @@ static void o2net_start_connect(struct work_struct *work)
+>  
+>  out:
+>  	if (ret && sc) {
+> -		printk(KERN_NOTICE "o2net: Connect attempt to " SC_NODEF_FMT
+> -		       " failed with errno %d\n", SC_NODEF_ARGS(sc), ret);
+> +		pr_notice("Connect attempt to " SC_NODEF_FMT " failed with errno %d\n",
+> +			  SC_NODEF_ARGS(sc), ret);
+>  		/* 0 err so that another will be queued and attempted
+>  		 * from set_nn_state */
+>  		o2net_ensure_shutdown(nn, sc, 0);
+> @@ -1669,12 +1663,10 @@ static void o2net_connect_expired(struct work_struct *work)
+>  
+>  	spin_lock(&nn->nn_lock);
+>  	if (!nn->nn_sc_valid) {
+> -		printk(KERN_NOTICE "o2net: No connection established with "
+> -		       "node %u after %u.%u seconds, check network and"
+> -		       " cluster configuration.\n",
+> -		     o2net_num_from_nn(nn),
+> -		     o2net_idle_timeout() / 1000,
+> -		     o2net_idle_timeout() % 1000);
+> +		pr_notice("No connection established with node %u after %u.%u seconds, check network and cluster configuration.\n",
+> +			  o2net_num_from_nn(nn),
+> +			  o2net_idle_timeout() / 1000,
+> +			  o2net_idle_timeout() % 1000);
+>  
+>  		o2net_set_nn_state(nn, NULL, 0, 0);
+>  	}
+> @@ -1821,9 +1813,9 @@ static int o2net_accept_one(struct socket *sock, int *more)
+>  
+>  	node = o2nm_get_node_by_ip(sin.sin_addr.s_addr);
+>  	if (node == NULL) {
+> -		printk(KERN_NOTICE "o2net: Attempt to connect from unknown "
+> -		       "node at %pI4:%d\n", &sin.sin_addr.s_addr,
+> -		       ntohs(sin.sin_port));
+> +		pr_notice("Attempt to connect from unknown node at %pI4:%d\n",
+> +			  &sin.sin_addr.s_addr,
+> +			  ntohs(sin.sin_port));
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> @@ -1831,15 +1823,13 @@ static int o2net_accept_one(struct socket *sock, int *more)
+>  	if (o2nm_this_node() >= node->nd_num) {
+>  		local_node = o2nm_get_node_by_num(o2nm_this_node());
+>  		if (local_node)
+> -			printk(KERN_NOTICE "o2net: Unexpected connect attempt "
+> -					"seen at node '%s' (%u, %pI4:%d) from "
+> -					"node '%s' (%u, %pI4:%d)\n",
+> -					local_node->nd_name, local_node->nd_num,
+> -					&(local_node->nd_ipv4_address),
+> -					ntohs(local_node->nd_ipv4_port),
+> -					node->nd_name,
+> -					node->nd_num, &sin.sin_addr.s_addr,
+> -					ntohs(sin.sin_port));
+> +			pr_notice("Unexpected connect attempt seen at node '%s' (%u, %pI4:%d) from node '%s' (%u, %pI4:%d)\n",
+> +				  local_node->nd_name, local_node->nd_num,
+> +				  &(local_node->nd_ipv4_address),
+> +				  ntohs(local_node->nd_ipv4_port),
+> +				  node->nd_name,
+> +				  node->nd_num, &sin.sin_addr.s_addr,
+> +				  ntohs(sin.sin_port));
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> @@ -1864,10 +1854,9 @@ static int o2net_accept_one(struct socket *sock, int *more)
+>  		ret = 0;
+>  	spin_unlock(&nn->nn_lock);
+>  	if (ret) {
+> -		printk(KERN_NOTICE "o2net: Attempt to connect from node '%s' "
+> -		       "at %pI4:%d but it already has an open connection\n",
+> -		       node->nd_name, &sin.sin_addr.s_addr,
+> -		       ntohs(sin.sin_port));
+> +		pr_notice("Attempt to connect from node '%s' at %pI4:%d but it already has an open connection\n",
+> +			  node->nd_name, &sin.sin_addr.s_addr,
+> +			  ntohs(sin.sin_port));
+>  		goto out;
+>  	}
+>  
+> @@ -1986,7 +1975,7 @@ static int o2net_open_listening_sock(__be32 addr, __be16 port)
+>  
+>  	ret = sock_create(PF_INET, SOCK_STREAM, IPPROTO_TCP, &sock);
+>  	if (ret < 0) {
+> -		printk(KERN_ERR "o2net: Error %d while creating socket\n", ret);
+> +		pr_err("Error %d while creating socket\n", ret);
+>  		goto out;
+>  	}
+>  
+> @@ -2003,14 +1992,14 @@ static int o2net_open_listening_sock(__be32 addr, __be16 port)
+>  	sock->sk->sk_reuse = SK_CAN_REUSE;
+>  	ret = sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
+>  	if (ret < 0) {
+> -		printk(KERN_ERR "o2net: Error %d while binding socket at "
+> -		       "%pI4:%u\n", ret, &addr, ntohs(port)); 
+> +		pr_err("Error %d while binding socket at %pI4:%u\n",
+> +		       ret, &addr, ntohs(port));
+>  		goto out;
+>  	}
+>  
+>  	ret = sock->ops->listen(sock, 64);
+>  	if (ret < 0)
+> -		printk(KERN_ERR "o2net: Error %d while listening on %pI4:%u\n",
+> +		pr_err("Error %d while listening on %pI4:%u\n",
+>  		       ret, &addr, ntohs(port));
+>  
+>  out:
 
