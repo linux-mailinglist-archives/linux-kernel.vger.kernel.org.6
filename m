@@ -1,247 +1,111 @@
-Return-Path: <linux-kernel+bounces-207120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745C190129A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:59:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2E790129E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAB01F214D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6A61C2189F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05B217D8AC;
-	Sat,  8 Jun 2024 15:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3B317B4FA;
+	Sat,  8 Jun 2024 15:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGxkhm4Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSf2rYdz"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3617B508;
-	Sat,  8 Jun 2024 15:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA52C17B411;
+	Sat,  8 Jun 2024 15:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717862241; cv=none; b=ub/nxln4oXzocKLCm9NYgaFNtRte2hufr3rC8YSVRLKImFskN5RL0IvIjN1Bq5WYGQXDmAqi1K/Q7UWuI9QJ3hsp3XDGpl3TR9+lc0/zf4R4XLzR02OWgcalTw/mRotq1YWW+qCbTvq8u+XIZjD38srIAgeAIGtdDyd6K/jrAoU=
+	t=1717862296; cv=none; b=t/Uh1C3vsWUblVngS3URxScO68j+0y94MjyFOvhHQXFaWFaQPnUQR5abkb8HcssKxYqyrac9zKS4tYv63TbDpd9cjb94PoCq/Pg1xR5wdaqqyI+HLztVWTtZnMeBkVU9NaEnMLDHdRFPwTU08pkEN84mHQHUj64DsKcNJQEVa0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717862241; c=relaxed/simple;
-	bh=mrE9CflCyD5JGJU45JpmcouGaGOztDkM/lJ4oalLK0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Frfs9URPqNh3cyDffZUYOaqJAoeBAMY9YjL/iKlQGnQhwtlchkNYiLoPXNQlCAX7QmZ3qf8T8u10BbMhCuaPoeaEGVTckJ80nEmmM2YHtcCx4TuymEGHdmlsmYhcvYnatOjQq3Z3E+u2pG01ppguYLxTJtReZBva4P4SZYqdkLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGxkhm4Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A95C4DE00;
-	Sat,  8 Jun 2024 15:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717862241;
-	bh=mrE9CflCyD5JGJU45JpmcouGaGOztDkM/lJ4oalLK0c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oGxkhm4YIAttg9cFJNPyiFrl4ijOQsL6rfF0KwRw5jU1mDiWrWCwCzuCQrMoO5eaE
-	 KPr+719Jx14U6SK4/vpnlrNvSRKI0alg300+P0XM2WSWT9vqWub/6aylm0OC417psp
-	 e/ymxXVIA+KtjVcZJibDuxcoHWwS9Fw1IHS+ilwdYLA12NrytGF2P/dRN1UsUb8WAK
-	 vs8uKTH5q4fzREncAidWEFyuc+BnC5d/3xdzooIPSL8He+WJlqmMkzcoRyAxWKHUyO
-	 ZUXo1lItASsMG+zMOszCVF5WpzKnacEjd7AxbVAq968ue+LF6Lx7eqIO1fU4zC2yPW
-	 z3dfc2F9xjNkQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sFyRU-000000003QN-2Rhf;
-	Sat, 08 Jun 2024 17:57:20 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Lee Jones <lee@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v3 12/12] arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
-Date: Sat,  8 Jun 2024 17:55:26 +0200
-Message-ID: <20240608155526.12996-13-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240608155526.12996-1-johan+linaro@kernel.org>
-References: <20240608155526.12996-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1717862296; c=relaxed/simple;
+	bh=GxZ4fij4mVUARHtBye6BxKbMg27/PfglqxhWb8ZY9i8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mLsKi5TfWLgfDfl690jaVF/3YDHXuC9fB5rInhWTdnBuA/E3+d0UB0xcuZfosvt3bMVz+sqfMVS+Ap/AQXtQSRZbFV4YB1ZUJxgNtSoY0Pu/J2EBPLNCGFsTEQmIOy7kXxbKO0rDiHS7xa7mMESkaVg5DBslXMrh8dlPJ8R3oYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSf2rYdz; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c6afa1839so362437a12.2;
+        Sat, 08 Jun 2024 08:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717862293; x=1718467093; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyzI0WQ3X5zI+IJy55iWPtVVJ4faSHAnX9GezP/s9dA=;
+        b=BSf2rYdzwTJjYzDxAyv3eYt+JOPMOJ5VM7r8DE+wJMVnXt5zrNgcgTJbLQAZIHEXr6
+         jQ+6FKDMEElbZgpPB+U6XjGBx3sYPyfRB/bac5HvDTA0abchXSV6cmCHbVkH1mcGNhHn
+         jYFFX6tVZIOqxyM9K4aIco+LhBMNrFqMb3cfTI7a2DPmAqxAfv+2HQ8mjaIyoSKCkpwm
+         A9QugOxE/i2b6DQsIG4DCzzAAMzlFLLgYc+slsE0a6JbCfhVLLddi5q74AW1FKlLkQrW
+         9QHTMVF6DUgsiYepdapVhBp4v5Ws0/hOtRJWDPBHWVl3h7DkzQR6plHXFSwbKlqpkXpy
+         R1sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717862293; x=1718467093;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XyzI0WQ3X5zI+IJy55iWPtVVJ4faSHAnX9GezP/s9dA=;
+        b=f3xp019qe+teY6T3CMsvMbIn1iJNxwsz5AiB/6VH8LJr7z86btAbyIMS9zPJvFGngu
+         Dvgm15CDAk+iEpHzLtEyXM71QcMRBpLGCHqCAEC5tMC5JOu7zNo4dXCeqyJr6Ebitm2+
+         akQyHiZEFPx+B5p+UDcpJgzAEaPe0I/gGVK2DJoob1qxa4vx2KBrEN5J+Xh0jWM/WNHG
+         5KFu8gR1wddsxWHAFSUE6NsUKfV3zBctywckTb9y+9JH8DaG5WonS06s0Y2hVIgnISPw
+         BSIUsVMH1cU6T0pQigpHL3HOVOjd35NWCkcKNHSisAL2IXlRQhWAy6GfDcdQeR130Sbo
+         Tr6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWd2dqHariJGG/gnJIi4hKeQYGPSDaBk6TTSrBq+N4o2v9Mki+juM5iRNawnBXbmGklVxt7QmJARnme36FSBWrd9kUR4l21QDDjIcIn4/BqM99Y7YJFivuhWwa47sBbdkPrQfH4
+X-Gm-Message-State: AOJu0YyLlq/Uzph5m9Ag0T/d0u8j5Cu8IeXqloxz2knrnJx8yl/dUzR3
+	PEb6ar6NEyEG1NFLo0GoOdTJ0RlRTP3aIwn1JMZJrie++6HSBPz3LfOwpVi+oZyJnGTvC+HGB4v
+	LXBURE+xduu/Lg2IE9DW2fhex+6g=
+X-Google-Smtp-Source: AGHT+IFUJvN5ap7ddufLT8K2gEMRRgmu9LzavhRK9OZ2aGcx+J8/6xVP0Nxf+xpkOh6TSfHYVabtZ1Ie30YJ9DAtMm4=
+X-Received: by 2002:a50:8d5c:0:b0:57a:3046:1cd8 with SMTP id
+ 4fb4d7f45d1cf-57c5085eb2bmr4230851a12.7.1717862292888; Sat, 08 Jun 2024
+ 08:58:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240607020843.1380735-1-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240607020843.1380735-1-chris.packham@alliedtelesis.co.nz>
+From: Luiz Angelo Daros de Luca <luizluca@gmail.com>
+Date: Sat, 8 Jun 2024 12:58:01 -0300
+Message-ID: <CAJq09z7XGgLo=JdyYfLu8D3W5Sh=wu0K83LK9KmUU0VRWPNyLw@mail.gmail.com>
+Subject: Re: [PATCH] net: dsa: Fix typo in NET_DSA_TAG_RTL4_A Kconfig
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable the PM8008 PMIC which is used to power the camera sensors.
+>
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  net/dsa/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
+> index 8e698bea99a3..8d5bf869eb14 100644
+> --- a/net/dsa/Kconfig
+> +++ b/net/dsa/Kconfig
+> @@ -129,7 +129,7 @@ config NET_DSA_TAG_RTL4_A
+>         tristate "Tag driver for Realtek 4 byte protocol A tags"
+>         help
+>           Say Y or M if you want to enable support for tagging frames for the
+> -         Realtek switches with 4 byte protocol A tags, sich as found in
+> +         Realtek switches with 4 byte protocol A tags, such as found in
+>           the Realtek RTL8366RB.
+>
+>  config NET_DSA_TAG_RTL8_4
+> --
+> 2.45.2
+>
+>
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 123 ++++++++++++++++++
- 1 file changed, 123 insertions(+)
+Thanks!
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index 642705b7d896..daca6bd2e34c 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -297,6 +297,27 @@ linux,cma {
- 	};
- 
- 	thermal-zones {
-+		pm8008-thermal {
-+			polling-delay-passive = <100>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors = <&pm8008>;
-+
-+			trips {
-+				trip0 {
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "passive";
-+				};
-+
-+				trip1 {
-+					temperature = <115000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
- 		skin-temp-thermal {
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
-@@ -671,6 +692,85 @@ touchscreen@10 {
- 	};
- };
- 
-+&i2c11 {
-+	clock-frequency = <400000>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c11_default>;
-+
-+	status = "okay";
-+
-+	pm8008: pmic@c {
-+		compatible = "qcom,pm8008";
-+		reg = <0xc>;
-+
-+		interrupts-extended = <&tlmm 41 IRQ_TYPE_EDGE_RISING>;
-+		reset-gpios = <&tlmm 42 GPIO_ACTIVE_LOW>;
-+
-+		vdd-l1-l2-supply = <&vreg_s11b>;
-+		vdd-l3-l4-supply = <&vreg_bob>;
-+		vdd-l5-supply = <&vreg_bob>;
-+		vdd-l6-supply = <&vreg_bob>;
-+		vdd-l7-supply = <&vreg_bob>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pm8008_default>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pm8008 0 0 2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		#thermal-sensor-cells = <0>;
-+
-+		regulators {
-+			vreg_l1q: ldo1 {
-+				regulator-name = "vreg_l1q";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			vreg_l2q: ldo2 {
-+				regulator-name = "vreg_l2q";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			vreg_l3q: ldo3 {
-+				regulator-name = "vreg_l3q";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			vreg_l4q: ldo4 {
-+				regulator-name = "vreg_l4q";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			vreg_l5q: ldo5 {
-+				regulator-name = "vreg_l5q";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			vreg_l6q: ldo6 {
-+				regulator-name = "vreg_l6q";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			vreg_l7q: ldo7 {
-+				regulator-name = "vreg_l7q";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+		};
-+	};
-+};
-+
- &i2c21 {
- 	clock-frequency = <400000>;
- 
-@@ -1361,6 +1461,13 @@ i2c4_default: i2c4-default-state {
- 		bias-disable;
- 	};
- 
-+	i2c11_default: i2c11-default-state {
-+		pins = "gpio18", "gpio19";
-+		function = "qup11";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
- 	i2c21_default: i2c21-default-state {
- 		pins = "gpio81", "gpio82";
- 		function = "qup21";
-@@ -1464,6 +1571,22 @@ wake-n-pins {
- 		};
- 	};
- 
-+	pm8008_default: pm8008-default-state {
-+		int-pins {
-+			pins = "gpio41";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		reset-n-pins {
-+			pins = "gpio42";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+	};
-+
- 	spkr_1_sd_n_default: spkr-1-sd-n-default-state {
- 		perst-n-pins {
- 			pins = "gpio178";
--- 
-2.44.1
-
+ Reviewed-by: Luiz Angelo Daros de Luca <luizluca@gmail.com>
 
