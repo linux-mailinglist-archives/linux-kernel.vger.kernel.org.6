@@ -1,230 +1,128 @@
-Return-Path: <linux-kernel+bounces-207181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CA3901356
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:21:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174D3901358
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425A91C20DEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1721E1C20DB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFBD45C0B;
-	Sat,  8 Jun 2024 19:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9320323;
+	Sat,  8 Jun 2024 19:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="i4CmwGnY"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="DfWCAf0r"
+Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735C136B0D;
-	Sat,  8 Jun 2024 19:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC41C6BE;
+	Sat,  8 Jun 2024 19:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717874392; cv=none; b=B7aGg6bIRKr3d4ULQV3u2b06lmCgyCdZaTKPrCFT2qBJLn18NKvdgdK30ybFuu9xj8iNbkkFVgsN3YLFVrjOQN8a8gq1QF7CClQsJTDSwpipQGQ1ZVYluEdFATj2EqAlm9rMo6AEKTe0/iZHWNiJsHEhxLW0yvD59F1FbCYphyk=
+	t=1717874419; cv=none; b=XhjP8tqDGBb23kFgNjKujLmej5Hu44UARezOAFxDAON05eFofbMdNohXnsa/J+LxFDDrjKnsoEN0SZHOenHnn76hPgDV/ZXFBFygtZTuZw3KG1GMTpRAnL5MZtMH7PQbNLhCVZd9SoVDnaPlocnFC441A2/QrXodGNmBxGoiYF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717874392; c=relaxed/simple;
-	bh=tSWgaNbICmLdESUXwsfkk/co8yDnfuRtdvYQKfLXD1I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZGuiQY3grcZTe1AjioS/TpM9tUxhUhcY50Pp7uecweCyGN8ExYAmmSJXxGkcM3LgSXvK5ewd2CYTXoDmkJLvonJAblpKg07RIM1gv+68bj8LV3DRydN/Hk/zJThpS0ywdPqQq3E0xpx5IMK6xDUS61PH11twcApkLzPz7Ww7NHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=i4CmwGnY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717874385;
-	bh=tSWgaNbICmLdESUXwsfkk/co8yDnfuRtdvYQKfLXD1I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=i4CmwGnY03B4zu944Y0vCeIrNN715h+Q/YLmFJxjED/2yRkp3x0nWBcB0KY+FHpFQ
-	 whJ4VWASHhDgjm0Mb9wMi4gRcGLKP1uMkY1sJngp+RKLMuRwVC5a0TZA27OeMrCtI3
-	 7GqAUuVFlKUhFYwWfOpV/vXIOYECxsslH8X7lyAo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 08 Jun 2024 21:19:41 +0200
-Subject: [PATCH RFC v2 5/5] platform/x86: system76: Use power_supply
- extension API
+	s=arc-20240116; t=1717874419; c=relaxed/simple;
+	bh=YPBWo/1TW6OyLktEGeZVaCyTmHOZ3JTo2WnUgif8pHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ok7N2gN+t5mKul/MrCBypnkr2CtRw9VJH6yWuiSXLPiWNVpz8QQDpQuVcCmi+DBs/DNtbROVWZGJT4MoFdbuWwLkcMIw8UMwAGAdaVe4W8XXKsRbO1WpsH+pyD/cDX7g9qYfVJBl0ZdAQBt+3TkuR8eojgNAkCal7r+AGuLi1U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=DfWCAf0r; arc=none smtp.client-ip=161.97.139.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
+	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sG1bk-0001CU-2i;
+	Sat, 08 Jun 2024 21:20:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FMkcj0KhC0yh+Y1ML/8400xCeZKqlnRCVmgyWA2sJsk=; b=DfWCAf0rdnWt3XQ3DjrNOnMdQ+
+	m6jpeBTdDkT0In4UhYtmuPg2QUdFByiCeiNK1IGTIuHFreAnYBTtdADGT2+3dRoMsDKb3tILfS0Nx
+	UILLY754dIm2X6IxfH5jTs2OJCJVBhGm1slwT2iRQMnJOObDVi9JRIrvtyTtneqsMgrpHb6XWNFfy
+	niTRJPt32WnfH9xisYt7at8b1xcURoTg/6kychlEflwe2/bxSohS23Xth9s9aeIauQqCuFdkS1gWT
+	sfZScn6O+3/RcpqvpHZpBaJkDQK3nYzPA+SS/bd44x64ppdIVO7mo07NRXYGHUEintMBwGjbIAPQX
+	Aapzcaww==;
+Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sG1bh-002vTe-0S;
+	Sat, 08 Jun 2024 21:20:06 +0200
+Date: Sat, 8 Jun 2024 21:20:04 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Adam Ford <aford173@gmail.com>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, marcel@holtmann.org,
+ johan@kernel.org, pmenzel@molgen.mpg.de, jirislaby@kernel.org,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+ tomi.valkeinen@ideasonboard.com, =?UTF-8?B?UMOpdGVy?= Ujfalusi
+ <peter.ujfalusi@gmail.com>, robh@kernel.org, hns@goldelico.com
+Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
+Message-ID: <20240608212004.3707d8ea@aktux>
+In-Reply-To: <CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
+References: <20240606183032.684481-1-andreas@kemnade.info>
+	<CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
+	<20240606221941.333a9704@aktux>
+	<CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240608-power-supply-extensions-v2-5-2dcd35b012ad@weissschuh.net>
-References: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
-In-Reply-To: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
-To: Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717874383; l=5330;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=tSWgaNbICmLdESUXwsfkk/co8yDnfuRtdvYQKfLXD1I=;
- b=voWK3Eqnksjg/maciOsahYbqlTj5u23CJueEHCilcO7xfaLOOk+7srpnLv2kWH0LO+NuKVAoc
- zE2/py1XNIZD6YXo1xUHktSyMGCgMHIuw1tzy7KhWVLvCmB+p7JTZzl
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/platform/x86/system76_acpi.c | 93 ++++++++++++++++++++----------------
- 1 file changed, 51 insertions(+), 42 deletions(-)
+Hi Adam,
 
-diff --git a/drivers/platform/x86/system76_acpi.c b/drivers/platform/x86/system76_acpi.c
-index 3da753b3d00d..d9bc5cae2dda 100644
---- a/drivers/platform/x86/system76_acpi.c
-+++ b/drivers/platform/x86/system76_acpi.c
-@@ -162,7 +162,7 @@ enum {
- 	THRESHOLD_END,
- };
- 
--static ssize_t battery_get_threshold(int which, char *buf)
-+static int battery_get_threshold(int which, int *val)
- {
- 	struct acpi_object_list input;
- 	union acpi_object param;
-@@ -186,29 +186,21 @@ static ssize_t battery_get_threshold(int which, char *buf)
- 	if (ret == BATTERY_THRESHOLD_INVALID)
- 		return -EINVAL;
- 
--	return sysfs_emit(buf, "%d\n", (int)ret);
-+	*val = ret;
-+	return 0;
- }
- 
--static ssize_t battery_set_threshold(int which, const char *buf, size_t count)
-+static int battery_set_threshold(int which, unsigned int value)
- {
- 	struct acpi_object_list input;
- 	union acpi_object params[2];
- 	acpi_handle handle;
- 	acpi_status status;
--	unsigned int value;
--	int ret;
- 
- 	handle = ec_get_handle();
- 	if (!handle)
- 		return -ENODEV;
- 
--	ret = kstrtouint(buf, 10, &value);
--	if (ret)
--		return ret;
--
--	if (value > 100)
--		return -EINVAL;
--
- 	input.count = 2;
- 	input.pointer = params;
- 	// Start/stop selection
-@@ -222,52 +214,69 @@ static ssize_t battery_set_threshold(int which, const char *buf, size_t count)
- 	if (ACPI_FAILURE(status))
- 		return -EIO;
- 
--	return count;
--}
--
--static ssize_t charge_control_start_threshold_show(struct device *dev,
--	struct device_attribute *attr, char *buf)
--{
--	return battery_get_threshold(THRESHOLD_START, buf);
--}
--
--static ssize_t charge_control_start_threshold_store(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t count)
--{
--	return battery_set_threshold(THRESHOLD_START, buf, count);
-+	return 0;
- }
- 
--static DEVICE_ATTR_RW(charge_control_start_threshold);
-+static const enum power_supply_property system76_battery_properties[] = {
-+	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
-+	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
-+};
- 
--static ssize_t charge_control_end_threshold_show(struct device *dev,
--	struct device_attribute *attr, char *buf)
-+static int system76_property_is_writeable(struct power_supply *psy,
-+					  const struct power_supply_ext *ext,
-+					  enum power_supply_property psp)
- {
--	return battery_get_threshold(THRESHOLD_END, buf);
-+	return true;
- }
- 
--static ssize_t charge_control_end_threshold_store(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t count)
-+static int system76_get_property(struct power_supply *psy,
-+				 const struct power_supply_ext *ext,
-+				 enum power_supply_property psp,
-+				 union power_supply_propval *val)
- {
--	return battery_set_threshold(THRESHOLD_END, buf, count);
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-+		return battery_get_threshold(THRESHOLD_START, &val->intval);
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-+		return battery_get_threshold(THRESHOLD_END, &val->intval);
-+	default:
-+		return -EINVAL;
-+	};
-+}
-+
-+static int system76_set_property(struct power_supply *psy, const struct power_supply_ext *ext,
-+				 enum power_supply_property psp,
-+				 const union power_supply_propval *val)
-+{
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-+		if (val->intval < 0 || val->intval > 100)
-+			return -EINVAL;
-+		return battery_set_threshold(THRESHOLD_START, val->intval);
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-+		if (val->intval < 0 || val->intval > 100)
-+			return -EINVAL;
-+		return battery_set_threshold(THRESHOLD_END, val->intval);
-+	default:
-+		return -EINVAL;
-+	};
- }
- 
--static DEVICE_ATTR_RW(charge_control_end_threshold);
--
--static struct attribute *system76_battery_attrs[] = {
--	&dev_attr_charge_control_start_threshold.attr,
--	&dev_attr_charge_control_end_threshold.attr,
--	NULL,
-+static const struct power_supply_ext system76_power_supply_ext = {
-+	.properties            = system76_battery_properties,
-+	.num_properties        = ARRAY_SIZE(system76_battery_properties),
-+	.property_is_writeable = system76_property_is_writeable,
-+	.get_property          = system76_get_property,
-+	.set_property          = system76_set_property,
- };
- 
--ATTRIBUTE_GROUPS(system76_battery);
--
- static int system76_battery_add(struct power_supply *battery, struct acpi_battery_hook *hook)
- {
- 	// System76 EC only supports 1 battery
- 	if (strcmp(battery->desc->name, "BAT0") != 0)
- 		return -ENODEV;
- 
--	if (device_add_groups(&battery->dev, system76_battery_groups))
-+	if (power_supply_register_extension(battery, &system76_power_supply_ext))
- 		return -ENODEV;
- 
- 	return 0;
-@@ -275,7 +284,7 @@ static int system76_battery_add(struct power_supply *battery, struct acpi_batter
- 
- static int system76_battery_remove(struct power_supply *battery, struct acpi_battery_hook *hook)
- {
--	device_remove_groups(&battery->dev, system76_battery_groups);
-+	power_supply_unregister_extension(battery, &system76_power_supply_ext);
- 	return 0;
- }
- 
+On Sat, 8 Jun 2024 14:00:38 -0500
+Adam Ford <aford173@gmail.com> wrote:
 
--- 
-2.45.2
+> On Thu, Jun 6, 2024 at 3:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade.i=
+nfo> wrote:
+> >
+> > Hi Luiz,
+> >
+> > On Thu, 6 Jun 2024 16:04:10 -0400
+> > Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
+> > =20
+> > > Hi Andreas,
+> > >
+> > > On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kemna=
+de.info> wrote: =20
+> > > >
+> > > > Some of these chips have GNSS support. In some vendor kernels
+> > > > a driver on top of misc/ti-st can be found providing a /dev/tigps
+> > > > device which speaks the secretive Air Independent Interface (AI2) p=
+rotocol. =20
+>=20
+> I think you may have sent me a file to test, but I can't find the
+> e-mail.   Can you tell me what tool you used to test it?  I can get
+> gnss0 to enumerate, so I am close.
+>=20
+hmm, /bin/cat is sufficient. It should spit out nmea now by default.
 
+For playing around with raw mode, you need the ai2raw parameter
+and then you can play around with read-gps from=20
+https://github.com/akemnade/bt200tools
+
+> [   20.759857] hci-ti serial0-0: using DT
+> '/ocp@68000000/serial@4806c000/bluetooth-gnss' for 'enable' GPIO
+> lookup
+> [   20.770263] of_get_named_gpiod_flags: parsed 'enable-gpios'
+> property of node '/ocp@68000000/serial@4806c000/bluetooth-gnss[0]' -
+> status (0)
+> [   29.221588] gnss: GNSS driver registered with major 244
+>=20
+That is nice.
+
+Regards,
+Andreas
 
