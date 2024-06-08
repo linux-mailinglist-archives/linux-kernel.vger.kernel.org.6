@@ -1,246 +1,153 @@
-Return-Path: <linux-kernel+bounces-207148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C91C9012E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:02:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124A29012E5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185121F22013
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0782829C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ACC17839B;
-	Sat,  8 Jun 2024 17:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09E317B4ED;
+	Sat,  8 Jun 2024 17:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjsorjkY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ABe7Kc3s"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5501E4A6;
-	Sat,  8 Jun 2024 17:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C21E4A6;
+	Sat,  8 Jun 2024 17:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717866120; cv=none; b=YrsIZZnuCZlGCafVqVnD3RkejxP22cRfWDNQvmYvq2KRWsy4bzB+bhE2SIgTLq05D8sbAoFxY1/nWyUnEYy4jz2oiXQv5PwcJUAdzjSR3/7k/bpIDaLAAZHMGN4CvAz5pqh2h1v2Q81NSJiFRueaehBN07/UnF34ONXFjJzzJiw=
+	t=1717866189; cv=none; b=Po/mlruE7ljLrvFgZiOse0I+LtKwNbUhwk+pTSrfIAGpmAQQp8dXOO+ttItv/gfsbEC04rpuFAnvBOCzwp1VzPLzuK7a9MEBeZfWPAb3cenDpiDbLDhDNgjqhcsWS85waMA7YPS3yFlRV/TF7rU/O6VDZPmL3774ayR7rO2Fak4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717866120; c=relaxed/simple;
-	bh=A3r29e7wb30cc4dRwLJF3YtUmAvgUID2/+yok408rUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d7GBLuxBZWZRqqBR2jbPP97g4lvuTezEvaHtPQkiPTD14ddkvmwxISmw71AYag+dDL4Rj5rt6pAQ4RGsnNjbnt8fBH/2y38cpjCg9PUqBpDUmc3ylYJmbpNBMFGaKfhnGEogWdjs1deqjXpXBhh+cvXDGeZjKpGrI369ca+Lbq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjsorjkY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74050C2BD11;
-	Sat,  8 Jun 2024 17:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717866119;
-	bh=A3r29e7wb30cc4dRwLJF3YtUmAvgUID2/+yok408rUI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QjsorjkYeR5ot/2nx3YQdJ33Ltg7bo9ynIyZ0yy2tLEkL6WevQY/ox4rhbzKIuNL0
-	 c4PnPynRch6bF7EhS431Yh7+23/1SCWMUxrScswPag2sVt30ceU55C5QgGJeVhweW9
-	 0d2061sm+bLRZ5lhW4J/SSomJKUPG3ayYhr4lYfi09X7NiPaefdxSyMjOk/9fbCo3g
-	 XSthg/0ScJ92zFZDO6RcKgLZuAwiNOx38r2rhCnn+Ir50cEoLpuLIY6IptQiTVGq9W
-	 NOfNX8tP/gaO33ix+mMHJny9npkfZvbamHxNJh+C3x1ZcTi1kyxzQIHahEpmKPp8uF
-	 9Ir41p0yUlElQ==
-Date: Sat, 8 Jun 2024 18:01:52 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yasin Lee <yasin.lee.x@outlook.com>
-Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
- u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
-Subject: Re: [PATCH v4 1/2] dt-bindings:iio:proximity: Add hx9023s binding
-Message-ID: <20240608180152.386db8a2@jic23-huawei>
-In-Reply-To: <20240608175758.73396584@jic23-huawei>
-References: <20240607114138.390272-1-yasin.lee.x@outlook.com>
-	<SN7PR12MB810129D8180B1C9593A8E078A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
-	<20240608175758.73396584@jic23-huawei>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717866189; c=relaxed/simple;
+	bh=aueIvf1hpPSoXzp5MDugHfujuyMFd0wpUQBGOz+woqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SS8awZXQxEQf50Q5w8oXVPiKOE5z/C++1Q2tNpuClLC17bP9RRzUout92gxSxnpvuX5uBe2pLaFSSjZrUKxxfizNbYSsqvXKmpDVVpv/FYBLCOVMWWn5KcInQh56lohqsbyLm8+v+melOfXX9YvaulUVcoCXtkkxdb849ffoIJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ABe7Kc3s; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717866175;
+	bh=aueIvf1hpPSoXzp5MDugHfujuyMFd0wpUQBGOz+woqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ABe7Kc3swRWGza89hhw/QA4ntSQ27MCPhSzAk/lmH7UDsh3k8O4lpkioyPTBXKL2r
+	 iiYcEWm0MHoLKRns/qfLWT/6+g4riVrK+XWi5lQvK4u7AI07E847dyKWaJ8JN8vr85
+	 5lh8qB4MqsZlMGGyx83QkFFBUV+5FB0Zr633l704=
+Date: Sat, 8 Jun 2024 19:02:53 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Jeremy Soller <jeremy@system76.com>, System76 Product Development <productdev@system76.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH RFC 0/6] power: supply: extension API
+Message-ID: <b3d265a3-5bf0-4ed7-b959-9c92aac8fa43@t-8ch.de>
+References: <20240606-power-supply-extensions-v1-0-b45669290bdc@weissschuh.net>
+ <41964782-222c-45fa-846e-3656eff5b3a9@gmx.de>
+ <86cafef5-8a41-46c8-8ee6-6b25dd165b58@t-8ch.de>
+ <992978fb-d74c-4da7-a103-9b623b78d889@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <992978fb-d74c-4da7-a103-9b623b78d889@gmx.de>
 
-On Sat, 8 Jun 2024 17:57:58 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Fri,  7 Jun 2024 19:41:37 +0800
-> Yasin Lee <yasin.lee.x@outlook.com> wrote:
+On 2024-06-08 18:27:07+0000, Armin Wolf wrote:
+> Am 07.06.24 um 12:26 schrieb Thomas Weißschuh:
 > 
-> > From: Yasin Lee <yasin.lee.x@gmail.com>
+> > On 2024-06-07 01:10:02+0000, Armin Wolf wrote:
+> > > Am 06.06.24 um 16:50 schrieb Thomas Weißschuh:
+> > > 
+> > > > Introduce a mechanism for drivers to extend the properties implemented
+> > > > by a power supply.
+
+<snip>
+
+> > > > 
+> > > > [0] https://lore.kernel.org/lkml/20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net/
+> > > Nice, i love this proposal!
+> > Good to hear!
 > > 
-> > A capacitive proximity sensor
+> > > I agree that the hwmon update functionality will need some changes in the hwmon core to work,
+> > > but there would be at least one driver benefiting from this (dell-wmi-ddv). Maybe we can add
+> > > support for this at a later point in time.
+> > Surely. Alternatively we could re-register the hwmon device after an
+> > extension was added.
 > > 
-> > Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>  
-> Hi Yasin
-> 
-> Some improvements but seems you missed some of the feedback on v3.
-> 
-> See inline.
-> 
-> Jonathan
-> 
-> > ---
-> >  .../bindings/iio/proximity/tyhx,hx9023s.yaml  | 103 ++++++++++++++++++
-> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
-> >  2 files changed, 105 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+> > > The possibility of registering multiple power supply extensions on a single power supply will
+> > > be necessary to support battery charge control on Dell notebooks in the future. This is because
+> > > there will be two drivers on Dell notebooks which register battery extensions: dell-wmi-ddv and
+> > > dell-laptop (when support for battery charge control is supported someday).
+> > > 
+> > > How difficult would it be to support such scenarios? If its very difficult, then maybe we can implement
+> > > this later when the need arises.
+> > It's not really difficult. The problem is in the callback functions
+> > going from a 'struct power_supply' back to the correct extension struct
+> > for use with container_of() to access the drivers private data.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
-> > new file mode 100644
-> > index 000000000000..50bf2849d823
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
-> > @@ -0,0 +1,103 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TYHX HX9023S capacitive proximity sensor
-> > +
-> > +maintainers:
-> > +  - Yasin Lee <yasin.lee.x@gmail.com>
-> > +
-> > +description: |
-> > +  TYHX HX9023S proximity sensor
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/iio/iio.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: tyhx,hx9023s
-> > +
-> > +  reg:
-> > +    maxItems: 1  
+> > But we can add a marker member to 'struct power_supply_ext' with which
+> > the callback can figure out which of the registered extensions is its
+> > own. Something like "led_hw_trigger_type" in the LED subsystem.
 > 
-> A device like this needs at least one power supply.  Make sure to document
-> all such supplies and make the ones that are required for functionality part of
-> your required properties.  Note that you should do this even if on your
-> board they are always turned on.
+> Maybe we can do the same thing as the battery hook API and just pass a pointer to
+> the power_supply_ext instance to the callbacks. They then can use container_of()
+> to access the drivers private data if the struct power_supply_ext is embedded
+> inside the private data struct.
 
-Ignore this for obvious reasons given you have just below!  However should be
-required.
+That indeed sounds like the obvious thing to do.
+I tried very hard to keep the callback signatures exactly the same as in
+power_supply_desc and didn't even see this possibility.
 
 > 
-> > +
-> > +  interrupts:
-> > +    description: |
-> > +      Generated by device to announce preceding read request has finished
-> > +      and data is available or that a close/far proximity event has happened.
-> > +    maxItems: 1
-> > +
-> > +  vdd-supply:
-> > +    true  
->   vdd-supply: true
+> > 
+> > And some documentation about how conflicts are to be resolved.
+> > 
+> > Thomas
 > 
-> on single line is commonly done for these.
-> 
-> > +
-> > +  channel-in-use:
-> > +    description: |
-> > +      Bit flag indicating which channels are used,
-> > +      depends on the hardware circuit design.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32  
-> 
-> Presence of the channel nodes below should make this clear
-> without a separate element.
-> 
-> 
-> > +
-> > +patternProperties:
-> > +  "^channel@[0-9]+$":
-> > +    type: object
-> > +    properties:
-> > +      reg:
-> > +        description: Channel register address
-> > +        $ref: /schemas/types.yaml#/definitions/uint32
-> > +      channel-positive:
-> > +        description: Positive channel assignments
-> > +        $ref: /schemas/types.yaml#/definitions/uint32  
-> 
-> That size seems implausible.  What are the limits. What does
-> 255 mean?
-> 
-> In review of previous version I pointed you at the differential
-> channel bindings for ADCs.  If they cannot be applied here
-> explain why in your patch description.
-> 
-> > +      channel-negative:
-> > +        description: Negative channel assignments
-> > +        $ref: /schemas/types.yaml#/definitions/uint32
-> > +    required:
-> > +      - reg
-> > +      - channel-positive
-> > +      - channel-negative
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    i2c {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <0>;
-> > +      hx9023s@2a {
-> > +        compatible = "tyhx,hx9023s";
-> > +        reg = <0x2a>;
-> > +        interrupt-parent = <&pio>;
-> > +        interrupts = <16 IRQ_TYPE_EDGE_FALLING>;
-> > +        vdd-supply = <&pp1800_prox>;
-> > +        channel-in-use = <0x1F>;
-> > +        channel@0 {
-> > +          reg = <0>;
-> > +          channel-positive = <0>;
-> > +          channel-negative = <255>;
-> > +        };
-> > +        channel@1 {
-> > +          reg = <1>;
-> > +          channel-positive = <1>;
-> > +          channel-negative = <255>;
-> > +        };
-> > +        channel@2 {
-> > +          reg = <2>;
-> > +          channel-positive = <2>;
-> > +          channel-negative = <255>;
-> > +        };
-> > +        channel@3 {
-> > +          reg = <3>;
-> > +          channel-positive = <3>;
-> > +          channel-negative = <255>;
-> > +        };
-> > +        channel@4 {
-> > +          reg = <4>;
-> > +          channel-positive = <4>;
-> > +          channel-negative = <255>;
-> > +        };
-> > +      };
-> > +    };
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > index b97d298b3eb6..e2224eea9ab9 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -1507,6 +1507,8 @@ patternProperties:
-> >      description: Turing Machines, Inc.
-> >    "^tyan,.*":
-> >      description: Tyan Computer Corporation
-> > +  "^tyhx,.*":
-> > +    description: NanjingTianyihexin Electronics Ltd.  
-> 
-> Use a separate patch for the new vendor prefix.  Makes it easier for people to cherrypick that
-> if they are backporting some other tyhx dt binding.
-> 
-> >    "^u-blox,.*":
-> >      description: u-blox
-> >    "^u-boot,.*":  
-> 
-> 
+> Sound like a plan, i suggest that extensions be prevented from registering with
+> a power supply containing conflicting properties or containing extensions with
+> conflicting properties.
 
+Ack.
+
+> As a side note, maybe there is a way to make power_supply_update_groups() available
+> for other power supply drivers? Afaik the ACPI battery driver would benefit from this too.
+
+I'll take a look and spin that into its own series.
+Or as you seem to know that driver better, I'd be happy if you did.
+
+> Thanks,
+> Armin Wolf
+> 
+> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > > ---
+> > > > Thomas Weißschuh (6):
+> > > >         power: supply: sysfs: use power_supply_property_is_writeable()
+> > > >         power: supply: core: avoid iterating properties directly
+> > > >         power: supply: core: implement extension API
+> > > >         power: supply: core: add locking around extension access
+> > > >         power: supply: test-power: implement a power supply extension
+> > > >         platform/x86: system76: Use power_supply extension API
+> > > > 
+> > > >    drivers/platform/x86/system76_acpi.c      |  83 +++++++++---------
+> > > >    drivers/power/supply/power_supply.h       |   9 ++
+> > > >    drivers/power/supply/power_supply_core.c  | 136 ++++++++++++++++++++++++++++--
+> > > >    drivers/power/supply/power_supply_hwmon.c |  48 +++++------
+> > > >    drivers/power/supply/power_supply_sysfs.c |  39 ++++++---
+> > > >    drivers/power/supply/test_power.c         | 102 ++++++++++++++++++++++
+> > > >    include/linux/power_supply.h              |  25 ++++++
+> > > >    7 files changed, 357 insertions(+), 85 deletions(-)
+> > > > ---
+> > > > base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+> > > > change-id: 20240602-power-supply-extensions-07d949f509d9
 
