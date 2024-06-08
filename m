@@ -1,149 +1,328 @@
-Return-Path: <linux-kernel+bounces-206840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCCE900EA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ED6900EA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7701C2199C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6441C21F9E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC3179E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728F94C6F;
 	Sat,  8 Jun 2024 00:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyDK515H"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GedBEcew"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC65E17E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4AEA31
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717805208; cv=none; b=rlyUVZQP15vaKaXCIACtKMJH7WMSvJpYqR1RDAJsIzIPDiqbCtNCLKhB8i/0wZUu+sQAeWkOb2lKTJxTquGlkBkZxlIGnA8NXnkxkYXiGezTwJgCn8PIJ1henDoyHzvt2ZJdsnUmhYg40SA7zr5Z6JD15CwYTjjBsbrmszbuujg=
+	t=1717805207; cv=none; b=TfH3vdAuuB2+UXQMRxwNkR6uZY+M3gWoV092MfUpkNpnFUFxhKUH9wG5VjeyBik53J9stPAsGDeIQw4EKPYHSBy1/wbLsKErKYf12N+eZRtJpl0va778wTY1rykcsG+FixuX2qSKqf1MygaJc4lGQqtIHOLYwciTGY5SZwTTouA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717805208; c=relaxed/simple;
-	bh=XVPTv+MRyQaDkK3HkOQFBqvjgvmyQ5edgR1y0le2kPE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QxXiXobNP2xxP/WWe4krczNNnbsmZddLBIAJRjSmWnET8MFRRkf3uGB9BDzjUbQjuyiTxdvB3B2+X0T9EhBgc1Z4s17x0DZauDNb7/cEiPJi8O3wpaHOseANoXxpESp3bsNJwvmSM0YRITZchfENaB6YJtIqjzRX5fpITk3xXR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyDK515H; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1717805207; c=relaxed/simple;
+	bh=qJZbgpT2J4Q/YFaFhTfRoIrKqervtsXgKC3zR+tLw5s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NsrwfnHhOaKFGLJNwk6sFw7cZbDgJ+JJNK8K6eNorRIdYmtTHbaqvMQyl5PjDkirgpUfNnm5U00X3b/nwjkW8z+QAcYjmiJbV2QvgKIkJR6+Dq2g/zpLtJFVm5t3d+VYiaJC/TKIRVT+ocGHVq3wmBHmt1Wj+pfPAmGaNFsoZ9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GedBEcew; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a2aec8521so42479007b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:06:42 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f68c07cbbeso19340935ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717805202; x=1718410002; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/0P/4UOR35lqVOzzO8NYcY7SPrBDZTXh2q6gNOWxYAI=;
-        b=OyDK515H/AGi8Ex2I9KZcTIXO3f0MOLdjlAsWkur/FQHYQ5k3YQa/HIdAqFr7rPUCj
-         R7jRjHsv4uxGrU1DcnZwEB/5iXbJ4CJLmCSiVDAV3DkHkVGwh7E+oozXwZH8iMPsiWUW
-         GtLWI3t0Bg8pbT3kO+pc9g8Qb9Z/lJb7VOVRjqD985bx1r1+J7n7+rvMh6LxdLgricDs
-         6gwyBt97fd1FEqQ56jVPJ8MWIZN/y/yvska3BK3fVxP1oUYPPhDKM6NGXHhJJixbwwok
-         mN4TdpZat7uDISgC7nbq0+zomU8bnRVm4Hmeo7qd8tE6QqyGEvnwBOSqrBTGhWZ3aQSP
-         ZE+g==
+        d=google.com; s=20230601; t=1717805204; x=1718410004; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=iq6DmtHz6SSF9fb08PX7PUoTv1+Fjd4jsK+/PHHPXto=;
+        b=GedBEcewHodC7XdXHcWYt+kP49pkS6EW5EXw4wp/ZoE8OtxTv+ZfWPNiRZrRcABdF2
+         zy9VA6JCN/6vVbcLHbnRVHKhQROTRN4GmWAd+kDkKUXpieS7qnnHO5MqiPZuyhXMICeR
+         gRtB9dRVuHeK/deMXqQneaTkvCReWVv2zCzeIwepVmBqxOAYuthWlx0s1yBRnf+HLoTE
+         DH86ILMs2Fy/qg/nfuT2CjqYt/ChTI1deHQbKILK9Nilx6kccRJgR1l+lXytYTTE7T5X
+         Rk5jAqdw3F8vLBFJbqLOv+JIaX54k37wg/SWrqzgl+bmjVPnXuodwkRi+bp42WNm9nJM
+         fVCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717805202; x=1718410002;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/0P/4UOR35lqVOzzO8NYcY7SPrBDZTXh2q6gNOWxYAI=;
-        b=IwhzDuQ4dVG7+hIZPUUDMfAkIVelTGFGgdtnQNduFhTgtLUrIWuvvQBA//fjdySGgX
-         vAteV5iTWF3YELtYW4cdQUJJYmTz/mUs84xqw51BHsMRdx17vSAetljgBnVC8iZOPQgV
-         tlE8yQzBvXhgMEjfQfOQeKgayar4USJ72eOWt2KYUWv7p3+w+2tpT5RhfuzLNillzp7g
-         bmeOTS9oPIGHietlwM12YXXxtlE5gPNwfX27Wjo8FiD7nOG3hvxa4b2KpemjGXfdDo6S
-         KnehkDmbd9iF6oTjcoCD+a+qwJXziVyMs8rV8ziVjxUemqtbzgfpUqw13oHwEVlhu6hL
-         1XdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbHz2vi4TJOkvXaOV7itBibwfmbm1t356bQ/wtjrsS2wWMenqg4SwBo+uzOB387dsgB1IIDlq7bV5s3GJcww8Cp+0cB6Eoh+t03WmA
-X-Gm-Message-State: AOJu0YyyLSgl7C2WWeYeSNXOZ6+Z6KezTNSEPk8meRvxafKH8lo0X28V
-	ky01FzXDJFbBvv7QxrhQhLRQADIcIqZHQyLf9ChDjtS2UxgfSFqiHape7jaeneX2wWgYGAcsnNj
-	nCQ==
-X-Google-Smtp-Source: AGHT+IFwFGUu4a2gd3YVZgag51+UKBWx+Irxs5YXa+JjqjNYxaDeP1xNMO/cMl4Jibd6nngY7z8aWIx4e0M=
+        d=1e100.net; s=20230601; t=1717805204; x=1718410004;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iq6DmtHz6SSF9fb08PX7PUoTv1+Fjd4jsK+/PHHPXto=;
+        b=RGL4JTGdWHp9XbvCjCJzvLvvTRMl3rK2S1WHfekafReEl8kFXHAgzpH6GL3ijWt7Kc
+         I9M0lcl3nuYi/x1NZy7zV4XXgjdlKhzDknrQDRidLspOwHka4fXW4n9zY6nL/bRUoeNp
+         GPRtlEjgDFG0g6C5UoDbtHSo7bM1ebUTennJTVL9dOLQYEZCxw2YVwjdTWEj7eJqwvfN
+         MMAbZJC4LcceLF7glvq99Y2nqz+CckBnEC8LcSTelKwyp0Ux9wioSw8NEgh+NXtXYyH+
+         8CWp5Egz0Gkmdp+wHiy9L38wBZ5IgJPSztUWIO5GGJaITpOsv9Xd2ekGc8KwTklxm4Wb
+         dViw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBIom2Ez0zynKHcsgG+9lZUN26FOWDwbBz+yLvOcSrirW/CLqlXUFmg8OF+sSXMKhidQJlLgjElUD6H2vbZcXC50m/R/E2HUbtsYRP
+X-Gm-Message-State: AOJu0Yy9ARhlhI7k1D4tTGV/5i0kjqD020LiLavCwUBTzI4OQi/kLXS9
+	xq2ZaoaBYe/hHbxreAK+ZAQgcRvXnZg23G4n90F2JLVBMaQPbG8gzbnnpOR5Y/yc4M89ksuQciX
+	6SQ==
+X-Google-Smtp-Source: AGHT+IFX7XA1z/r7DTD+xg8pBAk2Ziz2yxBNYPknTvwUeL/gY7i62oOk8PrbJK11m2b86KyxJqzu59I5xl4=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:100a:b0:de6:bf2:b026 with SMTP id
- 3f1490d57ef6-dfaf6679f20mr433495276.13.1717805201794; Fri, 07 Jun 2024
- 17:06:41 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:aa8a:b0:1f6:565f:27af with SMTP id
+ d9443c01a7336-1f6d03b81d4mr1419915ad.12.1717805203627; Fri, 07 Jun 2024
+ 17:06:43 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  7 Jun 2024 17:06:31 -0700
+Date: Fri,  7 Jun 2024 17:06:32 -0700
+In-Reply-To: <20240608000639.3295768-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240608000639.3295768-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240608000639.3295768-1-seanjc@google.com>
-Subject: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when enabling virt
+Message-ID: <20240608000639.3295768-2-seanjc@google.com>
+Subject: [PATCH v3 1/8] KVM: Use dedicated mutex to protect kvm_usage_count to
+ avoid deadlock
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Register KVM's cpuhp and syscore callbacks when enabling virtualization in
-hardware, as the sole purpose of said callbacks is to disable and re-enable
-virtualization as needed.
+Use a dedicated mutex to guard kvm_usage_count to fix a potential deadlock
+on x86 due to a chain of locks and SRCU synchronizations.  Translating the
+below lockdep splat, CPU1 #6 will wait on CPU0 #1, CPU0 #8 will wait on
+CPU2 #3, and CPU2 #7 will wait on CPU1 #4 (if there's a writer, due to the
+fairness of r/w semaphores).
 
-The primary motivation for this series is to simplify dealing with enabling
-virtualization for Intel's TDX, which needs to enable virtualization
-when kvm-intel.ko is loaded, i.e. long before the first VM is created.  TDX
-doesn't _need_ to keep virtualization enabled, but doing so is much simpler
-for KVM (see patch 3).
+    CPU0                     CPU1                     CPU2
+1   lock(&kvm->slots_lock);
+2                                                     lock(&vcpu->mutex);
+3                                                     lock(&kvm->srcu);
+4                            lock(cpu_hotplug_lock);
+5                            lock(kvm_lock);
+6                            lock(&kvm->slots_lock);
+7                                                     lock(cpu_hotplug_lock);
+8   sync(&kvm->srcu);
 
-That said, this is a nice cleanup on its own, assuming I haven't broken
-something.  By registering the callbacks on-demand, the callbacks themselves
-don't need to check kvm_usage_count, because their very existence implies a
-non-zero count.
+Note, there are likely more potential deadlocks in KVM x86, e.g. the same
+pattern of taking cpu_hotplug_lock outside of kvm_lock likely exists with
+__kvmclock_cpufreq_notifier(), but actually triggering such deadlocks is
+beyond rare due to the combination of dependencies and timings involved.
+E.g. the cpufreq notifier is only used on older CPUs without a constant
+TSC, mucking with the NX hugepage mitigation while VMs are running is very
+uncommon, and doing so while also onlining/offlining a CPU (necessary to
+generate contention on cpu_hotplug_lock) would be even more unusual.
 
-The meat is in patch 1.  Patches 2 renames the helpers so that patch 3 is
-less awkward.  Patch 3 adds a module param to enable virtualization when KVM
-is loaded.  Patches 4-6 are tangentially related x86 cleanups to registers
-KVM's "emergency disable" callback on-demand, same as the syscore callbacks.
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  6.10.0-smp--c257535a0c9d-pip #330 Tainted: G S         O
+  ------------------------------------------------------
+  tee/35048 is trying to acquire lock:
+  ff6a80eced71e0a8 (&kvm->slots_lock){+.+.}-{3:3}, at: set_nx_huge_pages+0x179/0x1e0 [kvm]
 
-The suspend/resume and cphup paths still need to be fully tested, as do
-non-x86 architectures.
+  but task is already holding lock:
+  ffffffffc07abb08 (kvm_lock){+.+.}-{3:3}, at: set_nx_huge_pages+0x14a/0x1e0 [kvm]
 
-v3:
- - Collect reviews/acks.
- - Switch to kvm_usage_lock in a dedicated patch, Cc'd for stable@. [Chao]
- - Enable virt at load by default. [Chao]
- - Add comments to document how kvm_arch_{en,dis}able_virtualization() fit
-   into the overall flow. [Kai]
+  which lock already depends on the new lock.
 
-v2:
- - https://lore.kernel.org/all/20240522022827.1690416-1-seanjc@google.com
- - Use a dedicated mutex to avoid lock inversion issues between kvm_lock and
-   the cpuhp lock.
- - Register emergency disable callbacks on-demand. [Kai]
- - Drop an unintended s/junk/ign rename. [Kai]
- - Decrement kvm_usage_count on failure. [Chao]
+   the existing dependency chain (in reverse order) is:
 
-v1: https://lore.kernel.org/all/20240425233951.3344485-1-seanjc@google.com
+  -> #3 (kvm_lock){+.+.}-{3:3}:
+         __mutex_lock+0x6a/0xb40
+         mutex_lock_nested+0x1f/0x30
+         kvm_dev_ioctl+0x4fb/0xe50 [kvm]
+         __se_sys_ioctl+0x7b/0xd0
+         __x64_sys_ioctl+0x21/0x30
+         x64_sys_call+0x15d0/0x2e60
+         do_syscall_64+0x83/0x160
+         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Sean Christopherson (8):
-  KVM: Use dedicated mutex to protect kvm_usage_count to avoid deadlock
-  KVM: Register cpuhp and syscore callbacks when enabling hardware
-  KVM: Rename functions related to enabling virtualization hardware
-  KVM: Add a module param to allow enabling virtualization when KVM is
-    loaded
-  KVM: Add arch hooks for enabling/disabling virtualization
-  x86/reboot: Unconditionally define cpu_emergency_virt_cb typedef
-  KVM: x86: Register "emergency disable" callbacks when virt is enabled
-  KVM: Enable virtualization at load/initialization by default
+  -> #2 (cpu_hotplug_lock){++++}-{0:0}:
+         cpus_read_lock+0x2e/0xb0
+         static_key_slow_inc+0x16/0x30
+         kvm_lapic_set_base+0x6a/0x1c0 [kvm]
+         kvm_set_apic_base+0x8f/0xe0 [kvm]
+         kvm_set_msr_common+0x9ae/0xf80 [kvm]
+         vmx_set_msr+0xa54/0xbe0 [kvm_intel]
+         __kvm_set_msr+0xb6/0x1a0 [kvm]
+         kvm_arch_vcpu_ioctl+0xeca/0x10c0 [kvm]
+         kvm_vcpu_ioctl+0x485/0x5b0 [kvm]
+         __se_sys_ioctl+0x7b/0xd0
+         __x64_sys_ioctl+0x21/0x30
+         x64_sys_call+0x15d0/0x2e60
+         do_syscall_64+0x83/0x160
+         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
- Documentation/virt/kvm/locking.rst |  19 ++-
- arch/x86/include/asm/kvm_host.h    |   3 +
- arch/x86/include/asm/reboot.h      |   2 +-
- arch/x86/kvm/svm/svm.c             |   5 +-
- arch/x86/kvm/vmx/main.c            |   2 +
- arch/x86/kvm/vmx/vmx.c             |   6 +-
- arch/x86/kvm/vmx/x86_ops.h         |   1 +
- arch/x86/kvm/x86.c                 |  10 ++
- include/linux/kvm_host.h           |  14 ++
- virt/kvm/kvm_main.c                | 258 ++++++++++++++---------------
- 10 files changed, 175 insertions(+), 145 deletions(-)
+  -> #1 (&kvm->srcu){.+.+}-{0:0}:
+         __synchronize_srcu+0x44/0x1a0
+         synchronize_srcu_expedited+0x21/0x30
+         kvm_swap_active_memslots+0x110/0x1c0 [kvm]
+         kvm_set_memslot+0x360/0x620 [kvm]
+         __kvm_set_memory_region+0x27b/0x300 [kvm]
+         kvm_vm_ioctl_set_memory_region+0x43/0x60 [kvm]
+         kvm_vm_ioctl+0x295/0x650 [kvm]
+         __se_sys_ioctl+0x7b/0xd0
+         __x64_sys_ioctl+0x21/0x30
+         x64_sys_call+0x15d0/0x2e60
+         do_syscall_64+0x83/0x160
+         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
+  -> #0 (&kvm->slots_lock){+.+.}-{3:3}:
+         __lock_acquire+0x15ef/0x2e30
+         lock_acquire+0xe0/0x260
+         __mutex_lock+0x6a/0xb40
+         mutex_lock_nested+0x1f/0x30
+         set_nx_huge_pages+0x179/0x1e0 [kvm]
+         param_attr_store+0x93/0x100
+         module_attr_store+0x22/0x40
+         sysfs_kf_write+0x81/0xb0
+         kernfs_fop_write_iter+0x133/0x1d0
+         vfs_write+0x28d/0x380
+         ksys_write+0x70/0xe0
+         __x64_sys_write+0x1f/0x30
+         x64_sys_call+0x281b/0x2e60
+         do_syscall_64+0x83/0x160
+         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-base-commit: af0903ab52ee6d6f0f63af67fa73d5eb00f79b9a
+Cc: Chao Gao <chao.gao@intel.com>
+Fixes: 0bf50497f03b ("KVM: Drop kvm_count_lock and instead protect kvm_usage_count with kvm_lock")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ Documentation/virt/kvm/locking.rst | 19 ++++++++++++------
+ virt/kvm/kvm_main.c                | 31 +++++++++++++++---------------
+ 2 files changed, 29 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/virt/kvm/locking.rst b/Documentation/virt/kvm/locking.rst
+index 02880d5552d5..5e102fe5b396 100644
+--- a/Documentation/virt/kvm/locking.rst
++++ b/Documentation/virt/kvm/locking.rst
+@@ -227,7 +227,13 @@ time it will be set using the Dirty tracking mechanism described above.
+ :Type:		mutex
+ :Arch:		any
+ :Protects:	- vm_list
+-		- kvm_usage_count
++
++``kvm_usage_count``
++^^^^^^^^^^^^^^^^^^^
++
++:Type:		mutex
++:Arch:		any
++:Protects:	- kvm_usage_count
+ 		- hardware virtualization enable/disable
+ :Comment:	KVM also disables CPU hotplug via cpus_read_lock() during
+ 		enable/disable.
+@@ -290,11 +296,12 @@ time it will be set using the Dirty tracking mechanism described above.
+ 		wakeup.
+ 
+ ``vendor_module_lock``
+-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++^^^^^^^^^^^^^^^^^^^^^^
+ :Type:		mutex
+ :Arch:		x86
+ :Protects:	loading a vendor module (kvm_amd or kvm_intel)
+-:Comment:	Exists because using kvm_lock leads to deadlock.  cpu_hotplug_lock is
+-    taken outside of kvm_lock, e.g. in KVM's CPU online/offline callbacks, and
+-    many operations need to take cpu_hotplug_lock when loading a vendor module,
+-    e.g. updating static calls.
++:Comment:	Exists because using kvm_lock leads to deadlock.  kvm_lock is taken
++    in notifiers, e.g. __kvmclock_cpufreq_notifier(), that may be invoked while
++    cpu_hotplug_lock is held, e.g. from cpufreq_boost_trigger_state(), and many
++    operations need to take cpu_hotplug_lock when loading a vendor module, e.g.
++    updating static calls.
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 4965196cad58..d9b0579d3eea 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -5499,6 +5499,7 @@ __visible bool kvm_rebooting;
+ EXPORT_SYMBOL_GPL(kvm_rebooting);
+ 
+ static DEFINE_PER_CPU(bool, hardware_enabled);
++static DEFINE_MUTEX(kvm_usage_lock);
+ static int kvm_usage_count;
+ 
+ static int __hardware_enable_nolock(void)
+@@ -5531,10 +5532,10 @@ static int kvm_online_cpu(unsigned int cpu)
+ 	 * be enabled. Otherwise running VMs would encounter unrecoverable
+ 	 * errors when scheduled to this CPU.
+ 	 */
+-	mutex_lock(&kvm_lock);
++	mutex_lock(&kvm_usage_lock);
+ 	if (kvm_usage_count)
+ 		ret = __hardware_enable_nolock();
+-	mutex_unlock(&kvm_lock);
++	mutex_unlock(&kvm_usage_lock);
+ 	return ret;
+ }
+ 
+@@ -5554,10 +5555,10 @@ static void hardware_disable_nolock(void *junk)
+ 
+ static int kvm_offline_cpu(unsigned int cpu)
+ {
+-	mutex_lock(&kvm_lock);
++	mutex_lock(&kvm_usage_lock);
+ 	if (kvm_usage_count)
+ 		hardware_disable_nolock(NULL);
+-	mutex_unlock(&kvm_lock);
++	mutex_unlock(&kvm_usage_lock);
+ 	return 0;
+ }
+ 
+@@ -5573,9 +5574,9 @@ static void hardware_disable_all_nolock(void)
+ static void hardware_disable_all(void)
+ {
+ 	cpus_read_lock();
+-	mutex_lock(&kvm_lock);
++	mutex_lock(&kvm_usage_lock);
+ 	hardware_disable_all_nolock();
+-	mutex_unlock(&kvm_lock);
++	mutex_unlock(&kvm_usage_lock);
+ 	cpus_read_unlock();
+ }
+ 
+@@ -5606,7 +5607,7 @@ static int hardware_enable_all(void)
+ 	 * enable hardware multiple times.
+ 	 */
+ 	cpus_read_lock();
+-	mutex_lock(&kvm_lock);
++	mutex_lock(&kvm_usage_lock);
+ 
+ 	r = 0;
+ 
+@@ -5620,7 +5621,7 @@ static int hardware_enable_all(void)
+ 		}
+ 	}
+ 
+-	mutex_unlock(&kvm_lock);
++	mutex_unlock(&kvm_usage_lock);
+ 	cpus_read_unlock();
+ 
+ 	return r;
+@@ -5648,13 +5649,13 @@ static int kvm_suspend(void)
+ {
+ 	/*
+ 	 * Secondary CPUs and CPU hotplug are disabled across the suspend/resume
+-	 * callbacks, i.e. no need to acquire kvm_lock to ensure the usage count
+-	 * is stable.  Assert that kvm_lock is not held to ensure the system
+-	 * isn't suspended while KVM is enabling hardware.  Hardware enabling
+-	 * can be preempted, but the task cannot be frozen until it has dropped
+-	 * all locks (userspace tasks are frozen via a fake signal).
++	 * callbacks, i.e. no need to acquire kvm_usage_lock to ensure the usage
++	 * count is stable.  Assert that kvm_usage_lock is not held to ensure
++	 * the system isn't suspended while KVM is enabling hardware.  Hardware
++	 * enabling can be preempted, but the task cannot be frozen until it has
++	 * dropped all locks (userspace tasks are frozen via a fake signal).
+ 	 */
+-	lockdep_assert_not_held(&kvm_lock);
++	lockdep_assert_not_held(&kvm_usage_lock);
+ 	lockdep_assert_irqs_disabled();
+ 
+ 	if (kvm_usage_count)
+@@ -5664,7 +5665,7 @@ static int kvm_suspend(void)
+ 
+ static void kvm_resume(void)
+ {
+-	lockdep_assert_not_held(&kvm_lock);
++	lockdep_assert_not_held(&kvm_usage_lock);
+ 	lockdep_assert_irqs_disabled();
+ 
+ 	if (kvm_usage_count)
 -- 
 2.45.2.505.gda0bf45e8d-goog
 
