@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-207015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B91901150
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:09:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E473901152
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 13:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E351F21D7A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12F94282CF8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E7917837B;
-	Sat,  8 Jun 2024 11:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC9F178374;
+	Sat,  8 Jun 2024 11:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmDGbuM4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSgZAd3J"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0B514F139;
-	Sat,  8 Jun 2024 11:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04741CAA2;
+	Sat,  8 Jun 2024 11:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717844985; cv=none; b=Zs7DGd94dyRAsAuN1csB3cPrTdpHOxXTP0i3xSGDcPJP8GbTPbgWoxm2BXbAxBquvs5ntH+SIsVjAW8SoFm1BAnN0NwBhr9s364v9UtBMgf0TicRWmoYF9cIDoGZtPRexKK4uu3dKGSPa2XkQYtljvTcxdU3QYubEBcOXas9zSY=
+	t=1717845389; cv=none; b=OfbdDBGzP+4KkzDSt3wpNnTVF9q3LMXRU7FOoTK/qI/g4PmUmBBtgkkEJb3dVz1ntRZInN0jZkFcN5wlJBXkic8TM18LNXMgBfIXnABqEcVB0COrHqZy4NLdSZPg2g5iPhCDxEZFUmLamnQ/KDJfBOOy8Z1Rz0wGL1gTvb6yhBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717844985; c=relaxed/simple;
-	bh=wowWc9+njfwW5t2kl62DnHQwLj+9w4BlUoe93ce4FPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=YvGlhQZs4r4UEIEQ9PL9+QkGYumOqtd8yg2bzzhSM0CQlictCuRTeDYR30Tmq8HfMD0SUFk6MCRPviHsxOsMv4u2FerV04JzzMUFxDhUsRiSwnQUf8DBdCyh+C97uU5i6Ay2TmU6T6fpXGKzxhVbatXdf1cFga0ZPm68SzR0qP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmDGbuM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4DB8C2BD11;
-	Sat,  8 Jun 2024 11:09:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717844984;
-	bh=wowWc9+njfwW5t2kl62DnHQwLj+9w4BlUoe93ce4FPI=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=pmDGbuM4AJocyuzzQinMKUnOcJ25HYEm4iYqj5mdmsYFU4bnb97B0ZakyoAjggBA+
-	 mQTNrA5010kBF2QnmhLR64tDpjR21izgSvH/IM6G4xiDhMhTWkv59tCGLN1TzKclUX
-	 LkBOFrtl2ADj7APSzO+a77IYQg4HBf4nsc8GNegbWnE34fjdCzxhT/9cVg2fC4s3fI
-	 /HGMoPtPm6gIYTtaQZaCWqz9LvMazXLy2EJY6z28p5Qm2hHUOY1/2ijC0hvsUCd4Np
-	 cNx3pj8BoJn7TB9KN5FZkCXDSvSZlT6zVa6P0xbFyhqqwRL8vMxfS/CEuz108nUdY8
-	 U332EgegW8Neg==
-Message-ID: <6720af76-6504-4337-99f4-01db93913d0b@kernel.org>
-Date: Sat, 8 Jun 2024 19:09:42 +0800
+	s=arc-20240116; t=1717845389; c=relaxed/simple;
+	bh=jvizYpBh/846u79/ri9njeTMhe898iK4HlK2JzCGn6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icmQcjuKAO2AmjBp8MmhCQq51EyRrUMOtBSdN5ElQBPdyeY3VkxKwBOhdsyq1SUKlO+hdjrKyXA7idfs2VWtTrfQrpi7x4A+GqzNngB+y0uPw/YjVlSUxXa2qgLQedFUwCVeN1WZsX5zfdmeAFgtyzR/S132McLIZBkcKxZKzwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSgZAd3J; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68ca4d6545so519310766b.0;
+        Sat, 08 Jun 2024 04:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717845386; x=1718450186; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtXxKMBWiGQ1B2oZBxOrPQhSy0IwrF0BuuPyQk2cWyw=;
+        b=HSgZAd3JFVVi9WTp0BU99BET/xnTCS0bHS+bwww958oBSbQQ883bNQHIfLDrDsu7QE
+         VQUBjgXQsF3uE67QK7oivbKxdGvdaRuih8IX5RxZNujR3U/jySeqSTxZeCGvfAGaAT8v
+         3syUPyj22VFh5hIhc0v0A67oAqnpPgiaZka5GmXJuZpKX2th9lTe+eYuoxEZu//7H84x
+         pq2qFbDOeO5D7S7yZ7jAZ4yBzf0JqPEjM8torHA3g8lZm39a2jX1A35RUo36yy0UjiNj
+         sQQw37y62kcahcFur4ksQTJLow0GMEEdJTrMPAjc4NF9GKcgM6J4AXVeF9tkLtKkfLk1
+         L1zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717845386; x=1718450186;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PtXxKMBWiGQ1B2oZBxOrPQhSy0IwrF0BuuPyQk2cWyw=;
+        b=DTDaHpdywa+5Yvzn0lhIetwlVPNAmQL5Na1S6NsptyKTzErvf5xpbRdwwp/dOe2u8I
+         7cn5SnBgrzsozoawsbH5PsKNcshVv1kDxBOiuIdyJVRVpzNgWfOOGStWJiGplQjrjmlT
+         ZpqEVk6LDAEY08M/UVlaGEhLkYmAQh6bWJGdUcIBYgPZ+esNWPj3iFrRrt0sYKEm4FYk
+         hcY1wCy7uPHTqL8Omh3jhOBfiyYdjGJKk15BUnRrq0wUKb2PC64B0bsI207fVq6QGTCA
+         qc4iz0715uJi/TWtFHkta+GTk4koeKJ8r1n3VjHaLe/VW4tbycEYaY/4fG6AjIoyhV9+
+         AfWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfIC8kyt6tdW/8ygBESZ2eD7pzkJ/eHb4IYjB1zTUpooYdNqEqhLkDZTo7jwgjMkFITqU7sNQZzy+fE6DbQknLC2fX4nb6iniIrsx84Fj7e+TKOZScO7sWI77UnCjAUxrXbjJr
+X-Gm-Message-State: AOJu0Yy1Tc0ARJC0HGsL2MyC2BTyieYTsDk5OwAd5VcNZPTIGATNkl2p
+	VX7Cz0zlK8yXKl4sjdBEEoybPldZnifDdUKYehgC1zx6xE5OfCA+
+X-Google-Smtp-Source: AGHT+IELhGMfpxFt70JA2lImQ9hXz89V1CMxUo0K9yLXNAygI/b4E25TAhfw7hwBUPVqr4qgvlH2TA==
+X-Received: by 2002:a17:906:b897:b0:a6e:2c34:6c0e with SMTP id a640c23a62f3a-a6e2c717611mr287777666b.22.1717845385591;
+        Sat, 08 Jun 2024 04:16:25 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eaa4dsm370256066b.110.2024.06.08.04.16.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Jun 2024 04:16:24 -0700 (PDT)
+Date: Sat, 8 Jun 2024 14:16:21 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: linux@armlinux.org.uk, andrew@lunn.ch, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	wojciech.drewek@intel.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net v4 PATCH] net: stmmac: replace priv->speed with the
+ portTransmitRate from the tc-cbs parameters
+Message-ID: <20240608111621.oasttwwkhsmpcl4y@skbuf>
+References: <20240608044557.1380550-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_revalidate_dentry
-To: syzbot <syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com>,
- syzkaller-bugs@googlegroups.com
-References: <000000000000a66c7705f4578aaa@google.com>
-Content-Language: en-US
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- glider@google.com
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <000000000000a66c7705f4578aaa@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240608044557.1380550-1-xiaolei.wang@windriver.com>
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git misc
+On Sat, Jun 08, 2024 at 12:45:57PM +0800, Xiaolei Wang wrote:
+> The current cbs parameter depends on speed after uplinking,
+> which is not needed and will report a configuration error
+> if the port is not initially connected. The UAPI exposed by
+> tc-cbs requires userspace to recalculate the send slope anyway,
+> because the formula depends on port_transmit_rate (see man tc-cbs),
+> which is not an invariant from tc's perspective. Therefore, we
+> use offload->sendslope and offload->idleslope to derive the
+> original port_transmit_rate from the CBS formula.
+> 
+> Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+> ---
+> 
+> Change log:
+> 
+> v1:
+>     https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240528092010.439089-1-xiaolei.wang@windriver.com/
+> v2:
+>     Update CBS parameters when speed changes after linking up
+>     https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240530061453.561708-1-xiaolei.wang@windriver.com/
+> v3:
+>     replace priv->speed with the  portTransmitRate from the tc-cbs parameters suggested by Vladimir Oltean
+>     link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240607103327.438455-1-xiaolei.wang@windriver.com/
+> v4:
+>     Delete speed_div variable, delete redundant port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope; and update commit log
+> 
+>  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 20 +++++++------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 222540b55480..87af129a6a1d 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -344,10 +344,11 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  {
+>  	u32 tx_queues_count = priv->plat->tx_queues_to_use;
+>  	u32 queue = qopt->queue;
+> -	u32 ptr, speed_div;
+> +	u32 ptr;
+>  	u32 mode_to_use;
+>  	u64 value;
+>  	int ret;
+> +	s64 port_transmit_rate_kbps;
 
-On 2023/2/10 20:21, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    8c89ecf5c13b kmsan: silence -Wmissing-prototypes warnings
-> git tree:       https://github.com/google/kmsan.git master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10b53fff480000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=91d3152219aa6b45
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> userspace arch: i386
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1409f0b3480000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c76993480000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/fa537cffb53c/disk-8c89ecf5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5b9d03c04a3e/vmlinux-8c89ecf5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/55c166dec3af/bzImage-8c89ecf5.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/b234e4e5c704/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com
-> 
-> =======================================================
-> WARNING: The mand mount option has been deprecated and
->           and is ignored by this kernel. Remove the mand
->           option from the mount to silence this warning.
-> =======================================================
-> =====================================================
-> BUG: KMSAN: uninit-value in hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
-> BUG: KMSAN: uninit-value in hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
->   hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
->   hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
->   block_read_full_folio+0x4ff/0x11b0 fs/buffer.c:2271
->   hfs_read_folio+0x55/0x60 fs/hfs/inode.c:39
->   filemap_read_folio+0x148/0x4f0 mm/filemap.c:2426
->   do_read_cache_folio+0x7c8/0xd90 mm/filemap.c:3553
->   do_read_cache_page mm/filemap.c:3595 [inline]
->   read_cache_page+0xfb/0x2f0 mm/filemap.c:3604
->   read_mapping_page include/linux/pagemap.h:755 [inline]
->   hfs_btree_open+0x928/0x1ae0 fs/hfs/btree.c:78
->   hfs_mdb_get+0x260c/0x3000 fs/hfs/mdb.c:204
->   hfs_fill_super+0x1fb1/0x2790 fs/hfs/super.c:406
->   mount_bdev+0x628/0x920 fs/super.c:1359
->   hfs_mount+0xcd/0xe0 fs/hfs/super.c:456
->   legacy_get_tree+0x167/0x2e0 fs/fs_context.c:610
->   vfs_get_tree+0xdc/0x5d0 fs/super.c:1489
->   do_new_mount+0x7a9/0x16f0 fs/namespace.c:3145
->   path_mount+0xf98/0x26a0 fs/namespace.c:3475
->   do_mount fs/namespace.c:3488 [inline]
->   __do_sys_mount fs/namespace.c:3697 [inline]
->   __se_sys_mount+0x919/0x9e0 fs/namespace.c:3674
->   __ia32_sys_mount+0x15b/0x1b0 fs/namespace.c:3674
->   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
->   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
->   do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
->   do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
->   entry_SYSENTER_compat_after_hwframe+0x70/0x82
-> 
-> Uninit was created at:
->   __alloc_pages+0x926/0x10a0 mm/page_alloc.c:5572
->   alloc_pages+0xb4b/0xec0
->   alloc_slab_page mm/slub.c:1851 [inline]
->   allocate_slab mm/slub.c:1998 [inline]
->   new_slab+0x5c5/0x19b0 mm/slub.c:2051
->   ___slab_alloc+0x132b/0x3790 mm/slub.c:3193
->   __slab_alloc mm/slub.c:3292 [inline]
->   __slab_alloc_node mm/slub.c:3345 [inline]
->   slab_alloc_node mm/slub.c:3442 [inline]
->   slab_alloc mm/slub.c:3460 [inline]
->   __kmem_cache_alloc_lru mm/slub.c:3467 [inline]
->   kmem_cache_alloc_lru+0x72f/0xb80 mm/slub.c:3483
->   alloc_inode_sb include/linux/fs.h:3119 [inline]
->   hfs_alloc_inode+0x80/0xf0 fs/hfs/super.c:165
->   alloc_inode+0xad/0x4b0 fs/inode.c:259
->   iget_locked+0x340/0xf80 fs/inode.c:1286
->   hfs_btree_open+0x20d/0x1ae0 fs/hfs/btree.c:38
->   hfs_mdb_get+0x2519/0x3000 fs/hfs/mdb.c:199
->   hfs_fill_super+0x1fb1/0x2790 fs/hfs/super.c:406
->   mount_bdev+0x628/0x920 fs/super.c:1359
->   hfs_mount+0xcd/0xe0 fs/hfs/super.c:456
->   legacy_get_tree+0x167/0x2e0 fs/fs_context.c:610
->   vfs_get_tree+0xdc/0x5d0 fs/super.c:1489
->   do_new_mount+0x7a9/0x16f0 fs/namespace.c:3145
->   path_mount+0xf98/0x26a0 fs/namespace.c:3475
->   do_mount fs/namespace.c:3488 [inline]
->   __do_sys_mount fs/namespace.c:3697 [inline]
->   __se_sys_mount+0x919/0x9e0 fs/namespace.c:3674
->   __ia32_sys_mount+0x15b/0x1b0 fs/namespace.c:3674
->   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
->   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
->   do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
->   do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
->   entry_SYSENTER_compat_after_hwframe+0x70/0x82
-> 
-> CPU: 1 PID: 5015 Comm: syz-executor119 Not tainted 6.2.0-rc7-syzkaller-80760-g8c89ecf5c13b #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
-> =====================================================
-> 
+The feedback that came along with Wojciech's review in v3 was to use
+reverse Christmas tree (RCT) variable ordering. That means to sort
+variable declarations from longest line to shortest. It is the de facto
+coding style standard for kernel networking code.
 
+pw-bot: changes-requested
 
