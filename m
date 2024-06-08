@@ -1,105 +1,205 @@
-Return-Path: <linux-kernel+bounces-207188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4A0901377
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 22:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E70901379
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 22:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A14282500
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE491C20DE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD00E1F932;
-	Sat,  8 Jun 2024 20:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876CD219F6;
+	Sat,  8 Jun 2024 20:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="eiwBNu/q"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YQ5fiA/i"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9975B134DE
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 20:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CC21B966
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 20:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717879982; cv=none; b=lBWbKkb7AGlbehYcmrc1lO5JHSCruT6VfgVUait7Rq3dfewDjGBKh5QAREbziHH+4byiWWuPLwgRJzE1QC/IzjOjDLPkx+dIz6aWMnmV7hOGc3OOHEBkMhXuWn8gESFah54+aymfAcuNEXdlE5lx0QVD2Xb9gz9m+ErY/eodXbc=
+	t=1717880128; cv=none; b=eQc7MCY7WU8AYICheZySJFCgCS6rZxlJzydOgOQ7AoAVoH4LAROPM2rhjII1Il5EE6kTrA+SoO4mV93yG7G6KlLBtvQCwpuC38B72Lm8A1QlIQiQ2f7mTY5XDiIN5nTONd/cnnDfT9FjqSojSKYfBzJnGqPdmRYTmCvKDVYpJk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717879982; c=relaxed/simple;
-	bh=o3A+wp2C903FC2WDwTMbS8Xt+l0kyfAYt5wNH+jWtOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/AcsdDZLlYerkzjBphoQXuk5fqE5xWDtReC4oA3QJt0uCCExMHG7nRoYUmY8ZfKbAqhBsAUxiR4Tv6mPa58F5r6WAopnzOBLd9MAjPucMhq41O4j8HVk/jjQpod82n4ChdjJW+gqO2jdmsGP34DsnmRR7RgNAguOFRTea2d9v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=eiwBNu/q; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=8uTz2hQmdZ42l5KhlmjOcoaAYMysjJIUyCXrGnDGCHM=; b=eiwBNu/qD0CyD0Gf
-	ZlFL3SbiCpbUbMjU7ZvKd+EVdlxO5/JXEFBi/fvMzK4R7PlUu7VT2vWhyRVRC3miCUXjn+WFx/P6m
-	R9n/+czpTvTeoOZQFOW0Sf0bxCJuKA4kmB1fOkBh2lFo6m5MykBeL/w1gVcAwnvUKwnHluXZNbGR+
-	SERv9L3ozAIFRBVkXlrLRHkMrTXy6DB17r0j2jh+tx5ByYEoYSihJgCGYRSwGMZX0b5y0weohzfzz
-	Dj2iOE1l46urETARdrm1QTZXVNvDtWYPawOLWBrFVS9k9mS24XFVNIY2B/pd0255oni7BJAa9WDjX
-	h/XslAWJl1/+OFshfg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sG33a-005A0Y-1C;
-	Sat, 08 Jun 2024 20:52:58 +0000
-Date: Sat, 8 Jun 2024 20:52:58 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: jassisinghbrar@gmail.com, rrice@broadcom.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailbox: bcm-pdc: remove unused struct 'pdc_dma_map'
-Message-ID: <ZmTEqs2PKZZW_mYT@gallifrey>
-References: <20240523203741.201099-1-linux@treblig.org>
+	s=arc-20240116; t=1717880128; c=relaxed/simple;
+	bh=85qXbyqX6RxIt4uYLrSaAWXRZLFbmQAyyxDKG3decKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RreMcslfyPUoltGH+D1IMI0Fu3IlpTgLPzsbSWlKlZjA4mkq9LuAjuD2YVRHmxCT2WB3dQbS4rw5QZcVEfcPDzYCqNlgxBjlZQRuKRa3DwgT84C5ixISVpSmV7d/mpgEyR2Bo/aSuFv6PrHioeZ56hKlXjQXwNww6/7m9Eq2NKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YQ5fiA/i; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so49605a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 13:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1717880124; x=1718484924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8fZXZV0kR4ym1XRcBTj6zdWLTsFZy0CZQ2wcW79A4Pg=;
+        b=YQ5fiA/i9irEZv950RSdF+rt1Q/nv0owxU5c2taFyR9SX5KN64c+AN0WKrr2ViIJv+
+         ZRGAVMLeYhfyDW9E1zmpcir+XT+EIy2/jKRwVZqm3eYUyX2zeoyijsUwyj+izMS/+v3m
+         PtmzSG44bHWQU/+fk4scIfw1KPRf2uIdpLLfc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717880124; x=1718484924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8fZXZV0kR4ym1XRcBTj6zdWLTsFZy0CZQ2wcW79A4Pg=;
+        b=jXJEyUu1btWbu9wkd2UKd2GdvpvtjXx8iz/w1dYigszbndyRLBczbtN8TVqTJgxV0/
+         kRIWl96yDX25Bt70++E/VqXrH3aG0i+AGwWqBtbL6wBVgvHKISxPdIa9NTRsCgELbIoK
+         Y+XMBxhWPasFy4ZxZezxuaecCTqReDD2IZeaQpjnBTcmmB/ajFrQFDKAXV7w9Wp1Edoq
+         PUa0eTc4mUhmRl2hDs3jjgmvruv1wqUmtj5Ny+PNH4z8mOzkfG3wKN637I422yjC+O0p
+         a1xKTRLLF8nkYMbML04R4SvDNJ4B88U7pil0ZabSLM55VwTmMszgHGDb4U+4HO5Jq3O9
+         9k8Q==
+X-Gm-Message-State: AOJu0YzfE9zT2rzKFsHjYCtnhFY39lwacao7K70bwRtSMy4ir3Xv/Wyj
+	z8CWqu+RRuR6pF+4P2Gi5pEIkSCrwlq5zJuP9kkImAEQJ0rquLL/XDLCQ5469Q58GMMpq8o4LHe
+	+za8=
+X-Google-Smtp-Source: AGHT+IExpfDLQxqQxlOeP2w4XUatmvhkMpMHPJRIe8fEM+ZFW7+j7uis3AlK/Raa7ispxpw7TsY5uw==
+X-Received: by 2002:a50:999b:0:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-57c610a6eecmr2692272a12.11.1717880123927;
+        Sat, 08 Jun 2024 13:55:23 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c5fd78477sm2582194a12.40.2024.06.08.13.55.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Jun 2024 13:55:22 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a68b54577aaso418815766b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 13:55:22 -0700 (PDT)
+X-Received: by 2002:a17:906:585:b0:a6f:1235:d82 with SMTP id
+ a640c23a62f3a-a6f12350ed3mr42380466b.13.1717880121989; Sat, 08 Jun 2024
+ 13:55:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240523203741.201099-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:52:49 up 31 days,  8:06,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+In-Reply-To: <20240608193504.429644-2-torvalds@linux-foundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 8 Jun 2024 13:55:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
+Message-ID: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="0000000000007054e4061a6722a6"
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'pdf_dma_map' has been unused since the original
-> commit a24532f8d17b ("mailbox: Add Broadcom PDC mailbox driver").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+--0000000000007054e4061a6722a6
+Content-Type: text/plain; charset="UTF-8"
 
-Ping
+On Sat, 8 Jun 2024 at 12:43, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Needs more comments and testing, but it works, and has a generic
+> fallback for architectures that don't support it.
 
-> ---
->  drivers/mailbox/bcm-pdc-mailbox.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/mailbox/bcm-pdc-mailbox.c b/drivers/mailbox/bcm-pdc-mailbox.c
-> index 242e7504a628..a873672a9082 100644
-> --- a/drivers/mailbox/bcm-pdc-mailbox.c
-> +++ b/drivers/mailbox/bcm-pdc-mailbox.c
-> @@ -158,10 +158,6 @@ enum pdc_hw {
->  	PDC_HW		/* PDC/MDE hardware (i.e. Northstar 2, Pegasus) */
->  };
->  
-> -struct pdc_dma_map {
-> -	void *ctx;          /* opaque context associated with frame */
-> -};
-> -
->  /* dma descriptor */
->  struct dma64dd {
->  	u32 ctrl1;      /* misc control bits */
-> -- 
-> 2.45.1
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+.. and here is the TOTALLY UNTESTED patch to implement the arm64
+version of runtime constants.
+
+It almost certainly does not work. I'm too scared to test it.  I may
+start to recognize arm64 instructions, but rewriting them on the fly
+is another thing entirely, and I'm fairly sure this needs an  I$ sync
+and probably modifying the instructions using another address even
+during early boot.
+
+So this is a "throw it over the fence to the actually competent arm64
+people" patch.
+
+Catalin, Will? This depends on the infrastructure that I added in
+
+   https://lore.kernel.org/all/20240608193504.429644-2-torvalds@linux-foundation.org/
+
+which is actually tested on the x86-64 side.
+
+I did test that the code generation looks superficially sane, and this generates
+
+        mov     x1, #0xcdef
+        movk    x1, #0x89ab, lsl #16
+        movk    x1, #0x4567, lsl #32
+        movk    x1, #0x123, lsl #48
+        ...
+        lsr     w0, w25, #12
+        ldr     x0, [x1, x0, lsl #3]
+
+for the dcache hash lookup (those constants are obviously the ones
+that get rewritten after the hash table has been allocated and the
+size becomes fixed).
+
+And honestly, I may have gotten even the simple part of instruction
+rewriting wrong (ie maybe I'm filling in the wrong bit locations - I'm
+reading the architecture manual, not actually *testing* anything).
+
+Think of this patch mostly as a "look, adding another architecture
+isn't *that* hard - even if the constant value is spread out in the
+instructions".
+
+                Linus
+
+--0000000000007054e4061a6722a6
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-arm64-add-runtime-const-support.patch"
+Content-Disposition: attachment; 
+	filename="0001-arm64-add-runtime-const-support.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lx6lemy50>
+X-Attachment-Id: f_lx6lemy50
+
+RnJvbSBiZWZjM2Q0OTM2NmZiMDQ5YjY1Njc5ZmIzN2ZhNzAzZmU0MTlhN2U4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+CkRhdGU6IFNhdCwgOCBKdW4gMjAyNCAxMzoyMjozMSAtMDcwMApTdWJqZWN0OiBb
+UEFUQ0hdIGFybTY0OiBhZGQgJ3J1bnRpbWUgY29uc3QnIHN1cHBvcnQKCk1vbW15IG1vbW15IEkn
+bSBzY2FyZWQKLS0tCiBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8IDcz
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrCiBhcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxk
+cy5TICAgICAgICB8ICAzICsrCiAyIGZpbGVzIGNoYW5nZWQsIDc2IGluc2VydGlvbnMoKykKIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaAoK
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oIGIvYXJj
+aC9hcm02NC9pbmNsdWRlL2FzbS9ydW50aW1lLWNvbnN0LmgKbmV3IGZpbGUgbW9kZSAxMDA2NDQK
+aW5kZXggMDAwMDAwMDAwMDAwLi43ZDQwMmFlNmQzYzIKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNo
+L2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaApAQCAtMCwwICsxLDczIEBACisvKiBT
+UERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLworI2lmbmRlZiBfQVNNX1JVTlRJTUVf
+Q09OU1RfSAorI2RlZmluZSBfQVNNX1JVTlRJTUVfQ09OU1RfSAorCisjZGVmaW5lIHJ1bnRpbWVf
+Y29uc3RfcHRyKHN5bSkgKHsJCQkJXAorCXR5cGVvZihzeW0pIF9fcmV0OwkJCQkJXAorCWFzbSgi
+MTpcdCIJCQkJCQlcCisJCSJtb3Z6ICUwLCAjMHhjZGVmXG5cdCIJCQkJXAorCQkibW92ayAlMCwg
+IzB4ODlhYiwgbHNsICMxNlxuXHQiCQkJXAorCQkibW92ayAlMCwgIzB4NDU2NywgbHNsICMzMlxu
+XHQiCQkJXAorCQkibW92ayAlMCwgIzB4MDEyMywgbHNsICM0OFxuXHQiCQkJXAorCQkiLnB1c2hz
+ZWN0aW9uIHJ1bnRpbWVfcHRyXyIgI3N5bSAiLFwiYVwiXG5cdCIJXAorCQkiLmxvbmcgMWIgLSAu
+XG5cdCIJCQkJXAorCQkiLnBvcHNlY3Rpb24iCQkJCQlcCisJCToiPXIiIChfX3JldCkpOwkJCQkJ
+XAorCV9fcmV0OyB9KQorCisjZGVmaW5lIHJ1bnRpbWVfY29uc3Rfc2hpZnRfcmlnaHRfMzIodmFs
+LCBzeW0pICh7CQlcCisJdW5zaWduZWQgbG9uZyBfX3JldDsJCQkJCVwKKwlhc20oIjE6XHQiCQkJ
+CQkJXAorCQkibHNyICV3MCwldzEsIzEyXG5cdCIJCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRp
+bWVfc2hpZnRfIiAjc3ltICIsXCJhXCJcblx0IglcCisJCSIubG9uZyAxYiAtIC5cblx0IgkJCQlc
+CisJCSIucG9wc2VjdGlvbiIJCQkJCVwKKwkJOiI9ciIgKF9fcmV0KQkJCQkJXAorCQk6InIiICgw
+dSsodmFsKSkpOwkJCQlcCisJX19yZXQ7IH0pCisKKyNkZWZpbmUgcnVudGltZV9jb25zdF9pbml0
+KHR5cGUsIHN5bSwgdmFsdWUpIGRvIHsJXAorCWV4dGVybiBzMzIgX19zdGFydF9ydW50aW1lXyMj
+dHlwZSMjXyMjc3ltW107CVwKKwlleHRlcm4gczMyIF9fc3RvcF9ydW50aW1lXyMjdHlwZSMjXyMj
+c3ltW107CVwKKwlydW50aW1lX2NvbnN0X2ZpeHVwKF9fcnVudGltZV9maXh1cF8jI3R5cGUsCVwK
+KwkJKHVuc2lnbmVkIGxvbmcpKHZhbHVlKSwgCQlcCisJCV9fc3RhcnRfcnVudGltZV8jI3R5cGUj
+I18jI3N5bSwJCVwKKwkJX19zdG9wX3J1bnRpbWVfIyN0eXBlIyNfIyNzeW0pOwkJXAorfSB3aGls
+ZSAoMCkKKworLy8gMTYtYml0IGltbWVkaWF0ZSBmb3Igd2lkZSBtb3ZlIChtb3Z6IGFuZCBtb3Zr
+KSBpbiBiaXRzIDUuLjIwCitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwXzE2KHVu
+c2lnbmVkIGludCAqcCwgdW5zaWduZWQgaW50IHZhbCkKK3sKKwl1bnNpZ25lZCBpbnQgaW5zbiA9
+ICpwOworCWluc24gJj0gMHhmZmUwMDAxZjsKKwlpbnNuIHw9ICh2YWwgJiAweGZmZmYpIDw8IDU7
+CisJKnAgPSBpbnNuOworfQorCitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwX3B0
+cih2b2lkICp3aGVyZSwgdW5zaWduZWQgbG9uZyB2YWwpCit7CisJX19ydW50aW1lX2ZpeHVwXzE2
+KHdoZXJlLCB2YWwpOworCV9fcnVudGltZV9maXh1cF8xNih3aGVyZSs0LCB2YWwgPj4gMTYpOwor
+CV9fcnVudGltZV9maXh1cF8xNih3aGVyZSs4LCB2YWwgPj4gMzIpOworCV9fcnVudGltZV9maXh1
+cF8xNih3aGVyZSsxMiwgdmFsID4+IDQ4KTsKK30KKworLy8gSW1tZWRpYXRlIHZhbHVlIGlzIDUg
+Yml0cyBzdGFydGluZyBhdCBiaXQgIzE2CitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2Zp
+eHVwX3NoaWZ0KHZvaWQgKndoZXJlLCB1bnNpZ25lZCBsb25nIHZhbCkKK3sKKwl1bnNpZ25lZCBp
+bnQgaW5zbiA9ICoodW5zaWduZWQgaW50ICopd2hlcmU7CisJaW5zbiAmPSAweGZmYzBmZmZmOwor
+CWluc24gfD0gKHZhbCAmIDYzKSA8PCAxNjsKKwkqKHVuc2lnbmVkIGludCAqKXdoZXJlID0gaW5z
+bjsKK30KKworc3RhdGljIGlubGluZSB2b2lkIHJ1bnRpbWVfY29uc3RfZml4dXAodm9pZCAoKmZu
+KSh2b2lkICosIHVuc2lnbmVkIGxvbmcpLAorCXVuc2lnbmVkIGxvbmcgdmFsLCBzMzIgKnN0YXJ0
+LCBzMzIgKmVuZCkKK3sKKwl3aGlsZSAoc3RhcnQgPCBlbmQpIHsKKwkJZm4oKnN0YXJ0ICsgKHZv
+aWQgKilzdGFydCwgdmFsKTsKKwkJc3RhcnQrKzsKKwl9Cit9CisKKyNlbmRpZgpkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm02NC9rZXJuZWwvdm1saW51eC5sZHMuUyBiL2FyY2gvYXJtNjQva2VybmVsL3Zt
+bGludXgubGRzLlMKaW5kZXggNzU1YTIyZDRmODQwLi41NWE4ZTMxMGVhMTIgMTAwNjQ0Ci0tLSBh
+L2FyY2gvYXJtNjQva2VybmVsL3ZtbGludXgubGRzLlMKKysrIGIvYXJjaC9hcm02NC9rZXJuZWwv
+dm1saW51eC5sZHMuUwpAQCAtMjY0LDYgKzI2NCw5IEBAIFNFQ1RJT05TCiAJCUVYSVRfREFUQQog
+CX0KIAorCVJVTlRJTUVfQ09OU1Qoc2hpZnQsIGRfaGFzaF9zaGlmdCkKKwlSVU5USU1FX0NPTlNU
+KHB0ciwgZGVudHJ5X2hhc2h0YWJsZSkKKwogCVBFUkNQVV9TRUNUSU9OKEwxX0NBQ0hFX0JZVEVT
+KQogCUhZUEVSVklTT1JfUEVSQ1BVX1NFQ1RJT04KIAotLSAKMi40NS4xCgo=
+--0000000000007054e4061a6722a6--
 
