@@ -1,174 +1,246 @@
-Return-Path: <linux-kernel+bounces-207147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCD19012DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C91C9012E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 19:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B061F22074
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185121F22013
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519B215A86A;
-	Sat,  8 Jun 2024 17:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ACC17839B;
+	Sat,  8 Jun 2024 17:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6SjjxWD"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjsorjkY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0E11DA53;
-	Sat,  8 Jun 2024 17:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5501E4A6;
+	Sat,  8 Jun 2024 17:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717866055; cv=none; b=RLWcb/FfOq+w0a6EjMrdTC3qoKZAignabGA9VoOrcLeLwEbS2Csu7j4nta2RzPhV4eXDM3NMqrmAVjl22Lx8nzzC7KFgKAGnrzrI/4VtS0cmh8CArqlttTcN0X1YnRSASbyw6DfoGoa51d7Mw6fPqspML+U8EH9QYADlT4s8z9I=
+	t=1717866120; cv=none; b=YrsIZZnuCZlGCafVqVnD3RkejxP22cRfWDNQvmYvq2KRWsy4bzB+bhE2SIgTLq05D8sbAoFxY1/nWyUnEYy4jz2oiXQv5PwcJUAdzjSR3/7k/bpIDaLAAZHMGN4CvAz5pqh2h1v2Q81NSJiFRueaehBN07/UnF34ONXFjJzzJiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717866055; c=relaxed/simple;
-	bh=gMQ0eHLshKtC1hAUhRc+rdSi0rYKPhqCVJ4aIx7Cwos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mY7HY4zUScElftG9lh+pl4TO5FuaGiPVurx99k1W+1fzIoG6WZ3x85qOLsYcziy0D4B+QU6ho3Mte5H+OTcG4r6OBVX2xpylXQJKLTMr71/TbRfjQ+5FX2Adrqq2ACFoVSfpKlSWvuyr0EZ6VYRDj9g2S/dN3qs9fFvZV5dMGE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6SjjxWD; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b06e63d288so1762956d6.0;
-        Sat, 08 Jun 2024 10:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717866053; x=1718470853; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WlAvcvuYpizx43siA6da7TpxkmfPkzBdxJMOwCEaWKM=;
-        b=X6SjjxWD7tLG6aGJPAvSHQBpdxZVm60ekmA6HzZmzfxVNi9NHj+pfNEiWsDXLeJ6yP
-         0SrsRzDyE82YxnsVnqkw1bUxPhvMpPvLImgdwCT031XIIZXBswmgWAXcahyPAtX1w7lL
-         n1+HA0SRJurdaqoUWcOyrQLqH+6atnMHAQNBtsOm9PKjoRcs5amLUkNnlX4wXyF6bE6G
-         sOWvFTfrB/Jk8LkT7RiupZ5fSG9tiumK9udME2WEtkbqYrdMZ7G/9aoA8ywREIetK7mH
-         /smCxNh0dGy+lfnTJkCl762fpEVq3tQ/KzH1BC+LoimRKPRk9aJ2LHAEULJ3NjeW4Air
-         b0hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717866053; x=1718470853;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WlAvcvuYpizx43siA6da7TpxkmfPkzBdxJMOwCEaWKM=;
-        b=IafB5wZ345LWnTqr5AtbFz3PKduTJHLZMFjvqo+Ci1L2dK/joTWE/5v0N3haeZKZyO
-         fdraHMDw8SoRgXkmyuQmqWqnGBWZfixkPx7+YRui5SgpcLfHRHdAAjmZHudHM9z/OGIv
-         wQIYL/Tljg6GT1EUQNqCbbolVXigofMR0QvCBKBfxsWZT9WCivKExAhAAuIV90E7w3Br
-         OVyhMHfe3ddGK1i4NO+r+3/M+T3saY2o10HKjUjzEVRWyh8Pp1JExAFyLsFyiHT+G+qW
-         mkMG8YmaWZTnldvT4NKj8+HuEhp+L7DiOGWdejSG/X/3LvfuipWElHu4WFNlTdhuhc9s
-         Qg+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUYlivAsQkOeD2QWkrMb6srCZCD2mzl8HUS++upHk1Iuuf4fM4mWYpco6X32ZR03ulP31JnhjxrjFYUxJX4DBO7yjtwXrjsze4wana8lzDNwxIYjdAmmufK4aQ4FcsYOg2A
-X-Gm-Message-State: AOJu0Yzef4fvIGJKNUhx+474i8OvNRhuCRSKhr3LbjnZpUmlPf6+KkEk
-	H/N+9OiHkRmUddbrwzTaSQnHi8LlO7ZBohaFeDtefBfp4/nU4R5l
-X-Google-Smtp-Source: AGHT+IFPUeDnBthizn1ZkGLmlbVW6ag4no8kim6tVOAUEgdPBs8VG+krglvggH6BSVBAK/gK2Is+6Q==
-X-Received: by 2002:a0c:aa9b:0:b0:6b0:63dc:eb56 with SMTP id 6a1803df08f44-6b063dceeb7mr38052946d6.62.1717866052917;
-        Sat, 08 Jun 2024 10:00:52 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b071aaa3a6sm3974946d6.47.2024.06.08.10.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 10:00:52 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 8A4F31200043;
-	Sat,  8 Jun 2024 13:00:51 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sat, 08 Jun 2024 13:00:51 -0400
-X-ME-Sender: <xms:Q45kZuXIuwo0zkzqFSyaLbyhjXS7tVfYW1VTWqLxEoxf2SIotl7sug>
-    <xme:Q45kZqljhFlh7uXLIsT9UtwCphI_qkxe59dowhr-83mFmn8LM27pxkb5v5VHW-WB3
-    -L2iBocKr82lY52fA>
-X-ME-Received: <xmr:Q45kZiadFHSGNErRj0G2AFDsGo5xW6HqccOMLoZMeOyiZtwosDVP0czCXd8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtgedggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
-    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:Q45kZlV54gmR6cM4CeZzyU516a1VGq74xKV6J3P8au-Y7eeuPlOCVg>
-    <xmx:Q45kZonLD3tyZ0Kn-M_wNOMrLMpRG6xXclF2VhNsz9UqWnxbe-kdag>
-    <xmx:Q45kZqdbyYdoZd0GfJMheoh0hNtH1MtFeri963MejbqYfKwoGHwuSg>
-    <xmx:Q45kZqGhpXttlXONZmRzToKEvHNC0pdeD1aRYrcUe-fDjC4Oy5LQ0w>
-    <xmx:Q45kZmlE2RsU2RRK-Q4L_LkYEbDBja3wKO-WnXTWXzdtFjJw48dzNvSC>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 8 Jun 2024 13:00:50 -0400 (EDT)
-Date: Sat, 8 Jun 2024 10:00:36 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Rachel Menge <rachelmenge@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Wei Fu <fuweid89@gmail.com>, apais@linux.microsoft.com,
-	Sudhanva Huruli <Sudhanva.Huruli@microsoft.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Mike Christie <michael.christie@oracle.com>,
-	Joel Granados <j.granados@samsung.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with
- TIF_SIGPENDING
-Message-ID: <ZmSONKRjlzJl3WCi@boqun-archlinux>
-References: <1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com>
- <20240608120616.GB7947@redhat.com>
+	s=arc-20240116; t=1717866120; c=relaxed/simple;
+	bh=A3r29e7wb30cc4dRwLJF3YtUmAvgUID2/+yok408rUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d7GBLuxBZWZRqqBR2jbPP97g4lvuTezEvaHtPQkiPTD14ddkvmwxISmw71AYag+dDL4Rj5rt6pAQ4RGsnNjbnt8fBH/2y38cpjCg9PUqBpDUmc3ylYJmbpNBMFGaKfhnGEogWdjs1deqjXpXBhh+cvXDGeZjKpGrI369ca+Lbq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjsorjkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74050C2BD11;
+	Sat,  8 Jun 2024 17:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717866119;
+	bh=A3r29e7wb30cc4dRwLJF3YtUmAvgUID2/+yok408rUI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QjsorjkYeR5ot/2nx3YQdJ33Ltg7bo9ynIyZ0yy2tLEkL6WevQY/ox4rhbzKIuNL0
+	 c4PnPynRch6bF7EhS431Yh7+23/1SCWMUxrScswPag2sVt30ceU55C5QgGJeVhweW9
+	 0d2061sm+bLRZ5lhW4J/SSomJKUPG3ayYhr4lYfi09X7NiPaefdxSyMjOk/9fbCo3g
+	 XSthg/0ScJ92zFZDO6RcKgLZuAwiNOx38r2rhCnn+Ir50cEoLpuLIY6IptQiTVGq9W
+	 NOfNX8tP/gaO33ix+mMHJny9npkfZvbamHxNJh+C3x1ZcTi1kyxzQIHahEpmKPp8uF
+	 9Ir41p0yUlElQ==
+Date: Sat, 8 Jun 2024 18:01:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yasin Lee <yasin.lee.x@outlook.com>
+Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
+ u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
+Subject: Re: [PATCH v4 1/2] dt-bindings:iio:proximity: Add hx9023s binding
+Message-ID: <20240608180152.386db8a2@jic23-huawei>
+In-Reply-To: <20240608175758.73396584@jic23-huawei>
+References: <20240607114138.390272-1-yasin.lee.x@outlook.com>
+	<SN7PR12MB810129D8180B1C9593A8E078A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
+	<20240608175758.73396584@jic23-huawei>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608120616.GB7947@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jun 08, 2024 at 02:06:16PM +0200, Oleg Nesterov wrote:
-> kernel_wait4() doesn't sleep and returns -EINTR if there is no
-> eligible child and signal_pending() is true.
-> 
-> That is why zap_pid_ns_processes() clears TIF_SIGPENDING but this is not
-> enough, it should also clear TIF_NOTIFY_SIGNAL to make signal_pending()
-> return false and avoid a busy-wait loop.
-> 
-> Fixes: 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
-> Reported-by: Rachel Menge <rachelmenge@linux.microsoft.com>
-> Closes: https://lore.kernel.org/all/1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com/
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+On Sat, 8 Jun 2024 17:57:58 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-
-Wei, appreciate it if you could share some test result and provide a
-Tested-by tag. Thanks!
-
-Regards,
-Boqun
-
-> ---
->  kernel/pid_namespace.c | 1 +
->  1 file changed, 1 insertion(+)
+> On Fri,  7 Jun 2024 19:41:37 +0800
+> Yasin Lee <yasin.lee.x@outlook.com> wrote:
 > 
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index dc48fecfa1dc..25f3cf679b35 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -218,6 +218,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
->  	 */
->  	do {
->  		clear_thread_flag(TIF_SIGPENDING);
-> +		clear_thread_flag(TIF_NOTIFY_SIGNAL);
->  		rc = kernel_wait4(-1, NULL, __WALL, NULL);
->  	} while (rc != -ECHILD);
->  
-> -- 
-> 2.25.1.362.g51ebf55
+> > From: Yasin Lee <yasin.lee.x@gmail.com>
+> > 
+> > A capacitive proximity sensor
+> > 
+> > Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>  
+> Hi Yasin
+> 
+> Some improvements but seems you missed some of the feedback on v3.
+> 
+> See inline.
+> 
+> Jonathan
+> 
+> > ---
+> >  .../bindings/iio/proximity/tyhx,hx9023s.yaml  | 103 ++++++++++++++++++
+> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+> >  2 files changed, 105 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+> > new file mode 100644
+> > index 000000000000..50bf2849d823
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+> > @@ -0,0 +1,103 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TYHX HX9023S capacitive proximity sensor
+> > +
+> > +maintainers:
+> > +  - Yasin Lee <yasin.lee.x@gmail.com>
+> > +
+> > +description: |
+> > +  TYHX HX9023S proximity sensor
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/iio/iio.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: tyhx,hx9023s
+> > +
+> > +  reg:
+> > +    maxItems: 1  
+> 
+> A device like this needs at least one power supply.  Make sure to document
+> all such supplies and make the ones that are required for functionality part of
+> your required properties.  Note that you should do this even if on your
+> board they are always turned on.
+
+Ignore this for obvious reasons given you have just below!  However should be
+required.
+
+> 
+> > +
+> > +  interrupts:
+> > +    description: |
+> > +      Generated by device to announce preceding read request has finished
+> > +      and data is available or that a close/far proximity event has happened.
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply:
+> > +    true  
+>   vdd-supply: true
+> 
+> on single line is commonly done for these.
+> 
+> > +
+> > +  channel-in-use:
+> > +    description: |
+> > +      Bit flag indicating which channels are used,
+> > +      depends on the hardware circuit design.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32  
+> 
+> Presence of the channel nodes below should make this clear
+> without a separate element.
 > 
 > 
+> > +
+> > +patternProperties:
+> > +  "^channel@[0-9]+$":
+> > +    type: object
+> > +    properties:
+> > +      reg:
+> > +        description: Channel register address
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +      channel-positive:
+> > +        description: Positive channel assignments
+> > +        $ref: /schemas/types.yaml#/definitions/uint32  
+> 
+> That size seems implausible.  What are the limits. What does
+> 255 mean?
+> 
+> In review of previous version I pointed you at the differential
+> channel bindings for ADCs.  If they cannot be applied here
+> explain why in your patch description.
+> 
+> > +      channel-negative:
+> > +        description: Negative channel assignments
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +    required:
+> > +      - reg
+> > +      - channel-positive
+> > +      - channel-negative
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    i2c {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +      hx9023s@2a {
+> > +        compatible = "tyhx,hx9023s";
+> > +        reg = <0x2a>;
+> > +        interrupt-parent = <&pio>;
+> > +        interrupts = <16 IRQ_TYPE_EDGE_FALLING>;
+> > +        vdd-supply = <&pp1800_prox>;
+> > +        channel-in-use = <0x1F>;
+> > +        channel@0 {
+> > +          reg = <0>;
+> > +          channel-positive = <0>;
+> > +          channel-negative = <255>;
+> > +        };
+> > +        channel@1 {
+> > +          reg = <1>;
+> > +          channel-positive = <1>;
+> > +          channel-negative = <255>;
+> > +        };
+> > +        channel@2 {
+> > +          reg = <2>;
+> > +          channel-positive = <2>;
+> > +          channel-negative = <255>;
+> > +        };
+> > +        channel@3 {
+> > +          reg = <3>;
+> > +          channel-positive = <3>;
+> > +          channel-negative = <255>;
+> > +        };
+> > +        channel@4 {
+> > +          reg = <4>;
+> > +          channel-positive = <4>;
+> > +          channel-negative = <255>;
+> > +        };
+> > +      };
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > index b97d298b3eb6..e2224eea9ab9 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > @@ -1507,6 +1507,8 @@ patternProperties:
+> >      description: Turing Machines, Inc.
+> >    "^tyan,.*":
+> >      description: Tyan Computer Corporation
+> > +  "^tyhx,.*":
+> > +    description: NanjingTianyihexin Electronics Ltd.  
+> 
+> Use a separate patch for the new vendor prefix.  Makes it easier for people to cherrypick that
+> if they are backporting some other tyhx dt binding.
+> 
+> >    "^u-blox,.*":
+> >      description: u-blox
+> >    "^u-boot,.*":  
+> 
+> 
+
 
