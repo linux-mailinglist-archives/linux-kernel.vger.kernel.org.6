@@ -1,185 +1,117 @@
-Return-Path: <linux-kernel+bounces-206851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92010900EC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:10:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD701900EC3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BBB285485
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D781C210B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDF620EB;
-	Sat,  8 Jun 2024 00:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569DC2579;
+	Sat,  8 Jun 2024 00:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NYgzyN7g"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TILMNDrX"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693CAED9
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642C417F5
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717805435; cv=none; b=ioBiAoGDTvxpLeLn2UxJjcF15iPAWlHUowXb4sAGxchKaqB4zHdsteabnZye3d8X+UeUkEpDphsubeqZSf3FzDlqohhd3L0F6KBn2GdmQFHrGbtZd5zpnQ+F1QklFsoNKdwRMKcrMd54+PhtJ8EnQCty7jDr+pNglBWJu76a9fo=
+	t=1717805472; cv=none; b=Llx1BxhoU7j7trklunyOFv51XMFmkMVzAlE0zP3+5bSkdP7JZIguGq3uasY2zWNtjQ4BMAGxj+sfJd2kB7BesAKKcyvL6Xg43xv8bBs4XOW3EtY394OBeNCNzUN402zdWhyVlqfO6bhIpSrYULlWcTxwf5DEmgIroYYZdikbIYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717805435; c=relaxed/simple;
-	bh=3Z0zbhdACaOweT0p4Zo9vqZ/2iKMThY/VCjBhXk2B98=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KdRPViD0fEtTFOAtK+ZC+Tiz88Y35D2j6ieTeiUB8M0x8P18EEo7p2oFzjSmPn7fxpvEoqppeveSY3UBaqdCENr3cSHXE1lraAqC3T+8YnmNcQzzuOVXa3+Q5IWlKU+uuGGnpH6A2Uww79S91eFNm+V1ysATHrc19Y4rfX5l4+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NYgzyN7g; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68c5524086so309625766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:10:30 -0700 (PDT)
+	s=arc-20240116; t=1717805472; c=relaxed/simple;
+	bh=vWPGDr0VAOnNNuqxYO9KemOUnDeq1bzz8spYQseOLoQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=csB1+dOGBC+9FpFOeCwlqULdY6/iGbm4zwjqg1CqX3s2USI3/4SOLTKRtKJWfsvJA92N5+5qVyKANUapY9goDgORztwooMBBGXxI5bHCjfHGgCEjnFcbutu7HKoMaIYk73s1m3jvlf6zzlNSpN9rGT3uSxOKg1MbVq13V+pujIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TILMNDrX; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7041c30c0b4so710038b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717805429; x=1718410229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ecYbGPjfLKyLt3DQ3SIRGpflUimkoU9cxy6SCcr4fJc=;
-        b=NYgzyN7gQwaHHOnT33RYm7H51KHPHEEyCb495wDg7e/+F/eaU8fwiA/e0b7XNljIFz
-         HTpCaTAX74ZX+Jgxr8fr01JMhoApgcc8alS9xeAmHDcNcZcCB5yQPr9VbmlDUtUydBvt
-         nPjO2QnwSfCSyz61so+vYO0QBawY4QP2n9gUzIWveRRhpmUv5pbwwTcoVS/78LRvWiaa
-         NRbyuY5UtNoy+cEjp4tgkQgqgXiIVp5O76B9rf6OOQqN2p6MTvKBUEaGnNkFsZU3Fcac
-         1vOtHR5sLJbTzqKv6/8Bob9zwR1H2m8ldJ9q1r3BeoBFtTxcVQJCdxGqEmnNNumC9dMs
-         tqBA==
+        d=google.com; s=20230601; t=1717805471; x=1718410271; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z1D7CxmQOWEB+afJq8q/LjLb1nA3G9jvJYdupVYkAuw=;
+        b=TILMNDrXFVEhm9Rf/NiMcpZDXlaxqwagc4Dy3EtW0YecdSVAJxCtfkLMScMHs6Z8Da
+         +5X19Y0Af64RxgVLOcxT9Ajq8z2j2oJD85YvL0WPYWqsFjBfUqHjdA6Sg6dJI2MsaA94
+         /0wlQ9HS+c6uh5nz/vUiHMQYBz6P/A4KDdwyxhPYHpu8c4VlVREEWV66i7Tj9NvgyeoD
+         MDg3Sv56PiNuHtg4SPlzvqKqa+wUCLYb75Ux4ZA3rzUGRJdhnqSuZepwnljAw7/Ws5A3
+         n1KfiiJDIgTb4ChRfiNf9QYONZilLYwLh0MMsIuG9G+RF6b/HeC+tWqOdf3WWsB6Ebh2
+         sZmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717805429; x=1718410229;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ecYbGPjfLKyLt3DQ3SIRGpflUimkoU9cxy6SCcr4fJc=;
-        b=wM2DP5mli1E2B4mK2L6ygN8aBzr7bT3L4yUIzIXttOn+0NO+sdsmtwSbjORl25CHd2
-         pY48djqsEvK+vZMST+Lpft/ds+EbO7e1ewtUEHyL6r4LuOneD6kGwSy2dtAWRFxrLsNV
-         tz6V1Oqsiu1HmmHlNNiq+xaOw9oR0GJJ3GIX110ldA/PKWjSKwMauu3we7M7hVmc74TA
-         t2GRUMrpBGUvUWM9SW2B+1O2J66OmlNRtzeqbqAV7BplTaiYZhyuC8Klou51XWNiCLb5
-         1fglolnAnnVUMVHGm5dV4jDvSpODT5QvTHrVfsuAV5AEw664C2i19Vtp9NhUC3vJp6gZ
-         3CBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDuJ1Qm83agcaUt48w+uS2TWsDQ4u97FfnngwJv7VZm23JCPmXik02NognEJTSa/7QsBVcaSJwO8xMvYAFLdsG9LNGS2UlXIp6QZc/
-X-Gm-Message-State: AOJu0YwfFxsfo4RBGLb6VwX/jio0IyuU7US+n5LK81Ezg0bj62M83p9B
-	OayjB9YMepFMHNTbUSTQZ4Y07H7FwZXto3mivTd22QH61KMInPv78hYSXhZElgHdjiUieiljFzn
-	lXpw=
-X-Google-Smtp-Source: AGHT+IGKs8zL5jX+MjTfJtki6oImzN4o0EMy+BZr6R3i98fBPLE4MH2FIlQhLNTGaTXRFSDGtvJabA==
-X-Received: by 2002:a17:906:e949:b0:a62:2eca:4f12 with SMTP id a640c23a62f3a-a6cdb203fc6mr247661566b.59.1717805428632;
-        Fri, 07 Jun 2024 17:10:28 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eaa41sm312424766b.115.2024.06.07.17.10.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 17:10:27 -0700 (PDT)
-Message-ID: <e4973e07-c608-419c-94f3-de70d3abc6fc@linaro.org>
-Date: Sat, 8 Jun 2024 02:10:25 +0200
+        d=1e100.net; s=20230601; t=1717805471; x=1718410271;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1D7CxmQOWEB+afJq8q/LjLb1nA3G9jvJYdupVYkAuw=;
+        b=QbiLX//ofhVPXcfgNwecj1KhvDL8sd9DcjGCjrkTm4dhTm9cJtRad6ufZ8no14EP7p
+         UQz5lFuQDnw+3IPVJ1hDYnPU9ck1i/4jj1QNo3JuDYDVSLneGqOK8bYAT27VizNI/GtX
+         UEldu19Gt50U1GIB34VBlRKEPESyiOKJQlGbS2iBtXcm5LTxCytFunkAF4VZTK6lr5ZI
+         4lSFZVB8jj/qaAxNSV3fbJ4qQ2dn8OCzR8IE7wjpcCkpJhXDFYvupwhmoDCGOJzVxKY6
+         j7JdRuQILrM/PpZkBEJlZlCBy8u2bBIQgDKB421LNQn9xSegK0QhzmvlY2B7YZa5/Qca
+         Dtnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsoG1Btztt7Aq+TSdyFHIMxzNU88FDgOdEmrN8Bz1+t/noofvxEwYkhIzwrCTiAVtW8SmzBe6jGLZb4KtgxyP4wXWnyY25l7frkCzB
+X-Gm-Message-State: AOJu0YyTcIab1QTVZYdDS33/uZ1Yh2ps0Rb/PaNIEfoBYBfHbTxTlS5r
+	Tn251j0zjvDBZaDRMWjjxIs8BIP2GxEejj0GjMIqIaZVjEIE8Nk79U0NLggdJRO8Ue23sdMOc9l
+	Xng==
+X-Google-Smtp-Source: AGHT+IG9PBzMAAZoiZyf0Ifd3jc9ODlYrgfiGByUvwS7iZ7SJgKLrOSsaQR9jZWzB7+o1o0N9vRC0QHSiDE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2e9c:b0:702:2ab4:b12f with SMTP id
+ d2e1a72fcca58-7040c708fa2mr16072b3a.2.1717805470628; Fri, 07 Jun 2024
+ 17:11:10 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri,  7 Jun 2024 17:11:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
- gcc_sdcc2_apps_clk_src
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
- <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
- <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
- <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
- <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
- <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
- <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
- <9440dd954294db7c02a11a1807d75ad9.sboyd@kernel.org>
- <93eb11e7-21d7-4d3b-b033-b66898ea7874@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <93eb11e7-21d7-4d3b-b033-b66898ea7874@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240608001108.3296879-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86/mmu: Rephrase comment about synthetic PFERR flags in
+ #PF handler
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6.06.2024 1:56 PM, Konrad Dybcio wrote:
-> On 7.05.2024 11:52 PM, Stephen Boyd wrote:
->> Quoting Konrad Dybcio (2024-05-07 14:17:01)
->>>
->>>
->>> On 5/7/24 22:28, Stephen Boyd wrote:
->>>>>
->>>>
->>>> Can you share your patch that prints the message? What bit are you
->>>> checking in the hardware to determine if the RCG is enabled? Do you also
->>>> print the enable count in software?
->>>
->>> I already reset-ed the tree state, but I added something like
->>>
->>> if (rcg->cmd_rcgr == the one in the declaration)
->>>         pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "ENABLED" : "DISABLED");
->>>
->>> to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
->>>
->>>
->>
->> Ok. You're reading the software state because there isn't an is_enabled
->> clk_op for RCGs. Can you also read the CMD register (0x0 offset from
->> base) and check for CMD_ROOT_EN (bit 1) being set? That's what I mean
->> when I'm talking about the RCG being enabled in hardware. Similarly,
->> read CMD_ROOT_OFF (bit 31) to see if some child branch of the RCG is
->> enabled at this time.
-> 
-> [    3.998362] gcc_sdcc2_apps_clk_src is SW-DISABLED, CMD_ROOT_EN=0 CMD_ROOT_OFF=1
-> [    3.999896] scsi host0: ufshcd
-> [    4.006712] ------------[ cut here ]------------
-> [    4.013751] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
-> 
-> [...]
-> 
-> [    4.288626] gcc_sdcc2_apps_clk_src is SW-ENABLED, CMD_ROOT_EN=0 CMD_ROOT_OFF=0
-> 
+Reword the BUILD_BUG_ON() comment in the legacy #PF handler to explicitly
+describe how asserting that synthetic PFERR flags are limited to bits 31:0
+protects KVM against inadvertently passing a synthetic flag to the common
+page fault handler.
 
-Err.. one more thing.. After removing the HW_CTL logic that I introduced in
-Commit a0e0ec7424c9 ("clk: qcom: rcg2: Make hw_clk_ctrl toggleable"), this
-warn goes away.. I suppose I was already asked whether it's actually necessary
-to drop it, and IIRC I shoved it in with my GPU enablement.. I'll retest whether
-it's actually necessary, but I don't think so.
+No functional change intended.
 
-Still, doesn't explain why we needed this flag on so many other SoCs where
-HW_CTL was left unset
+Suggested-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/mmu/mmu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Konrad
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 8d7115230739..2421d971ce1b 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4599,7 +4599,10 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+ 	if (WARN_ON_ONCE(error_code >> 32))
+ 		error_code = lower_32_bits(error_code);
+ 
+-	/* Ensure the above sanity check also covers KVM-defined flags. */
++	/*
++	 * Restrict KVM-defined flags to bits 63:32 so that it's impossible for
++	 * them to conflict with #PF error codes, which are limited to 32 bits.
++	 */
+ 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+ 
+ 	vcpu->arch.l1tf_flush_l1d = true;
+
+base-commit: b9adc10edd4e14e66db4f7289a88fdbfa45ae7a8
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
