@@ -1,124 +1,189 @@
-Return-Path: <linux-kernel+bounces-206980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BE29010F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:07:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B589010F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C047B282C21
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:07:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 464A6B230F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E5617DE27;
-	Sat,  8 Jun 2024 09:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E00178382;
+	Sat,  8 Jun 2024 09:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnGemssx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fw+w9GB1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D65917D8AB;
-	Sat,  8 Jun 2024 09:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396C5178380;
+	Sat,  8 Jun 2024 09:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717837319; cv=none; b=e1nSkO9nYdaWHDb58/xIrfcV0hmuPOLgrsJaIzeUlcRaZmIhnU0dVTAzJvFsB9yuTaATIf2amj+nc/FFGk5O2wG3QVoSJkEkrUt9ZCc9hmrmOM2xE5/Nm03xtq9c9Agl4uqRN+0chOkWL74uHMcNQ7OPtqhEZm7+CBhX5IgYBBY=
+	t=1717837331; cv=none; b=JJNQCZOBQoZeVVJ3Az+uqJsIpqf7FZa4iKW2yk7+/+/cfUB4ec446i8kpTi8eA89ytbDwuang8VypIpb5Rem0V/H4B3gABH3b8oohqkdDvZKU97WT0QmrR8IjJ0w4hScsrC/QYNpTRKKw0Q+wp+9l1YWycgCtXCyJRbIDxbBiVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717837319; c=relaxed/simple;
-	bh=YHolCvF3jA/DQGyy5jN6lFObu+rIHNuOu9Dmy3Vod3s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vAWuIfFrgPMtDd82JCM4NYweVN+JMXxDNs7ImURdwFWxd/YrHTbnxEDC9VLrA+ttRytoELiXp+n0x2+KTa4WU6kF/4I5q0XSHUlMAMZQl++YeBOKiil/s1Gm18ohF4PjoZXeDuvdeJJ94p/F2t8kDTmio0gJfFe7HK7oQWVxb/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnGemssx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194D5C2BD11;
-	Sat,  8 Jun 2024 09:01:56 +0000 (UTC)
+	s=arc-20240116; t=1717837331; c=relaxed/simple;
+	bh=pn6sRt29wjeooIZHAWfVIge2Odfg9sfeFnnF7t2PQuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XppbbWg0Ns2Qa5HRC2tN8MiUBKrRnQGNE7WKoVlNV2dTuz++pTYjgqn9hFTHyeDwGk9StL7MgEyDf/nb+Xvo4DALImofCWnUtcRlQfa/hCQuvtkWmwogY/ue7gGi03wOGfBpfhb1kACDYxV61mcaDZgbttFlL7gxrExD8I4f2ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fw+w9GB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA99C3277B;
+	Sat,  8 Jun 2024 09:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717837318;
-	bh=YHolCvF3jA/DQGyy5jN6lFObu+rIHNuOu9Dmy3Vod3s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LnGemssx+z+2K25Xw92Vk4C+ubNIsAfaEmFEbd0Tik3oN5d5gYJMkWvjaNImlQatE
-	 R2bP64tn3V8FknJxybCEobkZbtFtgb8mOQX3v7Lkxd2iIJFemsXckHrbCq/5OtB7Yv
-	 mFBKw3tB+ImpWCwAoZVyymfKyTUIZVCz8V1HVG9CZlgYGIbXRu03A1iHlq7DzXpwRy
-	 mlohtUSJsomVheW16NDYB+NbUJl7jrRjjMljtGsYR+8D/I3k6ricVI9XwzSHUCu0TF
-	 e1MBSPZBeJcCchnXe279kZ8wGRsZHEzMWFedMEbmpQlh6vUjfGexyePkHSxRp42lGB
-	 ok7vhLH3VXtLA==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Sat, 08 Jun 2024 11:01:28 +0200
-Subject: [PATCH HID v3 16/16] HID: bpf: make part of struct hid_device
- writable
+	s=k20201202; t=1717837331;
+	bh=pn6sRt29wjeooIZHAWfVIge2Odfg9sfeFnnF7t2PQuk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fw+w9GB1UmC8TQLf64V1fuur1RM2TjOW/V8lr4NXyEn6EUHIfKYiNfhRMmFPDKmP+
+	 dVge0rIhzSrAw6QofLByJrE/cNLWbUXA32ccna84Yq6XMoIKpkSLMFm/FRRCRLL5xt
+	 BI0LQixNhmeqlU2UP/zxrcwYi2RRk9AUZ3wuLPbwKSa6NPQi/j+zSMcvtUrrZq7o4Y
+	 gW1dHg41ja/7I0eG0rBvW9kIV8U7WVUYdLs5wjOTxY4C6AnJxY/jt43JknorAADdj3
+	 DkzGwbkBRu+j3P0B8NQCLODsqiMLaQ75cXph3YBq9OzU+RXsunrCiKLVIVnXZutifq
+	 H4Sav7rFkWzTg==
+Date: Sat, 8 Jun 2024 14:31:52 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jianjun Wang <jianjun.wang@mediatek.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	jieyy.yang@mediatek.com, chuanjia.liu@mediatek.com,
+	qizhong.cheng@mediatek.com, jian.yang@mediatek.com,
+	jianguo.zhang@mediatek.com
+Subject: Re: [PATCH v2 1/3] PCI: mediatek: Allocate MSI address with
+ dmam_alloc_coherent()
+Message-ID: <20240608090152.GB3282@thinkpad>
+References: <20231211085256.31292-1-jianjun.wang@mediatek.com>
+ <20231211085256.31292-2-jianjun.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240608-hid_bpf_struct_ops-v3-16-6ac6ade58329@kernel.org>
-References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
-In-Reply-To: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
-To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717837279; l=1694;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=YHolCvF3jA/DQGyy5jN6lFObu+rIHNuOu9Dmy3Vod3s=;
- b=CdyFQFSOvnA/Vvz1fzchBiZjuEjZvhWbXkEF/tt9wXTyR9zjNA+HozZMMQG0RO/2vF20g01sT
- n5qq7W2nfvgAHvK0GUkqigT7+e1KxJDjF0kSVu9OT9JFxIZKpXZ7bCL
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231211085256.31292-2-jianjun.wang@mediatek.com>
 
-It is useful to change the name, the phys and/or the uniq of a
-struct hid_device during .rdesc_fixup().
+On Mon, Dec 11, 2023 at 04:52:54PM +0800, Jianjun Wang wrote:
+> Use dmam_alloc_coherent() to allocate the MSI address, instead of using
+> virt_to_phys().
+> 
 
-For example, hid-uclogic.ko changes the uniq to store the firmware version
-to differentiate between 2 devices sharing the same PID. In the same
-way, changing the device name is useful when the device export 3 nodes,
-all with the same name.
+What is the reason for this change? So now PCIE_MSI_VECTOR becomes unused?
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+- Mani
 
----
-
-changes in v3:
-- amend for new WRITE_RANGE API
-
-new in v2
----
- drivers/hid/bpf/hid_bpf_struct_ops.c | 3 +++
- include/linux/hid_bpf.h              | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
-index b14eccb121e0..e28cca78e1f5 100644
---- a/drivers/hid/bpf/hid_bpf_struct_ops.c
-+++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-@@ -74,6 +74,9 @@ static int hid_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
- 
- 	const struct hid_bpf_offset_write_range write_ranges[] = {
- 		WRITE_RANGE(hid_bpf_ctx, retval, false),
-+		WRITE_RANGE(hid_device, name, true),
-+		WRITE_RANGE(hid_device, uniq, true),
-+		WRITE_RANGE(hid_device, phys, true),
- 	};
- #undef WRITE_RANGE
- 	const struct btf_type *state = NULL;
-diff --git a/include/linux/hid_bpf.h b/include/linux/hid_bpf.h
-index 1b4cc1b2c31d..65d7e0acc8c2 100644
---- a/include/linux/hid_bpf.h
-+++ b/include/linux/hid_bpf.h
-@@ -43,7 +43,7 @@ struct hid_device;
-  * ``hid`` and ``allocated_size`` are read-only, ``size`` and ``retval`` are read-write.
-  */
- struct hid_bpf_ctx {
--	const struct hid_device *hid;
-+	struct hid_device *hid;
- 	__u32 allocated_size;
- 	union {
- 		__s32 retval;
+> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 66a8f73296fc..2fb9e44369f8 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -178,6 +178,7 @@ struct mtk_pcie_soc {
+>   * @phy: pointer to PHY control block
+>   * @slot: port slot
+>   * @irq: GIC irq
+> + * @msg_addr: MSI message address
+>   * @irq_domain: legacy INTx IRQ domain
+>   * @inner_domain: inner IRQ domain
+>   * @msi_domain: MSI IRQ domain
+> @@ -198,6 +199,7 @@ struct mtk_pcie_port {
+>  	struct phy *phy;
+>  	u32 slot;
+>  	int irq;
+> +	dma_addr_t msg_addr;
+>  	struct irq_domain *irq_domain;
+>  	struct irq_domain *inner_domain;
+>  	struct irq_domain *msi_domain;
+> @@ -394,12 +396,10 @@ static struct pci_ops mtk_pcie_ops_v2 = {
+>  static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>  {
+>  	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
+> -	phys_addr_t addr;
+>  
+>  	/* MT2712/MT7622 only support 32-bit MSI addresses */
+> -	addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
+>  	msg->address_hi = 0;
+> -	msg->address_lo = lower_32_bits(addr);
+> +	msg->address_lo = lower_32_bits(port->msg_addr);
+>  
+>  	msg->data = data->hwirq;
+>  
+> @@ -494,6 +494,14 @@ static struct msi_domain_info mtk_msi_domain_info = {
+>  static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  {
+>  	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
+> +	void *msi_vaddr;
+> +
+> +	msi_vaddr = dmam_alloc_coherent(port->pcie->dev, sizeof(dma_addr_t), &port->msg_addr,
+> +					GFP_KERNEL);
+> +	if (!msi_vaddr) {
+> +		dev_err(port->pcie->dev, "failed to alloc and map MSI address\n");
+> +		return -ENOMEM;
+> +	}
+>  
+>  	mutex_init(&port->lock);
+>  
+> @@ -501,6 +509,7 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  						      &msi_domain_ops, port);
+>  	if (!port->inner_domain) {
+>  		dev_err(port->pcie->dev, "failed to create IRQ domain\n");
+> +		dmam_free_coherent(port->pcie->dev, sizeof(dma_addr_t), msi_vaddr, port->msg_addr);
+>  		return -ENOMEM;
+>  	}
+>  
+> @@ -508,6 +517,7 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  						     port->inner_domain);
+>  	if (!port->msi_domain) {
+>  		dev_err(port->pcie->dev, "failed to create MSI domain\n");
+> +		dmam_free_coherent(port->pcie->dev, sizeof(dma_addr_t), msi_vaddr, port->msg_addr);
+>  		irq_domain_remove(port->inner_domain);
+>  		return -ENOMEM;
+>  	}
+> @@ -518,10 +528,8 @@ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  static void mtk_pcie_enable_msi(struct mtk_pcie_port *port)
+>  {
+>  	u32 val;
+> -	phys_addr_t msg_addr;
+>  
+> -	msg_addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
+> -	val = lower_32_bits(msg_addr);
+> +	val = lower_32_bits(port->msg_addr);
+>  	writel(val, port->base + PCIE_IMSI_ADDR);
+>  
+>  	val = readl(port->base + PCIE_INT_MASK);
+> @@ -588,7 +596,7 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+>  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+>  		ret = mtk_pcie_allocate_msi_domains(port);
+>  		if (ret)
+> -			return ret;
+> +			dev_warn(dev, "no MSI supported, only INTx available\n");
+>  	}
+>  
+>  	return 0;
+> @@ -732,7 +740,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>  	val &= ~INTX_MASK;
+>  	writel(val, port->base + PCIE_INT_MASK);
+>  
+> -	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +	if (IS_ENABLED(CONFIG_PCI_MSI) && port->msi_domain)
+>  		mtk_pcie_enable_msi(port);
+>  
+>  	/* Set AHB to PCIe translation windows */
+> -- 
+> 2.18.0
+> 
+> 
 
 -- 
-2.44.0
-
+மணிவண்ணன் சதாசிவம்
 
