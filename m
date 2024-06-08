@@ -1,320 +1,276 @@
-Return-Path: <linux-kernel+bounces-206868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8812F900F16
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:25:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5478D900F18
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EED284C12
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:25:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADBCCB23DF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0F88480;
-	Sat,  8 Jun 2024 01:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E059A4C66;
+	Sat,  8 Jun 2024 01:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8oE7LJw"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DH+gZ5jw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEB6848A;
-	Sat,  8 Jun 2024 01:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7DC3233
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 01:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717809920; cv=none; b=SuJhW7ydVXnp9shK51t602jsWAZ2Z09IS4aR5QnRjZvRXJddiP7JtNk8QEroPGOjIi9Br0Yf7THz0azBRsKQOy6t7iG3VThSzl1VwwUFYaRfwNgN3qJoir6xhVuXJ72g1FDsrt3ZZ+mCVrf0KKH4+yWiGZPujRk0notET2EOQ14=
+	t=1717810241; cv=none; b=KWXDqqlrsY87A4Ei7wXwyp6oDnDPhMgAAJtG1zdMQjZQ99joYJkXjjJVAwGZrEmC1grZDAFTvSv8q6fTaQsaOpNV8aNbmRd0EoYWCGs57Fq56R+At3x/DKZXUYwJllbrkrkfTUab3FgTEN933P4Ue6soehFdJOoApDis38eo4tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717809920; c=relaxed/simple;
-	bh=L4OZLnKbMNDvncJL9v1x4JqFdwPiVzXEVbHsgXPkqDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOxFusZyeZdLsooo4H3Sg5EYNLf6aWFEr1KHoGxwbNUo+f6ErGoUQsygbkqJxXlD+ZSi0t46DTtWugWYyti5zHeOnB0vsXLqHC/m+3U/3FsGhCTcpnDZ0nvRFEH52msgc4W6GrRUL581lFyzLnJPi/NLvGixsBVq3FNGnl/wmmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8oE7LJw; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eb24c79f96so5712461fa.1;
-        Fri, 07 Jun 2024 18:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717809917; x=1718414717; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=paKwLBHO6OeQbfOe6U7z90lIDKfpa81t0rQoMMCmIa0=;
-        b=b8oE7LJw3iyOtay/3Oeoz8mZtVsoVBiNhSSFgZzCvTT4qQJXlZqgApeqT0nYnS3DYs
-         eeimZY99axbNrtNYFIbpRB6mhOlpITVSZoLUlvC/NKJvu/Y9q0vJCLYh5dM3uKKhFrS7
-         jwFKAOH555xokS8nZPfy+bQ0mb0ikzh98k+oOBbeBEJ0oxqBQcJa5BaHfiDEi/i+O/rT
-         CC8c5R3Du54IwAbRjztpmY4q1/+Yb5+kCsio71g9AKAokVo0zcEo04Q7BSLGElw6yhYR
-         SoZoJtI+X5S4jbtxEiQTvKsIZYINflCATphDeJYiY1uklFweDyFQFbMgXyNAZtzM9uEu
-         s7ug==
+	s=arc-20240116; t=1717810241; c=relaxed/simple;
+	bh=hjCP01qKnJF8j+l2wZ4Q6TKDW+o+AnIizpbon3uG6H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKSk/GN1ksWb9yWWCvM+SLTVrRBLU/Q1buyyMoXPzfDRKNcBsPE1UjO/D3VpAFcZvl5Yfjz42hj2lQb4+HnvE37vgEPzPoysX1pW1FMyNbMaTgF7z/skGrmQwRt0MkhGvdPohqbEuTgWpTtTYzEgqEQdGYSfhuzO97yA1TteptM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DH+gZ5jw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717810238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Il+x7mPxkybxlGmp96omLuhvnPqHbzJs6J/7vrJ884=;
+	b=DH+gZ5jwGLwVk1tIhvwUu9K5w/gl8Z9AQuETd6t/0TltEgMoizB0E55+1XWiMllryk/IP5
+	woyBnmsNsbcvcxw+tsCAsEZC+T2oYDD4JsOY+JIB0OqbjpAUwfKtL8p83rVEPezhgypaKX
+	JivWapn7aueWIq+vVzkpQuLBhYiW+eY=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-gL236XnyNNGiPgJJhwYnXQ-1; Fri, 07 Jun 2024 21:30:37 -0400
+X-MC-Unique: gL236XnyNNGiPgJJhwYnXQ-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-704231a9953so358077b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 18:30:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717809917; x=1718414717;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=paKwLBHO6OeQbfOe6U7z90lIDKfpa81t0rQoMMCmIa0=;
-        b=fMzUknaBtGP3wffCmULClCYrQtzNRqwZvdykF0d/9cHie+/9Wd3yTNWv7DMX0Z88hj
-         CqVzvg4NzGUGM51AZ3TzKn7jHc+HFuq+cLxL4nPuCtiRQX7fVoR0VKe7kmu6OYNyx3DP
-         gSziogtq+NMhfqXmtaZfkmW2G8gmWDZJJqV+cm+FFRYlo1wPhGqwswvZ5t2IQ2nXBR0p
-         l/whuMw1NID6o12HEAHAm4Azx3teHf/PUgXSsaraSbJSZAt4LH54mbKtNP1vd3AilOYx
-         jMqOBSVvex0pM9pumL+rHJ7IQIwgr6fPL1SAi9vhOuVkO1EkUEQ/BnA7GjSZNMr1/IHw
-         m7ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVNP7LsWIqD1c4Ci3P02iPrSiss2axGeTnIAlg66nMT1UIvhjkb3O9kigmzs8dX6I4/0QPsI7+RjarF3SWs9G7L0Rpz4Ci3uZVJdAa0I847RBcykqKVP0+HN/QgIeM8/UMUL7I6J2hb
-X-Gm-Message-State: AOJu0Yw9WP79J7vO5Vk5YjDwJTiQZZs5oadecCOf2AcpC1sZBd1unApH
-	5jHIGUXcobs4JcPWYDWr9/NXVqLl+CO+lvASGKUq50+tduoXe3ZY
-X-Google-Smtp-Source: AGHT+IG/LdQabhIQXH9ibCjc41qDjHHAVBZVmSeSTpb42tlBcOg4/okUr2xDXjr90uQkxqDspfMMMA==
-X-Received: by 2002:a19:ad45:0:b0:52b:f2ab:1303 with SMTP id 2adb3069b0e04-52bf2ab143dmr726578e87.28.1717809916270;
-        Fri, 07 Jun 2024 18:25:16 -0700 (PDT)
-Received: from [192.168.1.99] ([151.81.125.40])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42171e17aaasm27190495e9.37.2024.06.07.18.25.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 18:25:15 -0700 (PDT)
-Message-ID: <e255e232-f7f0-4ded-a749-27ed5ccfcd7b@gmail.com>
-Date: Sat, 8 Jun 2024 03:25:13 +0200
+        d=1e100.net; s=20230601; t=1717810237; x=1718415037;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Il+x7mPxkybxlGmp96omLuhvnPqHbzJs6J/7vrJ884=;
+        b=V/rAZo2I3WvoNLcMCojYGvFGDreesuaqdZE3BtpA0WWy6hw4dhrpVcvBPINdiruXLD
+         +suS5KMyQo7MDGrvrAZBb0MFbc7/Ts6147mexOx3LDnE5d/nmRfjg6iEI1d/7HsZ5eKL
+         lB4cFUr4BoMtQGSXsGEap3qyVL1/adDr9fDxYUTrzvK5V6o81QhS+Lq5ajfGcDUEy1jB
+         AJFtgxzqNA5NaTEb5Qs2loMnOIR23k/3AfGFJ+ZDdagqnx3scnQZ9OAvwJGCBOzdCCJx
+         Iw/h/SS5dqXIhw4Om2T0GSga6hVBhOxpyqWA84Z1nHDPFFl+1idlQMFR0+XqKXZXqdk8
+         uekQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG1uAO68qPz4lI04Y6BANbd3RtjUTPNn9ZD6NcPUaSC/owk7DCE9g7St1UbTs/OI28zstuhdmpRMQLpeBX4WxULF0nPgYli+AVysOj
+X-Gm-Message-State: AOJu0YzRHeqTsm/xpbIWewDaNjw45XGcbCf8O0qwI4UYCG15dHF/Ww5I
+	ckKqjM08idgeAAdsnlbe+5jC737W/odbLFjK4ExhcEEXZo1jFQTFUFGUoOQGPjV81QICbJEOUfj
+	Brf9b1NKaiHZ93qHLul0N/IM49Ud4LyTpjzF0wL+QVGGI389KzeylqHNWujmcNA==
+X-Received: by 2002:a05:6a00:2e9c:b0:6ea:bf1c:9dfd with SMTP id d2e1a72fcca58-7040c737a8bmr4548035b3a.27.1717810235835;
+        Fri, 07 Jun 2024 18:30:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHf18qDxBKvh63AOJgteBoZ+l1rs1vBq/RxFyokdqBxSXDxTeJ/VWO2OgmN/pBacP7VyFcMzA==
+X-Received: by 2002:a05:6a00:2e9c:b0:6ea:bf1c:9dfd with SMTP id d2e1a72fcca58-7040c737a8bmr4548005b3a.27.1717810235042;
+        Fri, 07 Jun 2024 18:30:35 -0700 (PDT)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70423a7f217sm251223b3a.206.2024.06.07.18.30.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 18:30:34 -0700 (PDT)
+Date: Sat, 8 Jun 2024 09:26:43 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: kexec@lists.infradead.org
+Cc: Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
+	Thomas Staudt <tstaudt@de.ibm.com>, Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, 
+	Kairui Song <ryncsn@gmail.com>, Jan Pazdziora <jpazdziora@redhat.com>, 
+	Pingfan Liu <kernelfans@gmail.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <26jkoqavu54xo4ctbpxfibhdlbc5kezu2kkyl5fbb7r6oizvo4@cmq5yaeszfqq>
+References: <20240607122622.167228-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: iio: iio-trig-hrtimer bug on suspend/resume when used with bmi160
- and bmi323
-Content-Language: en-US
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jagath Jog J <jagathjog1996@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Luke D . Jones" <luke@ljones.dev>, Jonathan LoBue <jlobue10@gmail.com>
-References: <31d7f7aa-e834-4fd0-a66a-e0ff528425dc@gmail.com>
- <20240113174351.47a20239@jic23-huawei>
- <053a5c27-68fd-41b1-8b40-783dfb83d488@gmail.com>
- <20240115093703.00001f64@Huawei.com>
- <c11328ef-b61e-489f-9016-e342c749c000@gmail.com>
- <20240602170830.34d73c96@jic23-huawei>
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <20240602170830.34d73c96@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240607122622.167228-1-coxu@redhat.com>
 
-On 6/2/24 18:08, Jonathan Cameron wrote:
-> On Thu, 30 May 2024 16:07:22 +0200
-> Denis Benato <benato.denis96@gmail.com> wrote:
-> 
->> On 1/15/24 10:37, Jonathan Cameron wrote:
->>> On Sun, 14 Jan 2024 21:04:12 +0100
->>> Denis Benato <benato.denis96@gmail.com> wrote:
->>>   
->>>> On 1/13/24 18:46, Jonathan Cameron wrote:  
->>>>> On Wed, 10 Jan 2024 23:35:01 +0100
->>>>> Denis Benato <benato.denis96@gmail.com> wrote:
->>>>>     
->>>>>> Hello,
->>>>>>
->>>>>> With this mail I am submitting bug report that is probably related to
->>>>>> iio-trig-hrtimer but there is also the possibility for it to be
->>>>>> specific to bmi160 and bmi323.
->>>>>>
->>>>>> The described problem have been reproduced on my handheld PC (Asus
->>>>>> RC71L) and in another handheld PC with two different gyroscope
->>>>>> drivers: bmi323 (backported by me on v6.7, on RC71L) and bmi160.
->>>>>>
->>>>>> My target hardware (RC71L that yeld to this discovery) has a bmi323
->>>>>> chip that does not have any interrupt pins reaching the CPU, yet I
->>>>>> need to fetch periodically data from said device, therefore I used
->>>>>> iio-trig-hrtimer: created a trigger, set the device and trigger
->>>>>> sampling frequencies, bound the trigger to the device and enabled
->>>>>> buffer: data is being read and available over /dev/iio:device0.
->>>>>>
->>>>>> While in this state if I suspend my handheld I receive (from dmesg)
->>>>>> the warning reported below and at resume data is not coming out of
->>>>>> the iio device and the hrtimer appears to not be working. If I create
->>>>>> a new trigger and bind the new trigger to said iio device and
->>>>>> re-enable buffer data does come out of /dev/iio:device0 once more,
->>>>>> until the next sleep.
->>>>>>
->>>>>> Since this is important to me I have taken the time to look at both
->>>>>> drivers and iio-trig-hrtimer and I have identified three possible
->>>>>> reasons:
->>>>>>
->>>>>> 1) iio-trig-hrtimer won't work after suspend regardless of how it is
->>>>>> used (this is what I believe is the cause)    
->>>>> me too.    
->>>> who and how should investigate this issue? Would putting a kprintf in the hrtimer callback be enough to check?  
->>> The warning you have pretty much points at this being the problem, but sure
->>> you could add a print there to be absolutely sure.
->>>   
->>>>
->>>>
->>>> Just to make sure I understood correctly: is this a separate issue from the warning I receive or are those linked?  
->>>
->>> I think it's all one issue.  
->> Hello,
->>
->> Sorry for the delay, I was able to find some time just recently.
->>
->> Sadly I don't think anymore this is just one issue:
->>
->> I have setup a proof of concept that at suspend sets a boolean to true and at resume sets the same boolean to false, and on trigger_handler returns IRQ_NONE if the device is sleeping (everything guarded by an additional mutex) and it solved the warning: no more regmap access are being performed after the device is put to sleep, but unfortunately the acquisition does not automatically resume after waking up the device.
->>
->> How shall we proceed?
-> 
-> It's been a while (and a busy day of reviewing) so I'm struggling
-> a bit with the best away forwardHello,
+The subject prefix should be "[PATCH v5 0/7]". I'm sorry if it causes
+any confusion.
 
-Don't worry about it, I don't have much time available either. That stuff is as precious as gold! Thank you kindly for your time!
-> 
-> A hackyish approach might be to mask the interrupt at device side
-> (fake interrupt used as part of the tree from a trigger to a pollfunc).
-> A tidy wrapped up version of this might be the best route forwards
-> though it won't currently stop the hrtimer merrily poking interrupts
-> at no oneI am sorry but I am not sure I understood this correctly: do you mean having something "in-between" iio-trig-hrtimer and the target iio device and use that to selectively poll the device? 
-> 
-> As a hack, could you try having your suspend call disable_irq() on
-> the irq found in iio_dev->poll_func->irq and reenable it in resume?
-> That might be sufficient.
-I used disable_irq and enable_irq as suggested and it works perfectly: I tested it four times and all four times (in a row) data flow resumed after s2idle-suspending the device.
+On Fri, Jun 07, 2024 at 08:26:10PM +0800, Coiby Xu wrote:
+>LUKS is the standard for Linux disk encryption. Many users choose LUKS
+>and in some use cases like Confidential VM it's mandated. With kdump
+>enabled, when the 1st kernel crashes, the system could boot into the
+>kdump/crash kernel and dump the memory image i.e. /proc/vmcore to a
+>specified target. Currently, when dumping vmcore to a LUKS
+>encrypted device, there are two problems,
+>
+> - Kdump kernel may not be able to decrypt the LUKS partition. For some
+>   machines, a system administrator may not have a chance to enter the
+>   password to decrypt the device in kdump initramfs after the 1st kernel
+>   crashes; For cloud confidential VMs, depending on the policy the
+>   kdump kernel may not be able to unseal the keys with TPM and the
+>   console virtual keyboard is untrusted.
+>
+> - LUKS2 by default use the memory-hard Argon2 key derivation function
+>   which is quite memory-consuming compared to the limited memory reserved
+>   for kdump. Take Fedora example, by default, only 256M is reserved for
+>   systems having memory between 4G-64G. With LUKS enabled, ~1300M needs
+>   to be reserved for kdump. Note if the memory reserved for kdump can't
+>   be used by 1st kernel i.e. an user sees ~1300M memory missing in the
+>   1st kernel.
+>
+>Besides users (at least for Fedora) usually expect kdump to work out of
+>the box i.e. no manual password input is needed. And it doesn't make
+>sense to derivate the keys again in kdump kernel which seems to be
+>redundant work.
+>
+>This patch set addresses the above issues by make the LUKS volume keys
+>persistent for kdump kernel with the help of cryptsetup's new APIs
+>(--link-vk-to-keyring/--volume-key-keyring). Here is the life cycle of
+>this kdump copy of LUKS volume keys,
+>
+> 1. After the 1st kernel loads the initramfs during boot, systemd
+>    use an user-input passphrase or TPM-sealed key to de-crypt the LUKS
+>    volume keys and then save the volume keys to specified keyring
+>    (using the --link-vk-to-keyring API) and the key will expire within
+>    specified time.
+>
+> 2. A user space tool (kdump initramfs builder) writes a key description to
+>    /sys/kernel/crash_dm_crypt_keys to inform the 1st kernel to record the
+>    key while building the kdump initramfs
+>
+> 3. The kexec_file_load syscall read the volume keys by recorded key
+>    descriptions and then save them key to kdump reserved memory and wipe the
+>    copy.
+>
+> 4. When the 1st kernel crashes and the kdump initramfs is booted, the kdump
+>    initramfs asks the kdump kernel to create a user key using the key stored in
+>    kdump reserved memory by writing to to /sys/kernel/crash_dm_crypt_keys. Then
+>    the LUKS encrypted devide is unlocked with libcryptsetup's
+>    --volume-key-keyring API.
+>
+> 5. The system gets rebooted to the 1st kernel after dumping vmcore to
+>    the LUKS encrypted device is finished
+>
+>After libcryptsetup saving the LUKS volume keys to specified keyring,
+>whoever takes this should be responsible for the safety of these copies
+>of keys. The keys will be saved in the memory area exclusively reserved
+>for kdump where even the 1st kernel has no direct access. And further
+>more, two additional protections are added,
+> - save the copy randomly in kdump reserved memory as suggested by Jan
+> - clear the _PAGE_PRESENT flag of the page that stores the copy as
+>   suggested by Pingfan
+>
+>This patch set only supports x86. There will be patches to support other
+>architectures once this patch set gets merged.
+>
+>v5
+> - Baoquan
+>   - limit the feature of placing kexec_buf randomly to kdump (CONFIG_CRASH_DUMP)
+>   - add documentation for added sysfs API
+>   - allow to re-send init command to support the case of user switching to
+>     a different LUKS-encrypted target
+>   - make CONFIG_CRASH_DM_CRYPT depends on CONFIG_DM_CRYPT
+>   - check if the number of keys exceed KEY_NUM_MAX
+>   - rename (struct keys_header).key_count as (struct
+>     keys_header).total_keys to improve code readiblity
+>   - improve commit message
+>   - fix the failure of calling crash_exclude_mem_range (there is a split
+>     of mem_range)
+>   - use ret instead of r as return code
+>
+> - Greg
+>   - add documentation for added sysfs API
+>   - avoid spamming kernel logs
+>   - fix a buffer overflow issue
+>   - keep the state enums synced up with the string values
+>   - use sysfs_emit other than sprintf
+>   - explain KEY_NUM_MAX and KEY_SIZE_MAX
+>   - s/EXPORT_SYMBOL_GPL/EXPORT_SYMBOL/g
+>   - improve code readability
+>
+> - Rebase onto latest Linus tree
+>
+>
+>v4
+>- rebase onto latest Linus tree so Baoquan can apply the patches for
+>  code review
+>- fix kernel test robot warnings
+>
+>v3
+> - Support CPU/memory hot-plugging [Baoquan]
+> - Don't save the keys temporarily to simplify the implementation [Baoquan]
+> - Support multiple LUKS encrypted volumes
+> - Read logon key instead of user key to improve security [Ondrej]
+> - A kernel config option CRASH_DM_CRYPT for this feature (disabled by default)
+> - Fix warnings found by kernel test robot
+> - Rebase the code onto 6.9.0-rc5+
+>
+>v2
+> - work together with libscryptsetup's --link-vk-to-keyring/--volume-key-keyring APIs [Milan and Ondrej]
+> - add the case where console virtual keyboard is untrusted for confidential VM
+> - use dm_crypt_key instead of LUKS volume key [Milan and Eric]
+> - fix some code format issues
+> - don't move "struct kexec_segment" declaration
+> - Rebase the code onto latest Linus tree (6.7.0)
+>
+>v1
+> - "Put the luks key handling related to crash_dump out into a separate
+>   file kernel/crash_dump_luks.c" [Baoquan]
+> - Put the generic luks handling code before the x86 specific code to
+>   make it easier for other arches to follow suit [Baoquan]
+> - Use phys_to_virt instead of "pfn -> page -> vaddr" [Dave Hansen]
+> - Drop the RFC prefix [Dave Young]
+> - Rebase the code onto latest Linus tree (6.4.0-rc4)
+>
+>RFC v2
+> - libcryptsetup interacts with the kernel via sysfs instead of "hacking"
+>   dm-crypt
+>   - to save a kdump copy of the LUKS volume key in 1st kernel
+>   - to add a logon key using the copy for libcryptsetup in kdump kernel [Milan]
+>   - to avoid the incorrect usage of LUKS master key in dm-crypt [Milan]
+> - save the kdump copy of LUKS volume key randomly [Jan]
+> - mark the kdump copy inaccessible [Pingfan]
+> - Miscellaneous
+>   - explain when operations related to the LUKS volume key happen [Jan]
+>   - s/master key/volume key/g
+>   - use crash_ instead of kexec_ as function prefix
+>   - fix commit subject prefixes e.g. "x86, kdump" to x86/crash
+>
+>Coiby Xu (7):
+>  kexec_file: allow to place kexec_buf randomly
+>  crash_dump: make dm crypt keys persist for the kdump kernel
+>  crash_dump: store dm crypt keys in kdump reserved memory
+>  crash_dump: reuse saved dm crypt keys for CPU/memory hot-plugging
+>  crash_dump: retrieve dm crypt keys in kdump kernel
+>  x86/crash: pass dm crypt keys to kdump kernel
+>  x86/crash: make the page that stores the dm crypt keys inaccessible
+>
+> Documentation/ABI/testing/crash_dm_crypt_keys |  35 ++
+> arch/x86/kernel/crash.c                       |  20 +-
+> arch/x86/kernel/kexec-bzimage64.c             |   7 +
+> arch/x86/kernel/machine_kexec_64.c            |  22 ++
+> include/linux/crash_core.h                    |   9 +-
+> include/linux/crash_dump.h                    |   2 +
+> include/linux/kexec.h                         |   8 +
+> kernel/Kconfig.kexec                          |   9 +
+> kernel/Makefile                               |   1 +
+> kernel/crash_dump_dm_crypt.c                  | 338 ++++++++++++++++++
+> kernel/kexec_file.c                           |  21 ++
+> kernel/ksysfs.c                               |  24 ++
+> 12 files changed, 493 insertions(+), 3 deletions(-)
+> create mode 100644 Documentation/ABI/testing/crash_dm_crypt_keys
+> create mode 100644 kernel/crash_dump_dm_crypt.c
+>
+>
+>base-commit: 8a92980606e3585d72d510a03b59906e96755b8a
+>-- 
+>2.45.1
+>
 
-I can do more testing, but this is already looking very good and I'm happy (I don't have knowledge about iio internals so I am unable to tell if what I did will introduce some race conditions).
-
-As a reference I leave here the github link to the branch I have been experimenting with: https://github.com/NeroReflex/linux/commits/bmi323-pollfunc/ (Please don't mind that proof-of-concept code being copied and partially commented from bmc150-accel).
-
-No errors are printed out and combining that info with the fact it's now working it can only means pollfunc and irq are both non-NULL and non-zero at both suspend and resume.
-> 
-> Check poll_func goes somewhere first though and that irq is > 0
-> I think that will call iio_trig_subirq_mask() which should block
-> any further interrupts until it's unmasked again.
-> 
-> We'll need to ensure this doesn't race with pollfunc going away though
-> which will make it more complex, but the above test should tell us
-> if there is a fairly smooth path to making this work.
-> 
-> I'll try and find time to do some testing myself, but it won't be
-> for a few weeks :(
-> 
-> Thanks,
-> 
-> Jonathan
-Thank you again for your guidance,
-Denis Benato
-> 
-> 
->>>   
->>>>>     
->>>>>> 2) iio-trig-hrtimer is stopped by the -ESHTDOWN returned by the
->>>>>> function printing "Transfer while suspended", however that stack
->>>>>> trace does not include function calls related to iio-trig-hrtimer and
->>>>>> this seems less plausible 3) bmi160 and bmi323 appears to be similar
->>>>>> and maybe are sharing a common bug with suspend (this is also why I
->>>>>> have maintainers of those drivers in the recipient list)
->>>>>>
->>>>>> Thanks for your time, patience and understanding,    
->>>>>
->>>>> Hi Denis,
->>>>>
->>>>> I suspect this is the legacy of the platform I used to test the hrtimer
->>>>> and similar triggers on never had working suspend and resume (we ripped
->>>>> support for that board out of the kernel a while back now...)
->>>>> Hence those paths were never tested by me and others may not have cared
->>>>> about this particular case.
->>>>>
->>>>> Anyhow, so I think what is going on is fairly simple.
->>>>>
->>>>> There is no way for a driver to indicate to a trigger provided by a separate
->>>>> module / hardware device that it should stop triggering data capture.
->>>>> The driver in question doesn't block data capture when suspended, which
->>>>> would be easy enough to add but doesn't feel like the right solution.
->>>>>
->>>>> So my initial thought is that we should add suspend and resume callbacks to
->>>>> iio_trigger_ops and call them manually from iio device drivers in their
->>>>> suspend and resume callbacks.  These would simply pause whatever the
->>>>> trigger source was so that no attempts are made to trigger the use of
->>>>> the device when it is suspended.
->>>>>
->>>>> It gets a little messy though as triggers can be shared between
->>>>> multiple devices so we'd need to reference count suspend and resume
->>>>> for the trigger to make sure we only resume once all consumers of
->>>>> the trigger have said they are ready to cope with triggers again.
->>>>>
->>>>> As mentioned, the alternative would be to block the triggers at ingress
->>>>> to the bmi323 and bmi160 drivers.  There may be a helpful pm flag that could
->>>>> be used but if not, then setting an is_suspended flag under the data->mutex
->>>>> to avoid races. and reading it in the trigger_handler to decide whether
->>>>> to talk to the device should work.    
->>>> I was thinking of doing this too, but I don't know if adding a mutex to frequently invoked functions is going to introduce some timing problems and so I was waiting for some comments on that matter. If nothing bad is expected I can surely try it.  
->>>>>
->>>>> I'd kind of like the generic solution of actually letting the trigger
->>>>> know, but not sure how much work it would turn out to be.  Either way there
->>>>> are a lot of drivers to fix this problem in as in theory most triggers can
->>>>> be used with most drivers that support buffered data capture.
->>>>> There may also be fun corners where a hardware trigger from one IIO
->>>>> device A is being used by another B and the suspend timing is such that B
->>>>> finishing with the trigger results in A taking an action (in the try_reenable
->>>>> callback) that could result in bus traffic.
->>>>> That one is going to be much more fiddly to handle than the simpler case
->>>>> you have run into.    
->>>> Since more and more handheld PCs are coming and provided many vendors such as
->>>> asus tends to improve what they did built on previous generations I think a
->>>> general solution would be desirable.
->>>>
->>>> Plus there are handheld PCs that does not yet have a driver (bmi270) or are
->>>> using an existing one and it would be very difficult to fix it in every of
->>>> them as of now, in the future I fear it will become almost impossible or 
->>>> extremely time consuming as market expands.  
->>>
->>> Both solutions require specific calls to be added to every driver that might
->>> encounter this - so most drivers that support triggers other than the ones
->>> they supply.
->>>   
->>>>>
->>>>> Thanks for the detailed bug report btw.   To get it fixed a few
->>>>> questions:
->>>>> 1) Are you happy to test proposed fixes?
->>>>> 2) Do you want to have a go at fixing it yourself? (I'd suggest trying
->>>>>    the fix in the bmi323 driver first rather than looking at the other 
->>>>>    solution)
->>>>>    If we eventually implement the more general version, then a bmi323
->>>>>    additional protection against this problem would not be a problem.
->>>>>
->>>>> Clearly I'd like the answers to be yes to both questions, but up to you!
->>>>>
->>>>> Jonathan
->>>>>
->>>>>     
->>>> Hello Jonathan and thank you kindly for you answer,
->>>>
->>>> I am very interested in the iio ecosystem as in those aforementioned
->>>> handheld PCs the gyroscope plays the role as a mouse so it's a pretty
->>>> important input device.
->>>>
->>>> I am writing to lkml not just as a single developer, but as part of a
->>>>  larger community in this matter: this means we will be able to test
->>>> any solution and in more than just one hardware.
->>>>
->>>> To answers your questions:
->>>> 1) yes, we all will be very happy to
->>>> 2) as I am very busy right now I might be unable to do that immediately,
->>>> but I will surely do it if one general solution cannot be found or is impractical.
->>>>
->>>> As of my limited knowledge the number of drivers now existing that are affected
->>>> are 2, and the number of drivers that will be affected, once the driver is
->>>> written, will be at least 3.  
->>>
->>> The problem appears to be general unfortunately.
->>>
->>> I'll have to see if I can fire up something where I can actually test solutions
->>> and I'm afraid I also don't have a lot of time at the moment.
->>> Perhaps I can find time in the next few weeks to hack together a prototype
->>> for one of the drivers you can test.
->>>
->>> Jonathan
->>>   
->>>>
->>>> Thank you very much for your answer,
->>>> Denis
->>>>  
->>>   
->>
->> Thank you for you time and patience,
->> Denis
-> 
+-- 
+Best regards,
+Coiby
 
 
