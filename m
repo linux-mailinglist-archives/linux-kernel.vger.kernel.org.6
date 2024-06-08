@@ -1,175 +1,188 @@
-Return-Path: <linux-kernel+bounces-206863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026DA900F03
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250E0900F06
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 02:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C852844F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F43F1F22680
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 00:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA106125;
-	Sat,  8 Jun 2024 00:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFDA8BF8;
+	Sat,  8 Jun 2024 00:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGnrWb/V"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="idl3dvWV"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0A53233
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 00:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9B33C5;
+	Sat,  8 Jun 2024 00:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717807908; cv=none; b=OY7GkVNfiLay0nyDvkuLrQFH5czrQR4FvmvP4diOktA6liYbCMKvTkbY031HvrBfLH33jHcz9AK/9IGIc1Jx+TGN5gj+VeNwqSIVZFrfu3G5g4lXyfW5+qmRKK3SeiwPwonXnVzILwWm9rm6gfW3HC+OoMYhsp9/OxNBLwcJ08s=
+	t=1717807959; cv=none; b=cntnIigWMiI5awWt3XjnTYG3Bg9YbhJoybRqzXoHAIhZtXxIaIMnxyiY67zMhHRj6+o9916k4lXiyii9Z9TwlecKXJCbg6tVtqPnwjmYVS+dxtUjmuon6Is3mzntK/q+UT6JAKWspZ/8w0qFigQVAgwBONPf10UPjt4LKYnL/OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717807908; c=relaxed/simple;
-	bh=Xpu0TVdYt8IpgyfcyM8eBR3e+Lim84wZBPFs4RaabSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzogoOSIxzQuhXpMYX5KxnlqLnHbjy/zPjac6zN/a5+6HX39iLK59kUEpjQajCG+bdb56HH/7cM02vO0BTpgMvLjs1efHJ495cGBmDSd32LKeT+sKrqhotS7OxRdX2BkOaPMgQOW9hssi/VzkW9WShfzT1GiQ/WdQU56VqkQPkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EGnrWb/V; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a68bf84d747so260664366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 17:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717807905; x=1718412705; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GKmEYYbLN6RZt0gVgrc1uNmBvZwEN49C/Juti4dcLvY=;
-        b=EGnrWb/V4544W3QbThGepQK4c1Re0FWTkkfbnqhGD6OwMVrXW6cfM2PrmT4FTV5X6c
-         8euBije/injFQAH3YdoZUXPYTrKkN+D/f5GKQc41uEGkfWFZhNevVP8LUPDLvYIdXZaE
-         V+OhV8+AbTYRhpjg850VlvfzZPRqtXkFq9IJ1pshPzv62N0ES5Bnz1DyfDUCUb4TvSBu
-         EJ4Aat0094Gs97WC3h0TSq5i++ME4fdkZHif7XfBiQ8G49OBSgD5I0sjg95prZWfFm/W
-         juLOKfjY9N2wx9uPQYMOB1Jybn4ky0hFfd0tLzMJk2j40lHyvEMtJl6begdkbZPtWfSY
-         6XbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717807905; x=1718412705;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GKmEYYbLN6RZt0gVgrc1uNmBvZwEN49C/Juti4dcLvY=;
-        b=Q5S5RNLXLRxTnO8JW2m+vp4kVfVkX+8yA8tve1N+Nta+CYODjSaWfU92t/RwBtWQgu
-         Lj6uwNs/Pds/ehjxdDi+mDIUYS14r0ffx81+no0IELAD1mysWMbKNr4Fm+6JtkgKZ5Dn
-         7UTxLmgmYVUUNYmOM5Zr0P3HgKelrm8Ady419wLUvEA5h2kkD04TNcWFRYtx6qX/glHQ
-         GTXFWqA0P3oKwkv56CRwscW4v9NkNnzSuqAHDJRkuZLOmJenwVPlfYsRDkGZI1voYkbm
-         QcLw+hJyTWa89txSGdSBTyGZQ2Ma0w+j4egZClwGu6sAXsg/VLfYCGsGIdWOCpbXpkke
-         FKOA==
-X-Gm-Message-State: AOJu0YzelCa0obsiyO0lHcefnQMg1oEzuWkDjP9veMNYm2HTxQ5jcpxW
-	KhkaT9J3kCT4cp7r99DtpAz/Nd7kKrZqzDrQz2/nOARJm9jBAVQ1
-X-Google-Smtp-Source: AGHT+IFFEYhn95X5wlp0yvy/g7BNLOY7hnRErafTSEW36dxiClkkU80brBOdzArkxY2Ye0XwiTQFZw==
-X-Received: by 2002:a17:906:3610:b0:a69:7d72:b0d6 with SMTP id a640c23a62f3a-a6cdbef7773mr244615066b.71.1717807905171;
-        Fri, 07 Jun 2024 17:51:45 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ccb1csm317710066b.80.2024.06.07.17.51.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2024 17:51:44 -0700 (PDT)
-Date: Sat, 8 Jun 2024 00:51:44 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v1 2/2] mm/highmem: make nr_free_highpages() return
- "unsigned long"
-Message-ID: <20240608005144.ypbq4442bh46tmqb@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240607083711.62833-1-david@redhat.com>
- <20240607083711.62833-3-david@redhat.com>
+	s=arc-20240116; t=1717807959; c=relaxed/simple;
+	bh=eyfpPJgtOIuG1vIFDolKXcOYY3XJke1VYW8FXO8L9lw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MhSQ7qNgjbI5CHrN6Uf3HK+TCJu41IftwanSCY0/Hf2p/mfpL8DYjlgiccrkqKMGaSgD+jOyUvNk49XyuMPRfA4E7ENWo8ueOZU0Ua3WCiN2e0pjZSTIWEW3Y3DGTVxvmG0Ln9Kg6zHNfSMIpoT8kuvJwbLvaUUftDiKInaoEVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=idl3dvWV; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BC0DD1140198;
+	Fri,  7 Jun 2024 20:52:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 07 Jun 2024 20:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717807955; x=1717894355; bh=/REvkr6D1X9D70grvQc7R30pDYdS
+	TCpuO5alixbgfuw=; b=idl3dvWVn5I9w3VyjDNA4Ubxji9+IShx8UWBbSp3dhEM
+	uOD2N1vgHND86LvmJBRihlxMeCYK1WzJepAkcxLiWtgXhrTmHwRw34Ih/TCWzS6u
+	9ZhLaCYXQbIAWK7Dp5mfFprAllPPt5749QeMLDyWfwASAtlS3hP0kzUzy/Xry6+H
+	eYsIHDHvKkgvwQ/LV543zkojg0qhviuwHwF9nSdfdmKB3ZNatIFeeQoSvkw9pbLE
+	iUnZyp2h3P0xOOFnW6FF+vIvIPJEmJwicXpI2rEQE6/RRVvg7J6sCnu5BcSIRo4G
+	dKoy/nekllowiW68sOkbYj0gQWs5Zwf75fNfFVI1wQ==
+X-ME-Sender: <xms:UqtjZgh_5tCr0UUD52YExB7Dmu-rk0SCxgVLAhlI7RAFbmeHBFVQfQ>
+    <xme:UqtjZpBim1sa_N1BqSVyXFyan7JSjuo9EEvYDCFIFS3m-G1JkuwkMyH8YwQJc-RMx
+    vhP2I717tLzsedCLxw>
+X-ME-Received: <xmr:UqtjZoGv1k___eQlePsqXz2yJvGJapPTvsPH5oqtpWf0pJCxiryuwNbthkUGo8E-2O68N1Pmt7C7az7SZsA0Qjd4J_K-6bJmOU0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddgfeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
+    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
+    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
+X-ME-Proxy: <xmx:UqtjZhQM5s0kCbeiPk5CsPlJmN7ITTMh8xeiBFxk_JDU9M_OysraDg>
+    <xmx:UqtjZtzggBDkc0AysPkaRowYF_gJ4hojVed-FOenIUh21MTTpdEuqQ>
+    <xmx:UqtjZv4BnGTTGHp89OAwlx_FBQfsUXkUSpfkcBTIlT8P87DQ0eFzVQ>
+    <xmx:UqtjZqye_IxQsC1wIyykMDZd-kOg45Cf_9LW7faBPJH6WOpSiM41Hw>
+    <xmx:U6tjZiK-f8KeBmUYH9rnubMuOprY4Mp9NaUXO_JR1a4AWObb5NqDScKX>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Jun 2024 20:52:32 -0400 (EDT)
+Date: Sat, 8 Jun 2024 10:52:45 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: Khalid Aziz <khalid@gonehiking.org>, 
+    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+    "Martin K. Petersen" <martin.petersen@oracle.com>, 
+    Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>, 
+    Michael Schmitz <schmitzmic@gmail.com>, 
+    James Smart <james.smart@broadcom.com>, 
+    Ram Vegesna <ram.vegesna@broadcom.com>, 
+    Artur Paszkiewicz <artur.paszkiewicz@intel.com>, 
+    "Juergen E. Fischer" <fischer@norbit.de>, linux-scsi@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, target-devel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
+Message-ID: <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
+References: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607083711.62833-3-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jun 07, 2024 at 10:37:11AM +0200, David Hildenbrand wrote:
->It looks rather weird that totalhigh_pages() returns an
->"unsigned long" but nr_free_highpages() returns an "unsigned int".
->
->Let's return an "unsigned long" from nr_free_highpages() to be
->consistent.
->
->While at it, use a plain "0" instead of a "0UL" in the !CONFIG_HIGHMEM
->totalhigh_pages() implementation, to make these look alike as well.
 
-I am not sure why not use 0UL for both?
+On Fri, 7 Jun 2024, Jeff Johnson wrote:
 
->
->Signed-off-by: David Hildenbrand <david@redhat.com>
->---
-> include/linux/highmem-internal.h | 8 ++++----
-> include/linux/highmem.h          | 2 +-
-> mm/highmem.c                     | 4 ++--
-> 3 files changed, 7 insertions(+), 7 deletions(-)
->
->diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
->index 65f865fbbac04..dd100e849f5e0 100644
->--- a/include/linux/highmem-internal.h
->+++ b/include/linux/highmem-internal.h
->@@ -131,10 +131,10 @@ static inline void __kunmap_atomic(const void *addr)
-> 		preempt_enable();
-> }
-> 
->-unsigned int __nr_free_highpages(void);
->+unsigned long __nr_free_highpages(void);
-> unsigned long __totalhigh_pages(void);
-> 
->-static inline unsigned int nr_free_highpages(void)
->+static inline unsigned long nr_free_highpages(void)
-> {
-> 	return __nr_free_highpages();
-> }
->@@ -234,8 +234,8 @@ static inline void __kunmap_atomic(const void *addr)
-> 		preempt_enable();
-> }
-> 
->-static inline unsigned int nr_free_highpages(void) { return 0; }
->-static inline unsigned long totalhigh_pages(void) { return 0UL; }
->+static inline unsigned long nr_free_highpages(void) { return 0; }
->+static inline unsigned long totalhigh_pages(void) { return 0; }
-> 
-> static inline bool is_kmap_addr(const void *x)
-> {
->diff --git a/include/linux/highmem.h b/include/linux/highmem.h
->index 6b0d6f3c8580c..930a591b9b616 100644
->--- a/include/linux/highmem.h
->+++ b/include/linux/highmem.h
->@@ -179,7 +179,7 @@ static inline void *kmap_local_folio(struct folio *folio, size_t offset);
-> static inline void *kmap_atomic(struct page *page);
-> 
-> /* Highmem related interfaces for management code */
->-static inline unsigned int nr_free_highpages(void);
->+static inline unsigned long nr_free_highpages(void);
-> static inline unsigned long totalhigh_pages(void);
-> 
-> #ifndef ARCH_HAS_FLUSH_ANON_PAGE
->diff --git a/mm/highmem.c b/mm/highmem.c
->index 3c4e9f8c26dcd..1ece1e69031e7 100644
->--- a/mm/highmem.c
->+++ b/mm/highmem.c
->@@ -111,10 +111,10 @@ static inline wait_queue_head_t *get_pkmap_wait_queue_head(unsigned int color)
-> }
-> #endif
-> 
->-unsigned int __nr_free_highpages(void)
->+unsigned long __nr_free_highpages(void)
-> {
->+	unsigned long pages = 0;
-> 	struct zone *zone;
->-	unsigned int pages = 0;
-> 
-> 	for_each_populated_zone(zone) {
-> 		if (is_highmem(zone))
->-- 
->2.45.1
+> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
+> index 742625ac7d99..4eb5770aeef5 100644
+> --- a/drivers/scsi/atari_scsi.c
+> +++ b/drivers/scsi/atari_scsi.c
+> @@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
+>  module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
+>  
+>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+> +MODULE_DESCRIPTION("Atari generic SCSI port driver");
+>  MODULE_LICENSE("GPL");
 
--- 
-Wei Yang
-Help you, Help me
+"Atari NCR5380 SCSI driver", please. I don't think the word "generic" 
+applies here. It was a reference to the "generic NCR5380 driver by Drew 
+Eckhardt" from which specialized drivers like this one were derived.
+
+> diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+> index f6305e3e60f4..1bef131664e0 100644
+> --- a/drivers/scsi/g_NCR5380.c
+> +++ b/drivers/scsi/g_NCR5380.c
+> @@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
+>  MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
+>  
+>  MODULE_ALIAS("g_NCR5380_mmio");
+> +MODULE_DESCRIPTION("Generic NCR5380 driver");
+>  MODULE_LICENSE("GPL");
+>  
+>  static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
+
+"Generic NCR5380/NCR53C400 SCSI driver" please.
+
+This driver actually describes itself as "generic generic NCR5380 driver" 
+which appears to be a joke. The term "generic" was used to mean universal 
+i.e. intended to cover every ISA card implementation.
+
+> diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+> index 625fd547ee60..82d8b8f8293f 100644
+> --- a/drivers/scsi/initio.c
+> +++ b/drivers/scsi/initio.c
+> @@ -2939,6 +2939,7 @@ static void initio_remove_one(struct pci_dev *pdev)
+>  	pci_disable_device(pdev);
+>  }
+>  
+> +MODULE_DESCRIPTION("Initio 9100U(W) driver");
+>  MODULE_LICENSE("GPL");
+>  
+>  static struct pci_device_id initio_pci_tbl[] = {
+> @@ -2961,4 +2962,5 @@ module_pci_driver(initio_pci_driver);
+>  
+>  MODULE_DESCRIPTION("Initio INI-9X00U/UW SCSI device driver");
+>  MODULE_AUTHOR("Initio Corporation");
+> +MODULE_DESCRIPTION("TBD");
+>  MODULE_LICENSE("GPL");
+
+There are now three MODULE_DESCRIPTION macros here.
+
+> diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
+> index a402c4dc4645..f74231ca29e5 100644
+> --- a/drivers/scsi/mac_scsi.c
+> +++ b/drivers/scsi/mac_scsi.c
+> @@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
+>  module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
+>  
+>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+> +MODULE_DESCRIPTION("Generic Macintosh NCR5380 driver");
+>  MODULE_LICENSE("GPL");
+
+
+"Macintosh NCR5380 SCSI driver", please.
+
+> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> index 7ab000942b97..c4a88f673183 100644
+> --- a/drivers/scsi/sr.c
+> +++ b/drivers/scsi/sr.c
+> @@ -68,6 +68,7 @@
+>  
+>  
+>  MODULE_DESCRIPTION("SCSI cdrom (sr) driver");
+> +MODULE_DESCRIPTION("TBD");
+>  MODULE_LICENSE("GPL");
+>  MODULE_ALIAS_BLOCKDEV_MAJOR(SCSI_CDROM_MAJOR);
+>  MODULE_ALIAS_SCSI_DEVICE(TYPE_ROM);
+> @@ -1007,4 +1008,5 @@ static void __exit exit_sr(void)
+>  
+>  module_init(init_sr);
+>  module_exit(exit_sr);
+> +MODULE_DESCRIPTION("SCSI CDROM driver");
+>  MODULE_LICENSE("GPL");
+
+Three macros here also.
 
