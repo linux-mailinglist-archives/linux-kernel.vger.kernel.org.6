@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-207139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685A19012D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04EAC9012D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B7E1C21000
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D5428293D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F0E17B506;
-	Sat,  8 Jun 2024 16:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4029417B4E9;
+	Sat,  8 Jun 2024 16:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="h5Se5bZV"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmeOnuBP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4DD17799F;
-	Sat,  8 Jun 2024 16:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C15A1E526;
+	Sat,  8 Jun 2024 16:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717864908; cv=none; b=Cs1TwBDSS39Az5WOSli3pTZLXz9pnD0uHkGGA+Yn44XKI4XH7GyVEDEZ7UXGkxlbrC0Re/VrZlPi14ndC9ofvdtggH1NEJ2pDGufMsOjR9YVquruJwQSBvNUEowOC/ScrWB2VOovpFm8s3mGs7BnXP0uVZsywqy/bs2vNC7HVl4=
+	t=1717865376; cv=none; b=mxgjwyc9B0b3ZN0SJMdOBRKDOHf2HoMugD5CCzN4j5vsh7M4qng6uwFASz556+QEAKjRcn3On92LGncf+wNUUxOAB3Zx2HeGDNGHc2SOqaT9kNCZ+jtnNQJDqcgmPz6YZfhQDoZz78gsUGC0RI9ndeeyQNeE7hIPUzEzfW8ue8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717864908; c=relaxed/simple;
-	bh=nd8aGPyRjCPGxDSOZpqcO52E+aAhPHmVWJpLMJGZyOE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BTznOvGFA1d7nKWdwrYtZaKLhAeavujx9Ya72DXquNCT8JcAbfIDviohb5Csx4KivPRccRUPdT3oBYEuYCCuJtZjZ7q7PvoYAZ7FKASG5HgDoM4nbsM85PUJmXaOVEcH32380T54IScAshDr/Pb1Tz+rmlqLKyuDClTFOLggYRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=h5Se5bZV; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2ACE2FF804;
-	Sat,  8 Jun 2024 16:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1717864898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ipnAqkv8CKA5NR2Dc6toWfQ3VizrwhxjHZMdAgEtcAY=;
-	b=h5Se5bZVFAGO2qAnlv0h7lrd+lxou37R8kxvhSsR1dkGtYCff9dodaqilDsf2ZIrky+a/6
-	D0YRn5FwNfbsZRbxTwZKVFDXViGfvZ94PODMG0DTHfaL5o3Wb/2vDfb1yenu+j/djrMYj/
-	6qXo3jYIisT8MterATHVxKcYXTLMkLTqhzgkPtsSOONs5qXrIK63zVdnBB7uLSU2CyaIqG
-	TIDGQRslRKi56Ms3JSCDTvFZtS1C7wVDK0qTbjUM1yNwWXBUrEibpRpjx2FZkCHnlzRMNS
-	GkXzUNz4KaJ00SAVg72yR/GD2c1F7wMzBGrzacac6Pw5FBZU87bo4YPUE0NGAQ==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Date: Sat, 08 Jun 2024 18:41:27 +0200
-Subject: [PATCH] media: v4l: Fix missing tabular column hint for Y14P
- format
+	s=arc-20240116; t=1717865376; c=relaxed/simple;
+	bh=+mpRkOh6rjXaG3EKggTO3VYVSska1ba0Ipx/xyJRRRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pyLz61bn/NHfZxlEPScdA1oN/p4eJxYWlvdDROD+NQr4TO+CCmFkIiDQB5Onx54NSiLlr8OxgGLfBMw7JKdFTGBl+AO9kmslVMfwBJfNVZQiHhEizCXLZUffvXKX5Pp8OMB1Uu0jvLRtAmnDnI5F28/8OqnRRQoO2rfUnE37UgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmeOnuBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58E8C2BD11;
+	Sat,  8 Jun 2024 16:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717865376;
+	bh=+mpRkOh6rjXaG3EKggTO3VYVSska1ba0Ipx/xyJRRRg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KmeOnuBPlFzgRSwmBXF30pdVRilFZ71TYj4+7n5qU4z7332metcPBIJMYmhyl7MP+
+	 JiydxlOkrJbCZUpCKMu9Gs2N43PNAX2l3UssqojFUqTWBpr3yfwX3I845avM1xkHuq
+	 FzvUIq1ZvyT4atC+BpMYN39v5rgPtLdLZabSKu7dNEZBBvEg5VGe6dtfHShmzHhq6p
+	 b1nfCyHCltqRo1T/MXab6w/33WPsTLVWkhGHNQFZaohQYp31bjpN2nKO8uTSguAy70
+	 wEGeot0hIBKZImGgrb/+hVtudnqdq7l07P9ilMfrBVOUElQ1H2/R8DUiJKZV+mP9Fe
+	 /k2/FyYihQi9g==
+Date: Sat, 8 Jun 2024 17:49:29 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Yasin Lee <yasin.lee.x@outlook.com>, lars@metafoo.de,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, nuno.a@analog.com,
+ swboyd@chromium.org, u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
+Subject: Re: [PATCH v4 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor
+ driver
+Message-ID: <20240608174929.14cd9f51@jic23-huawei>
+In-Reply-To: <CAHp75VfYhMbHK7pMTuVDZ3uc5ZjytA7uC+3fr7u3nWUEosGZHw@mail.gmail.com>
+References: <20240607114138.390272-1-yasin.lee.x@outlook.com>
+	<SN7PR12MB81017291E79E6B61A8DEC9A5A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
+	<CAHp75VdYYGe7rXJm1z2a=r7ZnSU0-y+3N8juoNF-5xXi5=z5nA@mail.gmail.com>
+	<CAHp75VfYhMbHK7pMTuVDZ3uc5ZjytA7uC+3fr7u3nWUEosGZHw@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240608-jmh-correct-mkdocs-luma-v1-1-7e114a2c4bdf@yoseli.org>
-X-B4-Tracking: v=1; b=H4sIALaJZGYC/x3MQQqEMAxA0atI1gY6KurMVcRFaaLGmdohVRHEu
- 1tcvsX/J0RW4Qif7ATlXaKEJeGVZ+Amu4yMQslQmKIytWlx9hO6oMpuRf+l4CL+Nm+xeVNZtcT
- UWAup/isPcjznrr+uG2v24dRpAAAA
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Akira Yokosawa <akiyks@gmail.com>, 
- Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717864896; l=1497;
- i=jeanmichel.hautbois@yoseli.org; s=20240608; h=from:subject:message-id;
- bh=nd8aGPyRjCPGxDSOZpqcO52E+aAhPHmVWJpLMJGZyOE=;
- b=gUl9pvpJwAefy7Oe2Hp8P8VB6tgxPvb6HKJPwmtdnwflfp9btBkySxT1L1/K5SpVrcuB1cm+h
- vfE+50pq3VrAXNEKuV3hsRJAZHxrtN+HZoQI2yyZ8j6JHgeNnZhjTnA
-X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
- pk=oMZuYhJzT0j5MI73RlNUVYaA8VdWpFR/Sao0JKz1D2I=
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The original commit added two columns in the flat-table of Luma-Only
-Image Formats, without updating hints to latex: above it.  This results
-in wrong column count in the output of Sphinx's latex builder.
+On Fri, 7 Jun 2024 22:45:49 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Fix it.
+> On Fri, Jun 7, 2024 at 10:40=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Fri, Jun 7, 2024 at 2:42=E2=80=AFPM Yasin Lee <yasin.lee.x@outlook.c=
+om> wrote: =20
+>=20
+> ...
+> .
+> > > +static const struct acpi_device_id hx9023s_acpi_match[] =3D {
+> > > +       { "TYHX9023" },
+> > > +       {}
+> > > +}; =20
+> >
+> > Btw, do you have a reference to any device on the market that has this =
+ID? =20
+>=20
+> Aaaargh!
+> Jonathan, we have to have a big rule from now on on ACPI IDs, if
+> anybody introduces an ID in the driver, they must provide the device
+> model that is (are going to) use it and excerpt from the ACPI ID
+> registry to prove the vendor ID is real.
+>=20
+> This is the heck fake ID!
+> NAK.
 
-Reported-by: Akira Yokosawa <akiyks@gmail.com>
-Link: https://lore.kernel.org/linux-media/bdbc27ba-5098-49fb-aabf-753c81361cc7@gmail.com/
-Fixes: adb1d4655e53 (media: v4l: Add V4L2-PIX-FMT-Y14P format)
-Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
----
- Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Agreed.  Though we should also put together some boilerplate text /
+Documentation on how to get a real ID if it makes sense and what
+information we need to justify carrying a bad one (which usually
+has to include that you've made the supplier aware that the Linux
+maintainers are going to be grumpy and our ire wasn't enough to persuade
+them to promise to mend their ways - note it has worked a few times!)
 
-diff --git a/Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst b/Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst
-index b3c5779521d8..2e7d0d3151a1 100644
---- a/Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst
-+++ b/Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst
-@@ -21,9 +21,9 @@ are often referred to as greyscale formats.
- 
- .. raw:: latex
- 
--    \scriptsize
-+    \tiny
- 
--.. tabularcolumns:: |p{3.6cm}|p{3.0cm}|p{1.3cm}|p{2.6cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|
-+.. tabularcolumns:: |p{3.6cm}|p{2.4cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|
- 
- .. flat-table:: Luma-Only Image Formats
-     :header-rows: 1
+For this case, key is:  There are two types of valid ID the one here
+is of the ACPI ID form. For that...
 
----
-base-commit: dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
-change-id: 20240608-jmh-correct-mkdocs-luma-79d348ded7aa
+ACPI IDs have to be granted by a manufacturer who has registered
+with UEFI forum and been granted the use of the four letter sequence
+for their products.  For example HiSilicon (my employer) has HISI.
+Note that the list on the website is sometimes a bit out of date, so
+if you know it has been granted recently just say that in your
+patch header.  Note, I can check an would guess Andy can as well :)
 
-Best regards,
--- 
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+That company is then responsible for handling their ID space. In my
+case I know who has control of the big spread sheet, so when I want
+a valid ID I go ask him and make a case for why.  Those ID spreadsheets
+aren't public though in most cases, so we only know it's gone wrong
+when we get a clash or a suspicious value (DEAD or BEEF usually ;)
+
+If this process has not been gone through but some device manufacturer
+has shipped a firmware with a made up ID, then we are effectively
+carrying a workaround for their errata.  We will do that, but we need
+much more information and a comment next to the id table entry to provide
+at least one example of the shipping product suffering from this bug.
+
+Jonathan
+
+p.s Occasionally these sneak past me (less so with Andy's eagle eyes
+on the job) and in the past I was young and didn't know better.
+We will rip new ones out if we detect them reasonably quickly and
+we reserve the right to rip out old ones to see who screams...
+>=20
 
 
