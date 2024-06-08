@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-207065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6569011FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:22:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3AC901202
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC641F21D4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75691B21A31
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B2017A930;
-	Sat,  8 Jun 2024 14:21:56 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6562F17A931;
+	Sat,  8 Jun 2024 14:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RryReEsD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBD927457;
-	Sat,  8 Jun 2024 14:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993FF17A920;
+	Sat,  8 Jun 2024 14:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717856516; cv=none; b=b2+gPp9qAyMFk84pksLpg0SNiSAsnXb/uhIb0nOdOACBPTUfrst8OgObnTUfL9XOmd44dXHcHks5m73B8UbYS1haQ4qJxAzmVELBr45MlZFxoqg/M0niO3Gr91ZoAVgRKRTDmkLCStXKs1ZyNRz3IuqtnvDkWYJNoNV1+NCCum4=
+	t=1717856701; cv=none; b=pbYQDFRu7jjZ7xKWX8e7IlQcEsGFiarl9tFr6HxVEE1bfqg/X+4OT9h7XFdsInV1ZxTMqer0TlDGAvnY9DVbq1TBzfNK5Nul1yMXeaQ3uleBmFJGUXcpXv5iKudBKOXLlBxq1p2L/SL9l3+b0XRX1At1y4Pbe/MF1lNbewqq2kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717856516; c=relaxed/simple;
-	bh=fZKzObTQo0GxnaEwl/4M+G9KFYepsIumuA+Sh7vMUGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xi+fl9L4+eit/0DGtZsj0tCXTUNS+eOzvd1S2BkqaUPZXD7JZGkLxNf0TPYgNaW18EL/TIKJ1FOQD6c6L0IMhbhKWqZkoHmQZVlsw/cMh6fxA9q69WAdFcok3YgBJrnY/5WoJf8kJcVGbRuuRb0DvQlDpmdDQ4oJRLcxYiNgZp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [194.95.143.137] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFwwy-0008KS-CO; Sat, 08 Jun 2024 16:21:44 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>, kever.yang@rock-chips.com,
- Huang-Huang Bao <i@eh5.me>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328 GPIO3-B pins
-Date: Sat, 08 Jun 2024 16:21:43 +0200
-Message-ID: <5759165.44csPzL39Z@phil>
-In-Reply-To: <3dab2269-a048-4750-bea8-cce245df075a@eh5.me>
-References:
- <20240606125755.53778-1-i@eh5.me> <4786379.ElGaqSPkdT@phil>
- <3dab2269-a048-4750-bea8-cce245df075a@eh5.me>
+	s=arc-20240116; t=1717856701; c=relaxed/simple;
+	bh=rlC8MSGnb6YA01DoUOnDbXDIu1BbNuO1qPii8soutYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyFxEhFjv+EP1ZTJOpJd85muY2qLJTdQ1GheM01SL8y0ba92hsUhZUxMpAglERo2M2F5f/SekaoHj7pEdcr9mRBtG+ZSW0Czju+Z9cTvM/ugkx63NxtItVrHOlvjFxf7HkJmiPIOyLRG+BiM2xUD9a45dhMfUv0/enHz9O2Uh6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RryReEsD; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717856699; x=1749392699;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=rlC8MSGnb6YA01DoUOnDbXDIu1BbNuO1qPii8soutYw=;
+  b=RryReEsDvLT4lzCCkDlBOj1ew5Dm0l+HIgaKOaiJsxDmJcyv/W+nRkuE
+   nVQ446Nr74QU4ALeP2oeK/uoMyA6nwcSTiPo530exjcgv3sMSPSByAp+7
+   1UU4HtvJ00KJ56YKKH72Sh+sjgFcD0INbw5gRoo9+x8q4+4rS0BMhf+fU
+   EjqhPlfNsFAihqi6muzLYfno41wVYxtPqqm6BqJLGJnBSw6eVFXigcAw6
+   72smYIgdFOZnJ+ZR6mh+PRT6gy2q4Se1dKooAWu7SrB6OA1h1llZDRzdD
+   zzdd3h1VCWbHQ4JC1tpxcPf2ayoJDtkGBNfpl+ZFla/GCODAVg3zT7PIY
+   w==;
+X-CSE-ConnectionGUID: kB8I2w7MTLCbd67QT+sd2w==
+X-CSE-MsgGUID: XbEm6xjHSK2Pk5q7znAadQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="14726828"
+X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
+   d="scan'208";a="14726828"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 07:24:59 -0700
+X-CSE-ConnectionGUID: 08A8MsLfQq2uUBz6UiXTFQ==
+X-CSE-MsgGUID: 8j2cGZ7nTMC2JfPsGBkgKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,223,1712646000"; 
+   d="scan'208";a="38547777"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Jun 2024 07:24:57 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFx02-00001W-2M;
+	Sat, 08 Jun 2024 14:24:54 +0000
+Date: Sat, 8 Jun 2024 22:24:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@baylibre.com>,
+	Benson Leung <bleung@chromium.org>
+Cc: oe-kbuild-all@lists.linux.dev, Guenter Roeck <groeck@chromium.org>,
+	linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] pwm: cros-ec: Don't care about consumers in
+ .get_state()
+Message-ID: <202406082139.KG4VcZiF-lkp@intel.com>
+References: <20240607084416.897777-6-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240607084416.897777-6-u.kleine-koenig@baylibre.com>
 
-Am Freitag, 7. Juni 2024, 16:46:19 CEST schrieb Huang-Huang Bao:
-> 
-> On 6/7/24 20:32, Heiko Stuebner wrote:
-> > Am Donnerstag, 6. Juni 2024, 14:57:53 CEST schrieb Huang-Huang Bao:
-> >> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
-> >> specified in RK3328 TRM, however we can get hint from pad name and its
-> >> correspinding IOMUX setting for pins in interface descriptions. The
-> >> correspinding IOMIX settings for these pins can be found in the same
-> >> row next to occurrences of following pad names in RK3328 TRM.
-> >>
-> >> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
-> >> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
-> >> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
-> >> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
-> >> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
-> >> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
-> >>
-> >> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
-> >> these pins does not follow rockchip convention.
-> >>
-> >> Signed-off-by: Huang-Huang Bao <i@eh5.me>
-> > 
-> > This matches the information that I found in my TRM, thanks to your
-> > detailed explanation.
-> > 
-> > Though I of course can't say if the TRM is just wrong or the hardware
-> > changed after the pads-description was written.
-> > 
-> > Did you test the usage of these pins on your board?
-> > 
-> 
-> My board(NanoPi R2S) is kinda integrated and does not have GPIO3 pins so
-> I can't test these pins directly.
-> 
->  From DTS for RK3328(arch/arm64/boot/dts/rockchip/rk3328*.dts*), there is
-> pinctrl/cif-0/dvp_d2d9_m0 referencing part of GPIO3-B1+ pins(GPIO3-B1 to
-> GPIO3-B4) that indeed matches "Table 15-1 TSP interface description"
-> which contains hint pad names. And this DTS node exists from
-> initial commit to add RK3328 dtsi
-> (52e02d377a72 "arm64: dts: rockchip: add core dtsi file for RK3328 SoCs").
+Hi Uwe,
 
-thanks for digging up this information, that makes sense and stuff looks
-pretty much correct with everything combined.
+kernel test robot noticed the following build warnings:
 
-Heiko
+[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Uwe-Kleine-K-nig/pwm-cros-ec-Don-t-care-about-consumers-in-get_state/20240607-164747
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240607084416.897777-6-u.kleine-koenig%40baylibre.com
+patch subject: [PATCH 1/3] pwm: cros-ec: Don't care about consumers in .get_state()
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240608/202406082139.KG4VcZiF-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406082139.KG4VcZiF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406082139.KG4VcZiF-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pwm/pwm-cros-ec.c:28: warning: Excess struct member 'channel' description in 'cros_ec_pwm_device'
 
 
+vim +28 drivers/pwm/pwm-cros-ec.c
+
+3d593b6e80ad2c Fabio Baltieri   2022-04-28  17  
+1f0d3bb02785f6 Brian Norris     2016-07-15  18  /**
+1f0d3bb02785f6 Brian Norris     2016-07-15  19   * struct cros_ec_pwm_device - Driver data for EC PWM
+1f0d3bb02785f6 Brian Norris     2016-07-15  20   *
+1f0d3bb02785f6 Brian Norris     2016-07-15  21   * @ec: Pointer to EC device
+3d593b6e80ad2c Fabio Baltieri   2022-04-28  22   * @use_pwm_type: Use PWM types instead of generic channels
+82adc1b2688b02 Uwe Kleine-König 2023-07-05  23   * @channel: array with per-channel data
+1f0d3bb02785f6 Brian Norris     2016-07-15  24   */
+1f0d3bb02785f6 Brian Norris     2016-07-15  25  struct cros_ec_pwm_device {
+1f0d3bb02785f6 Brian Norris     2016-07-15  26  	struct cros_ec_device *ec;
+3d593b6e80ad2c Fabio Baltieri   2022-04-28  27  	bool use_pwm_type;
+1db37f9561b2b3 Thierry Reding   2019-10-17 @28  };
+1db37f9561b2b3 Thierry Reding   2019-10-17  29  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
