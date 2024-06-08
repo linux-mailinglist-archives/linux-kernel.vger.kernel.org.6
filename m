@@ -1,130 +1,208 @@
-Return-Path: <linux-kernel+bounces-206872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2E6900F22
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FB8900F25
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 03:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5894B215B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA60C1C2093F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 01:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC02B67E;
-	Sat,  8 Jun 2024 01:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0BBBE58;
+	Sat,  8 Jun 2024 01:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jra7IUHE"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b="hdTzjzyc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WybPuoCO"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6258465;
-	Sat,  8 Jun 2024 01:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8656FC6;
+	Sat,  8 Jun 2024 01:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717811127; cv=none; b=M/gTaB5P/ANlD/MBtCpa2FAS7rroF9kntVS9mmUcqbCHkVvkCoTinRA1cJ0/xepOkDlAseFNYgJNbYDHKInCwmxp1Io+B62r9pGh4L3lK9xzT5AmL8rWiMhYHuVySitU8/MiURYHETxrfYvTBzivFOBU6spO+y1xdEFMEeVQkRs=
+	t=1717811269; cv=none; b=hGiHJU6cwTXveVgaltl4zez+0nF4EMJ/YgIDEALNLLd3Szt5H81+7MfG7eVYpghZpHD3z9ZmSG/WvhC7QSQi86zs7wSZxVrYzCSoxeHQJs48Yh0I9dyBIVMNq8lvMmH7WcSINmPejFanO3+a0sVvNrusTEMeRfXAFQuN0HJTnBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717811127; c=relaxed/simple;
-	bh=UN6q3g+9Dz4/hjzQmqjAEEyYcqjaGtBx/GKcyf0LG30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=njEXFljG3Jg/fi2k6em3K0ikUNq5snbTAs41UlUJR5IbZXq+LFqE/eaDslg95G3ybcuN6RhFHlLxaBJUswA//loOj5kwCnALsolKxVLT+GBmofPBsnlI0ZPVN6hpEC17sXri6/hnN8WLrgQnGdHCmNY1LqGteyUWuJY3Zy27BQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=jra7IUHE; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so3128790a12.0;
-        Fri, 07 Jun 2024 18:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1717811124; x=1718415924; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Hx0XsA+WMrNCJ2gQvfTLdJ/oldDhKZcwHjNsGDQ/qE=;
-        b=jra7IUHEOgUX3pYT3UFJEaSZImcUaed9un24MhA/eLcXNGr9cOMMWS0YT27inlmTxI
-         nDEj44sugbaehXnoL0Ad2J2lOPJI5/X5fJJGMvQpSn2iL/S408XdLmkp1EQCuyQcLBfw
-         V345PiV0KSswGSFb4wXaFCGa+Gy9jvV4teOMPqL0K/C3b5yo3MTbN8kAEAg7qe4oTy3C
-         HE9EpqbbemVstXsJyhqtYGI2az2J+zsALt/sMHVqc4cqMcibmE5GIexentiqeF21lgdC
-         3bP+xsxJHAWj4MPFIMGMPjlO+kqMz9bjHRBoIlHprBdEAG0cDdyyT5k7q6ZNV58+6qt2
-         6dMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717811124; x=1718415924;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Hx0XsA+WMrNCJ2gQvfTLdJ/oldDhKZcwHjNsGDQ/qE=;
-        b=mOx7KrDZjfeoeJGRmzj/3dxV+zwTS/+gMRDzigHe3MVrbdimrU/ufWEAZemPt4XPvu
-         UffG0MbYn1Yt+A5nrviQmUpNcPJP15NvL+FUjoFRufBdGx+V5hR2ulFkOJ84G7soGkQv
-         tUxIk2OovOHE34xJHPUYURgcAjYJ5iKnpbhvD8BxAkdj8rl17BQ5nCWXoPHxNGCMhEY4
-         tkzEuVr4q4MHRqQfc391Jdx7dOwETzeMg4vf370QCqK0sCCtsnm2Cfitqxc7aDiY4ptC
-         ADjRucWHm6niPsUuJu9w1mYKJc4pV245Hb0rz54mnwue3rSqrQ7yRxKqznT/2RxQ1Pal
-         Ogzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkof9egtFPEooExfBsj8oiG1Tf1yf51fC99b5w+5YmBZBe4Nrpha+gVNY8IDUZCM1bI2uHFF5R8QSiP6XPr7K5ziuGgP/7oM+65NNHuwExAtei1DEzlKxiE4t+ui1CJbCwmIMj
-X-Gm-Message-State: AOJu0YxAb+BI5I2KeMarg4Ejb4iNgg7t0lw0o0WSAqDi7a74Zd5scecl
-	5KkmnfXaMLWy9NAoznV9g9q6JVqvdzPSLbQhN1W/0Rz9lSX+k3c=
-X-Google-Smtp-Source: AGHT+IEn+M+mmJhzhk83b+UnFQZL1b9885lzfYJfv3PYzK1Ds7Gda+BjdcA/yOXBMm2vMdDqX2t/YQ==
-X-Received: by 2002:a50:d5c1:0:b0:579:fd26:2ece with SMTP id 4fb4d7f45d1cf-57aa55aee6fmr6610174a12.13.1717811124013;
-        Fri, 07 Jun 2024 18:45:24 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4840.dip0.t-ipconnect.de. [91.43.72.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae2366a4sm3544140a12.92.2024.06.07.18.45.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 18:45:23 -0700 (PDT)
-Message-ID: <de7db93e-1042-4417-a8a2-346c836ba1d2@googlemail.com>
-Date: Sat, 8 Jun 2024 03:45:21 +0200
+	s=arc-20240116; t=1717811269; c=relaxed/simple;
+	bh=3hAKft0IpTlaATaf6B4KLpVNg79DZ5h1pzjABHPAuk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NeKIaml8OOHw+iWi1mv2g8CJKlpfg4cBNpia8JlXHN6iJ/jKNzkoxG8GEH/FfJxJge1G7dnE9oOTlXUy2OgbwK1FAUvqufldrZG3B3qxydz3Cm8Kwza3HrzQwPB+ZObGNswBB3anK6oeXCpG153M0ivBOCPpA2f1Dkti5za6nkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au; dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b=hdTzjzyc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WybPuoCO; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 75A13138019E;
+	Fri,  7 Jun 2024 21:47:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 07 Jun 2024 21:47:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com.au;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1717811266; x=1717897666; bh=wVtkKE02aG
+	BtUM4XVJj9v4PooiUi8hPGO3tB8GgDw7E=; b=hdTzjzycTW0W5sG4FreOYRTMaF
+	9r3BiaiIiAZoTUa/iDwQlVvTtw2mF5dVk+7uiS+OAoRRWf87LcPi5PER4f/p9l7o
+	+ic2UISgdAfXGoN1veCJfWCvcmAQN41DHRxrAgieont0uIT3Po/bawxhqHw37Rqi
+	ENe//xnQMZb7B6jlq9/vFJ9gRtbS3iSMtyWk8w0oIAAAr9aQh4L/ztEM1spFQAU4
+	1bXrsmnIPetZdE5/IAdb8kvsV9FtiACZ4gCnAvgKM4iwMvrdqrRblMYa97OhOLTo
+	WIv7GylXyQFED8GNk3I2vFZ1FTqeukVTSaTfcBDIM/TAu6joXYTyWjXGqJ/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717811266; x=1717897666; bh=wVtkKE02aGBtUM4XVJj9v4PooiUi
+	8hPGO3tB8GgDw7E=; b=WybPuoCOmiH6K2dnfgpCvA4vI8Z9IkaN4tqIcY5di8Pm
+	RGORf+bfZpi2Q2eopd7ltknL5w28c5A9t/jt2Tczsn3+npD9zpZ4l1AKuQSR81Yz
+	y4+bj6SNKYLn669v9J5GPrnXph20Lie5/YRezb0CKW19o4ApzjaLWz5Mt0nNHcbN
+	kSTTtQLzH0YUhH3Q8MEOZ2pgo1cHHh/WLp7NBt0hjBAw6dgHvFo65EG8DYaiRYiF
+	6I7gTNp82xu6d0qyoI5umfIOy2tZQkwKsH3Hx+wQUdiP9TE4JjYqwn5KvRqPGWb+
+	XKGB378X6bx6mVhVh9vQuu2+05eQqLm/HD1MyAYYug==
+X-ME-Sender: <xms:QbhjZjTTm8Pg0y9AlgwqVYUUdKbMi9sipOYi7Y2youjo3a3bhbDZfQ>
+    <xme:QbhjZkzB_1z1vF0T9ty83Bl-eEGdIAlnycxOE-5RjVcNiI_JwVo4s3HU6wx9JRHZ-
+    YTTFaaKkPjARYG8kg>
+X-ME-Received: <xmr:QbhjZo3t_3GU1qZmgJ__-j7mXL3lca2uCGxcHiWHkXkUNU6F5gzqsmaeRu9v6CsYHl12FFynEPnAqXk7W0KGz5NpZwxdeBSroBGSeQWbXDOXxRdmhAgwSXp-Mg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddggeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpeflohhhnhcuvfhhohhmshhonhcuoehgihhtsehjohhhnhhthhho
+    mhhsohhnrdhfrghsthhmrghilhdrtghomhdrrghuqeenucggtffrrghtthgvrhhnpeefvd
+    ekveeggfekgeehvdelteeiffehgfeihfelgfdvkeefvdetkeeuueevleehveenucffohhm
+    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepghhithesjhhohhhnthhhohhmshhonhdrfhgrshhtmhgrihhl
+    rdgtohhmrdgruh
+X-ME-Proxy: <xmx:QbhjZjA_RAISdoskpNW2efmv-pAul3XpVgE29J_Kkb7LmOXPmxCNfA>
+    <xmx:QbhjZsjLV2RbFUka9q8VxReyviuwlp_7Z4koRLNU_JxpI6G66j6RoQ>
+    <xmx:QbhjZnoQvmcO9cYfO7ZYhyRaN6jKbkmbIJ7qDuCBoeJa6xwyKY9mXA>
+    <xmx:QbhjZngx0F34ySU9YZ-12hAFsB5jaR6t2A5Y44QP61EdzBjF4cKZRw>
+    <xmx:QrhjZoyLNwbENlmanbnJaMrTKai9grgA6-kNv2CZ8DESQ3u7iFIorhnx>
+Feedback-ID: ic081425d:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Jun 2024 21:47:40 -0400 (EDT)
+From: John Thomson <git@johnthomson.fastmail.com.au>
+To: daniel@makrotopia.org,
+	andrew@lunn.ch,
+	f.fainelli@gmail.com,
+	olteanv@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	John Thomson <git@johnthomson.fastmail.com.au>
+Subject: [RFC net-next] net: dsa: generate port ifname if exists or invalid
+Date: Sat,  8 Jun 2024 11:47:24 +1000
+Message-ID: <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.9 000/374] 6.9.4-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240606131651.683718371@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240606131651.683718371@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Am 06.06.2024 um 15:59 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.9.4 release.
-> There are 374 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+In the case where a DSA port (via DTB label) had an interface name
+that collided with an existing netdev name, register_netdevice failed
+with -EEXIST, and the port was not usable. While this did correctly
+identify a configuration error in DTB, rather bringup the port with an
+enumerated interface name, which can be renamed later from userspace
+where required.
+While this does change the implicit expectation that it is an error if
+the DSA port cannot use it's predictable (DTS label) name, there is no
+functionality to stop netdev from allocating one of these (perhaps
+poorly selected) DSA port names to a non-DSA device before the DSA
+device can.
 
-Builds, boots and works w/o regressions on my good old 2-socket Ivy Bridge Xeon E5-2697 v2 
-server machine and runs 15 QEMU/KVM virtual machines for some hours now, no hiccups.
+While at it, also test that the port name is a valid interface name,
+before doing the work to setup the device, and use an enumerated name
+otherwise.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+This was seen recently (for the EdgeRouter X device) in OpenWrt when a
+downstream hack [1] was removed, which had used DTS label for ifname
+in an ethernet device driver, in favour of renaming ifnames in userspace.
+At the time the device was added to OpenWrt, it only used one network
+device driver interface, plus the switch ports, so eth1 (matching physical
+labelling) was used as a switch port label. Since, this device has
+been adjusted to use phy muxing, exposing a switch port instead as the
+second network device, so at bringup for this DSA port, eth1
+(which is later renamed in userspace) exists, and the eth1 labelled
+DSA port cannot be used.
 
-Beste Grüße,
-Peter Schneider
+[1]: https://lore.kernel.org/netdev/20210419154659.44096-3-ilya.lipnitskiy@gmail.com/
 
+Signed-off-by: John Thomson <git@johnthomson.fastmail.com.au>
+---
+
+RFC:
+Not a full solution.
+
+Not sure if supported, I cannot see any users in tree DTS,
+but I guess I would need to skip these checks (and should mark as
+NEM_NAME_ENUM) if port->name contains '%'.
+
+name is also used in alloc_netdev_mqs, and I have not worked out if any
+of the functionality between alloc_netdev_mqs and the register_netdevice
+uses name, so I added these test early, but believe without a rntl lock,
+a colliding name could still be allocated to another device between this
+introduced test, and where this device does lock and register_netdevice
+near the end of this function.
+To deal with this looks to require moving the rntl_lock before
+these tests, which would lock around significantly more.
+
+As an alternative, could we possibly always register an enumerated name,
+then (if name valid) dev_change_name (not exported), while still within
+the lock after register_netdevice?
+
+Or could we introduce a parameter or switch-level DTS property that forces
+DSA to ignore port labels, so that all network devices names can be
+managed from userspace (using the existing port DSA label as intended name,
+as this still seems the best place to define device labels, even if the
+driver does not use this label)?
+
+Cheers
+---
+ net/dsa/user.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/net/dsa/user.c b/net/dsa/user.c
+index 867c5fe9a4da..347d2d8eb219 100644
+--- a/net/dsa/user.c
++++ b/net/dsa/user.c
+@@ -2684,6 +2684,7 @@ int dsa_user_create(struct dsa_port *port)
+ 	struct dsa_switch *ds = port->ds;
+ 	struct net_device *user_dev;
+ 	struct dsa_user_priv *p;
++	bool valid_name = false;
+ 	const char *name;
+ 	int assign_type;
+ 	int ret;
+@@ -2692,6 +2693,20 @@ int dsa_user_create(struct dsa_port *port)
+ 		ds->num_tx_queues = 1;
+ 
+ 	if (port->name) {
++		if (!netdev_name_in_use(&init_net, port->name))
++			valid_name = true;
++		else
++			netdev_warn(conduit, "port %d set name: %s: already in use\n",
++				    port->index, port->name);
++		if (dev_valid_name(port->name)) {
++			valid_name &= true;
++		} else {
++			valid_name = false;
++			netdev_warn(conduit, "port %d set name: %s: is invalid\n",
++				    port->index, port->name);
++		}
++	}
++	if (valid_name) {
+ 		name = port->name;
+ 		assign_type = NET_NAME_PREDICTABLE;
+ 	} else {
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.45.1
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
