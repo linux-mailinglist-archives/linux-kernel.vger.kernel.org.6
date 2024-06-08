@@ -1,138 +1,229 @@
-Return-Path: <linux-kernel+bounces-206895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23122900F6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:08:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449C5900F73
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 06:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989EF2839C3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:08:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDFA41C20D38
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 04:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A8DDDDA;
-	Sat,  8 Jun 2024 04:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MP4gR9F/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACBAFBEA;
+	Sat,  8 Jun 2024 04:19:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856654C65
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 04:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E148C1A
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 04:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717819723; cv=none; b=pVBFAP6snpGnENlOaAcY0Umb7UC0MEe+S+G/XEfBgxwfcrwV4NZsMK1YlKDSi1uMvPeS/54RSQKd+BIbj9XdzuJ+7ycKwM2ocgRMP8PH4zbGHp9ParWzPSE9dD03NwBk6Hgw5czyaMN6Hk5hwDEEu9uM0sImds4dILqdo2nYyQY=
+	t=1717820371; cv=none; b=CV/IKkU6lT6tumw2ARo7A/yipVuj4llhX+aQNVCBe9+k5km5cLwmQGf+IxcRYAWms9TuEwHNSqPA76zc2J9IEUfILc6e58jz1pod+CZvKzfaOcqZjxlgHwS2yY7Q6rGfWFR3EtIOBPsvo3L3Fk6D2SKWTn+XhdH54ODGom7GyjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717819723; c=relaxed/simple;
-	bh=rhdyfV0lj9KExec2QDEAF5SwzBkbHNhhbde9hVK9i5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=poGSoOf4UO2tXX7I5ZwrWA4GlvD/CMHqzsoRAnmjwCt5lEs1wjAqC1Hv0L+ZM1l7w/hhRRZNYhk6ENw34F4eFDpZrzQTHvfpIMCReYVTG5aHNvCxIl5HBe9hPbzfk1a8RyxLGBmipRCY1JIpbzCxbakDcyvxkEVVqD0FX4vCqqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MP4gR9F/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717819720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DTizEaaqhSpnwMjwXtrrvGrCeV6DhFjXTqgmOLq3eUA=;
-	b=MP4gR9F/oNYgrOXuU9jgd8Uy/OaXTKGrpFlRr1Z+ZOETrQVIZtkucco51BUs5ffy2ASBWE
-	rfdKEvydhYQz7X0R90yJDHNzZgyM0CzAvkjnSW46qb2laY8weU9hMlfMRLKUUjAOVDOIqN
-	t3ZT2kvvWaTgwEIzVaJvR2K8R6uVilI=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-hWOn0VnOP_qe4KrWtQM5Rg-1; Sat, 08 Jun 2024 00:08:38 -0400
-X-MC-Unique: hWOn0VnOP_qe4KrWtQM5Rg-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52c7fca52f8so62596e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 21:08:38 -0700 (PDT)
+	s=arc-20240116; t=1717820371; c=relaxed/simple;
+	bh=X0teV559jlfZtNFTdn0vczKwkiEC69CYvIAxRsiPpCA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qUTYB+AXg5HsSJkhdDUAhWYYFRleqSHYEmsj4CS6RKM8YPv3Jgd4dYDdHBU2KaXHNShOTrlA2qRbimNZxznpONkXmkOhtxdXCVPsO0BLKmAu67mPogzv81act3N6TWjedRek4mK8PRPATAAfn2XfCd3YiLVK28ETxn5vNZF63AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3745fb76682so28282325ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2024 21:19:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717819717; x=1718424517;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DTizEaaqhSpnwMjwXtrrvGrCeV6DhFjXTqgmOLq3eUA=;
-        b=OA1Sl7OsAQ/8UdJREMwS14ZJzPA43IzHJkPiDwNKr6u8kVw9B4HdwUKrq9J04RN9uM
-         H4zb42Jv1iCCK9PK30k3y3Wuyp6T7te5g6Sho+TJpA1LiUlNjZHMHxXgHcj+rx7lz66n
-         uad0QFCk+SkYiqDl3U0juGPft5WOZJmEF6x3V5Gs9gxTBsQ3TI5naa25parXue2Ouolj
-         wU6NQKApPNOMUwg1OP97O5kpB3yG/XP17zGPmDL10shkCucp3Vz2KYxz98rUS2mq+USf
-         zusphwUQXwVKbu2Nc+ifwDwRFUnwtkhTypHkqLIwb43/EAs/I/YUtI6Qp/uDI7CIGibx
-         bbIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdu1zECocD2PqBcz85NsTL41a9A9Nkr9t3ugy5RYWTvDkoQyzWZU6ri6wA97ZlZsx8XqgeKfugD8n0nkGg5NBarE/QboQZ3HoStHn5
-X-Gm-Message-State: AOJu0YwYKOdgm0+Xq5wjHxb+zKTbjAGLU4+gjmr8Qa1G1hdNF1yVrV0L
-	k4ipfviEhMGiUHSuoshAWV9hTygK52qR5HQiIiUxrr2PmbTkH7Cgi99pGr0ditB1cWlvdv8u1eO
-	a6G/ZWWp6Mpcqo+vfgr2yOx3jmHA6+Oomp3eUVyomafmcmflu45jkksErRg3F
-X-Received: by 2002:ac2:5042:0:b0:52b:c140:5d5 with SMTP id 2adb3069b0e04-52bc1400742mr777369e87.2.1717819717330;
-        Fri, 07 Jun 2024 21:08:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFN5pkegTgaO4mm1YT1IXKdAFuULGC+9wRXdHWSA1Ql/+m5SjGH+cIPu1UQIm6nkKulEcOYw==
-X-Received: by 2002:ac2:5042:0:b0:52b:c140:5d5 with SMTP id 2adb3069b0e04-52bc1400742mr777352e87.2.1717819716843;
-        Fri, 07 Jun 2024 21:08:36 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-17-83.bb.dnainternet.fi. [85.23.17.83])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41dd2e2sm6969941fa.133.2024.06.07.21.08.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jun 2024 21:08:36 -0700 (PDT)
-Message-ID: <2821278f-bc94-c147-d0fe-8cc52dbdccb1@redhat.com>
-Date: Sat, 8 Jun 2024 07:08:35 +0300
+        d=1e100.net; s=20230601; t=1717820369; x=1718425169;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aFuJHIowLvdv+S/MY3yW2L+R0NtntumzDdr8pfEPbnA=;
+        b=JkNzaDny4cVL9SI4gdZPjZHNujmC7yple6iO5E7SrqxrNocsFHoGg0npqRnMiBMxim
+         K904tyuuCoMXp2Kx987wUI5u42KH4+prKtzEXV27gGKi0cyRVnOZ3an7SdRkOlj1bLMI
+         3vqVypXi9RmgAlm9OQQ8L0B+tAjRhn2QkXr/bzOYpf5dmayidlgTfO5Py/o9WeTNMqxa
+         kO7KfguHeuNU5D5nveMGwBIldW/fLJr34w+CJ2+H4gvxsk8+Ie/30csZvV1G892UdNw0
+         5Em7EvYpUIVKJbPuiVVgJwJ6OOpet+rb0OoZIWfBsj5XVRvobGqDxOPoRTmk32kliETu
+         1TaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsyTjY8t6wpeDJAQ75wjjgv1GrNnqkFlazCkwQn7lPnlc2rbipoypJkhJ4BudDcdQ0kybTNty1xAtTIMEmldNBbBA6IDEyVnJQhw/G
+X-Gm-Message-State: AOJu0YwAba7DW7QILhXRUKgLuYiA3mh+cZCIu8RE8QkW5JaQu1pxPXB2
+	MSTTY8x4jjveLTHUfhnRyyeR63aO41hhSI8ZzinfOxi8Ho3rjN/6OHiiRlrxiXAxEhS8AMZBYzu
+	TYvrPCUR5E4FGVmZzPKSLu9HEjTMcTR9ioYlzTzjQiLRyS8dbnsL6vcU=
+X-Google-Smtp-Source: AGHT+IG+tBNAsB4soo5Wd1WTLfqHn2iEeP1fHWDV1vVAOHz8Q9oGKp+gOvSsE42TikUV3AwOJ+seTavtBssdIgKSiDfGZXBYwqMc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large
- folios
-Content-Language: en-US
-To: Yosry Ahmed <yosryahmed@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>,
- Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240608023654.3513385-1-yosryahmed@google.com>
-From: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mpenttil@redhat.com>
-In-Reply-To: <20240608023654.3513385-1-yosryahmed@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c4b:b0:369:f7ca:a361 with SMTP id
+ e9e14a558f8ab-37580303aebmr3387565ab.1.1717820368771; Fri, 07 Jun 2024
+ 21:19:28 -0700 (PDT)
+Date: Fri, 07 Jun 2024 21:19:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000de6b81061a5938d6@google.com>
+Subject: [syzbot] [btrfs?] INFO: trying to register non-static key in btrfs_stop_all_workers
+From: syzbot <syzbot+8e86db7d430e87415248@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/8/24 05:36, Yosry Ahmed wrote:
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index b9b35ef86d9be..ebb878d3e7865 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
->  
->  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
->  
-> +	/*
-> +	 * Large folios should not be swapped in while zswap is being used, as
-> +	 * they are not properly handled. Zswap does not properly load large
-> +	 * folios, and a large folio may only be partially in zswap.
-> +	 *
-> +	 * If any of the subpages are in zswap, reading from disk would result
-> +	 * in data corruption, so return true without marking the folio uptodate
-> +	 * so that an IO error is emitted (e.g. do_swap_page() will sigfault).
-> +	 *
-> +	 * Otherwise, return false and read the folio from disk.
-> +	 */
-> +	if (folio_test_large(folio)) {
-> +		if (xa_find(tree, &offset,
-> +			    offset + folio_nr_pages(folio) - 1, XA_PRESENT)) {
-> +			WARN_ON_ONCE(1);
-> +			return true;
-> +		}
+Hello,
 
-How does that work? Should it be xa_find_after() to not always find
-current entry?
+syzbot found the following issue on:
 
-And does it still mean those subsequent entries map to same folio?
+HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=176b7026980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=8e86db7d430e87415248
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-f06ce441.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/67a525046331/vmlinux-f06ce441.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/01865e308aa0/bzImage-f06ce441.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8e86db7d430e87415248@syzkaller.appspotmail.com
+
+BTRFS info (device loop2): last unmount of filesystem 395ef67a-297e-477c-816d-cd80a5b93e5d
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 PID: 9630 Comm: syz-executor.2 Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ assign_lock_key kernel/locking/lockdep.c:976 [inline]
+ register_lock_class+0xc2a/0x1230 kernel/locking/lockdep.c:1289
+ __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+ put_pwq_unlocked kernel/workqueue.c:1662 [inline]
+ put_pwq_unlocked kernel/workqueue.c:1655 [inline]
+ destroy_workqueue+0x5df/0xaa0 kernel/workqueue.c:5851
+ btrfs_stop_all_workers+0x29f/0x370 fs/btrfs/disk-io.c:1804
+ close_ctree+0x4e3/0xf90 fs/btrfs/disk-io.c:4365
+ generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+ kill_anon_super+0x3a/0x60 fs/super.c:1226
+ btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf72e5579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000ffbeced8 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
+RAX: 0000000000000000 RBX: 00000000ffbecf80 RCX: 0000000000000009
+RDX: 00000000f743bff4 RSI: 00000000f738c361 RDI: 00000000ffbee024
+RBP: 00000000ffbecf80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in kernel/locking/qspinlock.c:131:9
+index 855 is out of range for type 'long unsigned int [8]'
+CPU: 0 PID: 9630 Comm: syz-executor.2 Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x110/0x150 lib/ubsan.c:429
+ decode_tail kernel/locking/qspinlock.c:131 [inline]
+ __pv_queued_spin_lock_slowpath+0xcb2/0xcc0 kernel/locking/qspinlock.c:468
+ pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
+ queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
+ queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+ do_raw_spin_lock+0x210/0x2c0 kernel/locking/spinlock_debug.c:116
+ put_pwq_unlocked kernel/workqueue.c:1662 [inline]
+ put_pwq_unlocked kernel/workqueue.c:1655 [inline]
+ destroy_workqueue+0x5df/0xaa0 kernel/workqueue.c:5851
+ btrfs_stop_all_workers+0x29f/0x370 fs/btrfs/disk-io.c:1804
+ close_ctree+0x4e3/0xf90 fs/btrfs/disk-io.c:4365
+ generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+ kill_anon_super+0x3a/0x60 fs/super.c:1226
+ btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf72e5579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000ffbeced8 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
+RAX: 0000000000000000 RBX: 00000000ffbecf80 RCX: 0000000000000009
+RDX: 00000000f743bff4 RSI: 00000000f738c361 RDI: 00000000ffbee024
+RBP: 00000000ffbecf80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+---[ end trace ]---
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
---Mika
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
