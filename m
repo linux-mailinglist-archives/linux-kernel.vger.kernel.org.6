@@ -1,205 +1,198 @@
-Return-Path: <linux-kernel+bounces-207189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E70901379
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 22:55:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6597690137B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 23:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE491C20DE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:55:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F9F5B215C7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 21:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876CD219F6;
-	Sat,  8 Jun 2024 20:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YQ5fiA/i"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4444421345;
+	Sat,  8 Jun 2024 21:09:30 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CC21B966
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 20:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363D2FC19
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 21:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717880128; cv=none; b=eQc7MCY7WU8AYICheZySJFCgCS6rZxlJzydOgOQ7AoAVoH4LAROPM2rhjII1Il5EE6kTrA+SoO4mV93yG7G6KlLBtvQCwpuC38B72Lm8A1QlIQiQ2f7mTY5XDiIN5nTONd/cnnDfT9FjqSojSKYfBzJnGqPdmRYTmCvKDVYpJk8=
+	t=1717880969; cv=none; b=us/bWz8E6rvUAGsC8hmbsk4mRRioM8dhvP5W9Pc64jpU/xG6DTbp9SUrIXkIm8NUQvPekgR4pR939vBNRs1qzrF9kMM/uE/+EmUz1i7dASJPhXXcgpPVbg5dyKpoz7z5sPK0OAmwfe+uPoRfkQ+ruFPtyiywV77vJqIbGGtKEHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717880128; c=relaxed/simple;
-	bh=85qXbyqX6RxIt4uYLrSaAWXRZLFbmQAyyxDKG3decKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RreMcslfyPUoltGH+D1IMI0Fu3IlpTgLPzsbSWlKlZjA4mkq9LuAjuD2YVRHmxCT2WB3dQbS4rw5QZcVEfcPDzYCqNlgxBjlZQRuKRa3DwgT84C5ixISVpSmV7d/mpgEyR2Bo/aSuFv6PrHioeZ56hKlXjQXwNww6/7m9Eq2NKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YQ5fiA/i; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so49605a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 13:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717880124; x=1718484924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8fZXZV0kR4ym1XRcBTj6zdWLTsFZy0CZQ2wcW79A4Pg=;
-        b=YQ5fiA/i9irEZv950RSdF+rt1Q/nv0owxU5c2taFyR9SX5KN64c+AN0WKrr2ViIJv+
-         ZRGAVMLeYhfyDW9E1zmpcir+XT+EIy2/jKRwVZqm3eYUyX2zeoyijsUwyj+izMS/+v3m
-         PtmzSG44bHWQU/+fk4scIfw1KPRf2uIdpLLfc=
+	s=arc-20240116; t=1717880969; c=relaxed/simple;
+	bh=fx2cUn1aGGTl72TzVzQp1Te/OpJg4rXmMYSOls+0/BE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ofmOvg44G7n9JFniPbxW3seuegSoO9gl3MbQQJcJgmxDak6Z7VrbNZScYxSYXRw8s2XO1S6jQvRFaUxnqltdIkm2q3PWdJ1uKcSyrUHAMKtHmY6nmEEx3Z1wycSKOJZvT5HdfFT3ICP93+VGyYpzlppfd49/S336S9VErkiRhfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb4e561314so370540039f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 14:09:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717880124; x=1718484924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8fZXZV0kR4ym1XRcBTj6zdWLTsFZy0CZQ2wcW79A4Pg=;
-        b=jXJEyUu1btWbu9wkd2UKd2GdvpvtjXx8iz/w1dYigszbndyRLBczbtN8TVqTJgxV0/
-         kRIWl96yDX25Bt70++E/VqXrH3aG0i+AGwWqBtbL6wBVgvHKISxPdIa9NTRsCgELbIoK
-         Y+XMBxhWPasFy4ZxZezxuaecCTqReDD2IZeaQpjnBTcmmB/ajFrQFDKAXV7w9Wp1Edoq
-         PUa0eTc4mUhmRl2hDs3jjgmvruv1wqUmtj5Ny+PNH4z8mOzkfG3wKN637I422yjC+O0p
-         a1xKTRLLF8nkYMbML04R4SvDNJ4B88U7pil0ZabSLM55VwTmMszgHGDb4U+4HO5Jq3O9
-         9k8Q==
-X-Gm-Message-State: AOJu0YzfE9zT2rzKFsHjYCtnhFY39lwacao7K70bwRtSMy4ir3Xv/Wyj
-	z8CWqu+RRuR6pF+4P2Gi5pEIkSCrwlq5zJuP9kkImAEQJ0rquLL/XDLCQ5469Q58GMMpq8o4LHe
-	+za8=
-X-Google-Smtp-Source: AGHT+IExpfDLQxqQxlOeP2w4XUatmvhkMpMHPJRIe8fEM+ZFW7+j7uis3AlK/Raa7ispxpw7TsY5uw==
-X-Received: by 2002:a50:999b:0:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-57c610a6eecmr2692272a12.11.1717880123927;
-        Sat, 08 Jun 2024 13:55:23 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c5fd78477sm2582194a12.40.2024.06.08.13.55.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 13:55:22 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a68b54577aaso418815766b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 13:55:22 -0700 (PDT)
-X-Received: by 2002:a17:906:585:b0:a6f:1235:d82 with SMTP id
- a640c23a62f3a-a6f12350ed3mr42380466b.13.1717880121989; Sat, 08 Jun 2024
- 13:55:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717880967; x=1718485767;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t/a1GMGacPVXDdBIoJvowPyN1smkbn3A/XJO66RgH2g=;
+        b=AQiRfVWKrSnVdBFEW2bzCDRaf7dU0HqDT2a73gDfxdNk8DmTapPP4RoKn3S/oV/SKz
+         NAzIRs0WSPaX0ENXogW3CMIDYeqx2T3xSvZg9cgkxb+MiXHAbuRJ1NZIJWwINdTkKVLN
+         +USFNb0beu5IZxmWjTipFJa2SxCy5kbedEoShLIKhcwv2sYk7JGIQlglKZlauAUPkOc9
+         jyr3f3bbv+i6QWuVQ1epSuCItZBc77pjsIZxaBnzN+9cpUqZv9fK0s/WZcBtS19irfNq
+         hBjIC6i9vRV86sNRkcOd0Yxc3F7wwLB78jabGMBceBjF7tYyC4lCjKuaOHwSmM586PCn
+         yVcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJyAxD6bh9tVJoXkKydWO/hSJ/osO67jSUXSiOL9R9vGyXJWOp83RM9IjCBZyS7y6d9N9EtN7vYqrRIWeDWFS73eKKIHyRMfmOYcIH
+X-Gm-Message-State: AOJu0YzuhE1ht6X6/B5tvuPLjhLrH7L5XaFu1g87D3glPPbdDfkQ//YA
+	ZDW6Iq5RoMcfIkjj7lrkJ9QuqwH8gBUatABz2c9/sxAaUru6ZPCsmV4Upu6SMII54eWfMSH461n
+	siLbuMr4QsTGog+yHn+8rsGxNb+Hxt4eUNUDBJL8CocK3eeDFRBIpMtY=
+X-Google-Smtp-Source: AGHT+IHkVLOC4GAFi09SRk6jmIudmyxj7G9za864sinCt8GMUPwNOVAjWB+Tjr9irnQFcOMwb1LGznGPPW1MLVqhjXOca30gJ0mb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
-In-Reply-To: <20240608193504.429644-2-torvalds@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 8 Jun 2024 13:55:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
-Message-ID: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: multipart/mixed; boundary="0000000000007054e4061a6722a6"
-
---0000000000007054e4061a6722a6
+X-Received: by 2002:a05:6e02:17cd:b0:374:64df:681c with SMTP id
+ e9e14a558f8ab-375803a726cmr5106655ab.4.1717880967192; Sat, 08 Jun 2024
+ 14:09:27 -0700 (PDT)
+Date: Sat, 08 Jun 2024 14:09:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d0f165061a6754c3@google.com>
+Subject: [syzbot] [mm?] KMSAN: uninit-value in zswap_store
+From: syzbot <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
+	syzkaller-bugs@googlegroups.com, yosryahmed@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 8 Jun 2024 at 12:43, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Needs more comments and testing, but it works, and has a generic
-> fallback for architectures that don't support it.
+Hello,
 
-.. and here is the TOTALLY UNTESTED patch to implement the arm64
-version of runtime constants.
+syzbot found the following issue on:
 
-It almost certainly does not work. I'm too scared to test it.  I may
-start to recognize arm64 instructions, but rewriting them on the fly
-is another thing entirely, and I'm fairly sure this needs an  I$ sync
-and probably modifying the instructions using another address even
-during early boot.
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=113f3fd6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c1fe13fcb51574b249b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-So this is a "throw it over the fence to the actually competent arm64
-people" patch.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Catalin, Will? This depends on the infrastructure that I added in
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
-   https://lore.kernel.org/all/20240608193504.429644-2-torvalds@linux-foundation.org/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com
 
-which is actually tested on the x86-64 side.
+=====================================================
+BUG: KMSAN: uninit-value in zswap_is_page_same_filled mm/zswap.c:1481 [inline]
+BUG: KMSAN: uninit-value in zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
+ zswap_is_page_same_filled mm/zswap.c:1481 [inline]
+ zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
+ swap_writepage+0x126/0x4c0 mm/page_io.c:198
+ shmem_writepage+0x1826/0x1f70 mm/shmem.c:1518
+ pageout mm/vmscan.c:660 [inline]
+ shrink_folio_list+0x4a55/0x7910 mm/vmscan.c:1323
+ evict_folios+0x9d7f/0xcc20 mm/vmscan.c:4537
+ try_to_shrink_lruvec+0x160e/0x1a50 mm/vmscan.c:4733
+ shrink_one+0x66f/0xd40 mm/vmscan.c:4772
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4935 [inline]
+ shrink_node+0x4856/0x55f0 mm/vmscan.c:5894
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat mm/vmscan.c:6895 [inline]
+ kswapd+0x1eba/0x4460 mm/vmscan.c:7164
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-I did test that the code generation looks superficially sane, and this generates
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:122 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
+ iterate_and_advance include/linux/iov_iter.h:271 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x2ae0 lib/iov_iter.c:481
+ generic_perform_write+0x4c1/0xc60 mm/filemap.c:3982
+ shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:2920
+ do_iter_readv_writev+0x7e6/0x960
+ vfs_iter_write+0x459/0xd00 fs/read_write.c:895
+ lo_write_bvec drivers/block/loop.c:246 [inline]
+ lo_write_simple drivers/block/loop.c:267 [inline]
+ do_req_filebacked drivers/block/loop.c:491 [inline]
+ loop_handle_cmd drivers/block/loop.c:1907 [inline]
+ loop_process_work+0x1502/0x3440 drivers/block/loop.c:1942
+ loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1973
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
+ worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-        mov     x1, #0xcdef
-        movk    x1, #0x89ab, lsl #16
-        movk    x1, #0x4567, lsl #32
-        movk    x1, #0x123, lsl #48
-        ...
-        lsr     w0, w25, #12
-        ldr     x0, [x1, x0, lsl #3]
+Uninit was created at:
+ __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+ alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
+ alloc_pages mm/mempolicy.c:2335 [inline]
+ folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
+ filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
+ __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
+ grow_dev_folio fs/buffer.c:1042 [inline]
+ grow_buffers fs/buffer.c:1108 [inline]
+ __getblk_slow fs/buffer.c:1134 [inline]
+ bdev_getblk+0x39b/0xc80 fs/buffer.c:1429
+ __getblk include/linux/buffer_head.h:355 [inline]
+ sb_getblk include/linux/buffer_head.h:361 [inline]
+ ext4_getblk+0x3da/0xe00 fs/ext4/inode.c:843
+ ext4_xattr_inode_write fs/ext4/xattr.c:1421 [inline]
+ ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1596 [inline]
+ ext4_xattr_set_entry+0x574d/0x6880 fs/ext4/xattr.c:1718
+ ext4_xattr_block_set+0xb94/0x4fb0 fs/ext4/xattr.c:2037
+ ext4_xattr_move_to_block fs/ext4/xattr.c:2654 [inline]
+ ext4_xattr_make_inode_space fs/ext4/xattr.c:2729 [inline]
+ ext4_expand_extra_isize_ea+0x20bd/0x3560 fs/ext4/xattr.c:2821
+ __ext4_expand_extra_isize+0x5dc/0x680 fs/ext4/inode.c:5789
+ ext4_try_to_expand_extra_isize fs/ext4/inode.c:5832 [inline]
+ __ext4_mark_inode_dirty+0x70d/0xa10 fs/ext4/inode.c:5910
+ ext4_delete_inline_entry+0x650/0x7d0 fs/ext4/inline.c:1753
+ ext4_delete_entry+0x13f/0x7d0 fs/ext4/namei.c:2719
+ __ext4_unlink+0x9b8/0x11b0 fs/ext4/namei.c:3273
+ ext4_unlink+0x226/0x630 fs/ext4/namei.c:3321
+ vfs_unlink+0x676/0xa30 fs/namei.c:4343
+ do_unlinkat+0x823/0xe10 fs/namei.c:4407
+ __do_sys_unlinkat fs/namei.c:4450 [inline]
+ __se_sys_unlinkat fs/namei.c:4443 [inline]
+ __x64_sys_unlinkat+0x17c/0x230 fs/namei.c:4443
+ x64_sys_call+0x846/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:264
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-for the dcache hash lookup (those constants are obviously the ones
-that get rewritten after the hash table has been allocated and the
-size becomes fixed).
+CPU: 1 PID: 88 Comm: kswapd1 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
 
-And honestly, I may have gotten even the simple part of instruction
-rewriting wrong (ie maybe I'm filling in the wrong bit locations - I'm
-reading the architecture manual, not actually *testing* anything).
 
-Think of this patch mostly as a "look, adding another architecture
-isn't *that* hard - even if the constant value is spread out in the
-instructions".
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-                Linus
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
---0000000000007054e4061a6722a6
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-arm64-add-runtime-const-support.patch"
-Content-Disposition: attachment; 
-	filename="0001-arm64-add-runtime-const-support.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lx6lemy50>
-X-Attachment-Id: f_lx6lemy50
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-RnJvbSBiZWZjM2Q0OTM2NmZiMDQ5YjY1Njc5ZmIzN2ZhNzAzZmU0MTlhN2U4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFNhdCwgOCBKdW4gMjAyNCAxMzoyMjozMSAtMDcwMApTdWJqZWN0OiBb
-UEFUQ0hdIGFybTY0OiBhZGQgJ3J1bnRpbWUgY29uc3QnIHN1cHBvcnQKCk1vbW15IG1vbW15IEkn
-bSBzY2FyZWQKLS0tCiBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8IDcz
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrCiBhcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxk
-cy5TICAgICAgICB8ICAzICsrCiAyIGZpbGVzIGNoYW5nZWQsIDc2IGluc2VydGlvbnMoKykKIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaAoK
-ZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oIGIvYXJj
-aC9hcm02NC9pbmNsdWRlL2FzbS9ydW50aW1lLWNvbnN0LmgKbmV3IGZpbGUgbW9kZSAxMDA2NDQK
-aW5kZXggMDAwMDAwMDAwMDAwLi43ZDQwMmFlNmQzYzIKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNo
-L2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaApAQCAtMCwwICsxLDczIEBACisvKiBT
-UERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLworI2lmbmRlZiBfQVNNX1JVTlRJTUVf
-Q09OU1RfSAorI2RlZmluZSBfQVNNX1JVTlRJTUVfQ09OU1RfSAorCisjZGVmaW5lIHJ1bnRpbWVf
-Y29uc3RfcHRyKHN5bSkgKHsJCQkJXAorCXR5cGVvZihzeW0pIF9fcmV0OwkJCQkJXAorCWFzbSgi
-MTpcdCIJCQkJCQlcCisJCSJtb3Z6ICUwLCAjMHhjZGVmXG5cdCIJCQkJXAorCQkibW92ayAlMCwg
-IzB4ODlhYiwgbHNsICMxNlxuXHQiCQkJXAorCQkibW92ayAlMCwgIzB4NDU2NywgbHNsICMzMlxu
-XHQiCQkJXAorCQkibW92ayAlMCwgIzB4MDEyMywgbHNsICM0OFxuXHQiCQkJXAorCQkiLnB1c2hz
-ZWN0aW9uIHJ1bnRpbWVfcHRyXyIgI3N5bSAiLFwiYVwiXG5cdCIJXAorCQkiLmxvbmcgMWIgLSAu
-XG5cdCIJCQkJXAorCQkiLnBvcHNlY3Rpb24iCQkJCQlcCisJCToiPXIiIChfX3JldCkpOwkJCQkJ
-XAorCV9fcmV0OyB9KQorCisjZGVmaW5lIHJ1bnRpbWVfY29uc3Rfc2hpZnRfcmlnaHRfMzIodmFs
-LCBzeW0pICh7CQlcCisJdW5zaWduZWQgbG9uZyBfX3JldDsJCQkJCVwKKwlhc20oIjE6XHQiCQkJ
-CQkJXAorCQkibHNyICV3MCwldzEsIzEyXG5cdCIJCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRp
-bWVfc2hpZnRfIiAjc3ltICIsXCJhXCJcblx0IglcCisJCSIubG9uZyAxYiAtIC5cblx0IgkJCQlc
-CisJCSIucG9wc2VjdGlvbiIJCQkJCVwKKwkJOiI9ciIgKF9fcmV0KQkJCQkJXAorCQk6InIiICgw
-dSsodmFsKSkpOwkJCQlcCisJX19yZXQ7IH0pCisKKyNkZWZpbmUgcnVudGltZV9jb25zdF9pbml0
-KHR5cGUsIHN5bSwgdmFsdWUpIGRvIHsJXAorCWV4dGVybiBzMzIgX19zdGFydF9ydW50aW1lXyMj
-dHlwZSMjXyMjc3ltW107CVwKKwlleHRlcm4gczMyIF9fc3RvcF9ydW50aW1lXyMjdHlwZSMjXyMj
-c3ltW107CVwKKwlydW50aW1lX2NvbnN0X2ZpeHVwKF9fcnVudGltZV9maXh1cF8jI3R5cGUsCVwK
-KwkJKHVuc2lnbmVkIGxvbmcpKHZhbHVlKSwgCQlcCisJCV9fc3RhcnRfcnVudGltZV8jI3R5cGUj
-I18jI3N5bSwJCVwKKwkJX19zdG9wX3J1bnRpbWVfIyN0eXBlIyNfIyNzeW0pOwkJXAorfSB3aGls
-ZSAoMCkKKworLy8gMTYtYml0IGltbWVkaWF0ZSBmb3Igd2lkZSBtb3ZlIChtb3Z6IGFuZCBtb3Zr
-KSBpbiBiaXRzIDUuLjIwCitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwXzE2KHVu
-c2lnbmVkIGludCAqcCwgdW5zaWduZWQgaW50IHZhbCkKK3sKKwl1bnNpZ25lZCBpbnQgaW5zbiA9
-ICpwOworCWluc24gJj0gMHhmZmUwMDAxZjsKKwlpbnNuIHw9ICh2YWwgJiAweGZmZmYpIDw8IDU7
-CisJKnAgPSBpbnNuOworfQorCitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwX3B0
-cih2b2lkICp3aGVyZSwgdW5zaWduZWQgbG9uZyB2YWwpCit7CisJX19ydW50aW1lX2ZpeHVwXzE2
-KHdoZXJlLCB2YWwpOworCV9fcnVudGltZV9maXh1cF8xNih3aGVyZSs0LCB2YWwgPj4gMTYpOwor
-CV9fcnVudGltZV9maXh1cF8xNih3aGVyZSs4LCB2YWwgPj4gMzIpOworCV9fcnVudGltZV9maXh1
-cF8xNih3aGVyZSsxMiwgdmFsID4+IDQ4KTsKK30KKworLy8gSW1tZWRpYXRlIHZhbHVlIGlzIDUg
-Yml0cyBzdGFydGluZyBhdCBiaXQgIzE2CitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2Zp
-eHVwX3NoaWZ0KHZvaWQgKndoZXJlLCB1bnNpZ25lZCBsb25nIHZhbCkKK3sKKwl1bnNpZ25lZCBp
-bnQgaW5zbiA9ICoodW5zaWduZWQgaW50ICopd2hlcmU7CisJaW5zbiAmPSAweGZmYzBmZmZmOwor
-CWluc24gfD0gKHZhbCAmIDYzKSA8PCAxNjsKKwkqKHVuc2lnbmVkIGludCAqKXdoZXJlID0gaW5z
-bjsKK30KKworc3RhdGljIGlubGluZSB2b2lkIHJ1bnRpbWVfY29uc3RfZml4dXAodm9pZCAoKmZu
-KSh2b2lkICosIHVuc2lnbmVkIGxvbmcpLAorCXVuc2lnbmVkIGxvbmcgdmFsLCBzMzIgKnN0YXJ0
-LCBzMzIgKmVuZCkKK3sKKwl3aGlsZSAoc3RhcnQgPCBlbmQpIHsKKwkJZm4oKnN0YXJ0ICsgKHZv
-aWQgKilzdGFydCwgdmFsKTsKKwkJc3RhcnQrKzsKKwl9Cit9CisKKyNlbmRpZgpkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm02NC9rZXJuZWwvdm1saW51eC5sZHMuUyBiL2FyY2gvYXJtNjQva2VybmVsL3Zt
-bGludXgubGRzLlMKaW5kZXggNzU1YTIyZDRmODQwLi41NWE4ZTMxMGVhMTIgMTAwNjQ0Ci0tLSBh
-L2FyY2gvYXJtNjQva2VybmVsL3ZtbGludXgubGRzLlMKKysrIGIvYXJjaC9hcm02NC9rZXJuZWwv
-dm1saW51eC5sZHMuUwpAQCAtMjY0LDYgKzI2NCw5IEBAIFNFQ1RJT05TCiAJCUVYSVRfREFUQQog
-CX0KIAorCVJVTlRJTUVfQ09OU1Qoc2hpZnQsIGRfaGFzaF9zaGlmdCkKKwlSVU5USU1FX0NPTlNU
-KHB0ciwgZGVudHJ5X2hhc2h0YWJsZSkKKwogCVBFUkNQVV9TRUNUSU9OKEwxX0NBQ0hFX0JZVEVT
-KQogCUhZUEVSVklTT1JfUEVSQ1BVX1NFQ1RJT04KIAotLSAKMi40NS4xCgo=
---0000000000007054e4061a6722a6--
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
