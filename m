@@ -1,538 +1,244 @@
-Return-Path: <linux-kernel+bounces-207171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BE890133C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:29:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335EF90133E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 20:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696261F2200C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6CA1F21F7C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 18:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB52D1CD31;
-	Sat,  8 Jun 2024 18:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA191CAB9;
+	Sat,  8 Jun 2024 18:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctwTgDsy"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="loif6Zv0"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3846FC6;
-	Sat,  8 Jun 2024 18:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE2B1BF47
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 18:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717871342; cv=none; b=N17+8pYF5t4Mo5xZI6a8zHGBhoEdpXbsvXIYctEmMh3xlE3U/QLXITiTxA9MT0CWXdiU00wodQp89ykSWNJJviSsSYIysBTXOFiWmO/jKZTZ8ubJEzgq0Z6fk5JbP5w4LcTsw0oFX8b2/B3FBq2LfxhgZkkZZVqkleabcWXtwWk=
+	t=1717872154; cv=none; b=Spnt/W5+4/yt5DScREHW+edUwsc992U6QPBBbc38zzKq0pp+jGU76avUM9zr65VhgguhJqClhZ9wU5jLnoiaCsVw7P/iuTEt400IslZJumE/7lJV9JUlx6VZNaGgTyO4i2V9BTidnNKsAuhaDvpWNdbUzfFqNRUdRSHbkzXagBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717871342; c=relaxed/simple;
-	bh=r72H5ZdNmR3C8f3b+3az13Jp1Z/mZ69OqWKI5POB724=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvfUobiO3VzwGoVXWacdW1SsGcOk0rLPplcaAt+NOArn6/8xcs41ei+d9vcs3d3LccHlB8vwrUsBriDBAajn24qRDW7f7UZinwKeoaDo6QsKdMDAqGhPYs7/hdpYd9CtzMbufWy8jhGOpnWJGn0/y9oOQejXeAoMq3cU2SSw/fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctwTgDsy; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1717872154; c=relaxed/simple;
+	bh=60R9bElBX9vuDPwrJY9GGMz9/9prp1ljHtjQ8ovslRA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZfPhO3FMQwsfjGuT54UpYVttHE0O66B4pO1g5lGZYI9KYnxfOA6MQeqKLplNqFykXHv6eV53H7klTpYwTfKIMTmBOM2speXLzasNWBLFBMpbPh04+2LFGQAJfvzIdgXchHd336YlrUR6NNUAvVdcCtZdd1ZylCC3egjlGUQRBW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=loif6Zv0; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so27832745e9.1;
-        Sat, 08 Jun 2024 11:28:59 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70417a6c328so1248028b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 11:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717871338; x=1718476138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YEtjOYlWexEgJJsvLgOBtWZTXzXSDRZuW01UHOrnf8=;
-        b=ctwTgDsyVDzFj7B/BtBQDO1ALM1j7M5vYqfhS15Qg2olc3uKEiLyrumVBK+xtJ9yK8
-         3wofSWOUwheC+OIMutPlMmIfDYCCovvLOMWyaqE8P+ECvvT99R3qS/o9A6co3g/CC+Ap
-         9YYtXfbt3cUMvTRDjS0o9LOC5EsRuX0CBqdI40jnm15W/WrvcWTbmKe2ydE+SUzKw+SJ
-         dc7Y2IY6gojhpdUxwTLlOCVJRZr3pn5NYhVwM1QtqGdeCsN6yThvmHW2hdGlF9M8Wj6M
-         iUb5BkswlXCHIrGgrOdf7FmUsdgFh44hXwhDUgXbJASajA7rI5BMFGaFTdfy8MYN4W4i
-         DZBw==
+        d=gmail.com; s=20230601; t=1717872152; x=1718476952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mnJ7/aQ/WWEpgURJ0oL3mgCg6+vYhnKqhoFl7B/S6zI=;
+        b=loif6Zv0tJImjDbsJXAvoxSplkN6V9u40SkMP2ry5YQD0okqJRXyfGmCcmHya9JFpX
+         adzCLFcPmqWmk8VevQp2sp/xHT9PIqCvFSVq4CIEYKZ3DTFnff/jcMA34D+nMESkZuH4
+         KmbHE5d+r1i7DZ95loGhCzksCvUp7l8BNQDA3705d9c04VQVIuugJNbRXvP6BeM0aOdq
+         2Y1jXf9JARlRcWweTcjmndbG0kuSMaAZITnZL/mGACoySDh86Op19lZruWXkcV3dzpp1
+         p+f53EjS+Eikt+fzNZmymEYn8WAcnYngFY0yT2CUx4qYKNPFYCUbI0XrRTlMEQ4hKZvA
+         qSYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717871338; x=1718476138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2YEtjOYlWexEgJJsvLgOBtWZTXzXSDRZuW01UHOrnf8=;
-        b=V/DxNDflyv2PNzAHdqQm3bRYHvkFyxQiFzaqrRwZfazeWTxZESuV0tO8uLKaspmaF6
-         Jz//LwMskJC8nVrgvIf0PtNDVnlAkO1UCKK/m/E02/CUhq1hBDIGiY4QTZppi/795BBk
-         sgjhQ2SGh4dHpXgpj3+mqt9qF3LKbjlPJ4Ev/qkmswdyUVvwYpliOZ23QXaxUpC0Dst/
-         Zux7ThcuCcBlXu3JAC8nvFhE8xSj4T43MswdVdDxL1D7XbZEx29d/I91NuTyy+IMgB8G
-         9rczKuWpsErgOKfkfCT0Lanq45Vg252gzBmjnKkrvWoIMcfdtBbIK8OOG7hgy3x6QiHR
-         v6YA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsoOMxT4GwncXL/pmTAmidhcMYMx6bnWEUeQ88ZvhnEDzeos7G0jJgL/SMSm+cS+th0ncuoLENaD5s2AEFnU2dI8nbbgwi4l/1vvJCvzxlEnDov3Adve3tgL+DqbIZ7VK5ctY+WpGNg9o=
-X-Gm-Message-State: AOJu0Yw4qT4b9MjlW8Yb7dTdNF7gugcwas+kN6TeYjXxXL00TqsSrnle
-	WUFRTsDv3SZHsNCX8LcRaWNfnzvs5WmfZWJmIbmqzHCS9v+XFxxT
-X-Google-Smtp-Source: AGHT+IHRfQalvrjhBk4LUAX34SPJH4ABuSUBsSWP6sRBAqfMjmJVtUVfXWNuiX/0tr5jtd7b5lbfCQ==
-X-Received: by 2002:a05:600c:3503:b0:41a:ff7d:2473 with SMTP id 5b1f17b1804b1-421649e9f54mr45797205e9.4.1717871337946;
-        Sat, 08 Jun 2024 11:28:57 -0700 (PDT)
-Received: from fedora ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421602aa1adsm48851555e9.1.2024.06.08.11.28.56
+        d=1e100.net; s=20230601; t=1717872152; x=1718476952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mnJ7/aQ/WWEpgURJ0oL3mgCg6+vYhnKqhoFl7B/S6zI=;
+        b=m8Bwap26l51X4wPF4IvNWHKSr3hbQoIlmam52ox60IOlwugguC1ZsOnQcZsfw/WkAr
+         GiMBRGF/nZ9OAHJ6Id6lp+U5ZfOvLMZdFXtpdzE3YZ7G8bVVov6r6d6Mu0WWgHvl22tO
+         2JLN6WpHqNfq67RToOll6QEpK0cWpob4cHA7W1qn66yDkIMKg2cAU+H3BkU0dBQVE81Q
+         fOEbuDQ7FmFc2bz/POdX9vHc3H6j0vcKy4/QuBwlUj+95ts9cF3rNbRKspPx/rxKCi63
+         zmGwY3AtpWTd/Yk5LNwR3VZ1rOGNw1tnv+3NhcY4UeHs4+fK+q/kXVe/h6vilmkKtSiR
+         MX8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKj0G1lrHFbY6DnBfJiFB7ppFUieMfp5I7kS26pYmDwcsfvMlHCUQZqnX35VTsS3jHW6AdwF4Am+Z95LYNxK1yuuoBe7KMJ6AGMzi+
+X-Gm-Message-State: AOJu0YzOmI83O+YdAQ+XBPjeGcftEnLtY2VB5bUYR3y4EvT0bkzwDQrc
+	6IrVYeeIImhiT8VI1LMMUYR7QV0myDzkeRY1m15wLJc8fOBC18/K
+X-Google-Smtp-Source: AGHT+IGD9n2JL9aeYm1jQ2mS2lR6xMdQ9+XHhumhVOXyQy8832xUQ+hZhVLeSibUpUkcK8InftoY2Q==
+X-Received: by 2002:a05:6a00:3d10:b0:704:1c78:4f8a with SMTP id d2e1a72fcca58-7041c785413mr3636546b3a.21.1717872151948;
+        Sat, 08 Jun 2024 11:42:31 -0700 (PDT)
+Received: from mari.. ([2804:431:cfd3:42f5:56d2:4948:9090:477d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd3780absm4324264b3a.21.2024.06.08.11.42.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 11:28:57 -0700 (PDT)
-Date: Sat, 8 Jun 2024 20:28:55 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-	Fabio Baltieri <fabiobaltieri@chromium.org>,
-	Ivan Gorinov <linux-kernel@altimeter.info>,
-	Johannes Roith <johannes@gnu-linux.rocks>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
- modules
-Message-ID: <ZmSi5_-4mD4AaIJW@fedora>
-References: <20240529094816.1859073-1-arnd@kernel.org>
+        Sat, 08 Jun 2024 11:42:31 -0700 (PDT)
+From: Marilene A Garcia <marilene.agarcia@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Marilene A Garcia <marilene.agarcia@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dca: Change the format of kerneldoc parameters to fix warnings
+Date: Sat,  8 Jun 2024 15:42:10 -0300
+Message-Id: <20240608184210.1393921-1-marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529094816.1859073-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+According to the kernel documentation, the format of the parameter
+descriptions should be "@arg: description".
 
-On Wed, May 29, 2024 at 11:48:05AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The hid-uclogic-params.o and hid-uclogic-rdesc.o files are linked
-> into both the driver module and the unit test, which triggers a
-> W=1 warning:
-> 
-> scripts/Makefile.build:236: drivers/hid/Makefile: hid-uclogic-rdesc.o is added to multiple modules: hid-uclogic hid-uclogic-test
-> scripts/Makefile.build:236: drivers/hid/Makefile: hid-uclogic-params.o is added to multiple modules: hid-uclogic hid-uclogic-test
-> 
-> Avoids this by moving these two files into a separate module
-> that is used by the driver and the unit test.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I have made patches for all such warnings in the tree, this is one I'm not
-> sure about, maybe there is a better fix.
-> ---
->  drivers/hid/Makefile             | 12 ++----
->  drivers/hid/hid-uclogic-params.c |  8 ++++
->  drivers/hid/hid-uclogic-rdesc.c  | 72 ++++++++++++++++++++++++++++++++
->  3 files changed, 84 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> index ce71b53ea6c5..864dfbae8ace 100644
-> --- a/drivers/hid/Makefile
-> +++ b/drivers/hid/Makefile
-> @@ -133,10 +133,8 @@ obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
->  obj-$(CONFIG_HID_TOPRE)	+= hid-topre.o
->  obj-$(CONFIG_HID_TWINHAN)	+= hid-twinhan.o
->  obj-$(CONFIG_HID_U2FZERO)	+= hid-u2fzero.o
-> -hid-uclogic-objs		:= hid-uclogic-core.o \
-> -				   hid-uclogic-rdesc.o \
-> -				   hid-uclogic-params.o
-> -obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
-> +hid-uclogic-objs		:= hid-uclogic-core.o
-> +obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o hid-uclogic-rdesc.o hid-uclogic-params.o
->  obj-$(CONFIG_HID_UDRAW_PS3)	+= hid-udraw-ps3.o
->  obj-$(CONFIG_HID_LED)		+= hid-led.o
->  obj-$(CONFIG_HID_XIAOMI)	+= hid-xiaomi.o
-> @@ -154,10 +152,8 @@ obj-$(CONFIG_HID_WINWING)	+= hid-winwing.o
->  obj-$(CONFIG_HID_SENSOR_HUB)	+= hid-sensor-hub.o
->  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR)	+= hid-sensor-custom.o
->  
-> -hid-uclogic-test-objs		:= hid-uclogic-rdesc.o \
-> -				   hid-uclogic-params.o \
-> -				   hid-uclogic-rdesc-test.o
-> -obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o
-> +hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
-> +obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o hid-uclogic-params.o hid-uclogic-params.o
->  
->  obj-$(CONFIG_USB_HID)		+= usbhid/
->  obj-$(CONFIG_USB_MOUSE)		+= usbhid/
+It also added some missing parameter descriptions and the module
+description.
 
-I tested your patch with:
+Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
+---
+Hello,
+This subsystem seems unmaintained, and because of that, I was wondering 
+if you could review the patch, Andrew.
 
-	hid-uclogic-objs		:= hid-uclogic-core.o \
-					   hid-uclogic-rdesc.o \
-					   hid-uclogic-params.o
-	obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
-	[...]
-	hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
-	obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic.o hid-uclogic-test.o
+These changes fix the following compiler warnings.
+These warnings happen using GCC compiler the command 'make W=1'.
+Thank you.
 
-And I think it is a bit more clear and it looks like it does the trick
-removing the warning.
+drivers/dca/dca-core.c:171: warning: Function parameter or struct member 'dev' not described in 'dca_add_requester'
+drivers/dca/dca-core.c:226: warning: Function parameter or struct member 'dev' not described in 'dca_remove_requester'
+drivers/dca/dca-core.c:258: warning: Function parameter or struct member 'dev' not described in 'dca_common_get_tag'
+drivers/dca/dca-core.c:258: warning: Function parameter or struct member 'cpu' not described in 'dca_common_get_tag'
+drivers/dca/dca-core.c:283: warning: Function parameter or struct member 'dev' not described in 'dca3_get_tag'
+drivers/dca/dca-core.c:283: warning: Function parameter or struct member 'cpu' not described in 'dca3_get_tag'
+drivers/dca/dca-core.c:296: warning: Function parameter or struct member 'cpu' not described in 'dca_get_tag'
+drivers/dca/dca-core.c:308: warning: Function parameter or struct member 'ops' not described in 'alloc_dca_provider'
+drivers/dca/dca-core.c:308: warning: Function parameter or struct member 'priv_size' not described in 'alloc_dca_provider'
+drivers/dca/dca-core.c:328: warning: Function parameter or struct member 'dca' not described in 'free_dca_provider'
+drivers/dca/dca-core.c:339: warning: Function parameter or struct member 'dca' not described in 'register_dca_provider'
+drivers/dca/dca-core.c:339: warning: Function parameter or struct member 'dev' not described in 'register_dca_provider'
+drivers/dca/dca-core.c:396: warning: Function parameter or struct member 'dca' not described in 'unregister_dca_provider'
+drivers/dca/dca-core.c:396: warning: Function parameter or struct member 'dev' not described in 'unregister_dca_provider'
+drivers/dca/dca-core.c:428: warning: Function parameter or struct member 'nb' not described in 'dca_register_notify'
+drivers/dca/dca-core.c:437: warning: Function parameter or struct member 'nb' not described in 'dca_unregister_notify'
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dca/dca.o
 
-Also, with that change only "EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);"
-is required. The other EXPORT_SYMBOL_GPL can be removed.
+ drivers/dca/dca-core.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-However, I'm not sure about what are the best practices using EXPORT_SYMBOL_GPL
-and if it should be used for each function/data in the .h file. Maybe that's
-why you added them.
+diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
+index ed3dac546dd6..f849386f8424 100644
+--- a/drivers/dca/dca-core.c
++++ b/drivers/dca/dca-core.c
+@@ -17,6 +17,7 @@
+ #define DCA_VERSION "1.12.1"
+ 
+ MODULE_VERSION(DCA_VERSION);
++MODULE_DESCRIPTION("Intel Direct Cache Access Driver");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Intel Corporation");
+ 
+@@ -165,7 +166,7 @@ static struct dca_provider *dca_find_provider_by_dev(struct device *dev)
+ 
+ /**
+  * dca_add_requester - add a dca client to the list
+- * @dev - the device that wants dca service
++ * @dev: the device that wants dca service
+  */
+ int dca_add_requester(struct device *dev)
+ {
+@@ -220,7 +221,7 @@ EXPORT_SYMBOL_GPL(dca_add_requester);
+ 
+ /**
+  * dca_remove_requester - remove a dca client from the list
+- * @dev - the device that wants dca service
++ * @dev: the device that wants dca service
+  */
+ int dca_remove_requester(struct device *dev)
+ {
+@@ -251,8 +252,8 @@ EXPORT_SYMBOL_GPL(dca_remove_requester);
+ 
+ /**
+  * dca_common_get_tag - return the dca tag (serves both new and old api)
+- * @dev - the device that wants dca service
+- * @cpu - the cpuid as returned by get_cpu()
++ * @dev: the device that wants dca service
++ * @cpu: the cpuid as returned by get_cpu()
+  */
+ static u8 dca_common_get_tag(struct device *dev, int cpu)
+ {
+@@ -276,8 +277,8 @@ static u8 dca_common_get_tag(struct device *dev, int cpu)
+ /**
+  * dca3_get_tag - return the dca tag to the requester device
+  *                for the given cpu (new api)
+- * @dev - the device that wants dca service
+- * @cpu - the cpuid as returned by get_cpu()
++ * @dev: the device that wants dca service
++ * @cpu: the cpuid as returned by get_cpu()
+  */
+ u8 dca3_get_tag(struct device *dev, int cpu)
+ {
+@@ -290,7 +291,7 @@ EXPORT_SYMBOL_GPL(dca3_get_tag);
+ 
+ /**
+  * dca_get_tag - return the dca tag for the given cpu (old api)
+- * @cpu - the cpuid as returned by get_cpu()
++ * @cpu: the cpuid as returned by get_cpu()
+  */
+ u8 dca_get_tag(int cpu)
+ {
+@@ -300,8 +301,8 @@ EXPORT_SYMBOL_GPL(dca_get_tag);
+ 
+ /**
+  * alloc_dca_provider - get data struct for describing a dca provider
+- * @ops - pointer to struct of dca operation function pointers
+- * @priv_size - size of extra mem to be added for provider's needs
++ * @ops: pointer to struct of dca operation function pointers
++ * @priv_size: size of extra mem to be added for provider's needs
+  */
+ struct dca_provider *alloc_dca_provider(const struct dca_ops *ops,
+ 					int priv_size)
+@@ -321,8 +322,7 @@ EXPORT_SYMBOL_GPL(alloc_dca_provider);
+ 
+ /**
+  * free_dca_provider - release the dca provider data struct
+- * @ops - pointer to struct of dca operation function pointers
+- * @priv_size - size of extra mem to be added for provider's needs
++ * @dca: struct created by alloc_dca_provider()
+  */
+ void free_dca_provider(struct dca_provider *dca)
+ {
+@@ -332,8 +332,8 @@ EXPORT_SYMBOL_GPL(free_dca_provider);
+ 
+ /**
+  * register_dca_provider - register a dca provider
+- * @dca - struct created by alloc_dca_provider()
+- * @dev - device providing dca services
++ * @dca: struct created by alloc_dca_provider()
++ * @dev: device providing dca services
+  */
+ int register_dca_provider(struct dca_provider *dca, struct device *dev)
+ {
+@@ -390,7 +390,8 @@ EXPORT_SYMBOL_GPL(register_dca_provider);
+ 
+ /**
+  * unregister_dca_provider - remove a dca provider
+- * @dca - struct created by alloc_dca_provider()
++ * @dca: struct created by alloc_dca_provider()
++ * @dev: device providing dca services
+  */
+ void unregister_dca_provider(struct dca_provider *dca, struct device *dev)
+ {
+@@ -423,6 +424,7 @@ EXPORT_SYMBOL_GPL(unregister_dca_provider);
+ 
+ /**
+  * dca_register_notify - register a client's notifier callback
++ * @nb: notifier block to register
+  */
+ void dca_register_notify(struct notifier_block *nb)
+ {
+@@ -432,6 +434,7 @@ EXPORT_SYMBOL_GPL(dca_register_notify);
+ 
+ /**
+  * dca_unregister_notify - remove a client's notifier callback
++ * @nb: notifier block to unregister
+  */
+ void dca_unregister_notify(struct notifier_block *nb)
+ {
+-- 
+2.34.1
 
-Best wishes,
-Jose
-
-> diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
-> index 5bab006ec165..97ae7e4f61e1 100644
-> --- a/drivers/hid/hid-uclogic-params.c
-> +++ b/drivers/hid/hid-uclogic-params.c
-> @@ -133,6 +133,7 @@ void uclogic_params_hid_dbg(const struct hid_device *hdev,
->  	}
->  	hid_dbg(hdev, "}\n");
->  }
-> +EXPORT_SYMBOL_GPL(uclogic_params_hid_dbg);
->  
->  /**
->   * uclogic_params_get_str_desc - retrieve a string descriptor from a HID
-> @@ -660,6 +661,7 @@ void uclogic_params_cleanup(struct uclogic_params *params)
->  		memset(params, 0, sizeof(*params));
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(uclogic_params_cleanup);
->  
->  /**
->   * uclogic_params_get_desc() - Get a replacement report descriptor for a
-> @@ -732,6 +734,7 @@ int uclogic_params_get_desc(const struct uclogic_params *params,
->  	kfree(desc);
->  	return rc;
->  }
-> +EXPORT_SYMBOL_GPL(uclogic_params_get_desc);
->  
->  /**
->   * uclogic_params_init_invalid() - initialize tablet interface parameters,
-> @@ -1859,7 +1862,12 @@ int uclogic_params_init(struct uclogic_params *params,
->  	uclogic_params_cleanup(&p);
->  	return rc;
->  }
-> +EXPORT_SYMBOL_GPL(uclogic_params_init);
->  
->  #ifdef CONFIG_HID_KUNIT_TEST
->  #include "hid-uclogic-params-test.c"
->  #endif
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Nikolai Kondrashov");
-> +MODULE_DESCRIPTION("HID driver for UC-Logic devices tablet initialization and parameter retrieval");
-> diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic-rdesc.c
-> index b6dfdf6356a6..d4f1ee79e0a1 100644
-> --- a/drivers/hid/hid-uclogic-rdesc.c
-> +++ b/drivers/hid/hid-uclogic-rdesc.c
-> @@ -59,9 +59,11 @@ __u8 uclogic_rdesc_wp4030u_fixed_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp4030u_fixed_arr);
->  
->  const size_t uclogic_rdesc_wp4030u_fixed_size =
->  			sizeof(uclogic_rdesc_wp4030u_fixed_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp4030u_fixed_size);
->  
->  /* Fixed WP5540U report descriptor */
->  __u8 uclogic_rdesc_wp5540u_fixed_arr[] = {
-> @@ -136,9 +138,11 @@ __u8 uclogic_rdesc_wp5540u_fixed_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp5540u_fixed_arr);
->  
->  const size_t uclogic_rdesc_wp5540u_fixed_size =
->  			sizeof(uclogic_rdesc_wp5540u_fixed_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp5540u_fixed_size);
->  
->  /* Fixed WP8060U report descriptor */
->  __u8 uclogic_rdesc_wp8060u_fixed_arr[] = {
-> @@ -213,9 +217,11 @@ __u8 uclogic_rdesc_wp8060u_fixed_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp8060u_fixed_arr);
->  
->  const size_t uclogic_rdesc_wp8060u_fixed_size =
->  			sizeof(uclogic_rdesc_wp8060u_fixed_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp8060u_fixed_size);
->  
->  /* Fixed WP1062 report descriptor */
->  __u8 uclogic_rdesc_wp1062_fixed_arr[] = {
-> @@ -261,9 +267,11 @@ __u8 uclogic_rdesc_wp1062_fixed_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp1062_fixed_arr);
->  
->  const size_t uclogic_rdesc_wp1062_fixed_size =
->  			sizeof(uclogic_rdesc_wp1062_fixed_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_wp1062_fixed_size);
->  
->  /* Fixed PF1209 report descriptor */
->  __u8 uclogic_rdesc_pf1209_fixed_arr[] = {
-> @@ -338,9 +346,11 @@ __u8 uclogic_rdesc_pf1209_fixed_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_pf1209_fixed_arr);
->  
->  const size_t uclogic_rdesc_pf1209_fixed_size =
->  			sizeof(uclogic_rdesc_pf1209_fixed_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_pf1209_fixed_size);
->  
->  /* Fixed PID 0522 tablet report descriptor, interface 0 (stylus) */
->  __u8 uclogic_rdesc_twhl850_fixed0_arr[] = {
-> @@ -384,9 +394,11 @@ __u8 uclogic_rdesc_twhl850_fixed0_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed0_arr);
->  
->  const size_t uclogic_rdesc_twhl850_fixed0_size =
->  			sizeof(uclogic_rdesc_twhl850_fixed0_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed0_size);
->  
->  /* Fixed PID 0522 tablet report descriptor, interface 1 (mouse) */
->  __u8 uclogic_rdesc_twhl850_fixed1_arr[] = {
-> @@ -424,9 +436,11 @@ __u8 uclogic_rdesc_twhl850_fixed1_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed1_arr);
->  
->  const size_t uclogic_rdesc_twhl850_fixed1_size =
->  			sizeof(uclogic_rdesc_twhl850_fixed1_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed1_size);
->  
->  /* Fixed PID 0522 tablet report descriptor, interface 2 (frame buttons) */
->  __u8 uclogic_rdesc_twhl850_fixed2_arr[] = {
-> @@ -450,9 +464,11 @@ __u8 uclogic_rdesc_twhl850_fixed2_arr[] = {
->  	0x80,               /*      Input,                          */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed2_arr);
->  
->  const size_t uclogic_rdesc_twhl850_fixed2_size =
->  			sizeof(uclogic_rdesc_twhl850_fixed2_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twhl850_fixed2_size);
->  
->  /* Fixed TWHA60 report descriptor, interface 0 (stylus) */
->  __u8 uclogic_rdesc_twha60_fixed0_arr[] = {
-> @@ -499,9 +515,11 @@ __u8 uclogic_rdesc_twha60_fixed0_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed0_arr);
->  
->  const size_t uclogic_rdesc_twha60_fixed0_size =
->  			sizeof(uclogic_rdesc_twha60_fixed0_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed0_size);
->  
->  /* Fixed TWHA60 report descriptor, interface 1 (frame buttons) */
->  __u8 uclogic_rdesc_twha60_fixed1_arr[] = {
-> @@ -527,9 +545,11 @@ __u8 uclogic_rdesc_twha60_fixed1_arr[] = {
->  	0x81, 0x01, /*      Input (Constant),       */
->  	0xC0        /*  End Collection              */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed1_arr);
->  
->  const size_t uclogic_rdesc_twha60_fixed1_size =
->  			sizeof(uclogic_rdesc_twha60_fixed1_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_twha60_fixed1_size);
->  
->  /* Fixed report descriptor template for (tweaked) v1 pen reports */
->  const __u8 uclogic_rdesc_v1_pen_template_arr[] = {
-> @@ -581,9 +601,11 @@ const __u8 uclogic_rdesc_v1_pen_template_arr[] = {
->  	0xC0,                   /*      End Collection,                     */
->  	0xC0                    /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_pen_template_arr);
->  
->  const size_t uclogic_rdesc_v1_pen_template_size =
->  			sizeof(uclogic_rdesc_v1_pen_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_pen_template_size);
->  
->  /* Fixed report descriptor template for (tweaked) v2 pen reports */
->  const __u8 uclogic_rdesc_v2_pen_template_arr[] = {
-> @@ -647,9 +669,11 @@ const __u8 uclogic_rdesc_v2_pen_template_arr[] = {
->  	0xC0,                   /*      End Collection,                     */
->  	0xC0                    /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_pen_template_arr);
->  
->  const size_t uclogic_rdesc_v2_pen_template_size =
->  			sizeof(uclogic_rdesc_v2_pen_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_pen_template_size);
->  
->  /*
->   * Expand to the contents of a generic frame buttons report descriptor.
-> @@ -702,16 +726,22 @@ const size_t uclogic_rdesc_v2_pen_template_size =
->  const __u8 uclogic_rdesc_v1_frame_arr[] = {
->  	UCLOGIC_RDESC_FRAME_BUTTONS_BYTES(UCLOGIC_RDESC_V1_FRAME_ID, 8)
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_frame_arr);
-> +
->  const size_t uclogic_rdesc_v1_frame_size =
->  			sizeof(uclogic_rdesc_v1_frame_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v1_frame_size);
->  
->  /* Fixed report descriptor for (tweaked) v2 frame button reports */
->  const __u8 uclogic_rdesc_v2_frame_buttons_arr[] = {
->  	UCLOGIC_RDESC_FRAME_BUTTONS_BYTES(UCLOGIC_RDESC_V2_FRAME_BUTTONS_ID,
->  					  12)
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_buttons_arr);
-> +
->  const size_t uclogic_rdesc_v2_frame_buttons_size =
->  			sizeof(uclogic_rdesc_v2_frame_buttons_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_buttons_size);
->  
->  /* Fixed report descriptor for (tweaked) v2 frame touch ring reports */
->  const __u8 uclogic_rdesc_v2_frame_touch_ring_arr[] = {
-> @@ -758,8 +788,11 @@ const __u8 uclogic_rdesc_v2_frame_touch_ring_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_ring_arr);
-> +
->  const size_t uclogic_rdesc_v2_frame_touch_ring_size =
->  			sizeof(uclogic_rdesc_v2_frame_touch_ring_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_ring_size);
->  
->  /* Fixed report descriptor for (tweaked) v2 frame touch strip reports */
->  const __u8 uclogic_rdesc_v2_frame_touch_strip_arr[] = {
-> @@ -806,8 +839,11 @@ const __u8 uclogic_rdesc_v2_frame_touch_strip_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_strip_arr);
-> +
->  const size_t uclogic_rdesc_v2_frame_touch_strip_size =
->  			sizeof(uclogic_rdesc_v2_frame_touch_strip_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_touch_strip_size);
->  
->  /* Fixed report descriptor for (tweaked) v2 frame dial reports */
->  const __u8 uclogic_rdesc_v2_frame_dial_arr[] = {
-> @@ -856,14 +892,22 @@ const __u8 uclogic_rdesc_v2_frame_dial_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_dial_arr);
-> +
->  const size_t uclogic_rdesc_v2_frame_dial_size =
->  			sizeof(uclogic_rdesc_v2_frame_dial_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_v2_frame_dial_size);
->  
->  const __u8 uclogic_ugee_v2_probe_arr[] = {
->  	0x02, 0xb0, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_arr);
-> +
->  const size_t uclogic_ugee_v2_probe_size = sizeof(uclogic_ugee_v2_probe_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_size);
-> +
->  const int uclogic_ugee_v2_probe_endpoint = 0x03;
-> +EXPORT_SYMBOL_GPL(uclogic_ugee_v2_probe_endpoint);
->  
->  /* Fixed report descriptor template for UGEE v2 pen reports */
->  const __u8 uclogic_rdesc_ugee_v2_pen_template_arr[] = {
-> @@ -935,8 +979,11 @@ const __u8 uclogic_rdesc_ugee_v2_pen_template_arr[] = {
->  	0xc0,               /*      End Collection,                     */
->  	0xc0,               /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_pen_template_arr);
-> +
->  const size_t uclogic_rdesc_ugee_v2_pen_template_size =
->  			sizeof(uclogic_rdesc_ugee_v2_pen_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_pen_template_size);
->  
->  /* Fixed report descriptor template for UGEE v2 frame reports (buttons only) */
->  const __u8 uclogic_rdesc_ugee_v2_frame_btn_template_arr[] = {
-> @@ -964,8 +1011,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_btn_template_arr[] = {
->  	0xC0,               /*      End Collection,                     */
->  	0xC0                /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_btn_template_arr);
-> +
->  const size_t uclogic_rdesc_ugee_v2_frame_btn_template_size =
->  			sizeof(uclogic_rdesc_ugee_v2_frame_btn_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_btn_template_size);
->  
->  /* Fixed report descriptor template for UGEE v2 frame reports (dial) */
->  const __u8 uclogic_rdesc_ugee_v2_frame_dial_template_arr[] = {
-> @@ -1004,8 +1054,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_dial_template_arr[] = {
->  	0xC0,               /*      End Collection,                     */
->  	0xC0                /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_dial_template_arr);
-> +
->  const size_t uclogic_rdesc_ugee_v2_frame_dial_template_size =
->  			sizeof(uclogic_rdesc_ugee_v2_frame_dial_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_dial_template_size);
->  
->  /* Fixed report descriptor template for UGEE v2 frame reports (mouse) */
->  const __u8 uclogic_rdesc_ugee_v2_frame_mouse_template_arr[] = {
-> @@ -1038,8 +1091,11 @@ const __u8 uclogic_rdesc_ugee_v2_frame_mouse_template_arr[] = {
->  	0xC0,               /*      End Collection,                     */
->  	0xC0                /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_mouse_template_arr);
-> +
->  const size_t uclogic_rdesc_ugee_v2_frame_mouse_template_size =
->  			sizeof(uclogic_rdesc_ugee_v2_frame_mouse_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_frame_mouse_template_size);
->  
->  /* Fixed report descriptor template for UGEE v2 battery reports */
->  const __u8 uclogic_rdesc_ugee_v2_battery_template_arr[] = {
-> @@ -1072,8 +1128,11 @@ const __u8 uclogic_rdesc_ugee_v2_battery_template_arr[] = {
->  	0x81, 0x01,         /*      Input (Constant),                   */
->  	0xC0                /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_battery_template_arr);
-> +
->  const size_t uclogic_rdesc_ugee_v2_battery_template_size =
->  			sizeof(uclogic_rdesc_ugee_v2_battery_template_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_v2_battery_template_size);
->  
->  /* Fixed report descriptor for Ugee EX07 frame */
->  const __u8 uclogic_rdesc_ugee_ex07_frame_arr[] = {
-> @@ -1099,8 +1158,11 @@ const __u8 uclogic_rdesc_ugee_ex07_frame_arr[] = {
->  	0xC0,                   /*      End Collection,                     */
->  	0xC0                    /*  End Collection                          */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_ex07_frame_arr);
-> +
->  const size_t uclogic_rdesc_ugee_ex07_frame_size =
->  			sizeof(uclogic_rdesc_ugee_ex07_frame_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_ex07_frame_size);
->  
->  /* Fixed report descriptor for Ugee G5 frame controls */
->  const __u8 uclogic_rdesc_ugee_g5_frame_arr[] = {
-> @@ -1153,8 +1215,10 @@ const __u8 uclogic_rdesc_ugee_g5_frame_arr[] = {
->  	0xC0,               /*      End Collection,                 */
->  	0xC0                /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_g5_frame_arr);
->  const size_t uclogic_rdesc_ugee_g5_frame_size =
->  			sizeof(uclogic_rdesc_ugee_g5_frame_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_ugee_g5_frame_size);
->  
->  /* Fixed report descriptor for XP-Pen Deco 01 frame controls */
->  const __u8 uclogic_rdesc_xppen_deco01_frame_arr[] = {
-> @@ -1187,9 +1251,11 @@ const __u8 uclogic_rdesc_xppen_deco01_frame_arr[] = {
->  	0xC0,       /*      End Collection,                 */
->  	0xC0        /*  End Collection                      */
->  };
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_xppen_deco01_frame_arr);
->  
->  const size_t uclogic_rdesc_xppen_deco01_frame_size =
->  			sizeof(uclogic_rdesc_xppen_deco01_frame_arr);
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_xppen_deco01_frame_size);
->  
->  /**
->   * uclogic_rdesc_template_apply() - apply report descriptor parameters to a
-> @@ -1242,3 +1308,9 @@ __u8 *uclogic_rdesc_template_apply(const __u8 *template_ptr,
->  
->  	return rdesc_ptr;
->  }
-> +EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Martin Rusko");
-> +MODULE_AUTHOR("Nikolai Kondrashov");
-> +MODULE_DESCRIPTION("HID driver for UC-Logic devices original and fixed report descriptors");
-> -- 
-> 2.39.2
-> 
 
