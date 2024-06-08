@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-206941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F5F90101C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 10:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789B6901026
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 10:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C401C21082
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7952F1C20341
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 08:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743B6176AA6;
-	Sat,  8 Jun 2024 08:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EA1177990;
+	Sat,  8 Jun 2024 08:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="fAggY7pv"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fm50fgeh"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBF7179BD;
-	Sat,  8 Jun 2024 08:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBE5176AC7;
+	Sat,  8 Jun 2024 08:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717834344; cv=none; b=lr0NnF9+8pM01ZlEVJMkGf5Czz2P01pu9rmXQo/39N6Q8Jd/tmxlQ0D82bUcBoqgvTVrZUsM8Y6XSmsTYxlGLmny2Awcwx0HtMrlcAI0lotMpP6dxUgRTvRBKMmOUmcuyIIDBs9KFI9FnySDAPWdqK+zr+Kcw7+UItHiPWXgKg8=
+	t=1717834372; cv=none; b=eyQTZ1aTRVKtrKRRvc/P/D5HPjKu1ES9KH7mernv0ZH9hYCkn6ZavXPegH8qlpDvE8OieKLaEJEKDv8eOjWWa1NZ7NxrmxAhVECfckxTuHPs7ERlApz7vR5TXA8dEHSVSeguHxZZ8Q67r321CLmGXKLGnifZReLsIoUBtYAtHB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717834344; c=relaxed/simple;
-	bh=u9h2ASGk3dgMRL3ClbaO/j9atbgc18++9OC0IL2p5Ts=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MadXP8uo1rV4+kObXjEgD2oaQ+lM9S2a6BVVZOfD6Sr7teaCrsrxNEd6UEusZUYcUruXbIOTdbw5F8Ry3QyWLnWFtnNwCVLnmNi0nLbkdX1O2hHOu2Yvh+5Q9Y7lOi5e24tVWBN+SlNSsFfnuOgYYPRd8KZMGmw6eK2gDAFIpUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=fAggY7pv; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout2.routing.net (Postfix) with ESMTP id A141F601D3;
-	Sat,  8 Jun 2024 08:05:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1717833951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=COBqnfw9jmd19Qe8P9hzoCORT/LkJpn4G+nYf3HB3Xk=;
-	b=fAggY7pv+SXUz/Qh75i6O6aIBroOhGi+H1zgEjYVfOhB8vshCA6ZZXuosdug81T7JDkpNr
-	F3/wd83pLAnPB3DM/EAFRb63WmV7f0uKq3xvlxUciChKXSaZe7CtzsQQmDuooOGAsSplUC
-	zdQznpXiUbyLnPE4VZlcYbvL9JX2V3s=
-Received: from frank-G5.. (fttx-pool-217.61.155.199.bambit.de [217.61.155.199])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id CCC398010F;
-	Sat,  8 Jun 2024 08:05:50 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [PATCH v3 2/2] arm64: dts: mt7986: add overlay for SATA power socket on BPI-R3
-Date: Sat,  8 Jun 2024 10:05:30 +0200
-Message-Id: <20240608080530.9436-3-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240608080530.9436-1-linux@fw-web.de>
-References: <20240608080530.9436-1-linux@fw-web.de>
+	s=arc-20240116; t=1717834372; c=relaxed/simple;
+	bh=c+uFpWCMZSQ7m/Mz5EU7dhzeC3k6SNmPxQRmuwxkvE4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jC0Z6yF5e8j7Fmnfwjp00QwHXLNyccNfJ1JN7YqIrimvXihnhkjiaF0MbmEV7W/ztqqB8OTsUtcaE9H1tYdG7AIyNNTSEiEy7J7vHRNA9oqfODAT8KSZXuOVfjtaR5soRp1XfsRjtT+0JvdBabbk1Hycsz7UFfJxlkRBcvI1/IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fm50fgeh; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717834365;
+	bh=c+uFpWCMZSQ7m/Mz5EU7dhzeC3k6SNmPxQRmuwxkvE4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=fm50fgehiRH9BsrP5fW4J04QmVMefFB2retvoLCwfq2MkCj140cQuJ0CqSXpMqQ08
+	 kzkba2FtQYlB10N2JxJpeISl1voORZPN+UOeI0XFVnHeX5PfYuE9igMgOHnizbdTKi
+	 MCs0CneMRezwRaxyuMvqYAv2dFL4FiSwGDno2YGM=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/5] hwmon: (cros_ec): fan target, fan pwm control and
+ temperature thresholds
+Date: Sat, 08 Jun 2024 10:12:42 +0200
+Message-Id: <20240608-cros_ec-hwmon-pwm-v1-0-d29dfc26fbc3@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: d825f04a-d61b-4af0-a7c3-99149f58adbc
+X-B4-Tracking: v=1; b=H4sIAHoSZGYC/x2MQQqAMAzAviI9W6hDBf2KiMxatQc32cAJ4t8d3
+ pJD8kCUoBKhLx4IcmlU77JUZQG8W7cJ6pIdDJmaGtMhBx8nYdzT4R2e6UBamNuKZpsBcncGWfX
+ +n8P4vh/9Ya6gYwAAAA==
+To: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+ Guenter Roeck <groeck@chromium.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Dustin Howett <dustin@howett.net>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Stephen Horvath <s.horvath@outlook.com.au>, chrome-platform@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717834364; l=1917;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=c+uFpWCMZSQ7m/Mz5EU7dhzeC3k6SNmPxQRmuwxkvE4=;
+ b=4jzTKzT8wrfJoXc3/XsHoF+ibf+T1IlRLVbt8KY6ViDATww+JRaWiWiDD0SR2sFW6yLyQCBpy
+ TLUja5j9ZpIBg/xxUIcAqrvfZqYyEAPlDQ0qwYtu2f0SE181uVI7oC1
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Add support to cros_ec_hwmon for
+* fan target speed for fan 1
+* fan pwm control for all fans
+* fan temperature thresholds (RW) for all temp sensors
 
-Bananapi R3 has a Power socket entended for using external SATA drives.
-This Socket is off by default but can be switched with gpio 8.
+The EC also supports tempY_auto_pointZ_{pwm,temp} but that does not yet
+seem to be usable from "struct hwmon_channel_info".
+Guenter, is this intentional, do you want me to add support for it?
 
-Add an overlay to activate it.
+Patch 1 introduces a utility function cros_ec_cmd_versions() which wraps
+EC_CMD_GET_CMD_VERSIONS.
+That is used as it seems inadvisable to call EC_CMD_PWM_SET_FAN_DUTY
+during probing.
+I'm planning on also using this utility function in my CrOS EC charge
+control driver.
+Also  there are some other places throughout the tree that could use it.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+This series is meant to be merged through the chrome-platform tree,
+as cros_ec_hwmon itself is only available there and because of
+the new cros_ec_cmd_version().
+To test it you *also* need
+commit 27e669820c ("mfd: cros_ec: Register hardware monitoring subdevice")
+from the MFD tree (branch mfd-for-next).
+
+Tested on a Framework 13 AMD.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
-v3:
-- make sata overlay better readable
-v2:
-- rebase on the patch "add dtbs with applied overlays for bpi-r3"
-- add sata-overlay to the full dtbs
----
- arch/arm64/boot/dts/mediatek/Makefile         | 13 ++++---
- .../mt7986a-bananapi-bpi-r3-sata.dtso         | 35 +++++++++++++++++++
- 2 files changed, 44 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
+Thomas Weißschuh (5):
+      platform/chrome: cros_ec_proto: Introduce cros_ec_cmd_versions()
+      hwmon: (cros_ec) Add support for fan target speed
+      hwmon: (cros_ec) Add support for PWM fan control
+      hwmon: (cros_ec) Split temperature channel params
+      hwmon: (cros_ec) Add support for temperature thresholds
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 0ec5b904d35d..ac0af5ffe97d 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -14,26 +14,31 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sata.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd.dtbo
- mt7986a-bananapi-bpi-r3-emmc-nand-dtbs := \
- 	mt7986a-bananapi-bpi-r3.dtb \
- 	mt7986a-bananapi-bpi-r3-emmc.dtbo \
--	mt7986a-bananapi-bpi-r3-nand.dtbo
-+	mt7986a-bananapi-bpi-r3-nand.dtbo \
-+	mt7986a-bananapi-bpi-r3-sata.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc-nand.dtb
- mt7986a-bananapi-bpi-r3-emmc-nor-dtbs := \
- 	mt7986a-bananapi-bpi-r3.dtb \
- 	mt7986a-bananapi-bpi-r3-emmc.dtbo \
--	mt7986a-bananapi-bpi-r3-nor.dtbo
-+	mt7986a-bananapi-bpi-r3-nor.dtbo \
-+	mt7986a-bananapi-bpi-r3-sata.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc-nor.dtb
- mt7986a-bananapi-bpi-r3-sd-nand-dtbs := \
- 	mt7986a-bananapi-bpi-r3.dtb \
- 	mt7986a-bananapi-bpi-r3-sd.dtbo \
--	mt7986a-bananapi-bpi-r3-nand.dtbo
-+	mt7986a-bananapi-bpi-r3-nand.dtbo \
-+	mt7986a-bananapi-bpi-r3-sata.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd-nand.dtb
- mt7986a-bananapi-bpi-r3-sd-nor-dtbs := \
- 	mt7986a-bananapi-bpi-r3.dtb \
- 	mt7986a-bananapi-bpi-r3-sd.dtbo \
--	mt7986a-bananapi-bpi-r3-nor.dtbo
-+	mt7986a-bananapi-bpi-r3-nor.dtbo \
-+	mt7986a-bananapi-bpi-r3-sata.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd-nor.dtb
- 
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
-new file mode 100644
-index 000000000000..17659545470e
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2021 MediaTek Inc.
-+ * Author: Frank Wunderlich <frank-w@public-files.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+&{/} {
-+	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
-+
-+	reg_sata12v: regulator-sata12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "sata12v";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		gpio = <&pio 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
-+
-+	reg_sata5v: regulator-sata5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "sata5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_sata12v>;
-+	};
-+
-+};
-+
+ Documentation/hwmon/cros_ec_hwmon.rst       |   8 +-
+ drivers/hwmon/cros_ec_hwmon.c               | 284 +++++++++++++++++++++++++---
+ drivers/platform/chrome/cros_ec_proto.c     |  26 +++
+ include/linux/platform_data/cros_ec_proto.h |   2 +
+ 4 files changed, 290 insertions(+), 30 deletions(-)
+---
+base-commit: c8a4bdca928debacf49524d1b09dbf27e88e1f18
+change-id: 20240529-cros_ec-hwmon-pwm-0dcc610ba0dc
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
