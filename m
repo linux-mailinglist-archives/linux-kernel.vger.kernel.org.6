@@ -1,92 +1,127 @@
-Return-Path: <linux-kernel+bounces-207091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3A6901247
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:17:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03B490124B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 17:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17498282A2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BEA1F21560
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 15:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DE517B41B;
-	Sat,  8 Jun 2024 15:17:29 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C069117967F;
+	Sat,  8 Jun 2024 15:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuR0clWC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FAF179675;
-	Sat,  8 Jun 2024 15:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044701FBB;
+	Sat,  8 Jun 2024 15:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717859848; cv=none; b=iz93obLpED4rZyHOpN3ndeKixpbhrCT4PJ2ZMIeNiu1ROgxqBD/5HrTQGA90SYH1A3pJiQ6djdaiRAgltyOLefgfKPNxnaObMkEZ7fYXUHQFV1etZiF+1faQxnv87HlgZ89FFZDDVOKv7SoEGm99fbX6dCZ3p/XwA46VGUdZ5Cg=
+	t=1717860044; cv=none; b=EMvCIYWAAgl6sl0uBG8abv2fI+Y/8KAXNDXXCSYNXXuXhjXv8PIhEQ5qFDjf/ytNNegP/fsKG0tLg7GPWcjdatQK9L2azXrdryzWg4W5O3eoukG/8TBFWRpx/TUwcyntqcH6Yw/Ivd0TxYcpTc5zUxOj4hoURqEwCalkH2vaeYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717859848; c=relaxed/simple;
-	bh=uHg3+Wgz9CV5Yva7pZSHAd9W2b88TUkIRA2v5WtHk+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qN9WgjEcHPQGoOXRESKlEcvsdvW8oBEkt9WsEtcJGMpzfKwBaUDpJRGvV5CUB4pSgPfhMDtk/sxQW+YW6cWdBxLWpCti9F17K4TgNAAxirGau3Xg+ffl3Kf8+tl0gHjV+73rJ1xPqbOyWp5lUYsT0U6kd4mLdve32FZraFcYlPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sFxon-0000Ur-I4; Sat, 08 Jun 2024 17:17:21 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alex Bee <knaerzche@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Add SFC support for RK3128
-Date: Sat,  8 Jun 2024 17:17:19 +0200
-Message-Id: <171785983005.2839639.8937453926692720849.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606143401.32454-2-knaerzche@gmail.com>
-References: <20240606143401.32454-2-knaerzche@gmail.com>
+	s=arc-20240116; t=1717860044; c=relaxed/simple;
+	bh=SBrOG5vtgHcP9Ql3D1Fkja1dS+krqo3w5B2YITbmwFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gCR2XNP/jXV0JBec/U8x47MBQCB/v4b39DRqK2CsC3rdNOGJZhMxQi7f9klndU+DseJnNJBxo1K7rEyI3YuLSAvpU+oSa2xzzfROdMwbY6Sg1UT55bFKlh5DnHYTPb6Cl/WCsisTUodJmiS4iYeu95f38cUWjmfkCzu94RWk6X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuR0clWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62DAC2BD11;
+	Sat,  8 Jun 2024 15:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717860043;
+	bh=SBrOG5vtgHcP9Ql3D1Fkja1dS+krqo3w5B2YITbmwFE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CuR0clWCH/pu1MIadrb9SDLdxVu8abrLH02ZEcpbh3z+zU8iGdvCZxXWDAWm4os60
+	 sjEAuaQxZZdZP5sNG6shs8cAv7JOwo6pKItN6YYBFeWETejGLAW9oBKqoAG9IfTxmw
+	 vEBBBw4e4raMkXyWnHDHL9Of1WdCa8qroaFGPghwnQllB2QFMLjOZS3f0Er3rOae5B
+	 KP//JGz+LaiM8tOnChOzMOej6wi2n5byFwoPagGtGb2XtCPBWH0un1dcsecR5CTnJ9
+	 f4cUnRLwc/9kcj7ir6jV4hgU1XTSQKDGgeCebP15rVRRq6C/5/f84C2s6z6c643dkI
+	 CCLka07fOPcXQ==
+Date: Sat, 8 Jun 2024 16:20:35 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mudit Sharma <muditsharma.info@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ ivan.orlov0322@gmail.com, lars@metafoo.de, krzk+dt@kernel.org,
+ conor+dt@kernel.org, robh@kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: light: ROHM BH1745 colour sensor
+Message-ID: <20240608162035.6965cad5@jic23-huawei>
+In-Reply-To: <14ac1188-a018-4ebb-bf64-7818fab9ab7b@gmail.com>
+References: <20240603162122.165943-1-muditsharma.info@gmail.com>
+	<20240603162122.165943-2-muditsharma.info@gmail.com>
+	<39710806-3151-4b57-9af4-c0b4a4d21c28@gmail.com>
+	<c0732554-0742-444b-910d-55052e2c0f92@gmail.com>
+	<5c4800f4-3345-415b-b4e0-0099f1d22770@gmail.com>
+	<14ac1188-a018-4ebb-bf64-7818fab9ab7b@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 6 Jun 2024 16:33:57 +0200, Alex Bee wrote:
-> This series adds support for the Serial Flash Controller (SFC) found in
-> RK3128 SoCs. The existing driver can be used as-is.
+
+> >>>
+> >>> Nit: black line before return (it applies to several functions in this
+> >>> driver, but again, not in all of them).  
+> >>
+> >> Hi Javier,
+> >>
+> >> Thank you for the review on this.
+> >>
+> >> Can you please point me to resource/section of code style guide for
+> >> reference which talks about new line before 'return'.
+> >>
+> >> Best regards,
+> >> Mudit Sharma
+> >>
+> >>
+> >>  
+> > 
+> > AFAIK that is not written in stone, but many common practices are not
+> > documented anywhere (e.g. names of error/ret variables). They just copy
+> > what the majority of the code in that subsystem does. There is indeed a
+> > tendency to add a blank line before the last (unconditional, not
+> > labeled) return, but I am sure that some code does not follow that.
+> > 
+> > Having said that, I don't have a strong opinion (it was a nitpick) on
+> > that, but what I would definitely recommend you is following **some**
+> > pattern. There are some functions where you added a blank line, and some
+> > others (the majority, I think), where you didn't. Given that this is new
+> > code, uniformity would be appreciated.
+> > 
+> > Unless an IIO maintainer (I am NOT one) says otherwise, I would find
+> > both approaches (blank/no line) reasonable, even though I like the blank
+> > line in that particular case :)
+> > 
+> > Best regards,
+> > Javier Carrasco  
 > 
-> As without using some "id holes" we would run out clock ids when adding the
-> additional SFC AHB clock in the binding and would have to touch the ABI, I
-> added patches which remove the CLK_NR_CLKS macro and use the recently
-> introduced rockchip_clk_find_max_clk_id helper instead to find the highest
-> clock id.
+> Thanks for the explanation here.
 > 
-> [...]
+> I agree with having a consistent pattern and will make the necessary 
+> changes to v3.
+> 
+> Best regards,
+> Mudit Sharma
+> 
+I'm feeling grumpy today and you are the unlucky ones, given it's
+been a day of much scrolling.
 
-Applied, thanks!
+Crop your replies to just the relevant context as I've done here.
 
-[1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
-      commit: 3d0316c949e26392a5098e23c139c932991e50ce
-[2/5] dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
-      commit: 9f22b4fbd4c6d27ca4e5f8fa6632e6d7a846af28
-[3/5] dt-bindings: clock: rk3128: Add HCLK_SFC
-      commit: 469d6e0e70eefe1a31a89a7abd379f169b33b1f4
-[4/5] clk: rockchip: Add HCLK_SFC for RK3128
-      commit: f1fc95b41a3b1b2e613acb04c4f8aee7b87394cc
-[5/5] ARM: dts: rockchip: Add SFC for RK3128
-      commit: 01689df79018c4d68f84a2ac0cf65c35c852b979
+Yes, I prefer the blank line in most cases. However as noted the more
+important factor is local consistency.  Aim here is to make your code
+as easy to review as possible - having it all look the same is a good
+way to help that.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Jonathan
+ 
+
 
