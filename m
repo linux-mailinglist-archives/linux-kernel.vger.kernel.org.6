@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-206999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FAB90112C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B2490112D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E8E1C20E51
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595BD1C210D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCB6176FAE;
-	Sat,  8 Jun 2024 09:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C49176FB6;
+	Sat,  8 Jun 2024 09:47:45 +0000 (UTC)
 Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE2F25740
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7691EB40
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717839896; cv=none; b=iQfM8/3RP+oLmN1OH/DiCY1W7087BRQAs1hnHKg0MMsD4qJSegFL3M8Mz0d9ttYtoZs0cMYqG8vpDzmE/JAQO/F8ufHCyW75zOLNU3dpC8OiQb+A1v0cjk5e5tWVg04Ful9UJIjw5C+Q5B9tmUZxbNHtcpo6X5U2Bq0h1m6QvrM=
+	t=1717840065; cv=none; b=GiXJEwX7yBzJFj+krF2UlTf+8vMUXEwSP/Ci7p60j7KyEUh8EEvEWojKhDQC/qbT24yg3HzzwfLAY/WKgbTQakT8Rl43hqE8rdcUk3RcxlevSQgK1G8/emouZcHNAWkEC9dsvB5+jAWFIL8XljHXsazRhTatkZduhEekDUka5yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717839896; c=relaxed/simple;
-	bh=540A8R/1TpIFNPJ/N/OR1orqd1BnHCt4N1sRFu3by+o=;
+	s=arc-20240116; t=1717840065; c=relaxed/simple;
+	bh=JqOtTvqw7uV/u0K6rQtsNQAPJjZEb7jqnR2ekLIN1YA=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbvBd30MykpDzmmw+uY2nxelUSa4gbAqDRwhGRkNsa0OEiAgINkQ86UJ41bgm8Z4EGGWfSBtIWJ+o2CK4V70ixRN65OH3uFolRXyzXWxltIBuY3zvTVSVQ/Wwubhb1RpTsNfwDTwYdWwBSyfV3SJ1OV0UGJHkcZOKByJCd61B1U=
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+RK/VGp7TuYocetCL5AFeLFFYOpkbrJu6i9XMOCho7dDjgvl9sCqAdXUKcFaGpyVDmDgk6JPKAWGXq2o4SyzPQ3uqnx6qot3MEbwfIOj7I2na50dkLPHRNRwlxoOVlY5XDYbxrngbfRp1naYHOuwa6rCdgTwzlN4wgMFR0bW9I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id bbaf993f-257b-11ef-80e2-005056bdfda7;
-	Sat, 08 Jun 2024 12:44:46 +0300 (EEST)
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 25790f07-257c-11ef-8d59-005056bd6ce9;
+	Sat, 08 Jun 2024 12:47:41 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 8 Jun 2024 12:44:43 +0300
-To: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: pca953x: Improve interrupt support
-Message-ID: <ZmQoCwLFuJNyuRG6@surfacebook.localdomain>
-References: <20240606033102.2271916-1-mark.tomlinson@alliedtelesis.co.nz>
+Date: Sat, 8 Jun 2024 12:47:40 +0300
+To: Crescent Hsieh <crescentcy.hsieh@moxa.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 0/6] Adjustments and Enhancements for MOXA PCI Serial
+ Boards
+Message-ID: <ZmQovC6TbDpTb3c8@surfacebook.localdomain>
+References: <20240607114336.4496-1-crescentcy.hsieh@moxa.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,35 +50,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606033102.2271916-1-mark.tomlinson@alliedtelesis.co.nz>
+In-Reply-To: <20240607114336.4496-1-crescentcy.hsieh@moxa.com>
 
-Thu, Jun 06, 2024 at 03:31:02PM +1200, Mark Tomlinson kirjoitti:
-> The GPIO drivers with latch interrupt support (typically types starting
-> with PCAL) have interrupt status registers to determine which particular
-> inputs have caused an interrupt. Unfortunately there is no atomic
-> operation to read these registers and clear the interrupt. Clearing the
-> interrupt is done by reading the input registers.
+Fri, Jun 07, 2024 at 07:43:30PM +0800, Crescent Hsieh kirjoitti:
+> There are 6 patches within this patch series to make some adjustments
+> and enhancements for MOXA PCI serial boards, a briefly description is
+> written below:
+> 
+> - The first patch is an independent bug fix patch.
+> - The second and third patches migrate some MOXA PCI devices from
+>   `mxser.c` to `8250_pci.c`.
+> - The fourth and fifth patches address improvements and adjustments in
+>   handling the serial interface.
+> - The sixth patch adds a UART configuration that aligns with the
+>   hardware capabilities of MOXA PCI serial boards.
 
-What you are describing sounds to me like the case without latch enabled.
-Can you elaborate a bit more?
-
-> The code was reading the interrupt status registers, and then reading
-> the input registers. If an input changed between these two events it was
-> lost.
-
-I don't see how. If there is a short pulse or a series of pulses between
-interrupt latching and input reading, the second+ will be lost in any case.
-This is HW limitation as far as I can see.
-
-> The solution in this patch is to revert to the non-latch version of
-> code, i.e. remembering the previous input status, and looking for the
-> changes. This system results in no more I2C transfers, so is no slower.
-> The latch property of the device still means interrupts will still be
-> noticed if the input changes back to its initial state.
-
-Again, can you elaborate? Is it a real use case? If so, can you provide the
-chart of the pin sginalling against the time line and depict where the problem
-is?
+Everything is fine except one issue. Can we avoid polluting 8250_pci?
+What I would expect as a patch 2 is a separation of 8250_moxa from
+8250_pci (see examples how it was done in the past: 8250_exar, 8250_lpss,
+8250_mid, ...) and then updating code there. Can it be achievable?
 
 -- 
 With Best Regards,
