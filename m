@@ -1,82 +1,73 @@
-Return-Path: <linux-kernel+bounces-206934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD12B901005
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE330901006
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77D7282A89
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:40:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB831F2236F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DEC140389;
-	Sat,  8 Jun 2024 07:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8D149C65;
+	Sat,  8 Jun 2024 07:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lb9d4HoU"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bTvUqZvK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C3AED9
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B97610C
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717832448; cv=none; b=WIzYpeeFZ2//s+lcGglc16z1CKIk20eLNeLFrpeJIRdqLELoUAnzHMVwNQ3EqyJVAbXgjyTHfJy9tlAxiCng099b63q9nyvOXDs52pLARmNqlyP8x2J0S1ykqx1KpOkewhtTuSJKS0JBy9Yonl7/dVjF7d+SuNtRIEuW4UDeXTc=
+	t=1717832727; cv=none; b=ZaJhhHNnFrm4nivt78P3GdlRuoZVItn93oCDjGsU+KCNgiYR4R9GnTce3V0Nv9T6WXnt0amGV56uniMejWH5INenbVoSB6vmfefTdm3H1pv1wy3p2Asevo7BgyvFX9ip6cKfvjhSy65U98/nibyncr0QR+/XUAReLzE2iKKMp9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717832448; c=relaxed/simple;
-	bh=AxpNIteblEn/4GY1XvkEPZKmkuXDFGG9n8qrJc0vbTw=;
+	s=arc-20240116; t=1717832727; c=relaxed/simple;
+	bh=0qxGBIGAeV+6/mYpcz2yW6HvdA8SWLHlev3qLo95vug=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=opSDqVs53gs25cX1Xx0O6YgA/UDSdv/N+tO588sJGPUMFFCPBP32udYqj+4Fa69Gz+XLViXeeQEeZ0Hb80dfnoaTdsJo9di0UPqZpE2+nNJsnQCvIYo2oSySf/K42ygPku9ZMcGjqR1+RtH7Ab/WL7BCjlx8UzZU3tbD5Y+8fUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lb9d4HoU; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6e349c0f2bso165645666b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717832444; x=1718437244; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ui9jC/Xinch2NwVNkta+FJYdj2bjXrQc1vpDtK0Dp4=;
-        b=Lb9d4HoU6Yj3miDaDecKIS07/0CYTjwAToNKrvEwRV0ZkDD/taBzUKyAA6kc7ObuWo
-         M0t/GB94/0uZcs2R8Z3jnLCqeMdsx2EqScQm+Zrx/5elhyGOE3Ywa0PWVox7P0DkRBeE
-         9QMBoqBDTdnZWQqT3Dv0k/PKM1Aud6VvNsMNA5nFKBgsmntWITODBFZ4xJwla3FLZUhG
-         pvBsFhp7F+oKAHVdTNES0/cVL612DFaHRF60yjP50C4cAAe/Zww8hiG7VtF54rMtD1Vz
-         g/zESH8klWx407BCp5q8C8g0q1Udq4zfTC2FGP7BBEW8/ScqgoyD9a7x0m29X3cfAeIn
-         mvww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717832444; x=1718437244;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+ui9jC/Xinch2NwVNkta+FJYdj2bjXrQc1vpDtK0Dp4=;
-        b=wZP7qI9P/5aV/HsxoLmCNE/Ju0iiYDffvbOrKRv5nXPyIjLe0TjdO1brxWrtafG17F
-         E6AIHw75HCo7CA82q0g4eb9vTs+t5toF78juxqTNk/PLoyKJ2q5xrj1yOJU/bCMonTlM
-         rM5m/lR8OBJFl3jy5qwyXjPzR8HmbKDaACTSrlon1C6Hn5WnyX2VKvhjIaHLylVfTNIP
-         Nk9/h3OToQXLbO5ppVhiUcktiKYo0yTnVRBESSTI32r6NnUAKh2FTeHTdgIbrBJFIhb+
-         EHH6CoLPlAvcZ1pyKTJ985Pl/sbQxTffUK6TkIwzSOf+yA/rIMtiClACOJuQm92+Ffmx
-         KB8g==
-X-Gm-Message-State: AOJu0YzCt37g3xiN98OWBbJHBP2S5ENmvj37HCLVY8Q9RZGSWxqE8jEQ
-	q5F+JvmMhu3TkTD3B/cOG/BwfvO40TEtwa/48CGEViOHV4xHT/qY
-X-Google-Smtp-Source: AGHT+IFgU+l5q4AZUZvFlJ0CkqjT70q4rEImXFLe/gEtjNW16nUVubfrxE8tOPC4XLn2GR40jCI2MQ==
-X-Received: by 2002:a17:907:9694:b0:a68:ab53:50e7 with SMTP id a640c23a62f3a-a6cdbd0e372mr360030466b.69.1717832444081;
-        Sat, 08 Jun 2024 00:40:44 -0700 (PDT)
-Received: from gmail.com (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f073632ecsm35758866b.108.2024.06.08.00.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 00:40:43 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 8 Jun 2024 09:40:41 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] perf events fix
-Message-ID: <ZmQK-WsCPwR_DB0n@gmail.com>
+	 Content-Disposition; b=lSYHmaWTD8A+iAHhFWqmpeKTDZTtQ+6kpLb07WHDt3Gn3KPRgD70PhV5O6Zp544a42fdtqyeeyyx0sj1HKpYs+tNq9pko6zQ0xum1k6u/X/6O8SNpyBYdA7Bo3TkKWDY0hNDOE+HF2RztWruvQDgmy/SB9eABhT11emFCNE/ubo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bTvUqZvK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717832725; x=1749368725;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=0qxGBIGAeV+6/mYpcz2yW6HvdA8SWLHlev3qLo95vug=;
+  b=bTvUqZvKCKs7bX/0+NIFaG4+HoLB1YLDLE6T8Q1tFJuGVcEHipHsA0RM
+   il0ZMGg3KJFS0KRKxxZx5IwAsc7L+qwjbm/vjNNxF4MPNiRyUtIr8WH8F
+   SjiV7IzFRaB1oAgDcjdMEvgzkNhHL5+0JJ+b9xN/SCq0MBpUWpEAP3JS+
+   DQC/pOXM/fYMED+rjvOvGBlLzdEDyvvYtbGzh7igRapyGVlchbaGb5Do1
+   aUODqHKpv+oviysZJFIBXW0o4n3a54QtBuF1qEUf029Kww880TEkC2NGP
+   4AlAJDrnm7U/1ahsjlwkaWZRs93dmhUvZmzAX9Wch4blvdcyF+dQD7uO4
+   w==;
+X-CSE-ConnectionGUID: +LK5FOIETgqkFyyIyvv9jw==
+X-CSE-MsgGUID: sJzWXxtHRpmLJNlrss+Www==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="32103211"
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="32103211"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 00:45:24 -0700
+X-CSE-ConnectionGUID: Jt7DZv3tTGi6p0Wjd2KZgA==
+X-CSE-MsgGUID: EEdnJdahRe+QJ/Ud6qjAig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="69728240"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Jun 2024 00:45:23 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFqlN-0001GY-1c;
+	Sat, 08 Jun 2024 07:45:21 +0000
+Date: Sat, 8 Jun 2024 15:45:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Howells <dhowells@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>
+Subject: riscv32-linux-ld: section .rodata VMA [c2566300,c2f0be8d] overlaps
+ section .bss VMA [c2556000,c2892ad7]
+Message-ID: <202406081518.k7yJ6Tja-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,26 +77,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Linus,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
+commit: 5fb70e7275a61dd404f684370e1add7fe0ebe9c5 netfs, 9p: Implement helpers for new write code
+date:   5 weeks ago
+config: riscv-randconfig-r022-20221204 (https://download.01.org/0day-ci/archive/20240608/202406081518.k7yJ6Tja-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081518.k7yJ6Tja-lkp@intel.com/reproduce)
 
-Please pull the latest perf/urgent Git tree from:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406081518.k7yJ6Tja-lkp@intel.com/
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2024-06-08
+All errors (new ones prefixed by >>):
 
-   # HEAD: 74751ef5c1912ebd3e65c3b65f45587e05ce5d36 perf/core: Fix missing wakeup when waiting for context reference
+   riscv32-linux-ld: section .data LMA [00f80000,0148ce97] overlaps section .text LMA [000a0290,025662e7]
+>> riscv32-linux-ld: section .rodata VMA [c2566300,c2f0be8d] overlaps section .bss VMA [c2556000,c2892ad7]
+>> riscv32-linux-ld: section .data..percpu VMA [c2893000,c28a1633] overlaps section .rodata VMA [c2566300,c2f0be8d]
 
-Fix race between perf_event_free_task() and perf_event_release_kernel()
-that can result in missed wakeups and hung tasks.
-
- Thanks,
-
-	Ingo
-
------------------->
-Haifeng Xu (1):
-      perf/core: Fix missing wakeup when waiting for context reference
-
-
- kernel/events/core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
