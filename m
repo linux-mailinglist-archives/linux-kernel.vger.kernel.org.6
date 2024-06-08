@@ -1,164 +1,925 @@
-Return-Path: <linux-kernel+bounces-206994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E1590111D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:21:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD30690111F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 11:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01CAF283074
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBC4AB20C7B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B6917837D;
-	Sat,  8 Jun 2024 09:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9561F1779A9;
+	Sat,  8 Jun 2024 09:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZbGXO2JL"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P+og23OU"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA5F178378
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83E8178385
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717838448; cv=none; b=iPo8vF5q797SO/nhjk/NFwe17vYlqHKLn3RotBxxPfrQoEGREy/F3PH1BFfl48J4/nMfO+BQ85zzoxWulWIO1TgeuC5tSq8+KWvP8EnerKRmhYFNQuEPXA21EpGE08SgDuuSbm9L263+jWHG64v1D+kMlgQ84HTWVrKHUtvKZOA=
+	t=1717838455; cv=none; b=lz9iKO60JjjBzyyAoUn9PD+cvB78FtIQxvNy8cmg76f/AVV8zS4TeK+cRRI/qUpXvUdxMM/bPp63BtNi3ew5KaptZLXE0Qbyea/bOdAiZm2rjb4LoDgrvRaRHRD6yMX8EOUIfgT3agnNCLhXroalMrqk5boHI1yDc8Txg7nfdUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717838448; c=relaxed/simple;
-	bh=dmp3ZygbNJjd9gCzu9X9V3iyIgWFoacHTsp0TE9JTq0=;
+	s=arc-20240116; t=1717838455; c=relaxed/simple;
+	bh=xMskBvWFVi5FKegQlGYWbnmVxy3u0psROTLyxW2Nctg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RNoaA/3poRIerkbmdWsUN6/0te+U0zHtdjDyqUMZimAKDl8AlEP0FRgapay+ANwfe69jl1klWQ6/Jfm8dc6eNnezlnluOVhGDT+4kiDOi4UZUYlupGN+wrSml6RW6b8vFQkUx56unqMnZSSotkzf2PplKOb5UHIOvqMNwFwdYV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZbGXO2JL; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=JctfYCn75SKxGzxyuihKzHXAeJg09X1CWb9I3a67sCuEnU0AOP6DJlIwVERe/H95IpwvselkquTjaAHV1nis9Dv3MTpIyYm/VYzPZ4iEKW6WZUJrzBnUiKayvKYvoLTM8P6kOkPFYwWCWfH5Nn7n48UPrWbpM/YjMZ/Wj1VioKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P+og23OU; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4400cc0dad1so215971cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 02:20:46 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4405cf01a7fso40441cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 02:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717838446; x=1718443246; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717838451; x=1718443251; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oh5Dx4IlIdDZbc5FstyH0shKwGXk8TJvD9enkWLqoTI=;
-        b=ZbGXO2JLfcERfbq33pBdr4C1+TQ/DdKJj3nhdpzbELmhLYRavmqbVwvPNP3F0uRPC5
-         73EdxUgg0wQ4KLXo/rdZsUD6oTFaIcF9xaJYO+5yzY1NwqXiavaJ/73RomL3c0iLRkAe
-         ynwRxqH455BQEGJG8MrgxV/Os+FA4RQRk6wJRE5F6S2ULKe+15VADHYbmelMXnK//vvt
-         JS+iKGabfud6Ipr7SLnn85L44bzQT1kd4GE95DpqHswYBZLRSMy9ETzYCVvJFQ+O8Zd8
-         voCpKsz48JjVo6X0Vank5Kl6LmO4ibYxF6cZgDSnAgBP5cN/74bO3OU7md/oeI1OO2yg
-         XG9g==
+        bh=EYkxAdrTA6hSodvasREmwf1rXpTm+6Jt991K7jhzVe0=;
+        b=P+og23OUNh8QKzpz/lzdZF17H/TxGxYEybm7PsdVYBGRsHORz5WgSzVAnew3wDVOpX
+         /mjzhzQT7zmc8V/LxX6APNUokz0o6uy0q6By8WXYLHT4GE0nJcwiaoXnmAndcqtPMTem
+         PZUChGl8dNJjhVTSSiaotpAuIMxFRXTsPCvkJRbHOhN6LaWAav8rB7jHkwweXp7i1okF
+         HxSaYcpIt4IHgf+TBmGA50V7MTXCd4TigSjDjRT39NevuRoLB2kSyCaV9QC8gK6kveQi
+         xl9FVJnd8oan3lzNuydSJyR6cUT97isAsvH72qAUzA2V1RxMrUqntQ1UmQhIaTDWFY3O
+         ZXKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717838446; x=1718443246;
+        d=1e100.net; s=20230601; t=1717838451; x=1718443251;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Oh5Dx4IlIdDZbc5FstyH0shKwGXk8TJvD9enkWLqoTI=;
-        b=tOyya7dovapq4U3i5P8MXlzknbFgfnLXS/zy+f6luVapNNmQ+OiT/13gklCO3gqirr
-         ha8Nhjo5dB4uCP1eK8+eK6CY3XQ34GoUOKoN/gpcM+aRHEz3mdyw/VE9EEL6fLSYI30z
-         PR2CQs3boNKggQXr5ftYJCvM1ZwI4PjFSk9t8bQzS1OqsOADfUxgSn1/AW82+FEjoCD8
-         4l6J+lG3SkSR9GP8iSfafwxOuQCezsHO5+MXqqforAW16qSeYACeUbao9YF9M/PgVAls
-         jgI+m5Ef5uNDBp4A61mfozg2mMAe8aJ72k0KenDnLxAXUhBR3NYd9ddDffUQap6mGopT
-         6neA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2BwgaKNG/Mc8Fn1Ern4R2DgCaUCvoAdQmk8jFmIh4X41dn/WM8bOVirEhA6QSG3WNYOx8lW+HMbSfxP1jJE3sPcxycToPecL3du/a
-X-Gm-Message-State: AOJu0YwUARkxbQXdbV9IuVaSbor2QClHgUNS5sO5m3UnN8VWCu6wGVxF
-	RGII4mUAZHk17WfIu6I2ROkKHM1oLlGQ5vXWXczdz++9IOUbvcxN2n6UFKQiSgmg/zgmbE1kAhu
-	Q5u9K4QHLdLuKkZAmV4GdjFG7PjdlDHJxB+RP
-X-Google-Smtp-Source: AGHT+IGrgwjRbQqe6L3dL9eB0TpHrKbIRHkqP2DO/QNgWX+bB3tzzJGyRY0yPu74Wzabgooqd58vk4NtzhxS4uVcQW8=
-X-Received: by 2002:a05:622a:228c:b0:43f:f92a:bdb with SMTP id
- d75a77b69052e-440578d42c7mr1079781cf.13.1717838445384; Sat, 08 Jun 2024
- 02:20:45 -0700 (PDT)
+        bh=EYkxAdrTA6hSodvasREmwf1rXpTm+6Jt991K7jhzVe0=;
+        b=BIP4/1CuIa+uQ2YcYxY/y1y6ZtrxqNuefltu+wXR2sFWFby0M8z6gE1RXoUdiIg2l8
+         XoFc1F2kz8W+4wyJWNKhx6V8ro1Bo4DxrupQjlh99kkPeJhoTtnYz3/qJHBB7vRMBAmd
+         WapbxB/Vlg0g1eR2BjzBwBC1EX14RFON77ZMi6kE1yGnkZxbofkhwpjcw7xT2y2SdBaU
+         ow6xWP5X1SLBpe1PGqUNgBQKMj1XTCCvci8y/rqft2SaAagluJFdaYAoltNuLh7kdFKO
+         AIo0S0zMkmZHax3a1Vvo+TZeCsyw1+9daphwvpjbk9pbhk4uh8qUIW03OCNzVaBGpDnv
+         3zHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsdRUmq0FiMFANzXnZF3FnnWQ9kqfyRly+oQGcslzeBF/iq/sWRRieHsSGpO5WvAIjM7L73H/WjAU8kKtTxsaEohVR1lCUo4+ULtZP
+X-Gm-Message-State: AOJu0Yx8Mp1Byqr50r55t0Q2e+I1BI8k1dWoEzV+Z7/CAkHDqtt0hl7d
+	mcZ7/ls5KabQdF3O9WgX5AgM2CYdNVIwqVdkHGR+M1JOeYzaKfeMYB+2KI8iI+o+QAGXdpSV7E4
+	6/t4pUxDpugZ2FL9oS117GVDF6akFl1QY8rIz
+X-Google-Smtp-Source: AGHT+IFSnIpSZ4g63rxJZna9HGk8Q9zFN4hlddiwmddTHoIX3AfvBKYnVoJRmpk5g/4VvEgym3nN7qaDZ+9ndiylyoY=
+X-Received: by 2002:a05:622a:4d4e:b0:440:416a:5aa9 with SMTP id
+ d75a77b69052e-4405647f206mr2414011cf.20.1717838450432; Sat, 08 Jun 2024
+ 02:20:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604123204.10412-1-ivan.orlov0322@gmail.com> <20240604123204.10412-5-ivan.orlov0322@gmail.com>
-In-Reply-To: <20240604123204.10412-5-ivan.orlov0322@gmail.com>
+References: <20240604123204.10412-1-ivan.orlov0322@gmail.com> <20240604123204.10412-6-ivan.orlov0322@gmail.com>
+In-Reply-To: <20240604123204.10412-6-ivan.orlov0322@gmail.com>
 From: David Gow <davidgow@google.com>
-Date: Sat, 8 Jun 2024 17:20:34 +0800
-Message-ID: <CABVgOS=8S4QqAdNHs7hLXfD7HGq+eQNUqVbLkTu94-BUDTxOWA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] kunit: assert: export non-static functions
+Date: Sat, 8 Jun 2024 17:20:38 +0800
+Message-ID: <CABVgOSkc+t0J2tbgRHnsao9mhhDDKcjp+62R+F_fUQv7aBvTbA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] kunit: Merge assertion test into kunit-test.c
 To: Ivan Orlov <ivan.orlov0322@gmail.com>
 Cc: brendan.higgins@linux.dev, rmoar@google.com, 
 	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
 	linux-kernel@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005ba0ea061a5d6ea7"
+	boundary="000000000000a8adb9061a5d6e2d"
 
---0000000000005ba0ea061a5d6ea7
+--000000000000a8adb9061a5d6e2d
 Content-Type: text/plain; charset="UTF-8"
 
 On Tue, 4 Jun 2024 at 20:32, Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
 >
-> Export non-static functions from the assert.c file into the KUnit
-> namespace in order to be able to access them from the tests if
-> they are compiled as modules.
+> Since assert_test covers the part of the KUnit core (the assertion
+> formatting functions), I believe it would be better to have it merged
+> into kunit-test (as it is done for other tests for the KUnit core).
 >
 > Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
 > ---
 
-I think this could be merged with patch 5, as it's not useful on its
-own. Also, a few of the symbol names might be a little too generic to
-be exported: maybe we should give them a 'kunit_assert' prefix?
+Personally, I don't mind if the assert tests are in a separate file,
+but do think it's worth having them in the same module.
+
+Do you think it'd be better to keep them as separate source files (but
+put them in the same module via the Makefile), or is having a single
+source file cleaner?
+
+Either way, I think this should be merged with the previous patch (see
+my comments there.)
 
 Cheers,
 -- David
 
->  lib/kunit/assert.c | 4 ++++
->  1 file changed, 4 insertions(+)
+
+>  lib/kunit/Makefile      |   5 -
+>  lib/kunit/assert_test.c | 388 ----------------------------------------
+>  lib/kunit/kunit-test.c  | 379 ++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 378 insertions(+), 394 deletions(-)
+>  delete mode 100644 lib/kunit/assert_test.c
 >
-> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
-> index 867aa5c4bccf..f394e4b8482f 100644
-> --- a/lib/kunit/assert.c
-> +++ b/lib/kunit/assert.c
-> @@ -38,6 +38,7 @@ void kunit_assert_print_msg(const struct va_format *message,
->         if (message->fmt)
->                 string_stream_add(stream, "\n%pV", message);
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
+> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
+> index 4793a3960f07..f41d2eab1f8d 100644
+> --- a/lib/kunit/Makefile
+> +++ b/lib/kunit/Makefile
+> @@ -20,9 +20,4 @@ obj-y +=                              hooks.o
+>  obj-$(CONFIG_KUNIT_TEST) +=            kunit-test.o
+>  obj-$(CONFIG_KUNIT_STRING_STREAM_TEST) += string-stream-test.o
 >
->  void kunit_fail_assert_format(const struct kunit_assert *assert,
->                               const struct va_format *message,
-> @@ -112,6 +113,7 @@ VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
+> -# string-stream-test compiles built-in only.
+> -ifeq ($(CONFIG_KUNIT_TEST),y)
+> -obj-$(CONFIG_KUNIT_TEST) +=            assert_test.o
+> -endif
+> -
+>  obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=    kunit-example-test.o
+> diff --git a/lib/kunit/assert_test.c b/lib/kunit/assert_test.c
+> deleted file mode 100644
+> index 4a5967712186..000000000000
+> --- a/lib/kunit/assert_test.c
+> +++ /dev/null
+> @@ -1,388 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-or-later
+> -/*
+> - * KUnit test for the assertion formatting functions.
+> - * Author: Ivan Orlov <ivan.orlov0322@gmail.com>
+> - */
+> -#include <kunit/test.h>
+> -#include "string-stream.h"
+> -
+> -#define TEST_PTR_EXPECTED_BUF_SIZE 32
+> -#define HEXDUMP_TEST_BUF_LEN 5
+> -#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TRUE(test, strstr(str, substr))
+> -#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_FALSE(test, strstr(str, substr))
+> -
+> -static void kunit_test_is_literal(struct kunit *test)
+> -{
+> -       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
+> -       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
+> -       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
+> -       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890));
+> -       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
+> -       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
+> -       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
+> -       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
+> -}
+> -
+> -static void kunit_test_is_str_literal(struct kunit *test)
+> -{
+> -       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "Hello, World!"));
+> -       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
+> -       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
+> -       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
+> -       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
+> -       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"));
+> -       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"));
+> -       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abacaba\""));
+> -}
+> -
+> -KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
+> -
+> -/* this function is used to get a "char *" string from the string stream and defer its cleanup  */
+> -static char *get_str_from_stream(struct kunit *test, struct string_stream *stream)
+> -{
+> -       char *str = string_stream_get_string(stream);
+> -
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, str);
+> -       kunit_add_action(test, kfree_wrapper, (void *)str);
+> -
+> -       return str;
+> -}
+> -
+> -static void kunit_test_assert_prologue(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       char *str;
+> -       const struct kunit_loc location = {
+> -               .file = "testfile.c",
+> -               .line = 1337,
+> -       };
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       /* Test an expectation fail prologue */
+> -       kunit_assert_prologue(&location, KUNIT_EXPECTATION, stream);
+> -       str = get_str_from_stream(test, stream);
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "EXPECTATION");
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> -
+> -       /* Test an assertion fail prologue */
+> -       string_stream_clear(stream);
+> -       kunit_assert_prologue(&location, KUNIT_ASSERTION, stream);
+> -       str = get_str_from_stream(test, stream);
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "ASSERTION");
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> -       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> -}
+> -
+> -/*
+> - * This function accepts an arbitrary count of parameters and generates a va_format struct,
+> - * which can be used to validate kunit_assert_print_msg function
+> - */
+> -static void verify_assert_print_msg(struct kunit *test,
+> -                                   struct string_stream *stream,
+> -                                   char *expected, const char *format, ...)
+> -{
+> -       va_list list;
+> -       const struct va_format vformat = {
+> -               .fmt = format,
+> -               .va = &list,
+> -       };
+> -
+> -       va_start(list, format);
+> -       string_stream_clear(stream);
+> -       kunit_assert_print_msg(&vformat, stream);
+> -       KUNIT_EXPECT_STREQ(test, get_str_from_stream(test, stream), expected);
+> -}
+> -
+> -static void kunit_test_assert_print_msg(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       verify_assert_print_msg(test, stream, "\nTest", "Test");
+> -       verify_assert_print_msg(test, stream, "\nAbacaba -123 234", "%s %d %u",
+> -                               "Abacaba", -123, 234U);
+> -       verify_assert_print_msg(test, stream, "", NULL);
+> -}
+> -
+> -/*
+> - * Further code contains the tests for different assert format functions.
+> - * This helper function accepts the assert format function, executes it and
+> - * validates the result string from the stream by checking that all of the
+> - * substrings exist in the output.
+> - */
+> -static void validate_assert(assert_format_t format_func, struct kunit *test,
+> -                           const struct kunit_assert *assert,
+> -                           struct string_stream *stream, int num_checks, ...)
+> -{
+> -       size_t i;
+> -       va_list checks;
+> -       char *cur_substr_exp;
+> -       struct va_format message = { NULL, NULL };
+> -
+> -       va_start(checks, num_checks);
+> -       string_stream_clear(stream);
+> -       format_func(assert, &message, stream);
+> -
+> -       for (i = 0; i < num_checks; i++) {
+> -               cur_substr_exp = va_arg(checks, char *);
+> -               ASSERT_TEST_EXPECT_CONTAIN(test, get_str_from_stream(test, stream), cur_substr_exp);
+> -       }
+> -}
+> -
+> -static void kunit_test_unary_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct kunit_assert assert = {};
+> -       struct kunit_unary_assert un_assert = {
+> -               .assert = assert,
+> -               .condition = "expr",
+> -               .expected_true = true,
+> -       };
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       validate_assert(kunit_unary_assert_format, test, &un_assert.assert,
+> -                       stream, 2, "true", "is false");
+> -
+> -       un_assert.expected_true = false;
+> -       validate_assert(kunit_unary_assert_format, test, &un_assert.assert,
+> -                       stream, 2, "false", "is true");
+> -}
+> -
+> -static void kunit_test_ptr_not_err_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct kunit_assert assert = {};
+> -       struct kunit_ptr_not_err_assert not_err_assert = {
+> -               .assert = assert,
+> -               .text = "expr",
+> -               .value = NULL,
+> -       };
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       /* Value is NULL. The corresponding message should be printed out */
+> -       validate_assert(kunit_ptr_not_err_assert_format, test,
+> -                       &not_err_assert.assert,
+> -                       stream, 1, "null");
+> -
+> -       /* Value is not NULL, but looks like an error pointer. Error should be printed out */
+> -       not_err_assert.value = (void *)-12;
+> -       validate_assert(kunit_ptr_not_err_assert_format, test,
+> -                       &not_err_assert.assert, stream, 2,
+> -                       "error", "-12");
+> -}
+> -
+> -static void kunit_test_binary_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct kunit_assert assert = {};
+> -       struct kunit_binary_assert_text text = {
+> -               .left_text = "1 + 2",
+> -               .operation = "==",
+> -               .right_text = "2",
+> -       };
+> -       const struct kunit_binary_assert binary_assert = {
+> -               .assert = assert,
+> -               .text = &text,
+> -               .left_value = 3,
+> -               .right_value = 2,
+> -       };
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       /*
+> -        * Printed values should depend on the input we provide: the left text, right text, left
+> -        * value and the right value.
+> -        */
+> -       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> -                       stream, 4, "1 + 2", "2", "3", "==");
+> -
+> -       text.right_text = "4 - 2";
+> -       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> -                       stream, 3, "==", "1 + 2", "4 - 2");
+> -
+> -       text.left_text = "3";
+> -       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> -                       stream, 4, "3", "4 - 2", "2", "==");
+> -
+> -       text.right_text = "2";
+> -       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> -                       stream, 3, "3", "2", "==");
+> -}
+> -
+> -static void kunit_test_binary_ptr_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct kunit_assert assert = {};
+> -       char *addr_var_a, *addr_var_b;
+> -       static const void *var_a = (void *)0xDEADBEEF;
+> -       static const void *var_b = (void *)0xBADDCAFE;
+> -       struct kunit_binary_assert_text text = {
+> -               .left_text = "var_a",
+> -               .operation = "==",
+> -               .right_text = "var_b",
+> -       };
+> -       struct kunit_binary_ptr_assert binary_ptr_assert = {
+> -               .assert = assert,
+> -               .text = &text,
+> -               .left_value = var_a,
+> -               .right_value = var_b,
+> -       };
+> -
+> -       addr_var_a = kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_a);
+> -       addr_var_b = kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_b);
+> -       /*
+> -        * Print the addresses to the buffers first.
+> -        * This is necessary as we may have different count of leading zeros in the pointer
+> -        * on different architectures.
+> -        */
+> -       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
+> -       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -       validate_assert(kunit_binary_ptr_assert_format, test, &binary_ptr_assert.assert,
+> -                       stream, 3, addr_var_a, addr_var_b, "==");
+> -}
+> -
+> -static void kunit_test_binary_str_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct kunit_assert assert = {};
+> -       static const char *var_a = "abacaba";
+> -       static const char *var_b = "kernel";
+> -       struct kunit_binary_assert_text text = {
+> -               .left_text = "var_a",
+> -               .operation = "==",
+> -               .right_text = "var_b",
+> -       };
+> -       struct kunit_binary_str_assert binary_str_assert = {
+> -               .assert = assert,
+> -               .text = &text,
+> -               .left_value = var_a,
+> -               .right_value = var_b,
+> -       };
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       validate_assert(kunit_binary_str_assert_format, test,
+> -                       &binary_str_assert.assert,
+> -                       stream, 5, "var_a", "var_b", "\"abacaba\"",
+> -                       "\"kernel\"", "==");
+> -
+> -       text.left_text = "\"abacaba\"";
+> -       validate_assert(kunit_binary_str_assert_format, test, &binary_str_assert.assert,
+> -                       stream, 4, "\"abacaba\"", "var_b", "\"kernel\"", "==");
+> -
+> -       text.right_text = "\"kernel\"";
+> -       validate_assert(kunit_binary_str_assert_format, test, &binary_str_assert.assert,
+> -                       stream, 3, "\"abacaba\"", "\"kernel\"", "==");
+> -}
+> -
+> -static const u8 hex_testbuf1[] = { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> -                                  0x45, 0x9d, 0x47, 0xd6, 0x47,
+> -                                  0x2,  0x89, 0x8c, 0x81, 0x94,
+> -                                  0x12, 0xfe, 0x01 };
+> -static const u8 hex_testbuf2[] = { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> -                                  0x45, 0x9d, 0x47, 0x21, 0x47,
+> -                                  0xcd, 0x89, 0x24, 0x50, 0x94,
+> -                                  0x12, 0xba, 0x01 };
+> -static void kunit_test_assert_hexdump(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       char *str;
+> -       size_t i;
+> -       char buf[HEXDUMP_TEST_BUF_LEN];
+> -
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -       /* Check that we are getting output like <xx> for non-matching numbers. */
+> -       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf2, sizeof(hex_testbuf1));
+> -       str = get_str_from_stream(test, stream);
+> -       for (i = 0; i < sizeof(hex_testbuf1); i++) {
+> -               snprintf(buf, HEXDUMP_TEST_BUF_LEN, "<%02x>", hex_testbuf1[i]);
+> -               if (hex_testbuf1[i] != hex_testbuf2[i])
+> -                       ASSERT_TEST_EXPECT_CONTAIN(test, str, buf);
+> -       }
+> -       /* We shouldn't get any <xx> numbers when comparing the buffer with itself. */
+> -       string_stream_clear(stream);
+> -       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf1, sizeof(hex_testbuf1));
+> -       str = get_str_from_stream(test, stream);
+> -       ASSERT_TEST_EXPECT_NCONTAIN(test, str, "<");
+> -       ASSERT_TEST_EXPECT_NCONTAIN(test, str, ">");
+> -}
+> -
+> -static void kunit_test_mem_assert_format(struct kunit *test)
+> -{
+> -       struct string_stream *stream;
+> -       struct string_stream *expected_stream;
+> -       struct kunit_assert assert = {};
+> -       static const struct kunit_binary_assert_text text = {
+> -               .left_text = "hex_testbuf1",
+> -               .operation = "==",
+> -               .right_text = "hex_testbuf2",
+> -       };
+> -       struct kunit_mem_assert mem_assert = {
+> -               .assert = assert,
+> -               .text = &text,
+> -               .left_value = NULL,
+> -               .right_value = hex_testbuf2,
+> -               .size = sizeof(hex_testbuf1),
+> -       };
+> -
+> -       expected_stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected_stream);
+> -       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> -
+> -       /* The left value is NULL */
+> -       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> -                       stream, 2, "hex_testbuf1", "is not null");
+> -
+> -       /* The right value is NULL, the left value is not NULL */
+> -       mem_assert.left_value = hex_testbuf1;
+> -       mem_assert.right_value = NULL;
+> -       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> -                       stream, 2, "hex_testbuf2", "is not null");
+> -
+> -       /* Both arguments are not null */
+> -       mem_assert.left_value = hex_testbuf1;
+> -       mem_assert.right_value = hex_testbuf2;
+> -
+> -       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> -                       stream, 3, "hex_testbuf1", "hex_testbuf2", "==");
+> -}
+> -
+> -static struct kunit_case assert_test_cases[] = {
+> -       KUNIT_CASE(kunit_test_is_literal),
+> -       KUNIT_CASE(kunit_test_is_str_literal),
+> -       KUNIT_CASE(kunit_test_assert_prologue),
+> -       KUNIT_CASE(kunit_test_assert_print_msg),
+> -       KUNIT_CASE(kunit_test_unary_assert_format),
+> -       KUNIT_CASE(kunit_test_ptr_not_err_assert_format),
+> -       KUNIT_CASE(kunit_test_binary_assert_format),
+> -       KUNIT_CASE(kunit_test_binary_ptr_assert_format),
+> -       KUNIT_CASE(kunit_test_binary_str_assert_format),
+> -       KUNIT_CASE(kunit_test_assert_hexdump),
+> -       KUNIT_CASE(kunit_test_mem_assert_format),
+> -       {}
+> -};
+> -
+> -static struct kunit_suite assert_test_suite = {
+> -       .name = "kunit-assert",
+> -       .test_cases = assert_test_cases,
+> -};
+> -
+> -kunit_test_suites(&assert_test_suite);
+> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
+> index 42178d5a97d1..efba189442c2 100644
+> --- a/lib/kunit/kunit-test.c
+> +++ b/lib/kunit/kunit-test.c
+> @@ -849,10 +849,387 @@ static struct kunit_suite kunit_current_test_suite = {
+>         .test_cases = kunit_current_test_cases,
+>  };
 >
->         return ret;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
-
-I'm a bit worried about having such a generic name exported, even
-conditionally and to a namespace. Maybe we could give this a
-'kunit_assert' prefix, or put it in a separate, more specific
-namespace?
-
+> +#define TEST_PTR_EXPECTED_BUF_SIZE 32
+> +#define HEXDUMP_TEST_BUF_LEN 5
+> +#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TRUE(test, strstr(str, substr))
+> +#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_FALSE(test, strstr(str, substr))
+> +
+> +static void kunit_test_is_literal(struct kunit *test)
+> +{
+> +       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
+> +       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
+> +       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
+> +}
+> +
+> +static void kunit_test_is_str_literal(struct kunit *test)
+> +{
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "Hello, World!"));
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
+> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"));
+> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abacaba\""));
+> +}
+> +
+> +/* this function is used to get a "char *" string from the string stream and defer its cleanup  */
+> +static char *get_str_from_stream(struct kunit *test, struct string_stream *stream)
+> +{
+> +       char *str = string_stream_get_string(stream);
+> +
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, str);
+> +       kunit_add_action(test, kfree_wrapper, (void *)str);
+> +
+> +       return str;
+> +}
+> +
+> +static void kunit_test_assert_prologue(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       char *str;
+> +       const struct kunit_loc location = {
+> +               .file = "testfile.c",
+> +               .line = 1337,
+> +       };
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* Test an expectation fail prologue */
+> +       kunit_assert_prologue(&location, KUNIT_EXPECTATION, stream);
+> +       str = get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "EXPECTATION");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> +
+> +       /* Test an assertion fail prologue */
+> +       string_stream_clear(stream);
+> +       kunit_assert_prologue(&location, KUNIT_ASSERTION, stream);
+> +       str = get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "ASSERTION");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
+> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
+> +}
+> +
+> +/*
+> + * This function accepts an arbitrary count of parameters and generates a va_format struct,
+> + * which can be used to validate kunit_assert_print_msg function
+> + */
+> +static void verify_assert_print_msg(struct kunit *test,
+> +                                   struct string_stream *stream,
+> +                                   char *expected, const char *format, ...)
+> +{
+> +       va_list list;
+> +       const struct va_format vformat = {
+> +               .fmt = format,
+> +               .va = &list,
+> +       };
+> +
+> +       va_start(list, format);
+> +       string_stream_clear(stream);
+> +       kunit_assert_print_msg(&vformat, stream);
+> +       KUNIT_EXPECT_STREQ(test, get_str_from_stream(test, stream), expected);
+> +}
+> +
+> +static void kunit_test_assert_print_msg(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       verify_assert_print_msg(test, stream, "\nTest", "Test");
+> +       verify_assert_print_msg(test, stream, "\nAbacaba -123 234", "%s %d %u",
+> +                               "Abacaba", -123, 234U);
+> +       verify_assert_print_msg(test, stream, "", NULL);
+> +}
+> +
+> +/*
+> + * Further code contains the tests for different assert format functions.
+> + * This helper function accepts the assert format function, executes it and
+> + * validates the result string from the stream by checking that all of the
+> + * substrings exist in the output.
+> + */
+> +static void validate_assert(assert_format_t format_func, struct kunit *test,
+> +                           const struct kunit_assert *assert,
+> +                           struct string_stream *stream, int num_checks, ...)
+> +{
+> +       size_t i;
+> +       va_list checks;
+> +       char *cur_substr_exp;
+> +       struct va_format message = { NULL, NULL };
+> +
+> +       va_start(checks, num_checks);
+> +       string_stream_clear(stream);
+> +       format_func(assert, &message, stream);
+> +
+> +       for (i = 0; i < num_checks; i++) {
+> +               cur_substr_exp = va_arg(checks, char *);
+> +               ASSERT_TEST_EXPECT_CONTAIN(test, get_str_from_stream(test, stream), cur_substr_exp);
+> +       }
+> +}
+> +
+> +static void kunit_test_unary_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert = {};
+> +       struct kunit_unary_assert un_assert = {
+> +               .assert = assert,
+> +               .condition = "expr",
+> +               .expected_true = true,
+> +       };
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       validate_assert(kunit_unary_assert_format, test, &un_assert.assert,
+> +                       stream, 2, "true", "is false");
+> +
+> +       un_assert.expected_true = false;
+> +       validate_assert(kunit_unary_assert_format, test, &un_assert.assert,
+> +                       stream, 2, "false", "is true");
+> +}
+> +
+> +static void kunit_test_ptr_not_err_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert = {};
+> +       struct kunit_ptr_not_err_assert not_err_assert = {
+> +               .assert = assert,
+> +               .text = "expr",
+> +               .value = NULL,
+> +       };
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* Value is NULL. The corresponding message should be printed out */
+> +       validate_assert(kunit_ptr_not_err_assert_format, test,
+> +                       &not_err_assert.assert,
+> +                       stream, 1, "null");
+> +
+> +       /* Value is not NULL, but looks like an error pointer. Error should be printed out */
+> +       not_err_assert.value = (void *)-12;
+> +       validate_assert(kunit_ptr_not_err_assert_format, test,
+> +                       &not_err_assert.assert, stream, 2,
+> +                       "error", "-12");
+> +}
+> +
+> +static void kunit_test_binary_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert = {};
+> +       struct kunit_binary_assert_text text = {
+> +               .left_text = "1 + 2",
+> +               .operation = "==",
+> +               .right_text = "2",
+> +       };
+> +       const struct kunit_binary_assert binary_assert = {
+> +               .assert = assert,
+> +               .text = &text,
+> +               .left_value = 3,
+> +               .right_value = 2,
+> +       };
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /*
+> +        * Printed values should depend on the input we provide: the left text, right text, left
+> +        * value and the right value.
+> +        */
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> +                       stream, 4, "1 + 2", "2", "3", "==");
+> +
+> +       text.right_text = "4 - 2";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> +                       stream, 3, "==", "1 + 2", "4 - 2");
+> +
+> +       text.left_text = "3";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> +                       stream, 4, "3", "4 - 2", "2", "==");
+> +
+> +       text.right_text = "2";
+> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.assert,
+> +                       stream, 3, "3", "2", "==");
+> +}
+> +
+> +static void kunit_test_binary_ptr_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert = {};
+> +       char *addr_var_a, *addr_var_b;
+> +       static const void *var_a = (void *)0xDEADBEEF;
+> +       static const void *var_b = (void *)0xBADDCAFE;
+> +       struct kunit_binary_assert_text text = {
+> +               .left_text = "var_a",
+> +               .operation = "==",
+> +               .right_text = "var_b",
+> +       };
+> +       struct kunit_binary_ptr_assert binary_ptr_assert = {
+> +               .assert = assert,
+> +               .text = &text,
+> +               .left_value = var_a,
+> +               .right_value = var_b,
+> +       };
+> +
+> +       addr_var_a = kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_a);
+> +       addr_var_b = kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_b);
+> +       /*
+> +        * Print the addresses to the buffers first.
+> +        * This is necessary as we may have different count of leading zeros in the pointer
+> +        * on different architectures.
+> +        */
+> +       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
+> +       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +       validate_assert(kunit_binary_ptr_assert_format, test, &binary_ptr_assert.assert,
+> +                       stream, 3, addr_var_a, addr_var_b, "==");
+> +}
+> +
+> +static void kunit_test_binary_str_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct kunit_assert assert = {};
+> +       static const char *var_a = "abacaba";
+> +       static const char *var_b = "kernel";
+> +       struct kunit_binary_assert_text text = {
+> +               .left_text = "var_a",
+> +               .operation = "==",
+> +               .right_text = "var_b",
+> +       };
+> +       struct kunit_binary_str_assert binary_str_assert = {
+> +               .assert = assert,
+> +               .text = &text,
+> +               .left_value = var_a,
+> +               .right_value = var_b,
+> +       };
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       validate_assert(kunit_binary_str_assert_format, test,
+> +                       &binary_str_assert.assert,
+> +                       stream, 5, "var_a", "var_b", "\"abacaba\"",
+> +                       "\"kernel\"", "==");
+> +
+> +       text.left_text = "\"abacaba\"";
+> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str_assert.assert,
+> +                       stream, 4, "\"abacaba\"", "var_b", "\"kernel\"", "==");
+> +
+> +       text.right_text = "\"kernel\"";
+> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str_assert.assert,
+> +                       stream, 3, "\"abacaba\"", "\"kernel\"", "==");
+> +}
+> +
+> +static const u8 hex_testbuf1[] = { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> +                                  0x45, 0x9d, 0x47, 0xd6, 0x47,
+> +                                  0x2,  0x89, 0x8c, 0x81, 0x94,
+> +                                  0x12, 0xfe, 0x01 };
+> +static const u8 hex_testbuf2[] = { 0x26, 0x74, 0x6b, 0x9c, 0x55,
+> +                                  0x45, 0x9d, 0x47, 0x21, 0x47,
+> +                                  0xcd, 0x89, 0x24, 0x50, 0x94,
+> +                                  0x12, 0xba, 0x01 };
+> +static void kunit_test_assert_hexdump(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       char *str;
+> +       size_t i;
+> +       char buf[HEXDUMP_TEST_BUF_LEN];
+> +
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +       /* Check that we are getting output like <xx> for non-matching numbers. */
+> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf2, sizeof(hex_testbuf1));
+> +       str = get_str_from_stream(test, stream);
+> +       for (i = 0; i < sizeof(hex_testbuf1); i++) {
+> +               snprintf(buf, HEXDUMP_TEST_BUF_LEN, "<%02x>", hex_testbuf1[i]);
+> +               if (hex_testbuf1[i] != hex_testbuf2[i])
+> +                       ASSERT_TEST_EXPECT_CONTAIN(test, str, buf);
+> +       }
+> +       /* We shouldn't get any <xx> numbers when comparing the buffer with itself. */
+> +       string_stream_clear(stream);
+> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf1, sizeof(hex_testbuf1));
+> +       str = get_str_from_stream(test, stream);
+> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, "<");
+> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, ">");
+> +}
+> +
+> +static void kunit_test_mem_assert_format(struct kunit *test)
+> +{
+> +       struct string_stream *stream;
+> +       struct string_stream *expected_stream;
+> +       struct kunit_assert assert = {};
+> +       static const struct kunit_binary_assert_text text = {
+> +               .left_text = "hex_testbuf1",
+> +               .operation = "==",
+> +               .right_text = "hex_testbuf2",
+> +       };
+> +       struct kunit_mem_assert mem_assert = {
+> +               .assert = assert,
+> +               .text = &text,
+> +               .left_value = NULL,
+> +               .right_value = hex_testbuf2,
+> +               .size = sizeof(hex_testbuf1),
+> +       };
+> +
+> +       expected_stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected_stream);
+> +       stream = kunit_alloc_string_stream(test, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
+> +
+> +       /* The left value is NULL */
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> +                       stream, 2, "hex_testbuf1", "is not null");
+> +
+> +       /* The right value is NULL, the left value is not NULL */
+> +       mem_assert.left_value = hex_testbuf1;
+> +       mem_assert.right_value = NULL;
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> +                       stream, 2, "hex_testbuf2", "is not null");
+> +
+> +       /* Both arguments are not null */
+> +       mem_assert.left_value = hex_testbuf1;
+> +       mem_assert.right_value = hex_testbuf2;
+> +
+> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert,
+> +                       stream, 3, "hex_testbuf1", "hex_testbuf2", "==");
+> +}
+> +
+> +static struct kunit_case kunit_assert_test_cases[] = {
+> +       KUNIT_CASE(kunit_test_is_literal),
+> +       KUNIT_CASE(kunit_test_is_str_literal),
+> +       KUNIT_CASE(kunit_test_assert_prologue),
+> +       KUNIT_CASE(kunit_test_assert_print_msg),
+> +       KUNIT_CASE(kunit_test_unary_assert_format),
+> +       KUNIT_CASE(kunit_test_ptr_not_err_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_ptr_assert_format),
+> +       KUNIT_CASE(kunit_test_binary_str_assert_format),
+> +       KUNIT_CASE(kunit_test_assert_hexdump),
+> +       KUNIT_CASE(kunit_test_mem_assert_format),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite kunit_assert_test_suite = {
+> +       .name = "kunit-assert",
+> +       .test_cases = kunit_assert_test_cases,
+> +};
+> +
+>  kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
+>                   &kunit_log_test_suite, &kunit_status_test_suite,
+>                   &kunit_current_test_suite, &kunit_device_test_suite,
+> -                 &kunit_fault_test_suite);
+> +                 &kunit_fault_test_suite, &kunit_assert_test_suite);
 >
->  void kunit_binary_assert_format(const struct kunit_assert *assert,
->                                 const struct va_format *message,
-> @@ -180,6 +182,7 @@ VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value)
->
->         return strncmp(text + 1, value, len - 2) == 0;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
-
-I'm a bit worried about having such a generic name exported, even
-conditionally and to a namespace. Maybe we could give this a
-'kunit_assert' prefix, or put it in a separate, more specific
-namespace?
-
-
-
-
->  void kunit_binary_str_assert_format(const struct kunit_assert *assert,
->                                     const struct va_format *message,
-> @@ -232,6 +235,7 @@ void kunit_assert_hexdump(struct string_stream *stream,
->                         string_stream_add(stream, " %02x ", buf1[i]);
->         }
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
->
->  void kunit_mem_assert_format(const struct kunit_assert *assert,
->                              const struct va_format *message,
+>  MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
+>  MODULE_LICENSE("GPL v2");
 > --
 > 2.34.1
 >
 
---0000000000005ba0ea061a5d6ea7
+--000000000000a8adb9061a5d6e2d
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -226,14 +987,14 @@ GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
 kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
 MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
 IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIFZW3ZZqfOiqQvETl56Re8uP/Jgaqm3H2kZr3NxMcJlOMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwODA5MjA0NlowaQYJKoZIhvcNAQkPMVww
+hvcNAQkEMSIEIP7D+TdVWOxMH34XxqFNg1l0oiexuGln1KgF5of8MUBqMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwODA5MjA1MVowaQYJKoZIhvcNAQkPMVww
 WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBvFo8K
-auhPV9/WpIpYUVJQ/5QhEtdE5BLWMPM53Zm3byrQ/XN6WWwT2PGgCMuzM99uh5P/TqkhE0SDMZRw
-8L6FhXh3szHBPavQebhpPPXa78AJtnJZ1FKehclXXqb2k25rdf1yw/yzowxxU41tDBqwvFcN2GEB
-9Kq/x9psACErF/2m+Inr7/Age8KxJ5ht1fLgpMfOmmOF/eXBtQVFZyg20HeoyqswTmU0iTIYF62Z
-s0g4HFlpkDsjCpXQ/6FOKroKgByWWMQzuHv+9oMI0rytrKqpUdUxvBvADQy5ExRYsnaBNItv0slS
-ZEBBInuLqICnl4NQwI8ODc4fTpg7do0x
---0000000000005ba0ea061a5d6ea7--
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAGLm+2
++vC+5LIykb1nqp6X8bWsMRJe/MqVEFfeWsHIFxM7aRPHdBVt+dy7wQoAvYEA9Ujzysmn3KeXZrGn
+ADBS27dazaKJp6HSmd8zeGQzAWUl3dj6+nCCVuXY9oi5+F+aDQKF6ll42mNbzGZFxOMKNly6Ziwt
+f3YI4+2sZs/Z4J7rOGOHQUq3ZKhhAmBXl6Kwc9B233lAf8YpDvDwRcjcq+3zCXvZd+cFXHlXrHqX
+511UPfjLF5DRXN6Ob7hntFywhPvWgcriBF4R4hEgdVcZA8nNpj6n9ak9bXEzz62joCFzxq57SYbn
+A9H/XWaeF/ytNOD5Dx7Zfr7LTWgnNl4s
+--000000000000a8adb9061a5d6e2d--
 
