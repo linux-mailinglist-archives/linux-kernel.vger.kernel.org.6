@@ -1,158 +1,219 @@
-Return-Path: <linux-kernel+bounces-207076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8993390121B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83E4901220
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 16:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC751C213AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D94B282BD2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 14:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D50650282;
-	Sat,  8 Jun 2024 14:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8D15699D;
+	Sat,  8 Jun 2024 14:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgUEZpTu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bgrB9vL+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5386911718;
-	Sat,  8 Jun 2024 14:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9716E1C6A3;
+	Sat,  8 Jun 2024 14:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857663; cv=none; b=PSYSPsSxh9LL5rkb+qJYp6iWrMunP0pM2FJHn9JyBrCxNzBtioqjv797eKxVpXLuLUZgqh2Wdl/kk4dWWBQTmna0cPwvHWnehkPSvwygopvSkA/NTbXMnpY5UvJZKAGEJ/w5iYTCixXw2Uh5EwdILJlLZdMp7uqjh5J9DVCeLJQ=
+	t=1717857734; cv=none; b=gxhUYBouE1C+e+Tzu8CU3c+R72Jl8Hh7QcFTrkxwzJqM3n4XkUZ8tzu0NJazwwaV1Ezt1BNHQOngJYdZZ40a8HL9RmrbX8lMvZf1dc6UFaAAIiB2L580HcCU7tZnJUqVcnM7YPDnY1QER5Du0ZGorSpW6x4Zl+97ngJgwp+qRLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857663; c=relaxed/simple;
-	bh=50S6Lswn1r44hRlmB2kSl8+Im7fYL4RZp/xxNiPMJhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dBp7jdN1vW8bhTCez5Do092ztPruwLU7reTp4Zu6yCMVH0u72bfjz7g+IcjDdRZlOtwNiZa+XSgx5a2f1QJrduNks6n0Myth9ly3xq6ChFa+OfQqj6oj2pDEawvGYzSF/QakyJaZPm+rZ9444WZmO2u+ZNml8/gzOOSp8EnIZV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgUEZpTu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B3AC2BD11;
-	Sat,  8 Jun 2024 14:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717857663;
-	bh=50S6Lswn1r44hRlmB2kSl8+Im7fYL4RZp/xxNiPMJhI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MgUEZpTuPd524grhZFpsVtXgC+CsvaHZO1Nh54y4V8xKCyxFBqFwZ+z8cj664VE3D
-	 3uJGOy7ZMaSVeY63B0RdiTOOIPqMn9cPxXuDXI9i5dLqQeVi0BUXfhO/RrbrEf/B3M
-	 VayBF9g1W1/hkVWK6mYWqJVe34A5qnLd4bJ7heYLPEToWYh6pQqej3DB8fzPp/AaDp
-	 uLXmoEnWxE/5UZRI17zXirVvFdn1hz1H4B+gSMgbhuDyN2Xugg3zbbjSPYgMrymdo6
-	 ejfJuM2m4JphLcskOt7tUmtAHRcy91ko2ANWQlK26P98DPEW1EMiN2X2eurIlU+j9l
-	 uyRCYPe5O+0GA==
-Date: Sat, 8 Jun 2024 15:40:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Michael Hennerich"
- <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <noname.nuno@gmail.com>
-Subject: Re: [PATCH v3 1/5] iio: ABI: Generalize ABI documentation for DAC
-Message-ID: <20240608154053.1cf1097e@jic23-huawei>
-In-Reply-To: <20240603012200.16589-2-kimseer.paller@analog.com>
-References: <20240603012200.16589-1-kimseer.paller@analog.com>
-	<20240603012200.16589-2-kimseer.paller@analog.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717857734; c=relaxed/simple;
+	bh=ugXXbx/CLwI99YRexmYb0Gotntqo0tZn8jJp15qegVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O4b2/YFQA2i4DnfAmfs5AmBIDvA1sKwU62RNGZTlu6nMd0sgsNC0d3laA8B3vOLPKRldzwQSkhQfJ8e7wRWK5HVFv3TJ2BvOht1tznc3LOPhKsOUeMEV8gUnR0SriYFGm8RQL+JEinKqB+1zVKvVWzKLrw6m3CPAv/5K0OtY1Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bgrB9vL+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 458DqOVN000471;
+	Sat, 8 Jun 2024 14:41:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v6ltMQCxUcuE3p8fTuKauLmI6EQiUGo+ku3r9/Qjuok=; b=bgrB9vL+fuo568Cb
+	0BXORn+RAdyrwKy/oABWlD54oLKkvT2pZe9RbuO+YChYOvQF1YnehgGJlsBvzcQY
+	WEiabHK//uhBo5jiH9/5nhWwamDch5ri2g6Jc0MxPCTdHYcXKDL/1xoHqx2WdJRd
+	C6G+PVWcAGjIPyKMchQ5uO5hFHFSsC6MLtJcMtSWeCTAUBKxkzQaAliKqdO2oSHq
+	yMucZ0kSncB2lashx1n/2GwolOsSUZmaLOgK6lH4J0j9af9YD1Aw+mLYShVYsXpI
+	lpLyekRuZgjQvyWXavaLvbnY59FhOE33Ln6bmmmR2E6/lHYoc1t/JOOUkHt1AsCK
+	hX8f0Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemggn0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 08 Jun 2024 14:41:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 458EfqsM024744
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 8 Jun 2024 14:41:52 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 8 Jun 2024
+ 07:41:51 -0700
+Message-ID: <280d8b3c-cb05-4fd6-8710-df328e2ae65a@quicinc.com>
+Date: Sat, 8 Jun 2024 07:41:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Finn Thain <fthain@linux-m68k.org>, Michael Schmitz <schmitzmic@gmail.com>
+CC: Khalid Aziz <khalid@gonehiking.org>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Hannes
+ Reinecke <hare@suse.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        James Smart
+	<james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        Artur
+ Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "Juergen E. Fischer"
+	<fischer@norbit.de>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
+ <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gX9eRH22cdIPfMCDaLtW3GlvQ3i7oL0H
+X-Proofpoint-ORIG-GUID: gX9eRH22cdIPfMCDaLtW3GlvQ3i7oL0H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-08_08,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406080110
 
-On Mon, 3 Jun 2024 09:21:56 +0800
-Kim Seer Paller <kimseer.paller@analog.com> wrote:
-
-> Introduces a more generalized ABI documentation for DAC. Instead of
-> having separate ABI files for each DAC, we now have a single ABI file
-> that covers the common sysfs interface for all DAC.
+On 6/7/2024 5:52 PM, Finn Thain wrote:
 > 
-> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-
-A few comments inline.
-
-I wondered if it made sense to combine voltage and current entries of each type
-in single block, but I think the docs would become too complicated with lots
-of wild cards etc.  Hence I think the duplication is fine.
-
-Jonathan
-
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-dac   | 61 +++++++++++++++++++
->  .../ABI/testing/sysfs-bus-iio-dac-ltc2688     | 31 ----------
->  2 files changed, 61 insertions(+), 31 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
+> On Fri, 7 Jun 2024, Jeff Johnson wrote:
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac b/Documentation/ABI/testing/sysfs-bus-iio-dac
-> new file mode 100644
-> index 000000000000..36d316bb75f6
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
-> @@ -0,0 +1,61 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_toggle_en
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +       		Toggle enable. Write 1 to enable toggle or 0 to disable it. This
-Tab vs space issue - see below.
+>> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
+>> index 742625ac7d99..4eb5770aeef5 100644
+>> --- a/drivers/scsi/atari_scsi.c
+>> +++ b/drivers/scsi/atari_scsi.c
+>> @@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
+>>  module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
+>>  
+>>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+>> +MODULE_DESCRIPTION("Atari generic SCSI port driver");
+>>  MODULE_LICENSE("GPL");
+> 
+> "Atari NCR5380 SCSI driver", please. I don't think the word "generic" 
+> applies here. It was a reference to the "generic NCR5380 driver by Drew 
+> Eckhardt" from which specialized drivers like this one were derived.
+> 
 
-> +		is useful when one wants to change the DAC output codes. The way
-> +		it should be done is:
-> +
-> +        	- disable toggle operation;
-> +        	- change out_currentY_rawN, where N is the integer value of the symbol;
-> +        	- enable toggle operation.
-Same question as below on whether this is accurate - Maybe it just needs to mention
-this scheme needs to be used for autonomous toggling (out of software control).
-It works for software toggling but may be overkill!
+noted, but also saw the comment from Michael, so I'll use his even more
+specific suggestion in v2
 
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_rawN
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute has the same meaning as out_currentY_raw. It is
-> +		specific to toggle enabled channels and refers to the DAC output
-> +		code in INPUT_N (_rawN), where N is the integer value of the symbol.
-> +		The same scale and offset as in out_currentY_raw applies.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_symbol
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Performs a SW switch to a predefined output symbol. This attribute
-> +		is specific to toggle enabled channels and allows switching between
-> +		multiple predefined symbols. Each symbol corresponds to a different
-> +		output, denoted as out_currentY_rawN, where N is the integer value
-> +		of the symbol. Writing an integer value N will select out_currentY_rawN.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_toggle_en
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +       		Toggle enable. Write 1 to enable toggle or 0 to disable it. This
+>> diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+>> index f6305e3e60f4..1bef131664e0 100644
+>> --- a/drivers/scsi/g_NCR5380.c
+>> +++ b/drivers/scsi/g_NCR5380.c
+>> @@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
+>>  MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
+>>  
+>>  MODULE_ALIAS("g_NCR5380_mmio");
+>> +MODULE_DESCRIPTION("Generic NCR5380 driver");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
+> 
+> "Generic NCR5380/NCR53C400 SCSI driver" please.
+> 
+> This driver actually describes itself as "generic generic NCR5380 driver" 
+> which appears to be a joke. The term "generic" was used to mean universal 
+> i.e. intended to cover every ISA card implementation.
 
-Mix of spacing and tabs is inconsistent. Hence the odd indent in this reply version.
+will update in v2
 
-> +		is useful when one wants to change the DAC output codes. The way
-> +		it should be done is:
+> 
+>> diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+>> index 625fd547ee60..82d8b8f8293f 100644
+>> --- a/drivers/scsi/initio.c
+>> +++ b/drivers/scsi/initio.c
+>> @@ -2939,6 +2939,7 @@ static void initio_remove_one(struct pci_dev *pdev)
+>>  	pci_disable_device(pdev);
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("Initio 9100U(W) driver");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  static struct pci_device_id initio_pci_tbl[] = {
+>> @@ -2961,4 +2962,5 @@ module_pci_driver(initio_pci_driver);
+>>  
+>>  MODULE_DESCRIPTION("Initio INI-9X00U/UW SCSI device driver");
+>>  MODULE_AUTHOR("Initio Corporation");
+>> +MODULE_DESCRIPTION("TBD");
+>>  MODULE_LICENSE("GPL");
+> 
+> There are now three MODULE_DESCRIPTION macros here.
 
-Hmm. Is this true?  If we are doing autonomous toggling on a clock or similar than agreed.
-If we are using the out_current_symbol software control it would be common to switch
-to A, modify B, switch to B, modify A etc.
+yikes! my helper script got confused by the presence of multiple
+MODULE_LICENSE() macros -- will revert in v2
 
-I think our interface has probably evolved and so this might need an update.
+> 
+>> diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
+>> index a402c4dc4645..f74231ca29e5 100644
+>> --- a/drivers/scsi/mac_scsi.c
+>> +++ b/drivers/scsi/mac_scsi.c
+>> @@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
+>>  module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
+>>  
+>>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+>> +MODULE_DESCRIPTION("Generic Macintosh NCR5380 driver");
+>>  MODULE_LICENSE("GPL");
+> 
+> 
+> "Macintosh NCR5380 SCSI driver", please.
 
-> +
-> +        	- disable toggle operation;
-> +        	- change out_voltageY_rawN, where N is the integer value of the symbol;
-> +        	- enable toggle operation.
+noted
+
+> 
+>> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+>> index 7ab000942b97..c4a88f673183 100644
+>> --- a/drivers/scsi/sr.c
+>> +++ b/drivers/scsi/sr.c
+>> @@ -68,6 +68,7 @@
+>>  
+>>  
+>>  MODULE_DESCRIPTION("SCSI cdrom (sr) driver");
+>> +MODULE_DESCRIPTION("TBD");
+>>  MODULE_LICENSE("GPL");
+>>  MODULE_ALIAS_BLOCKDEV_MAJOR(SCSI_CDROM_MAJOR);
+>>  MODULE_ALIAS_SCSI_DEVICE(TYPE_ROM);
+>> @@ -1007,4 +1008,5 @@ static void __exit exit_sr(void)
+>>  
+>>  module_init(init_sr);
+>>  module_exit(exit_sr);
+>> +MODULE_DESCRIPTION("SCSI CDROM driver");
+>>  MODULE_LICENSE("GPL");
+> 
+> Three macros here also.
+
+Yikes again!
+
+Will post a v2 with the corrections.
 
