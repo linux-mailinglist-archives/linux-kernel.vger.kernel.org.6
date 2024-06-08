@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-206927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-206928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF713900FFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:32:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917D6900FFF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 09:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4211C21D26
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7CB1C21800
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2024 07:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AAB1779B4;
-	Sat,  8 Jun 2024 07:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969B9178377;
+	Sat,  8 Jun 2024 07:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIoQz9rv"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPTX3ulz"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5970E176FB0
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D17417BAF
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2024 07:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717831943; cv=none; b=aUuZzClYrpDwWs5ZVQbmeu/WyLM1QWM7uXJEj9wBPUlHUipTSFKkBUWLDiYbPkuu2DIx1WgaAyl7MWIOkO2vpW0ca1tp4uKX7lo1r395lAZGHMUGtG3S53wl93tZLv0cq/gTmuGkSSKgc2A7vk1Br/E72UMnYMjurSdXvFKOHYg=
+	t=1717831944; cv=none; b=mVvd4VJ0YfZGqF2oSi9JWsCo+XdEqLg3ZSjQYfckj8ywMRAWf+oKqIY1XfZ3P1s9uan5KEKVA2uw0PhIwSVlGDJ8238KmAX+Nf/CDZqiHQefLvQsJS7J6YSZe1XcGkjR2J5bDoPZIRNNthXWdd8dvNjx0nv6PSlF+cvXxItNn5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717831943; c=relaxed/simple;
-	bh=F+af4rxe7d7IoVbuM2DptpY8oZNWyOTUT9YFS5HcTCs=;
+	s=arc-20240116; t=1717831944; c=relaxed/simple;
+	bh=NPbHCS9f0nBSWkbqacoINu9Sm2IaRds7yMCrldRHK78=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SchDhjl7QvMJ8xuAvO7lBraDsnqzT69uC+Y/ZuP+mUm4V7PJfsMEW7LXryFhCOX+zcJRZeGhZsdXFk3c9rwugA9/56BnsFNWLsEQ2EASbxPkw4+VHMIKvAFH/XALs5iKpglcC3ZVnrDNptR+QhwhvIWtzYgB5NzcgEVnnfNQtns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIoQz9rv; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=TqbAzAo3KSj8SKZZXkAStCtwMHWkLpexrr+PuaJZTOiNDQyxulaVHPLFw6BeWOrtaY1r5yMZ9AjJT+TwaaAu3qt5AHg3SgkXHndmdej4Od22LRdS0ygiClwHepFMxvfSMgOoT8A6nAq4B0Q60dUAGGSI6iJtUGgpUeWbD+9oGtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPTX3ulz; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6c7ae658d0so371978266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:32:20 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so93920966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 00:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717831939; x=1718436739; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717831941; x=1718436741; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TkNzPEoAERYPXrD8RfGzPSQCNStah0bla1ynxf0VLJE=;
-        b=dIoQz9rvdHNED8+6xYzD0lDTNamReGNlKL1fqdkdFSmfJ2S0PvPG+aXu2oUTcvsf5m
-         O2Cd7dKVI63j07u86EpGbPCGqzEk2/aiqbwryGT/rcDzJ7oBhjjwMhtf98NrGn/sDZew
-         8bfj1BZ9ChjnAfRvM41+q6GB6dEvw5P9DzlVuAky3JayT0gC8T6ghgVeDysjZ6kcn3SK
-         NZMLbbZhZUv/iX7vqxSZ/Y/iYQGDD2lrIhTQbvsBlQ9H5afiSFVeGg6q56p9QshFzOf7
-         ezhth42jOlbOIh8JQw+OGtax5w90KRJITAenStzZT9KZNimmcSDxg5Q8gxLov0po6H8w
-         cIPg==
+        bh=I52Ss9P+t77Fk6nJffqozhx7Mo6O/vHA5ocISHNQDuE=;
+        b=FPTX3ulzLXEH0vccOZPRePseJ+bmg8Y94Aeu343KkpQT7sYKYLrLZ/vhWe1l7cCGWZ
+         esFd4z8y4LhcHr40ZtxGykU/ryJLPMa1h3dIY/Q9EOw0hL6IpBrPNnJZACOWY1nQtAVz
+         78Jrxfv87PPH/R/FQp3IYYe8ATTGCtNfXf0ClI9NHMymKUnND9y2blD51mg1nvq/9N9Q
+         GmCMiRkCfCciggBav7Jf1J6WuR15NOVUHYzVASo4Bxig6Sr31ugBs1IrGWRBm17S8muH
+         rwc5B5yRMGTD9U2N7GNfGJQWIjTzqFGNAEDrP2GWEvQcQCaV+Q+Yc5xxXMx1J+uYNOgF
+         I4pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717831939; x=1718436739;
+        d=1e100.net; s=20230601; t=1717831941; x=1718436741;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TkNzPEoAERYPXrD8RfGzPSQCNStah0bla1ynxf0VLJE=;
-        b=e50FCtmhoeeijHVWiP1X23+pcBmknvuvzQ73W+/IvWLQuK7DCpBX5hQ9gygGu9RyWP
-         gq8+/sgcjptNObaquTfrkrFYE1h3QTOk9nQXAEvU4MNpQc1TCzUi3RIpWFlCmg4ILA4H
-         o+CDImn6u3xWq53hoocQAzD/RE73dCtpMqGXEJdupQSLjauzV+dNXNGqeqwvBxgcuj1z
-         JNm2Sm1PWK7/ahioiOYvkiIOA0XOJa82BU3jE35ystL8RZjwDE8pnKCTL0+2V8mEFjzV
-         mxO1eRsVLfwaLFJO1ifCdb3gz4fvP/miOgV/cetlsQTd4ssRRRuDSMBnaBsiOYh22JmU
-         TQqQ==
-X-Gm-Message-State: AOJu0YxU8Jt9vhuTOvc3KXwcD9qOMP/rFvhfSc3ALenL0oh6rMc3syps
-	Lnrruxs0rh9gnmSSjMSX5xDqwhXIShfAs1LWRRurbj1uZP0vRYZxQ4d+ypOJ
-X-Google-Smtp-Source: AGHT+IEzkOIgiL/eEMAuGS396TaiIbDbyUoPQ2xIZN8upFRyHLr7w5g1uSAfCeA2B1OfV3KzjBnSiw==
-X-Received: by 2002:a17:906:49a:b0:a69:10b9:d7ea with SMTP id a640c23a62f3a-a6cd7891a31mr352696266b.41.1717831939387;
-        Sat, 08 Jun 2024 00:32:19 -0700 (PDT)
+        bh=I52Ss9P+t77Fk6nJffqozhx7Mo6O/vHA5ocISHNQDuE=;
+        b=OLttAxol89QNv/bxJ0NZLdPARe/BYBb4PVVfIxVpaQDnpf/Ggz9J3c+XcAxZW0q06U
+         0ay9IfOg2QNlkJtMT7qtSOF8ZQ0DrMRcANOiSlwYbrP4sJd9fRNT83vvVQ5l+LDfVbVy
+         j/q8q/xTyWy1y2XrjaAobuuARv3izAbex3N+DQnEQ/jsyX34RknqoEP41dasGdqZSzfR
+         ggtl1+UixKyOpJLAWKwk30WfE9tncUtDNHjhtPZ4pij6BHaEujQaWkCtvgKPIlAF2NjK
+         sPLKRWBthGhGpq63Va0qguLehZ98JgiRYHdAMfIlKrfh5ut3P4yCGW1/D7Hg9ZXJAdRQ
+         1xAg==
+X-Gm-Message-State: AOJu0YxHKhBA21uTSMoaEmJMAyGJeum4XpHddgfzGj9ktdPFC23pgxSn
+	jNcPcVxjn8aH4ATaLnxZ2yqvJqevpgkRYVe/UfmygVe2E9DYK0NvwDU01ARH
+X-Google-Smtp-Source: AGHT+IGWWk4MSouJxW08xN80V+cRIaseq45V2ieTr473uukebYC8k3dKVom2XgNMfEMVPMQCcXk48g==
+X-Received: by 2002:a17:906:3556:b0:a6e:f763:1c88 with SMTP id a640c23a62f3a-a6ef7631ce7mr131809966b.37.1717831940959;
+        Sat, 08 Jun 2024 00:32:20 -0700 (PDT)
 Received: from kepler.. (1F2EF20A.nat.pool.telekom.hu. [31.46.242.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efe5262cdsm61350466b.117.2024.06.08.00.32.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efe5262cdsm61350466b.117.2024.06.08.00.32.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 00:32:19 -0700 (PDT)
+        Sat, 08 Jun 2024 00:32:20 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
@@ -79,9 +79,9 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH 4/9] x86/fpu: Remove the thread::fpu pointer
-Date: Sat,  8 Jun 2024 09:31:29 +0200
-Message-ID: <20240608073134.264210-5-mingo@kernel.org>
+Subject: [PATCH 5/9] x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
+Date: Sat,  8 Jun 2024 09:31:30 +0200
+Message-ID: <20240608073134.264210-6-mingo@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240608073134.264210-1-mingo@kernel.org>
 References: <20240608073134.264210-1-mingo@kernel.org>
@@ -93,112 +93,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As suggested by Oleg, remove the thread::fpu pointer, as we can
-calculate it via x86_task_fpu() at compile-time.
+This encapsulates the fpu__drop() functionality better, and it
+will also enable other changes that want to check a task for
+PF_KTHREAD before calling x86_task_fpu().
 
-This improves code generation a bit:
-
-   kepler:~/tip> size vmlinux.before vmlinux.after
-   text        data        bss        dec         hex        filename
-   26475405    10435342    1740804    38651551    24dc69f    vmlinux.before
-   26475339    10959630    1216516    38651485    24dc65d    vmlinux.after
-
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Link: https://lore.kernel.org/r/20240605083557.2051480-3-mingo@kernel.org
 ---
- arch/x86/include/asm/processor.h | 5 +----
- arch/x86/kernel/fpu/core.c       | 4 +---
- arch/x86/kernel/fpu/init.c       | 1 -
- arch/x86/kernel/process.c        | 2 --
- arch/x86/kernel/vmlinux.lds.S    | 4 ++++
- 5 files changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/fpu/sched.h | 2 +-
+ arch/x86/kernel/fpu/core.c       | 4 +++-
+ arch/x86/kernel/process.c        | 3 +--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 64509c7f26c8..3de609aad0af 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -502,12 +502,9 @@ struct thread_struct {
+diff --git a/arch/x86/include/asm/fpu/sched.h b/arch/x86/include/asm/fpu/sched.h
+index 1feaa68b7567..5fd12634bcc4 100644
+--- a/arch/x86/include/asm/fpu/sched.h
++++ b/arch/x86/include/asm/fpu/sched.h
+@@ -10,7 +10,7 @@
+ #include <asm/trace/fpu.h>
  
- 	struct thread_shstk	shstk;
- #endif
--
--	/* Floating point and extended processor state */
--	struct fpu		*fpu;
- };
- 
--#define x86_task_fpu(task) ((task)->thread.fpu)
-+#define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
- 
- /*
-  * X86 doesn't need any embedded-FPU-struct quirks:
+ extern void save_fpregs_to_fpstate(struct fpu *fpu);
+-extern void fpu__drop(struct fpu *fpu);
++extern void fpu__drop(struct task_struct *tsk);
+ extern int  fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 		      unsigned long shstk_addr);
+ extern void fpu_flush_thread(void);
 diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index f0c4367804b3..167a9c7ed6d3 100644
+index 167a9c7ed6d3..c85667c0695d 100644
 --- a/arch/x86/kernel/fpu/core.c
 +++ b/arch/x86/kernel/fpu/core.c
-@@ -591,13 +591,11 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 	 * This is safe because task_struct size is a multiple of cacheline size.
- 	 */
- 	struct fpu *src_fpu = x86_task_fpu(current);
--	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-+	struct fpu *dst_fpu = x86_task_fpu(dst);
+@@ -672,8 +672,10 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+  * a state-restore is coming: either an explicit one,
+  * or a reschedule.
+  */
+-void fpu__drop(struct fpu *fpu)
++void fpu__drop(struct task_struct *tsk)
+ {
++	struct fpu *fpu = x86_task_fpu(tsk);
++
+ 	preempt_disable();
  
- 	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
- 	BUG_ON(!src_fpu);
- 
--	dst->thread.fpu = dst_fpu;
--
- 	/* The new task's FPU state cannot be valid in the hardware. */
- 	dst_fpu->last_cpu = -1;
- 
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 4e8d37b5a90b..794682b52373 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -78,7 +78,6 @@ static void __init fpu__init_system_early_generic(void)
- 	int this_cpu = smp_processor_id();
- 
- 	fpstate_reset(&x86_init_fpu);
--	current->thread.fpu = &x86_init_fpu;
- 	per_cpu(fpu_fpregs_owner_ctx, this_cpu) = &x86_init_fpu;
- 	x86_init_fpu.last_cpu = this_cpu;
- 
+ 	if (fpu == x86_task_fpu(current)) {
 diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 5bb73bc0e31a..4184c085627e 100644
+index 4184c085627e..0a24997c8cc6 100644
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -96,8 +96,6 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- #ifdef CONFIG_VM86
- 	dst->thread.vm86 = NULL;
- #endif
--	/* Drop the copied pointer to current's fpstate */
--	dst->thread.fpu = NULL;
+@@ -114,7 +114,6 @@ void arch_release_task_struct(struct task_struct *tsk)
+ void exit_thread(struct task_struct *tsk)
+ {
+ 	struct thread_struct *t = &tsk->thread;
+-	struct fpu *fpu = x86_task_fpu(tsk);
  
- 	return 0;
+ 	if (test_thread_flag(TIF_IO_BITMAP))
+ 		io_bitmap_exit(tsk);
+@@ -122,7 +121,7 @@ void exit_thread(struct task_struct *tsk)
+ 	free_vm86(t);
+ 
+ 	shstk_free(tsk);
+-	fpu__drop(fpu);
++	fpu__drop(tsk);
  }
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 3509afc6a672..226244a894da 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -170,6 +170,10 @@ SECTIONS
- 		/* equivalent to task_pt_regs(&init_task) */
- 		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
  
-+		__x86_init_fpu_begin = .;
-+		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
-+		__x86_init_fpu_end = .;
-+
- #ifdef CONFIG_X86_32
- 		/* 32 bit has nosave before _edata */
- 		NOSAVE_DATA
+ static int set_new_tls(struct task_struct *p, unsigned long tls)
 -- 
 2.43.0
 
