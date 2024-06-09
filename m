@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-207534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117EF901891
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:47:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BC3901892
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71902B20C1E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB231F21248
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D4D208CB;
-	Sun,  9 Jun 2024 22:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689944C627;
+	Sun,  9 Jun 2024 22:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="L3grKSon"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="sENSOwL+"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355A66FC6
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 22:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB09E208CB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 22:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717973225; cv=none; b=ufKhe0ZtSDNG2KnfIMnCkwtkvVxlBtlvQs/bC9UKUCZs72YLdWIqRJ7vD0gUY9tKRoZdbkMLsgxpSQC6O2ux6qiN4KvKFum6Ngyzm0LFUBFA0QTXObe4neGqxFXxOwwZT7wauR1mRevPaNRmM8Vm8sSqoxbsBwyPFYnVEkZ+MjA=
+	t=1717973725; cv=none; b=dQDQr5CbF1D9GIIMY2P97pKdjELWobWFpNcnyDCupGH4Q007YetmB23bnCo/RMq2VyfKJYeyDHmSgeowBUeSzuCtaaSIpkVo6w1r5fdnFTcwv6tIqbPmi+4jCaAYYpI4uI90XEPPpgdJR5NSp02ZH7bkaAsBJfT+15M78pE/Te4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717973225; c=relaxed/simple;
-	bh=CF+cO1pSinPGWgCkR6VFs6IZwJ4BytxCPSPFPveyHtU=;
+	s=arc-20240116; t=1717973725; c=relaxed/simple;
+	bh=ehpmDSbl4lMpkp6LjsltKUEYdBpWLpnkrfwilgTcaZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0gqDNu7vLUmfeOZhetMvj6NC448uelOOYPEm9F+ZsOe8Hlz0tEu2c37PScLq7uJ0gjEVk2hJYIWoCvekR3692bKymPSCdOj0ApF9sxaKanYMNY4+uk5wkGhuo0kn96QPaT9T9ofATU0EZSbvKJAWaWPCR4lVw6OATl7Qj5BQGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=L3grKSon; arc=none smtp.client-ip=209.85.128.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=PG576C3zfvQ1HodKJ62DjFRvYPO5Gz6Wyw+89INh9Jgyjm8T/aO40YnLeX1Drx4Ai9l2+VflwGIsN7QQFPb0A2vzrOnWEZLfvkoedRyFWAFD6nx9EQMsmD43X7Y+cr7ESCg7G+7LlOZ++lD6EfKxQO41Y01a7KLhhmQ7VvOgInE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=sENSOwL+; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4217a96de38so10564435e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 15:47:03 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-421820fc26dso4643525e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 15:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717973222; x=1718578022; darn=vger.kernel.org;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717973722; x=1718578522; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2WtKTGPRhj0z7HQ6EPmJaANaylZUzntqsNLAHly3ENA=;
-        b=L3grKSonXsj1Ell1Q1dDrBvdu5mg09BodMzUq3cCxnaod1fMc6xVGmRM/kLl1rPnII
-         BI+n4XkN9Z1kJw/PVDtA75HfWch9yNABx95He5QSSiPfwYdH9/3Ofm/k+wxDCIGHNmUc
-         U+SeKVexG2gXQvc8V/1ycwIM7xtU14w+9aF8wVIaQfSpYQVrnof1DVSEkGm+tWcmi31j
-         2ZwBR8YZZTdvJUPRjAhcJYikRtuqRRjwHs7CtO8eKVf6Hz4TNGbZwc7zBFAn1gWSKool
-         AgQp9MKbIEbSJesTmmS7/F8zbmBlxu36A8+aQqva/ZneGn/jiYUi5NGGLaHkoYo2Nc/a
-         VifA==
+        bh=rU8mmOTJ5SUXajvdC/Zl4SFrSmsJUmbhkZaZ5sER8f4=;
+        b=sENSOwL+l7rsrSiG2nrniqKBvWi0Hpc8tVPwsiFZyJbuh0aIcQaDDqx+s9JBsSIRgg
+         rcEfYsO9En0U4ZHsxPNUNnjZ5XC32Vr+Sybqv5bRvbkV9e0Pd6sQ4Jxuzogvg2roRd37
+         +E+pbIMctyFo+TtgY98mSdyUF1klpURTU3focIOopXRMXOApBbsNfT43JWQd0kzfmAcO
+         hRLtrR4r8km6e/URbcnKeIWE2QDTPxS6DBYu9tHw4NTWO1XBueGrek1HFwkHEQV2npqt
+         /tsH88qeuhyn1jyNJQ19e2DGytgiJmBDQXwVG6sxVgUzi5x+ZLn8aXHRzSZgHPlcHdDl
+         vUuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717973222; x=1718578022;
+        d=1e100.net; s=20230601; t=1717973722; x=1718578522;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2WtKTGPRhj0z7HQ6EPmJaANaylZUzntqsNLAHly3ENA=;
-        b=hMvj6l51KtHdJiw8HLPDwLfFQlxeRfcTqTJefHiNXJLYjxeojigKofrS/FJaNZd+zF
-         A+3eAY3/l9A7EyWVVaXCTiuoVwWzeQgbPxMi0CYortmnVxgmbUwF2Dka+sFvAiLyUx88
-         rNnYR4uf7cx9i8pbYoySL6gQHJpB0ojsscIBG9s8uf3/5AiyK33qbKIquxngFTGsrMB1
-         S5IhBm+QDdrJCAf4rqRz3nKNsmRnmaPihjKzpEVerKq6C32QfwzKBTaebOLkctlPYoNg
-         q/L0OmKE5bFQTANPvcwXcwvXkpR2/VXpAt3wAxIn+ecfUn3M48i+WY7JzyDX4EI49sW5
-         U0bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi2yVhOAXSQiZzzt68fbLgp6F0hu4xihRjqJrwLrIoOCOPza2U6PRF5EH1IkfWXK7PbaSox2kBHHCcxU41OQpRmhtRaqOmIdCxq8I7
-X-Gm-Message-State: AOJu0Yyh4g19H2T5bbyEfPfloQcZqhTKnwCaHKmdNt/YaixpngDKsYrk
-	pizbkx81NJfxzMPVqJRGBISFrwVQSmRT0jY88nhF4IhjcCf1YMqIC3yaOuPsOZk=
-X-Google-Smtp-Source: AGHT+IFeLN3Eubzn1uX7ekPwZGluQ4RwPDVnJ0LDW2iX1nYkbJDRca0Ehd7IGNHlN/ZzwllLO+GXbg==
-X-Received: by 2002:a05:600c:500f:b0:41f:9ae3:57f2 with SMTP id 5b1f17b1804b1-42164a3f64cmr64627845e9.37.1717973222593;
-        Sun, 09 Jun 2024 15:47:02 -0700 (PDT)
+        bh=rU8mmOTJ5SUXajvdC/Zl4SFrSmsJUmbhkZaZ5sER8f4=;
+        b=jkznP5FPX0sU0VVkf3nKDlSttUJyFw4r3farVMEYTt2MB65wdb47F8Dcvy/c+WG87z
+         +7QcjX5M6yejm0ixyd2n+KsX4wjLNDFzMranGVIeoYkgwbR5CcyRzkbHA0ScOA6rv1h9
+         Youxgun6jG9xalgwvydE+DUO4w6MhOiuF1WAJRdFIRphiUY2ZbMEHwcbMFn0mLQcdjIe
+         lYDjJm1tA8QVfIhpO6otGAG8tkUHskOJOmpcvOzzh/ZaAMAR+2xWBDawPzpdIsjDxoZw
+         m7s1k5sYTGCqNvZRBXC2FOg7Zv/BB/zQyHoj+k5l22tVdwWi2zo5UThut+sd4KTDbHgG
+         R/4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaXdYnskVQJmcRzhUNdgswllpXRV2qt+KCVFb3OJz8zF9QysWOaZ8Ycfb/FxE3Uv7Q6tMj5R060P91knOjjguJyjDT+LYddvv5zH3w
+X-Gm-Message-State: AOJu0YzNJ4yHm9rRwp4svi4N67TB+hwWp0TauYIdGs20NkwlDlCWAJiH
+	bwpGYI2uXQZU+RRMKI1T+ZzwI7pLAJbGdese7w92R6/QcVH3O18HOfcx6Z5saRU=
+X-Google-Smtp-Source: AGHT+IHts2gnLFQmIhTYJn/kx65GoJaltqUIGCBmLkEcBMJkTXLvnjNmHOqAGVSL5m2HLy9mPyZkNA==
+X-Received: by 2002:a05:600c:3aca:b0:421:b47d:4e9d with SMTP id 5b1f17b1804b1-421b47d4eaemr11187575e9.40.1717973722153;
+        Sun, 09 Jun 2024 15:55:22 -0700 (PDT)
 Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421c20e9f51sm20248635e9.17.2024.06.09.15.47.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe37csm157828705e9.3.2024.06.09.15.55.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 15:47:02 -0700 (PDT)
-Date: Sun, 9 Jun 2024 23:47:01 +0100
+        Sun, 09 Jun 2024 15:55:21 -0700 (PDT)
+Date: Sun, 9 Jun 2024 23:55:20 +0100
 From: Qais Yousef <qyousef@layalina.io>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rafael@kernel.org, vincent.guittot@linaro.org, peterz@infradead.org,
-	daniel.lezcano@linaro.org, anna-maria@linutronix.de,
-	kajetan.puchalski@arm.com, lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com
-Subject: Re: [PATCH 1/6] cpuidle: teo: Increase util-threshold
-Message-ID: <20240609224701.pc6om2o5ep6btywe@airbuntu>
-References: <20240606090050.327614-1-christian.loehle@arm.com>
- <20240606090050.327614-2-christian.loehle@arm.com>
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, vincent.donnefort@arm.com,
+	ke.wang@unisoc.com, xuewen.yan94@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+Message-ID: <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,76 +86,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240606090050.327614-2-christian.loehle@arm.com>
+In-Reply-To: <20240606070645.3295-1-xuewen.yan@unisoc.com>
 
-On 06/06/24 10:00, Christian Loehle wrote:
-> Increase the util-threshold by a lot as it was low enough for some
-> minor load to always be active, especially on smaller CPUs.
+On 06/06/24 15:06, Xuewen Yan wrote:
+> Because the effective_cpu_util() would return a util which
+> maybe bigger than the actual_cpu_capacity, this could cause
+> the pd_busy_time calculation errors.
+> So clamp the cpu_busy_time with the eenv->cpu_cap, which is
+> the actual_cpu_capacity.
+
+I actually think capping by pd_cap is something we should remove. Saturated
+systems aren't calculated properly especially when uclamp_max is used.
+
+But this might a bigger change and out of scope of what you're proposing..
+
+Did this 'wrong' calculation cause an actual problem for task placement?
+I assume the pd looked 'busier' because some CPUs were too busy.
+
+Was the system in overutilzied state? Usually if one CPU is that busy
+overutilized should be set and we'd skip EAS - unless uclamp_max was used.
+
 > 
-> For small cap CPUs (Pixel6) the util threshold is as low as 1.
-> For CPUs of capacity <64 it is 0. So ensure it is at a minimum, too.
-> 
-> Fixes: 9ce0f7c4bc64 ("cpuidle: teo: Introduce util-awareness")
-> Reported-by: Qais Yousef <qyousef@layalina.io>
-> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Suggested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> Fixes: 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utilization in feec()")
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 > ---
->  drivers/cpuidle/governors/teo.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
+>  kernel/sched/fair.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-> index 7244f71c59c5..45f43e2ee02d 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -146,13 +146,11 @@
->   * The number of bits to shift the CPU's capacity by in order to determine
->   * the utilized threshold.
->   *
-> - * 6 was chosen based on testing as the number that achieved the best balance
-> - * of power and performance on average.
-> - *
->   * The resulting threshold is high enough to not be triggered by background
-> - * noise and low enough to react quickly when activity starts to ramp up.
-> + * noise.
->   */
-> -#define UTIL_THRESHOLD_SHIFT 6
-> +#define UTIL_THRESHOLD_SHIFT 2
-> +#define UTIL_THRESHOLD_MIN 50
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8a5b1ae0aa55..8939d725023a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7870,7 +7870,9 @@ static inline void eenv_pd_busy_time(struct energy_env *eenv,
+>  	for_each_cpu(cpu, pd_cpus) {
+>  		unsigned long util = cpu_util(cpu, p, -1, 0);
 >  
->  /*
->   * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
-> @@ -671,7 +669,8 @@ static int teo_enable_device(struct cpuidle_driver *drv,
->  	int i;
+> -		busy_time += effective_cpu_util(cpu, util, NULL, NULL);
+> +		util = effective_cpu_util(cpu, util, NULL, NULL);
+> +		util = min(eenv->cpu_cap, util);
+> +		busy_time += util;
+>  	}
 >  
->  	memset(cpu_data, 0, sizeof(*cpu_data));
-> -	cpu_data->util_threshold = max_capacity >> UTIL_THRESHOLD_SHIFT;
-> +	cpu_data->util_threshold = max(UTIL_THRESHOLD_MIN,
-> +				max_capacity >> UTIL_THRESHOLD_SHIFT);
-
-Thanks for trying to fix this. But I am afraid this is not a solution. There's
-no magic number that can truly work here - we tried. As I tried to explain
-before, a higher util value doesn't mean long idle time is unlikely. And
-blocked load can cause problems where a decay can take too long.
-
-We are following up with the suggestions I have thrown back then and we'll
-share results if anything actually works.
-
-For now, I think a revert is more appropriate. There was some perf benefit, but
-the power regressions were bad and there's no threshold value that actually
-works. The thresholding concept itself is incorrect and flawed - it seemed the
-correct thing back then, yes. But in a hindsight now it doesn't work.
-
-
-Thanks!
-
---
-Qais Yousef
-
->  
->  	for (i = 0; i < NR_RECENT; i++)
->  		cpu_data->recent_idx[i] = -1;
+>  	eenv->pd_busy_time = min(eenv->pd_cap, busy_time);
 > -- 
-> 2.34.1
+> 2.25.1
 > 
 
