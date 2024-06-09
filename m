@@ -1,96 +1,157 @@
-Return-Path: <linux-kernel+bounces-207273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FA19014E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB2B9014E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54E128175E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132A4281C18
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457431C68F;
-	Sun,  9 Jun 2024 08:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlFAMsSt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972351C68F;
+	Sun,  9 Jun 2024 08:09:03 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A8D26A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AAED26A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717920454; cv=none; b=EgRK1IRot8mfCQ22ly2ad0AyTQyKW2qjnjNtW/ZcIYqbB28R/MG8C/N62cTaymIIl1dJPYQKC0YliTY9ZOZgp9EWwljK55nolsPEddecrJmfR4xIWa/zB7Qbh3IAchhncNPtMmlPuJ4qoBwvk8Bia6/VEgI6dO7Pem3b3+CsTPk=
+	t=1717920543; cv=none; b=bzpW6CKCIpb8apU2V7fLc2Ny/gpObakH2uDgtQeC+tB+xlSVJ/ABZuabZO5tPG9QJNO7UmG9AOOtKUgnn4r/0HMMasssmc3L4WNMgdJsaRSkZjdb6Us8kthw56+a8GKUtLhpFY0B18AcoyfiXG+pppEizhDvSoscW2EuQU3BXzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717920454; c=relaxed/simple;
-	bh=lOSN//yUQFmhLpm5Bd1YqSKVJsxaLRxaQ+D/NYYOnxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWc7kxznnsqlF3o+ZAx9j+TvWjePMKazyLjmct0j4tvdpG0Y0CZnwckZQDK54pW4WNZcmag0TGh2iPZzbJ3aI/JGbIa+at4v2Pb8ElI+Of34rTJGkw4m2vpgA17M7auRgzebqQ/424/2Dq8tO9F+13cpYKt7ZDVZQlazkGu1ecE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlFAMsSt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BF4C2BD10;
-	Sun,  9 Jun 2024 08:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717920454;
-	bh=lOSN//yUQFmhLpm5Bd1YqSKVJsxaLRxaQ+D/NYYOnxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlFAMsStExGoQBYvuSIo0iDEJHa4iKG/EfmfB9bdHbNXmA4tarjE3A1ad6uuHN8R1
-	 LpsVMw9kUTmTq1i7v2Gw6FgQwOPuFCdwpQk2PHtISl+EAG3nPN0+ABKK2kZ5RQfK6u
-	 XIZZdrPv4JeliIHs3ZBUFeV+eKvnpnmZGoAK4XvuWXcthpqEBE/cpWnJu6eycqeSov
-	 XfFa+xkYLO/oPjT3NlL2A7fRPWVexwHB6Rb7Ao+47yYMZRfK3Vzg9i3ia0B69hiSab
-	 y428LSwwqvuLxOxWlE1e+bVU4IFYj7RV2FvvqqjoHFpDrc9tk6vyfmXe2ezgXMr3W0
-	 1ipplsLYj6eIw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sGDaP-000000006fV-05O9;
-	Sun, 09 Jun 2024 10:07:33 +0200
-Date: Sun, 9 Jun 2024 10:07:33 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <David.Laight@aculab.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 6.10-rc2 - massive performance regression
-Message-ID: <ZmVixS7tG9-sf9l2@hovoldconsulting.com>
-References: <CAHk-=wisJ8bS3qe6iBPwL9x=PqJA5oE7tum-E9oZfyPgd2mmrw@mail.gmail.com>
- <46cb50d65e414bfd9bef5549d68ae4ea@AcuMS.aculab.com>
- <CAHk-=wh170Lme6HHSGa5eM6YNcd01vdkOoPenZ0m7P+Yv6_zxg@mail.gmail.com>
- <adbbd899aabf4e6898bbbb04f90b3ede@AcuMS.aculab.com>
- <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
+	s=arc-20240116; t=1717920543; c=relaxed/simple;
+	bh=G3I4tbx0AiuW6I9IAVsKC+RvknC2RDYBwErr5ofCUUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kh7m4cU/mnOP74t64xZ2r+MVmcDkZfaXcNJVRDmNha9ff7ST5LI+ACEOdoW0YlyJvirB7ZwIYq2HhDemi/y/JpjOeh2lMx4rGmN3RUkOhXFYi6Kw59F70YQV2uF9zlRXNdtbt6FBAm09LCk1zBhkrCvztzh2/70YserErhMVZ4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vxnbd2DxhzdZwN;
+	Sun,  9 Jun 2024 16:07:25 +0800 (CST)
+Received: from canpemm500001.china.huawei.com (unknown [7.192.104.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3D63B18007C;
+	Sun,  9 Jun 2024 16:08:51 +0800 (CST)
+Received: from [10.67.111.186] (10.67.111.186) by
+ canpemm500001.china.huawei.com (7.192.104.163) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 9 Jun 2024 16:08:50 +0800
+Message-ID: <f23a2d63-7493-75c8-030c-e569ed73b9d2@huawei.com>
+Date: Sun, 9 Jun 2024 16:08:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH] sched: Initialize the vruntime of a new task when it is
+ first enqueued
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <mingo@redhat.com>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <bristot@redhat.com>, <vschneid@redhat.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240606121133.2218723-1-zhangqiao22@huawei.com>
+ <20240607103043.GO8774@noisy.programming.kicks-ass.net>
+From: Zhang Qiao <zhangqiao22@huawei.com>
+In-Reply-To: <20240607103043.GO8774@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500001.china.huawei.com (7.192.104.163)
 
-On Sat, Jun 08, 2024 at 03:00:43PM -0700, Linus Torvalds wrote:
-> On Sat, 8 Jun 2024 at 14:36, David Laight <David.Laight@aculab.com> wrote:
 
-> > I've done some tests.
-> > I'm seeing a three-fold slow down on:
-> > $ i=0; while [ $i -lt 1000000 ]; do i=$((i + 1)); done
-> > which goes from 1 second to 3.
-> >
-> > I can run that with ftrace monitoring scheduler events (and a few
-> > other things) and can't spot anywhere the process isn't running
-> > for a significant time.
+
+在 2024/6/7 18:30, Peter Zijlstra 写道:
+> On Thu, Jun 06, 2024 at 08:11:33PM +0800, Zhang Qiao wrote:
+>> When create a new task, we initialize vruntime of the new task
+>> at sched_cgroup_fork(). However, the timing of executing this
+>> action is too early and may not be accurate.
+>>
+>> Because it use current cpu to init the vruntime, but the new
+>> task actually runs on the cpu which be assigned at wake_up_new_task().
+>>
+>> To optimize this case, we pass ENQUEUE_INITIAL flag to
+>> activate_task() in wake_up_new_task(), in this way,
+>> when place_entity is called in enqueue_entity(), the
+>> vruntime of the new task will be initialized. At the same
+>> time, place_entity in task_fork_fair() is useless, remove it.
 > 
-> Sounds like cpu frequency. Almost certainly hw-specific. I went
-> through that on my Threadripper in the 6.9 timeframe, but I'm not
-> seeing any issues in this current release.
+> The better argument would've looked at history to see why the code was
+> the way it is and then verify those reasons are no longer valid.
 > 
-> If you bisect it, we have somebody to blame and point fingers at...
+> Specifically, I think these are remains of child_runs_first, and that is
+> now gone.> > Can you verify and update accordingly?
 
-This may possibly be related to the cpufreq/thermal regression I just
-reported here:
+Initially, __enqueue_entity() was in task_new_fair(), in order to schedule
+according to se->vruntime, only a"se->vruntime = cfs_rq->min_vruntime" was
+added here. This modification  was introduced by commit e9acbff648 ("sched: introduce se->vruntime").
 
-	https://lore.kernel.org/lkml/ZmVfcEOxmjUHZTSX@hovoldconsulting.com/
+Then,the commit 4d78e7b656aa("sched: new task placement for vruntime") added proper
+new task placement for the vruntime based math, this also requires the new task's vruntime value.
 
-which causes the big cores on the Lenovo ThinkPad X13s to be stuck at a
-low frequency once they've been throttled.
+The commit aeb73b040399("sched: clean up new task placement") clean up code and extract
+a place_entity() helper function.
 
-Johan
+To summarize, the place_entity() in task_fork_fair() was for the child_runs_first and enqueue_entity,
+After remove the child_runs_first and enqueue_entity from task_fork_fair(), we can remove this place_entity().
+
+
+> 
+>> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
+>> ---
+>>  kernel/sched/core.c |  2 +-
+>>  kernel/sched/fair.c | 16 ----------------
+>>  2 files changed, 1 insertion(+), 17 deletions(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index bcf2c4cc0522..b4ff595a2dc8 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -4897,7 +4897,7 @@ void wake_up_new_task(struct task_struct *p)
+>>  	update_rq_clock(rq);
+>>  	post_init_entity_util_avg(p);
+>>  
+>> -	activate_task(rq, p, ENQUEUE_NOCLOCK);
+>> +	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
+>>  	trace_sched_wakeup_new(p);
+>>  	wakeup_preempt(rq, p, WF_FORK);
+>>  #ifdef CONFIG_SMP
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index efce2d36a783..bb5f376fd51e 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -12702,23 +12702,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+>>   */
+>>  static void task_fork_fair(struct task_struct *p)
+>>  {
+>> -	struct sched_entity *se = &p->se, *curr;
+>> -	struct cfs_rq *cfs_rq;
+>> -	struct rq *rq = this_rq();
+>> -	struct rq_flags rf;
+>> -
+>> -	rq_lock(rq, &rf);
+>> -
+>>  	set_task_max_allowed_capacity(p);
+>> -
+>> -	cfs_rq = task_cfs_rq(current);
+>> -	curr = cfs_rq->curr;
+>> -	if (curr) {
+>> -		update_rq_clock(rq);
+>> -		update_curr(cfs_rq);
+>> -	}
+>> -	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
+>> -	rq_unlock(rq, &rf);
+>>  }
+>>  
+>>  /*
+>> -- 
+>> 2.18.0.huawei.25
+>>
+> .
+> 
 
