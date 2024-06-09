@@ -1,78 +1,303 @@
-Return-Path: <linux-kernel+bounces-207231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEED6901432
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 04:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3B7901434
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 04:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5253281AFB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 02:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357E3281D5F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 02:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC7C848D;
-	Sun,  9 Jun 2024 02:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA49E6AC0;
+	Sun,  9 Jun 2024 02:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwQpDL+2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOqAncGv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B7FBE4F;
-	Sun,  9 Jun 2024 02:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80E2EC0;
+	Sun,  9 Jun 2024 02:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717899525; cv=none; b=cnCTc+xoC7Ft8jdZLPA7koo+ze8tJHhl1n4IhMUigjd93CO3P8RN06u8hUC1vbkLGPkv9hG+s09WzZwz8/5Gn/Nq+yYUg6FAd08JvG+5TEQeJVtZPapn3Z3po2WtYsJiJLyDZ8wgjoPRxpX8HQjQezYBO6mRHCO7DaMlIs+KcbQ=
+	t=1717900079; cv=none; b=CG17EIqbSm5/bpIBZ11CU16vKMiIcoG/VGFv86P5s4/GNjz9RQCQoBfY/GZxOpvW5Qd6hqfyn712JY4oz57Of5ea0ttMYC/XzJU2O8zjFMx/pMyAx43pbQW+mP1KIL5SLCZLYdJ5ZYv8Gx42hFd2zadVVUFfjgzFLTYnDXE7Lkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717899525; c=relaxed/simple;
-	bh=Bea9mPR6xlcQ6bWD9g/zEvks4GD58AbFFNx5iRXVeNg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=R32YhJ77lQDPplRylIkRi1cksPufhRhwFXL8HWcVmmJhFLHYgxl+erSYA8sDRrOdqav0VuBRGfr7F+eqWiLx8VSzMFoSSSUOiWRoEauo60RZhudgz2Nfqo0bC288YpmUVEnbC07kSqg58BwsL+br5+0Tl9BKuzneWufJ2r5L5VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwQpDL+2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E3580C2BD11;
-	Sun,  9 Jun 2024 02:18:44 +0000 (UTC)
+	s=arc-20240116; t=1717900079; c=relaxed/simple;
+	bh=gCFD56xrPAyUQ+zx7LWVeY5PRcTCWGUQ9+BPZ2pW7dM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UW8gPRdUfYmw5KbDuy/NSxUXbK1H33xTZwPTTijSBmEHQWwh8reG6bpG9K3BBliUUUAc1IuWXm7vVGU0FZO8mjsJwdO0lJZM4MhOqcm6MZrwGSZ704w7pUSeb/nsj9qCQSquyzso+pCRczRKmthkIZhy6PpBo10KKycnRCje5pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOqAncGv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB51C2BD11;
+	Sun,  9 Jun 2024 02:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717899524;
-	bh=Bea9mPR6xlcQ6bWD9g/zEvks4GD58AbFFNx5iRXVeNg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=hwQpDL+2743YEgPmV2U3q1tsaMYjskBGz1YmD0juSpZvFuemv8UcPpE+SWnLuJE18
-	 xJltrx/3BiEZS/I+YH4y7tQWBZBKru1PTpcFQtX4J/JAg/GWnYlcKddSyFrAlIADBg
-	 ESpfRTV+H3RmgH+egxOTosv8Vab9cfFEVX5GUhuS1xH1VgqkwaDYmjuMvZrMajxByI
-	 7BonguLFmpr1NATn45uJhADHvaddhiVg/qAosKPg7sDitgjYzNsG1hmYciPdgmBaJM
-	 wIX2+dSjllkv35NCVfgaHzJc3j0dzSlVakVGcX9KG2leNo/WxxrnEZn/Jie60dnrDW
-	 3K3Fj9jgv0OKA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D9C97CF3BA4;
-	Sun,  9 Jun 2024 02:18:44 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5muOwzD0cy_mZ5ydJfQLpmY4MYpKqYsHgAB1Z+qs6Gknmg@mail.gmail.com>
-References: <CAH2r5muOwzD0cy_mZ5ydJfQLpmY4MYpKqYsHgAB1Z+qs6Gknmg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5muOwzD0cy_mZ5ydJfQLpmY4MYpKqYsHgAB1Z+qs6Gknmg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc2-smb3-client-fixes
-X-PR-Tracked-Commit-Id: a88d60903696c01de577558080ec4fc738a70475
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c5dbc2ed0006d1a910b5496202a280138ce596e4
-Message-Id: <171789952488.28801.9387865286608951069.pr-tracker-bot@kernel.org>
-Date: Sun, 09 Jun 2024 02:18:44 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1717900079;
+	bh=gCFD56xrPAyUQ+zx7LWVeY5PRcTCWGUQ9+BPZ2pW7dM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOqAncGv5m/frkDyK8tX3FXlDW3COWL81rcEZat7j0Upb7Rx4AwVP8krjZJpP5cXx
+	 GP9sgYiVzD+DErDdCcZEwsOznEcZ8Xwcp3Os6U4Sw2+28iVfNC84hso9bbqfBNS2SZ
+	 EmP8tVim4Zi9D5Mm2A54XpErGGsK48c2mPyXyZo7Gi3lcWbynFlqS8BoWDq83DbBCT
+	 8F4gyO68+3UfMaR4m9P147OAyWJSmreLC9qxolLdATpoUu8SNwXk2XH5m+nHD/NFhv
+	 JERkXrfPlQsytAUzEcCdx1NSn5Um57oNIIp1euNMOyL3Us7L3JZ4C80WIgFRFJhnzT
+	 cDdF8BbJ6opig==
+Date: Sat, 8 Jun 2024 19:27:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Taylor, Perry" <perry.taylor@intel.com>,
+	"Alt, Samantha" <samantha.alt@intel.com>,
+	"Biggers, Caleb" <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v11 3/8] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+Message-ID: <ZmUTLOeLcdYs-cqe@google.com>
+References: <20240605052200.4143205-1-weilin.wang@intel.com>
+ <20240605052200.4143205-4-weilin.wang@intel.com>
+ <ZmJEP_42Ehlt-c-6@google.com>
+ <CO6PR11MB56350EA26F8AD92B222C528DEEFB2@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <ZmNdYwAxlXkQ8WJt@google.com>
+ <CO6PR11MB5635DC04091BBE1FEC59642DEEFB2@CO6PR11MB5635.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CO6PR11MB5635DC04091BBE1FEC59642DEEFB2@CO6PR11MB5635.namprd11.prod.outlook.com>
 
-The pull request you sent on Sat, 8 Jun 2024 18:41:12 -0500:
+On Fri, Jun 07, 2024 at 08:45:13PM +0000, Wang, Weilin wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Namhyung Kim <namhyung@kernel.org>
+> > Sent: Friday, June 7, 2024 12:20 PM
+> > To: Wang, Weilin <weilin.wang@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > <mingo@redhat.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunter,
+> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor, Perry
+> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Biggers,
+> > Caleb <caleb.biggers@intel.com>
+> > Subject: Re: [RFC PATCH v11 3/8] perf stat: Fork and launch perf record when
+> > perf stat needs to get retire latency value for a metric.
+> > 
+> > On Fri, Jun 07, 2024 at 01:07:12AM +0000, Wang, Weilin wrote:
+[SNIP]
+> > > > > @@ -2186,6 +2240,9 @@ static int evsel__open_cpu(struct evsel *evsel,
+> > > > struct perf_cpu_map *cpus,
+> > > > >  		return 0;
+> > > > >  	}
+> > > > >
+> > > > > +	if (evsel__is_retire_lat(evsel))
+> > > > > +		return tpebs_start(evsel->evlist, cpus);
+> > > >
+> > > > As it works with evlist, I think it's better to put this code there.
+> > > > But it seems perf stat doesn't call the evlist API for open, then we
+> > > > can add this to somewhere in __run_perf_stat() directly.
+> > > >
+> > > > > +
+> > > > >  	err = __evsel__prepare_open(evsel, cpus, threads);
+> > > > >  	if (err)
+> > > > >  		return err;
+> > > > > @@ -2376,6 +2433,8 @@ int evsel__open(struct evsel *evsel, struct
+> > > > perf_cpu_map *cpus,
+> > > > >
+> > > > >  void evsel__close(struct evsel *evsel)
+> > > > >  {
+> > > > > +	if (evsel__is_retire_lat(evsel))
+> > > > > +		tpebs_delete();
+> > > >
+> > > > Ditto.
+> > >
+> > > Hi Namhyung,
+> > >
+> > > I hope both this and the one above on open could stay in evsel level because
+> > > these are operations on retire_latency evsel.
+> > 
+> > Then I think you need to remove the specific evsel not the all tpebs
+> > events.
+> > 
+> > > At the same time, a lot of the
+> > > previous several versions of work was to move TPEBS code out from perf
+> > stat to
+> > > evsel to make it more generic. I think move these back to __run_perf_stat()
+> > are
+> > > opposite to that goal.
+> > 
+> > Oh, I meant you can have the logic in utils/intel-tpebs.c but add a call
+> > to tpebs_delete() in __run_perf_stat().  I think it'd better to keep it
+> > in evlist__close() but we don't use evlist__open() for perf stat so it's
+> > not symmetric. :(
+> > 
+> > Anyway, all I want to say is that tpebs APIs work on evlist level.  So I
+> > think it's natural that they are called for the whole list, not for an
+> > event/evsel.
+> 
+> I think we're trying to work at evsel level and open(remove) or close one 
+> retire_latency evsel at a time. In addition to that, we put all the required retire_latency
+> together in one perf record launch in order to reduce overhead to fork multiple perf 
+> record. I hope this makes sense. 
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc2-smb3-client-fixes
+Well.. I think we can do something like this in the current code.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c5dbc2ed0006d1a910b5496202a280138ce596e4
+__run_perf_stat():
+  ...
 
-Thank you!
+  tpebs__start(evlist, target);
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+  evlist__for_each_cpu(...) {
+      if (create_perf_steat_counter() < 0) {
+          ....
+
+instead of doing it in the evsel__open().  What's the issue with this
+approach?
+
+> 
+> > 
+> > >
+> > >
+> > > >
+> > > > >  	perf_evsel__close(&evsel->core);
+> > > > >  	perf_evsel__free_id(&evsel->core);
+> > > > >  }
+> > > > > @@ -3341,6 +3400,9 @@ static int store_evsel_ids(struct evsel *evsel,
+> > > > struct evlist *evlist)
+> > > > >  {
+> > > > >  	int cpu_map_idx, thread;
+> > > > >
+> > > > > +	if (evsel__is_retire_lat(evsel))
+> > > > > +		return 0;
+> > > > > +
+> > > > >  	for (cpu_map_idx = 0; cpu_map_idx < xyarray__max_x(evsel->core.fd);
+> > > > cpu_map_idx++) {
+> > > > >  		for (thread = 0; thread < xyarray__max_y(evsel->core.fd);
+> > > > >  		     thread++) {
+> > > > > diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..37b7a4f92dd9
+> > > > > --- /dev/null
+> > > > > +++ b/tools/perf/util/intel-tpebs.c
+> > > > > @@ -0,0 +1,397 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > +/*
+> > > > > + * intel_tpebs.c: Intel TPEBS support
+> > > > > + */
+> > > > > +
+> > > > > +
+> > > > > +#include <sys/param.h>
+> > > > > +#include <subcmd/run-command.h>
+> > > > > +#include <thread.h>
+> > > > > +#include "intel-tpebs.h"
+> > > > > +#include <linux/list.h>
+> > > > > +#include <linux/zalloc.h>
+> > > > > +#include <linux/err.h>
+> > > > > +#include "sample.h"
+> > > > > +#include "debug.h"
+> > > > > +#include "evlist.h"
+> > > > > +#include "evsel.h"
+> > > > > +#include "session.h"
+> > > > > +#include "tool.h"
+> > > > > +#include "cpumap.h"
+> > > > > +#include "metricgroup.h"
+> > > > > +#include <sys/stat.h>
+> > > > > +#include <sys/file.h>
+> > > > > +#include <poll.h>
+> > > > > +#include <math.h>
+> > > > > +
+> > > > > +#define PERF_DATA		"-"
+> > > > > +
+> > > > > +bool tpebs_recording;
+> > > > > +static pid_t tpebs_pid = -1;
+> > > > > +static size_t tpebs_event_size;
+> > > > > +static pthread_t tpebs_reader_thread;
+> > > > > +static struct child_process *tpebs_cmd;
+> > > > > +static struct list_head tpebs_results = LIST_HEAD_INIT(tpebs_results);
+> > > >
+> > > > It can be 'static LIST_HEAD(tpebs_results);'
+> > > >
+> > > > > +
+> > > > > +struct tpebs_retire_lat {
+> > > > > +	struct list_head nd;
+> > > > > +	/* Event name */
+> > > > > +	const char *name;
+> > > > > +	/* Event name with the TPEBS modifier R */
+> > > > > +	const char *tpebs_name;
+> > > > > +	/* Count of retire_latency values found in sample data */
+> > > > > +	size_t count;
+> > > > > +	/* Sum of all the retire_latency values in sample data */
+> > > > > +	int sum;
+> > > > > +	/* Average of retire_latency, val = sum / count */
+> > > > > +	double val;
+> > > > > +};
+> > > > > +
+> > > > > +static int get_perf_record_args(const char **record_argv, char buf[],
+> > > > > +				const char *cpumap_buf)
+> > > > > +{
+> > > > > +	struct tpebs_retire_lat *e;
+> > > > > +	int i = 0;
+> > > > > +
+> > > > > +	pr_debug("Prepare perf record for retire_latency\n");
+> > > > > +
+> > > > > +	record_argv[i++] = "perf";
+> > > > > +	record_argv[i++] = "record";
+> > > > > +	record_argv[i++] = "-W";
+> > > > > +	record_argv[i++] = "--synth=no";
+> > > > > +	record_argv[i++] = buf;
+> > > > > +
+> > > > > +	if (cpumap_buf) {
+> > > > > +		record_argv[i++] = "-C";
+> > > > > +		record_argv[i++] = cpumap_buf;
+> > > > > +	}
+> > > > > +
+> > > > > +	record_argv[i++] = "-a";
+> > > > > +
+> > > > > +	if (!cpumap_buf) {
+> > > > > +		pr_err("Require cpumap list to run sampling.\n");
+> > > > > +		return -ECANCELED;
+> > > > > +	}
+> > > >
+> > > > Hmm.. I thought you supported system wide collection, not sure if it has
+> > > > a cpumap.  Anyway this check makes the earlier one meaningless - you
+> > > > need the cpumap always, right?
+> > >
+> > > TPEBS should be work with "-a" or "-C". I'm not sure what the cpumap
+> > would be
+> > > for "-a". Would it make sense to add "-a" only when cpumap_buf is NULL?
+> > 
+> > I think the best way is to check target__has_cpu().
+> Yes this is an ideal way to check. But since the tpebs_start() is called in evsel, I'm
+> wondering do we still have target here?
+
+Please see above.
+
+Thanks,
+Namhyung
+
+> 
+> > 
+> > >
+> > > >
+> > > > > +
+> > > > > +	list_for_each_entry(e, &tpebs_results, nd) {
+> > > > > +		record_argv[i++] = "-e";
+> > > > > +		record_argv[i++] = e->name;
+> > > > > +	}
+> > > > > +
+> > > > > +	record_argv[i++] = "-o";
+> > > > > +	record_argv[i++] = PERF_DATA;
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
 
