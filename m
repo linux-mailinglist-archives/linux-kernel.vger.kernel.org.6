@@ -1,182 +1,97 @@
-Return-Path: <linux-kernel+bounces-207429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E96901702
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1D2901706
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A171DB20EC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56121F21327
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBE747F7A;
-	Sun,  9 Jun 2024 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579D1482D0;
+	Sun,  9 Jun 2024 16:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oH54ZGAu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXi8GwA5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4D2C138;
-	Sun,  9 Jun 2024 16:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA1D1EA73;
+	Sun,  9 Jun 2024 16:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717950923; cv=none; b=NOVXqeCSFEJIqVNagdFkyhby9NonUQL50s2my/Eyalwdp2h5PQZb5vSIvBrM2Sf5c632QmnoEChRN2LY69tv0rQYhyA2WRZl3ud427HwVhBEKh1JorUgIATwBxwPElaxJ2ofdw+Z2uJXL6Nmbs+EhhrAphS5j++sYeNJt1ihuqo=
+	t=1717951227; cv=none; b=pFJauVqoWksFw71G3pcnlty3qDAmwpSKpipIEGHCGhOh6/cc7+TSgEOPc7iyX4jPSHhX0IpCKetCR6fD01ZWcjh5mkiIO58jblBEqSpb79xUGsd4efE7J/z5Vl3z7T7wCPue1fDaCT6U1Prt5jGygCtc96NPKigOQAM+THkenss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717950923; c=relaxed/simple;
-	bh=i82wRIg1FJ9izY6xDD9I3BrVV5hbns0VEV5ZrjVhwFE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SowdUKey7pSyCtB0cv/KEtSI9JL4wu/jzpkN20z97/40lNWz3YS43BEZ+WsPP712D8nEbz0j+mJnbx1w+UlC/Tl5siUc9FUwB4VwM76cyhDfoUfwKfNGLeZtb/P4UdA2RqEWMzhNv6yLJR4/7A98xn5HZmRcMCNa1b7AtS10ZTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oH54ZGAu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459DkfFi020409;
-	Sun, 9 Jun 2024 16:35:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hGdRGLBjpFozqNKWbB3thN
-	ejwM99uKQmE5pOVTisNZo=; b=oH54ZGAukMJxfUCAg9H3UgfRGv4MGvjfW4jdHM
-	ManqALFA465mKsFX7QL1klI50dTdLLtWlvRgDJ0YMHH4jU2sIAEWkzWXguTr8mxa
-	/o9p7qHm7N67QdeMq2XyVLfEMf6ydFyOO8uP9gtrLKDIDJQvi4MpXpDJEj9tnX+a
-	8W4eV8VULw9SIYHLr7tMZTeCzca6MqkbLtfmjZNXX7yIuvMlvIHdaxXOr0bPGKKR
-	iD76eJl8YGq97pUo9NBrxAGybXro14NCHYt/1V+cd/lmNqqLW2TTJSkFGx4/uTSN
-	ly/lNRudI2xqluvHxGiCuAhah8mUqDbjVTBrMERl4UFG9hbg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfcv1v0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Jun 2024 16:35:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459GYxLG027369
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 9 Jun 2024 16:34:59 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 09:34:59 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 09:34:59 -0700
-Subject: [PATCH] drm/ttm/tests: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717951227; c=relaxed/simple;
+	bh=GvpgVeH8caYoRfUd4ZWG2IefcCP4XeyACLZHX1/PZ7w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OCXCn7u+6EPF8s9rz3k1WyIpFT4WTQoJnS6hUnIMOOJwwEQiN0B/R0QUEp3k0fgR0SOrA5p8sKy2ZWS/FzHM4UmWOouinyxrIarqUcsWcuhEosyuI8NdHw0tumpbfD78KpmvnQK2mlwewhUM7vm91rdY4T4OemzyXnEowaeVgSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXi8GwA5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 073D0C3277B;
+	Sun,  9 Jun 2024 16:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717951227;
+	bh=GvpgVeH8caYoRfUd4ZWG2IefcCP4XeyACLZHX1/PZ7w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oXi8GwA5ckE4W47hzv0W37SEfcVCiCBzvuJZaUGn/EN3PIAdR6LtmAENaAGteT0PQ
+	 g5BvuR7+1U5RMFWAggXrmDfA3JfpwzUr/YKT5Rulcv0rpdB1qn2D+Dq12TiBCAKMg+
+	 FqsDpw9pIg6jpgIBzvGBFqnkcJ/qWME21G5QusJ/Yvz0eJZa9+ewmb9i3jQc2ClcpW
+	 4S5d6lxm+d6qeDy8xW0SqUOMUVggsRffHn/CBMW3KNJ2j2oAB9JMuSb6CZAA6lVEEl
+	 Ym2n5HM7jZXekhnMb4ZAknLzsVw+7HIzdQOw7BSRLLXvOD6IZHrVW2dpYOhLmyeuRn
+	 9zNXFA8/ZD6BQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E89EFCF3BAB;
+	Sun,  9 Jun 2024 16:40:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-gpu-drm-ttm-tests-v1-1-d94123d95b4c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALLZZWYC/x3MywrCMBCF4Vcps3YgtiWiryIucpm0AyaWmbQUS
- t/d6OLA+TffAUrCpPDoDhDaWPlTWlwvHYTZlYmQY2voTT8aa+6YI0bhjURxWtb2M9baRloV083
- bIY2W/BCgEYtQ4v3PP1+tvVNCL66E+Ye+uaw7ZqeVBM7zC6uWBMaNAAAA
-To: Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui
-	<ray.huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dHidcDURqjcFrVOkfWh6rSxTRIaZq-Ci
-X-Proofpoint-GUID: dHidcDURqjcFrVOkfWh6rSxTRIaZq-Ci
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_12,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 phishscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406090130
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] dmaengine: ti: k3-udma-glue: clean up return in
+ k3_udma_glue_rx_get_irq()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171795122694.8829.8746227477977795348.git-patchwork-notify@kernel.org>
+Date: Sun, 09 Jun 2024 16:40:26 +0000
+References: <2f28f769-6929-4fc2-b875-00bf1d8bf3c4@kili.mountain>
+In-Reply-To: <2f28f769-6929-4fc2-b875-00bf1d8bf3c4@kili.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: peter.ujfalusi@gmail.com, vkoul@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, danishanwar@ti.com,
+ rogerq@kernel.org, grygorii.strashko@ti.com, jpanis@baylibre.com,
+ c-vankar@ti.com, diogo.ivo@siemens.com, horms@kernel.org,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel-janitors@vger.kernel.org
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_device_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_pool_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_resource_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_tt_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_bo_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.o
+Hello:
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/gpu/drm/ttm/tests/ttm_bo_test.c       | 1 +
- drivers/gpu/drm/ttm/tests/ttm_device_test.c   | 1 +
- drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
- drivers/gpu/drm/ttm/tests/ttm_pool_test.c     | 1 +
- drivers/gpu/drm/ttm/tests/ttm_resource_test.c | 1 +
- drivers/gpu/drm/ttm/tests/ttm_tt_test.c       | 1 +
- 6 files changed, 6 insertions(+)
+On Thu, 6 Jun 2024 17:23:44 +0300 you wrote:
+> Currently the k3_udma_glue_rx_get_irq() function returns either negative
+> error codes or zero on error.  Generally, in the kernel, zero means
+> success so this be confusing and has caused bugs in the past.  Also the
+> "tx" version of this function only returns negative error codes.  Let's
+> clean this "rx" function so both functions match.
+> 
+> This patch has no effect on runtime.
+> 
+> [...]
 
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-index 1f8a4f8adc92..c18547c65985 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-@@ -619,4 +619,5 @@ static struct kunit_suite ttm_bo_test_suite = {
- 
- kunit_test_suites(&ttm_bo_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for ttm_bo APIs");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_device_test.c b/drivers/gpu/drm/ttm/tests/ttm_device_test.c
-index 19eaff22e6ae..5bdfa4f88438 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_device_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_device_test.c
-@@ -209,4 +209,5 @@ static struct kunit_suite ttm_device_test_suite = {
- 
- kunit_test_suites(&ttm_device_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for ttm_device APIs");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-index 7b7c1fa805fc..d9d29b34b23b 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-@@ -156,4 +156,5 @@ void ttm_test_devices_fini(struct kunit *test)
- }
- EXPORT_SYMBOL_GPL(ttm_test_devices_fini);
- 
-+MODULE_DESCRIPTION("TTM KUnit test helper functions");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_pool_test.c b/drivers/gpu/drm/ttm/tests/ttm_pool_test.c
-index 0a3fede84da9..2d1928b615a0 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_pool_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_pool_test.c
-@@ -433,4 +433,5 @@ static struct kunit_suite ttm_pool_test_suite = {
- 
- kunit_test_suites(&ttm_pool_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for ttm_pool APIs");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_resource_test.c b/drivers/gpu/drm/ttm/tests/ttm_resource_test.c
-index 029e1f094bb0..ade487fea179 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_resource_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_resource_test.c
-@@ -332,4 +332,5 @@ static struct kunit_suite ttm_resource_test_suite = {
- 
- kunit_test_suites(&ttm_resource_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for ttm_resource and ttm_sys_man APIs");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_tt_test.c b/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-index fd4502c18de6..d78e1e9896d8 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-@@ -292,4 +292,5 @@ static struct kunit_suite ttm_tt_test_suite = {
- 
- kunit_test_suites(&ttm_tt_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for ttm_tt APIs");
- MODULE_LICENSE("GPL");
+Here is the summary with links:
+  - [net-next] dmaengine: ti: k3-udma-glue: clean up return in k3_udma_glue_rx_get_irq()
+    https://git.kernel.org/netdev/net-next/c/28f961f9d5b7
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240609-md-drivers-gpu-drm-ttm-tests-f7b63f46eb3c
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
