@@ -1,137 +1,137 @@
-Return-Path: <linux-kernel+bounces-207422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1629016F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:06:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA019016F2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5B01C20CC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96471C2096D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B52347779;
-	Sun,  9 Jun 2024 16:06:17 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01D84778B;
+	Sun,  9 Jun 2024 16:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8BedKyx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D71E14265;
-	Sun,  9 Jun 2024 16:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0100D14265;
+	Sun,  9 Jun 2024 16:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717949176; cv=none; b=I+GFQqoLhbjqb6HXUPinnt1lB5iGuyJyhJPc/+Pb/4i4k3M65pEtIdIAHxMbk4rk4cnTAJs3KcWkpd7OTVs3beA1DlmjszRQGMatDLmVrTFIWcrKvJC0q7dAa+9EE3gra3qi/CUANkqCfutYe0tAV6zE7I8xqMOI/kHP3oX/zI4=
+	t=1717949437; cv=none; b=Qnmjl6oWac3mCyBgGnqKkmsBv+K+iTEexhKpUCZgo8ltaVNDd681wIzp1j8Yll4KQymkFPMW9eYUacwGAJz55MSfvHqIdoEd7bmaaGc3uuAYtDqSD7MMTceNrvrtcRhn4Xm0yocxuuGaTQzrPq/PZvbR7GHexfILpzwzoGqbD8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717949176; c=relaxed/simple;
-	bh=53/N3nydP1Frzk260uGA223xS+Df7guFfr89dKFOU10=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=urslX9vjfQKOsaIYeuxUzZFDPE3Bf1JoNY9tEfau7AghAIG1vdZLeiAKzORwKgELCgkYRpQTuDS+ASjqSoNwHT51/x2ofzU0WLK9ueH/OfejFq9m+a9vJNHgor12i3J7CHHjHl96rFI4KK0PmwVvn8BMEgMA1pK/Ap+G+RQLsts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sGL3G-0004V8-Ee; Sun, 09 Jun 2024 18:05:50 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Space Meyer <me@the-space.agency>, Sebastian Kropatsch <seb-dev@mail.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
- Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 2/2] arm64: dts: rockchip: Add FriendlyElec CM3588 NAS board
-Date: Sun, 09 Jun 2024 18:05:49 +0200
-Message-ID: <4035271.e99z0qppnp@diego>
-In-Reply-To: <f5cfcf3e-27e5-464a-9adf-261753ad6de7@mail.de>
-References:
- <20240602211901.237769-1-seb-dev@mail.de> <11747652.CDJkKcVGEf@phil>
- <f5cfcf3e-27e5-464a-9adf-261753ad6de7@mail.de>
+	s=arc-20240116; t=1717949437; c=relaxed/simple;
+	bh=oeXu4rLXkrMEaolsQz5Aqf61Yi+TBt3Qo8sec7rPtis=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tPip8gnNA4kvoY09DwIATCZYcYVS63qbDPOnWdKpYvJlgbmbKcCoT3OVFrUqjemzDwGTeKiSCAyT/EptO9tLfP8LO4k6vH+pZvO344sj5zYQQBgjuyFSz2pQgjeVLWANrcUVdj67x2pO1XtO3zIqRAQSg05CNEik/evRXlY0Qyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8BedKyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E70A2C2BD10;
+	Sun,  9 Jun 2024 16:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717949435;
+	bh=oeXu4rLXkrMEaolsQz5Aqf61Yi+TBt3Qo8sec7rPtis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=F8BedKyxzZ7BfckNJ9wRqnbNA6noRXzFK/IUYcfaC/I/hCFC/qPPp00NM/xdSTsrc
+	 ST3B5k4CfFK78FhOVqBVU1mEbcbt1VE9s+ZbvWexG2/QqmHiT4lvgVPCxA5+g5tXmp
+	 w5qoyKP+o11xLBAJuRmgOPqkF8J5FS4ehdKJFlUqVxTfp/wTseAByU3Qh1ajQkzBAN
+	 Oh7Xa3FNiXQEZ95ft9TvKw/OEAQ85vaivD+K2HomdST6BCtzojuNZGv9j6oghwCHzL
+	 0SOxOjNUDwW8XnrAjwQTOX8OcRerJ4n/ImT0/lXLbsqgZ5smWCylNhSN/4+aSctm1g
+	 c5/m6xGvo+slg==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.1 000/470] 6.1.93-rc2 review
+Date: Sun,  9 Jun 2024 09:10:31 -0700
+Message-Id: <20240609161031.63516-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240609113816.092461948@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Am Samstag, 8. Juni 2024, 19:22:01 CEST schrieb Sebastian Kropatsch:
-> Hello,
+Hello,
+
+On Sun,  9 Jun 2024 13:41:02 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.1.93 release.
+> There are 470 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Am 08.06.2024 um 16:38 schrieb Heiko Stuebner:
-> > Am Donnerstag, 6. Juni 2024, 15:13:20 CEST schrieb Space Meyer:
-> >> On 02.06.2024 22:20, Sebastian Kropatsch wrote:
-> >>> Some RK3588 boards are still using this property, the following quote
-> >>> is from rk3588-tiger-haikou.dts for example:
-> >>>       &sdmmc {
-> >>>           /* while the same pin, sdmmc_det does not detect card changes */
-> >>>           cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
-> >>>
-> >>> I am unsure as to whether this comment from the quote might apply for
-> >>> the CM3588 as well. Please let me know if you are able to tell :-)
-> >>
-> >> I don't quite understand this. However GPIO0_A4 *is* routed to the micro
-> >> sd CD according to the NAS schematic, page 16 around A5.
-> > 
-> > for the actual sdmmc_det functionality ... possibly some pinconfig thing?
-> > I.e. pull-whatever settings?
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
 > 
-> I have no idea. I just removed the "cd-gpios" line in v2 due to a
-> suggestion by Jonas Karlman and then stumbled over this comment.
-> So I'm not sure whether to include or not include this property
-> for the CM3588 NAS since I don't know the consequences.
-> Probably in the end it doesn't even matter :)
-> 
-> >>> +	vcc_3v3_pcie30: regulator-vcc-3v3-pcie30 {
-> >>> +		compatible = "regulator-fixed";
-> >>> +		regulator-name = "vcc_3v3_pcie30";
-> >>> +		regulator-always-on;
-> >>> +		regulator-boot-on;
-> >>> +		regulator-min-microvolt = <3300000>;
-> >>> +		regulator-max-microvolt = <3300000>;
-> >>> +		vin-supply = <&vcc_5v0_sys>;
-> >>> +	};
-> >>
-> >> These are 4 seperate regulators according to the schematic. However, as
-> >> they are all fixed, idk if they should be split or kept like this.
-> > 
-> > personally, I really like the power-diagram to match schematics.
-> > I.e. $debugfs/regulator/regulator_summary will produce a really nice
-> > graph of all the system's regulators, so it's definitly nice if the
-> > hirarchy matches. Also prevents head-scratching later on ;-)
-> 
-> These are indeed 4 different regulators according to the schematic.[1]
-> But they don't have any pin to control them separately. I can
-> duplicate them 4 times if that's the preferred practice.
-> 
-> But matching the schematics won't be possible either way, since
-> e.g. there is only one single 5v regulator acc. to the schematic
-> (vcc_5v0_sys), but vcc_5v0_host_20, vcc_5v0_host_30, vbus_5v0_typec
-> and so on are needed since each device has a different control pin
-> to enable its power. Or is there a better way to solve this while
-> having only one 5v regulator node but still being able to set the
-> control pins separately for the different USB ports?
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 
-The other option we often use is to define multiple phandles
-for a regulator. For exactly that case where one gpio controls
-a set of regulators.
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-So you have one regulator
+Tested-by: SeongJae Park <sj@kernel.org>
 
-vcc_5v0_host_20: vcc_5v0_host_30: vbus_5v0_typec: regulator-vcc-whatever {
-	foo;
-}
+[1] https://github.com/awslabs/damon-tests/tree/next/corr
+[2] bd8637d23a9e ("Linux 6.1.93-rc2")
 
-So in short there is not set rule, but more like a best-effort to get as
-close to the schematics as possible. I.e. someone going from dt
-to schematics should be able to just search for an identifier
-(of course same for the other direction).
+Thanks,
+SJ
 
+[...]
 
-Heiko
+---
 
-
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: sysfs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh
+ok 12 selftests: damon-tests: build_m68k.sh
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
