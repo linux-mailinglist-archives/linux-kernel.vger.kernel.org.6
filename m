@@ -1,194 +1,133 @@
-Return-Path: <linux-kernel+bounces-207501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A80090181E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:21:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD8F901821
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE4A280C3C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E50281245
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9924D8B3;
-	Sun,  9 Jun 2024 20:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5592E4D8BD;
+	Sun,  9 Jun 2024 20:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/ubQ1Fi"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UdFrUZmL"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAD338DD3;
-	Sun,  9 Jun 2024 20:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188F247A7A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 20:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717964487; cv=none; b=eNRlUqvsm3V06fOaPAOAb7rNaQFGLrRoi2vBHD5ggLWHc9dH82hBlaOVMoa4qeazRwtEbOV/8JZp9+WbXpfAXy6t8QitodDVJsn/4da5AODqgLMNJBQuvg1B0E9o1PqAWT0ODgiXRh+KY8Kpww38hXjhSEfDpgCHFcjL/KkpAZw=
+	t=1717964846; cv=none; b=DUjaM2jgJgfyUr7MfZH0zvtnlSXWshNOO+EvUXhbOnmVZ9RBD9qrRGm3uikCx3jBgw17mJ6TRjJHYwAMUr2UhI+8SWojHz1K0MmfotbA70xXxH8iFjCZB70NZwaK2Xkg+kv0Y9YmnflDTgNjjX0uOMhs6ecoMbpavXqwUEK51XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717964487; c=relaxed/simple;
-	bh=+bzKM9EUcFNyUvWXeH4KuSku+qNeTDWylsL42zL5iDo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Sj2mSF632XubCEYWcuzv+yCiBJIgRRT9OeCII4Kky+lUSC5fN3HqAdeS6QECw2s8P2PihD4Tmc9X8W+/iKOkPxKPtx1jwpI1LpKZ53YEU6zyuRRk46dOUe08wOqgr1qTJ6x8YEpX2DvUFI9thb297KDbh42fb47jLtraJIJGfCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/ubQ1Fi; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfb0538e227so1957494276.2;
-        Sun, 09 Jun 2024 13:21:25 -0700 (PDT)
+	s=arc-20240116; t=1717964846; c=relaxed/simple;
+	bh=P2yzPJodq4h5YIN8ovSMmJRCJKvyoJQi2FOaksZYxzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W8bafIyLjO3jx6C5I5lWWN+J9FvFIrypfvepj1eMIbGo30c4ZGkwtK5uxlOl0pdC5p6hnjAhrjE9n8vvUCT93rqcOXBKjWFkq6BD0BkPk3eTmJcW3oDQH44eQkdG4JPAl5Y5Scgmt6MsBkIc6pEfUtFBElxfDTilKDJi2aarl0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UdFrUZmL; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f361af4cb6so1108545a34.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 13:27:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717964485; x=1718569285; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rSVhib7jKO8Jl77YAATJbfVUvW2x6LHh0YQnorGkKq8=;
-        b=N/ubQ1FiqBDlzhEJyMTETr6UcqT47azjc6pm1MieZg4ckYd3i1Q9TVXQpH6Kp0D9Iv
-         ghnlq70loyEVS7xPiKEzgMc1I7PZ3GA/TqyeYIWQQozVyL7cV+mFrUDrhm6NN/U7Nm3q
-         sAF3wHApmuzOIvi/4dmQTqlR2rRZWbAJaVw94Plkd7J8mv1Ya9Uzvf68/W/MOAty5j3+
-         dbS+aojWIqknAipQcqR1cejqAPHGNDi4uuQQ26xbZS+zr+UJmMcpLyfXg/+QfyCj21jF
-         +5sk0mHA7yVxo3IZU7mkxEGevz5esLVviY0tlcjSRZflc+SWT72FqIUMLqLIZOFLSMLI
-         PzTg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717964843; x=1718569643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FmHzB4XbyiULyr7+qCoY+u5mwDNUrkNjS2sO5Rn1BI4=;
+        b=UdFrUZmLQh/taAvgECDNEjqxGC2fu9/HAgGd8Tgra8bJLst7e5XgdQPlnc4aZ0Hrn2
+         VrWiHJ7k4NizXNhmS0L/7koOO/yLvK3WGx4uzWIzJLm9+drUopt90aKTU+AZNfcHvT/4
+         9w863NBoR/D4s/w9Iusqm62IM8YKtNRmaFOSKM0MSfMEH+enu7qoIB6G5NZh3cBHFE1g
+         UkoJK7VHPefnGKB105zMOVPFnbj8aJROxX3ejxKaPyWEnRCnHcxcum9ddq5YSDw3Age7
+         Q3VWmLTQ21qGXYYrmCsT65Y1HbPAov7c7o900SLYL5rN9X5NusOkKYZcVQeAme4bRE2C
+         /tYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717964485; x=1718569285;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rSVhib7jKO8Jl77YAATJbfVUvW2x6LHh0YQnorGkKq8=;
-        b=Ozc8i//XnmNn7CnCCh8Y5itZIKFQPIqsE1T3DzpbM5U+jKjkOWTuIkgyYCQtHzhQQY
-         kAnHl+woR3mJGileZu5CScmQ2JZwwxjBOv1CNJ6X5d7XgH1lHc8S5JmSx1z47D9W4Mzl
-         HCaYmWpz0KR8DQgGTwUXwkKQW7P0BDtaXX4Czm0bjZorPyyw9T8oxXe+gT0oJ3MzkNKt
-         x/D+kzYAkDG9JY89ScUzpMfH2WzYSZfDkcur3d2C1P6epOLqiEau5wOVMMNKowpbxBVR
-         HoIEBeYlJ3cvoGinAe7tG0PiTz0x+zj+akrj1ZM/FOeBU6dJwF0y3PU1HdAMWXi80nMt
-         VcPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF1atCh2VxwzzXU0YLLX59gF8DLaAT2JPzrpPY7sM0vkl5nf1OjOjfjQ9pMKmcT88/q9f70zbRG3v9CmOBN0Ker4fA2zrhAYur2RcCDiXGFjNVyc/bd5MMLEP/POb+qNlqrwH40ajh+KVaea9y9s5rm/5/PZAueVrUyR54
-X-Gm-Message-State: AOJu0YxWCzI4GBs9ElJro0RuOwvuh4KUMQX54lKEmkELtG33B/kH2h80
-	zldYIIpxNryHHqG10LVOGl2eNrbtvQvATd5i2/rYqfV4q03w3UB4
-X-Google-Smtp-Source: AGHT+IF26bX+ph1/1s1eH5JB6xP553+SdKj51RRQ1tb2iaPpfDBA5NuYBTaR8QzkBK/QyeEKQGpk4Q==
-X-Received: by 2002:a05:6902:503:b0:dfb:4ae:27c with SMTP id 3f1490d57ef6-dfb04ae05b1mr5857844276.42.1717964484581;
-        Sun, 09 Jun 2024 13:21:24 -0700 (PDT)
-Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44052953a0fsm19666741cf.92.2024.06.09.13.21.24
+        d=1e100.net; s=20230601; t=1717964843; x=1718569643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FmHzB4XbyiULyr7+qCoY+u5mwDNUrkNjS2sO5Rn1BI4=;
+        b=qfR3QQaTPpp0qdydDls7FY6kvBK1JUEhP1GJ+MQJ4QWNVYjBklPGAQgaGR986TqBrC
+         0rSoY5xN16d94JkvbBjK1MxFxubkERj62rFIrDm1gWCsMo393AEMmLYPWsxxxUX0qMO9
+         lkjj3LWtTdCpkh8kc5qk6mTb9z8ekUw1REpjrzBFHHcIYD5J1lT/cvx5lTyquMC54suI
+         4RgFhnzx832APiHIUaEq2i4Lq5UG6F4W+9W03km7QKsj2zBegJPyy41kY6z4ow3LDdMe
+         GWmt25O4I60I9fZHCPygDxIdOX/PZDYNQe+2J1uOrLvEdV8gooPudGDMPql0nqm9cgEO
+         bQVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Vdk9j8INSgvbSDriD+b/7jHQRTSKK9JzAReCUtp3tpk1V6PLrricGvwFzj2PuzW1+zkmt2/pC1PPXIXLIQFXmHIKiwWtqufRdmG5
+X-Gm-Message-State: AOJu0YzGhmdf8H9TlhZC+n8Jztdw9uvVJm2umnqTLfPNNtY6PVAx8a94
+	qwwXMAiNHuKv4A3yDfVRIvpfvOOIsi1cJfZKfqil69AT2NZwUrdUezFA3MHFDlo=
+X-Google-Smtp-Source: AGHT+IF64Klfnj9wuTgopPxzcjnx9CZmadAde8hhEAskWb8v6MHBZanNtQf2+2ut+ZEx70xohRLCvg==
+X-Received: by 2002:a9d:5f08:0:b0:6f9:8a29:8e8c with SMTP id 46e09a7af769-6f98a298fddmr3582617a34.23.1717964843113;
+        Sun, 09 Jun 2024 13:27:23 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f94dca1d06sm1541555a34.44.2024.06.09.13.27.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 13:21:24 -0700 (PDT)
-Date: Sun, 09 Jun 2024 16:21:23 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Chengen Du <chengen.du@canonical.com>, 
- willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- kaber@trash.net, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-Message-ID: <66660ec3f3e22_8dbbb294ed@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CAPza5qfuNhDbhV9mau9RE=cNKMwGtJcx4pmjkoHNwpfysnw5yw@mail.gmail.com>
-References: <20240608025347.90680-1-chengen.du@canonical.com>
- <CAPza5qfuNhDbhV9mau9RE=cNKMwGtJcx4pmjkoHNwpfysnw5yw@mail.gmail.com>
-Subject: Re: [PATCH v6] af_packet: Handle outgoing VLAN packets without
- hardware offloading
+        Sun, 09 Jun 2024 13:27:22 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Judith Mendez <jm@ti.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] counter: ti-eqep: enable clock at probe
+Date: Sun,  9 Jun 2024 15:27:11 -0500
+Message-ID: <20240609-ti-eqep-enable-clock-v1-1-1e9e7626467e@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-Chengen Du wrote:
-> Hi,
-> =
+The TI eQEP clock is both a functional and interface clock. Since it is
+required for the device to function, we should be enabling it at probe.
 
-> I would like to provide some additional explanations about the patch.
-> =
+Up to now, we've just been lucky that the clock was enabled by something
+else on the system already.
 
-> =
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/counter/ti-eqep.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> On Sat, Jun 8, 2024 at 10:54=E2=80=AFAM Chengen Du <chengen.du@canonica=
-l.com> wrote:
-> >
-> > The issue initially stems from libpcap. The ethertype will be overwri=
-tten
-> > as the VLAN TPID if the network interface lacks hardware VLAN offload=
-ing.
-> > In the outbound packet path, if hardware VLAN offloading is unavailab=
-le,
-> > the VLAN tag is inserted into the payload but then cleared from the s=
-k_buff
-> > struct. Consequently, this can lead to a false negative when checking=
- for
-> > the presence of a VLAN tag, causing the packet sniffing outcome to la=
-ck
-> > VLAN tag information (i.e., TCI-TPID). As a result, the packet captur=
-ing
-> > tool may be unable to parse packets as expected.
-> >
-> > The TCI-TPID is missing because the prb_fill_vlan_info() function doe=
-s not
-> > modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in =
-the
-> > payload and not in the sk_buff struct. The skb_vlan_tag_present() fun=
-ction
-> > only checks vlan_all in the sk_buff struct. In cooked mode, the L2 he=
-ader
-> > is stripped, preventing the packet capturing tool from determining th=
-e
-> > correct TCI-TPID value. Additionally, the protocol in SLL is incorrec=
-t,
-> > which means the packet capturing tool cannot parse the L3 header corr=
-ectly.
-> >
-> > Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
-> > Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.d=
-u@canonical.com/T/#u
-> > Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Chengen Du <chengen.du@canonical.com>
-> > ---
-> >  net/packet/af_packet.c | 57 ++++++++++++++++++++++++++++++++++++++++=
---
-> >  1 file changed, 55 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> > index ea3ebc160e25..8cffbe1f912d 100644
-> > --- a/net/packet/af_packet.c
-> > +++ b/net/packet/af_packet.c
-> > @@ -538,6 +538,43 @@ static void *packet_current_frame(struct packet_=
-sock *po,
-> >         return packet_lookup_frame(po, rb, rb->head, status);
-> >  }
-> >
-> > +static u16 vlan_get_tci(struct sk_buff *skb)
-> > +{
-> > +       struct vlan_hdr vhdr, *vh;
-> > +       u8 *skb_orig_data =3D skb->data;
-> > +       int skb_orig_len =3D skb->len;
-> > +
-> > +       skb_push(skb, skb->data - skb_mac_header(skb));
-> > +       vh =3D skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr)=
-;
-> > +       if (skb_orig_data !=3D skb->data) {
-> > +               skb->data =3D skb_orig_data;
-> > +               skb->len =3D skb_orig_len;
-> > +       }
-> =
+diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
+index 072b11fd6b32..825ae22c3ebc 100644
+--- a/drivers/counter/ti-eqep.c
++++ b/drivers/counter/ti-eqep.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/clk.h>
+ #include <linux/counter.h>
+ #include <linux/kernel.h>
+ #include <linux/mod_devicetable.h>
+@@ -376,6 +377,7 @@ static int ti_eqep_probe(struct platform_device *pdev)
+ 	struct counter_device *counter;
+ 	struct ti_eqep_cnt *priv;
+ 	void __iomem *base;
++	struct clk *clk;
+ 	int err;
+ 
+ 	counter = devm_counter_alloc(dev, sizeof(*priv));
+@@ -415,6 +417,10 @@ static int ti_eqep_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+ 
++	clk = devm_clk_get_enabled(dev, NULL);
++	if (IS_ERR(clk))
++		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable clock\n");
++
+ 	err = counter_add(counter);
+ 	if (err < 0) {
+ 		pm_runtime_put_sync(dev);
 
-> =
-
-> The reason for not directly using skb_header_pointer(skb,
-> skb_mac_header(skb) + ETH_HLEN, ...) to get the VLAN header is due to
-> the check logic in skb_header_pointer. In the SOCK_DGRAM and
-> PACKET_OUTGOING scenarios, the offset can be a negative number, which
-> causes the check logic (i.e., likely(hlen - offset >=3D len)) in
-> __skb_header_pointer() to not work as expected.
-
-The calculation is still correct?
-
-I think that this is not the first situation where negative offsets
-can be given to skb_header_pointer.
- =
-
-> While it is possible to modify __skb_header_pointer() to handle cases
-> where the offset is negative, this change could affect a wider range
-> of code.
-
+---
+base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
+change-id: 20240609-ti-eqep-enable-clock-91697095ca81
 
