@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-207469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E477A9017B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9301901784
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82CB12849F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8308F281B3E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2395B7C09E;
-	Sun,  9 Jun 2024 18:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39C271B45;
+	Sun,  9 Jun 2024 18:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wzy7dMNm"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0rphp2c"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CE47603F;
-	Sun,  9 Jun 2024 18:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB196F2F6;
+	Sun,  9 Jun 2024 18:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717957381; cv=none; b=Oq5CwOxZgMHkITt4y5zoMgxF12UAq7A5Qq/e0X7EltVVvYThMP6qAWqs6m98dwgGx55htMB2dMB7GEm0vsw4UfPEj61je7F5MuksEWZ7+fnU9+iPpyTmNfd77SYcw1WW8bcDj2s+uqwrHmmcagQh0HEJ8oRZG0zBjzIi4VOmvSs=
+	t=1717957315; cv=none; b=u+KlJYiimnwxQrxTzgTQjzCEOmqRI8rHv/Am8DF8lZP5hRih6847TvETUBkIrEdAjWrJIV+QZ9w6Of4ZhE3piYmK28uqC0H7iBabz6hJxSJSA/c8f9u5avInGXXVb4fOiHbfrKSC0GunuEW8xCjY0IpdAx40JKESdV/UFCuSEWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717957381; c=relaxed/simple;
-	bh=i8K3Ux3Z/cBupX2WMMCK5fZqPW621c1mS4TOzZjAAWE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h+YSDgBvCg1te7OZRt4R0oPxUPCM22Byf0h9uCMku9870VCNum0wfjJAbs4XfO35ROGxgSrM/JOKRgz9PbC38kYE5xLH7ITok76dx1fsmxqArrl1JzKjg3DbgrFAyw0yktXDptYJrpL+wtI/ajG4gawwpcuHc5g0XV+94TF7P5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wzy7dMNm; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 459IMpvT075158;
-	Sun, 9 Jun 2024 13:22:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717957371;
-	bh=YKpb1uxx/sJKyGxHuWsphCI/VgLTO2hem/+/azo+pdE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Wzy7dMNmyPBtiNn85Lh9eb9PGSouacVQeWms1E6PiPF3x5z6NWOM5BdJQBDK4VYvw
-	 MKUJX81gU2EaUxJh3ZVSC+qiFTCYMIRLzCU5PX5MI05A5lyTaB/XB/fce8nj1fsKUd
-	 vY+tFxO1dBHk0Yp1RHg4VLBoIF7XzG7DiVRa7nr8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 459IMpKn053617
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 9 Jun 2024 13:22:51 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 9
- Jun 2024 13:22:51 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 9 Jun 2024 13:22:51 -0500
-Received: from localhost (uda0389739.dhcp.ti.com [137.167.1.114])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 459IMoBo067823;
-	Sun, 9 Jun 2024 13:22:50 -0500
-From: <michael.nemanov@ti.com>
-To: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
-        Johannes
- Berg <johannes.berg@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Michael Nemanov
-	<Michael.Nemanov@ti.com>
-Subject: [PATCH v2 14/17] wifi: cc33xx: Add ps.c, ps.h
-Date: Sun, 9 Jun 2024 21:20:59 +0300
-Message-ID: <20240609182102.2950457-15-michael.nemanov@ti.com>
+	s=arc-20240116; t=1717957315; c=relaxed/simple;
+	bh=uIrmQEelix3LEmJne/2AfADR5iCGGxuiQSpXb8kYLOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SdE0JLGTXRPJzEMZzDUwIu0K7O3KuXmoXWw640CwBsI/MaBC/nB0rIzBj0qEENFOVWEn0P9foU2DcB3Xe4rq8ty+pckJCDbuiHvViSLN8vzZEap7P3X3V4EdTGh5gDiHKv99y2+gx9EptQChqvHMum4QATJIqjkjOkp8qOvMqRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0rphp2c; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso54055591fa.3;
+        Sun, 09 Jun 2024 11:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717957311; x=1718562111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7cTyvCxrK3Xq1bvrTLKc9ITi2Qxz8ox9OMKkDMGhIxo=;
+        b=g0rphp2cjviw5tKkBCVY10WW3umPFEz6t69T9k9BhZ6Luga1gXf3jKg/6nopYNfVB6
+         kssYQIDS16c1l2hNlPK1cl7MUrg7cL+KD/TZDDkY0u8gyf/4lY9ec+aMJ7aKeq8Ext/R
+         6II08aGgpvds6Nwn6v76c6Dnc9l2g4hOpqMbEjEOSC5csgGA/33AqTVqL+ZRb+HeeaOq
+         MMMi1+fG9JEyO6vV8pDrMR0AqblA6gcdo8dg4dl5t3fR44AvBEswktq/tEeCkmVs7/se
+         lQsOHmYZw/cMtyrlrA5qovSHztHhbq14qmpLxGzvzpx81W39Xz1M1sUgm8SgiUM2ENPn
+         Rz9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717957311; x=1718562111;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7cTyvCxrK3Xq1bvrTLKc9ITi2Qxz8ox9OMKkDMGhIxo=;
+        b=Bm8JWuT/zOkmlv4XsKhbBYRwJ4jo7X9y9RO55AlBODVlNuMnfnRRc92/kl0+UnBMZc
+         wvdFXX/8HHqUxSSGxOBNH3fKJWQDJvAG9PEKOxzRLa8L631q/T4Be/TLfRF+jcmBPium
+         rpKYtB6BqnE1djv2iAuChHhLrRbt0hy8a+76f3UatWiaThmC+lcmo9YXq64cymdvPBuQ
+         PekatUfFr3QdL3WDklui21+K2LJkBL46CQakkAWJ/hPytIdQqZ0jZLspH/DvnxOu9FSM
+         fDWUGBjP4PPL8/RytoGdGzRnd3g3Ed9mVNH/GswQea6fQ5VgCdYhauM6GSAB400Pcik2
+         Fuww==
+X-Forwarded-Encrypted: i=1; AJvYcCUJAmGbDDg9dZ1IZsOJSwIDj4cYnY6tUmfTGQwy1ET5veiEzUxd1otJSVO2xShdtt98Zka+PmE3WO+t2xdjMK+P66ODOHSVCyzAlvQ/9GsrjVheGP6SJa1CUZMlyE+Bj6iE/EblbYrvWq6H/DTxDR9FOCZNLNuNb6p3t6wbzO4cpzuGRysCPhTvkjAZhSpRJbSWdPupajcVGVi96kP0u+2MEw==
+X-Gm-Message-State: AOJu0Yyu+npgWJTndhe51zYCeaHhn6R28yH98nfaHBafbilQjrwGrpRR
+	5VMPkn9EEX4yUfySWrJZOzNJC9Ew9+Jsrhhakmmsi5lUt0dK4uZwizT5KdCx
+X-Google-Smtp-Source: AGHT+IEqaU+iUHneGrvnKrfvs6kEjkdYgmEr5+JnTTFLxGXE8SL8TnFJ/s6teQVEaMPIonG0/glQgg==
+X-Received: by 2002:a05:651c:1505:b0:2e0:e470:882f with SMTP id 38308e7fff4ca-2eadce3774amr55597591fa.28.1717957310900;
+        Sun, 09 Jun 2024 11:21:50 -0700 (PDT)
+Received: from localhost.localdomain (bza83.neoplus.adsl.tpnet.pl. [83.30.46.83])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebd5a63bf2sm6679841fa.33.2024.06.09.11.21.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 11:21:50 -0700 (PDT)
+From: Adam Skladowski <a39.skl@gmail.com>
+To: 
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Adam Skladowski <a39.skl@gmail.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 7/7] dt-bindings: interconnect: qcom: msm8939: Fix example
+Date: Sun,  9 Jun 2024 20:21:00 +0200
+Message-Id: <20240609182112.13032-8-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240609182102.2950457-1-michael.nemanov@ti.com>
-References: <20240609182102.2950457-1-michael.nemanov@ti.com>
+In-Reply-To: <20240609182112.13032-1-a39.skl@gmail.com>
+References: <20240609182112.13032-1-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,166 +95,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Michael Nemanov <Michael.Nemanov@ti.com>
+For now example list snoc_mm as children of bimc which is obviously
+not valid, change example and include rest of nocs in it.
 
-80211 power-save modes are handled automictically by HW but
-can be overridden here.
+Fixes: 462baaf4c628 ("dt-bindings: interconnect: qcom: Fix and separate out MSM8939")
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 ---
- drivers/net/wireless/ti/cc33xx/ps.c | 117 ++++++++++++++++++++++++++++
- drivers/net/wireless/ti/cc33xx/ps.h |  16 ++++
- 2 files changed, 133 insertions(+)
- create mode 100644 drivers/net/wireless/ti/cc33xx/ps.c
- create mode 100644 drivers/net/wireless/ti/cc33xx/ps.h
+ .../bindings/interconnect/qcom,msm8939.yaml   | 22 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/wireless/ti/cc33xx/ps.c b/drivers/net/wireless/ti/cc33xx/ps.c
-new file mode 100644
-index 000000000000..e708ef8d5f46
---- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/ps.c
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+index fd15ab5014fb..a77e6aa2fbee 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+@@ -56,19 +56,25 @@ examples:
+   - |
+     #include <dt-bindings/clock/qcom,rpmcc.h>
+ 
+-    snoc: interconnect@580000 {
+-        compatible = "qcom,msm8939-snoc";
+-        reg = <0x00580000 0x14000>;
+-        #interconnect-cells = <1>;
+-    };
+-
+     bimc: interconnect@400000 {
+         compatible = "qcom,msm8939-bimc";
+         reg = <0x00400000 0x62000>;
+-        #interconnect-cells = <1>;
++        #interconnect-cells = <2>;
++    };
 +
-+#include "ps.h"
-+#include "tx.h"
-+#include "debug.h"
++    pcnoc: interconnect@500000 {
++        compatible = "qcom,msm8939-pcnoc";
++        reg = <0x00500000 0x11000>;
++        #interconnect-cells = <2>;
++    };
 +
-+int cc33xx_ps_set_mode(struct cc33xx *cc, struct cc33xx_vif *wlvif,
-+		       enum cc33xx_cmd_ps_mode_e mode)
-+{
-+	int ret;
-+	u16 timeout = cc->conf.host_conf.conn.dynamic_ps_timeout;
-+
-+	switch (mode) {
-+	case STATION_AUTO_PS_MODE:
-+	case STATION_POWER_SAVE_MODE:
-+		cc33xx_debug(DEBUG_PSM, "entering psm (mode=%d,timeout=%u)",
-+			     mode, timeout);
-+
-+		ret = cc33xx_cmd_ps_mode(cc, wlvif, mode, timeout);
-+		if (ret < 0)
-+			return ret;
-+
-+		set_bit(WLVIF_FLAG_IN_PS, &wlvif->flags);
-+		break;
-+
-+	case STATION_ACTIVE_MODE:
-+		cc33xx_debug(DEBUG_PSM, "leaving psm");
-+
-+		ret = cc33xx_cmd_ps_mode(cc, wlvif, mode, 0);
-+		if (ret < 0)
-+			return ret;
-+
-+		clear_bit(WLVIF_FLAG_IN_PS, &wlvif->flags);
-+		break;
-+
-+	default:
-+		cc33xx_warning("trying to set ps to unsupported mode %d", mode);
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static void cc33xx_ps_filter_frames(struct cc33xx *cc, u8 hlid)
-+{
-+	int i;
-+	struct sk_buff *skb;
-+	struct ieee80211_tx_info *info;
-+	unsigned long flags;
-+	int filtered[NUM_TX_QUEUES];
-+	struct cc33xx_link *lnk = &cc->links[hlid];
-+
-+	/* filter all frames currently in the low level queues for this hlid */
-+	for (i = 0; i < NUM_TX_QUEUES; i++) {
-+		filtered[i] = 0;
-+		while ((skb = skb_dequeue(&lnk->tx_queue[i]))) {
-+			filtered[i]++;
-+
-+			if (WARN_ON(cc33xx_is_dummy_packet(cc, skb)))
-+				continue;
-+
-+			info = IEEE80211_SKB_CB(skb);
-+			info->flags |= IEEE80211_TX_STAT_TX_FILTERED;
-+			info->status.rates[0].idx = -1;
-+			ieee80211_tx_status_ni(cc->hw, skb);
-+		}
-+	}
-+
-+	spin_lock_irqsave(&cc->cc_lock, flags);
-+	for (i = 0; i < NUM_TX_QUEUES; i++) {
-+		cc->tx_queue_count[i] -= filtered[i];
-+		if (lnk->wlvif)
-+			lnk->wlvif->tx_queue_count[i] -= filtered[i];
-+	}
-+
-+	spin_unlock_irqrestore(&cc->cc_lock, flags);
-+	cc33xx_handle_tx_low_watermark(cc);
-+}
-+
-+void cc33xx_ps_link_start(struct cc33xx *cc, struct cc33xx_vif *wlvif,
-+			  u8 hlid, bool clean_queues)
-+{
-+	struct ieee80211_sta *sta;
-+	struct ieee80211_vif *vif = cc33xx_wlvif_to_vif(wlvif);
-+
-+	if (WARN_ON_ONCE(wlvif->bss_type != BSS_TYPE_AP_BSS))
-+		return;
-+
-+	if (!test_bit(hlid, wlvif->ap.sta_hlid_map) ||
-+	    test_bit(hlid, &cc->ap_ps_map))
-+		return;
-+
-+	cc33xx_debug(DEBUG_PSM,
-+		     "start mac80211 PSM on hlid %d pkts %d clean_queues %d",
-+		     hlid, cc->links[hlid].allocated_pkts, clean_queues);
-+
-+	rcu_read_lock();
-+	sta = ieee80211_find_sta(vif, cc->links[hlid].addr);
-+	if (!sta) {
-+		cc33xx_error("could not find sta %pM for starting ps",
-+			     cc->links[hlid].addr);
-+		rcu_read_unlock();
-+		return;
-+	}
-+
-+	ieee80211_sta_ps_transition_ni(sta, true);
-+	rcu_read_unlock();
-+
-+	/* do we want to filter all frames from this link's queues? */
-+	if (clean_queues)
-+		cc33xx_ps_filter_frames(cc, hlid);
-+
-+	__set_bit(hlid, &cc->ap_ps_map);
-+}
-diff --git a/drivers/net/wireless/ti/cc33xx/ps.h b/drivers/net/wireless/ti/cc33xx/ps.h
-new file mode 100644
-index 000000000000..47f65b684b52
---- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/ps.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only
-+ *
-+ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#ifndef __PS_H__
-+#define __PS_H__
-+
-+#include "acx.h"
-+
-+int cc33xx_ps_set_mode(struct cc33xx *cc, struct cc33xx_vif *wlvif,
-+		       enum cc33xx_cmd_ps_mode_e mode);
-+void cc33xx_ps_link_start(struct cc33xx *cc, struct cc33xx_vif *wlvif,
-+			  u8 hlid, bool clean_queues);
-+
-+#endif /* __PS_H__ */
++    snoc: interconnect@580000 {
++        compatible = "qcom,msm8939-snoc";
++        reg = <0x00580000 0x14080>;
++        #interconnect-cells = <2>;
+ 
+           snoc_mm: interconnect-snoc {
+               compatible = "qcom,msm8939-snoc-mm";
+-              #interconnect-cells = <1>;
++              #interconnect-cells = <2>;
+           };
+     };
 -- 
-2.25.1
+2.45.1
 
 
