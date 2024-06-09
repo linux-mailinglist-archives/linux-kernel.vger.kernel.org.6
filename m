@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-207272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4499014E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:54:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FA19014E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC68B1F217B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54E128175E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776CE1B28D;
-	Sun,  9 Jun 2024 07:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457431C68F;
+	Sun,  9 Jun 2024 08:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUp53Rrd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlFAMsSt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35831BF2A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 07:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A8D26A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717919640; cv=none; b=tXS9z2XLEVgeSAr5xCbWMMSoWFHFyNJqxM+ya0pune3wFFkVlPpnUsuKPJp1rG+mhpDP+z9c02FhHpHh70wg5TBZlER0btmF3IQCt7L/yxzKKRXC+TGUGUvSAjDRyS9WtNAUhkXcG7FL43IvokUgnqGtVZLP9AZwUYJz7aJkowk=
+	t=1717920454; cv=none; b=EgRK1IRot8mfCQ22ly2ad0AyTQyKW2qjnjNtW/ZcIYqbB28R/MG8C/N62cTaymIIl1dJPYQKC0YliTY9ZOZgp9EWwljK55nolsPEddecrJmfR4xIWa/zB7Qbh3IAchhncNPtMmlPuJ4qoBwvk8Bia6/VEgI6dO7Pem3b3+CsTPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717919640; c=relaxed/simple;
-	bh=hKt2tbMbPsT+WdQ0/MZQmCtDLUEjEnAa0OPgsC1Rk0M=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=UxxBVzC8L410O00IExDwnde0fICH2BrewzMJ62AIyvf7cGcOlR+s2/1Jdj8tknI5HqkYOBZl2zqwRclqpQkaJjpVkEL9Gg2FR4vFvo22rm5cyTg9iQhGMcH5JYQ/KXS6kvc/6EALaggIMrS94t/GFLRYm5h6UaUva2SXWNaS8aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUp53Rrd; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717919639; x=1749455639;
-  h=date:from:to:cc:subject:message-id;
-  bh=hKt2tbMbPsT+WdQ0/MZQmCtDLUEjEnAa0OPgsC1Rk0M=;
-  b=UUp53RrdzZDtaN3RqIPQXSQSfNPF/0J5L7Bx0lQgTCz4qIS9+EhCWZuP
-   pWOv3Fwnn2urMAgKq6nK6WtnmLCz8djXmmOKBo3PUmuNkiABS2Yov5j4Z
-   ewBv3CE8a+50gEYs51ZZvlOrApNRPU1+vJdOf3F2CwfgkHSoavfKBP+xq
-   PxIzHpdnWTmBcVNlckdlGtNiL3mZWPPyCHNO1A2ygd6V+5nbIVc7n3lRv
-   Zdo5pcs/kHs+sCC+/4WPlFkrxzW7N1DcmWc9gmDmKKt1Q/nhbNWmmRmf7
-   G1UDwWqbx3VNa6usM/TFOd7WcQUYC2EOJ4DM31zh0ca3bp0jSe692Wf1C
-   g==;
-X-CSE-ConnectionGUID: wBhUnG7aRBW0KYFqeo8Kzw==
-X-CSE-MsgGUID: 07ZnZNBISCGnUZ8SPmCVwA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="14428162"
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="14428162"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 00:53:58 -0700
-X-CSE-ConnectionGUID: qIxW9JOMS76d/F9HR7hvew==
-X-CSE-MsgGUID: 8Gcf7Bd7ReaaCX3YIiwsbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="69923378"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 09 Jun 2024 00:53:56 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGDNC-0000xu-0q;
-	Sun, 09 Jun 2024 07:53:54 +0000
-Date: Sun, 09 Jun 2024 15:53:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:WIP.x86/fpu] BUILD SUCCESS
- 5a4cac0ba89bf31be7ffb19f0ac5d677eda4bd90
-Message-ID: <202406091551.dlPfniRr-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1717920454; c=relaxed/simple;
+	bh=lOSN//yUQFmhLpm5Bd1YqSKVJsxaLRxaQ+D/NYYOnxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWc7kxznnsqlF3o+ZAx9j+TvWjePMKazyLjmct0j4tvdpG0Y0CZnwckZQDK54pW4WNZcmag0TGh2iPZzbJ3aI/JGbIa+at4v2Pb8ElI+Of34rTJGkw4m2vpgA17M7auRgzebqQ/424/2Dq8tO9F+13cpYKt7ZDVZQlazkGu1ecE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlFAMsSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BF4C2BD10;
+	Sun,  9 Jun 2024 08:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717920454;
+	bh=lOSN//yUQFmhLpm5Bd1YqSKVJsxaLRxaQ+D/NYYOnxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rlFAMsStExGoQBYvuSIo0iDEJHa4iKG/EfmfB9bdHbNXmA4tarjE3A1ad6uuHN8R1
+	 LpsVMw9kUTmTq1i7v2Gw6FgQwOPuFCdwpQk2PHtISl+EAG3nPN0+ABKK2kZ5RQfK6u
+	 XIZZdrPv4JeliIHs3ZBUFeV+eKvnpnmZGoAK4XvuWXcthpqEBE/cpWnJu6eycqeSov
+	 XfFa+xkYLO/oPjT3NlL2A7fRPWVexwHB6Rb7Ao+47yYMZRfK3Vzg9i3ia0B69hiSab
+	 y428LSwwqvuLxOxWlE1e+bVU4IFYj7RV2FvvqqjoHFpDrc9tk6vyfmXe2ezgXMr3W0
+	 1ipplsLYj6eIw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sGDaP-000000006fV-05O9;
+	Sun, 09 Jun 2024 10:07:33 +0200
+Date: Sun, 9 Jun 2024 10:07:33 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <David.Laight@aculab.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc2 - massive performance regression
+Message-ID: <ZmVixS7tG9-sf9l2@hovoldconsulting.com>
+References: <CAHk-=wisJ8bS3qe6iBPwL9x=PqJA5oE7tum-E9oZfyPgd2mmrw@mail.gmail.com>
+ <46cb50d65e414bfd9bef5549d68ae4ea@AcuMS.aculab.com>
+ <CAHk-=wh170Lme6HHSGa5eM6YNcd01vdkOoPenZ0m7P+Yv6_zxg@mail.gmail.com>
+ <adbbd899aabf4e6898bbbb04f90b3ede@AcuMS.aculab.com>
+ <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/fpu
-branch HEAD: 5a4cac0ba89bf31be7ffb19f0ac5d677eda4bd90  x86/fpu: Fix stale comment in ex_handler_fprestore()
+On Sat, Jun 08, 2024 at 03:00:43PM -0700, Linus Torvalds wrote:
+> On Sat, 8 Jun 2024 at 14:36, David Laight <David.Laight@aculab.com> wrote:
 
-elapsed time: 1450m
+> > I've done some tests.
+> > I'm seeing a three-fold slow down on:
+> > $ i=0; while [ $i -lt 1000000 ]; do i=$((i + 1)); done
+> > which goes from 1 second to 3.
+> >
+> > I can run that with ftrace monitoring scheduler events (and a few
+> > other things) and can't spot anywhere the process isn't running
+> > for a significant time.
+> 
+> Sounds like cpu frequency. Almost certainly hw-specific. I went
+> through that on my Threadripper in the 6.9 timeframe, but I'm not
+> seeing any issues in this current release.
+> 
+> If you bisect it, we have somebody to blame and point fingers at...
 
-configs tested: 50
-configs skipped: 2
+This may possibly be related to the cpufreq/thermal regression I just
+reported here:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+	https://lore.kernel.org/lkml/ZmVfcEOxmjUHZTSX@hovoldconsulting.com/
 
-tested configs:
-alpha                            allyesconfig   gcc  
-hexagon                          allmodconfig   clang
-hexagon                          allyesconfig   clang
-i386         buildonly-randconfig-001-20240609   gcc  
-i386         buildonly-randconfig-002-20240609   gcc  
-i386         buildonly-randconfig-003-20240609   gcc  
-i386         buildonly-randconfig-004-20240609   gcc  
-i386         buildonly-randconfig-005-20240609   clang
-i386         buildonly-randconfig-006-20240609   gcc  
-i386                  randconfig-001-20240609   clang
-i386                  randconfig-002-20240609   clang
-i386                  randconfig-003-20240609   gcc  
-i386                  randconfig-004-20240609   gcc  
-i386                  randconfig-005-20240609   clang
-i386                  randconfig-006-20240609   clang
-i386                  randconfig-011-20240609   clang
-i386                  randconfig-012-20240609   clang
-i386                  randconfig-013-20240609   clang
-i386                  randconfig-014-20240609   clang
-i386                  randconfig-015-20240609   gcc  
-i386                  randconfig-016-20240609   clang
-openrisc                          allnoconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   clang
-s390                              allnoconfig   clang
-s390                                defconfig   clang
-sh                                allnoconfig   gcc  
-sh                                  defconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   clang
-x86_64       buildonly-randconfig-001-20240609   clang
-x86_64       buildonly-randconfig-002-20240609   clang
-x86_64       buildonly-randconfig-003-20240609   clang
-x86_64       buildonly-randconfig-004-20240609   gcc  
-x86_64       buildonly-randconfig-005-20240609   clang
-x86_64       buildonly-randconfig-006-20240609   gcc  
-x86_64                randconfig-001-20240609   gcc  
-xtensa                            allnoconfig   gcc  
+which causes the big cores on the Lenovo ThinkPad X13s to be stuck at a
+low frequency once they've been throttled.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Johan
 
