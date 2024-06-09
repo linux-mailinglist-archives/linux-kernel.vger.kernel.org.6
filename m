@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-207522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2072F90185E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 23:49:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1960901860
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 23:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F9D281149
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18EF1C2097B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5334D52F6A;
-	Sun,  9 Jun 2024 21:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F35E548E0;
+	Sun,  9 Jun 2024 21:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rabZRwXH"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N1qgJlIg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC5D18C3D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 21:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5415B3;
+	Sun,  9 Jun 2024 21:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717969786; cv=none; b=g8BZ6GP1nKKve0+2XPvCQDHCHrnSwtvWZ5bf9wQMY/UB3F4luetPn2T0wdlJPiWIQwZ+EwR7rKcrtXvqZpdkfafy6xYxROdDtPeof17zuMHi8qqd1cPYYZDKrNlM3WadNTbZms0+UgrlWdExjL1pl29Zrs6/jtafeMcAE41g6aM=
+	t=1717970303; cv=none; b=g81efY0jfeeTmL1g2J2i4uZNOwLw7E73a/osyXehJCU8IUXMxuiw4WZAn9l7/+hB0dxBtYYX6BJmKU2NS8CGcYpCBYL+9vgly11jo60gnl4YW2jH9c2eSJ2q3WtXiobKmH92z5fOMFabtdadBBue9OgdD6ajuyTIdHp0ukas8dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717969786; c=relaxed/simple;
-	bh=Wb5tJLwBJPwzazeELAb8uvSHdP56hHLRltr2/XlSHSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cti3suapGLlc6w5X+z0H5TpV3j0zvOzgVOg0wWZ4cShcFHXIGoWvmzY/3Jzp9VKMioaXBlCvVO6/Ohapv+wcRPIjh2isE3YqDRdmDZHa5Frz3z0CIDl/3MBBZ521+gC2TQvSsT3kvr2DCFaFGhotqldDYstmi7I7laijwzpJA6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rabZRwXH; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-254c8e27c80so201162fac.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 14:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717969782; x=1718574582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQJe0UtQ1jQuwlm6OXR6xFOyW/tArUIKSUvJlcl/w7U=;
-        b=rabZRwXHy85Sn36ZB1LlV6hLNa2kcoDvzjpOccwxuMVkwKs9N3OEIHzO7/78s/el2f
-         AprKOB0i2vjKNFbvMalwnwmAjnkkUpVaLz2uRMAL5EIzELSJzmUHspw6qLmV9CISsL1g
-         JAlCWJsL4cY9W7VAj4217HInI+75xr2l+3u93U8r70m0gDsk8mDMe03H2J0IzEGOHtEF
-         Je0ghLYZXHGDMy9mSFLZuYSGYDjyxDm33woIzh7XTVCybxYfG4iX/XTrv1izwcPmx4xH
-         bFO2OwXftLE17MBdB4gypMj7YuASK6UZOSS0AfjMxdS/E6/tspUwZ7D2y1ZAQxzaDFH1
-         AZyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717969782; x=1718574582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CQJe0UtQ1jQuwlm6OXR6xFOyW/tArUIKSUvJlcl/w7U=;
-        b=AudAylmEUnCppC3QthBhbf9L8ElIiO8nhKhPc+Ta+XPaorOwTazaEG40cUTaCjsXeL
-         lsce/+3eLSPMpYr2uAYJG62peQDsqR3T4JFOZTW969F/LE2JYxdUL0cPWr6h3bFc4zhe
-         JMLyu01E29u13FMMVRo8ymliyHbyRjIWWMfu08YP7RPfCEbc5wtIAnrTw40jnxwptzJC
-         GvxTYci1fwqtXtiC6LOj2xr3bK4bF/pKWJQTHUy3BVzC6GleVgabQqhS3hUN3SpNkZPq
-         Cb8ZVAwhgWL5BJoA4NNLIrhBGIvOigyYSR/FtYlhgtvOsD0Kw72nEJov9gaGK1xw76xr
-         fxDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ8wywwDlg8B9oKK3d2FBNa9qTL1SyZUKq09LNsL/vwv//t5yQJflIMyTUjZzP3dLBlgCfe8K0Hm5QAGspfWui9rhrD2TOixvyGexD
-X-Gm-Message-State: AOJu0YwX3w9CuUT7DxW1CQ84wUpLaZp+TwO5drEaQOXVLgdx9shTW0vz
-	5LnDlc3RFQjcXPZyx5fe9rZUVlozNDUkBV+N/+Ypr66MFrjYFWqEBSoC6eWXCmM=
-X-Google-Smtp-Source: AGHT+IFuCnK66haNuwyuMMntgL1WgOirTGuhY53m78kqAJKqjZ1hfEIGQuKJGYDqtVpGZ054SjIqfw==
-X-Received: by 2002:a05:6870:219e:b0:24c:59f7:e840 with SMTP id 586e51a60fabf-254644e9773mr8646820fac.17.1717969781951;
-        Sun, 09 Jun 2024 14:49:41 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2544812e3cbsm1965073fac.55.2024.06.09.14.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 14:49:41 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Judith Mendez <jm@ti.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] counter: ti-eqep: implement over/underflow events
-Date: Sun,  9 Jun 2024 16:49:33 -0500
-Message-ID: <20240609-counter-ti-eqep-over-under-events-v1-1-74fe1632f5ab@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1717970303; c=relaxed/simple;
+	bh=wrmf7nQafpJR6HI3SMheOheaSImeKAI4rYO9BfKRNks=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uK8rMOwipgmsWkg+xvh+djTm+ZWJgVmoDPS0Nc8P0cHo+RdTwat0uFRxsbxT/vJ+kC701M8kB3wxf97IJ95PCBBYUvXAD3s9i7lOsRPvJhQW8x0gE/Wf6V81VhB/bB8vEgqdNsf09IDajGEC0MEFJQT0i4ifcfPhwzimXOLRMdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N1qgJlIg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459Ki6XT027125;
+	Sun, 9 Jun 2024 21:58:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Geie8OwuMJG6PiGVP/N7mQ
+	scxmIur4X/0gDMW8lBPF4=; b=N1qgJlIgiTvcnqT5xg5WONCGeKQCtcAywAo/uu
+	5mX/eNouVBXmjbd8jq6uL9PfkTITsL7CaPc6v7svyth9DOz7vHG1p8wKlB+zyzMU
+	bywxS7viixThqLGUVminDyZ25ZuBVwuoNXbFv60QLmA+js1/YneFN4PoY4iE5NHm
+	vd3hiR+aL9E8Ey8i/0YFTGmLL5er6TFDyqhl9Cke+vzCK6FqXBN8w72qB007N2F2
+	zKCWfOYzG8FeSyOQ2Tjg6ygBlwX354q7umxBEUL/lMUEBPTpMTXRVyISE4/IoAA/
+	44ZLcF8FnW3uZA+OxJiO9+XVuSEL8eKtCMYAzBjjh85nfHIg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfh32gpa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Jun 2024 21:58:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459LwEAU019770
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Jun 2024 21:58:14 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
+ 14:58:07 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 9 Jun 2024 14:58:06 -0700
+Subject: [PATCH] media: saa7134: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,192 +63,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240609-md-drivers-media-pci-saa7134-v1-1-ec0a8b70b404@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAG0lZmYC/x3MTQqDMBBA4avIrDuQaPp7Felikox1oKYy04og3
+ r1p4W2+zdvAWIUNbs0GyouYvEqFPzSQRioPRsnV0Lo2uJO74pQxqyyshhNnIZyToBGdfRdwiF2
+ uHS/BJ6iLWXmQ9b/v79WRjDEqlTT+pk8pnxUnsjcr7PsXMtnhfo0AAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hJO0-AEjbSVkOx5IN1rs0t8rjTY9y5CY
+X-Proofpoint-GUID: hJO0-AEjbSVkOx5IN1rs0t8rjTY9y5CY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-09_17,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 bulkscore=0 phishscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=807 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406090173
 
-This adds support to the TI eQEP counter driver for subscribing to
-overflow and underflow events using the counter chrdev interface.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-empress.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-go7007.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-alsa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-dvb.o
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
-This is split out from a series that was sent a few years back [1] that
-I never finished, so I'm calling it v2. This was tested on a BeagleBone
-Blue using LEGO MINDSTORMS EV3 motors and this script[2].
+ drivers/media/pci/saa7134/saa7134-alsa.c    | 1 +
+ drivers/media/pci/saa7134/saa7134-dvb.c     | 1 +
+ drivers/media/pci/saa7134/saa7134-empress.c | 1 +
+ drivers/media/pci/saa7134/saa7134-go7007.c  | 1 +
+ 4 files changed, 4 insertions(+)
 
-[1]: https://lore.kernel.org/linux-iio/20211017013343.3385923-2-david@lechnology.com/
-[2]: https://github.com/dlech/linux-counter-ti-eqep-python/blob/3745b0840736248d8e60cc675a0f43558fcbb2af/test.py
-
-v2 changes:
-* Only clear interrupts that were handled.
-* Don't set default QPOSMAX value.
-* Don't error when setting QPOSMAX to 0.
-* Use regmap_write() when appropriate.
-* Validate watch channel.
-* Use counter_priv().
----
- drivers/counter/ti-eqep.c | 106 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 105 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
-index 072b11fd6b32..9f4ca219385c 100644
---- a/drivers/counter/ti-eqep.c
-+++ b/drivers/counter/ti-eqep.c
-@@ -7,6 +7,7 @@
+diff --git a/drivers/media/pci/saa7134/saa7134-alsa.c b/drivers/media/pci/saa7134/saa7134-alsa.c
+index dd2236c5c4a1..f86a44dfe6e3 100644
+--- a/drivers/media/pci/saa7134/saa7134-alsa.c
++++ b/drivers/media/pci/saa7134/saa7134-alsa.c
+@@ -1254,5 +1254,6 @@ static void saa7134_alsa_exit(void)
+ /* We initialize this late, to make sure the sound system is up and running */
+ late_initcall(saa7134_alsa_init);
+ module_exit(saa7134_alsa_exit);
++MODULE_DESCRIPTION("Philips SAA7134 DMA audio support");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Ricardo Cerqueira");
+diff --git a/drivers/media/pci/saa7134/saa7134-dvb.c b/drivers/media/pci/saa7134/saa7134-dvb.c
+index 9c6cfef03331..555d2eff9370 100644
+--- a/drivers/media/pci/saa7134/saa7134-dvb.c
++++ b/drivers/media/pci/saa7134/saa7134-dvb.c
+@@ -52,6 +52,7 @@
+ #include "s5h1411.h"
  
- #include <linux/bitops.h>
- #include <linux/counter.h>
-+#include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-@@ -67,6 +68,44 @@
- #define QEPCTL_UTE		BIT(1)
- #define QEPCTL_WDE		BIT(0)
+ MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
++MODULE_DESCRIPTION("DVB/ATSC Support for saa7134 based TV cards");
+ MODULE_LICENSE("GPL");
  
-+#define QEINT_UTO		BIT(11)
-+#define QEINT_IEL		BIT(10)
-+#define QEINT_SEL		BIT(9)
-+#define QEINT_PCM		BIT(8)
-+#define QEINT_PCR		BIT(7)
-+#define QEINT_PCO		BIT(6)
-+#define QEINT_PCU		BIT(5)
-+#define QEINT_WTO		BIT(4)
-+#define QEINT_QDC		BIT(3)
-+#define QEINT_PHE		BIT(2)
-+#define QEINT_PCE		BIT(1)
-+
-+#define QFLG_UTO		BIT(11)
-+#define QFLG_IEL		BIT(10)
-+#define QFLG_SEL		BIT(9)
-+#define QFLG_PCM		BIT(8)
-+#define QFLG_PCR		BIT(7)
-+#define QFLG_PCO		BIT(6)
-+#define QFLG_PCU		BIT(5)
-+#define QFLG_WTO		BIT(4)
-+#define QFLG_QDC		BIT(3)
-+#define QFLG_PHE		BIT(2)
-+#define QFLG_PCE		BIT(1)
-+#define QFLG_INT		BIT(0)
-+
-+#define QCLR_UTO		BIT(11)
-+#define QCLR_IEL		BIT(10)
-+#define QCLR_SEL		BIT(9)
-+#define QCLR_PCM		BIT(8)
-+#define QCLR_PCR		BIT(7)
-+#define QCLR_PCO		BIT(6)
-+#define QCLR_PCU		BIT(5)
-+#define QCLR_WTO		BIT(4)
-+#define QCLR_QDC		BIT(3)
-+#define QCLR_PHE		BIT(2)
-+#define QCLR_PCE		BIT(1)
-+#define QCLR_INT		BIT(0)
-+
- /* EQEP Inputs */
- enum {
- 	TI_EQEP_SIGNAL_QEPA,	/* QEPA/XCLK */
-@@ -238,12 +277,49 @@ static int ti_eqep_action_read(struct counter_device *counter,
- 	}
- }
+ static unsigned int antenna_pwr;
+diff --git a/drivers/media/pci/saa7134/saa7134-empress.c b/drivers/media/pci/saa7134/saa7134-empress.c
+index 434fa1ee1c33..bbf480ab31ca 100644
+--- a/drivers/media/pci/saa7134/saa7134-empress.c
++++ b/drivers/media/pci/saa7134/saa7134-empress.c
+@@ -19,6 +19,7 @@
+ /* ------------------------------------------------------------------ */
  
-+static int ti_eqep_events_configure(struct counter_device *counter)
-+{
-+	struct ti_eqep_cnt *priv = counter_priv(counter);
-+	struct counter_event_node *event_node;
-+	u32 qeint = 0;
-+
-+	list_for_each_entry(event_node, &counter->events_list, l) {
-+		switch (event_node->event) {
-+		case COUNTER_EVENT_OVERFLOW:
-+			qeint |= QEINT_PCO;
-+			break;
-+		case COUNTER_EVENT_UNDERFLOW:
-+			qeint |= QEINT_PCU;
-+			break;
-+		}
-+	}
-+
-+	return regmap_write(priv->regmap16, QEINT, qeint);
-+}
-+
-+static int ti_eqep_watch_validate(struct counter_device *counter,
-+				  const struct counter_watch *watch)
-+{
-+	switch (watch->event) {
-+	case COUNTER_EVENT_OVERFLOW:
-+	case COUNTER_EVENT_UNDERFLOW:
-+		if (watch->channel != 0)
-+			return -EINVAL;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct counter_ops ti_eqep_counter_ops = {
- 	.count_read	= ti_eqep_count_read,
- 	.count_write	= ti_eqep_count_write,
- 	.function_read	= ti_eqep_function_read,
- 	.function_write	= ti_eqep_function_write,
- 	.action_read	= ti_eqep_action_read,
-+	.events_configure = ti_eqep_events_configure,
-+	.watch_validate	= ti_eqep_watch_validate,
- };
+ MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
++MODULE_DESCRIPTION("Philips SAA7134 empress support");
+ MODULE_LICENSE("GPL");
  
- static int ti_eqep_position_ceiling_read(struct counter_device *counter,
-@@ -354,6 +430,25 @@ static struct counter_count ti_eqep_counts[] = {
- 	},
- };
+ static unsigned int empress_nr[] = {[0 ... (SAA7134_MAXBOARDS - 1)] = UNSET };
+diff --git a/drivers/media/pci/saa7134/saa7134-go7007.c b/drivers/media/pci/saa7134/saa7134-go7007.c
+index da83893ffee9..bd37db5ce363 100644
+--- a/drivers/media/pci/saa7134/saa7134-go7007.c
++++ b/drivers/media/pci/saa7134/saa7134-go7007.c
+@@ -516,4 +516,5 @@ static void __exit saa7134_go7007_mod_cleanup(void)
+ module_init(saa7134_go7007_mod_init);
+ module_exit(saa7134_go7007_mod_cleanup);
  
-+static irqreturn_t ti_eqep_irq_handler(int irq, void *dev_id)
-+{
-+	struct counter_device *counter = dev_id;
-+	struct ti_eqep_cnt *priv = counter_priv(counter);
-+	u32 qflg;
-+
-+	regmap_read(priv->regmap16, QFLG, &qflg);
-+
-+	if (qflg & QFLG_PCO)
-+		counter_push_event(counter, COUNTER_EVENT_OVERFLOW, 0);
-+
-+	if (qflg & QFLG_PCU)
-+		counter_push_event(counter, COUNTER_EVENT_UNDERFLOW, 0);
-+
-+	regmap_write(priv->regmap16, QCLR, qflg);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static const struct regmap_config ti_eqep_regmap32_config = {
- 	.name = "32-bit",
- 	.reg_bits = 32,
-@@ -376,7 +471,7 @@ static int ti_eqep_probe(struct platform_device *pdev)
- 	struct counter_device *counter;
- 	struct ti_eqep_cnt *priv;
- 	void __iomem *base;
--	int err;
-+	int err, irq;
- 
- 	counter = devm_counter_alloc(dev, sizeof(*priv));
- 	if (!counter)
-@@ -397,6 +492,15 @@ static int ti_eqep_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->regmap16))
- 		return PTR_ERR(priv->regmap16);
- 
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	err = devm_request_threaded_irq(dev, irq, NULL, ti_eqep_irq_handler,
-+					IRQF_ONESHOT, dev_name(dev), counter);
-+	if (err < 0)
-+		return dev_err_probe(dev, err, "failed to request IRQ\n");
-+
- 	counter->name = dev_name(dev);
- 	counter->parent = dev;
- 	counter->ops = &ti_eqep_counter_ops;
++MODULE_DESCRIPTION("go7007 support for saa7134 based TV cards");
+ MODULE_LICENSE("GPL v2");
 
 ---
-base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
-change-id: 20240609-counter-ti-eqep-over-under-events-8e7ace53d35a
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240609-md-drivers-media-pci-saa7134-fb3db3d5841c
+
 
