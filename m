@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-207445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5880901740
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6C290174C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9DA1F2123B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76BF1F21CAE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF314D8A8;
-	Sun,  9 Jun 2024 17:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DDC48CC7;
+	Sun,  9 Jun 2024 17:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="fyPN2pAj"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg8AkpY3"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DF46421;
-	Sun,  9 Jun 2024 17:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD593F9D5;
+	Sun,  9 Jun 2024 17:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717954500; cv=none; b=k/NiwVXiWzY7m23g0L5hLMc/3UrE6XOLrQJvN/Szl3dyn0oOWC/nhHhg5WPkVbgKQstFXbaVVNJlR8lwh4gGQUO8qAn0kkP2y0A7so6tT4bu0zxsArCpxRHJq2WjXdr6A3aWmtQVErevJakSg6jSfOWEQLN8c4FgHqI1Ug34170=
+	t=1717954654; cv=none; b=R4WaoN+IHKk1AbwfKjKkFiGORDRTDwUMsAQyeuOK4bpJcP32SZ1WCPBKngbceAunWIZicL29Eqed2MJJK3hM97PM4sSOFHOLsFSR4aKRarjTYXDMLSitvQpiwQ1yN/mAEEA4oswknpyG/ujGcbGAtpVtXjnYjKj/0bYPuOcVBR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717954500; c=relaxed/simple;
-	bh=ZDyN6Vf+52VBTThrkt6kfLAKDIBCA/WrvNpGqsChE9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s2jbl5B/pqor6y4zFPmmeP/3Ka1T6yStzYbSpJLFRZikt3M/ft4EMrlgUPAQ/qK2tPsuxH/LVQFhy/nJ5mudM1H7XMFbrmMd6av+tbiBYqNs8kAWPHE67C+z+4UFTGs6tCCUrHP6RYRXNojrWAfacuMh2yGUVulWDo9+E+GYEs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=fyPN2pAj; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 0B942600DC;
-	Sun,  9 Jun 2024 17:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1717954494;
-	bh=ZDyN6Vf+52VBTThrkt6kfLAKDIBCA/WrvNpGqsChE9o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fyPN2pAjzXZRM/MlyRtHzCD15pnXfj/ao/uVpN1HhdM1z900W9DGQ/YlUM98+reJc
-	 fdWBFXzsXYYkk9i3s+TxGzJOY1kE3yRx25Er6W/g8EMpZDXii5fWJdlT85RgH3Dh9X
-	 BqIzlwaf0T02nIePnnuJzx7F3aLoZtK8sv38IZmBR9C1pLhyj1BqvnURatxHt7cdSN
-	 h41YWCRZl0gp1Kxpr1y5F1OloHCyxAJyC7Mu82Ez4B9Fucc0epw1D5MwfFJGhi6c7T
-	 fi+c7whaMwimgMKPAiP/w5wlkoj8wuyjMbWbtPLqKCxWRnlswfKPTJR3308q2Wxuhm
-	 0Dl0NHsrTJFRQ==
-Received: by x201s (Postfix, from userid 1000)
-	id 2D227204695; Sun, 09 Jun 2024 17:34:31 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	Martin Habets <habetsm.xilinx@gmail.com>,
-	linux-net-drivers@amd.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	linux-rdma@vger.kernel.org,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	Louis Peens <louis.peens@corigine.com>,
-	oss-drivers@corigine.com,
+	s=arc-20240116; t=1717954654; c=relaxed/simple;
+	bh=b8H14q1Ca6ZPnjDbPXjPmPLORlz/P+sgF9Kb32Ix6OA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m0c/qJLfdABUb9iAmhw0PlihFSqKaB6FfPwgrcp4clIoo089leVqjDVdtkEeqxIDY7z1ROzflUq6tJurQhzDuZPWG7XJBKH2jh6mj3Sd4+3uU23M7A7UNDGYoapj2veXHdxSQKDIe40X7ah5wTz2gXwlPmlH86sAUKxxkIgnCdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg8AkpY3; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f4a5344ec7so27111835ad.1;
+        Sun, 09 Jun 2024 10:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717954652; x=1718559452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4Q4nkGn+FsWPFqFUmsc8Dh4Jkilm/kEj6LPCGMVCuU=;
+        b=dg8AkpY3gxg6ssKttcWcc5SYzJNzxyySmhUNeq44gE5+lv0+FUe7SmpA4GpIVj5sj1
+         L5bdRwxyxxEghWv5J/aiebi7iGcEVpe0Ym1FrdK90xl+VUJblq+aRRGQuDK062w42z0U
+         Tx57XNsj0mcmKtfC+UQPUatZWhp2Mry/Gsee2uFMT/mKdfK+oXvDdhZnb8Sk8St7ajBz
+         IrsLwj1xxaAUDd/BDC8MzS16OFI5XEf8AHSnuEuccrRCOK/NDBJBLvdOUf7HOI3nsHAV
+         ER/9kTORQZP3uvbh1lnIOJtLpwKh19ZGkBij94oAnGjz0gvblLVRW3daQ0PinVV/bmmW
+         ejlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717954652; x=1718559452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I4Q4nkGn+FsWPFqFUmsc8Dh4Jkilm/kEj6LPCGMVCuU=;
+        b=ppB7W9O1RT2Oy4AoZfNkNRfUfwjRnB+GLYAsOoWbOkSt8VLYtbLZgZidguxkT1sext
+         Huqhce5XHAXjBWLNj2L2XRhYlpzAJC0cbfeV/Om7XL3EzJRQ6NN+Mps7QvpE0psFvxwz
+         6qSUOqK9GXy2RUO+F7f8zC8inZeRJACGGu7s13+r7ieF+wFLJgP4jFtYkJglNXzla5Qy
+         RrdwbaTi1/89mM0r46+7sBAN9xeFDAd4zk2Lv/a29DKy1IFZ6/07H2Y0e01GhAOp2mqi
+         myEZfqxF2iOfkbtTPGZA5uMQcqh1QTXAt1aU01B2hV9ejp8W36PAdETci5qvaYSob3BS
+         8Tdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQUdTXKA1b8mKmGOIHftOCCrGfNwamoWYYlNb8Pe8Zyi3qsHfzZ4nAv/sAVuR+5QrXDZgaiIIbtuTzg3YWiXICK1TV8Voh0/RDlXOm6PjqfHvtlWliZob1oyiYwLKayU0KaGWVcGYWx3Gi5D57s03a9cTxK6+ieQ7ablA75a2l/INPtw==
+X-Gm-Message-State: AOJu0Yw1aVrWIG/sim6i7RyszcfoUI+gHx2KVpxmM5jemy7qlWrvQho6
+	5iL40JN32P42itIk4VO1l/SmhUKnung478ypt4qn9zfHtWweLLAS
+X-Google-Smtp-Source: AGHT+IG4OWfBDH6lIF5GdoY0dg5iheqSLYxAbS4UZoZcetoPw7khebj7QQ8YLaKse4xRlD3pGuTCOw==
+X-Received: by 2002:a17:902:eccd:b0:1f4:a04e:8713 with SMTP id d9443c01a7336-1f6d01b9784mr115027815ad.28.1717954652148;
+        Sun, 09 Jun 2024 10:37:32 -0700 (PDT)
+Received: from Kuiu.lan (180-177-2-91.dynamic.kbronet.com.tw. [180.177.2.91])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7cd2adsm67924615ad.174.2024.06.09.10.37.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 10:37:31 -0700 (PDT)
+From: Huichun Feng <foxhoundsk.tw@gmail.com>
+To: brgl@bgdev.pl
+Cc: corbet@lwn.net,
+	foxhoundsk.tw@gmail.com,
+	linus.walleij@linaro.org,
+	linux-doc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Davide Caratti <dcaratti@redhat.com>,
-	i.maximets@ovn.org
-Subject: [PATCH net-next 5/5] ice: flower: validate encapsulation control flags
-Date: Sun,  9 Jun 2024 17:33:55 +0000
-Message-ID: <20240609173358.193178-6-ast@fiberby.net>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240609173358.193178-1-ast@fiberby.net>
-References: <20240609173358.193178-1-ast@fiberby.net>
+	warthog618@gmail.com
+Subject: [PATCH v2] docs: gpio: prefer pread(2) for interrupt reading
+Date: Mon, 10 Jun 2024 01:37:28 +0800
+Message-Id: <20240609173728.2950808-1-foxhoundsk.tw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Encapsulation control flags are currently not used anywhere,
-so all flags are currently unsupported by all drivers.
+In legacy sysfs GPIO, when using poll(2) on the sysfs GPIO value for
+state change awaiting, a subsequent read(2) is required for consuming
+the event, which the doc recommends the use of lseek(2) or
+close-and-reopen to reset the file offset afterwards.
 
-This patch adds validation of this assumption, so that
-encapsulation flags may be used in the future.
+The recommendations however, require at least 2 syscalls to consume
+the event. Gladly, use of pread(2) require only 1 syscall for the
+consumption. Let's advertise this usage by prioritizing its placement.
 
-In case any encapsulation control flags are masked,
-flow_rule_match_has_enc_control_flags() sets a NL extended
-error message, and we return -EOPNOTSUPP.
-
-Only compile tested.
-
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+Signed-off-by: Huichun Feng <foxhoundsk.tw@gmail.com>
 ---
- drivers/net/ethernet/intel/ice/ice_tc_lib.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes in v2:
+- rebase against the latest tree.
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_tc_lib.c b/drivers/net/ethernet/intel/ice/ice_tc_lib.c
-index 8bd24b33f3a67..e6923f8121a99 100644
---- a/drivers/net/ethernet/intel/ice/ice_tc_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_tc_lib.c
-@@ -1353,6 +1353,7 @@ ice_parse_tunnel_attr(struct net_device *dev, struct flow_rule *rule,
- 		      struct ice_tc_flower_fltr *fltr)
- {
- 	struct ice_tc_flower_lyr_2_4_hdrs *headers = &fltr->outer_headers;
-+	struct netlink_ext_ack *extack = fltr->extack;
- 	struct flow_match_control enc_control;
+v1 link:
+https://lore.kernel.org/linux-gpio/20240514041223.800811-1-foxhoundsk.tw@gmail.com/T/#mfa19d877e6056936d3a2025cb64ca8c5b8718644
+---
+ Documentation/userspace-api/gpio/sysfs.rst | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/userspace-api/gpio/sysfs.rst b/Documentation/userspace-api/gpio/sysfs.rst
+index 116921048..bd64896de 100644
+--- a/Documentation/userspace-api/gpio/sysfs.rst
++++ b/Documentation/userspace-api/gpio/sysfs.rst
+@@ -97,9 +97,10 @@ and have the following read/write attributes:
+ 		poll(2) will return whenever the interrupt was triggered. If
+ 		you use poll(2), set the events POLLPRI and POLLERR. If you
+ 		use select(2), set the file descriptor in exceptfds. After
+-		poll(2) returns, either lseek(2) to the beginning of the sysfs
+-		file and read the new value or close the file and re-open it
+-		to read the value.
++		poll(2) returns, use pread(2) to read the value at offset
++		zero. Alternatively, either lseek(2) to the beginning of the
++		sysfs file and read the new value or close the file and
++		re-open it to read the value.
  
- 	fltr->tunnel_type = ice_tc_tun_get_type(dev);
-@@ -1373,6 +1374,9 @@ ice_parse_tunnel_attr(struct net_device *dev, struct flow_rule *rule,
- 
- 	flow_rule_match_enc_control(rule, &enc_control);
- 
-+	if (flow_rule_has_enc_control_flags(enc_control.mask->flags, extack))
-+		return -EOPNOTSUPP;
-+
- 	if (enc_control.key->addr_type == FLOW_DISSECTOR_KEY_IPV4_ADDRS) {
- 		struct flow_match_ipv4_addrs match;
- 
+ 	"edge" ...
+ 		reads as either "none", "rising", "falling", or
 -- 
-2.45.1
+2.34.1
 
 
