@@ -1,181 +1,174 @@
-Return-Path: <linux-kernel+bounces-207243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DF3901451
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57870901453
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B33281E29
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 03:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D66281EFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 03:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9857FB65E;
-	Sun,  9 Jun 2024 03:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A44BE4F;
+	Sun,  9 Jun 2024 03:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SIHebmCA"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="owXg/ekC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FC36139
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 03:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDD34C79;
+	Sun,  9 Jun 2024 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717902715; cv=none; b=bzB8eWd7he31e9TplK9hFCph+5yjgmtdxgteALq06b7uRrgPBYeMR3qv6EVHuzEXLoOsWEBnRdpgbBq06KTZVs3E0wCpQvNqL6MN7ilJlBBQEyvoDIqkgXvac1URAvYSLtYQZ/RjovhRGd4h4T5NhbRRCfnh8Ii/kJ6J1YPgpJY=
+	t=1717902884; cv=none; b=EHvVeAzj2pipDEw2dixj6U1OEful9LDyldumuYaHWs4rqv0T7rKJ8+qWOLAjGW74RdIFjRQoO8GZDfnqSfa0Eq98e97KlSGS9WeXghNqssbsw4n+XeqJ4U3899fyFvik2o72TSSKvv1MZzcsg8YsqPaBMpXLHbpw1WAVAqLSQOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717902715; c=relaxed/simple;
-	bh=Ro+ub4ifFKSZnb+ejWJ/xsVvSkhd//wMcVYHKFO+dzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SEvt3V+Mbw8MyKS1bPQOtr8EobOMWWExSjNPTlaCdtDqo3bz0FfCqdCENO5OeaOReQ+EdEjXUTj3X1N0xyFzjPTla9Y0k+uNFGwscHb085OyZLQ+KKafhut+Jm/l7Ktfk3ZZ3sEYyIuWKBVXuKnQOyO4dfLCuNZsSG+LCqI+Bhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SIHebmCA; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52962423ed8so3945428e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 20:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717902711; x=1718507511; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7dUoCR65nMgbX7LmvgfZWZMvg21MHj7Khg3DNyY50c=;
-        b=SIHebmCAAjHeKOmVHFnO0nUH0PHiJuJyZbym03QbwX5JYwryUZEVAuxrmfaD2w6SUH
-         wDi3ocoR0RGcVCFiLPeSwC/7CjS2fdnEEpDwVffhACpIEYL2/EiRAdgrtKeSYwDwWUHo
-         NPSUtvvt7rNzOXCkKNrQQsP1gZFqinTiKVQk8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717902711; x=1718507511;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A7dUoCR65nMgbX7LmvgfZWZMvg21MHj7Khg3DNyY50c=;
-        b=ukldvfQrrZ7dbbZ4JWtY7D1V4ZI7br0Nn3ZPG5b2zW2RFDv60IYtHyUg1FYiXchaTM
-         xHxc0E0k5kwJU2qaeydnHhRUa7pZvz1pm/+42uGWpwPjQDtXR3jCxqmc6d6EUrLmIQ9g
-         608pXKCFEA4CR7tEUJ2Xe/CFMj+L1tghX1Li/T2U+wwkl6v2TzOLfIfZB2oYbQggk5iq
-         hGxdqyP940WQAW5B+Pgp72zT6rF5f3tQrJbPxr2IaZmHxmbhefrWwIldoXy04N6HoWiu
-         o9vQODSFb9bt0SPfNxKByaGt5nGntbFN9b61o77f/83mNHRzgjxLqC49LBStT2KMZZ4Y
-         QnNw==
-X-Gm-Message-State: AOJu0Yzx2BndqPk4jMbKSzY71mbOX7uHwo6zaA0JbcTydFjdIq6LyF0W
-	4NGPE0dLUs0V8EUnSSsGLZqhS4RoEBNSAdkJSn9Fm6n2W5+cC8UpaMUOMGKpk7SsJ4Wrk+aE7Rj
-	3ER0=
-X-Google-Smtp-Source: AGHT+IEZUFhx9Q8rPcDoQbMjWdi1wRl0sLXV8j77b93t0aNnH0B4Mxkp8wH+VkDBVjfe5lJokB5vIQ==
-X-Received: by 2002:a05:6512:130b:b0:52b:bf8f:5690 with SMTP id 2adb3069b0e04-52bbf8f5813mr4266921e87.52.1717902711308;
-        Sat, 08 Jun 2024 20:11:51 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f102c4494sm105029266b.112.2024.06.08.20.11.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 20:11:50 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c76497cefso267023a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 20:11:50 -0700 (PDT)
-X-Received: by 2002:a17:906:f858:b0:a6e:f869:dfcd with SMTP id
- a640c23a62f3a-a6ef869e146mr209955566b.6.1717902709744; Sat, 08 Jun 2024
- 20:11:49 -0700 (PDT)
+	s=arc-20240116; t=1717902884; c=relaxed/simple;
+	bh=P5S5hn/wd59hfazDFIOvh3PsyxcaB0xSntPkgTcQT+A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mm0VcX/rTQr/6xhD+nkVumPFroHjwhIs5jUN/JJ2Qd4dx3SLanCOHbiFYzK1xoskXWuLfiG9zpxyp4UQHrLkSKBHFDfd8LBilrWTipr4W+65fCUOVC1xBdhfztN+/w5tEBaVG23trKMr+QPg0jwrvBLKXw+wUU8Y23cxr/DU+hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=owXg/ekC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4592vnoU019106;
+	Sun, 9 Jun 2024 03:14:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EZw8ly6QFChQVLaaO7OnGU
+	vETP74eZ80xU3svZ5nlfk=; b=owXg/ekC7dy8aKZurb8n8gMuW/kuxjtDDOXNUU
+	osbwm4ftQTP0ueA4gBB4YQ2YeSMPmaQ+UjoPRN+FiB3TMN3PD6md6qD+5DMyrv/4
+	sU897eKxhBKb/QolNzEu21Y0IHJB2r+s6ToUBb3Xfobt8Wh57dw2gY49A8f2fhk9
+	xPVTimKxx1CG8IKR1wLzOQBsexRL28pmK5ls4/vU3noWiBd2xxPDieNrDimAlQu/
+	J66BKXDNvV7V1dSquNdeVZ52DVBaBzNdEIVT/Y48mLDtIBQ+oss8Jxi1iExAL1C+
+	7VkJ4PjcZH9bhZCmngozhCtie8xjX/lR93fnVOubk9X0tpFg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemgh8fy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Jun 2024 03:14:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4593EYo3011403
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Jun 2024 03:14:34 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 8 Jun 2024 20:14:31 -0700
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Date: Sun, 9 Jun 2024 08:44:19 +0530
+Subject: [PATCH v3] PCI: Enable runtime pm of the host bridge
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org> <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 8 Jun 2024 20:11:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
-Message-ID: <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: multipart/mixed; boundary="000000000000c61ba5061a6c64c4"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAoeZWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwNL3aLSvJLM3NT4glxd81SzlFRDQ0sDQ0NjJaCGgqLUtMwKsGHRsbW
+ 1AM4Oc1pcAAAA
+To: Bjorn Helgaas <bhelgaas@google.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, <quic_vbadigan@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_ramkri@quicinc.com>,
+        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_parass@quicinc.com>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.13-dev-83828
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717902871; l=2657;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=P5S5hn/wd59hfazDFIOvh3PsyxcaB0xSntPkgTcQT+A=;
+ b=d/wxquSR8YprvLtvF38Z+kT1kOu99B53/T+n+ZMeCbmMYOYPp75ks8x+03Qd7syFW3JaNSIB2
+ VOvgUCN3m34BJ/E1NhdZzKqiPyvtF8v4jvO52th9n/PgwJSMKbOEAkf
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dJzh12uYDO6HxwNSHW30t2rGeaaoK68H
+X-Proofpoint-ORIG-GUID: dJzh12uYDO6HxwNSHW30t2rGeaaoK68H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-08_16,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406090024
 
---000000000000c61ba5061a6c64c4
-Content-Type: text/plain; charset="UTF-8"
+The Controller driver is the parent device of the PCIe host bridge,
+PCI-PCI bridge and PCIe endpoint as shown below.
 
-On Sat, 8 Jun 2024 at 13:55, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Think of this patch mostly as a "look, adding another architecture
-> isn't *that* hard - even if the constant value is spread out in the
-> instructions".
+        PCIe controller(Top level parent & parent of host bridge)
+                        |
+                        v
+        PCIe Host bridge(Parent of PCI-PCI bridge)
+                        |
+                        v
+        PCI-PCI bridge(Parent of endpoint driver)
+                        |
+                        v
+                PCIe endpoint driver
 
-.. and here's a version that actually works. It wasn't that bad.
+Now, when the controller device goes to runtime suspend, PM framework
+will check the runtime PM state of the child device (host bridge) and
+will find it to be disabled. So it will allow the parent (controller
+device) to go to runtime suspend. Only if the child device's state was
+'active' it will prevent the parent to get suspended.
 
-Or rather, it wouldn't have been that bad had I not spent *ages*
-debugging a stupid cut-and-paste error where I instead of writing
-words 0..3 of the 64-bit large constant generation, wrote words 0..2
-and then overwrote word 2 (again) with the data that should have gone
-into word 3. Causing the top 32 bits to be all wonky. Oops. Literally.
+Since runtime PM is disabled for host bridge, the state of the child
+devices under the host bridge is not taken into account by PM framework
+for the top level parent, PCIe controller. So PM framework, allows
+the controller driver to enter runtime PM irrespective of the state
+of the devices under the host bridge. And this causes the topology
+breakage and also possible PM issues like controller driver goes to
+runtime suspend while endpoint driver is doing some transfers.
 
-That stupid typo caused like two hours of wasted time.
+So enable runtime PM for the host bridge, so that controller driver
+goes to suspend only when all child devices goes to runtime suspend.
 
-But anyway, this patch actually works for me. It still doesn't do any
-I$/D$ flushing, because it's not needed in practice, but it *should*
-probably do that.
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+---
+Changes in v3:
+- Moved the runtime API call's from the dwc driver to PCI framework
+  as it is applicable for all (suggested by mani)
+- Updated the commit message.
+- Link to v3: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
+Changes in v2:
+- Updated commit message as suggested by mani.
+- Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
+---
 
-             Linus
+---
+ drivers/pci/probe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---000000000000c61ba5061a6c64c4
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-arm64-add-runtime-const-support.patch"
-Content-Disposition: attachment; 
-	filename="0001-arm64-add-runtime-const-support.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lx6yvkv70>
-X-Attachment-Id: f_lx6yvkv70
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 20475ca30505..b7f9ff75b0b3 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -3108,6 +3108,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
+ 		pcie_bus_configure_settings(child);
+ 
+ 	pci_bus_add_devices(bus);
++
++	pm_runtime_set_active(&bridge->dev);
++	pm_runtime_enable(&bridge->dev);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pci_host_probe);
 
-RnJvbSA4ODc4MjFlMWNmMzJjNTA1ZDJiYzlmYjlkY2VlNDVjZjFlMmY2NWU1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFNhdCwgOCBKdW4gMjAyNCAxMzoyMjozMSAtMDcwMApTdWJqZWN0OiBb
-UEFUQ0hdIGFybTY0OiBhZGQgJ3J1bnRpbWUgY29uc3QnIHN1cHBvcnQKClNpZ25lZC1vZmYtYnk6
-IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCiBhcmNo
-L2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8IDc1ICsrKysrKysrKysrKysrKysr
-KysrKysrKysrCiBhcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxkcy5TICAgICAgICB8ICAzICsr
-CiAyIGZpbGVzIGNoYW5nZWQsIDc4IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBh
-cmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaAoKZGlmZiAtLWdpdCBhL2FyY2gv
-YXJtNjQvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oIGIvYXJjaC9hcm02NC9pbmNsdWRlL2Fz
-bS9ydW50aW1lLWNvbnN0LmgKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAw
-Li5hYjVmOThiYzk0MmUKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNoL2FybTY0L2luY2x1ZGUvYXNt
-L3J1bnRpbWUtY29uc3QuaApAQCAtMCwwICsxLDc1IEBACisvKiBTUERYLUxpY2Vuc2UtSWRlbnRp
-ZmllcjogR1BMLTIuMCAqLworI2lmbmRlZiBfQVNNX1JVTlRJTUVfQ09OU1RfSAorI2RlZmluZSBf
-QVNNX1JVTlRJTUVfQ09OU1RfSAorCisjZGVmaW5lIHJ1bnRpbWVfY29uc3RfcHRyKHN5bSkgKHsJ
-CQkJXAorCXR5cGVvZihzeW0pIF9fcmV0OwkJCQkJXAorCWFzbSgiMTpcdCIJCQkJCQlcCisJCSJt
-b3Z6ICUwLCAjMHhjZGVmXG5cdCIJCQkJXAorCQkibW92ayAlMCwgIzB4ODlhYiwgbHNsICMxNlxu
-XHQiCQkJXAorCQkibW92ayAlMCwgIzB4NDU2NywgbHNsICMzMlxuXHQiCQkJXAorCQkibW92ayAl
-MCwgIzB4MDEyMywgbHNsICM0OFxuXHQiCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRpbWVfcHRy
-XyIgI3N5bSAiLFwiYVwiXG5cdCIJXAorCQkiLmxvbmcgMWIgLSAuXG5cdCIJCQkJXAorCQkiLnBv
-cHNlY3Rpb24iCQkJCQlcCisJCToiPXIiIChfX3JldCkpOwkJCQkJXAorCV9fcmV0OyB9KQorCisj
-ZGVmaW5lIHJ1bnRpbWVfY29uc3Rfc2hpZnRfcmlnaHRfMzIodmFsLCBzeW0pICh7CQlcCisJdW5z
-aWduZWQgbG9uZyBfX3JldDsJCQkJCVwKKwlhc20oIjE6XHQiCQkJCQkJXAorCQkibHNyICV3MCwl
-dzEsIzEyXG5cdCIJCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRpbWVfc2hpZnRfIiAjc3ltICIs
-XCJhXCJcblx0IglcCisJCSIubG9uZyAxYiAtIC5cblx0IgkJCQlcCisJCSIucG9wc2VjdGlvbiIJ
-CQkJCVwKKwkJOiI9ciIgKF9fcmV0KQkJCQkJXAorCQk6InIiICgwdSsodmFsKSkpOwkJCQlcCisJ
-X19yZXQ7IH0pCisKKyNkZWZpbmUgcnVudGltZV9jb25zdF9pbml0KHR5cGUsIHN5bSwgdmFsdWUp
-IGRvIHsJXAorCWV4dGVybiBzMzIgX19zdGFydF9ydW50aW1lXyMjdHlwZSMjXyMjc3ltW107CVwK
-KwlleHRlcm4gczMyIF9fc3RvcF9ydW50aW1lXyMjdHlwZSMjXyMjc3ltW107CVwKKwlydW50aW1l
-X2NvbnN0X2ZpeHVwKF9fcnVudGltZV9maXh1cF8jI3R5cGUsCVwKKwkJKHVuc2lnbmVkIGxvbmcp
-KHZhbHVlKSwgCQlcCisJCV9fc3RhcnRfcnVudGltZV8jI3R5cGUjI18jI3N5bSwJCVwKKwkJX19z
-dG9wX3J1bnRpbWVfIyN0eXBlIyNfIyNzeW0pOwkJXAorfSB3aGlsZSAoMCkKKworLy8gMTYtYml0
-IGltbWVkaWF0ZSBmb3Igd2lkZSBtb3ZlIChtb3Z6IGFuZCBtb3ZrKSBpbiBiaXRzIDUuLjIwCitz
-dGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwXzE2KHVuc2lnbmVkIGludCAqcCwgdW5z
-aWduZWQgaW50IHZhbCkKK3sKKwl1bnNpZ25lZCBpbnQgaW5zbiA9ICpwOworCWluc24gJj0gMHhm
-ZmUwMDAxZjsKKwlpbnNuIHw9ICh2YWwgJiAweGZmZmYpIDw8IDU7CisJKnAgPSBpbnNuOworfQor
-CitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwX3B0cih2b2lkICp3aGVyZSwgdW5z
-aWduZWQgbG9uZyB2YWwpCit7CisJdW5zaWduZWQgaW50ICpwID0gbG1fYWxpYXMod2hlcmUpOwor
-CV9fcnVudGltZV9maXh1cF8xNihwLCB2YWwpOworCV9fcnVudGltZV9maXh1cF8xNihwKzEsIHZh
-bCA+PiAxNik7CisJX19ydW50aW1lX2ZpeHVwXzE2KHArMiwgdmFsID4+IDMyKTsKKwlfX3J1bnRp
-bWVfZml4dXBfMTYocCszLCB2YWwgPj4gNDgpOworfQorCisvLyBJbW1lZGlhdGUgdmFsdWUgaXMg
-NSBiaXRzIHN0YXJ0aW5nIGF0IGJpdCAjMTYKK3N0YXRpYyBpbmxpbmUgdm9pZCBfX3J1bnRpbWVf
-Zml4dXBfc2hpZnQodm9pZCAqd2hlcmUsIHVuc2lnbmVkIGxvbmcgdmFsKQoreworCXVuc2lnbmVk
-IGludCAqcCA9IGxtX2FsaWFzKHdoZXJlKTsKKwl1bnNpZ25lZCBpbnQgaW5zbiA9ICpwOworCWlu
-c24gJj0gMHhmZmMwZmZmZjsKKwlpbnNuIHw9ICh2YWwgJiA2MykgPDwgMTY7CisJKnAgPSBpbnNu
-OworfQorCitzdGF0aWMgaW5saW5lIHZvaWQgcnVudGltZV9jb25zdF9maXh1cCh2b2lkICgqZm4p
-KHZvaWQgKiwgdW5zaWduZWQgbG9uZyksCisJdW5zaWduZWQgbG9uZyB2YWwsIHMzMiAqc3RhcnQs
-IHMzMiAqZW5kKQoreworCXdoaWxlIChzdGFydCA8IGVuZCkgeworCQlmbigqc3RhcnQgKyAodm9p
-ZCAqKXN0YXJ0LCB2YWwpOworCQlzdGFydCsrOworCX0KK30KKworI2VuZGlmCmRpZmYgLS1naXQg
-YS9hcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxkcy5TIGIvYXJjaC9hcm02NC9rZXJuZWwvdm1s
-aW51eC5sZHMuUwppbmRleCA3NTVhMjJkNGY4NDAuLjU1YThlMzEwZWExMiAxMDA2NDQKLS0tIGEv
-YXJjaC9hcm02NC9rZXJuZWwvdm1saW51eC5sZHMuUworKysgYi9hcmNoL2FybTY0L2tlcm5lbC92
-bWxpbnV4Lmxkcy5TCkBAIC0yNjQsNiArMjY0LDkgQEAgU0VDVElPTlMKIAkJRVhJVF9EQVRBCiAJ
-fQogCisJUlVOVElNRV9DT05TVChzaGlmdCwgZF9oYXNoX3NoaWZ0KQorCVJVTlRJTUVfQ09OU1Qo
-cHRyLCBkZW50cnlfaGFzaHRhYmxlKQorCiAJUEVSQ1BVX1NFQ1RJT04oTDFfQ0FDSEVfQllURVMp
-CiAJSFlQRVJWSVNPUl9QRVJDUFVfU0VDVElPTgogCi0tIAoyLjQ1LjEKCg==
---000000000000c61ba5061a6c64c4--
+---
+base-commit: 30417e6592bfc489a78b3fe564cfe1960e383829
+change-id: 20240609-runtime_pm-7e6de1190113
+
+Best regards,
+-- 
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
+
 
