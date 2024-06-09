@@ -1,356 +1,197 @@
-Return-Path: <linux-kernel+bounces-207394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4762901676
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:24:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806EE901678
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E381F212CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555991C20A83
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7F845BE4;
-	Sun,  9 Jun 2024 15:24:27 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C534501F;
+	Sun,  9 Jun 2024 15:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8Ovct9O"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CF641C63
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 15:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B230844C8F
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717946666; cv=none; b=X+QR9L3glqY6sa9W53Vu5maum3ggOqgRGdhS4DrD+CmJfZFiHqhZeMkF64ZCTgMoi6USepJXLeb/R1gfoNjl65LauLWW+Nd1E60ZE8EP+lsooppNyXVvx1sztKgDhxNrBlQ288u7Z4MHz+1K+pWzo9RHE/52DbnfbT9HOjUMOVQ=
+	t=1717946996; cv=none; b=XnrrNTcQGjf3ovBXkD6H/Nmi6YjYsk68l2lW9UzxRQ4qVPKDH0GCjohwFvUGUSdr+Qp905Z1y15Rz43/KYxykYcu24eytJcHw9PfnRwXlws5yayIMPtYnH1NJFmw9gBvsg3EaY5sTuSCvDf1juHWHKld4ZTswpeTLa4+cu60zvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717946666; c=relaxed/simple;
-	bh=KQyLT6vNtk8pOWJrj6wYYlk+dDFu8RZJgO+raGs4WqM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Wm8LM7sjixZ478my+4yZfOIsELYgQZD5DagjpX6YHFG+KH/lg4zngWwaFs7j8KHlDyl9YEkdIgvACBPwo6i/27yZNhN9ZkJJK/rYYvGUI2lW1UHCdczcRBw8V8FsJATtjQcrBMq6DB1XGJKp1emQpMXVCjkKJKkkhDkBkYmLKAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-36db3bbf931so42122945ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 08:24:24 -0700 (PDT)
+	s=arc-20240116; t=1717946996; c=relaxed/simple;
+	bh=LkPXGai8kaRoajhEuKD9q1QTp4VpWFHLrSWtfPGkqEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lcofh6CohZv/OCPQBEgrL2x+nhIk2tibMeRarpp0lUcHcY7ov3vL+ZVvDw3coCyREZSBcLneRUCl95guRGXdYCx85AgALw7mgHyPQoyArgTLDhDS+4ri0rQNLxaZWRsUx7TSQDpkOomH9LXKihuLKoVfOonHshXlestlhV7TTl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e8Ovct9O; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so1217010e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 08:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717946993; x=1718551793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+p7Dbyuweupea3JxyYctujxWv1vr+kMS3mFulUukLl4=;
+        b=e8Ovct9OJM6L9gooMPF98nCD/TSJFi5sosivd7iXjZQ/1b4j/I7Fly9b84YAu7o3zG
+         /zeN4ansGlsFvhJ3FlZ/RV3h3qNO5nRu2Fl5giDWSMUFw7Z4HByk7b5prLDFqStyMV5/
+         qXvQTfBeN7OMB8nsn1OnT6PooGPnrWYCE0Xnd9EqbotCW1y/45UczRkYv4zf9McTI9Af
+         ulvZYw1x+KJliZ0xRtzT2iF7u9Xu0xYhoF67+RgbQ7EVmkn8wDv7P6sa5VzZfJYoEoZx
+         8SVTipcnsxM0Oetz9yMBNedp9bBB0bFoPYS+fGi9N/nO50N4vh8Wq+1xXXN8ZD06sYL0
+         yIcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717946664; x=1718551464;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QB/dYc5vEwZKvwxOwqZTF82SJ4AzFGuh30sJJzKjp2Q=;
-        b=Cdgi8wpW2llzYEqCtMcKDvckTpTFXcvRwa4QV+xqjEE5YyEqYY6U2ADYOgPEeUni60
-         Jh2J53CfrfUWeyHoTuqIUU6Xcdis6olkAnpXxmrcSLN2p8ik6hTsmJ+Xe09CkyXLenRT
-         F5AAapyHp2sqssR2mAjWHbqvurvHGX5Z8ft5+tpxeu+zIAr0qYoSaXuFAuTlY4PXfnOm
-         yIONJTqyKTyLxN5HTlN1rJhKAgkIWLibIojbniCnswyANskanK+MzZv95uiYZ/Vit5HE
-         Gkgqw6MwZx9fYKxkm417Bka3739/iD0D20UpOKv2rHLsUuJ/Q+E7zxjxKjuWLW61ZtrC
-         4PQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrQfSBVx75QfpvVUQDZsRrgKUCO2jVcc1BJ3OASc/RUNCgh5WbTpzguNr6KWR6VIqg79eva2KuWor+UkQN8cB+JT9l0WgeyB147qIG
-X-Gm-Message-State: AOJu0YzqZ2oiwwjwJUeDaAbJQy/Q3Lge7Jt7S2jZ/5JvC2BzVD7QNa1d
-	T7fCcLOD3pP7iGHSJQP1PZIjzZs1Ln1JR8Z95IPW1uSTJXcqcMljj5vlD+cSub2IbLLc9IHoh0d
-	kIdHCNhAy7TG4XCChq9xSHE6phWZQQe1sgIbmEDDjr+2DpzrC/TKmdbc=
-X-Google-Smtp-Source: AGHT+IH3/uKyejHeqr8GpW0rlnaxkgGCbRvvStkMtBWgRa9+Wc3VVLomBAltNHJu9ztM2PrMv2a8jPn3KSLh5R3aYaX/DnhHuSh7
+        d=1e100.net; s=20230601; t=1717946993; x=1718551793;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+p7Dbyuweupea3JxyYctujxWv1vr+kMS3mFulUukLl4=;
+        b=WrcEoQ3gbTzUD1TOGcBjZekW7C8qZwqZjsmyb4tk45Oqvyc7MRbYpnW8e7RWASesTg
+         OF+GUQCT8fHTYEf+s1uIrBqNXunvgrb6skFWFZEYUKHefIcX5INJRQ7+cXQMup9OxiI9
+         tU3agJd37v+EOQrrq7o5AOLzdFqcb8aPTUUcE+YQ1hPvZXeAm1TAshv0BoP5XlXMRyB8
+         xqL+nGmTrd44SSAzS0NEXcarb/njPzugOrNPSoB18G6IBmuMXyreRxjMlzDG+BI9oUFD
+         8Zf9DNYCGfe71SzmbLizrW7YTWNeizqwM4y3A1bJPVv5EtpkQZf8jB3mpKHy06zy375n
+         pBzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcZ4vhgXUJLgilGkocco9oaHnMZt2BUfVphP8/c1C8BFOHgpJfNmAVRCsExYeOp65O9rU+SB7OdCblG8QuvE8aAJooSGoGuf3BV0UP
+X-Gm-Message-State: AOJu0YyqXUSw5d7MI5YUc004XcSWyV/3g81D8LLMwi2iw13oO4zmZ5A0
+	zt+pABP9P0VJCW/Ic/zWkIdIEiyJ+3U0YgntxfdnBoD9uqvmErB1+8kbLQZ8FFQ=
+X-Google-Smtp-Source: AGHT+IHAD4z52RxtAlhkJKnz6xDUNUsq8wzsH9aGCceUyMemIpuwQ3lYTq1VwnfUMEWgqgARHYFD4Q==
+X-Received: by 2002:a19:5f5b:0:b0:520:c2c1:153a with SMTP id 2adb3069b0e04-52bb9fd2521mr4380150e87.58.1717946992519;
+        Sun, 09 Jun 2024 08:29:52 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2024b1c8sm1716363f8f.39.2024.06.09.08.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 08:29:52 -0700 (PDT)
+Date: Sun, 9 Jun 2024 18:29:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Fred Griffoul <fgriffo@amazon.co.uk>,
+	griffoul@gmail.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Fred Griffoul <fgriffo@amazon.co.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Ye Bin <yebin10@huawei.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
+Message-ID: <714268da-d199-4371-8360-500e7165119c@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1488:b0:36c:5c1b:2051 with SMTP id
- e9e14a558f8ab-3758046d0bamr7297475ab.6.1717946664142; Sun, 09 Jun 2024
- 08:24:24 -0700 (PDT)
-Date: Sun, 09 Jun 2024 08:24:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a8d9a7061a76a05f@google.com>
-Subject: [syzbot] [serial?] possible deadlock in console_lock_spinning_enable (4)
-From: syzbot <syzbot+0f558b549182d2711c75@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607190955.15376-3-fgriffo@amazon.co.uk>
 
-Hello,
+Hi Fred,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d199ce980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-dashboard link: https://syzkaller.appspot.com/bug?extid=0f558b549182d2711c75
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11493bc2980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146cff16980000
+url:    https://github.com/intel-lab-lkp/linux/commits/Fred-Griffoul/cgroup-cpuset-export-cpuset_cpus_allowed/20240608-031332
+base:   cbb325e77fbe62a06184175aa98c9eb98736c3e8
+patch link:    https://lore.kernel.org/r/20240607190955.15376-3-fgriffo%40amazon.co.uk
+patch subject: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
+config: mips-randconfig-r081-20240609 (https://download.01.org/0day-ci/archive/20240609/202406092245.Hgx6MqK9-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 13.2.0
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406092245.Hgx6MqK9-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0f558b549182d2711c75@syzkaller.appspotmail.com
+New smatch warnings:
+drivers/vfio/pci/vfio_pci_core.c:1241 vfio_pci_ioctl_set_irqs() warn: maybe return -EFAULT instead of the bytes remaining?
 
-sp0: Synchronizing with TNC
-------------[ cut here ]------------
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc2-syzkaller-g8867bbd4a056 #0 Tainted: G        W         
-------------------------------------------------------
-syz-executor196/6254 is trying to acquire lock:
-ffff80008f1bcea0 (console_owner){....}-{0:0}, at: console_lock_spinning_enable+0x88/0xec kernel/printk/printk.c:1866
+vim +1241 drivers/vfio/pci/vfio_pci_core.c
 
-but task is already holding lock:
-ffff800093bc1c58 (&port_lock_key){....}-{2:2}, at: uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
-ffff800093bc1c58 (&port_lock_key){....}-{2:2}, at: uart_write+0x114/0x2ec drivers/tty/serial/serial_core.c:624
+2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1190  static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
+663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1191  				   struct vfio_irq_set __user *arg)
+2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1192  {
+2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1193  	unsigned long minsz = offsetofend(struct vfio_irq_set, count);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1194  	struct vfio_irq_set hdr;
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1195  	cpumask_var_t mask;
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1196  	u8 *data = NULL;
+05692d7005a364 drivers/vfio/pci/vfio_pci.c      Vlad Tsyrklevich 2016-10-12  1197  	int max, ret = 0;
+ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1198  	size_t data_size = 0;
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1199  
+663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1200  	if (copy_from_user(&hdr, arg, minsz))
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1201  		return -EFAULT;
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1202  
+05692d7005a364 drivers/vfio/pci/vfio_pci.c      Vlad Tsyrklevich 2016-10-12  1203  	max = vfio_pci_get_irq_count(vdev, hdr.index);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1204  
+ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1205  	ret = vfio_set_irqs_validate_and_prepare(&hdr, max, VFIO_PCI_NUM_IRQS,
+ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1206  						 &data_size);
+ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1207  	if (ret)
+ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1208  		return ret;
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1209  
+ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1210  	if (data_size) {
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1211  		if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY) {
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1212  			if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1213  				return -ENOMEM;
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1214  
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1215  			ret = copy_from_user(mask, &arg->data, data_size);
 
-which lock already depends on the new lock.
+copy_from_user() returns the number of bytes remaining to be copied.
+This should be:
 
+	if (copy_from_user(mask, &arg->data, data_size)) {
+		ret = -EFAULT;
+		goto out;
+	}
 
-the existing dependency chain (in reverse order) is:
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1216  			if (ret)
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1217  				goto out;
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1218  
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1219  			data = (u8 *)mask;
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1220  
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1221  		} else {
+663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1222  			data = memdup_user(&arg->data, data_size);
+3a1f7041ddd59e drivers/vfio/pci/vfio_pci.c      Fengguang Wu     2012-12-07  1223  			if (IS_ERR(data))
+3a1f7041ddd59e drivers/vfio/pci/vfio_pci.c      Fengguang Wu     2012-12-07  1224  				return PTR_ERR(data);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1225  		}
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1226  	}
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1227  
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1228  	mutex_lock(&vdev->igate);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1229  
+ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1230  	ret = vfio_pci_set_irqs_ioctl(vdev, hdr.flags, hdr.index, hdr.start,
+ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1231  				      hdr.count, data);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1232  
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1233  	mutex_unlock(&vdev->igate);
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1234  
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1235  out:
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1236  	if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY && data_size)
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1237  		free_cpumask_var(mask);
+66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1238  	else
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1239  		kfree(data);
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1240  
+89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31 @1241  	return ret;
+2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1242  }
 
--> #1 (&port_lock_key){....}-{2:2}:
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
-       uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
-       pl011_console_write+0x148/0x724 drivers/tty/serial/amba-pl011.c:2316
-       console_emit_next_record kernel/printk/printk.c:2928 [inline]
-       console_flush_all+0x5cc/0xb74 kernel/printk/printk.c:2994
-       console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
-       vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
-       vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
-       vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
-       _printk+0xdc/0x128 kernel/printk/printk.c:2370
-       register_console+0x700/0xa8c kernel/printk/printk.c:3596
-       uart_configure_port drivers/tty/serial/serial_core.c:2664 [inline]
-       serial_core_add_one_port drivers/tty/serial/serial_core.c:3192 [inline]
-       serial_core_register_port+0x1428/0x1bf4 drivers/tty/serial/serial_core.c:3429
-       serial_ctrl_register_port+0x28/0x38 drivers/tty/serial/serial_ctrl.c:41
-       uart_add_one_port+0x28/0x38 drivers/tty/serial/serial_port.c:136
-       pl011_register_port+0x1b4/0x44c drivers/tty/serial/amba-pl011.c:2744
-       sbsa_uart_probe+0x488/0x608 drivers/tty/serial/amba-pl011.c:2914
-       platform_probe+0x148/0x1c0 drivers/base/platform.c:1404
-       really_probe+0x38c/0x8fc drivers/base/dd.c:656
-       __driver_probe_device+0x194/0x374 drivers/base/dd.c:798
-       driver_probe_device+0x78/0x330 drivers/base/dd.c:828
-       __device_attach_driver+0x2a8/0x4f4 drivers/base/dd.c:956
-       bus_for_each_drv+0x228/0x2bc drivers/base/bus.c:457
-       __device_attach+0x2b4/0x434 drivers/base/dd.c:1028
-       device_initial_probe+0x24/0x34 drivers/base/dd.c:1077
-       bus_probe_device+0x178/0x240 drivers/base/bus.c:532
-       device_add+0x728/0xa6c drivers/base/core.c:3721
-       platform_device_add+0x3e8/0x6e8 drivers/base/platform.c:716
-       platform_device_register_full+0x4ec/0x604 drivers/base/platform.c:844
-       acpi_create_platform_device+0x5bc/0x744 drivers/acpi/acpi_platform.c:177
-       acpi_default_enumeration+0x6c/0xdc drivers/acpi/scan.c:2184
-       acpi_bus_attach+0x8b8/0xaa8 drivers/acpi/scan.c:2293
-       acpi_dev_for_one_check+0xa0/0xb4 drivers/acpi/bus.c:1143
-       device_for_each_child+0xec/0x174 drivers/base/core.c:4050
-       acpi_dev_for_each_child+0xc4/0x108 drivers/acpi/bus.c:1155
-       acpi_bus_attach+0x358/0xaa8 drivers/acpi/scan.c:2298
-       acpi_dev_for_one_check+0xa0/0xb4 drivers/acpi/bus.c:1143
-       device_for_each_child+0xec/0x174 drivers/base/core.c:4050
-       acpi_dev_for_each_child+0xc4/0x108 drivers/acpi/bus.c:1155
-       acpi_bus_attach+0x358/0xaa8 drivers/acpi/scan.c:2298
-       acpi_bus_scan+0x118/0x4f0 drivers/acpi/scan.c:2579
-       acpi_scan_init+0x214/0x6b0 drivers/acpi/scan.c:2714
-       acpi_init+0x190/0x254 drivers/acpi/bus.c:1460
-       do_one_initcall+0x254/0x9e4 init/main.c:1267
-       do_initcall_level+0x154/0x214 init/main.c:1329
-       do_initcalls+0x58/0xac init/main.c:1345
-       do_basic_setup+0x8c/0xa0 init/main.c:1364
-       kernel_init_freeable+0x324/0x478 init/main.c:1578
-       kernel_init+0x24/0x2a0 init/main.c:1467
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
--> #0 (console_owner){....}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
-       lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
-       console_lock_spinning_enable+0xb4/0xec kernel/printk/printk.c:1870
-       console_emit_next_record kernel/printk/printk.c:2922 [inline]
-       console_flush_all+0x58c/0xb74 kernel/printk/printk.c:2994
-       console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
-       vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
-       vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
-       vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
-       _printk+0xdc/0x128 kernel/printk/printk.c:2370
-       __report_bug lib/bug.c:195 [inline]
-       report_bug+0x3b8/0x5b0 lib/bug.c:219
-       bug_handler+0x50/0x1fc arch/arm64/kernel/traps.c:978
-       call_break_hook arch/arm64/kernel/debug-monitors.c:321 [inline]
-       brk_handler+0x17c/0x2e0 arch/arm64/kernel/debug-monitors.c:328
-       do_debug_exception+0x1e4/0x398 arch/arm64/mm/fault.c:909
-       el1_dbg+0x64/0x80 arch/arm64/kernel/entry-common.c:472
-       el1h_64_sync_handler+0x40/0xac arch/arm64/kernel/entry-common.c:512
-       el1h_64_sync+0x64/0x68 arch/arm64/kernel/entry.S:593
-       spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
-       uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
-       uart_write+0x280/0x2ec drivers/tty/serial/serial_core.c:626
-       tnc_init drivers/net/hamradio/6pack.c:531 [inline]
-       sixpack_open+0x5d8/0x8b0 drivers/net/hamradio/6pack.c:628
-       tty_ldisc_open+0x9c/0x14c drivers/tty/tty_ldisc.c:432
-       tty_set_ldisc+0x2f8/0x4e0 drivers/tty/tty_ldisc.c:563
-       tiocsetd+0x100/0x13c drivers/tty/tty_io.c:2439
-       tty_ioctl+0xba0/0xd8c drivers/tty/tty_io.c:2739
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl fs/ioctl.c:893 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
-       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&port_lock_key);
-                               lock(console_owner);
-                               lock(&port_lock_key);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-5 locks held by syz-executor196/6254:
- #0: ffff0000d4a131c0 (&tty->legacy_mutex){+.+.}-{3:3}, at: tty_lock+0x78/0xc8 drivers/tty/tty_mutex.c:18
- #1: ffff0000d4a130a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_write+0x3c/0x4c drivers/tty/tty_ldsem.c:366
- #2: ffff800093bc1c58 (&port_lock_key){....}-{2:2}, at: uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
- #2: ffff800093bc1c58 (&port_lock_key){....}-{2:2}, at: uart_write+0x114/0x2ec drivers/tty/serial/serial_core.c:624
- #3: ffff80008f0a47c0 (console_lock){+.+.}-{0:0}, at: vprintk_emit+0x1d0/0x350 kernel/printk/printk.c:2344
- #4: ffff80008f0a43f0 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire+0x10/0x4c include/linux/rcupdate.h:333
-
-stack backtrace:
-CPU: 0 PID: 6254 Comm: syz-executor196 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
- dump_stack+0x1c/0x28 lib/dump_stack.c:123
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
- lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
- console_lock_spinning_enable+0xb4/0xec kernel/printk/printk.c:1870
- console_emit_next_record kernel/printk/printk.c:2922 [inline]
- console_flush_all+0x58c/0xb74 kernel/printk/printk.c:2994
- console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
- vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
- vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
- vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
- _printk+0xdc/0x128 kernel/printk/printk.c:2370
- __report_bug lib/bug.c:195 [inline]
- report_bug+0x3b8/0x5b0 lib/bug.c:219
- bug_handler+0x50/0x1fc arch/arm64/kernel/traps.c:978
- call_break_hook arch/arm64/kernel/debug-monitors.c:321 [inline]
- brk_handler+0x17c/0x2e0 arch/arm64/kernel/debug-monitors.c:328
- do_debug_exception+0x1e4/0x398 arch/arm64/mm/fault.c:909
- el1_dbg+0x64/0x80 arch/arm64/kernel/entry-common.c:472
- el1h_64_sync_handler+0x40/0xac arch/arm64/kernel/entry-common.c:512
- el1h_64_sync+0x64/0x68 arch/arm64/kernel/entry.S:593
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
- uart_write+0x280/0x2ec drivers/tty/serial/serial_core.c:626
- tnc_init drivers/net/hamradio/6pack.c:531 [inline]
- sixpack_open+0x5d8/0x8b0 drivers/net/hamradio/6pack.c:628
- tty_ldisc_open+0x9c/0x14c drivers/tty/tty_ldisc.c:432
- tty_set_ldisc+0x2f8/0x4e0 drivers/tty/tty_ldisc.c:563
- tiocsetd+0x100/0x13c drivers/tty/tty_io.c:2439
- tty_ioctl+0xba0/0xd8c drivers/tty/tty_io.c:2739
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-WARNING: CPU: 0 PID: 6254 at drivers/tty/serial/serial_core.c:625 spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
-WARNING: CPU: 0 PID: 6254 at drivers/tty/serial/serial_core.c:625 uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
-WARNING: CPU: 0 PID: 6254 at drivers/tty/serial/serial_core.c:625 uart_write+0x280/0x2ec drivers/tty/serial/serial_core.c:626
-Modules linked in:
-CPU: 0 PID: 6254 Comm: syz-executor196 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 804000c5 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : uart_write+0x280/0x2ec include/linux/spinlock.h:406
-lr : uart_write+0x278/0x2ec drivers/tty/serial/serial_core.c:625
-sp : ffff8000a0807ad0
-x29: ffff8000a0807ad0 x28: 1ffff00014100f68 x27: dfff800000000000
-x26: 0000000000000001 x25: dfff800000000000 x24: ffff0000c9160f48
-x23: 0000000000000000 x22: ffff800093bc1c40 x21: ffff8000a0807b60
-x20: 0000000000000001 x19: ffff0000c9160be8 x18: ffff8000a0807780
-x17: 000000000000cbfe x16: ffff8000803514ec x15: ffff700014100f40
-x14: 1ffff00014100f40 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700014100f40 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d654bc80 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000020 x4 : 0000000000000000 x3 : ffff80008035161c
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff800093bc1c40
-Call trace:
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
- uart_write+0x280/0x2ec drivers/tty/serial/serial_core.c:626
- tnc_init drivers/net/hamradio/6pack.c:531 [inline]
- sixpack_open+0x5d8/0x8b0 drivers/net/hamradio/6pack.c:628
- tty_ldisc_open+0x9c/0x14c drivers/tty/tty_ldisc.c:432
- tty_set_ldisc+0x2f8/0x4e0 drivers/tty/tty_ldisc.c:563
- tiocsetd+0x100/0x13c drivers/tty/tty_io.c:2439
- tty_ioctl+0xba0/0xd8c drivers/tty/tty_io.c:2739
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 10516
-hardirqs last  enabled at (10515): [<ffff8000803794d8>] __up_console_sem kernel/printk/printk.c:341 [inline]
-hardirqs last  enabled at (10515): [<ffff8000803794d8>] __console_unlock kernel/printk/printk.c:2746 [inline]
-hardirqs last  enabled at (10515): [<ffff8000803794d8>] console_unlock+0x17c/0x3d4 kernel/printk/printk.c:3065
-hardirqs last disabled at (10516): [<ffff80008b008fd8>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (10516): [<ffff80008b008fd8>] _raw_spin_lock_irqsave+0x2c/0x7c kernel/locking/spinlock.c:162
-softirqs last  enabled at (10398): [<ffff800089102ce8>] neigh_parms_alloc+0x330/0x464 net/core/neighbour.c:1738
-softirqs last disabled at (10396): [<ffff800089102c3c>] neigh_parms_alloc+0x284/0x464 net/core/neighbour.c:1736
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
