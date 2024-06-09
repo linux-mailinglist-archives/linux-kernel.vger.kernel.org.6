@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-207242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E4E90144F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:11:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DF3901451
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AFE282184
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 03:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B33281E29
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 03:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33887BA4D;
-	Sun,  9 Jun 2024 03:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9857FB65E;
+	Sun,  9 Jun 2024 03:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXyQR9NU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SIHebmCA"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723334C79;
-	Sun,  9 Jun 2024 03:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FC36139
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 03:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717902659; cv=none; b=XYWQOmdC+RrjW2424jN94bdWFlNHhIIxED8vPLGMT+dLcvWuL+KbnMPDyRQQSDQ6mXMldEwPjWxLGtC4/De4dN3kJZ4c4h510KiNevXAerVYqVAWXeh5H9XC4PYmYH8ZK2oAC0RcnuMbP7C/atKNfAdBHrBwK0wAKzEUF93ezQ0=
+	t=1717902715; cv=none; b=bzB8eWd7he31e9TplK9hFCph+5yjgmtdxgteALq06b7uRrgPBYeMR3qv6EVHuzEXLoOsWEBnRdpgbBq06KTZVs3E0wCpQvNqL6MN7ilJlBBQEyvoDIqkgXvac1URAvYSLtYQZ/RjovhRGd4h4T5NhbRRCfnh8Ii/kJ6J1YPgpJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717902659; c=relaxed/simple;
-	bh=5D9tJLK8Yxi2FMWVVXhn5pe1Qnp5Kh/4GRapemA6eRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YouEPp5cNGwD+DpqeDgPTsUbh56PBN3RPKCSzxl7CBeSv/X1SwjIVmHBLlLwmP+r2QhUJWRGMGnPYuJrvuCrPNhWaE7OXdnynjfNhOPqvD84A5+8ccOUow3K4UWh286j4tQHhMx59SYvA1S/TvmhloSwQRaoU0H2oH2PirEXP/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXyQR9NU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA42C4AF1C;
-	Sun,  9 Jun 2024 03:10:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717902658;
-	bh=5D9tJLK8Yxi2FMWVVXhn5pe1Qnp5Kh/4GRapemA6eRg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ZXyQR9NUUiCecQY26AiSDvnRho0aiOSYjN69b9ADzgqWzIzf+elOuL87JEbD0BYR3
-	 cP4kipaKzxodyHO5BAfc/dzGzUb/h3D8epa8eLmLplmB0vSCHtEaM5hKz0Z3rOYqS6
-	 rUoJKXLlzQejoQN1Un8ffsY3JpWN0vag8uJHkZu1AirTO1JOyXWnsE/3KUaLeuOuz9
-	 1GN63VTrTCNIVZucSqO6ICkpv+FYdKzN4+QSgoJIk1L6maCZismCYIhNyOVJfEO5sY
-	 zcU2DwL7cO0hMPQrQ8if7X4K9dKYp17GVy7ZJTClN9Bv693OLWnLcaVESzByPP3AFM
-	 k5jS7GfwUhMpQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5AB57CE0F92; Sat,  8 Jun 2024 20:10:58 -0700 (PDT)
-Date: Sat, 8 Jun 2024 20:10:58 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	Marco Elver <elver@google.com>, Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
- mentorship session citation
-Message-ID: <fbb89aa4-3e1c-42bf-8202-4f35e2dcb17b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
- <20240604221419.2370127-3-paulmck@kernel.org>
- <42fa4660-b3bf-4d09-bbad-064f9d4cc727@gmail.com>
- <f11f7230-7c16-45a3-83be-9aba32e10a3b@paulmck-laptop>
- <3c5a53e2-b5a9-4197-97a3-247abb7f3061@gmail.com>
- <6bb5f789-f143-493c-a804-62b7c81dabb0@paulmck-laptop>
- <a3ff0522-fd2d-4c87-9c7b-00cbdd5f3c68@gmail.com>
+	s=arc-20240116; t=1717902715; c=relaxed/simple;
+	bh=Ro+ub4ifFKSZnb+ejWJ/xsVvSkhd//wMcVYHKFO+dzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SEvt3V+Mbw8MyKS1bPQOtr8EobOMWWExSjNPTlaCdtDqo3bz0FfCqdCENO5OeaOReQ+EdEjXUTj3X1N0xyFzjPTla9Y0k+uNFGwscHb085OyZLQ+KKafhut+Jm/l7Ktfk3ZZ3sEYyIuWKBVXuKnQOyO4dfLCuNZsSG+LCqI+Bhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SIHebmCA; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52962423ed8so3945428e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 20:11:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1717902711; x=1718507511; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7dUoCR65nMgbX7LmvgfZWZMvg21MHj7Khg3DNyY50c=;
+        b=SIHebmCAAjHeKOmVHFnO0nUH0PHiJuJyZbym03QbwX5JYwryUZEVAuxrmfaD2w6SUH
+         wDi3ocoR0RGcVCFiLPeSwC/7CjS2fdnEEpDwVffhACpIEYL2/EiRAdgrtKeSYwDwWUHo
+         NPSUtvvt7rNzOXCkKNrQQsP1gZFqinTiKVQk8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717902711; x=1718507511;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A7dUoCR65nMgbX7LmvgfZWZMvg21MHj7Khg3DNyY50c=;
+        b=ukldvfQrrZ7dbbZ4JWtY7D1V4ZI7br0Nn3ZPG5b2zW2RFDv60IYtHyUg1FYiXchaTM
+         xHxc0E0k5kwJU2qaeydnHhRUa7pZvz1pm/+42uGWpwPjQDtXR3jCxqmc6d6EUrLmIQ9g
+         608pXKCFEA4CR7tEUJ2Xe/CFMj+L1tghX1Li/T2U+wwkl6v2TzOLfIfZB2oYbQggk5iq
+         hGxdqyP940WQAW5B+Pgp72zT6rF5f3tQrJbPxr2IaZmHxmbhefrWwIldoXy04N6HoWiu
+         o9vQODSFb9bt0SPfNxKByaGt5nGntbFN9b61o77f/83mNHRzgjxLqC49LBStT2KMZZ4Y
+         QnNw==
+X-Gm-Message-State: AOJu0Yzx2BndqPk4jMbKSzY71mbOX7uHwo6zaA0JbcTydFjdIq6LyF0W
+	4NGPE0dLUs0V8EUnSSsGLZqhS4RoEBNSAdkJSn9Fm6n2W5+cC8UpaMUOMGKpk7SsJ4Wrk+aE7Rj
+	3ER0=
+X-Google-Smtp-Source: AGHT+IEZUFhx9Q8rPcDoQbMjWdi1wRl0sLXV8j77b93t0aNnH0B4Mxkp8wH+VkDBVjfe5lJokB5vIQ==
+X-Received: by 2002:a05:6512:130b:b0:52b:bf8f:5690 with SMTP id 2adb3069b0e04-52bbf8f5813mr4266921e87.52.1717902711308;
+        Sat, 08 Jun 2024 20:11:51 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f102c4494sm105029266b.112.2024.06.08.20.11.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Jun 2024 20:11:50 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c76497cefso267023a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 20:11:50 -0700 (PDT)
+X-Received: by 2002:a17:906:f858:b0:a6e:f869:dfcd with SMTP id
+ a640c23a62f3a-a6ef869e146mr209955566b.6.1717902709744; Sat, 08 Jun 2024
+ 20:11:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3ff0522-fd2d-4c87-9c7b-00cbdd5f3c68@gmail.com>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org> <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 8 Jun 2024 20:11:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
+Message-ID: <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="000000000000c61ba5061a6c64c4"
 
-On Sun, Jun 09, 2024 at 09:04:14AM +0900, Akira Yokosawa wrote:
-> On 2024/06/09 0:48, Paul E. McKenney wrote:
-> > On Sat, Jun 08, 2024 at 08:38:12AM +0900, Akira Yokosawa wrote:
-> >> On 2024/06/05 13:02, Paul E. McKenney wrote:
-> >>> On Wed, Jun 05, 2024 at 10:57:27AM +0900, Akira Yokosawa wrote:
-> >>>> On Tue,  4 Jun 2024 15:14:19 -0700, Paul E. McKenney wrote:
-> >>>>> Add a citation to Marco's LF mentorship session presentation entitled
-> >>>>> "The Kernel Concurrency Sanitizer"
-> >>>>>
-> >>>>> [ paulmck: Apply Marco Elver feedback. ]
-> >>>>>
-> >>>>> Reported-by: Marco Elver <elver@google.com>
-> >>>>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >>>>> Cc: Alan Stern <stern@rowland.harvard.edu>
-> >>>>> Cc: Andrea Parri <parri.andrea@gmail.com>
-> >>>>> Cc: Will Deacon <will@kernel.org>
-> >>>>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
-> >>>>> Cc: Nicholas Piggin <npiggin@gmail.com>
-> >>>>> Cc: David Howells <dhowells@redhat.com>
-> >>>>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> >>>>> Cc: Luc Maranget <luc.maranget@inria.fr>
-> >>>>> Cc: Akira Yokosawa <akiyks@gmail.com>
-> >>>>
-> >>>> Paul,
-> >>>>
-> >>>> While reviewing this, I noticed that
-> >>>> tools/memory-model/Documentation/README has no mention of
-> >>>> access-marking.txt.
-> >>>>
-> >>>> It has no mention of glossary.txt or locking.txt, either.
-> >>>>
-> >>>> I'm not sure where are the right places in README for them.
-> >>>> Can you update it in a follow-up change?
-> >>>>
-> >>>> Anyway, for this change,
-> >>>>
-> >>>> Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-> >>>
-> >>> Thank you, and good catch!  Does the patch below look appropriate?
-> >>
-> >> Well, I must say this is not what I expected.
-> >> Please see below.
-> > 
-> > OK, I was clearly in way too much of a hurry when doing this, and please
-> > accept my apologies for my inattention.  I am therefore going to do
-> > what I should have done in the first place, which is to ask you if you
-> > would like to send a patch fixing this.  If so, I would be quite happy
-> > to replace mine with yours.
-> 
-> OK.
-> I think I can submit a draft patch after fixing perfbook's build error
-> caused by changes in core LaTeX packages released last week.
+--000000000000c61ba5061a6c64c4
+Content-Type: text/plain; charset="UTF-8"
 
-Ouch!  Thank you for keeping up with this!
+On Sat, 8 Jun 2024 at 13:55, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Think of this patch mostly as a "look, adding another architecture
+> isn't *that* hard - even if the constant value is spread out in the
+> instructions".
 
-> Can you wait for a while ?
+.. and here's a version that actually works. It wasn't that bad.
 
-No hurry here.  It has been this way for some years, so a little while
-longer is not a disaster.
+Or rather, it wouldn't have been that bad had I not spent *ages*
+debugging a stupid cut-and-paste error where I instead of writing
+words 0..3 of the 64-bit large constant generation, wrote words 0..2
+and then overwrote word 2 (again) with the data that should have gone
+into word 3. Causing the top 32 bits to be all wonky. Oops. Literally.
 
-							Thanx, Paul
+That stupid typo caused like two hours of wasted time.
+
+But anyway, this patch actually works for me. It still doesn't do any
+I$/D$ flushing, because it's not needed in practice, but it *should*
+probably do that.
+
+             Linus
+
+--000000000000c61ba5061a6c64c4
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-arm64-add-runtime-const-support.patch"
+Content-Disposition: attachment; 
+	filename="0001-arm64-add-runtime-const-support.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lx6yvkv70>
+X-Attachment-Id: f_lx6yvkv70
+
+RnJvbSA4ODc4MjFlMWNmMzJjNTA1ZDJiYzlmYjlkY2VlNDVjZjFlMmY2NWU1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+CkRhdGU6IFNhdCwgOCBKdW4gMjAyNCAxMzoyMjozMSAtMDcwMApTdWJqZWN0OiBb
+UEFUQ0hdIGFybTY0OiBhZGQgJ3J1bnRpbWUgY29uc3QnIHN1cHBvcnQKClNpZ25lZC1vZmYtYnk6
+IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCiBhcmNo
+L2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8IDc1ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrCiBhcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxkcy5TICAgICAgICB8ICAzICsr
+CiAyIGZpbGVzIGNoYW5nZWQsIDc4IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBh
+cmNoL2FybTY0L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaAoKZGlmZiAtLWdpdCBhL2FyY2gv
+YXJtNjQvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oIGIvYXJjaC9hcm02NC9pbmNsdWRlL2Fz
+bS9ydW50aW1lLWNvbnN0LmgKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAw
+Li5hYjVmOThiYzk0MmUKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNoL2FybTY0L2luY2x1ZGUvYXNt
+L3J1bnRpbWUtY29uc3QuaApAQCAtMCwwICsxLDc1IEBACisvKiBTUERYLUxpY2Vuc2UtSWRlbnRp
+ZmllcjogR1BMLTIuMCAqLworI2lmbmRlZiBfQVNNX1JVTlRJTUVfQ09OU1RfSAorI2RlZmluZSBf
+QVNNX1JVTlRJTUVfQ09OU1RfSAorCisjZGVmaW5lIHJ1bnRpbWVfY29uc3RfcHRyKHN5bSkgKHsJ
+CQkJXAorCXR5cGVvZihzeW0pIF9fcmV0OwkJCQkJXAorCWFzbSgiMTpcdCIJCQkJCQlcCisJCSJt
+b3Z6ICUwLCAjMHhjZGVmXG5cdCIJCQkJXAorCQkibW92ayAlMCwgIzB4ODlhYiwgbHNsICMxNlxu
+XHQiCQkJXAorCQkibW92ayAlMCwgIzB4NDU2NywgbHNsICMzMlxuXHQiCQkJXAorCQkibW92ayAl
+MCwgIzB4MDEyMywgbHNsICM0OFxuXHQiCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRpbWVfcHRy
+XyIgI3N5bSAiLFwiYVwiXG5cdCIJXAorCQkiLmxvbmcgMWIgLSAuXG5cdCIJCQkJXAorCQkiLnBv
+cHNlY3Rpb24iCQkJCQlcCisJCToiPXIiIChfX3JldCkpOwkJCQkJXAorCV9fcmV0OyB9KQorCisj
+ZGVmaW5lIHJ1bnRpbWVfY29uc3Rfc2hpZnRfcmlnaHRfMzIodmFsLCBzeW0pICh7CQlcCisJdW5z
+aWduZWQgbG9uZyBfX3JldDsJCQkJCVwKKwlhc20oIjE6XHQiCQkJCQkJXAorCQkibHNyICV3MCwl
+dzEsIzEyXG5cdCIJCQkJXAorCQkiLnB1c2hzZWN0aW9uIHJ1bnRpbWVfc2hpZnRfIiAjc3ltICIs
+XCJhXCJcblx0IglcCisJCSIubG9uZyAxYiAtIC5cblx0IgkJCQlcCisJCSIucG9wc2VjdGlvbiIJ
+CQkJCVwKKwkJOiI9ciIgKF9fcmV0KQkJCQkJXAorCQk6InIiICgwdSsodmFsKSkpOwkJCQlcCisJ
+X19yZXQ7IH0pCisKKyNkZWZpbmUgcnVudGltZV9jb25zdF9pbml0KHR5cGUsIHN5bSwgdmFsdWUp
+IGRvIHsJXAorCWV4dGVybiBzMzIgX19zdGFydF9ydW50aW1lXyMjdHlwZSMjXyMjc3ltW107CVwK
+KwlleHRlcm4gczMyIF9fc3RvcF9ydW50aW1lXyMjdHlwZSMjXyMjc3ltW107CVwKKwlydW50aW1l
+X2NvbnN0X2ZpeHVwKF9fcnVudGltZV9maXh1cF8jI3R5cGUsCVwKKwkJKHVuc2lnbmVkIGxvbmcp
+KHZhbHVlKSwgCQlcCisJCV9fc3RhcnRfcnVudGltZV8jI3R5cGUjI18jI3N5bSwJCVwKKwkJX19z
+dG9wX3J1bnRpbWVfIyN0eXBlIyNfIyNzeW0pOwkJXAorfSB3aGlsZSAoMCkKKworLy8gMTYtYml0
+IGltbWVkaWF0ZSBmb3Igd2lkZSBtb3ZlIChtb3Z6IGFuZCBtb3ZrKSBpbiBiaXRzIDUuLjIwCitz
+dGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwXzE2KHVuc2lnbmVkIGludCAqcCwgdW5z
+aWduZWQgaW50IHZhbCkKK3sKKwl1bnNpZ25lZCBpbnQgaW5zbiA9ICpwOworCWluc24gJj0gMHhm
+ZmUwMDAxZjsKKwlpbnNuIHw9ICh2YWwgJiAweGZmZmYpIDw8IDU7CisJKnAgPSBpbnNuOworfQor
+CitzdGF0aWMgaW5saW5lIHZvaWQgX19ydW50aW1lX2ZpeHVwX3B0cih2b2lkICp3aGVyZSwgdW5z
+aWduZWQgbG9uZyB2YWwpCit7CisJdW5zaWduZWQgaW50ICpwID0gbG1fYWxpYXMod2hlcmUpOwor
+CV9fcnVudGltZV9maXh1cF8xNihwLCB2YWwpOworCV9fcnVudGltZV9maXh1cF8xNihwKzEsIHZh
+bCA+PiAxNik7CisJX19ydW50aW1lX2ZpeHVwXzE2KHArMiwgdmFsID4+IDMyKTsKKwlfX3J1bnRp
+bWVfZml4dXBfMTYocCszLCB2YWwgPj4gNDgpOworfQorCisvLyBJbW1lZGlhdGUgdmFsdWUgaXMg
+NSBiaXRzIHN0YXJ0aW5nIGF0IGJpdCAjMTYKK3N0YXRpYyBpbmxpbmUgdm9pZCBfX3J1bnRpbWVf
+Zml4dXBfc2hpZnQodm9pZCAqd2hlcmUsIHVuc2lnbmVkIGxvbmcgdmFsKQoreworCXVuc2lnbmVk
+IGludCAqcCA9IGxtX2FsaWFzKHdoZXJlKTsKKwl1bnNpZ25lZCBpbnQgaW5zbiA9ICpwOworCWlu
+c24gJj0gMHhmZmMwZmZmZjsKKwlpbnNuIHw9ICh2YWwgJiA2MykgPDwgMTY7CisJKnAgPSBpbnNu
+OworfQorCitzdGF0aWMgaW5saW5lIHZvaWQgcnVudGltZV9jb25zdF9maXh1cCh2b2lkICgqZm4p
+KHZvaWQgKiwgdW5zaWduZWQgbG9uZyksCisJdW5zaWduZWQgbG9uZyB2YWwsIHMzMiAqc3RhcnQs
+IHMzMiAqZW5kKQoreworCXdoaWxlIChzdGFydCA8IGVuZCkgeworCQlmbigqc3RhcnQgKyAodm9p
+ZCAqKXN0YXJ0LCB2YWwpOworCQlzdGFydCsrOworCX0KK30KKworI2VuZGlmCmRpZmYgLS1naXQg
+YS9hcmNoL2FybTY0L2tlcm5lbC92bWxpbnV4Lmxkcy5TIGIvYXJjaC9hcm02NC9rZXJuZWwvdm1s
+aW51eC5sZHMuUwppbmRleCA3NTVhMjJkNGY4NDAuLjU1YThlMzEwZWExMiAxMDA2NDQKLS0tIGEv
+YXJjaC9hcm02NC9rZXJuZWwvdm1saW51eC5sZHMuUworKysgYi9hcmNoL2FybTY0L2tlcm5lbC92
+bWxpbnV4Lmxkcy5TCkBAIC0yNjQsNiArMjY0LDkgQEAgU0VDVElPTlMKIAkJRVhJVF9EQVRBCiAJ
+fQogCisJUlVOVElNRV9DT05TVChzaGlmdCwgZF9oYXNoX3NoaWZ0KQorCVJVTlRJTUVfQ09OU1Qo
+cHRyLCBkZW50cnlfaGFzaHRhYmxlKQorCiAJUEVSQ1BVX1NFQ1RJT04oTDFfQ0FDSEVfQllURVMp
+CiAJSFlQRVJWSVNPUl9QRVJDUFVfU0VDVElPTgogCi0tIAoyLjQ1LjEKCg==
+--000000000000c61ba5061a6c64c4--
 
