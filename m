@@ -1,159 +1,104 @@
-Return-Path: <linux-kernel+bounces-207338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29D89015E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E929015E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC12B1C2039D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BFE1C20C45
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18642E657;
-	Sun,  9 Jun 2024 11:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704922D7B8;
+	Sun,  9 Jun 2024 11:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dPVBYW5Z"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RQXFQSl/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A787B282E5;
-	Sun,  9 Jun 2024 11:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE46FC19;
+	Sun,  9 Jun 2024 11:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717931619; cv=none; b=EVHJICLiMWdaeNe1GujqgbT3VnZPdK7VBW4Zox8S0edekALaujahJo2x9qTV0rmR7M1IkjFNJnhjTEsAYNf2PjQqLedZ9/In9MqLGT0HAsWKcE33ZyD6oq0YmEVxVFHjYaz2BAoBLe7O2qThII9mT29pa27JIUcox4TajIL9ix0=
+	t=1717931734; cv=none; b=IcLwnS+88ilp3gqq7koi0rv6IlrW/Jb5PYcXRtCqAEMscJb7FiFtqyGAWDnXllyC/VtWRmKizQpKaFtGnulKNt6Zb4rqNli7WBvcf6p1jc0hSIq1OUTMr2ofv5tZDoWGv4cpIzAKDoua0uD64eHyLLT41sWPuRYps0U5bkfNdTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717931619; c=relaxed/simple;
-	bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NDlDa3nzOd6zfv0wC1aBUGB26IXWpr/3y9Hpgn3+DgXa1rQaGlt881vzpGu5HV0Y0PCAdwIO2XHNEK/1bIvsp7nDUOLshZP2KE3i4Uivq0KL5TBzkSV/rMmUQDjtA/qpBsBaMUY2opnYVpiJ2c6OK8TD7OB2vdniaOOpoXY1aTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dPVBYW5Z; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717931614;
-	bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=dPVBYW5ZJEgEJYulhTsw4SU3sH9EC20PyGF4lecg/RyM+L1hPU9i87QUeJkPbkjUC
-	 CSYriBCNy1GWhBX1Qc4ghDQoD6paOaDeOaOLAGyvVgjSSTklk234ROX2qLmJXTQgDB
-	 6n+gKknHX8b+XyNQzCvM4mUIC0njr8eIJBvH0+bw=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 09 Jun 2024 13:13:28 +0200
-Subject: [PATCH] ACPI: SBS: manage alarm sysfs attribute through psy core
+	s=arc-20240116; t=1717931734; c=relaxed/simple;
+	bh=Yiu87WmkzUAqtCTuLzJKesGbXeV39VIDNRIjxNSxJH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZeM18grc/wRCzcDVKCwKw+2SSWbNt91TJ6O3aZKd+a8OHOZJFe+JUZ2Gv+2Nrr1hBclc4vs8es0YEPHqt3QnnhAUrXOvpG9fX7F7vWyn5riR24Q4BwwrCkABSwesNy7onbcar1E8xFjF9xwWLXy/fCdZmajpIksR2z5D/jlGilk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RQXFQSl/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B93DC2BD10;
+	Sun,  9 Jun 2024 11:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717931733;
+	bh=Yiu87WmkzUAqtCTuLzJKesGbXeV39VIDNRIjxNSxJH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RQXFQSl/5NGmzposFJDZv/4TqKC70uvqnhrXpTZS8lX3XzEgpAZJHF/WMS861Jqih
+	 qWiLQG7VDOG+sn8Npw4N9A8YT/XuARwasFUMkyYaPrsf+1WcRo15X2n3V7kuKz5Bpl
+	 p9CkY2La9JVA33u6hhh2wtd9krBoP6fw0vVdVAh8=
+Date: Sun, 9 Jun 2024 13:15:30 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/473] 6.1.93-rc1 review
+Message-ID: <2024060914-preview-sulphate-8097@gregkh>
+References: <20240606131659.786180261@linuxfoundation.org>
+ <CA+G9fYtMCm-iRDfhq-H5nENO=OyH+wN+HfwHUhandK0JKV_nnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAFeOZWYC/x3MTQ5AMBBA4avIrE0y6ie4ilhUTZkNTSeEiLtrL
- L/Few8oR2GFPnsg8ikq+5ZQ5Bm41W4Lo8zJYMhU1FCH1gVBnRT1Vq+4xP0IWJMtaXa1b42FlIb
- IXq5/O4zv+wE8CvH2ZgAAAA==
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717931613; l=2884;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
- b=skQzhFl1dCsplgUOI3yH040AlRupnm77EfNVRU198/eApMnR/dMPm9OpxDzMtOsOPTt9DKxdH
- 0FlB1WswbAkBpHsoFJESNL7UyCavbFmj36L6ATbppZIyAa4t2xUjA57
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtMCm-iRDfhq-H5nENO=OyH+wN+HfwHUhandK0JKV_nnw@mail.gmail.com>
 
-Let the power supply core register the attribute.
-This ensures that the attribute is created before the device is
-announced to userspace, avoiding a race condition.
+On Thu, Jun 06, 2024 at 08:01:05PM +0530, Naresh Kamboju wrote:
+> On Thu, 6 Jun 2024 at 19:42, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.1.93 release.
+> > There are 473 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> 
+> The Powerpc build failures were noticed on stable-rc 6.9, 6.6 and 6.1.
+> 
+> Powerpc:
+>  - maple_defconfig - gcc-13 - failed
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> arch/powerpc/include/asm/inst.h: In function '__copy_inst_from_kernel_nofault':
+> arch/powerpc/include/asm/uaccess.h:177:19: error: expected string
+> literal before 'DS_FORM_CONSTRAINT'
+>   177 |                 : DS_FORM_CONSTRAINT (*addr)                    \
+>       |                   ^~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Only compile-tested.
+Thanks, now fixed up for all branches.  I'll push out -rc2 releases soon
+to verify.
 
-This is the SBS equivalent of
-"ACPI: battery: create alarm sysfs attribute atomically" [0]
-
-[0] https://lore.kernel.org/lkml/20240609-acpi-battery-cleanup-v1-5-344517bdca73@weisss
----
- drivers/acpi/sbs.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-index dc8164b182dc..442c5905d43b 100644
---- a/drivers/acpi/sbs.c
-+++ b/drivers/acpi/sbs.c
-@@ -77,7 +77,6 @@ struct acpi_battery {
- 	u16 spec;
- 	u8 id;
- 	u8 present:1;
--	u8 have_sysfs_alarm:1;
- };
- 
- #define to_acpi_battery(x) power_supply_get_drvdata(x)
-@@ -462,12 +461,18 @@ static ssize_t acpi_battery_alarm_store(struct device *dev,
- 	return count;
- }
- 
--static const struct device_attribute alarm_attr = {
-+static struct device_attribute alarm_attr = {
- 	.attr = {.name = "alarm", .mode = 0644},
- 	.show = acpi_battery_alarm_show,
- 	.store = acpi_battery_alarm_store,
- };
- 
-+static struct attribute *acpi_battery_attrs[] = {
-+	&alarm_attr.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(acpi_battery);
-+
- /* --------------------------------------------------------------------------
-                                  Driver Interface
-    -------------------------------------------------------------------------- */
-@@ -518,7 +523,10 @@ static int acpi_battery_read(struct acpi_battery *battery)
- static int acpi_battery_add(struct acpi_sbs *sbs, int id)
- {
- 	struct acpi_battery *battery = &sbs->battery[id];
--	struct power_supply_config psy_cfg = { .drv_data = battery, };
-+	struct power_supply_config psy_cfg = {
-+		.drv_data = battery,
-+		.attr_grp = acpi_battery_groups,
-+	};
- 	int result;
- 
- 	battery->id = id;
-@@ -548,10 +556,6 @@ static int acpi_battery_add(struct acpi_sbs *sbs, int id)
- 		goto end;
- 	}
- 
--	result = device_create_file(&battery->bat->dev, &alarm_attr);
--	if (result)
--		goto end;
--	battery->have_sysfs_alarm = 1;
-       end:
- 	pr_info("%s [%s]: Battery Slot [%s] (battery %s)\n",
- 	       ACPI_SBS_DEVICE_NAME, acpi_device_bid(sbs->device),
-@@ -563,11 +567,8 @@ static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
- {
- 	struct acpi_battery *battery = &sbs->battery[id];
- 
--	if (battery->bat) {
--		if (battery->have_sysfs_alarm)
--			device_remove_file(&battery->bat->dev, &alarm_attr);
-+	if (battery->bat)
- 		power_supply_unregister(battery->bat);
--	}
- }
- 
- static int acpi_charger_add(struct acpi_sbs *sbs)
-
----
-base-commit: 771ed66105de9106a6f3e4311e06451881cdac5e
-change-id: 20240609-acpi-sbs-sysfs-group-50a30dc5f82a
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+greg k-h
 
