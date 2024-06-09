@@ -1,98 +1,142 @@
-Return-Path: <linux-kernel+bounces-207271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8249014DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:53:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4499014E0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851CF1C20CC1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC68B1F217B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8E81C698;
-	Sun,  9 Jun 2024 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776CE1B28D;
+	Sun,  9 Jun 2024 07:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKWR0226"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUp53Rrd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7812D17997;
-	Sun,  9 Jun 2024 07:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35831BF2A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 07:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717919602; cv=none; b=UGYJSVlxuTM8S5MG17PQK6+q+UE3zEhBJXU0EYfLOxMUTp5o6dxE2ttPQS+ldOSX0xSIKvQQhGzMTYTqg7nLLtZ+csZPHEvpZdyiNQre4PVJtovs0/S345HhEh/zjpGccEdreo+fd1cgtJdE1NXrOWh/V5cgGU2SmInthFwySWA=
+	t=1717919640; cv=none; b=tXS9z2XLEVgeSAr5xCbWMMSoWFHFyNJqxM+ya0pune3wFFkVlPpnUsuKPJp1rG+mhpDP+z9c02FhHpHh70wg5TBZlER0btmF3IQCt7L/yxzKKRXC+TGUGUvSAjDRyS9WtNAUhkXcG7FL43IvokUgnqGtVZLP9AZwUYJz7aJkowk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717919602; c=relaxed/simple;
-	bh=WKtvi7NoYsj3nIwgBQA3DkE/NuftdY0qLGUWPUJfuwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hQNzhIie5+GK69qEWRjB7veBoKA1Dj3gtZhMToiqmy1jj2/3ZcX5QDbYVq+qvxruwuHP1AQKINQzG53T/L07nsJkaO+jSG1F/WSW4AVzw/a5WsZ5E2z6hT/5ILltu1BgJdEwRhsvdXNsvqoeSnsMA5gKMU22/sRIiHB3WGnlhCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKWR0226; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A67C2BD10;
-	Sun,  9 Jun 2024 07:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717919602;
-	bh=WKtvi7NoYsj3nIwgBQA3DkE/NuftdY0qLGUWPUJfuwc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kKWR0226WA/BuBYJ8MZCA/Zhj1LRGVFzuerR8ZyV+/NWCdrJ6xIiEs4rLH38I3etf
-	 aCJRqSKoQ3SxBnubpDUC9TgjRLoP5CLA+jJM9BX5u001nzXtTBj8ZwTLNLzP/kNMKs
-	 Vudykrl8SoCo2tnY7s2WR0h8Yk98uedOcFzG3r3qaYphFxeLa52bDmPPDur6FSlXb2
-	 d8dHjMBghQV6LbsFagYrJYMGLKN2sYfz5j8YlO3zX6yRlnRjD6RkEKlJJEhAooXzop
-	 /mYrf4MqNti7O3tyAN3FT2Z9Xrnia/2MHIzJB7P6uQYhK3PljnuoODalMFNUHpaVqW
-	 U1157BgYYhpPQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sGDMf-0000000081I-0194;
-	Sun, 09 Jun 2024 09:53:21 +0200
-Date: Sun, 9 Jun 2024 09:53:20 +0200
-From: Johan Hovold <johan@kernel.org>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Steev Klimaszewski <steev@kali.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: cpufreq/thermal regression in 6.10
-Message-ID: <ZmVfcEOxmjUHZTSX@hovoldconsulting.com>
+	s=arc-20240116; t=1717919640; c=relaxed/simple;
+	bh=hKt2tbMbPsT+WdQ0/MZQmCtDLUEjEnAa0OPgsC1Rk0M=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=UxxBVzC8L410O00IExDwnde0fICH2BrewzMJ62AIyvf7cGcOlR+s2/1Jdj8tknI5HqkYOBZl2zqwRclqpQkaJjpVkEL9Gg2FR4vFvo22rm5cyTg9iQhGMcH5JYQ/KXS6kvc/6EALaggIMrS94t/GFLRYm5h6UaUva2SXWNaS8aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUp53Rrd; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717919639; x=1749455639;
+  h=date:from:to:cc:subject:message-id;
+  bh=hKt2tbMbPsT+WdQ0/MZQmCtDLUEjEnAa0OPgsC1Rk0M=;
+  b=UUp53RrdzZDtaN3RqIPQXSQSfNPF/0J5L7Bx0lQgTCz4qIS9+EhCWZuP
+   pWOv3Fwnn2urMAgKq6nK6WtnmLCz8djXmmOKBo3PUmuNkiABS2Yov5j4Z
+   ewBv3CE8a+50gEYs51ZZvlOrApNRPU1+vJdOf3F2CwfgkHSoavfKBP+xq
+   PxIzHpdnWTmBcVNlckdlGtNiL3mZWPPyCHNO1A2ygd6V+5nbIVc7n3lRv
+   Zdo5pcs/kHs+sCC+/4WPlFkrxzW7N1DcmWc9gmDmKKt1Q/nhbNWmmRmf7
+   G1UDwWqbx3VNa6usM/TFOd7WcQUYC2EOJ4DM31zh0ca3bp0jSe692Wf1C
+   g==;
+X-CSE-ConnectionGUID: wBhUnG7aRBW0KYFqeo8Kzw==
+X-CSE-MsgGUID: 07ZnZNBISCGnUZ8SPmCVwA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="14428162"
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="14428162"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 00:53:58 -0700
+X-CSE-ConnectionGUID: qIxW9JOMS76d/F9HR7hvew==
+X-CSE-MsgGUID: 8Gcf7Bd7ReaaCX3YIiwsbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="69923378"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 09 Jun 2024 00:53:56 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGDNC-0000xu-0q;
+	Sun, 09 Jun 2024 07:53:54 +0000
+Date: Sun, 09 Jun 2024 15:53:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:WIP.x86/fpu] BUILD SUCCESS
+ 5a4cac0ba89bf31be7ffb19f0ac5d677eda4bd90
+Message-ID: <202406091551.dlPfniRr-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/fpu
+branch HEAD: 5a4cac0ba89bf31be7ffb19f0ac5d677eda4bd90  x86/fpu: Fix stale comment in ex_handler_fprestore()
 
-Steev reported to me off-list that the CPU frequency of the big cores on
-the Lenovo ThinkPad X13s sometimes appears to get stuck at a low
-frequency with 6.10-rc2.
+elapsed time: 1450m
 
-I just confirmed that once the cores are fully throttled (using the
-stepwise thermal governor) due to the skin temperature reaching the
-first trip point, scaling_max_freq gets stuck at the next OPP:
+configs tested: 50
+configs skipped: 2
 
-	cpu4/cpufreq/scaling_max_freq:940800
-	cpu5/cpufreq/scaling_max_freq:940800
-	cpu6/cpufreq/scaling_max_freq:940800
-	cpu7/cpufreq/scaling_max_freq:940800
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-when the temperature drops again.
+tested configs:
+alpha                            allyesconfig   gcc  
+hexagon                          allmodconfig   clang
+hexagon                          allyesconfig   clang
+i386         buildonly-randconfig-001-20240609   gcc  
+i386         buildonly-randconfig-002-20240609   gcc  
+i386         buildonly-randconfig-003-20240609   gcc  
+i386         buildonly-randconfig-004-20240609   gcc  
+i386         buildonly-randconfig-005-20240609   clang
+i386         buildonly-randconfig-006-20240609   gcc  
+i386                  randconfig-001-20240609   clang
+i386                  randconfig-002-20240609   clang
+i386                  randconfig-003-20240609   gcc  
+i386                  randconfig-004-20240609   gcc  
+i386                  randconfig-005-20240609   clang
+i386                  randconfig-006-20240609   clang
+i386                  randconfig-011-20240609   clang
+i386                  randconfig-012-20240609   clang
+i386                  randconfig-013-20240609   clang
+i386                  randconfig-014-20240609   clang
+i386                  randconfig-015-20240609   gcc  
+i386                  randconfig-016-20240609   clang
+openrisc                          allnoconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   clang
+s390                              allnoconfig   clang
+s390                                defconfig   clang
+sh                                allnoconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64       buildonly-randconfig-001-20240609   clang
+x86_64       buildonly-randconfig-002-20240609   clang
+x86_64       buildonly-randconfig-003-20240609   clang
+x86_64       buildonly-randconfig-004-20240609   gcc  
+x86_64       buildonly-randconfig-005-20240609   clang
+x86_64       buildonly-randconfig-006-20240609   gcc  
+x86_64                randconfig-001-20240609   gcc  
+xtensa                            allnoconfig   gcc  
 
-This obviously leads to a massive performance drop and could possibly
-also be related to reports like this one:
-
-	https://lore.kernel.org/all/CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com/
-
-I assume the regression may have been introduced by all the thermal work
-that went into 6.10-rc1, but I don't have time to try to track this down
-myself right now (and will be away from keyboard most of next week).
-
-I've confirmed that 6.9 works as expected.
-
-Johan
-
-
-#regzbot introduced: v6.9..v6.10-rc2
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
