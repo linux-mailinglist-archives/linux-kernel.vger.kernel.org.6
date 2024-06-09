@@ -1,149 +1,129 @@
-Return-Path: <linux-kernel+bounces-207440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491BA901729
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DDA90172B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496271C20BBB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB661F212C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C00487AE;
-	Sun,  9 Jun 2024 17:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DAE481AA;
+	Sun,  9 Jun 2024 17:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ne7+itJP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jLMYUMld"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB2247F7A;
-	Sun,  9 Jun 2024 17:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BE4C62B;
+	Sun,  9 Jun 2024 17:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717953645; cv=none; b=fQBVC8P//20zDtNwIq+DoE5xvzdXFhpbP4igGoxoKeAEzKMxblCsptHuEFuak17ixT4Gf2k5YbB6LbG0s18k1ccJVB8c+4DixHwL6YJw7LOW3yzV2OVVZX3bLbCfzVmCwxpG9HmPndE8cJltCo9Ay1pugU9wVgTyZBsk9d8PeL0=
+	t=1717953667; cv=none; b=pSd+95aSLyFtJiOaImid/vlkVszxwgEN6vJOlpiVIEl/Jb7KEi0FXiGWzGVG4/a8TOCh2A9ZrQcdPLaF70tlQoOESaKHm0iqJ577JWq3qtUMvrAATsxiAEN/Re8g44IAow28HdDOHpwT9eedsfOOUnA4O6A6rQXGEYaP8SadcbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717953645; c=relaxed/simple;
-	bh=PDA0QnfyoVo69IIDr8HldwGa5UEInFTR/12LgVC7kMw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YZjfSyYg4G8Gzy9c2R6eLn6IZvOPJdtBIqH63PMsVYQQaWTAJjoeNENJdagGqfNnY5+5jTmzfT3qEN2NHLRt0XZuPKBAVuEGqMooQ9R87eNV4YHw2AHdL68jB+ON5LH44mBF0DhDtMK39G4NWGNLBsHb0Uy1GpNS9eegPTM5ijE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ne7+itJP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459Dvjc6007933;
-	Sun, 9 Jun 2024 17:20:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=QmTFdlGWYyA/ILag9RXZOE
-	j0+0c5s9ALptIYs4JMCQo=; b=ne7+itJPDvWoA4KGL/9jKKo4MoISx+tLOfnvtw
-	8HmNUxh3jIGuzPAV3ittmRaKooqFSS7WxTjapjM2GGStC5Sz/405ftBNkCv5exMy
-	GW/I1kkQq/ZXJ4SbdN/al4SRVdaZvYH4NwF11Gt8q9VxJ7jNx1REEsKlzYfZkhW1
-	Z67+glk0t6uCYNXdOZeK0eExpCRVKPcFpqZahcvrkpJdtYDENTM4CK0GIb/18wFG
-	hTvIjjq5k81vOT9Hwu9rFZqm9rZqVy8u+EdTvY5XIYpYmjkFNJ/AI0eFOY9j3Vg9
-	fMKZnCBpJoWhmzlXmmBpNP77b/VF8sLV9+RZGtrp5TLv0GbQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemghy5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Jun 2024 17:20:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459HKTog004295
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 9 Jun 2024 17:20:29 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 10:20:28 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 10:20:27 -0700
-Subject: [PATCH] drm/tiny: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717953667; c=relaxed/simple;
+	bh=Zs1W8pC83XX1hDj1WyEV0AXwD52Awo2YD1YE0xZh4UM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=K5qbwzTEIrahzZaQphakNyMWvLTvK06RrtYm/3vkaqH2rBzQZwM93ULREe0xCOx5P0mm4vSzOYY9gH1Rvx0eflyXSgRNYNi2IHbaLGnE28MJCePSqxrDeBeaUDlk3RM/gO61rBwMPM0PUXDyZ2pCcHH9W3nwq1qLa6HuEeozWBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jLMYUMld; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717953650; x=1718558450; i=markus.elfring@web.de;
+	bh=b4jf5lDj9legoz2GCZlODnFd4cAUlAidXLo/q9mPb/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jLMYUMldrihjj/bnAzszgj2SnLjP3apqvdXj1JjqXcSqKJwzeaoZ7KYHCT60QbKB
+	 eDAaomgZKII2CnR6b2vGfA1aYNsuPYeOmfOPdXBS7+o+MlobSmeVOCsmbVzK8wINc
+	 KM1WzaMfVHAblGYXiymtNfbyTuT1R+D7aZBxh4s7DX5nrItCVjL+aqCZW29CIJO1t
+	 dD573IGHuS+cuhEbEFdcX2q4ty69VG2wxerpwPwqLJUYSk0rDrltt3AQ/2vfr/Xr1
+	 zq/vddyq0TCa9lC1v5Lwif43t3ufBx/ALXqtsRgwr1VkUM3McRGZ+EOko5ib/Pqae
+	 SrXA+YsU0GP5UUbQ1A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1sOdtb0fgH-00t4pM; Sun, 09
+ Jun 2024 19:20:50 +0200
+Message-ID: <0e439d73-aff5-4d56-9a3c-b29867132db1@web.de>
+Date: Sun, 9 Jun 2024 19:20:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-gpu-drm-tiny-v1-1-6905fe4ada50@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFrkZWYC/x3MQQ6CQAyF4auQrm0ygKJ4FeNiYAo0cUbSAsEQ7
- k5x977F+zdQEiaFZ7aB0MLK32TILxm0g089IQczFK64usrVGAMG4YVEsR9n2xEnTj/0ZXl3+aP
- ubpUDe49CHa//8uttbrwSNuJTO5y9D6d5xeh1IoF9PwAx38zJiAAAAA==
-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
-        "Hans de
- Goede" <hdegoede@redhat.com>
-CC: <virtualization@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QT3iqX2zLqdwJZM9mFcQzj5MnZEEMNwf
-X-Proofpoint-ORIG-GUID: QT3iqX2zLqdwJZM9mFcQzj5MnZEEMNwf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_13,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406090135
+User-Agent: Mozilla Thunderbird
+To: Olivier Dautricourt <olivierdautricourt@gmail.com>,
+ dmaengine@vger.kernel.org, Stefan Roese <sr@denx.de>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Eric Schwarz <eas@sw-optimization.com>
+References: <20240608213216.25087-2-olivierdautricourt@gmail.com>
+Subject: Re: [PATCH v2 2/3] dmaengine: altera-msgdma: cleanup after completing
+ all descriptors
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240608213216.25087-2-olivierdautricourt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:te0zbBEFbcvuffv4IYrun6KWo0i0bkiQe6hOs6HZKvcel58CIHD
+ Hj4k/c/KZmxwQOBVbym9XAkiYbzBjqJqxj3XzqTpMTbJWXnEkkk9D9sClpKaL62GBMZuUTG
+ D7G/sn25W3cyqkJVZKkVtWhbIB84g+K1oOX+yuULaERx2BHBCp3IE2BNTLEr6y5zdMK2Awn
+ dBCrBjcWzEMa66jkJRtFw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XHO2VXyCijQ=;+c1+GZAFfFDrt40CmF4XbfgW8K7
+ yFFK9uB+m7yA5H2E9sJvFhR9HSRjmw2HqXizcWHDL7PcNakVjlplu8cHSAax7jMiMVST6z+dA
+ Q7xNB4ebOwFeIT5Z4Kh7eaEI69PFaTTO2rXnY1fREA0p/cQXR+T9gjv+GAJjXfbOEmur//eWa
+ ndt3RFAV3Uh5F1jBtUqqlZZwKTqtxbgZiA6dXe9zmSQDV0DwzLGaQWYQW8SRj9egiXR1PFPBM
+ yvjKg+HhedT0v2JObiGUxTXSb5VBdxprazcKVbcbWPdIPpnxaDH3dCjoT7NsD0MRdmgXLnmQO
+ pmm3X0XNcThSTKl32ugGo1rlAjADqEmwHX/ZjEoYvD9lRFoja2HEkupJzRmerj7ZmPOaLVZ7J
+ hTL6TJeDcL+OMjyoXP5jea1PlB/PWDHjIrLKAkKyx/opNab7jEa6BMKIDCeHzgE+tEFhY2R2G
+ 53/BXFPfiXDU4YiNmoRVmvqmgrkmuqJLeP7NyO3DFuF6low/blvEZPkFErDXjqGaSSZCbifgf
+ 38Fa9EtluFhIBj5fyFsYxP1RI0wLpBb8piP1ENB2qoZztKJPbzCizqaHukJF6dSnQF5Qd3Y9m
+ N7IUmmpNTZaX9tIpOR5PGq0so98niVFj+FS4khquxNCh3QGnm/9LazzGDPnBwT0nS80skBYtN
+ HCyltxF+NH9tRK7+n40eskXtXD4NFr9QLD9OxfjzNW03JLX0jh2J9TkNWHgApcuIgayMQbWTG
+ Ir36Ws4vTQ5UNiwNwTvFtvvjcFkys6iL1QtTG94gB9ih2xg7Y1bWzFzOJSjhSDes4kGh3dv49
+ xWGcV3xHXZm4rooISoTZW7Zie67F6bAUlZmxIMMBTy0Fk=
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/bochs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/cirrus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/gm12u320.o
+=E2=80=A6
+> This fixes a Sparse warning because we first take the lock in
+> msgdma_tasklet.
+=E2=80=A6
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Can the tag =E2=80=9CFixes=E2=80=9D become relevant for the proposed chang=
+e?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/gpu/drm/tiny/bochs.c    | 1 +
- drivers/gpu/drm/tiny/cirrus.c   | 1 +
- drivers/gpu/drm/tiny/gm12u320.c | 1 +
- 3 files changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
-index c23c9f0cf49c..d15f4d3baeab 100644
---- a/drivers/gpu/drm/tiny/bochs.c
-+++ b/drivers/gpu/drm/tiny/bochs.c
-@@ -736,4 +736,5 @@ drm_module_pci_driver_if_modeset(bochs_pci_driver, bochs_modeset);
- 
- MODULE_DEVICE_TABLE(pci, bochs_pci_tbl);
- MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-+MODULE_DESCRIPTION("DRM Support for bochs dispi vga interface (qemu stdvga)");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/tiny/cirrus.c b/drivers/gpu/drm/tiny/cirrus.c
-index 4e3a152f897a..89484f7084bd 100644
---- a/drivers/gpu/drm/tiny/cirrus.c
-+++ b/drivers/gpu/drm/tiny/cirrus.c
-@@ -760,4 +760,5 @@ static struct pci_driver cirrus_pci_driver = {
- drm_module_pci_driver(cirrus_pci_driver)
- 
- MODULE_DEVICE_TABLE(pci, pciidlist);
-+MODULE_DESCRIPTION("Cirrus driver for QEMU emulated device");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/tiny/gm12u320.c b/drivers/gpu/drm/tiny/gm12u320.c
-index 0187539ff5ea..07c6640022c2 100644
---- a/drivers/gpu/drm/tiny/gm12u320.c
-+++ b/drivers/gpu/drm/tiny/gm12u320.c
-@@ -755,4 +755,5 @@ static struct usb_driver gm12u320_usb_driver = {
- 
- module_usb_driver(gm12u320_usb_driver);
- MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_DESCRIPTION("GM12U320 driver for USB projectors");
- MODULE_LICENSE("GPL");
+=E2=80=A6
+> +++ b/drivers/dma/altera-msgdma.c
+> @@ -585,6 +585,8 @@ static void msgdma_chan_desc_cleanup(struct msgdma_d=
+evice *mdev)
+>  	struct msgdma_sw_desc *desc, *next;
+>  	unsigned long irqflags;
+>
+> +	spin_lock_irqsave(&mdev->lock, irqflags);
+> +
+>  	list_for_each_entry_safe(desc, next, &mdev->done_list, node) {
+>  		struct dmaengine_desc_callback cb;
+>
+> @@ -600,6 +602,8 @@ static void msgdma_chan_desc_cleanup(struct msgdma_d=
+evice *mdev)
+>  		/* Run any dependencies, then free the descriptor */
+>  		msgdma_free_descriptor(mdev, desc);
+>  	}
+> +
+> +	spin_unlock_irqrestore(&mdev->lock, irqflags);
+>  }
+=E2=80=A6
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240609-md-drivers-gpu-drm-tiny-a3370189f560
+Would you become interested to apply the guard =E2=80=9Cspinlock_irqsave=
+=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/spinlock.h=
+#L574
 
+Regards,
+Markus
 
