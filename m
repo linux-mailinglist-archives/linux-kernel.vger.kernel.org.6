@@ -1,65 +1,61 @@
-Return-Path: <linux-kernel+bounces-207284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516A5901509
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:30:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E476E90150B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F8FB21D90
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675691F21AF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD85D44374;
-	Sun,  9 Jun 2024 08:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBF44C76;
+	Sun,  9 Jun 2024 08:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="VR9ZkR/t"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="MIfxNhRD"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F412B9DE;
-	Sun,  9 Jun 2024 08:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4902C19E;
+	Sun,  9 Jun 2024 08:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717921687; cv=none; b=kDuC3jgKXJcFIJRpncpCawW7JxgB+WL5bksZJUgNjzKe11dIx2xJZ+XKahPey36LC05tUzftBCxlkoDdrnC9drb28FVit/ksEh1fHoQmlLD8B2s6Uhgzcr6MqJNVyFHpQNCeF5EaNmqP11E1CFzisUHlp5UVLPXgn9bjx6lBQvU=
+	t=1717921687; cv=none; b=IZ5Hb46i/ghjymQSfKhIw5yNFekLDMfHWyy/QFSbpIn/nBIGDfYXLuT0NzTmAq2hrgnkIebD28j+v4rJ9A/F3X7FKmrdW3R8b96cxB22BdQof4wgyeD06BOoRNseFqgoCGGLrw7YdW4zVQ7ryaVnGJRWgUokemV5RkwGNCGXyGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717921687; c=relaxed/simple;
-	bh=qLLVPjhv4+wYws/zoYNgUIy1WO/VEbOv0vP9ijH0hiA=;
+	bh=NiNHIvLM53266J2UpSupU/mhEjqFwYGKpKv/PxEnfjg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TQT1bz45xWV+s61mwNrOZi3F1GDIjSwgIlA+ovsXx4UUKkTZGRtgQVuyiatISXjHQq+Bd2S3QtMAiTlZgi8gfjSK2knoA2QOntww/DiR1FXrWk7wKS8Kc3N+RO8UTaowQYFLsXoAgRXnSnoX+J+pQuMk+dOAMzZo9pcTrKuXsYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=VR9ZkR/t; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=iMvqTtc8OxJ/bcazbLB6tHWmsivPUY3XgEuxkcKHXxe4TT+0k71431dlvaB4aBHq/J08OnfiEMk4nvsheIEn16UpErARxQKTfQiFvhxzX/okbJ5rYru8wjgRg7Ht+18JtZufXWQh+l4E+pvfuL6azLqYaVl6quK7hrCZphZ6VLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=MIfxNhRD; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=iFEsC8pdLHrqgm1R6uMYK9SmKFFJArc3WZMs1JbRrx4=;
-  b=VR9ZkR/tb+iYAA9REZgVRsraxFHkhZ11fgfCacvLyn02NmHJfc87gyLD
-   Ojt+FUosbkgoSE2C1JMAQN7vG2gd5dwBE+hs3r4NSMfW9A2ghm9xVo/Oy
-   EOcbUxpNmR1GmMsTZzlJnUFmbdZ+8sCYfx7nFLbM81IfNLvBurUvDfYLL
-   A=;
+  bh=ZGX1+w2KuTr4rSi8N+qfCTHA1YisBmkGA0Ss7Dju5os=;
+  b=MIfxNhRDBVUjuFmHXlb+sNburKUTYfbjg/5uLy1R/ywhQBlUW+zmy4Xu
+   2tU+2GFyi/wU/NwekIaEysW7i7MDCEFJKzQ8LxGDPQTvwvOMtfm0mKKVZ
+   Hzr8XViuT/8Vp0pCRmkFXP49qaxPROuwsqKjRs23k8XwrZq8qMHUd4FeW
+   8=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.08,225,1712613600"; 
-   d="scan'208";a="169696899"
+   d="scan'208";a="169696900"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 10:27:48 +0200
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 10:27:49 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Steffen Klassert <steffen.klassert@secunet.com>
+To: Steven Rostedt <rostedt@goodmis.org>
 Cc: kernel-janitors@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
 	"Paul E . McKenney" <paulmck@kernel.org>,
 	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 04/14] xfrm6_tunnel: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun,  9 Jun 2024 10:27:16 +0200
-Message-Id: <20240609082726.32742-5-Julia.Lawall@inria.fr>
+Subject: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun,  9 Jun 2024 10:27:17 +0200
+Message-Id: <20240609082726.32742-6-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240609082726.32742-1-Julia.Lawall@inria.fr>
 References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
@@ -159,34 +155,36 @@ Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 ---
- net/ipv6/xfrm6_tunnel.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ fs/tracefs/inode.c |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-index bf140ef781c1..c3c893ddb6ee 100644
---- a/net/ipv6/xfrm6_tunnel.c
-+++ b/net/ipv6/xfrm6_tunnel.c
-@@ -178,12 +178,6 @@ __be32 xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 7c29f4afc23d..338c52168e61 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
+ 	return &ti->vfs_inode;
  }
- EXPORT_SYMBOL(xfrm6_tunnel_alloc_spi);
  
--static void x6spi_destroy_rcu(struct rcu_head *head)
+-static void tracefs_free_inode_rcu(struct rcu_head *rcu)
 -{
--	kmem_cache_free(xfrm6_tunnel_spi_kmem,
--			container_of(head, struct xfrm6_tunnel_spi, rcu_head));
+-	struct tracefs_inode *ti;
+-
+-	ti = container_of(rcu, struct tracefs_inode, rcu);
+-	kmem_cache_free(tracefs_inode_cachep, ti);
 -}
 -
- static void xfrm6_tunnel_free_spi(struct net *net, xfrm_address_t *saddr)
+ static void tracefs_free_inode(struct inode *inode)
  {
- 	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
-@@ -200,7 +194,7 @@ static void xfrm6_tunnel_free_spi(struct net *net, xfrm_address_t *saddr)
- 			if (refcount_dec_and_test(&x6spi->refcnt)) {
- 				hlist_del_rcu(&x6spi->list_byaddr);
- 				hlist_del_rcu(&x6spi->list_byspi);
--				call_rcu(&x6spi->rcu_head, x6spi_destroy_rcu);
-+				kfree_rcu(x6spi, rcu_head);
- 				break;
- 			}
- 		}
+ 	struct tracefs_inode *ti = get_tracefs(inode);
+@@ -70,7 +62,7 @@ static void tracefs_free_inode(struct inode *inode)
+ 	list_del_rcu(&ti->list);
+ 	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+ 
+-	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
++	kfree_rcu(ti, rcu);
+ }
+ 
+ static ssize_t default_read_file(struct file *file, char __user *buf,
 
 
