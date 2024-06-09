@@ -1,78 +1,142 @@
-Return-Path: <linux-kernel+bounces-207426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6CE9016F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:12:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6179016FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1ECF1C20A97
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22031C20A97
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42B34653C;
-	Sun,  9 Jun 2024 16:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863DE4B5A6;
+	Sun,  9 Jun 2024 16:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiPTZOxd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rn2WBcSc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288F214265
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 16:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF08347781;
+	Sun,  9 Jun 2024 16:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717949525; cv=none; b=iuM84VvkZV8H5crjCLpmzEpGaPvDuP6yM2/HxcG10ycDCrkYlt2CD7kcDiWBIw2xSPIwAPGkIgQK8/XJwIZCXwsjRcpbripLbWc14mD9GQmzQHL51ZQkeTdNcXcTsvtMsdATM6RLmcpvUfzz2IR4DrBWZDNhRdraIaqcjh97dOA=
+	t=1717949530; cv=none; b=t5ilF5KBR+6T8oc7kIVEUTmX7TaItxnos3zbGnkPsSkMaodG4C7RBFCYRVOFVbhY6+rAYxMDSX7aWKlksXpLlm1derAVffMXsjcy28ozsQ1p1EeajbV7wjmuqt5NAcT4c8ULjGckUfgilhbabwPwvF/NKUNbcqJ7UbTLLIl/6UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717949525; c=relaxed/simple;
-	bh=AVXukoZMhdK9FG+d67cVBaKd4rMbAati93y8QIY9ihE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nxmcsbcxFMICkx76l/gwtAvMV4onL4S2F1KeGftprBwYQzVeSP+5NUx+nnjmHWfp4vq5WKcDYJdKjeuQoOAsBbR1SKTigcG9GJgtJ+Gpav8e8VIwXdHnEib8+bJ4+LnATPVrWnGhbklNPOZ8pRBE1p3UsaIxh9xk/FLd/FTCjQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiPTZOxd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03302C2BD10;
-	Sun,  9 Jun 2024 16:12:05 +0000 (UTC)
+	s=arc-20240116; t=1717949530; c=relaxed/simple;
+	bh=RbRhDqabPCXgr35nSOZGQ+0QSqxJ/NOzuTax/VfPgLA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=maRM9lkBYZKZAnGRGg0RuJj/YZjtj4x/e9aaQgOUhLyjmAw/FCuMd/PUVTWaxdbPl2OQmzLflho9NVUoC3C22Ss8Djn8WOy6ylOzJ7It0zdcD9HPXBfZglhKoPQA13hUg2M3PRtW7vKeND1IipgJRtVpyhG15Jp75yLJ6vJsnKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rn2WBcSc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D770FC2BD10;
+	Sun,  9 Jun 2024 16:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717949525;
-	bh=AVXukoZMhdK9FG+d67cVBaKd4rMbAati93y8QIY9ihE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AiPTZOxdUPowkgEnYWTxUzQjpsNGIo0wkFphUULFFhMV1TzHAH0Ni46fIoFSx84zV
-	 F7nHvfwGW4rxGZsiJbyM6WybRz0b93giEgWUXZ344YxSM7GCfPAatiQf30GlxHkysY
-	 sR/FFahqSgNHr7HOIawsLKFTkRGGvCPy0gBDbFtdo3TmlUDyRizk892DyAfmPhYNIp
-	 EeqDiaDG19WQH2MV9sV1GOQk+fvfe+xkMBGEvM3kk4A6w9PGGWd0fPVTWXm0EPM86d
-	 01D3xJv5HhtJ08tE9wtnaHY4Mv2ti0YqUgADtFNz/0U8Bk1aFY7oev5hmvmpBdJIMh
-	 6OLi1Fvfb4RCA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EE682CF3BA4;
-	Sun,  9 Jun 2024 16:12:04 +0000 (UTC)
-Subject: Re: [GIT PULL] EDAC urgent for v6.10-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240609092933.GAZmV1_Q8VbuAw_e7-@fat_crate.local>
-References: <20240609092933.GAZmV1_Q8VbuAw_e7-@fat_crate.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240609092933.GAZmV1_Q8VbuAw_e7-@fat_crate.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac_urgent_for_v6.10_rc3
-X-PR-Tracked-Commit-Id: f8367a74aebf88dc8b58a0db6a6c90b4cb8fc9d3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 637c2dfcd9f5e194ab2e879704460840edcde537
-Message-Id: <171794952497.28618.8783490578312173975.pr-tracker-bot@kernel.org>
-Date: Sun, 09 Jun 2024 16:12:04 +0000
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1717949530;
+	bh=RbRhDqabPCXgr35nSOZGQ+0QSqxJ/NOzuTax/VfPgLA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rn2WBcScrAyUTLc3Ync1nR5BUaQeoBLa9ix+dNFtyR1FRae3FHWOdB1hoGX51e+Gw
+	 iwbR6SXWjRFmR1oe6gmwlIR1nTssnlp5/tKh9FzvbFWbEEulrs5EvIOhn4H3CI+AFB
+	 5ZGBvuMz5AByUWjYYr9Py3QlhyaSx1FA1ShAfk1S6kTSkKgLD8Fx+mviTLMyVo1muv
+	 HowQQ/Q4JhV2/tjACAHoy2PNB+UPolldM5Y4m1UEOU1TFOK3Vm1pABZ5u0BRSBnhVw
+	 J1WYQFkqmmOjPJIRHtu7eBGMWZi9GbKf8M74ZdVSdTT3kAjK9TmuAxfJkHm4qTwHdf
+	 dQik3pJZuUH4A==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.9 000/368] 6.9.4-rc2 review
+Date: Sun,  9 Jun 2024 09:12:06 -0700
+Message-Id: <20240609161207.63641-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240609113803.338372290@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Sun, 9 Jun 2024 11:29:33 +0200:
+Hello,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac_urgent_for_v6.10_rc3
+On Sun,  9 Jun 2024 13:41:29 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/637c2dfcd9f5e194ab2e879704460840edcde537
+> This is the start of the stable review cycle for the 6.9.4 release.
+> There are 368 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.4-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
 
-Thank you!
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Tested-by: SeongJae Park <sj@kernel.org>
+
+[1] https://github.com/awslabs/damon-tests/tree/next/corr
+[2] 4aee3af1daf2 ("Linux 6.9.4-rc2")
+
+Thanks,
+SJ
+
+[...]
+
+---
+
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: debugfs_rm_non_contexts.sh
+ok 8 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
+ok 9 selftests: damon: debugfs_target_ids_pid_leak.sh
+ok 10 selftests: damon: sysfs.sh
+ok 11 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 12 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
+ok 13 selftests: damon: sysfs_update_schemes_tried_regions_wss_estimation.py
+ok 14 selftests: damon: damos_quota.py
+ok 15 selftests: damon: damos_apply_interval.py
+ok 16 selftests: damon: reclaim.sh
+ok 17 selftests: damon: lru_sort.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh
+ok 12 selftests: damon-tests: build_m68k.sh
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
