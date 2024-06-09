@@ -1,101 +1,162 @@
-Return-Path: <linux-kernel+bounces-207442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C7F90172F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:30:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F3C901731
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0E4281114
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D971F212EB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83421481B8;
-	Sun,  9 Jun 2024 17:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8E047F60;
+	Sun,  9 Jun 2024 17:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dLwuaI5f"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jafSMxQ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3AB3F9D5;
-	Sun,  9 Jun 2024 17:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCB0D2E5;
+	Sun,  9 Jun 2024 17:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717954216; cv=none; b=dG4k5vWgDOqh9dcOjazqjYxy3sxdkzx+mZkrvJUK9x/XkrQvI302RDuXCDd6hI7q3EEEbb/c93XlF8w//EQ5ndXRBBuTDuDXhKi11KGmUj3qob9iw29tbHqMJdauh9cmKRKNzU0QcAJp5pOWlZD6x9L4DLVtkv/JMovN2pKPzGw=
+	t=1717954407; cv=none; b=YhRzeHwIKMPwQiRyhBu10dQOzG44nHH606W+V6Lbt98eqUZSsypcY+y6P0hSmWLGxfvcpgMSMI91RqrkfDpyAV5e3TmOFVxFzZFnp4twvqJ1mfDmo8a+xbc+KcUJAPUPOMRmgPwGliH5souGyBjTxZ3ku6E0NoLZMoJGF97M4PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717954216; c=relaxed/simple;
-	bh=llF1AjA/gsCDY75iznxwt2VFqcsziWrqKHY7FoDX5kA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Y1NhwkfOCXGY5apNV5BnxO3kTxaPuf6d6v4jLjHF9bmqWc5W58Hvutpd1mkYvPFYwSWdpdkLiojv+zsncwQNBkT29lnWnsmkiIpID1g0rRosay/BJF9hOp/yxm8IJtUxVBNYNO2U4ZvQBVAJ9iXpAjrad0XLsST8xgXpasxl5ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dLwuaI5f; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717954206; x=1718559006; i=markus.elfring@web.de;
-	bh=llF1AjA/gsCDY75iznxwt2VFqcsziWrqKHY7FoDX5kA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dLwuaI5fcUOgsO4yfIWrti1MaQIc9Xyci7umYciwDCgReKeDcYvRUrcHhrnJiVQ3
-	 cfaTah+XSu7YZ7G/szB62BNJnRUOatgKG/6eTYetq58XIQbrRa99auIXg3ooC5Utp
-	 QYBRQb0vm9aGlfDKo20wmDxz3t3eftu7Jd51Ex3fr3GpcHeacUWDwH6bDM9lIH2OU
-	 ojIdekW25P6MZsTSzbD/8Vx9ciFiRu/fE9fh8yDQ80D6eyJ37WaBYGEFdUQoxKwg6
-	 ctkMOB+SoHzFgK+/8DskIG9yJuhyeqsoSjwL1BVOtdWiKU1XSPqYl2ztHAvH1zG2X
-	 b1snptsE14PDk/0nDg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCXVZ-1s7nf43flr-002tlJ; Sun, 09
- Jun 2024 19:30:05 +0200
-Message-ID: <6647d607-1424-4366-865c-069a166c61f1@web.de>
-Date: Sun, 9 Jun 2024 19:30:04 +0200
+	s=arc-20240116; t=1717954407; c=relaxed/simple;
+	bh=CBcnhStXol0Ia+umXn8moK4bXWC4G6yis63nfVjQ67M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fE1bfvVPCmC1J+Iz+FQyAXMBO3AfnGuG0Zpy9IpbByg5WKmvTE4iRWkd1XNnXjd68b2trrJtY8GsikcmD/Ma47h2seLczmuygmiNgHYlWN4J3NCFkWx99+nH0L41klQkixhJ9mYWUcNUo8TFR0o5SFDlN/kulurAp1SDmvmasGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jafSMxQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A67EC2BD10;
+	Sun,  9 Jun 2024 17:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717954405;
+	bh=CBcnhStXol0Ia+umXn8moK4bXWC4G6yis63nfVjQ67M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jafSMxQ+rfGLKTi2b6pV8wSjMONVIwt2fqfcu96DKNdtOh6peW+TFiWIJ+TjkBI0n
+	 Zu07YZKDxrKwFIbnYGNpiyJ+3nu3zSufIAc4l6FhXVoKzRdPiOICza9H01Zjc4RQWj
+	 FpKcHBg0BbzhFmNTBjMwHYND94bWa+lsrvF5n5OS6Ij8FylUHjcwkfwi80WQlmALrb
+	 69pIqC9KEYvSYSCr70zJ9pGD14i9ECgxuNmuBuK/Z2SjxQ/oezq7YTd7gR9Q2KG2PD
+	 TFJoF0eHtqzCbEaQQc85lI99TdPXPlKfcm6Fzvo7pkQp57fAcmwuAKm3bjV53pEOAn
+	 6IKQc1drKrCxg==
+Date: Sun, 9 Jun 2024 19:33:21 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dev Jain <dev.jain@arm.com>, linux-man@vger.kernel.org, 
+	mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com, 
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com, 
+	AneeshKumar.KizhakeVeetil@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] signal.7: Clearly describe ucontext kernel dump to
+ userspace
+Message-ID: <slkndx4223o6we7rygfatca6sa46hsw2fwbiovn2wx3mvyc55c@tyklfmkbe37r>
+References: <20240607123119.769044-1-dev.jain@arm.com>
+ <20240607123119.769044-2-dev.jain@arm.com>
+ <ZmMptdPt_Zw9Xrlt@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Olivier Dautricourt <olivierdautricourt@gmail.com>,
- dmaengine@vger.kernel.org, Stefan Roese <sr@denx.de>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Eric Schwarz <eas@sw-optimization.com>
-References: <20240608213216.25087-3-olivierdautricourt@gmail.com>
-Subject: Re: [PATCH v2 3/3] dmaengine: altera-msgdma: properly free descriptor
- in msgdma_free_descriptor
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240608213216.25087-3-olivierdautricourt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t7t3p7hirvo5uufk"
+Content-Disposition: inline
+In-Reply-To: <ZmMptdPt_Zw9Xrlt@finisterre.sirena.org.uk>
+
+
+--t7t3p7hirvo5uufk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sxygmDObboIClb8Fc5AO4FRRwqSmTxCZMT1zAAm+60fT7uauP1e
- vI5+lPS9jWANxmmBIwR7EGr39oMvTD3xysLKIFzCFYm43c+d+xlQsrQEgJdHx7wwIqN+z3n
- XlRCY9k1WbA11+gjy30mj3fOH6ZqR696lHZIUT5OGrcFk/YTP6dtyOXsALhwcQnZrwwfyj9
- Kaf/4fggkN4QvrKJmwO4w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cG3yEmUCP3Y=;wVFF4GkG3bwMumMDnndnSRj+XkK
- cqZbrqQNut03k49AU7qUo8zbcfuGBhQfEYGr/LpyDWAujmw7M3gae5YslMYgb/N/QRLLkEYlD
- hxZrvRIy18mWP9vm0POQYKJvVFgqcuHiykPwN5yEAHWO714U8Ka0pZY0a3kJVa05AtUuTW6XW
- 00kfr7Ay4284/mMc6/gmT1iDBlOPuW2wRgR77tVO1K/ToxD2RlBjUddDouIC4vIGtguReBV/Y
- /dcWJpPmB57Ye3+fsj+9UCzjQoHep0MxYLyTedAmYwqNNi5E03tnCEF6fmDE8+3TrlRO5nED9
- STt0sWQwFV3j11Hzgs3RypRA9rzvWs9OIRPUtcmj/h5XEsL08WYs2OOsHbcyQdbSSoDVN6AhL
- X7VP0+49z/wna9iHOCSPkQJLZnfnlSaMpleBCmryC6ghWgQ7LCSCdeWrByvfcr4ffi+OFE+yu
- L144EHcMIhXHpas9/iFDVJEKIeJlKtm3ub9Md8uF1g1T7w7kjF2dWlYvKpPS/VKWZ0Ly76bsg
- Y+F7YtILBYf412N5k7F7BI8tkZlSMRiTQYoapy1kPe96TXKOssQLyAjTCc2Y+kmmuTX5AT/LW
- zQ3v1LOZglxFJjGGfsh2mMfNsTD/p75BI//F15hWmEBmOBIbsnBLkvrQBGBTZAfOUytSck7yv
- 2gxhSWPRkEeLOIFeg0BH45HqjogDu6iA1uouiwOwh1V88LAempaRrRQQZMu5dEx5B+61i7Zop
- KDo3tL+eXBrJl29F561LTVPZQhd5+xm5HGRbZ07Ilk/DakOtQ7FOTJbmTQcAucw06FMP2k7ol
- PTB0XCSUf7Xba4L03l6N4h11Z2C+jf6LZdc/MeoTGw26c=
+From: Alejandro Colomar <alx@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dev Jain <dev.jain@arm.com>, linux-man@vger.kernel.org, 
+	mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com, 
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com, 
+	AneeshKumar.KizhakeVeetil@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] signal.7: Clearly describe ucontext kernel dump to
+ userspace
+References: <20240607123119.769044-1-dev.jain@arm.com>
+ <20240607123119.769044-2-dev.jain@arm.com>
+ <ZmMptdPt_Zw9Xrlt@finisterre.sirena.org.uk>
+MIME-Version: 1.0
+In-Reply-To: <ZmMptdPt_Zw9Xrlt@finisterre.sirena.org.uk>
 
-> Remove list_del call in msgdma_chan_desc_cleanup, this should be the rol=
-e
-> of msgdma_free_descriptor. In consequence replace list_add_tail with
-> list_move_tail in msgdma_free_descriptor.
-=E2=80=A6
+Hi Mark, Dev,
 
-Would you like to add the tag =E2=80=9CFixes=E2=80=9D?
+On Fri, Jun 07, 2024 at 04:39:33PM GMT, Mark Brown wrote:
+> On Fri, Jun 07, 2024 at 06:01:18PM +0530, Dev Jain wrote:
+>=20
+> >  .I ucontext_t
+> > -object that is pointed to by the third argument of the signal handler.)
+> > +object that is pointed to by the third argument of the signal handler.
+> > +We emphasize on the fact that this object contains context information
+>=20
+> s/We emphasize on the fact that/Note that/
+>=20
+> feels more idiomatic.
 
-Regards,
-Markus
+Even more idiomatic is to jump straight to the point, without noting it.
+If it weren't notable, we wouldn't say it.  :)
+
+>=20
+> > +of the thread, present before jumping into the handler; the set of
+> > +blocked signals for the current thread would be updated from struct
+>=20
+> s/would/will/
+>=20
+> > +sigaction only after
+> > +.I ucontext_t
+> > +has been dumped to userspace. This semantically makes sense since the
+
+Please use semantic newlines.  See man-pages:
+
+$ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+   Use semantic newlines
+     In the source of a manual page, new sentences should be started on
+     new lines, long sentences should be split  into  lines  at  clause
+     breaks  (commas,  semicolons, colons, and so on), and long clauses
+     should be split at phrase boundaries.  This convention,  sometimes
+     known as "semantic newlines", makes it easier to see the effect of
+     patches, which often operate at the level of individual sentences,
+     clauses, or phrases.
+
+> > +context for which the signals have been blocked, remains only during
+> > +execution of the handler.)
+>=20
+> I'd drop the "this semantically makes sense" and reword the last bit to
+> be something like "The ucontext reflects the state at the time the
+> signal is delivered rather than in the handler" for idiom reasons.
+
+Thank you both.
+
+Have a lovely day!
+Alex
+
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--t7t3p7hirvo5uufk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZl52EACgkQnowa+77/
+2zISPw//YFBwIkNkOCIegtXdYoUMN4j9lZMglkuqPrE/WMJLHVb6XJ5URr2fDRBD
+yLDzJ+ow05U73WYmRsXwM3q1NwD3t3CCvl50gxCwQ+IGZ1TnBu1NNzo79hoM/lgH
+dgdbBMHGieK6XwYBtiWZLle/shy1wdBVvRae5lcfuCBh8NfYGWwwB5x4hSXf9Xao
+pfeSTRD6OAZoouu3oO6ZKlp/6CcvYbYxdMxR+UEQImPprXp0WyBP9fLIydY5JSpq
++TloFpJXWkTYrlxbRLe8fcsIwJ5iDtz1hD5GpIPXosp/PHLjexot/d89Ixs/7pa6
+rzdyrXMvrSYF+8vd4wCJjuRB+abewra5mn03b8pBs2Y9Lbqg8rb2QLo/OT3zIom5
+Km5lVLCTpitZCJKnp32rk1eomz7FHiSzYsPdPqXg71DG9J0y0JU20ZBy8ZCu+ZsM
+mzJ+XKkbC9bdAyuGnX1tbPxj43PNhVWfxRq8ZTmDr6/OaJDBoFS8mG+suP0THW13
+rVOANNeljHABKHleiUEpXZKExZTq5n0RaNHCw3C8aoKN2Drsb1iCqLqyuwklin/b
+/ILzChdYE2988Olnpm86pAaWAsR6T6jkHTFZaSDEH4lL0Z55GtpRWV7wF0kVOD6i
+LcCtG0mhXbNwMrXlRost/n+DM3vc0/RfLDPGqDlpHAeh1Ly5s98=
+=W4Or
+-----END PGP SIGNATURE-----
+
+--t7t3p7hirvo5uufk--
 
