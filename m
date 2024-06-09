@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-207377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC8F90164D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B3590164F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D50F1C209B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91CBAB20F4E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4055D433DF;
-	Sun,  9 Jun 2024 14:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D16446AB;
+	Sun,  9 Jun 2024 14:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wJ8bfMbH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YdJgnW/4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mLG6eW5Z"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D131C5258
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 14:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC05258;
+	Sun,  9 Jun 2024 14:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717941975; cv=none; b=DEggallDxpjVION/YHtd3JaIs4EY4YQFRF4sbL8VZCaI+nitEFTYS5z+m03uNT6J9I8SslRiVGnTtS9S6japr1ELuzQSpe6DXf1e8bBw62iPja8bOKwlAXf2sZqjNYSgzd2p4qVQEfWrPx1hHg8GGEMglDWT9TZcY8dzXzynTHI=
+	t=1717942084; cv=none; b=ZhjXb/rWwVzXVwijYJE5anURTKUih2EXYHRuwmj7yoHf80HptOzGbuYZOSDGviZ45CtHPsi4SATLXTaUQKOVrnFMw5AmqREwnxH0uf8oe+tsQ96Zt15r0gvvEu4d8x/t6cNBfIWYIgnKyUtQo0LSDTeWtGUpM30j2p+azT9y+Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717941975; c=relaxed/simple;
-	bh=6QVgF/8COzoVrtWePYt2nKdMT6SVy0blal0ckZNuez8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=rKW7+netH6Gl7BJ45dcPIQYFmHVJqcGDW135vgACI/619qhGdAPZY5mjZCWqLtoqpowRwBfuY3Gk6JzVE0PkycVtGshwXmpuIOP/sdYKfz8Ga9nd2dUVYZiuH20865ZalPxLtoqkpIVggknn1GY6t7QtCdn6+FjS5YqujTgTwj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wJ8bfMbH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YdJgnW/4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717941966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=MdK2zU1xqNbST/UF9ZI3uh8ZHJQkTJnk5XC1SoB0iQo=;
-	b=wJ8bfMbHDbGEDHsvrp99UfMga4Xgzh0XrQ01OnGNVfJkSp7X5K38+/pTszobVdJU1hHJ6z
-	T7+yDwg3zHoBVzzBMz52qXHiy/Ua8wUgpFDW/aBB7gFWaf/lhdRY2RhA0HkTon7aTrwhFB
-	leHoOown417Hkgp4zXwyd2aIsuy8X+MT6R/0jJKyf7U5tczHTCE86OzT4Bdg/0GSsvNJCT
-	2DAhFFkbPiKCmYGJqJCjphLPfWswn0vnlrE0aVO3CVFf8ANxC7X6zgp7PxuGM7HE0qzAg0
-	U6XjyBbSYeAnhI+FBZewagL/wmXtooVdGBgvHd35opQfyvn1JmajxvQsnP8srA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717941966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=MdK2zU1xqNbST/UF9ZI3uh8ZHJQkTJnk5XC1SoB0iQo=;
-	b=YdJgnW/4qSsyqca8bqzAqhmLHZGAo15QGtIqPKvwqbehoBQ6wu30GVCX96ATHHDSluD7q9
-	AuaHyh7RsfPaW3DQ==
-To: Steven Rostedt <rostedt@goodmis.org>, Sam Sun <samsun1006219@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- syzkaller-bugs@googlegroups.com, peterz@infradead.org,
- jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, mingo@redhat.com,
- Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
- hpa@zytor.com, xrivendell7@gmail.com, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [Linux kernel bug] WARNING in static_key_slow_inc_cpuslocked
-In-Reply-To: <20240609090431.3af238bc@gandalf.local.home>
-Date: Sun, 09 Jun 2024 16:06:05 +0200
-Message-ID: <87o78axlbm.ffs@tglx>
+	s=arc-20240116; t=1717942084; c=relaxed/simple;
+	bh=OBxLFjmBv5Y1bDFc5KIIMYkCmQY5Bu976Hj/qpkXfiI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ora4sOVQ4FDeFMxPoEST2v4opEbiFCPSTKQcejDs9QuY3Elz2eP6s1qzfcdt/K6Qa/CgWIhFLx/kNlvuxi8JABoaIbEACv55eDArwyoq8VMIdAFAA9mvFp2vBW2I0O23W3KXRg3BbIm1TRKRp7sNMtRJDj9FZy7jQumXuiiPSyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mLG6eW5Z; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717942041; x=1718546841; i=markus.elfring@web.de;
+	bh=ZYc6ViqrmU+5mJe+gq/gz48E0wJG1FsE0M6nt2ykiS0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mLG6eW5ZLwDVlW933fYXZTqHYdugG/gYiuVtSYKNGN8i9K+1Jura0dlf5+58RAgW
+	 8OxdpUcJoZHM2CUgAp48zsTGW0BD+8mTk4pE4diilOdDeAJgKtzcHjH1TL38kYfkH
+	 u3Y0D2zQiqCwVSWVaXgE2PZ72ijaahSXNWxG2Vhkvms5f19vKFYnfsaPNgeEZwIbI
+	 TQKfoaSoXv+ng1GZeyyH6TBxsV6ERM6G8bL7hdNalriUncVsVjlKFcnvmp6qdDi+4
+	 vYrnMop5Eq0i2TkATHf1MZPUexhnSjNQVosWKX8qi8+Vege8+VsWRQUlqdv/Ck+xf
+	 yAHVNNfuzXW8YgSPww==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MaHWx-1rswnd3yJ3-00LQdr; Sun, 09
+ Jun 2024 16:07:21 +0200
+Message-ID: <85e31039-15ee-416f-89fc-a018307bc7b6@web.de>
+Date: Sun, 9 Jun 2024 16:07:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: Zhang Qiao <zhangqiao22@huawei.com>, kernel-janitors@vger.kernel.org,
+ Ben Segall <bsegall@google.com>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240606121133.2218723-1-zhangqiao22@huawei.com>
+Subject: Re: [PATCH] sched: Initialize the vruntime of a new task when it is
+ first enqueued
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606121133.2218723-1-zhangqiao22@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gQloGkDdGamf40XcJqdP+/GPIiZ0zAPzjglU3CwQ7ifISUNyeWZ
+ jTD2swiwY9ZRM9lWF7g6jlqHsNrtZ4CZ2EVB9QQIYNqWCNHw1DjFcQYs2DBy895JYonfsvP
+ IPJIcX+irmEs+y3p9c8Ck0cLkrSgVOHRfS8x9aGW1OmUYncFAIGpS/VPBp/nBiQml2JIShg
+ FFs/qjHCYEJo7kiGXeKNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jFA0np/W/f0=;famAjMx3WEWs2eRGOOmCmCvUQ41
+ 6WY6ikmPfe5ruKAhQXoIxV9tzTBJY+k7qrt3n/relM0fThejpt4HBMvpiTFKmzyT88vcJPTvD
+ hlHPK8AJhPK1e4GAgAxYNdavgwamkg36i7FfNs2RwAOhhKdMbDfQi+qaS78JOE5ElgOSRz9Xg
+ k7XmPxGCh30Be/bI0cczg1twhpBoNNqlV3ZApxA8feWkWs28tffmHTncX5SpLoAJVnGw2IhMm
+ /WNZIWH+psKMDcj6PCniBKrbekCmQM5DXH2AYe0MRcQa/tflXenBYxXERddGRmQCR6+1ltAFe
+ me3Kt+Tzdcy7D1sY3qvuebhw4GN3IOvIC/aowt/9szWm1hDxfwa5PGLVyx3SZJwAnQpnfqjJv
+ HZ+naZBkhyN5CLuK4mTcvfreLigeINWO6U5L0Rhf0/RVsn67Mzd2hY57MkQHwFq1apd6Xu9oP
+ 9eFJiKW7ptJutBfzsjYGFfBNAvOJraJOTmLFs3cRah63NEzNFdPdi6rmGNrJ0ku4s96/Cg1Jz
+ Or3HozKvktqxPYavtRySYvEdIsXZ2WvLYR61+1w/0ZgXMsIs2KOFfeyk1UQ3E03He0CbwIByi
+ T6MtVK3IwwbjAYNEcwycfOwjYrqCJhI3rak4Sw5Sn9lER0n9Th7dMLs/blBqQSUEh6yB2nj/r
+ hJRM91h91PLWfG2HiJYyoB+KG0PZOgGpAExmQxG/t5+MACQQQMJK9YJBopTDt3wy4ycYT0zyL
+ xHuKRTiW73/rh5Yb7/am/8Vpn3qRGSmnSgFBa4fLTBL71tSAqt/emf5yaV96+3pGINgBv/W0M
+ lp84TzczjwNj9114GalgDCwwztbw0y0EGR2LoII0T71Lk=
 
-On Sun, Jun 09 2024 at 09:04, Steven Rostedt wrote:
-> On Sun, 9 Jun 2024 14:33:01 +0800
-> Sam Sun <samsun1006219@gmail.com> wrote:
->> [   82.310798][ T8020] ------------[ cut here ]------------
->> [   82.311236][ T8020] kernel BUG at arch/x86/kernel/jump_label.c:73!
->
-> This is not a bug with jump labels. It's a bug with whatever is using jump
-> labels. Looks like something tried to modify a jump label that no longer
-> exists.
+> When create a new task, =E2=80=A6
 
-The jump label exists.
+       creating?
 
->> [   82.331873][ T8020]  set_attr_rdpmc+0x193/0x270
->> [   82.332179][ T8020]  ? get_attr_rdpmc+0x30/0x30
->> [   82.332511][ T8020]  ? sysfs_kf_write+0x18d/0x2b0
->> [   82.332832][ T8020]  ? sysfs_kf_read+0x370/0x370
->> [   82.333159][ T8020]  kernfs_fop_write_iter+0x3ab/0x500
->
-> So, something in kernfs modified a jump label location that was freed?
 
-No. What happens is:
+> Because it use current cpu =E2=80=A6
 
-CPU 0                           	CPU 1
+             uses current CPU?
 
-kernfs_fop_write_iter()			kernfs_fop_write_iter()
-  set_attr_rdpmc()		  	  set_attr_rdpmc()
-    arch_jump_label_transform_queue()       arch_jump_label_transform_queue()
-     mutex_lock(text_mutex)                   mutex_lock(text_mutex)
-     __jump_label_patch()
-     text_poke_queue()
-     mutex_unlokc(text_mutex)
-                                              __jump_label_patch()
 
-CPU 1 sees the original text and not the expected because CPU 0 did not
-yet invoke arch_jump_label_transform_apply().
+> To optimize this case, we pass ENQUEUE_INITIAL flag to
+> activate_task() in wake_up_new_task(), in this way,
+> when place_entity is called in enqueue_entity(), the
+=E2=80=A6
 
-So clearly set_attr_rdpmc() lacks serialization, no?
+Please improve such a change description also according to word wrapping
+because of a bit longer text line lengths.
 
-Thanks,
-
-        tglx
-
+Regards,
+Markus
 
