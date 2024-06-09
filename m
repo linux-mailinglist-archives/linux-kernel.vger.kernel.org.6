@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-207496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8F790180F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:03:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94086901815
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E741B20E09
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2090E280CA4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3914CE04;
-	Sun,  9 Jun 2024 20:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BF24D8DB;
+	Sun,  9 Jun 2024 20:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aT8yDBul"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1a6zNhyc"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190054D8AA;
-	Sun,  9 Jun 2024 20:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BEE1DDCE
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 20:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717963417; cv=none; b=PLrpJXWgvRW57Svn0zLQNBsEeYblDaLMf62YRmVPXL0zPbH1tnxKCpKF7OC3hclA+glXJzTjWfnbm/w9/1olavUc2v5V4MoLjCr9wySgeFI7iFQs55C1yb8P9X52CfpURD6+39A7qTq5R6oW9enIul80a6MB57g5OZTxjlkhr40=
+	t=1717963587; cv=none; b=Q5lxK65w0by7VaykfUipYqvzvgGX+ooNrt6qPEySMoSBseSlmw713akO6ybXHuX5Pn/6uxDWCa0zMDhqxQKBXi3rjtwX3E0jYgjKTdVJ6K4EuWizTAD1lukYjO3LzuyXUA/sB/s8wopITq+1ZfEqIYp5LOQUfxd2JVImbOWfWRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717963417; c=relaxed/simple;
-	bh=twnsg9bhBitdSy1JcCEV/bz7XV7JxHzCUyv/HsnsO/k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jtjKQnpniQ2DNh4q/qaPd0gV5XWZ47+SAcvHosVF//dbZqGyK+c/GP4qrmQ4u+CJn93q0LGm2kRXEZMMQA/NmWFEgxPVM4+zQESgONbf+XnCkcMv85OSpODY3pVmsDR7qWmK+lBKtW0zCpqDq8VCga9A2c4nvdM2SxhxRSdFmfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aT8yDBul; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459JE7I3022942;
-	Sun, 9 Jun 2024 20:03:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=r5w4+o1VCtp2zxKxfuee6l
-	TzhE4tSQR1uWS+Oy/psRQ=; b=aT8yDBulhxjYsIjxt3/FCNhJDCd8ad/R7fkdUr
-	YAaOpRjFQJgSs453jn/TQ9JUX7dlzcGnkb6smLRVkV34aq7LT7dwf8DVQQciI1N3
-	e4ie7tcRlk5AM+UgsRCVnrMzbYeB9ljbxyqwYMqQik2bfsEU1VOosyVKf6zmXZ4r
-	zNUgmyiH15c05gHuGnkpnc5GAP+PGuNBY3bKSL4P4LhhmW0kmrtdq/axoliSyWAR
-	KDfQ5NeWJrVODPMdVAcm6zdyA+qfSu2HG6NkTQ982sFMRENOQZWwbUmlCaEgFMVM
-	MSNbDS4hwSPHtPw+tLnxQcAEwe+w1tZfviVCRNckuQeazDxw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yme8rtcw1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Jun 2024 20:03:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459K3W5w026319
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 9 Jun 2024 20:03:32 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 13:03:31 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 13:03:30 -0700
-Subject: [PATCH] Input: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717963587; c=relaxed/simple;
+	bh=dV0HafcF6PMMuqh10cvuAZ5X5KeoDQVswsNpvA2TdBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FVTOlVb48bjw3wirpEttR9DU5BtHb4afKhytBhfNcIHcI5c2W4LI7zm6fOSEeY/gdXfyS7QvMPzTjJe5WjNO7pqzOwbsVtVYfYLmr7CI/HPz39RcT3qmGI/F/DmsnTrIk4o/Z67QGD4RVr1xREjc5DLMnhNfQQWrsSKnXe8tKXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1a6zNhyc; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ba70a0ed75so2188625eaf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 13:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717963583; x=1718568383; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bCgjLGIvHnJpxhOHdQz2TYeCVliZVrQ6mIgWxXIdyLs=;
+        b=1a6zNhycUCk4Pm+crqSjzPj6QkekJqLEAe8Y0hZyr+uSVtw7bozT22Ki5S5Oh5bDtr
+         0vsHEczt6RqNFysHDTtMVT61xVIEtuiJYwpwwPxl6/ZdCVUE32kDY9ffo1gN1WHcVwOv
+         r3JHfvAkU6TNghhEkytO6L7dib93Saw3eiSnBeAA7OBjhEo6P0FhcDcWPmY97Xp8Abpb
+         I0uPQi7VP+oNBzsqttsGoFJROOrDdpCSgAc0n2mJwhBS0ub27g6w5NWP59+Il/zXLoRj
+         gnOxBaTYw+npvRP+ZvgfpyeCn120hJxzva7SBd0yblpnT/M3O6y0f4kzGp5hivUCQ0Um
+         fZ4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717963583; x=1718568383;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bCgjLGIvHnJpxhOHdQz2TYeCVliZVrQ6mIgWxXIdyLs=;
+        b=lHMVQ9wBrDjYtnnmA/jwUpaMlKN7yiqL4yC4FhG7ht4nZZmqbG+d8IbiMYFMSlpyZ1
+         ypHBAOBULOvR6o+skaRQkgG7Rw/nf8ngq9UrbtRllRzpQEgFPcZy2/zKKF+5S1yktp3D
+         FyYVJhH/aFCwW/Ap5ZziLvVFYRopgKEJt803IAEmsexyJPg+2Prqi0UFSS/ML9gdA9gI
+         TeDTZqUBF8Gc8wSBicqSrditkbwM/18IlszfDUAjNEaV4mzMqtExnc7Gp9xhhwMlAZrm
+         twvLcJmvql30cfagR6q16kHA580RxEfIjiOW71iXHkb66MlfKscvodFyldedi8zmGxYg
+         Aq+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWLPA3vN0Kz7vNseM1Vy1Utw/jOmnVnnxuP9dkZjoYy7Rdi9x9yh/RJyNeITrM/lCqfG8Xc5VJ6AE2xWWlLB0N9bBi6R5XuWdlFn0ZA
+X-Gm-Message-State: AOJu0YxP2MKaI7/92qbM0XAMdaVKFzBZ4iHGW2hOSEAUAAunr707J3C6
+	eETDw9gS2Oyv3Vm/XXOOOGHe0yZPtz7SO3Xxe5W1Eughg9l9ydGS6/k1dJk2pW0=
+X-Google-Smtp-Source: AGHT+IGUcR9xqr3+AxBdyVQ8ar8tP10gwQFPrDJQGF+erJK+HZxWPREAfdHRAmFKf7QcyMjOjK3RfA==
+X-Received: by 2002:a4a:dc95:0:b0:5ba:bb77:bf51 with SMTP id 006d021491bc7-5babb77c5dfmr6153154eaf.2.1717963582922;
+        Sun, 09 Jun 2024 13:06:22 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ba977e121bsm1413278eaf.28.2024.06.09.13.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 13:06:22 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Judith Mendez <jm@ti.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] counter: ti-eqep: small cleanups
+Date: Sun,  9 Jun 2024 15:06:14 -0500
+Message-ID: <20240609-ti-eqep-cleanup-v1-0-9d67939c763a@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,122 +81,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-input-v1-1-a2f394e0f9d8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJEKZmYC/x3MQQrCQAxA0auUrA2MU7HUq4iLzEy0ARtL0pZC6
- d0dXb7F/zs4m7DDrdnBeBWXj1acTw3kgfTFKKUaYoiXcA09jgWLycrmKDotMyZm6ro+50gt1Gw
- yfsr2X94f1YmcMRlpHn6jt+iy4Ug+s8FxfAHeGgYKgQAAAA==
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ooB0b9bYHP_S9iNm0VvZexN6QbRwOUJ7
-X-Proofpoint-GUID: ooB0b9bYHP_S9iNm0VvZexN6QbRwOUJ7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_15,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406090157
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/touchscreen/cyttsp_i2c_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/misc/soc_button_array.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/matrix-keymap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
-
-Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-files which have a MODULE_LICENSE().
-
-This includes drivers/input/misc/sgi_btns.c which, although it did not
-produce a warning with the x86 allmodconfig configuration, may cause
-this warning with other configurations when either CONFIG_SGI_IP22 or
-CONFIG_SGI_IP32 is enabled.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/input/matrix-keymap.c                 | 1 +
- drivers/input/misc/sgi_btns.c                 | 1 +
- drivers/input/misc/soc_button_array.c         | 1 +
- drivers/input/tests/input_test.c              | 1 +
- drivers/input/touchscreen/cyttsp_i2c_common.c | 1 +
- drivers/input/vivaldi-fmap.c                  | 1 +
- 6 files changed, 6 insertions(+)
-
-diff --git a/drivers/input/matrix-keymap.c b/drivers/input/matrix-keymap.c
-index 4fa53423f56c..5d93043bad8e 100644
---- a/drivers/input/matrix-keymap.c
-+++ b/drivers/input/matrix-keymap.c
-@@ -199,4 +199,5 @@ int matrix_keypad_build_keymap(const struct matrix_keymap_data *keymap_data,
- }
- EXPORT_SYMBOL(matrix_keypad_build_keymap);
- 
-+MODULE_DESCRIPTION("Helpers for matrix keyboard bindings");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/input/misc/sgi_btns.c b/drivers/input/misc/sgi_btns.c
-index 0657d785b3cc..39c2882b8e1a 100644
---- a/drivers/input/misc/sgi_btns.c
-+++ b/drivers/input/misc/sgi_btns.c
-@@ -128,4 +128,5 @@ static struct platform_driver sgi_buttons_driver = {
- };
- module_platform_driver(sgi_buttons_driver);
- 
-+MODULE_DESCRIPTION("SGI Indy/O2 volume button interface driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/input/misc/soc_button_array.c b/drivers/input/misc/soc_button_array.c
-index f6d060377d18..5c5d407fe965 100644
---- a/drivers/input/misc/soc_button_array.c
-+++ b/drivers/input/misc/soc_button_array.c
-@@ -620,4 +620,5 @@ static struct platform_driver soc_button_driver = {
- };
- module_platform_driver(soc_button_driver);
- 
-+MODULE_DESCRIPTION("Windows-compatible SoC Button Array driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/input/tests/input_test.c b/drivers/input/tests/input_test.c
-index 2fa5b725ae0a..e11cf4bbead9 100644
---- a/drivers/input/tests/input_test.c
-+++ b/drivers/input/tests/input_test.c
-@@ -179,4 +179,5 @@ static struct kunit_suite input_test_suite = {
- kunit_test_suite(input_test_suite);
- 
- MODULE_AUTHOR("Javier Martinez Canillas <javierm@redhat.com>");
-+MODULE_DESCRIPTION("KUnit test for the input core");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/input/touchscreen/cyttsp_i2c_common.c b/drivers/input/touchscreen/cyttsp_i2c_common.c
-index 1f0b6d6f48e2..7e752fb9fad7 100644
---- a/drivers/input/touchscreen/cyttsp_i2c_common.c
-+++ b/drivers/input/touchscreen/cyttsp_i2c_common.c
-@@ -81,5 +81,6 @@ int cyttsp_i2c_write_block_data(struct device *dev, u8 *xfer_buf,
- EXPORT_SYMBOL_GPL(cyttsp_i2c_write_block_data);
- 
- 
-+MODULE_DESCRIPTION("Cypress TrueTouch(TM) Standard Product (TTSP) I2C touchscreen driver");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Cypress");
-diff --git a/drivers/input/vivaldi-fmap.c b/drivers/input/vivaldi-fmap.c
-index 0d29ec014e2f..978949eba9eb 100644
---- a/drivers/input/vivaldi-fmap.c
-+++ b/drivers/input/vivaldi-fmap.c
-@@ -36,4 +36,5 @@ ssize_t vivaldi_function_row_physmap_show(const struct vivaldi_data *data,
- }
- EXPORT_SYMBOL_GPL(vivaldi_function_row_physmap_show);
- 
-+MODULE_DESCRIPTION("Helpers for ChromeOS Vivaldi keyboard function row mapping");
- MODULE_LICENSE("GPL");
+Judith got me looking at this driver again, so I noticed a few small
+things that could be cleaned up.
 
 ---
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240609-md-drivers-input-beea779cc2a3
+David Lechner (2):
+      counter: ti-eqep: remove unused struct member
+      counter: ti-eqep: remove counter_priv() wrapper
 
+ drivers/counter/ti-eqep.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+---
+base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
+change-id: 20240609-ti-eqep-cleanup-254e6ba1e386
 
