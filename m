@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-207507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE7190182E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:58:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7699901828
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A411B20E7E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15541C20D07
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF224D9E3;
-	Sun,  9 Jun 2024 20:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907954F5EC;
+	Sun,  9 Jun 2024 20:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="lMJlQJRF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="l89tmy8h"
-Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="oIlYTeb3";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="RZVLVMEz"
+Received: from fallback16.i.mail.ru (fallback16.i.mail.ru [79.137.243.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20D217BB5;
-	Sun,  9 Jun 2024 20:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D51617BD3;
+	Sun,  9 Jun 2024 20:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717966716; cv=none; b=iPvaTh0Hyh/OADaXBKbh2lXiUkpC9eNqTGX8ZjZikAGxZptsMltkhiDgVEu+Sd+bz3h/DQHxLDUpz3WQ60LrV2o4Wtpr0TacH3ioI6IGVnq1Xs84WoOFX4NzVOb9zVo0aWVN6r6rQuQQaJnVYQDiL8zUpvhozfveyy5BZSc59b8=
+	t=1717965410; cv=none; b=EO6xeUed6Otsxe9yHOh9lbnTOjnCe5MGjwrW92Y8FXY8eBGa3Eu+kQtmsnn6AAfExnM6MdBc02E2tH1XZ49K0IDycS0xIRt5/ULakf4EnsLB8+/7jgycgpA/G4d5dQg55YpqFD5RcaGNAijf03YWA79XWWE1CMNqigNscKANNqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717966716; c=relaxed/simple;
-	bh=GR/JlxtZMXwox4E5NYpyR4Lv1v8HQrYc80CFndE8O9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BJ5Q2faKnt2LUf/gbWbNByQXDH0zpjsNQ4Dh4WiAPz9BTPeuDUSd+9iGPCLo0efKChgAeS3y+AIEjY9Gkn+Levx1SHQ6G9TxZzJOS4VdZHPxiHJ0zV8/EJMeTPdmdIOYUwcQZC2KnBa+FfGh/xxqPdLOlE1znjqJaja9GEUrMZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=lMJlQJRF; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=l89tmy8h; arc=none smtp.client-ip=79.137.243.76
+	s=arc-20240116; t=1717965410; c=relaxed/simple;
+	bh=b07g8Zm6vvFFd+Ji43SJ4CjSgJkVo+8chL6BAggB+WM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LZgaUnnnG425ma5L3h0PUufB+O1370SlzabLdEbK4em+dcqtrQPFoUD+sRCZxXAM209+c03Pz9ZyVThdmRLHDdUld2RDKISm1Jb6Wshoh+3pEWNi9015VYyZwq3/yhTMUIzgghjvdh4wIXs0JWn13CAdGMQD6Zk1tMNInKg6B0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=oIlYTeb3; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=RZVLVMEz; arc=none smtp.client-ip=79.137.243.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
-	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=jUWmlcuePUdDpLeFLBVk04U0i/kUraSxOcG7isSSgqE=;
-	t=1717966713;x=1718056713; 
-	b=lMJlQJRFJLYq/s9UpM5EESQLfaS82tjQb8CVlAg+WBANUh3sHcbE5yRPKVOTF9PD0nZfZeQl8pbDrXwirgb3ZAlmI8G2ywxshQoL5CjO3ImhSH7NIA4pmHt0bXBzCWFWc9BRF9ShXMbLNMbuFYZm+53VXZcZzr3V4kmRc2PYriU=;
-Received: from [10.12.4.20] (port=39844 helo=smtp44.i.mail.ru)
-	by fallback20.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
-	id 1sGPHJ-004H9z-OB; Sun, 09 Jun 2024 23:36:38 +0300
+	h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=XgCW2Teyxjo1qJ/+v4hXt3hiuRDzeE/1a0ajHqVR6WM=;
+	t=1717965407;x=1718055407; 
+	b=oIlYTeb3J6jAa9rIqyj9ZyW8UFbY6t3fyuQmIfeeKCv5M6RzgXSHEJ8NqfzFD1Dj456DQ3NSO9rX4f3WBh5kxYwqVQyQZHLz9qJScV0BRIynBqAVoi45DVgdjhh5/x2/eYCgHV8PIn8U1Xbb5Wb18PUS1p7c32i+Khw5puhZC+U=;
+Received: from [10.12.4.20] (port=47366 helo=smtp44.i.mail.ru)
+	by fallback16.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
+	id 1sGPHL-002KB2-3A; Sun, 09 Jun 2024 23:36:39 +0300
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
 	X-Cloud-Ids:Disposition-Notification-To;
-	bh=jUWmlcuePUdDpLeFLBVk04U0i/kUraSxOcG7isSSgqE=; t=1717965397; x=1718055397; 
-	b=l89tmy8hGitYlk07wsyGA5u+Z5LGCOw9MGxqlRzAi2eaY/qbGnvFKFV7l9t+g+Vb8AnsdY/H8Aq
-	z2ozTUnA7/8NpoXukGVM3YEsHIVbmbwDz6KUEfmX8DadyA0BZIM3pRWqfXiD6hIqYy+J1YNdbRbpO
-	UPFILqDyF6GW88JpATg=;
+	bh=XgCW2Teyxjo1qJ/+v4hXt3hiuRDzeE/1a0ajHqVR6WM=; t=1717965399; x=1718055399; 
+	b=RZVLVMEz3VHBc8zjUTDUNfj8hvs8AEsMW5Z35grcllPtBtaYw2qvI4HIy2edkanJCaJ/zgVi0PS
+	HVe5NRi55bd0RWEfyDXjacMU30kPww9RGaCQ6qSPzB0ovltPWYMSBtctbWstpKC4TFwzplFJY1s8r
+	POJJlv8GWz7j3JwmpMU=;
 Received: by smtp44.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
-	id 1sGPH3-00000004YbQ-1IfB; Sun, 09 Jun 2024 23:36:22 +0300
+	id 1sGPH5-00000004YbQ-2jgt; Sun, 09 Jun 2024 23:36:24 +0300
 From: Danila Tikhonov <danila@jiaxyga.com>
 To: neil.armstrong@linaro.org,
 	quic_jesszhan@quicinc.com,
@@ -68,10 +69,12 @@ Cc: dri-devel@lists.freedesktop.org,
 	adrian@travitia.xyz,
 	degdagmohamed@gmail.com,
 	Danila Tikhonov <danila@jiaxyga.com>
-Subject: [PATCH 0/2] Add Samsung AMS639RQ08 panel support
-Date: Sun,  9 Jun 2024 23:36:16 +0300
-Message-ID: <20240609203618.49413-1-danila@jiaxyga.com>
+Subject: [PATCH 1/2] dt-bindings: display: panel: Add Samsung AMS639RQ08
+Date: Sun,  9 Jun 2024 23:36:17 +0300
+Message-ID: <20240609203618.49413-2-danila@jiaxyga.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240609203618.49413-1-danila@jiaxyga.com>
+References: <20240609203618.49413-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,63 +83,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailru-Src: smtp
-X-7564579A: B8F34718100C35BD
-X-77F55803: 4F1203BC0FB41BD948651DF6EBC8E8B2F3C2019B50ED79272429E8323770A69B182A05F538085040E5603F6EAF513856D4FF92D56319F197448DE2AD3994A7427A4D2F7B2508D394E9977CD5C7BA570D
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7AD2F2D6F6013FF7FC2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE716FAD50E497B9C14EA1F7E6F0F101C6723150C8DA25C47586E58E00D9D99D84E1BDDB23E98D2D38B043BF0FB74779F36E96DE96AC6DA6F4C9DA7AAB3940AEFA454139C8A3DDBDD54A471835C12D1D9774AD6D5ED66289B5278DA827A17800CE77E7E81EEA8A9722B8941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B6BAA8CD687FCDB2EBCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB8D32BA5DBAC0009BE9E8FC8737B5C22496010E6B77066451176E601842F6C81A12EF20D2F80756B5FB606B96278B59C4276E601842F6C81A127C277FBC8AE2E8BBB75ECA0EAB52AE83AA81AA40904B5D99C9F4D5AE37F343AD1F44FA8B9022EA23BBE47FD9DD3FB595F5C1EE8F4F765FCAE9A1BBD95851C5BE2021AF6380DFAD18AA50765F7900637D64787C5AB2E18C322CA9DD8327EE4931B544F03EFBC4D572219AA581D1B0840C4224003CC83647689D4C264860C145E
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD948651DF6EBC8E8B222621CCF380C0F235C86A77A6A247FFB182A05F5380850404E84FBDD82675F9BD4FF92D56319F1972E2138EB373856867A4D2F7B2508D394DC39866218C5191E
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE770FEBAE29342FA8FEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F790063764BF1E09E94CC6278638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D875E801B35AE15423179B2FEBA43CD57B2C9B4D5420AE7347CC7F00164DA146DAFE8445B8C89999728AA50765F7900637DCE3DBD6F8E38AFD389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8A9FF340AA05FB58CF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C62B3BD3CC35DA5886E0066C2D8992A164AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C3CA64746D51DB396CBA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CF4964A708C60C975A1DD303D21008E298D5E8D9A59859A8B65FF0BFC5AEE34BE675ECD9A6C639B01B78DA827A17800CE760469D7ADB81D431731C566533BA786AA5CC5B56E945C8DA
 X-87b9d050: 1
-X-C1DE0DAB: 0D63561A33F958A54B00A8D2ECC013395002B1117B3ED69620828F57A5254853406406D89DD9EB8A823CB91A9FED034534781492E4B8EEADB30A456A8F293845C79554A2A72441328621D336A7BC284946AD531847A6065A17B107DEF921CE79BDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF3810E75B5F9F66C566EAE38DF7B5FCEACE2C6BC6BB304F9A2C929CB36D555B4CF49F51687F14C9B80FD6CD3E887ECC32579C634A4CDAACC5AE15ADD81BFA704D04A08754E2C765E00D035775BAD7A4FF02C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXhO6DXcrkr0XTfOtWPCGr3S
-X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949817A795F5C603EFD0C57FFD5DAF71AD12C93539627FE5850417DE40CF728D4966F2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-C1DE0DAB: 0D63561A33F958A5177F2A6FBBF53CE75002B1117B3ED6969AF1702879616AB219AC5B239BAD4335823CB91A9FED034534781492E4B8EEAD2B25D9E4C92BC8ACC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFFC2046D000D58A9CFC2D0F7E31F8481E1B3FB62E9FC0306DC211A96A0D0AF8DD7649A938D59E33ED0FD6CD3E887ECC32FF45B9C3B59D2153AE15ADD81BFA704DCE25B990C371C36E0D035775BAD7A4FF02C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj6D5zjHqYKv1Yl+a1Y8Sf+w==
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949817A795F5C603EFD0CAC4385294E02B5FBF47824E877E99CE90547A8BF58688A1D2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
 X-Mras: Ok
 X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4B653A1001F6F75E45D3E182DE990518462D9B15B91B4BA89B647ED114AB003ACCE0692C6BF09384D96B65AA5C4D7215703338A50BFA905CDF8EEC2ADE53719C2
-X-7FA49CB5: 0D63561A33F958A5D2136437802185CAC7FF20794776412D35C53782351F85508941B15DA834481FA18204E546F3947C3A8EB65318B1979EF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637C3957E6FF5665BA9389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3B95D3BAC42CD083E35872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-77F55803: 6242723A09DB00B4B653A1001F6F75E4542571B84DC1CDDAAF24926542F20ADDB647ED114AB003ACCE0692C6BF09384D4547AB07AD1460ADC5F3AE8F7E3F031E3ABB9FCC2388B9EA
+X-7FA49CB5: 0D63561A33F958A5438D42E686A423E79A85A0FF7066BD4E13E058B0BEB7AF308941B15DA834481FA18204E546F3947CD2B897A0B7B208E1F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006371CE0A079F1B3D4BD389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3B95D3BAC42CD083E35872C767BF85DA2F004C90652538430E4A6367B16DE6309
 X-87b9d050: 1
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj6D5zjHqYKv0VnfguqaVuAQ==
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj6D5zjHqYKv0tM1y63Q3TmQ==
 X-Mailru-MI: 8000000000000800
 X-Mras: Ok
 
-This series adds Samsung AMS639RQ08 panel support used in:
+The Samsung AMS639RQ08 is a 6.39 inch 1080x2340 MIPI-DSI CMD mode
+AMOLED panel used in:
 - Xiaomi Mi 9 Lite / CC9 (sdm710-xiaomi-pyxis)
 - Xiaomi Mi 9T / Redmi K20 (sm7150-xiaomi-davinci)
 - Xiaomi Mi 9T Pro / Redmi K20 Pro (sm8150-xiaomi-raphael)
+Add a dt-binding for it.
 
-Was tested on sm7150-xiaomi-davinci and sm8150-xiaomi-raphael. Based on my
-analysis of the downstream DTS, this driver should be fully compatible with the
-sdm710-xiaomi-pyxis (unfortunately not tested) without requiring any
-modifications.
-
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-To: Sam Ravnborg <sam@ravnborg.org>
-To: David Airlie <airlied@gmail.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Jens Reidel <adrian@travitia.xyz>
-Cc: Degdag Mohamed <degdagmohamed@gmail.com>
 Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-
-Danila Tikhonov (2):
-  dt-bindings: display: panel: Add Samsung AMS639RQ08
-  drm/panel: Add Samsung AMS639RQ08 panel driver
-
- .../display/panel/samsung,ams639rq08.yaml     |  80 ++++
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-samsung-ams639rq08.c  | 362 ++++++++++++++++++
- 4 files changed, 452 insertions(+)
+---
+ .../display/panel/samsung,ams639rq08.yaml     | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
- create mode 100644 drivers/gpu/drm/panel/panel-samsung-ams639rq08.c
 
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml b/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
+new file mode 100644
+index 0000000000000..3a561156f5601
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/samsung,ams639rq08.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung AMS639RQ08 EA8076-based 6.39" 1080x2340 MIPI-DSI Panel
++
++maintainers:
++  - Danila Tikhonov <danila@jiaxyga.com>
++  - Jens Reidel <adrian@travitia.xyz>
++
++description: |
++  The Samsung AMS639RQ08 is a 6.39 inch 1080x2340 MIPI-DSI CMD mode AMOLED panel.
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    const: samsung,ams639rq08
++
++  reg:
++    maxItems: 1
++
++  vdd3p3-supply:
++    description: 3.3V source voltage rail
++
++  vddio-supply:
++    description: I/O source voltage rail
++
++  vsn-supply:
++    description: Positive source voltage rail
++
++  vsp-supply:
++    description: Negative source voltage rail
++
++  reset-gpios: true
++  port: true
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - vdd3p3-supply
++  - vddio-supply
++  - vsn-supply
++  - vsp-supply
++  - reset-gpios
++  - port
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    dsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "samsung,ams639rq08";
++            reg = <0>;
++
++            vdd3p3-supply = <&vreg_l18a_2p8>;
++            vddio-supply = <&vreg_l13a_1p8>;
++            vsn-supply = <&vreg_ibb>;
++            vsp-supply = <&vreg_lab>;
++
++            reset-gpios = <&pm6150l_gpios 9 GPIO_ACTIVE_LOW>;
++
++            port {
++                panel_in: endpoint {
++                    remote-endpoint = <&mdss_dsi0_out>;
++                };
++            };
++        };
++    };
++
++...
 -- 
 2.45.2
 
