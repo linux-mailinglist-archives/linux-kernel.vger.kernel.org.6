@@ -1,69 +1,77 @@
-Return-Path: <linux-kernel+bounces-207480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C309017DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:31:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF75C9017DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BE3281950
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746F31F214BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8CD47A60;
-	Sun,  9 Jun 2024 18:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821CE524B4;
+	Sun,  9 Jun 2024 18:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bbztCnC5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU7S7I0N"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD264CE04
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 18:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19C481B9;
+	Sun,  9 Jun 2024 18:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717957795; cv=none; b=A2pg8v7c83r6GbeqC8euZAdoo9SewRKGUPn3JAhYEFOgNdJL3HxtBbe56qGWTK07xpjwcl8WYbyKtKTXd9rgZnyw/G/8puqhC6zIZRsz7+iMATm2vBmNlDJxCVVSRY81PVzPEwBd7eeF623OrZ8h+wDwY/pgSbVxi1IFp6Q0Vh0=
+	t=1717957853; cv=none; b=WW6/KkPilokffsDdb60NIy7oOd3+A5q4bMEBMHntT39/4qhqhL3CNcGKC6M0lYWk3iWvfPUdP9PcwWiGil6tcCCyICW1xiCzyEgSTb14Ewv6qPc1C6pOZ5TY3fDDfGNBBnmzjcIbXj3uUTsZE1re6So7ggSRNSPrx+QF1n0qkXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717957795; c=relaxed/simple;
-	bh=uEJNvYVVaNntIggMGXVBxh9+1kgmUPxGMleX6TQXWhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SM68FdPAFCgzkIQec5a7zRMWA0W/uDdHpTGzE0Q78yjYojf0Mi1UZZgRtcG0mvhr9to/nXKj92udlJ9PSmZKFXlfSeNjtXEKbKjxcJoI0oIE/xPTkE8bpJ1s1BNnm8rduRw1Kw0YtQ886OXo2RIqUkHIod2/QpzRDDsI3DBuszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bbztCnC5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717957792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEJNvYVVaNntIggMGXVBxh9+1kgmUPxGMleX6TQXWhc=;
-	b=bbztCnC5N8CuPDJkLiq01hjGGbmGVTDmXwD0MGARn46gxJVZKQaT/D6HfrZjGM//SEdXja
-	jUbXuf5sXao6CJ9a3mCiqvyu7UjF/5vEm4dpXkq7uGF5qs9cJAYA9bWjhZhBRbrKS+hRj5
-	+KluphkQCxsL7sxnokHYzeSkXffYn9k=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-b_u1TsIzNjSD3cBtNI32uQ-1; Sun, 09 Jun 2024 14:29:51 -0400
-X-MC-Unique: b_u1TsIzNjSD3cBtNI32uQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A3502811E79;
-	Sun,  9 Jun 2024 18:29:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.58])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 75E9C1121337;
-	Sun,  9 Jun 2024 18:29:49 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Jun 2024 20:28:21 +0200 (CEST)
-Date: Sun, 9 Jun 2024 20:28:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] exit: kill signal_struct->quick_threads
-Message-ID: <20240609182819.GA15903@redhat.com>
-References: <20240609142342.GA11165@redhat.com>
+	s=arc-20240116; t=1717957853; c=relaxed/simple;
+	bh=3UzT14NvWUR5CK3U1Fw6aNQWgadar+TXA8VhWP3bjJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PBWhI8ecNuEkexm+sW0e2WJOtdaE1FhMDe5xy9shSPEyFaqxCKA/BMkBgZU8Fy8SojjQAASVZbZH3iGZNF4dE6t5WNjqo8BU1egnWfY2i7qoX8eXvPEa4QnGkUkWVoQIaOKwu6WUCHDT1xKw43gYJDty21AT/QOCnswYy6xQ9iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YU7S7I0N; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5baf901ae65so234190eaf.3;
+        Sun, 09 Jun 2024 11:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717957851; x=1718562651; darn=vger.kernel.org;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zpbot7qHztX9ltp2BIpBIvx/SpoqMXIs8jofFmr9ho=;
+        b=YU7S7I0NaYTpnSFVA2NSi0qsRS3X72XrviDe5POTiJ8os412FOVOiJdqrUF7Jqe+Ps
+         L27KyWq7gnVqLX2DMWq3juyun3N9VDR8cLEKws8b1hBQSbBhSg4dNW6XmDOrqxwe9E+k
+         WjJw4ZgF/iB24GV9wMsSMsO4e1gJj9C7fmKtOCiNVbraXeFbDKvS/rxBukcc8VXulW2A
+         SIiem8Ozmqw3J2Zqw0JezqDgDAe4LMEB/y/2IZC7n7sNg9WIeHYN0V5MRnHBgBdT6A4m
+         l9ArxUbioEDqiWnvQAWbU9UIIH0tupqM0TzNE5CUhtq5PaAla412tBXa2Nnvp4/YSTBZ
+         /MYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717957851; x=1718562651;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9zpbot7qHztX9ltp2BIpBIvx/SpoqMXIs8jofFmr9ho=;
+        b=MEqRWh+RxRnziaWeRfIscp5+Kv0LobORDSlBne0B/BJ6FCnHJI0TjExN1yZEUWwfXM
+         pCp06cdIYTDYtfPEpC/jMUlXUS5ebL5Sw+/sk3oKZbOvErTU6kH4KLYCIM/2MAGEvN4O
+         ZbhwUBObDZ7E1lc2P/Y45ZO/lRiCs/tYtx1l5ZElpTnmP6ERwJrORJAb+arVRWUSN+pH
+         gnIhHtiDqLVX+eLBIh934hcKU66GXb/FIdMopNryNIY0kEjD0tDwQgLkxHrNCiZTi6b2
+         CUOI7bOdA4sbf/eNTgVPFb7vmDCbC1pS4lCsNZ5o1SmyaQwhqQpWiKysUKK39TrQ41D0
+         LBYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWckN07kPieJXbq51gLc+Vt19oq33ggsMozMweaNIWrHtpmucb46gg3RhspFbVHMUfMixvo7A1r8T3S0Qle3rgITWVdnal6
+X-Gm-Message-State: AOJu0Yx6D7NWLRALwyXn/4w0VfqEhjdtvJYg/HJ/sowf6PaCoRT1Wle/
+	HR/GOekLpjFMT1JunMm85exnHQe8WCK8ZgYy+Ooqy58fHDwat4eC5QVE/g==
+X-Google-Smtp-Source: AGHT+IH6woehv0uiSbbq3kkFLtAZorWcW0AIJefHJXF8Cpc3HyUt+4ulg4ioylZZkoL0LoDx3daTOw==
+X-Received: by 2002:a05:6358:989d:b0:19f:4d5a:c674 with SMTP id e5c5f4694b2df-19f4d5aca34mr226428455d.16.1717957850554;
+        Sun, 09 Jun 2024 11:30:50 -0700 (PDT)
+Received: from iZj6chx1xj0e0buvshuecpZ ([47.75.1.235])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e76d693b19sm2248211a12.92.2024.06.09.11.30.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Jun 2024 11:30:50 -0700 (PDT)
+Date: Mon, 10 Jun 2024 02:30:46 +0800
+From: Peng Liu <iwtbavbm@gmail.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: tglx@linutronix.de, gregkh@linuxfoundation.org, maz@kernel.org,
+	vincent.whitchurch@axis.com, iwtbavbm@gmail.com, 158710936@qq.com
+Subject: [PATCH] genirq: Keep handle_nested_irq() from touching desc->threads_active
+Message-ID: <20240609183046.GA14050@iZj6chx1xj0e0buvshuecpZ>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,21 +80,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240609142342.GA11165@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On 06/09, Oleg Nesterov wrote:
->
-> Tejun, could you check the note about css_task_iter_advance() in
-> the changelog?
+handle_nested_irq() is supposed to be running inside the parent thread
+handler context. It per se has no dedicated kernel thread, thus shouldn't
+touch desc->threads_active. The parent kernel thread has already taken
+care of this.
 
-Yes,
+Fixes: e2c12739ccf7 ("genirq: Prevent nested thread vs synchronize_hardirq() deadlock")
+Cc: stable@vger.kernel.org
+Signed-off-by: Peng Liu <iwtbavbm@gmail.com>
+---
 
-> And can't it use thread_group_empty() instead?
+Despite of its correctness, I'm afraid the testing on my only PC can't
+cover the affected code path. So the patch may be totally -UNTESTED-.
 
-Please forget. I'll write another email.
+ kernel/irq/chip.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Oleg.
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index dc94e0bf2c94..85d4f29134e9 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -478,7 +478,6 @@ void handle_nested_irq(unsigned int irq)
+ 	}
+ 
+ 	kstat_incr_irqs_this_cpu(desc);
+-	atomic_inc(&desc->threads_active);
+ 	raw_spin_unlock_irq(&desc->lock);
+ 
+ 	action_ret = IRQ_NONE;
+@@ -487,8 +486,6 @@ void handle_nested_irq(unsigned int irq)
+ 
+ 	if (!irq_settings_no_debug(desc))
+ 		note_interrupt(desc, action_ret);
+-
+-	wake_threads_waitq(desc);
+ }
+ EXPORT_SYMBOL_GPL(handle_nested_irq);
+ 
+-- 
+2.39.2
 
 
