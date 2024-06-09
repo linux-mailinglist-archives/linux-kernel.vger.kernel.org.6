@@ -1,422 +1,125 @@
-Return-Path: <linux-kernel+bounces-207257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A2F9014B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:33:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7099014C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BDE281F09
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 06:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF47281F87
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8819B15E9B;
-	Sun,  9 Jun 2024 06:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353A417C64;
+	Sun,  9 Jun 2024 07:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R32QuMPD"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="R7gKVuSY"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8C33DF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F73F9E4;
+	Sun,  9 Jun 2024 07:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717914796; cv=none; b=aSqoF4VaQ32Hx2jULI8u/tv8rfYlphTJ7mL9jZ3FPlJrrMGpSUQUvgyLMxJ6JAUr4AbMBxNgvgEcjZefzCpVSpaDfMmzqngkmzVnKjcq/z9Jj72+YWzUt0AAyt9r27/TPc9McyzBGJS3GWNjcJ+qVnw40tGn83PBOJjNNCLXJs4=
+	t=1717916628; cv=none; b=sxMCKp1gguXiScSHIeHP9h78iXbxPA1imyDBg+6X6A/Rtm1H+fLNtv0HQArJZOHrRnofb5XiGzKycyapXa+j5BWtszVqsPbLQ4TL6OQWDtgijmstpQZxP1Vu3RpFL0fvEeTMTS7Gi21pKfJN5FMbT3AQq4PGtj7HLiTVq5SJmDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717914796; c=relaxed/simple;
-	bh=bgpu+NWqruygNIi7SU+Yaw/rrCNt3KQoK7+wJT5wyeI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dRWnPbsq4ISbcTe4yfO+G0PDQyv6BLrMv62QFuZMOv1oXN1KoRV+/xZzCczHdT5QeYS6aodGAcUI9p+3kcKjFIKadkbriMt8TOSII6DUoOfBYDM3AEBIh8yxnlqWGm6Dms9mPOtVbh+fFBR8iTv0LQepJe/iRuK0AAmOjMWvwE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R32QuMPD; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a68c5524086so399937166b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 23:33:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717914793; x=1718519593; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m3pyWKr1SnHv2noO2MQo6XCxuEr+UwBzW9Jv6tqPVfk=;
-        b=R32QuMPD4WFSMzCBSlISAg0WMwSxaFco90B4iZb5nqkR/pSlAG0OuNpLv45X4Tr7Z2
-         kXoMLR3SIGMnXigChxpKCK6+esQvNaOTvLFtU9yEMcpfSRSOEwV64MkQqDZ3rTgG2JIj
-         efdbCncuDxVcxRL3QmF4w+NkjDusx5Hg+B+KDHSqkUfP9ixK98EVTnLedpYXFr3yIRx1
-         j9qB587VlZuQTWR9frmU2RsV05mLSfx/rB185M/RXNIi12fml8S2Umr1f0+CDpN+bQb7
-         /ODcyrh5aMH6suixPNlqHGRapu4HXPpuwY2GsYt1kd62IWpKkTGrsOxbwJP6VqF8l2MY
-         6K/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717914793; x=1718519593;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m3pyWKr1SnHv2noO2MQo6XCxuEr+UwBzW9Jv6tqPVfk=;
-        b=NlXWVogSJeGzNk7b3HeAJoIJJph4s7SBl+r+EXRfUMO16Dopkr3Jgez/voBZ+T3Pma
-         P5qudIz7f0k4cDNPxm8Wo4TM9iSCJdtFuqBkEDlH7tbbbxiFJKpZVZ1h1qE2w+eP6Ozj
-         QVDOC9+PqRKpUJzyQnbE+govtE7zVdulvQSOjpWpQ5tNDVT2Kj9UaJYVrmkEuBpDVTD9
-         6odE/dzXBq297gXemh20G3Gzp1xBaWkFqiOjyiAcFBLBLQndyclK+o7jxxb+HbB1Lj4I
-         1Yw/l3Db1x0Bv13wCY0ewa5FWj4I3PSLAXk8z8rg7Xp5p9Lkf7jgWMmEemozNqf0qYJD
-         MsxA==
-X-Gm-Message-State: AOJu0YxuADUD+M1JgHT7e62shIrzTpf8dK5zcYXh151SNfA2joiTQdPo
-	tu3bho6g+DISjcuIgW3cf7+BcTbJJLKsz/ytpW7jvorBSw04oPToAxtThxZ9RJ58aEHw2i06Qbh
-	LAGEfQtWbLVbAgJcZTFjAmN8wvmVCyEiU
-X-Google-Smtp-Source: AGHT+IHoK6KM0FXr/jUbSQwyJOwLVcUNeIU0vlX9/BK0LS6NliFNrwADYulk2Hp84UbAGmYa+1j3Saj2aD/O2jYOnk0=
-X-Received: by 2002:a17:906:f9d7:b0:a6a:7e39:2a3c with SMTP id
- a640c23a62f3a-a6cdb200fc5mr365344866b.48.1717914792421; Sat, 08 Jun 2024
- 23:33:12 -0700 (PDT)
+	s=arc-20240116; t=1717916628; c=relaxed/simple;
+	bh=G5jo3zUfH0rx0gxNk/gy1V61RaR8N0DTrBTT+oe6hsE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o4gHfTCSFnWMFE8JRNT93NPQCPGvlKX8nubnrCb4OSWSYzV4mhmlEh7Vnks5kKvrmkXpfElLMu8A9a3+xeVgC5YX2nmgVPd9Muhq62hUezYn++70VInsodX/BAeSYz2KjsxAxGjHN4+Qqa5FiDNlPDFnxf2rvm+Em+/jtAm60UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=R7gKVuSY; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id B3663100002;
+	Sun,  9 Jun 2024 10:03:17 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1717916597; bh=AyHJoAgjcoBVULg49ijh2T3fkhZTkVF+LRZzusXaTYg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=R7gKVuSY45ptuCvbTSVZa6l7/tWbVKtXPVjo5UypK0tfPVLP4ueQonMq66NL05izr
+	 QuxrqtH0NaIbqjQ6aX9++TgfkFdCDOm2+H6P2RSY9/S8opTLDxKBF9Ydl90rEsQ9i9
+	 HG4eC/4upQ2zma79PoHeZrnLEHZdPCW4R6nwnlorvjlKjKaCW5ltouaXHadomRPr0k
+	 G+oycShEil/N0bvDWfp7OPzEjS34OfztaV5/YPG333O7WqJQ9AsGT3nJPgAbNxtC83
+	 qtonRXOEVgX6Vr4UPSkCS+adWrHZ4iun8SYufkEXKmJ1zIsG6mDFcOJs5W6ONLe7Dd
+	 LbLj5Ko10Vycg==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Sun,  9 Jun 2024 10:02:15 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
+ 10:01:54 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Edwin Peer <edwin.peer@broadcom.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Chan
+	<michael.chan@broadcom.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Wojciech
+ Drewek <wojciech.drewek@intel.com>
+Subject: [PATCH net v2] bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send()
+Date: Sun, 9 Jun 2024 10:01:29 +0300
+Message-ID: <20240609070129.12364-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sam Sun <samsun1006219@gmail.com>
-Date: Sun, 9 Jun 2024 14:33:01 +0800
-Message-ID: <CAEkJfYNzfW1vG=ZTMdz_Weoo=RXY1NDunbxnDaLyj8R4kEoE_w@mail.gmail.com>
-Subject: [Linux kernel bug] WARNING in static_key_slow_inc_cpuslocked
-To: linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: syzkaller-bugs@googlegroups.com, peterz@infradead.org, jpoimboe@kernel.org, 
-	jbaron@akamai.com, rostedt@goodmis.org, ardb@kernel.org, tglx@linutronix.de, 
-	mingo@redhat.com, Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	xrivendell7@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185814 [Jun 08 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/09 02:52:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/09 04:46:00 #25519876
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Dear developers and maintainers,
+In case of token is released due to token->state == BNXT_HWRM_DEFERRED,
+released token (set to NULL) is used in log messages. This issue is
+expected to be prevented by HWRM_ERR_CODE_PF_UNAVAILABLE error code. But
+this error code is returned by recent firmware. So some firmware may not
+return it. This may lead to NULL pointer dereference.
+Adjust this issue by adding token pointer check.
 
-We encountered a kernel bug while using our modified
-syzkaller. It was tested against the latest upstream kernel.
-Kernel crash log is listed below.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-```
-[   82.310798][ T8020] ------------[ cut here ]------------
-[   82.311236][ T8020] kernel BUG at arch/x86/kernel/jump_label.c:73!
-[   82.311761][ T8020] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-[   82.312331][ T8020] CPU: 0 PID: 8020 Comm: static_key_slow Not
-tainted 6.10.0-rc2-00366-g771ed66105de 3
-[   82.313044][ T8020] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.13.0-1ubuntu1.1 04/04
-[   82.313778][ T8020] RIP: 0010:__jump_label_patch+0x456/0x480
-[   82.314223][ T8020] Code: e8 af a1 5d 00 48 c7 c7 40 01 86 8b 48 8b
-0c 24 48 89 ce 48 89 ca 4d 89 e8 4f
-[   82.315745][ T8020] RSP: 0018:ffffc9000f9cf980 EFLAGS: 00010292
-[   82.316204][ T8020] RAX: 000000000000008b RBX: 0000000000000085
-RCX: 218564eba7c06800
-[   82.316813][ T8020] RDX: 0000000000000000 RSI: 0000000080000000
-RDI: 0000000000000000
-[   82.317396][ T8020] RBP: ffffc9000f9cfac0 R08: ffffffff817176dc
-R09: 1ffff92001f39ed0
-[   82.317987][ T8020] R10: dffffc0000000000 R11: fffff52001f39ed1
-R12: 0000000000000001
-[   82.318548][ T8020] R13: ffffffff8b862901 R14: ffffffff90fbe8c0
-R15: ffffffff8b862901
-[   82.319116][ T8020] FS:  00007f04610bc540(0000)
-GS:ffff88802c800000(0000) knlGS:0000000000000000
-[   82.319808][ T8020] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   82.320308][ T8020] CR2: 00007f0460fd9650 CR3: 000000004a16a000
-CR4: 0000000000750ef0
-[   82.320883][ T8020] DR0: 0000000000000000 DR1: 0000000000000000
-DR2: 0000000000000000
-[   82.321460][ T8020] DR3: 0000000000000000 DR6: 00000000fffe0ff0
-DR7: 0000000000000400
-[   82.322004][ T8020] PKRU: 55555554
-[   82.322269][ T8020] Call Trace:
-[   82.322515][ T8020]  <TASK>
-[   82.322729][ T8020]  ? __die_body+0x88/0xe0
-[   82.323043][ T8020]  ? die+0xcf/0x110
-[   82.323322][ T8020]  ? do_trap+0x155/0x3a0
-[   82.323625][ T8020]  ? __jump_label_patch+0x456/0x480
-[   82.324009][ T8020]  ? do_error_trap+0x1dc/0x2a0
-[   82.324371][ T8020]  ? __jump_label_patch+0x456/0x480
-[   82.324774][ T8020]  ? do_int3+0x50/0x50
-[   82.325088][ T8020]  ? handle_invalid_op+0x34/0x40
-[   82.325445][ T8020]  ? __jump_label_patch+0x456/0x480
-[   82.325815][ T8020]  ? exc_invalid_op+0x34/0x50
-[   82.326156][ T8020]  ? asm_exc_invalid_op+0x1a/0x20
-[   82.326533][ T8020]  ? __wake_up_klogd+0xcc/0x100
-[   82.326879][ T8020]  ? __jump_label_patch+0x456/0x480
-[   82.327249][ T8020]  ? cr4_update_pce+0xf/0x80
-[   82.327601][ T8020]  ? arch_jump_label_transform_queue+0xf0/0xf0
-[   82.328047][ T8020]  ? cr4_update_pce+0xf/0x80
-[   82.328380][ T8020]  ? cr4_update_pce+0x1e/0x80
-[   82.328717][ T8020]  ? cr4_update_pce+0x11/0x80
-[   82.329052][ T8020]  ? read_lock_is_recursive+0x20/0x20
-[   82.329466][ T8020]  ? __static_key_slow_dec_cpuslocked+0xb0/0x140
-[   82.329966][ T8020]  ? text_poke_queue+0x46/0x180
-[   82.330329][ T8020]  arch_jump_label_transform_queue+0x63/0xf0
-[   82.330742][ T8020]  __jump_label_update+0x18b/0x3b0
-[   82.331101][ T8020]  __static_key_slow_dec_cpuslocked+0xe9/0x140
-[   82.331519][ T8020]  static_key_slow_dec+0x50/0xa0
-[   82.331873][ T8020]  set_attr_rdpmc+0x193/0x270
-[   82.332179][ T8020]  ? get_attr_rdpmc+0x30/0x30
-[   82.332511][ T8020]  ? sysfs_kf_write+0x18d/0x2b0
-[   82.332832][ T8020]  ? sysfs_kf_read+0x370/0x370
-[   82.333159][ T8020]  kernfs_fop_write_iter+0x3ab/0x500
-[   82.333531][ T8020]  vfs_write+0xa8b/0xd00
-[   82.333812][ T8020]  ? kernfs_fop_read_iter+0x640/0x640
-[   82.334234][ T8020]  ? kernel_write+0x330/0x330
-[   82.334598][ T8020]  ? do_sys_openat2+0x16b/0x1c0
-[   82.334949][ T8020]  ? do_sys_open+0x230/0x230
-[   82.335310][ T8020]  ? __up_read+0x2bb/0x6a0
-[   82.335633][ T8020]  ksys_write+0x17b/0x2a0
-[   82.335966][ T8020]  ? __ia32_sys_read+0x90/0x90
-[   82.336333][ T8020]  ? do_syscall_64+0xa5/0x230
-[   82.336656][ T8020]  do_syscall_64+0xe2/0x230
-[   82.336983][ T8020]  ? clear_bhb_loop+0x25/0x80
-[   82.337289][ T8020]  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-[   82.337692][ T8020] RIP: 0033:0x7f0460fd2473
-[   82.337987][ T8020] Code: 8b 15 21 2a 0e 00 f7 d8 64 89 02 48 c7 c0
-ff ff ff ff eb b7 0f 1f 00 64 8b 08
-[   82.339230][ T8020] RSP: 002b:00007ffc46fb3058 EFLAGS: 00000246
-ORIG_RAX: 0000000000000001
-[   82.339804][ T8020] RAX: ffffffffffffffda RBX: 0000000000000000
-RCX: 00007f0460fd2473
-[   82.340331][ T8020] RDX: 0000000000000002 RSI: 00007ffc46fb3090
-RDI: 0000000000000004
-[   82.340852][ T8020] RBP: 00007ffc46fb3cb0 R08: 000000000000000f
-R09: 0072736d2f232f75
-[   82.341353][ T8020] R10: 0000000000000000 R11: 0000000000000246
-R12: 00005615dc1dd1c0
-[   82.341853][ T8020] R13: 0000000000000000 R14: 0000000000000000
-R15: 0000000000000000
-[   82.342364][ T8020]  </TASK>
-[   82.342554][ T8020] Modules linked in:
-[   82.342875][ T8020] ---[ end trace 0000000000000000 ]---
-[   82.343230][ T8020] RIP: 0010:__jump_label_patch+0x456/0x480
-[   82.343668][ T8020] Code: e8 af a1 5d 00 48 c7 c7 40 01 86 8b 48 8b
-0c 24 48 89 ce 48 89 ca 4d 89 e8 4f
-[   82.345750][ T8020] RSP: 0018:ffffc9000f9cf980 EFLAGS: 00010292
-[   82.346161][ T8020] RAX: 000000000000008b RBX: 0000000000000085
-RCX: 218564eba7c06800
-[   82.346657][ T8020] RDX: 0000000000000000 RSI: 0000000080000000
-RDI: 0000000000000000
-[   82.347391][ T8020] RBP: ffffc9000f9cfac0 R08: ffffffff817176dc
-R09: 1ffff92001f39ed0
-[   82.347901][ T8020] R10: dffffc0000000000 R11: fffff52001f39ed1
-R12: 0000000000000001
-[   82.348652][ T8020] R13: ffffffff8b862901 R14: ffffffff90fbe8c0
-R15: ffffffff8b862901
-[   82.349173][ T8020] FS:  00007f04610bc540(0000)
-GS:ffff88802c800000(0000) knlGS:0000000000000000
-[   82.349784][ T8020] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   82.350196][ T8020] CR2: 00007f96d80450b8 CR3: 000000004a16a000
-CR4: 0000000000750ef0
-[   82.350717][ T8020] DR0: 0000000000000000 DR1: 0000000000000000
-DR2: 0000000000000000
-[   82.351243][ T8020] DR3: 0000000000000000 DR6: 00000000fffe0ff0
-DR7: 0000000000000400
-[   82.351769][ T8020] PKRU: 55555554
-[   82.352011][ T8020] Kernel panic - not syncing: Fatal exception
-[   82.352665][ T8020] Kernel Offset: disabled
-[   82.352988][ T8020] Rebooting in 86400 seconds..
-```
+Fixes: 8fa4219dba8e ("bnxt_en: add dynamic debug support for HWRM messages")
+Suggested-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+---
+v1->v2: Preserve the error message by replacing 'token' with 'ctx->req->seq_id' as suggested by Michael.
+ As the patch didn't change significantly, add Wojciech's Reviewed-by tag from the previous version.
 
-We have a C repro which can trigger this bug in latest upstream kernel
-commit, listed below:
+ drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-```
-#define _GNU_SOURCE
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
+index 1df3d56cc4b5..67d0ba8869f4 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
+@@ -680,7 +680,7 @@ static int __hwrm_send(struct bnxt *bp, struct bnxt_hwrm_ctx *ctx)
+ 			    req_type);
+ 	else if (rc && rc != HWRM_ERR_CODE_PF_UNAVAILABLE)
+ 		hwrm_err(bp, ctx, "hwrm req_type 0x%x seq id 0x%x error 0x%x\n",
+-			 req_type, token->seq_id, rc);
++			req_type, le16_to_cpu(ctx->req->seq_id), rc);
+ 	rc = __hwrm_to_stderr(rc);
+ exit:
+ 	if (token)
+-- 
+2.30.2
 
-#include <dirent.h>
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/prctl.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <unistd.h>
-
-static unsigned long long procid;
-
-static void sleep_ms(uint64_t ms)
-{
-  usleep(ms * 1000);
-}
-
-static uint64_t current_time_ms(void)
-{
-  struct timespec ts;
-  if (clock_gettime(CLOCK_MONOTONIC, &ts))
-    exit(1);
-  return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
-
-static bool write_file(const char* file, const char* what, ...)
-{
-  char buf[1024];
-  va_list args;
-  va_start(args, what);
-  vsnprintf(buf, sizeof(buf), what, args);
-  va_end(args);
-  buf[sizeof(buf) - 1] = 0;
-  int len = strlen(buf);
-  int fd = open(file, O_WRONLY | O_CLOEXEC);
-  if (fd == -1)
-    return false;
-  if (write(fd, buf, len) != len) {
-    int err = errno;
-    close(fd);
-    errno = err;
-    return false;
-  }
-  close(fd);
-  return true;
-}
-
-static long syz_mod_dev(volatile long a0, volatile long a1, volatile long a2,
-                        volatile long a3, volatile long a4)
-{
-  int fd, sysfd;
-  char buf[1024], sysbuf[1024], input[1024];
-  char* hash;
-  char dev_num;
-  dev_num = 0;
-  strncpy(buf, (char*)a0, sizeof(buf) - 1);
-  buf[sizeof(buf) - 1] = 0;
-  while ((hash = strchr(buf, '#'))) {
-    *hash = '0' + (char)(a1 % 10);
-    a1 /= 10;
-    if (dev_num == 0)
-      dev_num = *hash;
-  }
-  fd = open(buf, a2, 0);
-  strncpy(sysbuf, (char*)a3, sizeof(sysbuf) - 1);
-  sysbuf[sizeof(sysbuf) - 1] = 0;
-  if ((hash = strchr(sysbuf, '#'))) {
-    *hash = dev_num;
-    while ((hash = strchr(sysbuf, '#'))) {
-      *hash = '0' + (char)(a1 % 10);
-      a1 /= 10;
-    }
-  }
-  sysfd = open(sysbuf, O_RDWR, 0);
-  strncpy(input, (char*)a4, sizeof(input) - 1);
-  input[sizeof(input) - 1] = 0;
-  hash = strchr(input, '\0');
-  sysfd = write(sysfd, input, hash - input + 1);
-  return fd;
-}
-
-static void kill_and_wait(int pid, int* status)
-{
-  kill(-pid, SIGKILL);
-  kill(pid, SIGKILL);
-  for (int i = 0; i < 100; i++) {
-    if (waitpid(-1, status, WNOHANG | __WALL) == pid)
-      return;
-    usleep(1000);
-  }
-  DIR* dir = opendir("/sys/fs/fuse/connections");
-  if (dir) {
-    for (;;) {
-      struct dirent* ent = readdir(dir);
-      if (!ent)
-        break;
-      if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-        continue;
-      char abort[300];
-      snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
-               ent->d_name);
-      int fd = open(abort, O_WRONLY);
-      if (fd == -1) {
-        continue;
-      }
-      if (write(fd, abort, 1) < 0) {
-      }
-      close(fd);
-    }
-    closedir(dir);
-  } else {
-  }
-  while (waitpid(-1, status, __WALL) != pid) {
-  }
-}
-
-static void setup_test()
-{
-  prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
-  setpgrp();
-  write_file("/proc/self/oom_score_adj", "1000");
-}
-
-static void execute_one(void);
-
-#define WAIT_FLAGS __WALL
-
-static void loop(void)
-{
-  int iter = 0;
-  for (;; iter++) {
-    int pid = fork();
-    if (pid < 0)
-      exit(1);
-    if (pid == 0) {
-      setup_test();
-      execute_one();
-      exit(0);
-    }
-    int status = 0;
-    uint64_t start = current_time_ms();
-    for (;;) {
-      if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
-        break;
-      sleep_ms(1);
-      if (current_time_ms() - start < 5000)
-        continue;
-      kill_and_wait(pid, &status);
-      break;
-    }
-  }
-}
-
-void execute_one(void)
-{
-  memcpy((void*)0x20000000, "/dev/cpu/#/msr\000", 15);
-  memcpy((void*)0x200000c0, "/sys/devices/cpu/rdpmc\000", 23);
-  memcpy((void*)0x20000100, "0\000", 2);
-  syz_mod_dev(
-      /*dev=*/0x20000000, /*id=*/0x8001,
-      /*flags=O_TRUNC|O_PATH|O_NONBLOCK|O_NOATIME|O_EXCL|O_DIRECTORY|0x442*/
-      0x250ec2, /*file=*/0x200000c0, /*buf=*/0x20000100);
-  memcpy((void*)0x20000080, "/dev/cpu/#/msr\000", 15);
-  memcpy((void*)0x20000140, "/sys/devices/cpu/rdpmc\000", 23);
-  memcpy((void*)0x20000180, "1\000", 2);
-  syz_mod_dev(/*dev=*/0x20000080, /*id=*/0,
-              /*flags=__O_TMPFILE|O_APPEND*/ 0x400400, /*file=*/0x20000140,
-              /*buf=*/0x20000180);
-}
-int main(void)
-{
-  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
-          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  for (procid = 0; procid < 4; procid++) {
-    if (fork() == 0) {
-      loop();
-    }
-  }
-  sleep(1000000);
-  return 0;
-}
-```
-
-If you have any questions, please contact us.
-
-Reported by Yue Sun <samsun1006219@gmail.com>
-Reported by xingwei lee <xrivendell7@gmail.com>
-
-Best Regards,
-Yue
 
