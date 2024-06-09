@@ -1,107 +1,139 @@
-Return-Path: <linux-kernel+bounces-207506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E0190182A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F3B901830
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D881C20CFB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2431F21027
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602B4487BC;
-	Sun,  9 Jun 2024 20:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E6B4D9FB;
+	Sun,  9 Jun 2024 20:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPcIuEM4"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lhLw7vfo"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F69C17753
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 20:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3087117BB5
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 20:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717966059; cv=none; b=YLb9sJsBdZGn+Lx79FJpRWwy32yqphLksdmfvUomkNGjwhu7n29+RfL40m6EXT8AmRL0JVyTFDTzxblT4EW3VEgPbE9sHhsCydubQ+lwfSIiZ8y4Aicqg8i1tVReKbGAClR3ewRq17Shg2lbS3qcrEDWotK+4KxHgP3WVWWLIH8=
+	t=1717966747; cv=none; b=YNhHdYN1h9dd+y6jPfRo76nCrqs+OTW6Wpc1vdqiDJRxpfENUL8bkjaJut/LQE/t8F1sGxGG2zPYgH1EzLsDgzB2DDznnWZNkYbH6HKcRqKHzStJhCAodxKBeqJIozrntQI+5yn3xiJ2vtSAMANjjZeFOb4tDxqOb2LX7/hSNdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717966059; c=relaxed/simple;
-	bh=LZPwyVXX6F+Syx9TFtvOV4xYL54mKUOOQam9Dpy50nI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nL4ek2XcFTxEh0RBOyGV/pc8j5V8w+kTkTAQvjyKBEBlDce14i/UGKokb2V+M8tOZLz3LWCcbFcmFDOoSyW1q+XegM/XzTTMaHCECeVSDXyUiLrSJdw4vqaQPBQZYnTQ+KJR3IZ4EtpiCV2szt3z5NTT+xNIB44BsQBqP8J8NbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPcIuEM4; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b06217d421so610716d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 13:47:38 -0700 (PDT)
+	s=arc-20240116; t=1717966747; c=relaxed/simple;
+	bh=7j1v+9e9Niga/uAleJmKC8ouLVwD561QrPfRenVGGhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDn1OKIjbSfwuxU7Ft7pa03zxI4mB7+ukiW8vqe5cBEeqnbNujWRCeRCACaN3nS/1sIBYiw05MbLDeH/ebzX0b0kar/mSLjJNyloT5qDOsvjrhER7a82Li7ANG6t9ggqc7L0uIZI+qTSsyWo5maRXvFWGUjeTrunjwlSyVJA9Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lhLw7vfo; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42172ed3487so15623365e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 13:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717966057; x=1718570857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LZPwyVXX6F+Syx9TFtvOV4xYL54mKUOOQam9Dpy50nI=;
-        b=EPcIuEM4wwp8Kqt+eiHXeiny26PM2PRmvQ+rMuofdWXlcb+JgdmlJwg8J0Hl77xL6e
-         UE940pCt0gVMBFt/bUV82JBR1ikn//jnP6Ys1BvZu/8w1h3QdQvypLPjrBahP5CaOp1g
-         llIq4SnfQMliW6VO42TmvvJHhHelCW2t1SCGz7Tdf3It3P06uUJiMrOZUmBk86jOfIex
-         t02CRpZ0xXUYJjqSQ7WA/2vq9TPuLt6AZfEgKzwno+kO4LsV3Yct+fLWtglTpAsQA4uC
-         7RIQO2+WylPFxVwOSVEFwPaKqRctMd+AwoOjN5LwKD06ECK6Y6/UN3YKTIY5O1I4VPva
-         GiLA==
+        d=linaro.org; s=google; t=1717966744; x=1718571544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S/4EBuqn92sFzanqVMeYwTClL1PJfXX0U+C7af6lxxE=;
+        b=lhLw7vfofOYQ39xo6a6jGU0S+Bogg3cUW5Fwc0PfadUxIqtY1KDpVkigPq+KPEu9YS
+         mF3T7uufRS2qyE4drIW68dG2ZzevQZ+5Hr3SYvOKBrYjuuRbFbKgnWLuGnSLLKreCa4X
+         w+3b1J63D1DihjQHDPC/XzDCjonbie43adSfSCbNRqswg61I2350EkRaguGobu7+S0T7
+         2N3k4u8J75vZLZiIRSiFymXA0cSMfhnzCo95CYYwhUCh9yO9owChA8sUvoqKEhF/7TdX
+         UiWTIBNYlQ1bXLu6+RmRxZn7SR0o9+YIqER9vxx75czvaRAyd9UqplkSue2uYazeU7/R
+         n37A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717966057; x=1718570857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LZPwyVXX6F+Syx9TFtvOV4xYL54mKUOOQam9Dpy50nI=;
-        b=hTlNxRQKfyzmttJ95U4eg24wWFYX6rUsLJqMGDp02DB2eAXgLUFXhJu/q9OeBMnqXg
-         jyT6L7D23Ui28dvVWIYK0aqGL+5iL9NS0l11xtuqSg8nXjVHWM17Y6j/80lQUya/oPuI
-         YAXeBz5m4C5f/laIYMvxow179yM7Bmt8n5a/WR0h20bCtFSMz1Oyt1tir9ZvmsN0L2Ce
-         1JjFe9bD5O+63EKd6HeVQPPzbT1xqhrcYLzvBn5Tza4TCQkB+QrA/VVd+3VK/G+8xL23
-         Nn3BDcp7PvaOYJuFR2kDRfZRTB3uSKyFN7Hwi5yD3V+8c39dn02AaJsKRVDpvjgAd3aD
-         2Iwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsHH1Y0U9l/0xgjZcG7BaaZUxvhjqNROQDEnqOFcPgy/lqEHhYM4uQoco55B606ZxcFAd3JAvSik3AXxBfykykhNdG0/v1TI9+ccc7
-X-Gm-Message-State: AOJu0YyvxO9/8NscXYDYoaofnquaIr3fztqwIvHqbKrgurbuJZHRs1aA
-	yaWe93/CvW9Ofh6rL6BZTiOCeNK6vAygwcl5kIHo8Iahs5XVSGa2chZPmxS/BVepvMP7YDI0t2I
-	XjLSKTJTD9KKgJxjBWQ1kzgy1JHc=
-X-Google-Smtp-Source: AGHT+IHsz/3g0QZS8VJvYn/UjZPiE0Rj8KOCfXA4O9U/MnypRs+hJxZsoJ7gLOMcn3hQd0DkQzgp+0SdU4ITeomMHqU=
-X-Received: by 2002:a05:6214:2263:b0:6a0:a4eb:bcdc with SMTP id
- 6a1803df08f44-6b059cfc759mr87471406d6.3.1717966057153; Sun, 09 Jun 2024
- 13:47:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717966744; x=1718571544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S/4EBuqn92sFzanqVMeYwTClL1PJfXX0U+C7af6lxxE=;
+        b=VC04ETWRjEg7Rs50iOgeSg0+2RsU5qpg3O3xqunEfpULpXiIVljWGui5h9fgjV/tb5
+         keypVD2FjdlBpiF6E0HJzMfOd2QRIhm+Pdkfqx5srpnNG3AgXOQsl5RM/J1RIcf6cS2Z
+         77jP7iQo+S+o+hWZpw89tPO1VpfajXcaitmHXqu3BcI373TJ5cehFWL4oJEp59tSLPK7
+         vWKCT1XzEmKSdu8pY64+V0VGNK4fJek7jp6Vx+HxCtS12BRfuY78AHtFnO3Q0gKCf5Sp
+         +/7BtJZOYyyGz+Tde1bEGcKHcCjkxCFBFib1NC6932g9xptf/goKfbyBGw0XWzpAUAYb
+         C9OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWocuRFsvvK5RzGU5569zbwxcJP4aw9WUhH4htHWcpSVPQsUo93PWbyUUsQM86UDTjZgleR19FEqF7u89EX00UV1hboVozLNBTAEesc
+X-Gm-Message-State: AOJu0YyizzUojU5ypcImpHEFsrj9IVttHU7rPWDV1RwHTYckXoalirLu
+	ds0abbXzGzyU6cPQ+N7fjUvetpTxlR1chhRB14w04ea9XyyLb5GDW1RcwmDNkKU=
+X-Google-Smtp-Source: AGHT+IEEO/PHTW8AqU1APaxSs65MvnQM7xM/9DOK9VOy1PLDH9qtbNk2AlRHMSQ2/X/MVbgwKv4E1g==
+X-Received: by 2002:a05:600c:35c8:b0:421:819c:5d84 with SMTP id 5b1f17b1804b1-421819c5f0bmr19950585e9.10.1717966744343;
+        Sun, 09 Jun 2024 13:59:04 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d6985csm9336089f8f.60.2024.06.09.13.59.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 13:59:03 -0700 (PDT)
+Date: Sun, 9 Jun 2024 23:59:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Allen Chen <allen.chen@ite.com.tw>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Hermes Wu <hermes.wu@ite.com.tw>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: it6505: Fix potential NULL dereference
+Message-ID: <85dd2c45-df99-4270-abeb-a3633afb9d6a@moroto.mountain>
+References: <5e6e8882-478a-46c0-9119-b643d524cc0c@moroto.mountain>
+ <vk76z5x3al6rrzb3n2misu6br4fbmc4kj3agyo4ry5fz7ajsm6@dfpq5yzuolvm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsN6j9GMTx+f_pYShOpLKL5b6kmJ3w-FeYHHw9nUWYjyHg@mail.gmail.com>
- <f3c2fafc-dd31-40a4-8585-4a5dfd26e68b@amd.com> <CABXGCsPDwDKpYc+jKCqDCGoQQmSkgEFEHG98fA-9KmKHohsTQA@mail.gmail.com>
-In-Reply-To: <CABXGCsPDwDKpYc+jKCqDCGoQQmSkgEFEHG98fA-9KmKHohsTQA@mail.gmail.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Mon, 10 Jun 2024 01:47:26 +0500
-Message-ID: <CABXGCsNYr=yeN1xWFeEhouy8LNWXBEs-2htM6HD82roDHwxR2g@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - commit a68c7eaa7a8f cause *ERROR*
- Trying to clear memory with ring turned off in amdgpu_fill_buffer.
-To: "Paneer Selvam, Arunpravin" <arunpravin.paneerselvam@amd.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	felix.kuehling@amd.com, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vk76z5x3al6rrzb3n2misu6br4fbmc4kj3agyo4ry5fz7ajsm6@dfpq5yzuolvm>
 
-On Fri, May 17, 2024 at 8:59=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
->
-> Thanks, Arun.
-> With the patch this error did not appear anymore.
-> Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> on 7900XTX har=
-dware.
->
+On Sun, Jun 09, 2024 at 10:38:39PM +0300, Dmitry Baryshkov wrote:
+> On Sat, Jun 08, 2024 at 05:21:08PM +0300, Dan Carpenter wrote:
+> > Smatch complains correctly that the NULL checking isn't consistent:
+> > 
+> >     drivers/gpu/drm/bridge/ite-it6505.c:2583 it6505_poweron()
+> >     error: we previously assumed 'pdata->pwr18' could be null
+> >     (see line 2569)
+> > 
+> > Add a NULL check to prevent a NULL dereference on the error path.
+> > 
+> > Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+> > index 3f68c82888c2..4f01fadaec0f 100644
+> > --- a/drivers/gpu/drm/bridge/ite-it6505.c
+> > +++ b/drivers/gpu/drm/bridge/ite-it6505.c
+> > @@ -2580,7 +2580,8 @@ static int it6505_poweron(struct it6505 *it6505)
+> >  		usleep_range(1000, 2000);
+> >  		err = regulator_enable(pdata->ovdd);
+> >  		if (err) {
+> > -			regulator_disable(pdata->pwr18);
+> > +			if (pdata->pwr18)
+> > +				regulator_disable(pdata->pwr18);
+> 
+> Wait... I wat too quick to R-B it. The driver uses devm_regulator_get(),
+> which always returns non-NULL result. So all `if (pdata->pwr18)` and
+> `if (pdata->ovdd)` checks in the driver are useless. Could you please
+> send a patch, removing them?
+> 
 
-I see that this patch do the same but more correctly:
-https://gitlab.freedesktop.org/mesa/mesa/uploads/034bc23b94c373e5e903e7ce00=
-0aab28/v2-0001-drm-amdgpu-Fix-the-BO-release-clear-memory-warnin.patch
+Sure.  Will do.
 
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+regards,
+dan carpenter
 
---=20
-Best Regards,
-Mike Gavrilov.
 
