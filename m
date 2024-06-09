@@ -1,136 +1,317 @@
-Return-Path: <linux-kernel+bounces-207397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00F5901680
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:42:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4088901683
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E63AB21039
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6664E1F21431
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67546435;
-	Sun,  9 Jun 2024 15:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA6F46521;
+	Sun,  9 Jun 2024 15:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3jXnIak"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="B681KNkz";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YgPywMVQ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B742A91;
-	Sun,  9 Jun 2024 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717947740; cv=none; b=DNJFJovhA0UR5wx43miEDq0CqSCEm/NuvzbTMZaQmkmxs1Cvtkn4JFLfGMbHfBYUclm7wccCU6gk7X06TGsJK5CXMs1hhVotXfroxhbtZS1b5Hqhwd1qdNfRSmc2VRvQV+7lKRZM5RyFN2IhE+8IeuNkWTNUEFrDEUHlpBw0jUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717947740; c=relaxed/simple;
-	bh=jjZOAJDH3CXwj+75keK9jfIEu+0mkRJEuEOYmcBRoHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTuC50ETLmICE0l+i/vRxt5Tjbx3uXqv8AB48NV4jqeV267FoBFKauD1LevkMRFr9nWIHIrslkgPDr5kSscxL5OHdBWVg52wSyz8PbKuw4qQ3U4wdnBSO86Bn+iXQFHn8cF6MwyzWY47KQAX8a87k7qKyXvroQremfOPWBP5pcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3jXnIak; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717947738; x=1749483738;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jjZOAJDH3CXwj+75keK9jfIEu+0mkRJEuEOYmcBRoHQ=;
-  b=F3jXnIakmWKSTGAWlq/CFng+zDqs96WBEq7Hot4zdYyrMFjEO1TmCeAq
-   JXB72Xcf1ETYe1K37Q+3h+E5V3gxnoMu8Kj0FvwwPACtnCFdXp6uDKXOU
-   TxJ6xGgjtL/0qvddnJWuQ0qJDv7F7N7tWHLQo5uy1jYhIIl2jHMPbOJZB
-   U2gO4GLd99PA/dlSGOO5HETSKaxHv8jcvy9z4anvjqjtU3XwnYlhFv8YG
-   RiXgRe6N5LFMpmjpC511aT1HSN9LO1K69zR1jgmXLLhCI0oVBlGa53L/d
-   PEzpZkPm1SN6K4wis0eU+GdGOsDggtjz6z+yJhAbY3rbpZAQ+WYdR/UFt
-   g==;
-X-CSE-ConnectionGUID: HpLoFEvASyqNtxBdr5thPA==
-X-CSE-MsgGUID: 3v5+Lr9cRKa8bwYsv5BsKg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="32151653"
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="32151653"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 08:42:17 -0700
-X-CSE-ConnectionGUID: schCzkAoRBSIby+nbUxnhQ==
-X-CSE-MsgGUID: li9A0onhT+eAevH2f6SmgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="43256567"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Jun 2024 08:42:14 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGKgO-0001MA-1E;
-	Sun, 09 Jun 2024 15:42:12 +0000
-Date: Sun, 9 Jun 2024 23:41:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Viacheslav Bocharov <adeep@lexina.in>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] arm64: dts: meson-axg: add support for JetHome
- JetHub D2 (j200)
-Message-ID: <202406092342.w4H7PE64-lkp@intel.com>
-References: <20240607145148.2246990-3-adeep@lexina.in>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA7742A91;
+	Sun,  9 Jun 2024 15:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717947837; cv=fail; b=d6ti5Ce2Sa80EhwkZRzGyvqUMxAuktctJ7LpXijvSXz5HKoLxpeSNp/tiN5gp9PkbdzuMN2kpptNEW9WDNEunXRss3wYmxeaCCy3kCMHpDT7O5wxzA+WeLeDghWKCHowBKez6sJXbjbLbvzzJZiEqpTm8O19u10goRpinSVKl4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717947837; c=relaxed/simple;
+	bh=WuYCImMN8feQNo9hGEMgv0QiDEBxoU/oM2l2mQJ4UPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=abNtisNxpssAsEB04mLYcbrrNVKuZPFwSatIQ73X1n9Alu+n8Or30szyUMGYzCoKRPy+m+l8TqnnjtFzHD6AybLKxecd65wK/BzDSu9VXFgtPxHtMb4GFPc0rODJoPFbxv9e8qKJM5fZUv5GFS0fe8d8ravpiUePahHXIHI5HqA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=B681KNkz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YgPywMVQ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459EkuaR011740;
+	Sun, 9 Jun 2024 15:43:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=q1wAm1xs9VgVI0d
+	bRbvHjW5Xwntp/Fv3oDwB+FZ0yeQ=; b=B681KNkz1a42ATjTUNj3QlQpvn9UpJI
+	NKuUMEF6BXzyn2H06621aCvKkwPXuGo9APBz37CSMnasY0EL8Gv73vykIWqoSZUd
+	4zfeVp1Fz1AEoDCMQgKk6fw185C98rZfI66+PTxvXyDd7IYWAR+V6o2uYvSZAGum
+	N4PyfcreSprB/1XorBwS0LV9SybvC3m18iJlcUr29h5BX2h+B5Q3jv1/cr6YO1VK
+	4iaLwsc9X8Hh4ESxiL2oJAL2ffQEp9HzEstRM6g1ftJ5g+3FmVYNGrdPEPtSalRL
+	Jmn8kWQcbaHHeI2MRSY93YSD0Si2b3bHbT3cS54OsmqQ+EJdlq7whwg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh1919ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 09 Jun 2024 15:43:42 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 459CRXXr036656;
+	Sun, 9 Jun 2024 15:43:41 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncdtu5rs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 09 Jun 2024 15:43:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UuUsWZNRk/0XK3KvyxiBVUHYPjQxRUxJS7sCb8Wky19MYRrl6EkoJiHimDKkdUrkudQ2U4jHZx6gwDkiXySWCb5KYt30T5D8RWq0QDCIGN1+xAnLYxwn6QCJtluLUBZlaj9FDwIO/jGX9uycQ93hCVidQHuXZbrtA5yr60pD8AS5kB5asipDz8Fi3Cqrv4SKq6KXgvLQMSKIaf3NyP4pV7Jr8Y8qMXOzz5ONyfsJApzW3qXDurzC6jIM9lJxpu7+0VwAJYG2Y2iMVIIiVw4MAtx/fK2/Viua1G1sgDYlli3eRGE9VqYc3Ci5r8Jek1rzl5lpv1xdEXMMI6LOdpC2Pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q1wAm1xs9VgVI0dbRbvHjW5Xwntp/Fv3oDwB+FZ0yeQ=;
+ b=iGv4C/t/Vd08+rTRkE64KzVGEsMk64qg5VOucerbJWghn3lgYyRrXFIwQ/nETxpv1U7NZJ+xiaKRQ1+JZ3V4ha02J4XaZwUB+Oc7c3NfbeqkSXsizDOJQ0WT9VUcaAg3y2ilAOWVkkEu/HD7leVdjxk8Qa6AoBC1/MKID2MYLZYh7UxwqJKahA6s6s1fCS8/wNA9b8EsodUqhPbw9o0RSMBPCFeQt4Bw2Zfwa/LcrNkmGUOJ5ezujgQwipxqNUP5IE3N+Kq1IGvyfO3EXLNwn1l2TsIKxknu6YQp/gPg8FKQe3tt/8hDKo5Ghgh6hipt0hqrPhBXIoL0vc2PVPgsoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q1wAm1xs9VgVI0dbRbvHjW5Xwntp/Fv3oDwB+FZ0yeQ=;
+ b=YgPywMVQNv4ShKphtDcsxHAOeZ23kj69l8lp3aAYOUdxWy3eCgZ1/4Bzy6ATHxsVNCBxYNSMUK24zwucp+jPeWuO+ZqIT/UbbyXPXKvAM65ujdBc2jc8gWzilpFSCEgItVzZgjCoaJPTSVY8UlO+IOkEmd9bfV3G5jzyjOfBzbM=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by DM4PR10MB6135.namprd10.prod.outlook.com (2603:10b6:8:b6::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.36; Sun, 9 Jun 2024 15:43:39 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.7633.036; Sun, 9 Jun 2024
+ 15:43:39 +0000
+Date: Sun, 9 Jun 2024 11:43:36 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 08/14] nfsd: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <ZmXNqA/eM+j6gnWj@tissot.1015granger.net>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240609082726.32742-9-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609082726.32742-9-Julia.Lawall@inria.fr>
+X-ClientProxiedBy: CH2PR07CA0046.namprd07.prod.outlook.com
+ (2603:10b6:610:5b::20) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607145148.2246990-3-adeep@lexina.in>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|DM4PR10MB6135:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1714dec-5ece-4dff-63e5-08dc889aeecb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?fk910n2TTXIM9zCUUFpSN/zwOFoidJ3Of3SpH5QWKi6Xb7q9lrDka/VP+NNJ?=
+ =?us-ascii?Q?Anl49AI1He7Ltt0K2I5Ub+xJLXfq4VxMhb+nMfknf6Zo0vMFPF/enxRnnrr6?=
+ =?us-ascii?Q?JVQMn4jYFuIPFhL5G3d0zE2oNKsqiYkIoR3hP1XjwuF/u1/8l5cEK1mwmzXc?=
+ =?us-ascii?Q?2HzOHORjqpHYtT1GwIw8yaw82+/BM1rLARgp18hM58yv6MYsVWr2FGaAZANY?=
+ =?us-ascii?Q?pow7egHNytG4UTowWJ3vbSMBvh5T/0bjc8/ptGcSBpj7l008zqEBX8tKV0ft?=
+ =?us-ascii?Q?IthxrZAj3GvYeJPZ6wsWonrQhqeR33OA9FOUTkYmtVo1/70sUTUD1veL4P0P?=
+ =?us-ascii?Q?b273b5FA2BT+m/MWCfxXKuxTTgkPqdW/GyiFCHJCSlWOP1IToE39CV39hDJe?=
+ =?us-ascii?Q?F8mDtN18HfcVMTEyO9aZn/Tio1+lR7jh4C3FtMj0ix9R9MGly4pz5fUxDA5E?=
+ =?us-ascii?Q?G/7Cy5DmsOiq1Lm8XNwyCH7vXj1AH6T6jYg5SfXbbhog6c8yfZb7Ps5fuEEQ?=
+ =?us-ascii?Q?jefkRFYNH1VxvsHXoNQDUC0xZn8LfNscfvwUEJ7jSlXp1f57w3UViW4prSc7?=
+ =?us-ascii?Q?lVLd6z+cQn8U9uTZhyIHOqiqEPku9G54TxFuu/1DKzfowbgprcAnjKlbMQPf?=
+ =?us-ascii?Q?sPk5onQutoAgRDMF8mU1T98AnmxZ8s3kN9glOQBofCd7YOVrUHB+M1M3Bs36?=
+ =?us-ascii?Q?jnvBDn1v4blO2KICqNd0bv3LMAv4fW3W66H9mBtEMKSUIT3/Uwho+Fw0n+a4?=
+ =?us-ascii?Q?FuJQZjykF0wZdRl7ZGvxCUPaO8UjP3pR50nwxRudUxoREo/O6XdcIzN9bR7U?=
+ =?us-ascii?Q?0wLW5FE3IVu7W6sP1bP71egJV8MlOQ9dZDpTRnrj42YbqO1ZprcDhb9mkZ9e?=
+ =?us-ascii?Q?uuZp4ZNpThsQASWc1fFsafDnyny0OsFu5oSlH+IBPBV9gXJBqFt4S1FjShxA?=
+ =?us-ascii?Q?EuVmiwn0PXNEXdz9uanNvcz5bbVrWDjsO8xty/MYl0q/rM6bkZqYmu4AYEbf?=
+ =?us-ascii?Q?5uNK0uxTBKplgHP6fG5n15/u6gmunoTeakrsmScVpmZU2DatLLH1sIqcw4N9?=
+ =?us-ascii?Q?dt5dX0RNZJ45Tdx/XfstA6H6mdDshwEaOcV35Ug5jjGPpLmaQliVf/uTb9ac?=
+ =?us-ascii?Q?8vxu7lKRWF92jUdN8RWRQw07Ni/pb6sHMwZ9F9JOWOxpR/d49PXggJVmJWlc?=
+ =?us-ascii?Q?yq7zgiJCMl48N1VGsYc4vIZYESXMXVlrgrkCHEwCHep8oLyob93LW69WNR22?=
+ =?us-ascii?Q?qEYUt1/Zxrhax3p5xKpKmEMa+bf8vKGDCZXz0rhaq1U+vstzf5YRSYkRQdH3?=
+ =?us-ascii?Q?WIVrZAPMiWhiN8KDjMHupsTA?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Q8I3ELmMj1n/3fiTYZP10MsMWwp6L9O4ODMAhsTlaKDPAyr4MJgy5CwZ92aJ?=
+ =?us-ascii?Q?5iT8Djv09nui5Jcv/epVFyj09hpXnecejF3TpmmadG+UvZiRTQOuIDnMadZA?=
+ =?us-ascii?Q?l2XOuF9tmp4ycaR6YX1hyt/DbTmMIIn4XBibffHq/BDusg7PfN6BwTkJau79?=
+ =?us-ascii?Q?epakAA8dko0uBSBaVVmL/kXr15vZnqS1HVQXwy06r7BC9SnlxY9QKqmG8UAX?=
+ =?us-ascii?Q?CVKSDnnhtKFfs+yP9vQ6a4hh/9mgjg4kuFPzhhnWjSjPhv6hgpC51MiuxAaD?=
+ =?us-ascii?Q?nO1td4l6MYrr4Agod0QLQeOXmDy2VJKpH4g9L4mjH2QBFK7s5B9EfPNGaA51?=
+ =?us-ascii?Q?TN74qvqHAwAp2Osbcht5jUvxoMsuEuCYEu0XMZbKYgYt1c+Mg3TNgnm80+/b?=
+ =?us-ascii?Q?n5amnZq74fCF5mW7jARJ4/3b8jkh9E0tSTITNEOuwoN0bppHXOXCIxvUBsEC?=
+ =?us-ascii?Q?Z75qhszs50XKFfLhY2RbbWGtndV8a7P58p1oIHC74mH0UhjhqQbpaLw9Qyrs?=
+ =?us-ascii?Q?agjSgfw7GUNAnucnXgGG7ivgCLSb2XGzRU7CA+B3eV3Mt9bDHX55bw2F2zHG?=
+ =?us-ascii?Q?PCb+e5sA6SOLneE3Klzub1x8ui0PYoximjPjZ8JU56/BgR1HD7lRQOJtjG1V?=
+ =?us-ascii?Q?TMBlN9ig6dxqshXXRG4V8WfFLhDooL6JGjIDU3E0yFOvT5iMgM3aDpSA8nSn?=
+ =?us-ascii?Q?USKxzyl/KkhETalQe5id+LIJV1m0yVk1/e7Eyv7eG9LuICnKGz5NNZSbXhHc?=
+ =?us-ascii?Q?b9fFNQEQ17dCmi+5HDVRIqTLoglFwd/N+31HnLGixcxtTFZMcJFYJlVFzi7j?=
+ =?us-ascii?Q?z2tL7CoqlmU/9LH3KpRavXJS+jrhTMPB0DGCtWHwmzyaowb6hHD2IDLjdSL8?=
+ =?us-ascii?Q?YtNT0a5dqRehhmOYDl516KRbwuusxpsdRSSkXv1d4R3OOWa9RJqGFnjd4+pc?=
+ =?us-ascii?Q?OgN+/NeNStlUwhNuIJFvgNjtvMEShimBGHclXSfiZb6KuHiKEe8oCNeRWmSF?=
+ =?us-ascii?Q?JzbVnUh2PDRYTPEo+9PT8fkVdemUHGe9rvHXJYLEkYrwdBiH/tgTU2iBzTWU?=
+ =?us-ascii?Q?FpMvT7QIdI9BaR4KIgeTRfGoKU79OIwJFWQ/Cin0W2zW3BcHK/ZxH3dc+a87?=
+ =?us-ascii?Q?oYrVUgMVVfSKH2+IZ3nIjhIrI7G9TtFcSmrPW0HQBS42yh7JR7u8NX98Glrp?=
+ =?us-ascii?Q?kMl45k5X/Y9pzRcGMd8j/UYfkxj7SaWrw62W1CE7lTaGdY6NBZqZLQn7MZAH?=
+ =?us-ascii?Q?7LvbOb3kc3PA/2AyC6ypTuuruMvAG3NZo4wAl5U8+Yvt6oCppNpz0sfLJXZR?=
+ =?us-ascii?Q?SM3u7DM2D0AF5/0uAwQnQZpF3/u1eDhHk21m/CVcqq+sKmUEAV2wES2XeTJt?=
+ =?us-ascii?Q?QVvHSc23vb9zOj9W2U8Kh9zHlQzpee8HAHySD51jrRZcYVPfkRmunbDqe+ay?=
+ =?us-ascii?Q?Eyh0ZC+/VVjrFjfBVKtHW/jox6y00ml6VVUDd2lPKX9HnRETnCu7TQdplyS3?=
+ =?us-ascii?Q?J2T73xNTYXjpgEv7Pd9XGRysP8x+GGUta6ZM5Fy74FHKdj23xdKGmQjD5kvc?=
+ =?us-ascii?Q?p+9rBQ9KR+iRTSjRCtEG8oQ3K0jPuE1pBMrNf5XaZlHp9J3vsnXKC2L15Ily?=
+ =?us-ascii?Q?1w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	uxXCfPoviiIUQ29oEaqpRL3kfZPYocoNZS8kNJFidYVAD9v+WRtcAAOMsJdJsvoyBFu5JKP9Bg3rRqFrzuoeh6/Enj0PgdNHo/ocomyKa3t19aykbXatisIbqt2ZNEF8ZZHaQwbinkweScQufClbMOT3ZqaFKXALpRfhMxkcbInminPX2Q+v+fWpq9vLLwXf5JuTtoGtKC7lq12d4OjoaBvoKopiJUWQtCOsSkwvSLhGe/7ViX9JwOqO9Y3xXwOXh7jJQcuv3WBoj5qV6q8I3sqxp3RfGFPbNlWvWyTIcb797qIEDg2ciDcS8nf2vPZWrDJud5wEQ8y2oiBUXO146I/tAlKif2lrPCjDqgUHrA7lAlL4EyO1iNYdjolVdjMlPhRJsZL45ZUcR7G8CBpb4osjctcbIlhatpE3XH4OWGBeHsXQ4fOQeAkBs4YGIEjZebZNoJFCMNlpmI3FkuPm6Fsf2q9NT8s4SZwUleLrlrI9B4Gz0kcd4it5jjrMkWoWCAjWuexPwUpEwaeX43KKOECdW5STrSCXfjBm2Q2dvV+VlCNOZTV+vfK3PK4+Z/csPgPLd3kMwCQOVxHiSYja6nDYHpXG9k20aFMAMFIsEUc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1714dec-5ece-4dff-63e5-08dc889aeecb
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2024 15:43:39.3774
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: agEE+2VCLUVaM76sg/bER+nrpjjlzva2nt/ssGppCHIh6uarcTM6UFkNOLvz3z/23FBOjEuxrdTimEfMSya3Rw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6135
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-09_11,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
+ mlxscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406090124
+X-Proofpoint-GUID: kOLL6s-Q1gxt3S1Ljjh_KDhZ3B9B6PiD
+X-Proofpoint-ORIG-GUID: kOLL6s-Q1gxt3S1Ljjh_KDhZ3B9B6PiD
 
-Hi Viacheslav,
+On Sun, Jun 09, 2024 at 10:27:20AM +0200, Julia Lawall wrote:
+> Since SLOB was removed, it is not necessary to use call_rcu
+> when the callback only performs kmem_cache_free. Use
+> kfree_rcu() directly.
+> 
+> The changes were done using the following Coccinelle semantic patch.
+> This semantic patch is designed to ignore cases where the callback
+> function is used in another way.
+> 
+> // <smpl>
+> @r@
+> expression e;
+> local idexpression e2;
+> identifier cb,f;
+> position p;
+> @@
+> 
+> (
+> call_rcu(...,e2)
+> |
+> call_rcu(&e->f,cb@p)
+> )
+> 
+> @r1@
+> type T;
+> identifier x,r.cb;
+> @@
+> 
+>  cb(...) {
+> (
+>    kmem_cache_free(...);
+> |
+>    T x = ...;
+>    kmem_cache_free(...,x);
+> |
+>    T x;
+>    x = ...;
+>    kmem_cache_free(...,x);
+> )
+>  }
+> 
+> @s depends on r1@
+> position p != r.p;
+> identifier r.cb;
+> @@
+> 
+>  cb@p
+> 
+> @script:ocaml@
+> cb << r.cb;
+> p << s.p;
+> @@
+> 
+> Printf.eprintf "Other use of %s at %s:%d\n"
+>    cb (List.hd p).file (List.hd p).line
+> 
+> @depends on r1 && !s@
+> expression e;
+> identifier r.cb,f;
+> position r.p;
+> @@
+> 
+> - call_rcu(&e->f,cb@p)
+> + kfree_rcu(e,f)
+> 
+> @r1a depends on !s@
+> type T;
+> identifier x,r.cb;
+> @@
+> 
+> - cb(...) {
+> (
+> -  kmem_cache_free(...);
+> |
+> -  T x = ...;
+> -  kmem_cache_free(...,x);
+> |
+> -  T x;
+> -  x = ...;
+> -  kmem_cache_free(...,x);
+> )
+> - }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> ---
+>  fs/nfsd/nfs4state.c |    9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index a20c2c9d7d45..eba5083504c7 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -571,13 +571,6 @@ opaque_hashval(const void *ptr, int nbytes)
+>  	return x;
+>  }
+>  
+> -static void nfsd4_free_file_rcu(struct rcu_head *rcu)
+> -{
+> -	struct nfs4_file *fp = container_of(rcu, struct nfs4_file, fi_rcu);
+> -
+> -	kmem_cache_free(file_slab, fp);
+> -}
+> -
+>  void
+>  put_nfs4_file(struct nfs4_file *fi)
+>  {
+> @@ -585,7 +578,7 @@ put_nfs4_file(struct nfs4_file *fi)
+>  		nfsd4_file_hash_remove(fi);
+>  		WARN_ON_ONCE(!list_empty(&fi->fi_clnt_odstate));
+>  		WARN_ON_ONCE(!list_empty(&fi->fi_delegations));
+> -		call_rcu(&fi->fi_rcu, nfsd4_free_file_rcu);
+> +		kfree_rcu(fi, fi_rcu);
+>  	}
+>  }
+>  
+> 
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 32f88d65f01bf6f45476d7edbe675e44fb9e1d58]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Viacheslav-Bocharov/dt-bindings-arm-amlogic-add-binding-for-JetHome-JetHub-D2/20240607-225905
-base:   32f88d65f01bf6f45476d7edbe675e44fb9e1d58
-patch link:    https://lore.kernel.org/r/20240607145148.2246990-3-adeep%40lexina.in
-patch subject: [PATCH v1 2/2] arm64: dts: meson-axg: add support for JetHome JetHub D2 (j200)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406092342.w4H7PE64-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406092342.w4H7PE64-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/clock-controller@0: failed to match any schema with compatible: ['amlogic,sm1-audio-clkc']
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@300: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@340: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@380: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@3c0: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
->> arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/audio-controller@744: failed to match any schema with compatible: ['amlogic,sm1-tohdmitx', 'amlogic,g12a-tohdmitx']
->> arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/audio-controller@744: failed to match any schema with compatible: ['amlogic,sm1-tohdmitx', 'amlogic,g12a-tohdmitx']
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:0: 'sclk' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:1: 'lrclk' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:2: 'mclk' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
-   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-1: clock-names:0: 'sclk' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Chuck Lever
 
