@@ -1,195 +1,139 @@
-Return-Path: <linux-kernel+bounces-207344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27AA9015EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5049015F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871B4281CDF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937351C20B6A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E7D2E63B;
-	Sun,  9 Jun 2024 11:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD142E83C;
+	Sun,  9 Jun 2024 11:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cn6nTMt3"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YRHmiY2l"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D719A3A29A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 11:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA581865C;
+	Sun,  9 Jun 2024 11:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717932086; cv=none; b=BbIzXYe7rB4J7MpjqWSOZ9j6h2qs+y1Gf+4GMEt/0dJh38yXlFMFEygsLc8Ym+lu3P+tu8titQ5XwHXEl9/RFXamC6hcc+fY51PKhg64CT6KwLeGeT12kDdrwjWnBjrr3tdvlGTuBoQOvc6N/Rvy8nGDx/OBmtlvbnnVPg5bcw4=
+	t=1717932184; cv=none; b=HSrGIcJSlZzuSnv4kMCvHKRBtXKBRQivk2zRumtRpjbTmZ7imC9DLZBOKTX86tO9jkiIG9IVg7l+7g+5+qsgjQkZhvwdx9whr3gC/fI4xjcCEmS+4/jN40dJ8qBw2VuVOmm55vzmjfWuBkPL6LoaS5dylUnKG598DjBLraUVnXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717932086; c=relaxed/simple;
-	bh=xkJY+BLnez6gjRG4gOOnnI8LG/ufQvw+2cQN3oeukEU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CiEnyuph/0RrrVH+bq9DDeis18XWhCQBlG01Oi2xdHiFsyEEURynkU98F+mMXq+qtxs9qocZqHJ+uP4Iq3FWKDGB+T7dGUdnc5zNmmDF+sqEy+gElnvn3m/OqxEYqmlQy/+uImcUW/Rs2PmVuWbr+NfAeOfKM9hlGcI3kxFPkIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cn6nTMt3; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5baf982f56dso116081eaf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 04:21:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717932083; x=1718536883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O6LeVbVhP8fW9dLLQgkcFQHgf3T0RCtlXo8wcgs1rnU=;
-        b=cn6nTMt3N5DWO8VixLf2+XOvAZfE6XlfGC8IGaSU4KwdDitVQjblOhGyndpKlM15YZ
-         ufjc6jpEYUK/lH7c1dKATrnUZMMtn8SWU5C1VVZG8h70ufx4J5tL5C2dbf1qnLsysVrS
-         jS13tUxbRmBlyeiJmIMRIlr8EKaUZsIBbSaKSOel8D/TgmDHKoEnjMdPo61IHpbiVHHX
-         HKcP1YRaI+ftDOkaTvEhraXWB9S6cwp+N+nnLVJYKiq9eOXxqvZsvqWLrGjpfk/Xj9nY
-         ghLJPNp8sonuseEas5m+8KyV767CyznAE6r0bmmKZvltiQuVmzPQr7J3FDRbT/6M5qBR
-         0/4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717932083; x=1718536883;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O6LeVbVhP8fW9dLLQgkcFQHgf3T0RCtlXo8wcgs1rnU=;
-        b=AXKI7a5rKHb0mrmwia5Kt8oyNYq0Jwe05um6pcgSuv+EbZR//C16pX/PcPjCe4OLQo
-         lCATuOB6d+o/lrOTjBCGnD2nNIQjrfjb3uBj7drmDerJxFWcU5Uu+7b02gMuh9pTGv9q
-         pliQFb0kDdbvZgMHJJxbAkM8m2AJkUYwKfMo2pM+kfrXNT8b0z4XBv+s9jZmYS1WlAu5
-         1Alb4lVS1BZFTLexYvCsNDRhecAyM6P/sLX7gBG56tmTPVLqfKBONs1c+eZsT2MOXf8V
-         wruMWsvsE53JJe/cW/rjwTtTDjtlaboyP8J9i6925XwIpMSjQPXB99XHrmCYy6d5gQLT
-         +uWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo+LmNVDzRnS7WURhUHXt3TBo1iiSfUhQC3tfe7yI54gE6FsTY63J6kJN0aPsgltmRpFkQQYFTBQovF04snjnMTgA/4ruGswOJruNu
-X-Gm-Message-State: AOJu0Yze2JFhuYyXfZ20WXxZTj3yGyuv3csB/xZYUbjAedHLXgnZXukW
-	CP5r9IF9XRZ89t5tZ9nxXvf3vBh6+66OJlmSgHoYd20lL+A69yHHzc7MYgXyeo4=
-X-Google-Smtp-Source: AGHT+IHwBScq1ebphyGH+iK2HIk04UnLf8UGXAlgSrlVCk/JKXyljLxMeVrhBQqlS4Czk84vs5zKig==
-X-Received: by 2002:a05:6358:9103:b0:19f:1959:3c3d with SMTP id e5c5f4694b2df-19f1ff8ee68mr712652655d.26.1717932082658;
-        Sun, 09 Jun 2024 04:21:22 -0700 (PDT)
-Received: from ThinkPad-T490.. ([223.233.86.175])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f7092a525esm8168355ad.241.2024.06.09.04.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 04:21:22 -0700 (PDT)
-From: Mayuresh Chitale <mchitale@ventanamicro.com>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Mayuresh Chitale <mchitale@ventanamicro.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: [PATCH v6 1/1] riscv: mm: Add support for Svinval extension
-Date: Sun,  9 Jun 2024 16:51:03 +0530
-Message-Id: <20240609112103.285190-2-mchitale@ventanamicro.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240609112103.285190-1-mchitale@ventanamicro.com>
-References: <20240609112103.285190-1-mchitale@ventanamicro.com>
+	s=arc-20240116; t=1717932184; c=relaxed/simple;
+	bh=VE6QwhzHXGGsL6EN23G7rodAUHJBH/uKxOmJM1ROGLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGT3DAkq5FAZR++GDED/hd0qrQ7A093itAFGhM91NIMnZTffiTHjQtBv+7v2Ejbz8t/G2waS0pphlSO0xXuUELu100IdDKzJtnle4h3WHkDtUuvaUYTYF4Sy2NOsYAxbd6tWp0MbDvXXCOIq8lyD6P8uXiyxNc/hTui0Xe6hHIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YRHmiY2l; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 192A340E016E;
+	Sun,  9 Jun 2024 11:22:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1fvZKEsG9R5s; Sun,  9 Jun 2024 11:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717932175; bh=Wvqqzt8mRbBVpIrsNZaWXP6FfYaMmAg35B1wSRhrLn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YRHmiY2lq5i9UbRqPmzL5EHzi+yjVKQEqYQ6+jkT/MPUKhEJ37/IkH26uRyV+zotS
+	 vCnF2wJKPy8bDiGMwMTWntUn8504NQkZkhXzUB1VZtO+OIKxu99LHXbqO6r4RhyJ2j
+	 N01Lg8tsVCtnh4QK8eQsK1dSii6HwWR0Ep2XJRD1gp+dy+UJolT6PrkwU68jpUA76C
+	 e40CPRJz5RpwQynC+YSJBgAFcEI6ahIBCcxUsUmNywbX14g8j5B9MzwEhuPPqG5WtO
+	 VEutse9TFvEUOaYI3b/wXvSU15acCtPM+2u+1rZr0Jz+ihzK4YhCz9zDaVwMSDhgYw
+	 uXHMOBmeQDtQ+N8sJT5ZnL1kRS7pbE2nl9XxH6olFh91yPMwlykGlQkhCEj/iSshcI
+	 PeXp4m29nF/FqAD+L1MtAfMes3EITQKxRRro+R6h/IxbOuryhsxa5NCd11nY/G/QDJ
+	 l6XsHBTXt65NNSpu2BG44Z8O6encs1VxNP0GS5Y6LHVjcOiTCbIE4SORJmIu1qnu/Z
+	 rvD6IOrwZSJFsF5zKfu09DhVyGtjs/lPmT3QtKIvvmIoFqMy1WcKKP7OCZKWgIt5yL
+	 e8EGRMjF2/X0FdQyoL97AacrUSpWTzEPgsHX9bruxu71nxlxqgLuYmuY0B2BiMVA7S
+	 +5KcQGE6/YiUW4HXgnFRC3oc=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DD72F40E016A;
+	Sun,  9 Jun 2024 11:22:45 +0000 (UTC)
+Date: Sun, 9 Jun 2024 13:22:40 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+Message-ID: <20240609112240.GBZmWQgNQXguD_8Nc8@fat_crate.local>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240608193504.429644-2-torvalds@linux-foundation.org>
 
-The Svinval extension splits SFENCE.VMA instruction into finer-grained
-invalidation and ordering operations and is mandatory for RVA23S64 profile.
-When Svinval is enabled the local_flush_tlb_range_threshold_asid function
-should use the following sequence to optimize the tlb flushes instead of
-a simple sfence.vma:
+On Sat, Jun 08, 2024 at 12:35:05PM -0700, Linus Torvalds wrote:
+> Ingo / Peter / Borislav - I enabled this for 32-bit x86 too, because it
+> was literally trivial (had to remove a "q" from "movq").  I did a
+> test-build and it looks find, but I didn't actually try to boot it. 
 
-sfence.w.inval
-svinval.vma
-  .
-  .
-svinval.vma
-sfence.inval.ir
+Will do once you have your final version. I still have an Atom, 32-bit
+only laptop lying around here.
 
-The maximum number of consecutive svinval.vma instructions that
-can be executed in local_flush_tlb_range_threshold_asid function
-is limited to 64. This is required to avoid soft lockups and the
-approach is similar to that used in arm64.
+> +#define runtime_const_ptr(sym) ({				\
+> +	typeof(sym) __ret;					\
+> +	asm("mov %1,%0\n1:\n"					\
+> +		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
+> +		".long 1b - %c2 - .\n\t"			\
+> +		".popsection"					\
+> +		:"=r" (__ret)					\
+> +		:"i" ((unsigned long)0x0123456789abcdefull),	\
+> +		 "i" (sizeof(long)));				\
+> +	__ret; })
 
-Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
----
- arch/riscv/mm/tlbflush.c | 58 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+You might wanna use asm symbolic names for the operands so that it is
+more readable:
 
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 9b6e86ce3867..49d7978ac8d3 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -6,6 +6,54 @@
- #include <linux/hugetlb.h>
- #include <asm/sbi.h>
- #include <asm/mmu_context.h>
-+#include <asm/cpufeature.h>
-+
-+#define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
-+
-+static inline void local_sfence_inval_ir(void)
-+{
-+	/*
-+	 * SFENCE.INVAL.IR
-+	 * 0001100 00001 00000 000 00000 1110011
-+	 */
-+	__asm__ __volatile__ (".word 0x18100073" ::: "memory");
-+}
-+
-+static inline void local_sfence_w_inval(void)
-+{
-+	/*
-+	 * SFENCE.W.INVAL
-+	 * 0001100 00000 00000 000 00000 1110011
-+	 */
-+	__asm__ __volatile__ (".word 0x18000073" ::: "memory");
-+}
-+
-+static inline void local_sinval_vma_asid(unsigned long vma, unsigned long asid)
-+{
-+	if (asid != FLUSH_TLB_NO_ASID) {
-+		/*
-+		 * rs1 = a0 (VMA)
-+		 * rs2 = a1 (asid)
-+		 * SINVAL.VMA a0, a1
-+		 * 0001011 01011 01010 000 00000 1110011
-+		 */
-+		__asm__ __volatile__ ("add a0, %0, zero\n"
-+					"add a1, %1, zero\n"
-+					".word 0x16B50073\n"
-+					:: "r" (vma), "r" (asid)
-+					: "a0", "a1", "memory");
-+	} else {
-+		/*
-+		 * rs1 = a0 (VMA)
-+		 * rs2 = 0
-+		 * SINVAL.VMA a0
-+		 * 0001011 00000 01010 000 00000 1110011
-+		 */
-+		__asm__ __volatile__ ("add a0, %0, zero\n"
-+					".word 0x16050073\n"
-+					:: "r" (vma) : "a0", "memory");
-+	}
-+}
- 
- /*
-  * Flush entire TLB if number of entries to be flushed is greater
-@@ -26,6 +74,16 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
- 		return;
- 	}
- 
-+	if (has_svinval()) {
-+		local_sfence_w_inval();
-+		for (i = 0; i < nr_ptes_in_range; ++i) {
-+			local_sinval_vma_asid(start, asid);
-+			start += stride;
-+		}
-+		local_sfence_inval_ir();
-+		return;
-+	}
-+
- 	for (i = 0; i < nr_ptes_in_range; ++i) {
- 		local_flush_tlb_page_asid(start, asid);
- 		start += stride;
+#define runtime_const_ptr(sym) ({                                               \
+        typeof(sym) __ret;                                                      \
+        asm("mov %[constant] ,%[__ret]\n1:\n"                                   \
+                ".pushsection runtime_ptr_" #sym ",\"a\"\n\t"                   \
+                ".long 1b - %c[sizeoflong] - .\n\t"                             \
+                ".popsection"                                                   \
+                : [__ret] "=r" (__ret)                                          \
+                : [constant] "i" ((unsigned long)0x0123456789abcdefull),        \
+                  [sizeoflong] "i" (sizeof(long)));                             \
+        __ret; })
+
+For example.
+
+> +// The 'typeof' will create at _least_ a 32-bit type, but
+> +// will happily also take a bigger type and the 'shrl' will
+> +// clear the upper bits
+
+Can we pls use the multiline comments, like you do below in the same
+file.
+
+Otherwise, it looks ok to me and it boots in a guest.
+
+I'll take the final version for a spin on real hw in a couple of days,
+once the review dust settles.
+
+Thx.
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
