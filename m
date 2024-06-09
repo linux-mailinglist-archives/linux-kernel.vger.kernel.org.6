@@ -1,157 +1,105 @@
-Return-Path: <linux-kernel+bounces-207274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB2B9014E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD579014E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132A4281C18
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E03281E7A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972351C68F;
-	Sun,  9 Jun 2024 08:09:03 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03581CD20;
+	Sun,  9 Jun 2024 08:10:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AAED26A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0909BD26A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717920543; cv=none; b=bzpW6CKCIpb8apU2V7fLc2Ny/gpObakH2uDgtQeC+tB+xlSVJ/ABZuabZO5tPG9QJNO7UmG9AOOtKUgnn4r/0HMMasssmc3L4WNMgdJsaRSkZjdb6Us8kthw56+a8GKUtLhpFY0B18AcoyfiXG+pppEizhDvSoscW2EuQU3BXzE=
+	t=1717920605; cv=none; b=VvouF34EGCHKIdzl0RiT7PfO//aWHRHFiAOA7dw3bVaqDzKYrQZ4fyfZp9JB7294cfV7ZxltSN/2p+NoWWphTKAw+xzvlpE+B8aaU0irkPxz75JEHRRtQ5xsnAc/gxm2i/M2yJXek55J8IyhYIFvCGOcnG9+9sNWlfI+n5ErON8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717920543; c=relaxed/simple;
-	bh=G3I4tbx0AiuW6I9IAVsKC+RvknC2RDYBwErr5ofCUUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kh7m4cU/mnOP74t64xZ2r+MVmcDkZfaXcNJVRDmNha9ff7ST5LI+ACEOdoW0YlyJvirB7ZwIYq2HhDemi/y/JpjOeh2lMx4rGmN3RUkOhXFYi6Kw59F70YQV2uF9zlRXNdtbt6FBAm09LCk1zBhkrCvztzh2/70YserErhMVZ4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vxnbd2DxhzdZwN;
-	Sun,  9 Jun 2024 16:07:25 +0800 (CST)
-Received: from canpemm500001.china.huawei.com (unknown [7.192.104.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D63B18007C;
-	Sun,  9 Jun 2024 16:08:51 +0800 (CST)
-Received: from [10.67.111.186] (10.67.111.186) by
- canpemm500001.china.huawei.com (7.192.104.163) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 9 Jun 2024 16:08:50 +0800
-Message-ID: <f23a2d63-7493-75c8-030c-e569ed73b9d2@huawei.com>
-Date: Sun, 9 Jun 2024 16:08:50 +0800
+	s=arc-20240116; t=1717920605; c=relaxed/simple;
+	bh=GS9aZJ+LvBwTLtq/qNJhQCSTx+jEOzzxkyfkjOGKc3M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MvzKUhdq+CGJwBCNvugKHobjftmV36lbWDssWjSnWlNvWMblSW8f54og0gJv4pt8oYSI4kdwh1uDG0rKQFQLgRDVESEbv43b0O23QkKNAOB9ZvHQSqW3zq3itcwT3GlHf6C0jMhV2+9GbAfkF3zt4ZTLXACgnnuvdlnn4LpImAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso48939939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 01:10:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717920603; x=1718525403;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cNJralV27Phiz3+/bwDTU9IpTrdPF0Y6Sddk9Gzyfpg=;
+        b=fDK7+YMsBL266kPWZJQh29ryIRFeZJW/roUIaoT+BYvqOe7iLvjP8/lSG+Aoq009H0
+         jmBSmBobhgNVtarmm+6E55Qxd5BZCUxEs04WLArUo1qTJA22QbDWPtl6jTOz3vEi/SDw
+         qYWT1vQG1cq8W+OCgpsDdZ2S2kZLCBkad45HDIKkdO5SxuQIJBJwHvi6dQQOAQcXu/Tn
+         V+a1VD80GA9yM2aeFykiGnM1CPeOhJvfcCCkyY0NiVG3WjyUC++83cuiNQLP14RTc5xo
+         A5P8dJ2htpPm3/2Zx9hOcVlsw2u6lhhoW9tgh51QXx202P34KmgIGhN6bQEnBVb00//F
+         Szcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZBiM3pAN8khFAKoy3j+l1b8Na+HFaaRcta15RVo1dfwkAtslUSFLAtsS/k8B/jhI9wPg2HjewdMo9bgC+pIKLsDTKqWMdMMsv8bqx
+X-Gm-Message-State: AOJu0YypoLcXqks1OqXlmTo3xtY2rQlwOCAhZgZ+Tk4NL3GohIecG+CB
+	EVBxkRPWeeyMtBk9INXhFO8GKtuOJT2HEauL9YE9wbTJtIbYuk0w18hHaPeFTpizdTi6g2CESgU
+	8gu5x9cRwb0EmBEc4GJEo1W5pz09LBJA1aS4is5CRg8YG5ZLTKQkLaxw=
+X-Google-Smtp-Source: AGHT+IEy9eOLWJpA4i/hRidAbGKrxF/9TU6K0IRIrcf+HYaBTgTEqoKqcY/Zmj140g39ubNQ0I2CaTEli8UDwsRi4WZw+p8n0Arx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.1
-Subject: Re: [PATCH] sched: Initialize the vruntime of a new task when it is
- first enqueued
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <mingo@redhat.com>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <bristot@redhat.com>, <vschneid@redhat.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240606121133.2218723-1-zhangqiao22@huawei.com>
- <20240607103043.GO8774@noisy.programming.kicks-ass.net>
-From: Zhang Qiao <zhangqiao22@huawei.com>
-In-Reply-To: <20240607103043.GO8774@noisy.programming.kicks-ass.net>
+X-Received: by 2002:a05:6638:9806:b0:4b9:13c9:b0fa with SMTP id
+ 8926c6da1cb9f-4b913c9b5b5mr7429173.2.1717920603137; Sun, 09 Jun 2024 01:10:03
+ -0700 (PDT)
+Date: Sun, 09 Jun 2024 01:10:03 -0700
+In-Reply-To: <0000000000002a48dd05c506e7cc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d7aac061a708fa3@google.com>
+Subject: Re: [syzbot] [usb?] [wireless?] divide error in ath9k_htc_swba
+From: syzbot <syzbot+90d241d7661ca2493f0b@syzkaller.appspotmail.com>
+To: ath9k-devel@qca.qualcomm.com, davem@davemloft.net, kuba@kernel.org, 
+	kvalo@codeaurora.org, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, paskripkin@gmail.com, 
+	quic_kvalo@quicinc.com, syzkaller-bugs@googlegroups.com, toke@redhat.com, 
+	toke@toke.dk, tonymarislogistics@yandex.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500001.china.huawei.com (7.192.104.163)
+Content-Transfer-Encoding: quoted-printable
 
+syzbot suspects this issue was fixed by commit:
 
+commit 24355fcb0d4cbcb6ddda262596558e8cfba70f11
+Author: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+Date:   Fri Jan 26 14:02:17 2024 +0000
 
-在 2024/6/7 18:30, Peter Zijlstra 写道:
-> On Thu, Jun 06, 2024 at 08:11:33PM +0800, Zhang Qiao wrote:
->> When create a new task, we initialize vruntime of the new task
->> at sched_cgroup_fork(). However, the timing of executing this
->> action is too early and may not be accurate.
->>
->> Because it use current cpu to init the vruntime, but the new
->> task actually runs on the cpu which be assigned at wake_up_new_task().
->>
->> To optimize this case, we pass ENQUEUE_INITIAL flag to
->> activate_task() in wake_up_new_task(), in this way,
->> when place_entity is called in enqueue_entity(), the
->> vruntime of the new task will be initialized. At the same
->> time, place_entity in task_fork_fair() is useless, remove it.
-> 
-> The better argument would've looked at history to see why the code was
-> the way it is and then verify those reasons are no longer valid.
-> 
-> Specifically, I think these are remains of child_runs_first, and that is
-> now gone.> > Can you verify and update accordingly?
+    wifi: ath9k: delay all of ath9k_wmi_event_tasklet() until init is compl=
+ete
 
-Initially, __enqueue_entity() was in task_new_fair(), in order to schedule
-according to se->vruntime, only a"se->vruntime = cfs_rq->min_vruntime" was
-added here. This modification  was introduced by commit e9acbff648 ("sched: introduce se->vruntime").
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D155ade029800=
+00
+start commit:   e8b767f5e040 Merge tag 'for-linus-5.18-rc1' of git://git.k.=
+.
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da28aee0add07943=
+7
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D90d241d7661ca2493=
+f0b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D130fa98770000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12f2d26b700000
 
-Then,the commit 4d78e7b656aa("sched: new task placement for vruntime") added proper
-new task placement for the vruntime based math, this also requires the new task's vruntime value.
+If the result looks correct, please mark the issue as fixed by replying wit=
+h:
 
-The commit aeb73b040399("sched: clean up new task placement") clean up code and extract
-a place_entity() helper function.
+#syz fix: wifi: ath9k: delay all of ath9k_wmi_event_tasklet() until init is=
+ complete
 
-To summarize, the place_entity() in task_fork_fair() was for the child_runs_first and enqueue_entity,
-After remove the child_runs_first and enqueue_entity from task_fork_fair(), we can remove this place_entity().
-
-
-> 
->> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
->> ---
->>  kernel/sched/core.c |  2 +-
->>  kernel/sched/fair.c | 16 ----------------
->>  2 files changed, 1 insertion(+), 17 deletions(-)
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index bcf2c4cc0522..b4ff595a2dc8 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -4897,7 +4897,7 @@ void wake_up_new_task(struct task_struct *p)
->>  	update_rq_clock(rq);
->>  	post_init_entity_util_avg(p);
->>  
->> -	activate_task(rq, p, ENQUEUE_NOCLOCK);
->> +	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
->>  	trace_sched_wakeup_new(p);
->>  	wakeup_preempt(rq, p, WF_FORK);
->>  #ifdef CONFIG_SMP
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index efce2d36a783..bb5f376fd51e 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -12702,23 +12702,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->>   */
->>  static void task_fork_fair(struct task_struct *p)
->>  {
->> -	struct sched_entity *se = &p->se, *curr;
->> -	struct cfs_rq *cfs_rq;
->> -	struct rq *rq = this_rq();
->> -	struct rq_flags rf;
->> -
->> -	rq_lock(rq, &rf);
->> -
->>  	set_task_max_allowed_capacity(p);
->> -
->> -	cfs_rq = task_cfs_rq(current);
->> -	curr = cfs_rq->curr;
->> -	if (curr) {
->> -		update_rq_clock(rq);
->> -		update_curr(cfs_rq);
->> -	}
->> -	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
->> -	rq_unlock(rq, &rf);
->>  }
->>  
->>  /*
->> -- 
->> 2.18.0.huawei.25
->>
-> .
-> 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
