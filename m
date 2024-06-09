@@ -1,101 +1,85 @@
-Return-Path: <linux-kernel+bounces-207352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081D0901609
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:54:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BBA90160A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02DE1F21503
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE571F215EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C20E3D579;
-	Sun,  9 Jun 2024 11:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mMx70T9l"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351673A29A;
+	Sun,  9 Jun 2024 11:56:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8917565;
-	Sun,  9 Jun 2024 11:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8032233A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 11:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717934056; cv=none; b=ROWZtvkc06/KYb+SoXL4tnzZt987/vGX9elNQSVCfnCTOKRESdvzHPYp6VQAYAWhi4/KV77W4E6TQQnkE69OItszX77Xgcaf22mwl/BiL0bXG/1x6UJ+xEjt3oy7NUwRy3A9DIS1KNNKRgeBFfaT0cKNfWZMgLmRPD16pNOy+AM=
+	t=1717934164; cv=none; b=Cz9ai4vl2prFrX/gfECvOIj6iLKxRZHY0wZ1D9JfxJPzVbDf8G6QhssL6lRUSXTxVU/h9TS3cF7rDuDLvKDU0gcAE/WveXsYQEFaanLwZRqXrFjsvo+DMlD+ZDDxulVKtZos2dI34eHTNRS09cgFhvxHm90uwl88uSUO5EiVPmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717934056; c=relaxed/simple;
-	bh=b/m/1oWHcJq06eFpAh+xa9o2uvaqbkd/Wgycs2ci46U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YEJmkDsYIuBmL6MjmjZu8jap7BwmWSipqcsIeCFEAfPeO+1v/L3JM0byUCbdcjkZQzYG4FloqoWuE1BdjJF7thCE3eUpEQqDtoO5LuqTZvebVEh/zQyFroXYl0XySL4uvMqVeILJXm9dvfUpLwpHs92GDUEp39w1RsWKv1iWiUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mMx70T9l; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717934044;
-	bh=b/m/1oWHcJq06eFpAh+xa9o2uvaqbkd/Wgycs2ci46U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mMx70T9lj7rPDJS9E8c5ogdUgE0rKLOC89wQzmsN/79qP9fyYpbUVSkXIHV+XncXf
-	 rasSiyOlAMZyE8yEsWPaiPNqY38JdbJFsRY0GT1VoqJ3sEw6TBVGR0S9pIofWyudg3
-	 TbMt64Y+NKlJAhKkirVvjoTIu7Gm+x6iDN2nNI4Phw93D8o7K2+3FlETLbz9q4Znxn
-	 wG8zDaSNEoMU+nSmrlkXGHLlBLF8HzdcMpRNZcFM1HGHdEYwcG+SuZsIbPZbJylnsI
-	 lqqtXYDFnkHssi4kM0Moti2ykKTw8sUpXm7AG76feKApzNlzayfD0B4Gh1LuUPKTn0
-	 JR6eph7uhsUdw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vxtd83BlQz4wc4;
-	Sun,  9 Jun 2024 21:54:04 +1000 (AEST)
-Date: Sun, 9 Jun 2024 21:53:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Jun 7
-Message-ID: <20240609215348.02ef4386@canb.auug.org.au>
-In-Reply-To: <20240607131653.3ae8e5a7@canb.auug.org.au>
-References: <20240607131653.3ae8e5a7@canb.auug.org.au>
+	s=arc-20240116; t=1717934164; c=relaxed/simple;
+	bh=0wthAHWWXg8VRJ5D8GCyNjy6NqCRsMXmZ/TXbbb9RPs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ire1UCHmkuCVPi2RzyapEarJXviaxbeGXiVzw7IW68c0Uq1NW6d2ottqKIKFarccvEjZcIGyirVu8PLdffw5SlwjJvEsDea0Bof9IiP2XweXS5zEVYkYPNmdNyJtUJtFIaOSLm/7116SuPz2mfk2dstJBGOrEtVbeMlReTmr6CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb73f0683cso122804539f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 04:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717934162; x=1718538962;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qYXn/mt2Wh9gdlczMx1OhQNOOM+vEMkaX4d7adxLSww=;
+        b=UwcinjZdDvOeENQzLiMKYlcevrQFq5k5KwsxPgiVDsyWfg4sQ6CT4qHtaR7uZ7qUVl
+         6I6hwuzumuGO6RemtTSDivT1dW8K2yoJ48tcMN2kRvVrplyIzbLaRm0iu9uQJUYMUYq+
+         8RMG8bCbSEn58wBgqjkXpP/2GE2EK0QqmoXTI56sy/4UfSIGYZ+T1OycFuTxm2LRyE0F
+         RvxL6S18bXmfnE1kUO+Sg/q4q+YuIKzBdE1rzVUw1rBkmeYGN9UIuktPHZi/G9G7gSxN
+         kw8WqDyJ1Hwii6pyn0r2fDkSA57sA2b1iPJf1vTwyNpa2KUHjYID/X40QRXMnoDmHV7X
+         d6BQ==
+X-Gm-Message-State: AOJu0Yxaly4MP/YxH0Bh993Jjs94ZFMg8d8HAf44GyncDhNiFmsMOAtk
+	cTZ/3F17nXhVgyhERbaY0o5x8ISLUsBKLM0heqd/GB47M6FlS0WHwwxuWS/MNcOnCTKRFcvtu/2
+	uuuv54gRuVa7CEkhV3bwEaazQ/vCPkib/YM+xAFeqNrqIYKaWBb45FcU=
+X-Google-Smtp-Source: AGHT+IFuadi2xH4gzB5xIYG5Xv61QU3YQ5k/pkBFq4YcQbT4BahLHJIwtaboSZD5doSmrCn/qFAEDBksu67RE0zgnNNWfnXmO16s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/d5AJ+PN9OuigG.hZpwJdMYO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6638:2594:b0:487:100b:9212 with SMTP id
+ 8926c6da1cb9f-4b7b12edfdbmr372444173.3.1717934162515; Sun, 09 Jun 2024
+ 04:56:02 -0700 (PDT)
+Date: Sun, 09 Jun 2024 04:56:02 -0700
+In-Reply-To: <20240609111914.3620-1-n.zhandarovich@fintech.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008160d7061a73b7fc@google.com>
+Subject: Re: [syzbot] [usb?] WARNING in cxacru_cm/usb_submit_urb
+From: syzbot <syzbot+00c18ee8497dd3be6ade@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, n.zhandarovich@fintech.ru, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/d5AJ+PN9OuigG.hZpwJdMYO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Fri, 7 Jun 2024 13:16:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> News: I will not be doing any linnux-next releases between June 14 and
-> June 30, inclusive.
+Reported-and-tested-by: syzbot+00c18ee8497dd3be6ade@syzkaller.appspotmail.com
 
-Also, there will be no linux-next release tomorrow, sorry.
+Tested on:
 
---=20
-Cheers,
-Stephen Rothwell
+commit:         771ed661 Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a0c3fc980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67ede96756900c7c
+dashboard link: https://syzkaller.appspot.com/bug?extid=00c18ee8497dd3be6ade
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1371f0ca980000
 
---Sig_/d5AJ+PN9OuigG.hZpwJdMYO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZll8wACgkQAVBC80lX
-0GzFkwf+N1jqF/imUfzYGtB1OFAI8rzrEBB7hZ/GuG96ltoYCy0JiPmiQrW/jrQ9
-whXeqFfgl2OF47VTX3kr1ucTZCFyyLXmE1xYFNhvu1niy88ig/1bRpdBSi0VrsRg
-WZ7LzJdNIqlJHzlhm0lMrV/JKLId+2cPW2I4Bm25Le8ZZ7picgjUiK4LcwbhvXa5
-348b4B+a9UVzVrFoTIZBzpWBkfLhV9ih75ZrTNHU7OLcDbqN4RljRwjOTgls5wo+
-fYKffLVL3drsU6jgHqZd7jWMvklbNIdoq5YxFzgBRflt8yp0UYSS25e8yXNwrW3Y
-QXJzD8AwxCkQCSTtj0Ls6EH6NDKPRQ==
-=ldkO
------END PGP SIGNATURE-----
-
---Sig_/d5AJ+PN9OuigG.hZpwJdMYO--
+Note: testing is done by a robot and is best-effort only.
 
