@@ -1,102 +1,100 @@
-Return-Path: <linux-kernel+bounces-207391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05ED90166B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14757901670
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880971F21430
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC42F1F211C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8266146441;
-	Sun,  9 Jun 2024 15:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5B345026;
+	Sun,  9 Jun 2024 15:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7Wu94en"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V098lnKN"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA086210E4;
-	Sun,  9 Jun 2024 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DBC1CD39;
+	Sun,  9 Jun 2024 15:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717945231; cv=none; b=IIJUNECuvegDShWiwshslLrL0f+AkNmQvjEwwkaXM1dTGRPN86PIGh9vn3QSWEwbUtQv0e8G3BIUJVYK/5oBz2PH6YZPUBIcCGfgAWh2wR3IiEnPAAOy+0Srdv5y5aI7WfLRwvmGsCEIo9sgVemN/Ne4SD9ollM1JrAnzWai5oA=
+	t=1717945625; cv=none; b=NnAenW/WMPENa0PmO561pQqlBnvlDHPohxLgrhLyse0nSVot4qPJRTn4LEJO+NVOekJLx1LZGbzwDWk+E7NBLExgpdaLm/vs5kZlMNAa/G7wt5Ft2Hm8v59sRfZjhV16VVbUlIURFwBGGv86vlR8PFq7gsqV27qz97ScjnlfNRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717945231; c=relaxed/simple;
-	bh=sEvuJelJntixemBHKj20oqZhgwHOot8BPhwBUz8Va0I=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=I4WZwozdA/o9Eneut5tks/SW62f2F2DL+0viyoTxkBvDxnpxEjvCnbH/P1uCyjpJjPz7rJ2BFdFWcWzGiQZpy8Hps6CoMuDyWgBHiWXq82aS1Nlta1aG3FnXgXn17Xo1PrA1ahfKvPoWplyalgyUQV+hF/ALRNv8JrPYVMCSKxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7Wu94en; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CAA9C4AF1D;
-	Sun,  9 Jun 2024 15:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717945231;
-	bh=sEvuJelJntixemBHKj20oqZhgwHOot8BPhwBUz8Va0I=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=o7Wu94engqJPD62reFT6OXz+oNclILQNOIe2LJ5yD2OtKS1skqbvsJqPK+6zE6TrJ
-	 yE9gWVCo6sEIpnsSomPs63Ux8EaJpp7YM3RJgj6EnKQINA5+qU1wCojX052/HRC46j
-	 XpDT8GCoQCkDXSeU1SOn6nt6dhFxheb3hkJMYjstRfsJdq//lIH9l+0ac99riW/G23
-	 +JMuRfKZEiF4pMIJc9o0R9382sGe2Sc7Ajf/o+fIt7UAEOx6RovCjYCClMLGkT2j3i
-	 MNwM7HJ/k5yfPfTTkW73m+SFhWFFElMDV3VTDuQX79+Trk6YBkL/+r5S0LK4BtX68Y
-	 MBVIKVLEzQCPg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 18321CF3BA5;
-	Sun,  9 Jun 2024 15:00:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717945625; c=relaxed/simple;
+	bh=fLbJEsIxiyickhrx/svmDe6ThGq6ThhEZBgDU4p8vao=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nyrRvDrBKvNrXCJrISsz5196tdF0X3ZIpmM6qMW35ajhH81pRvepcGpDe04x3dsqHOd1KNzIY2H6Dq8qY8XgDOO8qMvG+0ulcJEkoLPGl17jYvUDJ2CMN9pVDkyPTA/xsYIzJnURnkctjBqnLMJnFFvBb1Wi+ZlnkOAoilw1qdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V098lnKN; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717945611; x=1718550411; i=markus.elfring@web.de;
+	bh=fLbJEsIxiyickhrx/svmDe6ThGq6ThhEZBgDU4p8vao=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=V098lnKN65H6s1iBfQxr5C1GuvkwJea44udvY5O3EHmEQrPAxAx5x7K53SPkdxQG
+	 w6FNq5Nx8OVW8HQSf9Tx9jeBWJqgdxea40XLYVhJ6Y4MILE7+5bAysWK+QZVH3kjg
+	 xzocMUYYwQKlbAkV2WEeWC8AkMMF1DP744tq7ywgEB8UgPRMSbqpPMJaOj1iHV2gR
+	 Cto7h/ZFKwatkECMA2NllmjOUbKGA9XHpCWkLnquFCLdfwZ/q+Z4tlTQxE0K6cjDP
+	 OG6QsotK8JpD8ePltQSVlbvvHOeH0ypuZJJeXugc+zwusRMKFMFn4SaruupOo0IHr
+	 zmuvQNK5wpIjmfuw3w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvbiu-1sXAIH1mje-017wbs; Sun, 09
+ Jun 2024 17:06:51 +0200
+Message-ID: <af71d076-5bf4-41e9-aaa4-ceb2d32933dd@web.de>
+Date: Sun, 9 Jun 2024 17:06:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: stmmac: dwmac-qcom-ethqos: Configure host DMA
- width
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171794523109.27019.808801880558550935.git-patchwork-notify@kernel.org>
-Date: Sun, 09 Jun 2024 15:00:31 +0000
-References: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
-In-Reply-To: <20240605-configure_ethernet_host_dma_width-v2-1-4cc34edfa388@quicinc.com>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: vkoul@kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, jh@henneberg-systemdesign.com,
- linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- andrew@lunn.ch, ahalaney@redhat.com
+User-Agent: Mozilla Thunderbird
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
+ <rjw@rjwysocki.net>, Rama Krishna <quic_ramkri@quicinc.com>,
+ Subramanian Ananthanarayanan <quic_skananth@quicinc.com>,
+ Veerabhadrarao Badiganti <quic_vbadigan@quicinc.com>,
+ quic_nitegupt@quicinc.com, quic_parass@quicinc.com
+References: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
+Subject: Re: [PATCH v3] PCI: Enable runtime pm of the host bridge
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QdMqJ+7+OgqaIUzm36yyD//L6dsvHBvph1cTO6CyDk5lFYil1QP
+ /iYbhVwQVeI+62QKcayD47NgpQUaFWcUxM4nMmHl2D3i6SnmeSYamGWUnn0g4ZLFqI8qyVZ
+ UUAseNqYoYDe67YY7Zgi8uD/MK8F+bRvBhaUYIdFgL5TCcHZdx9wArbqZrxT4yM3ES834At
+ hD3yFC6SRfZIJTjQhXXuw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hcNknEKYdVI=;CvDGzeWTWd9WWGmL0c7EgTX3b4y
+ ZXqP/Ts51uPQyAJqzWyJwfkpbFIqOBegUXUVChQoorD+pp5LhvmtAx2bYu3qc9I3vuAruYNt3
+ 6ljYODzuyBKWqa5+uG2BH2rGxna9Gv0AtOqIZZiGHK6sIaWdmF0WwgtnRll0jEpQjGwwag1rB
+ 47w5j5lkH+DPYNiXXm7MmKSmZtGaMaQImm4+kBNUMjtpSJP187bonzbGo0mV8QTOlPBMdlUyD
+ tmmymFa+l+ac5wHt1s1O23bVrDMdzcN+ohI2GiTM1S7kilVrm1Ujgnubndt6K1Y/FA1z6MlKi
+ 8j15ufga8TlJHP6hZ8DA1T2HOo9srK5nHG939sc06+7YkgC7uiPtjEvE5qvB/lzvJjjDNfDE8
+ rQZKdnGXp4UwlwFTvUodPuEHHKctdFMrjlnwmzvMj5b8XnvU+SvztKeDN5+faf/fF7yOgqgj+
+ YmrMutLjRpwMXnzn1/bkbx41SVJMXovfwAYnuzaMUOTqTvpgsK2uFMILwQoKCyVcLaZby1Wfx
+ +IeBGzS+ZxItGyWG/tanQ0Z2+3Lq8FlT+sZweLAhAQBwzh7PUnnPpQo7ssifVG2lFDJVU9MUX
+ N06UanT9RdQIbX/hU6He7cMMR0rqoyLwkRiRYWOjqnF283f/WnaMPYNsAcueVQyRBl90Cp+8X
+ 4DGnoIvvbvQtYedtt9x+HgvD7Hjx+AtAqyQaqSqDH/huXQRw29nDt7tsqwPRL+C2pl6rXApiX
+ vXbxRMZr8WjuGInx366gLY3b4OiZyl8KIaKMzqxX4ONjoh3fRYHraH1ZwDDsoz+o0HjaycZpW
+ 3SW/yvlF8zEKkBsoHSJ3bgvjc9FwckmOdi0phwPqnCTv4=
 
-Hello:
+=E2=80=A6
+> So enable runtime PM for the host bridge, so that controller driver
+> goes to suspend only when all child devices goes to runtime suspend.
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Can the tag =E2=80=9CFixes=E2=80=9D become relevant for this change?
 
-On Wed, 5 Jun 2024 11:57:18 -0700 you wrote:
-> Commit 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA
-> address width") added support in the stmmac driver for platform drivers
-> to indicate the host DMA width, but left it up to authors of the
-> specific platforms to indicate if their width differed from the addr64
-> register read from the MAC itself.
-> 
-> Qualcomm's EMAC4 integration supports only up to 36 bit width (as
-> opposed to the addr64 register indicating 40 bit width). Let's indicate
-> that in the platform driver to avoid a scenario where the driver will
-> allocate descriptors of size that is supported by the CPU which in our
-> case is 36 bit, but as the addr64 register is still capable of 40 bits
-> the device will use two descriptors as one address.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v2] net: stmmac: dwmac-qcom-ethqos: Configure host DMA width
-    https://git.kernel.org/netdev/net/c/0579f2724904
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Regards,
+Markus
 
