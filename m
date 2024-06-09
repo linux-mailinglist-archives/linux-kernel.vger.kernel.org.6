@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-207305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9F2901552
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:31:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711A4901554
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365371F2164E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:31:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1F1B21630
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F84D1CF92;
-	Sun,  9 Jun 2024 09:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lS4LRnKn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4731CD3F;
+	Sun,  9 Jun 2024 09:36:19 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9B8360;
-	Sun,  9 Jun 2024 09:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509E71CD00
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 09:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717925470; cv=none; b=EDo58zez23uaRrwpM/Akv/mIf1w69axF0LrjWvGd/n8Z8klVk7+pisTootNakGwkH9n0xYGtecjS73KBRKo6UdkSAjwAW0va2aq7ZJoXdceF8Kavl64acT9epOQBvVaWvp493zFtGk++EFY1bxIg9nQtozEzKfBEWsYUmY8OmwM=
+	t=1717925779; cv=none; b=HvUBhr3mvlx/8nFCsZiNHeD33EStJdPSxmftkGeaC+JJ7r4gJRjh5xlux9eFJdO5eg6GPW9lB+SuX39wLsw6DPnbyfYDULSowTEfXP29MCFkEtHIL/bbQx4CBr+R8CHh5E+Wr1WT0FYlph7K5m46INEmBeQZWYS+lLnSmTGcN7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717925470; c=relaxed/simple;
-	bh=jXOCtKxUztDJQHOsx2MNS1JltHk7f/xxhqp0JBqI5Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lsuRxON8DN19ChT6+hSaYBO/R5sLMtBxQqKO3CbZqRdpyJVklvz/JOZFfzTs5ZGfjl6cjUwGXtX0vcJce2ItQrV6UtlevVFoFNL4xj1yaoCUJRCU7booxUYW5DeIC4qUZUQztpC92kGDwCbVDCMhugsTP11Xsq2KUoiLUWydqS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lS4LRnKn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB5AC2BD10;
-	Sun,  9 Jun 2024 09:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717925470;
-	bh=jXOCtKxUztDJQHOsx2MNS1JltHk7f/xxhqp0JBqI5Z4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lS4LRnKn6nIb4Jw2kD/zVGvFtpSjyfOv5na0eTJxZ5cxY1CI9AKlUSv595j5V1UmI
-	 2T2V1tPoy53ySkc9TCATmi/lspGgbd9PCY7KGkL7QhxjfrJkBVRHbfTvhpSBw4GYZX
-	 41+xqDF8G8zdbQ+a77x4IPGCjrgYUhDkIokzzOeKyFF/IPNVbLByZJveIKlf/zsxYI
-	 8cdU2+V0lAZAwRgtP2+U9ZysKlV+j6gTUti6TiSp0LK/aQBwvN8t0Od1bRQoIEaMyu
-	 5bKNG3p4D5o4AHS2AcufojZ8NsOPS1V08clMb8XJcJQugKye0qozOoUFrt5AM12PaZ
-	 LkcMJvtrpGI1A==
-Date: Sun, 9 Jun 2024 10:30:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- lars@metafoo.de, christophe.jaillet@wanadoo.fr, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] iio: chemical: add driver for ENS160 sensor
-Message-ID: <20240609103033.2f746f1e@jic23-huawei>
-In-Reply-To: <20240604225747.7212-4-gustavograzs@gmail.com>
-References: <20240604225747.7212-1-gustavograzs@gmail.com>
-	<20240604225747.7212-4-gustavograzs@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717925779; c=relaxed/simple;
+	bh=QxyqwjX4RH9bduRiYY47W4a7DNLiazGnEX4BsDURPhg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=HId/K1Qe+fHqtpPoa6lSi2zRixK2xuWd3m4sFnbTS+8liJ/uF0cmAiaoIOcuXIhI4+WIp4G2R72h+ESg6BB7jxL5CHUpObYlCf0Fht2ANBDGo+ORe5CXf5QF1/GA8y9Zr67r20B77/4AEhBJ/bYc+9yirocvCrpSzK9fbD/gGfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-136-YpaBPdK1NEKgXkUGJAVVTQ-1; Sun, 09 Jun 2024 10:36:14 +0100
+X-MC-Unique: YpaBPdK1NEKgXkUGJAVVTQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 9 Jun
+ 2024 10:35:37 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 9 Jun 2024 10:35:37 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: Linux kernel regressions list <regressions@lists.linux.dev>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+Subject: RE: Linux 6.10-rc2 - massive performance regression
+Thread-Topic: Linux 6.10-rc2 - massive performance regression
+Thread-Index: Adq5okQ7HduYf8qJTJSPwCpAtFdr/wAEqzOAAAzamAAAFwt/pgABdYJQ
+Date: Sun, 9 Jun 2024 09:35:36 +0000
+Message-ID: <930d66db93814520be94f02ee62a19e6@AcuMS.aculab.com>
+References: <CAHk-=wisJ8bS3qe6iBPwL9x=PqJA5oE7tum-E9oZfyPgd2mmrw@mail.gmail.com>
+ <46cb50d65e414bfd9bef5549d68ae4ea@AcuMS.aculab.com>
+ <CAHk-=wh170Lme6HHSGa5eM6YNcd01vdkOoPenZ0m7P+Yv6_zxg@mail.gmail.com>
+ <adbbd899aabf4e6898bbbb04f90b3ede@AcuMS.aculab.com>
+ <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
+ <ebf5c056-3035-4e76-9472-d76be6427669@leemhuis.info>
+In-Reply-To: <ebf5c056-3035-4e76-9472-d76be6427669@leemhuis.info>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Tue,  4 Jun 2024 19:57:27 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
+RnJvbTogTGludXggcmVncmVzc2lvbiB0cmFja2luZyAoVGhvcnN0ZW4gTGVlbWh1aXMpDQo+IFNl
+bnQ6IDA5IEp1bmUgMjAyNCAwOToxMQ0KPiANCj4gT24gMDkuMDYuMjQgMDA6MDAsIExpbnVzIFRv
+cnZhbGRzIHdyb3RlOg0KPiA+IE9uIFNhdCwgOCBKdW4gMjAyNCBhdCAxNDozNiwgRGF2aWQgTGFp
+Z2h0IDxEYXZpZC5MYWlnaHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4gWy4uLl0NCj4gPj4gSSd2
+ZSBkb25lIHNvbWUgdGVzdHMuDQo+ID4+IEknbSBzZWVpbmcgYSB0aHJlZS1mb2xkIHNsb3cgZG93
+biBvbjoNCj4gPj4gJCBpPTA7IHdoaWxlIFsgJGkgLWx0IDEwMDAwMDAgXTsgZG8gaT0kKChpICsg
+MSkpOyBkb25lDQo+ID4+IHdoaWNoIGdvZXMgZnJvbSAxIHNlY29uZCB0byAzLg0KPiA+Pg0KPiA+
+PiBJIGNhbiBydW4gdGhhdCB3aXRoIGZ0cmFjZSBtb25pdG9yaW5nIHNjaGVkdWxlciBldmVudHMg
+KGFuZCBhIGZldw0KPiA+PiBvdGhlciB0aGluZ3MpIGFuZCBjYW4ndCBzcG90IGFueXdoZXJlIHRo
+ZSBwcm9jZXNzIGlzbid0IHJ1bm5pbmcNCj4gPj4gZm9yIGEgc2lnbmlmaWNhbnQgdGltZS4NCj4g
+Pg0KPiA+IFNvdW5kcyBsaWtlIGNwdSBmcmVxdWVuY3kuIEFsbW9zdCBjZXJ0YWlubHkgaHctc3Bl
+Y2lmaWMuIEkgd2VudA0KPiA+IHRocm91Z2ggdGhhdCBvbiBteSBUaHJlYWRyaXBwZXIgaW4gdGhl
+IDYuOSB0aW1lZnJhbWUsIGJ1dCBJJ20gbm90DQo+ID4gc2VlaW5nIGFueSBpc3N1ZXMgaW4gdGhp
+cyBjdXJyZW50IHJlbGVhc2UuDQo+IA0KPiBEYXZpZCwgd2hhdCBraW5kIG9mIGhhcmR3YXJlIGRv
+IHlvdSB1c2U/DQoNClRoaXMgaXMgb24gYW4gMTctNzcwMCAoNCBjb3JlcyArIGh5cGVydGhyZWFk
+aW5nIGVuYWJsZWQgPSA4IGNwdSkuDQoNCj4gSm9oYW4gSG92b2xkIGFzDQo+IG1hbi1pbi10aGUt
+bWlkZGxlIGp1c3QgcmVwb3J0ZWQgIkNQVSBmcmVxdWVuY3kgb2YgdGhlIGJpZyBjb3JlcyBvbiB0
+aGUNCj4gTGVub3ZvIFRoaW5rUGFkIFgxM3Mgc29tZXRpbWVzIGFwcGVhcnMgdG8gZ2V0IHN0dWNr
+IGF0IGEgbG93IGZyZXF1ZW5jeQ0KPiB3aXRoIDYuMTAtcmMyIiBhbmQgY29uZmlybWVkICJ0aGF0
+IG9uY2UgdGhlIGNvcmVzIGFyZSBmdWxseSB0aHJvdHRsZWQNCj4gKHVzaW5nIHRoZSBzdGVwd2lz
+ZSB0aGVybWFsIGdvdmVybm9yKSBkdWUgdG8gdGhlIHNraW4gdGVtcGVyYXR1cmUNCj4gcmVhY2hp
+bmcgdGhlDQo+IGZpcnN0IHRyaXAgcG9pbnQsIHNjYWxpbmdfbWF4X2ZyZXEgZ2V0cyBzdHVjayBh
+dCB0aGUgbmV4dCBPUFAiLg0KDQpUaGF0J3Mgbm90IHdoYXQgSSdtIHNlZWluZy4NCkkgY2FuIHR1
+cm4gdGhlIHNwZWVkIHVwIGFuZCBkb3duIGJ5IHN0b3BwaW5nL3N0YXJ0aW5nIGEgZGFlbW9uIHdl
+IHVzZQ0KZm9yIHByb2Nlc3NpbmcgYXVkaW8uDQooSSBjYW4gZ2l2ZSBhbnlvbmUgYSBjb3B5OyBp
+dCBpcyBmcmVlbHkgZG93bmxvYWRhYmxlIGZyb20gdGhlIGNvbXBhbnkNCndlYiBzaXRlIC0gaWYg
+eW91IGtub3cgZXhhY3RseSB3aGVyZSB0byBsb29rISkNCkJhc2ljYWxseSB0aGF0IGVuZHMgdXAg
+cnVubmluZyBhIGJpdCBvZiBjb2RlIG9uIGV2ZXJ5IGNwdSBldmVyeSAxMG1zLg0KDQpUaGVyZSBp
+cyBhIGJpZyBkaWZmZXJlbmNlIGluIHRoZSBudW1iZXIgb2Ygc2NoZWRfbWlncmF0ZV90YXNrIHRy
+YWNlcw0KYmV0d2VlbiA2LjkgYW5kIDYuMTAgKDE1IHYgODMpLg0KDQpJIHN1c3BlY3QgdGhhdCB0
+aGUgdW5kZXJseWluZyBwcm9ibGVtIGlzIHRoYXQgdGhlIGNwdSBnb3Zlcm5vcg0KZG9lc24ndCBh
+bGxvdyBmb3IgYSAnYnVzeScgcHJvY2VzcyBiZWluZyBtb3ZlZCB0byBhbiBpZGxlIGNwdT8NClNv
+IGlmIHlvdSBib3VuY2UgYSBwcm9jZXNzIGFib3V0IGl0IGFsd2F5cyBydW5zIGFuIDgwME1Iei4N
+Cg0KTXkgZG1lc2cgKDYuOSBhbmQgNi4xMCkgaGFzOg0KY3B1aWRsZTogdXNpbmcgZ292ZXJub3Ig
+aWRsZQ0KY3B1aWRsZTogdXNpbmcgZ292ZXJub3IgbGFkZGVyDQoNCkJ1dCBJIGhhZCBhIGZlZWxp
+bmcgdGhhdCBzb21lICdoYXJkd2FyZSBtYWdpYycgY2hhbmdlcyB0aGUgY3B1DQpzcGVlZCBvbiB0
+aGVzZSBzeXN0ZW1zPw0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
+LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
+ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
-> for indoor air quality monitoring. The driver supports readings of
-> CO2 and VOC, and can be accessed via both SPI and I2C.
-> 
-> Datasheet: https://www.sciosense.com/wp-content/uploads/2023/12/ENS160-Datasheet.pdf
-> 
-No blank lines in tags block.  Datahsheet is a semi official tag.
-I'll tidy up in this and previous patch if everything else fine.
-
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-> ---
->  drivers/iio/chemical/Kconfig       |  22 +++
->  drivers/iio/chemical/Makefile      |   3 +
->  drivers/iio/chemical/ens160.h      |   7 +
->  drivers/iio/chemical/ens160_core.c | 221 +++++++++++++++++++++++++++++
->  drivers/iio/chemical/ens160_i2c.c  |  60 ++++++++
->  drivers/iio/chemical/ens160_spi.c  |  60 ++++++++
->  6 files changed, 373 insertions(+)
->  create mode 100644 drivers/iio/chemical/ens160.h
->  create mode 100644 drivers/iio/chemical/ens160_core.c
->  create mode 100644 drivers/iio/chemical/ens160_i2c.c
->  create mode 100644 drivers/iio/chemical/ens160_spi.c
-> 
-> diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
-> index 02649ab81..e407afab8 100644
-> --- a/drivers/iio/chemical/Kconfig
-> +++ b/drivers/iio/chemical/Kconfig
-> @@ -76,6 +76,28 @@ config CCS811
->  	  Say Y here to build I2C interface support for the AMS
->  	  CCS811 VOC (Volatile Organic Compounds) sensor
->  
-> +config ENS160
-> +	tristate "ScioSense ENS160 sensor driver"
-> +	depends on (I2C || SPI)
-> +	select REGMAP
-> +	select ENS160_I2C if I2C
-> +	select ENS160_SPI if SPI
-> +	help
-> +	  Say yes here to build support for ScioSense ENS160 multi-gas sensor.
-> +
-> +	  This driver can also be built as a module. If so, the module for I2C
-> +	  would be called ens160_i2c and ens160_spi for SPI support.
-> +
-> +config ENS160_I2C
-> +	tristate
-> +	depends on I2C && ENS160
-> +	select REGMAP_I2C
-> +
-> +config ENS160_SPI
-> +	tristate
-> +	depends on SPI && ENS160
-> +	select REGMAP_SPI
-
-As these two config symbols aren't exposed I think you don't need the
-depends lines.
-
-See the BMA400 entry in drivers/iio/accel/Kconfig for example.
-
-If everything else looks good I'll drop those two lines whilst
-applying.
-
-Jonathan
 
