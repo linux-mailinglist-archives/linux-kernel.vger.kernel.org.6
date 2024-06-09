@@ -1,167 +1,303 @@
-Return-Path: <linux-kernel+bounces-207317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B105F901583
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3421B901587
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DB01C20908
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB7C1C209D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318C42263A;
-	Sun,  9 Jun 2024 10:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBF022EEF;
+	Sun,  9 Jun 2024 10:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="KXQIWHh3";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="jAEqo23d"
-Received: from smtpout149.security-mail.net (smtpout149.security-mail.net [85.31.212.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3h9CX1G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABAD20B04
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.149
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717928114; cv=fail; b=abBBHe/SlV/JafH5yWOMirCn9oUQPkfp2dGictz2/nwtqgeuLLtSGQc/ayN/Ci0RiR0xKpvKKGyZ3JPBGJ5zpoo9Rl9DHitHybJp3BrFJTpJeirBaarNwlUMWJ5R+S3BE/NOCMXJi7vYtEqiRdex+T7ww4W7Qki3838PnKls2+A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717928114; c=relaxed/simple;
-	bh=+Eu7p5goilcpuGA5TxewZ+zOoeNGCyKkRa0b+/g3ZEs=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ekJXE1EHxjZgwkkRjuTX//CvRncMNGjRWe2pynCTFNhMFHP5N+twFhE02I8/PCfi85wE334lvoHnxwOqz1EL94w1K9ES3qK02mSEeYzfKtvdoE14lL4mmkH1tgrSyPqZLapFjmaPLbI9BpIVi0ITsXWnWLcHJULO24qfkcXbfgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=KXQIWHh3; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=jAEqo23d reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx409.security-mail.net [127.0.0.1])
-	by fx409.security-mail.net (Postfix) with ESMTP id 2CED5349560
-	for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 12:08:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1717927739;
-	bh=+Eu7p5goilcpuGA5TxewZ+zOoeNGCyKkRa0b+/g3ZEs=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=KXQIWHh3+kudDEKhrxCGi7NssvUnGmPtok6fscnpUjdmCpM6k68AeffvHH94BhqRO
-	 Z6rBBvv4jLIFkNS4O5guPuISzEtSZ5ieAtWW/an1Bu9GSGHxgByZ1WKPs+gGXvj71g
-	 cHK0M81Cir4Z6w55k3e0t1aIUOp8ZHjUbjDFxH04=
-Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
- fx409.security-mail.net (Postfix) with ESMTP id 4776934998D; Sun, 09 Jun
- 2024 12:08:58 +0200 (CEST)
-Received: from FRA01-MR2-obe.outbound.protection.outlook.com
- (mail-mr2fra01lp2048.outbound.protection.outlook.com [104.47.25.48]) by
- fx409.security-mail.net (Postfix) with ESMTPS id 300EC34998A; Sun, 09 Jun
- 2024 12:08:57 +0200 (CEST)
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
- by PASP264MB4865.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:438::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Sun, 9 Jun
- 2024 10:08:56 +0000
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39%6]) with mapi id 15.20.7633.036; Sun, 9 Jun 2024
- 10:08:56 +0000
-X-Virus-Scanned: E-securemail
-X-Secumail-id: <c955.66657f39.2b512.0>
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ncbts6E0A7ct9OSSZUHHna+WMGjzl9iIk6IExGC80HIl4qLYmLfvfw5Db0lsxzLx/1cx/qDKmwjgOejkP6afw5y2jCNEOvy9qXtM5xMfXewjoWoRq9lDRf7Q1D4YZiUA/g2k50BVaIRIDysfHo+hTOJ2AhbX1ZXLb8JRGnl2dlXpC0J1wj79KVbwsjc3KhgSqpO48+HeERF1TbXvxrwO88PS5sAG12r+UHgLWLphiS5yaVl4rMMk5Ro01ki98PrmO7vPSdwme3Xn8YNEdbLmkOIlN/ghDKYvL5IomsVCqIfNXs9HZG76ni3Y3lg1jj4OtSJ87mRmiNc9ZlqP9Y3uIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microsoft.com; s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NIrYii9vA+eWsdTWKf9b93z0+XNTYX88Wocd3Ps4utM=;
- b=WCMz3Uaxty7tgSQn8cVugwIGQY/haJmudxBJBpIDKGDgh8l+i3bgra+pmSmjZN+aadeIKyrHvupjUzQh5aZRkKBUeHSqrcfJBC6GjiZZprdcoLTGRuyu6fBXYbxsbh615mGoh1NczkAyDlgd1uJq52y8ukY4az0BESOkgn7iOBeuxkttpq6ed7Zz+m17wV0b6dPhQ5qFwozvteJqFlTnF2HUy1Bq3Ll5yCUNXxu8Jd9Pydkn0CKiyo6hb3UWMnsmKKBsU+6UZ93oi3eAB8H5rl8pLuttBATPj2Mqzr0xnrY1NvFKHvWnBzOnmUEv9Nsf4lElr5mXIIZQ05CoP43vug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
- header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NIrYii9vA+eWsdTWKf9b93z0+XNTYX88Wocd3Ps4utM=;
- b=jAEqo23dh8qH5xqBhQ42xJHwDfjO8xQCOlafrU/C+zUkdgm6maMUPVXIVI4l3Bs6Jm1US7I6lE6xi6h9FtV7Wt3T92WZ/Q/kdX5gluRwdXRw7EeRBpMbCTqz/4JAGzxYhJPXMVHwGuXKB5SzTAzJCaApASfJWJIulLqHZCXYdkN4ZnqKmKeXgdcbtWM2DFefZ4KWTDkHlzi3KgxedMnVU+UylDTND3K0JO1tyakT8+OYwY0yLLeZRh71toxejb+VB7RNgb2iUv4l/T3vZ+XI5jcoASaB0TomYA43kiKQYFw9JG4WbyNJ5mxqv28pyOOWLbEhDgLwb6yKwSqdZZBbfQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kalrayinc.com;
-Message-ID: <a29fafc6-6d19-4dc5-a897-a506ac64cb98@kalrayinc.com>
-Date: Sun, 9 Jun 2024 12:08:52 +0200
-User-Agent: Mozilla Thunderbird
-From: Yann Sionneau <ysionneau@kalrayinc.com>
-Subject: Re: [PATCH 6.1 000/473] 6.1.93-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240606131659.786180261@linuxfoundation.org>
-Content-Language: en-us, fr
-In-Reply-To: <20240606131659.786180261@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PA7P264CA0089.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:349::9) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:14b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEA22619;
+	Sun,  9 Jun 2024 10:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717928318; cv=none; b=QObW4J2AoOutSQ7kp2ZkmRkHXizHgwbtsAe1ODzXzu7cHEIn71xbhgBuA0F4rRDKtb02T2c8FO2n5x+JcMnKhXMO4DIM+HQzjn9URgHEktg04wqfWF699qpqtQ3nKR81BAvaN0MWGplhHQSXh6LHQwkpFgZ69ZsEHiHgNOFKlfg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717928318; c=relaxed/simple;
+	bh=fy4wqIGP/0XPQnNOrnmxbqYJ84UFY/vN3hZc+RbEo2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DFuOiIfev8tlNApnZkrRzqAE9dKHaMnY7YuNn6uQUcFf7wOvSrPwbA4Xx1pjHR0vjDvDrw9k/G531gL8BjFmp/QXofolGY40uKUBUQcbZ8/ov/GxrSntUrzQQ8xjItCxjJVDzmkD1eS8GTAQUHNPBlzK/dOk0hd05UAeFZBz5g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3h9CX1G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CBCC2BD10;
+	Sun,  9 Jun 2024 10:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717928318;
+	bh=fy4wqIGP/0XPQnNOrnmxbqYJ84UFY/vN3hZc+RbEo2E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I3h9CX1GPHvxMGFCT0woGd59deltw5THyyUnHqHwwGn357o/S5lO/m6ft/Vj4HuvZ
+	 m4iRydXXf1Z8tbGu5ME+nkSY5kF5xhJC8P2lQGIhXUouDYbgeSwmwlltuCsoR8dr7i
+	 Pm7Sir7aOVVQCxu5eb44zTDuo6oJH8TY1XhNhbS/RurFdDWXrHcaZVuwN10MOXNVsc
+	 S4PeMybJwU0qCTxFajs4o26hADH7gfxraZtdLyEJfk7Ubnv9tp8q3+Ha6td0PPRN7L
+	 JDbhCcJyAeYIrxNr9AqQp5q2unefpATxjA1iDewKmuJLc1pyhv6ivtw7N+BGNTSTlE
+	 v18AETj417kjA==
+Date: Sun, 9 Jun 2024 11:17:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <jpaulo.silvagoncalves@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Francesco Dolcini
+ <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: add ti,ads1119
+Message-ID: <20240609111740.1c61ce07@jic23-huawei>
+In-Reply-To: <20240606163529.87528-2-francesco@dolcini.it>
+References: <20240606163529.87528-1-francesco@dolcini.it>
+	<20240606163529.87528-2-francesco@dolcini.it>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PASP264MB4865:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f8e0bab-142e-4d5c-4f39-08dc886c2bbb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info: 68HUlHccZDZBQVenKV8IUBxj4N11eomFfAduD5/SlAgKMV+eLnoKOkstEAyv8SO6a2HGrxghAx0hQNOcYL3q36+EeWaVykSNJ2nfqoqiGaAtnjGMxG+VurrqOgYX5NUg8ssMhoFXNx0LYl6JI11GhPi1PvJAVBjVpaSYvs+q01iSeyuEybKw1mWxAmlvnNv+7Nup+GsoKJQAClAWhkIY/ATk1z3+am+1mdFZXsOE4tGTlcIhsdDE9zvsB+fi+sa3txV+R0Crd994yc+Zo/b8u6mmZLmJhu8sPohIr6AaXCK/bPRqzqBwH9CDCVveWe9+jdUT48cT+QeT21KYxQzkJ7EWvLif6G/KU1PgdTd7SIhmYTvvvejCZIs8phEbznOMH3GcNWF6dIDY7qxn/mAJaI2ryMHl+vDlhipLeRHleQ6PV81txZKZ9lSKuxboruSxyxeDopSHo1R8nKB5NoML/sXMkpD3mEl9RiM3cDAXxwi43HxI9ta6Ou1rVuxsroouJxXkCWUWzPtw6OrdK/dCIiM/MmN3oGwwRb/YwBE07T3HO6nP5ELOhuG3Z0hYofFiKrIlPEgnb+q4zpu6TwCyfPlYSryCvX1nyysjvlv242BplNoV8mRez+PJ50g165DL0iRgSg4VFvbTmdF5C9D1M9OtdIkP+IMrHz1MAnps6vNS00vvnyAGtT00zpTRkEM7oiSdFJge+g5oqf/ZnLZ9ft3luEIeEpb1WvME9pnX/gJfyGHNIMJVGZ7oCHvr7V4HfH1kvmonrowAGhYliUq1GLrN7aVaxzoK6V31BtY6pbpH7rOiNAPI7kUkSKSs7til7TK6vj8ICaSAuaXklmxdsZlbraKO5Ddo6NuBzH/BHFwYBGgxGz6PPAq5OwgBg1O/SvBF8IXEV6Whkwr5T3xNDguLtDURltzgXlwI1Lkg6z6lYLpNsHhfN90L8qWg6jusibx
- NbyTqAkUQk3B2Jd5BWQ3RZ6fywiYunz8wlUSHYoy63nvFtJx3jQxifegSFndCRwmqBFfsegK6YFN2QqADThI4NZQOw+3LZsqYKbP68mruYiSbcTLwu4HJNrMMURVrjCq4OryoKmA/zDbPJbwzFBC9hCKQoe2G2cq0R2/VEPjCvVgHD0a+Ngg6Shzu3V0yw1FpRl8uDhsMzOhQQZcG8BkVralxd1kLQ03rKlo6Z03hLERgpnegv8iWEmcvIjRa+YMFhqRyZY3POVg8tAjGBBeiu/jhcX7cNrFo/gGyakpzIxr3BMG44W8S8wEM1FoO
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: v9yDPGyhQYXV8v1G9BfVK+UKVXvvb6ft09WkDCnAbK3zzUrEQLQHSqctANUqR4Hzn/wOf6lPgrAeUwKaQr8no8tiKk/FBeOLIOxYqxPuDo5DUvqTYk4v/bFyJSH519FAmZcyh5FqkIgH7dNWd6N46I7QzEL65DjNwRhQ4B4I1L77mriiKw6PIQgT8Q+UuXbqV31nzJVpqcU41WH8UwpeBrvmcjFXXKKanC9zkDgSJnwUuVM5aijedQOQS7+m7aRMCI3vThoanjKWrGileEOXZY+o0oLz0yIYem4HAXubfS2QLpErGyIbwzLmRYDb3P8CY2qqEqSLqrE+MAileGiyxveq5UfOMi8gf2K5kzbduM13a8YYaEp519cNSTJQqvO9+dD5cWdPHojdWjdD7vW/mMN5t1R6h8YlQZIIjNypyoM06EM0i3pW5z6i4ltUfcu0CKLfElgoycIRGlqNRX1V30z28XO9wLoCR+EInAmJ43wU3EjQF5+c7HVsAmRZ3Gefpsbg4c+AGvf7oeeRAboEOkOEZvYn8NfC7SwYETqzEtXSGEJ6PlfDuHcjHWLYx6cRn2YBX0vHfVGwe5zJNL18oZkIz+NzSoew3veMJe+mIOV1JRAi+8f4ZQ27cgjMOblkmCPQnoLfoo2W9mOaE/YZ2j2FtSbD90mcRqN2lDiA4pg8U8AE5pDjZLNHI5R1wJK5GdXTGxaCFjj8iNxNVj2rVef90iKmApkayEqMxPrwQe1WDACiEVukG7AMcsKSvzIo7frWbNbzAp6G9/Q847c7p1PxLqBy9ygtlUALAUmic5jQwXXLnGQJD3ZHZCJmZqTh5iSwu8WnzU9mQMU4wD1N2nRCck9rC6nFuGIYajY6LGorOZ2QFZf4Kok1QEyTX7dQ6B3+ulCd+h5HAHni+dg+w6wYnAAUUdFRcxC2xdpSh7GHVgHN7k08ZjL9sSYqd5aK
- ySzAnKcx4sZKFKl/ZGr2zwMOPbcFbqwmsWWttYZN0wG84ijlrLXY+Lp/vSOIEwCWsT5Yde85Gb74ZqOXDhHIS5vNs4Pm1/+RzEQshH6awYST85U74suyPihhfz/HSHXt42uVoKq7bwduarYb2G2r4W9ER0w9tYBtVNZHJhXRG4/6rt8vYuS4Cvt/jvcKhZdRuyuRxMCXCHCacaHvhYHFXDO6qqEAMqTaz6cbhGBM4ft8EgxlM3Mfrp8+NClfi5PCe5hubE2Pc7Lpgpzbz2AjwC1k6snUp14cGj9EuWokPI5VtZBV+gPSQNn854X4zVO1wAew/RiJpVGHizTarXd8mJbu27u6b1Ea/E16ne9m1D/aeHRX0PMD7Q86sDwJZAq4pGxM7j2BPJf62d7JW/nOazphtODdiMu53LrWq16H/xRMqXacZMUSOmZ8PHO14hDmKfxaGUeEwTH2QJtgMLFRL3uw3rjFPl9pzBxjx9emDD7E1LFWVv5Qez8wIC2Pxo1GAAFdb8GLUbcVkHiOz/hmFoe53vVYz26Zdt1tscZRSGO4d7rQYOgTnOlc6SmQswTwmqQBKum8g7K9LkWAvnMDCVq4eWq26ZuXByOn/tl7y5Mgop0ojxL8Y6siOOZMsagAbD3Ceg42DZqmVmiX3kO+r0TWejXcZvxQO0Jq3Qr/CoQuji7cNr9mspGyiILwsLx82lp90P8ZGuW0XQ2OCUIcbg==
-X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f8e0bab-142e-4d5c-4f39-08dc886c2bbb
-X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2024 10:08:55.9444
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zfGXFo0LFp8eLWpGCv3SyjmMgBzsDirIJGsWOdzJdI1IxyuF3RUrjjhk9QpUHA8qvRVwSLkDwJ8uGFD61uRU4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB4865
-X-ALTERMIMEV2_out: done
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Thu,  6 Jun 2024 18:35:28 +0200
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-On 06/06/2024 15:58, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.93 release.
-> There are 473 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Jun 2024 13:15:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.93-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
+> From: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
+>=20
+> Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
+> with I2C interface.
+>=20
+> Datasheet: https://www.ti.com/lit/gpn/ads1119
+> Signed-off-by: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-I tested 6.1.93-rc1 (d2106b62e226) on Kalray kvx arch (not upstream yet) and everything looks good!
+I missed it on previous version but you only have description in here
+for vref and few devices power them selves from something called vref!
 
-It ran on real hw (k200, k200lp and k300 boards), on qemu and on our internal instruction set simulator (ISS).
+The binding should describe the other power supplies as well and mark
+them as required.
 
-Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
+We've left these out too many times in the past and ended up having
+a patch very soon after adding them. Better to have them from the start.
+Driver should just use devm_regulator_get_enabled() to turn them on and
+register them to be turned off on driver removal, and ignore them
+after that.  If anyone has controlled supplies and wants to do more
+sophisticated handling they can add it later.
 
-Everything looks fine to us.
+Note that even though the dt-binding will list them as required, if
+a particular DTS doesn't provide them the regulator framework will
+give a dummy uncontrolled regulator to represent the assumption that
+the power is always there.  We still document them as required in
+the dt-binding though as other OS may not be so clever.
 
-Tested-by: Yann Sionneau <ysionneau@kalrayinc.com>
+Only needs minimal entries though - see inline
 
--- 
+Jonathan
 
-Yann
+> ---
+> v2:
+>  - add diff-channels and single-channel
+>  - add XOR check to make diff/single channel property required=20
+>  - add interrupts, reset-gpios and vref-supply to the example=20
+>  - fix missing additionalProperties/unevaluatedProperties warning in chan=
+nels
+>  - remove ti,gain and ti,datarate as they aren't fixed hw properties
+>  - remove unnecessary |=20
+> ---
+>  .../bindings/iio/adc/ti,ads1119.yaml          | 148 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 155 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1119.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml b/=
+Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> new file mode 100644
+> index 000000000000..cbf0d4ef3a11
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> @@ -0,0 +1,148 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1119.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments ADS1119 ADC
+> +
+> +maintainers:
+> +  - Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com>
+> +
+> +description:
+> +  The TI ADS1119 is a precision 16-bit ADC over I2C that offers single-e=
+nded and
+> +  differential measurements using a multiplexed input. It features a pro=
+grammable
+> +  gain, a programmable sample rate, an internal oscillator and voltage r=
+eference,
+> +  and a 50/60Hz rejection filter.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,ads1119
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+avdd-supply: true
+dvdd-supply: true
 
+> +  vref-supply:
+> +    description:
+> +      ADC external reference voltage (VREF).
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+    - avdd-supply
+    - dvdd-supply
 
-
-
+> +
+> +patternProperties:
+> +  "^channel@([0-6])$":
+> +    $ref: adc.yaml
+> +    type: object
+> +    properties:
+> +      reg:
+> +        minimum: 0
+> +        maximum: 6
+> +
+> +      diff-channels:
+> +        description:
+> +          Differential input channels AIN0-AIN1, AIN2-AIN3 and AIN1-AIN2.
+> +        oneOf:
+> +          - items:
+> +              - const: 0
+> +              - const: 1
+> +          - items:
+> +              - const: 2
+> +              - const: 3
+> +          - items:
+> +              - const: 1
+> +              - const: 2
+> +
+> +      single-channel:
+> +        description:
+> +          Single-ended input channels AIN0, AIN1, AIN2 and AIN3.
+> +        minimum: 0
+> +        maximum: 3
+> +
+> +    oneOf:
+> +      - required:
+> +          - diff-channels
+> +      - required:
+> +          - single-channel
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        adc@40 {
+> +            compatible =3D "ti,ads1119";
+> +            reg =3D <0x40>;
+> +            interrupt-parent =3D <&gpio1>;
+> +            interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
+> +            reset-gpios =3D <&gpio1 10 GPIO_ACTIVE_LOW>;
+> +            vref-supply =3D <&reg_vref_ads1119>;
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +            #io-channel-cells =3D <1>;
+> +
+> +            channel@0 {
+> +                reg =3D <0>;
+> +                single-channel =3D <0>;
+> +            };
+> +
+> +            channel@1 {
+> +                reg =3D <1>;
+> +                diff-channels =3D <0 1>;
+> +            };
+> +
+> +            channel@2 {
+> +                reg =3D <2>;
+> +                single-channel =3D <3>;
+> +            };
+> +
+> +            channel@3 {
+> +                reg =3D <3>;
+> +                single-channel =3D <1>;
+> +            };
+> +
+> +            channel@4 {
+> +                reg =3D <4>;
+> +                single-channel =3D <2>;
+> +            };
+> +
+> +            channel@5 {
+> +                reg =3D <5>;
+> +                diff-channels =3D <1 2>;
+> +            };
+> +
+> +            channel@6 {
+> +                reg =3D <6>;
+> +                diff-channels =3D <2 3>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6c90161c7bf..f1b2c4b815e2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22380,6 +22380,13 @@ M:	Robert Richter <rric@kernel.org>
+>  S:	Odd Fixes
+>  F:	drivers/gpio/gpio-thunderx.c
+> =20
+> +TI ADS1119 ADC DRIVER
+> +M:	Francesco Dolcini <francesco@dolcini.it>
+> +M:	Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> +
+>  TI ADS7924 ADC DRIVER
+>  M:	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+>  L:	linux-iio@vger.kernel.org
 
 
