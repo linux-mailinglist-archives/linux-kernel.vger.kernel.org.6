@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-207337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB6F9015E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29D89015E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5D291F21398
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:13:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC12B1C2039D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251432E63B;
-	Sun,  9 Jun 2024 11:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18642E657;
+	Sun,  9 Jun 2024 11:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvA2gFdv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dPVBYW5Z"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CD43D556;
-	Sun,  9 Jun 2024 11:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A787B282E5;
+	Sun,  9 Jun 2024 11:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717931586; cv=none; b=GzgM4eN/Hvnu2Ow1TwE9mE1lnl+2gB5bGNcBNALLc1GVbc0vCTBRWx1/8rAfS8GEgdaFsV5NV2vIOjzlLQpLe6bzM4iOg8hP+xNyOhLyOj5LYHga6eUShSlilEOmiK22Pha+f+a17eFdMALN9RPKO2+u/M/0eiHXoMB24+942tA=
+	t=1717931619; cv=none; b=EVHJICLiMWdaeNe1GujqgbT3VnZPdK7VBW4Zox8S0edekALaujahJo2x9qTV0rmR7M1IkjFNJnhjTEsAYNf2PjQqLedZ9/In9MqLGT0HAsWKcE33ZyD6oq0YmEVxVFHjYaz2BAoBLe7O2qThII9mT29pa27JIUcox4TajIL9ix0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717931586; c=relaxed/simple;
-	bh=Z3+Awxfxa8KCWGaWER0TC/hsJfL+g2wt5iEYfTrw768=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M3B9oSLFvzlMgbzD7yJ1gis3p3KuZY8NUs6fuoz3/7T5zOm5O5NzId7jKVNrvRSz4jjasta8AMYaGkAt1wr84Cvf3pexMfzEZSzvSmOKKbIZdX1SDjXNGNmmuIEMLFXwPMqZz+5morb9uoTBACuJ+sR7WbxPDtMxv+m6uXXcXNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvA2gFdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6281BC2BD10;
-	Sun,  9 Jun 2024 11:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717931585;
-	bh=Z3+Awxfxa8KCWGaWER0TC/hsJfL+g2wt5iEYfTrw768=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AvA2gFdvuwrl8OXi/9NUypgsEclOqtfUGJA7Dy4tmgkJ3xTGYGF0s3gb0dvH04CNG
-	 zoXlbQh9xodYy3fNChTYLkqY7/4Sc63GGEUv3yQkGmDzVd7mnz9jiUar9LL/cyGnIE
-	 bSJXdlMArHrlQPfUvFkF3RCNljUPWExmgld3CXweKAr+HUxXKnH+g18L+kjVR/7kuh
-	 tZXoLe3ROkGSJ3yyOylnixS/4tZrCnvSUGGk+5kyxcZNV6bC3bo5/CIuOiAZ+T4FNY
-	 DXc2+iLrx6OchqaDJnoYCOp9MKyns6PNNFfzsyAgMyu+xOdsTG4DHbkQkST/n+noBC
-	 esuwofbsImQaw==
-Date: Sun, 9 Jun 2024 12:12:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: dpfrey@gmail.com, himanshujha199640@gmail.com, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- mike.looijmans@topic.nl
-Subject: Re: [PATCH v2 19/19] iio: chemical: bme680: Refactorize reading
- functions
-Message-ID: <20240609121234.7a458c4a@jic23-huawei>
-In-Reply-To: <20240606212313.207550-22-vassilisamir@gmail.com>
-References: <20240606212313.207550-1-vassilisamir@gmail.com>
-	<20240606212313.207550-22-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717931619; c=relaxed/simple;
+	bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NDlDa3nzOd6zfv0wC1aBUGB26IXWpr/3y9Hpgn3+DgXa1rQaGlt881vzpGu5HV0Y0PCAdwIO2XHNEK/1bIvsp7nDUOLshZP2KE3i4Uivq0KL5TBzkSV/rMmUQDjtA/qpBsBaMUY2opnYVpiJ2c6OK8TD7OB2vdniaOOpoXY1aTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dPVBYW5Z; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717931614;
+	bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=dPVBYW5ZJEgEJYulhTsw4SU3sH9EC20PyGF4lecg/RyM+L1hPU9i87QUeJkPbkjUC
+	 CSYriBCNy1GWhBX1Qc4ghDQoD6paOaDeOaOLAGyvVgjSSTklk234ROX2qLmJXTQgDB
+	 6n+gKknHX8b+XyNQzCvM4mUIC0njr8eIJBvH0+bw=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 09 Jun 2024 13:13:28 +0200
+Subject: [PATCH] ACPI: SBS: manage alarm sysfs attribute through psy core
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAFeOZWYC/x3MTQ5AMBBA4avIrE0y6ie4ilhUTZkNTSeEiLtrL
+ L/Few8oR2GFPnsg8ikq+5ZQ5Bm41W4Lo8zJYMhU1FCH1gVBnRT1Vq+4xP0IWJMtaXa1b42FlIb
+ IXq5/O4zv+wE8CvH2ZgAAAA==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717931613; l=2884;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=BV+oswdjo+GnBuL0pDMh4r7BZxfSayoPjlLPADR1Rl8=;
+ b=skQzhFl1dCsplgUOI3yH040AlRupnm77EfNVRU198/eApMnR/dMPm9OpxDzMtOsOPTt9DKxdH
+ 0FlB1WswbAkBpHsoFJESNL7UyCavbFmj36L6ATbppZIyAa4t2xUjA57
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu,  6 Jun 2024 23:23:13 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Let the power supply core register the attribute.
+This ensures that the attribute is created before the device is
+announced to userspace, avoiding a race condition.
 
-> The reading of the pressure and humidity value, requires an update
-> of the t_fine variable which happens by reading the temperature
-> value.
-> 
-> So the bme680_read_{press/humid}() functions of the above sensors
-> are internally calling the equivalent bme680_read_temp() function
-> in order to update the t_fine value. By just looking at the code
-> this relation is a bit hidden and is not easy to understand why
-> those channels are not independent.
-> 
-> This commit tries to clear these thing a bit by splitting the
-> bme680_{read/compensate}_{temp/press/humid}() to the following:
-> 
-> i. bme680_read_{temp/press/humid}_adc(): read the raw value from
-> the sensor.
-> 
-> ii. bme680_calc_t_fine(): calculate the t_fine variable.
-> 
-> iii. bme680_get_t_fine(): get the t_fine variable.
-> 
-> iv. bme680_compensate_{temp/press/humid}(): compensate the adc
-> values and return the calculated value.
-> 
-> v. bme680_read_{temp/press/humid}(): combine calls of the
-> aforementioned functions to return the requested value.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Only compile-tested.
 
-LGTM. All the other patches I didn't comment on are fine.
-5 can wait for the non fix part of the series as it's just a typo.
-7-14 look fine but probably have to wait for 1-4 and (v3 of) 6
-to get into the upstream of iio.git.
+This is the SBS equivalent of
+"ACPI: battery: create alarm sysfs attribute atomically" [0]
 
-16,18,19 all look good.
+[0] https://lore.kernel.org/lkml/20240609-acpi-battery-cleanup-v1-5-344517bdca73@weisss
+---
+ drivers/acpi/sbs.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-Note given you have two series that are dependent on fixes
-I might take v3 of patch 6 then send another fixes pull request
-before I rebase the main togreg branch on char-next (once it
-has those fixes). 
+diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+index dc8164b182dc..442c5905d43b 100644
+--- a/drivers/acpi/sbs.c
++++ b/drivers/acpi/sbs.c
+@@ -77,7 +77,6 @@ struct acpi_battery {
+ 	u16 spec;
+ 	u8 id;
+ 	u8 present:1;
+-	u8 have_sysfs_alarm:1;
+ };
+ 
+ #define to_acpi_battery(x) power_supply_get_drvdata(x)
+@@ -462,12 +461,18 @@ static ssize_t acpi_battery_alarm_store(struct device *dev,
+ 	return count;
+ }
+ 
+-static const struct device_attribute alarm_attr = {
++static struct device_attribute alarm_attr = {
+ 	.attr = {.name = "alarm", .mode = 0644},
+ 	.show = acpi_battery_alarm_show,
+ 	.store = acpi_battery_alarm_store,
+ };
+ 
++static struct attribute *acpi_battery_attrs[] = {
++	&alarm_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(acpi_battery);
++
+ /* --------------------------------------------------------------------------
+                                  Driver Interface
+    -------------------------------------------------------------------------- */
+@@ -518,7 +523,10 @@ static int acpi_battery_read(struct acpi_battery *battery)
+ static int acpi_battery_add(struct acpi_sbs *sbs, int id)
+ {
+ 	struct acpi_battery *battery = &sbs->battery[id];
+-	struct power_supply_config psy_cfg = { .drv_data = battery, };
++	struct power_supply_config psy_cfg = {
++		.drv_data = battery,
++		.attr_grp = acpi_battery_groups,
++	};
+ 	int result;
+ 
+ 	battery->id = id;
+@@ -548,10 +556,6 @@ static int acpi_battery_add(struct acpi_sbs *sbs, int id)
+ 		goto end;
+ 	}
+ 
+-	result = device_create_file(&battery->bat->dev, &alarm_attr);
+-	if (result)
+-		goto end;
+-	battery->have_sysfs_alarm = 1;
+       end:
+ 	pr_info("%s [%s]: Battery Slot [%s] (battery %s)\n",
+ 	       ACPI_SBS_DEVICE_NAME, acpi_device_bid(sbs->device),
+@@ -563,11 +567,8 @@ static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
+ {
+ 	struct acpi_battery *battery = &sbs->battery[id];
+ 
+-	if (battery->bat) {
+-		if (battery->have_sysfs_alarm)
+-			device_remove_file(&battery->bat->dev, &alarm_attr);
++	if (battery->bat)
+ 		power_supply_unregister(battery->bat);
+-	}
+ }
+ 
+ static int acpi_charger_add(struct acpi_sbs *sbs)
 
-Getting complicated this cycle as a lot in flight!
+---
+base-commit: 771ed66105de9106a6f3e4311e06451881cdac5e
+change-id: 20240609-acpi-sbs-sysfs-group-50a30dc5f82a
 
-Thanks,
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-Jonathan
 
