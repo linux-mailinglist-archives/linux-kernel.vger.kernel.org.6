@@ -1,89 +1,144 @@
-Return-Path: <linux-kernel+bounces-207374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EA2901640
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:31:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B323E901648
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3FFB20F64
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9B81C20A18
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B7D41C69;
-	Sun,  9 Jun 2024 13:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027AB43AA8;
+	Sun,  9 Jun 2024 13:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y/+Fbamj"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7Ma1XWC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9993A20323
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 13:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427121CD2A;
+	Sun,  9 Jun 2024 13:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717939859; cv=none; b=rbCn+Lbc8LQXnpdwvHlFUBBGLiW/SzO9PPMsOQb30N3SsemHnLENq1ojLXS4CpIAV4N8cQT5o+gibKW1bJWzCGlv+qy3SFPROhuGUrsmUjGA5h9I5IlGZ6j7OZPBd0hOrXRNHTWX3sCZAki4n23vzDh67Bcvq82FoM2B1CcjIn8=
+	t=1717940892; cv=none; b=sysolDFQSF5MFMI6BRUMjcCKDEwW+gMZyUjfRSjAyKjMyNDOg7udqDZubbLQdzXfYGgVTvhuy1mdrZw5RVz5eucV5bMqjUSC7uUGxBdalstjw6MRQSbSfV2iJsyqIVZjkHoJwUwF1+MdQujMrUHW7/ccQY6Zpqn3v8Ic/ta5ehY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717939859; c=relaxed/simple;
-	bh=PyaUoKoKEXH5JVJAE8F0EcbjshvolazHP2760/iU4Gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MRkhHqRa/sxRHTyYr5RkRPDLu4N10EbN3UrMHwSb9i52XfVuBr4l389UjJo1r7SEu1ktH0oEq7SDV94OKuyiOHh7l720rz9TqWAceQGWbLS1SwuhQFeFaILmT4aFIg0uCCussSmSJr8Q1rFMYyAmULiKmUt5+zI3KDPU/KSG3cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y/+Fbamj; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+05c1843ef85da9e52042@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717939855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dygXqsnU+wgRnyrI1o+oaW814rLgAiGQCKt+uN/iHKM=;
-	b=Y/+Fbamj+iSt+yUFE+y2NJYAf5gFxwB5zqsLq3j9Q5FmVJ0/X6BanqEQQYuIw9EmEBsL8V
-	16VqwngI/gm7+rgKhtluo3u8xK6LYeklQs/6i1C3qNtNaDTj52JMaDoewD2ga7Kdfas2wZ
-	6oPhyJd7U5xGsPWzN//VC3cAyi2kKbo=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Sun, 9 Jun 2024 09:30:50 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+05c1843ef85da9e52042@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_fs_recovery
-Message-ID: <6tvlkgpsd3ikgyez6abnv4m3dri6atxu4fkxtzclsnejw4wmur@476lz26ii4sh>
-References: <0000000000008160ad06179354a2@google.com>
- <0000000000009ea02f061a741be4@google.com>
+	s=arc-20240116; t=1717940892; c=relaxed/simple;
+	bh=MsfDNyM9kCPGyW5bQ0n3e08qTzN3c/4LxFc+K0//VNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJtGNvExUUkRRK6P5OmD6FpRHOLOEwJ5PMP/RYpT6xQ8hQApBzqLGdovNpceGSvrPrP59QGNPXVtad3IuzBZsc5Hz+P1masraEz44YWLbZTfFb6k5AvffWLjGDPU5BNjcHbU66fRFKRbFbQFTfaWQjrQe34Xojf+QiGv6BjX9Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7Ma1XWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD035C2BD10;
+	Sun,  9 Jun 2024 13:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717940891;
+	bh=MsfDNyM9kCPGyW5bQ0n3e08qTzN3c/4LxFc+K0//VNc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c7Ma1XWCDOr/booLcB1kSj17uKNqx7Oyts5rarIeSaR4WC7ni3SVAk5KER7bgeCIS
+	 D2i7sXUt3LgIk3lgC7HMqHvADR+eorC7AIBqj3Y06pe4tiNI91DYH9zdLBYiE34vTh
+	 5SGrNiN6jjQLJ36hPITXqXD5K8k6DtkJHmcLdsfY+XfKOAAkxAusFHfRK3iPWfgHt/
+	 CgLgmfhCXmI0rkb9dyUaWpbLGST9pg4KPe4+4oVN9TCDWSwcHW5dwBbQQWXl/6L6bo
+	 G28MOgf4fGYgon2OIczx9FT6xArq8jDQ/d8JneNrQfDx19dQds/wIPaIwzyRys74zk
+	 c6kRdb6m3/+Xw==
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Milian Wolff <milian.wolff@kdab.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL] perf tools fixes for v6.10: 2nd batch
+Date: Sun,  9 Jun 2024 10:47:32 -0300
+Message-ID: <20240609134732.172580-1-acme@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000009ea02f061a741be4@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 09, 2024 at 05:24:02AM -0700, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 7ffec9ccdc6ad8356792f9a7823b1fe9c8a10cbf
-> Author: Kent Overstreet <kent.overstreet@linux.dev>
-> Date:   Fri May 3 14:55:17 2024 +0000
-> 
->     bcachefs: don't free error pointers
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13191932980000
-> start commit:   ddb4c3f25b7b Merge tag 'for-linus-6.9a-rc7-tag' of git://g..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-> dashboard link: https://syzkaller.appspot.com/bug?extid=05c1843ef85da9e52042
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1464ea2f180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130db31f180000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-#syz fix: bcachefs: don't free error pointers
+Hi Linus,
+
+	Please consider pulling,
+
+Best regards,
+
+- Arnaldo
+
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.10-2-2024-06-09
+
+for you to fetch changes up to ca9680821dfec73c9100860bda4fab1f1309722e:
+
+  perf bpf: Fix handling of minimal vmlinux.h file when interrupting the build (2024-06-05 11:33:00 -0300)
+
+----------------------------------------------------------------
+perf tools fixes for v6.10: 2nd batch
+
+- Update copies of kernel headers, which resulted in support for the new
+  'mseal' syscall, SUBVOL statx return mask bit, RISC-V and PPC prctls,
+  fcntl's DUPFD_QUERY, POSTED_MSI_NOTIFICATION IRQ vector, 'map_shadow_stack'
+  syscall for x86-32.
+
+- Revert perf.data record memory allocation optimization that ended up
+  causing a regression, work is being done to re-introduce it in the
+  next merge window.
+
+- Fix handling of minimal vmlinux.h file used with BPF's CO-RE when
+  interrupting the build.
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (12):
+      tools include UAPI: Sync linux/stat.h with the kernel sources
+      tools headers UAPI: Sync linux/prctl.h with the kernel sources
+      tools headers UAPI: Sync fcntl.h with the kernel sources to pick F_DUPFD_QUERY
+      perf beauty: Update copy of linux/socket.h with the kernel sources
+      perf trace beauty: Update the arch/x86/include/asm/irq_vectors.h copy with the kernel sources to pick POSTED_MSI_NOTIFICATION
+      tools headers: Update the syscall tables and unistd.h, mostly to support the new 'mseal' syscall
+      tools arch x86: Sync the msr-index.h copy with the kernel sources
+      tools headers UAPI: Sync kvm headers with the kernel sources
+      tools headers UAPI: Update i915_drm.h with the kernel sources
+      tools headers uapi: Sync linux/stat.h with the kernel sources to pick STATX_SUBVOL
+      tools headers arm64: Sync arm64's cputype.h with the kernel sources
+      Revert "perf record: Reduce memory for recording PERF_RECORD_LOST_SAMPLES event"
+
+Namhyung Kim (1):
+      perf bpf: Fix handling of minimal vmlinux.h file when interrupting the build
+
+ tools/arch/arm64/include/asm/cputype.h             |  6 +++++
+ tools/arch/x86/include/asm/msr-index.h             |  9 +++----
+ tools/arch/x86/include/uapi/asm/kvm.h              | 22 +++++++++++++--
+ tools/include/uapi/asm-generic/unistd.h            |  5 +++-
+ tools/include/uapi/drm/i915_drm.h                  | 31 +++++++++++++++++++---
+ tools/include/uapi/linux/kvm.h                     |  4 +--
+ tools/include/uapi/linux/stat.h                    |  4 ++-
+ tools/perf/Makefile.perf                           |  1 +
+ .../perf/arch/mips/entry/syscalls/syscall_n64.tbl  |  1 +
+ tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |  1 +
+ tools/perf/arch/s390/entry/syscalls/syscall.tbl    |  1 +
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  |  3 ++-
+ tools/perf/builtin-record.c                        |  6 ++---
+ tools/perf/builtin-trace.c                         |  2 +-
+ .../beauty/arch/x86/include/asm/irq_vectors.h      |  8 +++++-
+ tools/perf/trace/beauty/include/linux/socket.h     |  3 ++-
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 14 +++++-----
+ tools/perf/trace/beauty/include/uapi/linux/prctl.h | 22 +++++++++++++++
+ tools/perf/trace/beauty/include/uapi/linux/stat.h  |  4 ++-
+ 19 files changed, 118 insertions(+), 29 deletions(-)
 
