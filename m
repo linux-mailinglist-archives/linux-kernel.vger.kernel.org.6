@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-207395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806EE901678
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9CD90167C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555991C20A83
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB4F1C2095F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C534501F;
-	Sun,  9 Jun 2024 15:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247B545BFF;
+	Sun,  9 Jun 2024 15:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8Ovct9O"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s+j8k3X0"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B230844C8F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 15:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACD44207D
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 15:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717946996; cv=none; b=XnrrNTcQGjf3ovBXkD6H/Nmi6YjYsk68l2lW9UzxRQ4qVPKDH0GCjohwFvUGUSdr+Qp905Z1y15Rz43/KYxykYcu24eytJcHw9PfnRwXlws5yayIMPtYnH1NJFmw9gBvsg3EaY5sTuSCvDf1juHWHKld4ZTswpeTLa4+cu60zvQ=
+	t=1717947198; cv=none; b=fi+LnF7YjpTl4GqppGMCIeMwppuxWzK8+li77LWiCKhxvX2/Wg7ARRdQOKx0bJpqiG1UxdDrtby1RLEGuVbGwIgArHIQQQfuWOt3heXtrCShb6eWFZ/8XuHBL6Lao/ZFI7VgK0V4xRpOEva1OPfx2huWUgEgqogwVVC1S7cPwMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717946996; c=relaxed/simple;
-	bh=LkPXGai8kaRoajhEuKD9q1QTp4VpWFHLrSWtfPGkqEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lcofh6CohZv/OCPQBEgrL2x+nhIk2tibMeRarpp0lUcHcY7ov3vL+ZVvDw3coCyREZSBcLneRUCl95guRGXdYCx85AgALw7mgHyPQoyArgTLDhDS+4ri0rQNLxaZWRsUx7TSQDpkOomH9LXKihuLKoVfOonHshXlestlhV7TTl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e8Ovct9O; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1717947198; c=relaxed/simple;
+	bh=r4v/UAXdtaVQkhy3RY4WN1zXyyz8Oiobysf6yxbLWck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNs/+O7LtU5DDvYFCDcU3ZXs1vDei6jvJNyDt8+DGTqZznibVr7j/xPGUm8p+syeboRlRNHmDr78azs+axorJTwvlQWSPjYZCxq26z7Qhg5dpVW/Rx9qtV7dAr3FPpBTXYWeeFRD6xXQtcn9sFlZ+CTWQVPflwMmd05Tnp+4S3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s+j8k3X0; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so1217010e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 08:29:54 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421792aa955so11623815e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 08:33:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717946993; x=1718551793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+p7Dbyuweupea3JxyYctujxWv1vr+kMS3mFulUukLl4=;
-        b=e8Ovct9OJM6L9gooMPF98nCD/TSJFi5sosivd7iXjZQ/1b4j/I7Fly9b84YAu7o3zG
-         /zeN4ansGlsFvhJ3FlZ/RV3h3qNO5nRu2Fl5giDWSMUFw7Z4HByk7b5prLDFqStyMV5/
-         qXvQTfBeN7OMB8nsn1OnT6PooGPnrWYCE0Xnd9EqbotCW1y/45UczRkYv4zf9McTI9Af
-         ulvZYw1x+KJliZ0xRtzT2iF7u9Xu0xYhoF67+RgbQ7EVmkn8wDv7P6sa5VzZfJYoEoZx
-         8SVTipcnsxM0Oetz9yMBNedp9bBB0bFoPYS+fGi9N/nO50N4vh8Wq+1xXXN8ZD06sYL0
-         yIcw==
+        d=linaro.org; s=google; t=1717947195; x=1718551995; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dvLb4EQePzdCw1JidNRQOd0lUeEVij5wud7SriP9HXs=;
+        b=s+j8k3X03tydr5dzTCiWG/szBtN2dnnYY1oI99tPUTgJS1+5q5idKpXsfJPZvf98Gm
+         udxSMh38XDJuegRTX5ac2j1BppV/UkNEn7HTp1y5CUjCBejDDxR6kHaWv9VkGaDarq/5
+         qf+V+B/TZSwM5b39zSp4OG6bC897Of+bt3vC4/Ms6o1gV2kSiIvhcOrMftwaSHAeXVpZ
+         5uqm41bwPW0bw7nvgmDedI4rcMR9TiNB7o+8MY5kIJMyBicRCC0cEKdM+SuXoULrPhFz
+         QyclpCH9O6ufltIWptXfkOm1aDtqRheTt2FwZfDde70D3RT7dBoeIdUNayTVhhvyN8mH
+         bgpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717946993; x=1718551793;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+p7Dbyuweupea3JxyYctujxWv1vr+kMS3mFulUukLl4=;
-        b=WrcEoQ3gbTzUD1TOGcBjZekW7C8qZwqZjsmyb4tk45Oqvyc7MRbYpnW8e7RWASesTg
-         OF+GUQCT8fHTYEf+s1uIrBqNXunvgrb6skFWFZEYUKHefIcX5INJRQ7+cXQMup9OxiI9
-         tU3agJd37v+EOQrrq7o5AOLzdFqcb8aPTUUcE+YQ1hPvZXeAm1TAshv0BoP5XlXMRyB8
-         xqL+nGmTrd44SSAzS0NEXcarb/njPzugOrNPSoB18G6IBmuMXyreRxjMlzDG+BI9oUFD
-         8Zf9DNYCGfe71SzmbLizrW7YTWNeizqwM4y3A1bJPVv5EtpkQZf8jB3mpKHy06zy375n
-         pBzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcZ4vhgXUJLgilGkocco9oaHnMZt2BUfVphP8/c1C8BFOHgpJfNmAVRCsExYeOp65O9rU+SB7OdCblG8QuvE8aAJooSGoGuf3BV0UP
-X-Gm-Message-State: AOJu0YyqXUSw5d7MI5YUc004XcSWyV/3g81D8LLMwi2iw13oO4zmZ5A0
-	zt+pABP9P0VJCW/Ic/zWkIdIEiyJ+3U0YgntxfdnBoD9uqvmErB1+8kbLQZ8FFQ=
-X-Google-Smtp-Source: AGHT+IHAD4z52RxtAlhkJKnz6xDUNUsq8wzsH9aGCceUyMemIpuwQ3lYTq1VwnfUMEWgqgARHYFD4Q==
-X-Received: by 2002:a19:5f5b:0:b0:520:c2c1:153a with SMTP id 2adb3069b0e04-52bb9fd2521mr4380150e87.58.1717946992519;
-        Sun, 09 Jun 2024 08:29:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717947195; x=1718551995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dvLb4EQePzdCw1JidNRQOd0lUeEVij5wud7SriP9HXs=;
+        b=e7hXANRzJpvNjdcDlsFUGFyZzufnxc09GUR7KoFwvKmqP77vEkpgljvUoTyR3RiXaS
+         1Tuk5szieEuKGjE6xxuVnJAfZFUDmBe03nbGqfmajWrBExVjkdCteMeuPbZ7a8gNT76n
+         3CwNEf9+oaNJxx840pH4qV5gKV8mePCDoUHNwkRbvaOiZvd0ScijOGUOtfziAidcy75o
+         PqnMLOM653/mS+n8Kd73QleKs9VegJs5BaL8lv6RNAf1Oaasg9Qsta2jE+t4oKlfIRT3
+         KBirv9K2NnCt9cKtcN1mwaxa/wcSTSNv8Ftot+ucd/VwQBLkCxu2Soyww/qfqcpy9/XF
+         eQNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS+4rFAW0xub8CSmxmoUZiFn/enlvzP0PMXRaU3oSzcyDjUl0fgzrIpqE9DpoR8EK0+RsqAbxS50ciltLOUgi6k9lwQ00D/wEKHDPA
+X-Gm-Message-State: AOJu0Yw/K3kiXs1MDKkzUuxTFEipEJU90TMvVQq3gXMjZ9D0DPzFiNW8
+	NHvlp8gOKfApaSvNa2jngC2gGwpVpzgEyLPXBPiOEtGjyOujuLQ/6yCCpiyHV5Q=
+X-Google-Smtp-Source: AGHT+IFm2QG2Dc0gqMxwmCkOPINESWV60cY/tnsvGA5b6O3SaTzlM4NQ1WMs+ajiXNmXKiIgssrQ+w==
+X-Received: by 2002:a05:600c:1f8b:b0:421:7983:f1c4 with SMTP id 5b1f17b1804b1-4217983f41cmr39632065e9.6.1717947194928;
+        Sun, 09 Jun 2024 08:33:14 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2024b1c8sm1716363f8f.39.2024.06.09.08.29.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c7e8fsm114725415e9.38.2024.06.09.08.33.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 08:29:52 -0700 (PDT)
-Date: Sun, 9 Jun 2024 18:29:48 +0300
+        Sun, 09 Jun 2024 08:33:14 -0700 (PDT)
+Date: Sun, 9 Jun 2024 18:33:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Fred Griffoul <fgriffo@amazon.co.uk>,
-	griffoul@gmail.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Fred Griffoul <fgriffo@amazon.co.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
+To: Fred Griffoul <fgriffo@amazon.co.uk>
+Cc: griffoul@gmail.com, Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Alex Williamson <alex.williamson@redhat.com>,
 	Waiman Long <longman@redhat.com>,
@@ -94,7 +91,9 @@ Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
 	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
 	cgroups@vger.kernel.org
 Subject: Re: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
-Message-ID: <714268da-d199-4371-8360-500e7165119c@moroto.mountain>
+Message-ID: <1855e4d2-02da-4ea1-94b3-8daf044b1243@moroto.mountain>
+References: <20240607190955.15376-1-fgriffo@amazon.co.uk>
+ <20240607190955.15376-3-fgriffo@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,93 +104,50 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240607190955.15376-3-fgriffo@amazon.co.uk>
 
-Hi Fred,
+On Fri, Jun 07, 2024 at 07:09:49PM +0000, Fred Griffoul wrote:
+> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> index e97d796a54fb..e87131d45059 100644
+> --- a/drivers/vfio/vfio_main.c
+> +++ b/drivers/vfio/vfio_main.c
+> @@ -1505,23 +1505,28 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+>  		size = 0;
+>  		break;
+>  	case VFIO_IRQ_SET_DATA_BOOL:
+> -		size = sizeof(uint8_t);
+> +		size = hdr->count * sizeof(uint8_t);
+>  		break;
+>  	case VFIO_IRQ_SET_DATA_EVENTFD:
+> -		size = sizeof(int32_t);
+> +		size = hdr->count * sizeof(int32_t);
 
-kernel test robot noticed the following build warnings:
+Not related to your patch, but this multiply can integer overflow on
+32bit systems.  Better to use size_mul().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fred-Griffoul/cgroup-cpuset-export-cpuset_cpus_allowed/20240608-031332
-base:   cbb325e77fbe62a06184175aa98c9eb98736c3e8
-patch link:    https://lore.kernel.org/r/20240607190955.15376-3-fgriffo%40amazon.co.uk
-patch subject: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
-config: mips-randconfig-r081-20240609 (https://download.01.org/0day-ci/archive/20240609/202406092245.Hgx6MqK9-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
+regards,
+dan carpenter
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406092245.Hgx6MqK9-lkp@intel.com/
-
-New smatch warnings:
-drivers/vfio/pci/vfio_pci_core.c:1241 vfio_pci_ioctl_set_irqs() warn: maybe return -EFAULT instead of the bytes remaining?
-
-vim +1241 drivers/vfio/pci/vfio_pci_core.c
-
-2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1190  static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
-663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1191  				   struct vfio_irq_set __user *arg)
-2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1192  {
-2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1193  	unsigned long minsz = offsetofend(struct vfio_irq_set, count);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1194  	struct vfio_irq_set hdr;
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1195  	cpumask_var_t mask;
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1196  	u8 *data = NULL;
-05692d7005a364 drivers/vfio/pci/vfio_pci.c      Vlad Tsyrklevich 2016-10-12  1197  	int max, ret = 0;
-ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1198  	size_t data_size = 0;
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1199  
-663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1200  	if (copy_from_user(&hdr, arg, minsz))
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1201  		return -EFAULT;
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1202  
-05692d7005a364 drivers/vfio/pci/vfio_pci.c      Vlad Tsyrklevich 2016-10-12  1203  	max = vfio_pci_get_irq_count(vdev, hdr.index);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1204  
-ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1205  	ret = vfio_set_irqs_validate_and_prepare(&hdr, max, VFIO_PCI_NUM_IRQS,
-ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1206  						 &data_size);
-ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1207  	if (ret)
-ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1208  		return ret;
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1209  
-ef198aaa169c61 drivers/vfio/pci/vfio_pci.c      Kirti Wankhede   2016-11-17  1210  	if (data_size) {
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1211  		if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY) {
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1212  			if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1213  				return -ENOMEM;
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1214  
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1215  			ret = copy_from_user(mask, &arg->data, data_size);
-
-copy_from_user() returns the number of bytes remaining to be copied.
-This should be:
-
-	if (copy_from_user(mask, &arg->data, data_size)) {
-		ret = -EFAULT;
-		goto out;
-	}
-
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1216  			if (ret)
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1217  				goto out;
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1218  
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1219  			data = (u8 *)mask;
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1220  
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1221  		} else {
-663eab456e072b drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1222  			data = memdup_user(&arg->data, data_size);
-3a1f7041ddd59e drivers/vfio/pci/vfio_pci.c      Fengguang Wu     2012-12-07  1223  			if (IS_ERR(data))
-3a1f7041ddd59e drivers/vfio/pci/vfio_pci.c      Fengguang Wu     2012-12-07  1224  				return PTR_ERR(data);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1225  		}
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1226  	}
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1227  
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1228  	mutex_lock(&vdev->igate);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1229  
-ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1230  	ret = vfio_pci_set_irqs_ioctl(vdev, hdr.flags, hdr.index, hdr.start,
-ea3fc04d4fad2d drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1231  				      hdr.count, data);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1232  
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1233  	mutex_unlock(&vdev->igate);
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1234  
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1235  out:
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1236  	if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY && data_size)
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1237  		free_cpumask_var(mask);
-66c926fb7b2507 drivers/vfio/pci/vfio_pci_core.c Fred Griffoul    2024-06-07  1238  	else
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1239  		kfree(data);
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31  1240  
-89e1f7d4c66d85 drivers/vfio/pci/vfio_pci.c      Alex Williamson  2012-07-31 @1241  	return ret;
-2ecf3b58ed7bc5 drivers/vfio/pci/vfio_pci_core.c Jason Gunthorpe  2022-08-31  1242  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		break;
+> +	case VFIO_IRQ_SET_DATA_AFFINITY:
+> +		size = hdr->argsz - minsz;
+> +		if (size > cpumask_size())
+> +			size = cpumask_size();
+>  		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+>  
+>  	if (size) {
+> -		if (hdr->argsz - minsz < hdr->count * size)
+> +		if (hdr->argsz - minsz < size)
+>  			return -EINVAL;
+>  
+>  		if (!data_size)
+>  			return -EINVAL;
+>  
+> -		*data_size = hdr->count * size;
+> +		*data_size = size;
+>  	}
+>  
+>  	return 0;
 
 
