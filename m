@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-207275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD579014E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:10:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F549014E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E03281E7A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:10:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9844BB217DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03581CD20;
-	Sun,  9 Jun 2024 08:10:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DEF1C6A7;
+	Sun,  9 Jun 2024 08:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="pnvg5s3O"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0909BD26A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2A5A3F;
+	Sun,  9 Jun 2024 08:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717920605; cv=none; b=VvouF34EGCHKIdzl0RiT7PfO//aWHRHFiAOA7dw3bVaqDzKYrQZ4fyfZp9JB7294cfV7ZxltSN/2p+NoWWphTKAw+xzvlpE+B8aaU0irkPxz75JEHRRtQ5xsnAc/gxm2i/M2yJXek55J8IyhYIFvCGOcnG9+9sNWlfI+n5ErON8=
+	t=1717920674; cv=none; b=MCBzhfTPDd1sjjnVA6YZdwuC6wCRxXb060RYmZrZZhYRdxO7Tuk8R1oDXTnJFomacd8uW/u7kIkDw+LQ202sC7l1e/Cokjz8JXP+kz1BcrFCpZNU60uRDQWvqbCrp30M6xbWywt6NkNfWlN0qkvhy3LiirMURYC2X+AZTx2475A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717920605; c=relaxed/simple;
-	bh=GS9aZJ+LvBwTLtq/qNJhQCSTx+jEOzzxkyfkjOGKc3M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MvzKUhdq+CGJwBCNvugKHobjftmV36lbWDssWjSnWlNvWMblSW8f54og0gJv4pt8oYSI4kdwh1uDG0rKQFQLgRDVESEbv43b0O23QkKNAOB9ZvHQSqW3zq3itcwT3GlHf6C0jMhV2+9GbAfkF3zt4ZTLXACgnnuvdlnn4LpImAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso48939939f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 01:10:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717920603; x=1718525403;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cNJralV27Phiz3+/bwDTU9IpTrdPF0Y6Sddk9Gzyfpg=;
-        b=fDK7+YMsBL266kPWZJQh29ryIRFeZJW/roUIaoT+BYvqOe7iLvjP8/lSG+Aoq009H0
-         jmBSmBobhgNVtarmm+6E55Qxd5BZCUxEs04WLArUo1qTJA22QbDWPtl6jTOz3vEi/SDw
-         qYWT1vQG1cq8W+OCgpsDdZ2S2kZLCBkad45HDIKkdO5SxuQIJBJwHvi6dQQOAQcXu/Tn
-         V+a1VD80GA9yM2aeFykiGnM1CPeOhJvfcCCkyY0NiVG3WjyUC++83cuiNQLP14RTc5xo
-         A5P8dJ2htpPm3/2Zx9hOcVlsw2u6lhhoW9tgh51QXx202P34KmgIGhN6bQEnBVb00//F
-         Szcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZBiM3pAN8khFAKoy3j+l1b8Na+HFaaRcta15RVo1dfwkAtslUSFLAtsS/k8B/jhI9wPg2HjewdMo9bgC+pIKLsDTKqWMdMMsv8bqx
-X-Gm-Message-State: AOJu0YypoLcXqks1OqXlmTo3xtY2rQlwOCAhZgZ+Tk4NL3GohIecG+CB
-	EVBxkRPWeeyMtBk9INXhFO8GKtuOJT2HEauL9YE9wbTJtIbYuk0w18hHaPeFTpizdTi6g2CESgU
-	8gu5x9cRwb0EmBEc4GJEo1W5pz09LBJA1aS4is5CRg8YG5ZLTKQkLaxw=
-X-Google-Smtp-Source: AGHT+IEy9eOLWJpA4i/hRidAbGKrxF/9TU6K0IRIrcf+HYaBTgTEqoKqcY/Zmj140g39ubNQ0I2CaTEli8UDwsRi4WZw+p8n0Arx
+	s=arc-20240116; t=1717920674; c=relaxed/simple;
+	bh=5zbXRU1k+pJeZ0BVwq8DCQkKWnsqWbzOX8ocz4wTois=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eNK5fL0g4dfbhhcD2ljRUBhfKArU+Hxe2pXSZ8X8gASK2KnY09cXbeB7TtYKTFGidqZkQPelh6Pc6Pfv5jMzcoHckGdZ+3MAuP6aWAjLL3tpG/g6VQPTTOLBpKQy9Xs2bnex99H2wcFMfhotVqqgKyfi0xXGsG0viDYmUGZJZT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=pnvg5s3O; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=un0v7NRiuJ73SMR3ZhPeyJlOxaz9WHZsIQkF12rLpnY=;
+	t=1717920671; x=1718352671; b=pnvg5s3OGzyyNMZ2NQi/7qCIqHJGeDv8lLawx3DipUn29zW
+	fwU7gShJGJVFAbjyt+tH9GVJgTQmEY6ovpTbCagbp/LKYe4iyhcI00pBUgnZmEvQk/hrjdYmhm70D
+	VZQrU3c9brOz70SbTTPwZU0afU+fIGeViV7Mz/kzHKwH09A7tuhBWQaewqD4g9SssmbIWAnhuOOgh
+	zkykhGvBxbFa9kXaV6n0+fkm7z2vYgRHfwGoZ5L52z/SADjzNDvMSGNIGeAcTIFqiG+C+JeWiN9Pb
+	O5Cq/m0qU8pYEsBo7aRbSf5286zsrWhn13RJ3EOhrtOhVxOrOANPoXFPRkZOv/YQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sGDdm-0000XV-OS; Sun, 09 Jun 2024 10:11:02 +0200
+Message-ID: <ebf5c056-3035-4e76-9472-d76be6427669@leemhuis.info>
+Date: Sun, 9 Jun 2024 10:11:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9806:b0:4b9:13c9:b0fa with SMTP id
- 8926c6da1cb9f-4b913c9b5b5mr7429173.2.1717920603137; Sun, 09 Jun 2024 01:10:03
- -0700 (PDT)
-Date: Sun, 09 Jun 2024 01:10:03 -0700
-In-Reply-To: <0000000000002a48dd05c506e7cc@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d7aac061a708fa3@google.com>
-Subject: Re: [syzbot] [usb?] [wireless?] divide error in ath9k_htc_swba
-From: syzbot <syzbot+90d241d7661ca2493f0b@syzkaller.appspotmail.com>
-To: ath9k-devel@qca.qualcomm.com, davem@davemloft.net, kuba@kernel.org, 
-	kvalo@codeaurora.org, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, paskripkin@gmail.com, 
-	quic_kvalo@quicinc.com, syzkaller-bugs@googlegroups.com, toke@redhat.com, 
-	toke@toke.dk, tonymarislogistics@yandex.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.10-rc2 - massive performance regression
+To: David Laight <David.Laight@aculab.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <CAHk-=wisJ8bS3qe6iBPwL9x=PqJA5oE7tum-E9oZfyPgd2mmrw@mail.gmail.com>
+ <46cb50d65e414bfd9bef5549d68ae4ea@AcuMS.aculab.com>
+ <CAHk-=wh170Lme6HHSGa5eM6YNcd01vdkOoPenZ0m7P+Yv6_zxg@mail.gmail.com>
+ <adbbd899aabf4e6898bbbb04f90b3ede@AcuMS.aculab.com>
+ <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <CAHk-=wjwFGQZcDinK=BkEaA8FSyVg5NaUe0BobxowxeZ5PvetA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717920671;017a12b9;
+X-HE-SMSGID: 1sGDdm-0000XV-OS
 
-syzbot suspects this issue was fixed by commit:
+On 09.06.24 00:00, Linus Torvalds wrote:
+> On Sat, 8 Jun 2024 at 14:36, David Laight <David.Laight@aculab.com> wrote:
+> [...]
+>> I've done some tests.
+>> I'm seeing a three-fold slow down on:
+>> $ i=0; while [ $i -lt 1000000 ]; do i=$((i + 1)); done
+>> which goes from 1 second to 3.
+>>
+>> I can run that with ftrace monitoring scheduler events (and a few
+>> other things) and can't spot anywhere the process isn't running
+>> for a significant time.
+> 
+> Sounds like cpu frequency. Almost certainly hw-specific. I went
+> through that on my Threadripper in the 6.9 timeframe, but I'm not
+> seeing any issues in this current release.
 
-commit 24355fcb0d4cbcb6ddda262596558e8cfba70f11
-Author: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-Date:   Fri Jan 26 14:02:17 2024 +0000
+David, what kind of hardware do you use? Johan Hovold as
+man-in-the-middle just reported "CPU frequency of the big cores on the
+Lenovo ThinkPad X13s sometimes appears to get stuck at a low frequency
+with 6.10-rc2" and confirmed "that once the cores are fully throttled
+(using the stepwise thermal governor) due to the skin temperature
+reaching the
+first trip point, scaling_max_freq gets stuck at the next OPP".
 
-    wifi: ath9k: delay all of ath9k_wmi_event_tasklet() until init is compl=
-ete
+For more details, see:
+https://lore.kernel.org/all/ZmVfcEOxmjUHZTSX@hovoldconsulting.com/
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D155ade029800=
-00
-start commit:   e8b767f5e040 Merge tag 'for-linus-5.18-rc1' of git://git.k.=
-.
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da28aee0add07943=
-7
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D90d241d7661ca2493=
-f0b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D130fa98770000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12f2d26b700000
+> If you bisect it, we have somebody to blame and point fingers at...
 
-If the result looks correct, please mark the issue as fixed by replying wit=
-h:
+Sadly that one is not bisected yet either. :-/
 
-#syz fix: wifi: ath9k: delay all of ath9k_wmi_event_tasklet() until init is=
- complete
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
-n
+Ciao, Thorsten
 
