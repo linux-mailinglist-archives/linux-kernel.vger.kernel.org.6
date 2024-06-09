@@ -1,245 +1,106 @@
-Return-Path: <linux-kernel+bounces-207294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0133E901528
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:33:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE9A901532
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90A2BB22D70
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0E128195F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176726F30A;
-	Sun,  9 Jun 2024 08:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D883F1CD26;
+	Sun,  9 Jun 2024 08:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="PQ8uixq9"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DymMK0mF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1BA5337C;
-	Sun,  9 Jun 2024 08:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6231C698;
+	Sun,  9 Jun 2024 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717921695; cv=none; b=bBFQM2MB6rJwgtyJvdsaG5EsmenFo2HKL8ZrqMmVd6v68zHQP+dHeakmw281fOmv5CmJuNn9gz5QM6w5FDNL82k7NBRKMOZSxD8H5wyDn+068Y/LBElPIiDtEUlKFrySyfD6b8wsmZndOX2nucMmi8AQYsIP2kLZJKP/yaXYKDU=
+	t=1717923261; cv=none; b=NGbn18/9FCwGOEw+G6A00fYbgBv2njTF4egb7HvaWX1PWEhkqAr30IBLY6H7HO0L9NqC/f7fWXIyY4DnEr3sgfIazPiT6wUA4OvjEb4ie0Am2QUQRIDmJsciFUtdSFcsx85qKMZnxIW/EmkzACUqk/0oCtj/VJzU/9/GnFx0njM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717921695; c=relaxed/simple;
-	bh=XjSGzBEEN4R1uM6+FzoVLzsuvTNxmayPngOiT1u3sG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=irqZFMnBerrKO9/dHkCbHAgcjTyzMDE6dZIul0kBZpPCtsoXXS//pDPBFbLde8tm6Q7mWXuQczy6gAS3dGuuR+Q5kv9WLx2RHyM6hQbV8S2O9tMPgLK2KIXGA2sGfgAoy4WSLdm8GF+Fxd0LPowO9Dc7IZmvK88Uy7yntxsGK+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=PQ8uixq9; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=UDrliNsi6qf9iZ0cJTSfrv8FntRHZmJcOSPF/U9CCyU=;
-  b=PQ8uixq9gJb8XJ5kYQyD9s/ymp/dqHay+TNM4exQnNxtZvPryBNvScc0
-   yKx1TUYcF+ilJUMjUqmuURKc0OVGwc7MvninM1ky5jsSke9R2PMmzcoBq
-   5PKM4rmRoXEoS5gWDJL6KrtSpCRSd6OHyLzDTxvaFTRnqD67aFFemBGjC
-   w=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.08,225,1712613600"; 
-   d="scan'208";a="169696909"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 10:27:49 +0200
-From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: kernel-janitors@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 14/14] netfilter: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun,  9 Jun 2024 10:27:26 +0200
-Message-Id: <20240609082726.32742-15-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240609082726.32742-1-Julia.Lawall@inria.fr>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1717923261; c=relaxed/simple;
+	bh=7inD+T7vfVhaoZ68VEVW45ZwOQzy3PyFZWcOhMOCrL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kTxLMqTdkHvtIM6hbopTqHNKUDSqAXhd7sovhmsXd+WKrIA9ypcpkNjSvQvBvQZGsEya5Z1TySfUippa8SA5eHGU+CJ633tycNAKriC+VuP4TdfzG/V7xRGODH1KwHrL+6EY+cIUB5grvbWh1X1Bcsq8KmuSZap/roPg6V7hTDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DymMK0mF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F1CC2BD10;
+	Sun,  9 Jun 2024 08:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717923260;
+	bh=7inD+T7vfVhaoZ68VEVW45ZwOQzy3PyFZWcOhMOCrL8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DymMK0mFuoCRfNAhDmK1mA1ir9w7YoRCpDc9iYfiqGKeAeK9ZlLckD5Pjbqiii7/W
+	 v7dYqIm22MtyWEsZHIdIBKDGhouc/oC/a2ht8NA2nKc8CwyCDagKs9bYz4XErnXOj5
+	 +FwQJHG2wxVCF7lR8MqUGUGLpTSYX3TsToYCKDGRpL3I8YSmLhSDBR6Jpzn9r+JM9r
+	 7Z7GMTJ/uGWyigqEWFL02qNmjDZgCI3BP2oVfvho0gDGQHewU1gm1YexEsEGIfK/xB
+	 0eRsXc6Qua0od3ietulWXHbk5sZ0sB9N1rNoMJ4COsZOZPReJ0th9xqCZM5yrQr9eL
+	 lpt2ePD5di4ug==
+Date: Sun, 9 Jun 2024 09:53:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arthur Becker <arthur.becker@sentec.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>
+Subject: Re: [EXTERNAL]Re: [PATCH v4 2/2] dt-bindings: iio: light: add
+ VEML6040 RGBW-LS bindings
+Message-ID: <20240609095339.71cf9a78@jic23-huawei>
+In-Reply-To: <f86a8de8-126b-4582-8fac-a5e273851cab@kernel.org>
+References: <20240604-veml6040-v4-0-5a4d59597874@sentec.com>
+	<20240604-veml6040-v4-2-5a4d59597874@sentec.com>
+	<e740deb8-e412-4913-9a79-59ad8e117d53@kernel.org>
+	<ZR1P278MB11171DD79D5A09580FEEF4A181F82@ZR1P278MB1117.CHEP278.PROD.OUTLOOK.COM>
+	<f86a8de8-126b-4582-8fac-a5e273851cab@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since SLOB was removed, it is not necessary to use call_rcu
-when the callback only performs kmem_cache_free. Use
-kfree_rcu() directly.
+On Tue, 4 Jun 2024 11:05:43 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-The changes were done using the following Coccinelle semantic patch.
-This semantic patch is designed to ignore cases where the callback
-function is used in another way.
+> On 04/06/2024 10:59, Arthur Becker wrote:
+> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>
+> >> If there is any resend:
+> >> A nit, subject: drop second/last, redundant "bindings". The
+> >> "dt-bindings" prefix is already stating that these are bindings.
+> >> See also:
+> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> >>
+> >> Best regards,
+> >> Krzysztof  
+> > 
+> > Oups! I had read that part of the documentation but forgot about it...
+> > I'll think about it next time.
+> >   
+> 
+> It's fine, no worries.
+> 
+> Best regards,
+> Krzysztof
+> 
+I dropped the extra word whilst applying.
 
-// <smpl>
-@r@
-expression e;
-local idexpression e2;
-identifier cb,f;
-position p;
-@@
+Applied to the togreg branch of iio.git and pushed out as testing for 0-day
+to take a look at it.
 
-(
-call_rcu(...,e2)
-|
-call_rcu(&e->f,cb@p)
-)
+Thanks,
 
-@r1@
-type T;
-identifier x,r.cb;
-@@
+Jonathan
 
- cb(...) {
-(
-   kmem_cache_free(...);
-|
-   T x = ...;
-   kmem_cache_free(...,x);
-|
-   T x;
-   x = ...;
-   kmem_cache_free(...,x);
-)
- }
-
-@s depends on r1@
-position p != r.p;
-identifier r.cb;
-@@
-
- cb@p
-
-@script:ocaml@
-cb << r.cb;
-p << s.p;
-@@
-
-Printf.eprintf "Other use of %s at %s:%d\n"
-   cb (List.hd p).file (List.hd p).line
-
-@depends on r1 && !s@
-expression e;
-identifier r.cb,f;
-position r.p;
-@@
-
-- call_rcu(&e->f,cb@p)
-+ kfree_rcu(e,f)
-
-@r1a depends on !s@
-type T;
-identifier x,r.cb;
-@@
-
-- cb(...) {
-(
--  kmem_cache_free(...);
-|
--  T x = ...;
--  kmem_cache_free(...,x);
-|
--  T x;
--  x = ...;
--  kmem_cache_free(...,x);
-)
-- }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
----
- net/netfilter/nf_conncount.c        |   10 +---------
- net/netfilter/nf_conntrack_expect.c |   10 +---------
- net/netfilter/xt_hashlimit.c        |    9 +--------
- 3 files changed, 3 insertions(+), 26 deletions(-)
-
-diff --git a/net/netfilter/nf_conncount.c b/net/netfilter/nf_conncount.c
-index 8715617b02fe..587bfcb79723 100644
---- a/net/netfilter/nf_conncount.c
-+++ b/net/netfilter/nf_conncount.c
-@@ -275,14 +275,6 @@ bool nf_conncount_gc_list(struct net *net,
- }
- EXPORT_SYMBOL_GPL(nf_conncount_gc_list);
- 
--static void __tree_nodes_free(struct rcu_head *h)
--{
--	struct nf_conncount_rb *rbconn;
--
--	rbconn = container_of(h, struct nf_conncount_rb, rcu_head);
--	kmem_cache_free(conncount_rb_cachep, rbconn);
--}
--
- /* caller must hold tree nf_conncount_locks[] lock */
- static void tree_nodes_free(struct rb_root *root,
- 			    struct nf_conncount_rb *gc_nodes[],
-@@ -295,7 +287,7 @@ static void tree_nodes_free(struct rb_root *root,
- 		spin_lock(&rbconn->list.list_lock);
- 		if (!rbconn->list.count) {
- 			rb_erase(&rbconn->node, root);
--			call_rcu(&rbconn->rcu_head, __tree_nodes_free);
-+			kfree_rcu(rbconn, rcu_head);
- 		}
- 		spin_unlock(&rbconn->list.list_lock);
- 	}
-diff --git a/net/netfilter/nf_conntrack_expect.c b/net/netfilter/nf_conntrack_expect.c
-index 21fa550966f0..9dcaef6f3663 100644
---- a/net/netfilter/nf_conntrack_expect.c
-+++ b/net/netfilter/nf_conntrack_expect.c
-@@ -367,18 +367,10 @@ void nf_ct_expect_init(struct nf_conntrack_expect *exp, unsigned int class,
- }
- EXPORT_SYMBOL_GPL(nf_ct_expect_init);
- 
--static void nf_ct_expect_free_rcu(struct rcu_head *head)
--{
--	struct nf_conntrack_expect *exp;
--
--	exp = container_of(head, struct nf_conntrack_expect, rcu);
--	kmem_cache_free(nf_ct_expect_cachep, exp);
--}
--
- void nf_ct_expect_put(struct nf_conntrack_expect *exp)
- {
- 	if (refcount_dec_and_test(&exp->use))
--		call_rcu(&exp->rcu, nf_ct_expect_free_rcu);
-+		kfree_rcu(exp, rcu);
- }
- EXPORT_SYMBOL_GPL(nf_ct_expect_put);
- 
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 0859b8f76764..c2b9b954eb53 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -256,18 +256,11 @@ dsthash_alloc_init(struct xt_hashlimit_htable *ht,
- 	return ent;
- }
- 
--static void dsthash_free_rcu(struct rcu_head *head)
--{
--	struct dsthash_ent *ent = container_of(head, struct dsthash_ent, rcu);
--
--	kmem_cache_free(hashlimit_cachep, ent);
--}
--
- static inline void
- dsthash_free(struct xt_hashlimit_htable *ht, struct dsthash_ent *ent)
- {
- 	hlist_del_rcu(&ent->node);
--	call_rcu(&ent->rcu, dsthash_free_rcu);
-+	kfree_rcu(ent, rcu);
- 	ht->count--;
- }
- static void htable_gc(struct work_struct *work);
 
 
