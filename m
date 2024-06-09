@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-207503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB33E901824
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE7190182E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0FD1B20F93
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:34:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A411B20E7E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694124D8C6;
-	Sun,  9 Jun 2024 20:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF224D9E3;
+	Sun,  9 Jun 2024 20:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBmOZ037"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="lMJlQJRF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="l89tmy8h"
+Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3187517BD3;
-	Sun,  9 Jun 2024 20:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20D217BB5;
+	Sun,  9 Jun 2024 20:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717965241; cv=none; b=Crw9N8h+DvW1P4Mq8fl/CDNT/rNWIBXMMH7yV2Csear9l3YRJOXqTG91ArdKAVReICU5m4xkfPGSgSXIlDz/KUT4U6OGy1moMyAlQa6KnUHCYgcV575oB4HbVLUuaHlmQBdCrvNUFgnfb+HHOkfz68G9nlwBEJZrHP1ZpNM8QgA=
+	t=1717966716; cv=none; b=iPvaTh0Hyh/OADaXBKbh2lXiUkpC9eNqTGX8ZjZikAGxZptsMltkhiDgVEu+Sd+bz3h/DQHxLDUpz3WQ60LrV2o4Wtpr0TacH3ioI6IGVnq1Xs84WoOFX4NzVOb9zVo0aWVN6r6rQuQQaJnVYQDiL8zUpvhozfveyy5BZSc59b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717965241; c=relaxed/simple;
-	bh=rIKPDLDsHnN3JbRPuvRDCF5YTJrHLEE5++xGLHlQGoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f49MywR76d/MvO+5JA1+QLs282AHz8NpP9a7KycFNamz0W9+4r7TtOaPxE8YwV0Xea0mIMsqIqevzcbGMAY6ZGio100gteqnaC4ceXfpBQeSk9G4jpavxZiIf7169U1rmXAd2tIglvpqwwtslmKhA8HuwzeCUJR92bKcgnb3TZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBmOZ037; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f0f4746c2so1056529f8f.3;
-        Sun, 09 Jun 2024 13:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717965238; x=1718570038; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3n8SaL8WINeV1wuWjpxwfyGNSRase5dnk0DKSMoT+2M=;
-        b=fBmOZ0374mnyw4wVkZEPL96F2/Jkh8Pz06VV/vTBTHdVi+j09fB33010IhXNhvmrRn
-         2NKqN69GqoaXsfgDqH83boOWR4e0TeXCbzGyYmKsomYY0xjeE3ioxy+OjqaEfz0ywMSD
-         WFGHwazrw9CwLYCT7GCgHFTL8EMSXFOBXo63y8a349S52eKTuMTYAy9RN7yISZvkPYkC
-         6VE+A9EWbcTWsBVfh8mgTo69p6LTwMF/8RtBJLNp2D/6WStwBse5ucB3U8mcJvqw1ybV
-         SpaUhfdMKKL9dTjY4yOTPTgmAknMzf+sFojDc47zc5/BGFYYNXTJ6cG+D2nD15KiIuWM
-         k4iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717965238; x=1718570038;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3n8SaL8WINeV1wuWjpxwfyGNSRase5dnk0DKSMoT+2M=;
-        b=Xu0g3ZqxITI02iAM+uUJartfePs/iTwgYLLp+wtR1okFyqc9NYAFdWatDWmS7ihwdh
-         sORMl5Iinm1cquXzPsiOG/4ImNRX8ACUg27YNzwpGR8s40TZ1sglhA6dh0LzsSSdze6N
-         lYgo0DR5WmYXBfQEnrzXoCOJQmvif2jO0dBkJUd1kwEWzc4eR2gPIhdTd7g/gOlyAzyr
-         n8Zba7069jN/FdkJa49EQ4C3PZeGBWV5jMJ4ICHEObreDgU+1ZsdNWOFOU87fnh/zwZw
-         j4sfcYPngd8HbVIBoGYPhruspC7+kKN1ooqCEPCfupoznaFmkGOqCxALFgjhLzpTqnfT
-         htfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVnZUsCutREk9MDTlqQ8RyvjvrnoiR6hf1fL4GRgwRI5JkKbTPBZeR+MhwnB/p99MKCpNRQ+r5UBqUaalfFAgl7AHEQ+HGmnw3Iyoz
-X-Gm-Message-State: AOJu0YyjymvA1NFtomR/fAYXelRjaGwdiT2IB5txHPRAXL06blakjz7M
-	RpYyiZ/w4t3swKdkQhnaIyXOIJJTdWdSU5nunKB/w1LB7di5Lmew
-X-Google-Smtp-Source: AGHT+IFjKEniKG4XHDd7L4jElOc8JPpB7pazEHoJbSUzpzS95u/4aGEhVfjC1UyxWpQScCb8ixY1CQ==
-X-Received: by 2002:adf:ef0c:0:b0:35f:25c9:8c2 with SMTP id ffacd0b85a97d-35f25c90961mr211695f8f.46.1717965238385;
-        Sun, 09 Jun 2024 13:33:58 -0700 (PDT)
-Received: from olivier-manjaro (oliv-cloud.duckdns.org. [78.196.47.215])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1fd78d1bsm2251058f8f.48.2024.06.09.13.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 13:33:57 -0700 (PDT)
-Date: Sun, 9 Jun 2024 22:33:56 +0200
-From: Olivier Dautricourt <olivierdautricourt@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, Stefan Roese <sr@denx.de>,
-	Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Eric Schwarz <eas@sw-optimization.com>
-Subject: Re: [PATCH v2 2/3] dmaengine: altera-msgdma: cleanup after
- completing all descriptors
-Message-ID: <ZmYRtMlJheCp7i-E@olivier-manjaro>
-References: <20240608213216.25087-2-olivierdautricourt@gmail.com>
- <0e439d73-aff5-4d56-9a3c-b29867132db1@web.de>
+	s=arc-20240116; t=1717966716; c=relaxed/simple;
+	bh=GR/JlxtZMXwox4E5NYpyR4Lv1v8HQrYc80CFndE8O9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BJ5Q2faKnt2LUf/gbWbNByQXDH0zpjsNQ4Dh4WiAPz9BTPeuDUSd+9iGPCLo0efKChgAeS3y+AIEjY9Gkn+Levx1SHQ6G9TxZzJOS4VdZHPxiHJ0zV8/EJMeTPdmdIOYUwcQZC2KnBa+FfGh/xxqPdLOlE1znjqJaja9GEUrMZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=lMJlQJRF; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=l89tmy8h; arc=none smtp.client-ip=79.137.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=jUWmlcuePUdDpLeFLBVk04U0i/kUraSxOcG7isSSgqE=;
+	t=1717966713;x=1718056713; 
+	b=lMJlQJRFJLYq/s9UpM5EESQLfaS82tjQb8CVlAg+WBANUh3sHcbE5yRPKVOTF9PD0nZfZeQl8pbDrXwirgb3ZAlmI8G2ywxshQoL5CjO3ImhSH7NIA4pmHt0bXBzCWFWc9BRF9ShXMbLNMbuFYZm+53VXZcZzr3V4kmRc2PYriU=;
+Received: from [10.12.4.20] (port=39844 helo=smtp44.i.mail.ru)
+	by fallback20.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
+	id 1sGPHJ-004H9z-OB; Sun, 09 Jun 2024 23:36:38 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=jUWmlcuePUdDpLeFLBVk04U0i/kUraSxOcG7isSSgqE=; t=1717965397; x=1718055397; 
+	b=l89tmy8hGitYlk07wsyGA5u+Z5LGCOw9MGxqlRzAi2eaY/qbGnvFKFV7l9t+g+Vb8AnsdY/H8Aq
+	z2ozTUnA7/8NpoXukGVM3YEsHIVbmbwDz6KUEfmX8DadyA0BZIM3pRWqfXiD6hIqYy+J1YNdbRbpO
+	UPFILqDyF6GW88JpATg=;
+Received: by smtp44.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1sGPH3-00000004YbQ-1IfB; Sun, 09 Jun 2024 23:36:22 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	sam@ravnborg.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	adrian@travitia.xyz,
+	degdagmohamed@gmail.com,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH 0/2] Add Samsung AMS639RQ08 panel support
+Date: Sun,  9 Jun 2024 23:36:16 +0300
+Message-ID: <20240609203618.49413-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e439d73-aff5-4d56-9a3c-b29867132db1@web.de>
+X-Mailru-Src: smtp
+X-7564579A: B8F34718100C35BD
+X-77F55803: 4F1203BC0FB41BD948651DF6EBC8E8B2F3C2019B50ED79272429E8323770A69B182A05F538085040E5603F6EAF513856D4FF92D56319F197448DE2AD3994A7427A4D2F7B2508D394E9977CD5C7BA570D
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7AD2F2D6F6013FF7FC2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE716FAD50E497B9C14EA1F7E6F0F101C6723150C8DA25C47586E58E00D9D99D84E1BDDB23E98D2D38B043BF0FB74779F36E96DE96AC6DA6F4C9DA7AAB3940AEFA454139C8A3DDBDD54A471835C12D1D9774AD6D5ED66289B5278DA827A17800CE77E7E81EEA8A9722B8941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B6BAA8CD687FCDB2EBCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB8D32BA5DBAC0009BE9E8FC8737B5C22496010E6B77066451176E601842F6C81A12EF20D2F80756B5FB606B96278B59C4276E601842F6C81A127C277FBC8AE2E8BBB75ECA0EAB52AE83AA81AA40904B5D99C9F4D5AE37F343AD1F44FA8B9022EA23BBE47FD9DD3FB595F5C1EE8F4F765FCAE9A1BBD95851C5BE2021AF6380DFAD18AA50765F7900637D64787C5AB2E18C322CA9DD8327EE4931B544F03EFBC4D572219AA581D1B0840C4224003CC83647689D4C264860C145E
+X-87b9d050: 1
+X-C1DE0DAB: 0D63561A33F958A54B00A8D2ECC013395002B1117B3ED69620828F57A5254853406406D89DD9EB8A823CB91A9FED034534781492E4B8EEADB30A456A8F293845C79554A2A72441328621D336A7BC284946AD531847A6065A17B107DEF921CE79BDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF3810E75B5F9F66C566EAE38DF7B5FCEACE2C6BC6BB304F9A2C929CB36D555B4CF49F51687F14C9B80FD6CD3E887ECC32579C634A4CDAACC5AE15ADD81BFA704D04A08754E2C765E00D035775BAD7A4FF02C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXhO6DXcrkr0XTfOtWPCGr3S
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949817A795F5C603EFD0C57FFD5DAF71AD12C93539627FE5850417DE40CF728D4966F2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B4B653A1001F6F75E45D3E182DE990518462D9B15B91B4BA89B647ED114AB003ACCE0692C6BF09384D96B65AA5C4D7215703338A50BFA905CDF8EEC2ADE53719C2
+X-7FA49CB5: 0D63561A33F958A5D2136437802185CAC7FF20794776412D35C53782351F85508941B15DA834481FA18204E546F3947C3A8EB65318B1979EF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637C3957E6FF5665BA9389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3B95D3BAC42CD083E35872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-87b9d050: 1
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj6D5zjHqYKv0VnfguqaVuAQ==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-On Sun, Jun 09, 2024 at 07:20:49PM +0200, Markus Elfring wrote:
-> …
-> > This fixes a Sparse warning because we first take the lock in
-> > msgdma_tasklet.
-> …
-> 
-> Can the tag “Fixes” become relevant for the proposed change?
+This series adds Samsung AMS639RQ08 panel support used in:
+- Xiaomi Mi 9 Lite / CC9 (sdm710-xiaomi-pyxis)
+- Xiaomi Mi 9T / Redmi K20 (sm7150-xiaomi-davinci)
+- Xiaomi Mi 9T Pro / Redmi K20 Pro (sm8150-xiaomi-raphael)
 
-I can add a Fixes tag, it will target only the first commit introducing
-this driver.
+Was tested on sm7150-xiaomi-davinci and sm8150-xiaomi-raphael. Based on my
+analysis of the downstream DTS, this driver should be fully compatible with the
+sdm710-xiaomi-pyxis (unfortunately not tested) without requiring any
+modifications.
 
-> 
-> 
-> …
-> > +++ b/drivers/dma/altera-msgdma.c
-> > @@ -585,6 +585,8 @@ static void msgdma_chan_desc_cleanup(struct msgdma_device *mdev)
-> >  	struct msgdma_sw_desc *desc, *next;
-> >  	unsigned long irqflags;
-> >
-> > +	spin_lock_irqsave(&mdev->lock, irqflags);
-> > +
-> >  	list_for_each_entry_safe(desc, next, &mdev->done_list, node) {
-> >  		struct dmaengine_desc_callback cb;
-> >
-> > @@ -600,6 +602,8 @@ static void msgdma_chan_desc_cleanup(struct msgdma_device *mdev)
-> >  		/* Run any dependencies, then free the descriptor */
-> >  		msgdma_free_descriptor(mdev, desc);
-> >  	}
-> > +
-> > +	spin_unlock_irqrestore(&mdev->lock, irqflags);
-> >  }
-> …
-> 
-> Would you become interested to apply the guard “spinlock_irqsave”?
-> https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/spinlock.h#L574
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Jens Reidel <adrian@travitia.xyz>
+Cc: Degdag Mohamed <degdagmohamed@gmail.com>
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 
-I could but arent these type of things to be integrated in a more global patch serie
-targeting (let say) all drivers in one subsystem ?
-Currently it seems only one driver uses a guard in the dmaengine subsystem.
+Danila Tikhonov (2):
+  dt-bindings: display: panel: Add Samsung AMS639RQ08
+  drm/panel: Add Samsung AMS639RQ08 panel driver
 
+ .../display/panel/samsung,ams639rq08.yaml     |  80 ++++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-samsung-ams639rq08.c  | 362 ++++++++++++++++++
+ 4 files changed, 452 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-ams639rq08.c
 
-Kr,
+-- 
+2.45.2
 
-Olivier
 
