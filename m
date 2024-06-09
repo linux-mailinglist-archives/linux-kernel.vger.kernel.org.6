@@ -1,62 +1,119 @@
-Return-Path: <linux-kernel+bounces-207318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3421B901587
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:18:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C0A90159A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB7C1C209D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:18:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5131B21260
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBF022EEF;
-	Sun,  9 Jun 2024 10:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADE92D7B8;
+	Sun,  9 Jun 2024 10:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3h9CX1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="A6+uuzE1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AoEnVlYQ"
+Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEA22619;
-	Sun,  9 Jun 2024 10:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC7217554;
+	Sun,  9 Jun 2024 10:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717928318; cv=none; b=QObW4J2AoOutSQ7kp2ZkmRkHXizHgwbtsAe1ODzXzu7cHEIn71xbhgBuA0F4rRDKtb02T2c8FO2n5x+JcMnKhXMO4DIM+HQzjn9URgHEktg04wqfWF699qpqtQ3nKR81BAvaN0MWGplhHQSXh6LHQwkpFgZ69ZsEHiHgNOFKlfg=
+	t=1717929588; cv=none; b=ZlPnLeXNeaMAX1GiAh1VccFelQa8PvMFVoJHX6sh5NF0A22y3Qqy0r6SxCYYS4DeycHMdj0JdEpOiQozm8KXTKBjPbtCOGeoMv7EVaU5+/3N9IAt2IP5OXp8SIvti9mCtZhP2VewlVYzRjwL3nf2xC33RmUulN1dHMvSL7w5RN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717928318; c=relaxed/simple;
-	bh=fy4wqIGP/0XPQnNOrnmxbqYJ84UFY/vN3hZc+RbEo2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DFuOiIfev8tlNApnZkrRzqAE9dKHaMnY7YuNn6uQUcFf7wOvSrPwbA4Xx1pjHR0vjDvDrw9k/G531gL8BjFmp/QXofolGY40uKUBUQcbZ8/ov/GxrSntUrzQQ8xjItCxjJVDzmkD1eS8GTAQUHNPBlzK/dOk0hd05UAeFZBz5g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3h9CX1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CBCC2BD10;
-	Sun,  9 Jun 2024 10:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717928318;
-	bh=fy4wqIGP/0XPQnNOrnmxbqYJ84UFY/vN3hZc+RbEo2E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I3h9CX1GPHvxMGFCT0woGd59deltw5THyyUnHqHwwGn357o/S5lO/m6ft/Vj4HuvZ
-	 m4iRydXXf1Z8tbGu5ME+nkSY5kF5xhJC8P2lQGIhXUouDYbgeSwmwlltuCsoR8dr7i
-	 Pm7Sir7aOVVQCxu5eb44zTDuo6oJH8TY1XhNhbS/RurFdDWXrHcaZVuwN10MOXNVsc
-	 S4PeMybJwU0qCTxFajs4o26hADH7gfxraZtdLyEJfk7Ubnv9tp8q3+Ha6td0PPRN7L
-	 JDbhCcJyAeYIrxNr9AqQp5q2unefpATxjA1iDewKmuJLc1pyhv6ivtw7N+BGNTSTlE
-	 v18AETj417kjA==
-Date: Sun, 9 Jun 2024 11:17:40 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <jpaulo.silvagoncalves@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Francesco Dolcini
- <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: add ti,ads1119
-Message-ID: <20240609111740.1c61ce07@jic23-huawei>
-In-Reply-To: <20240606163529.87528-2-francesco@dolcini.it>
-References: <20240606163529.87528-1-francesco@dolcini.it>
-	<20240606163529.87528-2-francesco@dolcini.it>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717929588; c=relaxed/simple;
+	bh=dKaNr1T+2ZoKYO9xvZbhamHUunp15XF6FR3PVyK6ofs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YyfpeObEHeB9j2CAM8UpsCuM+iKk0I56wGlpW2MH/hAnK8jjLkZLq6FpteEbqXQdrCHM2eAhzdA2Yj2MK9F1Bi/1Bdm8Gt3601FGGQRuZ9DRVuhMhUhe/eY4Cv08fYv095zJQg37Rz4x7PJC8Dccf1Hswp6OSWn5do/B9Bvk5Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=A6+uuzE1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AoEnVlYQ; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailflow.nyi.internal (Postfix) with ESMTP id E12AC200151;
+	Sun,  9 Jun 2024 06:39:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sun, 09 Jun 2024 06:39:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1717929585; x=1717933185; bh=/O
+	0tfbzHKuHaojRdWTQXNBZb0w0SRZ82f5WuNVpAO8c=; b=A6+uuzE1rHNWSsZTV2
+	nh1GgNpjc352DgFM/jZmNgD1WhF905rYRmEKbvxZUpXDOMmDeBGRo63NyA943gXB
+	ljW4aI2qdH8o9+YWN9GGDLPEsJEvMaLl3TwU6HWh4C0SGTs/DDfsn0FIEBqiS6AA
+	DkZIjmnKSDloyVn9VQDpcrAu6vCm1QK24jjFQpP9/eUnEjws0WhLBrrVh4ZNvIGG
+	k3TMnL3/B9kNLkDUh/ctpKkeDQpzNdUiWe9Hz+703TzBOwdkoVuai/31wZuczjn/
+	YoUIG97TJBy2DJUMfUJgnKU6dZA8tdEX2Nf8gGGUlgq5bUpxralJlmIJH81XI5wH
+	cr6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1717929585; x=1717933185; bh=/O0tfbzHKuHao
+	jRdWTQXNBZb0w0SRZ82f5WuNVpAO8c=; b=AoEnVlYQzmapn7PSxAEaGwMl5HKnC
+	Gi+eLp2B2yPpYpKhrgYJbaf1CNuuBb8Nj0EZn5xeqCj/OYQNpSn0N+Sez1NTsyvE
+	o4zzTqq98s08xqhcKsfLLAqfDAJbkr6QW2qGF56RrKkMycCf4a8NuVxGOQ00A4x4
+	I7coXhOtpc6Np3R/o6XT04/Z2yhSdT2YA1jmCw3fjv+o7vQ4+5NrJ72ELB+9FJRL
+	zUlPUqUz8Z2Mov+4pST/+REpzCp9BeZ8zp5lPOmbYZ5KSpvijRSlJTHWvVBZI804
+	dZWBSTfN7LVZodknvVRVtJNFAN9wg0VZPFxZDHl/e0Q8cgnlMx9XY5L1Q==
+X-ME-Sender: <xms:cYZlZk0NrIt22oj_PCTv7GPk8BKAdSC4CvBNBtXMlKrOds-jXCX6kg>
+    <xme:cYZlZvHzJl2uMqjDCy3roIoo-wPALzr84HqJipIzv4B8BezJaghk90YZwAoLHZaiY
+    m6JB2LvR0uL0Rgub5A>
+X-ME-Received: <xmr:cYZlZs67TIAQXuRvS4LNJsxIfRhJCMyiWqLUXp3W9CszFQYAOSHyy3BskIrFs2z4wP4f_IFOCGRfLW-6pzjocKeQK7xB5wKEeX-c2uzDAIy6Cw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtjedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeflohhnrght
+    hhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenucggtf
+    frrghtthgvrhhnpefhieevtdektdekvdfftdetudejvdejudekffelvdegteejueeujeeu
+    fefhieegfeenucffohhmrghinhepphgrmhgptggrphdrshhopdhkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjtggr
+    lhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:cYZlZt12MpxahFlMi53JTtlMs2HyPQa9_US94TsFreIjarv_5keVTg>
+    <xmx:cYZlZnHuRk7vWBuaU_r-RtQjzMj_tt4zI_yGC5SVMw6LoOjX-kDXRA>
+    <xmx:cYZlZm-of11IqdzrJfcOfQNEqi19HaNDmVivU5F753rXVxPN1UYGtw>
+    <xmx:cYZlZskCoHs4JNkY3J6Og298J1wP6jL-wswP_utkz1mzpGJkfCz-1Q>
+    <xmx:cYZlZnGSnk2LavPUrcuXBV7haSMyAl3K3F7V8QEGPjlkJBm2S4l_yIuo>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Jun 2024 06:39:41 -0400 (EDT)
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: brauner@kernel.org,	ebiederm@xmission.com,
+	Jonathan Corbet <corbet@lwn.net>,	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,	"Serge E. Hallyn" <serge@hallyn.com>,
+	KP Singh <kpsingh@kernel.org>,	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@google.com>,	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,	Joel Granados <j.granados@samsung.com>,
+	John Johansen <john.johansen@canonical.com>,
+	David Howells <dhowells@redhat.com>,	Jarkko Sakkinen <jarkko@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: containers@lists.linux.dev,
+	Jonathan Calmels <jcalmels@3xx0.net>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
+	keyrings@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 0/4] Introduce user namespace capabilities
+Date: Sun,  9 Jun 2024 03:43:33 -0700
+Message-ID: <20240609104355.442002-1-jcalmels@3xx0.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,240 +121,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu,  6 Jun 2024 18:35:28 +0200
-Francesco Dolcini <francesco@dolcini.it> wrote:
+This patch series introduces a new user namespace capability set, as
+well as some plumbing around it (i.e. sysctl, secbit, lsm support).
 
-> From: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
->=20
-> Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
-> with I2C interface.
->=20
-> Datasheet: https://www.ti.com/lit/gpn/ads1119
-> Signed-off-by: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+First patch goes over the motivations for this as well as prior art.
 
-I missed it on previous version but you only have description in here
-for vref and few devices power them selves from something called vref!
+In summary, while user namespaces are a great success today in that they
+avoid running a lot of code as root, they also expand the attack surface
+of the kernel substantially which is often abused by attackers. 
+Methods exist to limit the creation of such namespaces [1], however,
+application developers often need to assume that user namespaces are
+available for various tasks such as sandboxing. Thus, instead of
+restricting the creation of user namespaces, we offer ways for userspace
+to limit the capabilities granted to them.
 
-The binding should describe the other power supplies as well and mark
-them as required.
+Why a new capability set and not something specific to the userns (e.g.
+ioctl_ns)?
 
-We've left these out too many times in the past and ended up having
-a patch very soon after adding them. Better to have them from the start.
-Driver should just use devm_regulator_get_enabled() to turn them on and
-register them to be turned off on driver removal, and ignore them
-after that.  If anyone has controlled supplies and wants to do more
-sophisticated handling they can add it later.
+    1. We can't really expect userspace to patch every single callsite
+    and opt-in this new security mechanism. 
 
-Note that even though the dt-binding will list them as required, if
-a particular DTS doesn't provide them the regulator framework will
-give a dummy uncontrolled regulator to represent the assumption that
-the power is always there.  We still document them as required in
-the dt-binding though as other OS may not be so clever.
+    2. We don't necessarily want policies enforced at said callsites.
+    For example a service like systemd-machined or a PAM session need to
+    be able to place restrictions on any namespace spawned under it.
 
-Only needs minimal entries though - see inline
+    3. We would need to come up with inheritance rules, querying
+    capabilities, etc. At this point we're just reinventing capability
+    sets.
 
-Jonathan
+    4. We can easily define interactions between capability sets, thus
+    helping with adoption (patch 2 is an example of this)
 
-> ---
-> v2:
->  - add diff-channels and single-channel
->  - add XOR check to make diff/single channel property required=20
->  - add interrupts, reset-gpios and vref-supply to the example=20
->  - fix missing additionalProperties/unevaluatedProperties warning in chan=
-nels
->  - remove ti,gain and ti,datarate as they aren't fixed hw properties
->  - remove unnecessary |=20
-> ---
->  .../bindings/iio/adc/ti,ads1119.yaml          | 148 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  2 files changed, 155 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1119.=
-yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml b/=
-Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
-> new file mode 100644
-> index 000000000000..cbf0d4ef3a11
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
-> @@ -0,0 +1,148 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1119.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments ADS1119 ADC
-> +
-> +maintainers:
-> +  - Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com>
-> +
-> +description:
-> +  The TI ADS1119 is a precision 16-bit ADC over I2C that offers single-e=
-nded and
-> +  differential measurements using a multiplexed input. It features a pro=
-grammable
-> +  gain, a programmable sample rate, an internal oscillator and voltage r=
-eference,
-> +  and a 50/60Hz rejection filter.
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,ads1119
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-avdd-supply: true
-dvdd-supply: true
+Some examples of how this could be leveraged in userspace:
 
-> +  vref-supply:
-> +    description:
-> +      ADC external reference voltage (VREF).
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  "#io-channel-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-    - avdd-supply
-    - dvdd-supply
+    - Prevent user from getting CAP_NET_ADMIN in user namespaces under SSH:
+        echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+        echo "!cap_net_admin $USER"     >> /etc/security/capability.conf
+        capsh --secbits=$((1 << 8)) -- -c /usr/sbin/sshd
 
-> +
-> +patternProperties:
-> +  "^channel@([0-6])$":
-> +    $ref: adc.yaml
-> +    type: object
-> +    properties:
-> +      reg:
-> +        minimum: 0
-> +        maximum: 6
-> +
-> +      diff-channels:
-> +        description:
-> +          Differential input channels AIN0-AIN1, AIN2-AIN3 and AIN1-AIN2.
-> +        oneOf:
-> +          - items:
-> +              - const: 0
-> +              - const: 1
-> +          - items:
-> +              - const: 2
-> +              - const: 3
-> +          - items:
-> +              - const: 1
-> +              - const: 2
-> +
-> +      single-channel:
-> +        description:
-> +          Single-ended input channels AIN0, AIN1, AIN2 and AIN3.
-> +        minimum: 0
-> +        maximum: 3
-> +
-> +    oneOf:
-> +      - required:
-> +          - diff-channels
-> +      - required:
-> +          - single-channel
-> +
-> +    required:
-> +      - reg
-> +
-> +    unevaluatedProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        adc@40 {
-> +            compatible =3D "ti,ads1119";
-> +            reg =3D <0x40>;
-> +            interrupt-parent =3D <&gpio1>;
-> +            interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
-> +            reset-gpios =3D <&gpio1 10 GPIO_ACTIVE_LOW>;
-> +            vref-supply =3D <&reg_vref_ads1119>;
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +            #io-channel-cells =3D <1>;
-> +
-> +            channel@0 {
-> +                reg =3D <0>;
-> +                single-channel =3D <0>;
-> +            };
-> +
-> +            channel@1 {
-> +                reg =3D <1>;
-> +                diff-channels =3D <0 1>;
-> +            };
-> +
-> +            channel@2 {
-> +                reg =3D <2>;
-> +                single-channel =3D <3>;
-> +            };
-> +
-> +            channel@3 {
-> +                reg =3D <3>;
-> +                single-channel =3D <1>;
-> +            };
-> +
-> +            channel@4 {
-> +                reg =3D <4>;
-> +                single-channel =3D <2>;
-> +            };
-> +
-> +            channel@5 {
-> +                reg =3D <5>;
-> +                diff-channels =3D <1 2>;
-> +            };
-> +
-> +            channel@6 {
-> +                reg =3D <6>;
-> +                diff-channels =3D <2 3>;
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6c90161c7bf..f1b2c4b815e2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22380,6 +22380,13 @@ M:	Robert Richter <rric@kernel.org>
->  S:	Odd Fixes
->  F:	drivers/gpio/gpio-thunderx.c
-> =20
-> +TI ADS1119 ADC DRIVER
-> +M:	Francesco Dolcini <francesco@dolcini.it>
-> +M:	Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
-> +
->  TI ADS7924 ADC DRIVER
->  M:	Hugo Villeneuve <hvilleneuve@dimonoff.com>
->  L:	linux-iio@vger.kernel.org
+    - Prevent containers from ever getting CAP_DAC_OVERRIDE:
+        systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
+                    -p SecureBits=userns-strict-caps \
+                    /usr/bin/dockerd
+        systemd-run -p UserNSCapabilities=~CAP_DAC_OVERRIDE \
+                    /usr/bin/incusd
+
+    - Kernel could be vulnerable to CAP_SYS_RAWIO exploits, prevent it:
+        sysctl -w cap_bound_userns_mask=0x1fffffdffff
+
+    - Drop CAP_SYS_ADMIN for this shell and all the user namespaces below it:
+        bwrap --unshare-user --cap-drop CAP_SYS_ADMIN /bin/sh
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7cd4c5c2101cb092db00f61f69d24380cf7a0ee8
+
+---
+Changes since v1:
+- Add documentation
+- Change commit wording
+- Cleanup various aspects of the code based on feedback
+- Add new CAP_SYS_CONTROL capability for sysctl check
+- Add BPF-LSM support for modifying userns capabilities
+---
+Jonathan Calmels (4):
+  capabilities: Add user namespace capabilities
+  capabilities: Add securebit to restrict userns caps
+  capabilities: Add sysctl to mask off userns caps
+  bpf,lsm: Allow editing capabilities in BPF-LSM hooks
+
+ Documentation/filesystems/proc.rst            |  1 +
+ Documentation/security/credentials.rst        |  6 ++
+ fs/proc/array.c                               |  9 +++
+ include/linux/cred.h                          |  3 +
+ include/linux/lsm_hook_defs.h                 |  2 +-
+ include/linux/securebits.h                    |  1 +
+ include/linux/security.h                      |  4 +-
+ include/linux/user_namespace.h                |  7 ++
+ include/uapi/linux/capability.h               |  6 +-
+ include/uapi/linux/prctl.h                    |  7 ++
+ include/uapi/linux/securebits.h               | 11 ++-
+ kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++
+ kernel/cred.c                                 |  3 +
+ kernel/sysctl.c                               | 10 +++
+ kernel/umh.c                                  | 15 ++++
+ kernel/user_namespace.c                       | 80 +++++++++++++++++--
+ security/apparmor/lsm.c                       |  2 +-
+ security/commoncap.c                          | 62 +++++++++++++-
+ security/keys/process_keys.c                  |  3 +
+ security/security.c                           |  6 +-
+ security/selinux/hooks.c                      |  2 +-
+ security/selinux/include/classmap.h           |  5 +-
+ .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++-
+ .../selftests/bpf/progs/test_deny_namespace.c |  7 +-
+ 24 files changed, 291 insertions(+), 28 deletions(-)
+
+-- 
+2.45.2
 
 
