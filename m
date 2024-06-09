@@ -1,195 +1,129 @@
-Return-Path: <linux-kernel+bounces-207269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB43D9014D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:33:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E440E9014DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 09:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1515AB214E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DEB9B218AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41031BF40;
-	Sun,  9 Jun 2024 07:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E971B28D;
+	Sun,  9 Jun 2024 07:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbPZ96fn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTqKkS4u"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7719BD29E
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 07:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD56A28F0
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 07:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717918391; cv=none; b=g2WRes5GIJQ/scuo2xLflcUcssy1fmK2xAp0JCjEZFJRn52g1rMIMOMhO5yBdjis/RVaLFC6kJ5gCTTNiZKM3CjsV1SxnPxJt/F+O1U7D3Q0kKgtZwldRL/3XSyiIIzupSpVgye7J5qfT3MPMNB5RA2C22hsVoFrXiaiACcWqLQ=
+	t=1717918538; cv=none; b=nePaFKscj7O08rpCA2Dh0zTjirwF/jQUlcS4n5YXt8ZUVzakZM1oMVmZ1q+hkf6y1jUf3jvtvBbIu+DGnaGSC59bvS4sGNcALVPD9Cgwwu0otX09ImJKpJjyvEz0sdMhXIh12udK9lU4qGskej6Uk9Faj5zkPwsTWk8mHx/BtPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717918391; c=relaxed/simple;
-	bh=6aFJQCU4PfS3rcXKKlQlz+ML8ImSC4rh3Wu5S/El4Fc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UW22QH6yi8d4hfbhNoAOP5PI3QnJUCQONdYc+ihCkyv5WsODDWTQyS2BXn9cLpQkoNCLUTPBo8seQ4tx7t/UjG4QAdiFa1ujPAH/R0bQWmW7Is6fxeQxzf91nEP3h56InOc5dWHMhjTbwr+yqKZJaOd3TSJedCdPDyLEQH4AEmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbPZ96fn; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717918389; x=1749454389;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6aFJQCU4PfS3rcXKKlQlz+ML8ImSC4rh3Wu5S/El4Fc=;
-  b=hbPZ96fn2Wn4Nlkt3fgqIQfG4AhC/7djuC7biRQOock8K7gkRCh1aGB1
-   qs4AVnrVLFD4ZWjYmj0h1QRNNUbmckg2w2L2GnPW2PGct7IvkjJKeglOr
-   2vqBW0G6l5vasmo9ewnMPoe7XJ7FM60GT0VDzjNQAQ2JW2P0yuxXdoWzs
-   hD1LBdKpQ0d1smVf+4Rip5ewuZ70/1k1qoPJ5M5pSeNoOmS/mbfD2afRl
-   uNyb7ZneBF0TxKu8t1SHwFdBx5gQE33eNPthUtB4ErAdBjDSebxGT6vxf
-   RDKYXTD9F0ll1q/OUsml00sMuyvzRltx3JrcTsPjpYrl/t3sm1fg6ergM
-   A==;
-X-CSE-ConnectionGUID: xrE+4DFiQLKbj60eRCdHAQ==
-X-CSE-MsgGUID: XyncmmDTRwKV146mWXWAJA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="32136876"
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="32136876"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 00:33:08 -0700
-X-CSE-ConnectionGUID: OqQdNhqdTm2j4Rinc57ReA==
-X-CSE-MsgGUID: 7lHAV04gRzmAkgMx9TKYcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
-   d="scan'208";a="38678785"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa010.jf.intel.com with ESMTP; 09 Jun 2024 00:33:07 -0700
-Message-ID: <d0fcc26e-1e2f-4783-8a17-5f09c9729aa2@linux.intel.com>
-Date: Sun, 9 Jun 2024 15:30:53 +0800
+	s=arc-20240116; t=1717918538; c=relaxed/simple;
+	bh=igpddAQWDIZwXmJeryECdsrcMiftiOyDnYUQjLucsb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CdubBDB6q5/e41u1cf/BYVqJasOA1fmQT6euYXb3F8CwaQvts+h838L+3yyLvkSCS8tLjVsdefbsyh/BNBITQF6v+OF+1jkP1aDAc5HXz40EHRvBIUZSq5mRpneekglYhfp3zqxqNmj0FKBtfWUiJHSOkd9wAzgEaU3yUExIrtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTqKkS4u; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so790689b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 00:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717918535; x=1718523335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=NzkYU5DYxKNgpaqGInOs2vFDZEGApMIaKijlXwu6VT0=;
+        b=gTqKkS4uCV6+r+EOMm62NxScg3euBj+A5lEgyuYvgX5H8+3PoLt9bhgO07f88Fl5m5
+         1nSrchRMGEVL/Zaa8C0aG2v4hcCavwICWYVNS12cAk2AA7I31DksbrtksgFzqmk6G1Ai
+         JGWi4JRNgXZ9+QkK2vBOYu6KQ1VUQnqiof4L13b3ICinMXyXRLOnCHy//p5eogjJLOFe
+         5YlvpVFRgcjUj0GdnBQJ38BD4oXBw3qiZoec99kfGHz6j/DnGma1ULxQCmdWvYEzu1ER
+         0BsIp12+TnQHr7DMPVKntnWJrSsThxuOgFrskaZYPujehETzk7DBPlwPs6ENZqsPpQ7+
+         93HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717918535; x=1718523335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NzkYU5DYxKNgpaqGInOs2vFDZEGApMIaKijlXwu6VT0=;
+        b=YoXirqZl5MW1Dvq1c9OV6R6BBNX0MiaGo/NZPjyZY6+5cWrslKBM0NojQou9RfqJil
+         4+KzhbvB8Mp5GUi/6+wQ97kdnqDs2lsrUMM1pQqPTMhzK7AiQ3NXGv3GZqlcJhf4JWXh
+         /AuBIrzIUBy6MY6SV80TtVILiKWuPnAbYP1v7YSHy/jnLYyUJlBBNW5Z/8Vepc9Gs3yC
+         6Sfu/8YjvkapTgp/Wno/8ixeRW7X4EHbTxAKT+blGoaHYKsVs0TSymO6mIkb0eti5gjr
+         4nMV53eJFsJB/z30Csz83dJDkASfMeu+AMf1wmAwMgGw3tyUWfURC22GtLUhZLCHrpkC
+         yFRQ==
+X-Gm-Message-State: AOJu0Yz3u9G6qJ7ZhECa8Gv7taMwrN84FEEgZMXwn8y+dTPEvau2EVxi
+	2E++GL5atjneQPQsmszrXx4Vew2HOxwwZZVJyXI3ejo1m4Y5KmQfa/nLxvNY
+X-Google-Smtp-Source: AGHT+IFjjfbzyT04gCLt5Z5VWXHO/IzqK2eX+mJmOVXKXfkrF57ZyOMVn1OlV1XpJf6Ot9PML8NSdQ==
+X-Received: by 2002:a05:6a20:6a20:b0:1b5:cf26:ed09 with SMTP id adf61e73a8af0-1b5cf270509mr2184206637.7.1717918534936;
+        Sun, 09 Jun 2024 00:35:34 -0700 (PDT)
+Received: from XH22050090-L.ad.ts.tri-ad.global ([103.175.111.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28687382csm8476895a91.25.2024.06.09.00.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 00:35:34 -0700 (PDT)
+Sender: Vincent Mailhol <vincent.mailhol@gmail.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kernel@vger.kernel.org,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH] linux/bits: simplify GENMASK_INPUT_CHECK()
+Date: Sun,  9 Jun 2024 16:35:13 +0900
+Message-Id: <20240609073513.256179-1-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: DMAR-IR: IRQ remapping was enabled on dmar6 but we are not in
- kdump mode
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-References: <5517f76a-94ad-452c-bae6-34ecc0ec4831@molgen.mpg.de>
- <433452d0-589a-49c8-8044-dcc93d5be90a@linux.intel.com>
- <24bf9a11-6abd-4ccf-9ca1-3cf75c45d374@molgen.mpg.de>
- <42b53bff-4027-4cb6-a457-e26fd62895e5@linux.intel.com>
- <61ce93c7-e89c-4217-8095-dde9fb01763c@molgen.mpg.de>
- <7eb01b85-9233-4f21-865e-6d128f39fb46@linux.intel.com>
- <b12ae551-e7a4-435b-b7ff-368d6c1ae7a1@molgen.mpg.de>
- <754664f9-ac5b-406e-99bd-1b179ea8333b@molgen.mpg.de>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <754664f9-ac5b-406e-99bd-1b179ea8333b@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 6/8/24 7:07 PM, Paul Menzel wrote:
-> Dear Linux folks,
-> 
-> 
-> Am 15.05.24 um 08:02 schrieb Paul Menzel:
-> 
->> Am 15.05.24 um 04:13 schrieb Baolu Lu:
->>> On 5/15/24 3:46 AM, Paul Menzel wrote:
->>>> Am 23.01.24 um 01:55 schrieb Baolu Lu:
->>>>> On 2024/1/22 22:53, Paul Menzel wrote:
->>>>>> Am 22.01.24 um 13:38 schrieb Baolu Lu:
->>>>>>> On 2024/1/19 22:45, Paul Menzel wrote:
->>>>>>>>
->>>>>>>> On a Dell PowerEdge T640, Linux 5.9 and 6.6.12 warn about kdump:
->>>>>>>>
->>>>>>>>      [    2.728445] DMAR-IR: IRQ remapping was enabled on dmar6 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.736544] DMAR-IR: IRQ remapping was enabled on dmar5 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.744620] DMAR-IR: IRQ remapping was enabled on dmar4 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.752695] DMAR-IR: IRQ remapping was enabled on dmar3 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.760774] DMAR-IR: IRQ remapping was enabled on dmar2 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.768847] DMAR-IR: IRQ remapping was enabled on dmar1 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.776922] DMAR-IR: IRQ remapping was enabled on dmar0 
->>>>>>>> but we are not in kdump mode
->>>>>>>>      [    2.784999] DMAR-IR: IRQ remapping was enabled on dmar7 
->>>>>>>> but we are not in kdump mode
->>>>>>>>
->>>>>>>> Looking through the logs, this only happens when using kexec to 
->>>>>>>> restart the system.
->>>>>>>
->>>>>>> The code that warned this is,
->>>>>>>
->>>>>>>   599         if (ir_pre_enabled(iommu)) {
->>>>>>>   600                 if (!is_kdump_kernel()) {
->>>>>>>   601                         pr_warn("IRQ remapping was enabled 
->>>>>>> on %s but we are not in kdump mode\n",
->>>>>>>   602                                 iommu->name);
->>>>>>>   603                         clear_ir_pre_enabled(iommu);
->>>>>>>   604                         iommu_disable_irq_remapping(iommu);
->>>>>>>   605                 }
->>>>>>>
->>>>>>> The VT-d interrupt remapping is enabled during boot, but this is 
->>>>>>> not a
->>>>>>> kdump kernel.
->>>>>>>
->>>>>>> Do you mind checking whether the disable interrupt remapping 
->>>>>>> callback
->>>>>>> was called during kexec reboot?
->>>>>>>
->>>>>>> 1121 struct irq_remap_ops intel_irq_remap_ops = {
->>>>>>> 1122         .prepare                = intel_prepare_irq_remapping,
->>>>>>> 1123         .enable                 = intel_enable_irq_remapping,
->>>>>>> 1124         .disable                = disable_irq_remapping,
->>>>>>> 1125         .reenable               = reenable_irq_remapping,
->>>>>>> 1126         .enable_faulting        = enable_drhd_fault_handling,
->>>>>>> 1127 };
->>>>>>
->>>>>> Is there a way to check this without rebuilding the Linux kernel?
->>>>>
->>>>> I am not sure, but you can check whether any messages are dumped in 
->>>>> the
->>>>> path of .disable callback? or try to use ftrace?
->>>>
->>>> With
->>>>
->>>> ```
->>>> diff --git a/drivers/iommu/intel/irq_remapping.c 
->>>> b/drivers/iommu/intel/irq_remapping.c
->>>> index 712ebfc9870c6..146f19ae5b5f1 100644
->>>> --- a/drivers/iommu/intel/irq_remapping.c
->>>> +++ b/drivers/iommu/intel/irq_remapping.c
->>>> @@ -1030,6 +1030,7 @@ static void disable_irq_remapping(void)
->>>>       struct dmar_drhd_unit *drhd;
->>>>       struct intel_iommu *iommu = NULL;
->>>>
->>>> +     pr_warn("XXX: Called %s\n", __func__);
->>>>       /*
->>>>        * Disable Interrupt-remapping for all the DRHD's now.
->>>>        */
->>>> ```
->>>>
->>>> I can’t see anything in the logs, so it does not seem to be called.
->>>>
->>>> Can you reproduce the issue?
->>>
->>> How did you reproduce this?
->>
->> On a “server” (with Intel Xeon?), in my case Dell PowerEdge T640 and 
->> Dell PowerEdge R930 (Intel E7-8891 v3), run
->>
->>      kexec /boot/bzImage --initrd=/boot/grub/initramfs.igz 
->> --reuse-cmdline
-> 
-> Were you able to fit some cycles into reproducing/analyzing this issue?
+The __builtin_choose_expr() works with a wide range of expressions.
+When these are Boolean expressions, some logical simplifications can
+be applied.
 
-Yeah! I can reproduce this issue with my local development machine. But
-I haven't had time to analyze it yet. Perhaps we can remove this
-message, or make sure the .disable callback should be called?
+This is the case of:
 
-Best regards,
-baolu
+  __builtin_choose_expr(condition, boolean_expression, false);
+
+which can be simplified to:
+
+  condition && boolean_expression;
+
+Because of the shortcut logic of the && operator, this works even if
+the condition is, for example, __is_constexpr().
+
+Apply above simplification to GENMASK_INPUT_CHECK().
+
+This change passes the unit tests from CONFIG_BITS_TEST, including the
+extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
+
+[1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
+Link: https://git.kernel.org/torvalds/c/6d511020e13d
+
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+ include/linux/bits.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/bits.h b/include/linux/bits.h
+index 0eb24d21aac2..4cf27f329579 100644
+--- a/include/linux/bits.h
++++ b/include/linux/bits.h
+@@ -21,8 +21,7 @@
+ #if !defined(__ASSEMBLY__)
+ #include <linux/build_bug.h>
+ #define GENMASK_INPUT_CHECK(h, l) \
+-	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+-		__is_constexpr((l) > (h)), (l) > (h), 0)))
++	BUILD_BUG_ON_ZERO(__is_constexpr((l) > (h)) && (l) > (h))
+ #else
+ /*
+  * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+-- 
+2.43.0
+
 
