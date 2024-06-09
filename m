@@ -1,248 +1,158 @@
-Return-Path: <linux-kernel+bounces-207249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954A790146F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 06:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A3D901470
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 06:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A0A1F21854
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 04:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0122F1C20C24
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 04:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8633EEBA;
-	Sun,  9 Jun 2024 04:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9528AEAD5;
+	Sun,  9 Jun 2024 04:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrvGRWcz"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RBwuDyOi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDD613D;
-	Sun,  9 Jun 2024 04:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D536AD7
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 04:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717908485; cv=none; b=aoWXgMsZpnFA/59DrPhuiWU3VMiYVM9e248dWhT32aN5CbqB4ZR/Cc4VeOecYCHl21aEasLCzePCRInfvn1L4WeWmvScDuVpvJgLke0kz4T7TQlpYTFkhRXBpRWoIP/WFNULH4bf7P4CTYy+0zXC40c9DVch8NjyRG1+aaTYJi4=
+	t=1717908835; cv=none; b=kRigYMaz1I+jB92T8Wje/xnpJY9u0fKy9EfqJe9TgrL1bYif0ocQOfFYR52tyZL9zckWXscQfhImd0mQ6UfFoDszBRJn0Ng8pLOStPDslqBtPnwptjX62Xn5NxAaBPM2tH8+VpyZHx7jd0IQDWhJQ8Vxyey0jUVSkNSCQcn0OEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717908485; c=relaxed/simple;
-	bh=ZC0NIExRadZz9pF4BtWQfbzpwRPdq83BjwULj/auO6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KPp359sLpeSBA0iafBvJ04DINvaaB2cRTVi5OLExo/8VrzrFMUVzU/OyqUdwJWz4IgOCq6s1x+HGOcZzeddqH8ydlm9X8SwadNHiNQxnv6qf2rwScRe/4PSRG/oLUEBP3Y1eVJwjKCZvMocYudptjAm9KhbGtei2Wh8ujN6E7wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrvGRWcz; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6efacd25ecso62232466b.1;
-        Sat, 08 Jun 2024 21:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717908481; x=1718513281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=de3XEag55PlRNeVsKoa46EW3T6BQjhB8VBX3S+KwyRs=;
-        b=YrvGRWczg1Q/laiPgvua92upgfg7LZF6WoKYfdF5WAgLLdjIqY29iBCZHbKvKNVrIB
-         B1lJSc6JSmvfuo6LcaBmuBaG0mpsi9U6v0ZVU2ENRTpZ6gqh6dfsB5etjOOfI2Uoo/Fx
-         4kf7lxBDXbXaexokhTpfJqvrATPng9cfHDFb9DctgLELjj6gjifR60ipO7M5RqI9wdP/
-         Gl9IPCcOzZIBXDXMzXSAV8RX6rLohM0lFqQT4PhDrkV5n28p0PigAPO34qJAeAe57y7r
-         QW7mVyer7H/AgshCAuKOqTXuOAUZH/WCD0momv+69mQkrpdLHwLwE3gGznYGENOxLe14
-         Qhag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717908481; x=1718513281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=de3XEag55PlRNeVsKoa46EW3T6BQjhB8VBX3S+KwyRs=;
-        b=H8hos+pkm0r5yFh76dr06AZ1VNwoGhPvfZfQc1pRGcOb9aWFYeOo47LOXIbEY7Z3QC
-         e5QaNwVMVMrJOh8zfu2lXP0e6pMwSIm/9jWaDrZY2yQn3MsKYdCVGoRJTNm20p8H4BqD
-         zqIRWiK9ataDbKwGr2uW6j4QbhdAaXYdFAAS0vV2veqB4ER5bSzkYth9Je2+p8djifDy
-         v0zaoVLfg6scXlyBRXYiK1fO0HUVpEwxs0LXn0KI9+czvVscdtyyt3Ys/dX/h6UXbDNf
-         4XKFixzNzQkA28eFs4D/GpWSfFVOumx9T3aIMT2j20sfO3ID4GGQtJMhO+JLsvoD4OZt
-         8rrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmaH4TMXcQB+lb3c1Z2Yw1HnXU+qTHEiJDP91lvSqPvXCLatst9TS2/kXamYxVHzBvJ0X8xVVbsr1aIQ+ZQ2JNaWJDZHjrinm3j3l+I5M2DoDbB5v/+v6e3ry0Z4EP4HBLIvmE
-X-Gm-Message-State: AOJu0YzfXsOu/hmV5c82mBfvucr/124PnGVmNxRFyZ36oDyjpXxRw58B
-	O/DL8bWKbcCqhwJ/ZqmjBvVfpoGY2KfhM4wYG3BIzQNILvyYAQw2EIqShvuH9zdpdGakzmuzTU7
-	rpB0btEv9dAUD7tpPWH9T42aojMlsbsOP
-X-Google-Smtp-Source: AGHT+IGdn1fEFpQkOilc6scv6rf5kFsxm6xroGSwWJReZhXqdcYJB8ZHIwhPOVK7olruhU83UUn4V8nH1ePdiMVhTUM=
-X-Received: by 2002:a50:bb28:0:b0:57a:4c22:b3 with SMTP id 4fb4d7f45d1cf-57c5085e6ecmr5330318a12.1.1717908481327;
- Sat, 08 Jun 2024 21:48:01 -0700 (PDT)
+	s=arc-20240116; t=1717908835; c=relaxed/simple;
+	bh=ZcAj0PiPzpOszmKtX+HbMcGgJHuqbHj+MLko7amaSvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQxrk4T1nU5QNOyFSQDZXosKr7PV0DBt3jYcL9dhfBLq9+yEsm5qU4gHB4P5s/N9t0AiiS8Ssdb7Bo63oZzU6oQ3pTA1IwmVtVh0jRsdjvTx0h3orQNx09cc3BmvmPoJbLgLhMP/MxPR/sK6c6ib7rHJRTDBhw3qCRpD3peiGyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RBwuDyOi; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717908834; x=1749444834;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZcAj0PiPzpOszmKtX+HbMcGgJHuqbHj+MLko7amaSvM=;
+  b=RBwuDyOi3dErDwVBepYAHnLntUUQ/bEn7JXCI5yNf/iuQ3aHXrfdx/79
+   h86RBbYvK7wkO9QMRZtztcuX+RmsyTYx26rbMlDbTtXFyrC3LMm5FjrPQ
+   lH74XmM2HQ3h7TF+pQVurb/9x+vEkYnRZSkm5XDTXVOcAGI9nU4GgXoZ5
+   exzTuLeAgxjU0YzhFo3W2j6Pm+U5bqwPxtMkz9NjtOPnNkObiiSBMgjsl
+   3h3cJ0SLdjXoKV0lty2md+mPnDIdJ3OA3lYIIsYChV+CBRkxEKcMEk2+9
+   FbbTUDzoea2bg3fgiYUBJqhQLrTRjFhwtemsM++0Rlx0mPpZaY1dZ0If5
+   A==;
+X-CSE-ConnectionGUID: s0KWV4eRTEmgJcoGiXqTxw==
+X-CSE-MsgGUID: ARmOFw0wSdqLYheF2ZeI+w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="18381292"
+X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
+   d="scan'208";a="18381292"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 21:53:54 -0700
+X-CSE-ConnectionGUID: As000kdWRbGBi4TokMrueg==
+X-CSE-MsgGUID: 0pOr1j9zRna0eOLqaN/Jgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
+   d="scan'208";a="43279431"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 08 Jun 2024 21:53:51 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGAYv-0000rR-0X;
+	Sun, 09 Jun 2024 04:53:49 +0000
+Date: Sun, 9 Jun 2024 12:53:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>,
+	linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>,
+	=?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>
+Subject: Re: [PATCH v4 1/2] devcoredump: Add dev_coredumpm_timeout()
+Message-ID: <202406091205.EPawyDRg-lkp@intel.com>
+References: <20240607193220.229760-1-jose.souza@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240216094154.3263843-1-leitao@debian.org> <20240216092905.4e2d3c7c@hermes.local>
- <0e0ba573-1ae0-4a4b-8286-fdbc8dbe7639@gmail.com> <CANn89i+5F7d4i7Ds4V6TtkzzAjQjNQ8xOeoYqZr8tY6tWWmMEg@mail.gmail.com>
- <ZdMjaCSKFSkAoDOS@gmail.com>
-In-Reply-To: <ZdMjaCSKFSkAoDOS@gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sun, 9 Jun 2024 12:47:23 +0800
-Message-ID: <CAL+tcoDqyYy7mE6W8qvDJZgMK_4sYwXPzpidvgEu=r-uJ46k4Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: sysfs: Do not create sysfs for non BQL device
-To: Breno Leitao <leitao@debian.org>
-Cc: Eric Dumazet <edumazet@google.com>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, kuba@kernel.org, davem@davemloft.net, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	horms@kernel.org, Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240607193220.229760-1-jose.souza@intel.com>
 
-Hello Breno, Eric
+Hi José,
 
-On Mon, Feb 19, 2024 at 5:47=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> On Fri, Feb 16, 2024 at 07:45:37PM +0100, Eric Dumazet wrote:
-> > On Fri, Feb 16, 2024 at 7:41=E2=80=AFPM Florian Fainelli <f.fainelli@gm=
-ail.com> wrote:
-> > >
-> > > On 2/16/24 09:29, Stephen Hemminger wrote:
-> > > > On Fri, 16 Feb 2024 01:41:52 -0800
-> > > > Breno Leitao <leitao@debian.org> wrote:
-> > > >
-> > > >> +static bool netdev_uses_bql(const struct net_device *dev)
-> > > >> +{
-> > > >> +    if (dev->features & NETIF_F_LLTX ||
-> > > >> +        dev->priv_flags & IFF_NO_QUEUE)
-> > > >> +            return false;
-> > > >> +
-> > > >> +    return IS_ENABLED(CONFIG_BQL);
-> > > >> +}
-> > > >
-> > > > Various compilers will warn about missing parens in that expression=
-.
-> > > > It is valid but mixing & and || can be bug trap.
-> > > >
-> > > >       if ((dev->features & NETIF_F_LLTX) || (dev->priv_flags & IFF_=
-NO_QUEUE))
-> > > >               return false;
-> > > >
-> > > > Not all drivers will be using bql, it requires driver to have that =
-code.
-> > > > So really it means driver could be using BQL.
-> > > > Not sure if there is a way to find out if driver has the required B=
-QL bits.
-> > >
-> > > There is not a feature flag to be keying off if that is what you are
-> > > after, you would need to audit the drivers and see whether they make
-> > > calls to netdev_tx_sent_queue(), netdev_tx_reset_queue(),
-> > > netdev_tx_completed_queue().
-> > >
-> > > I suppose you might be able to programmatically extract that informat=
-ion
-> > > by looking at whether a given driver object file has a reference to
-> > > dql_{reset,avail,completed} or do that at the source level, whichever=
- is
-> > > easier.
-> >
-> > Note that the suggested patch does not change current functionality.
-> >
-> > Traditionally, we had sysfs entries fpr BQL for all netdev, regardless =
-of them
-> > using BQL or not.
-> >
-> > The patch seems to be a good first step.
->
-> Thanks Eric. I agree it solves the problem without creating a new
-> feature flag, that could also be done, but maybe less important than
-> this first step.
+kernel test robot noticed the following build errors:
 
-When I'm reading and testing the dqs codes in my VM, I realize that
-the virtio_net driver should have been excluded from BQL drivers,
-which means VM using virtio_net driver should not have the
-/sys/class/net/eth1/queues/tx-1/byte_queue_limits directory because It
-has neither NETIF_F_LLTX nor IFF_NO_QUEUE.
+[auto build test ERROR on drm-xe/drm-xe-next]
+[also build test ERROR on wireless/main linus/master v6.10-rc2 next-20240607]
+[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus wireless-next/main]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'm trying to cook a patch to fix it without introducing a new feature
-like NETIF_F_LOOPBACK, but I failed to have a good patch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jos-Roberto-de-Souza/drm-xe-Increase-devcoredump-timeout/20240608-033441
+base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
+patch link:    https://lore.kernel.org/r/20240607193220.229760-1-jose.souza%40intel.com
+patch subject: [PATCH v4 1/2] devcoredump: Add dev_coredumpm_timeout()
+config: i386-buildonly-randconfig-006-20240609 (https://download.01.org/0day-ci/archive/20240609/202406091205.EPawyDRg-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406091205.EPawyDRg-lkp@intel.com/reproduce)
 
-I have two options in my mind:
-1) introduce a feature flag only for virtion_net [1]
-2) introduce a BQL flag, and then apply it to all the drivers which
-has either NETIF_F_LLTX or IFF_NO_QUEUE bit, including virtio_net
-driver
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406091205.EPawyDRg-lkp@intel.com/
 
-Do you have any ideas or suggestions?
+All error/warnings (new ones prefixed by >>):
 
-Thanks in advance!
+   In file included from drivers/remoteproc/remoteproc_coredump.c:9:
+>> include/linux/devcoredump.h:79:6: warning: no previous prototype for 'dev_coredumpm_timeout' [-Wmissing-prototypes]
+      79 | void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+         |      ^~~~~~~~~~~~~~~~~~~~~
+--
+   ld: drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.o: in function `dev_coredumpm_timeout':
+>> dpu_encoder_phys_cmd.c:(.text+0x145c): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.o: in function `dev_coredumpm_timeout':
+   dpu_encoder_phys_vid.c:(.text+0x13e8): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.o: in function `dev_coredumpm_timeout':
+   dpu_encoder_phys_wb.c:(.text+0xda0): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/disp/dpu1/dpu_kms.o: in function `dev_coredumpm_timeout':
+   dpu_kms.c:(.text+0x8910): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/disp/msm_disp_snapshot.o: in function `dev_coredumpm_timeout':
+   msm_disp_snapshot.c:(.text+0x0): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.o: in function `dev_coredumpm_timeout':
+   msm_disp_snapshot_util.c:(.text+0xd8): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/msm_debugfs.o: in function `dev_coredumpm_timeout':
+   msm_debugfs.c:(.text+0x534): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/msm_gpu.o: in function `dev_coredumpm_timeout':
+   msm_gpu.c:(.text+0x8fc): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/msm_kms.o: in function `dev_coredumpm_timeout':
+   msm_kms.c:(.text+0x108): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_debug.o: in function `dev_coredumpm_timeout':
+   dp_debug.c:(.text+0x498): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_aux.o: in function `dev_coredumpm_timeout':
+   dp_aux.c:(.text+0x624): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_catalog.o: in function `dev_coredumpm_timeout':
+   dp_catalog.c:(.text+0x0): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_ctrl.o: in function `dev_coredumpm_timeout':
+   dp_ctrl.c:(.text+0xa500): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_display.o: in function `dev_coredumpm_timeout':
+   dp_display.c:(.text+0x16dc): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_drm.o: in function `dev_coredumpm_timeout':
+   dp_drm.c:(.text+0x340): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_link.o: in function `dev_coredumpm_timeout':
+   dp_link.c:(.text+0xcf4): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_panel.o: in function `dev_coredumpm_timeout':
+   dp_panel.c:(.text+0x174): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
+   ld: drivers/gpu/drm/msm/dp/dp_audio.o: in function `dev_coredumpm_timeout':
+   dp_audio.c:(.text+0x918): multiple definition of `dev_coredumpm_timeout'; drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.o:dpu_encoder.c:(.text+0x1e24): first defined here
 
-[1]
-untested patch for now:
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 61a57d134544..e39417d99ea8 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -5634,7 +5634,7 @@ static int virtnet_probe(struct virtio_device *vdev)
-                           IFF_TX_SKB_NO_LINEAR;
-        dev->netdev_ops =3D &virtnet_netdev;
-        dev->stat_ops =3D &virtnet_stat_ops;
--       dev->features =3D NETIF_F_HIGHDMA;
-+       dev->features =3D NETIF_F_HIGHDMA | NETIF_F_VIRTNET;
-
-        dev->ethtool_ops =3D &virtnet_ethtool_ops;
-        SET_NETDEV_DEV(dev, &vdev->dev);
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_feature=
-s.h
-index 7c2d77d75a88..4ade9cdf079e 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -14,7 +14,7 @@ typedef u64 netdev_features_t;
- enum {
-        NETIF_F_SG_BIT,                 /* Scatter/gather IO. */
-        NETIF_F_IP_CSUM_BIT,            /* Can checksum TCP/UDP over IPv4. =
-*/
--       __UNUSED_NETIF_F_1,
-+       //__UNUSED_NETIF_F_1,
-        NETIF_F_HW_CSUM_BIT,            /* Can checksum all the packets. */
-        NETIF_F_IPV6_CSUM_BIT,          /* Can checksum TCP/UDP over IPV6 *=
-/
-        NETIF_F_HIGHDMA_BIT,            /* Can DMA to high memory. */
-@@ -91,6 +91,7 @@ enum {
-        NETIF_F_HW_HSR_FWD_BIT,         /* Offload HSR forwarding */
-        NETIF_F_HW_HSR_DUP_BIT,         /* Offload HSR duplication */
-
-+       NETIF_F_VIRTNET_BIT,            /* Enable virtnet */
-        /*
-         * Add your fresh new feature above and remember to update
-         * netdev_features_strings[] in net/ethtool/common.c and maybe
-@@ -122,6 +123,7 @@ enum {
- #define NETIF_F_IPV6_CSUM      __NETIF_F(IPV6_CSUM)
- #define NETIF_F_LLTX           __NETIF_F(LLTX)
- #define NETIF_F_LOOPBACK       __NETIF_F(LOOPBACK)
-+#define NETIF_F_VIRTNET                __NETIF_F(VIRTNET)
- #define NETIF_F_LRO            __NETIF_F(LRO)
- #define NETIF_F_NETNS_LOCAL    __NETIF_F(NETNS_LOCAL)
- #define NETIF_F_NOCACHE_COPY   __NETIF_F(NOCACHE_COPY)
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 4c27a360c294..d52d95ea6fb6 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -1764,7 +1764,7 @@ static const struct kobj_type netdev_queue_ktype =3D =
-{
-
- static bool netdev_uses_bql(const struct net_device *dev)
- {
--       if (dev->features & NETIF_F_LLTX ||
-+       if (dev->features & (NETIF_F_LLTX | NETIF_F_VIRTNET) ||
-            dev->priv_flags & IFF_NO_QUEUE)
-                return false;
-
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 6b2a360dcdf0..efb39a185e4b 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -74,6 +74,7 @@ const char
-netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] =3D {
-        [NETIF_F_HW_HSR_TAG_RM_BIT] =3D    "hsr-tag-rm-offload",
-        [NETIF_F_HW_HSR_FWD_BIT] =3D       "hsr-fwd-offload",
-        [NETIF_F_HW_HSR_DUP_BIT] =3D       "hsr-dup-offload",
-+       [NETIF_F_VIRTNET_BIT] =3D         "virtnet",
- };
-
- const char
-
->
-> Hoping this is OK, I am planning to send a v2 adding the extra
-> parenthesis as reported above.
->
-> Thanks
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
