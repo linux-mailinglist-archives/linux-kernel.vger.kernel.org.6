@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-207346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8063D9015F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:24:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED2F9015FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0DA1C20A45
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A8D1C20936
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137B3339A1;
-	Sun,  9 Jun 2024 11:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jaLH3p0j"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFE43C099;
+	Sun,  9 Jun 2024 11:34:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D242233A;
-	Sun,  9 Jun 2024 11:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFFB1BF24
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 11:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717932263; cv=none; b=tlqAbQ1nKnutSvziP0VmrkGVG/yy3tXY03DZPhPb+OCkUdVeWT5aMS3Z2RuE68gSqtBmMnx+HAkkiOymy+VivhJHZLAmCJAKSF0S5cHSbzzzKVEkdxErmnsSZldVD8eG1YnIuW1khuMwKp8j+Tt9a8wnkjtZh+/e+zP+lJvxiTk=
+	t=1717932868; cv=none; b=kXOnRl9QHeyR32cJBL0JyROaQ7WjhOJn8zCrX3cAGu6+dqsNHyZP9DgNFTxHBTSxfYDWmFy0Ksf+c1BaaPg5TWOzKm0N3burdWj0Ve86RAKXUzXI88bIoFvEtVS7NgjHz01n30v+Pws5TN+xDZEyXointGNUo7yF9Ty3CLmsZ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717932263; c=relaxed/simple;
-	bh=q/iXIOMyLJl5xphpYTwH3w/lEzJ3M4l/7/fmNTRAZeE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fWLRpn0oGWopYduWf1gNDP1nnJn2cWd9gDYHLJo8PnU6PCG0vCMYoB3Prw+V6IPwoUP+vWB5UQxLEFPvR3EYi7KEAYQLAzBOdMQ1SWwESWgdoz9yIKKua8Kj5/hqeTSnvLvomQafHcMF79eM+lR08dRCbX1QJliUKa/gFaT/QkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jaLH3p0j; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717932221; x=1718537021; i=markus.elfring@web.de;
-	bh=HJ4zCaTWgNUn48MUERLAvrZ6HAXG3veuSDqVhXI7XfA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jaLH3p0jdorjs00Q+bnR9LcaaipNoRxj1XpVz0Ewhr5wHalsQbXvJhw3THTYALoI
-	 Hgmod/cz128I5G3gUsPWd6ELT676AL2OtJMAy2fc9aO+qyqP8VvqsO+cFgxWuoOSS
-	 T69QSplwPmdjP1Jyqme5LT5VXEyWZUyzTTFc9UKZe1UMvVeVvgp1t1c7FdKcKz4ZZ
-	 6uiajyILhQw/urG1RNhhrcf4qbeE0zaJoeJu0/v4BS8XESKbZdDusPOF/dOfMNH1i
-	 S7xCjp2pZ63ZsNJCTrsiZ7lFuTfVf2SB+kNmdIghjs+VHpRgN7Jtg9jfIChsdR1aV
-	 ZU5zcmcQcetvhcM4wg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Melf5-1snxRB3Nsj-00q09r; Sun, 09
- Jun 2024 13:23:40 +0200
-Message-ID: <4aa34452-4e13-4dc2-a67f-5bd821fd0498@web.de>
-Date: Sun, 9 Jun 2024 13:23:26 +0200
+	s=arc-20240116; t=1717932868; c=relaxed/simple;
+	bh=Y1+ti1mbb9MNw7nNtpV56B0Q6eW+P17Im7g7i/SEQzs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UB8YxAXPNXAtnricvSCeF3THF19LGzFy52q799faT9zp8GRAHfCJGBmdAdabGVZ2VDczA+iHaku9g47foBOfCOrVaq7Ap1KjRhfEC0qA7gOQqnArZEzwsOYjl6TFsw8F2YII7114syPzxO4IWrviwDftHMpaivMXv/EI6o8g5hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375a26a094dso2536795ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 04:34:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717932866; x=1718537666;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZV4E2L8maI6s7zq2yrwNQ7hph7xAqxH7JzWM8hda4Q=;
+        b=qjRJO9zEzIST/aAIN4LiR4fQ0XIs9Nrrt74Q4ABRvao5S42FQhyCdDr4W3Q1nFQDXv
+         FDvQL43GfyfOqsA4iqNz7cMeAFmTjGBAP+liqhraKzR04ItUiesOGexj1YHkHVqUKNEY
+         U9g14bRkCpfIgsjaEb6cCoJP72t96BXpzdwDopcZYF+Y/GOaqDW9SiKTmtP0CVMLVOg4
+         7VF4jcgDdvxDv9M3Ucx2TzqxsdyfqjIPa8x5j5es7Wv+n34NgCmgFisI3LEwuzxjzF86
+         xREbgFmUnP7q1LRS8tbTBcSWb1eRHA1dJyOTn1cI42Y5LVSvWAAfx5EF/5XXGCGwEy33
+         Y63A==
+X-Forwarded-Encrypted: i=1; AJvYcCUh04+VmG4jr4McbU2Mrl+4K31qHk+xnDUpr4S7k6xG9iNqm6YSf2thNpfBqzSLVQw4Im1DXsIHOiDNWrL/eRJ0B09YzSKkH6ifiMwD
+X-Gm-Message-State: AOJu0YzTlugNzZztXxW3RBCg6TlVfJv2fByCC/r0ppaJXUN+i1FOFy7P
+	BY1Jy2VbmLiNBhacaAJWGwB2tSnsSKcGPLaK5sIoGnopA1fzdnJEsR8rTEZkccFxagBG70Rovcs
+	Rz0jNEk4aLtj7qZsaUfB/zTq7UvtnTodU1HKQ/PXHcLaXKO4vHQXJ5I0=
+X-Google-Smtp-Source: AGHT+IGbhhOsz75IpMUaqd4IQp6/f84Ci5jbYbl1vq4N3CB8GmF1Ph8Ht43avaioasT7zxVpLi/qG21XDDP+AWCbfVPf8+NAGXY8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Richard chien <richard.chien@hpe.com>, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Richard chien <m8809301@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <20240609085735.6253-1-richard.chien@hpe.com>
-Subject: Re: [PATCH] ixgbe: Add support for firmware update
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240609085735.6253-1-richard.chien@hpe.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2VFpPJBph9XiC5vhNiOmte11nZIZgjfOHt+kTXyb73NicWJP8kq
- TmMkwWvE8pGeQ8GU5ABYb0vEeNgUL8EwlpiO+3pSgkgRaPGHYtxpunzeHJK6+vcr46mX0Cx
- mnigvjhS9psZBvdkn4b28pmP2/U4S6ffcKwoCNK3vddo5oppRjskgueF1C8//ToVkWk8y/I
- bVo6IL6MhZSBu9erevrxw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:i1+OJLuE/48=;+swK+qIrek4neQqBpd9S0NH0hSm
- T+OzBThB+w3qj8yo8EPxADKPfzRb9aDf+hV9w8ynvILLQqwZ37IcSYQZk0Ck7Mr0j+xJ3Ye0V
- EGMIyeVJb90ouvgMZzHOgWwCHuqcS82mX6n/IvHW4v2TV/r//rw9hWULc+cjcyV9AXgAQ/7xi
- HDvAxWpTh6HIPQiK3Ow2LAsbsffL2JbOgtfk06dZ8N2d4pnC55l/CDhgTcapdsKnPbtS2c6+I
- dAofcBrEKuLAMp0STDXQtSLwDFwJWQlTxRcJ+4A33787VbhRpVMevar01vV1FWfMY1TW0SEjg
- cajpVzZZbTJY8PjnOnvNUjQI8AO4OxNlDMC0f7QdScdikkOR5ltEwiEAzAq3sITMPxWfQED/E
- dWm4E2iEHC0mvh7vHuyHe0I9qVjp/0wbgFfH5gmbJlkZw9ppN8sQr0xZAY4xQQl98rXlvu6ko
- aWrxWzNBFeCCm8hUhi8kEY4116ZIlvgH5V4cszl91ZK2FybOgmvhp1vpWxj5M7/VFOUjfYTAd
- 1cAE5vo7jRLFsCGcZ4F2Xg5wNpVe04JB8QX/u+VvnKo+p9tIGglnq5+6G47QTNENmqb8qiK8T
- T7z2OWPefxeiojr8V6QBSiAkPudzeWPvWHF8RKgnT5JcjR2V6n65Rrh3DM6W+GxHF69vqGzcD
- SkjE6NP9wGU0EObBJTNef6ZcFdM6FmkXLpG6BUEGyX2yp8typdbhBlwaAoXnzqk42YPRTL8+Y
- KpLc1jpFk0nsboil81B8aPv0UQEptHjVU7vWhjXXxDS7yDaJoLMZ77wf7gobs5X4jvlDjSQxt
- aknYOJ4U+bGnzWJ+eGGHV1uAr1r8gvX+mKopjIG2NFVyw=
+X-Received: by 2002:a05:6e02:1fc9:b0:374:a840:e5be with SMTP id
+ e9e14a558f8ab-375802379b1mr3680665ab.0.1717932865811; Sun, 09 Jun 2024
+ 04:34:25 -0700 (PDT)
+Date: Sun, 09 Jun 2024 04:34:25 -0700
+In-Reply-To: <00000000000099cf25061964d113@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000371fcb061a736a5b@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in
+ dev_map_enqueue (2)
+From: syzbot <syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-> This patch adds support for firmware update to the in-tree ixgbe driver =
-and it is actually a port
-> from the out-of-tree ixgbe driver. In-band firmware update is one of the=
- essential system maintenance
-=E2=80=A6
+syzbot has found a reproducer for the following issue on:
 
-Please improve such a change description also according to word wrapping
-because of more desirable text line lengths.
+HEAD commit:    c44711b78608 liquidio: Adjust a NULL pointer handling path..
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1175e6f6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
+dashboard link: https://syzkaller.appspot.com/bug?extid=cca39e6e84a367a7e6f6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172b3126980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17caa30a980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47ff53e982e7/disk-c44711b7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7b10dcb52f35/vmlinux-c44711b7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b4a6bf6f87c5/bzImage-c44711b7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 PID: 5098 Comm: syz-executor784 Not tainted 6.10.0-rc2-syzkaller-00228-gc44711b78608 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:dev_map_enqueue+0x31/0x3e0 kernel/bpf/devmap.c:539
+Code: 41 56 41 55 41 54 53 48 83 ec 18 49 89 d4 49 89 f5 48 89 fd 49 be 00 00 00 00 00 fc ff df e8 46 9c d7 ff 48 89 e8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 ef e8 a0 5e 3d 00 4c 8b 7d 00 48 83 c5
+RSP: 0018:ffffc9000343f678 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88807eb31e00
+RDX: 0000000000000000 RSI: ffff88802224a070 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff89625806 R09: ffffffff896257c3
+R10: 0000000000000004 R11: ffff88807eb31e00 R12: ffff8880151d8000
+R13: ffff88802224a070 R14: dffffc0000000000 R15: 0000000000000000
+FS:  00005555867d5380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdc79c59303 CR3: 0000000022bc8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __xdp_do_redirect_frame net/core/filter.c:4397 [inline]
+ xdp_do_redirect_frame+0x2a6/0x660 net/core/filter.c:4451
+ xdp_test_run_batch net/bpf/test_run.c:336 [inline]
+ bpf_test_run_xdp_live+0xe60/0x1e60 net/bpf/test_run.c:384
+ bpf_prog_test_run_xdp+0x80e/0x11b0 net/bpf/test_run.c:1281
+ bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4292
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5706
+ __do_sys_bpf kernel/bpf/syscall.c:5795 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5793 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5793
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdc79c5b239
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff5780f908 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdc79c5b239
+RDX: 0000000000000050 RSI: 0000000020000240 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dev_map_enqueue+0x31/0x3e0 kernel/bpf/devmap.c:539
+Code: 41 56 41 55 41 54 53 48 83 ec 18 49 89 d4 49 89 f5 48 89 fd 49 be 00 00 00 00 00 fc ff df e8 46 9c d7 ff 48 89 e8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 ef e8 a0 5e 3d 00 4c 8b 7d 00 48 83 c5
+RSP: 0018:ffffc9000343f678 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88807eb31e00
+RDX: 0000000000000000 RSI: ffff88802224a070 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff89625806 R09: ffffffff896257c3
+R10: 0000000000000004 R11: ffff88807eb31e00 R12: ffff8880151d8000
+R13: ffff88802224a070 R14: dffffc0000000000 R15: 0000000000000000
+FS:  00005555867d5380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdc79c59303 CR3: 0000000022bc8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	41 56                	push   %r14
+   2:	41 55                	push   %r13
+   4:	41 54                	push   %r12
+   6:	53                   	push   %rbx
+   7:	48 83 ec 18          	sub    $0x18,%rsp
+   b:	49 89 d4             	mov    %rdx,%r12
+   e:	49 89 f5             	mov    %rsi,%r13
+  11:	48 89 fd             	mov    %rdi,%rbp
+  14:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
+  1b:	fc ff df
+  1e:	e8 46 9c d7 ff       	call   0xffd79c69
+  23:	48 89 e8             	mov    %rbp,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 ef             	mov    %rbp,%rdi
+  34:	e8 a0 5e 3d 00       	call   0x3d5ed9
+  39:	4c 8b 7d 00          	mov    0x0(%rbp),%r15
+  3d:	48                   	rex.W
+  3e:	83                   	.byte 0x83
+  3f:	c5                   	.byte 0xc5
 
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-> @@ -993,114 +993,292 @@ static void ixgbe_get_regs(struct net_device *ne=
-tdev,
-=E2=80=A6
-> +static int ixgbe_set_eeprom(struct net_device *netdev,
-> +                            struct ethtool_eeprom *eeprom, u8 *bytes)
-=E2=80=A6
->  err:
-> -	kfree(eeprom_buff);
-> -	return ret_val;
-> +        kfree(eeprom_buff);
-> +        return ret_val;
->  }
-
-Please keep these statements unmodified.
-
-Would you like to reconsider the indentation once more for your change app=
-roach?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.10-rc2#n18
-
-Regards,
-Markus
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
