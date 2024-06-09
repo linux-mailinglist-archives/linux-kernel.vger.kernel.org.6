@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-207361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD44F901623
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:00:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8DF901628
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D1B20F73
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:00:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389D9B20F7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342473FBB2;
-	Sun,  9 Jun 2024 12:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FD9405E6;
+	Sun,  9 Jun 2024 13:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PehTp77C"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdhUKMyC"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32DF2230F;
-	Sun,  9 Jun 2024 12:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89A6374D4;
+	Sun,  9 Jun 2024 13:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717937996; cv=none; b=TfMz2aULYKmuRW24xHP8R3NU5S4adJSmUfpOqx47fo64S51y/M8j9oRpxv99xo3S3tmlGxed4FxspFmJJ3TFSCKTUh+YiG2yFf/Y+nk0nLlSyRCBKRGc5fYFcAudoapHO6hYmbIN2JHk0G51ArftOVyEdesVSfQh96NI1QXQbtI=
+	t=1717938072; cv=none; b=SZyFd9l100OmM7aDmXzsW7W2pWE7qlkA488JnbIdWZ4xfLEUDDRacmnuSt4JgM06uHwLXnVEpQJ5NCcW+CcwHX7nn1N3wD/ttuElAWqjBsRcxZpz08bN8fsRZMtothNzQ7EVEDQCOLFhQTNhdtGi9hs2Qa70/DGxo3hNiSRsB6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717937996; c=relaxed/simple;
-	bh=ZBEzRfn+mFCbyufKXc/4c7RplCyGr6rZvxeGQzawPT0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GAD3ZT+xqj+G0ARGEX6Qt3my5UV5DQfjSYkum23gpOpuZcdlAu+saYP6N999rFWKeun9PiVzu7qSQnn1ccB0aGjYxgwhKidtR8ltFNSzHsyi2d/YQpswA77Ew68HZSjfFg49F6L/PhSunkWr9OdLV2moGIlBmRoYbZO8FqsZvgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PehTp77C; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1717938072; c=relaxed/simple;
+	bh=j49VU9MU24LvpW7FfwuoiEMwbcnOP7x2EnhIo7iP/Mc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cOoVuasI5h/Fl2TcBg+8f/QFnqsSvsJCgZJm61vy6YbJ0xssTtA56W8uDVRDqrrinfaS+Z/nyOZm+9Owm+XT8SAgw/3YFI6FlcdAp9Wfy5sJV6fWARgPrUnbVqU/X/6PwrBR8syES0XchsXaMvFFPAP6wMmKzLHAhcNQxzw6uCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdhUKMyC; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c8342af5eso685016e87.3;
-        Sun, 09 Jun 2024 05:59:54 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef64b092cso180202766b.1;
+        Sun, 09 Jun 2024 06:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717937993; x=1718542793; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zvgraGsdwP8qNq0CbLRpBxfSdVjyK/qpe06H5/qHpTM=;
-        b=PehTp77CFUMUerE7WxPgl2P+14sl8WKYQI8JuBiC5+4MtE42hAxZx2CSpm4nbY5BD5
-         gmBgzlTpQ2C602MYeLJGcKIHtqq1jTPTeFtFXwUxMjIn/vOXqp/xPue7qeeCVRa5KHNk
-         0zGv8UEzagiHMHOJuJ1EI3W7BwcYB2HxrbPGE8Ft8ZRghxeT9O1mSgN1BU/ADdDFDtLV
-         qskdsCEXfU1ETYW2xaazqZHcBLbePm+r0waD/Ku+M2mbpcnUWoQKi9vGzvMiw7nG9TsB
-         yr5L4Vw66U/5rle2eDepA2rQb1mbwlpKICZOcNYJOBOrwSBZFWMSWRrE1LmfM9AxhgWl
-         kjTg==
+        d=gmail.com; s=20230601; t=1717938069; x=1718542869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REsRox1e0RuQ8D5QAaZjLhlhSVKgshVITv7B++1K8Ss=;
+        b=HdhUKMyCszV2EXAMcPngB/2Sh7n6BzLfYP0YgdbD+7hWlS9HwYKAhBpL7rQP5PJ3Ls
+         V48NS5RJDXW0DXf/qTn9P9OTPtHDwDjV014PMhwB877PBZQzAu74h1ZIiAHQIfliUYNo
+         CsDSWuCSsh2wpCeHhxauQJzomUGBnC/ETmGom1Az1JJfTPrqe1TsirCD4tytLeFkEuPv
+         207eHL5t7q1JQ+VFXFBeLEFJ5Yw2rBAdWSjB+02THcWLcfD/lFhwFbNslD/LDYNj3VZR
+         9uuAchz2QqaiYBy2UQAQhiq38VNIMp9Djrtn4CKYrPoa2FuXG14wVMKiaiWRuz0FA4nN
+         QAQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717937993; x=1718542793;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zvgraGsdwP8qNq0CbLRpBxfSdVjyK/qpe06H5/qHpTM=;
-        b=fp+SZyl9Q1FyMRT3vlRpaEjopXXHKBtlPn0N8PTqK/DnmpAFYH5d/TrkwDQeU/z1F3
-         1EChkz7qNw2GAP1NXTm/KNlICO3uVVTw9vMGxxv3yWwVn77QQA4qNN6ZxZQji2KqaoWg
-         ST78Z8swvtVJ2QAdF3iBwiD6cF2wqI1Kx3g+pOq5AO6EjE4MtFTrjZINXVAsKEv9+s9b
-         8PIvkwkwNYmFreSWvZW11oBT4Si3fMkbe8z8q2QH3VRXxnWwxUjrplpWj/OmG18iAn6b
-         ua2rxcShc66fm0UiUrC08ddqDNHt/EQaQVPdQG5nV1gB64Ie6J7lFGbR3sSilyGFxgTg
-         maxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8bNjDc1emHn/AM2ZvTmOwmO7wPnGAehMigxx9YVyfGvkwCAh1ZXUlI9wB+ZYdh31GlipobBhsSG1oFLh2f1L+0t+bx0KD/iregHVRl6sw6XXvTxTBOXT+TYZ/PIM2bLRH+TJl3wB2uQ==
-X-Gm-Message-State: AOJu0Yy8qTumiTJpJXHHbVmVAYm30TuXA8YkfPbtPCOgNBz09BXiSMr9
-	zCw017BmuCjkqOdQG8XH8OAmLi39nJmCBkdAbq3yHpMiXM5StjeX
-X-Google-Smtp-Source: AGHT+IH0kfJd+mvMseVa+3hYIyeisA8ltLtAHrUOGBmoHFRBwQJplxengofSYzowRy3u69oYOatzLw==
-X-Received: by 2002:ac2:4989:0:b0:52c:7fc9:954e with SMTP id 2adb3069b0e04-52c7fc9976fmr1948585e87.41.1717937992741;
-        Sun, 09 Jun 2024 05:59:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717938069; x=1718542869;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=REsRox1e0RuQ8D5QAaZjLhlhSVKgshVITv7B++1K8Ss=;
+        b=YcpqMDN/0o14aVnbSpilSqojAbxq/C0JGR9uZuWE4mbwkZc3D/wcztXkVe60aYHxtM
+         jD1S9Ih/yhDFjErfo9lV9KxPEMycQKg7VpgqJRPnMbn6tSe15gddiXcp60acJQupDDJ5
+         3448NKHY57rTRK+uiQiv+ZOUywmoWTJ3+QTP3ZBr1GaJT4HgbTHnzxe4A7OZMCg406pH
+         OcX9Ww7gT1/DCkip6bxtbm2xQ6dSmy2U1F+tM/wAjYxN6oLGlVMQGje2COF1xExbvJ+Y
+         BH3gIV7JQzehm4OhWBiS71GmGUth+UetImIWUfOiW/Tjrk5zzuwC8xznpWpa//0KK3z3
+         V59Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0xXO+ul8kXzAfEnl3HuorZ5IHsPrNun2eMbsxJuU0uHqfmJbRsB8m0fN4y9MyerCyPKQ8Rn4+IC5bSl8Q/n1LiMy7/hm2aztwdB5vTYQCiosTxamn1WEmZKHO07Pb1SIZi5I5eAur1A==
+X-Gm-Message-State: AOJu0YwAmjUxstuwAwok3Al2odBro6l+p0Z+CsMQ4XNJKX7q1FoZ0Jmj
+	TxPgBG71Uj3MSSpVrKcs5Qo7MzjZOiRX/s/LVUMQJEVO8nrkHjeD
+X-Google-Smtp-Source: AGHT+IHuwX9E4jd+uOP3g2E/VCQpCP2FwgjdCll+ONft/3eSl0lcdXlxqQ5XLFW8iIp/cysdKtueIQ==
+X-Received: by 2002:a17:906:4a4a:b0:a6f:74:d389 with SMTP id a640c23a62f3a-a6f0074d52fmr240671266b.14.1717938068825;
+        Sun, 09 Jun 2024 06:01:08 -0700 (PDT)
 Received: from lmc-playground.localdomain ([188.25.209.252])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f1841fceasm85961266b.70.2024.06.09.05.59.51
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f1841fceasm85961266b.70.2024.06.09.06.01.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 05:59:52 -0700 (PDT)
+        Sun, 09 Jun 2024 06:01:08 -0700 (PDT)
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,10 +79,12 @@ Cc: laurentiu.mihalcea@nxp.com,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] Add support for imx8ulp's SIM
-Date: Sun,  9 Jun 2024 15:58:58 +0300
-Message-Id: <20240609125901.76274-1-laurentiumihalcea111@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: reset: add schema for imx8ulp SIM reset
+Date: Sun,  9 Jun 2024 15:58:59 +0300
+Message-Id: <20240609125901.76274-2-laurentiumihalcea111@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240609125901.76274-1-laurentiumihalcea111@gmail.com>
+References: <20240609125901.76274-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,35 +95,90 @@ Content-Transfer-Encoding: 8bit
 
 From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-i.MX8ULP's SIM (System Integration Module) allows
-control and configuration of certain components
-form the domain it's assigned to. Add DT node
-and schema for it. Its child shall also be
-included.
+Add schema for imx8ulp's SIM reset controller.
 
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
-Changes in v2:
-- Reset controller is now also a syscon provider.
-- Changed vendor prefix to nxp.
-- Link to v1: https://lore.kernel.org/all/20240516204031.171920-1-laurentiumihalcea111@gmail.com/
-
----
-Laurentiu Mihalcea (3):
-  dt-bindings: reset: add schema for imx8ulp SIM reset
-  reset: add driver for imx8ulp SIM reset controller
-  arm64: dts: imx8ulp: add AVD-SIM node
-
- .../bindings/reset/nxp,imx8ulp-sim-reset.yaml |  68 ++++++++++++
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  13 +++
- drivers/reset/Kconfig                         |   7 ++
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-imx8ulp-sim.c             | 103 ++++++++++++++++++
- include/dt-bindings/reset/imx8ulp-sim-reset.h |  16 +++
- 6 files changed, 208 insertions(+)
+ .../bindings/reset/nxp,imx8ulp-sim-reset.yaml | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
- create mode 100644 drivers/reset/reset-imx8ulp-sim.c
- create mode 100644 include/dt-bindings/reset/imx8ulp-sim-reset.h
 
----
-base-commit: fec32ea96dd90bf0af97e001f380d4a240013aa0
+diff --git a/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml b/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
+new file mode 100644
+index 000000000000..e7faec55ff36
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/nxp,imx8ulp-sim-reset.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/nxp,imx8ulp-sim-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX8ULP System Integration Module Reset Controller
++
++maintainers:
++  - Liu Ying <victor.liu@nxp.com>
++
++description: |
++  Some instances of i.MX8ULP's SIM may offer control
++  over the reset of some components of a certain domain
++  (e.g: AVD-SIM).
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - nxp,imx8ulp-avd-sim-reset
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  '#reset-cells':
++    const: 1
++
++  mux-controller:
++    $ref: ../mux/reg-mux.yaml
++
++required:
++  - compatible
++  - reg
++  - '#reset-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nxp,imx8ulp-avd-sim-reset
++    then:
++      required:
++        - mux-controller
++        - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/imx8ulp-clock.h>
++    syscon@2da50000 {
++      compatible = "nxp,imx8ulp-avd-sim-reset", "syscon";
++      reg = <0x2da50000 0x38>;
++      clocks = <&pcc5 IMX8ULP_CLK_AVD_SIM>;
++      #reset-cells = <1>;
++
++      mux-controller {
++        compatible = "mmio-mux";
++        #mux-control-cells = <1>;
++        mux-reg-masks = <0x8 0x00000200>;
++      };
++    };
+-- 
+2.34.1
+
 
