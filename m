@@ -1,93 +1,81 @@
-Return-Path: <linux-kernel+bounces-207457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF990177B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2579017C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31BE1F21262
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411BE1F21034
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED76356452;
-	Sun,  9 Jun 2024 18:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242F80C07;
+	Sun,  9 Jun 2024 18:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OS0qvVYn"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VThoP2pT"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E589F55887;
-	Sun,  9 Jun 2024 18:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C61F76F1B;
+	Sun,  9 Jun 2024 18:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717957306; cv=none; b=XTwd1bF2cZamVGKoqRN5+VG0KdZnPzMmKCUwHJZt8aqN76xR8HNsLceZlrUxRQ8Bhstvge2ILP4IkpJ8L80pr+Xx0ZBCjXXVy8M0MV5LaOR82QtzJ/QjjPChqAG0E0zBpBmREjd3aM1t04Df46BkEmOBmnIp0nvA/wWoMx9jpxQ=
+	t=1717957383; cv=none; b=dpPw9fvlMjQOBj5mJAiIKrccp1K+XL2kwdyG9K/i9uHfPOdOCE7SRZ5KNWozhF52w4c6ORzOcl2JvOG3ws72FmnUZXUDyHEpigZAxeP57zMlBtmOT4oiUXOFUL3QD6ioyisCXXxMaFH1KCaFKIHi/HxDkpRiQSJ+uC3kSa4XwGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717957306; c=relaxed/simple;
-	bh=FX9kC0LgZEW0lT05tOIBxxA6CVUaZQ2h+RYJN8iMVPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ucCZg/vxxAXRQ6xlpW5Z943cmaIfZKfoJAm2zkvdkbQ964sRuQLiRhgGola46AtakYU6heyVQOeHwkYriwVzaBIvpoSbPJCuqeEGXJ3zVf+q/Z9fuZgL+I/TySs8OJl205ztbIrlaC1eVkJn6IZ708qIMaIYBOP8/wxQ/I0vMUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OS0qvVYn; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaea28868dso26760461fa.3;
-        Sun, 09 Jun 2024 11:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717957301; x=1718562101; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7aUxPnnNon/EcQm4WWh8QSMFKlzTjwmpeRbHxrtS3x0=;
-        b=OS0qvVYnfgRvqknpbhkCQGS8wHnRLYcnmhDjCeLggiE4JS/jMP006O0HXg4cXmvKpJ
-         cWLs29yop3FmU+pf7/YIgwmpyKeHNa1DexhZqziK/clhiB6XOxJvSO3mHhde6AV/DUke
-         pBMNNiAXd+pG17ZVWnmoQvB60XroTweWuFP17sL2aZqZKDcXNgStgrQOsgQqorF4kEUT
-         zQpl4dJMQ4W9OwVuD6eYWDOG/RiNvoWH9og2vcU3YiO7tNZ3hxTaG+ilourlFVjPMaMF
-         +yQ0svF6Qnxd8AlZstWN5cZnvlen32OEK2FhJSB8Bdrnrf3uNFAh42wk4Dbv8U7TuAam
-         Nn+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717957301; x=1718562101;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7aUxPnnNon/EcQm4WWh8QSMFKlzTjwmpeRbHxrtS3x0=;
-        b=WqSGSAwMV/mYzNFhrrde9D0qaIdC6Og5dJJxqicrm5v8jsb9nQVQnBz67oF6toNsNK
-         kIRdyoNPMrupgSV9ZV3e/Fzx+/dMugeQYVx1Xoj2yDABDyc/1LSN4XRJk9XReVKzJd84
-         wPUdXeVJ1Alfz/O/VmvEG6IIsyjZUMbgP18f/azXcyFiN1ccVOCuZm+zGvlAKVPpnM1A
-         ksYg5sbocJ3lxYUJpVVvAIErb3vQBBGF5HYOJ/A5u7OLoSwmJwCiTVZ+pZMnRum6PJhF
-         /bhPeeHAVwqklZr9b5MAXqTFVkDWmI2ibAXhAoFsgrHj4bsQY5w88eYvWg3RM52n5SeN
-         VM7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWll8g79p97sySSY0Dpo7PbVwodYtUq/HPthRbaxP361M47pzgPAsvOjAMg9gzf4ka7lr3DowBAROo+prjvv9dkYLeY393GCCbxU5u64CHx6K6xUNBhNu77qa6aQ7+sYw1IIPmkWfYaPtptqp2R7BQVAt3end07GH/kOy32cebNMi9Ep2dp01JF+2Y41gkWn06IZd15rz1P5joB3Nfc9r3lpg==
-X-Gm-Message-State: AOJu0YyxaVCUkUTpPX2IN3Xh/BsvXNM9NG40RR0OvZrdIv7yu/Sk97l/
-	SAKfNfABCUDnPIjljkq/fzqoaxVw2iVwgRPaCAUJEgspd7ZpGuC8EMlAII0c
-X-Google-Smtp-Source: AGHT+IEv9WdHqtNsCkyAk+QGX1TZrXGM/wgi9ZbLcnUf7owigfZHpAzmaT8rj/nIBnx0KRUFOr6gHw==
-X-Received: by 2002:a2e:a7c8:0:b0:2eb:e505:ebd6 with SMTP id 38308e7fff4ca-2ebe505ee6bmr15276331fa.0.1717957301180;
-        Sun, 09 Jun 2024 11:21:41 -0700 (PDT)
-Received: from localhost.localdomain (bza83.neoplus.adsl.tpnet.pl. [83.30.46.83])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebd5a63bf2sm6679841fa.33.2024.06.09.11.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 11:21:40 -0700 (PDT)
-From: Adam Skladowski <a39.skl@gmail.com>
-To: 
-Cc: phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] interconnect: qcom: Add MSM8937 interconnect provider driver
-Date: Sun,  9 Jun 2024 20:20:57 +0200
-Message-Id: <20240609182112.13032-5-a39.skl@gmail.com>
+	s=arc-20240116; t=1717957383; c=relaxed/simple;
+	bh=2u7Lb82cUdtwsf2YhwcR6icWXZ3KM0tayUYYi6w/EtU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q3GonMCYt+ov97uHF9iQto+GymXqzvCKMHwqVVS2oqIsgdfdtb9LLkeAi2AXBn9NxzUnifgScx6oxC4X3BMTWmICiSfM2YBv42ndk/wqTnuaauD8ynwIDQU5eBgya6bS0fHlfp31ImFsha21iXjrbLfVv5enX8oP5OKRGG2z9D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VThoP2pT; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 459IMmUk074359;
+	Sun, 9 Jun 2024 13:22:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717957368;
+	bh=ghtfBFd78oij9ASmCooUsYMI9QRmQG03qcOJ8mDHQik=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=VThoP2pTlCzm9U2n1YLp8xtK9bMzpieXiRtS9Ls2Fltrox7l9jdvrHBDBp6unjAeN
+	 CJrDrnYMIPlRdS0OPt9qMDh5liToW+XRCSoE3bgh7ug7FFHl/lZXHT0cfwaxlVxb09
+	 GmlGYF6UN/DLpKv23gmhFU0PcAOJVsVTKy+c8IUQ=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 459IMm5b035532
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 9 Jun 2024 13:22:48 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 9
+ Jun 2024 13:22:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 9 Jun 2024 13:22:48 -0500
+Received: from localhost (uda0389739.dhcp.ti.com [137.167.1.114])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 459IMlmd034721;
+	Sun, 9 Jun 2024 13:22:48 -0500
+From: <michael.nemanov@ti.com>
+To: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
+        Johannes
+ Berg <johannes.berg@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Michael Nemanov
+	<Michael.Nemanov@ti.com>
+Subject: [PATCH v2 12/17] wifi: cc33xx: Add scan.c, scan.h
+Date: Sun, 9 Jun 2024 21:20:57 +0300
+Message-ID: <20240609182102.2950457-13-michael.nemanov@ti.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240609182112.13032-1-a39.skl@gmail.com>
-References: <20240609182112.13032-1-a39.skl@gmail.com>
+In-Reply-To: <20240609182102.2950457-1-michael.nemanov@ti.com>
+References: <20240609182102.2950457-1-michael.nemanov@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,1440 +83,1156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add driver for interconnect busses found in MSM8937 based platforms.
-The topology consists of four NoCs that are partially controlled
-by a RPM processor.
+From: Michael Nemanov <Michael.Nemanov@ti.com>
 
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+Handles the scan process.
+Scan starts via cc33xx_op_hw_scan (main.c) which calls cc33xx_scan.
+Scan channels are packed and sent to HW where scanning is managed by
+FW concurrently to other roles without driver intervention.
+Scan results are handled like normal management frames
+and are sent to MAC80211. HW notifies driver of scan completion via
+dedicated event which triggers a call to cc33xx_scan_completed.
 ---
- drivers/interconnect/qcom/Kconfig   |    9 +
- drivers/interconnect/qcom/Makefile  |    2 +
- drivers/interconnect/qcom/msm8937.c | 1374 +++++++++++++++++++++++++++
- 3 files changed, 1385 insertions(+)
- create mode 100644 drivers/interconnect/qcom/msm8937.c
+ drivers/net/wireless/ti/cc33xx/scan.c | 754 ++++++++++++++++++++++++++
+ drivers/net/wireless/ti/cc33xx/scan.h | 364 +++++++++++++
+ 2 files changed, 1118 insertions(+)
+ create mode 100644 drivers/net/wireless/ti/cc33xx/scan.c
+ create mode 100644 drivers/net/wireless/ti/cc33xx/scan.h
 
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-index a0e9c09954ed..c3c534e7dad6 100644
---- a/drivers/interconnect/qcom/Kconfig
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -26,6 +26,15 @@ config INTERCONNECT_QCOM_MSM8916
- 	  This is a driver for the Qualcomm Network-on-Chip on msm8916-based
- 	  platforms.
- 
-+config INTERCONNECT_QCOM_MSM8937
-+	tristate "Qualcomm MSM8937 interconnect driver"
-+	depends on INTERCONNECT_QCOM
-+	depends on QCOM_SMD_RPM
-+	select INTERCONNECT_QCOM_SMD_RPM
-+	help
-+	  This is a driver for the Qualcomm Network-on-Chip on msm8937-based
-+	  platforms.
-+
- config INTERCONNECT_QCOM_MSM8939
- 	tristate "Qualcomm MSM8939 interconnect driver"
- 	depends on INTERCONNECT_QCOM
-diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-index 21ce45438258..a27dcb474df5 100644
---- a/drivers/interconnect/qcom/Makefile
-+++ b/drivers/interconnect/qcom/Makefile
-@@ -6,6 +6,7 @@ interconnect_qcom-y			:= icc-common.o
- icc-bcm-voter-objs			:= bcm-voter.o
- qnoc-msm8909-objs			:= msm8909.o
- qnoc-msm8916-objs			:= msm8916.o
-+qnoc-msm8937-objs			:= msm8937.o
- qnoc-msm8939-objs			:= msm8939.o
- qnoc-msm8974-objs			:= msm8974.o
- qnoc-msm8976-objs			:= msm8976.o
-@@ -41,6 +42,7 @@ icc-smd-rpm-objs			:= smd-rpm.o icc-rpm.o icc-rpm-clocks.o
- obj-$(CONFIG_INTERCONNECT_QCOM_BCM_VOTER) += icc-bcm-voter.o
- obj-$(CONFIG_INTERCONNECT_QCOM_MSM8909) += qnoc-msm8909.o
- obj-$(CONFIG_INTERCONNECT_QCOM_MSM8916) += qnoc-msm8916.o
-+obj-$(CONFIG_INTERCONNECT_QCOM_MSM8937) += qnoc-msm8937.o
- obj-$(CONFIG_INTERCONNECT_QCOM_MSM8939) += qnoc-msm8939.o
- obj-$(CONFIG_INTERCONNECT_QCOM_MSM8974) += qnoc-msm8974.o
- obj-$(CONFIG_INTERCONNECT_QCOM_MSM8976) += qnoc-msm8976.o
-diff --git a/drivers/interconnect/qcom/msm8937.c b/drivers/interconnect/qcom/msm8937.c
+diff --git a/drivers/net/wireless/ti/cc33xx/scan.c b/drivers/net/wireless/ti/cc33xx/scan.c
 new file mode 100644
-index 000000000000..470175c1c38b
+index 000000000000..28f89b0cbea0
 --- /dev/null
-+++ b/drivers/interconnect/qcom/msm8937.c
-@@ -0,0 +1,1374 @@
++++ b/drivers/net/wireless/ti/cc33xx/scan.c
+@@ -0,0 +1,754 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Based on data from msm8937-bus.dtsi in Qualcomm's msm-3.18 release:
-+ *   Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
++ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
 + */
 +
++#include "cc33xx.h"
++#include "debug.h"
++#include "cmd.h"
++#include "scan.h"
++#include "tx.h"
++#include "conf.h"
 +
-+#include <linux/device.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++static void cc33xx_adjust_channels(struct scan_param *scan_param,
++				   struct cc33xx_scan_channels *cmd_channels,
++				   enum scan_request_type scan_type)
++{
++	struct conn_scan_ch_info	*ch_info_list;
++	struct conn_scan_dwell_info	*dwell_info;
++	struct conn_scan_ch_params	*channel;
++	struct conn_scan_ch_params	*ch_params_list;
 +
++	u8 *passive;
++	u8 *dfs;
++	u8 *active;
++	int i, j;
++	u8 band;
 +
-+#include <dt-bindings/interconnect/qcom,msm8937.h>
++	if (scan_type == SCAN_REQUEST_CONNECT_PERIODIC_SCAN) {
++		ch_info_list	= scan_param->u.periodic.channel_list;
++		dwell_info	= scan_param->u.periodic.dwell_info;
++		active		= (u8 *)&scan_param->u.periodic.active;
++		passive		= (u8 *)&scan_param->u.periodic.passive;
++		dfs		= (u8 *)&scan_param->u.periodic.dfs;
++	} else {
++		ch_info_list	= scan_param->u.one_shot.channel_list;
++		dwell_info	= scan_param->u.one_shot.dwell_info;
++		active		= (u8 *)&scan_param->u.one_shot.active;
++		passive		= (u8 *)&scan_param->u.one_shot.passive;
++		dfs		= (u8 *)&scan_param->u.one_shot.dfs;
++	}
 +
-+#include "icc-rpm.h"
++	memcpy(passive, cmd_channels->passive, sizeof(cmd_channels->passive));
++	memcpy(active, cmd_channels->active, sizeof(cmd_channels->active));
++	*dfs = cmd_channels->dfs;
++
++	ch_params_list = cmd_channels->channels_2;
++	for (i = 0; i < MAX_CHANNELS_2GHZ; ++i) {
++		ch_info_list[i].channel	= ch_params_list[i].channel;
++		ch_info_list[i].flags = ch_params_list[i].flags;
++		ch_info_list[i].tx_power_att = ch_params_list[i].tx_power_att;
++	}
++
++	channel = &ch_params_list[0];
++	band = NL80211_BAND_2GHZ;
++	dwell_info[band].min_duration     = channel->min_duration;
++	dwell_info[band].max_duration     = channel->max_duration;
++	dwell_info[band].passive_duration = channel->passive_duration;
++
++	ch_params_list = cmd_channels->channels_5;
++	for (j = 0; j < MAX_CHANNELS_5GHZ; ++i, ++j) {
++		ch_info_list[i].channel = ch_params_list[j].channel;
++		ch_info_list[i].flags = ch_params_list[j].flags;
++		ch_info_list[i].tx_power_att = ch_params_list[j].tx_power_att;
++	}
++
++	channel = &ch_params_list[0];
++	band = NL80211_BAND_5GHZ;
++	dwell_info[band].min_duration     = channel->min_duration;
++	dwell_info[band].max_duration     = channel->max_duration;
++	dwell_info[band].passive_duration = channel->passive_duration;
++}
++
++static int cc33xx_cmd_build_probe_req(struct cc33xx *cc,
++				      struct cc33xx_vif *wlvif, u8 role_id,
++				      u8 scan_type, const u8 *ssid,
++				      size_t ssid_len, const u8 *ie0,
++				      size_t ie0_len, const u8 *ie1,
++				      size_t ie1_len, bool sched_scan)
++{
++	struct ieee80211_vif *vif = cc33xx_wlvif_to_vif(wlvif);
++	struct sk_buff *skb = NULL;
++	struct cc33xx_cmd_set_ies *cmd;
++	int ret;
++
++	cc33xx_debug(DEBUG_SCAN, "build probe request scan_type %d", scan_type);
++
++	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
++	if (!cmd) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	skb = ieee80211_probereq_get(cc->hw, vif->addr, ssid,
++				     ssid_len, ie0_len + ie1_len);
++	if (!skb) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	if (ie0_len)
++		skb_put_data(skb, ie0, ie0_len);
++
++	if (ie1_len)
++		skb_put_data(skb, ie1, ie1_len);
++
++	cmd->scan_type = scan_type;
++	cmd->role_id = role_id;
++
++	cmd->len = cpu_to_le16(skb->len - sizeof(struct ieee80211_hdr_3addr));
++
++	if (skb->data) {
++		memcpy(cmd->data,
++		       skb->data + sizeof(struct ieee80211_hdr_3addr), le16_to_cpu(cmd->len));
++	}
++
++	usleep_range(10000, 11000);
++	ret = cc33xx_cmd_send(cc, CMD_SET_PROBE_IE, cmd, sizeof(*cmd), 0);
++
++	if (ret < 0) {
++		cc33xx_warning("cmd set_template failed: %d", ret);
++		goto out_free;
++	}
++
++out_free:
++	dev_kfree_skb(skb);
++	kfree(cmd);
++out:
++	return ret;
++}
++
++static void cc33xx_started_vifs_iter(void *data, u8 *mac,
++				     struct ieee80211_vif *vif)
++{
++	struct cc33xx_vif *wlvif = cc33xx_vif_to_data(vif);
++	bool active = false;
++	int *count = (int *)data;
++
++	/* count active interfaces according to interface type.
++	 * checking only bss_conf.idle is bad for some cases, e.g.
++	 * we don't want to count sta in p2p_find as active interface.
++	 */
++	switch (wlvif->bss_type) {
++	case BSS_TYPE_STA_BSS:
++		if (test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
++			active = true;
++		break;
++
++	case BSS_TYPE_AP_BSS:
++		if (wlvif->cc->active_sta_count > 0)
++			active = true;
++		break;
++
++	default:
++		break;
++	}
++
++	if (active)
++		(*count)++;
++}
++
++static int cc33xx_count_started_vifs(struct cc33xx *cc)
++{
++	int count = 0;
++
++	ieee80211_iterate_active_interfaces_atomic(cc->hw,
++						   IEEE80211_IFACE_ITER_RESUME_ALL,
++						   cc33xx_started_vifs_iter,
++						   &count);
++	return count;
++}
++
++static int cc33xx_scan_get_channels(struct cc33xx *cc,
++				    struct ieee80211_channel *req_channels[],
++				    u32 n_channels, u32 n_ssids,
++				    struct conn_scan_ch_params *channels,
++				    u32 band, bool radar, bool passive,
++				    unsigned int start, unsigned int max_channels,
++				    u8 *n_pactive_ch, int scan_type)
++{
++	unsigned int i, j;
++	u32 flags;
++	bool force_passive = !n_ssids;
++	u32 min_dwell_time_active, max_dwell_time_active;
++	u32 dwell_time_passive, dwell_time_dfs;
++	struct conn_scan_ch_params *ch;
++	struct ieee80211_channel *req_ch;
++
++	/* configure dwell times according to scan type */
++	if (scan_type == SCAN_TYPE_SEARCH) {
++		struct conf_scan_settings *c = &cc->conf.host_conf.scan;
++		bool active_vif_exists = !!cc33xx_count_started_vifs(cc);
++
++		min_dwell_time_active = active_vif_exists ?
++						c->min_dwell_time_active :
++						c->min_dwell_time_active_long;
++		max_dwell_time_active = active_vif_exists ?
++						c->max_dwell_time_active :
++						c->max_dwell_time_active_long;
++		dwell_time_passive = c->dwell_time_passive;
++		dwell_time_dfs = c->dwell_time_dfs;
++	} else {
++		struct conf_sched_scan_settings *c =
++					&cc->conf.host_conf.sched_scan;
++		u32 delta_per_probe;
++
++		delta_per_probe = (band == NL80211_BAND_5GHZ) ?
++					c->dwell_time_delta_per_probe_5 :
++					c->dwell_time_delta_per_probe;
++
++		min_dwell_time_active = c->base_dwell_time +
++			 n_ssids * c->num_probe_reqs * delta_per_probe;
++
++		max_dwell_time_active = min_dwell_time_active;
++		max_dwell_time_active += c->max_dwell_time_delta;
++		dwell_time_passive = c->dwell_time_passive;
++		dwell_time_dfs = c->dwell_time_dfs;
++	}
++
++	min_dwell_time_active = DIV_ROUND_UP(min_dwell_time_active, 1000);
++	max_dwell_time_active = DIV_ROUND_UP(max_dwell_time_active, 1000);
++	dwell_time_passive = DIV_ROUND_UP(dwell_time_passive, 1000);
++	dwell_time_dfs = DIV_ROUND_UP(dwell_time_dfs, 1000);
++
++	for (i = 0, j = start; i < n_channels && j < max_channels; i++) {
++		flags = req_channels[i]->flags;
++		ch = &channels[j];
++		req_ch = req_channels[i];
++
++		if (force_passive)
++			flags |= IEEE80211_CHAN_NO_IR;
++
++		if (req_ch->band == band && !(flags & IEEE80211_CHAN_DISABLED) &&
++		    (!!(flags & IEEE80211_CHAN_RADAR) == radar) &&
++		    /* if radar is set, we ignore the passive flag */
++		    (radar || !!(flags & IEEE80211_CHAN_NO_IR) == passive)) {
++			if (flags & IEEE80211_CHAN_RADAR) {
++				ch->flags |= SCAN_CHANNEL_FLAGS_DFS;
++
++				ch->passive_duration =
++					cpu_to_le16(dwell_time_dfs);
++			} else {
++				ch->passive_duration =
++					cpu_to_le16(dwell_time_passive);
++			}
++
++			ch->min_duration = cpu_to_le16(min_dwell_time_active);
++			ch->max_duration = cpu_to_le16(max_dwell_time_active);
++
++			ch->tx_power_att = req_ch->max_power;
++			ch->channel = req_ch->hw_value;
++
++			if (n_pactive_ch && band == NL80211_BAND_2GHZ &&
++			    ch->channel >= 12 && ch->channel <= 14 &&
++			    (flags & IEEE80211_CHAN_NO_IR) && !force_passive) {
++				/* pactive channels treated as DFS */
++				ch->flags = SCAN_CHANNEL_FLAGS_DFS;
++
++				/* n_pactive_ch is counted down from the end of
++				 * the passive channel list
++				 */
++				(*n_pactive_ch)++;
++				cc33xx_debug(DEBUG_SCAN, "n_pactive_ch = %d",
++					     *n_pactive_ch);
++			}
++
++			cc33xx_debug(DEBUG_SCAN, "freq %d, ch. %d, flags 0x%x, power %d, min/max_dwell %d/%d%s%s",
++				     req_ch->center_freq, req_ch->hw_value,
++				     req_ch->flags, req_ch->max_power,
++				     min_dwell_time_active,
++				     max_dwell_time_active,
++				     flags & IEEE80211_CHAN_RADAR ? ", DFS" : "",
++				     flags & IEEE80211_CHAN_NO_IR ? ", NO-IR" : "");
++			j++;
++		}
++	}
++
++	return j - start;
++}
++
++static bool cc33xx_set_scan_chan_params(struct cc33xx *cc,
++					struct cc33xx_scan_channels *cfg,
++					struct ieee80211_channel *channels[],
++					u32 n_channels, u32 n_ssids,
++					int scan_type)
++{
++	u8 n_pactive_ch = 0;
++
++	cfg->passive[0] = cc33xx_scan_get_channels(cc, channels, n_channels,
++						   n_ssids, cfg->channels_2,
++						   NL80211_BAND_2GHZ, false,
++						   true, 0, MAX_CHANNELS_2GHZ,
++						   &n_pactive_ch, scan_type);
++
++	cfg->active[0] = cc33xx_scan_get_channels(cc, channels, n_channels,
++						  n_ssids, cfg->channels_2,
++						  NL80211_BAND_2GHZ, false,
++						  false, cfg->passive[0],
++						  MAX_CHANNELS_2GHZ,
++						  &n_pactive_ch, scan_type);
++
++	cfg->passive[1] = cc33xx_scan_get_channels(cc, channels, n_channels,
++						   n_ssids, cfg->channels_5,
++						   NL80211_BAND_5GHZ, false,
++						   true, 0, MAX_CHANNELS_5GHZ,
++						   &n_pactive_ch, scan_type);
++
++	cfg->dfs = cc33xx_scan_get_channels(cc, channels, n_channels, n_ssids,
++					    cfg->channels_5, NL80211_BAND_5GHZ,
++					    true, true, cfg->passive[1],
++					    MAX_CHANNELS_5GHZ, &n_pactive_ch,
++					    scan_type);
++
++	cfg->active[1] = cc33xx_scan_get_channels(cc, channels, n_channels,
++						  n_ssids, cfg->channels_5,
++						  NL80211_BAND_5GHZ, false,
++						  false,
++						  cfg->passive[1] + cfg->dfs,
++						  MAX_CHANNELS_5GHZ,
++						  &n_pactive_ch, scan_type);
++
++	/* 802.11j channels are not supported yet */
++	cfg->passive[2] = 0;
++	cfg->active[2] = 0;
++
++	cfg->passive_active = n_pactive_ch;
++
++	cc33xx_debug(DEBUG_SCAN, "2.4GHz: active %d passive %d",
++		     cfg->active[0], cfg->passive[0]);
++	cc33xx_debug(DEBUG_SCAN, "5GHz: active %d passive %d",
++		     cfg->active[1], cfg->passive[1]);
++	cc33xx_debug(DEBUG_SCAN, "DFS: %d", cfg->dfs);
++
++	return  cfg->passive[0] || cfg->active[0] || cfg->passive[1] ||
++		cfg->active[1] || cfg->dfs || cfg->passive[2] || cfg->active[2];
++}
++
++static int cc33xx_scan_send(struct cc33xx *cc, struct cc33xx_vif *wlvif,
++			    struct cfg80211_scan_request *req)
++{
++	struct cc33xx_cmd_scan_params *cmd;
++	struct cc33xx_scan_channels *cmd_channels = NULL;
++	struct cc33xx_ssid *cmd_ssid;
++	u16 alloc_size;
++	int ret;
++	int i;
++
++	alloc_size =  sizeof(*cmd) + (sizeof(struct cc33xx_ssid) * req->n_ssids);
++	cmd = kzalloc(alloc_size, GFP_KERNEL);
++	if (!cmd) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/* scan on the dev role if the regular one is not started */
++	if (cc33xx_is_p2p_mgmt(wlvif))
++		cmd->role_id = wlvif->dev_role_id;
++	else
++		cmd->role_id = wlvif->role_id;
++
++	if (WARN_ON(cmd->role_id == CC33XX_INVALID_ROLE_ID)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	cmd->scan_type = SCAN_REQUEST_ONE_SHOT;
++	cmd->rssi_threshold = -127;
++	cmd->snr_threshold = 0;
++
++	for (i = 0; i < ETH_ALEN; i++)
++		cmd->bssid[i] = req->bssid[i];
++	cmd->ssid_from_list = 0;
++	cmd->filter = 0;
++	WARN_ON(req->n_ssids > 1);
++
++	/* configure channels */
++	cmd_channels = kzalloc(sizeof(*cmd_channels), GFP_KERNEL);
++	if (!cmd_channels) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	cc33xx_set_scan_chan_params(cc, cmd_channels, req->channels,
++				    req->n_channels, req->n_ssids,
++				    SCAN_TYPE_SEARCH);
++
++	cc33xx_adjust_channels(&cmd->params, cmd_channels, cmd->scan_type);
++	if (req->n_ssids > 0) {
++		cmd->ssid_from_list = 1;
++		cmd->num_of_ssids = req->n_ssids;
++		cmd_ssid = (struct cc33xx_ssid *)((u8 *)cmd + sizeof(*cmd));
++
++		cmd_ssid->len = req->ssids[0].ssid_len;
++		memcpy(cmd_ssid->ssid, req->ssids[0].ssid, cmd_ssid->len);
++		cmd_ssid->type = (req->ssids[0].ssid_len) ?
++				SCAN_SSID_TYPE_HIDDEN : SCAN_SSID_TYPE_PUBLIC;
++	}
++
++	ret = cc33xx_cmd_build_probe_req(cc, wlvif, cmd->role_id, cmd->scan_type,
++					 req->ssids ? req->ssids[0].ssid : NULL,
++					 req->ssids ? req->ssids[0].ssid_len : 0,
++					 req->ie, req->ie_len, NULL, 0, false);
++	if (ret < 0) {
++		cc33xx_error("PROBE request template failed");
++		goto out;
++	}
++
++	cc33xx_dump(DEBUG_SCAN, "SCAN: ", cmd, alloc_size);
++
++	ret = cc33xx_cmd_send(cc, CMD_SCAN, cmd, alloc_size, 0);
++	if (ret < 0) {
++		cc33xx_error("SCAN failed");
++		goto out;
++	}
++
++out:
++	kfree(cmd_channels);
++	kfree(cmd);
++	return ret;
++}
++
++static int cc33xx_scan_sched_scan_ssid_list(struct cc33xx *cc,
++					    struct cc33xx_vif *wlvif,
++					struct cfg80211_sched_scan_request *req,
++					    struct cc33xx_cmd_ssid_list *cmd)
++{
++	struct cfg80211_match_set *sets = req->match_sets;
++	struct cfg80211_ssid *ssids = req->ssids;
++	int ret = 0, i, j, n_match_ssids = 0;
++
++	cc33xx_debug((DEBUG_CMD | DEBUG_SCAN), "cmd sched scan ssid list");
++	/* count the match sets that contain SSIDs */
++	for (i = 0; i < req->n_match_sets; i++) {
++		if (sets[i].ssid.ssid_len > 0)
++			n_match_ssids++;
++	}
++
++	/* No filter, no ssids or only bcast ssid */
++	if (!n_match_ssids && (!req->n_ssids ||
++			       (req->n_ssids == 1 && req->ssids[0].ssid_len == 0)))
++		goto out;
++
++	cmd->role_id = wlvif->role_id;
++	if (!n_match_ssids) {
++		/* No filter, with ssids */
++
++		for (i = 0; i < req->n_ssids; i++) {
++			cmd->ssids[cmd->n_ssids].type = (ssids[i].ssid_len) ?
++				SCAN_SSID_TYPE_HIDDEN : SCAN_SSID_TYPE_PUBLIC;
++			cmd->ssids[cmd->n_ssids].len = ssids[i].ssid_len;
++			memcpy(cmd->ssids[cmd->n_ssids].ssid, ssids[i].ssid,
++			       ssids[i].ssid_len);
++			cmd->n_ssids++;
++		}
++	} else {
++		/* Add all SSIDs from the filters */
++		for (i = 0; i < req->n_match_sets; i++) {
++			/* ignore sets without SSIDs */
++			if (!sets[i].ssid.ssid_len)
++				continue;
++
++			cmd->ssids[cmd->n_ssids].type = SCAN_SSID_TYPE_PUBLIC;
++			cmd->ssids[cmd->n_ssids].len = sets[i].ssid.ssid_len;
++			memcpy(cmd->ssids[cmd->n_ssids].ssid,
++			       sets[i].ssid.ssid, sets[i].ssid.ssid_len);
++			cmd->n_ssids++;
++		}
++		if (req->n_ssids > 1 || (req->n_ssids == 1 && req->ssids[0].ssid_len > 0)) {
++			/* Mark all the SSIDs passed in the SSID list as HIDDEN,
++			 * so they're used in probe requests.
++			 */
++			for (i = 0; i < req->n_ssids; i++) {
++				if (!req->ssids[i].ssid_len)
++					continue;
++
++				for (j = 0; j < cmd->n_ssids; j++) {
++					if (req->ssids[i].ssid_len == cmd->ssids[j].len &&
++					    !memcmp(req->ssids[i].ssid,
++						    cmd->ssids[j].ssid,
++						    req->ssids[i].ssid_len)) {
++						cmd->ssids[j].type =
++							SCAN_SSID_TYPE_HIDDEN;
++						break;
++					}
++				}
++				/* Fail if SSID isn't present in the filters */
++				if (j == cmd->n_ssids) {
++					ret = -EINVAL;
++					goto out;
++				}
++			}
++		}
++	}
++
++	cc33xx_debug(DEBUG_CMD, "cmd sched scan with ssid list %d",
++		     cmd->n_ssids);
++	return cmd->n_ssids;
++out:
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++int cc33xx_sched_scan_start(struct cc33xx *cc, struct cc33xx_vif *wlvif,
++			    struct cfg80211_sched_scan_request *req,
++			    struct ieee80211_scan_ies *ies)
++{
++	struct cc33xx_cmd_scan_params *cmd;
++	struct cc33xx_cmd_ssid_list *ssid_list;
++	struct cc33xx_scan_channels *cmd_channels = NULL;
++	struct conf_sched_scan_settings *c = &cc->conf.host_conf.sched_scan;
++	int ret;
++	int n_ssids = 0;
++	int alloc_size = sizeof(*cmd);
++
++	cc33xx_debug(DEBUG_CMD, "cmd sched_scan scan config");
++
++	ssid_list = kzalloc(sizeof(*ssid_list), GFP_KERNEL);
++	if (!ssid_list) {
++		ret = -ENOMEM;
++		goto out_ssid_free;
++	}
++
++	n_ssids = cc33xx_scan_sched_scan_ssid_list(cc, wlvif, req, ssid_list);
++	if (n_ssids < 0)
++		return n_ssids;
++
++	cc33xx_debug(DEBUG_CMD, "ssid list num of ssids %d", ssid_list->n_ssids);
++
++	if (n_ssids <= 5) {
++		alloc_size += (n_ssids * sizeof(struct cc33xx_ssid));
++	} else { /* n_ssids > 5 */
++		ssid_list->scan_type = SCAN_REQUEST_CONNECT_PERIODIC_SCAN;
++		ret = cc33xx_cmd_send(cc, CMD_CONNECTION_SCAN_SSID_CFG,
++				      ssid_list, sizeof(*ssid_list), 0);
++		if (ret < 0) {
++			cc33xx_error("cmd sched scan ssid list failed");
++			goto out_ssid_free;
++		}
++	}
++
++	cmd = kzalloc(alloc_size, GFP_KERNEL);
++	if (!cmd) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	cmd->role_id = wlvif->role_id;
++
++	if (WARN_ON(cmd->role_id == CC33XX_INVALID_ROLE_ID)) {
++		ret = -EINVAL;
++		goto out_free;
++	}
++
++	cmd->scan_type = SCAN_REQUEST_CONNECT_PERIODIC_SCAN;
++	cmd->rssi_threshold = c->rssi_threshold;
++	cmd->snr_threshold = c->snr_threshold;
++
++	cmd->filter = 1;
++	cmd->num_of_ssids = n_ssids;
++
++	cc33xx_debug(DEBUG_CMD, "ssid list num of n_ssids %d", n_ssids);
++	if (n_ssids > 0 && n_ssids <= 5) {
++		cmd->ssid_from_list = 1;
++		memcpy((u8 *)cmd + sizeof(*cmd), ssid_list->ssids,
++		       n_ssids * sizeof(struct cc33xx_ssid));
++	}
++
++	cmd_channels = kzalloc(sizeof(*cmd_channels), GFP_KERNEL);
++	if (!cmd_channels) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	/* configure channels */
++	cc33xx_set_scan_chan_params(cc, cmd_channels, req->channels,
++				    req->n_channels, req->n_ssids,
++				    SCAN_TYPE_PERIODIC);
++	cc33xx_adjust_channels(&cmd->params, cmd_channels, cmd->scan_type);
++
++	memcpy(cmd->params.u.periodic.sched_scan_plans, req->scan_plans,
++	       sizeof(struct sched_scan_plan_cmd) * req->n_scan_plans);
++
++	cmd->params.u.periodic.sched_scan_plans_num = req->n_scan_plans;
++
++	cc33xx_debug(DEBUG_SCAN,
++		     "interval[0]: %d, iterations[0]: %d, num_plans: %d",
++		     cmd->params.u.periodic.sched_scan_plans[0].interval,
++		     cmd->params.u.periodic.sched_scan_plans[0].iterations,
++		     cmd->params.u.periodic.sched_scan_plans_num);
++
++	ret = cc33xx_cmd_build_probe_req(cc, wlvif, cmd->role_id, cmd->scan_type,
++					 req->ssids ? req->ssids[0].ssid : NULL,
++					 req->ssids ? req->ssids[0].ssid_len : 0,
++					 ies->ies[NL80211_BAND_2GHZ],
++					 ies->len[NL80211_BAND_2GHZ],
++					 ies->common_ies,
++					 ies->common_ie_len, true);
++
++	if (ret < 0) {
++		cc33xx_error("PROBE request template failed");
++		goto out_free;
++	}
++
++	cc33xx_dump(DEBUG_SCAN, "SCAN: ", cmd, alloc_size);
++
++	ret = cc33xx_cmd_send(cc, CMD_SCAN, cmd, alloc_size, 0);
++	if (ret < 0) {
++		cc33xx_error("SCAN failed");
++		goto out_free;
++	}
++
++out_free:
++	kfree(cmd_channels);
++	kfree(cmd);
++
++out_ssid_free:
++	kfree(ssid_list);
++
++	return ret;
++}
++
++static int __cc33xx_scan_stop(struct cc33xx *cc,
++			      struct cc33xx_vif *wlvif, u8 scan_type)
++{
++	struct cc33xx_cmd_scan_stop *stop;
++	int ret;
++
++	cc33xx_debug(DEBUG_CMD, "cmd periodic scan stop");
++
++	stop = kzalloc(sizeof(*stop), GFP_KERNEL);
++	if (!stop)
++		return -ENOMEM;
++
++	stop->role_id = wlvif->role_id;
++	stop->scan_type = scan_type;
++
++	ret = cc33xx_cmd_send(cc, CMD_STOP_SCAN, stop, sizeof(*stop), 0);
++	if (ret < 0) {
++		cc33xx_error("failed to send sched scan stop command");
++		goto out_free;
++	}
++
++out_free:
++	kfree(stop);
++	return ret;
++}
++
++void cc33xx_scan_sched_scan_stop(struct cc33xx *cc,
++				 struct cc33xx_vif *wlvif)
++{
++	__cc33xx_scan_stop(cc, wlvif, SCAN_REQUEST_CONNECT_PERIODIC_SCAN);
++}
++
++static int cc33xx_scan_start(struct cc33xx *cc, struct cc33xx_vif *wlvif,
++			     struct cfg80211_scan_request *req)
++{
++	return cc33xx_scan_send(cc, wlvif, req);
++}
++
++int cc33xx_scan_stop(struct cc33xx *cc, struct cc33xx_vif *wlvif)
++{
++	return __cc33xx_scan_stop(cc, wlvif, SCAN_REQUEST_ONE_SHOT);
++}
++
++void cc33xx_scan_complete_work(struct work_struct *work)
++{
++	struct delayed_work *dwork;
++	struct cc33xx *cc;
++	struct cfg80211_scan_info info = {
++		.aborted = false,
++	};
++
++	dwork = to_delayed_work(work);
++	cc = container_of(dwork, struct cc33xx, scan_complete_work);
++
++	cc33xx_debug(DEBUG_SCAN, "Scanning complete");
++
++	mutex_lock(&cc->mutex);
++
++	if (unlikely(cc->state != CC33XX_STATE_ON))
++		goto out;
++
++	if (cc->scan.state == CC33XX_SCAN_STATE_IDLE)
++		goto out;
++
++	/* Rearm the tx watchdog just before idling scan. This
++	 * prevents just-finished scans from triggering the watchdog
++	 */
++	cc33xx_rearm_tx_watchdog_locked(cc);
++
++	cc->scan.state = CC33XX_SCAN_STATE_IDLE;
++	memset(cc->scan.scanned_ch, 0, sizeof(cc->scan.scanned_ch));
++	cc->scan.req = NULL;
++	cc->scan_wlvif = NULL;
++
++	if (cc->scan.failed) {
++		cc33xx_info("Scan completed due to error.");
++		cc33xx_queue_recovery_work(cc);
++	}
++
++	cc33xx_cmd_regdomain_config_locked(cc);
++
++	ieee80211_scan_completed(cc->hw, &info);
++
++out:
++	mutex_unlock(&cc->mutex);
++}
++
++int cc33xx_scan(struct cc33xx *cc, struct ieee80211_vif *vif, const u8 *ssid,
++		size_t ssid_len, struct cfg80211_scan_request *req)
++{
++	struct cc33xx_vif *wlvif = cc33xx_vif_to_data(vif);
++
++	if (cc->scan.state != CC33XX_SCAN_STATE_IDLE)
++		return -EBUSY;
++
++	cc->scan.state = CC33XX_SCAN_STATE_2GHZ_ACTIVE;
++
++	if (ssid_len && ssid) {
++		cc->scan.ssid_len = ssid_len;
++		memcpy(cc->scan.ssid, ssid, ssid_len);
++	} else {
++		cc->scan.ssid_len = 0;
++	}
++
++	cc->scan_wlvif = wlvif;
++	cc->scan.req = req;
++	memset(cc->scan.scanned_ch, 0, sizeof(cc->scan.scanned_ch));
++
++	/* we assume failure so that timeout scenarios are handled correctly */
++	cc->scan.failed = true;
++	ieee80211_queue_delayed_work(cc->hw, &cc->scan_complete_work,
++				     msecs_to_jiffies(CC33XX_SCAN_TIMEOUT));
++
++	cc33xx_scan_start(cc, wlvif, req);
++
++	return 0;
++}
++
++inline void cc33xx_scan_sched_scan_results(struct cc33xx *cc)
++{
++	cc33xx_debug(DEBUG_SCAN, "got periodic scan results");
++
++	ieee80211_sched_scan_results(cc->hw);
++}
++
++void cc33xx_scan_completed(struct cc33xx *cc, struct cc33xx_vif *wlvif)
++{
++	cc->scan.failed = false;
++	cancel_delayed_work(&cc->scan_complete_work);
++	ieee80211_queue_delayed_work(cc->hw, &cc->scan_complete_work,
++				     msecs_to_jiffies(0));
++}
+diff --git a/drivers/net/wireless/ti/cc33xx/scan.h b/drivers/net/wireless/ti/cc33xx/scan.h
+new file mode 100644
+index 000000000000..8475008a8e97
+--- /dev/null
++++ b/drivers/net/wireless/ti/cc33xx/scan.h
+@@ -0,0 +1,364 @@
++/* SPDX-License-Identifier: GPL-2.0-only
++ *
++ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
++ */
++
++#ifndef __SCAN_H__
++#define __SCAN_H__
++
++#include "cc33xx.h"
++
++#define CC33XX_SCAN_TIMEOUT    30000 /* msec */
 +
 +enum {
-+	QNOC_MASTER_AMPSS_M0 = 1,
-+	QNOC_MASTER_GRAPHICS_3D,
-+	QNOC_SNOC_BIMC_0_MAS,
-+	QNOC_SNOC_BIMC_2_MAS,
-+	QNOC_SNOC_BIMC_1_MAS,
-+	QNOC_MASTER_TCU_0,
-+	QNOC_MASTER_SPDM,
-+	QNOC_MASTER_BLSP_1,
-+	QNOC_MASTER_BLSP_2,
-+	QNOC_MASTER_USB_HS,
-+	QNOC_MASTER_XM_USB_HS1,
-+	QNOC_MASTER_CRYPTO_CORE0,
-+	QNOC_MASTER_SDCC_1,
-+	QNOC_MASTER_SDCC_2,
-+	QNOC_SNOC_PNOC_MAS,
-+	QNOC_MASTER_QDSS_BAM,
-+	QNOC_BIMC_SNOC_MAS,
-+	QNOC_MASTER_JPEG,
-+	QNOC_MASTER_MDP_PORT0,
-+	QNOC_PNOC_SNOC_MAS,
-+	QNOC_MASTER_VIDEO_P0,
-+	QNOC_MASTER_VFE,
-+	QNOC_MASTER_VFE1,
-+	QNOC_MASTER_CPP,
-+	QNOC_MASTER_QDSS_ETR,
-+	QNOC_PNOC_M_0,
-+	QNOC_PNOC_M_1,
-+	QNOC_PNOC_INT_0,
-+	QNOC_PNOC_INT_1,
-+	QNOC_PNOC_INT_2,
-+	QNOC_PNOC_INT_3,
-+	QNOC_PNOC_SLV_0,
-+	QNOC_PNOC_SLV_1,
-+	QNOC_PNOC_SLV_2,
-+	QNOC_PNOC_SLV_3,
-+	QNOC_PNOC_SLV_4,
-+	QNOC_PNOC_SLV_6,
-+	QNOC_PNOC_SLV_7,
-+	QNOC_PNOC_SLV_8,
-+	QNOC_SNOC_QDSS_INT,
-+	QNOC_SNOC_INT_0,
-+	QNOC_SNOC_INT_1,
-+	QNOC_SNOC_INT_2,
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV,
-+	QNOC_SLAVE_SDCC_2,
-+	QNOC_SLAVE_SPDM_WRAPPER,
-+	QNOC_SLAVE_PDM,
-+	QNOC_SLAVE_PRNG,
-+	QNOC_SLAVE_TCSR,
-+	QNOC_SLAVE_SNOC_CFG,
-+	QNOC_SLAVE_MESSAGE_RAM,
-+	QNOC_SLAVE_CAMERA_CFG,
-+	QNOC_SLAVE_DISPLAY_CFG,
-+	QNOC_SLAVE_VENUS_CFG,
-+	QNOC_SLAVE_GRAPHICS_3D_CFG,
-+	QNOC_SLAVE_TLMM,
-+	QNOC_SLAVE_BLSP_1,
-+	QNOC_SLAVE_BLSP_2,
-+	QNOC_SLAVE_PMIC_ARB,
-+	QNOC_SLAVE_SDCC_1,
-+	QNOC_SLAVE_CRYPTO_0_CFG,
-+	QNOC_SLAVE_USB_HS,
-+	QNOC_SLAVE_TCU,
-+	QNOC_PNOC_SNOC_SLV,
-+	QNOC_SLAVE_APPSS,
-+	QNOC_SLAVE_WCSS,
-+	QNOC_SNOC_BIMC_0_SLV,
-+	QNOC_SNOC_BIMC_1_SLV,
-+	QNOC_SNOC_BIMC_2_SLV,
-+	QNOC_SLAVE_OCIMEM,
-+	QNOC_SNOC_PNOC_SLV,
-+	QNOC_SLAVE_QDSS_STM,
-+	QNOC_SLAVE_CATS_128,
-+	QNOC_SLAVE_OCMEM_64,
-+	QNOC_SLAVE_LPASS,
-+};
-+
-+static const u16 mas_apps_proc_links[] = {
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV
-+};
-+
-+static struct qcom_icc_node mas_apps_proc = {
-+	.name = "mas_apps_proc",
-+	.id = QNOC_MASTER_AMPSS_M0,
-+	.buswidth = 8,
-+	.mas_rpm_id = 0,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 0,
-+	.num_links = ARRAY_SIZE(mas_apps_proc_links),
-+	.links = mas_apps_proc_links,
-+};
-+
-+static const u16 mas_oxili_links[] = {
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV
-+};
-+
-+static struct qcom_icc_node mas_oxili = {
-+	.name = "mas_oxili",
-+	.id = QNOC_MASTER_GRAPHICS_3D,
-+	.buswidth = 8,
-+	.mas_rpm_id = 6,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 2,
-+	.num_links = ARRAY_SIZE(mas_oxili_links),
-+	.links = mas_oxili_links,
-+};
-+
-+static const u16 mas_snoc_bimc_0_links[] = {
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV
-+};
-+
-+static struct qcom_icc_node mas_snoc_bimc_0 = {
-+	.name = "mas_snoc_bimc_0",
-+	.id = QNOC_SNOC_BIMC_0_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 3,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 3,
-+	.num_links = ARRAY_SIZE(mas_snoc_bimc_0_links),
-+	.links = mas_snoc_bimc_0_links,
-+};
-+
-+static const u16 mas_snoc_bimc_2_links[] = {
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV
-+};
-+
-+static struct qcom_icc_node mas_snoc_bimc_2 = {
-+	.name = "mas_snoc_bimc_2",
-+	.id = QNOC_SNOC_BIMC_2_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 108,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 4,
-+	.num_links = ARRAY_SIZE(mas_snoc_bimc_2_links),
-+	.links = mas_snoc_bimc_2_links,
-+};
-+
-+static const u16 mas_snoc_bimc_1_links[] = {
-+	QNOC_SLAVE_EBI_CH0
-+};
-+
-+static struct qcom_icc_node mas_snoc_bimc_1 = {
-+	.name = "mas_snoc_bimc_1",
-+	.id = QNOC_SNOC_BIMC_1_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 76,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 5,
-+	.num_links = ARRAY_SIZE(mas_snoc_bimc_1_links),
-+	.links = mas_snoc_bimc_1_links,
-+};
-+
-+static const u16 mas_tcu_0_links[] = {
-+	QNOC_SLAVE_EBI_CH0,
-+	QNOC_BIMC_SNOC_SLV
-+};
-+
-+static struct qcom_icc_node mas_tcu_0 = {
-+	.name = "mas_tcu_0",
-+	.id = QNOC_MASTER_TCU_0,
-+	.buswidth = 8,
-+	.mas_rpm_id = 102,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 2,
-+	.qos.qos_port = 6,
-+	.num_links = ARRAY_SIZE(mas_tcu_0_links),
-+	.links = mas_tcu_0_links,
-+};
-+
-+static const u16 mas_spdm_links[] = {
-+	QNOC_PNOC_M_0
-+};
-+
-+static struct qcom_icc_node mas_spdm = {
-+	.name = "mas_spdm",
-+	.id = QNOC_MASTER_SPDM,
-+	.buswidth = 4,
-+	.mas_rpm_id = 50,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(mas_spdm_links),
-+	.links = mas_spdm_links,
-+};
-+
-+static const u16 mas_blsp_1_links[] = {
-+	QNOC_PNOC_M_1
-+};
-+
-+static struct qcom_icc_node mas_blsp_1 = {
-+	.name = "mas_blsp_1",
-+	.id = QNOC_MASTER_BLSP_1,
-+	.buswidth = 4,
-+	.mas_rpm_id = 41,
-+	.slv_rpm_id = -1,
-+	.num_links = ARRAY_SIZE(mas_blsp_1_links),
-+	.links = mas_blsp_1_links,
-+};
-+
-+static const u16 mas_blsp_2_links[] = {
-+	QNOC_PNOC_M_1
-+};
-+
-+static struct qcom_icc_node mas_blsp_2 = {
-+	.name = "mas_blsp_2",
-+	.id = QNOC_MASTER_BLSP_2,
-+	.buswidth = 4,
-+	.mas_rpm_id = 39,
-+	.slv_rpm_id = -1,
-+	.num_links = ARRAY_SIZE(mas_blsp_2_links),
-+	.links = mas_blsp_2_links,
-+};
-+
-+static const u16 mas_usb_hs1_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node mas_usb_hs1 = {
-+	.name = "mas_usb_hs1",
-+	.id = QNOC_MASTER_USB_HS,
-+	.buswidth = 4,
-+	.mas_rpm_id = 42,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 12,
-+	.num_links = ARRAY_SIZE(mas_usb_hs1_links),
-+	.links = mas_usb_hs1_links,
-+};
-+
-+static const u16 mas_xi_usb_hs1_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node mas_xi_usb_hs1 = {
-+	.name = "mas_xi_usb_hs1",
-+	.id = QNOC_MASTER_XM_USB_HS1,
-+	.buswidth = 8,
-+	.mas_rpm_id = 138,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 11,
-+	.num_links = ARRAY_SIZE(mas_xi_usb_hs1_links),
-+	.links = mas_xi_usb_hs1_links,
-+};
-+
-+static const u16 mas_crypto_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node mas_crypto = {
-+	.name = "mas_crypto",
-+	.id = QNOC_MASTER_CRYPTO_CORE0,
-+	.buswidth = 8,
-+	.mas_rpm_id = 23,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 0,
-+	.num_links = ARRAY_SIZE(mas_crypto_links),
-+	.links = mas_crypto_links,
-+};
-+
-+static const u16 mas_sdcc_1_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node mas_sdcc_1 = {
-+	.name = "mas_sdcc_1",
-+	.id = QNOC_MASTER_SDCC_1,
-+	.buswidth = 8,
-+	.mas_rpm_id = 33,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 7,
-+	.num_links = ARRAY_SIZE(mas_sdcc_1_links),
-+	.links = mas_sdcc_1_links,
-+};
-+
-+static const u16 mas_sdcc_2_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node mas_sdcc_2 = {
-+	.name = "mas_sdcc_2",
-+	.id = QNOC_MASTER_SDCC_2,
-+	.buswidth = 8,
-+	.mas_rpm_id = 35,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 8,
-+	.num_links = ARRAY_SIZE(mas_sdcc_2_links),
-+	.links = mas_sdcc_2_links,
-+};
-+
-+static const u16 mas_snoc_pcnoc_links[] = {
-+	QNOC_PNOC_SLV_7,
-+	QNOC_PNOC_INT_2,
-+	QNOC_PNOC_INT_3
-+};
-+
-+static struct qcom_icc_node mas_snoc_pcnoc = {
-+	.name = "mas_snoc_pcnoc",
-+	.id = QNOC_SNOC_PNOC_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 77,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 9,
-+	.num_links = ARRAY_SIZE(mas_snoc_pcnoc_links),
-+	.links = mas_snoc_pcnoc_links,
-+};
-+
-+static const u16 mas_qdss_bam_links[] = {
-+	QNOC_SNOC_QDSS_INT
-+};
-+
-+static struct qcom_icc_node mas_qdss_bam = {
-+	.name = "mas_qdss_bam",
-+	.id = QNOC_MASTER_QDSS_BAM,
-+	.buswidth = 4,
-+	.mas_rpm_id = 19,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 11,
-+	.num_links = ARRAY_SIZE(mas_qdss_bam_links),
-+	.links = mas_qdss_bam_links,
-+};
-+
-+static const u16 mas_bimc_snoc_links[] = {
-+	QNOC_SNOC_INT_0,
-+	QNOC_SNOC_INT_1,
-+	QNOC_SNOC_INT_2
-+};
-+
-+static struct qcom_icc_node mas_bimc_snoc = {
-+	.name = "mas_bimc_snoc",
-+	.id = QNOC_BIMC_SNOC_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 21,
-+	.slv_rpm_id = -1,
-+	.num_links = ARRAY_SIZE(mas_bimc_snoc_links),
-+	.links = mas_bimc_snoc_links,
-+};
-+
-+static const u16 mas_jpeg_links[] = {
-+	QNOC_SNOC_BIMC_2_SLV
-+};
-+
-+static struct qcom_icc_node mas_jpeg = {
-+	.name = "mas_jpeg",
-+	.id = QNOC_MASTER_JPEG,
-+	.buswidth = 16,
-+	.mas_rpm_id = 7,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 6,
-+	.num_links = ARRAY_SIZE(mas_jpeg_links),
-+	.links = mas_jpeg_links,
-+};
-+
-+static const u16 mas_mdp_links[] = {
-+	QNOC_SNOC_BIMC_0_SLV
-+};
-+
-+static struct qcom_icc_node mas_mdp = {
-+	.name = "mas_mdp",
-+	.id = QNOC_MASTER_MDP_PORT0,
-+	.buswidth = 16,
-+	.mas_rpm_id = 8,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 7,
-+	.num_links = ARRAY_SIZE(mas_mdp_links),
-+	.links = mas_mdp_links,
-+};
-+
-+static const u16 mas_pcnoc_snoc_links[] = {
-+	QNOC_SNOC_INT_0,
-+	QNOC_SNOC_INT_1,
-+	QNOC_SNOC_BIMC_1_SLV
-+};
-+
-+static struct qcom_icc_node mas_pcnoc_snoc = {
-+	.name = "mas_pcnoc_snoc",
-+	.id = QNOC_PNOC_SNOC_MAS,
-+	.buswidth = 8,
-+	.mas_rpm_id = 29,
-+	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 5,
-+	.num_links = ARRAY_SIZE(mas_pcnoc_snoc_links),
-+	.links = mas_pcnoc_snoc_links,
-+};
-+
-+static const u16 mas_venus_links[] = {
-+	QNOC_SNOC_BIMC_2_SLV
-+};
-+
-+static struct qcom_icc_node mas_venus = {
-+	.name = "mas_venus",
-+	.id = QNOC_MASTER_VIDEO_P0,
-+	.buswidth = 16,
-+	.mas_rpm_id = 9,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 8,
-+	.num_links = ARRAY_SIZE(mas_venus_links),
-+	.links = mas_venus_links,
-+};
-+
-+static const u16 mas_vfe0_links[] = {
-+	QNOC_SNOC_BIMC_0_SLV
-+};
-+
-+static struct qcom_icc_node mas_vfe0 = {
-+	.name = "mas_vfe0",
-+	.id = QNOC_MASTER_VFE,
-+	.buswidth = 16,
-+	.mas_rpm_id = 11,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 9,
-+	.num_links = ARRAY_SIZE(mas_vfe0_links),
-+	.links = mas_vfe0_links,
-+};
-+
-+static const u16 mas_vfe1_links[] = {
-+	QNOC_SNOC_BIMC_0_SLV
-+};
-+
-+static struct qcom_icc_node mas_vfe1 = {
-+	.name = "mas_vfe1",
-+	.id = QNOC_MASTER_VFE1,
-+	.buswidth = 16,
-+	.mas_rpm_id = 133,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 13,
-+	.num_links = ARRAY_SIZE(mas_vfe1_links),
-+	.links = mas_vfe1_links,
-+};
-+
-+static const u16 mas_cpp_links[] = {
-+	QNOC_SNOC_BIMC_2_SLV
-+};
-+
-+static struct qcom_icc_node mas_cpp = {
-+	.name = "mas_cpp",
-+	.id = QNOC_MASTER_CPP,
-+	.buswidth = 16,
-+	.mas_rpm_id = 115,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 12,
-+	.num_links = ARRAY_SIZE(mas_cpp_links),
-+	.links = mas_cpp_links,
-+};
-+
-+static const u16 mas_qdss_etr_links[] = {
-+	QNOC_SNOC_QDSS_INT
-+};
-+
-+static struct qcom_icc_node mas_qdss_etr = {
-+	.name = "mas_qdss_etr",
-+	.id = QNOC_MASTER_QDSS_ETR,
-+	.buswidth = 8,
-+	.mas_rpm_id = 31,
-+	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 10,
-+	.num_links = ARRAY_SIZE(mas_qdss_etr_links),
-+	.links = mas_qdss_etr_links,
-+};
-+
-+static const u16 pcnoc_m_0_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node pcnoc_m_0 = {
-+	.name = "pcnoc_m_0",
-+	.id = QNOC_PNOC_M_0,
-+	.buswidth = 4,
-+	.mas_rpm_id = 87,
-+	.slv_rpm_id = 116,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 5,
-+	.num_links = ARRAY_SIZE(pcnoc_m_0_links),
-+	.links = pcnoc_m_0_links,
-+};
-+
-+static const u16 pcnoc_m_1_links[] = {
-+	QNOC_PNOC_INT_0
-+};
-+
-+static struct qcom_icc_node pcnoc_m_1 = {
-+	.name = "pcnoc_m_1",
-+	.id = QNOC_PNOC_M_1,
-+	.buswidth = 4,
-+	.mas_rpm_id = 88,
-+	.slv_rpm_id = 117,
-+	.num_links = ARRAY_SIZE(pcnoc_m_1_links),
-+	.links = pcnoc_m_1_links,
-+};
-+
-+static const u16 pcnoc_int_0_links[] = {
-+	QNOC_PNOC_SNOC_SLV,
-+	QNOC_PNOC_SLV_7,
-+	QNOC_PNOC_INT_3,
-+	QNOC_PNOC_INT_2
-+};
-+
-+static struct qcom_icc_node pcnoc_int_0 = {
-+	.name = "pcnoc_int_0",
-+	.id = QNOC_PNOC_INT_0,
-+	.buswidth = 8,
-+	.mas_rpm_id = 85,
-+	.slv_rpm_id = 114,
-+	.num_links = ARRAY_SIZE(pcnoc_int_0_links),
-+	.links = pcnoc_int_0_links,
-+};
-+
-+static const u16 pcnoc_int_1_links[] = {
-+	QNOC_PNOC_SNOC_SLV,
-+	QNOC_PNOC_SLV_7,
-+	QNOC_PNOC_INT_3,
-+	QNOC_PNOC_INT_2
-+};
-+
-+static struct qcom_icc_node pcnoc_int_1 = {
-+	.name = "pcnoc_int_1",
-+	.id = QNOC_PNOC_INT_1,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = -1,
-+	.num_links = ARRAY_SIZE(pcnoc_int_1_links),
-+	.links = pcnoc_int_1_links,
-+};
-+
-+static const u16 pcnoc_int_2_links[] = {
-+	QNOC_PNOC_SLV_2,
-+	QNOC_PNOC_SLV_3,
-+	QNOC_PNOC_SLV_6,
-+	QNOC_PNOC_SLV_8
-+};
-+
-+static struct qcom_icc_node pcnoc_int_2 = {
-+	.name = "pcnoc_int_2",
-+	.id = QNOC_PNOC_INT_2,
-+	.buswidth = 8,
-+	.mas_rpm_id = 124,
-+	.slv_rpm_id = 184,
-+	.num_links = ARRAY_SIZE(pcnoc_int_2_links),
-+	.links = pcnoc_int_2_links,
-+};
-+
-+static const u16 pcnoc_int_3_links[] = {
-+	QNOC_PNOC_SLV_1,
-+	QNOC_PNOC_SLV_0,
-+	QNOC_PNOC_SLV_4,
-+	QNOC_SLAVE_GRAPHICS_3D_CFG,
-+	QNOC_SLAVE_TCU
-+};
-+
-+static struct qcom_icc_node pcnoc_int_3 = {
-+	.name = "pcnoc_int_3",
-+	.id = QNOC_PNOC_INT_3,
-+	.buswidth = 8,
-+	.mas_rpm_id = 125,
-+	.slv_rpm_id = 185,
-+	.num_links = ARRAY_SIZE(pcnoc_int_3_links),
-+	.links = pcnoc_int_3_links,
-+};
-+
-+static const u16 pcnoc_s_0_links[] = {
-+	QNOC_SLAVE_SPDM_WRAPPER,
-+	QNOC_SLAVE_PDM,
-+	QNOC_SLAVE_PRNG,
-+	QNOC_SLAVE_SDCC_2
-+};
-+
-+static struct qcom_icc_node pcnoc_s_0 = {
-+	.name = "pcnoc_s_0",
-+	.id = QNOC_PNOC_SLV_0,
-+	.buswidth = 4,
-+	.mas_rpm_id = 89,
-+	.slv_rpm_id = 118,
-+	.num_links = ARRAY_SIZE(pcnoc_s_0_links),
-+	.links = pcnoc_s_0_links,
-+};
-+
-+static const u16 pcnoc_s_1_links[] = {
-+	QNOC_SLAVE_TCSR
-+};
-+
-+static struct qcom_icc_node pcnoc_s_1 = {
-+	.name = "pcnoc_s_1",
-+	.id = QNOC_PNOC_SLV_1,
-+	.buswidth = 4,
-+	.mas_rpm_id = 90,
-+	.slv_rpm_id = 119,
-+	.num_links = ARRAY_SIZE(pcnoc_s_1_links),
-+	.links = pcnoc_s_1_links,
-+};
-+
-+static const u16 pcnoc_s_2_links[] = {
-+	QNOC_SLAVE_SNOC_CFG
-+};
-+
-+static struct qcom_icc_node pcnoc_s_2 = {
-+	.name = "pcnoc_s_2",
-+	.id = QNOC_PNOC_SLV_2,
-+	.buswidth = 4,
-+	.mas_rpm_id = 91,
-+	.slv_rpm_id = 120,
-+	.num_links = ARRAY_SIZE(pcnoc_s_2_links),
-+	.links = pcnoc_s_2_links,
-+};
-+
-+static const u16 pcnoc_s_3_links[] = {
-+	QNOC_SLAVE_MESSAGE_RAM
-+};
-+
-+static struct qcom_icc_node pcnoc_s_3 = {
-+	.name = "pcnoc_s_3",
-+	.id = QNOC_PNOC_SLV_3,
-+	.buswidth = 4,
-+	.mas_rpm_id = 92,
-+	.slv_rpm_id = 121,
-+	.num_links = ARRAY_SIZE(pcnoc_s_3_links),
-+	.links = pcnoc_s_3_links,
-+};
-+
-+static const u16 pcnoc_s_4_links[] = {
-+	QNOC_SLAVE_CAMERA_CFG,
-+	QNOC_SLAVE_DISPLAY_CFG,
-+	QNOC_SLAVE_VENUS_CFG
-+};
-+
-+static struct qcom_icc_node pcnoc_s_4 = {
-+	.name = "pcnoc_s_4",
-+	.id = QNOC_PNOC_SLV_4,
-+	.buswidth = 4,
-+	.mas_rpm_id = 93,
-+	.slv_rpm_id = 122,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(pcnoc_s_4_links),
-+	.links = pcnoc_s_4_links,
-+};
-+
-+static const u16 pcnoc_s_6_links[] = {
-+	QNOC_SLAVE_TLMM,
-+	QNOC_SLAVE_BLSP_1,
-+	QNOC_SLAVE_BLSP_2
-+};
-+
-+static struct qcom_icc_node pcnoc_s_6 = {
-+	.name = "pcnoc_s_6",
-+	.id = QNOC_PNOC_SLV_6,
-+	.buswidth = 4,
-+	.mas_rpm_id = 94,
-+	.slv_rpm_id = 123,
-+	.num_links = ARRAY_SIZE(pcnoc_s_6_links),
-+	.links = pcnoc_s_6_links,
-+};
-+
-+static const u16 pcnoc_s_7_links[] = {
-+	QNOC_SLAVE_SDCC_1,
-+	QNOC_SLAVE_PMIC_ARB
-+};
-+
-+static struct qcom_icc_node pcnoc_s_7 = {
-+	.name = "pcnoc_s_7",
-+	.id = QNOC_PNOC_SLV_7,
-+	.buswidth = 4,
-+	.mas_rpm_id = 95,
-+	.slv_rpm_id = 124,
-+	.num_links = ARRAY_SIZE(pcnoc_s_7_links),
-+	.links = pcnoc_s_7_links,
-+};
-+
-+static const u16 pcnoc_s_8_links[] = {
-+	QNOC_SLAVE_USB_HS,
-+	QNOC_SLAVE_CRYPTO_0_CFG
-+};
-+
-+static struct qcom_icc_node pcnoc_s_8 = {
-+	.name = "pcnoc_s_8",
-+	.id = QNOC_PNOC_SLV_8,
-+	.buswidth = 4,
-+	.mas_rpm_id = 96,
-+	.slv_rpm_id = 125,
-+	.num_links = ARRAY_SIZE(pcnoc_s_8_links),
-+	.links = pcnoc_s_8_links,
-+};
-+
-+static const u16 qdss_int_links[] = {
-+	QNOC_SNOC_INT_1,
-+	QNOC_SNOC_BIMC_1_SLV
-+};
-+
-+static struct qcom_icc_node qdss_int = {
-+	.name = "qdss_int",
-+	.id = QNOC_SNOC_QDSS_INT,
-+	.buswidth = 8,
-+	.mas_rpm_id = 98,
-+	.slv_rpm_id = 128,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(qdss_int_links),
-+	.links = qdss_int_links,
-+};
-+
-+static const u16 snoc_int_0_links[] = {
-+	QNOC_SLAVE_LPASS,
-+	QNOC_SLAVE_WCSS,
-+	QNOC_SLAVE_APPSS
-+};
-+
-+static struct qcom_icc_node snoc_int_0 = {
-+	.name = "snoc_int_0",
-+	.id = QNOC_SNOC_INT_0,
-+	.buswidth = 8,
-+	.mas_rpm_id = 99,
-+	.slv_rpm_id = 130,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(snoc_int_0_links),
-+	.links = snoc_int_0_links,
-+};
-+
-+static const u16 snoc_int_1_links[] = {
-+	QNOC_SLAVE_QDSS_STM,
-+	QNOC_SLAVE_OCIMEM,
-+	QNOC_SNOC_PNOC_SLV
-+};
-+
-+static struct qcom_icc_node snoc_int_1 = {
-+	.name = "snoc_int_1",
-+	.id = QNOC_SNOC_INT_1,
-+	.buswidth = 8,
-+	.mas_rpm_id = 100,
-+	.slv_rpm_id = 131,
-+	.num_links = ARRAY_SIZE(snoc_int_1_links),
-+	.links = snoc_int_1_links,
-+};
-+
-+static const u16 snoc_int_2_links[] = {
-+	QNOC_SLAVE_CATS_128,
-+	QNOC_SLAVE_OCMEM_64
-+};
-+
-+static struct qcom_icc_node snoc_int_2 = {
-+	.name = "snoc_int_2",
-+	.id = QNOC_SNOC_INT_2,
-+	.buswidth = 8,
-+	.mas_rpm_id = 134,
-+	.slv_rpm_id = 197,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(snoc_int_2_links),
-+	.links = snoc_int_2_links,
-+};
-+
-+
-+static struct qcom_icc_node slv_ebi = {
-+	.name = "slv_ebi",
-+	.id = QNOC_SLAVE_EBI_CH0,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 0,
-+};
-+
-+static const u16 slv_bimc_snoc_links[] = {
-+	QNOC_BIMC_SNOC_MAS
-+};
-+
-+static struct qcom_icc_node slv_bimc_snoc = {
-+	.name = "slv_bimc_snoc",
-+	.id = QNOC_BIMC_SNOC_SLV,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 2,
-+	.num_links = ARRAY_SIZE(slv_bimc_snoc_links),
-+	.links = slv_bimc_snoc_links,
-+};
-+
-+
-+static struct qcom_icc_node slv_sdcc_2 = {
-+	.name = "slv_sdcc_2",
-+	.id = QNOC_SLAVE_SDCC_2,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 33,
-+};
-+
-+
-+static struct qcom_icc_node slv_spdm = {
-+	.name = "slv_spdm",
-+	.id = QNOC_SLAVE_SPDM_WRAPPER,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 60,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_pdm = {
-+	.name = "slv_pdm",
-+	.id = QNOC_SLAVE_PDM,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 41,
-+};
-+
-+
-+static struct qcom_icc_node slv_prng = {
-+	.name = "slv_prng",
-+	.id = QNOC_SLAVE_PRNG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 44,
-+};
-+
-+
-+static struct qcom_icc_node slv_tcsr = {
-+	.name = "slv_tcsr",
-+	.id = QNOC_SLAVE_TCSR,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 50,
-+};
-+
-+
-+static struct qcom_icc_node slv_snoc_cfg = {
-+	.name = "slv_snoc_cfg",
-+	.id = QNOC_SLAVE_SNOC_CFG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 70,
-+};
-+
-+
-+static struct qcom_icc_node slv_message_ram = {
-+	.name = "slv_message_ram",
-+	.id = QNOC_SLAVE_MESSAGE_RAM,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 55,
-+};
-+
-+
-+static struct qcom_icc_node slv_camera_ss_cfg = {
-+	.name = "slv_camera_ss_cfg",
-+	.id = QNOC_SLAVE_CAMERA_CFG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 3,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_disp_ss_cfg = {
-+	.name = "slv_disp_ss_cfg",
-+	.id = QNOC_SLAVE_DISPLAY_CFG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 4,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_venus_cfg = {
-+	.name = "slv_venus_cfg",
-+	.id = QNOC_SLAVE_VENUS_CFG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 10,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_gpu_cfg = {
-+	.name = "slv_gpu_cfg",
-+	.id = QNOC_SLAVE_GRAPHICS_3D_CFG,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 11,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_tlmm = {
-+	.name = "slv_tlmm",
-+	.id = QNOC_SLAVE_TLMM,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 51,
-+};
-+
-+
-+static struct qcom_icc_node slv_blsp_1 = {
-+	.name = "slv_blsp_1",
-+	.id = QNOC_SLAVE_BLSP_1,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 39,
-+};
-+
-+
-+static struct qcom_icc_node slv_blsp_2 = {
-+	.name = "slv_blsp_2",
-+	.id = QNOC_SLAVE_BLSP_2,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 37,
-+};
-+
-+
-+static struct qcom_icc_node slv_pmic_arb = {
-+	.name = "slv_pmic_arb",
-+	.id = QNOC_SLAVE_PMIC_ARB,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 59,
-+};
-+
-+
-+static struct qcom_icc_node slv_sdcc_1 = {
-+	.name = "slv_sdcc_1",
-+	.id = QNOC_SLAVE_SDCC_1,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 31,
-+};
-+
-+
-+static struct qcom_icc_node slv_crypto_0_cfg = {
-+	.name = "slv_crypto_0_cfg",
-+	.id = QNOC_SLAVE_CRYPTO_0_CFG,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 52,
-+};
-+
-+
-+static struct qcom_icc_node slv_usb_hs = {
-+	.name = "slv_usb_hs",
-+	.id = QNOC_SLAVE_USB_HS,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 40,
-+};
-+
-+
-+static struct qcom_icc_node slv_tcu = {
-+	.name = "slv_tcu",
-+	.id = QNOC_SLAVE_TCU,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 133,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+static const u16 slv_pcnoc_snoc_links[] = {
-+	QNOC_PNOC_SNOC_MAS
-+};
-+
-+static struct qcom_icc_node slv_pcnoc_snoc = {
-+	.name = "slv_pcnoc_snoc",
-+	.id = QNOC_PNOC_SNOC_SLV,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 45,
-+	.num_links = ARRAY_SIZE(slv_pcnoc_snoc_links),
-+	.links = slv_pcnoc_snoc_links,
-+};
-+
-+
-+static struct qcom_icc_node slv_kpss_ahb = {
-+	.name = "slv_kpss_ahb",
-+	.id = QNOC_SLAVE_APPSS,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 20,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+
-+static struct qcom_icc_node slv_wcss = {
-+	.name = "slv_wcss",
-+	.id = QNOC_SLAVE_WCSS,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 23,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+static const u16 slv_snoc_bimc_0_links[] = {
-+	QNOC_SNOC_BIMC_0_MAS
-+};
-+
-+static struct qcom_icc_node slv_snoc_bimc_0 = {
-+	.name = "slv_snoc_bimc_0",
-+	.id = QNOC_SNOC_BIMC_0_SLV,
-+	.buswidth = 16,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 24,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(slv_snoc_bimc_0_links),
-+	.links = slv_snoc_bimc_0_links,
-+};
-+
-+static const u16 slv_snoc_bimc_1_links[] = {
-+	QNOC_SNOC_BIMC_1_MAS
-+};
-+
-+static struct qcom_icc_node slv_snoc_bimc_1 = {
-+	.name = "slv_snoc_bimc_1",
-+	.id = QNOC_SNOC_BIMC_1_SLV,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 104,
-+	.num_links = ARRAY_SIZE(slv_snoc_bimc_1_links),
-+	.links = slv_snoc_bimc_1_links,
-+};
-+
-+static const u16 slv_snoc_bimc_2_links[] = {
-+	QNOC_SNOC_BIMC_2_MAS
-+};
-+
-+static struct qcom_icc_node slv_snoc_bimc_2 = {
-+	.name = "slv_snoc_bimc_2",
-+	.id = QNOC_SNOC_BIMC_2_SLV,
-+	.buswidth = 16,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 137,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+	.num_links = ARRAY_SIZE(slv_snoc_bimc_2_links),
-+	.links = slv_snoc_bimc_2_links,
-+};
-+
-+static struct qcom_icc_node slv_imem = {
-+	.name = "slv_imem",
-+	.id = QNOC_SLAVE_OCIMEM,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 26,
-+};
-+
-+static const u16 slv_snoc_pcnoc_links[] = {
-+	QNOC_SNOC_PNOC_MAS
-+};
-+
-+static struct qcom_icc_node slv_snoc_pcnoc = {
-+	.name = "slv_snoc_pcnoc",
-+	.id = QNOC_SNOC_PNOC_SLV,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 28,
-+	.num_links = ARRAY_SIZE(slv_snoc_pcnoc_links),
-+	.links = slv_snoc_pcnoc_links,
-+};
-+
-+static struct qcom_icc_node slv_qdss_stm = {
-+	.name = "slv_qdss_stm",
-+	.id = QNOC_SLAVE_QDSS_STM,
-+	.buswidth = 4,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 30,
-+};
-+
-+static struct qcom_icc_node slv_cats_0 = {
-+	.name = "slv_cats_0",
-+	.id = QNOC_SLAVE_CATS_128,
-+	.buswidth = 16,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 106,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+static struct qcom_icc_node slv_cats_1 = {
-+	.name = "slv_cats_1",
-+	.id = QNOC_SLAVE_OCMEM_64,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 107,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+static struct qcom_icc_node slv_lpass = {
-+	.name = "slv_lpass",
-+	.id = QNOC_SLAVE_LPASS,
-+	.buswidth = 8,
-+	.mas_rpm_id = -1,
-+	.slv_rpm_id = 21,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
-+};
-+
-+static struct qcom_icc_node *msm8937_bimc_nodes[] = {
-+	[MAS_APPS_PROC] = &mas_apps_proc,
-+	[MAS_OXILI] = &mas_oxili,
-+	[MAS_SNOC_BIMC_0] = &mas_snoc_bimc_0,
-+	[MAS_SNOC_BIMC_2] = &mas_snoc_bimc_2,
-+	[MAS_SNOC_BIMC_1] = &mas_snoc_bimc_1,
-+	[MAS_TCU_0] = &mas_tcu_0,
-+	[SLV_EBI] = &slv_ebi,
-+	[SLV_BIMC_SNOC] = &slv_bimc_snoc,
-+};
-+
-+static const struct regmap_config msm8937_bimc_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x5A000,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_icc_desc msm8937_bimc = {
-+	.type = QCOM_ICC_BIMC,
-+	.nodes = msm8937_bimc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8937_bimc_nodes),
-+	.bus_clk_desc = &bimc_clk,
-+	.regmap_cfg = &msm8937_bimc_regmap_config,
-+	.qos_offset = 0x8000,
-+	.ab_coeff = 154,
-+};
-+
-+static struct qcom_icc_node *msm8937_pcnoc_nodes[] = {
-+	[MAS_SPDM] = &mas_spdm,
-+	[MAS_BLSP_1] = &mas_blsp_1,
-+	[MAS_BLSP_2] = &mas_blsp_2,
-+	[MAS_USB_HS1] = &mas_usb_hs1,
-+	[MAS_XI_USB_HS1] = &mas_xi_usb_hs1,
-+	[MAS_CRYPTO] = &mas_crypto,
-+	[MAS_SDCC_1] = &mas_sdcc_1,
-+	[MAS_SDCC_2] = &mas_sdcc_2,
-+	[MAS_SNOC_PCNOC] = &mas_snoc_pcnoc,
-+	[PCNOC_M_0] = &pcnoc_m_0,
-+	[PCNOC_M_1] = &pcnoc_m_1,
-+	[PCNOC_INT_0] = &pcnoc_int_0,
-+	[PCNOC_INT_1] = &pcnoc_int_1,
-+	[PCNOC_INT_2] = &pcnoc_int_2,
-+	[PCNOC_INT_3] = &pcnoc_int_3,
-+	[PCNOC_S_0] = &pcnoc_s_0,
-+	[PCNOC_S_1] = &pcnoc_s_1,
-+	[PCNOC_S_2] = &pcnoc_s_2,
-+	[PCNOC_S_3] = &pcnoc_s_3,
-+	[PCNOC_S_4] = &pcnoc_s_4,
-+	[PCNOC_S_6] = &pcnoc_s_6,
-+	[PCNOC_S_7] = &pcnoc_s_7,
-+	[PCNOC_S_8] = &pcnoc_s_8,
-+	[SLV_SDCC_2] = &slv_sdcc_2,
-+	[SLV_SPDM] = &slv_spdm,
-+	[SLV_PDM] = &slv_pdm,
-+	[SLV_PRNG] = &slv_prng,
-+	[SLV_TCSR] = &slv_tcsr,
-+	[SLV_SNOC_CFG] = &slv_snoc_cfg,
-+	[SLV_MESSAGE_RAM] = &slv_message_ram,
-+	[SLV_CAMERA_SS_CFG] = &slv_camera_ss_cfg,
-+	[SLV_DISP_SS_CFG] = &slv_disp_ss_cfg,
-+	[SLV_VENUS_CFG] = &slv_venus_cfg,
-+	[SLV_GPU_CFG] = &slv_gpu_cfg,
-+	[SLV_TLMM] = &slv_tlmm,
-+	[SLV_BLSP_1] = &slv_blsp_1,
-+	[SLV_BLSP_2] = &slv_blsp_2,
-+	[SLV_PMIC_ARB] = &slv_pmic_arb,
-+	[SLV_SDCC_1] = &slv_sdcc_1,
-+	[SLV_CRYPTO_0_CFG] = &slv_crypto_0_cfg,
-+	[SLV_USB_HS] = &slv_usb_hs,
-+	[SLV_TCU] = &slv_tcu,
-+	[SLV_PCNOC_SNOC] = &slv_pcnoc_snoc,
-+};
-+
-+static const struct regmap_config msm8937_pcnoc_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x13080,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_icc_desc msm8937_pcnoc = {
-+	.type = QCOM_ICC_NOC,
-+	.nodes = msm8937_pcnoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8937_pcnoc_nodes),
-+	.bus_clk_desc = &bus_0_clk,
-+	.qos_offset = 0x7000,
-+	.keep_alive = true,
-+	.regmap_cfg = &msm8937_pcnoc_regmap_config,
-+};
-+
-+static struct qcom_icc_node *msm8937_snoc_nodes[] = {
-+	[MAS_QDSS_BAM] = &mas_qdss_bam,
-+	[MAS_BIMC_SNOC] = &mas_bimc_snoc,
-+	[MAS_PCNOC_SNOC] = &mas_pcnoc_snoc,
-+	[MAS_QDSS_ETR] = &mas_qdss_etr,
-+	[QDSS_INT] = &qdss_int,
-+	[SNOC_INT_0] = &snoc_int_0,
-+	[SNOC_INT_1] = &snoc_int_1,
-+	[SNOC_INT_2] = &snoc_int_2,
-+	[SLV_KPSS_AHB] = &slv_kpss_ahb,
-+	[SLV_WCSS] = &slv_wcss,
-+	[SLV_SNOC_BIMC_1] = &slv_snoc_bimc_1,
-+	[SLV_IMEM] = &slv_imem,
-+	[SLV_SNOC_PCNOC] = &slv_snoc_pcnoc,
-+	[SLV_QDSS_STM] = &slv_qdss_stm,
-+	[SLV_CATS_1] = &slv_cats_1,
-+	[SLV_LPASS] = &slv_lpass,
-+};
-+
-+static const struct regmap_config msm8937_snoc_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x16080,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_icc_desc msm8937_snoc = {
-+	.type = QCOM_ICC_NOC,
-+	.nodes = msm8937_snoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8937_snoc_nodes),
-+	.bus_clk_desc = &bus_1_clk,
-+	.regmap_cfg = &msm8937_snoc_regmap_config,
-+	.qos_offset = 0x7000,
-+};
-+
-+static struct qcom_icc_node *msm8937_snoc_mm_nodes[] = {
-+	[MAS_JPEG] = &mas_jpeg,
-+	[MAS_MDP] = &mas_mdp,
-+	[MAS_VENUS] = &mas_venus,
-+	[MAS_VFE0] = &mas_vfe0,
-+	[MAS_VFE1] = &mas_vfe1,
-+	[MAS_CPP] = &mas_cpp,
-+	[SLV_SNOC_BIMC_0] = &slv_snoc_bimc_0,
-+	[SLV_SNOC_BIMC_2] = &slv_snoc_bimc_2,
-+	[SLV_CATS_0] = &slv_cats_0,
-+};
-+
-+static const struct qcom_icc_desc msm8937_snoc_mm = {
-+	.type = QCOM_ICC_NOC,
-+	.nodes = msm8937_snoc_mm_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8937_snoc_mm_nodes),
-+	.bus_clk_desc = &bus_2_clk,
-+	.regmap_cfg = &msm8937_snoc_regmap_config,
-+	.qos_offset = 0x7000,
-+	.ab_coeff = 154,
-+};
-+
-+static const struct of_device_id msm8937_noc_of_match[] = {
-+	{ .compatible = "qcom,msm8937-bimc", .data = &msm8937_bimc },
-+	{ .compatible = "qcom,msm8937-pcnoc", .data = &msm8937_pcnoc },
-+	{ .compatible = "qcom,msm8937-snoc", .data = &msm8937_snoc },
-+	{ .compatible = "qcom,msm8937-snoc-mm", .data = &msm8937_snoc_mm },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, msm8937_noc_of_match);
-+
-+static struct platform_driver msm8937_noc_driver = {
-+	.probe = qnoc_probe,
-+	.remove_new = qnoc_remove,
-+	.driver = {
-+		.name = "qnoc-msm8937",
-+		.of_match_table = msm8937_noc_of_match,
-+		.sync_state = icc_sync_state,
-+	},
-+};
-+module_platform_driver(msm8937_noc_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm MSM8937 NoC driver");
-+MODULE_LICENSE("GPL");
++	CC33XX_SCAN_STATE_IDLE,
++	CC33XX_SCAN_STATE_2GHZ_ACTIVE,
++	CC33XX_SCAN_STATE_2GHZ_PASSIVE,
++	CC33XX_SCAN_STATE_5GHZ_ACTIVE,
++	CC33XX_SCAN_STATE_5GHZ_PASSIVE,
++	CC33XX_SCAN_STATE_DONE
++};
++
++struct conn_scan_ch_params {
++	__le16 min_duration;
++	__le16 max_duration;
++	__le16 passive_duration;
++
++	u8  channel;
++	u8  tx_power_att;
++
++	/* bit 0: DFS channel; bit 1: DFS enabled */
++	u8  flags;
++
++	u8  padding[3];
++} __packed;
++
++enum {
++	SCAN_SSID_TYPE_PUBLIC = 0,
++	SCAN_SSID_TYPE_HIDDEN = 1,
++};
++
++#define MAX_CHANNELS_2GHZ	14
++#define MAX_CHANNELS_4GHZ	4
++#define MAX_CHANNELS_5GHZ	32
++
++#define SCAN_MAX_CYCLE_INTERVALS 16
++#define SCAN_MAX_BANDS 3
++#define SCHED_SCAN_MAX_SSIDS 16
++
++/******************************************************************************
++ * ** ***                                                               *** ** *
++ * ** ***                          SCAN API                             *** ** *
++ * ** ***                                                               *** ** *
++ ******************************************************************************/
++
++#define CONN_SCAN_MAX_BAND                          (2)
++#define CONN_SCAN_MAX_CHANNELS_ALL_BANDS            (46)
++#define SCAN_MAX_SCHED_SCAN_PLANS           (12)
++
++enum scan_request_type {
++	SCAN_REQUEST_NONE,
++	SCAN_REQUEST_CONNECT_PERIODIC_SCAN,
++	SCAN_REQUEST_ONE_SHOT,
++	SCAN_REQUEST_SURVEY_SCAN,
++	SCAN_NUM_OF_REQUEST_TYPE
++};
++
++/******************************************************************************
++ *	ID:     CMD_SCAN
++ *	Desc:   This command will start scan process depending scan request
++ *		type
++ *	Return: CMD_COMPLETE
++ *****************************************************************************/
++/* struct cc33xx_ssid - SSIDs connection scan description
++ *
++ * @type: SSID type - SCAN_SSID_TYPE_HIDDEN/SCAN_SSID_TYPE_PUBLIC
++ *
++ * @len:  Length of the ssid
++ *
++ * @ssid: SSID
++ */
++struct cc33xx_ssid {
++	u8 type;
++	u8 len;
++	u8 ssid[IEEE80211_MAX_SSID_LEN];
++	u8 padding[2];
++} __packed;
++
++/**
++ * struct cc33xx_cmd_ssid_list - scan SSID list description
++ *
++ * @role_id:            roleID
++ *
++ * @num_of_ssids:       Number of SSID in the list. MAX 16 entries
++ *
++ * @ssid_list:          SSIDs to scan for (active scan only)
++ */
++struct cc33xx_cmd_ssid_list {
++	struct cc33xx_cmd_header header;
++
++	u8 role_id;
++	u8 scan_type;
++	u8 n_ssids;
++	struct cc33xx_ssid ssids[SCHED_SCAN_MAX_SSIDS];
++	u8 padding;
++} __packed;
++
++/**
++ * struct conn_scan_dwell_info - Channels duration info per band
++ *
++ * @min_duration:        Min duration (in ms)
++ *
++ * @max_duration:        Max duration (in ms)
++ *
++ * @passive_duration:    Duration to use for passive scans (in ms)
++ */
++struct conn_scan_dwell_info {
++	__le16  min_duration;
++	__le16  max_duration;
++	__le16  passive_duration;
++} __packed;
++
++/**
++ * struct conn_scan_ch_info - Channels info
++ *
++ * @channel:            channel number (channel_e)
++ *
++ * @tx_power_att:    TX power level in dbm
++ *
++ * @flags:       0 - DFS channel, 1 - DFS enabled (to be included in active scan)
++ */
++struct conn_scan_ch_info {
++	u8   channel;
++	u8   tx_power_att;
++	u8   flags;
++} __packed;
++
++/**
++ * struct scan_one_shot_info - ONE_SHOT scan param
++ *
++ * @passive:		Number of passive scan channels in bands BG,A
++ *
++ * @active:		Number of active scan channels in bands BG,A
++ *
++ * @dfs:		Number of DFS channels in A band
++ *
++ * @channel_list:	Channel list info
++ *			BG band channels are set from place 0 and forward.
++ *			A band channels are from CONN_SCAN_MAX_CHANNELS_BG and forward.
++ *			6Ghz band channels are from CONN_SCAN_MAX_CHANNELS_A_BG and forward.
++
++ * @dwell_info:		Scan duration time info per band
++ *
++ * @reserved:
++ *
++ */
++struct scan_one_shot_info {
++	u8  passive[CONN_SCAN_MAX_BAND];
++	u8  active[CONN_SCAN_MAX_BAND];
++	u8  dfs;
++
++	struct conn_scan_ch_info    channel_list[CONN_SCAN_MAX_CHANNELS_ALL_BANDS];
++	struct conn_scan_dwell_info dwell_info[CONN_SCAN_MAX_BAND];
++	u8  reserved;
++};
++
++/**
++ * sched_scan_plans - Scan plans for scheduled scan
++ *
++ * Each scan plan consists of the number of iterations to scan and the
++ * interval between scans. When a scan plan finishes (i.e., it was run
++ * for the specified number of iterations), the next scan plan is
++ * executed. The scan plans are executed in the order they appear in
++ * the array (lower index first). The last scan plan will run infinitely
++ * (until requested to stop), thus must not specify the number of
++ * iterations. All other scan plans must specify the number of
++ * iterations.
++ */
++struct sched_scan_plan_cmd {
++	u32 interval; /* In seconds */
++	u32 iterations; /* Zero to run infinitely */
++};
++
++/* struct periodicScanParams_t - Periodic scan param
++ *
++ * @sched_scan_plans:	Scan plans for a scheduled scan (defined in supplicant's driver.h)
++ *				interval and iterations
++ *
++ * @sched_scan_plans_num:Number of scan plans in sched_scan_plans array
++ *
++ * @passive:		Number of passive scan channels in bands BG,A
++ *
++ * @active:		Number of active scan channels in bands BG,A
++ *
++ * @dfs:		number of DFS channels in A band
++ *
++ * @channel_list:	Channel list info.
++ *			BG band channels are set from place 0 and forward.
++ *			A band channels are set from CONN_SCAN_MAX_CHANNELS_BG and forward.
++ *			6Ghz band are set from CONN_SCAN_MAX_CHANNELS_A_BG and forward.
++ *
++ * @dwell_info:		Scan duration time info per band
++ *
++ */
++struct scan_periodic_info {
++	struct sched_scan_plan_cmd  sched_scan_plans[SCAN_MAX_SCHED_SCAN_PLANS];
++	u16 sched_scan_plans_num;
++
++	u8 passive[CONN_SCAN_MAX_BAND];
++	u8 active[CONN_SCAN_MAX_BAND];
++	u8 dfs;
++
++	struct conn_scan_ch_info      channel_list[CONN_SCAN_MAX_CHANNELS_ALL_BANDS];
++	struct conn_scan_dwell_info   dwell_info[CONN_SCAN_MAX_BAND];
++} __packed;
++
++/**
++ * struct scan_param - union for ONE_SHOT/PERIODIC scan param
++ *
++ * @one_shot:       ONE_SHOT scan param
++ *
++ * @periodic:       Periodic scan param
++ */
++struct scan_param {
++	union {
++		struct scan_one_shot_info    one_shot;
++		struct scan_periodic_info    periodic;
++	} u;
++} __packed;
++
++/**
++ * struct cc33xx_cmd_scan_params - scan configured param
++ *
++ * @scan_type:		ONE_SHOT/PERIODIC scan
++ *
++ * @role_id:            role ID
++ *
++ * @params:	Scan parameter for ONE_SHOT/PERIODIC Scan
++ *
++ * @rssi_threshold:     RSSI threshold for basic filter
++ *
++ * @snr_threshold:      SNR threshold for basic filter
++ *
++ * @bssid:              BSSID to scan for
++ *
++ * @ssid_from_list:	0 - if there are more than 5 SSIDs entries
++ *				(list was sent SSID CONFIGURE COMMAND),
++ *			1 - 5 or less SSIDs entries, the list is at the end of the scan command
++ *
++ * @filter:		0 - not using filter and all the beacons/probe response frame
++ *                      forward to upper mac,  1 - using filter
++ *
++ * @num_of_ssids:		Number of SSIDs
++ */
++struct cc33xx_cmd_scan_params {
++	struct cc33xx_cmd_header header;
++	u8 scan_type;
++	u8 role_id;
++
++	struct scan_param   params;
++	s8 rssi_threshold; /* for filtering (in dBm) */
++	s8 snr_threshold;  /* for filtering (in dB) */
++
++	u8 bssid[ETH_ALEN];
++	u8 padding[2];
++
++	u8 ssid_from_list; /* use ssid from configured ssid list */
++	u8 filter;         /* forward only results with matching ssids */
++
++	u8 num_of_ssids;
++} __packed;
++
++/******************************************************************************
++ *	ID:     CMD_SET_PROBE_IE
++ *	Desc:   This command will  set the Info elements data for
++ *		probe request
++ *	Return: CMD_COMPLETE
++ *******************************************************************************/
++#define MAX_EXTRA_IES_LEN 512
++/**
++ * struct cc33xx_cmd_set_ies - Probe request info elements
++ *
++ * @scan_type:    ONE_SHOT/PERIODIC scan
++ *
++ * @role_id:      roleID
++ *
++ * @data:         info element buffer
++ *
++ * @len:          info element length
++ */
++struct cc33xx_cmd_set_ies {
++	struct cc33xx_cmd_header header;
++	u8 scan_type;
++	u8 role_id;
++	__le16 len;
++	u8                   data[MAX_EXTRA_IES_LEN];
++} __packed;
++
++/******************************************************************************
++ *	ID:     CMD_STOP_SCAN
++ *	Desc:   This command will stop scan process depending scan request
++ *		type, and if early termination is on
++ *	Return: CMD_COMPLETE
++ ******************************************************************************/
++/**
++ * struct cc33xx_cmd_scan_stop - scan stop param
++ *
++ * @scan_type:           Scan request type
++ *
++ * @role_id:             role ID
++ *
++ * @is_ET:               TRUE - Early termination is on, FALSE - no ET
++ */
++struct cc33xx_cmd_scan_stop {
++	struct cc33xx_cmd_header header;
++
++	u8 scan_type;
++	u8 role_id;
++	u8 is_ET;
++	u8 padding;
++} __packed;
++
++int cc33xx_scan_stop(struct cc33xx *cc, struct cc33xx_vif *wlvif);
++void cc33xx_scan_completed(struct cc33xx *cc, struct cc33xx_vif *wlvif);
++int cc33xx_sched_scan_start(struct cc33xx *cc, struct cc33xx_vif *wlvif,
++			    struct cfg80211_sched_scan_request *req,
++			    struct ieee80211_scan_ies *ies);
++void cc33xx_scan_sched_scan_stop(struct cc33xx *cc, struct cc33xx_vif *wlvif);
++
++int cc33xx_scan(struct cc33xx *cc, struct ieee80211_vif *vif,
++		const u8 *ssid, size_t ssid_len,
++		struct cfg80211_scan_request *req);
++void cc33xx_scan_complete_work(struct work_struct *work);
++void cc33xx_scan_sched_scan_results(struct cc33xx *cc);
++
++enum {
++	SCAN_SSID_FILTER_ANY      = 0,
++	SCAN_SSID_FILTER_SPECIFIC = 1,
++	SCAN_SSID_FILTER_LIST     = 2,
++	SCAN_SSID_FILTER_DISABLED = 3
++};
++
++#define SCAN_CHANNEL_FLAGS_DFS		BIT(0) /* channel is passive until an
++						* activity is detected on it
++						*/
++#define SCAN_CHANNEL_FLAGS_DFS_ENABLED	BIT(1)
++
++struct cc33xx_scan_channels {
++	u8 passive[SCAN_MAX_BANDS]; /* number of passive scan channels */
++	u8 active[SCAN_MAX_BANDS];  /* number of active scan channels */
++	u8 dfs;		   /* number of dfs channels in 5ghz */
++	u8 passive_active; /* number of passive before active channels 2.4ghz */
++
++	struct conn_scan_ch_params channels_2[MAX_CHANNELS_2GHZ];
++	struct conn_scan_ch_params channels_5[MAX_CHANNELS_5GHZ];
++	struct conn_scan_ch_params channels_4[MAX_CHANNELS_4GHZ];
++};
++
++enum {
++	SCAN_TYPE_SEARCH	= 0,
++	SCAN_TYPE_PERIODIC	= 1,
++	SCAN_TYPE_TRACKING	= 2,
++};
++
++#endif /* __CC33XX_SCAN_H__ */
 -- 
-2.45.1
+2.25.1
 
 
