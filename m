@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-207467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7624B9017AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4CB90176A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAE91F21233
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B841F211F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6729978C66;
-	Sun,  9 Jun 2024 18:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE374D9E8;
+	Sun,  9 Jun 2024 18:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MD3Nr7nd"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAtHiqbX"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7619B7406D;
-	Sun,  9 Jun 2024 18:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F5F4D8AE;
+	Sun,  9 Jun 2024 18:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717957379; cv=none; b=O1sVHQ+6jjPIjD4DRNjIcwinY0azCUVekJV/R5wmCfjTRt9Kgw/A/51ynERh1YufRudTs4ATk5uq+IR8j3lrDmDzMsXhryusYrFcEJliM3LlQg1BZEBVp0T9sZjS5LoYz8ePnZZen++/6yEt7JBqbUZTM4BF1LPPwXdFVfYp/Sk=
+	t=1717957293; cv=none; b=FGOT5DJ5OoJRnC1txAoS5hbGynrpGajT2hcZGlYJb/imJDAXRm7OqPnwgXNA++34WseQV1r2SI/LYOsW3/kin9JOkgPDR3jAjDtaXdZxDbjcnWGWharXYDfxdt11bC4NJEo80l/epNv/jN8C53nCIN8vsPWdJgzcoCfVkRFsXho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717957379; c=relaxed/simple;
-	bh=muBmN1226zJl8fTqaCDPFRJ4kxWik6pw6zoeM/rM/X8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IrsfGrsGL63xbbL5sszouay4/pgC3hVBrq8u+wkFbzSuFQ3qarrWWhQqUTPNzgSKvZorTrXroSL5HJW7dmZEJtR7aPimL++4j8q9OL2HPFeCzLx8/4SyqZnVNqijHCUpPNA1S2cROmTQtueAeJ5GpjxwWtbyZBNfcO+RtCz1Vvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MD3Nr7nd; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 459IMirL075125;
-	Sun, 9 Jun 2024 13:22:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717957364;
-	bh=JuiOqzvwWEdGtM1iM7NryaiyTVAN6BYzcnNFJTeuRqk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=MD3Nr7ndr95boVT6+0M66ecTJXTkp7UWaYuXr9sIhkr3r2GDZbKgHWJolck8VKuSz
-	 tPtxd8iVYlhztUEnoh81QEvytaJsssoAXfhWhQuSmWKOXIVkASOEssAhc3wuUY0E75
-	 vYvaum/oX1DQjIim1DGtwBduW/b0kP1ahLLHp3nI=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 459IMiDR035494
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 9 Jun 2024 13:22:44 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 9
- Jun 2024 13:22:44 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 9 Jun 2024 13:22:44 -0500
-Received: from localhost (uda0389739.dhcp.ti.com [137.167.1.114])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 459IMhRl034653;
-	Sun, 9 Jun 2024 13:22:43 -0500
-From: <michael.nemanov@ti.com>
-To: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
-        Johannes
- Berg <johannes.berg@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Michael Nemanov
-	<Michael.Nemanov@ti.com>
-Subject: [PATCH v2 09/17] wifi: cc33xx: Add rx.c, rx.h
-Date: Sun, 9 Jun 2024 21:20:54 +0300
-Message-ID: <20240609182102.2950457-10-michael.nemanov@ti.com>
+	s=arc-20240116; t=1717957293; c=relaxed/simple;
+	bh=ziRlSJW9/STMYE8qL339Gew9QD0QOSsY2zJstVkSd5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hrq7M9Jwfw1/p2xpYVr5q78XzUWD9F//OqRK8NfoGv3cZFoO3tVV/IIk0v54hHO39Dn2Xd+JSx7a2tBw7ULzmZUDfE91r/DpEnvB0bBo/wgwFcHoIsQWiV+V7PxR+FKmPaT2gIkpyKm3XXPU+6flDzdb86X4ZtS03tvuf+x+wT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DAtHiqbX; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so6297761fa.2;
+        Sun, 09 Jun 2024 11:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717957290; x=1718562090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aWsqy146Wz8gtIigu1ZwZda5tu61ILNT8EB35qWgat8=;
+        b=DAtHiqbXryWhtjjoHgJ8jVLp8d3axEkqRimKcn/GKpvFxHh5oa3GgBpw0Kga78qHM3
+         ynsJnviKEU8NceKQSsw+TqWe1015JbaSI9YYIcz5/nUw03rV0mSZLEJtjIhTfLY1Gw7J
+         tAeruDDNVhYHiYk8yYFRGRbfUqSt6EaGpHVAlH/95/IGNteqk9fUWb6HHFqWZoxCmwb8
+         dgwuMBI3qWQ08lNgKzc1I1TWsG9Lx0eNXBpp+SivPUEOIKqfqo/RdtBlbM9FR7vaXR/G
+         xy1kYe+Y58JmQ4qzDvFmkAVq/CYnHtD6Fx6jVH6ym84yBpTfLYPzCe5+SWjFufuB21rq
+         8LlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717957290; x=1718562090;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aWsqy146Wz8gtIigu1ZwZda5tu61ILNT8EB35qWgat8=;
+        b=tSsuOf+fS6DQdvO89g5T8DLL2XuS3GxX+EIfU65jzHCDeHfW3l85fH/CoXrf6eu+tH
+         VkblwIb6xRLlPQmIMzy812B5jfRb1HktJhUmfUkBF1ZKbIC8NFozJXZucL0QjOM6Hewu
+         vYQtZ6lu8fbsguDkArgn5oUeTwkqyz+SQtUBNtopSPMY9xxnRV34QOYCYjwvYdXNYazg
+         35QHfVFSAGSwLWSDYpf1SDsWAvQznz3jyHYS6laNFY791l2jwee+0GGMuHoU49JyrzCj
+         fHFzTDyrW7IKU9O8sBpp5jI/2RkMZsI+FNDxmxUFjx5i1Gpz9zIME0ZLCSFti/K8jIQj
+         J52w==
+X-Forwarded-Encrypted: i=1; AJvYcCWjLdOzJ1jLHrHCBf8+4q3EU+KUXs+bsuPivWUxnDMaE9D0QmUTv8nUZ950myb8dZEeimgzYIfWrqkWpgFypuA+u9IYiISltDTJIX1EmqMApJXoEtn5IpuSadR4Yzau97ymmvK9LddkA0jjMf1ePGp9r6bPeoiXF31A4ypdiRoYyHArEp6IfIB94+dkx+2xT/11DI+Iqxu1ljqeDoFSByTVPg==
+X-Gm-Message-State: AOJu0YzQJj7AT4+QLOV2uL24qvOZTQWx1Quz0vXKUouPExPVsoMVeL7g
+	JDwGdKDZkCtlLfxc/BHsLHmautJxwyEOMIyG6TW2jNcHKWtEWmWnXoNaKca1
+X-Google-Smtp-Source: AGHT+IFLEaGF6B4SoeubzpJFEMoylvNqJn3ms5QaONbEAQjbhK4hz3PMn7RKuUGyEmP1KfO4HKtKng==
+X-Received: by 2002:a2e:a7c8:0:b0:2eb:e505:ebcd with SMTP id 38308e7fff4ca-2ebe505ee51mr13192241fa.11.1717957289792;
+        Sun, 09 Jun 2024 11:21:29 -0700 (PDT)
+Received: from localhost.localdomain (bza83.neoplus.adsl.tpnet.pl. [83.30.46.83])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebd5a63bf2sm6679841fa.33.2024.06.09.11.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 11:21:29 -0700 (PDT)
+From: Adam Skladowski <a39.skl@gmail.com>
+To: 
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Adam Skladowski <a39.skl@gmail.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/7] dt-bindings: interconnect: Add Qualcomm MSM8976 DT bindings
+Date: Sun,  9 Jun 2024 20:20:54 +0200
+Message-Id: <20240609182112.13032-2-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240609182102.2950457-1-michael.nemanov@ti.com>
-References: <20240609182102.2950457-1-michael.nemanov@ti.com>
+In-Reply-To: <20240609182112.13032-1-a39.skl@gmail.com>
+References: <20240609182112.13032-1-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,517 +95,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Michael Nemanov <Michael.Nemanov@ti.com>
+Add bindings for Qualcomm MSM8976 Network-On-Chip interconnect devices.
 
-Code that handles parsing raw Rx data buffer from HW and, splitting
-it in to SKBs and handing them to MAC80211.
-
-Rx handling starts at cc33xx_rx. Full SKBs are stored at
-cc->deferred_rx_queue from where they are handed to MAC80211 by calling
-cc->netstack_work (cc33xx_netstack_work @ main.c). This allows
-calling ieee80211_rx_ni while new data is being read from HW.
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 ---
- drivers/net/wireless/ti/cc33xx/rx.c | 393 ++++++++++++++++++++++++++++
- drivers/net/wireless/ti/cc33xx/rx.h |  86 ++++++
- 2 files changed, 479 insertions(+)
- create mode 100644 drivers/net/wireless/ti/cc33xx/rx.c
- create mode 100644 drivers/net/wireless/ti/cc33xx/rx.h
+ .../bindings/interconnect/qcom,msm8976.yaml   | 107 ++++++++++++++++++
+ .../dt-bindings/interconnect/qcom,msm8976.h   |  97 ++++++++++++++++
+ 2 files changed, 204 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8976.yaml
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8976.h
 
-diff --git a/drivers/net/wireless/ti/cc33xx/rx.c b/drivers/net/wireless/ti/cc33xx/rx.c
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8976.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8976.yaml
 new file mode 100644
-index 000000000000..e6467e1e223e
+index 000000000000..bc9d08443e7c
 --- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/rx.c
-@@ -0,0 +1,393 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8976.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interconnect/qcom,msm8976.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm MSM8976 Network-On-Chip interconnect
++
++maintainers:
++  - Konrad Dybcio <konradybcio@kernel.org>
++
++description: |
++  The Qualcomm MSM8976 interconnect providers support adjusting the
++  bandwidth requirements between the various NoC fabrics.
++
++properties:
++  compatible:
++    enum:
++      - qcom,msm8976-bimc
++      - qcom,msm8976-pcnoc
++      - qcom,msm8976-snoc
++
++  reg:
++    maxItems: 1
++
++  clock-names:
++    minItems: 1
++    maxItems: 2
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++patternProperties:
++  '^interconnect-[a-z0-9\-]+$':
++    type: object
++    $ref: qcom,rpm-common.yaml#
++    description:
++      The interconnect providers do not have a separate QoS register space,
++      but share parent's space.
++
++    allOf:
++      - $ref: qcom,rpm-common.yaml#
++
++    properties:
++      compatible:
++        const: qcom,msm8976-snoc-mm
++
++    required:
++      - compatible
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++allOf:
++  - $ref: qcom,rpm-common.yaml#
++  - if:
++      properties:
++        compatible:
++          const: qcom,msm8976-snoc
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: IPA clock from RPMCC
++        clock-names:
++          const: ipa
++
++      required:
++        - clocks
++        - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmcc.h>
++    #include <dt-bindings/interconnect/qcom,rpm-icc.h>
++
++    bimc: interconnect@400000 {
++        compatible = "qcom,msm8976-bimc";
++        reg = <0x00400000 0x62000>;
++        #interconnect-cells = <2>;
++    };
++
++    pcnoc: interconnect@500000 {
++        compatible = "qcom,msm8976-pcnoc";
++        reg = <0x00500000 0x14000>;
++        #interconnect-cells = <2>;
++    };
++
++    snoc: interconnect@580000 {
++        compatible = "qcom,msm8976-snoc";
++        reg = <0x00580000 0x1a000>;
++        clocks =  <&rpmcc RPM_SMD_IPA_CLK>;
++        clock-names = "ipa";
++        #interconnect-cells = <2>;
++
++          snoc_mm: interconnect-snoc {
++              compatible = "qcom,msm8976-snoc-mm";
++              #interconnect-cells = <2>;
++          };
++    };
+diff --git a/include/dt-bindings/interconnect/qcom,msm8976.h b/include/dt-bindings/interconnect/qcom,msm8976.h
+new file mode 100644
+index 000000000000..4ea90f22320e
+--- /dev/null
++++ b/include/dt-bindings/interconnect/qcom,msm8976.h
+@@ -0,0 +1,97 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
-+ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
++ * Qualcomm MSM8976 interconnect IDs
 + */
 +
-+#include "acx.h"
-+#include "rx.h"
-+#include "tx.h"
-+#include "io.h"
-+
-+#define RSSI_LEVEL_BITMASK	0x7F
-+#define ANT_DIVERSITY_BITMASK	BIT(7)
-+#define ANT_DIVERSITY_SHIFT		7
-+
-+/* Construct the rx status structure for upper layers */
-+static void cc33xx_rx_status(struct cc33xx *cc,
-+			     struct cc33xx_rx_descriptor *desc,
-+			     struct ieee80211_rx_status *status,
-+			     u8 beacon, u8 probe_rsp)
-+{
-+	memset(status, 0, sizeof(struct ieee80211_rx_status));
-+
-+	if ((desc->flags & CC33XX_RX_DESC_BAND_MASK) == CC33XX_RX_DESC_BAND_BG)
-+		status->band = NL80211_BAND_2GHZ;
-+	else if ((desc->flags & CC33XX_RX_DESC_BAND_MASK) == CC33XX_RX_DESC_BAND_J)
-+		status->band = NL80211_BAND_2GHZ;
-+	else if ((desc->flags & CC33XX_RX_DESC_BAND_MASK) == CC33XX_RX_DESC_BAND_A)
-+		status->band = NL80211_BAND_5GHZ;
-+	else
-+		status->band = NL80211_BAND_5GHZ; /* todo -Should be 6GHZ when added */
-+
-+	status->rate_idx = cc33xx_rate_to_idx(cc, desc->rate, status->band);
-+
-+	if (desc->frame_format == CC33xx_VHT)
-+		status->encoding = RX_ENC_VHT;
-+	else if ((desc->frame_format == CC33xx_HT_MF) ||
-+		 (desc->frame_format == CC33xx_HT_GF))
-+		status->encoding = RX_ENC_HT;
-+	else if ((desc->frame_format == CC33xx_B_SHORT) ||
-+		 (desc->frame_format == CC33xx_B_LONG) ||
-+		(desc->frame_format == CC33xx_LEGACY_OFDM))
-+		status->encoding = RX_ENC_LEGACY;
-+	else
-+		status->encoding = RX_ENC_HE;
-+
-+	/* Read the signal level and antenna diversity indication.
-+	 * The msb in the signal level is always set as it is a
-+	 * negative number.
-+	 * The antenna indication is the msb of the rssi.
-+	 */
-+	status->signal = ((desc->rssi & RSSI_LEVEL_BITMASK) | BIT(7));
-+	status->antenna = ((desc->rssi & ANT_DIVERSITY_BITMASK) >> ANT_DIVERSITY_SHIFT);
-+	status->freq = ieee80211_channel_to_frequency(desc->channel,
-+						      status->band);
-+
-+	if (desc->flags & CC33XX_RX_DESC_ENCRYPT_MASK) {
-+		u8 desc_err_code = desc->status & CC33XX_RX_DESC_STATUS_MASK;
-+
-+		/* Frame is sent to driver with the IV (for PN replay check)
-+		 * but without the MIC
-+		 */
-+		status->flag |=  RX_FLAG_MMIC_STRIPPED |
-+				 RX_FLAG_DECRYPTED | RX_FLAG_MIC_STRIPPED;
-+
-+		if (unlikely(desc_err_code & CC33XX_RX_DESC_MIC_FAIL)) {
-+			status->flag |= RX_FLAG_MMIC_ERROR;
-+			cc33xx_warning("Michael MIC error. Desc: 0x%x",
-+				       desc_err_code);
-+		}
-+	}
-+
-+	if (beacon || probe_rsp)
-+		status->boottime_ns = ktime_get_boottime_ns();
-+
-+	if (beacon)
-+		cc33xx_set_pending_regdomain_ch(cc, (u16)desc->channel,
-+						status->band);
-+	status->nss = 1;
-+}
-+
-+/* Copy part\ all of the descriptor. Allocate skb, or drop corrupted packet
-+ */
-+static int cc33xx_rx_get_packet_descriptor(struct cc33xx *cc, u8 *raw_buffer_ptr,
-+					   u16 *raw_buffer_len)
-+{
-+	u16 missing_desc_bytes;
-+	u16 available_desc_bytes;
-+	u16 pkt_data_len;
-+	struct sk_buff *skb;
-+	u16 prev_buffer_len = *raw_buffer_len;
-+
-+	missing_desc_bytes = sizeof(struct cc33xx_rx_descriptor);
-+	missing_desc_bytes -= cc->partial_rx.handled_bytes;
-+	available_desc_bytes = min(*raw_buffer_len, missing_desc_bytes);
-+	memcpy(((u8 *)(&cc->partial_rx.desc)) + cc->partial_rx.handled_bytes,
-+	       raw_buffer_ptr, available_desc_bytes);
-+
-+	/* If descriptor was not completed */
-+	if (available_desc_bytes != missing_desc_bytes) {
-+		cc->partial_rx.handled_bytes += *raw_buffer_len;
-+		cc->partial_rx.status = CURR_RX_DESC;
-+		*raw_buffer_len = 0;
-+		goto out;
-+	} else {
-+		cc->partial_rx.handled_bytes += available_desc_bytes;
-+		*raw_buffer_len -= available_desc_bytes;
-+	}
-+
-+	/* Descriptor was fully copied */
-+	pkt_data_len = cc->partial_rx.original_bytes;
-+	pkt_data_len -=	sizeof(struct cc33xx_rx_descriptor);
-+
-+	if (unlikely(cc->partial_rx.desc.status & CC33XX_RX_DESC_DECRYPT_FAIL)) {
-+		cc33xx_warning("corrupted packet in RX: status: 0x%x len: %d",
-+			       cc->partial_rx.desc.status & CC33XX_RX_DESC_STATUS_MASK,
-+			pkt_data_len);
-+
-+		/* If frame can be fully dropped */
-+		if (pkt_data_len <= *raw_buffer_len) {
-+			*raw_buffer_len -=  pkt_data_len;
-+			cc->partial_rx.status = CURR_RX_START;
-+		} else {
-+			cc->partial_rx.handled_bytes += *raw_buffer_len;
-+			cc->partial_rx.status = CURR_RX_DROP;
-+			*raw_buffer_len = 0;
-+		}
-+		goto out;
-+	}
-+
-+	skb = __dev_alloc_skb(pkt_data_len, GFP_KERNEL);
-+	if (!skb) {
-+		cc33xx_error("Couldn't allocate RX frame");
-+		/* If frame can be fully dropped */
-+		if (pkt_data_len <= *raw_buffer_len) {
-+			*raw_buffer_len -=  pkt_data_len;
-+			cc->partial_rx.status = CURR_RX_START;
-+		} else {
-+		/* Dropped partial frame */
-+			cc->partial_rx.handled_bytes += *raw_buffer_len;
-+			cc->partial_rx.status = CURR_RX_DROP;
-+			*raw_buffer_len = 0;
-+		}
-+		goto out;
-+	}
-+
-+	cc->partial_rx.skb = skb;
-+	cc->partial_rx.status = CURR_RX_DATA;
-+
-+out:
-+	/* Function return the amount of consumed bytes */
-+	return (prev_buffer_len - *raw_buffer_len);
-+}
-+
-+/* Copy part or all of the packet's data. push skb to queue if possible */
-+static int cc33xx_rx_get_packet_data(struct cc33xx *cc, u8 *raw_buffer_ptr,
-+				     u16 *raw_buffer_len)
-+{
-+	u16 missing_data_bytes;
-+	u16 available_data_bytes;
-+	u32 defer_count;
-+	enum cc33xx_rx_buf_align rx_align;
-+	u16 extra_bytes;
-+	struct ieee80211_hdr *hdr;
-+	u8 beacon = 0;
-+	u8 is_probe_resp = 0;
-+	u16 seq_num;
-+	u16 prev_buffer_len = *raw_buffer_len;
-+
-+	missing_data_bytes = cc->partial_rx.original_bytes;
-+	missing_data_bytes -= cc->partial_rx.handled_bytes;
-+	available_data_bytes = min(missing_data_bytes, *raw_buffer_len);
-+
-+	cc33xx_debug(DEBUG_RX, "current rx data: original bytes: %d, handled bytes %d, desc pad len %d, missing_data_bytes %d",
-+		     cc->partial_rx.original_bytes,
-+		     cc->partial_rx.handled_bytes,
-+		     cc->partial_rx.desc.pad_len, missing_data_bytes);
-+
-+	skb_put_data(cc->partial_rx.skb, raw_buffer_ptr, available_data_bytes);
-+
-+	/* Check if we didn't manage to copy the entire packet - got out,
-+	 * continue next time
-+	 */
-+	if (available_data_bytes != missing_data_bytes) {
-+		cc->partial_rx.handled_bytes += *raw_buffer_len;
-+		cc->partial_rx.status = CURR_RX_DATA;
-+		*raw_buffer_len = 0;
-+		goto out;
-+	} else {
-+		*raw_buffer_len -=  available_data_bytes;
-+	}
-+
-+	/* Data fully copied */
-+
-+	rx_align = cc->partial_rx.desc.header_alignment;
-+	if (rx_align == CC33XX_RX_BUF_PADDED)
-+		skb_pull(cc->partial_rx.skb, RX_BUF_ALIGN);
-+
-+	extra_bytes = cc->partial_rx.desc.pad_len;
-+	if (extra_bytes != 0)
-+		skb_trim(cc->partial_rx.skb,
-+			 cc->partial_rx.skb->len - extra_bytes);
-+
-+	hdr = (struct ieee80211_hdr *)cc->partial_rx.skb->data;
-+
-+	if (ieee80211_is_beacon(hdr->frame_control))
-+		beacon = 1;
-+	if (ieee80211_is_probe_resp(hdr->frame_control))
-+		is_probe_resp = 1;
-+
-+	cc33xx_rx_status(cc, &cc->partial_rx.desc,
-+			 IEEE80211_SKB_RXCB(cc->partial_rx.skb),
-+			 beacon, is_probe_resp);
-+
-+	seq_num = (le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_SEQ) >> 4;
-+	cc33xx_debug(DEBUG_RX, "rx skb 0x%p: %d B %s seq %d link id %d",
-+		     cc->partial_rx.skb,
-+		     cc->partial_rx.skb->len - cc->partial_rx.desc.pad_len,
-+		     beacon ? "beacon" : "", seq_num, cc->partial_rx.desc.hlid);
-+
-+	cc33xx_debug(DEBUG_RX, "rx frame. frame type 0x%x, frame length 0x%x, frame address 0x%lx",
-+		     hdr->frame_control, cc->partial_rx.skb->len,
-+		     (unsigned long)cc->partial_rx.skb->data);
-+
-+	/* Adding frame to queue */
-+	skb_queue_tail(&cc->deferred_rx_queue, cc->partial_rx.skb);
-+	cc->rx_counter++;
-+	cc->partial_rx.status = CURR_RX_START;
-+
-+	/* Make sure the deferred queues don't get too long */
-+	defer_count = skb_queue_len(&cc->deferred_tx_queue);
-+	defer_count += skb_queue_len(&cc->deferred_rx_queue);
-+	if (defer_count >= CC33XX_RX_QUEUE_MAX_LEN)
-+		cc33xx_flush_deferred_work(cc);
-+	else
-+		queue_work(cc->freezable_netstack_wq, &cc->netstack_work);
-+
-+out:
-+	return (prev_buffer_len - *raw_buffer_len);
-+}
-+
-+static int cc33xx_rx_drop_packet_data(struct cc33xx *cc, u8 *raw_buffer_ptr,
-+				      u16 *raw_buffer_len)
-+{
-+	u16 prev_buffer_len = *raw_buffer_len;
-+
-+	/* Can we drop the entire frame ? */
-+	if (*raw_buffer_len >=
-+		(cc->partial_rx.original_bytes - cc->partial_rx.handled_bytes)) {
-+		*raw_buffer_len -= cc->partial_rx.original_bytes -
-+				cc->partial_rx.handled_bytes;
-+		cc->partial_rx.handled_bytes = 0;
-+		cc->partial_rx.status = CURR_RX_START;
-+	} else {
-+		cc->partial_rx.handled_bytes += *raw_buffer_len;
-+		*raw_buffer_len = 0;
-+	}
-+
-+	return (prev_buffer_len - *raw_buffer_len);
-+}
-+
-+/* Handle single packet from the RX buffer. We don't have to be aligned to
-+ * packet boundary (buffer may start \ end in the middle of packet)
-+ */
-+static void cc33xx_rx_handle_packet(struct cc33xx *cc, u8 *raw_buffer_ptr,
-+				    u16 *raw_buffer_len)
-+{
-+	struct cc33xx_rx_descriptor *desc;
-+	u16 consumed_bytes;
-+
-+	if (cc->partial_rx.status == CURR_RX_START) {
-+		WARN_ON(*raw_buffer_len < 2);
-+		desc = (struct cc33xx_rx_descriptor *)raw_buffer_ptr;
-+		cc->partial_rx.original_bytes = le16_to_cpu(desc->length);
-+		cc->partial_rx.handled_bytes = 0;
-+		cc->partial_rx.status = CURR_RX_DESC;
-+
-+		cc33xx_debug(DEBUG_RX, "rx frame. desc length 0x%x, alignment 0x%x, padding 0x%x",
-+			     desc->length, desc->header_alignment, desc->pad_len);
-+	}
-+
-+	/* start \ continue copy descriptor */
-+	if (cc->partial_rx.status == CURR_RX_DESC) {
-+		consumed_bytes = cc33xx_rx_get_packet_descriptor(cc,
-+								 raw_buffer_ptr,
-+								 raw_buffer_len);
-+		raw_buffer_ptr += consumed_bytes;
-+	}
-+
-+	/* Check if we are in the middle of dropped packet */
-+	if (unlikely(cc->partial_rx.status == CURR_RX_DROP)) {
-+		consumed_bytes = cc33xx_rx_drop_packet_data(cc, raw_buffer_ptr,
-+							    raw_buffer_len);
-+		raw_buffer_ptr += consumed_bytes;
-+	}
-+
-+	/* start \ continue copy descriptor */
-+	if (cc->partial_rx.status == CURR_RX_DATA) {
-+		consumed_bytes = cc33xx_rx_get_packet_data(cc, raw_buffer_ptr,
-+							   raw_buffer_len);
-+		raw_buffer_ptr += consumed_bytes;
-+	}
-+}
-+
-+/* It is assumed that SDIO buffer was read prior to this function (data buffer
-+ * is read along with the status). The RX function gets pointer to the RX data
-+ * and its length. This buffer may contain unknown number of packets, separated
-+ * by hif descriptor and 0-3 bytes padding if required.
-+ * The last packet may be truncated in the middle, and should be saved for next
-+ * iteration.
-+ */
-+int cc33xx_rx(struct cc33xx *cc, u8 *rx_buf_ptr, u16 rx_buf_len)
-+{
-+	u16 local_rx_buffer_len = rx_buf_len;
-+	u16 pkt_offset = 0;
-+	u16 consumed_bytes;
-+	u16 prev_rx_buf_len;
-+
-+	/* Split data into separate packets */
-+	while (local_rx_buffer_len > 0) {
-+		cc33xx_debug(DEBUG_RX, "start loop. buffer length %d",
-+			     local_rx_buffer_len);
-+
-+		/* the handle data call can only fail in memory-outage
-+		 * conditions, in that case the received frame will just
-+		 * be dropped.
-+		 */
-+		prev_rx_buf_len = local_rx_buffer_len;
-+		cc33xx_rx_handle_packet(cc, rx_buf_ptr + pkt_offset,
-+					&local_rx_buffer_len);
-+		consumed_bytes = prev_rx_buf_len - local_rx_buffer_len;
-+
-+		pkt_offset +=  consumed_bytes;
-+
-+		cc33xx_debug(DEBUG_RX, "end rx loop. buffer length %d, packet counter %d, current packet status %d",
-+			     local_rx_buffer_len, cc->rx_counter,
-+			     cc->partial_rx.status);
-+	}
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+int cc33xx_rx_filter_enable(struct cc33xx *cc, int index, bool enable,
-+			    struct cc33xx_rx_filter *filter)
-+{
-+	int ret;
-+
-+	if (!!test_bit(index, cc->rx_filter_enabled) == enable) {
-+		cc33xx_warning("Request to enable an already enabled rx filter %d",
-+			       index);
-+		return 0;
-+	}
-+
-+	ret = cc33xx_acx_set_rx_filter(cc, index, enable, filter);
-+
-+	if (ret) {
-+		cc33xx_error("Failed to %s rx data filter %d (err=%d)",
-+			     enable ? "enable" : "disable", index, ret);
-+		return ret;
-+	}
-+
-+	if (enable)
-+		__set_bit(index, cc->rx_filter_enabled);
-+	else
-+		__clear_bit(index, cc->rx_filter_enabled);
-+
-+	return 0;
-+}
-+
-+int cc33xx_rx_filter_clear_all(struct cc33xx *cc)
-+{
-+	int i, ret = 0;
-+
-+	for (i = 0; i < CC33XX_MAX_RX_FILTERS; i++) {
-+		if (!test_bit(i, cc->rx_filter_enabled))
-+			continue;
-+		ret = cc33xx_rx_filter_enable(cc, i, 0, NULL);
-+		if (ret)
-+			goto out;
-+	}
-+
-+out:
-+	return ret;
-+}
-+#else
-+int cc33xx_rx_filter_enable(struct cc33xx *cc, int index, bool enable,
-+			    struct cc33xx_rx_filter *filter)
-+{
-+	return 0;
-+}
-+
-+int cc33xx_rx_filter_clear_all(struct cc33xx *cc) { return 0; }
-+#endif /* CONFIG_PM */
-diff --git a/drivers/net/wireless/ti/cc33xx/rx.h b/drivers/net/wireless/ti/cc33xx/rx.h
-new file mode 100644
-index 000000000000..46ff6867749f
---- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/rx.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: GPL-2.0-only
-+ *
-+ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#ifndef __RX_H__
-+#define __RX_H__
-+
-+/* RX Descriptor flags:
-+ *
-+ * Bits 0-1 - band
-+ * Bit  2   - STBC
-+ * Bit  3   - A-MPDU
-+ * Bit  4   - HT
-+ * Bits 5-7 - encryption
-+ */
-+#define CC33XX_RX_DESC_BAND_MASK    0x03
-+#define CC33XX_RX_DESC_ENCRYPT_MASK 0xE0
-+
-+#define CC33XX_RX_DESC_BAND_BG      0x00
-+#define CC33XX_RX_DESC_BAND_J       0x01
-+#define CC33XX_RX_DESC_BAND_A       0x02
-+
-+/* RX Descriptor status
-+ *
-+ * Bits 0-2 - error code
-+ * Bits 3-5 - process_id tag (AP mode FW)
-+ * Bits 6-7 - reserved
-+ */
-+enum {
-+	CC33XX_RX_DESC_SUCCESS		= 0x00,
-+	CC33XX_RX_DESC_DECRYPT_FAIL	= 0x01,
-+	CC33XX_RX_DESC_MIC_FAIL		= 0x02,
-+	CC33XX_RX_DESC_STATUS_MASK	= 0x07
-+};
-+
-+/* Account for the padding inserted by the FW in case of RX_ALIGNMENT
-+ * or for fixing alignment in case the packet wasn't aligned.
-+ */
-+#define RX_BUF_ALIGN                 2
-+
-+/* Describes the alignment state of a Rx buffer */
-+enum cc33xx_rx_buf_align {
-+	CC33XX_RX_BUF_ALIGNED,
-+	CC33XX_RX_BUF_UNALIGNED,
-+	CC33XX_RX_BUF_PADDED,
-+};
-+
-+enum cc33xx_rx_curr_status {
-+	CURR_RX_START,
-+	CURR_RX_DROP,
-+	CURR_RX_DESC,
-+	CURR_RX_DATA
-+};
-+
-+struct cc33xx_rx_descriptor {
-+	__le16 length;
-+	u8  header_alignment;
-+	u8  status;
-+	__le32 timestamp;
-+
-+	u8  flags;
-+	u8  rate;
-+	u8  channel;
-+	s8  rssi;
-+	u8  snr;
-+
-+	u8  hlid;
-+	u8  pad_len;
-+	u8  frame_format;
-+} __packed;
-+
-+struct partial_rx_frame {
-+	struct sk_buff *skb;
-+	struct cc33xx_rx_descriptor desc;
-+	u16 handled_bytes;
-+	u16 original_bytes; /* including descriptor */
-+	enum cc33xx_rx_curr_status status;
-+};
-+
-+int cc33xx_rx(struct cc33xx *cc, u8 *rx_buf_ptr, u16 rx_buf_len);
-+int cc33xx_rx_filter_enable(struct cc33xx *cc, int index, bool enable,
-+			    struct cc33xx_rx_filter *filter);
-+int cc33xx_rx_filter_clear_all(struct cc33xx *cc);
-+
-+#endif /* __RX_H__ */
++#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_MSM8976_H
++#define __DT_BINDINGS_INTERCONNECT_QCOM_MSM8976_H
++
++/* BIMC fabric */
++#define MAS_APPS_PROC		0
++#define MAS_SMMNOC_BIMC	        1
++#define MAS_SNOC_BIMC		2
++#define MAS_TCU_0		3
++#define SLV_EBI		        4
++#define SLV_BIMC_SNOC		5
++
++/* PCNOC fabric */
++#define MAS_USB_HS2		0
++#define MAS_BLSP_1		1
++#define MAS_USB_HS1		2
++#define MAS_BLSP_2		3
++#define MAS_CRYPTO		4
++#define MAS_SDCC_1		5
++#define MAS_SDCC_2		6
++#define MAS_SDCC_3		7
++#define MAS_SNOC_PCNOC		8
++#define MAS_LPASS_AHB		9
++#define MAS_SPDM		10
++#define MAS_DEHR		11
++#define MAS_XM_USB_HS1		12
++#define PCNOC_M_0		13
++#define PCNOC_M_1		14
++#define PCNOC_INT_0		15
++#define PCNOC_INT_1		16
++#define PCNOC_INT_2		17
++#define PCNOC_S_1		18
++#define PCNOC_S_2		19
++#define PCNOC_S_3		20
++#define PCNOC_S_4		21
++#define PCNOC_S_8		22
++#define PCNOC_S_9		23
++#define SLV_TCSR		24
++#define SLV_TLMM		25
++#define SLV_CRYPTO_0_CFG	26
++#define SLV_MESSAGE_RAM	        27
++#define SLV_PDM		        28
++#define SLV_PRNG		29
++#define SLV_PMIC_ARB		30
++#define SLV_SNOC_CFG		31
++#define SLV_DCC_CFG		32
++#define SLV_CAMERA_SS_CFG	33
++#define SLV_DISP_SS_CFG	        34
++#define SLV_VENUS_CFG		35
++#define SLV_SDCC_1		36
++#define SLV_BLSP_1		37
++#define SLV_USB_HS		38
++#define SLV_SDCC_3		39
++#define SLV_SDCC_2		40
++#define SLV_GPU_CFG		41
++#define SLV_USB_HS2		42
++#define SLV_BLSP_2		43
++#define SLV_PCNOC_SNOC		44
++
++/* SNOC fabric */
++#define MAS_QDSS_BAM		0
++#define MAS_BIMC_SNOC		1
++#define MAS_PCNOC_SNOC		2
++#define MAS_QDSS_ETR		3
++#define MAS_LPASS_PROC		4
++#define MAS_IPA		        5
++#define QDSS_INT		6
++#define SNOC_INT_0		7
++#define SNOC_INT_1		8
++#define SNOC_INT_2		9
++#define SLV_KPSS_AHB		10
++#define SLV_SNOC_BIMC		11
++#define SLV_IMEM		12
++#define SLV_SNOC_PCNOC		13
++#define SLV_QDSS_STM		14
++#define SLV_CATS_0		15
++#define SLV_CATS_1		16
++#define SLV_LPASS		17
++
++/* SNOC-MM fabric */
++#define MAS_JPEG		0
++#define MAS_OXILI		1
++#define MAS_MDP0		2
++#define MAS_MDP1		3
++#define MAS_VENUS_0		4
++#define MAS_VENUS_1		5
++#define MAS_VFE_0		6
++#define MAS_VFE_1		7
++#define MAS_CPP		        8
++#define MM_INT_0		9
++#define SLV_SMMNOC_BIMC		10
++
++#endif /* __DT_BINDINGS_INTERCONNECT_QCOM_MSM8976_H */
 -- 
-2.25.1
+2.45.1
 
 
