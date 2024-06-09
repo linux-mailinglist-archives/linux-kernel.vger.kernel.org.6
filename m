@@ -1,82 +1,63 @@
-Return-Path: <linux-kernel+bounces-207380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC44901652
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4003F901654
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59DF1C20A0E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2EC1C20A33
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1A143AC4;
-	Sun,  9 Jun 2024 14:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8h/UQNi"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD475433C2;
+	Sun,  9 Jun 2024 14:18:15 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793911CD3C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 14:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8B1CD3C
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 14:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717942651; cv=none; b=T1hp0k5zOwGYcKTUOr16/B1hyIYuDvPsyhd/yeBIBjA6fLyOXQsLP5wExzZsxWcmmiW1Yy5Tur2MEFhgkKcWsF7EKYzCdHnJaO+GaosUqP+MKyUCcJSFyu2TttRjqqOv3wS9+su18MH/6FPijOprp5gIo4kikfkzqYIM/1zFBUg=
+	t=1717942695; cv=none; b=pb969C1e0Bsvo+qzLHNjAuhEQZGepAXJnTBKUY7xlLKE2rBQJF6A5LFwdtoggfoB4HJB0vTvlw+qXCLuCbylm1TrLfN8K4WCFjjMmTa9dGUySceC0CS2A0+TlrefvVRst5/mHJDyFG4aeqc/kcDAKEKaqXRY51BT+WXa7zxMoUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717942651; c=relaxed/simple;
-	bh=NJDToOELLavN79YkpNHBhxfCYr8Bzt9pRlexqHPJ7XY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=miSyvtft1KBK2xEmpVLaLYFVWGMPsbpgka7ZjAp9Cl+EP2e6lIXr84XH3GP4IfeGuGwkUNVfPzKSQGdKBgyOFBxbTFOCcBBP4M2JgedsumYdCMLC+T4Q6/nq9o6/l34cNN6anj2ev+T1BpzOvcRDbk1tymDgIctypmHHcchO5Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8h/UQNi; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7041f4553ccso1443953b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 07:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717942650; x=1718547450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TutpqlrSfL/EF9pT63bvOTQrpOoXNL5CWPlMZU8S7qU=;
-        b=U8h/UQNiwli2/fRnA5A3ZYhGwmJVO9zJuvs6ki5Zg5nsai4GuLsaIXjapUFaJi/g90
-         9t0s245GqtUaR2+U+P8Tt9WgH2TKZPtEJd/1FbnWjCey7C69f+mRDtVUn5qNIX7u8eHF
-         8oWswBY+ue7q0Q3yPWHo5e72zlKQI3fG1P8rgTPXFjnHCnfaguXuJag+RYec+FAzPO6B
-         dW8S3RS6eoKoIGBPP+UmNwvIBLOEHDsac1+G33IcJLLlY6LYibypWdR7HgORoIlQPV5u
-         tEXN431I7J1ld3Ip7ibN5mv7/wsLp2tYM2mjVoTtXyc4FvNUAb38Y5hvQfTD3tBG+3Od
-         2/IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717942650; x=1718547450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TutpqlrSfL/EF9pT63bvOTQrpOoXNL5CWPlMZU8S7qU=;
-        b=JGuE8/bTnVJ/Y1eSnsHSRKufCToqX3aH6+1l8TRiYC7YRYdhoT3npOXdtX0RdOdUb3
-         /9v6ZQQlhREcCnntzkI5qnK/Vm2PIxuY1WWFtEwdYpEV1IZLfWGdkI9M82Rz5LrObxWN
-         FYjIgi2XWuuZbUV1Ig9cECn92uH7jmE6uNhUcFqXT7iIFWJehugmQZqYti3ntlD7yMrt
-         4V74PJx8XR6Fu0kOZbBTQIC0pw+i7gYSW98ijsqwEqo1L8SPIAAcD9evLUqUs0N/y3ZX
-         i8Sivj9dlEUpQ6sG1dUwPsdUzIvKZaI5ZRXX5sTyHcSpYBxXNn6vnKLiEbQc9YZQI9A3
-         VNPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsYNKp+h2kfHRR+hZTJf90WprVZCR84AvgQ8NTh1Xls3d9wnGeAQgyYKdbfZeiTSb1YCjdUHiYVBwLM6GV1ypXIrGkL/ZLMIdBs2vE
-X-Gm-Message-State: AOJu0YzBGua9N7FnYj1uLQ43rleVZy1YeqBVVgybBPZ4ZX5/oHNB7dcj
-	mfiQR2loJ25DTaafpZ354lbCRYhTdii/zQwgsL82JpfmnlUozeqd
-X-Google-Smtp-Source: AGHT+IFTYQkeJxZrMdLUEDOMYJfJADY46i3otPb5Xg6VepNEXgcNkbZzzwYqyTOBwy5rjnS0JFuV0Q==
-X-Received: by 2002:a05:6a20:7490:b0:1b5:97da:dfde with SMTP id adf61e73a8af0-1b597dae2ccmr3868311637.43.1717942649827;
-        Sun, 09 Jun 2024 07:17:29 -0700 (PDT)
-Received: from dev0.. ([49.43.162.161])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7041ffa7cfasm2767555b3a.112.2024.06.09.07.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 07:17:29 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	dm-devel@lists.linux.dev,
+	s=arc-20240116; t=1717942695; c=relaxed/simple;
+	bh=2o6h+jkbF3j5Xznkz/U08BjHf5jtHcabwfD/Tcq1DGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AWU9Ssod1YXT/+trlcEFfldKac0HyKMF42+cO4K9X62t/QcsFGHsbQ2PKc4RqQeEfRXax7+IxCwTY9n6FeaCiRyvoAgW2/00xARao8ihbHAdrO3s6xpfKkgGwG38+wfKQDQXr4C5JB0cQNUM1Xtzt6ONcOhwN84z6tZfhG2RCoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 5112AA9C38;
+	Sun,  9 Jun 2024 23:18:05 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id SAkmJ4iE8ZGW; Sun,  9 Jun 2024 23:18:05 +0900 (JST)
+Received: from localhost.localdomain (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp [153.220.101.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id 0047FA9BFA;
+	Sun,  9 Jun 2024 23:18:04 +0900 (JST)
+From: takakura@valinux.co.jp
+To: alex@ghiti.fr,
+	songshuaishuai@tinylab.org,
+	paul.walmsley@sifive.com
+Cc: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	guoren@kernel.org,
+	xianting.tian@linux.alibaba.com,
+	takahiro.akashi@linaro.org,
+	takakura@valinux.co.jp,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	jain.abhinav177@gmail.com
-Subject: [PATCH] dm: Add support for escaped characters in str_field_delimit()
-Date: Sun,  9 Jun 2024 14:17:21 +0000
-Message-Id: <20240609141721.52344-1-jain.abhinav177@gmail.com>
+Subject: Re: [-fixes] riscv: kexec: Avoid deadlock in kexec crash path
+Date: Sun,  9 Jun 2024 23:18:02 +0900
+Message-Id: <20240609141802.6976-1-takakura@valinux.co.jp>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <545a7f3e-436e-4fd7-a45f-4f800bd58b20@ghiti.fr>
+References: <545a7f3e-436e-4fd7-a45f-4f800bd58b20@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,51 +66,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new variable for escaped characters.
+Hi Alex, Song,
 
-If an escaped character (\) is found before the separator, and if the 
-separator is not found or if the escaped character is located before the
-separator, then move the separator ahead and continue searching for the
-next separator.
+On Fri, 24 May 2024, Alexandre Ghiti wrote:
+>Hi Song, Ryo,
+>
+>On 06/05/2024 07:10, takakura@valinux.co.jp wrote:
+>> Hi Song and Paul!
+>>
+>>>> To avoid the deadlock, this patch directly EOI the irq regardless of
+>>>> the active status of irqchip.
+>>> Taking a quick look at the other architectures, looks like no one else is
+>>> doing this.  Is this addressing a RISC-V-only problem?
+>>>
+>>>> diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
+>>>> index f6c7135b00d7..d7ddf4d2b243 100644
+>>>> --- a/arch/riscv/kernel/machine_kexec.c
+>>>> +++ b/arch/riscv/kernel/machine_kexec.c
+>>>> @@ -149,20 +149,12 @@ static void machine_kexec_mask_interrupts(void)
+>>>>   
+>>>>   	for_each_irq_desc(i, desc) {
+>>>>   		struct irq_chip *chip;
+>>>> -		int ret;
+>>>>   
+>>>>   		chip = irq_desc_get_chip(desc);
+>>>>   		if (!chip)
+>>>>   			continue;
+>>>>   
+>>>> -		/*
+>>>> -		 * First try to remove the active state. If this
+>>>> -		 * fails, try to EOI the interrupt.
+>>>> -		 */
+>>>> -		ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
+>>>> -
+>>>> -		if (ret && irqd_irq_inprogress(&desc->irq_data) &&
+>>>> -		    chip->irq_eoi)
+>>>> +		if (chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+>>>>   			chip->irq_eoi(&desc->irq_data);
+>> I think this deadlock is relevant to riscv and arm64 as they both
+>> acquire irqdesc spinlock by calling irq_set_irqchip_state() during their
+>> machine_kexec_mask_interrupts().
+>>
+>> However, I think calling irq_set_irqchip_state() during
+>> machine_kexec_mask_interrupts() is arm64 specific way of handling EOI
+>> which is not necessary for riscv.
+>> For arm64, its interrupt controller(gic) seems to have two ways of EOIing
+>> an interrupt depending on the mode which gic is configured. One of them
+>> treats EOI as two step procedure, priority drop and deactivation. I think
+>> irq_set_irqchip_state() is there to handle the deactivation part of
+>> the procedure.
+>> For riscv, EOI only requires irq_eoi handler to complete EOI and I think
+>> keeping irq_set_irqchip_state() will only leave this possible deadlock
+>> without any use.
+>> So I think it's best we simply remove irq_set_irqchip_state() as Song did.
+>
+>
+>I think this ^ is relevant and should be added to the commit log. @Song 
+>can you respin another version with the updated commit log? @Ryo can you 
+>add your Reviewed-by when it's done?
 
-Return the pointer to remainder string after the delimiter. If the
-separator was found, return a pointer to the character immediately after
-the delimiter (s + 1). If the separator was not found, return NULL.
+Sure!
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- drivers/md/dm-init.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+>This fix has been lagging behind for quite some time, it would be nice 
+>to merge this in 6.10 and backport to stable.
 
-diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-index 2a71bcdba92d..bef6a582a4ae 100644
---- a/drivers/md/dm-init.c
-+++ b/drivers/md/dm-init.c
-@@ -87,11 +87,21 @@ static void __init dm_setup_cleanup(struct list_head *devices)
-  */
- static char __init *str_field_delimit(char **str, char separator)
- {
--	char *s;
-+	char *s, *escaped;
- 
--	/* TODO: add support for escaped characters */
- 	*str = skip_spaces(*str);
- 	s = strchr(*str, separator);
-+
-+	/* Check for escaped character */
-+	escaped = strchr(*str, '\\');
-+	if (escaped && (s == NULL || escaped < s)) {
-+		/*
-+		 * If escaped character comes before the separator, move
-+		 * the separator ahead & continue searching for next one.
-+		 */
-+		s = strchr(escaped + 1, separator);
-+	}
-+
- 	/* Delimit the field and remove trailing spaces */
- 	if (s)
- 		*s = '\0';
--- 
-2.34.1
+Sincerely,
 
+Ryo Takakura
+
+>Thanks,
+>
+>Alex
 
