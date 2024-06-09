@@ -1,431 +1,452 @@
-Return-Path: <linux-kernel+bounces-207252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58811901481
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AB09014AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 07:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B266B210EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D4D28206E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 05:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90166FC19;
-	Sun,  9 Jun 2024 05:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TXRugNb+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C57A17565;
+	Sun,  9 Jun 2024 05:45:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAD6E56A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 05:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717910410; cv=fail; b=nJFM4zBhl29FPHVx4rIUve3fbvlN4SQCOWboF/JS4hv3U1jVdd7y9Ps6zhggpRCieiZqD76iUzw1O2jEcGBBevUldKw1NWL/9fPa1ukF6CWFDg+y3+8CDih0UeQ4fBCDQ3jKI6wLjgEs/FDXe3cex5MC+2jGnSJDentwKbj4QsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717910410; c=relaxed/simple;
-	bh=XCn3Zjp3344SCByJIXcK5f4snJqsJUrWljnnWI6tjXQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CGntJrqODEH62afVx5LQ0uz56QT6a6HcmEWaCqK4aK5SPDURKHr00WpRS9/M8uBQZRucWBfeDb2u44Y6VRMtjCtj0I2IG7EBEbIgX0cBQMEJ4oB7GJb6vqQaK8pFmCYgUFSltxdFq/n0AemJ8tgVQby8a1eqFbenHzpiaUdac68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TXRugNb+; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717910408; x=1749446408;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=XCn3Zjp3344SCByJIXcK5f4snJqsJUrWljnnWI6tjXQ=;
-  b=TXRugNb+VQho7Xzovy6IuuqZDW9Bt0pSnIKm9mortZKO3q2KcGAhnN1D
-   rZaQhf2mQeJyDQ+x4Pe5uLMK8iBdTw7NEoC4l7UzqiJrBk/26LKymZFTr
-   Jlgb1TVZydHu5SnvLwrrfLpleztxNO0C6TlKDkaFIhNA9EILgbuH8fTtj
-   e4nGSvC15puhI72fuWKoSGE0sCRINVzJ+bpP2qi+jJjzzr6icrmmC8Z/A
-   PE+djYgvvIB2mbTmEZk1h+XxiVQg+7emakzj/sHepABUW7nzsnDlvFrgv
-   UB8rJh+lRFb7onU717daGvh4NldXuN0BSUiPminhjJMJdya/x+ZojekkF
-   g==;
-X-CSE-ConnectionGUID: 9QK7C9F2TpOxtOPX9Ky5fw==
-X-CSE-MsgGUID: hfT9Z2mMTMCjALQQEc+/Yw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="25168014"
-X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
-   d="scan'208";a="25168014"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2024 22:20:08 -0700
-X-CSE-ConnectionGUID: 3+4QDELFSS25aOa0x+dq+A==
-X-CSE-MsgGUID: bgWQC4RgRj2+0LnjUnaLUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,224,1712646000"; 
-   d="scan'208";a="38665912"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Jun 2024 22:20:06 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 8 Jun 2024 22:20:05 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 8 Jun 2024 22:20:05 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 8 Jun 2024 22:20:05 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 8 Jun 2024 22:20:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WddZ5oAv1VBv3X1SnHBUco7q5FhbCXUrLKOncJLTWZ86a2CADwgAlwjuXpeUl3USkVvr6juQJiG3J1WpTgvB06S9ZAaop39iQuxfRYoK39sWItsH47LpH8EN8X/TlKihUIh5Nqfc2lWyqTznDJqk2uXuIZ8ILnJ5jOo0fmalR3+kXkikfslealRlAkfvWhgSuSkhTeWZpdbtQilOSdJsQQ4h477vdwhGWYEqNrMwZ+6oLQPVZsB7XZ/gaN9cleil0XqKqEmFIHC7CE0EVrszDET14XdoAgDpiZLy7YPEyKTid/+zeLbtJZ0e0sFu2tJe/pmDC3C7tE15nw44IoLChQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KQ8Tz75Rd1ApSvk+OQLbBHqsxwUkGDSchHwQkjEtsHA=;
- b=R9A8o/y94JOEvUoMowRAVGnfJ915iiglucRAtfr2OyLLWJvXJrUGT1XhSRESWiR7UXnP2JgAwJEHTVpi00TOsvahkoeBP7Sty4SabkCm6KCs6ZadW71UETZHkQP1R2m7aaw6vus7pF50MZj/wyXlqomvg3JL6UDF+JS+9W4Gv9vntvg25gAWXZkm8RhyFer0Q9t3iDeszq6VlsGYZUzws1uWK9Mlsi6aPtcvxmYOkBj/pLQUr7XCbklcFcVsAGXyby06uSlJPPGWwPNxjEt4eEvVkdF58jOkF24YdLim7AUmiCkPtfviuNi0b4H67YdioinZXYff9Ix3SmMgZmfvGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN6PR11MB3230.namprd11.prod.outlook.com (2603:10b6:805:b8::29)
- by DM4PR11MB6360.namprd11.prod.outlook.com (2603:10b6:8:bd::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Sun, 9 Jun
- 2024 05:20:03 +0000
-Received: from SN6PR11MB3230.namprd11.prod.outlook.com
- ([fe80::c2dd:7cf8:6008:b690]) by SN6PR11MB3230.namprd11.prod.outlook.com
- ([fe80::c2dd:7cf8:6008:b690%5]) with mapi id 15.20.7633.036; Sun, 9 Jun 2024
- 05:20:02 +0000
-Date: Sun, 9 Jun 2024 13:19:53 +0800
-From: Philip Li <philip.li@intel.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-CC: kernel test robot <lkp@intel.com>, "oe-kbuild-all@lists.linux.dev"
-	<oe-kbuild-all@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:85.11-94.6: Warning
- (graph_child_address): /soc/video@10830000/ports/port@1: graph node has
- single child node 'endpoint@0', #address-cells/#size-cells are not necessary
-Message-ID: <ZmU7ebk5vWv+fBT2@rli9-mobl>
-References: <202406081329.snoMrZsJ-lkp@intel.com>
- <TY3PR01MB113468C94F2ED383F5EB883A986C42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB113468C94F2ED383F5EB883A986C42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-X-ClientProxiedBy: SG2PR04CA0157.apcprd04.prod.outlook.com (2603:1096:4::19)
- To SN6PR11MB3230.namprd11.prod.outlook.com (2603:10b6:805:b8::29)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F975168DA
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 05:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717911906; cv=none; b=Vd9aA3fA64Kq6stojBf+xnFzGosSKWQuLLg89ryKizIFfeOtPTea2VVOCqRQ0ud6Ox5YMAhKWq9hMuelFVAE0+r9GF5MHxetN6CHjSZbljnVnmP4W4V4lCgEvtnraDkM6Oe4CfEwxt5N2naqnce/O/JuwvgXJLOplT8VRdZlmjk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717911906; c=relaxed/simple;
+	bh=RTzrk6GY1mnljqMb9bYDJF64MmlYIX7pxCDeaLaVoOU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=t45NLazzCB8IV3//fu64AVxz9G3Veb8iQxE090+DKor+MdydQAboZOnQpe0q4NOAcvKMEjv7zNryOxJW4jJMpxZUi2NdocYho/8EY1fi/pukyOMexZCPzRO/GYP0I51puY6VqSFtU3KtoWbdd6bnleRcZ6ysQV72fTzQEoyme6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb520773e3so276548439f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 22:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717911903; x=1718516703;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yMneK5lFkX4aAU6cmcK9EzLM5jIu4765tBMNtNsXyZc=;
+        b=Wq4PcOkatjL3wpeo0B/dUbAvGV1IUwfhVQUv7RxZFRO9FrWo1oMGzXB6e+YafeXhaa
+         iXI36N9mECODUj+votq1vLOTlTTV8FRndcPgNg+laHFpBViCRiBTnq9IJ7V7/jHbXcfZ
+         ldjWodR6v31rUW3g6Y8xUF51ZheRfrXemON3KWgmEs/bqTfaV2WxHajrqr3IUa88IdoB
+         w6kNoZ8vYlFYyYEOqokUZ5X944vFI+2xkKKHk6H+1bgN6IvRdETJ1oAGDD82VSIj+KLw
+         92mNlifjdVof4AuLaOBJA8+RDSZ1tD3siwpjoZynjYz7XUSV2DvmHb4dBdFNIOJjkbKN
+         U62Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNiiIXDdF7gWAPrdtmoK1SjebbnmdvcavY5Mj6zzVlQpUBgZ1DrTL4WRW/HdX6bwPw45THFDrbmp5NIFFRYg+eLDzeWcPXtyKnIzoI
+X-Gm-Message-State: AOJu0Yw/j6i0Ad9MpX336hSdudr3V26/7mlwiD6cDIiwKFpZyQUjf1DG
+	M8z7PAmJfokYMY8YZgv+bdgvBpLpZlLiR2A7tNCUMLs92XVlVxejuZc/W6VgiKtTh3NKGtc/0k1
+	24N1XVIh4ECjRnAgTmrSPAEh/BMjptMmSjSISAgA0rLs8LEfl/P3X/7k=
+X-Google-Smtp-Source: AGHT+IH/Ex/8FT88Dbal+4QU8eBIEd/ZrNiT574O5+7PxwzevxmM3NZZRUXHI4PgT+WO1xJl5Kc5N+Zi7gAroHh9u2MFmC8kLJ5W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR11MB3230:EE_|DM4PR11MB6360:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62f511ee-58a6-45c5-6ee8-08dc8843d0a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|220923002;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?E3g5cv10HZ+C6/rPMTocQOGY9XpnKp6qG36UgmGLCoHCGk6YFxJNGBfCtTKW?=
- =?us-ascii?Q?0gVzKvzm60EbivEdnBadRbPusUkH3wFsqZVFXzJg5ftAz8oHV0HZzjLozOzJ?=
- =?us-ascii?Q?si03CJijKrLW7Ot9zBaJ9my1VIELA1mh/LXI94sgRMymdJQ1o9ldSrK2S6dP?=
- =?us-ascii?Q?6G64DJA5WEtUHUnQt6Uw3Q8REGFVLb91y/KCP9BiKrKocszRkIZL52eR/HUI?=
- =?us-ascii?Q?NRWWdDPcY+8SviFr7XK9lFe91Q/z5xY+b21aZgXd1uMjQhmQTX6ORQBnZ9Io?=
- =?us-ascii?Q?gynDXbmiFBIxrXDycjCS4jrq+2tkHI5WG+RBWMjjrL31bLG2d8cHoLB7FFwL?=
- =?us-ascii?Q?HBHsTj4Ee51MT7Yrf491AjYpbOcQGnYseKuuQceFfBg7dHszuZ3V0+S0OPbY?=
- =?us-ascii?Q?P0oFuyeRxeNAwC+9AUAzQ0EJ29Rnv+QrYqjU1TsqGxyBT4KXJvOJyFtV+V5D?=
- =?us-ascii?Q?r85lwrM4RSHEHyOFtMAgA1DeaOUwzZ828xBLMiN+26so/vgLc+Se7OJsVHpM?=
- =?us-ascii?Q?qWYExQT8w1o7l96/QdHYRGlYCZxmP2LVQJTByxU62oEleZFHXd5RFWNR/aUx?=
- =?us-ascii?Q?Oc4EmkaXAW/02/ONQc+src4bgBs79HMSgPHjf7eaRZNtkvLfOPDdsWgSfHw4?=
- =?us-ascii?Q?gIhQyWDtSMSId073VLFXg/wqPk1eJxSWnkJdhFMT5JPVODXfNECkcw4vRG3I?=
- =?us-ascii?Q?5bhNhn27C8RujnecXy28ywxW8SgIotXkz0MFWKqqo5MakfZbLpIkjh99gRVx?=
- =?us-ascii?Q?/P7uOQJZaC2jEeHl6tOS5Q/Pt7mqPCblRJICtgJNiJQMzFr0m323RTe9aii0?=
- =?us-ascii?Q?Dv0LdP0WYnP/2zWgQygxgw1OplS8xtX7IA5INbQyygtLrEY1tF1PsvFbp0ot?=
- =?us-ascii?Q?yMXtC54/UaqgseGWMrZDxjOUQ6nueYtz66/Qh7kQLJoN1oLBh8MosLVpCnwL?=
- =?us-ascii?Q?7Elsd7ywGQ5cavav68CveN3ahfg+jKrBtJzQu8ITYbnxc1as4ipTokYb52Bo?=
- =?us-ascii?Q?ynh59mLrXnHLSITJi6mfnvWUZcObJ6S2N7Rq1Gf9iGS4UNCMqIS9Tbycy+81?=
- =?us-ascii?Q?/R3yYxRH9Y0GgiG9VPgeUhWjCm0ADXKxw4idWV+jUW2nsOR1ZpAWSpsj3RXr?=
- =?us-ascii?Q?c/zAZ3UPQah0dWWxjZqZlh9fJjSASuOiDFbfpIg51SG5AQI0SflmeucwJjv1?=
- =?us-ascii?Q?wc+nhzDcZ5CkWZrPsWkbpV+9273djUjZ5bET3iYfyKBVQ7YM0LuAdNZS4di/?=
- =?us-ascii?Q?nGo7SIQhPTbQwO1Lpewww3Ho2BR/3habBHdfkfC/MW5PhX4+Ydw91g8gXswS?=
- =?us-ascii?Q?E8MdpB2PhYFt7kegSjd9RWv0?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB3230.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(220923002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/l5VON+m3DQAUhhIx+Eud6/WLsBuS5wXp46SnIgnU+WIbn6OfF71C57N1FYQ?=
- =?us-ascii?Q?U9hCQtTk+YZ8bsLjGmidZTZuxv6LuK0nLBTVA3kN8ftBFscoA+SINjSm0U/W?=
- =?us-ascii?Q?Eq4BPH/mttPBW0mHuie6Ll7yZbLJ0YYuxoMNg4Vf5r5WYnD2bDvoHJ16J+Qf?=
- =?us-ascii?Q?dNPXIJEM6WetZsauV1Y+kpMoufTzlMnK7V+4BteEUEO2OGozTq9YCKQr23id?=
- =?us-ascii?Q?4utfGJteCh3g3BZimQ2j7KgeM7pzwTJrMuPvfVZ9/pCHLwCSjFK2VCNUU33Y?=
- =?us-ascii?Q?lCR/0I+8gGhxohD/4uhJciP61M7zZ6cnKRadJWAAI1N42WrjyPzE0i7WfKpt?=
- =?us-ascii?Q?ZltANV62r9Mmmtk5TwZ2T8KPMYZtVD6oSzErTzSmiThUR0XxFpQmgX+vDgcL?=
- =?us-ascii?Q?xinwFnO9Ty1t+Z/9qt6RceVMNqjuiqBz9Eakmm91hc2F+Bbl+1TbWqTR7hQM?=
- =?us-ascii?Q?dBDeysJwGW3Z5aSUZ7NYxJmX5ne+rxvfh97k3ufhi1UHlu9SukSFavbNQFIq?=
- =?us-ascii?Q?O5cQHZNjg8hcLHM5NzlKZsiSAL/L802u4M+HcmkpC0YlVIy6JQSMOXpPAMuk?=
- =?us-ascii?Q?46sgM3vxCvw5JcBaeQqQWN0w/76b9UdCrHFncCmoUPJ0ZLhzqPmHuuvVVPF8?=
- =?us-ascii?Q?aiGQPYcWNR7eDiXqiANZOdLbX+Fjij9AaYOqUkTAOMcGDQn5cNyMIkw+LZbQ?=
- =?us-ascii?Q?zfr0OQXSS/wV5MfSdB6kCREE6SIPRXC3iwY0+qIJHY2VoS2e5LYRsAp8PDob?=
- =?us-ascii?Q?9ZBNoLLSJ6diqk5xx2IifkwZz8LfecsS1r2FqPU5cSe8/JG17SQYXi48OgRs?=
- =?us-ascii?Q?2vWex4CH2yDnFhvKm0KjhO1D51hrUfyJNUnA7elcy+765lrZInXw6zc953XK?=
- =?us-ascii?Q?zrdpazidkwkOIQPY410JmsryweUp1zx81JK6amJ5HEQuWGmNw6iYUQDqbMx9?=
- =?us-ascii?Q?LH4tQAzjLsxrk5NnpdQVGUINnIxY8QfJbvSW3Ia9kdEXdtjWXxBLTW5spTPq?=
- =?us-ascii?Q?+TtrRnvk5+BXWvbSxcNisYiXknix7yGlTzoeFskYRUi1Q8Gjc4+K2VjNVqvc?=
- =?us-ascii?Q?GzUspTpADXGUSss+CPNvIF5s1T+8YgdOgGrV/x47DciD0+8Q4VLETeDhWd7m?=
- =?us-ascii?Q?JAf5qRcHJMbSfERWs0XhvVU9mD7nl6Hncvv+TTu4Aqkw8zvkRLWnByQklnWU?=
- =?us-ascii?Q?YWddmhAowTqKslFHoWOoW2yXME4UQpmmLcrxVC1VX+dMzWacSypbj/sY5QJ/?=
- =?us-ascii?Q?gHOP+K8AHKM82SrQz+sfeoFwlNePcrw5HmQbekeOvWDyj9KtZw+eezFEAAIW?=
- =?us-ascii?Q?UohG5yPhsMtSOuQupzfzmfRWqtHimhSOW0o7VWqeJfvjOtz5Q1MhCmc8CPcX?=
- =?us-ascii?Q?oufu9DARmRgxRgAObWXGqTv3oKqXGNoJvlhbg5LXMg4e1kE+Jnf9MfXM3NCX?=
- =?us-ascii?Q?KBqKxmTvTMdv/xntFvFn6JJKkDWrozrsavVJwXd9cQVIY9tj5T+M8VijPAgX?=
- =?us-ascii?Q?gVOsjdiVvTd8yo4pd3aIf6J3GwQGWTwji26n5jt82xgChF3B4IRawfcCgkm6?=
- =?us-ascii?Q?mjRBCtAk+/hQ5tEiI/KUBtVNhljyBhuuJwY5jPNZ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62f511ee-58a6-45c5-6ee8-08dc8843d0a8
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB3230.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2024 05:20:02.7596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fu3iXAcyzm/dPPpFvp+HdZQcyCEqe6T7blILT+Rn+EAdC352TmXIdhT/ZUSMbIeFloxHxwBi5EA3Xw/yfkjKUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6360
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6638:248b:b0:488:75e3:f3c5 with SMTP id
+ 8926c6da1cb9f-4b7b122d444mr97217173.0.1717911903322; Sat, 08 Jun 2024
+ 22:45:03 -0700 (PDT)
+Date: Sat, 08 Jun 2024 22:45:03 -0700
+In-Reply-To: <d6923855-5846-4ae7-be6a-ef987ecb9f9c@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c0d2aa061a6e88d0@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_revalidate_dentry
+From: syzbot <syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com>
+To: chao@kernel.org, glider@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 08, 2024 at 08:42:56AM +0000, Biju Das wrote:
-> Hi All,
-> 
-> > -----Original Message-----
-> > From: kernel test robot <lkp@intel.com>
-> > Sent: Saturday, June 8, 2024 6:37 AM
-> > To: Biju Das <biju.das.jz@bp.renesas.com>
-> > Cc: oe-kbuild-all@lists.linux.dev; linux-kernel@vger.kernel.org; Geert Uytterhoeven
-> > <geert+renesas@glider.be>
-> > Subject: arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:85.11-94.6: Warning (graph_child_address):
-> > /soc/video@10830000/ports/port@1: graph node has single child node 'endpoint@0', #address-
-> > cells/#size-cells are not necessary
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   dc772f8237f9b0c9ea3f34d0dc4a57d1f6a5070d
-> > commit: 971c17f879352adc719ff215e0769f8e0a49d7c4 arm64: dts: renesas: r9a07g043u: Add CSI and CRU
-> > nodes
-> > date:   4 months ago
-> > compiler: aarch64-linux-gcc (GCC) 13.2.0 reproduce (this is a W=1 build):
-> > (https://download.01.org/0day-ci/archive/20240608/202406081329.snoMrZsJ-lkp@intel.com/reproduce)
-> 
-> As per this,
-> dasb@ree-du1sdd5:~/lkp-tests$ mkdir build_dir && cp config build_dir/.config
-> cp: cannot stat 'config': No such file or directory
+Hello,
 
-sorry, looks this is confusing to "cp config build_dir/.config" as there's no .config
-for this case. We will fix the reproduce step.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> 
-> So I have generated .config and copied as config
-> 
-> Than I got the the below issue,
-> COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
-> -bash: /data/dasb/lkp-tests/kbuild/make.cross: No such file or directory
+  T1] ALSA device list:
+[   49.732806][    T1]   #0: Dummy 1
+[   49.736413][    T1]   #1: Loopback 1
+[   49.740228][    T1]   #2: Virtual MIDI Card 1
+[   49.750262][   T10] platform regulatory.0: Direct firmware load for regu=
+latory.db failed with error -2
+[   49.760115][   T10] platform regulatory.0: Falling back to sysfs fallbac=
+k for: regulatory.db
+[   49.769557][    T1] md: Waiting for all devices to be available before a=
+utodetect
+[   49.777447][    T1] md: If you don't use raid, use raid=3Dnoautodetect
+[   49.784213][    T1] md: Autodetecting RAID arrays.
+[   49.789324][    T1] md: autorun ...
+[   49.793191][    T1] md: ... autorun DONE.
+[   49.912261][    T1] EXT4-fs (sda1): mounted filesystem 5941fea2-f5fa-4b4=
+e-b5ef-9af118b27b95 ro with ordered data mode. Quota mode: none.
+[   49.925661][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce 8:1.
+[   49.949100][    T1] devtmpfs: mounted
+[   50.204085][    T1] Freeing unused kernel image (initmem) memory: 36920K
+[   50.216901][    T1] Write protecting the kernel read-only data: 260096k
+[   50.263842][    T1] Freeing unused kernel image (rodata/data gap) memory=
+: 1876K
+[   51.884629][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   51.895285][    T1] x86/mm: Checking user space page tables
+[   53.370836][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   53.379919][    T1] Failed to set sysctl parameter 'kernel.hung_task_all=
+_cpu_backtrace=3D1': parameter not found
+[   53.401312][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
+ic=3D1': parameter not found
+[   53.413335][    T1] Run /sbin/init as init process
+[   55.024257][ T4444] mount (4444) used greatest stack depth: 8112 bytes l=
+eft
+[   55.119469][ T4445] EXT4-fs (sda1): re-mounted 5941fea2-f5fa-4b4e-b5ef-9=
+af118b27b95 r/w. Quota mode: none.
+mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
+y
+mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
+ory
+[   55.460316][ T4448] mount (4448) used greatest stack depth: 5568 bytes l=
+eft
+Starting syslogd: OK
+Starting acpid: OK
+Starting klogd: OK
+Running sysctl: OK
+Populating /dev using udev: [   59.293786][ T4478] udevd[4478]: starting ve=
+rsion 3.2.11
+[   62.812014][ T4480] udevd[4480]: starting eudev-3.2.11
+[   62.823661][ T4478] udevd (4478) used greatest stack depth: 5344 bytes l=
+eft
+[   96.252561][ T1219] net_ratelimit: 2 callbacks suppressed
+[   96.252654][ T1219] aoe: packet could not be sent on lo.  consider incre=
+asing tx_queue_len
+[   96.267801][ T1219] aoe: packet could not be sent on bond0.  consider in=
+creasing tx_queue_len
+[   96.276910][ T1219] aoe: packet could not be sent on dummy0.  consider i=
+ncreasing tx_queue_len
+[   96.286143][ T1219] aoe: packet could not be sent on eql.  consider incr=
+easing tx_queue_len
+[   96.295161][ T1219] aoe: packet could not be sent on ifb0.  consider inc=
+reasing tx_queue_len
+[   96.304298][ T1219] aoe: packet could not be sent on ifb1.  consider inc=
+reasing tx_queue_len
+[   96.313312][ T1219] aoe: packet could not be sent on eth0.  consider inc=
+reasing tx_queue_len
+[   96.322319][ T1219] aoe: packet could not be sent on wlan0.  consider in=
+creasing tx_queue_len
+[   96.331822][ T1219] aoe: packet could not be sent on wlan1.  consider in=
+creasing tx_queue_len
+[   96.341035][ T1219] aoe: packet could not be sent on hwsim0.  consider i=
+ncreasing tx_queue_len
+done
+Starting system message bus: done
+Starting iptables: OK
+Starting network: OK
+Starting dhcpcd...
+dhcpcd-9.4.1 starting
+dev: loaded udev
+DUID 00:04:98:24:4c:28:99:7c:d9:70:fe:51:ca:fe:56:33:2c:7d
+forked to background, child pid 4692
+[  110.213007][ T4693] 8021q: adding VLAN 0 to HW filter on device bond0
+[  110.255329][ T4693] eql: remember to turn off Van-Jacobson compression o=
+n your slave devices
+Starting sshd: [  111.615530][   T10] cfg80211: failed to load regulatory.d=
+b
+OK
 
-Is it possible the lkp-tests is not up to date? the make.cross code was uploaded
-recently.
 
-> 
-> Can you please provide the details how to get this tool chain?
-> 
-> So that I can reproduce and fix the issue in same environment.
+syzkaller
 
-You can try below steps (without the cp .config)
+syzkaller login: [  114.058251][    C0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  114.065473][    C0] BUG: KMSAN: uninit-value in receive_buf+0x25e3/0x5fd=
+0
+[  114.072524][    C0]  receive_buf+0x25e3/0x5fd0
+[  114.077324][    C0]  virtnet_poll+0xd1c/0x23c0
+[  114.082110][    C0]  __napi_poll+0xe7/0x980
+[  114.086745][    C0]  net_rx_action+0x82a/0x1850
+[  114.091708][    C0]  handle_softirqs+0x1ce/0x800
+[  114.096721][    C0]  __irq_exit_rcu+0x68/0x120
+[  114.101495][    C0]  irq_exit_rcu+0x12/0x20
+[  114.106116][    C0]  common_interrupt+0x94/0xa0
+[  114.111003][    C0]  asm_common_interrupt+0x2b/0x40
+[  114.116235][    C0]  virt_to_page_or_null+0x9b/0x150
+[  114.121622][    C0]  kmsan_get_metadata+0x146/0x1d0
+[  114.126851][    C0]  kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[  114.132755][    C0]  __msan_metadata_ptr_for_load_8+0x24/0x40
+[  114.138838][    C0]  move_page_tables+0x22aa/0x3940
+[  114.144062][    C0]  setup_arg_pages+0x1741/0x1eb0
+[  114.149161][    C0]  load_elf_binary+0x186e/0x4e10
+[  114.154310][    C0]  bprm_execve+0xc57/0x21c0
+[  114.158971][    C0]  do_execveat_common+0xceb/0xd70
+[  114.164231][    C0]  __x64_sys_execve+0xf4/0x130
+[  114.169182][    C0]  x64_sys_call+0x164f/0x3b90
+[  114.174097][    C0]  do_syscall_64+0xcd/0x1e0
+[  114.178953][    C0]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  114.185159][    C0]=20
+[  114.187583][    C0] Uninit was created at:
+[  114.191970][    C0]  __alloc_pages_noprof+0x9d6/0xe70
+[  114.197429][    C0]  alloc_pages_mpol_noprof+0x299/0x990
+[  114.203217][    C0]  alloc_pages_noprof+0x1bf/0x1e0
+[  114.208521][    C0]  skb_page_frag_refill+0x2bf/0x7c0
+[  114.214331][    C0]  virtnet_rq_alloc+0x43/0xbb0
+[  114.219311][    C0]  try_fill_recv+0x3f0/0x2f50
+[  114.224213][    C0]  virtnet_open+0x1cc/0xb00
+[  114.228892][    C0]  __dev_open+0x546/0x6f0
+[  114.233458][    C0]  __dev_change_flags+0x309/0x9a0
+[  114.238699][    C0]  dev_change_flags+0x8e/0x1d0
+[  114.243670][    C0]  devinet_ioctl+0x13ec/0x22c0
+[  114.248707][    C0]  inet_ioctl+0x4bd/0x6d0
+[  114.253223][    C0]  sock_do_ioctl+0xb7/0x540
+[  114.257877][    C0]  sock_ioctl+0x727/0xd70
+[  114.262296][    C0]  __se_sys_ioctl+0x261/0x450
+[  114.267163][    C0]  __x64_sys_ioctl+0x96/0xe0
+[  114.271913][    C0]  x64_sys_call+0x18c0/0x3b90
+[  114.276861][    C0]  do_syscall_64+0xcd/0x1e0
+[  114.281557][    C0]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  114.287691][    C0]=20
+[  114.290142][    C0] CPU: 0 PID: 4810 Comm: cmp Not tainted 6.10.0-rc2-sy=
+zkaller-00318-g68af0e6e57f1 #0
+[  114.299891][    C0] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 04/02/2024
+[  114.310124][    C0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  114.317210][    C0] Disabling lock debugging due to kernel taint
+[  114.323590][    C0] Kernel panic - not syncing: kmsan.panic set ...
+[  114.330063][    C0] CPU: 0 PID: 4810 Comm: cmp Tainted: G    B          =
+    6.10.0-rc2-syzkaller-00318-g68af0e6e57f1 #0
+[  114.341090][    C0] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 04/02/2024
+[  114.351224][    C0] Call Trace:
+[  114.354569][    C0]  <IRQ>
+[  114.357458][    C0]  dump_stack_lvl+0x216/0x2d0
+[  114.362339][    C0]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[  114.368256][    C0]  dump_stack+0x1e/0x30
+[  114.372558][    C0]  panic+0x4e2/0xcd0
+[  114.376579][    C0]  ? kmsan_get_metadata+0xa1/0x1d0
+[  114.381828][    C0]  kmsan_report+0x2d5/0x2e0
+[  114.386474][    C0]  ? __pfx_min_vruntime_cb_rotate+0x10/0x10
+[  114.392494][    C0]  ? kmsan_internal_set_shadow_origin+0x69/0x100
+[  114.398930][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.404232][    C0]  ? __msan_warning+0x95/0x120
+[  114.409102][    C0]  ? receive_buf+0x25e3/0x5fd0
+[  114.413993][    C0]  ? virtnet_poll+0xd1c/0x23c0
+[  114.418899][    C0]  ? __napi_poll+0xe7/0x980
+[  114.423521][    C0]  ? net_rx_action+0x82a/0x1850
+[  114.428495][    C0]  ? handle_softirqs+0x1ce/0x800
+[  114.433533][    C0]  ? __irq_exit_rcu+0x68/0x120
+[  114.438422][    C0]  ? irq_exit_rcu+0x12/0x20
+[  114.443046][    C0]  ? common_interrupt+0x94/0xa0
+[  114.448005][    C0]  ? asm_common_interrupt+0x2b/0x40
+[  114.453326][    C0]  ? virt_to_page_or_null+0x9b/0x150
+[  114.458717][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.464012][    C0]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[  114.469951][    C0]  ? __msan_metadata_ptr_for_load_8+0x24/0x40
+[  114.476138][    C0]  ? move_page_tables+0x22aa/0x3940
+[  114.481443][    C0]  ? setup_arg_pages+0x1741/0x1eb0
+[  114.487208][    C0]  ? load_elf_binary+0x186e/0x4e10
+[  114.492542][    C0]  ? bprm_execve+0xc57/0x21c0
+[  114.497428][    C0]  ? do_execveat_common+0xceb/0xd70
+[  114.502965][    C0]  ? __x64_sys_execve+0xf4/0x130
+[  114.508049][    C0]  ? x64_sys_call+0x164f/0x3b90
+[  114.513049][    C0]  ? do_syscall_64+0xcd/0x1e0
+[  114.517835][    C0]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  114.524271][    C0]  ? kmsan_internal_memmove_metadata+0x17b/0x230
+[  114.530728][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.536028][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.541332][    C0]  ? page_to_skb+0xdae/0x1620
+[  114.546091][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.551404][    C0]  __msan_warning+0x95/0x120
+[  114.556099][    C0]  receive_buf+0x25e3/0x5fd0
+[  114.560811][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.566222][    C0]  ? kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[  114.572325][    C0]  virtnet_poll+0xd1c/0x23c0
+[  114.577052][    C0]  ? __pfx_virtnet_poll+0x10/0x10
+[  114.582192][    C0]  __napi_poll+0xe7/0x980
+[  114.586804][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.592127][    C0]  net_rx_action+0x82a/0x1850
+[  114.596929][    C0]  ? sched_clock_cpu+0x55/0x870
+[  114.601889][    C0]  ? __pfx_net_rx_action+0x10/0x10
+[  114.607136][    C0]  handle_softirqs+0x1ce/0x800
+[  114.612097][    C0]  __irq_exit_rcu+0x68/0x120
+[  114.616825][    C0]  irq_exit_rcu+0x12/0x20
+[  114.621255][    C0]  common_interrupt+0x94/0xa0
+[  114.626143][    C0]  </IRQ>
+[  114.629121][    C0]  <TASK>
+[  114.632123][    C0]  asm_common_interrupt+0x2b/0x40
+[  114.637277][    C0] RIP: 0010:virt_to_page_or_null+0x9b/0x150
+[  114.643734][    C0] Code: d6 48 c1 ee 23 48 8b 34 f1 48 85 f6 74 13 48 8=
+9 d1 48 c1 e9 1b 0f b6 c9 48 c1 e1 04 48 01 ce eb 02 31 f6 65 ff 05 ad a1 c=
+4 7d <48> 85 f6 74 09 4c 8b 06 41 f6 c0 02 75 17 31 c9 65 ff 0d 96 a1 c4
+[  114.663636][    C0] RSP: 0018:ffff888115fa3560 EFLAGS: 00000282
+[  114.669801][    C0] RAX: ffff8881a04798b0 RBX: ffff8881204798b0 RCX: 000=
+0000000000240
+[  114.678046][    C0] RDX: 00000001204798b0 RSI: ffff88813fff9240 RDI: fff=
+f8881204798b0
+[  114.686097][    C0] RBP: ffff888115fa3560 R08: ffffea000000000f R09: 000=
+0000000000000
+[  114.694353][    C0] R10: ffff8881157a3588 R11: 0000000000000004 R12: 000=
+07ffffffff000
+[  114.702427][    C0] R13: ffff88811759ccc0 R14: 0000000000000001 R15: fff=
+f8881204798b0
+[  114.710503][    C0]  kmsan_get_metadata+0x146/0x1d0
+[  114.715665][    C0]  kmsan_get_shadow_origin_ptr+0x4d/0xb0
+[  114.721472][    C0]  __msan_metadata_ptr_for_load_8+0x24/0x40
+[  114.727581][    C0]  move_page_tables+0x22aa/0x3940
+[  114.732810][    C0]  setup_arg_pages+0x1741/0x1eb0
+[  114.737898][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.743211][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.748534][    C0]  ? kmsan_internal_set_shadow_origin+0x69/0x100
+[  114.754977][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.760321][    C0]  load_elf_binary+0x186e/0x4e10
+[  114.765360][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.770982][    C0]  ? kmsan_internal_set_shadow_origin+0x69/0x100
+[  114.777440][    C0]  ? kmsan_internal_unpoison_memory+0x14/0x20
+[  114.783631][    C0]  ? load_elf_binary+0x1331/0x4e10
+[  114.788932][    C0]  ? kmsan_get_metadata+0x146/0x1d0
+[  114.794247][    C0]  ? __pfx_load_elf_binary+0x10/0x10
+[  114.799718][    C0]  bprm_execve+0xc57/0x21c0
+[  114.804338][    C0]  do_execveat_common+0xceb/0xd70
+[  114.809485][    C0]  __x64_sys_execve+0xf4/0x130
+[  114.814370][    C0]  x64_sys_call+0x164f/0x3b90
+[  114.819190][    C0]  do_syscall_64+0xcd/0x1e0
+[  114.823875][    C0]  ? clear_bhb_loop+0x25/0x80
+[  114.828744][    C0]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  114.834741][    C0] RIP: 0033:0x7febec525ef7
+[  114.839238][    C0] Code: Unable to access opcode bytes at 0x7febec525ec=
+d.
+[  114.846321][    C0] RSP: 002b:00007ffee08c4918 EFLAGS: 00000246 ORIG_RAX=
+: 000000000000003b
+[  114.855113][    C0] RAX: ffffffffffffffda RBX: 000055e293558020 RCX: 000=
+07febec525ef7
+[  114.863169][    C0] RDX: 000055e293558048 RSI: 000055e293558020 RDI: 000=
+055e2935580d0
+[  114.871237][    C0] RBP: 000055e2935580d0 R08: 000055e2935580d9 R09: 000=
+07ffee08c8ecb
+[  114.879289][    C0] R10: 0000000000000008 R11: 0000000000000246 R12: 000=
+055e293558048
+[  114.887358][    C0] R13: 00007febec6d3904 R14: 000055e293558048 R15: 000=
+0000000000000
+[  114.895462][    C0]  </TASK>
+[  114.898839][    C0] Kernel Offset: disabled
+[  114.903237][    C0] Rebooting in 86400 seconds..
 
-$ mkdir build_dir
-$ COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
-$ COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
 
-Or you can ignore the full make, just do below after make olddefconfig
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build3593741732=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-$ COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash dtbs_check
+git status (err=3D<nil>)
+HEAD detached at 25905f5d0a
+nothing to commit, working tree clean
 
-e.g.
 
-$ COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/upstream/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash dtbs_check 2>&1 | grep 'arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:85.11-94.6'
-../arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:85.11-94.6: Warning (graph_child_address): /soc/video@10830000/ports/port@1: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D25905f5d0a2a7883bd33491997556193582c6059 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240301-171218'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
+ github.com/google/syzkaller/syz-fuzzer
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D25905f5d0a2a7883bd33491997556193582c6059 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240301-171218'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D25905f5d0a2a7883bd33491997556193582c6059 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240301-171218'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
+ github.com/google/syzkaller/tools/syz-stress
+mkdir -p ./bin/linux_amd64
+gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"25905f5d0a2a7883bd3349199755619358=
+2c6059\"
 
-Thanks
 
-> 
-> Cheers,
-> Biju
-> 
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of the same
-> > patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes:
-> > | https://lore.kernel.org/oe-kbuild-all/202406081329.snoMrZsJ-lkp@intel.
-> > | com/
-> > 
-> > dtcheck warnings: (new ones prefixed by >>)
-> > >> arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:85.11-94.6: Warning
-> > >> (graph_child_address): /soc/video@10830000/ports/port@1: graph node
-> > >> has single child node 'endpoint@0', #address-cells/#size-cells are
-> > >> not necessary
-> > >> arch/arm64/boot/dts/renesas/r9a07g043u.dtsi:120.11-129.6: Warning
-> > >> (graph_child_address): /soc/csi2@10830400/ports/port@1: graph node
-> > >> has single child node 'endpoint@0', #address-cells/#size-cells are
-> > >> not necessary
-> > 
-> > vim +85 arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-> > 
-> >     60
-> >     61	&soc {
-> >     62		interrupt-parent = <&gic>;
-> >     63
-> >     64		cru: video@10830000 {
-> >     65			compatible = "renesas,r9a07g043-cru", "renesas,rzg2l-cru";
-> >     66			reg = <0 0x10830000 0 0x400>;
-> >     67			clocks = <&cpg CPG_MOD R9A07G043_CRU_VCLK>,
-> >     68				 <&cpg CPG_MOD R9A07G043_CRU_PCLK>,
-> >     69				 <&cpg CPG_MOD R9A07G043_CRU_ACLK>;
-> >     70			clock-names = "video", "apb", "axi";
-> >     71			interrupts = <SOC_PERIPHERAL_IRQ(167) IRQ_TYPE_LEVEL_HIGH>,
-> >     72				     <SOC_PERIPHERAL_IRQ(168) IRQ_TYPE_LEVEL_HIGH>,
-> >     73				     <SOC_PERIPHERAL_IRQ(169) IRQ_TYPE_LEVEL_HIGH>;
-> >     74			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-> >     75			resets = <&cpg R9A07G043_CRU_PRESETN>,
-> >     76				 <&cpg R9A07G043_CRU_ARESETN>;
-> >     77			reset-names = "presetn", "aresetn";
-> >     78			power-domains = <&cpg>;
-> >     79			status = "disabled";
-> >     80
-> >     81			ports {
-> >     82				#address-cells = <1>;
-> >     83				#size-cells = <0>;
-> >     84
-> >   > 85				port@1 {
-> >     86					#address-cells = <1>;
-> >     87					#size-cells = <0>;
-> >     88
-> >     89					reg = <1>;
-> >     90					crucsi2: endpoint@0 {
-> >     91						reg = <0>;
-> >     92						remote-endpoint = <&csi2cru>;
-> >     93					};
-> >     94				};
-> >     95			};
-> >     96		};
-> >     97
-> >     98		csi2: csi2@10830400 {
-> >     99			compatible = "renesas,r9a07g043-csi2", "renesas,rzg2l-csi2";
-> >    100			reg = <0 0x10830400 0 0xfc00>;
-> >    101			interrupts = <SOC_PERIPHERAL_IRQ(166) IRQ_TYPE_LEVEL_HIGH>;
-> >    102			clocks = <&cpg CPG_MOD R9A07G043_CRU_SYSCLK>,
-> >    103				 <&cpg CPG_MOD R9A07G043_CRU_VCLK>,
-> >    104				 <&cpg CPG_MOD R9A07G043_CRU_PCLK>;
-> >    105			clock-names = "system", "video", "apb";
-> >    106			resets = <&cpg R9A07G043_CRU_PRESETN>,
-> >    107				 <&cpg R9A07G043_CRU_CMN_RSTB>;
-> >    108			reset-names = "presetn", "cmn-rstb";
-> >    109			power-domains = <&cpg>;
-> >    110			status = "disabled";
-> >    111
-> >    112			ports {
-> >    113				#address-cells = <1>;
-> >    114				#size-cells = <0>;
-> >    115
-> >    116				port@0 {
-> >    117					reg = <0>;
-> >    118				};
-> >    119
-> >  > 120				port@1 {
-> >    121					#address-cells = <1>;
-> >    122					#size-cells = <0>;
-> >    123					reg = <1>;
-> >    124
-> >    125					csi2cru: endpoint@0 {
-> >    126						reg = <0>;
-> >    127						remote-endpoint = <&crucsi2>;
-> >    128					};
-> >    129				};
-> >    130			};
-> >    131		};
-> >    132
-> >    133		irqc: interrupt-controller@110a0000 {
-> >    134			compatible = "renesas,r9a07g043u-irqc",
-> >    135				     "renesas,rzg2l-irqc";
-> >    136			reg = <0 0x110a0000 0 0x10000>;
-> >    137			#interrupt-cells = <2>;
-> >    138			#address-cells = <0>;
-> >    139			interrupt-controller;
-> >    140			interrupts = <SOC_PERIPHERAL_IRQ(0) IRQ_TYPE_LEVEL_HIGH>,
-> >    141				     <SOC_PERIPHERAL_IRQ(1) IRQ_TYPE_LEVEL_HIGH>,
-> >    142				     <SOC_PERIPHERAL_IRQ(2) IRQ_TYPE_LEVEL_HIGH>,
-> >    143				     <SOC_PERIPHERAL_IRQ(3) IRQ_TYPE_LEVEL_HIGH>,
-> >    144				     <SOC_PERIPHERAL_IRQ(4) IRQ_TYPE_LEVEL_HIGH>,
-> >    145				     <SOC_PERIPHERAL_IRQ(5) IRQ_TYPE_LEVEL_HIGH>,
-> >    146				     <SOC_PERIPHERAL_IRQ(6) IRQ_TYPE_LEVEL_HIGH>,
-> >    147				     <SOC_PERIPHERAL_IRQ(7) IRQ_TYPE_LEVEL_HIGH>,
-> >    148				     <SOC_PERIPHERAL_IRQ(8) IRQ_TYPE_LEVEL_HIGH>,
-> >    149				     <SOC_PERIPHERAL_IRQ(444) IRQ_TYPE_LEVEL_HIGH>,
-> >    150				     <SOC_PERIPHERAL_IRQ(445) IRQ_TYPE_LEVEL_HIGH>,
-> >    151				     <SOC_PERIPHERAL_IRQ(446) IRQ_TYPE_LEVEL_HIGH>,
-> >    152				     <SOC_PERIPHERAL_IRQ(447) IRQ_TYPE_LEVEL_HIGH>,
-> >    153				     <SOC_PERIPHERAL_IRQ(448) IRQ_TYPE_LEVEL_HIGH>,
-> >    154				     <SOC_PERIPHERAL_IRQ(449) IRQ_TYPE_LEVEL_HIGH>,
-> >    155				     <SOC_PERIPHERAL_IRQ(450) IRQ_TYPE_LEVEL_HIGH>,
-> >    156				     <SOC_PERIPHERAL_IRQ(451) IRQ_TYPE_LEVEL_HIGH>,
-> >    157				     <SOC_PERIPHERAL_IRQ(452) IRQ_TYPE_LEVEL_HIGH>,
-> >    158				     <SOC_PERIPHERAL_IRQ(453) IRQ_TYPE_LEVEL_HIGH>,
-> >    159				     <SOC_PERIPHERAL_IRQ(454) IRQ_TYPE_LEVEL_HIGH>,
-> >    160				     <SOC_PERIPHERAL_IRQ(455) IRQ_TYPE_LEVEL_HIGH>,
-> >    161				     <SOC_PERIPHERAL_IRQ(456) IRQ_TYPE_LEVEL_HIGH>,
-> >    162				     <SOC_PERIPHERAL_IRQ(457) IRQ_TYPE_LEVEL_HIGH>,
-> >    163				     <SOC_PERIPHERAL_IRQ(458) IRQ_TYPE_LEVEL_HIGH>,
-> >    164				     <SOC_PERIPHERAL_IRQ(459) IRQ_TYPE_LEVEL_HIGH>,
-> >    165				     <SOC_PERIPHERAL_IRQ(460) IRQ_TYPE_LEVEL_HIGH>,
-> >    166				     <SOC_PERIPHERAL_IRQ(461) IRQ_TYPE_LEVEL_HIGH>,
-> >    167				     <SOC_PERIPHERAL_IRQ(462) IRQ_TYPE_LEVEL_HIGH>,
-> >    168				     <SOC_PERIPHERAL_IRQ(463) IRQ_TYPE_LEVEL_HIGH>,
-> >    169				     <SOC_PERIPHERAL_IRQ(464) IRQ_TYPE_LEVEL_HIGH>,
-> >    170				     <SOC_PERIPHERAL_IRQ(465) IRQ_TYPE_LEVEL_HIGH>,
-> >    171				     <SOC_PERIPHERAL_IRQ(466) IRQ_TYPE_LEVEL_HIGH>,
-> >    172				     <SOC_PERIPHERAL_IRQ(467) IRQ_TYPE_LEVEL_HIGH>,
-> >    173				     <SOC_PERIPHERAL_IRQ(468) IRQ_TYPE_LEVEL_HIGH>,
-> >    174				     <SOC_PERIPHERAL_IRQ(469) IRQ_TYPE_LEVEL_HIGH>,
-> >    175				     <SOC_PERIPHERAL_IRQ(470) IRQ_TYPE_LEVEL_HIGH>,
-> >    176				     <SOC_PERIPHERAL_IRQ(471) IRQ_TYPE_LEVEL_HIGH>,
-> >    177				     <SOC_PERIPHERAL_IRQ(472) IRQ_TYPE_LEVEL_HIGH>,
-> >    178				     <SOC_PERIPHERAL_IRQ(473) IRQ_TYPE_LEVEL_HIGH>,
-> >    179				     <SOC_PERIPHERAL_IRQ(474) IRQ_TYPE_LEVEL_HIGH>,
-> >    180				     <SOC_PERIPHERAL_IRQ(475) IRQ_TYPE_LEVEL_HIGH>,
-> >    181				     <SOC_PERIPHERAL_IRQ(25) IRQ_TYPE_EDGE_RISING>;
-> >    182			interrupt-names = "nmi",
-> >    183					  "irq0", "irq1", "irq2", "irq3",
-> >    184					  "irq4", "irq5", "irq6", "irq7",
-> >    185					  "tint0", "tint1", "tint2", "tint3",
-> >    186					  "tint4", "tint5", "tint6", "tint7",
-> >    187					  "tint8", "tint9", "tint10", "tint11",
-> >    188					  "tint12", "tint13", "tint14", "tint15",
-> >    189					  "tint16", "tint17", "tint18", "tint19",
-> >    190					  "tint20", "tint21", "tint22", "tint23",
-> >    191					  "tint24", "tint25", "tint26", "tint27",
-> >    192					  "tint28", "tint29", "tint30", "tint31",
-> >    193					  "bus-err";
-> >    194			clocks = <&cpg CPG_MOD R9A07G043_IA55_CLK>,
-> >    195				<&cpg CPG_MOD R9A07G043_IA55_PCLK>;
-> >    196			clock-names = "clk", "pclk";
-> >    197			power-domains = <&cpg>;
-> >    198			resets = <&cpg R9A07G043_IA55_RESETN>;
-> >    199		};
-> >    200
-> >    201		gic: interrupt-controller@11900000 {
-> >    202			compatible = "arm,gic-v3";
-> >    203			#interrupt-cells = <3>;
-> >    204			#address-cells = <0>;
-> >    205			interrupt-controller;
-> >    206			reg = <0x0 0x11900000 0 0x40000>,
-> >    207			      <0x0 0x11940000 0 0x60000>;
-> >    208			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-> >    209		};
-> >    210	};
-> >    211
-> > 
-> > --
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> 
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D16a96dce980000
+
+
+Tested on:
+
+commit:         68af0e6e hfs: fix to initialize fields of hfs_inode_in..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.=
+git misc
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db7d07bfd0c305fe=
+4
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D3ae6be33a50b5aae4=
+dab
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+
+Note: no patches were applied.
 
