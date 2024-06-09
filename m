@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-207345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5049015F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:23:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8063D9015F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 13:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937351C20B6A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0DA1C20A45
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 11:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD142E83C;
-	Sun,  9 Jun 2024 11:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137B3339A1;
+	Sun,  9 Jun 2024 11:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YRHmiY2l"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jaLH3p0j"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA581865C;
-	Sun,  9 Jun 2024 11:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D242233A;
+	Sun,  9 Jun 2024 11:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717932184; cv=none; b=HSrGIcJSlZzuSnv4kMCvHKRBtXKBRQivk2zRumtRpjbTmZ7imC9DLZBOKTX86tO9jkiIG9IVg7l+7g+5+qsgjQkZhvwdx9whr3gC/fI4xjcCEmS+4/jN40dJ8qBw2VuVOmm55vzmjfWuBkPL6LoaS5dylUnKG598DjBLraUVnXc=
+	t=1717932263; cv=none; b=tlqAbQ1nKnutSvziP0VmrkGVG/yy3tXY03DZPhPb+OCkUdVeWT5aMS3Z2RuE68gSqtBmMnx+HAkkiOymy+VivhJHZLAmCJAKSF0S5cHSbzzzKVEkdxErmnsSZldVD8eG1YnIuW1khuMwKp8j+Tt9a8wnkjtZh+/e+zP+lJvxiTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717932184; c=relaxed/simple;
-	bh=VE6QwhzHXGGsL6EN23G7rodAUHJBH/uKxOmJM1ROGLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGT3DAkq5FAZR++GDED/hd0qrQ7A093itAFGhM91NIMnZTffiTHjQtBv+7v2Ejbz8t/G2waS0pphlSO0xXuUELu100IdDKzJtnle4h3WHkDtUuvaUYTYF4Sy2NOsYAxbd6tWp0MbDvXXCOIq8lyD6P8uXiyxNc/hTui0Xe6hHIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YRHmiY2l; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 192A340E016E;
-	Sun,  9 Jun 2024 11:22:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1fvZKEsG9R5s; Sun,  9 Jun 2024 11:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717932175; bh=Wvqqzt8mRbBVpIrsNZaWXP6FfYaMmAg35B1wSRhrLn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YRHmiY2lq5i9UbRqPmzL5EHzi+yjVKQEqYQ6+jkT/MPUKhEJ37/IkH26uRyV+zotS
-	 vCnF2wJKPy8bDiGMwMTWntUn8504NQkZkhXzUB1VZtO+OIKxu99LHXbqO6r4RhyJ2j
-	 N01Lg8tsVCtnh4QK8eQsK1dSii6HwWR0Ep2XJRD1gp+dy+UJolT6PrkwU68jpUA76C
-	 e40CPRJz5RpwQynC+YSJBgAFcEI6ahIBCcxUsUmNywbX14g8j5B9MzwEhuPPqG5WtO
-	 VEutse9TFvEUOaYI3b/wXvSU15acCtPM+2u+1rZr0Jz+ihzK4YhCz9zDaVwMSDhgYw
-	 uXHMOBmeQDtQ+N8sJT5ZnL1kRS7pbE2nl9XxH6olFh91yPMwlykGlQkhCEj/iSshcI
-	 PeXp4m29nF/FqAD+L1MtAfMes3EITQKxRRro+R6h/IxbOuryhsxa5NCd11nY/G/QDJ
-	 l6XsHBTXt65NNSpu2BG44Z8O6encs1VxNP0GS5Y6LHVjcOiTCbIE4SORJmIu1qnu/Z
-	 rvD6IOrwZSJFsF5zKfu09DhVyGtjs/lPmT3QtKIvvmIoFqMy1WcKKP7OCZKWgIt5yL
-	 e8EGRMjF2/X0FdQyoL97AacrUSpWTzEPgsHX9bruxu71nxlxqgLuYmuY0B2BiMVA7S
-	 +5KcQGE6/YiUW4HXgnFRC3oc=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DD72F40E016A;
-	Sun,  9 Jun 2024 11:22:45 +0000 (UTC)
-Date: Sun, 9 Jun 2024 13:22:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-Message-ID: <20240609112240.GBZmWQgNQXguD_8Nc8@fat_crate.local>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+	s=arc-20240116; t=1717932263; c=relaxed/simple;
+	bh=q/iXIOMyLJl5xphpYTwH3w/lEzJ3M4l/7/fmNTRAZeE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=fWLRpn0oGWopYduWf1gNDP1nnJn2cWd9gDYHLJo8PnU6PCG0vCMYoB3Prw+V6IPwoUP+vWB5UQxLEFPvR3EYi7KEAYQLAzBOdMQ1SWwESWgdoz9yIKKua8Kj5/hqeTSnvLvomQafHcMF79eM+lR08dRCbX1QJliUKa/gFaT/QkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jaLH3p0j; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717932221; x=1718537021; i=markus.elfring@web.de;
+	bh=HJ4zCaTWgNUn48MUERLAvrZ6HAXG3veuSDqVhXI7XfA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jaLH3p0jdorjs00Q+bnR9LcaaipNoRxj1XpVz0Ewhr5wHalsQbXvJhw3THTYALoI
+	 Hgmod/cz128I5G3gUsPWd6ELT676AL2OtJMAy2fc9aO+qyqP8VvqsO+cFgxWuoOSS
+	 T69QSplwPmdjP1Jyqme5LT5VXEyWZUyzTTFc9UKZe1UMvVeVvgp1t1c7FdKcKz4ZZ
+	 6uiajyILhQw/urG1RNhhrcf4qbeE0zaJoeJu0/v4BS8XESKbZdDusPOF/dOfMNH1i
+	 S7xCjp2pZ63ZsNJCTrsiZ7lFuTfVf2SB+kNmdIghjs+VHpRgN7Jtg9jfIChsdR1aV
+	 ZU5zcmcQcetvhcM4wg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Melf5-1snxRB3Nsj-00q09r; Sun, 09
+ Jun 2024 13:23:40 +0200
+Message-ID: <4aa34452-4e13-4dc2-a67f-5bd821fd0498@web.de>
+Date: Sun, 9 Jun 2024 13:23:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240608193504.429644-2-torvalds@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+To: Richard chien <richard.chien@hpe.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Richard chien <m8809301@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>
+References: <20240609085735.6253-1-richard.chien@hpe.com>
+Subject: Re: [PATCH] ixgbe: Add support for firmware update
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240609085735.6253-1-richard.chien@hpe.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2VFpPJBph9XiC5vhNiOmte11nZIZgjfOHt+kTXyb73NicWJP8kq
+ TmMkwWvE8pGeQ8GU5ABYb0vEeNgUL8EwlpiO+3pSgkgRaPGHYtxpunzeHJK6+vcr46mX0Cx
+ mnigvjhS9psZBvdkn4b28pmP2/U4S6ffcKwoCNK3vddo5oppRjskgueF1C8//ToVkWk8y/I
+ bVo6IL6MhZSBu9erevrxw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:i1+OJLuE/48=;+swK+qIrek4neQqBpd9S0NH0hSm
+ T+OzBThB+w3qj8yo8EPxADKPfzRb9aDf+hV9w8ynvILLQqwZ37IcSYQZk0Ck7Mr0j+xJ3Ye0V
+ EGMIyeVJb90ouvgMZzHOgWwCHuqcS82mX6n/IvHW4v2TV/r//rw9hWULc+cjcyV9AXgAQ/7xi
+ HDvAxWpTh6HIPQiK3Ow2LAsbsffL2JbOgtfk06dZ8N2d4pnC55l/CDhgTcapdsKnPbtS2c6+I
+ dAofcBrEKuLAMp0STDXQtSLwDFwJWQlTxRcJ+4A33787VbhRpVMevar01vV1FWfMY1TW0SEjg
+ cajpVzZZbTJY8PjnOnvNUjQI8AO4OxNlDMC0f7QdScdikkOR5ltEwiEAzAq3sITMPxWfQED/E
+ dWm4E2iEHC0mvh7vHuyHe0I9qVjp/0wbgFfH5gmbJlkZw9ppN8sQr0xZAY4xQQl98rXlvu6ko
+ aWrxWzNBFeCCm8hUhi8kEY4116ZIlvgH5V4cszl91ZK2FybOgmvhp1vpWxj5M7/VFOUjfYTAd
+ 1cAE5vo7jRLFsCGcZ4F2Xg5wNpVe04JB8QX/u+VvnKo+p9tIGglnq5+6G47QTNENmqb8qiK8T
+ T7z2OWPefxeiojr8V6QBSiAkPudzeWPvWHF8RKgnT5JcjR2V6n65Rrh3DM6W+GxHF69vqGzcD
+ SkjE6NP9wGU0EObBJTNef6ZcFdM6FmkXLpG6BUEGyX2yp8typdbhBlwaAoXnzqk42YPRTL8+Y
+ KpLc1jpFk0nsboil81B8aPv0UQEptHjVU7vWhjXXxDS7yDaJoLMZ77wf7gobs5X4jvlDjSQxt
+ aknYOJ4U+bGnzWJ+eGGHV1uAr1r8gvX+mKopjIG2NFVyw=
 
-On Sat, Jun 08, 2024 at 12:35:05PM -0700, Linus Torvalds wrote:
-> Ingo / Peter / Borislav - I enabled this for 32-bit x86 too, because it
-> was literally trivial (had to remove a "q" from "movq").  I did a
-> test-build and it looks find, but I didn't actually try to boot it. 
+> This patch adds support for firmware update to the in-tree ixgbe driver =
+and it is actually a port
+> from the out-of-tree ixgbe driver. In-band firmware update is one of the=
+ essential system maintenance
+=E2=80=A6
 
-Will do once you have your final version. I still have an Atom, 32-bit
-only laptop lying around here.
+Please improve such a change description also according to word wrapping
+because of more desirable text line lengths.
 
-> +#define runtime_const_ptr(sym) ({				\
-> +	typeof(sym) __ret;					\
-> +	asm("mov %1,%0\n1:\n"					\
-> +		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
-> +		".long 1b - %c2 - .\n\t"			\
-> +		".popsection"					\
-> +		:"=r" (__ret)					\
-> +		:"i" ((unsigned long)0x0123456789abcdefull),	\
-> +		 "i" (sizeof(long)));				\
-> +	__ret; })
 
-You might wanna use asm symbolic names for the operands so that it is
-more readable:
+=E2=80=A6
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+> @@ -993,114 +993,292 @@ static void ixgbe_get_regs(struct net_device *ne=
+tdev,
+=E2=80=A6
+> +static int ixgbe_set_eeprom(struct net_device *netdev,
+> +                            struct ethtool_eeprom *eeprom, u8 *bytes)
+=E2=80=A6
+>  err:
+> -	kfree(eeprom_buff);
+> -	return ret_val;
+> +        kfree(eeprom_buff);
+> +        return ret_val;
+>  }
 
-#define runtime_const_ptr(sym) ({                                               \
-        typeof(sym) __ret;                                                      \
-        asm("mov %[constant] ,%[__ret]\n1:\n"                                   \
-                ".pushsection runtime_ptr_" #sym ",\"a\"\n\t"                   \
-                ".long 1b - %c[sizeoflong] - .\n\t"                             \
-                ".popsection"                                                   \
-                : [__ret] "=r" (__ret)                                          \
-                : [constant] "i" ((unsigned long)0x0123456789abcdefull),        \
-                  [sizeoflong] "i" (sizeof(long)));                             \
-        __ret; })
+Please keep these statements unmodified.
 
-For example.
+Would you like to reconsider the indentation once more for your change app=
+roach?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.10-rc2#n18
 
-> +// The 'typeof' will create at _least_ a 32-bit type, but
-> +// will happily also take a bigger type and the 'shrl' will
-> +// clear the upper bits
-
-Can we pls use the multiline comments, like you do below in the same
-file.
-
-Otherwise, it looks ok to me and it boots in a guest.
-
-I'll take the final version for a spin on real hw in a couple of days,
-once the review dust settles.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Markus
 
