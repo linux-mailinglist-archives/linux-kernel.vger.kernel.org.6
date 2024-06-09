@@ -1,108 +1,146 @@
-Return-Path: <linux-kernel+bounces-207520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83A2901858
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 23:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF00B901859
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 23:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8271C20753
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177482810DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285D55466C;
-	Sun,  9 Jun 2024 21:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7523F524B4;
+	Sun,  9 Jun 2024 21:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2pqihU5"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="XImHj7o6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OFv/hOoE"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D394558B9;
-	Sun,  9 Jun 2024 21:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0521C48CE0;
+	Sun,  9 Jun 2024 21:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717969293; cv=none; b=cQqDtsdGpBCyLyMAJe8luRjWKRpEqOW5pbUtpouVxNqteAqRmNnROCQpi9z9ZKzReG12PlhGMzcVYpjPeMF+8Ne/BDRuY79ioPQitMJk2YvDpm4DMeqtlhPsaRbUp8XrQu/oGZ4U8K/vSeuqNw8iKM+oVqEJnHwo94fq0SOwxaM=
+	t=1717969428; cv=none; b=ZQfmafBYp+kwy7sPWs1BII89Y+D2nQ8tYQHUxEZMZgMEWYy5dLNSE1rf8vid440D1M0SwrwpSEt5/gLb+CReVj2FbXTFeEf76/osT/3vety68JrAxDrLYZdOywGOX6oJbzLL+N8k4JU/69l5rBACe9easXv8YbJ92YwRI3ZyfXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717969293; c=relaxed/simple;
-	bh=Ti1lCadmrkvVtjeAn4RXvBoHq+kyH8MlfVFoXz9WGVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoSxSKJms/lp7XRI/cPec5AMQgA9Csln6juhfejbvJ/9RQ33hDmOEdutH5fhHeSWKSY46ccjuwDJD8yBgPSbtrbKYi+vLcQnyS6yhxPYR+ZN4MBlmMhUYEUTrEsllqOScn9ofw15UHd6UGjuvyTbcfw70GwTeYVkJNpYOdOgHdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2pqihU5; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2c6b27428so1550474a91.3;
-        Sun, 09 Jun 2024 14:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717969291; x=1718574091; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1/NQGBcniwOGtlfkKFY4bfViy5G6/qqoA0oBFSyyOU=;
-        b=Z2pqihU5bGr/bMMj3et7/Sl5a/b8M+MkU8FAe4/StJcmqrqXO1hoQMZFWRMTWMO6xU
-         gdhQLF5B96BPffNFVZErpoMVynTNiDx2e/dQ1JoAnxQmqVpsr7zmfnUgzPfu3nEq6bkJ
-         KYLQRkoWwTf57v9qNI2DS6fAdBooHpZPjLr5RJewDp/Jtkd+D2lcJFTI1yvKBVIakYn4
-         kQGrsnofjRU9VMO2P/XpQ30uMgG0G3Tw28i7hkAT6ivzjS65p3BfL2geQ2lBo2OgvxKe
-         vny3a0gMxDY0ECOAtV88uDxBaSMvNbtzzqCHN93g4/LFbAigj0kGuAYhxsbKSwiQkvPZ
-         Excg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717969291; x=1718574091;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e1/NQGBcniwOGtlfkKFY4bfViy5G6/qqoA0oBFSyyOU=;
-        b=FY1f5oX8IhHhTFJsfH1AeGq2XtKk/6/+ALxJ3YLSR/dbHqfmWmKHXeSp8Qgr1uwKu0
-         btPNiBlLaEqfiax6G8vg+Dq79N9jTnlx1aP/1p2fBfWkXJ6DbvCXJChc13zZaX617rCT
-         tkD9llyNkrbisMBCiRE4jDTYrzYsMYO+Zd9oOzwqeu6chpzVc4ZKSjB3AW76oCN9vVH0
-         +sd2aZ5e7sTjFslpG7vqzjkenHA0UElFQmvsHDkpyJSkSNSIgSBMRc7deUL61+YNTg4R
-         npqmUKfScYCVtldPbLt7kOWKT0YyHqu39szNwD7btn0sep7dPWpUupBXFGI11CeCUlcD
-         /gpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmFAbQei8iizIedSVC5pFuBi7eTsOWM301Pf40LqTWvDbAxxKEqWrP3Q5BMLrT8oZ2tShGEh+8U/e74Ov3lzEAVvlUtLlSYyFJ9sm/qrmhaDLysRVeAacjpX0HuxD0Y86L/XpZe+pzD7PaqEcKiEdRRlhtsii39IWhfz0iYZ40eE9LcY6NqBJ3lFM=
-X-Gm-Message-State: AOJu0YywazrNGmDLHeMi+1QxYPByhOtBcaa1H+TLOaunySz5+C1TQjVo
-	Zvu0aQ4KDc/FiIC+lA1iru5nzEtWjw2mIRvhVUak+NIKAyVjbweE0T3c2A==
-X-Google-Smtp-Source: AGHT+IHJJsfWu0z4qAJiwFg5/tkSiQXhyKVwNBCsm+WCSX3/V+8Aq8is+U/owQSeGL6hBruGzHR03A==
-X-Received: by 2002:a17:90a:bc9:b0:2c2:c670:8a4b with SMTP id 98e67ed59e1d1-2c2c6708b6amr6051432a91.26.1717969291333;
-        Sun, 09 Jun 2024 14:41:31 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:55a9:13e9:dec7:f9d3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2ebc8b49bsm2593241a91.50.2024.06.09.14.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 14:41:31 -0700 (PDT)
-Date: Sun, 9 Jun 2024 14:41:28 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Input: add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZmYhiDpM65GbEWgG@google.com>
-References: <20240609-md-drivers-input-v1-1-a2f394e0f9d8@quicinc.com>
+	s=arc-20240116; t=1717969428; c=relaxed/simple;
+	bh=HJgurrWiX7eXP4/IiNcGUcXHq8B7HVmDJ3Xbz7REcyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hYbhZCZfx9BEoEokDJ4C83jjUmUFEeocNZ93R1w0f/J0i8F5T9k+EyEr7V3UDUl733pkc5Qdj7Guujjt7no6/91IETw/ey1zz8Zd5C/hu8KzTw/i7ZPPms/W24AOQw8IJVLBtSonijEbzxXK4dLr/wrsqeKNqPzs9llZl1HbEJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=XImHj7o6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OFv/hOoE; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 0147913800C2;
+	Sun,  9 Jun 2024 17:43:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sun, 09 Jun 2024 17:43:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1717969424; x=
+	1718055824; bh=fGXoDc5UQ7R92D0+Vz5I/WElToagZBOZ6lR8JyKacWE=; b=X
+	ImHj7o6OhXSA1D8wybapa2gE4lY/FttnqFiGnltyOvsho9nXXG2uooFMwOsnPqBy
+	MB1/JwtctjTauXMWydtA8BTVxG634bd15zNGytG4kJ0bvSMv5MqI7pPLnEfqzeKr
+	e8+y5knhXbfbnhp7n9erHcGeGWkzcbZ54uhKoBGVZr3VY+1JwRDcnd8b95+5JG8d
+	K7vo3+/sb/9m9xOhOXdhC837Fhszt3vDFxnQTlBPWrgCUh3LnX9jnXprGp4XPRXQ
+	YolsM51/bt+FVOleAt/f6Mm7Eu2LTWlExPoUfF9v8q5UIcVTX4LhTjxkAdAINokZ
+	qHmWHpw1NWf/aDLFKgypw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717969424; x=
+	1718055824; bh=fGXoDc5UQ7R92D0+Vz5I/WElToagZBOZ6lR8JyKacWE=; b=O
+	Fv/hOoEMJbyIFtVcjPMCbMXCMCm4SCIlQu/bMnDJQ/2j6VjtU5iPvAUdid5ltmdR
+	hSK06azb6ogDhYZCnQ1VHGgjzg76NIgILM61oFJz/Yi/kwfAEYFE1aUllWBYgVaw
+	IrE+kT5lFzAwh2LqMCfaFd3VbIw29hR5uAwExlZu8uPsvNajRqzQIt9JOTX7+cQV
+	athT1KOKThpigCZQnQcZfN/lxF2Va1uZZk/vIZbpDLpajuUPyvQikUKrdOWgm8su
+	CPTm5ZOPKBuahJNTBfwCaTsgIEIrroGIaOuT5lL+cljVBO6rjHfYXYX6InZKNals
+	hlpfYJWcW2sCWEnnip7Kw==
+X-ME-Sender: <xms:ECJmZvXJ2WMUi2o5Vppw2T2IjzyabY8cXmq6RLp-Zk_bP6TPMjM-1g>
+    <xme:ECJmZnk3_xrOb9fhQ08yKzgRfur63HlgikXtLyIsE9Nlrc5Y31lAmtJUVo2Knc86V
+    Kqkx6E8H3fs2rGzJyY>
+X-ME-Received: <xmr:ECJmZrasbdMOKSTFRurHZqGhAhmrQvs0DqzunHbR6kJunYIk6TQHnTcKGdW1U-tL0vxXwN0ouJA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtkedgtdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephf
+    fvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrrhhkucfrvggrrhhs
+    ohhnuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgeqnecuggftrf
+    grthhtvghrnhepfedtvdejfeelffevhffgjeejheduteetieeguefgkefhhfegjeduueet
+    hefgvdffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
+X-ME-Proxy: <xmx:ECJmZqV5id-LmX3dEvCOtw14p1adApGTXy9BKe3ZulhgMFAheivLYQ>
+    <xmx:ECJmZpnNMidT_gv0XCnPlwhVNrYtJGMK0Sk-SqmGBJVorJgeqVcE-w>
+    <xmx:ECJmZnecSw1Du_aoOqkxose4tXoIwgclGfgI5CBaWb7TeLkytSP9sg>
+    <xmx:ECJmZjEaFnqRX_VTUOJhBdjLTiZEJFS7HtBqwHmPFXnkqoBtYvmdzg>
+    <xmx:ECJmZvWReU4NmGO7ltoJasA2W0GiIUMJwooYBJzhDp_RCJeETtSY5lbJ>
+Feedback-ID: ibe194615:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Jun 2024 17:43:44 -0400 (EDT)
+From: Mark Pearson <mpearson-lenovo@squebb.ca>
+To: mpearson-lenovo@squebb.ca
+Cc: diogo.ivo@siemens.com,
+	dmitry.baryshkov@linaro.org,
+	heikki.krogerus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: typec: ucsi: don't retrieve PDOs if not supported
+Date: Sun,  9 Jun 2024 17:43:18 -0400
+Message-ID: <20240609214328.6580-1-mpearson-lenovo@squebb.ca>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609-md-drivers-input-v1-1-a2f394e0f9d8@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 09, 2024 at 01:03:30PM -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/touchscreen/cyttsp_i2c_common.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/misc/soc_button_array.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/matrix-keymap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes drivers/input/misc/sgi_btns.c which, although it did not
-> produce a warning with the x86 allmodconfig configuration, may cause
-> this warning with other configurations when either CONFIG_SGI_IP22 or
-> CONFIG_SGI_IP32 is enabled.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On systems where the UCSI PDOs are not supported, the UCSI driver is
+giving an error message. This can cause users to believe there is a HW
+issue with their system when in fact it is working as designed.
 
-Applied, thank you.
+Check if PDO_DETAILS are supported as a feature before attempting to
+access PDO. If not supported return that zero PDOs are available.
 
+Tested on Lenovo L14 G5 AMD and confirmed with Lenovo FW team that PDOs
+are not supported on this platform.
+
+Suggested-by: Diogo Ivo <diogo.ivo@siemens.com>
+Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+---
+Note this patch replaces my previous submission 'treat get_pdos not supported
+condition as info instead of error', based on feedback from review.
+
+ drivers/usb/typec/ucsi/ucsi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index cb52e7b0a2c5..cadea8d328ed 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -641,9 +641,13 @@ static int ucsi_read_pdos(struct ucsi_connector *con,
+ static int ucsi_get_pdos(struct ucsi_connector *con, enum typec_role role,
+ 			 int is_partner, u32 *pdos)
+ {
++	struct ucsi *ucsi = con->ucsi;
+ 	u8 num_pdos;
+ 	int ret;
+ 
++	if (!(ucsi->cap.features & UCSI_CAP_PDO_DETAILS))
++		return 0;
++
+ 	/* UCSI max payload means only getting at most 4 PDOs at a time */
+ 	ret = ucsi_read_pdos(con, role, is_partner, pdos, 0, UCSI_MAX_PDOS);
+ 	if (ret < 0)
 -- 
-Dmitry
+2.45.1
+
 
