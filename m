@@ -1,177 +1,170 @@
-Return-Path: <linux-kernel+bounces-207526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607DD90187E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:19:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 157F5901884
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9251F2117D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:19:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5611F211C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3D355887;
-	Sun,  9 Jun 2024 22:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0938155885;
+	Sun,  9 Jun 2024 22:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UcG/T8D2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="39zNmJkV"
+Received: from shout11.mail.de (shout11.mail.de [62.201.172.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F81EAF9;
-	Sun,  9 Jun 2024 22:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765043B784;
+	Sun,  9 Jun 2024 22:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717971545; cv=none; b=fjgDBd8aNzhPESFUu2QFsu9GHpmHfEt34hCX5L8iKZndoDenerMa63uQxNwMMmdKVUK7Q2ThdOdEw+FMmjqGgs+s7dFw1vugmSRbwCfS9yOEQo8yZO0XMxcKgHucC86l/Q2esmnw8Sz1xD2RtLYlCl/CaE5GKkgp92srdsmzUFU=
+	t=1717972028; cv=none; b=XJXjmwYtDL6WU3Vvj4bYWYbEmcuSovChYBLRi2T5fj179DZ6DIZDW2kH8Ti26ISL7A+wX7QB6WR6Q/RGjVrLjRVlntmZvyMaokYt0hcQmtZ6Nxz0sD6oFM6A9UhKjD+ygcmicsd4M0QwxdDo/w+l1Oba5gaGHreuio+ZAay59Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717971545; c=relaxed/simple;
-	bh=ySuyf8UbF0zWjzvwoGYc+ew5iXeHZUMDNjl7NU6DiCc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=k05XrsWKwwXHCXereFqBb+aiNd3nXCx2G7hZnNqfVzhYDjdL9LP3COtFRm8Kvcy4HCWiZdL4einEDW5gVBb+l2nIdenUKdfzFbAfMlOdjWdtyr9PSfxY1RATHWiTLnY6+0GkknYuMQatcypIyIK+/qRfwO2cDUZkkhHKuvW9wdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UcG/T8D2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459KrZO1025542;
-	Sun, 9 Jun 2024 22:19:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=N5eQqMFkP57lxHjn9HDz4v
-	EB4SJwMNThRpvnJhhQHpw=; b=UcG/T8D211BCdRfNuk8HKiQOqHIZxskACmAEVr
-	lyFv1zz86XpAEDMi6OYEywDEjWf7cQP6RJtFPQeq1hjG7SFs1/i3WePbjHs0ADuV
-	Pw++JbP4fwlXHAueLZQOWk/3hts65pJi7yYGnPiksNTlPu3tnHOlAGaod9kIbUIs
-	/6rRdnobjSZwqZ6NjXX3ts8whHm0uwKPnqPmU0tW45Gnxs2yei4/k3cyYz3Y9FAj
-	3EiWAVu9hRx6wL9PggQOeYOwE89uWstW5zyJG/BW0FTTXp0PL6uYZN4I50bNezB6
-	s8yF/XWrlnXRP0Zzxw1mbwW5GD5ey0Wzn1OhSj7p4WxVXeWg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfp7a3dg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Jun 2024 22:19:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459MIwr8002475
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 9 Jun 2024 22:18:59 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 15:18:58 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 15:18:58 -0700
-Subject: [PATCH] spi: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717972028; c=relaxed/simple;
+	bh=ZtpP7xUC8YMjEeXjZcAOLEg8ab3YVKQ27bfu4A7cBCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X6EblUsBCBtSXuFoIiTwbhY/MQ/xJkcQ8119RhNN+dWDa7el0d+CTBYcfB7XpAa6WnUkOHHYmQUVCpCLKZ62WNx/7X/c8NtFqOVBsobpQAAuS+CVlzw6NESHGT3wAbhpqth691wN49QvUqykGI0gKFB8wQv7TLANWXqJu2NfXHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=39zNmJkV; arc=none smtp.client-ip=62.201.172.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
+Received: from shout01.mail.de (unknown [10.0.120.221])
+	by shout11.mail.de (Postfix) with ESMTPS id 58201241909;
+	Mon, 10 Jun 2024 00:26:59 +0200 (CEST)
+Received: from postfix02.mail.de (postfix02.bt.mail.de [10.0.121.126])
+	by shout01.mail.de (Postfix) with ESMTP id E7A32240CA5;
+	Mon, 10 Jun 2024 00:26:58 +0200 (CEST)
+Received: from smtp01.mail.de (smtp02.bt.mail.de [10.0.121.212])
+	by postfix02.mail.de (Postfix) with ESMTP id BC489A00E2;
+	Mon, 10 Jun 2024 00:26:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+	s=mailde202009; t=1717972018;
+	bh=ZtpP7xUC8YMjEeXjZcAOLEg8ab3YVKQ27bfu4A7cBCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:From:To:CC:Subject:Reply-To;
+	b=39zNmJkV+bWkj90p0YJDG2lWE8SFy1O8Wu7p36sKtjy7SYtS8DdULuTH+KeKBmS/j
+	 9UKh1yj26KNo8RjQ2gTqsVZ715LyCXKIf9hYBw8SVC6oApiXBKC9TVQXnC9bcZlytP
+	 gECh86fb1el2d81HBfLodFhYEf5uBIrtMclucLn0F9uK3utdOF1LcByVhEx+MPNF1F
+	 sv0eG9XLRlHgQJQUzq6bleoIv0hzseL8Vxtu11EzoqfgEoYgZX+2KUYuvwjCSPWKjz
+	 96hCT8guoNkffurqeA5uKMlgdZ59Auoj0dbpHBye5EEB/GYqUGTetDrQV5Ul9gk6pR
+	 dAWIOMIh5Fc2A==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp01.mail.de (Postfix) with ESMTPSA id C327F240A27;
+	Mon, 10 Jun 2024 00:26:56 +0200 (CEST)
+From: Sebastian Kropatsch <seb-dev@mail.de>
+To: Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Space Meyer <me@the-space.agency>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] RK3588: FriendlyElec CM3588 NAS board support
+Date: Mon, 10 Jun 2024 00:20:15 +0200
+Message-ID: <20240609222428.134977-1-seb-dev@mail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-spi-v1-1-1c7444f53cde@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFEqZmYC/x3MQQqDQAxG4atI1g2kIoq9SulixvlbA3UqSSuCe
- PeOLr/Fexs5TOF0qzYyLOr6yQXXS0XDGPILrKmYaqkbaaXnKXEyXWDOPiv3XdcEoE0ShUo0G56
- 6nsP7ozgGB0cLeRiPzVvzb+Up+BdG+/4HTCSgnX8AAAA=
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 35kC_feu8IiuVCZfmxFCPlL9L7wanhBE
-X-Proofpoint-ORIG-GUID: 35kC_feu8IiuVCZfmxFCPlL9L7wanhBE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_17,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406090175
+Content-Transfer-Encoding: 8bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 3493
+X-purgate-ID: 154282::1717972018-FED2B878-86B4AC69/0/0
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-altera-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-omap2-mcspi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-qup.o
+Hello!
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+This adds support for the FriendlyElec CM3588 NAS board.
+The board's device tree makes use of the latest upstream advances on the
+RK3588 like USB3 DRD and GPU support as well as the latest Rockchip PCIe
+driver bifurcation fixes, but some features such as thermal management
+and HDMI will have to be added later when SoC support for these features
+is merged.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/spi/spi-altera-core.c | 1 +
- drivers/spi/spi-fsl-cpm.c     | 1 +
- drivers/spi/spi-fsl-lib.c     | 1 +
- drivers/spi/spi-omap-uwire.c  | 1 +
- drivers/spi/spi-omap2-mcspi.c | 1 +
- drivers/spi/spi-qup.c         | 1 +
- 6 files changed, 6 insertions(+)
+Issues:
+1) pcie3x4 BAR 1 fails to assign, see dmesg:
+   pci 0000:00:00.0: BAR 0 [mem 0x900000000-0x93fffffff]: assigned
+   pci 0000:00:00.0: BAR 1 [mem size 0x40000000]: can't assign; no space
+   pci 0000:00:00.0: BAR 1 [mem size 0x40000000]: failed to assign
 
-diff --git a/drivers/spi/spi-altera-core.c b/drivers/spi/spi-altera-core.c
-index 87e37f48f196..7af097929116 100644
---- a/drivers/spi/spi-altera-core.c
-+++ b/drivers/spi/spi-altera-core.c
-@@ -219,4 +219,5 @@ void altera_spi_init_host(struct spi_controller *host)
- }
- EXPORT_SYMBOL_GPL(altera_spi_init_host);
- 
-+MODULE_DESCRIPTION("Altera SPI Controller driver core");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/spi/spi-fsl-cpm.c b/drivers/spi/spi-fsl-cpm.c
-index e335132080bf..23ad1249f121 100644
---- a/drivers/spi/spi-fsl-cpm.c
-+++ b/drivers/spi/spi-fsl-cpm.c
-@@ -415,4 +415,5 @@ void fsl_spi_cpm_free(struct mpc8xxx_spi *mspi)
- }
- EXPORT_SYMBOL_GPL(fsl_spi_cpm_free);
- 
-+MODULE_DESCRIPTION("Freescale SPI controller driver CPM functions");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/spi/spi-fsl-lib.c b/drivers/spi/spi-fsl-lib.c
-index 4fc2c56555b5..bb7a625db5b0 100644
---- a/drivers/spi/spi-fsl-lib.c
-+++ b/drivers/spi/spi-fsl-lib.c
-@@ -158,4 +158,5 @@ int of_mpc8xxx_spi_probe(struct platform_device *ofdev)
- }
- EXPORT_SYMBOL_GPL(of_mpc8xxx_spi_probe);
- 
-+MODULE_DESCRIPTION("Freescale SPI/eSPI controller driver library");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/spi/spi-omap-uwire.c b/drivers/spi/spi-omap-uwire.c
-index 210a98d903fa..03b820e85651 100644
---- a/drivers/spi/spi-omap-uwire.c
-+++ b/drivers/spi/spi-omap-uwire.c
-@@ -541,5 +541,6 @@ static void __exit omap_uwire_exit(void)
- subsys_initcall(omap_uwire_init);
- module_exit(omap_uwire_exit);
- 
-+MODULE_DESCRIPTION("MicroWire interface driver for OMAP");
- MODULE_LICENSE("GPL");
- 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 7e3083b83534..b428990f6931 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -1671,4 +1671,5 @@ static struct platform_driver omap2_mcspi_driver = {
- };
- 
- module_platform_driver(omap2_mcspi_driver);
-+MODULE_DESCRIPTION("OMAP2 McSPI controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
-index 2af63040ac6e..1e335cd961a4 100644
---- a/drivers/spi/spi-qup.c
-+++ b/drivers/spi/spi-qup.c
-@@ -1369,5 +1369,6 @@ static struct platform_driver spi_qup_driver = {
- };
- module_platform_driver(spi_qup_driver);
- 
-+MODULE_DESCRIPTION("Qualcomm SPI controller with QUP interface");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:spi_qup");
+2) The device enumeration of NVMe SSDs plugged into the four PCIe M.2
+slots does not follow the order of the slots on the board: The slots are
+physically named from 1 to 4, top to bottom. However, they do not show
+up in this same order in Linux when all slots are polulated:
+   - SSD in physical slot 1 shows up as nvme0
+   - SSD in physical slot 2 shows up as nvme2
+   - SSD in physical slot 3 shows up as nvme1
+   - SSD in physical slot 4 shows up as nvme3
+This is the same order in which the data lanes are mapped for PCIe
+bifurcation (dts property: data-lanes = <1 3 2 4>).
+I could not solve this by using aliases for the PCIe nodes in the device
+tree. Perhaps this is something that can only be solved at driver level?
+I am not sure if this behaviour is even considered a bug or if this is
+intended behaviour by design.
+
+Devicetree validation:
+`make CHECK_DTBS=y rockchip/rk3588-cm3588-nas.dtb` does not give any
+warnings or errors, tested on Linux next-20240607.
+
+Best regards,
+Sebastian Kropatsch
 
 ---
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240609-md-drivers-spi-9774aee6d0b0
+
+Changes v2 -> v3:
+- add vmmc-supply and vqmmc-supply to &sdhci
+- remove duplicate combphys
+- add 4 times the same regulator for PCIe to reflect the schematics
+- fix USB vcc_5v0_host_30_p2 to use 5V as per schematics
+- usb-c-connector: disable sink power delivery, enable only source mode
+- &u2phy0_otg: add phy-supply
+- rename some nodes
+- minor fixes and some additional helpful comments (some sugg. by Space Mayer)
+- collect a-b tag for patch 1
+- v2: https://lore.kernel.org/linux-rockchip/20240602211901.237769-1-seb-dev@mail.de/
+
+Changes v1 -> v2:
+- split dts into two files (CM and carrier board)
+- rename fixed regulators with preferred 'regulator-' prefix
+- use preferred 'gpios' property instead of 'gpio'
+- add 'pinctrl-names' property for every pinctrl
+- add several pwm nodes
+- drop HMDI PHY and VOP support
+- drop unneeded &wdt node
+- remove i2c4 since it's not availabe according to the schematics
+- &sdhci: drop 'full-pwr-cycle-in-suspend' flag
+- &sdmmc: drop 'cap-mmc-highspeed' flag because of no-mmc
+- &sdmmc: drop 'cd-gpios' property, unneeded w/ using sdmmc_det pinctrl
+- &usb_host0_xhci, &usb_host2_xhci: remove default 'dr_mode' property
+
+---
+
+Sebastian Kropatsch (2):
+  dt-bindings: arm: rockchip: Add FriendlyElec CM3588 NAS
+  arm64: dts: rockchip: Add FriendlyElec CM3588 NAS board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   7 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../rk3588-friendlyelec-cm3588-nas.dts        | 759 ++++++++++++++++++
+ .../rockchip/rk3588-friendlyelec-cm3588.dtsi  | 655 +++++++++++++++
+ 4 files changed, 1422 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
+
+-- 
+2.43.0
 
 
