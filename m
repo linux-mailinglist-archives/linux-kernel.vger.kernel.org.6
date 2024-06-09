@@ -1,99 +1,82 @@
-Return-Path: <linux-kernel+bounces-207396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9CD90167C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:33:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00F5901680
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 17:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB4F1C2095F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E63AB21039
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 15:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247B545BFF;
-	Sun,  9 Jun 2024 15:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67546435;
+	Sun,  9 Jun 2024 15:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s+j8k3X0"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3jXnIak"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACD44207D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 15:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B742A91;
+	Sun,  9 Jun 2024 15:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717947198; cv=none; b=fi+LnF7YjpTl4GqppGMCIeMwppuxWzK8+li77LWiCKhxvX2/Wg7ARRdQOKx0bJpqiG1UxdDrtby1RLEGuVbGwIgArHIQQQfuWOt3heXtrCShb6eWFZ/8XuHBL6Lao/ZFI7VgK0V4xRpOEva1OPfx2huWUgEgqogwVVC1S7cPwMA=
+	t=1717947740; cv=none; b=DNJFJovhA0UR5wx43miEDq0CqSCEm/NuvzbTMZaQmkmxs1Cvtkn4JFLfGMbHfBYUclm7wccCU6gk7X06TGsJK5CXMs1hhVotXfroxhbtZS1b5Hqhwd1qdNfRSmc2VRvQV+7lKRZM5RyFN2IhE+8IeuNkWTNUEFrDEUHlpBw0jUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717947198; c=relaxed/simple;
-	bh=r4v/UAXdtaVQkhy3RY4WN1zXyyz8Oiobysf6yxbLWck=;
+	s=arc-20240116; t=1717947740; c=relaxed/simple;
+	bh=jjZOAJDH3CXwj+75keK9jfIEu+0mkRJEuEOYmcBRoHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNs/+O7LtU5DDvYFCDcU3ZXs1vDei6jvJNyDt8+DGTqZznibVr7j/xPGUm8p+syeboRlRNHmDr78azs+axorJTwvlQWSPjYZCxq26z7Qhg5dpVW/Rx9qtV7dAr3FPpBTXYWeeFRD6xXQtcn9sFlZ+CTWQVPflwMmd05Tnp+4S3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s+j8k3X0; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421792aa955so11623815e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 08:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717947195; x=1718551995; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvLb4EQePzdCw1JidNRQOd0lUeEVij5wud7SriP9HXs=;
-        b=s+j8k3X03tydr5dzTCiWG/szBtN2dnnYY1oI99tPUTgJS1+5q5idKpXsfJPZvf98Gm
-         udxSMh38XDJuegRTX5ac2j1BppV/UkNEn7HTp1y5CUjCBejDDxR6kHaWv9VkGaDarq/5
-         qf+V+B/TZSwM5b39zSp4OG6bC897Of+bt3vC4/Ms6o1gV2kSiIvhcOrMftwaSHAeXVpZ
-         5uqm41bwPW0bw7nvgmDedI4rcMR9TiNB7o+8MY5kIJMyBicRCC0cEKdM+SuXoULrPhFz
-         QyclpCH9O6ufltIWptXfkOm1aDtqRheTt2FwZfDde70D3RT7dBoeIdUNayTVhhvyN8mH
-         bgpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717947195; x=1718551995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dvLb4EQePzdCw1JidNRQOd0lUeEVij5wud7SriP9HXs=;
-        b=e7hXANRzJpvNjdcDlsFUGFyZzufnxc09GUR7KoFwvKmqP77vEkpgljvUoTyR3RiXaS
-         1Tuk5szieEuKGjE6xxuVnJAfZFUDmBe03nbGqfmajWrBExVjkdCteMeuPbZ7a8gNT76n
-         3CwNEf9+oaNJxx840pH4qV5gKV8mePCDoUHNwkRbvaOiZvd0ScijOGUOtfziAidcy75o
-         PqnMLOM653/mS+n8Kd73QleKs9VegJs5BaL8lv6RNAf1Oaasg9Qsta2jE+t4oKlfIRT3
-         KBirv9K2NnCt9cKtcN1mwaxa/wcSTSNv8Ftot+ucd/VwQBLkCxu2Soyww/qfqcpy9/XF
-         eQNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS+4rFAW0xub8CSmxmoUZiFn/enlvzP0PMXRaU3oSzcyDjUl0fgzrIpqE9DpoR8EK0+RsqAbxS50ciltLOUgi6k9lwQ00D/wEKHDPA
-X-Gm-Message-State: AOJu0Yw/K3kiXs1MDKkzUuxTFEipEJU90TMvVQq3gXMjZ9D0DPzFiNW8
-	NHvlp8gOKfApaSvNa2jngC2gGwpVpzgEyLPXBPiOEtGjyOujuLQ/6yCCpiyHV5Q=
-X-Google-Smtp-Source: AGHT+IFm2QG2Dc0gqMxwmCkOPINESWV60cY/tnsvGA5b6O3SaTzlM4NQ1WMs+ajiXNmXKiIgssrQ+w==
-X-Received: by 2002:a05:600c:1f8b:b0:421:7983:f1c4 with SMTP id 5b1f17b1804b1-4217983f41cmr39632065e9.6.1717947194928;
-        Sun, 09 Jun 2024 08:33:14 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c7e8fsm114725415e9.38.2024.06.09.08.33.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 08:33:14 -0700 (PDT)
-Date: Sun, 9 Jun 2024 18:33:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Fred Griffoul <fgriffo@amazon.co.uk>
-Cc: griffoul@gmail.com, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Ye Bin <yebin10@huawei.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] vfio/pci: add msi interrupt affinity support
-Message-ID: <1855e4d2-02da-4ea1-94b3-8daf044b1243@moroto.mountain>
-References: <20240607190955.15376-1-fgriffo@amazon.co.uk>
- <20240607190955.15376-3-fgriffo@amazon.co.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTuC50ETLmICE0l+i/vRxt5Tjbx3uXqv8AB48NV4jqeV267FoBFKauD1LevkMRFr9nWIHIrslkgPDr5kSscxL5OHdBWVg52wSyz8PbKuw4qQ3U4wdnBSO86Bn+iXQFHn8cF6MwyzWY47KQAX8a87k7qKyXvroQremfOPWBP5pcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3jXnIak; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717947738; x=1749483738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jjZOAJDH3CXwj+75keK9jfIEu+0mkRJEuEOYmcBRoHQ=;
+  b=F3jXnIakmWKSTGAWlq/CFng+zDqs96WBEq7Hot4zdYyrMFjEO1TmCeAq
+   JXB72Xcf1ETYe1K37Q+3h+E5V3gxnoMu8Kj0FvwwPACtnCFdXp6uDKXOU
+   TxJ6xGgjtL/0qvddnJWuQ0qJDv7F7N7tWHLQo5uy1jYhIIl2jHMPbOJZB
+   U2gO4GLd99PA/dlSGOO5HETSKaxHv8jcvy9z4anvjqjtU3XwnYlhFv8YG
+   RiXgRe6N5LFMpmjpC511aT1HSN9LO1K69zR1jgmXLLhCI0oVBlGa53L/d
+   PEzpZkPm1SN6K4wis0eU+GdGOsDggtjz6z+yJhAbY3rbpZAQ+WYdR/UFt
+   g==;
+X-CSE-ConnectionGUID: HpLoFEvASyqNtxBdr5thPA==
+X-CSE-MsgGUID: 3v5+Lr9cRKa8bwYsv5BsKg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="32151653"
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="32151653"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 08:42:17 -0700
+X-CSE-ConnectionGUID: schCzkAoRBSIby+nbUxnhQ==
+X-CSE-MsgGUID: li9A0onhT+eAevH2f6SmgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="43256567"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 09 Jun 2024 08:42:14 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGKgO-0001MA-1E;
+	Sun, 09 Jun 2024 15:42:12 +0000
+Date: Sun, 9 Jun 2024 23:41:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Viacheslav Bocharov <adeep@lexina.in>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] arm64: dts: meson-axg: add support for JetHome
+ JetHub D2 (j200)
+Message-ID: <202406092342.w4H7PE64-lkp@intel.com>
+References: <20240607145148.2246990-3-adeep@lexina.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,52 +85,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607190955.15376-3-fgriffo@amazon.co.uk>
+In-Reply-To: <20240607145148.2246990-3-adeep@lexina.in>
 
-On Fri, Jun 07, 2024 at 07:09:49PM +0000, Fred Griffoul wrote:
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index e97d796a54fb..e87131d45059 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -1505,23 +1505,28 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
->  		size = 0;
->  		break;
->  	case VFIO_IRQ_SET_DATA_BOOL:
-> -		size = sizeof(uint8_t);
-> +		size = hdr->count * sizeof(uint8_t);
->  		break;
->  	case VFIO_IRQ_SET_DATA_EVENTFD:
-> -		size = sizeof(int32_t);
-> +		size = hdr->count * sizeof(int32_t);
+Hi Viacheslav,
 
-Not related to your patch, but this multiply can integer overflow on
-32bit systems.  Better to use size_mul().
+kernel test robot noticed the following build warnings:
 
-regards,
-dan carpenter
+[auto build test WARNING on 32f88d65f01bf6f45476d7edbe675e44fb9e1d58]
 
-> +		break;
-> +	case VFIO_IRQ_SET_DATA_AFFINITY:
-> +		size = hdr->argsz - minsz;
-> +		if (size > cpumask_size())
-> +			size = cpumask_size();
->  		break;
->  	default:
->  		return -EINVAL;
->  	}
->  
->  	if (size) {
-> -		if (hdr->argsz - minsz < hdr->count * size)
-> +		if (hdr->argsz - minsz < size)
->  			return -EINVAL;
->  
->  		if (!data_size)
->  			return -EINVAL;
->  
-> -		*data_size = hdr->count * size;
-> +		*data_size = size;
->  	}
->  
->  	return 0;
+url:    https://github.com/intel-lab-lkp/linux/commits/Viacheslav-Bocharov/dt-bindings-arm-amlogic-add-binding-for-JetHome-JetHub-D2/20240607-225905
+base:   32f88d65f01bf6f45476d7edbe675e44fb9e1d58
+patch link:    https://lore.kernel.org/r/20240607145148.2246990-3-adeep%40lexina.in
+patch subject: [PATCH v1 2/2] arm64: dts: meson-axg: add support for JetHome JetHub D2 (j200)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240609/202406092342.w4H7PE64-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406092342.w4H7PE64-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:2220.23-2260.6: Warning (avoid_unnecessary_addr_size): /soc/bus@ffd00000/dsi@7000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/clock-controller@0: failed to match any schema with compatible: ['amlogic,sm1-audio-clkc']
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@300: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@340: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@380: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller@3c0: compatible: ['amlogic,sm1-tdmin', 'amlogic,axg-tdmin'] is too long
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-formatters.yaml#
+>> arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/audio-controller@744: failed to match any schema with compatible: ['amlogic,sm1-tohdmitx', 'amlogic,g12a-tohdmitx']
+>> arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: /soc/bus@ff600000/bus@60000/audio-controller@744: failed to match any schema with compatible: ['amlogic,sm1-tohdmitx', 'amlogic,g12a-tohdmitx']
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:0: 'sclk' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:1: 'lrclk' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-0: clock-names:2: 'mclk' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+   arch/arm64/boot/dts/amlogic/meson-sm1-jethome-jethub-j200.dtb: audio-controller-1: clock-names:0: 'sclk' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
