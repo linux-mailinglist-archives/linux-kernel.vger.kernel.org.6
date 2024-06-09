@@ -1,156 +1,159 @@
-Return-Path: <linux-kernel+bounces-207221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDAF90140B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 02:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8E0901414
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 02:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F523282B5F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 00:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89671C20C46
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 00:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E729A50;
-	Sun,  9 Jun 2024 00:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7nsZ2S0"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E124C62;
+	Sun,  9 Jun 2024 00:28:29 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D351367;
-	Sun,  9 Jun 2024 00:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622AE23CB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 00:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717891461; cv=none; b=amRF6XforGR1chsfFa6rvZakqHj+BWg1rI/DREY4LfKTugjKVoojqF5GrleYdxk4gZo/ly7yiMclNa+9zH/B9Bu19nK6gxm7MyKBgoQiHEDd+Er5zK2nbRdH7eC0bj3GPlukqWqMeC3iN6DOkKqJaKKT4hOG6jqBr0UzkunYARk=
+	t=1717892908; cv=none; b=kb6AcwDeNDLitkmz0lbR4n49+FFGksgpxk9Pa5Yl+1yOORMBRyktyY6TZLUuHSN9uFiBlHc4rcqU1HQByW/AoV3uBlk7V0gjB501p01QR9/3jzYcZ82j7w99rz0jbIclyTtloSwLz3PVZ/ZN13pxHWibkDZIxmiOBl7AyBtnkHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717891461; c=relaxed/simple;
-	bh=E87V4JfAoOPrdLIRnIrrMEZJYH4ni/PVxRCNolBbXUk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LKJxLVfouHxJUg0gVB5F++Rf5t73IL/xhl/+FH8PHBEC8UZ/xNNiheHRLbtVqykCQMU6LzJJNHxoHmZPjf1A/umkao9OvJhYT9sG7idW/m2f76EAn87/teTjQYlalQ4KSFlJuE9EFGuj/cEg/p7VOCYI2khxTw3/J+y3ACsINTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7nsZ2S0; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6f031549bso7591945ad.3;
-        Sat, 08 Jun 2024 17:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717891459; x=1718496259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R4DiYmrDM9WuiqCUk6d8962w9mDc3uxUQIRfmiIP+g4=;
-        b=b7nsZ2S0Kpf7aBLTEEIpsCkcCiAuQrCce7PngnFEJ0J2O47KHBdFBFKmyIf4puXxXB
-         LV/jyrchos0gAKJ8C09DrOZ5BXs8l+C0JWO56RLWuUDObeHzR4O17XT6pPAq64Svrwsx
-         ejVNuEx4QgyGe+lcJLvptFNNERSA/yrRaCsP2gpBcJBr8DtSa34IWCztw8xQypbQBMzY
-         pk/dJZlUaOgcxVApsBa9GYdMXmDiU6Q1hSlcI+HQpE8fMChXlVvgYUaNr5+3BqzssKeq
-         VveT0bxcFlYvOXHE+cTVZxxlR0iWYVsZv06FCBnvLc1/ZKvhOW7ae2USxwo8uJcka9Ru
-         UAfg==
+	s=arc-20240116; t=1717892908; c=relaxed/simple;
+	bh=mmz54JJc3yybfHFgKCfVytER7nCl3IzG69J6glltmqU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lCFel/ckswCI5aTKDhv96+Wo9b15HyJxABAmdgr4HuKjM2FVXzgfq7anbgR9vELfuz4tZYrHjPEPvBlR6Qb4v/hk3875xN1EvOI5oiX0zm1hG22Jb49shdbAMgmDUzS0DRoM1BbxK6XIWj7xi+IEH+exMuk3v5u3utC+E9IJKMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb5f83ae57so171114139f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2024 17:28:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717891459; x=1718496259;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1717892906; x=1718497706;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R4DiYmrDM9WuiqCUk6d8962w9mDc3uxUQIRfmiIP+g4=;
-        b=jW3nmqRm7AiTnCY8Qzr32yAclZXEGsMVtgZRMcU/otXW/6PGQOiwfhw7c17RxchOaD
-         juP3av3V6zhYeiLpOjLml6vObVHx78keadW1zR2ZdZQAD33L3eAOdUQA6iE+tBBt7idd
-         5rMDQBe/BSEzqvZvo4Lw0IzqGEvphNmbpbtBHrp/K6tG0yC4nvUH0fkmqzNkyAAm9IMG
-         QOm/vJlDHcSs3in8vD6crX4ZfpbmefH0iNkwRYyHX7JURYJr/iL9kudgQ8FAZV8pnvYT
-         IYS7R2US9sx5MbPnWNe0mEub52pe61rEV/OIF98PjEOpNlGpLTmqTzyQKRiqSVohy7lw
-         kx9w==
-X-Forwarded-Encrypted: i=1; AJvYcCW5XZdRzMYWGH1GJrOEOqKCvFt/QUpngvSnaFTqRybi+rhX+kOFaUI4XLpv5vBbIWMvbRUxZ1Ty+9poNxBm45yyVp8CeENc4Glcbw==
-X-Gm-Message-State: AOJu0Ywoevj8ppZqdH5f738pI8CQrErnt3FBoVeYVq+0CrTMp3v/yU7d
-	Or/S6cDeLiWJjoBuFDRQEkTtokW78OQQVzyTI4CBgERcOCtcDpbX
-X-Google-Smtp-Source: AGHT+IE+CFBySHJU8B2QPWQ4xCh6axAZY3QaBrbCrRKRI5T+2Fyo/3wpSzjxHDtTe723K/sKx0iaIg==
-X-Received: by 2002:a17:902:6506:b0:1f6:ee9e:f60c with SMTP id d9443c01a7336-1f6ee9efdbemr24024875ad.58.1717891459496;
-        Sat, 08 Jun 2024 17:04:19 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f96f18e8sm13029685ad.230.2024.06.08.17.04.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Jun 2024 17:04:19 -0700 (PDT)
-Message-ID: <a3ff0522-fd2d-4c87-9c7b-00cbdd5f3c68@gmail.com>
-Date: Sun, 9 Jun 2024 09:04:14 +0900
+        bh=tjSd/mQbu7tpbBHvdcZ8g7QffSYT7ae7Efa+kpXZs90=;
+        b=H+LyzH6WSymKN/q2m3PaoEzNkDYoA2guleIokNgwQR1epoQxH9X2RcrOhPdT3MaS0F
+         pNNCgXzIcITraIPJbNIJRyfQK6vk7DrR2bXcNcTw+53B5uWP76TKmHMmgwmgvPALfObb
+         ARG1S/LQgzldpWvX4jNrR4ceE+1TqBlbWDoqKH8nRJEXcTyD8pnpONgWIBoijmYnRbEs
+         T+xytICngtjWZXIBnI3qsFrXVZZwfUmy94mQ7MD212CJSh/5v0BrRuFaLWgmwWZtUTD+
+         M7UJ/PMEpoTVHKiSjtzEQcKk0HxyWZip+j35M6n/K8HiwwdtizZrjcaNhK/mAdZxNf+e
+         5E4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWda0bO6dmhKTVX4evmnFo4hj2X7dKXnNUSOekDCPUXzBx5yJRlQp5s0Q8MykH98mv64Vjh2+SZEfuarD731IuQXXirRobgUoJaqX+
+X-Gm-Message-State: AOJu0Yz9CBKDp+qzyG0P+OP3u2dD8DT3E+109ZH5PMmgFALFOupnImGw
+	egA6Xcoay87DH+yR03UXxXEMyzBeSfA3xzIMdUdx1OPw/+JG4XS1ZmVk2bG/wh7q5sOWUm0pgPW
+	wmuAPXHuwVCoYP6PjtXSuREpJe0GO0pYaI5BN0TjIbJPkAg7WKCroBbI=
+X-Google-Smtp-Source: AGHT+IFuuiZW/vtOjVZzzKuNpot5s5YMUblKeXMxi26BsDQBuOBDrUz89HPVX+3MGQuUsnI9teLh1LxyKXypIfeksLH/9heNiKx/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
- mentorship session citation
-To: paulmck@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
- parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
- boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
- j.alglave@ucl.ac.uk, luc.maranget@inria.fr, Marco Elver <elver@google.com>,
- Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
- Akira Yokosawa <akiyks@gmail.com>
-References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
- <20240604221419.2370127-3-paulmck@kernel.org>
- <42fa4660-b3bf-4d09-bbad-064f9d4cc727@gmail.com>
- <f11f7230-7c16-45a3-83be-9aba32e10a3b@paulmck-laptop>
- <3c5a53e2-b5a9-4197-97a3-247abb7f3061@gmail.com>
- <6bb5f789-f143-493c-a804-62b7c81dabb0@paulmck-laptop>
-Content-Language: en-US
-In-Reply-To: <6bb5f789-f143-493c-a804-62b7c81dabb0@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:1548:b0:7eb:7e0c:d198 with SMTP id
+ ca18e2360f4ac-7eb7e0cd405mr1758339f.2.1717892906467; Sat, 08 Jun 2024
+ 17:28:26 -0700 (PDT)
+Date: Sat, 08 Jun 2024 17:28:26 -0700
+In-Reply-To: <000000000000b1093b0608ff6979@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000073d54b061a6a1c65@google.com>
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
+From: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/06/09 0:48, Paul E. McKenney wrote:
-> On Sat, Jun 08, 2024 at 08:38:12AM +0900, Akira Yokosawa wrote:
->> On 2024/06/05 13:02, Paul E. McKenney wrote:
->>> On Wed, Jun 05, 2024 at 10:57:27AM +0900, Akira Yokosawa wrote:
->>>> On Tue,  4 Jun 2024 15:14:19 -0700, Paul E. McKenney wrote:
->>>>> Add a citation to Marco's LF mentorship session presentation entitled
->>>>> "The Kernel Concurrency Sanitizer"
->>>>>
->>>>> [ paulmck: Apply Marco Elver feedback. ]
->>>>>
->>>>> Reported-by: Marco Elver <elver@google.com>
->>>>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->>>>> Cc: Alan Stern <stern@rowland.harvard.edu>
->>>>> Cc: Andrea Parri <parri.andrea@gmail.com>
->>>>> Cc: Will Deacon <will@kernel.org>
->>>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
->>>>> Cc: Nicholas Piggin <npiggin@gmail.com>
->>>>> Cc: David Howells <dhowells@redhat.com>
->>>>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
->>>>> Cc: Luc Maranget <luc.maranget@inria.fr>
->>>>> Cc: Akira Yokosawa <akiyks@gmail.com>
->>>>
->>>> Paul,
->>>>
->>>> While reviewing this, I noticed that
->>>> tools/memory-model/Documentation/README has no mention of
->>>> access-marking.txt.
->>>>
->>>> It has no mention of glossary.txt or locking.txt, either.
->>>>
->>>> I'm not sure where are the right places in README for them.
->>>> Can you update it in a follow-up change?
->>>>
->>>> Anyway, for this change,
->>>>
->>>> Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
->>>
->>> Thank you, and good catch!  Does the patch below look appropriate?
->>
->> Well, I must say this is not what I expected.
->> Please see below.
-> 
-> OK, I was clearly in way too much of a hurry when doing this, and please
-> accept my apologies for my inattention.  I am therefore going to do
-> what I should have done in the first place, which is to ask you if you
-> would like to send a patch fixing this.  If so, I would be quite happy
-> to replace mine with yours.
+syzbot has found a reproducer for the following issue on:
 
-OK.
-I think I can submit a draft patch after fixing perfbook's build error
-caused by changes in core LaTeX packages released last week.
+HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10961932980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15be6dce980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101ca30a980000
 
-Can you wait for a while ?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
 
-        Thanks, Akira
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
+
+cdc_wdm 1-1:1.0: nonzero urb status received: -71
+cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
+cdc_wdm 1-1:1.0: nonzero urb status received: -71
+cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
+watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [syz-executor782:6625]
+CPU#0 Utilization every 4s during lockup:
+	#1:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#2:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#3:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#4:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#5:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
+Modules linked in:
+irq event stamp: 73096
+hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
+hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
+hardirqs last disabled at (73096): [<ffff80008af10b00>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
+hardirqs last disabled at (73096): [<ffff80008af10b00>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
+softirqs last  enabled at (73048): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (73048): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
+softirqs last disabled at (73043): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
+CPU: 0 PID: 6625 Comm: syz-executor782 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:176 [inline]
+pc : arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+pc : console_emit_next_record kernel/printk/printk.c:2935 [inline]
+pc : console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
+lr : console_emit_next_record kernel/printk/printk.c:2935 [inline]
+lr : console_flush_all+0x678/0xb74 kernel/printk/printk.c:2994
+sp : ffff800097d67380
+x29: ffff800097d67480 x28: ffff800097d67530 x27: 0000000000000001
+x26: ffff80009090b530 x25: ffff80009090b520 x24: dfff800000000000
+x23: 1ffff000121216af x22: dfff800000000000 x21: ffff80009090b578
+x20: 0000000000000000 x19: 00000000000000c0 x18: ffff800097d672b8
+x17: 6965636572207375 x16: ffff80008033878c x15: 0000000000000001
+x14: 1ffff00011e379c8 x13: 0000000000000000 x12: 0000000000000003
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000cdc05ac0 x7 : ffff800080381d44 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000006 x1 : 0000000000000080 x0 : 0000000000000000
+Call trace:
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+ console_emit_next_record kernel/printk/printk.c:2935 [inline]
+ console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
+ console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
+ vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
+ vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
+ vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
+ _printk+0xdc/0x128 kernel/printk/printk.c:2370
+ usb_gadget_register_driver_owner+0x1f0/0x224 drivers/usb/gadget/udc/core.c:1711
+ raw_ioctl_run drivers/usb/gadget/legacy/raw_gadget.c:595 [inline]
+ raw_ioctl+0x10c0/0x33bc drivers/usb/gadget/legacy/raw_gadget.c:1306
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
