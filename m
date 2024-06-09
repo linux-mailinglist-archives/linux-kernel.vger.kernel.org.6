@@ -1,104 +1,77 @@
-Return-Path: <linux-kernel+bounces-207382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB4C901657
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F0B90165B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFD42816FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:25:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B46281727
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BE843AC4;
-	Sun,  9 Jun 2024 14:25:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4567343AC4;
+	Sun,  9 Jun 2024 14:27:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA0A2233A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 14:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A942233A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 14:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717943116; cv=none; b=gkojatleMxmlNJ9I3H8JO73PJDqU8j2zRc4YyXNnATrzD9HpRSMwmn1oc2Uv/s5P9TrM41jtZYjxgVlWXTplCzgT0DZOl4E4zjWYMFIHq0knvL0f9INu6qjSbrMguGyhBU8GqnIhE8wk2qTABQYCBt7RbDt8gFGPp08QjHGXWWU=
+	t=1717943241; cv=none; b=LzklwGQGEnLnt0K+A675BEXGh/OGWEShA9XSY5qfCOEA16jioCscpkCHTPlPvJJ12blnfTyg1mzcyeqvO4CXenngw2ytt6rcux/3yaSgCckvyOhECUrWwWMRtdocwoVPN4+nVChLMYLmm2IKDNGXFv1S6nBi/s3FSDZmf7YjxX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717943116; c=relaxed/simple;
-	bh=4DAeBNRuP/ZxcrO8Rw9fTCFAb9nXpRMGSiRThrAiwAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a6UWrlBv0zjY02i2v+0QOzeXfVA6Wpm8FwtSfscsr2UfBmwxKlqmQD79VaBHJ3TtvinH9P61qEKhRLSkYicUDfvhOOefY+61uasraaRzh0ugKiFh+bivJkUkLbNkvo0TxHwWaMCkI7Q0i+irPqO5x7vjOkznZlv4XWlYm8Q+TBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABCBC2BD10;
-	Sun,  9 Jun 2024 14:25:12 +0000 (UTC)
-Date: Sun, 9 Jun 2024 10:25:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sam Sun <samsun1006219@gmail.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, syzkaller-bugs@googlegroups.com, peterz@infradead.org,
- jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, mingo@redhat.com,
- Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com, hpa@zytor.com,
- xrivendell7@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tejun Heo <tj@kernel.org>
-Subject: Re: [Linux kernel bug] WARNING in static_key_slow_inc_cpuslocked
-Message-ID: <20240609102530.0a292b07@rorschach.local.home>
-In-Reply-To: <87o78axlbm.ffs@tglx>
-References: <20240609090431.3af238bc@gandalf.local.home>
-	<87o78axlbm.ffs@tglx>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717943241; c=relaxed/simple;
+	bh=uCueXMX0OM59PcADSVt5fbj4XY/6xP4O5x3Q6OOEq9U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DlZe7czl16N7JIKNRpzp1uFYeeIY93THtTGL/LK2dOia0GZap3QTPxgkoT+d0ED/8XGpgysbYzXY0L7Dp3n6x4K+WJQHy00OY4EDbUBSXhuJYGoW41PdKbbgswjvXIM43aKoAp//cTxuuq5OntEeCbWv9X+j+2QTjiKglpvzN78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e69c0762b8so473756039f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 07:27:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717943240; x=1718548040;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCueXMX0OM59PcADSVt5fbj4XY/6xP4O5x3Q6OOEq9U=;
+        b=rWrHfTFeUX7nsbkzWL0/YuB8LD6I5jPgQdhIv7nnnHfGF42VZtiAaUDbSENHgOPFIy
+         d8MFI50ovUQXx31EpDNNt+ovp0HHnhrFQ8vBBvozyiSm9Gs0MdnPvFj70nkZXckwUviW
+         cBhnkIyugfsmQZ1h9l7oUXGs6zLqURM0KzkaKg9MASIAYtRR9IxCcTDg6ImhrwmsTuJw
+         tzQHydNoMAOWu9I4kSk9aXm6672NWzNw3adJtjUU+JNc/b8ouhq0nks2soZ6zFemR07W
+         WCf+1+SJG3R6cRY/khu66t+S2f5/XCeQpZ6E+im8/RiVkV4ftE6747Fxexvu+sd171mb
+         GHag==
+X-Gm-Message-State: AOJu0YwT2DeWAzXuH01z2I2fZwTyQFbfZXS3CDb2rV5D2TBgS/pXy/0Q
+	rVsFSsIqtNpdnLLjK5ozkXxeHyb1fN4mg1aJOXkuQr2+5UMKKDPQ9DrFTDgzbiJYJN8VFTjEqwK
+	5xbtGXZvDaaKi7nDelTJgKNjE0oQ37GNaunf3yBJ/NJiGzDAelcIaoeQ=
+X-Google-Smtp-Source: AGHT+IF1i7BRptCTWbWJ3Pvm2I4/MXiPfhuok/5eqlVYFSmzq95QG8zw3B/h+dkE4e0TH01A5J0pH7vgEHrsJT3pdur6m9u7Mof5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:14d0:b0:7eb:76f7:4857 with SMTP id
+ ca18e2360f4ac-7eb76f76027mr9983339f.0.1717943239738; Sun, 09 Jun 2024
+ 07:27:19 -0700 (PDT)
+Date: Sun, 09 Jun 2024 07:27:19 -0700
+In-Reply-To: <000000000000141201061a75665a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008c99a7061a75d4e3@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [usb?] WARNING in kcov_remote_start (4)
+From: syzbot <syzbot+7110e6a4069f19537d85@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 09 Jun 2024 16:06:05 +0200
-Thomas Gleixner <tglx@linutronix.de> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> On Sun, Jun 09 2024 at 09:04, Steven Rostedt wrote:
-> > On Sun, 9 Jun 2024 14:33:01 +0800
-> > Sam Sun <samsun1006219@gmail.com> wrote:  
-> >> [   82.310798][ T8020] ------------[ cut here ]------------
-> >> [   82.311236][ T8020] kernel BUG at arch/x86/kernel/jump_label.c:73!  
-> >
-> > This is not a bug with jump labels. It's a bug with whatever is using jump
-> > labels. Looks like something tried to modify a jump label that no longer
-> > exists.  
-> 
-> The jump label exists.
+***
 
-Ah, I missed the set_attr_rdpmc() as something not with a "?" in front :-p
+Subject: Re: [syzbot] [usb?] WARNING in kcov_remote_start (4)
+Author: penguin-kernel@i-love.sakura.ne.jp
 
-> 
-> >> [   82.331873][ T8020]  set_attr_rdpmc+0x193/0x270
-> >> [   82.332179][ T8020]  ? get_attr_rdpmc+0x30/0x30
-> >> [   82.332511][ T8020]  ? sysfs_kf_write+0x18d/0x2b0
-> >> [   82.332832][ T8020]  ? sysfs_kf_read+0x370/0x370
-> >> [   82.333159][ T8020]  kernfs_fop_write_iter+0x3ab/0x500  
-> >
-> > So, something in kernfs modified a jump label location that was freed?  
-> 
-> No. What happens is:
-> 
-> CPU 0                           	CPU 1
-> 
-> kernfs_fop_write_iter()			kernfs_fop_write_iter()
->   set_attr_rdpmc()		  	  set_attr_rdpmc()
->     arch_jump_label_transform_queue()       arch_jump_label_transform_queue()
->      mutex_lock(text_mutex)                   mutex_lock(text_mutex)
->      __jump_label_patch()
->      text_poke_queue()
->      mutex_unlokc(text_mutex)
->                                               __jump_label_patch()
-> 
-> CPU 1 sees the original text and not the expected because CPU 0 did not
-> yet invoke arch_jump_label_transform_apply().
-> 
-> So clearly set_attr_rdpmc() lacks serialization, no?
-> 
+#syz fix: kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
 
-Hmm, but should jump labels fail when that happens? Or should it catch
-it, and not cause a BUG?
-
--- Steve
 
