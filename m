@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-207278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C6A9014EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4539014EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 10:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ED2FB21880
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05380281B33
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 08:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964B1CA80;
-	Sun,  9 Jun 2024 08:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F901C6A7;
+	Sun,  9 Jun 2024 08:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fZRkQEsF"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QUq5EGI4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114FDBE4F;
-	Sun,  9 Jun 2024 08:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878ED18C3D
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 08:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717921268; cv=none; b=jhT8JkmSPBP2lNtGYniRNOgrOcH1pgutL0qT2hIgqX0xK9dBzsMgJBg4e6nF/wwnPpO6+wSkwNhTYu/flFBZsOXEpd1r8spfLuh0f/BsBuRAOZNe5B7igTz8lEpgemVVbYUHwp3F/RDv34px8iKLa1tM+1BL+y1nQDDZbmq67uI=
+	t=1717921381; cv=none; b=agz3NWRwaRbR2LA9VGFVs9QFw7wfem9qFE7MQzB8eC9D/vTHmLtf6Yc59Ts0DLX1WUmLzKT94EdO0+ID7zIJUi9NBTnsn3oH+3yvN7QJTyYvTIX/k55+T3D4W1CEJTjQ23BAn5YTanEXhCFPBVyIm9QpQADmoieTBGTXp+Nh1ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717921268; c=relaxed/simple;
-	bh=5DevxDXr7dBgUa1XngX1B4wwpcU5vAKWJLDm4Bc6Xe4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnaUrV3XqmXhmDPl2lqUH/rbpmuTLfTS3JEuD71FUZ8lZRG/omvhTmMWcN3Yi7w2JX1QR/a7lrFRsMdqzz0ewVz3S7zHzcyi9jqZhlG7P8W13BewERN+phpkp0GPVxOdojWjAACB6qw9QNKCZa2dGU+z/eOXZQY9UNDpED7slcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fZRkQEsF; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: dzm91@hust.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717921260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p4o03/pzCQ6eaeQy5QsanEkCk2N90XxxK4ZFhqU5w5g=;
-	b=fZRkQEsFiu91Pkd2Pxhlci0bCPR1U1by4AqZxFdHkBwjJ7CqLVi0NH3Op5wN7wakh2zbu1
-	vRy8pXkX8BC8ivI70n6i6ZZ/UPe7etrVzJQKVMj5utldss5Qwa/2HFztKrbPOZW5ajdKuA
-	nQfDzWjrEZI7DaQzI7fjhALlIbNXao8=
-X-Envelope-To: alexs@kernel.org
-X-Envelope-To: siyanteng@loongson.cn
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: konstantin@linuxfoundation.org
-X-Envelope-To: linux-doc@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zenghui.yu@linux.dev
-Message-ID: <fdbbe5d0-65ea-49ef-9a4c-26fe7a691c64@linux.dev>
-Date: Sun, 9 Jun 2024 16:20:40 +0800
+	s=arc-20240116; t=1717921381; c=relaxed/simple;
+	bh=aYbhmIouizHZNA+e1YXn+Q5/h6TyBnnjode5JopwoWY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Bhb+XBt1qAa9yPd2bgwUtrYyeRHxbY6B8fsIjduCg3r/CNfu9WfdlP9ZLNxKQKlSZg4u79jYDQVM6ytO22sSs09tuwDjkH587/GTndufTg2RZ3smn+5S0N7IK+YhEMM4ylFm/v0KIvpCj31PnSPVUflXyWIp5UjSfFsZkC7/B98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QUq5EGI4; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717921379; x=1749457379;
+  h=date:from:to:cc:subject:message-id;
+  bh=aYbhmIouizHZNA+e1YXn+Q5/h6TyBnnjode5JopwoWY=;
+  b=QUq5EGI4HhhxOmaegGbvaW1RQ/rskpIWeiekyf6q+bCCMtt7uvZgHhZu
+   6uwfu1ZsV2FI9/eGUSOqPseQ4GlFLu4t7milZosOGiUVbt+8XPMXYCO88
+   X8QuIXlpBHFGOS/UA6ruAsTDLbzbsP4LfdPzpbYSDHz42cYAUL2cShMKp
+   ylTcGqMTUDaikNV4CZSaTrEKBx+vlJXTCP7ArB+cYQ5TSkgwX4ykM23N3
+   KcqeHDSIeImv+Ju7rvyjQpRiZwWCecHW7uRzGecAK9dEPLn/5zp+y0gHD
+   6mMSglAszxfi45sA2hBsdd7ZEyZ4l8xvXnE8yFicNuqpt8azuhwxqL+0l
+   g==;
+X-CSE-ConnectionGUID: gvsDyWa4ShWH0DkUrh1VNg==
+X-CSE-MsgGUID: TcJE3kpNSt++bX+0rwYU2A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11097"; a="14479680"
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="14479680"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 01:22:59 -0700
+X-CSE-ConnectionGUID: 7TGqeQFRRKy89bfzFfm6zg==
+X-CSE-MsgGUID: kSYf+nPyS0OxwIsR5vWOag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,225,1712646000"; 
+   d="scan'208";a="38836714"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 09 Jun 2024 01:22:58 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGDpH-0000zf-1p;
+	Sun, 09 Jun 2024 08:22:55 +0000
+Date: Sun, 09 Jun 2024 16:22:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 91aa264023e0bdf3560faa6f20c7f7688eec95f1
+Message-ID: <202406091613.gsbaDz1m-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: update the translation of security-bugs
-To: Dongliang Mu <dzm91@hust.edu.cn>
-Cc: Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240607025842.24321-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zenghui Yu <zenghui.yu@linux.dev>
-In-Reply-To: <20240607025842.24321-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2024/6/7 10:58, Dongliang Mu wrote:
-> Update to commit 5928d411557e ("Documentation: Document the Linux Kernel
-> CVE process")
-> 
-> commit 0217f3944aeb ("Documentation: security-bugs.rst: linux-distros
-> relaxed their rules")
-> commit 3c1897ae4b6b ("Documentation: security-bugs.rst: clarify CVE
-> handling")
-> commit 4fee0915e649 ("Documentation: security-bugs.rst: update
-> preferences when dealing with the linux-distros group")
-> commit 44ac5abac86b ("Documentation/security-bugs: move from admin-guide/
-> to process/")
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  .../translations/zh_CN/admin-guide/index.rst  |  1 -
->  .../translations/zh_CN/process/index.rst      |  3 +-
->  .../zh_CN/process/security-bugs.rst           | 84 +++++++++++++++++++
->  3 files changed, 86 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/translations/zh_CN/process/security-bugs.rst
-> 
-> diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
-> index ac2960da33e6..773c53956000 100644
-> --- a/Documentation/translations/zh_CN/admin-guide/index.rst
-> +++ b/Documentation/translations/zh_CN/admin-guide/index.rst
-> @@ -37,7 +37,6 @@ Todolist:
->  
->     reporting-issues
->     reporting-regressions
-> -   security-bugs
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 91aa264023e0bdf3560faa6f20c7f7688eec95f1  Merge branch into tip/master: 'x86/percpu'
 
-It's be good to remove the old zh_CN/admin-guide/security-bugs.rst file
-as well and update all references to it:
+elapsed time: 1448m
 
-% git grep "admin-guide/security-bugs.rst" Documentation/translations/zh_CN/
-Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:Documentation/translations/zh_CN/admin-guide/security-bugs.rst 
-，
-Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:更多信息请参见 
-Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
-Documentation/translations/zh_CN/process/submitting-patches.rst:参见 
-Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
+configs tested: 48
+configs skipped: 2
 
-Thanks,
-Zenghui
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+hexagon                          allmodconfig   clang
+hexagon                          allyesconfig   clang
+i386         buildonly-randconfig-001-20240609   gcc  
+i386         buildonly-randconfig-002-20240609   gcc  
+i386         buildonly-randconfig-003-20240609   gcc  
+i386         buildonly-randconfig-004-20240609   gcc  
+i386         buildonly-randconfig-005-20240609   clang
+i386         buildonly-randconfig-006-20240609   gcc  
+i386                  randconfig-001-20240609   clang
+i386                  randconfig-002-20240609   clang
+i386                  randconfig-003-20240609   gcc  
+i386                  randconfig-004-20240609   gcc  
+i386                  randconfig-005-20240609   clang
+i386                  randconfig-006-20240609   clang
+i386                  randconfig-011-20240609   clang
+i386                  randconfig-012-20240609   clang
+i386                  randconfig-013-20240609   clang
+i386                  randconfig-014-20240609   clang
+i386                  randconfig-015-20240609   gcc  
+i386                  randconfig-016-20240609   clang
+openrisc                          allnoconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   clang
+s390                              allnoconfig   clang
+s390                                defconfig   clang
+sh                                allnoconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64       buildonly-randconfig-001-20240609   clang
+x86_64       buildonly-randconfig-002-20240609   clang
+x86_64       buildonly-randconfig-003-20240609   clang
+x86_64       buildonly-randconfig-004-20240609   gcc  
+x86_64       buildonly-randconfig-005-20240609   clang
+xtensa                            allnoconfig   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
