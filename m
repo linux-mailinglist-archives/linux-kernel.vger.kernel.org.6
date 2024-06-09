@@ -1,107 +1,139 @@
-Return-Path: <linux-kernel+bounces-207358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4DE901619
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:32:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCB790161C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E7A281A4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:32:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 834B0B20D74
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 12:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5A33F8FB;
-	Sun,  9 Jun 2024 12:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8B13F9D5;
+	Sun,  9 Jun 2024 12:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1SUlV46"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIW7TVXi"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E2DA3F;
-	Sun,  9 Jun 2024 12:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACA52E64A;
+	Sun,  9 Jun 2024 12:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717936362; cv=none; b=TJdKuc/pKs93O/rGfaoEi6E6JHWwc5ByaUKYm96bU2zZCTclcqvwPRyIo3qSBCPrbmYbh8zBTwJuo7kLJBGNyJzBpaQqVkb1lOMLWOxBz5FirzXWWsLzBGX1lHFhkXrHYm0zNj3s1IgCyAwoRn3jK0xNFjJVdqFBDYF/7ei6PCo=
+	t=1717936899; cv=none; b=iyKswC5vb8evItpLvzYEsm0Xldt2EWSHmfuu1YhqajvBRCCdou1Gry33tBQDsr2otecxf7erPeppftW8+yqLFcrUAxtfM8NW77IdFz0zQTAxnWQivdWabCHaFCXwqUdR8ldSiu5WtyGM8iu9ceK8/sn7EnvKLo+mK05X7g+0g0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717936362; c=relaxed/simple;
-	bh=gfageaVpPs5ry5xzWB7cccoG0GS182Wtm9HpTExW198=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=at4mnhDumS0tYYRoplprPiKrlNC8cx9M+47wuj//Tq1bHHc+7Khf7vWaauqtqIBQK6klHzEJlc+YHmOIm7RIH3MXfVJSSmu2SM2eA/6xzpk2I0Ymp+lZhrDTqxvgTPGWBBGvJspX7aDOcuNf/JZsE35uM0WYwN8P27NNYTvWaLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1SUlV46; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AAFC2BD10;
-	Sun,  9 Jun 2024 12:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717936361;
-	bh=gfageaVpPs5ry5xzWB7cccoG0GS182Wtm9HpTExW198=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c1SUlV46y1QW7hzJho8wZS2A0M4LByF1N4p2SZaHAX0Ol+cj9rIw12osuerjHfxTD
-	 XPSa0rgG/o7BLlTed8gNqA5lUUFGEPnjKUtGja2IArtozwzScXQmBD9iAxNlywX1PW
-	 Fz/7WBxQjc0CTSjqPNrI1ZF6JnxFrprlXxhSx07/iKW7Ri2qvmD1euHiKJ9j0RFvOz
-	 9pvNbYEsJGSpwsylYgVP3KOQBh8mz2BQzJaRbHAxeZdzZ1IO41JXW3bEg8dO7iUKyd
-	 b5hJ4ZIhw1bfdTo2qC9fyuzo5xnZDPs/m944aAE+rFsKhwDWbeHzjU81dL7d1jf1T8
-	 9Tjy8KBqAlDZg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sGHix-002715-Di;
-	Sun, 09 Jun 2024 13:32:39 +0100
-Date: Sun, 09 Jun 2024 13:32:38 +0100
-Message-ID: <864ja2l2jd.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Jianjun Wang <jianjun.wang@mediatek.com>,	Lorenzo Pieralisi
- <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Rob Herring <robh@kernel.org>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,	Ryder
- Lee <ryder.lee@mediatek.com>,	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	jieyy.yang@mediatek.com,
-	chuanjia.liu@mediatek.com,	qizhong.cheng@mediatek.com,
-	jian.yang@mediatek.com,	jianguo.zhang@mediatek.com
-Subject: Re: [PATCH v2 1/3] PCI: mediatek: Allocate MSI address with dmam_alloc_coherent()
-In-Reply-To: <20240608090152.GB3282@thinkpad>
-References: <20231211085256.31292-1-jianjun.wang@mediatek.com>
-	<20231211085256.31292-2-jianjun.wang@mediatek.com>
-	<20240608090152.GB3282@thinkpad>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717936899; c=relaxed/simple;
+	bh=VxQ5ZVnh61dCaKiBJCdTdFoMX88pxW2Juk0q/pYhdRw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sc37fJKNXbSzmMyAy6+lQhb+Iu619GsXLagYS1SoPco9oQwgdgpD1GBwY99Bqz2gwDlVrU4T2wsjK/WPODiVMVVxsigKYBQl3sr0JCTbJC3vT/P2Cfev73MFMOk8hOv+Q8c4oM7FEoY767NmPmVpKRbmzQTYRX/oHYAiT4NiDZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIW7TVXi; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f6dfc17006so13011095ad.0;
+        Sun, 09 Jun 2024 05:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717936897; x=1718541697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cf23nxdHeFgkRwPVZrD1JWaI4FpEFwucMzstBOMHqWA=;
+        b=NIW7TVXihRaiYaOfvVqk9BckyxW/xmQ9sRAwuXuAXgzT/ddv0tUCoE7459cJkGKbgw
+         c6sRL1xIbcRJZIXpBj8gq5pIf4J4pOjyTLtNktoOjCjkKtBML/RYfGJ72ZupzUpltjaK
+         tFw9Db22aHd+cjQri/r0o2KHqho2dlKBlAwv6GLdh+stxPbV4koX0RUtl+aiuMiSjE7A
+         CrLYjRMq7VVPYAQlxMS/p9aPDu+08BH/+XbdB4VlwcDKPv1mXWOF+EfGnHvc+uuK+HrU
+         8eS0gR8Ch3l/jvhmSfcQbzcjxgMdu3Ui0zPwjU7/1cNfK+f1uHYWXYib1F2PYbcxLQOq
+         VQFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717936897; x=1718541697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cf23nxdHeFgkRwPVZrD1JWaI4FpEFwucMzstBOMHqWA=;
+        b=rWUc5qMUl0c3SzpbGWJd3pukaZcKbuJmwgUbY5qRDVNJKhrn8RsK8Y/LLS40hxMYZC
+         WVgtDU2+9WlDKMHDH8VGzJYdl29Y/RQNYJhBnjkzlX72UhXkduNmGR9yMdv4SdCwm1Wy
+         k518NVYppsaV8GHIE5nXyuBtYlrwHi55cGVlnljbnUUY2DcwGEmHrN4V/Zth1BBAEok9
+         m89nMNkKCtMb4f7osmscNXFGvSqUMHZSmaAaOZMBLR72Q9PdkGus1Yzn55bBapmitsMO
+         1QdTedx6WyM0Hpen5H5MlVVM7z7oEybrfOr3pfWIZ4eiR7H0FVu3XGw/8bJlO6EV6kmd
+         B4eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXx1c878hcHNrXtpj8kB2QF9NpGV+w0r4CmYcEOaTLd4HC3Cl+y5Gisb4nY5nM4i9JQA3eUHmM9/KPt6BS5oSvpSuSYpkzJnTnbP59mjSkgs+RVuvrnBw1FHosj+v3w+gAd7GvGXtXSfvjsyDa3
+X-Gm-Message-State: AOJu0YzBfuctXMCQQiBvHsn1nbELVyTLQxijqhMugI44sl7Xk7QALRTK
+	GuujHC62yPr0hhXU/UhxJz9n482rhb0R4W8QrkEf4Rts8o0hsGZXw4UX3al2
+X-Google-Smtp-Source: AGHT+IFM2w014+Q/HonIa8KttAfbXETdNGzigbqJB3eJok4sZhqsrj0nNjkLw58YfAg3vKiJyLFmYw==
+X-Received: by 2002:a17:902:c401:b0:1f6:751b:f2c with SMTP id d9443c01a7336-1f6d02e6b25mr77675145ad.25.1717936897520;
+        Sun, 09 Jun 2024 05:41:37 -0700 (PDT)
+Received: from dev0.. ([49.43.162.161])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7d2ee7sm64933735ad.168.2024.06.09.05.41.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 05:41:37 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: keescook@chromium.org,
+	tony.luck@intel.com,
+	gpiccoli@igalia.com,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	jain.abhinav177@gmail.com,
+	julia.lawall@inria.fr
+Subject: [PATCH v3] pstore/ram: Replace of_node_put with __free() for automatic cleanup
+Date: Sun,  9 Jun 2024 12:41:24 +0000
+Message-Id: <20240609124124.51166-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: mani@kernel.org, jianjun.wang@mediatek.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, ryder.lee@mediatek.com, linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jieyy.yang@mediatek.com, chuanjia.liu@mediatek.com, qizhong.cheng@mediatek.com, jian.yang@mediatek.com, jianguo.zhang@mediatek.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 08 Jun 2024 10:01:52 +0100,
-Manivannan Sadhasivam <mani@kernel.org> wrote:
-> 
-> On Mon, Dec 11, 2023 at 04:52:54PM +0800, Jianjun Wang wrote:
-> > Use dmam_alloc_coherent() to allocate the MSI address, instead of using
-> > virt_to_phys().
-> > 
-> 
-> What is the reason for this change? So now PCIE_MSI_VECTOR becomes unused?
+Add __free(device_node) to the parent_node struct declaration.
+Add initialization to declaration for ensuring scope sanity.
+Remove of_node_put from parent_node struct.
 
-More importantly, this is yet another example of the DW reference
-driver nonsense, where memory is allocated for *MSI*, while the whole
-point of MSIs is that it is a write that doesn't target memory, making
-any form of RAM allocation absolutely pointless.
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+---
 
-This silly approach has been cargo-culted for years, and while I
-caught a few in my time, you can't beat copy-paste.
+Submiting v3 after making Changes as per feedback shared in v1 and v2.
 
-IMO, this patch is only making things worse instead of fixing things.
+Patch v1:
+https://lore.kernel.org/all/20240415161409.8375-1-jain.abhinav177@gmail.com/
 
-	M.
+Patch v2:
+https://lore.kernel.org/all/20240605214944.22113-1-jain.abhinav177@gmail.com/
+---
+ fs/pstore/ram.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index b1a455f42e93..f8258e4567c3 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -644,7 +644,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
+ 			    struct ramoops_platform_data *pdata)
+ {
+ 	struct device_node *of_node = pdev->dev.of_node;
+-	struct device_node *parent_node;
++	struct device_node *parent_node __free(device_node) = of_node_parent(of_node);
+ 	struct resource *res;
+ 	u32 value;
+ 	int ret;
+@@ -704,14 +704,12 @@ static int ramoops_parse_dt(struct platform_device *pdev,
+ 	 * we're not a child of "reserved-memory" and mimicking the
+ 	 * expected behavior.
+ 	 */
+-	parent_node = of_get_parent(of_node);
+ 	if (!of_node_name_eq(parent_node, "reserved-memory") &&
+ 	    !pdata->console_size && !pdata->ftrace_size &&
+ 	    !pdata->pmsg_size && !pdata->ecc_info.ecc_size) {
+ 		pdata->console_size = pdata->record_size;
+ 		pdata->pmsg_size = pdata->record_size;
+ 	}
+-	of_node_put(parent_node);
+ 
+ 	return 0;
+ }
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
