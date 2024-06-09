@@ -1,189 +1,233 @@
-Return-Path: <linux-kernel+bounces-207527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B428901881
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:20:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD1090188C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F76F281376
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5C51C20C94
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FA653E22;
-	Sun,  9 Jun 2024 22:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A882225CE;
+	Sun,  9 Jun 2024 22:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="op2Ookdx"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bwj1EMnu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57611CFAF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 22:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A2A20DF4;
+	Sun,  9 Jun 2024 22:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717971635; cv=none; b=VJA372LSrRvFppfyz09YS6OdTF2OjQl9aUDehS2KuTvssOxah7HmZhbLKqNU0NIpi8nHFSCZ90k5Yp75U/vfzkB+AXlsEQH7oFlvG2zWrOGK/t7fCy0uei2RH3hFZB8wvBFeogrX672tSGjZaobiZe3UJuYkUQBWyAxpXuIhfLw=
+	t=1717972482; cv=none; b=Tt2LMaE0Tvi+AHhx/J3JQb7dnU/DcuktRf/pyxCuw+ixLrlE0TtHK1/wCOnRFNK07IIx4Ig+WVv86zoHwVBrcrk0kv3r9YcDYuELXadZIuttP2FjSGY3yd4dNAYVVjrQw5LlpMsIcwxU0oqa+MGPDOkrJG+fVxchzTIplurDQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717971635; c=relaxed/simple;
-	bh=9+n4z6PHma9WMp2Smv74h7ErUV/1pq2HGsBupGkD7dA=;
+	s=arc-20240116; t=1717972482; c=relaxed/simple;
+	bh=7POtHIFBnIfQvUggHgsCUgRA8D1KL4yajWsmoQaTe9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awHHPc0ES6E8JdApFcRGZBF4dqfLJki3U0Yg3O27xUD9lQH+O+iMVyJSFy4sirV8z6bCXEAChbilY1eFjuJIawTjuDjzy7hAESz8tFfvtXng3Up1aLge0U7B7R6n5+Def4IGfv8pb0VPLxg9QLLHUaFotyk5I5kJEAb9s8rxWDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=op2Ookdx; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354b722fe81so3245183f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 15:20:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717971631; x=1718576431; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oHc0h4ytn0quxx7T9SUT8FUoAjYS+2WFatBpz0qSLT8=;
-        b=op2OokdxRnKRuXEghujswnMB315tnkCrp17dbS4oo/gXjwlzwa9XKecPUAlD2Kq4WE
-         WMQO/Du+E+xZCQGR+Dy/V/G1q2X+Yp0DWF2eK16MiInMqbSt+SnIEWPxR3Dee6DrV/Hm
-         zqF+FN0eON0+qGFSvPPWj+YeV1nyDDpwLEM9953VUz6OnWwtsFAbEShT4VPa99FSz/xq
-         bUbIZOdjbWTlpBTa0WhXp+E7EwFtetmHaq8ekyo6/Hj51uAXWebvSVfD+TWeRyjiAZP/
-         W3rnTAYIIPFNKgVSHjq1laBS2Nt8EwBs/ReTi1Zqkq1rUPP0YjO4xW/W8gaJgZcMIQCy
-         diiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717971631; x=1718576431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oHc0h4ytn0quxx7T9SUT8FUoAjYS+2WFatBpz0qSLT8=;
-        b=ZHbPPhzSpslOioV2ShEe7n+fNuu6d0cnAFnYsW3XUFQ4Hf1EeWIBZhzrrqkYJgPS0I
-         HvXhS/0AW/6hF4IxP01sAwpUHyGgrpDsVz9ty27EfBIDYsVyCvgvUlqjLZSBGRq9ROKq
-         FGKriDjoHfyceEt27tQnicEk1iuNVjMH/QAqmVkI5Wxm1gPBoLeLWn1wFnnS2EVS4bpv
-         uEc4PwGqyGOE+05fi6Bx8UEO77cX1KHyTzfAoIzy/gLn2K7qwgmlHj/yDMRD2QbDPPlX
-         pOk5p2YqbKhQI+c7c0QvjmdrEfZvUL7fQXYpzQE62kr9UxSiqi6VrhDk5OADl46aRV7L
-         8Yyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxg++Rnf4rC7WaShKd6ttA+Ej3uRxykGQRN1N4uaH6eF51bDaQ9waNSKCChqlxAC7mSKA3BViLUEK+T85bM5BuLQCT3MOmeI4oMzOv
-X-Gm-Message-State: AOJu0YwPDR1ankiNxR+BhGoDZ0sg0aK8QgiKUSRUh1X/c9oWgpfj3d7G
-	aNA5fawTI/7at+I7InGjVMDkepB1TCze6vF5coi16xSmsojTG64jEk6LETlKHVk=
-X-Google-Smtp-Source: AGHT+IHeyJMWEvfMZi/wZCb6BpC4/fb80QGI+bbYZBWrD7lSEDalPFXwyGcRzY9689gjelOtNXYOyg==
-X-Received: by 2002:a5d:634e:0:b0:35f:1384:de4d with SMTP id ffacd0b85a97d-35f1384e1e3mr2786380f8f.37.1717971631047;
-        Sun, 09 Jun 2024 15:20:31 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421f23d06ddsm3444455e9.8.2024.06.09.15.20.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 15:20:30 -0700 (PDT)
-Date: Sun, 9 Jun 2024 23:20:29 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] sched: Consolidate cpufreq updates
-Message-ID: <20240609222029.yebhborjptp3gr6a@airbuntu>
-References: <20240530104653.1234004-1-qyousef@layalina.io>
- <20240601224017.qku2mhbaz4vsh3a3@airbuntu>
- <CAKfTPtCHfnDAD-p_ScqHh7cZ=7AXDTw3fE0+ynMHNvCjuG8ogw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEJW8AOiUVUdVUrr0Jenvf5W8fOaxyRljzDOUntFWwdBkdPlbLoOzKTvRWdYeUmgqnt4OA0LV7qVllK7XoKTFX0PHPLFxmdpUgiaThfhR5ZL+u+vpBukN1GOZdreyJAj/9uz5okjE7LTJmBxVnL3qV+/HFbvb1xTmy5lT/i0Te8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bwj1EMnu; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717972481; x=1749508481;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7POtHIFBnIfQvUggHgsCUgRA8D1KL4yajWsmoQaTe9k=;
+  b=Bwj1EMnujoVnMIOHsZqXcqyQCvmbW3rbi919qut6P8dT1GiKhGdOQQrO
+   ybc4K/iBXuEyKBv1K/jTSmFICmH/2tbdOyM70i367C5dLqjIFwNbGOanR
+   M0P8rFhhUkiUeVNEChGCa1X5iUGf+CUDYvlViavn7o36C02Z8evW1IJn/
+   WVwrGJ+JV4eIui+avKvqg7ZOehBuLTcu2pAG+xtko4zeNmIvpmYhLz8R7
+   I4yTygOHJJlt8SVwlUYAtFnqp0whSpE1TRjJ0nveYNnlANr2Dl8DjwH3R
+   fdM0jJ/9ItJZDG/R03oszbDh79xGTxGLEG/GaGhnW3MHozhaK3p4AKFtB
+   Q==;
+X-CSE-ConnectionGUID: yANDYUxSS++20z62wf6HVw==
+X-CSE-MsgGUID: FTyfXxfvTS6MzoZgix08BA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="14803232"
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="14803232"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 15:34:40 -0700
+X-CSE-ConnectionGUID: RfCIc2f5TkCYoaPUy7JXMw==
+X-CSE-MsgGUID: 4VQrmob1R6GwaE0Sbl6IBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="43314180"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 09 Jun 2024 15:34:37 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGR7T-0001eE-0g;
+	Sun, 09 Jun 2024 22:34:35 +0000
+Date: Mon, 10 Jun 2024 06:33:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Richard chien <m8809301@gmail.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Richard chien <richard.chien@hpe.com>
+Subject: Re: [PATCH] ixgbe: Add support for firmware update
+Message-ID: <202406100635.nORK1Xs0-lkp@intel.com>
+References: <20240609085735.6253-1-richard.chien@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtCHfnDAD-p_ScqHh7cZ=7AXDTw3fE0+ynMHNvCjuG8ogw@mail.gmail.com>
+In-Reply-To: <20240609085735.6253-1-richard.chien@hpe.com>
 
-On 06/05/24 14:22, Vincent Guittot wrote:
-> Hi Qais,
-> 
-> On Sun, 2 Jun 2024 at 00:40, Qais Yousef <qyousef@layalina.io> wrote:
-> >
-> > On 05/30/24 11:46, Qais Yousef wrote:
-> >
-> > > +static __always_inline void
-> > > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> > > +{
-> >
-> > I found a problem here. We should check if prev was sugov task. I hit a
-> > corner case where we were constantly switching between RT task and sugov.
-> >
-> >         if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
-> >                 /* Sugov just did an update, don't be too aggressive */
-> >                 return;
-> >         }
-> >
-> 
-> I reran my test with this v5 and the fix above but the problem is
-> still there, it waits for the next tick to update the frequency
-> whereas the cpu was idle.
+Hi Richard,
 
-Hurmph. Sorry I forgot to rerun this test. I broke it again with this
-optimization :( Maybe I can replace this with explicit check with util_avg ==
-SCHED_CAPACITY_SCALE, though this is not generic enough..
+kernel test robot noticed the following build warnings:
 
-	diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-	index 6d8d569cdb6a..d64d47b4471a 100644
-	--- a/kernel/sched/fair.c
-	+++ b/kernel/sched/fair.c
-	@@ -4702,7 +4702,6 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
-	 static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-	 {
-		u64 now = cfs_rq_clock_pelt(cfs_rq);
-	-       unsigned long prev_util_avg = cfs_rq->avg.util_avg;
+[auto build test WARNING on tnguy-net-queue/dev-queue]
+[also build test WARNING on linus/master v6.10-rc3 next-20240607]
+[cannot apply to tnguy-next-queue/dev-queue]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-		/*
-		 * Track task load average for carrying it to new CPU after migrated, and
-	@@ -4736,16 +4735,6 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
-		} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
-			update_tg_load_avg(cfs_rq);
-		}
-	-
-	-       /*
-	-        * This field is used to indicate whether a trigger of cpufreq update
-	-        * is required. When the CPU is saturated, other load signals could
-	-        * still be changing, but util_avg would have settled down, so ensure
-	-        * that we don't trigger unnecessary updates as from fair policy point
-	-        * of view, nothing has changed to cause a cpufreq update.
-	-        */
-	-       if (cfs_rq->decayed && prev_util_avg == cfs_rq->avg.util_avg)
-	-               cfs_rq->decayed = false;
-	 }
+url:    https://github.com/intel-lab-lkp/linux/commits/Richard-chien/ixgbe-Add-support-for-firmware-update/20240609-170239
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue.git dev-queue
+patch link:    https://lore.kernel.org/r/20240609085735.6253-1-richard.chien%40hpe.com
+patch subject: [PATCH] ixgbe: Add support for firmware update
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240610/202406100635.nORK1Xs0-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406100635.nORK1Xs0-lkp@intel.com/reproduce)
 
-	 /*
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406100635.nORK1Xs0-lkp@intel.com/
 
-> 
-> Also continuing here the discussion started on v2:
-> 
-> I agree that in the current implementation we are probably calling way
-> too much cpufreq_update, we can optimize some sequences and using the
-> context switch is a good way to get a better sampling but this is not
-> enough and we still need to call cpufreq_update in some other case
-> involving enqueue. The delay of waiting for the next tick is not
+All warnings (new ones prefixed by >>):
 
-Do you have any suggestions? I'm not sure how to classify different type of
-enqueue events where some would need an update and others don't.
+>> drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c:1104:9: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    1104 |         default:
+         |         ^
+   drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c:1104:9: note: insert 'break;' to avoid fall-through
+    1104 |         default:
+         |         ^
+         |         break; 
+   1 warning generated.
 
-I think cases that involve wakeup preemption not causing a context switch AND
-maybe a large change in util_avg?
 
-> acceptable nor sustainable especially with 250 and lower HZ but I'm
+vim +1104 drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
 
-I think it is fine for 250. I have been testing with this and didn't see
-issues. But wider testing could yield different results.
+  1005	
+  1006	static int ixgbe_nvmupd_validate_offset(struct ixgbe_adapter *adapter,
+  1007	                                        u32 offset)
+  1008	{
+  1009	        struct net_device *netdev = adapter->netdev;
+  1010	
+  1011	        switch (offset) {
+  1012	        case IXGBE_STATUS:
+  1013	        case IXGBE_ESDP:
+  1014	        case IXGBE_MSCA:
+  1015	        case IXGBE_MSRWD:
+  1016	        case IXGBE_EEC_8259X:
+  1017	        case IXGBE_FLA_8259X:
+  1018	        case IXGBE_FLOP:
+  1019	        case IXGBE_SWSM_8259X:
+  1020	        case IXGBE_FWSM_8259X:
+  1021	        case IXGBE_FACTPS_8259X:
+  1022	        case IXGBE_GSSR:
+  1023	        case IXGBE_HICR:
+  1024	        case IXGBE_FWSTS:
+  1025	                return 0;
+  1026	        default:
+  1027	                if ((offset >= IXGBE_MAVTV(0) && offset <= IXGBE_MAVTV(7)) ||
+  1028	                    (offset >= IXGBE_RAL(0) && offset <= IXGBE_RAH(15)))
+  1029	                        return 0;
+  1030	        }
+  1031	
+  1032	        switch (adapter->hw.mac.type) {
+  1033	        case ixgbe_mac_82599EB:
+  1034	                switch (offset) {
+  1035	                case IXGBE_AUTOC:
+  1036	                case IXGBE_EERD:
+  1037	                case IXGBE_BARCTRL:
+  1038	                        return 0;
+  1039	                default:
+  1040	                        if (offset >= 0x00020000 &&
+  1041	                            offset <= ixgbe_get_eeprom_len(netdev))
+  1042	                                return 0;
+  1043	                }
+  1044	                break;
+  1045	        case ixgbe_mac_X540:
+  1046	                switch (offset) {
+  1047	                case IXGBE_EERD:
+  1048	                case IXGBE_EEWR:
+  1049	                case IXGBE_SRAMREL:
+  1050	                case IXGBE_BARCTRL:
+  1051	                        return 0;
+  1052	                default:
+  1053	                        if ((offset >= 0x00020000 &&
+  1054	                             offset <= ixgbe_get_eeprom_len(netdev)))
+  1055	                                return 0;
+  1056	                }
+  1057	                break;
+  1058	        case ixgbe_mac_X550:
+  1059	                switch (offset) {
+  1060	                case IXGBE_EEWR:
+  1061	                case IXGBE_SRAMREL:
+  1062	                case IXGBE_PHYCTL_82599:
+  1063	                case IXGBE_FWRESETCNT:
+  1064	                        return 0;
+  1065	                default:
+  1066	                        if (offset >= IXGBE_FLEX_MNG_PTR(0) &&
+  1067	                            offset <= IXGBE_FLEX_MNG_PTR(447))
+  1068	                                return 0;
+  1069	                }
+  1070	                break;
+  1071	        case ixgbe_mac_X550EM_x:
+  1072	                switch (offset) {
+  1073	                case IXGBE_PHYCTL_82599:
+  1074	                case IXGBE_NW_MNG_IF_SEL:
+  1075	                case IXGBE_FWRESETCNT:
+  1076	                case IXGBE_I2CCTL_X550:
+  1077	                        return 0;
+  1078	                default:
+  1079	                        if ((offset >= IXGBE_FLEX_MNG_PTR(0) &&
+  1080	                             offset <= IXGBE_FLEX_MNG_PTR(447)) ||
+  1081	                            (offset >= IXGBE_FUSES0_GROUP(0) &&
+  1082	                             offset <= IXGBE_FUSES0_GROUP(7)))
+  1083	                                return 0;
+  1084	                }
+  1085	                break;
+  1086	        case ixgbe_mac_x550em_a:
+  1087	                switch (offset) {
+  1088	                case IXGBE_PHYCTL_82599:
+  1089	                case IXGBE_NW_MNG_IF_SEL:
+  1090	                case IXGBE_FWRESETCNT:
+  1091	                case IXGBE_I2CCTL_X550:
+  1092	                case IXGBE_FLA_X550EM_a:
+  1093	                case IXGBE_SWSM_X550EM_a:
+  1094	                case IXGBE_FWSM_X550EM_a:
+  1095	                case IXGBE_SWFW_SYNC_X550EM_a:
+  1096	                case IXGBE_FACTPS_X550EM_a:
+  1097	                case IXGBE_EEC_X550EM_a:
+  1098	                        return 0;
+  1099	                default:
+  1100	                        if (offset >= IXGBE_FLEX_MNG_PTR(0) &&
+  1101	                            offset <= IXGBE_FLEX_MNG_PTR(447))
+  1102	                                return 0;
+  1103	                }
+> 1104	        default:
+  1105	                break;
+  1106	        }
+  1107	
+  1108	        return -ENOTTY;
+  1109	}
+  1110	
 
-> pretty sure it would be the same for some system using 1000HZ. IIUC
-> new HW is becoming much more efficient at updating the frequency so it
-> would not be a problem for this new system to update performance more
-> frequently especially when it ends up being as simple as writing a
-> value in a memory region without waiting for it to be applied (like
-> cpufreq fast_switch methods). All this to say that always/only waiting
-> for context switch or tick might be suitable for your case but it
-> doesn't look like the right solution for all devices and systems
-
-I just don't want us to end up with probabilistic approach. I am fine with more
-updates, but we need to be more intentional/specific when it's truly needed.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
