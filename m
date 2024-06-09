@@ -1,115 +1,257 @@
-Return-Path: <linux-kernel+bounces-207378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B3590164F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC615901650
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 16:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91CBAB20F4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E6A2816F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 14:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D16446AB;
-	Sun,  9 Jun 2024 14:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B84344384;
+	Sun,  9 Jun 2024 14:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mLG6eW5Z"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEnGUrLr"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC05258;
-	Sun,  9 Jun 2024 14:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016D31CA96;
+	Sun,  9 Jun 2024 14:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717942084; cv=none; b=ZhjXb/rWwVzXVwijYJE5anURTKUih2EXYHRuwmj7yoHf80HptOzGbuYZOSDGviZ45CtHPsi4SATLXTaUQKOVrnFMw5AmqREwnxH0uf8oe+tsQ96Zt15r0gvvEu4d8x/t6cNBfIWYIgnKyUtQo0LSDTeWtGUpM30j2p+azT9y+Nc=
+	t=1717942389; cv=none; b=SFSgr7HzmQCnoTCRpsHEXY5AEUKAbZyeYScUD+cFRTPspNOmt220nbjx03vf3KOnxqAUENMnrzOZi+Xvpsh8SCx5OqaPOF1/ORPsLX8/6lD0jjIpJ/nQtsPOLcXFlUwL8iOMC96yrJG6Igk7LQNd3uDe9x5y8BBcw80Gf2yVwl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717942084; c=relaxed/simple;
-	bh=OBxLFjmBv5Y1bDFc5KIIMYkCmQY5Bu976Hj/qpkXfiI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ora4sOVQ4FDeFMxPoEST2v4opEbiFCPSTKQcejDs9QuY3Elz2eP6s1qzfcdt/K6Qa/CgWIhFLx/kNlvuxi8JABoaIbEACv55eDArwyoq8VMIdAFAA9mvFp2vBW2I0O23W3KXRg3BbIm1TRKRp7sNMtRJDj9FZy7jQumXuiiPSyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mLG6eW5Z; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717942041; x=1718546841; i=markus.elfring@web.de;
-	bh=ZYc6ViqrmU+5mJe+gq/gz48E0wJG1FsE0M6nt2ykiS0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mLG6eW5ZLwDVlW933fYXZTqHYdugG/gYiuVtSYKNGN8i9K+1Jura0dlf5+58RAgW
-	 8OxdpUcJoZHM2CUgAp48zsTGW0BD+8mTk4pE4diilOdDeAJgKtzcHjH1TL38kYfkH
-	 u3Y0D2zQiqCwVSWVaXgE2PZ72ijaahSXNWxG2Vhkvms5f19vKFYnfsaPNgeEZwIbI
-	 TQKfoaSoXv+ng1GZeyyH6TBxsV6ERM6G8bL7hdNalriUncVsVjlKFcnvmp6qdDi+4
-	 vYrnMop5Eq0i2TkATHf1MZPUexhnSjNQVosWKX8qi8+Vege8+VsWRQUlqdv/Ck+xf
-	 yAHVNNfuzXW8YgSPww==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MaHWx-1rswnd3yJ3-00LQdr; Sun, 09
- Jun 2024 16:07:21 +0200
-Message-ID: <85e31039-15ee-416f-89fc-a018307bc7b6@web.de>
-Date: Sun, 9 Jun 2024 16:07:17 +0200
+	s=arc-20240116; t=1717942389; c=relaxed/simple;
+	bh=RPUqh0YRQMY/bnzJlVrToKYU2tLxFFKggTCer8KeMJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RJwEwzlwk5n6KlTztAK2HH0HKzG/3d9DdhTYGIE9JkWyOPVv3wd1hP8Ar/ZIvIEHhr5ezUUBOsILsUHz4vIZ1J7qS4zKx+QgDawjknoX4hSSiSc9De1T/urwjRwWSVobi+8uyKp0ZaGYr9G0knDolG8V9IKdBVZLD3whOIjrg/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEnGUrLr; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f44b441b08so27745235ad.0;
+        Sun, 09 Jun 2024 07:13:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717942387; x=1718547187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jVP9gZF1z69z90rblB0DvNlsS4xXMrofV6Qh1n5Tx4c=;
+        b=YEnGUrLr1ZKBfQK0QB/fCwOWVMFmerWL++Y9USDOC6khMnKjvBx91aLO3c4l0KoAyo
+         MZCDtPn4j1kqfVpQdVzC9+7UWBO1ptHUXeAtnxW/H2P2pP2XrQ9282zPQuX5x71YVKHp
+         9guwwZcyE2md7dpQlD9/tCSg8s1DqUbZhNPdENAwDRxkkqkjLULwp2TiAEYgRp6hwvrY
+         1j6ALoIcdGt+U9kVEZwYbK+ais75GB4+Zr95gS55aaTPrbnun2je4Z1Ul/gYX36GzNfE
+         ob9HbezMTVx7rqklxlApELitCBT1bSTq5w3I0Kv25lkV7rm+0ArPyXVZDnBROOi2DXCU
+         22zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717942387; x=1718547187;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jVP9gZF1z69z90rblB0DvNlsS4xXMrofV6Qh1n5Tx4c=;
+        b=UYpT1+2cArcUQf7Q6a3yvSfvYyiQiXHtZl6kNSZkLuZqouJHwWmF+K9Hi+BIKFldrO
+         h6dNwgm5f5WS8jJiw+mW4iwp+0lSlJJK3WyhjgqcMqm0ie5Awp/EOsMWDr2BZVAY2C2h
+         10LVhB5i+6U/RlLGMcMXTgCLHO//4egEJUaBJr4MoY9pZkvYlDMlVRMHdV/kJAxQI8/u
+         XBhr2GPVAKSKpxS/yzzJpl5LbMtF/M1T5wAdUPrA63Yr7CZ2SBtyG99UDHgvzpbnm0ZR
+         Fg04il9kAasYBbV6bYcdFsxZKjj0oahP8GxSCuJ/x9v88AHRnYZTptuh+e+9jhtP3G9R
+         jbLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwaoGFov8RHZMdAr0Hwc7OW/+HUil78WRpn3gncLgOkR2gks8mqCkwYDBrDqBYfrflnOuBhVr2WF2HwIrLcsRVnbvLejPlDWH+Hc3SGwXtbbHpT1Ma+dK7dcW9Fdb/CvzT
+X-Gm-Message-State: AOJu0YzK/7zg/CGXEPRGZr0USAu4OejnXIocHVlWm+BvAmcwaypFtbvc
+	cEIIb83TOwl7ObWd26P2LMfZyhCcIia1uRIYHLVPkGRsJcBg4jnD
+X-Google-Smtp-Source: AGHT+IH0kVsdRsvkC9sjpweoKQAM/B+Fy+4c9BoCfcCuMFsOmJSt4FoTvvvkuxs1DdqTcj7rnqazQw==
+X-Received: by 2002:a17:902:d2d2:b0:1f7:2ba:4c15 with SMTP id d9443c01a7336-1f702ba4de5mr26736215ad.2.1717942387125;
+        Sun, 09 Jun 2024 07:13:07 -0700 (PDT)
+Received: from localhost.localdomain ([91.199.84.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6dcb222aesm43572455ad.49.2024.06.09.07.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 07:13:06 -0700 (PDT)
+From: Wei Fu <fuweid89@gmail.com>
+To: oleg@redhat.com
+Cc: Sudhanva.Huruli@microsoft.com,
+	akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	axboe@kernel.dk,
+	boqun.feng@gmail.com,
+	brauner@kernel.org,
+	frederic@kernel.org,
+	fuweid89@gmail.com,
+	j.granados@samsung.com,
+	jiangshanlai@gmail.com,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	linux-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	michael.christie@oracle.com,
+	mjguzik@gmail.com,
+	neeraj.upadhyay@kernel.org,
+	paulmck@kernel.org,
+	qiang.zhang1211@gmail.com,
+	rachelmenge@linux.microsoft.com,
+	rcu@vger.kernel.org,
+	rostedt@goodmis.org
+Subject: [PATCH] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with TIF_SIGPENDING
+Date: Sun,  9 Jun 2024 22:12:44 +0800
+Message-ID: <20240609141244.1770896-1-fuweid89@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240608120616.GB7947@redhat.com>
+References: <20240608120616.GB7947@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Qiao <zhangqiao22@huawei.com>, kernel-janitors@vger.kernel.org,
- Ben Segall <bsegall@google.com>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240606121133.2218723-1-zhangqiao22@huawei.com>
-Subject: Re: [PATCH] sched: Initialize the vruntime of a new task when it is
- first enqueued
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240606121133.2218723-1-zhangqiao22@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gQloGkDdGamf40XcJqdP+/GPIiZ0zAPzjglU3CwQ7ifISUNyeWZ
- jTD2swiwY9ZRM9lWF7g6jlqHsNrtZ4CZ2EVB9QQIYNqWCNHw1DjFcQYs2DBy895JYonfsvP
- IPJIcX+irmEs+y3p9c8Ck0cLkrSgVOHRfS8x9aGW1OmUYncFAIGpS/VPBp/nBiQml2JIShg
- FFs/qjHCYEJo7kiGXeKNQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jFA0np/W/f0=;famAjMx3WEWs2eRGOOmCmCvUQ41
- 6WY6ikmPfe5ruKAhQXoIxV9tzTBJY+k7qrt3n/relM0fThejpt4HBMvpiTFKmzyT88vcJPTvD
- hlHPK8AJhPK1e4GAgAxYNdavgwamkg36i7FfNs2RwAOhhKdMbDfQi+qaS78JOE5ElgOSRz9Xg
- k7XmPxGCh30Be/bI0cczg1twhpBoNNqlV3ZApxA8feWkWs28tffmHTncX5SpLoAJVnGw2IhMm
- /WNZIWH+psKMDcj6PCniBKrbekCmQM5DXH2AYe0MRcQa/tflXenBYxXERddGRmQCR6+1ltAFe
- me3Kt+Tzdcy7D1sY3qvuebhw4GN3IOvIC/aowt/9szWm1hDxfwa5PGLVyx3SZJwAnQpnfqjJv
- HZ+naZBkhyN5CLuK4mTcvfreLigeINWO6U5L0Rhf0/RVsn67Mzd2hY57MkQHwFq1apd6Xu9oP
- 9eFJiKW7ptJutBfzsjYGFfBNAvOJraJOTmLFs3cRah63NEzNFdPdi6rmGNrJ0ku4s96/Cg1Jz
- Or3HozKvktqxPYavtRySYvEdIsXZ2WvLYR61+1w/0ZgXMsIs2KOFfeyk1UQ3E03He0CbwIByi
- T6MtVK3IwwbjAYNEcwycfOwjYrqCJhI3rak4Sw5Sn9lER0n9Th7dMLs/blBqQSUEh6yB2nj/r
- hJRM91h91PLWfG2HiJYyoB+KG0PZOgGpAExmQxG/t5+MACQQQMJK9YJBopTDt3wy4ycYT0zyL
- xHuKRTiW73/rh5Yb7/am/8Vpn3qRGSmnSgFBa4fLTBL71tSAqt/emf5yaV96+3pGINgBv/W0M
- lp84TzczjwNj9114GalgDCwwztbw0y0EGR2LoII0T71Lk=
+Content-Transfer-Encoding: 8bit
 
-> When create a new task, =E2=80=A6
+> kernel_wait4() doesn't sleep and returns -EINTR if there is no
+> eligible child and signal_pending() is true.
+> 
+> That is why zap_pid_ns_processes() clears TIF_SIGPENDING but this is not
+> enough, it should also clear TIF_NOTIFY_SIGNAL to make signal_pending()
+> return false and avoid a busy-wait loop.
+> 
+> Fixes: 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
+> Reported-by: Rachel Menge <rachelmenge@linux.microsoft.com>
+> Closes: https://lore.kernel.org/all/1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com/
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-       creating?
+Tested-By: Wei Fu <fuweid89@gmail.com>
+
+This change looks good to me!
+
+I used [rcudeadlock-v1][1] to verify this patch on v5.15.160 for more than 30
+hours. The soft lockup didn't show up. If there is no such patch, that
+test will trigger soft-lockup in 10 minutes.
+
+```
+root@(none):/# uname -a
+Linux (none) 5.15.160-dirty #7 SMP Fri Jun 7 15:25:30 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+root@(none):/# ps -ef | grep rcu
+root 3 2 0 Jun07 ? 00:00:00 [rcu_gp]
+root 4 2 0 Jun07 ? 00:00:00 [rcu_par_gp]
+root 11 2 0 Jun07 ? 00:00:00 [rcu_tasks_rude_]
+root 12 2 0 Jun07 ? 00:00:00 [rcu_tasks_trace]
+root 15 2 0 Jun07 ? 00:03:31 [rcu_sched]
+root 145 141 0 Jun07 ? 00:15:29 ./rcudeadlock
+root 5372 141 0 13:37 ? 00:00:00 grep rcu
+
+root@(none):/# date
+Sun Jun 9 13:37:38 UTC 2024
+```
 
 
-> Because it use current cpu =E2=80=A6
+I used [rcudeadlock-v2][2] to verify this patch on v6.10-rc2 for more than 2
+hours. The soft lockup didn't show up. If there is no such patch, that
+test will trigger soft-lockup in 1 minute.
 
-             uses current CPU?
+```
+root@(none):/# uname -a
+Linux (none) 6.10.0-rc2-dirty #4 SMP Sun Jun 9 11:19:40 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+root@(none):/# ps -ef | grep rcu
+root 4 2 0 11:20 ? 00:00:00 [kworker/R-rcu_g]
+root 13 2 0 11:20 ? 00:00:00 [rcu_tasks_rude_kthread]
+root 14 2 0 11:20 ? 00:00:00 [rcu_tasks_trace_kthread]
+root 16 2 0 11:20 ? 00:00:03 [rcu_sched]
+root 17 2 0 11:20 ? 00:00:00 [rcu_exp_par_gp_kthread_worker/0]
+root 18 2 0 11:20 ? 00:00:12 [rcu_exp_gp_kthread_worker]
+root 117 108 0 11:21 ? 00:01:06 ./rcudeadlock
+root 14451 108 0 13:37 ? 00:00:00 grep rcu
+
+root@(none):/# date
+Sun Jun 9 13:37:15 UTC 2024
+```
 
 
-> To optimize this case, we pass ENQUEUE_INITIAL flag to
-> activate_task() in wake_up_new_task(), in this way,
-> when place_entity is called in enqueue_entity(), the
-=E2=80=A6
+It's about data-race during cleanup active iou-wrk-thread. I shares that idea
+about how to verify this patch.
 
-Please improve such a change description also according to word wrapping
-because of a bit longer text line lengths.
+> ---
+>  kernel/pid_namespace.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index dc48fecfa1dc..25f3cf679b35 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -218,6 +218,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
+>  	 */
+>  	do {
+>  		clear_thread_flag(TIF_SIGPENDING);
+> +		clear_thread_flag(TIF_NOTIFY_SIGNAL);
+>  		rc = kernel_wait4(-1, NULL, __WALL, NULL);
+>  	} while (rc != -ECHILD);
+>  
+> -- 
+> 2.25.1.362.g51ebf55
+> 
+> 
+> 
 
-Regards,
-Markus
+Let's assume that there is new pid namespace unshared by host pid namespace,
+named by `PA`. There are two processes in `PA`. The init process is named by
+`X` and its child is named by `Y`.
+
+```
+unshare(CLONE_NEWPID|CLONE_NEWNS)
+
+	X
+	|__ Y
+```
+
+The main-thread of process X creates one active iouring worker thread
+`iou-wrk-X`. When process X exits, that main-thread of process X wakes up and
+set `TIF_NOTIFY_SIGNAL` flag on `iou-wrk-X` thread.
+
+However, if `iou-wrk-X` thread receives signal from main-thread and wakes up,
+that thread isn't able to clear `TIF_NOTIFY_SIGNAL` flag. And that `iou-wrk-X`
+thread is last thread in process-X and it will carry `TIF_NOTIFY_SIGNAL` flag
+to enter `zap_pid_ns_processes`. It can be described by the following comment.
+
+
+```
+== X main-thread ==		== X iou-wrk-X ==	== Y main-thread ==
+
+do_exit
+  kill iou-wrk-X thread
+  io_uring_files_cancel		io_wq_worker
+    set TIF_NOTIFY_SIGNAL on
+     iou-wrk-X thread
+				do_exit(0)
+  exit_task_namespace		
+
+				  exit_task_namespace
+  do_task_dead
+
+				  exit_notify
+				    forget_original_parent
+				      find_child_reaper
+				        zap_pid_ns_processes	do_exit
+								  exit_task_namespace
+								    ...
+								    namespace_unlock
+								      synchronize_rcu_expedited
+```
+
+
+The `iou-wrk-X` thread kills process-Y which is only one holding the mount
+namespace reference. The process-Y will get into `synchronize_rcu_expedited`.
+
+Since kernel doesn't enable preempt and `iou-wrk-X` thread has
+`TIF_NOTIFY_SIGNAL` flag, the `iou-wrk-X` thread will get into infinity loop,
+which cause soft lockup.
+
+So, in [rcudeadlock-v2][2] test, I create more active iou-wrk- threads in
+init process so that there is high chance to have iou-wrk- thread in
+`zap_pid_ns_processes` function.
+
+Hope it can help.
+Thanks,
+
+Wei
+
+[1]: https://github.com/rlmenge/rcu-soft-lock-issue-repro/blob/662b8e414ff15d75419e2286b8121b7c2049a37c/rcudeadlock.go#L1
+[2]: https://github.com/rlmenge/rcu-soft-lock-issue-repro/pull/1
 
