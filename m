@@ -1,153 +1,123 @@
-Return-Path: <linux-kernel+bounces-207485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89159017E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:44:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A529017EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4BC71C20BEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 18:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB1B1C2091F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626FF4CE05;
-	Sun,  9 Jun 2024 18:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED0F4D8A8;
+	Sun,  9 Jun 2024 19:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2+c6No6"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b63hlcB9"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6325E42AAB
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 18:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2126E1B28D;
+	Sun,  9 Jun 2024 19:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717958670; cv=none; b=MDkhLWdH5EIDNXqh5UwzbT4uDvcHxmnmz3Tu0ViNxeZwH3t56AWjlEXPAUr4iBcU2IYsbAcoS6/Y1iiadV4w/oWSxqrhed0KiO/z1ZMXQgKO6zGowA6ffrMx+mu+9aKdRnDbgS18giyR4knPFjxiebD0AuJFJkK7mfIQpyq6mGk=
+	t=1717959691; cv=none; b=HUwlcleHDvmb1wNETQouiZPdi/6i+E5q4Z7YJiaxpDDcjHL5wenmyJ4cXjObO/5pGCAZvIAQYkCmZGIS6FPFfvEEa2jlMD8nlGnnjWT1gFRvShzWtkcS66v2idT+CsHh6mlDVRrOcam83dneAJg6+zd1Emcz5J11xPR18Vv4ZoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717958670; c=relaxed/simple;
-	bh=z86plG12qr5Z1bSQwt5yOklVzbOK9mShEJuRaLJ/XhM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lbxTGWo5rRBjEVehg9VYrTzYJHsVMbkx47QK4+7EklOWIMJCUC8g8FKQQjwecKYRZ/tmoSHIEeHr5bEhaCHgVWaJaTd5I7//iz7rMxIlH+ZECKdObCGiqVgaYM+vzX4TbLF7RFz5A/L+foJdD0B9NrubyNQmenatV4GxCmFLUp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2+c6No6; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1717959691; c=relaxed/simple;
+	bh=ocoRvi11iBtziByojGeenMr4D6A+yGo/xCifrTlDuUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pZNPtR0z3rLUadaTjbcvGsdUyOT/BSxDVojqaFmVbtKIW2LYoJxv2kzrJoF3HeH4U3WGBc/S3rvAE21aQIKwqhr5PRzipjWkN5+JnHOIHpECOwvtO5WDQZfj9f2alDYX6OqvJ2T40mMeepVSnEfudzr4CjR0avksBDVvs/lqkZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b63hlcB9; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7046e87e9afso293610b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 11:44:29 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b7ecafe05so678083e87.3;
+        Sun, 09 Jun 2024 12:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717958668; x=1718563468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUUN5jvMypW6P+Pp1YvyXgjvxQ678L4ijvc2XJHbh1A=;
-        b=J2+c6No6QVkdkAbZZlbu4AA56f1uO/OPIIaEtykqDoYxLp5beTw1r2MujTL46X+pgr
-         aVVwdlY7DU0v1397Hz/gHKecVykV7mTldObsX2cr773IrrGchNXtADNh7UwpIVq9KkhY
-         LnXH7i8+EHmbel5r2rTovBn5NgYj+eeG/lLDcxjnz/9Sd2R4RepuryaQIVKl3z/UUXpO
-         9q6SJetbTRKxKDIxgOa4s4RJON/KjKo7P13vTcOaMjE8ZBNp6//T2IdZgMD7DcG8/Zx8
-         N333VuzuscLPzRsX0t2SAjIHy61Ijfozf1v7XVruU3qsUJ4sKQ7O8VZ1en4BLwjJtrCL
-         6xhQ==
+        d=gmail.com; s=20230601; t=1717959688; x=1718564488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EPmBBYLT5yNnrcbl92wdFUaVe7Q/yxC54IFQQ0drxFU=;
+        b=b63hlcB9bWCs8JtfivCd/EXRYv0ut7dLaXNAnb9VzJeMvtpNRz086lTBRD3anerXPv
+         isx53cv/i2EacUuRwZYXbr8ElkLN2vKXv6G6n88UbCBnuFUJtqlisHpRKb1I6jcsrrkI
+         4pd5kIbDASfVY+BJGiYpxafjKiQgHelR0JXNzcPlWFejoVweESwzt6TylAR947Gs3our
+         Hc5fEpVRLGrZ7X7JtZB+IVQbFvGyWKBS4OQTG1UvDQ3Y89ALvhl/+PQ3PQMPPh0QC628
+         /UNmL0ENh7oneohL5i2w4e2+1t6xHPhYyA4kf/F11nGnrTy1mn49ViWm3S+cIRYhR1cA
+         VuMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717958668; x=1718563468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QUUN5jvMypW6P+Pp1YvyXgjvxQ678L4ijvc2XJHbh1A=;
-        b=YJ0pZXq3AVQ5yWwKldT68nzRAHiHgG+Q4c5q7DOB9w8ocE/SN5Gn3u6c4ItCWIjL6U
-         GbcXsAnUqBAN/B5bB6JTU00x5KLOS4j6A6TLOQBXqQzlZqwo9um2u9hFggAsW9MH/aww
-         t2pLtU1XI7tWdEYVJGpcltafqzVIKnD/B8Jx0Bjj5YOuoXb+CMjfCS69lugNQcfG5gUw
-         qvforlzaBEDKpGtbp6AWOWEEQsooPPqu/h9i1xnVNa7nzkuqJ6kHk9KvPqBpYcy883Ns
-         iwpGKLwHnnPWFMo8IC5OWFP7n6DUjtdgUABLZydlVu/X4z2cbn8pZt4fp8wU+4uyMYt0
-         rVMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqqCxhEEvwhZ2av4/FW34c30kO8FPmCkFWuRZMwMCyRUAEXxOwe8XyFMj0nOfdER4myy9m0zJ4i7kZ9vwYNi1KJP7vV7iyleEKhhG
-X-Gm-Message-State: AOJu0YxjIrr25Ox13y7GZs+A+6tCuVebvAuxrn3SyMXjLHhJzK0CKXDv
-	HDBJpsBsgShehtWVcS5rE0X3gHqos0wfQPzyco5UFsubghbyUmEY
-X-Google-Smtp-Source: AGHT+IHKKiBJNRWQNNKgV62vwr/OlJ+hKJrqkVpM54C1atGqjWvBWdpuEMXjHXRaNIX0ePqrcNmTIg==
-X-Received: by 2002:a05:6a00:17a3:b0:705:96b5:8bf2 with SMTP id d2e1a72fcca58-70596b596a2mr946312b3a.3.1717958668561;
-        Sun, 09 Jun 2024 11:44:28 -0700 (PDT)
-Received: from dev0.. ([132.154.51.183])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e2b38167a2sm3714385a12.90.2024.06.09.11.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 11:44:28 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: jgross@suse.com,
-	sstabellini@kernel.org,
-	oleksandr_tyshchenko@epam.com,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	jain.abhinav177@gmail.com
-Subject: [PATCH] xen: xen-pciback: Export a bridge and all its children as per TODO
-Date: Sun,  9 Jun 2024 18:44:10 +0000
-Message-Id: <20240609184410.53500-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1717959688; x=1718564488;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPmBBYLT5yNnrcbl92wdFUaVe7Q/yxC54IFQQ0drxFU=;
+        b=ro9XDkUyo8FeS9zbstWA4qVY4+d2roTW4kwfsdX32IdWSOoon39D6UFdCLGAj9T95/
+         imuutooFn2/yjPfMLsKX2Rjkdrb029bFPeG27xgFa0CJ0eClFR7iAwrzqf2FPM5HjKM3
+         EqgZ8C4scablVFdoJQFXlrS+Ux6JDpD5t7gv142YdFxBHnWqjYvzcc06WSSIcMn0AUNF
+         uXRgDGcT3WZWRuuUifZkUVLHoNlE/8PsybgbtchfFH2hgwe1bvaoYFAQmGG/FZMqmuil
+         HQW/wt3wpiooqv1TQVHmGW3elnZ0oahV4aPOH24wt8k8o0poEjJ++uXVTZMpAELz0+Jn
+         Levw==
+X-Forwarded-Encrypted: i=1; AJvYcCV168gvUEYGYY5DVvgoZOvvR20xRUqVziHLmdcjm7/FhnXOOfb0uo+/mz7lA6sz+jzGc31QhyCBdieAWis3Yag3culg/QUHRDsnIZKux9EGaudgpCsZP2L/Q9VcSpn65YgAV3hvc54VTp661w93
+X-Gm-Message-State: AOJu0YyyJDGxhQWwPuLQxG1RSHT3EKSgSOVNRxi0sMskxqiRr1e3p0xH
+	XLnWBcpAIPfZwARijsgxqox8QNQJKXzl5LKt+VyZQpvMFruqgBs1
+X-Google-Smtp-Source: AGHT+IEjro3Dz3nO6tBHGOASiHqbEGbQmhynRdtvs5TGYPk7MFePTUMw3KmMNSMRWSdBoWOmGd/9/A==
+X-Received: by 2002:a05:6512:551:b0:52b:8325:6eed with SMTP id 2adb3069b0e04-52bb9f76f7dmr4617590e87.2.1717959687981;
+        Sun, 09 Jun 2024 12:01:27 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:d20e:7300:4c17:8e3c:d4d8:5918? ([2a01:4b00:d20e:7300:4c17:8e3c:d4d8:5918])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1f109346sm2387028f8f.27.2024.06.09.12.01.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Jun 2024 12:01:27 -0700 (PDT)
+Message-ID: <655c6a80-53d0-4a9c-b242-25936646e49c@gmail.com>
+Date: Sun, 9 Jun 2024 20:01:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] kunit: string-stream: export non-static functions
+To: David Gow <davidgow@google.com>
+Cc: brendan.higgins@linux.dev, rmoar@google.com,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org
+References: <20240604123204.10412-1-ivan.orlov0322@gmail.com>
+ <20240604123204.10412-2-ivan.orlov0322@gmail.com>
+ <CABVgOSnNLmmMDHin=mvrAmN3m6mJmWsntcc_JvV03pCzXUEX+w@mail.gmail.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <CABVgOSnNLmmMDHin=mvrAmN3m6mJmWsntcc_JvV03pCzXUEX+w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Check if the device is a bridge.
-If it is a bridge, iterate over all its child devices and export them.
-Log error if the export fails for any particular device logging details.
-Export error string is split across lines as I could see several
-other such occurrences in the file.
-Please let me know if I should change it in some way.
+On 6/8/24 10:20, David Gow wrote:
+> On Tue, 4 Jun 2024 at 20:32, Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+>>
+>> Export non-static functions from the string-stream.c file into the KUnit
+>> namespace in order to be able to access them from the KUnit core tests
+>> (when they are loaded as modules).
+>>
+>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+>> ---
+> 
+> Looks good to me, thanks.
+> 
+> It's very slightly hilarious to use EXPORT_SYMBOL_IF_KUNIT() here,
+> because _of course_ KUnit is enabled, but I think it's the right idea
+> nevertheless.
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- drivers/xen/xen-pciback/xenbus.c | 39 +++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+Hi David,
 
-diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
-index b11e401f1b1e..d15271d33ad6 100644
---- a/drivers/xen/xen-pciback/xenbus.c
-+++ b/drivers/xen/xen-pciback/xenbus.c
-@@ -258,14 +258,37 @@ static int xen_pcibk_export_device(struct xen_pcibk_device *pdev,
- 		xen_register_device_domain_owner(dev, pdev->xdev->otherend_id);
- 	}
- 
--	/* TODO: It'd be nice to export a bridge and have all of its children
--	 * get exported with it. This may be best done in xend (which will
--	 * have to calculate resource usage anyway) but we probably want to
--	 * put something in here to ensure that if a bridge gets given to a
--	 * driver domain, that all devices under that bridge are not given
--	 * to other driver domains (as he who controls the bridge can disable
--	 * it and stop the other devices from working).
--	 */
-+	/* Check if the device is a bridge and export all its children */
-+	if ((dev->hdr_type && PCI_HEADER_TYPE_MASK) == PCI_HEADER_TYPE_BRIDGE) {
-+		struct pci_dev *child = NULL;
-+
-+		/* Iterate over all the devices in this bridge */
-+		list_for_each_entry(child, &dev->subordinate->devices,
-+				bus_list) {
-+			dev_dbg(&pdev->xdev->dev,
-+				"exporting child device %04x:%02x:%02x.%d\n",
-+				child->domain, child->bus->number,
-+				PCI_SLOT(child->devfn),
-+				PCI_FUNC(child->devfn));
-+
-+			err = xen_pcibk_export_device(pdev,
-+						      child->domain,
-+						      child->bus->number,
-+						      PCI_SLOT(child->devfn),
-+						      PCI_FUNC(child->devfn),
-+						      devid);
-+			if (err) {
-+				dev_err(&pdev->xdev->dev,
-+					"failed to export child device : "
-+					"%04x:%02x:%02x.%d\n",
-+					child->domain,
-+					child->bus->number,
-+					PCI_SLOT(child->devfn),
-+					PCI_FUNC(child->devfn));
-+				goto out;
-+			}
-+		}
-+	}
- out:
- 	return err;
- }
+Thank you for the review.
+
+Yes, the name of the EXPORT_SYMBOL_IF_KUNIT macro in this case is a bit 
+confusing... It is used not only to export the symbol conditionally (if 
+CONFIG_KUNIT is enabled), but also to export the symbol into the KUnit 
+namespace (so I used it as a shortcut for this action here) :)
+
 -- 
-2.34.1
+Kind regards,
+Ivan Orlov
 
 
