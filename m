@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-207487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D38E9017EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8E59017F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286C22811B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:05:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BB51C2083E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 19:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B53A4D8BC;
-	Sun,  9 Jun 2024 19:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5664D9E3;
+	Sun,  9 Jun 2024 19:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6+l9pbi"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wtNdwUqv"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C2A22309;
-	Sun,  9 Jun 2024 19:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A11DA23;
+	Sun,  9 Jun 2024 19:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717959935; cv=none; b=ehCntZsrA0N58javqT6fEHeIdfQxGw/NVS0AfyFwutZ8QRSPaJdUvmAerZvuiNQReMxJwSQFoMn0qZyxdsL1ZyVdP0Fn4i6ot6ILXty2amEjCTN/0AHOVZtrMUtXJTP/Zcej7hfIMzr6RudGRQUX1ayC///O9ILsS92cT89YPsw=
+	t=1717960267; cv=none; b=gj3Ek+4LaFSp+GL1gDCbtT0973stWHQh3Kuf2hYRPmFhx8CJ7oz76rDniqQAfWypS+tdpKVcP3uYpXOX3kdwyQ0PQdbohGTH/I0D4FApk0+aGPkkTBGVnLHhmNG+z2y27SW1DxWoTak9ztrwYVytabW00DS2Gne44tfDEP47l5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717959935; c=relaxed/simple;
-	bh=zenYx0VoQBy5HcEaOcHDB+JgjwPoleCTHfuYYzYy6pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iSVF54V/6LcKtj80uM3XsqI2aTJ1IqwxlStS7prSQTbUDBPnHKi2dVrCZ7doZp2x1lsmVvEJXKv1LizVO9m7xlmIYYMGs3rgih86fOkQJ2GBWuprAFDq9o+Ds8x8d7zpkyRmF9Fv2dBSBRDiwphN6uAhQ4hL25ZY69gexcW84dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M6+l9pbi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4218e647d62so159855e9.3;
-        Sun, 09 Jun 2024 12:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717959932; x=1718564732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lMP7LygSAZhkpoA1ycYCpv7KiAFgQsf91H9TDN3GjSg=;
-        b=M6+l9pbikjq0slbvDY5EpKyNjT/HQU3a8FSPm9P0v4m6ogu6SMyW0rHyCVhPeNx+CQ
-         rI3IF916/JPIHFTwCjbMhmUSVoOx34wE/TP5m+Zod0XmJRn/oVwNA8EV1yeT38Nk0zlN
-         DfLYli46ttMM1EMth+j4ukrx4ZxVLZknm1pVzIn2eqtnbKF4O3cHMN3GMjwLS6CzVnzR
-         0Edo7cTJzyzJQ9kKbxTKeK85QRg9HKXmhEZ7PzD5zPomS5Q2iqFah4UeO2YGAkM1/o7b
-         M9DjScXCzV715NnMh7EVi2JGws8wODDsJom1WX/VrRLHwzTT7/qAs02QcyDE9+9WzcfR
-         e0Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717959932; x=1718564732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lMP7LygSAZhkpoA1ycYCpv7KiAFgQsf91H9TDN3GjSg=;
-        b=sq2sza6T6E+U1FShlc+zyFoqXx3eaDDmYxbHhktq4doVJQOheYOXa/I4HzVHGcOqZ2
-         nI+OMplOPkUro3aN4UxVTT9C8A8iw/AWdd/aPFHefX6yG5DAM7rRrqBQ0jg3ayBMS/6v
-         hxPYjaRuP0J2yeCKEuQUplVD9Did6opD7PcHj2CYEG/CAj902+RNJLXAzEIPKwVSkSDU
-         /nf022uFq+mi96a9tlYNnpiZ/QGsxMsLnXn1ZHV/aCDEBgldbtFAyJPUwp5CoT0JmEBY
-         ENQYXHKeXmCUb0lgrP5UsHuM8EONOABhaftSUfZtSbOIZ0ggib1cX/qCXh0lyMv6+BTs
-         yxMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjk0exfwH2YF2jt6W41YjfPNnoYvhZqevtuGrXE+QQK3cFhUDw419IKCrplQbznBjaZowOT8TBLgYhfgOW/V7OEMFxmarUh7hummcrogapMib0f7X9WVIXPgJWIW9npiuk0w3YiQysaNYg4j38
-X-Gm-Message-State: AOJu0YxFHenDxOQQf5sP61es9uIqpda9OBFhU2es2bp1cZMohRXjAGRD
-	jDkhDI8hYWGKkn708/EqWFBXm7n9G1Cy2eZ56hRL/IuG1WxYPzvP
-X-Google-Smtp-Source: AGHT+IHfSes+9oVjbmgm5e0N+c3RceqjslX8crzf2VP/G3f+RKqtT3a2EM0OO+4XGkB4puDxNOJp7Q==
-X-Received: by 2002:a05:600c:17c3:b0:421:7dc3:99ff with SMTP id 5b1f17b1804b1-4217dc39e3emr26029325e9.3.1717959931734;
-        Sun, 09 Jun 2024 12:05:31 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:4c17:8e3c:d4d8:5918? ([2a01:4b00:d20e:7300:4c17:8e3c:d4d8:5918])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42196386d13sm20959725e9.12.2024.06.09.12.05.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Jun 2024 12:05:31 -0700 (PDT)
-Message-ID: <d8b30709-0be0-4474-88c5-8131ec74ec3f@gmail.com>
-Date: Sun, 9 Jun 2024 20:05:30 +0100
+	s=arc-20240116; t=1717960267; c=relaxed/simple;
+	bh=YnJ6yY0kxkf1yXvMuHok1nLzJNsY6Nscx/FJTwHLG/w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BGMdy7vox1+/M6G4RqIWVgjZE4h1/YHOQ8OGwipDUOlcKnZ7KQBuYpPVQrU2Jjgg9POZdx+QQuLEucu5Mw2jutLKJ22QfIBwCA1+xtrooDcLLwLGh/dzg+jMR4IMjZhLY5NfW27VC2r0+FOoRshnWN+uoa7lg6QgC48BqwKV1g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wtNdwUqv; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717960233; x=1718565033; i=markus.elfring@web.de;
+	bh=YnJ6yY0kxkf1yXvMuHok1nLzJNsY6Nscx/FJTwHLG/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wtNdwUqvGO7vuU1E3AgUWCHdAoLpEYY7SUz0KUO5yyBkqbiXPPTU7H1HuONe6Mll
+	 1JEcKggM9gnlLXGcqFEvzpu50Xv7AY2UYijFmN8p9L1enXgrZTHVdsI2bXOjoMfzC
+	 3PUoXJd6PoemlG8B8GCeH/ZIE1Tz6KAQRo4sKjVSQhn8U/GggGPSCn+mBAVmV6uvE
+	 XkyZz/GUkX8+MullBkjRJY23BHxnP3FDLLoH2Qdn9E7x6OGdZ7aGWAczvFDEUBD9R
+	 EJVLopDTrQRTHZMpfOG4ShngZNcXPAcyrtXVDzOaWEtSpj5pcZ25iZA8aC1SpPli5
+	 HCsl9wCnUhJ1kjm61w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1rqhGf3udp-00NdWW; Sun, 09
+ Jun 2024 21:10:33 +0200
+Message-ID: <d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de>
+Date: Sun, 9 Jun 2024 21:10:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,103 +56,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] kunit: assert: export non-static functions
-To: David Gow <davidgow@google.com>
-Cc: brendan.higgins@linux.dev, rmoar@google.com,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org
-References: <20240604123204.10412-1-ivan.orlov0322@gmail.com>
- <20240604123204.10412-5-ivan.orlov0322@gmail.com>
- <CABVgOS=8S4QqAdNHs7hLXfD7HGq+eQNUqVbLkTu94-BUDTxOWA@mail.gmail.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <CABVgOS=8S4QqAdNHs7hLXfD7HGq+eQNUqVbLkTu94-BUDTxOWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Howard Chu <howardchu95@gmail.com>, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Namhyung Kim <namhyung@kernel.org>
+References: <20240608172147.2779890-1-howardchu95@gmail.com>
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240608172147.2779890-1-howardchu95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:loiKlUeVG/cvD/6mt7zFwk7DiMngcfkEpvsa9j5Cn8qj94nZXB5
+ FEBticdnDFBidkOYQiIs0t5ArX9n6wQ8E/dK7g4xsNGQ2PIix6ZxzBoai3pVBjoYa/gYUJY
+ qdjBgV2RBPM/lDkVBH6UixCtaFAZRfT1oXUM4hxsz2oC9Swls+zlhUCadXJYlrPWqD6JCiW
+ LlNLGVydHqj0AHgMMVdXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fyQ3HizanSg=;BaqCYqzTT646PfgdVySuUOhIlHj
+ qTNb4j59hNxbLFXHPHBAL4asH3TInev08YLW90ZKo9b+mmTjqSPZ1wMFMSFPlT2vTlozZiYfU
+ SmX0FDztLbEZSuIR3dswbEJDSJ/scO13Lqd3OXUpu5fpJZN3FkqbetaE3+tPNX6LnOzJaTM+i
+ 086ds2yM2K7sQsaM1p5nFALvlK7mNRSjgmSOky05b7JkrOmgsTW66fB72t5anMYdmnBn2WRIz
+ TksYt54asCPCiF9tPXyT/W8RmYClZ36FFUjvQecPcyLd/03eZqNyL8HezsTa06Z15DyT1pVVZ
+ GVQSPUgoTIG3e4DVCK8QZdxMDESEerWi+I6qtvCi5RpK7svH1ToD2kXYW6prQKNpZ8NUgIrnw
+ YVAJu9cTV75DA7A3Jkvaf62Uf2PrhWkJnnjQ/kM+TWY3A/tM2AZOwO/c+YuDlOzTkprRsj8Lo
+ zUDHCzf6VyBqjVwg3XDL3VmCAv1T++cX6or8KZMDJVZnP5MCdSU0PAoje8IUZ1k4ThmnFwGEM
+ HvUED3A5+q5CeNfVk/9xx6b8eFsk2yZk2DerpJpswuGGd0b2EIyqvSlr73CdJ9VEJyyxslENo
+ XlRCV3BaGKXZF0GLR4wjmSv2sLeMPl4XMvlqMv7TaGVuOntx0ari6qlKnT8zI/JQJGi7Dpsyx
+ Fy3zAwRYugFbRjxtvcjXXCggLgQLYPk1GYV1RrS06fxi4eCNOB9SsP5YkJZaAVLIOX7BTMbHz
+ zhkKS5IEi6R/i1Itw18ZYn3ZJ1FWMFC38ITW67pHWCNyuU5DkmYGJHKMXPeA4Zm5sQB8Afchl
+ y+3uIVynZB0ZQELsfp2PvG5dLyJJkCahX1iQkjO1/bbfQ=
 
-On 6/8/24 10:20, David Gow wrote:
-> I think this could be merged with patch 5, as it's not useful on its
-> own. Also, a few of the symbol names might be a little too generic to
-> be exported: maybe we should give them a 'kunit_assert' prefix?
-> 
-> Cheers,
-> -- David
-> 
+> This is a bug found when implementing pretty-printing for the
+> landlock_add_rule system call, I decided to send this patch separately
+> because this is a serious bug that should be fixed fast.
+=E2=80=A6
 
-Hi David,
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
-Thank you for the review and yes, I agree that it would be more useful 
-in the scope of the next patch (so I'm going to squash it with the next 
-patch in the V2).
-
->>   lib/kunit/assert.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
->> index 867aa5c4bccf..f394e4b8482f 100644
->> --- a/lib/kunit/assert.c
->> +++ b/lib/kunit/assert.c
->> @@ -38,6 +38,7 @@ void kunit_assert_print_msg(const struct va_format *message,
->>          if (message->fmt)
->>                  string_stream_add(stream, "\n%pV", message);
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
->>
->>   void kunit_fail_assert_format(const struct kunit_assert *assert,
->>                                const struct va_format *message,
->> @@ -112,6 +113,7 @@ VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
->>
->>          return ret;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
-> 
-> I'm a bit worried about having such a generic name exported, even
-> conditionally and to a namespace. Maybe we could give this a
-> 'kunit_assert' prefix, or put it in a separate, more specific
-> namespace?
-> 
-
-Yeah, makes sense, I'll rename them in the next version of the series. 
-Thank you!
-
->>
->>   void kunit_binary_assert_format(const struct kunit_assert *assert,
->>                                  const struct va_format *message,
->> @@ -180,6 +182,7 @@ VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value)
->>
->>          return strncmp(text + 1, value, len - 2) == 0;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
-> 
-> I'm a bit worried about having such a generic name exported, even
-> conditionally and to a namespace. Maybe we could give this a
-> 'kunit_assert' prefix, or put it in a separate, more specific
-> namespace?
-> 
-> 
-
-Same here: will be renamed :)
-
-Thanks!
-
-> 
-> 
->>   void kunit_binary_str_assert_format(const struct kunit_assert *assert,
->>                                      const struct va_format *message,
->> @@ -232,6 +235,7 @@ void kunit_assert_hexdump(struct string_stream *stream,
->>                          string_stream_add(stream, " %02x ", buf1[i]);
->>          }
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
->>
->>   void kunit_mem_assert_format(const struct kunit_assert *assert,
->>                               const struct va_format *message,
->> --
->> 2.34.1
->>
-
--- 
-Kind regards,
-Ivan Orlov
-
+Regards,
+Markus
 
