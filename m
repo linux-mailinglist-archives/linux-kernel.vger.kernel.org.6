@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-207525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C31901879
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607DD90187E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B2628135F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9251F2117D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E4855882;
-	Sun,  9 Jun 2024 22:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3D355887;
+	Sun,  9 Jun 2024 22:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="uAP0Kik5"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UcG/T8D2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFA74C627
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 22:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F81EAF9;
+	Sun,  9 Jun 2024 22:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717971220; cv=none; b=u4P3TXLK0Z6wBwlhrn/3vxARYNV8HMx0JQS5V9teqdbr/1q+4WhLrkxszun8ZrvHQn72mCbG1uQ0rkjtXumUv4diy1/9zCrWIXI5TPaPd3cDJhv14KIgMLZtBOBnFfLwjar0pv3zS+HL1VscRT6I/safD+1bN1qHspignpcLsmU=
+	t=1717971545; cv=none; b=fjgDBd8aNzhPESFUu2QFsu9GHpmHfEt34hCX5L8iKZndoDenerMa63uQxNwMMmdKVUK7Q2ThdOdEw+FMmjqGgs+s7dFw1vugmSRbwCfS9yOEQo8yZO0XMxcKgHucC86l/Q2esmnw8Sz1xD2RtLYlCl/CaE5GKkgp92srdsmzUFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717971220; c=relaxed/simple;
-	bh=hbL/pdZIv5Dp0rCVGhg8oan6rPug4SJHwJnZVrisT2g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UeVD1TNTAf/ErADD1IrMHZTsRFRAgV9S3Da2wsjRFP65uJ1H8nbxoj+6dXm701lp1rUa1c0C6eT0+1e54OmXLbc0dgNS1iGM49QKrvP0MZF/tKxaAbNlyR3z4GO1u6+A3yKjzjiXYfYLPiisMXt48YmfpsS3eDQffAVCaPENyS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=uAP0Kik5; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id AD0422C08BD;
-	Mon, 10 Jun 2024 10:13:28 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1717971208;
-	bh=hbL/pdZIv5Dp0rCVGhg8oan6rPug4SJHwJnZVrisT2g=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=uAP0Kik559ZH9Wc3yJGsVD/3ed0OsFSq5pnQH87QjSBZfULdH0TxLPSw9Iz/aJlqC
-	 OzSqe7R/r6B6CRWzUQQwhbVDNwSf1LrTYyiRkl/CjUaMGIclWgAZunjktTeoO5b6CZ
-	 fqhxlGIuVO2TqGanvS9HU8sUAFqgdNh7aEdV3wawUAZGePlj+jVlRcdiRVe+P9hJUg
-	 E9OTkd8tCJZXD5ND/IfsQXUVBKKUx6mF2DzvAPt7UzERN+XgdeoDzn/mZKgyLrdYVT
-	 /E3jo90Qck8DfITddmyLQYTZ3Fprfo1kkZYD/ZzqHwrFCUSYEUNmDxfwn7kNY77FTX
-	 +sNqWOR/tFlNA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B666629080001>; Mon, 10 Jun 2024 10:13:28 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Mon, 10 Jun 2024 10:13:28 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Mon, 10 Jun 2024 10:13:28 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 10 Jun 2024 10:13:28 +1200
-From: Mark Tomlinson <Mark.Tomlinson@alliedtelesis.co.nz>
-To: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>
-CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "brgl@bgdev.pl"
-	<brgl@bgdev.pl>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: Improve interrupt support
-Thread-Topic: [PATCH] gpio: pca953x: Improve interrupt support
-Thread-Index: AQHat8IKrnq78xh9RkCOMGJXNt7JBLG82EyAgAJjhoA=
-Date: Sun, 9 Jun 2024 22:13:27 +0000
-Message-ID: <e407b7b58c966ee35e023618ad428a21f979e761.camel@alliedtelesis.co.nz>
-References: <20240606033102.2271916-1-mark.tomlinson@alliedtelesis.co.nz>
-	 <ZmQoCwLFuJNyuRG6@surfacebook.localdomain>
-In-Reply-To: <ZmQoCwLFuJNyuRG6@surfacebook.localdomain>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F331E2EA68419549A37805A254B08F2C@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1717971545; c=relaxed/simple;
+	bh=ySuyf8UbF0zWjzvwoGYc+ew5iXeHZUMDNjl7NU6DiCc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=k05XrsWKwwXHCXereFqBb+aiNd3nXCx2G7hZnNqfVzhYDjdL9LP3COtFRm8Kvcy4HCWiZdL4einEDW5gVBb+l2nIdenUKdfzFbAfMlOdjWdtyr9PSfxY1RATHWiTLnY6+0GkknYuMQatcypIyIK+/qRfwO2cDUZkkhHKuvW9wdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UcG/T8D2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459KrZO1025542;
+	Sun, 9 Jun 2024 22:19:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=N5eQqMFkP57lxHjn9HDz4v
+	EB4SJwMNThRpvnJhhQHpw=; b=UcG/T8D211BCdRfNuk8HKiQOqHIZxskACmAEVr
+	lyFv1zz86XpAEDMi6OYEywDEjWf7cQP6RJtFPQeq1hjG7SFs1/i3WePbjHs0ADuV
+	Pw++JbP4fwlXHAueLZQOWk/3hts65pJi7yYGnPiksNTlPu3tnHOlAGaod9kIbUIs
+	/6rRdnobjSZwqZ6NjXX3ts8whHm0uwKPnqPmU0tW45Gnxs2yei4/k3cyYz3Y9FAj
+	3EiWAVu9hRx6wL9PggQOeYOwE89uWstW5zyJG/BW0FTTXp0PL6uYZN4I50bNezB6
+	s8yF/XWrlnXRP0Zzxw1mbwW5GD5ey0Wzn1OhSj7p4WxVXeWg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfp7a3dg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Jun 2024 22:19:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459MIwr8002475
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Jun 2024 22:18:59 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
+ 15:18:58 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 9 Jun 2024 15:18:58 -0700
+Subject: [PATCH] spi: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=66662908 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=KE40CbAq34oA:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=UDBL-DoJI6aJ5C6zNTwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240609-md-drivers-spi-v1-1-1c7444f53cde@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFEqZmYC/x3MQQqDQAxG4atI1g2kIoq9SulixvlbA3UqSSuCe
+ PeOLr/Fexs5TOF0qzYyLOr6yQXXS0XDGPILrKmYaqkbaaXnKXEyXWDOPiv3XdcEoE0ShUo0G56
+ 6nsP7ozgGB0cLeRiPzVvzb+Up+BdG+/4HTCSgnX8AAAA=
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 35kC_feu8IiuVCZfmxFCPlL9L7wanhBE
+X-Proofpoint-ORIG-GUID: 35kC_feu8IiuVCZfmxFCPlL9L7wanhBE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-09_17,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406090175
 
-T24gU2F0LCAyMDI0LTA2LTA4IGF0IDEyOjQ0ICswMzAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-DQo+IFRodSwgSnVuIDA2LCAyMDI0IGF0IDAzOjMxOjAyUE0gKzEyMDAsIE1hcmsgVG9tbGluc29u
-IGtpcmpvaXR0aToNCj4gPiBUaGUgR1BJTyBkcml2ZXJzIHdpdGggbGF0Y2ggaW50ZXJydXB0IHN1
-cHBvcnQgKHR5cGljYWxseSB0eXBlcyBzdGFydGluZw0KPiA+IHdpdGggUENBTCkgaGF2ZSBpbnRl
-cnJ1cHQgc3RhdHVzIHJlZ2lzdGVycyB0byBkZXRlcm1pbmUgd2hpY2gNCj4gPiBwYXJ0aWN1bGFy
-DQo+ID4gaW5wdXRzIGhhdmUgY2F1c2VkIGFuIGludGVycnVwdC4gVW5mb3J0dW5hdGVseSB0aGVy
-ZSBpcyBubyBhdG9taWMNCj4gPiBvcGVyYXRpb24gdG8gcmVhZCB0aGVzZSByZWdpc3RlcnMgYW5k
-IGNsZWFyIHRoZSBpbnRlcnJ1cHQuIENsZWFyaW5nIHRoZQ0KPiA+IGludGVycnVwdCBpcyBkb25l
-IGJ5IHJlYWRpbmcgdGhlIGlucHV0IHJlZ2lzdGVycy4NCj4gDQo+IFdoYXQgeW91IGFyZSBkZXNj
-cmliaW5nIHNvdW5kcyB0byBtZSBsaWtlIHRoZSBjYXNlIHdpdGhvdXQgbGF0Y2ggZW5hYmxlZC4N
-Cj4gQ2FuIHlvdSBlbGFib3JhdGUgYSBiaXQgbW9yZT8NCg0KVGhlIGxhdGNoIGlzIHVzZWZ1bCB3
-aGVuIGFuIGlucHV0IGNoYW5nZXMgc3RhdGUsIGJ1dCBjaGFuZ2VzIGJhY2sgYWdhaW4NCmJlZm9y
-ZSB0aGUgaW5wdXQgaXMgcmVhZC4gVXNpbmcgdGhlIGxhdGNoIGNhdXNlcyB0aGUgaW5wdXQgcmVn
-aXN0ZXIgdG8gc2hvdw0Kd2hhdCBjYXVzZWQgdGhlIGludGVycnVwdCwgcmF0aGVyIHRoYW4gdGhl
-IGN1cnJlbnQgc3RhdGUgb2YgdGhlIHBpbi4NCg0KVGhlIHByb2JsZW0gSSBoYXZlIGlzIG5vdCBy
-ZWxhdGVkIHRvIHRoZSBsYXRjaCBhcyB0aGUgaW5wdXRzIGFyZSBub3QNCmNoYW5naW5nIGJhY2sg
-dG8gdGhlaXIgb3JpZ2luYWwgc3RhdGUuIEkgaGF2ZSB0d28gaW5wdXRzIHdoaWNoIGNoYW5nZSBz
-dGF0ZQ0KYXQgYWxtb3N0IHRoZSBzYW1lIHRpbWUuIFdoZW4gdGhlIGZpcnN0IGlucHV0IGNoYW5n
-ZXMgc3RhdGUsIGFuIGludGVycnVwdA0Kb2NjdXJzLiBQcmlvciB0byBteSBwYXRjaCwgdGhlIGlu
-dGVycnVwdCBzdGF0dXMgcmVnaXN0ZXIgd2FzIHJlYWQsIGFuZCBvbmx5DQp0aGlzIG9uZSBpbnRl
-cnJ1cHQgaXMgc2hvd24gYXMgcGVuZGluZy4gVGhlIHNlY29uZCBpbnB1dCBjaGFuZ2VzIHN0YXRl
-DQpiZXR3ZWVuIHJlYWRpbmcgdGhlIGludGVycnVwdCBzdGF0dXMgYW5kIHJlYWRpbmcgdGhlIGlu
-cHV0ICh3aGljaCBjbGVhcnMNCmJvdGggaW50ZXJydXB0IHNvdXJjZXMpLiBTbyBJIG9ubHkgZ2V0
-IHRoZSBvbmUgaW50ZXJydXB0IGFuZCBub3QgYm90aC4NCg0KPiA+IFRoZSBjb2RlIHdhcyByZWFk
-aW5nIHRoZSBpbnRlcnJ1cHQgc3RhdHVzIHJlZ2lzdGVycywgYW5kIHRoZW4gcmVhZGluZw0KPiA+
-IHRoZSBpbnB1dCByZWdpc3RlcnMuIElmIGFuIGlucHV0IGNoYW5nZWQgYmV0d2VlbiB0aGVzZSB0
-d28gZXZlbnRzIGl0DQo+ID4gd2FzDQo+ID4gbG9zdC4NCj4gDQo+IEkgZG9uJ3Qgc2VlIGhvdy4g
-SWYgdGhlcmUgaXMgYSBzaG9ydCBwdWxzZSBvciBhIHNlcmllcyBvZiBwdWxzZXMgYmV0d2Vlbg0K
-PiBpbnRlcnJ1cHQgbGF0Y2hpbmcgYW5kIGlucHV0IHJlYWRpbmcsIHRoZSBzZWNvbmQrIHdpbGwg
-YmUgbG9zdCBpbiBhbnkNCj4gY2FzZS4NCj4gVGhpcyBpcyBIVyBsaW1pdGF0aW9uIGFzIGZhciBh
-cyBJIGNhbiBzZWUuDQoNCkkgZmVlbCB5b3UncmUgdGhpbmtpbmcgb2YgdGhlIHNpbmdsZSBpbnB1
-dCBwaW4gY2FzZS4gVGhlcmUgaXMgbm8gaXNzdWUgd2l0aA0KYSBzaW5nbGUgcGluIHB1bHNpbmcg
-YXMgdGhlIGxhdGNoIHdpbGwga2VlcCB0aGUgdmFsdWUgd2hpY2ggY2F1c2VkIHRoZQ0KaW50ZXJy
-dXB0IHVudGlsIGl0IGlzIHJlYWQuIFRoZSBpbnRlcnJ1cHQgc3RhdHVzIHJlZ2lzdGVyIHdpbGwg
-aGF2ZSB0aGUNCmNvcnJlY3QgdmFsdWUgdG9vLg0KPiANCj4gPiBUaGUgc29sdXRpb24gaW4gdGhp
-cyBwYXRjaCBpcyB0byByZXZlcnQgdG8gdGhlIG5vbi1sYXRjaCB2ZXJzaW9uIG9mDQo+ID4gY29k
-ZSwgaS5lLiByZW1lbWJlcmluZyB0aGUgcHJldmlvdXMgaW5wdXQgc3RhdHVzLCBhbmQgbG9va2lu
-ZyBmb3IgdGhlDQo+ID4gY2hhbmdlcy4gVGhpcyBzeXN0ZW0gcmVzdWx0cyBpbiBubyBtb3JlIEky
-QyB0cmFuc2ZlcnMsIHNvIGlzIG5vIHNsb3dlci4NCj4gPiBUaGUgbGF0Y2ggcHJvcGVydHkgb2Yg
-dGhlIGRldmljZSBzdGlsbCBtZWFucyBpbnRlcnJ1cHRzIHdpbGwgc3RpbGwgYmUNCj4gPiBub3Rp
-Y2VkIGlmIHRoZSBpbnB1dCBjaGFuZ2VzIGJhY2sgdG8gaXRzIGluaXRpYWwgc3RhdGUuDQo+IA0K
-PiBBZ2FpbiwgY2FuIHlvdSBlbGFib3JhdGU/IElzIGl0IGEgcmVhbCB1c2UgY2FzZT8gSWYgc28s
-IGNhbiB5b3UgcHJvdmlkZQ0KPiB0aGUNCj4gY2hhcnQgb2YgdGhlIHBpbiBzZ2luYWxsaW5nIGFn
-YWluc3QgdGhlIHRpbWUgbGluZSBhbmQgZGVwaWN0IHdoZXJlIHRoZQ0KPiBwcm9ibGVtDQo+IGlz
-Pw0KDQpZZXMsIHRoaXMgaXMgcmVhbC4gSG9wZWZ1bGx5IHRoZSBhYm92ZSBkZXNjcmlwdGlvbiBl
-eHBsYWlucyB3aGF0IHdlJ3JlDQpzZWVpbmcsIGJ1dCBhcyBhIHBpY3R1cmUgaXMgd29ydGggMTAw
-MCB3b3JkcywgaGVyZSdzIGEgdGltZWxpbmU6DQoNCiAgICAgICAgLS0tLS0tLS0rDQpJbnB1dCAx
-ICAgICAgICAgfA0KICAgICAgICAgICAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0NCiAgICAgICAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLSsNCklucHV0IDIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0t
-DQogICAgICAgIC0tLS0tLS0tKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAr
-LS0tLS0tLQ0KSVJRICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgfA0KICAgICAgICAgICAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tKw0KDQpJbnRlcnJ1cHQgc3RhdHVzICAgICAgICAgICAgICAqDQpSZWdpc3RlciBSZWFk
-DQoNCklucHV0IFJlZ2lzdGVyICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICoNClJlYWQNCg0KTm90ZSB0aGF0IHRoZSBpbnRlcnJ1cHQgc3RhdHVzIHJlYWQgb25seSBzZWVz
-IG9uZSBldmVudCwgYnV0IGJvdGggYXJlDQpjbGVhcmVkIGxhdGVyLiBBcyB0aGVzZSB0d28gcmVh
-ZHMgYXJlIEkyQyBidXMgdHJhbnNmZXJzLCB0aGV5IGFyZSBtb3JlIHRoYW4NCjEwMMK1cyBhcGFy
-dCwgc28gdGhpcyBldmVudCBvY2N1cnMgcXVpdGUgZnJlcXVlbnRseSBpbiBvdXIgc3lzdGVtLg0K
-DQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRoaXMuDQpCZXN0IFJlZ2FyZHMsDQoNCg==
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-altera-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-omap2-mcspi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-qup.o
+
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/spi/spi-altera-core.c | 1 +
+ drivers/spi/spi-fsl-cpm.c     | 1 +
+ drivers/spi/spi-fsl-lib.c     | 1 +
+ drivers/spi/spi-omap-uwire.c  | 1 +
+ drivers/spi/spi-omap2-mcspi.c | 1 +
+ drivers/spi/spi-qup.c         | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/drivers/spi/spi-altera-core.c b/drivers/spi/spi-altera-core.c
+index 87e37f48f196..7af097929116 100644
+--- a/drivers/spi/spi-altera-core.c
++++ b/drivers/spi/spi-altera-core.c
+@@ -219,4 +219,5 @@ void altera_spi_init_host(struct spi_controller *host)
+ }
+ EXPORT_SYMBOL_GPL(altera_spi_init_host);
+ 
++MODULE_DESCRIPTION("Altera SPI Controller driver core");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/spi/spi-fsl-cpm.c b/drivers/spi/spi-fsl-cpm.c
+index e335132080bf..23ad1249f121 100644
+--- a/drivers/spi/spi-fsl-cpm.c
++++ b/drivers/spi/spi-fsl-cpm.c
+@@ -415,4 +415,5 @@ void fsl_spi_cpm_free(struct mpc8xxx_spi *mspi)
+ }
+ EXPORT_SYMBOL_GPL(fsl_spi_cpm_free);
+ 
++MODULE_DESCRIPTION("Freescale SPI controller driver CPM functions");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/spi/spi-fsl-lib.c b/drivers/spi/spi-fsl-lib.c
+index 4fc2c56555b5..bb7a625db5b0 100644
+--- a/drivers/spi/spi-fsl-lib.c
++++ b/drivers/spi/spi-fsl-lib.c
+@@ -158,4 +158,5 @@ int of_mpc8xxx_spi_probe(struct platform_device *ofdev)
+ }
+ EXPORT_SYMBOL_GPL(of_mpc8xxx_spi_probe);
+ 
++MODULE_DESCRIPTION("Freescale SPI/eSPI controller driver library");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/spi/spi-omap-uwire.c b/drivers/spi/spi-omap-uwire.c
+index 210a98d903fa..03b820e85651 100644
+--- a/drivers/spi/spi-omap-uwire.c
++++ b/drivers/spi/spi-omap-uwire.c
+@@ -541,5 +541,6 @@ static void __exit omap_uwire_exit(void)
+ subsys_initcall(omap_uwire_init);
+ module_exit(omap_uwire_exit);
+ 
++MODULE_DESCRIPTION("MicroWire interface driver for OMAP");
+ MODULE_LICENSE("GPL");
+ 
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index 7e3083b83534..b428990f6931 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -1671,4 +1671,5 @@ static struct platform_driver omap2_mcspi_driver = {
+ };
+ 
+ module_platform_driver(omap2_mcspi_driver);
++MODULE_DESCRIPTION("OMAP2 McSPI controller driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index 2af63040ac6e..1e335cd961a4 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -1369,5 +1369,6 @@ static struct platform_driver spi_qup_driver = {
+ };
+ module_platform_driver(spi_qup_driver);
+ 
++MODULE_DESCRIPTION("Qualcomm SPI controller with QUP interface");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:spi_qup");
+
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240609-md-drivers-spi-9774aee6d0b0
+
 
