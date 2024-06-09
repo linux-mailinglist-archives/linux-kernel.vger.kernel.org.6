@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-207508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F3B901830
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 22:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF14901836
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 23:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2431F21027
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 20:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA67D2813F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2024 21:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E6B4D9FB;
-	Sun,  9 Jun 2024 20:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2104050289;
+	Sun,  9 Jun 2024 21:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lhLw7vfo"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W1C1TP99"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3087117BB5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Jun 2024 20:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAFB18C22;
+	Sun,  9 Jun 2024 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717966747; cv=none; b=YNhHdYN1h9dd+y6jPfRo76nCrqs+OTW6Wpc1vdqiDJRxpfENUL8bkjaJut/LQE/t8F1sGxGG2zPYgH1EzLsDgzB2DDznnWZNkYbH6HKcRqKHzStJhCAodxKBeqJIozrntQI+5yn3xiJ2vtSAMANjjZeFOb4tDxqOb2LX7/hSNdc=
+	t=1717967006; cv=none; b=Ke89oiIBgPYYubgouY1Q828EXQIMVG20boWBIz1lkOmjKDDbVe6Ogj/aAbm5TaxKD0T8JWafAK9+GvRT/h8ttpBOg/8b/zC2PWoQAoCa2NiD1Fk8I+iLtgHRqeKD3kn6mlQbyE/NA28N5HHmkbOlJtOhRu2E7z4hWsWdTQZcpyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717966747; c=relaxed/simple;
-	bh=7j1v+9e9Niga/uAleJmKC8ouLVwD561QrPfRenVGGhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDn1OKIjbSfwuxU7Ft7pa03zxI4mB7+ukiW8vqe5cBEeqnbNujWRCeRCACaN3nS/1sIBYiw05MbLDeH/ebzX0b0kar/mSLjJNyloT5qDOsvjrhER7a82Li7ANG6t9ggqc7L0uIZI+qTSsyWo5maRXvFWGUjeTrunjwlSyVJA9Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lhLw7vfo; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42172ed3487so15623365e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 13:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717966744; x=1718571544; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/4EBuqn92sFzanqVMeYwTClL1PJfXX0U+C7af6lxxE=;
-        b=lhLw7vfofOYQ39xo6a6jGU0S+Bogg3cUW5Fwc0PfadUxIqtY1KDpVkigPq+KPEu9YS
-         mF3T7uufRS2qyE4drIW68dG2ZzevQZ+5Hr3SYvOKBrYjuuRbFbKgnWLuGnSLLKreCa4X
-         w+3b1J63D1DihjQHDPC/XzDCjonbie43adSfSCbNRqswg61I2350EkRaguGobu7+S0T7
-         2N3k4u8J75vZLZiIRSiFymXA0cSMfhnzCo95CYYwhUCh9yO9owChA8sUvoqKEhF/7TdX
-         UiWTIBNYlQ1bXLu6+RmRxZn7SR0o9+YIqER9vxx75czvaRAyd9UqplkSue2uYazeU7/R
-         n37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717966744; x=1718571544;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S/4EBuqn92sFzanqVMeYwTClL1PJfXX0U+C7af6lxxE=;
-        b=VC04ETWRjEg7Rs50iOgeSg0+2RsU5qpg3O3xqunEfpULpXiIVljWGui5h9fgjV/tb5
-         keypVD2FjdlBpiF6E0HJzMfOd2QRIhm+Pdkfqx5srpnNG3AgXOQsl5RM/J1RIcf6cS2Z
-         77jP7iQo+S+o+hWZpw89tPO1VpfajXcaitmHXqu3BcI373TJ5cehFWL4oJEp59tSLPK7
-         vWKCT1XzEmKSdu8pY64+V0VGNK4fJek7jp6Vx+HxCtS12BRfuY78AHtFnO3Q0gKCf5Sp
-         +/7BtJZOYyyGz+Tde1bEGcKHcCjkxCFBFib1NC6932g9xptf/goKfbyBGw0XWzpAUAYb
-         C9OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWocuRFsvvK5RzGU5569zbwxcJP4aw9WUhH4htHWcpSVPQsUo93PWbyUUsQM86UDTjZgleR19FEqF7u89EX00UV1hboVozLNBTAEesc
-X-Gm-Message-State: AOJu0YyizzUojU5ypcImpHEFsrj9IVttHU7rPWDV1RwHTYckXoalirLu
-	ds0abbXzGzyU6cPQ+N7fjUvetpTxlR1chhRB14w04ea9XyyLb5GDW1RcwmDNkKU=
-X-Google-Smtp-Source: AGHT+IEEO/PHTW8AqU1APaxSs65MvnQM7xM/9DOK9VOy1PLDH9qtbNk2AlRHMSQ2/X/MVbgwKv4E1g==
-X-Received: by 2002:a05:600c:35c8:b0:421:819c:5d84 with SMTP id 5b1f17b1804b1-421819c5f0bmr19950585e9.10.1717966744343;
-        Sun, 09 Jun 2024 13:59:04 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d6985csm9336089f8f.60.2024.06.09.13.59.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 13:59:03 -0700 (PDT)
-Date: Sun, 9 Jun 2024 23:59:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Allen Chen <allen.chen@ite.com.tw>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Hermes Wu <hermes.wu@ite.com.tw>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: it6505: Fix potential NULL dereference
-Message-ID: <85dd2c45-df99-4270-abeb-a3633afb9d6a@moroto.mountain>
-References: <5e6e8882-478a-46c0-9119-b643d524cc0c@moroto.mountain>
- <vk76z5x3al6rrzb3n2misu6br4fbmc4kj3agyo4ry5fz7ajsm6@dfpq5yzuolvm>
+	s=arc-20240116; t=1717967006; c=relaxed/simple;
+	bh=Wl9NG8h/GJ+vj6ODjcz+fX4TjV1msfDj8arPmokIcOw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uBuHbybrslIshCz2tDLxhFPfpiaM1cn2PyiUr5jX/JGC1N380IGTAsglu8pFdkyvKb65arit64euBhA/qP7ZoxsENDW6Uz3dYNiEkfDpg8FkzEeeuxkTkz2G6F2yoeXlDK3VBlH0FSPwai44RFhXBN2cyviCVR1mkDcYmpnt0rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W1C1TP99; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459HtLZO024951;
+	Sun, 9 Jun 2024 21:03:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=WixHRYN2timxfzVPnpYDb/
+	GYF5ejmv1jUPZn2cYpWKI=; b=W1C1TP99e+EZl0v+qBeXnJq3H0ohKYkoOSLApS
+	i+ALw7184rLDZ5D9QyXzE6eXkmxeCyFoCpGy3BGkFaATfrUHMP1PP1fJf06Wi6QJ
+	W4c6vmS713//ay7RiACRUJplQ0B8WqCK4WXJ5iUabVoX8JbqvGD6hRkaZ28izGox
+	6pjDFVXP2O/3TE5OULzW0fxV/pF7IY32oDRwIczopG1wypHuuAg6s9xbFg3P5/eS
+	DTIhPNiZd/CIcfyFqYW0jhqq3fZEgEfpkrXys6O9iEegLEK59KexDwxgRbx9c4Xe
+	IKws2ZhkmJ9M4ir9IA+jrXuN67AO4pHkLCYA7XqVkepba3ww==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemgj5gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Jun 2024 21:03:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459L390m024628
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Jun 2024 21:03:09 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
+ 14:03:09 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 9 Jun 2024 14:03:08 -0700
+Subject: [PATCH] media: exynos4-is: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vk76z5x3al6rrzb3n2misu6br4fbmc4kj3agyo4ry5fz7ajsm6@dfpq5yzuolvm>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240609-md-drivers-media-platform-samsung-v1-1-d474799346dd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIsYZmYC/x3NQQqDQAxA0atI1g2otRV7ldJFnMlowBklURHEu
+ 3fa5dv8f4KxChu8ihOUdzGZU0Z1K8CNlAZG8dlQl3VTPssOo0evsrMaRvZCuEy0hlkjGkXb0oC
+ hfbgmtFUTujvkzqIc5Pg/3p/snoyxV0pu/JUnSduBkWxlhev6AuWorDKSAAAA
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
+X-Proofpoint-ORIG-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-09_16,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406090165
 
-On Sun, Jun 09, 2024 at 10:38:39PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Jun 08, 2024 at 05:21:08PM +0300, Dan Carpenter wrote:
-> > Smatch complains correctly that the NULL checking isn't consistent:
-> > 
-> >     drivers/gpu/drm/bridge/ite-it6505.c:2583 it6505_poweron()
-> >     error: we previously assumed 'pdata->pwr18' could be null
-> >     (see line 2569)
-> > 
-> > Add a NULL check to prevent a NULL dereference on the error path.
-> > 
-> > Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> > index 3f68c82888c2..4f01fadaec0f 100644
-> > --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> > +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> > @@ -2580,7 +2580,8 @@ static int it6505_poweron(struct it6505 *it6505)
-> >  		usleep_range(1000, 2000);
-> >  		err = regulator_enable(pdata->ovdd);
-> >  		if (err) {
-> > -			regulator_disable(pdata->pwr18);
-> > +			if (pdata->pwr18)
-> > +				regulator_disable(pdata->pwr18);
-> 
-> Wait... I wat too quick to R-B it. The driver uses devm_regulator_get(),
-> which always returns non-NULL result. So all `if (pdata->pwr18)` and
-> `if (pdata->ovdd)` checks in the driver are useless. Could you please
-> send a patch, removing them?
-> 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-lite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-is.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos4-is-common.o
 
-Sure.  Will do.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-regards,
-dan carpenter
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/platform/samsung/exynos4-is/common.c    | 1 +
+ drivers/media/platform/samsung/exynos4-is/fimc-is.c   | 1 +
+ drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/drivers/media/platform/samsung/exynos4-is/common.c b/drivers/media/platform/samsung/exynos4-is/common.c
+index e41333535eac..77007f1a909b 100644
+--- a/drivers/media/platform/samsung/exynos4-is/common.c
++++ b/drivers/media/platform/samsung/exynos4-is/common.c
+@@ -44,4 +44,5 @@ void __fimc_vidioc_querycap(struct device *dev, struct v4l2_capability *cap)
+ }
+ EXPORT_SYMBOL(__fimc_vidioc_querycap);
+ 
++MODULE_DESCRIPTION("Samsung S5P/EXYNOS4 SoC Camera Subsystem driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+index 39aab667910d..0a4b58daf924 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+@@ -999,4 +999,5 @@ module_exit(fimc_is_module_exit);
+ MODULE_ALIAS("platform:" FIMC_IS_DRV_NAME);
+ MODULE_AUTHOR("Younghwan Joo <yhwan.joo@samsung.com>");
+ MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
++MODULE_DESCRIPTION("Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+index d1d860fa3454..1a4d75443215 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+@@ -1662,5 +1662,6 @@ static struct platform_driver fimc_lite_driver = {
+ 	}
+ };
+ module_platform_driver(fimc_lite_driver);
++MODULE_DESCRIPTION("Samsung EXYNOS FIMC-LITE (camera host interface) driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" FIMC_LITE_DRV_NAME);
+
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240609-md-drivers-media-platform-samsung-f75c4f714f93
 
 
