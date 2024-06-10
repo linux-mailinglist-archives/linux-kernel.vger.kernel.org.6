@@ -1,172 +1,175 @@
-Return-Path: <linux-kernel+bounces-208607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A8C90272B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD42902731
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838DF1F21A59
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B423D1C22F9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AE714C581;
-	Mon, 10 Jun 2024 16:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A9715A849;
+	Mon, 10 Jun 2024 16:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="voPagU8F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5E1Hqcc8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DB352gYe"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726D7158A12
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD8158DDD;
+	Mon, 10 Jun 2024 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037783; cv=none; b=MGm2cWX0TJzUDElUa7KuSCCovvHNXSjSNYbyPHEV8odUHJUVT5QHKxSI/Lsvh5+tVKp8xIL79iSP0dlIeZ3fPzPlQ8pesLsFxryAUJJKBg9KWzsNYHct0Qs1MyYSH0UJX2v5bL3esmNbMcSsdg9yNtxocyr5jkp0R3jCWdHq3nA=
+	t=1718037789; cv=none; b=Rw12Yd1qeoGiWjsO4GWDTQg8OBmoIcDIt3OQ0NUNIA6MYq/dE4vYjIAa4b8ZGgNeIwT6/6Hgzjpr1CHI8SejZ3Meb88HbbZZDUXJUyaYK5L1Np6RUEgMJFX3351eYxQ8cwnzHTjFJBL8+7N/9nwxZcmYnPJd9TsEdAE8EU2VAq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037783; c=relaxed/simple;
-	bh=NFKqTJ9ShtyiYAgy+AdG3Zbk7Do+0qFmxaGilWT4BiI=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=uWlQkormI1HKxbeddJnVQj/GPjS9RtlzwYO4qyyz+WhILfqwA6oCcumr1XrH/Wo+4DESYcyxFyq/6xl51qHetkcKsMBsXoVnPJjmxKrGtl2Q2JKzss6Jjkm4Fp2p4LcsqYsfxKGW5oBz70PVGtIkzdOOrq8qCl6sYl+yhDpN3Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=voPagU8F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5E1Hqcc8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20240610164028.169579977@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718037778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=DxPffv+7izSrJC7n0/k0QCEO3R4CfssBq8UJE3DdsrY=;
-	b=voPagU8F8COwMmHGGbN47wMmLuNp3TGobV8Q/TvLQfTegQJOIYXQZHPf70wDvCQssoXQb3
-	53BHytOlkAOrTR4aC0KJ50vq7s0oj/nusykd4Ez5NCavFdkCxTrqck9rkSgyCKVli64p1b
-	OiUf/cl+3lUoB24K3i4RUnpT9XF6bCeV5lDiMEet/a+n1vDpu4CJKo3OCRwccQXMJE+0Qw
-	egltKzwncibCRj16XbiPvQtheSKdDndMXO7M1UspaKPX/J1Pkp4judFXaRSO5ZJp638UF4
-	oLWZCAithOJfEajm4ka1Gl5PJqFzZqpEN9FRAFmqXjlz41hI7mz6aXpOvLNq7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718037778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=DxPffv+7izSrJC7n0/k0QCEO3R4CfssBq8UJE3DdsrY=;
-	b=5E1Hqcc848gkJMcSKbyp1r1LM0UryDIT3Gksyc19ZVf9t8BDL4DRKTzky1UH3p8jzAHR+S
-	6xzVJWeabZ/p/4Dg==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- John Stultz <jstultz@google.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V3 43/51] signal: Cleanup unused posix-timer leftovers
-References: <20240610163452.591699700@linutronix.de>
+	s=arc-20240116; t=1718037789; c=relaxed/simple;
+	bh=MIurSoSSt9UMNcU8rMUkViP6+MSKKbqSoe0jANf2I7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uOVWkOxTm+vID/PjzgY257uDgyrff7UW2LvwSLo9EHszGkYlWxdeNGj4/QPKQSUvEuv6LKyOCSK9BThqNoe93FADphRF1TX7h0PVhl7QEv2BhH2ZxVFNcNvMqBN50X4YdAJyx/ghYMIhWVmNiLPsMFgEA4T4yIuUaJRiHAfeYmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DB352gYe; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f44b594deeso38119025ad.2;
+        Mon, 10 Jun 2024 09:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718037787; x=1718642587; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1QB4h0GreS2FpZ8gwTT0yYN5B4QpL8DyuQc8MSaq4UA=;
+        b=DB352gYeGEYRMGFFwDJeSfXqaIf7MKGVyBQ3EPUk0T2+UT7eiNA8wOybKm4xrgyJHt
+         KpDhF5cL8rmKPjn48+jNMGv5h7XcWNBsiQQRs6ORO1u/+r19BLqXOwap5E1gMLInOCjl
+         N+RFWbKj8FpYQbqydM9V2UDr71/OKQRhtUioTFbthXunoATa8CymhXlx4lWG8R2/pcKT
+         6ajarEZfzlQHwI0OtFyxJNtk1//54E6g1m05F2VCryLxBD/I7xVD+WySGb+F4LteQsmX
+         nmQzee2QTminCSOV1K5WhQf2Dj3WfDaeDPb1/N9S41BFYdCelIQhUOFYy9iJvCALGVtG
+         xRHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718037787; x=1718642587;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1QB4h0GreS2FpZ8gwTT0yYN5B4QpL8DyuQc8MSaq4UA=;
+        b=O/WfhWs6JlQoDm/Lqvmr0/eO5B/3Zkz7FRbXwwxEFIQStMcGHF/EmitvodUbjbXcjY
+         5N96qLFp4/+a9vs+TAJZoJivcO67KU01kQKRQbrJaYoGTYyUjWoVaCHX6PJjNSBhjiSS
+         0KmvGBxj5oHJN3pKSmA7hFCpuj/pDTDYE9VCC58HuoHuI1KIOaHA8a29a76Mbq7vz21f
+         iIfwWN70fc4y3qHXIRvAS+qCuAefUroqb6tVwct722zJfwzyUhxMbk/+7fZBjPNrGb6F
+         V6rXyRiNkkhfsEeRQaGjVy5Sd8Ytr2LP/x6P/qyqqUCL7Fhk5M5NOjamjbDKS7aaS/Ep
+         nD2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9xazcsVS2hNoygm/F+365A8tN1HtKkeACtKDxqh9y4raFwvPey6HjapnE+aE5GxjX9gYdudT7fs5eL4zuFGRSZSjfW+aGAsloWnMp
+X-Gm-Message-State: AOJu0Yz4bXN5DmD8rJ+5hT5Kylg+QxVWNAdXNuKVkZ2tHi/A/uVK+C37
+	hokAXln1xlhbnqyftfqqiuxgq6RUkU3P7DQLBHO93CrK4Ydrb90+3a7diw==
+X-Google-Smtp-Source: AGHT+IFWygY78JM+DU3KmixueTP0lS+a6n7LqLrY5El0iLZUr5XMsUEHLCPoeyO35xEUC8+DBd5Nog==
+X-Received: by 2002:a17:902:cecd:b0:1f7:19d6:fb0 with SMTP id d9443c01a7336-1f719d613a3mr28419395ad.45.1718037786897;
+        Mon, 10 Jun 2024 09:43:06 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:83cc:2314:b3bd:bf64])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72479ab2esm5235845ad.308.2024.06.10.09.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:43:06 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org,
+	Nuno Sa <nuno.sa@analog.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/4] Input: adxl34x - use input_set_capability()
+Date: Mon, 10 Jun 2024 09:42:58 -0700
+Message-ID: <20240610164301.1048482-2-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+In-Reply-To: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
+References: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Jun 2024 18:42:58 +0200 (CEST)
+Content-Transfer-Encoding: 8bit
 
-Remove the leftovers of sigqueue preallocation as it's not longer used.
+Switch to using input_set_capability() instead of using __set_bit() to
+make clear what exactly kinds of events (EV_KEY, EV_REL) are being
+declared.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Also drop redundant calls setting EV_ABS and ABS_X|Y|Z bits as that is
+taken care by input_set_abs_params().
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- include/linux/sched/signal.h |    2 --
- kernel/signal.c              |   43 +++++++------------------------------------
- 2 files changed, 7 insertions(+), 38 deletions(-)
 
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -337,8 +337,6 @@ extern void force_fatal_sig(int);
- extern void force_exit_sig(int);
- extern int send_sig(int, struct task_struct *, int);
- extern int zap_other_threads(struct task_struct *p);
--extern struct sigqueue *sigqueue_alloc(void);
--extern void sigqueue_free(struct sigqueue *);
- extern int do_sigaction(int, struct k_sigaction *, struct k_sigaction *);
+v2: new patch, split out from devm conversion at Nino's request
+
+ drivers/input/misc/adxl34x.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/input/misc/adxl34x.c b/drivers/input/misc/adxl34x.c
+index fbe5a56c19d1..830acf29c32b 100644
+--- a/drivers/input/misc/adxl34x.c
++++ b/drivers/input/misc/adxl34x.c
+@@ -769,18 +769,12 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
  
- static inline void clear_notify_signal(void)
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -439,8 +439,8 @@ static void __sigqueue_init(struct sigqu
-  * - this may be called without locks if and only if t == current, otherwise an
-  *   appropriate lock must be held to stop the target task from exiting
-  */
--static struct sigqueue *__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
--					 int override_rlimit, const unsigned int sigqueue_flags)
-+static struct sigqueue *sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
-+				       int override_rlimit)
- {
- 	struct ucounts *ucounts = sig_get_ucounts(t, sig, override_rlimit);
- 	struct sigqueue *q;
-@@ -454,14 +454,16 @@ static struct sigqueue *__sigqueue_alloc
- 		return NULL;
+ 	input_set_drvdata(input_dev, ac);
+ 
+-	__set_bit(ac->pdata.ev_type, input_dev->evbit);
+-
+ 	if (ac->pdata.ev_type == EV_REL) {
+-		__set_bit(REL_X, input_dev->relbit);
+-		__set_bit(REL_Y, input_dev->relbit);
+-		__set_bit(REL_Z, input_dev->relbit);
++		input_set_capability(input_dev, EV_REL, REL_X);
++		input_set_capability(input_dev, EV_REL, REL_Y);
++		input_set_capability(input_dev, EV_REL, REL_Z);
+ 	} else {
+ 		/* EV_ABS */
+-		__set_bit(ABS_X, input_dev->absbit);
+-		__set_bit(ABS_Y, input_dev->absbit);
+-		__set_bit(ABS_Z, input_dev->absbit);
+-
+ 		if (pdata->data_range & FULL_RES)
+ 			range = ADXL_FULLRES_MAX_VAL;	/* Signed 13-bit */
+ 		else
+@@ -791,18 +785,18 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
+ 		input_set_abs_params(input_dev, ABS_Z, -range, range, 3, 3);
  	}
  
--	__sigqueue_init(q, ucounts, sigqueue_flags);
-+	__sigqueue_init(q, ucounts, 0);
- 	return q;
- }
+-	__set_bit(EV_KEY, input_dev->evbit);
+-	__set_bit(pdata->ev_code_tap[ADXL_X_AXIS], input_dev->keybit);
+-	__set_bit(pdata->ev_code_tap[ADXL_Y_AXIS], input_dev->keybit);
+-	__set_bit(pdata->ev_code_tap[ADXL_Z_AXIS], input_dev->keybit);
++	input_set_capability(input_dev, EV_KEY, pdata->ev_code_tap[ADXL_X_AXIS]);
++	input_set_capability(input_dev, EV_KEY, pdata->ev_code_tap[ADXL_Y_AXIS]);
++	input_set_capability(input_dev, EV_KEY, pdata->ev_code_tap[ADXL_Z_AXIS]);
  
- static void __sigqueue_free(struct sigqueue *q)
- {
--	if (q->flags & SIGQUEUE_PREALLOC)
-+	if (q->flags & SIGQUEUE_PREALLOC) {
-+		posixtimer_sigqueue_putref(q);
- 		return;
-+	}
- 	if (q->ucounts) {
- 		dec_rlimit_put_ucounts(q->ucounts, UCOUNT_RLIMIT_SIGPENDING);
- 		q->ucounts = NULL;
-@@ -1065,7 +1067,7 @@ static int __send_signal_locked(int sig,
- 	else
- 		override_rlimit = 0;
+ 	if (pdata->ev_code_ff) {
+ 		ac->int_mask = FREE_FALL;
+-		__set_bit(pdata->ev_code_ff, input_dev->keybit);
++		input_set_capability(input_dev, EV_KEY, pdata->ev_code_ff);
+ 	}
  
--	q = __sigqueue_alloc(sig, t, GFP_ATOMIC, override_rlimit, 0);
-+	q = sigqueue_alloc(sig, t, GFP_ATOMIC, override_rlimit);
+ 	if (pdata->ev_code_act_inactivity)
+-		__set_bit(pdata->ev_code_act_inactivity, input_dev->keybit);
++		input_set_capability(input_dev, EV_KEY,
++				     pdata->ev_code_act_inactivity);
  
- 	if (q) {
- 		list_add_tail(&q->list, &pending->list);
-@@ -1925,37 +1927,6 @@ bool posixtimer_init_sigqueue(struct sig
- 	return true;
- }
+ 	ac->int_mask |= ACTIVITY | INACTIVITY;
  
--struct sigqueue *sigqueue_alloc(void)
--{
--	return __sigqueue_alloc(-1, current, GFP_KERNEL, 0, SIGQUEUE_PREALLOC);
--}
--
--void sigqueue_free(struct sigqueue *q)
--{
--	spinlock_t *lock = &current->sighand->siglock;
--	unsigned long flags;
--
--	if (WARN_ON_ONCE(!(q->flags & SIGQUEUE_PREALLOC)))
--		return;
--	/*
--	 * We must hold ->siglock while testing q->list
--	 * to serialize with collect_signal() or with
--	 * __exit_signal()->flush_sigqueue().
--	 */
--	spin_lock_irqsave(lock, flags);
--	q->flags &= ~SIGQUEUE_PREALLOC;
--	/*
--	 * If it is queued it will be freed when dequeued,
--	 * like the "regular" sigqueue.
--	 */
--	if (!list_empty(&q->list))
--		q = NULL;
--	spin_unlock_irqrestore(lock, flags);
--
--	if (q)
--		__sigqueue_free(q);
--}
--
- static void posixtimer_queue_sigqueue(struct sigqueue *q, struct task_struct *t, enum pid_type type)
- {
- 	struct sigpending *pending;
+@@ -874,13 +868,13 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
+ 
+ 		if (pdata->orientation_enable & ADXL_EN_ORIENTATION_3D)
+ 			for (i = 0; i < ARRAY_SIZE(pdata->ev_codes_orient_3d); i++)
+-				__set_bit(pdata->ev_codes_orient_3d[i],
+-					  input_dev->keybit);
++				input_set_capability(input_dev, EV_KEY,
++						     pdata->ev_codes_orient_3d[i]);
+ 
+ 		if (pdata->orientation_enable & ADXL_EN_ORIENTATION_2D)
+ 			for (i = 0; i < ARRAY_SIZE(pdata->ev_codes_orient_2d); i++)
+-				__set_bit(pdata->ev_codes_orient_2d[i],
+-					  input_dev->keybit);
++				input_set_capability(input_dev, EV_KEY,
++						     pdata->ev_codes_orient_2d[i]);
+ 	} else {
+ 		ac->pdata.orientation_enable = 0;
+ 	}
+-- 
+2.45.2.505.gda0bf45e8d-goog
 
 
