@@ -1,255 +1,185 @@
-Return-Path: <linux-kernel+bounces-208709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999C090285E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EB0902860
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B39287BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3598287F6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D7D150981;
-	Mon, 10 Jun 2024 18:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCD814B973;
+	Mon, 10 Jun 2024 18:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="HzBsRp0p"
-Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="Auuy7MG/"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E67814EC43;
-	Mon, 10 Jun 2024 18:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F57E761;
+	Mon, 10 Jun 2024 18:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042942; cv=none; b=mEFnB5DyLV5kh5hQ1za3Q+UmBTf24alUSlHkQCJB1vZk2AYslqklWe+sik+JhXH2RxlIdc2csbRdmyRWkHDvyY7PyI1Y6kjjAtokUlz/3lPee07BvveY8ZbMn3td2/MfSPzqLt33jc+xLS7wEORKi+UNc69R4JEVqH6mGcpt05I=
+	t=1718042991; cv=none; b=aLjbhZ10L+fNGt1WW3G3j+qhjW86u7T1B0Ieh5lD5UKXHMXrNv13HY7/NvL/bIPqzuLcK5ZLSu6JNGNIvgUYt6KEQAA2shk3q15jZ1+KEyHaawvq0HsMExB4JRIC1tbhvfur5V2dJc0n46QeVFcD9x5wcIBY/VbfXzTqeOI/LXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042942; c=relaxed/simple;
-	bh=jIe9JeocBr7G6WT23O2lxLj34KMlvE4LnyGCyZrVp2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XCVGMEnpRh/I2xhCAjyNGRAgbhktQ1ijUzN/wQCvl3pWXbMq8Ogv6+uAYuS8g2cprBKc8eHlo+sTDwoJ7944XMuA90+SQvIMJB6QpP3Jv2E+umSJY4C2nDk5KEZGzwCxEkwTdkw8EYMbUFzvIOjCEYMMnOUu4twgqQ0iNg1fV9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=HzBsRp0p; arc=none smtp.client-ip=199.247.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
-Received: from spock.localnet (unknown [212.20.115.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	s=arc-20240116; t=1718042991; c=relaxed/simple;
+	bh=VMAGW0oB8N8oHwmlZO78JAp91DNuXS2+2Hv5FK2UPzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGiADsqpvff5vED00ZhG3zLTwuKwAfL2pd9aGu95dVEKRHrONYk00ssCQJQ+63PTHEC+EsB/rhxnj/zmtR+9g+UkxVe2a5hNb0mAT5gMq3Ago7Hu4tUAa+67MI5iRH+PuiBvib6JFOrotCgjAVJOeYuoGcaS1eS+NjGlfhVd6ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=Auuy7MG/; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355088.ppops.net [127.0.0.1])
+	by m0355088.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 45ABm98Q002176;
+	Mon, 10 Jun 2024 18:09:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=JCButQwjvZVZNyRkDdtQ7rO
+	g+hf/mkn6MXierihoty0=; b=Auuy7MG/eYyQO2j/HY+HwmdSM/To4BwhQSNUuYD
+	mBj7Ez1Z1LvB5NXDoH7nIOpsIv9voZPDm0hxhmi5OU1Ym77L2nBN+jUsOCIKT3Ev
+	GU3pRsnOxVLUWc4CBIvb9zdEmhJknXgcEY6Aep2z9bO0A+V9QahgTbTQ4VBUESfm
+	6FiWvZZkvRYJ2AEittN4DrrqjlrvUSnmBbiQOjBXs+62atkgtowLix9+rG/eVWel
+	qdIOdLCRvtqxDtm5/xliA691usMjGKOFoDLSsxyXIa8LKNJTlWHJrooCPf3wVX5s
+	wwzSR/Qp2WNC9SUJQYx27BtjMrxvWE6gCLG3sihQIKvXkHA==
+Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
+	by m0355088.ppops.net (PPS) with ESMTPS id 3yn4ft2ax8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 18:09:26 +0000 (GMT)
+Received: from va32lmmrp02.lenovo.com (va32lmmrp02.mot.com [10.62.176.191])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by prime.voidband.net (Postfix) with ESMTPSA id 2873F635B055;
-	Mon, 10 Jun 2024 20:08:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-	s=dkim-20170712; t=1718042934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VHBmuPzeQk6RrXH74wFJcj/vN52Uy+kCPKcbBOPsTrU=;
-	b=HzBsRp0p2xJRqImMu3onkIhg6CjljW8VZToRrXgpaQXBLvbdPuvPGBWdZbTWmczSPegHfF
-	BFEKKTFgQ2S5OC0aiWVpspiJKkRqCfqJMnKLnnASxjP8qCYhS9lZd3aOZE39Cl2ypmcQpW
-	wn78Rz/9Z/WRzRfCADQXJuudsuSj7ak=
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, kees@kernel.org,
- gustavoars@kernel.org, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, ananth.narayan@amd.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, ravi.bangoria@amd.com,
- sandipan.das@amd.com, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 0/6] Add per-core RAPL energy counter support for AMD CPUs
-Date: Mon, 10 Jun 2024 20:08:43 +0200
-Message-ID: <1887843.tdWV9SEqCh@natalenko.name>
-In-Reply-To: <cfd0a622-89bc-4303-a972-4b5c8380eb76@amd.com>
-References:
- <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
- <2733323.mvXUDI8C0e@natalenko.name>
- <cfd0a622-89bc-4303-a972-4b5c8380eb76@amd.com>
+	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4Vyfvn0XBZzhWB3;
+	Mon, 10 Jun 2024 18:09:25 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp02.lenovo.com (Postfix) with ESMTPSA id 4Vyfvm4nzfz2VZ3B;
+	Mon, 10 Jun 2024 18:09:24 +0000 (UTC)
+Date: Mon, 10 Jun 2024 13:09:23 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v5 3/3] arm64/cfi,bpf: Use DEFINE_CFI_TYPE in arm64
+Message-ID: <enuputvysbmsujfjfzxqurwubc7ffv5mtu5iw3tqijd6i4p45u@ioe5sbuy6dpq>
+References: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2184984.irdbgypaU6";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
+X-Proofpoint-GUID: DUHw64W3JWg0MRvl_rezKK9v29hYaxtk
+X-Proofpoint-ORIG-GUID: DUHw64W3JWg0MRvl_rezKK9v29hYaxtk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 bulkscore=0 spamscore=0 priorityscore=1501
+ malwarescore=0 phishscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406100137
 
---nextPart2184984.irdbgypaU6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-Date: Mon, 10 Jun 2024 20:08:43 +0200
-Message-ID: <1887843.tdWV9SEqCh@natalenko.name>
-In-Reply-To: <cfd0a622-89bc-4303-a972-4b5c8380eb76@amd.com>
-MIME-Version: 1.0
+Corrects Puranjay Mohan's commit to adopt Mark Rutland's
+suggestion of using a C CFI type macro in kCFI+BPF.
 
-On pond=C4=9Bl=C3=AD 10. =C4=8Dervna 2024 17:17:42, SEL=C4=8C Dhananjay Ugw=
-ekar wrote:
-> Hello Oleksandr,
->=20
-> On 6/10/2024 7:58 PM, Oleksandr Natalenko wrote:
-> > Hello.
-> >=20
-> > On pond=C4=9Bl=C3=AD 10. =C4=8Dervna 2024 12:07:45, SEL=C4=8C Dhananjay=
- Ugwekar wrote:
-> >> Currently the energy-cores event in the power PMU aggregates energy
-> >> consumption data at a package level. On the other hand the core energy
-> >> RAPL counter in AMD CPUs has a core scope (which means the energy=20
-> >> consumption is recorded separately for each core). Earlier efforts to =
-add
-> >> the core event in the power PMU had failed [1], due to the difference =
-in=20
-> >> the scope of these two events. Hence, there is a need for a new core s=
-cope
-> >> PMU.
-> >>
-> >> This patchset adds a new "power_per_core" PMU alongside the existing
-> >> "power" PMU, which will be responsible for collecting the new
-> >> "energy-per-core" event.
-> >>
-> >> Tested the package level and core level PMU counters with workloads
-> >> pinned to different CPUs.
-> >>
-> >> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa=20
-> >> machine:
-> >>
-> >> $ perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
-> >>
-> >>  Performance counter stats for 'system wide':
-> >>
-> >> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
-> >> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
-> >> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
-> >>
-> >> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d=
-@linux.intel.com/
-> >>
-> >> This patchset applies cleanly on top of v6.10-rc3 as well as latest=20
-> >> tip/master.
-> >>
-> >> Dhananjay Ugwekar (6):
-> >>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
-> >>   perf/x86/rapl: Rename rapl_pmu variables
-> >>   perf/x86/rapl: Make rapl_model struct global
-> >>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
-> >>   perf/x86/rapl: Add wrapper for online/offline functions
-> >>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
-> >>
-> >>  arch/x86/events/rapl.c | 311 ++++++++++++++++++++++++++++++-----------
-> >>  1 file changed, 233 insertions(+), 78 deletions(-)
-> >>
-> >>
-> >=20
-> > With my CPU:
-> >=20
-> >   Model name:             AMD Ryzen 9 5950X 16-Core Processor
-> >=20
-> > and this workload:
-> >=20
-> > $ taskset -c 1 dd if=3D/dev/zero of=3D/dev/null
-> >=20
-> > the following result is got:
-> >=20
-> > $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ sleep=
- 1
-> >=20
-> >  Performance counter stats for 'system wide':
-> >=20
-> > S0-D0-C0              1               1,70 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C1              1               8,83 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C2              1               0,17 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C3              1               0,33 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C4              1               0,14 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C5              1               0,33 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C6              1               0,25 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C7              1               0,19 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C8              1               0,66 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C9              1               1,71 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C10             1               0,38 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C11             1               1,69 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C12             1               0,22 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C13             1               0,11 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C14             1               0,49 Joules power_per_core/energy=
-=2Dper-core/
-> > S0-D0-C15             1               0,37 Joules power_per_core/energy=
-=2Dper-core/
-> >=20
-> >        1,002409590 seconds time elapsed
-> >=20
-> > If it is as expected, please add my:
-> >=20
-> > Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
->=20
-> We can see that after you affined the workload to cpu 1, energy=20
-> consumption of core 1 is considerably higher than the other cores,=20
-> which is as expected, will add your tested-by in next version.
->=20
-> P.S: I'm assuming here that cpu 1 is part of core 1 in your system,=20
-> please let me know if that assumption is wrong.
+Signed-off-by: Maxwell Bland <mbland@motorola.com>
+---
+ arch/arm64/kernel/alternative.c | 46 ++++-----------------------------
+ 1 file changed, 5 insertions(+), 41 deletions(-)
 
-You assumption should be correct:
-
-$ cat /sys/devices/system/cpu/cpu1/topology/core_id
-1
-
-> Thanks for testing the patch!
->=20
-> Regards,
-> Dhananjay
->=20
-> >=20
-> > Thank you.
-> >=20
->=20
-
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
---nextPart2184984.irdbgypaU6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmZnQSsACgkQil/iNcg8
-M0t+SQ//cFOUD42pQ87oXU+DNh8dOLRaZgt5OVPnx9wVRuH5xs6JMksQQ0cCl4Mn
-sa2VdK5pMMUsd8e39+Sf3Y9qAi+y6hN9DJAy6D2PM3eIgVLrfyBx8cu8wwYPJYLj
-5hM6EYFI9pntlnfj+solUrTdA5gfuAzzHpBmq1aRsRjVyCVEQwVKaArBrHXbHR+J
-6mPxs2bcLoZGal+4rYNxUBwztUjJvJ4NLMaWumyZlRfBuXAwiUSPFRu8TaI2kxZN
-lDWnzlViyx0qPh86cD/QaD7j85QaPOFNfeou7g1vUhJ34oywko5UfqNjW8AcgDxD
-QQ3tTeja0+aQL1yLL1buOFL073fdtfICyjRhFsozEWDkvIBAel1P5LOFAPPfUHQD
-X736qZG7BSvERo62nlZz59XMh9W/8gGSXA8fXEvusK2jx9hhqW8NC1QSBGOZgFp1
-3vI/z/zPn3236s/oEd++tJa1drUBDPMc59zxIzU+CW8xGc22dyWe3bj7Rn0LZRBV
-NPdRpgrJyv60rWj07w1NR9KTkSWYWR47xoNIv6JlN7bpaJSlo9hwhg0SVF4ihL/N
-Z5rLGFmxqrpBHwMbehSQM1kr8faF8BvdLbskbqPFuhePnHPir8IjPpDA7+My5Sp6
-hNjQ0nAYSpmMiEwI9Grre1uhInW+CpVnsuw5zTjC0uW2A4ebI0g=
-=eAZx
------END PGP SIGNATURE-----
-
---nextPart2184984.irdbgypaU6--
-
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index 1715da7df137..d7a58eca7665 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -8,6 +8,7 @@
+ 
+ #define pr_fmt(fmt) "alternatives: " fmt
+ 
++#include <linux/cfi_types.h>
+ #include <linux/init.h>
+ #include <linux/cpu.h>
+ #include <linux/elf.h>
+@@ -302,53 +303,16 @@ EXPORT_SYMBOL(alt_cb_patch_nops);
+ 
+ #ifdef CONFIG_CFI_CLANG
+ struct bpf_insn;
+-
+ /* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
+ extern unsigned int __bpf_prog_runX(const void *ctx,
+ 				    const struct bpf_insn *insn);
+-
+-/*
+- * Force a reference to the external symbol so the compiler generates
+- * __kcfi_typid.
+- */
+-__ADDRESSABLE(__bpf_prog_runX);
+-
+-/* u32 __ro_after_init cfi_bpf_hash = __kcfi_typeid___bpf_prog_runX; */
+-asm (
+-"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
+-"	.type	cfi_bpf_hash,@object				\n"
+-"	.globl	cfi_bpf_hash					\n"
+-"	.p2align	2, 0x0					\n"
+-"cfi_bpf_hash:							\n"
+-"	.word	__kcfi_typeid___bpf_prog_runX			\n"
+-"	.size	cfi_bpf_hash, 4					\n"
+-"	.popsection						\n"
+-);
+-
++DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
+ /* Must match bpf_callback_t */
+ extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
+-
+-__ADDRESSABLE(__bpf_callback_fn);
+-
+-/* u32 __ro_after_init cfi_bpf_subprog_hash = __kcfi_typeid___bpf_callback_fn; */
+-asm (
+-"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
+-"	.type	cfi_bpf_subprog_hash,@object			\n"
+-"	.globl	cfi_bpf_subprog_hash				\n"
+-"	.p2align	2, 0x0					\n"
+-"cfi_bpf_subprog_hash:						\n"
+-"	.word	__kcfi_typeid___bpf_callback_fn			\n"
+-"	.size	cfi_bpf_subprog_hash, 4				\n"
+-"	.popsection						\n"
+-);
+-
++DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
+ u32 cfi_get_func_hash(void *func)
+ {
+-	u32 hash;
+-
+-	if (get_kernel_nofault(hash, func - cfi_get_offset()))
+-		return 0;
+-
+-	return hash;
++	u32 *hashp = func - cfi_get_offset();
++	return READ_ONCE(*hashp);
+ }
+ #endif
+-- 
+2.39.2
 
 
 
