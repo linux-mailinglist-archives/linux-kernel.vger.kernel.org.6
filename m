@@ -1,83 +1,86 @@
-Return-Path: <linux-kernel+bounces-208621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA6B90273E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:55:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11524902768
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340C3284AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:55:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5E0B2BCDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB2314D714;
-	Mon, 10 Jun 2024 16:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C801147C74;
+	Mon, 10 Jun 2024 16:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVV7wJzR"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEmR3EIJ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA8014D70F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D6F14658E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037846; cv=none; b=b7qJtx3deF7cG9RJ1t/FIu2gk2S0hnj/oHRB46Mf1oho9bGxqFAq5sJkopq+isK60hwDpJSrMdcRoXsMwM+9Xy4jCZylAGXnr3a0sLlc0XGqw+eoeD7/o14LLVxTXJIwI45JqCIyTXqKVbh+vm93mAWlpaV9BsaLZVFlYIwuUvE=
+	t=1718038043; cv=none; b=bgkNSUYfmuaT6/fiFD9vAk+kkdKKIwaDsrwemWTFSi/d/nFKltFHjgMxiPc0sFeAqs+YLwh/YniM7zX+iu+qtrtiw9UOlLP/g1GnB95XamqYqlsGs7E0IhyREDPm/S2Ax4hcjP9jdEpKlOgpU9IBDOjbLWMGAsxp4rn4YKTgv3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037846; c=relaxed/simple;
-	bh=xlRyyKorKOkhZQWkf8a+nVC2AGE5Tsed48f95tQ+Bjs=;
+	s=arc-20240116; t=1718038043; c=relaxed/simple;
+	bh=4Hj9IG1LMlzHH3A3y0qYTvhcNtKcDqLmxJ6EzjUt+qQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1gjszaoPuEKqt8MyO6hMeDApJt+7KQ8BZ2x4x8ZsecLmtNxRB66oN1lqiJjTRlhvQ/qOvsz3PHR53w+UB1yhgl5S+vCQEL0sN+rUje9rWpbP/gST06HQ2XoaLLGU2f9BwmP5tCbld4nOqL7egmiIjWIjgwPgQb5guTgYJGmSvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVV7wJzR; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e57506bb2dso104422a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:44:04 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PABKVWyoPRzn63oZeP5jz+rL2bmQdRDBK8ise98Fb3eAFVR+unIBRI3xNuOtVTrQ1oFOnrgCtA7dwW5LCRmliycdOFp6bZmt7YsEJJy81p9donBBT/XsUQwcOxGW6n6MgDF7tlcfijGPBizoX8D7lsOSBewGIJaEne9JBIck1ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEmR3EIJ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-704261a1f67so156028b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718037844; x=1718642644; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718038041; x=1718642841; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWJrFt56Ba2XKaEKUnUCqUmu/jVW4Te91KO0JGqkT1U=;
-        b=vVV7wJzRXeB3sZmGcJE71gHQuld85DUnCFugMhjYU3T4QniZ0LJvImsxKJxukpEWMd
-         mTuRH8N/OOfUrus04eWls6VFT3/o+gPSxRffI4eRDy9T7Xqof+QPO1a6QJOMV1JnmwDe
-         s7TeUx5LeDCoFcfm5rRMi5DFcuWl1DenPA/DZqGE3pU20Oy1JESvJ9h1sTEJIWKWNCzD
-         SgbgztELPXPo27jutHk8cxDYpB7QYrthombm4u/RPTsFyv+JcS/R4X21B09nBwnymk3G
-         cVp5is2P8G/gnoSEobw+YZVR4OBCPiGEh0Fq7mtaKOlgSbBrVGBHXIFTcI+GRpHuffEM
-         CALg==
+        bh=GltpCEOROqdEZtPzqZDYIjfn931I+xP8uUPheSuWph8=;
+        b=CEmR3EIJ4PoH1DfyHnjBX5hNlJ9uYuGFk88XT3SmMao9uI6Yhe9HXqP6qybWOG58NH
+         fnhSlY5S46dpm4rzVDVm+NMbaXkIcTPyznOTFHXaTX/ofyA6DreOeUZInOV3JlCdgWyg
+         2WGbd+J+2ugZEXDzReyiifJU272zUmi2XbvSaQR5tIO9ihLHh/2Qfybd5K0U8QqUk0P7
+         PI5fL5kHL9laNZZkQq+hMaea4cWSyZGw1lBGGt5tL3pn7YOzZVCYBvk9YpYhEjH43uSW
+         ++THTrMQ0oFbUjDDKsaGL1knxZCPu6MWHYQDHqec5YBNdnqyxAhH+IawtAoFdcCfP+Aw
+         sEdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718037844; x=1718642644;
+        d=1e100.net; s=20230601; t=1718038041; x=1718642841;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZWJrFt56Ba2XKaEKUnUCqUmu/jVW4Te91KO0JGqkT1U=;
-        b=VcNUtyCwb5otC4ZreJ294W9Hck97jjsgDBtfZ/TpDZZAn15eoirEeX+be3Ylj1W/kR
-         pncoRbvsbULHKSsYj+9Q9+D9AdEDSt1NlF8LR1Xej61Zg3p+jDm7UPGPSGZJaJKOaFl0
-         bhIAlWrpxItVQNmtr5itFdHiuHhhBznCEYzkEAffm1pBm0z7gIH1cTRkl7Oc/fYxr5ya
-         KMD53QrjVaKBGerzApZCY2p7n3YyK3qKlAb06CeucDoS3HeRgJFDjFdToaXYxiiH9oqM
-         5G9UQVp1gYtgP0MFxCqPIc84CYC9sBpsCyqUG5M5y0OTvBy3Rmeq/C1UmXvRM5BmooA8
-         EOFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP1kQ9UuAfELaAM0NTNP1LCZCcayljT2W9QU7OtIqN8erT/BKXfgW/23D+/VvRku2qarwAHy6qHNiWPavqF4A0XVDySm5ueFnM5yHJ
-X-Gm-Message-State: AOJu0YxqXd777+h8wx87b9t6+YQHfSx+cvg9OqywVMqD+pgT/ntBCHuc
-	trjqDiwzKfXVVww+X6nGV/Cy4o/gIMWf9ff/blwHno1/FOE7Scwy8aDk8Ms6xQ==
-X-Google-Smtp-Source: AGHT+IFO/T7QbJyG6RfIGM4sbC0wUi2kSF81e1T/t2MsMvtblCbstqePphSLuWts4/pUFHivpG5mhw==
-X-Received: by 2002:a17:90b:1c8c:b0:2c2:3de7:20c0 with SMTP id 98e67ed59e1d1-2c2bcc4cd43mr8521758a91.37.1718037843726;
-        Mon, 10 Jun 2024 09:44:03 -0700 (PDT)
-Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28066d57esm11358284a91.19.2024.06.10.09.44.02
+        bh=GltpCEOROqdEZtPzqZDYIjfn931I+xP8uUPheSuWph8=;
+        b=gp3Zb3Rdr4Ra+3SVQFghrON7gua6BPPHNFcdUqLEljR+TVODsmA5Mni/Nbz71hsfRz
+         eu2H1fJHBO+Ih0E0vsFKBEhCOQjiZ/J1PfYAIF6Dald0yhKsW6iLvnPY+aD8Mv0YqlK8
+         hLM7CU4KJHpw5pnm+bANl57Uuia8HdUdXlVmEUkVY8HSEi/my+CHJbULwAOlG9skez+r
+         9jBO3Wcg8qTE+ze5qFXdmkoaLHyWjsxmhP4esC+bQKY4s62dIBs1qNi8oVW/BUGh+ue4
+         RqUN7UgAwv/LeWWnDlAbP6aahOAo3KDyJk/MDMSfFuCJnosR49PCnXtlMLG9Fg3EgkKX
+         wD5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVePgDDnOvdPsNBPzvIUTs0cqNu0i6Eo4AS4RltJjBJDLJj60lmq3FKgbjKlvBQ+Kdn9lKaOFbkS0YS/FcUPMY3jGeNYE1y46LriYlO
+X-Gm-Message-State: AOJu0YyiktO2lGYx9kyDXvgBwS2Gavsekr6CPi6xJXLoDnfVGSJ3+XdI
+	ee+uaIVOT5KEbA1s9uEMBtuN8U9mBd3u4/ItpVdcDNffuFKDxzqHMEa76xi7Jjs=
+X-Google-Smtp-Source: AGHT+IGb/lXCCC+JbIDGUdr375qb0RgEL7LsqGDkkx+quxB1SnI5zlcCI8SeIz3Y9Zc+WyklRsuyOQ==
+X-Received: by 2002:a05:6a00:8506:b0:704:25de:f297 with SMTP id d2e1a72fcca58-70425def3f2mr4676511b3a.29.1718038041356;
+        Mon, 10 Jun 2024 09:47:21 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9b34:fecc:a6c:e2bc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70426cc74f3sm4045691b3a.35.2024.06.10.09.47.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:44:03 -0700 (PDT)
-Date: Mon, 10 Jun 2024 16:43:59 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-	sumit.semwal@linaro.org, Brian.Starkey@arm.com,
-	benjamin.gaignard@collabora.com, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, jstultz@google.com,
-	linux-kernel@vger.kernel.org, tjmercier@google.com,
-	v-songbaohua@oppo.com, hailong.liu@oppo.com
-Subject: Re: [PATCH] dma-buf/heaps: Correct the types of fd_flags and
- heap_flags
-Message-ID: <ZmctTwAuzkObaXLi@google.com>
-References: <20240606020213.49854-1-21cnbao@gmail.com>
+        Mon, 10 Jun 2024 09:47:20 -0700 (PDT)
+Date: Mon, 10 Jun 2024 10:47:17 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Adjust phandle parsing issue
+ while remapping optional addresses in imx_rproc_addr_init()
+Message-ID: <ZmcuFRfjKRQG9OXI@p14s>
+References: <20240606075204.12354-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,28 +89,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606020213.49854-1-21cnbao@gmail.com>
+In-Reply-To: <20240606075204.12354-1-amishin@t-argos.ru>
 
-On Thu, Jun 06, 2024 at 02:02:13PM +1200, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
+On Thu, Jun 06, 2024 at 10:52:04AM +0300, Aleksandr Mishin wrote:
+> In imx_rproc_addr_init() "nph = of_count_phandle_with_args()" just counts
+> number of phandles. But phandles may be empty. So of_parse_phandle() in
+> the parsing loop (0 < a < nph) may return NULL which is later dereferenced.
+> Adjust this issue by adding NULL-return check.
 > 
-> dma_heap_allocation_data defines the UAPI as follows:
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
->  struct dma_heap_allocation_data {
->         __u64 len;
->         __u32 fd;
->         __u32 fd_flags;
->         __u64 heap_flags;
->  };
-> 
-> But dma heaps are casting both fd_flags and heap_flags into
-> unsigned long. This patch makes dma heaps - cma heap and
-> system heap have consistent types with UAPI.
-> 
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 > ---
+>  drivers/remoteproc/imx_rproc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 5a3fb902acc9..39eacd90af14 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -726,6 +726,8 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  		struct resource res;
+>  
+>  		node = of_parse_phandle(np, "memory-region", a);
+> +		if (!node)
 
-Looks good to me, thanks!
+You're missing an "of_node_put()" before continuing.
 
-Reviewed-by: Carlos Llamas <cmllamas@google.com>
+> +			continue;
+>  		/* Not map vdevbuffer, vdevring region */
+>  		if (!strncmp(node->name, "vdev", strlen("vdev"))) {
+>  			of_node_put(node);
+> -- 
+> 2.30.2
+> 
+> 
 
