@@ -1,211 +1,91 @@
-Return-Path: <linux-kernel+bounces-208474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE7D90258D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:26:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B56902592
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B820E2891DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31834B21E06
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E48E14F111;
-	Mon, 10 Jun 2024 15:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE70143742;
+	Mon, 10 Jun 2024 15:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="j/XNjI2G"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF4agIZL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC8E14EC47;
-	Mon, 10 Jun 2024 15:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C4D13DDCE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032871; cv=none; b=CysUMU/1OYqtkwmd1SSpFvc5/2xL3rYRXm5hEojTlAfQIf52qHPsrdl0JDvFQnHuPOXwvEChDY/naJ6p2Yru/+dzzc2DskEDPWMClA9enW1gqji37WjENSBWlniQ0T4cFZldW7GpEOxZ/boprVr2Za+/La6Ija9DedpNjgIil08=
+	t=1718032862; cv=none; b=NQXM065E4vcOMC6w+uWaEf7o+UVmoYJWpciNBxL/pIY1FhtS8S7U+W2oBXoZj5wdSjSUoAZcaXtyIfngxcnqggL1oRGepPN9oQgKRRkd3Oma5/kTZ4g6cs4RSNhmI6Yt+qUrESREaMX6kkSXkp0DjVIBHAwvMQNoqSPcoEGuznI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032871; c=relaxed/simple;
-	bh=I95YfeR4z6uaBo8ShVWAd+z5U0ONBdc/Mf/dNEVoGb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHlCB1E4b4UaNLXQI9cMZp/hhUZP3iQYxPvh9tp7MqFUhEoCwlJha+f/3GKYFqIxYLfSv7eTeYYfWDRbT3mIopIXF+itqvNFtfR2hukcNyRGIkMUXCZ/B1JNPraKIDBOdv22uN576tlyslF7hYdnrFzB+FCIDJLWB/MsPnLO/eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=j/XNjI2G; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E1FF239F;
-	Mon, 10 Jun 2024 17:20:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718032854;
-	bh=I95YfeR4z6uaBo8ShVWAd+z5U0ONBdc/Mf/dNEVoGb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j/XNjI2GGs5Z/9LaKhn1e+/ugW9C4MVTBR4qApHE+MgdWHq09l2hJyRxVnbxviE8j
-	 uRSrD6FXWV99GtmGdh13jaUrkNlgRvWgcf8mIcMJt4h59gDO3f/YT+wZ+yf9jYrU6z
-	 i8XZQBJnOakj1O0KTeWgw2A7ExpTa0pYiDb+YqwM=
-Date: Mon, 10 Jun 2024 18:20:46 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] media: uvcvideo: Refactor Power Line Frequency limit
- selection
-Message-ID: <20240610152046.GJ26663@pendragon.ideasonboard.com>
-References: <20240318-billion-v1-0-2f7bc0ee2030@chromium.org>
- <20240318-billion-v1-2-2f7bc0ee2030@chromium.org>
+	s=arc-20240116; t=1718032862; c=relaxed/simple;
+	bh=wrEyc/XOccK5lcvUAFHZMzKW2b4TGOK8NRquUO/ZqfQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Yc5uWXu6rodpgKEA/N274yWeoXij+loTB6JUQ+gFlrdhP2nSe8zXiD1TfybcPTKy0mUSFWUqlnw4Xn5p8i1Hv49K7yTDFlcdTL6H0E+WCvVZZf7s8GkSU9noNpN6A6OBWnNF1NTWVfrtD/ps1ik17iMgeyoImk8aoAv9qzSD7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF4agIZL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0ACC2C32786;
+	Mon, 10 Jun 2024 15:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718032862;
+	bh=wrEyc/XOccK5lcvUAFHZMzKW2b4TGOK8NRquUO/ZqfQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YF4agIZLqnty+hVCpPe+arb55voccu/wz5PLFlNZmY+GFV+SflhWRnHCJG2ZXHxzr
+	 2RPTZekLP0XqSVRu5Abbl9bPPzZLlSBtQm1sOAQttObYjIvHe4mFilJcxk/srfyuLW
+	 MTqX4YgK36BXSb5HawiX9+23BAF65cX5Ta4e3grtys+Oj9bY9E4pH3ffMFo/wsOCeD
+	 CCbJZFd9A91k1eGN08MtSCWbJTZAd6quINEi48uEGpB1kDVJyPJ3oAMwKdI1dM9XFQ
+	 niMlJEn4vZHY5l0+m2/p40JmciPmyb1HDmYHyWVqBJ2PBoeypPJ3NlrpVQ+xv6jYay
+	 U8iASVN5VEm0Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F18CBE7C76F;
+	Mon, 10 Jun 2024 15:21:01 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240318-billion-v1-2-2f7bc0ee2030@chromium.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [GIT PULL] RISC-V Fixes for 6.10-rc3
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <171803286198.3082.7486991860696715697.git-patchwork-notify@kernel.org>
+Date: Mon, 10 Jun 2024 15:21:01 +0000
+References: <mhng-1afb5c2b-25de-4eb4-a911-523495ad3939@palmer-ri-x1c9>
+In-Reply-To: <mhng-1afb5c2b-25de-4eb4-a911-523495ad3939@palmer-ri-x1c9>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
+ linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+Hello:
 
-Thank you for the patch.
+This pull request was applied to riscv/linux.git (fixes)
+by Linus Torvalds <torvalds@linux-foundation.org>:
 
-On Mon, Mar 18, 2024 at 11:55:24PM +0000, Ricardo Ribalda wrote:
-> Move the PLF mapping logic to its own function. This patch does not
-> introduce any new functionality to the logic, it is just a preparation
-> patch.
+On Fri, 07 Jun 2024 07:25:49 -0700 (PDT) you wrote:
+> The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 93 ++++++++++++++++++++++++----------------
->  1 file changed, 55 insertions(+), 38 deletions(-)
+>   Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 3e939b4fbaaaf..67522143c6c85 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -459,6 +459,56 @@ static void uvc_ctrl_set_rel_speed(struct uvc_control_mapping *mapping,
->  	data[first+1] = min_t(int, abs(value), 0xff);
->  }
->  
-> +const struct uvc_control_mapping uvc_ctrl_power_line_mapping_limited = {
-> +	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> +	.entity		= UVC_GUID_UVC_PROCESSING,
-> +	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> +	.size		= 2,
-> +	.offset		= 0,
-> +	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> +	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> +	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_60HZ,
-> +				  V4L2_CID_POWER_LINE_FREQUENCY_50HZ),
-> +};
-> +
-> +const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc11 = {
-> +	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> +	.entity		= UVC_GUID_UVC_PROCESSING,
-> +	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> +	.size		= 2,
-> +	.offset		= 0,
-> +	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> +	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> +	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_60HZ,
-> +				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
-> +};
-> +
-> +static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
-> +	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> +	.entity		= UVC_GUID_UVC_PROCESSING,
-> +	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> +	.size		= 2,
-> +	.offset		= 0,
-> +	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> +	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> +	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_AUTO,
-> +				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
-> +};
-> +
-> +static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-> +	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping);
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-rc3
+> 
+> [...]
 
-I wonder if we could avoid the forward declaration by turning the
-.add_mapping() operation into a .filter_mapping() (name to be
-bikshedded) that would return a replacement mapping instead of adding
-it. The caller (the __uvc_ctrl_add_custom_mapping() function) would then
-call __uvc_ctrl_add_mapping() unconditionally. You could actually call
-the new operation directly in __uvc_ctrl_add_custom_mapping() without
-having to add a new __uvc_ctrl_add_custom_mapping() function. What do
-you think, would that be simpler and more redable ?
+Here is the summary with links:
+  - [GIT,PULL] RISC-V Fixes for 6.10-rc3
+    https://git.kernel.org/riscv/c/0a02756d9145
 
-> +
-> +static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
-> +	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-> +{
-> +	if (chain->dev->uvc_version < 0x150)
-> +		return __uvc_ctrl_add_mapping(chain, ctrl,
-> +					      &uvc_ctrl_power_line_mapping_uvc11);
-> +
-> +	return __uvc_ctrl_add_mapping(chain, ctrl,
-> +				      &uvc_ctrl_power_line_mapping_uvc15);
-> +}
-> +
->  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->  	{
->  		.id		= V4L2_CID_BRIGHTNESS,
-> @@ -748,51 +798,18 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->  		.v4l2_type	= V4L2_CTRL_TYPE_BOOLEAN,
->  		.data_type	= UVC_CTRL_DATA_TYPE_BOOLEAN,
->  	},
-> -};
-> -
-> -const struct uvc_control_mapping uvc_ctrl_power_line_mapping_limited = {
-> -	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> -	.entity		= UVC_GUID_UVC_PROCESSING,
-> -	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> -	.size		= 2,
-> -	.offset		= 0,
-> -	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> -	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> -	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_60HZ,
-> -				  V4L2_CID_POWER_LINE_FREQUENCY_50HZ),
-> -};
-> -
-> -const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc11 = {
-> -	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> -	.entity		= UVC_GUID_UVC_PROCESSING,
-> -	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> -	.size		= 2,
-> -	.offset		= 0,
-> -	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> -	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> -	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_60HZ,
-> -				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
-> +	{
-> +		.entity		= UVC_GUID_UVC_PROCESSING,
-> +		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> +		.add_mapping	= uvc_ctrl_add_plf_mapping,
-> +	},
->  };
->  
->  static const struct uvc_control_mapping *uvc_ctrl_mappings_uvc11[] = {
-> -	&uvc_ctrl_power_line_mapping_uvc11,
->  	NULL, /* Sentinel */
->  };
->  
-> -static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
-> -	.id		= V4L2_CID_POWER_LINE_FREQUENCY,
-> -	.entity		= UVC_GUID_UVC_PROCESSING,
-> -	.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> -	.size		= 2,
-> -	.offset		= 0,
-> -	.v4l2_type	= V4L2_CTRL_TYPE_MENU,
-> -	.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
-> -	.menu_mask	= GENMASK(V4L2_CID_POWER_LINE_FREQUENCY_AUTO,
-> -				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
-> -};
-> -
->  static const struct uvc_control_mapping *uvc_ctrl_mappings_uvc15[] = {
-> -	&uvc_ctrl_power_line_mapping_uvc15,
->  	NULL, /* Sentinel */
->  };
->  
-
+You are awesome, thank you!
 -- 
-Regards,
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Laurent Pinchart
+
 
