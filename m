@@ -1,118 +1,191 @@
-Return-Path: <linux-kernel+bounces-208948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE17902AE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:50:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E73902AEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310A61F22C44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFFA51C215B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BAA143886;
-	Mon, 10 Jun 2024 21:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66124149C43;
+	Mon, 10 Jun 2024 21:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IABCUkKq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="LJnmf/8Q"
+Received: from alln-iport-5.cisco.com (alln-iport-5.cisco.com [173.37.142.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024C06BB33;
-	Mon, 10 Jun 2024 21:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD46142620;
+	Mon, 10 Jun 2024 21:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718056245; cv=none; b=QZr32CZdgTLg50YVhLVTgBrhv6dDD0Jx6O+zJIgXXwkzX30demfoN8MYrr105t9uOZnTd+e+2PYwYMlH2uqwag7bnAKRb1mnosJJvJhYSHKqUK5vfZAKnSrC7KqleuZwKtFfXMvZgOYmy3nn5uBqHaqJmQ4kwx9ulC3eyLRTbu0=
+	t=1718056351; cv=none; b=rptub9SeSDiOX4d9Ejstg6TlG2156LlUf3d7EBF9t+ZAzMqu95DriJC65oe2CL2QjvSRdxuy7A/GRVkOFC0w+ogq/ZbfpIEJpEcstDwTu9R0um0iq/HpZVA4Jmb61MLDdB6+wpx/feIGnIfjQMjjrGZTCeXQj5HqL+3q+PPBALY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718056245; c=relaxed/simple;
-	bh=TFxV9viCsgGzXh/HDil6hu+fKqnzPH+C9fRoDE52ffg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uarjn9chKaydyCClIji8lFKWIXmRDdyFsl1MeP2AHFrMaRytvELRgS9xv10GLBUvCYGvqZUOtGj34oMlPd9JzETifppiNrScbnjaFDYakInzYJte5PBQP1scuuJrGmha+bIC5fyknrOwP6kyUX0/JPHgKAFwkGmtuyH97TGDT8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IABCUkKq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEm5f5006815;
-	Mon, 10 Jun 2024 21:50:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Xmr+t7hg7hJrqIQO0ea69r
-	tcJI6nRDI2vfR2R9N+DhQ=; b=IABCUkKqdHHmusndhev+/NzR8jSIa1/Wji0KUI
-	IbeNVJPm2ouMjnED3uyHr5Nb2O8cmyQ6gDJ2jMpUmJMEbyuOCwUhFYWrChmzPuxP
-	eUPHqwqbdLhkin3ixibdjXDeD/KerGa8Sq93dFkya3vO+H++Jb9O89EmOX7uIm3e
-	8AXWfKozY/MHlCXP4d66c15GVdMwN00T3ATSGjIsICh+eEXD+xrQXPmhjYLvC1Im
-	pxC3m07M/UJXYifbHM4ONZvIB31r+qq3MQ4/1Pau0DR/fn89rsKtpN2cdxmzsALn
-	S9D/Rp0zLl0hEEa8I/lUofuB9GeiGDPoAKHA+m/a4m3CkaWA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8vtdk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 21:50:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ALodue027898
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 21:50:39 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 14:50:38 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 14:50:37 -0700
-Subject: [PATCH] platform/chrome: cros_ec_proto: add missing
- MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718056351; c=relaxed/simple;
+	bh=20dF36tyLYMvukAEs6/ZOMhFZal8fnBiTzHawZxFwC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EUi7t3QO7S8xWKgzIWnk4L++jg97XIZ+kdqV3DlbINFVIzwun4XzXzoRbvExkpcBRjKLNZdjrrFSJGQnzOWI27WffRqsIDPxam+M1CZYkbs982Lbc89PJyp2t47zINl1DJq4I1BBj8hfrYICBZUUlZh2icakCF80BXDogSFLWd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=LJnmf/8Q; arc=none smtp.client-ip=173.37.142.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=4768; q=dns/txt; s=iport;
+  t=1718056349; x=1719265949;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+/+1WZ9Qli7ENIFuydnVAiZxGbcQ1OYsf5kSIXdQmPU=;
+  b=LJnmf/8QaVoac5gl5OdLO+m7+yccDigrqF5XlUQT0udug3Tux5d3SWp/
+   yKm7Q+sRV73Zo+1nWeYGbO7qSSha9DOZw/CQr/2GZVlx867nEvEcX+SVK
+   PGFZp4gn1VaqZYraXnK0XvqEk9HAyS7YhDcbfoFGCH5mg/TiFiQkP6Sf1
+   s=;
+X-CSE-ConnectionGUID: bV5CvFE1SweijZFgi/Hwvg==
+X-CSE-MsgGUID: 7brQSmZHTfmbJqkBrOt6rw==
+X-IronPort-AV: E=Sophos;i="6.08,227,1712620800"; 
+   d="scan'208";a="294807107"
+Received: from alln-core-4.cisco.com ([173.36.13.137])
+  by alln-iport-5.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 21:51:20 +0000
+Received: from localhost.cisco.com ([10.193.101.253])
+	(authenticated bits=0)
+	by alln-core-4.cisco.com (8.15.2/8.15.2) with ESMTPSA id 45ALpBCO012699
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 10 Jun 2024 21:51:19 GMT
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com, mkai2@cisco.com,
+        satishkh@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH 00/14] Introduce support for feature Fabric Discovery and
+Date: Mon, 10 Jun 2024 14:50:46 -0700
+Message-Id: <20240610215100.673158-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-platform-chrome-v1-1-f9c75adcc1ca@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACx1Z2YC/x3MSwqDMBAA0KvIrDuQhCDSq5Qu8hmbAZPIxIog3
- t20y7d5JzQSpgbP4QShnRvX0qEfA4TkyoeQYzcYZawatcIcMQrvJA3XxW1zlYwhSc2EOkzWj3a
- yJnjowSo08/HPX+9u7xqhF1dC+pULl++B2bWNBK7rBkT8reuLAAAA
-To: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
-        Guenter Roeck <groeck@chromium.org>
-CC: <chrome-platform@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rV2IW1dhTdhSKeDRxO1BybYEnDh8Pyyd
-X-Proofpoint-ORIG-GUID: rV2IW1dhTdhSKeDRxO1BybYEnDh8Pyyd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_06,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1011
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100162
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.193.101.253, [10.193.101.253]
+X-Outbound-Node: alln-core-4.cisco.com
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/chrome/cros_kunit_proto_test.o
+Hi Martin, reviewers,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+This cover letter describes the feature: add support for Fabric Discovery
+and Login Services (FDLS) to fnic driver.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/platform/chrome/cros_ec_proto_test.c | 1 +
- 1 file changed, 1 insertion(+)
+This functionality is needed to support port channel RSCN (PC-RSCN)
+handling and serves as a base to create FC-NVME initiators
+(planned later), and eCPU handling (planned later).
 
-diff --git a/drivers/platform/chrome/cros_ec_proto_test.c b/drivers/platform/chrome/cros_ec_proto_test.c
-index 41378c2ee6a0..3960f7c16eb0 100644
---- a/drivers/platform/chrome/cros_ec_proto_test.c
-+++ b/drivers/platform/chrome/cros_ec_proto_test.c
-@@ -2740,4 +2740,5 @@ static struct kunit_suite cros_ec_proto_test_suite = {
- 
- kunit_test_suite(cros_ec_proto_test_suite);
- 
-+MODULE_DESCRIPTION("Kunit tests for ChromeOS Embedded Controller protocol");
- MODULE_LICENSE("GPL");
+It is used to discover the fabric and target ports associated with the
+fabric.
+It will then login to the target ports that are zoned to it.
+The driver uses the tport structure presented by FDLS.
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-platform-chrome-1c84b64842cb
+Port channel RSCN is a Cisco vendor specific RSCN
+event. It is applicable only to Cisco UCS fabrics.
+
+In cases where the eCPU in the UCS VIC (Unified Computing Services
+Virtual Interface Card) hangs, a fabric log out is sent to the fabric.
+Upon successful log out from the fabric, the IO path is failed over
+to a new path.
+
+Generally from a feature perspective, the code is divided into adding
+support for this functionality initially. Then, code has been added to
+modify the IO path and interfaces. Finally, support for port channel RSCN
+handling has been added.
+
+Here are the headers of some of the salient patches:
+
+o add headers and definitions for FDLS
+o add support for fabric based solicited requests and responses
+o add support for target based solicited requests and responses
+o add support for unsolicited requests and responses
+o add support for FDMI
+o add support for FIP
+o add functionality in fnic to support FDLS
+o modify IO path to use FDLS and tport
+o modify fnic interfaces to use FDLS
+o add support to handle port channel RSCN
+
+Even though the patches have been made into a series, some patches are
+heavier than others. But, every effort has been made to keep the purpose
+of each patch as a single-purpose, and to compile cleanly.
+All the individual patches compile cleanly. There are some unused function
+warnings, but since the function calls happen in later patches, those
+warnings go away.
+
+This patchset has been tested as a whole. Therefore, the tested-by fields
+have been added only to one patch in the set.
+I've refrained from adding tested-by to most of the patches,
+so as to not mislead the reviewer/reader.
+
+A brief note on the unit tests:
+
+o. Perform zone in zone out testing in a loop: remove a target
+port from the zone, add it to the zone in a loop. 1000+ iterations
+of this test have been successful.
+o. Configure multipathing, and run link flaps on single link.
+IOs drop briefly, but pick up as expected.
+o. Configure multipathing, and run link flaps on two links, with a
+30 second delay in between. IOs drop briefly, but pick up as expected.
+o. Module load/unload test.
+o. Repeat the above tests with 1 queue and 64 queues.
+All tests were successful.
+
+Please consider this patch series for the next merge window.
+
+Thanks and regards,
+Karan
+
+Karan Tilak Kumar (14):
+  scsi: fnic: Replace shost_printk with pr_info/pr_err
+  scsi: fnic: Add headers and definitions for FDLS
+  scsi: fnic: Add support for fabric based solicited requests and
+    responses
+  scsi: fnic: Add support for target based solicited requests and
+    responses
+  scsi: fnic: Add support for unsolicited requests and responses
+  scsi: fnic: Add and integrate support for FDMI
+  scsi: fnic: Add and integrate support for FIP
+  scsi: fnic: Add functionality in fnic to support FDLS
+  scsi: fnic: Modify IO path to use FDLS
+  scsi: fnic: Modify fnic interfaces to use FDLS
+  scsi: fnic: Add stats and related functionality
+  scsi: fnic: Code cleanup
+  scsi: fnic: Add support to handle port channel RSCN
+  scsi: fnic: Increment driver version
+
+ drivers/scsi/fnic/Makefile                |    5 +-
+ drivers/scsi/fnic/fdls_disc.c             | 3942 +++++++++++++++++++++
+ drivers/scsi/fnic/fdls_fc.h               |  548 +++
+ drivers/scsi/fnic/fip.c                   |  900 +++++
+ drivers/scsi/fnic/fip.h                   |  341 ++
+ drivers/scsi/fnic/fnic.h                  |  216 +-
+ drivers/scsi/fnic/fnic_attrs.c            |   12 +-
+ drivers/scsi/fnic/fnic_debugfs.c          |   30 +-
+ drivers/scsi/fnic/fnic_fcs.c              | 1775 ++++------
+ drivers/scsi/fnic/fnic_fdls.h             |  371 ++
+ drivers/scsi/fnic/fnic_io.h               |   14 +-
+ drivers/scsi/fnic/fnic_isr.c              |   28 +-
+ drivers/scsi/fnic/fnic_main.c             |  670 ++--
+ drivers/scsi/fnic/fnic_pci_subsys_devid.c |  133 +
+ drivers/scsi/fnic/fnic_res.c              |   76 +-
+ drivers/scsi/fnic/fnic_scsi.c             | 1406 +++++---
+ drivers/scsi/fnic/fnic_stats.h            |   48 +-
+ drivers/scsi/fnic/fnic_trace.c            |   83 +-
+ 18 files changed, 8640 insertions(+), 1958 deletions(-)
+ create mode 100644 drivers/scsi/fnic/fdls_disc.c
+ create mode 100644 drivers/scsi/fnic/fdls_fc.h
+ create mode 100644 drivers/scsi/fnic/fip.c
+ create mode 100644 drivers/scsi/fnic/fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+ create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
+
+-- 
+2.31.1
 
 
