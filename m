@@ -1,125 +1,187 @@
-Return-Path: <linux-kernel+bounces-208628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2821B902754
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:58:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E2790278C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5B11C21B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:58:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA7DB2B012
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B829152503;
-	Mon, 10 Jun 2024 16:54:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D114389E;
+	Mon, 10 Jun 2024 16:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lucW27f2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F8414AD3E;
-	Mon, 10 Jun 2024 16:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487E1EA8F;
+	Mon, 10 Jun 2024 16:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038467; cv=none; b=EMaclGYCNEHDHg/caw29vEAKHx8iaSu/lY5WHxZocHkchtrdLI9Ny75+ehTzVCaHdAfY32OWcMdnhkbbcBqhkYPW0Sipuci2C9zH7IBQ6oItClMzkrd1dlZpENX7iQidbTUl41+D2no6cOUBHZLfGY/A7VVIZynEzqkonSmIV/Y=
+	t=1718038684; cv=none; b=DOHFIIyKbZluj6rlNf71lDm2XcbFYKqVd13/4+qmlMi/YY2D5ccLqY0ND1BPqrTbgnzsjnxfBt6oMuIX6e1SDvPh1iF4uWHvq2Am1qV4URKfgU76377MolCa9mrrJ4H0ksGD+jgksOHv7oC7Za0VLe+WL5/JFn4XPkGl2oC/1Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038467; c=relaxed/simple;
-	bh=IHKjkJJmNUwQBgZoGJ0QQEMWCIHokZu18EE5Cx8Z+f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GyCA0oUHdIJE5GpENnff5CrnAxFvYo6LJT5FYhdFdplqs2z6a0GYma6flsyVKlVbWpl98N1a2UmIdwHkXvJm4qyPc3ar56aZ9rwvS7IvRlNt2hyYhfzmOFQeWCzk19TQWsxqAmyW0fzlE5f6Di1GIPhZTcXL3o4vFgLLlNzwxw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 599B4C2BBFC;
-	Mon, 10 Jun 2024 16:54:24 +0000 (UTC)
-Date: Mon, 10 Jun 2024 12:54:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yan Zhai <yan@cloudflare.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, David Ahern
- <dsahern@kernel.org>, Abhishek Chauhan <quic_abchauha@quicinc.com>, Mina
- Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>,
- Alexander Lobakin <aleksander.lobakin@intel.com>, David Howells
- <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann
- <daniel@iogearbox.net>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Pavel Begunkov
- <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
- kernel-team@cloudflare.com, Jesper Dangaard Brouer <hawk@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Neil Horman <nhorman@tuxdriver.com>,
- linux-trace-kernel@vger.kernel.org, Dan Carpenter
- <dan.carpenter@linaro.org>
-Subject: Re: [RFC v3 net-next 1/7] net: add rx_sk to trace_kfree_skb
-Message-ID: <20240610125422.252da487@rorschach.local.home>
-In-Reply-To: <CAO3-PbqRNRduSAyN9CtaxPFsOs9xtGHruu1ACfJ5e-mrvTo2Cw@mail.gmail.com>
-References: <cover.1717529533.git.yan@cloudflare.com>
-	<983c54f98746bd42d778b99840435d0a93963cb3.1717529533.git.yan@cloudflare.com>
-	<20240605195750.1a225963@gandalf.local.home>
-	<CAO3-PbqRNRduSAyN9CtaxPFsOs9xtGHruu1ACfJ5e-mrvTo2Cw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718038684; c=relaxed/simple;
+	bh=GbHdTLYub+sD5dM94PZbMo3MaJnKZiE5cFXrl5fkjXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqeVDBCYyUl27SO4GCnuPxiGcD4lnSpSNdQA/DhSKQJr1o+FDHu3hDD+A/oaND+YYUdsntpYswgpE+H1ElTfooXeZ5aPFdxGY8icnK+Ha2EXY6KlrxfMYPlP5J2gyfgXC9FDzN2yY+M9y+qYCSjOam95Cdnn7F/QRX4HItE/tmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lucW27f2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f1e35156cso1449206f8f.1;
+        Mon, 10 Jun 2024 09:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718038681; x=1718643481; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YzhH3IOabREM20REb/myGlikn8tIz8znLMQG7lX39H0=;
+        b=lucW27f288qBMrV/Y6MmNrn0ShEVENXd3LS+2Cf2OI5DNUtnoiBjB5xQ0fMPtg5ejg
+         e465ImeOi+Xd8yPb9v0ukyWOsmmJppURrfa7WyTu5bDgM8vleNC4im1XSQ+QuwX3MxmF
+         b+7zcYrXybEPMxkuHtENbefRmAexdBqiF/wYLN9In4pBuPu2p0NapkA4/cKWZ4Jv+o3X
+         yzd7Ky/7dlQZcTbxHe3SJaSc0hEvZuI3S28BjPTMo22trRt7VbkktLz2j/9GQKFsNMw7
+         9IyaOBHtwrvPYgtA7WgOYkmGRGOqxY9qc6sXqnritkEzQjdUwUsJOgG55CLkt8be/tm7
+         Ue/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718038681; x=1718643481;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YzhH3IOabREM20REb/myGlikn8tIz8znLMQG7lX39H0=;
+        b=NBsFVhvfy/m7Sr+FMS4O1fPEghYwOHyWCOB4Jg0frdjb0KvZGZjG7D5HxuKeCXXZXw
+         vAHZ9RygUei6Uzosv76p1B0icY+f6Xw7Hijf4D3+948KhwakW4GWJRfzIyEe/ECyZMuF
+         wenNGFnVqD0mbhiV2nVYey1NwUEzhuM7/5G/sfCl+POokq7ePfCapeQYIe7XFgBOyZgf
+         zhajeU/kZFtB+owvjDlkwrjqJC5CJwPjBnq6vxe/jKgnVNo2xvChv0UnqmnFhlbp6ul/
+         teQ1Wu/L6hONS7NPax64vvo1/Z2FJY+3lFwTWe35FL7ISC+cgDRDJC5ihPw4IqvB6/oL
+         T+Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUb1M23iM+nu8I0TA0yk7k4wVTsCqawRzvCbbHtv+FrMKpG1ksAvv9YA5EIjvN0/d9vB42tj3X0H2A23V03N1kPpVK7NTYqvUb0drpM/P5kcEUlYR5bJkPdrBqORFy7nVpdKV4O6K6DUBg=
+X-Gm-Message-State: AOJu0Yx6bessLHYRKMB9G81iq2GfIpltRmEiH+CN0dUISLbwDyIJ9YAn
+	s0Xka3Ur/SJKXttd9i1anwwjEGmvyWqDmErxwBNioJepNsAFNQ2t
+X-Google-Smtp-Source: AGHT+IG+QPm7gKyzny8UH/DTLMeR8S6+4sdE41Ci4AqJdc31dcZI00ajdyOAPOBqiAWKX9RhsM3lkA==
+X-Received: by 2002:a5d:53c3:0:b0:35f:234a:9c0e with SMTP id ffacd0b85a97d-35f234a9cd9mr2638920f8f.30.1718038681005;
+        Mon, 10 Jun 2024 09:58:01 -0700 (PDT)
+Received: from fedora ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm2554737f8f.79.2024.06.10.09.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:58:00 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:57:58 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Fabio Baltieri <fabiobaltieri@chromium.org>,
+	Ivan Gorinov <linux-kernel@altimeter.info>,
+	Johannes Roith <johannes@gnu-linux.rocks>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
+ modules
+Message-ID: <Zmcwlt6Kfpt09tKi@fedora>
+References: <20240529094816.1859073-1-arnd@kernel.org>
+ <ZmSi5_-4mD4AaIJW@fedora>
+ <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
 
-On Thu, 6 Jun 2024 10:37:46 -0500
-Yan Zhai <yan@cloudflare.com> wrote:
-
-> > name: kfree_skb
-> > ID: 1799
-> > format:
-> >         field:unsigned short common_type;       offset:0;       size:2; signed:0;
-> >         field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-> >         field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-> >         field:int common_pid;   offset:4;       size:4; signed:1;
+On Mon, Jun 10, 2024 at 08:24:51AM +0200, Arnd Bergmann wrote:
+> On Sat, Jun 8, 2024, at 20:28, José Expósito wrote:
+> > On Wed, May 29, 2024 at 11:48:05AM +0200, Arnd Bergmann wrote:
+> 
+> >> @@ -154,10 +152,8 @@ obj-$(CONFIG_HID_WINWING)	+= hid-winwing.o
+> >>  obj-$(CONFIG_HID_SENSOR_HUB)	+= hid-sensor-hub.o
+> >>  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR)	+= hid-sensor-custom.o
+> >>  
+> >> -hid-uclogic-test-objs		:= hid-uclogic-rdesc.o \
+> >> -				   hid-uclogic-params.o \
+> >> -				   hid-uclogic-rdesc-test.o
+> >> -obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o
+> >> +hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
+> >> +obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o hid-uclogic-params.o hid-uclogic-params.o
+> >>  
+> >>  obj-$(CONFIG_USB_HID)		+= usbhid/
+> >>  obj-$(CONFIG_USB_MOUSE)		+= usbhid/
 > >
-> >         field:void * skbaddr;   offset:8;       size:8; signed:0;
-> >         field:void * location;  offset:16;      size:8; signed:0;
-> >         field:unsigned short protocol;  offset:24;      size:2; signed:0;
-> >         field:enum skb_drop_reason reason;      offset:28;      size:4; signed:0;
+> > I tested your patch with:
 > >
-> > Notice that "protocol" is 2 bytes in size at offset 24, but "reason" starts
-> > at offset 28. This means at offset 26, there's a 2 byte hole.
-> >  
-> The reason I added the pointer as the last argument is trying to
-> minimize the surprise to existing TP users, because for common ABIs
-> it's fine to omit later arguments when defining a function, but it
-> needs change and recompilation if the order of arguments changed.
-
-Nothing should be hard coding the offsets of the fields. This is
-exported to user space so that tools can see where the fields are.
-That's the purpose of libtraceevent. The fields should be movable and
-not affect anything. There should be no need to recompile.
-
+> > 	hid-uclogic-objs		:= hid-uclogic-core.o \
+> > 					   hid-uclogic-rdesc.o \
+> > 					   hid-uclogic-params.o
+> > 	obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
+> > 	[...]
+> > 	hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
+> > 	obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic.o hid-uclogic-test.o
+> >
+> > And I think it is a bit more clear and it looks like it does the trick
+> > removing the warning.
 > 
-> Looking at the actual format after the change, it does not add a new
-> hole since protocol and reason are already packed into the same 8-byte
-> block, so rx_skaddr starts at 8-byte aligned offset:
+> Right, that seems fine.
 > 
-> # cat /sys/kernel/debug/tracing/events/skb/kfree_skb/format
-> name: kfree_skb
-> ID: 2260
-> format:
->         field:unsigned short common_type;       offset:0;
-> size:2; signed:0;
->         field:unsigned char common_flags;       offset:2;
-> size:1; signed:0;
->         field:unsigned char common_preempt_count;       offset:3;
->  size:1; signed:0;
->         field:int common_pid;   offset:4;       size:4; signed:1;
+> > Also, with that change only "EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);"
+> > is required. The other EXPORT_SYMBOL_GPL can be removed.
+> >
+> > However, I'm not sure about what are the best practices using EXPORT_SYMBOL_GPL
+> > and if it should be used for each function/data in the .h file. Maybe that's
+> > why you added them.
 > 
->         field:void * skbaddr;   offset:8;       size:8; signed:0;
->         field:void * location;  offset:16;      size:8; signed:0;
->         field:unsigned short protocol;  offset:24;      size:2; signed:0;
->         field:enum skb_drop_reason reason;      offset:28;
-> size:4; signed:0;
->         field:void * rx_skaddr; offset:32;      size:8; signed:0;
+> No, having only the single export is better here, you should
+> have as few of them as possible. I did picked the more complicated
+> approach as I wasn't sure if loading the entire driver from the
+> test module caused any problems. Let's use your simpler patch
+> then.
 > 
-> Do you think we still need to change the order?
+>      Arnd
 
-Up to you, just wanted to point it out.
+Turns out that, since the last time I checked the KUnit docs,
+we have "EXPORT_SYMBOL_IF_KUNIT" available now.
 
--- Steve
+I think we can use it and your final patch, without the MODULE_*
+changes, could look like:
 
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index ce71b53ea6c5..e40f1ddebbb7 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -154,10 +154,8 @@ obj-$(CONFIG_HID_WINWING)  += hid-winwing.o
+ obj-$(CONFIG_HID_SENSOR_HUB)   += hid-sensor-hub.o
+ obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR) += hid-sensor-custom.o
+ 
+-hid-uclogic-test-objs          := hid-uclogic-rdesc.o \
+-                                  hid-uclogic-params.o \
+-                                  hid-uclogic-rdesc-test.o
+-obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic-test.o
++hid-uclogic-test-objs          := hid-uclogic-rdesc-test.o
++obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic.o hid-uclogic-test.o
+ 
+ obj-$(CONFIG_USB_HID)          += usbhid/
+ obj-$(CONFIG_USB_MOUSE)                += usbhid/
+diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic-rdesc.c
+index b6dfdf6356a6..6c7a90417569 100644
+--- a/drivers/hid/hid-uclogic-rdesc.c
++++ b/drivers/hid/hid-uclogic-rdesc.c
+@@ -17,6 +17,7 @@
+ #include "hid-uclogic-rdesc.h"
+ #include <linux/slab.h>
+ #include <asm/unaligned.h>
++#include <kunit/visibility.h>
+ 
+ /* Fixed WP4030U report descriptor */
+ __u8 uclogic_rdesc_wp4030u_fixed_arr[] = {
+@@ -1242,3 +1243,4 @@ __u8 *uclogic_rdesc_template_apply(const __u8 *template_ptr,
+ 
+        return rdesc_ptr;
+ }
++EXPORT_SYMBOL_IF_KUNIT(uclogic_rdesc_template_apply);
+
+I hope that helps,
+Jose
 
