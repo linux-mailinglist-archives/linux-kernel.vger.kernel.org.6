@@ -1,80 +1,57 @@
-Return-Path: <linux-kernel+bounces-208926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38F2902AB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD279902AB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34435283561
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4244E28227B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F2114D70E;
-	Mon, 10 Jun 2024 21:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7F6745E4;
+	Mon, 10 Jun 2024 21:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eK7GeKlS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAz3+OGX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB5A6F31F;
-	Mon, 10 Jun 2024 21:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBE66BB33;
+	Mon, 10 Jun 2024 21:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718055456; cv=none; b=j/jCdumX0gK+sxw8ooFh51hNEVyAJkKl0PBjfNw+RrFAPV1Qakfcq3pil6ueKiWY4iAHrmBYWuIEwn9A1u3uil6x9VqvK+i7GVQXNxppkzXYED5quxMDYC/ZInTJovZ3QuyAiM8vZqDPC9hvsBNLLjCMZQpFpcgSt412ZeEdAIg=
+	t=1718055494; cv=none; b=hRng0WeN8CA5oLS/AYMXmfPtGzrUT2bWFQ3d2e/zX36DtKvhMDf2UquzHjUbujYTC8DFdAH02SPBaxckGfGSWQ44UkmYfPP2cxv0pTqKUu8SJMpb4QSPBrlx7oBHHdwwUq8lfsIN04MBL1lNEzIfbPfj3dsfjdGUOEoa/sq4i2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718055456; c=relaxed/simple;
-	bh=Hu+ZYAxQIeqrj2N96pQMniXoSv97DArchied9P7Vm1k=;
+	s=arc-20240116; t=1718055494; c=relaxed/simple;
+	bh=iS+f24vXNzu4B5CkXlWd3tuO2O54byUj8yfLNwSgl0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dr05P9TvSCXDQz4pjuvaTpTdudzWVN6Qi0qG7kQ/wq+b1x4J+7HeD9ekV8PslpCJ2hHkOD2qH3myDrKHTsTjx+BIOZm4iaOEfo2uX2UdWSwWuIYw451FvMB1Yt6KOLclyhk0OEfPrgvkFKpqA+BV688AN9rorM9+15v0wgsS7Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eK7GeKlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DF7C4AF50;
-	Mon, 10 Jun 2024 21:37:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+CBldef9nVR+4XFQY1wcTkl02SdHeg4tO2KvcFrP+ISyZwo1hJgeMpocYIgcz93Icgd07iEPsZkTn3Bn9iHVil2aoWH6NWUJGoyos8E4aFWuUv0EcaB+g8wgcIBS7E7dSGqdLCsaqHEFye5TwwIYNl14UDrTPbbr8/iFppVHrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAz3+OGX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 203D0C2BBFC;
+	Mon, 10 Jun 2024 21:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718055456;
-	bh=Hu+ZYAxQIeqrj2N96pQMniXoSv97DArchied9P7Vm1k=;
+	s=k20201202; t=1718055494;
+	bh=iS+f24vXNzu4B5CkXlWd3tuO2O54byUj8yfLNwSgl0Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eK7GeKlSJb8Ckg8qzh4cf2ZYk8nis9CGFj3j4T3Q4QfgbeOCCm0FV/6SFblR3J7si
-	 pxfoNeGyWC4xbIiuoMVSdGD+JZvpzwxpW7z/gnBc9Z0pgeMWs1fVZ7MIjrS/WEXRCv
-	 h61wr6uzmBp9FtmoJiwoVXPupCCZew8yrOKV5e895AMnBVJQM/eejzhmspRrRRnie6
-	 jTv4Q78kVKB+O64bYc6jWMI/KQ5kUBVgzKZoTZT6ugNUUEmpVElHOVLtKIJfalEVXQ
-	 raIKCmtKVsjBCrb0AVnlpkB3kj6MGqvWDfiYNQorQelmaTYWDxymZSm44Hmo5gxcEW
-	 JEZh2WqqKsCLQ==
-Date: Mon, 10 Jun 2024 15:37:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 17/19] PCI: of_property: Add interrupt-controller
- property in PCI device nodes
-Message-ID: <20240610213735.GA3112053-robh@kernel.org>
-References: <20240527161450.326615-18-herve.codina@bootlin.com>
- <20240606192612.GA814032@bhelgaas>
+	b=AAz3+OGXKsWW9qcaNDnCoZ0CMB5Lp50iQ2ZEQabUOmgOwCF7LgJ47bTrDCr+ADblc
+	 xYmKmgwsFQYIHEVkNhGwf16DhRsLUpad2qDpnkHw//GtUQe0KUgAITQYPhw3euCJzo
+	 VMuYsBFqJe8hFF6/ZrAqlOqNl3cA4/6z0yWk879vn5WOlTorT3pzZmIAHPevS33ESo
+	 ms7EvVeDB6f8bvhDBhSP1frGU7xq8aKz9GeE7/6FJRWeDGrPY50f/9msf7GVRCgJbR
+	 i7cYQb2VHH5r+FB39zeVMtUOUdHUwda9XSLTMVQlZZOu7NBMV+cYok0UXLZoXDrISz
+	 BQ63x+2w4DW0w==
+Date: Mon, 10 Jun 2024 15:38:12 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Shresth Prasad <shresthprasad7@gmail.com>
+Cc: Shresth Prasad <shrestprasad7@gmail.com>, wim@linux-watchdog.org,
+	linux@roeck-us.net, krzk+dt@kernel.org,
+	javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	skhan@linuxfoundation.org, conor+dt@kernel.org
+Subject: Re: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to
+ dtschema
+Message-ID: <171805549065.3119295.11660443713191939962.robh@kernel.org>
+References: <20240527195811.7897-2-shresthprasad7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,36 +60,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606192612.GA814032@bhelgaas>
+In-Reply-To: <20240527195811.7897-2-shresthprasad7@gmail.com>
 
-On Thu, Jun 06, 2024 at 02:26:12PM -0500, Bjorn Helgaas wrote:
-> On Mon, May 27, 2024 at 06:14:44PM +0200, Herve Codina wrote:
-> > PCI devices and bridges DT nodes created during the PCI scan are created
-> > with the interrupt-map property set to handle interrupts.
-> > 
-> > In order to set this interrupt-map property at a specific level, a
-> > phandle to the parent interrupt controller is needed. On systems that
-> > are not fully described by a device-tree, the parent interrupt
-> > controller may be unavailable (i.e. not described by the device-tree).
-> > 
-> > As mentioned in the [1], avoiding the use of the interrupt-map property
-> > and considering a PCI device as an interrupt controller itself avoid the
-> > use of a parent interrupt phandle.
-> > 
-> > In that case, the PCI device itself as an interrupt controller is
-> > responsible for routing the interrupts described in the device-tree
-> > world (DT overlay) to the PCI interrupts.
-> > 
-> > Add the 'interrupt-controller' property in the PCI device DT node.
-> > 
-> > [1]: https://lore.kernel.org/lkml/CAL_Jsq+je7+9ATR=B6jXHjEJHjn24vQFs4Tvi9=vhDeK9n42Aw@mail.gmail.com/
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+
+On Tue, 28 May 2024 01:28:12 +0530, Shresth Prasad wrote:
+> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
+> for validation.
 > 
-> No objection from me, but I'd like an ack/review from Rob.
+> Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
+> ---
+> Changes in v2:
+>     - Remove blank space
+>     - Add item list with description for clocks
+>     - Drop description for interrupts
+>     - Drop properties assigned-clocks and assigned-clock-rates
+> ---
+>  .../bindings/watchdog/img,pdc-wdt.yaml        | 55 +++++++++++++++++++
+>  .../bindings/watchdog/imgpdc-wdt.txt          | 19 -------
+>  2 files changed, 55 insertions(+), 19 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
+> 
 
-Given it is more DT patches in the series, how about I take them and 
-this one with your ack instead?
+Applied, thanks!
 
-Rob
 
