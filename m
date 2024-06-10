@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-208220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152AE90227E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169E590216B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21AF1F21BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8955D1F2167F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25472823CB;
-	Mon, 10 Jun 2024 13:15:49 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A387E799;
+	Mon, 10 Jun 2024 12:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYIZ+rDm"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337BA4501B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64BD7E57C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025348; cv=none; b=NbsgWiFwb2ZyKqz9hkbeM41OBlVTuTzP4UAeMdro+OSv9NfxE4Ojb1IGLPu68dMhrQ/tByLWnAeMvzLP3EDPwxu0se+eD4byJcIxhU9FNi3ObvPUByiW5EdfE5v0QGTXqy+JYHE97NrmLcIVhodGDeVxWDUWO1LtX/oNLj58RyM=
+	t=1718021906; cv=none; b=LnTLFPdATGI5wqMMS6xlXRh7cmtNtzt/W6Y9VQQ4MZujD2p94x3gw2gPtmQ1q6KZkU5S0xrJJnGte7dXDmJfvtx+yXo0DoibuoFiuJjHUGcUNsl5yQ1tE0Qn62CgnqFxCfm+/s4E8ZCSRaPU1QBzKOldhVXNvobY6WMv1rAXI1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025348; c=relaxed/simple;
-	bh=9bEWqJnLSb5dIy8d++RUCBQVhWWIm218oHNDiRmcECo=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=gadRfjhFuPQOdF5z8O4siYDhStTSM4Gq6Hj//i9ZlsD4SJfaWnSpvPcL83mg0TmVR1SsYCk++FMFNopB2g6+qiIogXJJSbZ3Xv6EpdNjjfcWHxyd8j3cPeDOP30vkdwBvtUODSZC/Vu1J17zMCvSvc2UxL+C5QcwiaYq43XwR6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:34336)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sGdwM-0068VY-IK; Mon, 10 Jun 2024 06:15:58 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:49164 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sGdwL-00AkLa-Aa; Mon, 10 Jun 2024 06:15:58 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
-  linux-kernel@vger.kernel.org
-References: <20240609142342.GA11165@redhat.com>
-Date: Mon, 10 Jun 2024 07:15:02 -0500
-In-Reply-To: <20240609142342.GA11165@redhat.com> (Oleg Nesterov's message of
-	"Sun, 9 Jun 2024 16:23:42 +0200")
-Message-ID: <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718021906; c=relaxed/simple;
+	bh=aQ6jk11K5ysHvETxy4Xlgu0vY/turwVtvB4rc1wailw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1Da4UtsQ+nn1U7/QBa6DAwNqUvrXltnJ5yuKcopSqE+qPwtgYhhv4K8LZYH2g/EnXZQUUajkXg+mONiR2rqK4LwunNSYX6kYCjHoKg9dTfN78hmFgFnoO5qpb7phYUQPQ9CROgL3wA9OegNHa71ndxa6d3tZ7cXcM6qXEui6l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYIZ+rDm; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b970e90ab8so2614505eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718021904; x=1718626704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0+Az1PpLJ4JYTtMedJjbgRRlyQLWkppyc96i5melFic=;
+        b=nYIZ+rDmdHTitQPk69K7ei3+zVFySXuD9h7D2J5zw3L7WPrg/O6X/UgScIqub5BQ9h
+         oOfF1fuA/R5kixjjK38Wkgs+EBNDSjezqjHHFmryy5KVEuAJ7KQ1Dl7b6q/v6BDuMlUq
+         ifMjPCZqGzFo1iRTCZxXlDQvZUdjoeSClan0jp751bAyWxMtfCqmYf8YlqBmedYrzkls
+         dajPV/nXChVuJWHXXPNZ68/FyoMRZB5eGC7K/5X9HJIApxMTETjJQTKKSBkfTdFqwa6i
+         jcdsP1LkYOhUUjed+INi2O1lRLjvcbW6OO7WeBe2NAnZxHl37EUWemz1gNtSjcESwM6i
+         2+Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718021904; x=1718626704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0+Az1PpLJ4JYTtMedJjbgRRlyQLWkppyc96i5melFic=;
+        b=Phdd1GN6Me2ki8D9iiipc07QxXxg0NPiCgw3RmRvboAVMn7/TjO37KFfk+m3Vksa9y
+         S2XAhczSqxiEAHiAJ7SkAglIkPp6bMekfNLibDw5tkuoa0dbpvkFR080j7TQtu1D9oMC
+         BM7Pwd9kBKb7gbKUQ10W2qwvBSHPBK1NjO6MdNTW9yrGWBlJhOO9hNcIoB5v1Q14avSm
+         EFVpn1qHoMUp9az8VKDjuk2H7ZqUBUfsSzZFeZrUDldmF2P21h4OEA12KhiRXGBtqEFO
+         VlJzcJhjpDscxei5IRar8Tx4Qyk8AwRSOycvSCfS3XS6gR9hh02qnJbj05bJZctPdk0i
+         d9bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN2OG8Tng+xljWV2UR8dNQtVIDegNgim+Ij610zg0x46qSsP19a5B/R1nupKGc+tSw+K4bw6DrvJeQbn5W1lHKXmMk8Ks+YewSjdR7
+X-Gm-Message-State: AOJu0YwRXa0e/bZ9NbN/jpLZMWyBKm4aI1iMIbO9fKPrRusmADCvNGo5
+	vQmOrNip2HrItVwjoRSq8LiBooMHQ7h7fNKEK/isjV5lA77ZjvUV
+X-Google-Smtp-Source: AGHT+IHlGKS8y91VhGXHAROeBpYgpO4e/NBHK33a/DUHtG9u+8/tE43i3a/RyUN7beMURh6JEM4UUQ==
+X-Received: by 2002:a05:6358:63a3:b0:19f:4d27:fb77 with SMTP id e5c5f4694b2df-19f4d27ff52mr491142255d.5.1718021903745;
+        Mon, 10 Jun 2024 05:18:23 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-007.fbsv.net. [2a03:2880:20ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b063821c95sm32331886d6.96.2024.06.10.05.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 05:18:23 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	david@redhat.com,
+	ying.huang@intel.com,
+	hughd@google.com,
+	willy@infradead.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
+Date: Mon, 10 Jun 2024 13:15:58 +0100
+Message-ID: <20240610121820.328876-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sGdwL-00AkLa-Aa;;;mid=<87r0d5t2nt.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/90GW62Ma1o8FMMT4UgLYPDrWPv3uutuI=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: *
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4978]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 355 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 4.4 (1.2%), b_tie_ro: 3.1 (0.9%), parse: 1.02
-	(0.3%), extract_message_metadata: 4.0 (1.1%), get_uri_detail_list:
-	1.78 (0.5%), tests_pri_-2000: 3.0 (0.9%), tests_pri_-1000: 1.94 (0.5%),
-	 tests_pri_-950: 1.09 (0.3%), tests_pri_-900: 0.82 (0.2%),
-	tests_pri_-90: 119 (33.4%), check_bayes: 117 (33.0%), b_tokenize: 4.4
-	(1.2%), b_tok_get_all: 56 (15.8%), b_comp_prob: 2.5 (0.7%),
-	b_tok_touch_all: 51 (14.4%), b_finish: 0.66 (0.2%), tests_pri_0: 205
-	(57.7%), check_dkim_signature: 0.37 (0.1%), check_dkim_adsp: 2.4
-	(0.7%), poll_dns_idle: 1.00 (0.3%), tests_pri_10: 1.75 (0.5%),
-	tests_pri_500: 6 (1.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 0/1] exit: kill signal_struct->quick_threads
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Going back to the v1 implementation of the patchseries. The main reason
+is that a correct version of v2 implementation requires another rmap
+walk in shrink_folio_list to change the ptes from swap entry to zero pages to
+work (i.e. more CPU used) [1], is more complex to implement compared to v1
+and is harder to verify correctness compared to v1, where everything is
+handled by swap.
 
-> Hello,
->
-> Eric, I can't understand why the commit ("signal: Guarantee that
-> SIGNAL_GROUP_EXIT is set on process exit") added the new
-> quick_threads counter. And why, if we forget about --quick_threads,
-> synchronize_group_exit() has to take siglock unconditionally.
-> Did I miss something obvious?
+---
+As shown in the patchseries that introduced the zswap same-filled
+optimization [2], 10-20% of the pages stored in zswap are same-filled.
+This is also observed across Meta's server fleet.
+By using VM counters in swap_writepage (not included in this
+patchseries) it was found that less than 1% of the same-filled
+pages to be swapped out are non-zero pages.
 
-At a minimum it is the exact same locking as everywhere else that sets
-signal->flags, signal->group_exit_code, and signal->group_stop_count
-uses.
+For conventional swap setup (without zswap), rather than reading/writing
+these pages to flash resulting in increased I/O and flash wear, a bitmap
+can be used to mark these pages as zero at write time, and the pages can
+be filled at read time if the bit corresponding to the page is set.
 
-So it would probably require some significant reason to not use
-the same locking and complicate reasoning about the code.  I suspect
-setting those values without siglock held is likely to lead to
-interesting races.
+When using zswap with swap, this also means that a zswap_entry does not
+need to be allocated for zero filled pages resulting in memory savings
+which would offset the memory used for the bitmap.
 
-May I ask which direction you are coming at this from?  Are you trying
-to reduce the cost of do_exit?  Are you interested in untangling the
-mess that is exiting threads in a process?
+A similar attempt was made earlier in [3] where zswap would only track
+zero-filled pages instead of same-filled.
+This patchseries adds zero-filled pages optimization to swap
+(hence it can be used even if zswap is disabled) and removes the
+same-filled code from zswap (as only 1% of the same-filled pages are
+non-zero), simplifying code.
 
-I have a branch around that I was slowly working through to detangle
-the entire mess.  And if you are interested I can dig it back up.
-My memory is I had all of the known issues worked through but I still
-needed to feed the code through code review and merge it in small steps
-to ensure I don't introduce regressions.
-
-That is where signal->quick_threads comes from.  In the work it is a
-part of I wind up moving the decrement up much sooner to the point where
-individual threads decide to exit.  The decrement of signal->live comes
-much too late to be useful in that context.
-
-It is also part of me wanting to be able to uniformly use
-SIGNAL_GROUP_EXIT and signal->group_exit_code when talking about the
-process state, and p->exit_code when talking about the per task state.
-
-At the moment I am staring at wait_task_zombie and trying to understand
-how:
-
-	status = (p->signal->flags & SIGNAL_GROUP_EXIT)
-		? p->signal->group_exit_code : p->exit_code;
-
-works without any locks or barriers.
-
-Eric
+This patchseries is based on mm-unstable.
 
 
+[1] https://lore.kernel.org/all/e4d167fe-cb1e-41d1-a144-00bfa14b7148@gmail.com/
+[2] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+[3] https://lore.kernel.org/lkml/20240325235018.2028408-1-yosryahmed@google.com/
 
+---
+v2->v3:
+- Going back to the v1 version of the implementation (David and Shakeel)
+- convert unatomic bitmap_set/clear to atomic set/clear_bit (Johannes)
+- use clear_highpage instead of folio_page_zero_fill (Yosry)
 
+v1 -> v2:
+- instead of using a bitmap in swap, clear pte for zero pages and let
+  do_pte_missing handle this page at page fault. (Yosry and Matthew)
+- Check end of page first when checking if folio is zero filled as
+  it could lead to better performance. (Yosry)
+ 
+Usama Arif (2):
+  mm: store zero pages to be swapped out in a bitmap
+  mm: remove code to handle same filled pages
 
+ include/linux/swap.h |  1 +
+ mm/page_io.c         | 92 +++++++++++++++++++++++++++++++++++++++++++-
+ mm/swapfile.c        | 21 +++++++++-
+ mm/zswap.c           | 86 ++++-------------------------------------
+ 4 files changed, 119 insertions(+), 81 deletions(-)
+
+-- 
+2.43.0
 
 
