@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-208094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A4390208C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4EC9020A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2EF1F212BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFA8283FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAFD7E0E8;
-	Mon, 10 Jun 2024 11:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7897E57F;
+	Mon, 10 Jun 2024 11:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tSfnduN5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="p2PN4/Ps"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7437711A;
-	Mon, 10 Jun 2024 11:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A97C6EB;
+	Mon, 10 Jun 2024 11:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019810; cv=none; b=q8YhLJdZycU7q90F45/XeDV8en6pbe+F7j9ibRmo17b7+l62jRiXIMblgbkXWYqMI8/mS2DdrXxLy1w6KVav0QnfnWcsfBfTjHAD7ee/SSjawPwqNxNiMvP/ON9NIGIJJ9PZIbaNBdm3WnaYcr+pE/ZOYX6s6XI91EMTbGop9kI=
+	t=1718020018; cv=none; b=fu5MXgC0/rlLHy4wykm9xb/72+3HHRG5uwEwJgji9Htm9FP6m6YI31XSH/HeMpTGfPqAlDyB3s3TQKLYX8+/mnSpiPCOwIIyrdocpxEabEwDfK5mKHSkNfg9u1DuGNuFo8wftr5o5DuBA2EU2v3RUIqJW/Hxuu81IZlAhjt8vy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019810; c=relaxed/simple;
-	bh=A2UrWvpzcV8mD91bwCSuFpb+wTplVoHZLc2I0ye9+58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/aMC2SJpRf2lKR9VgChi2+znViqimudhZIlBrcvCUbcxLANLkTE5WX2SL4N/C1lMXSEjnxxSUe4lddEm4ac8O1QVoZxay7Eov29ktoA44aqNh2I7E1K3BPqnfOYhUiejXmzPiYq4dUJnULhFKnnb4/l1r1Ar+iwN3cCCf5e6y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tSfnduN5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95BB966F;
-	Mon, 10 Jun 2024 13:43:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718019795;
-	bh=A2UrWvpzcV8mD91bwCSuFpb+wTplVoHZLc2I0ye9+58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tSfnduN55Y2h/duvE2uu4wyNYNhEvYg3wqCkgr02/GJF0jfWiJPKHLkuq4SE77TDw
-	 SGnipWbyc1DI61bmsR4+Pl2BJ49bmOgcMmhloBVKhMMPQFmdzPh5oHi2JYF6MwQx5O
-	 hfI1O9LiR4O3+lNecMDcsO8jT61tNVGhBAdvE8DY=
-Date: Mon, 10 Jun 2024 14:43:06 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"hn.chen" <hn.chen@sunplusit.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v10 4/6] media: uvcvideo: Allow hw clock updates with
- buffers not full
-Message-ID: <20240610114306.GR18479@pendragon.ideasonboard.com>
-References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
- <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
- <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
+	s=arc-20240116; t=1718020018; c=relaxed/simple;
+	bh=cO/r8Z4NMLMNKUw5RcGGIRel+4bcO3Tor7T1qEhGYiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rKU2A11SSlCp4KAwxZnSSqHS80Ss+kbFJXipjsn8Bi9HIWbAxI3CL1mwkkiqco/wMW+gHFCFTdllwx29Kla1CjZLrb0AsnMtBcHWldJGafE5jXVJNSOw7tgQdlT/SwbPPv7MgHMaXaMW7VY3QYPq6kTsIsAy7WuXrwpxTuaoYik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=p2PN4/Ps; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A8Csfe015503;
+	Mon, 10 Jun 2024 13:46:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NLGY4SlIiBcaxzvgC7IKiZv6Lsi5LnhvOHDsDuCMGlE=; b=p2PN4/PsKalzGyRM
+	Ys5q/WeS7Co31Z8hBg0ERHW4EZBE0sRg3sgHdLNvt51bIHkbR9JSjCBbmkR1R9In
+	UMQovCBBoQuB40rOsd8ZwlJyh7KWm2V6VGxhBDCG5MAvFjTuxBzjoCLCMvCzM6Uo
+	B2bI91W1wst4k6YO1rd2vNfDl6mE0FpgHTgQ4OfS7R1CiOnhYaOrxMuRxDrhuGuC
+	rjXxxDM2vP9t0iO8LadmjDTEM4WzY4OIvsYWHLATXJwG4U+5nyBfROskg24u9rY2
+	gyIMpz5YO1GQivUykDetLUf3DbhsbTwvPD6OAXOU+7G727qM60LeS/iRuEoUITDk
+	1vB+WA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymemxppqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 13:46:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 12CF040047;
+	Mon, 10 Jun 2024 13:46:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 90B9D21684A;
+	Mon, 10 Jun 2024 13:45:10 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 13:45:09 +0200
+Message-ID: <c5ea12e7-5ee6-4960-9141-e774ccd9977b@foss.st.com>
+Date: Mon, 10 Jun 2024 13:45:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,PATCH v6 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240610071459.287500-1-christophe.roullier@foss.st.com>
+ <20240610071459.287500-8-christophe.roullier@foss.st.com>
+ <20139233-4e95-4fe5-84ca-734ee866afca@denx.de>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <20139233-4e95-4fe5-84ca-734ee866afca@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
 
-On Wed, May 29, 2024 at 05:03:08PM +0900, Tomasz Figa wrote:
-> On Sat, Mar 23, 2024 at 10:48:05AM +0000, Ricardo Ribalda wrote:
-> > With UVC 1.5 we get as little as one clock sample per frame. Which means
-> > that it takes 32 frames to move from the software timestamp to the
-> > hardware timestamp method.
-> > 
-> > This results in abrupt changes in the timestamping after 32 frames (~1
-> > second), resulting in noticeable artifacts when used for encoding.
-> > 
-> > With this patch we modify the update algorithm to work with whatever
-> > amount of values are available.
-> > 
-> > Tested-by: HungNien Chen <hn.chen@sunplusit.com>
-> > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > index d6ca383f643e3..af25b9f1b53fe 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -768,10 +768,10 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
-> >  
-> >  	spin_lock_irqsave(&clock->lock, flags);
-> >  
-> > -	if (clock->count < clock->size)
-> > +	if (clock->count < 2)
-> >  		goto done;
-> >  
-> > -	first = &clock->samples[clock->head];
-> > +	first = &clock->samples[(clock->head - clock->count + clock->size) % clock->size];
-> >  	last = &clock->samples[(clock->head - 1 + clock->size) % clock->size];
-> >  
-> >  	/* First step, PTS to SOF conversion. */
-> > @@ -786,6 +786,18 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
-> >  	if (y2 < y1)
-> >  		y2 += 2048 << 16;
-> >  
-> > +	/*
-> > +	 * Have at least 1/4 of a second of timestamps before we
-> > +	 * try to do any calculation. Otherwise we do not have enough
-> > +	 * precision. This value was determined by running Android CTS
-> > +	 * on different devices.
-> > +	 *
-> > +	 * dev_sof runs at 1KHz, and we have a fixed point precision of
-> > +	 * 16 bits.
-> > +	 */
-> > +	if ((y2 - y1) < ((1000 / 4) << 16))
-> > +		goto done;
-> 
-> Not a comment for this patch directly, but...
-> 
-> This kind of makes me wonder if we don't want to have some documentation
-> that specifies what the userspace can expect from the timestamps, so
-> that this isn't changed randomly in the future breaking what was fixed
-> by this patch.
 
-I think timestamp handling should really be moved to userspace. It will
-be easier to handle with floating-point arithmetic there. That would
-have been difficult to manage for applications a while ago, but now that
-we have libcamera, we could implement it there. This isn't high on my
-todo list though.
-
-> Anyway:
-> 
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-
--- 
-Regards,
-
-Laurent Pinchart
+On 6/10/24 12:39, Marek Vasut wrote:
+> On 6/10/24 9:14 AM, Christophe Roullier wrote:
+>
+> [...]
+>
+>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>> @@ -303,7 +307,7 @@ static int stm32mcu_set_mode(struct 
+>> plat_stmmacenet_data *plat_dat)
+>>       dev_dbg(dwmac->dev, "Mode %s", 
+>> phy_modes(plat_dat->mac_interface));
+>>         return regmap_update_bits(dwmac->regmap, reg,
+>> -                 dwmac->ops->syscfg_eth_mask, val << 23);
+>> +                 SYSCFG_MCU_ETH_MASK, val << 23);
+>>   }
+>>     static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, 
+>> bool suspend)
+>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
+>> stm32_dwmac *dwmac,
+>>           return PTR_ERR(dwmac->regmap);
+>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>> &dwmac->mode_reg);
+>> -    if (err)
+>> +    if (err) {
+>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>> +        return err;
+>> +    }
+>> +
+>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>> &dwmac->mode_mask);
+>> +    if (err)
+>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>
+> Isn't this an error , so dev_err() ?
+No, it is only "warning" information, for MP1 the mask is not needed 
+(and for backward compatibility is not planned to put mask parameter 
+mandatory)
+>
+> Include the err variable in the error message, see the dev_err() above 
+> for an example. That way the log already contains useful information 
+> (the error code) that can be used to narrow down the problem.
 
