@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-208561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD9D9026DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:38:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145959026DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C50B281C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDCAF1F24086
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CCB14535A;
-	Mon, 10 Jun 2024 16:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602D914532E;
+	Mon, 10 Jun 2024 16:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="eeYpo2mJ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0Hr2vM1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077EE143864
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404B614387C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037493; cv=none; b=bV3LIH0LBRsYFRLDUJAQZU2dmNyLy1Yi7v9oTqmjVeGIuJTd3yU/uPkERAPx0lQv3J00Evp1+Fi0J6MQwRIFx6O9LgUTBxy4kbip12u2AGN0/PRSGTeTSFTo9kiWzx61qbC8r2oHob9EUa5zzxcwmdaTy+Fu1kEYBD0UbmSDUkE=
+	t=1718037548; cv=none; b=DNJOcrjcWM8/CK3yUUXZI0AIQatVOumbHVi/AWWX6AGfSd2v942IeaeuHV+eJVzJXixNuWS9TH+cjRykBxP66+bRkMm2V+A9/TYhmTg8qZipayzcEKGppPEvlpeXKszjm1goRMx8xieRnpyfdS82SL3sh+KhaIt7HEI8Tr2Y9wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037493; c=relaxed/simple;
-	bh=kiJ5B+nQ3bNrTcSfOUxREX/Sxo9421n4Dpjf7djMOc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9jIH/epxPcA/Awa49m+tyZj6gG/Zv99F5f8M+rM7AgGtyrszS8qACrevAK3PkL/Xk625Xc4er7Z9AHynAn288WFqwIA0uPy946w+Qcqcs4tYn7bpQ2gO154qKcdYHZqiAhkIPWaE/bWv5eYydvqeiZ2BCZ7uW/i4VQ+ehHzxiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=eeYpo2mJ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so1742493b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718037490; x=1718642290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXoCBXdsY/M+q0fRNH+4Z39Lx/Z6bNhqTdLOeE8sP8k=;
-        b=eeYpo2mJKCmltM/YSNkpBTpFbSgBIvZlnOg01HHwTSceDifLDW0QFWMpKWXNf19jUm
-         Lw4bYd3qomSPKP/eB0uhF+trTe5sdQdvRBqfPyCXSNlrsKNlM6pimiR20nPBj1BgpBPE
-         M61J+/XH/qcs1YkO1HwW18msjqxrElztK5401L1PFKPSJyb68iigc7BfdIyjjHSnnJ+k
-         juEEZqHrVLpKuer1c8IZUoPR16mtz+Gh92Fdp7LeDvz9c4Qj7PoDqD66SAkjFzhNWgfR
-         bHKH7e7e1JJ+p2kuk/OewehHMJeU6qvcBvm5i1/l1TkKchqRstlqW0gb7lP4x/tSQ9Yb
-         uKvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718037490; x=1718642290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NXoCBXdsY/M+q0fRNH+4Z39Lx/Z6bNhqTdLOeE8sP8k=;
-        b=Vevccm2YcPkTiYTj2RhrX/XlJ+D3NXFqXY9hzJpBsCamBkdcYtYOAa88JDRvPBLKoM
-         7+Wq4k2IAc5R2WtBrDO46LYk7ELmerogaIOaPXCG7FoJ7BltUybZoBvnvuRmgyaC4RP9
-         OtZXTvLDEv/DQAjcxr6ujI4DJjCSWLd1l+582CS8vuIT1uNbTvMijPwXYmZAS8a8020K
-         IdxRoiBs3ypihlgZK1y0itYkvY060wSzdsZno2EMuf7Pl1Rj/2lzuXH3ZOt3QAswzCi4
-         3kMjzAlBi7mpPY7FK9B7qZoMb8nWabBWuwLeaMwAqKK+wRc/4OgAhvqPA7V8S7NzYrG8
-         HsUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW81kZju3jsrb/t5tMubZtk4s+CRP14vFjLeaOJ/g3lqN/tP50Hn6/8ZsoBMK00+pTjvG8iVQ+akYEgbtsDuQNZOaOhbLv6p/XyvyaP
-X-Gm-Message-State: AOJu0YwBg0SEr0Z3O/OBzlS9K8iQjCBhA3SZZ4ch6hzx06G9FS3kmblK
-	vNb3ZHbRBs655l8QeJU/b1Enn4xsP2Hn2dUqEdtBzF8b1812JvWCxaDHAPAk/hc=
-X-Google-Smtp-Source: AGHT+IE55hp5TAOsUAoyvyS756iP3CfmNdcn1/vY5DaP2UtK03lkcl/o+b2HM769MgzylCW45JEhTg==
-X-Received: by 2002:a05:6a00:138c:b0:705:951e:ed88 with SMTP id d2e1a72fcca58-705951f1f4cmr3638587b3a.25.1718037490325;
-        Mon, 10 Jun 2024 09:38:10 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:129d:83bc:830b:8292])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6deb62efb66sm5525307a12.12.2024.06.10.09.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:38:09 -0700 (PDT)
-Date: Mon, 10 Jun 2024 09:38:06 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 02/13] dt-bindings: thead: add a vlen register length
- property
-Message-ID: <Zmcr7pP+XEWHYTsy@ghost>
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
- <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
- <20240610-unaltered-crazily-5b63e224d633@spud>
+	s=arc-20240116; t=1718037548; c=relaxed/simple;
+	bh=dN+77p+j/b8iZSyHVlGXH1wUBYhYLJsCm7Lq8sxSecA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+tufNUAn6ktGrN6iblR0UOIRIKUQmo0uRcQ+0SDatHr21SYRbSIhe09IuoydDlh4Qr2ppAHB7WtPN7mWG0Yt81g0zpL54xf1gVoAogTDLKuat9usGg/AvI+FeuL8asFWMDLVmTpb6o3twP+36wAVU4a2X44IFkwYY3U0G/64wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0Hr2vM1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718037546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cs2+zpw7zAO4JC3ZJJkARQKdcaav8qsg47LwqLONWbc=;
+	b=F0Hr2vM1be5M3wnbM5yK6GBDU4OwTpZ220NnvdYs/Vxcbr18FZD8r2X83vrQjBWyMFOnoI
+	lpVerXP1CeRA/wXsl7MQH3m6JaC8ITqp2gSebcqDrgumpBcAvV/s3lZTBIytMHlwe3f8Lb
+	1jYr/IzYjEtdauhnUufT/S8I/o1p6WQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-537-JCJm8Pe4PTGh1Mp4o2xrng-1; Mon,
+ 10 Jun 2024 12:39:03 -0400
+X-MC-Unique: JCJm8Pe4PTGh1Mp4o2xrng-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6A67D19560BA;
+	Mon, 10 Jun 2024 16:39:01 +0000 (UTC)
+Received: from optiplex-lnx.redhat.com (unknown [10.22.17.224])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3FB8319560B0;
+	Mon, 10 Jun 2024 16:38:59 +0000 (UTC)
+From: Rafael Aquini <aquini@redhat.com>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] kbuild: rpm-pkg: fix rpmbuild warnings for kernel.spec
+Date: Mon, 10 Jun 2024 12:38:56 -0400
+Message-ID: <20240610163856.693110-1-aquini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610-unaltered-crazily-5b63e224d633@spud>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Jun 10, 2024 at 05:29:23PM +0100, Conor Dooley wrote:
-> On Sun, Jun 09, 2024 at 09:45:07PM -0700, Charlie Jenkins wrote:
-> > Add a property analogous to the vlenb CSR so that software can detect
-> > the vector length of each CPU prior to it being brought online.
-> > Currently software has to assume that the vector length read from the
-> > boot CPU applies to all possible CPUs. On T-Head CPUs implementing
-> > pre-ratification vector, reading the th.vlenb CSR may produce an illegal
-> > instruction trap, so this property is required on such systems.
-> > 
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/riscv/thead.yaml | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/riscv/thead.yaml b/Documentation/devicetree/bindings/riscv/thead.yaml
-> > index 301912dcd290..5e578df36ac5 100644
-> > --- a/Documentation/devicetree/bindings/riscv/thead.yaml
-> > +++ b/Documentation/devicetree/bindings/riscv/thead.yaml
-> > @@ -28,6 +28,13 @@ properties:
-> >            - const: sipeed,lichee-module-4a
-> >            - const: thead,th1520
-> >  
-> > +thead,vlenb:
-> 
-> This needs to move back into cpus.yaml, this file documents root node
-> compatibles (boards and socs etc) and is not for CPUs. If you want to
-> restrict this to T-Head CPUs only, it must be done in cpus.yaml with
-> a conditional `if: not: ... then: properties: thead,vlenb: false`.
-> 
-> Please test your bindings.
+Newer revisions of rpmbuild are throwing warnings about the current
+kernel.spec template having an unversioned kernel-headers in the
+'Obsoletes:' field and not being able to source the epoch's date from
+the spec's missing '%changelog' section:
 
-Now that I know `make dt_binding_check` exists I will use that in the
-future!
+  $ make srcrpm-pkg
+    UPD     include/config/kernel.release
+    GEN     rpmbuild/SPECS/kernel.spec
+    UPD     .tmp_HEAD
+    ARCHIVE linux.tar.gz
+  rpmbuild -bs rpmbuild/SPECS/kernel.spec --define='_topdir /mnt/nfs/work/kernel/linux/rpmbuild'
+  warning: line 34: It's not recommended to have unversioned Obsoletes: Obsoletes: kernel-headers
+  warning: source_date_epoch_from_changelog set but %changelog is missing
+  Wrote: /mnt/nfs/work/kernel/linux/rpmbuild/SRPMS/kernel-6.10.0_rc3-1.src.rpm
 
-- Charlie
+  RPM build warnings:
+      line 34: It's not recommended to have unversioned Obsoletes: Obsoletes: kernel-headers
+      source_date_epoch_from_changelog set but %changelog is missing
 
-> 
-> Thanks,
-> Conor.
-> 
-> > +  $ref: /schemas/types.yaml#/definitions/uint32
-> > +  description:
-> > +    VLEN/8, the vector register length in bytes. This property is required in
-> > +    systems where the vector register length is not identical on all harts, or
-> > +    the vlenb CSR is not available.
-> > +
-> >  additionalProperties: true
-> >  
-> >  ...
-> > 
-> > -- 
-> > 2.44.0
-> > 
+This patch addresses both RPM build warnings.
 
+Signed-off-by: Rafael Aquini <aquini@redhat.com>
+---
+ scripts/package/kernel.spec | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
+index e095eb1e290e..4d58b29c03ad 100644
+--- a/scripts/package/kernel.spec
++++ b/scripts/package/kernel.spec
+@@ -1,3 +1,5 @@
++%global source_date_epoch_from_changelog 0
++
+ # _arch is undefined if /usr/lib/rpm/platform/*/macros was not included.
+ %{!?_arch: %define _arch dummy}
+ %{!?make: %define make make}
+@@ -27,7 +29,7 @@ The Linux Kernel, the operating system core itself
+ %package headers
+ Summary: Header files for the Linux kernel for use by glibc
+ Group: Development/System
+-Obsoletes: kernel-headers
++Obsoletes: kernel-headers < %{version}
+ Provides: kernel-headers = %{version}
+ %description headers
+ Kernel-headers includes the C header files that specify the interface
+-- 
+2.45.1
 
 
