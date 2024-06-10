@@ -1,185 +1,256 @@
-Return-Path: <linux-kernel+bounces-208688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1EA902822
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:58:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12822902825
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820BF1F232BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:58:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F3CB27280
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB614900C;
-	Mon, 10 Jun 2024 17:58:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E925F14AD3E;
+	Mon, 10 Jun 2024 17:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B6uYFWB3"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0537E14BF89
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CB914900C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042284; cv=none; b=g4KQvKI+HO5c4vhlHuPahgvwgQ/lcZvrblSl5rIdvYzQ7LYQo4AdiaV4uVc3GOAezJiHwYr/LzpN44TJv7anMQngpQLSboo+We+NYf/x448COYZzbgcV2ShzRanLJJOFHIxefP6z3oSAdvWS+7j2xfnCmO5S52ERnLxfJxI1uyA=
+	t=1718042320; cv=none; b=ddRdpLjq+SIEAnI5dqz2LlZXvgxHTKEYTjp9v9h5UuC2CCALFTarG3Fo/kGcgSVDKAv8k0udW9p5DGRjqiEr23oq/nQp3e8wIjgY7yEu63roIR5SB5Qwebja3thCu5w98jWMJCdjWAWvbjMnC+gDs2b0u4GX2MWOjM6Xe56VOuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042284; c=relaxed/simple;
-	bh=CZtH7Ao+C5oTSuA5K4jC2pck/kyUckCO8qhUQIFgIrg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IeqLHcHRb1H8EnU4YK+tJhkgghIMiJtnp3yJJ88XwPdsNp12y0BdUv6bDf55y7jQic3JdfvxA+oKDZMHX5uQpagySD/1eOm9lVkVt+zC3Qw5oPvLsrNhjFvevuaxitNJPe05wbNNRx2nEvln02iaNeoTAHj2T/WHOi2jWesveWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e94cac3ee5so20793439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:58:02 -0700 (PDT)
+	s=arc-20240116; t=1718042320; c=relaxed/simple;
+	bh=hO6nnDmuhkUErx75fBkprBGAIkEHIr9E1JJw8oC4y1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xe/N9W81xl5GR54L6Rwosu2ElfG55Tf2jzWiAm97RIPvCwIyVrGoN+OSBAQ6ZivbZiDQbzrgsXoVoz5H8V0ai5Rkx7Bd7QdqdzIyrlzxx8zIZd9Uk8mLil2OtoIYugAoXaZjngtcxZCOgW3NuRzNSyYyvWfKfbFCGcQdW2iFa0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B6uYFWB3; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so2429331fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718042316; x=1718647116; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQX4a1uB13mXlhl/FxYuXCoDhG2XSW0BFXyW6YKkaDg=;
+        b=B6uYFWB392WDEcYr0HbznBnOc65vMkmbWesae73GUt4mybcRD4siviUw6vNx4qdp1R
+         IxO08I+AFOHO51Zu/sdVI03lQhK7O2CB7ePLaD6iMyem/FGvoTN6VssUJiNTEocj9+tw
+         ifuTpVtCHbuZhlMkS4/teuJHTrgbfvkhhJxLo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042282; x=1718647082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MU+323og30grVWQXcxG4YNn0xgi84AVzfHAxcCczLpE=;
-        b=uthWtTDjS6aogkHXcBqoKGHI5HgK+szfCRJzD3cdShlIyeVUDUHrTD1sIfxNl2scGr
-         uSXw37/kkJ/a/g+rIpFoiNbto3ssZtqrJTJcmb3UVe7wIF8iV52falyztSAx7pNRnxKR
-         /988ENiNyrrs++FSJXXYLtKgyimkFQmXv/7lgsxfgks/tl7dq0rVvFwHT34/340fcaIM
-         j+VdJ6yvsBlnaIG573ZippYIuRVEVg4t+VLM0+wJp0tyeMJSd/jfHpfC08uV8LXHGzs2
-         yqKPPdaHcuro8Kc5y2My/ahh1ag5dKB/IIFzdxxKJl7Jf5zGASE51UgEwyDY9uGYRUwl
-         LUuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmB7pYJmFoxvk29WNB/zjcDaF9rkDyehKYGwqihnCgx7KyjRx9xR1PP1V+5xO0XSUcjMUHUKQ3lccMOj5yDHd5ft0eFFr8spZ/5k/l
-X-Gm-Message-State: AOJu0YwfUlC4Jbg1KEZxEH/vK7+WTnHFyNKJ8q3CkH2foE+FA4kt1p3u
-	6mb2aNimEX3ykLdZ2pDFDRFdOIRNGgWlAtcKyuYTwSeLYj0MNgLmwCkS/sJYbwSWUtg6QL1rzwc
-	btOKCgHS6bnxuePMjDV4j2/GjIGQIYVrfbyZsYLPadDp1bqe9Td1RPoA=
-X-Google-Smtp-Source: AGHT+IHqdhYEA70jCGH19iPxU6tBAhR8yxwgdzCpzeCFLSAGYeIj3djXjDo3eIKB6v4HQUYEoBhOYIk92QM1vh6RyXhM5QuPmVuw
+        d=1e100.net; s=20230601; t=1718042316; x=1718647116;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQX4a1uB13mXlhl/FxYuXCoDhG2XSW0BFXyW6YKkaDg=;
+        b=BcxexQHjkj/c6GCQFFssZcmvwH+AiLBE4JIJNLTVG5XlEKNfXItR4nw6WiwiCpZRo5
+         R+Uxu6k8NOc5q/SDfpwOyAu9cQnz8LkFJoMlcJB7XvuLqzxAAIzfAsVTXDiuJBIslldg
+         wpItIAaX2YScel4VsGGkLyEKDq/nIFuZ36/xSGyNPLp8ZaouJFBnmBrzCp2k7Yy+F50I
+         ZDnhmaSwDfpQYNvSEAg61DFA5GQBTwiCoM5KmF3AAFC7N8gVKN4xCU53qC57TysSHBkM
+         lslt6dbeinOQQ0zPU0KZs0BXLejt+O9y5+suxPpQSqfIxlciJxaOGqtnm2YtW9w2cD49
+         cNQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBTYuItpaNVJvQAzaEzvx6xoy7X2OpnQKKcNu2waSezrXAQebJL7myEfwonP+NPlFF7La3IFrHdwipfTw94TS8BBfoHMjXzzPj2Zfz
+X-Gm-Message-State: AOJu0Ywwk4GXwOjyAAnRts6wOePgbPasyOW8bBV3V7BTK7pUCtcF3di4
+	NBCn8urUKbKc7LoddjGm7HDLa0jTnBSgO/V8XOoEOUDAtlc/1RNtyrQ8ewlkVj/71bWA6aKEdfj
+	7bnA=
+X-Google-Smtp-Source: AGHT+IH+nflCgXgGyqWM75VImrtNQOkew5rCmDGxFjCBCz5Ya67tvW31aP3boayESY9TC3YU1oKsCg==
+X-Received: by 2002:a2e:3502:0:b0:2eb:d696:4b80 with SMTP id 38308e7fff4ca-2ebd6965d7bmr51041131fa.52.1718042315791;
+        Mon, 10 Jun 2024 10:58:35 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae234204sm7781388a12.87.2024.06.10.10.58.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 10:58:34 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6ef8e62935so22102866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:58:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9hMnkO37W1gsY0SF1ty1+BzFdIqgDRvVitlQ5+5p7pm/BwEgi0k7Or1+GsVYU/hYV4ZOw0E/6+mfGWvWmdcZiGqNOpDoNyAJJbXnz
+X-Received: by 2002:a17:906:11ca:b0:a6e:139b:996d with SMTP id
+ a640c23a62f3a-a6e139b9d75mr689185666b.32.1718042314389; Mon, 10 Jun 2024
+ 10:58:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d17:b0:7eb:7e4a:8ea9 with SMTP id
- ca18e2360f4ac-7eb7e4a92e3mr22432339f.4.1718042282049; Mon, 10 Jun 2024
- 10:58:02 -0700 (PDT)
-Date: Mon, 10 Jun 2024 10:58:02 -0700
-In-Reply-To: <e8b8013b-d8b4-4eee-8643-1d512aa17133@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee54e1061a8ce3f6@google.com>
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
-From: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
+References: <20240608193504.429644-2-torvalds@linux-foundation.org> <29a8ceb4-a699-433b-8a11-be6b3c9fd045@rasmusvillemoes.dk>
+In-Reply-To: <29a8ceb4-a699-433b-8a11-be6b3c9fd045@rasmusvillemoes.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 10 Jun 2024 10:58:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wirUHJ8DWzWjb3ZxatjQaomeTzM4uPjemrkbSjVvYOaGQ@mail.gmail.com>
+Message-ID: <CAHk-=wirUHJ8DWzWjb3ZxatjQaomeTzM4uPjemrkbSjVvYOaGQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	linux-arch <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 10 Jun 2024 at 02:50, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+>
+> Well, I think it lacks a little. I made it so that an arch didn't need
+> to implement support for all runtime_const_*() helpers
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: soft lockup in raw_ioctl
+Honestly, normally the number of helpers would max out at probably
+three or four.
 
-dummy_hcd dummy_hcd.0: urbp 000000006bf6c1dd 40409880 next_frame 0000000000000000
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-dummy_hcd dummy_hcd.0: urbp 000000003f481f40 40409880 next_frame 000000003f481f40
-watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [syz-executor415:10796]
-CPU#0 Utilization every 4s during lockup:
-	#1:  95% system,	  1% softirq,	  5% hardirq,	  0% idle
-	#2:  95% system,	  1% softirq,	  5% hardirq,	  0% idle
-	#3:  95% system,	  2% softirq,	  5% hardirq,	  0% idle
-	#4:  95% system,	  1% softirq,	  5% hardirq,	  0% idle
-	#5:  95% system,	  2% softirq,	  5% hardirq,	  0% idle
-Modules linked in:
-irq event stamp: 223968
-hardirqs last  enabled at (223967): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
-hardirqs last  enabled at (223967): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
-hardirqs last disabled at (223968): [<ffff80008af10ec0>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
-hardirqs last disabled at (223968): [<ffff80008af10ec0>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
-softirqs last  enabled at (223962): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (223962): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
-softirqs last disabled at (223957): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
-CPU: 0 PID: 10796 Comm: syz-executor415 Tainted: G        W          6.10.0-rc2-syzkaller-00003-g8867bbd4a056-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:176 [inline]
-pc : arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
-pc : console_emit_next_record kernel/printk/printk.c:2935 [inline]
-pc : console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
-lr : console_emit_next_record kernel/printk/printk.c:2935 [inline]
-lr : console_flush_all+0x678/0xb74 kernel/printk/printk.c:2994
-sp : ffff80009c6d7380
-x29: ffff80009c6d7480 x28: ffff80009c6d7530 x27: 0000000000000001
-x26: ffff80009090b530 x25: ffff80009090b520 x24: dfff800000000000
-x23: 1ffff000121216af x22: dfff800000000000 x21: ffff80009090b578
-x20: 0000000000000000 x19: 00000000000000c0 x18: ffff80009c6d72b8
-x17: 000000302e646368 x16: ffff80008033878c x15: 0000000000000001
-x14: 1ffff00011e379c8 x13: 0000000000000000 x12: 0000000000000003
-x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000dac7bc80 x7 : ffff800080381d44 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000006 x1 : 0000000000000080 x0 : 0000000000000000
-Call trace:
- __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
- arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
- console_emit_next_record kernel/printk/printk.c:2935 [inline]
- console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
- console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
- vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
- vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
- vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
- _printk+0xdc/0x128 kernel/printk/printk.c:2370
- usb_gadget_register_driver_owner+0x1f0/0x224 drivers/usb/gadget/udc/core.c:1711
- raw_ioctl_run drivers/usb/gadget/legacy/raw_gadget.c:595 [inline]
- raw_ioctl+0x10c0/0x33bc drivers/usb/gadget/legacy/raw_gadget.c:1306
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 532 Comm: kworker/u8:6 Tainted: G        W          6.10.0-rc2-syzkaller-00003-g8867bbd4a056-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: bat_events batadv_nc_worker
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : lock_release+0x500/0x9cc
-lr : lockdep_recursion_finish kernel/locking/lockdep.c:467 [inline]
-lr : lock_release+0x4c4/0x9cc kernel/locking/lockdep.c:5776
-sp : ffff8000988e78e0
-x29: ffff8000988e79b0 x28: ffff80008f1c76a0 x27: dfff800000000000
-x26: 1fffe00018cc6517 x25: ffff0000c6632910 x24: ffff0000c6631e40
-x23: ffff0000c66328b8 x22: 00000000ffe2000d x21: 73559e3b58d8591b
-x20: 0000000000000002 x19: ffff0001b3db6000 x18: 1fffe000367b6bde
-x17: ffff80008efed000 x16: ffff80008af15aa8 x15: 0000000000000001
-x14: ffff80008eff0558 x13: dfff800000000000 x12: 000000001635a668
-x11: 0000000061619286 x10: 0000000000ff0100 x9 : ffff80008ef36000
-x8 : 0000000000000000 x7 : ffff80008ac4e1b0 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000002
-x2 : 0000000000000008 x1 : 0000000000000080 x0 : 0000000000000001
-Call trace:
- __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
- arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
- lock_release+0x500/0x9cc kernel/locking/lockdep.c:5777
- rcu_lock_release+0x2c/0x38 include/linux/rcupdate.h:339
- rcu_read_unlock include/linux/rcupdate.h:812 [inline]
- batadv_nc_process_nc_paths+0x28c/0x324 net/batman-adv/network-coding.c:699
- batadv_nc_worker+0x3c4/0x580 net/batman-adv/network-coding.c:728
- process_one_work+0x7b0/0x15e8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x938/0xef4 kernel/workqueue.c:3393
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+The only helpers you need is for the different constant sizes and the
+placement in the instructions. For example, on x86-64, you almost
+certainly end up with just three fixup functions (byte, 32-bit and
+64-bit) and then *maybe* a couple of "operation" helpers.
+
+Honestly, the only op helpers that are likely to exist are
+add/mask/shift. But I didn't add macros for creating these ops,
+because I don't actually believe very many exist in the first place.
+
+And yes, x86-64 ends up being fairly simple, because it doesn't have
+multiple different ways of encoding immediates in different places of
+the instruction. But even that isn't going to make for very many
+operations.
+
+In fact, one of the whole design points here was KISS - Keep It Simple
+Stupid. Very much *not* trying to handle all operations. This is not
+something that will ever be like the atomic ops, where we have a
+plethora of them.
+
+To use a runtime constant, the code has to be really *really*
+critical. Honestly, I have only ever seen one such function.
+__d_lookup_rcu() really has shown up for over a decace as one of the
+hottest kernel functions on real and relevant loads.
+
+For example, in your RAI patches six years ago, you did the dentry
+cache, and you did the inode_cachep thing.
+
+And honestly, while I've never seen the inode_cachep in a profile. If
+you ever look up the value of inode_cachep, it's because you're doing
+to allocate or free an inode, and the memory load is the *least* of
+your problems.
+
+> name because yes, much better than rai_), but could implement just
+> runtime_const_load() and not the _shift_right thing,
+
+Not a single relevant architecture would find that AT ALL useful.
+
+If you have a constant shift, that constant will be encoded in the
+shift instruction. Only completely broken and pointless architectures
+would ever have to use a special "load constant into register, then
+shift by register".
+
+I'm sure such horrors exist - hardware designers sometimes have some
+really odd hang-ups - but none of the relevant architectures do that.
+
+> Otherwise, if we want to add some runtime_const_mask32() thing to
+> support hash tables where we use that model, one would have to hook up
+> support on all architectures at once.
+
+See above: when we're talking about a couple of operations, I think
+trying to abstract it is actually *wrong*. It makes the code less
+readable, not more.
+
+> Don't you need a cc clobber here?
+
+"cc" clobbers aren't actually needed on x86. All inline asms are
+assumed to clobber cc
+
+It's not wrong to add them, but we generally don't.
+
+> And for both, I think asm_inline is appropriate
+
+Yup. Will do.
+
+> I know it's a bit more typing, but the section names should be
+> "runtime_const_shift" etc., not merely "runtime_shift".
+
+I actually had that initially. It wasn't the "more typing". It was
+"harder to read" because everything became so long and cumbersome.
+
+The noise in the names basically ended up just overwhelming all the
+RealCode(tm).
+
+> > +     RUNTIME_CONST(shift, d_hash_shift)
+> > +     RUNTIME_CONST(ptr, dentry_hashtable)
+> > +
+>
+> Hm, doesn't this belong in the common linker script?
+
+I actually went back and forth on this and had it both ways. I ended
+up worrying that different architectures would want to have these
+things in particular locations, closer to the text section etc.
+
+IOW, I ended up putting it in the architecture-specific part because
+that's where the altinstructions sections were, and it fit that
+pattern.
+
+It could possibly go into the
+
+        INIT_DATA_SECTION
+
+thing in the generic macros, but it has to go *outside* the section
+that is called ".init.data" because the section name has to match.
+
+See why I didn't do that?
+
+> I mean, if arm64 were to implement support for this, they'd also have to add this
+> boilerplate to their vmlinux.lds.S?
+
+See
+
+    https://lore.kernel.org/all/CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com/
+
+doing arm64 was always the plan - ti was doing perf profiles on arm64
+that showed this nasty pattern to me once again (and honestly, showed
+it much more: I have 14% of all time in __d_lookup_rcu() because while
+this machine has lots of cores, it doesn't have lots of cache, so it's
+all very nasty).
+
+Notice how small that patch is. Yes, it adds two lines to the arm64
+vmlinux.lds.S file. But everything else is literally just the required
+"this is how you modify the instructions".
+
+There is no extra fat there.
+
+> Please keep the #includes together at the top of the file.
+
+Yes, my original plan was to do
+
+    #ifdef CONFIG_RUNTIME_CONST
+    #include <asm/runtime-const.h>
+    .. do the const version of d_hash() ..
+   #else
+   .. do the non-const one ..
+  #endif
+
+but the asm-generic approach meant that I didn't even need to make it
+a CONFIG variable.
 
 
-Tested on:
+> > +static inline struct hlist_bl_head *d_hash(unsigned long hashlen)
+>
+> Could you spend some words on this signature change? Why should this now
+> (on 64BIT) take the full hash_len as argument, only to let the compiler
+> (with the (u32) cast) or cpu (in the x86_64 case, via the %k modifier if
+> I'm reading things right) only use the lower 32 bits?
 
-commit:         8867bbd4 mm: arm64: Fix the out-of-bounds issue in con..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=137ec67a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=151eb522980000
+I'll separate it out, but it boils down to both x86 and arm64 doing
+32-bit shifts that clear the upper 32 bits.
 
+So you do *not* want a separate instruction just to turn a "unsigned
+long" into a "u32".
+
+And while arm64 can take a 32-bit input register and output a 64-bit
+output, on x86-64 the input and output registers are the same, and you
+cannot tell the compiler that the upper 32 bits don't matter on input
+to the asm.
+
+End result: you actually want to keep the input to the constant shift
+as the native register size.
+
+But I'll separate out the d_hash() interface change from the actual
+runtime constant part.
+
+               Linus
 
