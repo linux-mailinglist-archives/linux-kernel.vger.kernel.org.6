@@ -1,152 +1,174 @@
-Return-Path: <linux-kernel+bounces-208540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78FD90267B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:19:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D67E90267C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823F01F223C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01A01C212B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6314142E9F;
-	Mon, 10 Jun 2024 16:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86889143720;
+	Mon, 10 Jun 2024 16:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCBZuDqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3rQAy0Go"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D85E81754;
-	Mon, 10 Jun 2024 16:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67271140369
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036360; cv=none; b=Qf0Tx4OZiPAh+9UN5DBYycSc9ibX2Bov5cRNghcL0Wn1FrxhGoBcxNAsU0fNGZ1hqvcaHtVTR2Z6zGDr3+Zrn4hgl66urS/yV2xI9hqkj3/8hNr1Df3YI+1U90Mj3bNVn/qTP3xcUYxztjCCmYmR+gIU9NQCISQh/TqSM7NJX9U=
+	t=1718036376; cv=none; b=Oh44GfJKYLXsVXvK3gLlAIEy6fJjkJ5+0/3hXPsvgZFbSAT24xzjJ1NdRYVqrbh9RngWUMatlNAKIPemFck+HtjML+ZHm3psTNIjIAurBNPL3kw/uMmEA2ZTfIOzAXaz+ybT/UPpqlxlQ+YuPW+BixCVxqIykX8K8m7YbGcPL8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036360; c=relaxed/simple;
-	bh=BbqJ1v2auCLBE0bToKR5V2m6jVtwM9b3QEfzCJ0IEGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PKe4/V0V9ulX9YeEzXsx7UGAvxBZG0nZX62es1vCf5ygD8aG++jdXJTU2ukLgNAL6guLXNPBCBFZbqv0201BWmc1wt2HvrWzpAZ3oicg7qtl1nZZlSrKjWp9P2PBOITbdhpeW81kY2pWRi1pvlGhzSio2M1k8x6U07fGFMUfqm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCBZuDqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7C4C2BBFC;
-	Mon, 10 Jun 2024 16:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718036359;
-	bh=BbqJ1v2auCLBE0bToKR5V2m6jVtwM9b3QEfzCJ0IEGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCBZuDqGMZksQ02K0c6Tu0igtY4udAd2HSprodAzpj7y20CG1Rp94dBhi67W4sV4B
-	 FhxwAU00PLHQNegE7o9BEdkh5U+D7udL5MwHWWoZrVh2WfsZGTz66KaZmYvVZQVLCf
-	 xwGRR8JC3MnNGlePNimuEgxrBFE03d8DilPpCt5P5tdrZKUiM9AgItec9FwZva0xTX
-	 KK7oBHuHbIXWXJSzDJy+m+WXd/pYdmKi1ZK6pr30JO5EADzooTkT8fu7Q5HaWrciHb
-	 Dj6ZjPLUBy8/5Q0Am01/D1LK5yfOG+VtG+FipVcnVWt/TTN0x3Ivu/inudTdlekQ/t
-	 qFyzKDvshmAGQ==
-Date: Mon, 10 Jun 2024 17:19:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	pthombar@cadence.com
-Subject: Re: [PATCH v8 4/4] spi: cadence: Add MRVL overlay xfer operation
- support
-Message-ID: <ZmcnhGH2fcmrXn1G@finisterre.sirena.org.uk>
-References: <20240607151831.3858304-1-wsadowski@marvell.com>
- <20240607151831.3858304-5-wsadowski@marvell.com>
+	s=arc-20240116; t=1718036376; c=relaxed/simple;
+	bh=nuxTR3CH9P7Y4RDrtApmBEaW6Xc1c9ZyqxUg5eKbxSo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jNMLVxVfa6msHV2kTsDjhkSM/OPwTgtjLR5cVLGNzfGWKe5y95MHDGu5nMa1HYKn8OUovXEyWScO0K7736ayJviMtauHhQR2UKRASAscr0kbkce/twGMaTQcsRhSvDJvECcz7YcMCnIp7ZLRpmxCmW5CP2/POiM12KY4Ggti/ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3rQAy0Go; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70258e95605so77309b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718036375; x=1718641175; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikH/R8MZ/k5w4tUSKc7WaDfELjNmgc1A9Z/tdHObMgk=;
+        b=3rQAy0Go4r8NvsFrNWKIRg0fw4Vw5CNNf9PtYSd0VXh9+h4hVyP6jYDGQiDelnGSQQ
+         Cu5Q2HvDzgnfyqO2nd35q0evKHKR0eWvVXmEe+25HH+tfETGpbQ6Pq/l6AX4yCbhFt+u
+         kkxnwB55kk9lh7U8inpbzEt+9oKjARBggp1Wy6GY6dVJhovfB8rofEPwTDBm7xc887nI
+         fqU2oyKbuAsYQMj3/BXbWQx7ynVEePp4hWORwAL5cW8hYDOnL/vInr5LH8xp+eh3SKJV
+         lsTSVJxz+YCqB5i5OOEc0pT4GxxqexPlI5F9QW3fVOregwMv6dbahXIg+yC4E4xkTcT/
+         Okcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718036375; x=1718641175;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikH/R8MZ/k5w4tUSKc7WaDfELjNmgc1A9Z/tdHObMgk=;
+        b=MD2oCymXNHMM5aI/lV1k1P+2uKu7Ecg1ZXZSuur2VmjVm65m3cHVWdeDbrb/IFq06U
+         j198RzTGx0GlwuSnGooT3bZO7roR0BKY4xppEbyx7/q+BSzMxHa3jD2ab38LLeFqj2u4
+         pTkUvdJMrzGPl/1jlAktywWUcO6o6OsAvZ1VefeSIsITKEOuc2pvc0QgSM8x66D/aulU
+         rjjOqFX6crKQovG+dAn1UVZaIxqAjFWR0XHQUu1BU5A6jP+ptED60Pn+mVse1fyhmV6v
+         FdbMi9ozvpaFaBGGchSbNg2pFtTFnN+rVAx9xSPabf02Mv6iML4r3R7axt0FROIrQn7b
+         iCiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkpQpgb54zl31aXN/uKc0zmh3fRAX1BE4eQo9ziAYGaNL78g/tlDSWb/vkUUIQfd/vIAgV/iOt6EEARleKOuzdF/Ra3JpBpnIoBpM9
+X-Gm-Message-State: AOJu0YwWKfjV+p2wDPzq+o3l+Dg03vdpJP/k9dkfdFov4lbrBMUeFUh9
+	1T9VqyFhKwXOrVOuHPGyyHFmxIW/7hyy58yWdA+m5ykefklCXoUgJU3gBb0RcjoTFELj+cq9MsW
+	O9Q==
+X-Google-Smtp-Source: AGHT+IELGegd6g36C/J8R9TwAA8ahdxIA5hWoH24f8z3rOR38vK9vW62qn43Fg3GcplWtlU1VBnrOsku5GY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:98b:b0:704:3415:7c5b with SMTP id
+ d2e1a72fcca58-70434158199mr66452b3a.3.1718036374323; Mon, 10 Jun 2024
+ 09:19:34 -0700 (PDT)
+Date: Mon, 10 Jun 2024 09:19:32 -0700
+In-Reply-To: <20240506101751.3145407-4-foxywang@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QscN4rSe5xkktnMl"
-Content-Disposition: inline
-In-Reply-To: <20240607151831.3858304-5-wsadowski@marvell.com>
-X-Cookie: Your love life will be... interesting.
+Mime-Version: 1.0
+References: <20240506101751.3145407-1-foxywang@tencent.com> <20240506101751.3145407-4-foxywang@tencent.com>
+Message-ID: <ZmcnlPcplno-toU4@google.com>
+Subject: Re: [v5 3/3] KVM: s390: don't setup dummy routing when KVM_CREATE_IRQCHIP
+From: Sean Christopherson <seanjc@google.com>
+To: Yi Wang <up2wing@gmail.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, wanpengli@tencent.com, 
+	foxywang@tencent.com, oliver.upton@linux.dev, maz@kernel.org, 
+	anup@brainfault.org, atishp@atishpatra.org, borntraeger@linux.ibm.com, 
+	frankja@linux.ibm.com, imbrenda@linux.ibm.com, weijiang.yang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Mon, May 06, 2024, Yi Wang wrote:
+> From: Yi Wang <foxywang@tencent.com>
+> 
+> As we have setup empty irq routing in kvm_create_vm(), there's
+> no need to setup dummy routing when KVM_CREATE_IRQCHIP.
+> 
+> Signed-off-by: Yi Wang <foxywang@tencent.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 5147b943a864..ba7fd39bcbf4 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -2998,14 +2998,7 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>  		break;
+>  	}
+>  	case KVM_CREATE_IRQCHIP: {
+> -		struct kvm_irq_routing_entry routing;
+> -
+> -		r = -EINVAL;
+> -		if (kvm->arch.use_irqchip) {
+> -			/* Set up dummy routing. */
+> -			memset(&routing, 0, sizeof(routing));
+> -			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
+> -		}
+> +		r = 0;
 
---QscN4rSe5xkktnMl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is wrong, KVM_CREATE_IRQCHIP should fail with -EINVAL if kvm->arch.use_irqchip
+is false.
 
-On Fri, Jun 07, 2024 at 08:18:31AM -0700, Witold Sadowski wrote:
+There's also a functional change here, though I highly doubt it negatively affects
+userspace.  Nothing in s390 prevents invoking KVM_CREATE_IRQCHIP after
+KVM_SET_GSI_ROUTING, so userspace could very theoretically use KVM_CREATE_IRQCHIP
+to reset to empty IRQ routing.
 
-> +static int cdns_xspi_prepare_generic(int cs, const void *dout, int len, int glue, u32 *cmd_regs)
-> +{
-> +	u8 *data = (u8 *)dout;
-> +	int i;
-> +	int data_counter = 0;
-> +
-> +	memset(cmd_regs, 0x00, 6*4);
+Christian, if it works for you, I'll massage it to this when applying.
 
-The magic numbers here aren't great...
+--
+From: Yi Wang <foxywang@tencent.com>
+Date: Mon, 6 May 2024 18:17:51 +0800
+Subject: [PATCH] KVM: s390: Don't re-setup dummy routing when
+ KVM_CREATE_IRQCHIP
 
-> +static unsigned char reverse_bits(unsigned char num)
-> +{
-> +	unsigned int count = sizeof(num) * 8 - 1;
-> +	unsigned int reverse_num = num;
-> +
-> +	num >>= 1;
-> +	while (num) {
-> +		reverse_num <<= 1;
-> +		reverse_num |= num & 1;
-> +		num >>= 1;
-> +		count--;
-> +	}
-> +	reverse_num <<= count;
-> +	return reverse_num;
-> +}
+Now that KVM sets up empty irq routing in kvm_create_vm(), there's
+no need to setup dummy routing when KVM_CREATE_IRQCHIP.
 
-I can't help but think there ought to be a helper for this though I
-can't think what it is off the top of my head.  If there isn't it
-probably makes sense to add this as one.
+Note, userspace could very theoretically use KVM_CREATE_IRQCHIP after
+KVM_SET_GSI_ROUTING to reset to empty IRQ routing, but it's extremely
+unlikely any VMM does that, e.g. the main reason s390 does anything for
+KVM_CREATE_IRQCHIP is to that s390 doesn't need to be special cased by the
+VMM.
 
-> +	/* Enable xfer state machine */
-> +	if (!cdns_xspi->xfer_in_progress) {
-> +		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-> +
-> +		cdns_xspi->current_xfer_qword = 0;
-> +		cdns_xspi->xfer_in_progress = true;
-> +		xfer_control |= (MRVL_XFER_RECEIVE_ENABLE |
-> +				 MRVL_XFER_CLK_CAPTURE_POL |
-> +				 MRVL_XFER_FUNC_START |
-> +				 MRVL_XFER_SOFT_RESET |
-> +				 FIELD_PREP(MRVL_XFER_CS_N_HOLD, (1 << cs)));
-> +		xfer_control &= ~(MRVL_XFER_FUNC_ENABLE | MRVL_XFER_CLK_DRIVE_POL);
-> +		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-> +	}
+Signed-off-by: Yi Wang <foxywang@tencent.com>
+Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+Link: https://lore.kernel.org/r/20240506101751.3145407-4-foxywang@tencent.com
+[sean: keep use_irqchip check, call out KVM_SET_GSI_ROUTING impact]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/s390/kvm/kvm-s390.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Could this just be a prepare_transfer_hardware() and we could just use
-transfer_one()?
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 82e9631cd9ef..4641083ee100 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -2996,14 +2996,9 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+ 		break;
+ 	}
+ 	case KVM_CREATE_IRQCHIP: {
+-		struct kvm_irq_routing_entry routing;
+-
+ 		r = -EINVAL;
+-		if (kvm->arch.use_irqchip) {
+-			/* Set up dummy routing. */
+-			memset(&routing, 0, sizeof(routing));
+-			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
+-		}
++		if (kvm->arch.use_irqchip)
++			r = 0;
+ 		break;
+ 	}
+ 	case KVM_SET_DEVICE_ATTR: {
 
-> +	list_for_each_entry(t, &m->transfers, transfer_list) {
-> +		u8 *txd = (u8 *) t->tx_buf;
-> +		u8 *rxd = (u8 *) t->rx_buf;
-> +		u8 data[10];
-> +		u32 cmd_regs[6];
-> +
-> +		if (!txd)
-> +			txd = data;
-> +
-> +		cdns_xspi->in_buffer = txd + 1;
-> +		cdns_xspi->out_buffer = txd + 1;
-
-Oh?
-
---QscN4rSe5xkktnMl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnJ4QACgkQJNaLcl1U
-h9Dp1wf/WWCSFxYA9ICwOA6a517Qv5oZM6qYTRD9DXmo/lVgjct+IPOYv8EzpMJn
-6R13HN446bDgxlYUEKBj3khExObjLdA+JbrEa50OV6ylKDWUcYfhGw7l4FNKQdmp
-dlztImDchBdOisfrcVyLk/yzZZ5YHlFzmYldqrcVDQYQySDtuRt3uGm7wwWDdcu4
-BaOSqwoBskBGobu3S/TFdOa1wNusmc8s6K3Ti5j6y0q0X1lgRfmanltHuD6XBWn5
-NGrkO7xN/v2DyQKmCkKcDpSWUllFYEqHDhDZjr8EkrUQlkIvhtI5Tf1/E1r5qyOY
-kkyDt6TcBguiNI+NuByW8RL9kB2QjA==
-=LJaH
------END PGP SIGNATURE-----
-
---QscN4rSe5xkktnMl--
+base-commit: 9a859becf1b7f6879466e8c0ebee492b236f2080
+-- 
 
