@@ -1,187 +1,104 @@
-Return-Path: <linux-kernel+bounces-208629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E2790278C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281F5902795
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA7DB2B012
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FEA282812
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D114389E;
-	Mon, 10 Jun 2024 16:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F02145FF7;
+	Mon, 10 Jun 2024 17:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lucW27f2"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="DnX772Ec"
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487E1EA8F;
-	Mon, 10 Jun 2024 16:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BC477F2F;
+	Mon, 10 Jun 2024 17:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038684; cv=none; b=DOHFIIyKbZluj6rlNf71lDm2XcbFYKqVd13/4+qmlMi/YY2D5ccLqY0ND1BPqrTbgnzsjnxfBt6oMuIX6e1SDvPh1iF4uWHvq2Am1qV4URKfgU76377MolCa9mrrJ4H0ksGD+jgksOHv7oC7Za0VLe+WL5/JFn4XPkGl2oC/1Wg=
+	t=1718039723; cv=none; b=YsXSXwMCxLfx2Y8zpyk36QUC6XDWx6WXY+dd2KnbeNV0vGvVNjzlEQOhinfgOTJpbas9V5u0I6HH2YJXXJi9ME9QNr4MXgVZIG3JYpQoFImWOgiiMzTe1T1t8ors7drKkGIEd+wDaIoHLV0hmejXtpq46j6ezHNfvATgyZo34Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038684; c=relaxed/simple;
-	bh=GbHdTLYub+sD5dM94PZbMo3MaJnKZiE5cFXrl5fkjXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqeVDBCYyUl27SO4GCnuPxiGcD4lnSpSNdQA/DhSKQJr1o+FDHu3hDD+A/oaND+YYUdsntpYswgpE+H1ElTfooXeZ5aPFdxGY8icnK+Ha2EXY6KlrxfMYPlP5J2gyfgXC9FDzN2yY+M9y+qYCSjOam95Cdnn7F/QRX4HItE/tmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lucW27f2; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f1e35156cso1449206f8f.1;
-        Mon, 10 Jun 2024 09:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718038681; x=1718643481; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YzhH3IOabREM20REb/myGlikn8tIz8znLMQG7lX39H0=;
-        b=lucW27f288qBMrV/Y6MmNrn0ShEVENXd3LS+2Cf2OI5DNUtnoiBjB5xQ0fMPtg5ejg
-         e465ImeOi+Xd8yPb9v0ukyWOsmmJppURrfa7WyTu5bDgM8vleNC4im1XSQ+QuwX3MxmF
-         b+7zcYrXybEPMxkuHtENbefRmAexdBqiF/wYLN9In4pBuPu2p0NapkA4/cKWZ4Jv+o3X
-         yzd7Ky/7dlQZcTbxHe3SJaSc0hEvZuI3S28BjPTMo22trRt7VbkktLz2j/9GQKFsNMw7
-         9IyaOBHtwrvPYgtA7WgOYkmGRGOqxY9qc6sXqnritkEzQjdUwUsJOgG55CLkt8be/tm7
-         Ue/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718038681; x=1718643481;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YzhH3IOabREM20REb/myGlikn8tIz8znLMQG7lX39H0=;
-        b=NBsFVhvfy/m7Sr+FMS4O1fPEghYwOHyWCOB4Jg0frdjb0KvZGZjG7D5HxuKeCXXZXw
-         vAHZ9RygUei6Uzosv76p1B0icY+f6Xw7Hijf4D3+948KhwakW4GWJRfzIyEe/ECyZMuF
-         wenNGFnVqD0mbhiV2nVYey1NwUEzhuM7/5G/sfCl+POokq7ePfCapeQYIe7XFgBOyZgf
-         zhajeU/kZFtB+owvjDlkwrjqJC5CJwPjBnq6vxe/jKgnVNo2xvChv0UnqmnFhlbp6ul/
-         teQ1Wu/L6hONS7NPax64vvo1/Z2FJY+3lFwTWe35FL7ISC+cgDRDJC5ihPw4IqvB6/oL
-         T+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUb1M23iM+nu8I0TA0yk7k4wVTsCqawRzvCbbHtv+FrMKpG1ksAvv9YA5EIjvN0/d9vB42tj3X0H2A23V03N1kPpVK7NTYqvUb0drpM/P5kcEUlYR5bJkPdrBqORFy7nVpdKV4O6K6DUBg=
-X-Gm-Message-State: AOJu0Yx6bessLHYRKMB9G81iq2GfIpltRmEiH+CN0dUISLbwDyIJ9YAn
-	s0Xka3Ur/SJKXttd9i1anwwjEGmvyWqDmErxwBNioJepNsAFNQ2t
-X-Google-Smtp-Source: AGHT+IG+QPm7gKyzny8UH/DTLMeR8S6+4sdE41Ci4AqJdc31dcZI00ajdyOAPOBqiAWKX9RhsM3lkA==
-X-Received: by 2002:a5d:53c3:0:b0:35f:234a:9c0e with SMTP id ffacd0b85a97d-35f234a9cd9mr2638920f8f.30.1718038681005;
-        Mon, 10 Jun 2024 09:58:01 -0700 (PDT)
-Received: from fedora ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm2554737f8f.79.2024.06.10.09.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:58:00 -0700 (PDT)
-Date: Mon, 10 Jun 2024 18:57:58 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-	Fabio Baltieri <fabiobaltieri@chromium.org>,
-	Ivan Gorinov <linux-kernel@altimeter.info>,
-	Johannes Roith <johannes@gnu-linux.rocks>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
- modules
-Message-ID: <Zmcwlt6Kfpt09tKi@fedora>
-References: <20240529094816.1859073-1-arnd@kernel.org>
- <ZmSi5_-4mD4AaIJW@fedora>
- <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
+	s=arc-20240116; t=1718039723; c=relaxed/simple;
+	bh=tZhK0yK9PUCBDyPTcAJrUy48YWTdR49HUbCN3uazuz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TKMkTotGI9/l59H10SOz1UZ94xrFdxIR3wSgDF4Pu+b2nELB1vyKdgKyy8KKdEZhkFjTu9KJNLae0gXQ5PeK7VImHpmeNF/M4OqVdk+ug0bPLXnfyPXnAV1E0sTwfiE18nHTCCvT6Ni+/5ENB44TKZ4Kcuyy4u3iF5QDdd2iG8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=DnX772Ec; arc=none smtp.client-ip=4.36.192.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codeweavers.com; s=s1; h=Message-ID:Date:Subject:Cc:To:From:Sender;
+	bh=tZhK0yK9PUCBDyPTcAJrUy48YWTdR49HUbCN3uazuz0=; b=DnX772Ecy7Sytu4dDSC25WhQIM
+	p5J1nPDMk23g5W9HIGqwfixQXSHf83CTiGTFcbIG2EtOfYpF1nbnMN4YIecI9884NVGDBMKen38lx
+	H5A17OKO6ibWhAVY6DtoBGmmJe3P2sjGNsycECNyftwTeT74mFPKtsqkRDQ5H7m6GxIOHmcNDK8xB
+	f/ZPLptOxLwz897jhfiz716tUV14MPVge41NhrFJYrM3savy+WZ+fBG1fn2KHLi2FDuyp7Ht2MrjI
+	faduXUalJ6gir2AtcAqDE1HZu5VMSRtquUGHVqLX2x+lr7mZNrNiWJLrOzYvHJvZDHBgKyJ8MSvz5
+	6BNpqxqA==;
+Received: from [10.69.139.13] (helo=uriel.localnet)
+	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <zfigura@codeweavers.com>)
+	id 1sGiM6-00H4i2-0f;
+	Mon, 10 Jun 2024 11:58:50 -0500
+From: Elizabeth Figura <zfigura@codeweavers.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+ wine-devel@winehq.org,
+ =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+ Wolfram Sang <wsa@kernel.org>, Arkadiusz Hiler <ahiler@codeweavers.com>,
+ Andy Lutomirski <luto@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH v5 00/28] NT synchronization primitive driver
+Date: Mon, 10 Jun 2024 11:58:48 -0500
+Message-ID: <2325658.ElGaqSPkdT@uriel>
+In-Reply-To: <20240519202454.1192826-1-zfigura@codeweavers.com>
+References: <20240519202454.1192826-1-zfigura@codeweavers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Jun 10, 2024 at 08:24:51AM +0200, Arnd Bergmann wrote:
-> On Sat, Jun 8, 2024, at 20:28, José Expósito wrote:
-> > On Wed, May 29, 2024 at 11:48:05AM +0200, Arnd Bergmann wrote:
-> 
-> >> @@ -154,10 +152,8 @@ obj-$(CONFIG_HID_WINWING)	+= hid-winwing.o
-> >>  obj-$(CONFIG_HID_SENSOR_HUB)	+= hid-sensor-hub.o
-> >>  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR)	+= hid-sensor-custom.o
-> >>  
-> >> -hid-uclogic-test-objs		:= hid-uclogic-rdesc.o \
-> >> -				   hid-uclogic-params.o \
-> >> -				   hid-uclogic-rdesc-test.o
-> >> -obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o
-> >> +hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
-> >> +obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic-test.o hid-uclogic-params.o hid-uclogic-params.o
-> >>  
-> >>  obj-$(CONFIG_USB_HID)		+= usbhid/
-> >>  obj-$(CONFIG_USB_MOUSE)		+= usbhid/
-> >
-> > I tested your patch with:
-> >
-> > 	hid-uclogic-objs		:= hid-uclogic-core.o \
-> > 					   hid-uclogic-rdesc.o \
-> > 					   hid-uclogic-params.o
-> > 	obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
-> > 	[...]
-> > 	hid-uclogic-test-objs		:= hid-uclogic-rdesc-test.o
-> > 	obj-$(CONFIG_HID_KUNIT_TEST)	+= hid-uclogic.o hid-uclogic-test.o
-> >
-> > And I think it is a bit more clear and it looks like it does the trick
-> > removing the warning.
-> 
-> Right, that seems fine.
-> 
-> > Also, with that change only "EXPORT_SYMBOL_GPL(uclogic_rdesc_template_apply);"
-> > is required. The other EXPORT_SYMBOL_GPL can be removed.
-> >
-> > However, I'm not sure about what are the best practices using EXPORT_SYMBOL_GPL
-> > and if it should be used for each function/data in the .h file. Maybe that's
-> > why you added them.
-> 
-> No, having only the single export is better here, you should
-> have as few of them as possible. I did picked the more complicated
-> approach as I wasn't sure if loading the entire driver from the
-> test module caused any problems. Let's use your simpler patch
-> then.
-> 
->      Arnd
+On Sunday, May 19, 2024 3:24:26=E2=80=AFPM CDT Elizabeth Figura wrote:
+> This patch series implements a new char misc driver, /dev/ntsync, which is
+> used to implement Windows NT synchronization primitives.
+>=20
+> NT synchronization primitives are unique in that the wait functions both =
+are
+> vectored, operate on multiple types of object with different behaviour
+> (mutex, semaphore, event), and affect the state of the objects they wait
+> on. This model is not compatible with existing kernel synchronization
+> objects or interfaces, and therefore the ntsync driver implements its own
+> wait queues and locking.
+>=20
+> This patch series is rebased against the "char-misc-next" branch of
+> gregkh/char-misc.git.
 
-Turns out that, since the last time I checked the KUnit docs,
-we have "EXPORT_SYMBOL_IF_KUNIT" available now.
+Hi Peter,
 
-I think we can use it and your final patch, without the MODULE_*
-changes, could look like:
+Sorry to bother, but now that the Linux merge window is closed could I
+request a review of this revision of the ntsync patch set, please (or a
+review from another locking maintainer)?
 
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index ce71b53ea6c5..e40f1ddebbb7 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -154,10 +154,8 @@ obj-$(CONFIG_HID_WINWING)  += hid-winwing.o
- obj-$(CONFIG_HID_SENSOR_HUB)   += hid-sensor-hub.o
- obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR) += hid-sensor-custom.o
- 
--hid-uclogic-test-objs          := hid-uclogic-rdesc.o \
--                                  hid-uclogic-params.o \
--                                  hid-uclogic-rdesc-test.o
--obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic-test.o
-+hid-uclogic-test-objs          := hid-uclogic-rdesc-test.o
-+obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic.o hid-uclogic-test.o
- 
- obj-$(CONFIG_USB_HID)          += usbhid/
- obj-$(CONFIG_USB_MOUSE)                += usbhid/
-diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic-rdesc.c
-index b6dfdf6356a6..6c7a90417569 100644
---- a/drivers/hid/hid-uclogic-rdesc.c
-+++ b/drivers/hid/hid-uclogic-rdesc.c
-@@ -17,6 +17,7 @@
- #include "hid-uclogic-rdesc.h"
- #include <linux/slab.h>
- #include <asm/unaligned.h>
-+#include <kunit/visibility.h>
- 
- /* Fixed WP4030U report descriptor */
- __u8 uclogic_rdesc_wp4030u_fixed_arr[] = {
-@@ -1242,3 +1243,4 @@ __u8 *uclogic_rdesc_template_apply(const __u8 *template_ptr,
- 
-        return rdesc_ptr;
- }
-+EXPORT_SYMBOL_IF_KUNIT(uclogic_rdesc_template_apply);
+I believe I've addressed all of the comments from the last review,
+except those which would have changed the existing userspace API
+(although since the driver isn't really functional yet, maybe this
+would have been fine to do anyway?)
 
-I hope that helps,
-Jose
+Thanks,
+Zeb
+
+
 
