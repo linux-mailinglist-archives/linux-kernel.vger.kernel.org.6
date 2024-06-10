@@ -1,162 +1,79 @@
-Return-Path: <linux-kernel+bounces-208794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE3F902939
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:26:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5858F90293C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FDAD1F21240
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB74B22322
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD5514C584;
-	Mon, 10 Jun 2024 19:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDFB14D70A;
+	Mon, 10 Jun 2024 19:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="a7F0WWpI"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rkkQy4Dg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E73F14A85
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D4E14A85;
+	Mon, 10 Jun 2024 19:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047578; cv=none; b=I9LioxneXAHPEL5tls9IjF/FebQsOcnUvx2hZrtqDWZhlaXvs/s5stXrrCNROZmJbcKo1UPwhYmvsn2NpN5b4dG0aCPHZMybHHfEmHTNI25YcuAcqMh4sW8RjzTvpw4ELeL5xM1JVcG9ByL9CtHcuJMylZ9sx5+IkAVIsqTdrcM=
+	t=1718047660; cv=none; b=ZpwwBStL8K0sc34gXfOEQPxc7hBOiBy9FtL4QtuUtlnkgPJTKNP3XT1xPHbtS0XM7GJSIyX/CMeiyI6ynr3pPYmC/QPZDPh3SjBuXjZqGNiz5gqH6sdkxUf2OorghNegw2JtZ0w2BA7F1B02lpPrQbL6scoPie1U7HIhrAJNXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047578; c=relaxed/simple;
-	bh=KGqwvxPvj4Ln5e71vhrELndG938ZlgrVOL2zaKHDysg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=u9k7M8g48eGRdlNM/zp2w5NQM90TgvqD+CbsXVs+Mw1O14HDKajxfOoC3zEAoYzb0ZjD/PYSUJByeLGEeznXMhLdMJOXIn3gZkMojTGu1imJm2L2Ton4Nk7QTRhRObyfXmproqcBzOCl/XzcA8SKPaHALYf8CqsewG/TI5Gbqyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=a7F0WWpI; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718047572;
-	bh=KGqwvxPvj4Ln5e71vhrELndG938ZlgrVOL2zaKHDysg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=a7F0WWpIlIaEF6JyG9PmhiMPtgr6m6Y0G+KaihSOcE6+BI02rBH98WPEPl/2l4xtu
-	 cn7Ry8pSna7maKwxniPX0GKQVrTWWvheDbR4+WFR6CCrKK/GfJXngF7SfgkrT07cgB
-	 cfggcKC3BdXCRNPh/Kbu/N0+R8R39rftxlIv3upU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 10 Jun 2024 21:26:05 +0200
-Subject: [PATCH] drm/amd: force min_input_signal to 0 on Framework AMD
- 13/16
+	s=arc-20240116; t=1718047660; c=relaxed/simple;
+	bh=yuNOHab/Qh0nJR8QmMywHK9g1cgCBeo/HLsQ/jKVNbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJS6OlNokmmycR8k4OMFMPH5TzKuWV5PLD/kBbYSX5PGB1RMy2ApjWp9CBcWlL1vWvDjNbTJ0EhrwpGSnMnnEecBAkUUJkQVi8AuXl0EX613LjJI8pNUDFwOVBIebvlbQlPQhaIoJcY+Ae7hBwqUDC28T4nPV0LRcTbyL4pS0WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rkkQy4Dg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MiZyu8VhPCk0AXuRPnHhqHOvpBJ0fh6/3Mj663IB6kk=; b=rkkQy4DgBiRXuV0GDiC21jNbL+
+	+sKzjfXkmyigg916XMHJle6k/JKxg//GmdgAAHq0vw9sjlLS0X+V9I6mjsJytGeZt4hXaqAaI3IUP
+	hwcrxGVxlZN3G9Aa//f+OkUhuEq5isbDMQ6LSxUM/U387T4lfW0gZ8cj4lexim+NJNgE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGkfs-00HK4x-Qm; Mon, 10 Jun 2024 21:27:24 +0200
+Date: Mon, 10 Jun 2024 21:27:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Richard chien <m8809301@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jesse.brandeburg@intel.com,
+	anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Richard chien <richard.chien@hpe.com>
+Subject: Re: [PATCH] igb: Add support for firmware update
+Message-ID: <ef5029dc-baad-49d8-8c95-03ec41df5858@lunn.ch>
+References: <20240609081526.5621-1-richard.chien@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAExTZ2YC/x3MQQ5AMBAAwK/Inm1SJYiviEPpqg2KVkUi/q5xn
- Ms84MkxeWiSBxxd7HmzEVmawDApawhZR4MUshBlJlCt2uwBV7bYq2Fe2EwnHoHdjHUh5KhrqvJ
- SQQx2RyPff9527/sBX6wgCWwAAAA=
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
- Dustin Howett <dustin@howett.net>, Matt Hartley <matt.hartley@gmail.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718047572; l=2819;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=KGqwvxPvj4Ln5e71vhrELndG938ZlgrVOL2zaKHDysg=;
- b=e62/svmTkpaY4tCy8VOBGB8kgLMr+GHdEXl9B/PEWz4pFnp+efPRzJ/FWEP1pFikUMicWtLbn
- u5O+aUJQF5cAJ+29mD8/WwhFiDEJf1U7f7l8zEfBztWhbS9zTsQIeyZ
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609081526.5621-1-richard.chien@hpe.com>
 
-The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-is "12". This leads to a fairly bright minimum display backlight.
+On Sun, Jun 09, 2024 at 04:15:26PM +0800, Richard chien wrote:
+> This patch adds support for firmware update to the in-tree igb driver and it is actually a port from the out-of-tree igb driver.
+> In-band firmware update is one of the essential system maintenance tasks. To simplify this task, the Intel online firmware update
+> utility provides a common interface that works across different Intel NICs running the igb/ixgbe/i40e drivers. Unfortunately, the
+> in-tree igb and ixgbe drivers are unable to support this firmware update utility, causing problems for enterprise users who do not
+> or cannot use out-of-distro drivers due to security and various other reasons (e.g. commercial Linux distros do not provide technical
+> support for out-of-distro drivers). As a result, getting this feature into the in-tree igb driver is highly desirable.
 
-Introduce a quirk to override "min_input_signal" to "0" which leads to a
-much lower minimum brightness, which is still readable even in daylight.
+I don't really follow what this code is doing, but it seems to make
+ethtool -e and -E dual purpose? Please could you show examples of how
+this is used.
 
-Tested on a Framework AMD 13 BIOS 3.05 and Framework AMD 16.
-
-Link: https://community.frame.work/t/25711/9
-Link: https://community.frame.work/t/47036
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 35 ++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index 7099ff9cf8c5..b481889f7491 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -25,6 +25,7 @@
- #include <linux/pci.h>
- #include <linux/acpi.h>
- #include <linux/backlight.h>
-+#include <linux/dmi.h>
- #include <linux/slab.h>
- #include <linux/xarray.h>
- #include <linux/power_supply.h>
-@@ -130,6 +131,35 @@ static struct amdgpu_acpi_priv {
- 	struct amdgpu_atcs atcs;
- } amdgpu_acpi_priv;
- 
-+struct amdgpu_acpi_quirks {
-+	bool ignore_min_input_signal;
-+};
-+
-+static const struct dmi_system_id amdgpu_acpi_quirk_table[] = {
-+	{
-+		/* the Framework Laptop 13 (AMD Ryzen) and 16 (AMD Ryzen) */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "AMD Ryzen"),
-+			DMI_MATCH(DMI_PRODUCT_FAMILY, "Laptop"),
-+		},
-+		.driver_data = &(struct amdgpu_acpi_quirks) {
-+			.ignore_min_input_signal = true,
-+		},
-+	},
-+	{}
-+};
-+
-+static const struct amdgpu_acpi_quirks *amdgpu_acpi_get_quirks(void)
-+{
-+	const struct dmi_system_id *dmi_id;
-+
-+	dmi_id = dmi_first_match(amdgpu_acpi_quirk_table);
-+	if (!dmi_id)
-+		return NULL;
-+	return dmi_id->driver_data;
-+}
-+
- /* Call the ATIF method
-  */
- /**
-@@ -1388,6 +1418,7 @@ bool amdgpu_acpi_should_gpu_reset(struct amdgpu_device *adev)
-  */
- void amdgpu_acpi_detect(void)
- {
-+	const struct amdgpu_acpi_quirks *quirks = amdgpu_acpi_get_quirks();
- 	struct amdgpu_atif *atif = &amdgpu_acpi_priv.atif;
- 	struct amdgpu_atcs *atcs = &amdgpu_acpi_priv.atcs;
- 	struct pci_dev *pdev = NULL;
-@@ -1429,6 +1460,10 @@ void amdgpu_acpi_detect(void)
- 					ret);
- 			atif->backlight_caps.caps_valid = false;
- 		}
-+		if (quirks && quirks->ignore_min_input_signal) {
-+			DRM_INFO("amdgpu_acpi quirk: min_input_signal=0\n");
-+			atif->backlight_caps.min_input_signal = 0;
-+		}
- 	} else {
- 		atif->backlight_caps.caps_valid = false;
- 	}
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Thanks
+	Andrew
 
