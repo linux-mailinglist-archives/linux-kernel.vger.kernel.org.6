@@ -1,179 +1,466 @@
-Return-Path: <linux-kernel+bounces-208204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0350902248
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D21490224C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3975EB2122E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8B51C21C33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197308248B;
-	Mon, 10 Jun 2024 13:01:03 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD54501B;
-	Mon, 10 Jun 2024 13:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895D081742;
+	Mon, 10 Jun 2024 13:02:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9FB7E0E9;
+	Mon, 10 Jun 2024 13:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718024462; cv=none; b=OFmQ0LPXchQE8jOfakPGEY0mPGa/X0L9yJUc+AkFu3+D+dwu4y9bXtKMwVcpjT51Yuk3l216hQSWQXEL7/eFrZMgNNHZtDFLj5lmXtj0OyMjmPbJCnFseQTdBC5kAsGd0Y8JhznI10nGKPHRI6o9qkdAE6nsuBRT7FnFo/XC+e8=
+	t=1718024565; cv=none; b=VeRIhALriEGUr44k6GVQ6LqR0WjnluUsY9Qj5SsEM0VxfiFqIjI/D8HzMfG7C6vqSY6tAwWpy1zJSFDwRTFuwFO5zSmUwSxJ7yvtcGxA+hTmq7kmCOyEWzaiY+e613dNGT19KNXtNRAitc7H/Ps7R8VpzVYcYjP7uprNw4s6+c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718024462; c=relaxed/simple;
-	bh=oeZ4MpWLlEwqn3Pl12O9nYB2grDeF+oGLF9aIpfQcp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOq+hiY1HqDTfe73i+rb6qe1cvk0a2rjTnZcxHNLOr1n9ELKzj+R740kg+hXLi+5prpk7Hb2C0LEV+ywujoyBMLxTsbKx9rq3OgfuG2XNGtS2ZokBgmIlEkyo1KeGOoa8zWM9lB2p+BHPIanF17P8kHYnLBONlr9SjI9xHbb3oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id C3CC4579; Mon, 10 Jun 2024 08:00:57 -0500 (CDT)
-Date: Mon, 10 Jun 2024 08:00:57 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>, Andrew Morgan <morgan@kernel.org>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
-Message-ID: <20240610130057.GB2193924@mail.hallyn.com>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-2-jcalmels@3xx0.net>
+	s=arc-20240116; t=1718024565; c=relaxed/simple;
+	bh=LA92olITgOVkeVEx4hSp+GnmhUBmo185qlfnP1yZthE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qB7Y2Ou+40ysku2RUssGrQ5bMqX+cdrX14tRKnv79hGfQDGAsM089T4Bx0/G5q7VXHQt44PlRcVuBvW1lhova4pm2/A8RnW2c9UoGy1N/IxteQkBg8xMUr5NeLWMP6u/NLrnFPy7ZlvPdqkWwebIWerw24pg3s0tjcXlTXyHNDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09E9C11FB;
+	Mon, 10 Jun 2024 06:03:01 -0700 (PDT)
+Received: from [10.57.71.145] (unknown [10.57.71.145])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFAED3F58B;
+	Mon, 10 Jun 2024 06:02:34 -0700 (PDT)
+Message-ID: <f885b6df-e9c4-4c19-9587-b4e0c84d31c4@arm.com>
+Date: Mon, 10 Jun 2024 14:02:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609104355.442002-2-jcalmels@3xx0.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/7] coresight: tmc: Enable panic sync handling
+Content-Language: en-GB
+To: Linu Cherian <lcherian@marvell.com>, mike.leach@linaro.org,
+ james.clark@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com
+References: <20240605081725.622953-1-lcherian@marvell.com>
+ <20240605081725.622953-5-lcherian@marvell.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240605081725.622953-5-lcherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 09, 2024 at 03:43:34AM -0700, Jonathan Calmels wrote:
-> Attackers often rely on user namespaces to get elevated (yet confined)
-> privileges in order to target specific subsystems (e.g. [1]). Distributions
-> have been pretty adamant that they need a way to configure these, most of
-> them carry out-of-tree patches to do so, or plainly refuse to enable them.
-> As a result, there have been multiple efforts over the years to introduce
-> various knobs to control and/or disable user namespaces (e.g. [2][3][4]).
+On 05/06/2024 09:17, Linu Cherian wrote:
+> - Get reserved region from device tree node for metadata
+> - Define metadata format for TMC
+> - Add TMC ETR panic sync handler that syncs register snapshot
+>    to metadata region
+> - Add TMC ETF panic sync handler that syncs register snapshot
+>    to metadata region and internal SRAM to reserved trace buffer
+>    region.
 > 
-> While we acknowledge that there are already ways to control the creation of
-> such namespaces (the most recent being a LSM hook), there are inherent
-> issues with these approaches. Preventing the user namespace creation is not
-> fine-grained enough, and in some cases, incompatible with various userspace
-> expectations (e.g. container runtimes, browser sandboxing, service
-> isolation)
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> Reviewed-by: James Clark <james.clark@arm.com>
+> ---
+> Changelog from v8:
+> Added Reviewed-by tag.
 > 
-> This patch addresses these limitations by introducing an additional
-> capability set used to restrict the permissions granted when creating user
-> namespaces. This way, processes can apply the principle of least privilege
-> by configuring only the capabilities they need for their namespaces.
+>   .../hwtracing/coresight/coresight-tmc-core.c  | 25 +++++++
+>   .../hwtracing/coresight/coresight-tmc-etf.c   | 72 +++++++++++++++++++
+>   .../hwtracing/coresight/coresight-tmc-etr.c   | 70 ++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tmc.h   | 45 +++++++++++-
+>   4 files changed, 211 insertions(+), 1 deletion(-)
 > 
-> For compatibility reasons, processes always start with a full userns
-> capability set.
-> 
-> On namespace creation, the userns capability set (pU) is assigned to the
-> new effective (pE), permitted (pP) and bounding set (X) of the task:
-> 
->     pU = pE = pP = X
-> 
-> The userns capability set obeys the invariant that no bit can ever be set
-> if it is not already part of the task’s bounding set. This ensures that
-> no namespace can ever gain more privileges than its predecessors.
-> Additionally, if a task is not privileged over CAP_SETPCAP, setting any bit
-> in the userns set requires its corresponding bit to be set in the permitted
-> set. This effectively mimics the inheritable set rules and means that, by
-> default, only root in the user namespace can regain userns capabilities
-> previously dropped:
-> 
->     p’U = (pE & CAP_SETPCAP) ? X : (X & pP)
-> 
-> Note that since userns capabilities are strictly hierarchical, policies can
-> be enforced at various levels (e.g. init, pam_cap) and inherited by every
-> child namespace.
-> 
-> Here is a sample program that can be used to verify the functionality:
-> 
-> /*
->  * Test program that drops CAP_SYS_RAWIO from subsequent user namespaces.
->  *
->  * ./cap_userns_test unshare -r grep Cap /proc/self/status
->  * CapInh: 0000000000000000
->  * CapPrm: 000001fffffdffff
->  * CapEff: 000001fffffdffff
->  * CapBnd: 000001fffffdffff
->  * CapAmb: 0000000000000000
->  * CapUNs: 000001fffffdffff
->  */
-
-...
-
-> +#ifdef CONFIG_USER_NS
-> +	case PR_CAP_USERNS:
-> +		if (arg2 == PR_CAP_USERNS_CLEAR_ALL) {
-> +			if (arg3 | arg4 | arg5)
-> +				return -EINVAL;
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index 6beb69d74d0a..daad08bc693d 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -443,6 +443,31 @@ static void tmc_get_reserved_region(struct device *parent)
+>   
+>   	drvdata->crash_tbuf.paddr = res.start;
+>   	drvdata->crash_tbuf.size  = resource_size(&res);
 > +
-> +			new = prepare_creds();
-> +			if (!new)
-> +				return -ENOMEM;
-> +			cap_clear(new->cap_userns);
-> +			return commit_creds(new);
-> +		}
+> +	/* Metadata region */
+> +	node = tmc_get_region_byname(parent->of_node, "metadata");
+> +	if (IS_ERR_OR_NULL(node)) {
+> +		dev_dbg(parent, "No metadata memory-region specified\n");
+> +		return;
+> +	}
 > +
-> +		if (((!cap_valid(arg3)) | arg4 | arg5))
-> +			return -EINVAL;
+> +	rc = of_address_to_resource(node, 0, &res);
+> +	of_node_put(node);
+> +	if (rc || res.start == 0 || resource_size(&res) == 0) {
+> +		dev_err(parent, "Metadata memory is invalid\n");
+> +		return;
+> +	}
 > +
-> +		if (arg2 == PR_CAP_USERNS_IS_SET)
-> +			return !!cap_raised(current_cred()->cap_userns, arg3);
-> +		if (arg2 != PR_CAP_USERNS_RAISE && arg2 != PR_CAP_USERNS_LOWER)
-> +			return -EINVAL;
-> +		if (arg2 == PR_CAP_USERNS_RAISE && !cap_uns_is_raiseable(arg3))
-> +			return -EPERM;
+> +	drvdata->crash_mdata.vaddr = memremap(res.start,
+> +					       resource_size(&res),
+> +					       MEMREMAP_WC);
+> +	if (IS_ERR_OR_NULL(drvdata->crash_mdata.vaddr)) {
+> +		dev_err(parent, "Metadata memory mapping failed\n");
+> +		return;
+> +	}
 > +
-> +		new = prepare_creds();
-> +		if (!new)
-> +			return -ENOMEM;
-> +		if (arg2 == PR_CAP_USERNS_RAISE)
-> +			cap_raise(new->cap_userns, arg3);
-> +		else
-> +			cap_lower(new->cap_userns, arg3);
+> +	drvdata->crash_mdata.paddr = res.start;
+> +	drvdata->crash_mdata.size  = resource_size(&res);
+>   }
+>   
+>   /* Detect and initialise the capabilities of a TMC ETR */
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index d4f641cd9de6..f9569585e9f8 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -590,6 +590,73 @@ static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
+>   	return to_read;
+>   }
+>   
+> +static int tmc_panic_sync_etf(struct coresight_device *csdev)
+> +{
+> +	u32 val;
+> +	struct csdev_access *csa;
+> +	struct tmc_crash_metadata *mdata;
+> +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	csa = &drvdata->csdev->access;
+> +
+> +	/* Make sure we have valid reserved memory */
+> +	if (!is_tmc_reserved_region_valid(csdev->dev.parent))
+> +		return 0;
+> +
+> +	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
+> +	mdata->valid = false;
+> +
+> +	CS_UNLOCK(drvdata->base);
+> +
+> +	/* Proceed only if ETF is enabled or configured as sink */
+> +	val = readl(drvdata->base + TMC_CTL);
+> +	if (!(val & TMC_CTL_CAPT_EN))
+> +		goto out;
+> +
+> +	val = readl(drvdata->base + TMC_MODE);
+> +	if (val != TMC_MODE_CIRCULAR_BUFFER)
+> +		goto out;
+> +
+> +	val = readl(drvdata->base + TMC_FFSR);
+> +	/* Do manual flush and stop only if its not auto-stopped */
+> +	if (!(val & TMC_FFSR_FT_STOPPED)) {
+> +		dev_info(&csdev->dev,
+> +			 "%s: Triggering manual flush\n", __func__);
+> +		tmc_flush_and_stop(drvdata);
+> +	} else
+> +		tmc_wait_for_tmcready(drvdata);
+> +
+> +	/* Sync registers from hardware to metadata region */
+> +	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
+> +	mdata->trc_paddr = drvdata->crash_tbuf.paddr;
+> +
+> +	/* Sync Internal SRAM to reserved trace buffer region */
+> +	drvdata->buf = drvdata->crash_tbuf.vaddr;
+> +	tmc_etb_dump_hw(drvdata);
+> +	/* Store as per RSZ register convention */
+> +	mdata->size = drvdata->len >> 2;
+> +
+> +	/*
+> +	 * Make sure all previous writes are completed,
+> +	 * before we mark valid
+> +	 */
+> +	dsb(sy);
+> +	mdata->valid = true;
+> +	/*
+> +	 * Below order need to maintained, since crc of metadata
+> +	 * is dependent on first
+> +	 */
+> +	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
+> +	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
+> +
+> +	tmc_disable_hw(drvdata);
+> +
+> +	dev_info(&csdev->dev, "%s: success\n", __func__);
+> +out:
+> +	CS_UNLOCK(drvdata->base);
+> +	return 0;
+> +}
+> +
+>   static const struct coresight_ops_sink tmc_etf_sink_ops = {
+>   	.enable		= tmc_enable_etf_sink,
+>   	.disable	= tmc_disable_etf_sink,
+> @@ -603,6 +670,10 @@ static const struct coresight_ops_link tmc_etf_link_ops = {
+>   	.disable	= tmc_disable_etf_link,
+>   };
+>   
+> +static const struct coresight_ops_panic tmc_etf_sync_ops = {
+> +	.sync		= tmc_panic_sync_etf,
+> +};
+> +
+>   const struct coresight_ops tmc_etb_cs_ops = {
+>   	.sink_ops	= &tmc_etf_sink_ops,
+>   };
+> @@ -610,6 +681,7 @@ const struct coresight_ops tmc_etb_cs_ops = {
+>   const struct coresight_ops tmc_etf_cs_ops = {
+>   	.sink_ops	= &tmc_etf_sink_ops,
+>   	.link_ops	= &tmc_etf_link_ops,
+> +	.panic_ops	= &tmc_etf_sync_ops,
+>   };
+>   
+>   int tmc_read_prepare_etb(struct tmc_drvdata *drvdata)
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 041c428dd7cd..be1079e8fd64 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -1813,6 +1813,71 @@ static int tmc_disable_etr_sink(struct coresight_device *csdev)
+>   	return 0;
+>   }
+>   
+> +static int tmc_panic_sync_etr(struct coresight_device *csdev)
+> +{
+> +	u32 val;
+> +	struct csdev_access *csa;
+> +	struct tmc_crash_metadata *mdata;
+> +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	csa = &drvdata->csdev->access;
+> +
+> +	if (!drvdata->etr_buf)
+> +		return 0;
+> +
+> +	/* Being in RESRV mode implies valid reserved memory as well */
+> +	if (drvdata->etr_buf->mode != ETR_MODE_RESRV)
+> +		return 0;
+> +
+> +	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
+> +	mdata->valid = false;
+> +
+> +	CS_UNLOCK(drvdata->base);
+> +
+> +	/* Proceed only if ETR is enabled */
+> +	val = readl(drvdata->base + TMC_CTL);
+> +	if (!(val & TMC_CTL_CAPT_EN))
+> +		goto out;
+> +
+> +	val = readl(drvdata->base + TMC_FFSR);
+> +	/* Do manual flush and stop only if its not auto-stopped */
+> +	if (!(val & TMC_FFSR_FT_STOPPED)) {
+> +		dev_info(&csdev->dev,
+> +			 "%s: Triggering manual flush\n", __func__);
+> +		tmc_flush_and_stop(drvdata);
+> +	} else
+> +		tmc_wait_for_tmcready(drvdata);
+> +
+> +	/* Sync registers from hardware to metadata region */
+> +	mdata->size = csdev_access_relaxed_read32(csa, TMC_RSZ);
+> +	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
+> +	mdata->rrp = tmc_read_rrp(drvdata);
+> +	mdata->rwp = tmc_read_rwp(drvdata);
+> +	mdata->dba = tmc_read_dba(drvdata);
+> +	mdata->trc_paddr = drvdata->crash_tbuf.paddr;
+> +
+> +	/*
+> +	 * Make sure all previous writes are completed,
+> +	 * before we mark valid
+> +	 */
+> +	dsb(sy);
+> +	mdata->valid = true;
+> +	/*
+> +	 * Below order need to maintained, since crc of metadata
+> +	 * is dependent on first
+> +	 */
+> +	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
+> +	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
+> +
+> +	tmc_disable_hw(drvdata);
+> +
+> +	dev_info(&csdev->dev, "%s: success\n", __func__);
+> +out:
+> +	CS_UNLOCK(drvdata->base);
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct coresight_ops_sink tmc_etr_sink_ops = {
+>   	.enable		= tmc_enable_etr_sink,
+>   	.disable	= tmc_disable_etr_sink,
+> @@ -1821,8 +1886,13 @@ static const struct coresight_ops_sink tmc_etr_sink_ops = {
+>   	.free_buffer	= tmc_free_etr_buffer,
+>   };
+>   
+> +static const struct coresight_ops_panic tmc_etr_sync_ops = {
+> +	.sync		= tmc_panic_sync_etr,
+> +};
+> +
+>   const struct coresight_ops tmc_etr_cs_ops = {
+>   	.sink_ops	= &tmc_etr_sink_ops,
+> +	.panic_ops	= &tmc_etr_sync_ops,
+>   };
+>   
+>   int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index c23dc9917ab9..35beee53584a 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -12,6 +12,7 @@
+>   #include <linux/miscdevice.h>
+>   #include <linux/mutex.h>
+>   #include <linux/refcount.h>
+> +#include <linux/crc32.h>
+>   
+>   #define TMC_RSZ			0x004
+>   #define TMC_STS			0x00c
+> @@ -76,6 +77,9 @@
+>   #define TMC_AXICTL_AXCACHE_OS	(0xf << 2)
+>   #define TMC_AXICTL_ARCACHE_OS	(0xf << 16)
+>   
+> +/* TMC_FFSR - 0x300 */
+> +#define TMC_FFSR_FT_STOPPED	BIT(1)
+> +
+>   /* TMC_FFCR - 0x304 */
+>   #define TMC_FFCR_FLUSHMAN_BIT	6
+>   #define TMC_FFCR_EN_FMT		BIT(0)
+> @@ -131,6 +135,21 @@ enum tmc_mem_intf_width {
+>   #define CORESIGHT_SOC_600_ETR_CAPS	\
+>   	(TMC_ETR_SAVE_RESTORE | TMC_ETR_AXI_ARCACHE)
+>   
 
-Now, one thing that does occur to me here is that there is a
-very mild form of sendmail-capabilities vulnerability that
-could happen here.  Unpriv user joe can drop CAP_SYS_ADMIN
-from cap_userns, then run a setuid-root program which starts
-a container which expects CAP_SYS_ADMIN.  This could be a
-shared container, and so joe could be breaking expected
-behavior there.
 
-I *think* we want to say we don't care about this case, but
-if we did, I suppose we could say that the normal cap raise
-rules on setuid should apply to cap_userns?
+
+
+> +/* TMC metadata region for ETR and ETF configurations */
+
+I strongly think we should version the data layout to handle
+the future changes better (if at all).
+
+
+> +struct tmc_crash_metadata {
+> +	uint32_t crc32_mdata;	/* crc of metadata */
+> +	uint32_t crc32_tdata;	/* crc of tracedata */
+
+	uint32_t version;	/* Version of the structure = 1 */
+
+> +	uint32_t valid;         /* Indicate if this ETF/ETR was enabled */
+> +	uint32_t size;          /* Ram Size register */
+
+Please save the size in bytes and also rename it :
+
+	uint32_t trace_size;	/* Trace size in Bytes */
+
+
+> +	uint32_t sts;           /* Status register */
+> +	uint32_t reserved32[3];
+> +	uint64_t rrp;           /* Ram Read pointer register */
+> +	uint64_t rwp;           /* Ram Write pointer register */
+
+
+
+> +	uint64_t dba;		/* Data buffer address register */
+
+Is this field useful ? And we store RRP/RWP relative to the DBA ? Could
+we instead :
+
+1. Drop DBA
+2. Store RRP and RWP as offsets from DBA. Or even convert them to the
+actual PADDRs relative to the trc_paddr.
+
+DBA could be a "DMA" Address and not necessarily the PA Address.
+We already have the trc_paddr below. (And for ETF, we already copy
+the buffer to the reserved buffer). So all the user needs to know
+is where the pointers are within the buffer. Having them relative
+to the "actual" location of the buffer is much useful than basing
+it on some unusable base address.
+
+> +	uint64_t trc_paddr;	/* Phys address of trace buffer */
+
+s/trc/trace
+
+Move RRP and RWP, after the above field.
+
+For the sake of completeness, you are also missing :
+
+1) FFCR register => That tells you whether the Formatting was enabled or 
+not (among other things) ? Though we always enable it, its good to
+capture it, if we ever decide to turn off the formatting.
+
+
+2) MODE => Which mode was selected. Again, CIRCULAR_BUFFER for now,
+but lets seal it for the future, so that you can infer the trace buffer
+correctly with RRP/RWP.
+
+3) And may be FFSR, just in case the flush never completed and the
+data is not reliable ?
+
+> +	uint64_t reserved64[3];
+> +};
+
+
+
+
+> +
+>   enum etr_mode {
+>   	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
+>   	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
+> @@ -204,6 +223,8 @@ struct tmc_resrv_buf {
+>    *		retention (after crash) only when ETR_MODE_RESRV buffer
+>    *		mode is enabled. Used by ETF for trace data retention
+>    *		(after crash) by default.
+> + * @crash_mdata: Reserved memory for storing tmc crash metadata.
+> + *		 Used by ETR/ETF.
+>    */
+>   struct tmc_drvdata {
+>   	struct clk		*pclk;
+> @@ -230,6 +251,7 @@ struct tmc_drvdata {
+>   	struct etr_buf		*sysfs_buf;
+>   	struct etr_buf		*perf_buf;
+>   	struct tmc_resrv_buf	crash_tbuf;
+> +	struct tmc_resrv_buf	crash_mdata;
+>   };
+>   
+>   struct etr_buf_operations {
+> @@ -352,11 +374,32 @@ static inline bool is_tmc_reserved_region_valid(struct device *dev)
+>   	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
+>   
+>   	if (drvdata->crash_tbuf.paddr &&
+> -		drvdata->crash_tbuf.size)
+> +		drvdata->crash_tbuf.size &&
+> +		drvdata->crash_mdata.paddr &&
+> +		drvdata->crash_mdata.size)
+
+Why do we need to tie the "reserved" region to metdata region 
+availability ? It is perfectly possible for another usecase
+to dedicate a buffer for trace and use it without metadata ?
+
+Suzuki
+
+
+>   		return true;
+>   	return false;
+>   }
+>   
+> +static inline uint32_t find_crash_metadata_crc(struct tmc_crash_metadata *md)
+> +{
+> +	unsigned long crc_size;
+> +
+> +	crc_size = sizeof(struct tmc_crash_metadata) -
+> +		offsetof(struct tmc_crash_metadata, crc32_tdata);
+> +	return crc32_le(0, (void *)&md->crc32_tdata, crc_size);
+> +}
+> +
+> +static inline uint32_t find_crash_tracedata_crc(struct tmc_drvdata *drvdata,
+> +						struct tmc_crash_metadata *md)
+> +{
+> +	unsigned long crc_size;
+> +
+> +	/* Take CRC of configured buffer size to keep it simple */
+> +	crc_size = md->size << 2;
+> +	return crc32_le(0, (void *)drvdata->crash_tbuf.vaddr, crc_size);
+> +}
+> +
+>   struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
+>   
+>   void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
 
 
