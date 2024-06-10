@@ -1,184 +1,121 @@
-Return-Path: <linux-kernel+bounces-207794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF777901C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:04:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1763A901C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9BB216A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1501D1C21C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35F2558BB;
-	Mon, 10 Jun 2024 08:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7C557C8E;
+	Mon, 10 Jun 2024 08:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qO42PDzo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="harg0rQW"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C78F3CF5E;
-	Mon, 10 Jun 2024 08:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7B339A8;
+	Mon, 10 Jun 2024 08:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006683; cv=none; b=N7LmLyoJItrFU6efgCldt/WuDofN7yc6HAWIJB+Tq0ce+wTGNmT5I5S2fitw1zwS7UzKWUH5U2ENbYO1zxMem4boDzWsBJZbZ+hgWW3zuyAkioVoMgmIInFxsUgU7TznUBnN13agFQ9exxfPSW6XLmxrjGVp6iLnEVlby2rTutU=
+	t=1718006872; cv=none; b=kdLpGkcAKqQvIywj1Ox1HpYqG5igkU9cLvK+GWjIiVjZLfWwdPB7urEIjgcemTP5FhEToG9cfA8j3p2b8OJP5wl1Fxf1P71EKwf9jv95r2ZAEiUScOCsySXVpRa2TsZHbcKpJTED6BXkunkCNFY4VOfIO9Mi2DjCc4PdQxa3e+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006683; c=relaxed/simple;
-	bh=PfWUeRhLyjLhAFqFtGc6KqYlFjjdNjw8O7JtmZzFAko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2Ul/5oIbVgg98qWuM4ktYmhJGXokMZRcS7wvdRbPWZJCT4CRTKW6pMFbIyqMgtgWVYkIBctTMYgELltFTlgTwcVyGO5Arhxa7Nr8vv5si8MEutcGE1koOGGVJ4cS/PxOheOo6Oc8x9sJQmRwpwLeUWMMG2KEhmLSMxcG8S/tCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qO42PDzo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E494C2BBFC;
-	Mon, 10 Jun 2024 08:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718006682;
-	bh=PfWUeRhLyjLhAFqFtGc6KqYlFjjdNjw8O7JtmZzFAko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qO42PDzoabkTGCXzdKgdk8myoHbUmsMiGKKU433H4x8Qjy353i403niBCKrmui3Lu
-	 NUg3hZpaHfTMbV3ihO6GW21J2dWw2NMU/CsHXZVz3yspF+0alAxU/SzDdgZsIA/hJ7
-	 GBGC459skTMfxoAFUtckXd/ebZkhF43R3w/0f+8QymrJhOteSi9W//nY4HQWS4PKiq
-	 yw6PV+EtVhcBnIuHC1YzDwUrOHqh1gdq4JcxVmCgH19QAL4V+smyGgbH91TYbnkIUl
-	 hPnzVHBmbDKEG5yJILQU/He//ghmdTmnz4///DkjI1+jjAUA77cK8crsSGjczimfhM
-	 1NvFUFf9b/Iew==
-Date: Mon, 10 Jun 2024 10:04:40 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/9] drm/bridge-connector: switch to using drmm
- allocations
-Message-ID: <20240610-secret-rottweiler-from-asgard-132f75@houat>
-References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
- <20240607-bridge-hdmi-connector-v5-2-ab384e6021af@linaro.org>
+	s=arc-20240116; t=1718006872; c=relaxed/simple;
+	bh=yBWutYD+y9qJBSEWzb+gA5jjH4xI73/rWVc0YuUDBNg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KYNHYDbFOVVyQnwDgEFa88CBR6NzkK+Wglv7bYm7uZgaQQqavNpVzztBAU3a8Hx+TOFMpd9oJ88B3zr5j63zWz0niiwy9O57Z+PEPqGfn3jxsS07WGUExO6ya0bySJmtBImcYJIYV0P5Bh4exVE2Y/LKi1qMdVJ3QI4XpfOgWPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=harg0rQW; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A7Z61V020310;
+	Mon, 10 Jun 2024 10:07:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=Enas9aIy2Kupmq8Hnvo20L
+	OvOZZaAjZWGbSb3rp4BoY=; b=harg0rQW0nkCDUic+CQjkGXLcoIwYEhHnc5CP0
+	pOL2VbEXE7LBB5iy1HSZ09xVNoOz3NmBalrPedsKlL6V8lnT15voljk8cBB9RcIB
+	p2Gt9gcY5lTG193191M9cB/3yywvhAev8Tn/htTKjZ1o+TM4oMZRfPyhDrfarBAA
+	YB6DrXkzbX+cA9iCUjvqWlvDujpCvHDZODStEu3bzPr6r8JBQ5f2gEdjxbHuKPzV
+	pVSiENB3IKa8afLhrjkgw8YL9fVY/2QQdaMV7xHr0ec50XjCJvPZWQBTjUJvu4YP
+	gGZPZu0DnVFp9N6+RchZebqkbeZlaixaV6yumPmX6r9BuS3Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymemxnpqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 10:07:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B52A14002D;
+	Mon, 10 Jun 2024 10:07:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 475CE211959;
+	Mon, 10 Jun 2024 10:06:06 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 10:06:05 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/1] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+Date: Mon, 10 Jun 2024 10:06:04 +0200
+Message-ID: <20240610080604.291102-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ekqacobahrau4wvb"
-Content-Disposition: inline
-In-Reply-To: <20240607-bridge-hdmi-connector-v5-2-ab384e6021af@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
+Enable MCP23S08 I/O expanders to manage Ethernet PHY
+reset in STM32MP135F-DK board.
 
---ekqacobahrau4wvb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi,
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 86bf057ac3663..9758f3d41ad70 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
+ CONFIG_SPI_SPIDEV=y
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_AS3722=y
++CONFIG_PINCTRL_MCP23S08=y
+ CONFIG_PINCTRL_MICROCHIP_SGPIO=y
+ CONFIG_PINCTRL_OCELOT=y
+ CONFIG_PINCTRL_PALMAS=y
+-- 
+2.25.1
 
-On Fri, Jun 07, 2024 at 04:22:59PM GMT, Dmitry Baryshkov wrote:
-> Turn drm_bridge_connector to using drmm_kzalloc() and
-> drmm_connector_init() and drop the custom destroy function. The
-> drm_connector_unregister() and fwnode_handle_put() are already handled
-> by the drm_connector_cleanup() and so are safe to be dropped.
->=20
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/drm_bridge_connector.c | 23 +++++------------------
->  1 file changed, 5 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm=
-_bridge_connector.c
-> index 982552c9f92c..e093fc8928dc 100644
-> --- a/drivers/gpu/drm/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/drm_bridge_connector.c
-> @@ -15,6 +15,7 @@
->  #include <drm/drm_connector.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_edid.h>
-> +#include <drm/drm_managed.h>
->  #include <drm/drm_modeset_helper_vtables.h>
->  #include <drm/drm_probe_helper.h>
-> =20
-> @@ -193,19 +194,6 @@ drm_bridge_connector_detect(struct drm_connector *co=
-nnector, bool force)
->  	return status;
->  }
-> =20
-> -static void drm_bridge_connector_destroy(struct drm_connector *connector)
-> -{
-> -	struct drm_bridge_connector *bridge_connector =3D
-> -		to_drm_bridge_connector(connector);
-> -
-> -	drm_connector_unregister(connector);
-> -	drm_connector_cleanup(connector);
-> -
-> -	fwnode_handle_put(connector->fwnode);
-> -
-> -	kfree(bridge_connector);
-> -}
-> -
->  static void drm_bridge_connector_debugfs_init(struct drm_connector *conn=
-ector,
->  					      struct dentry *root)
->  {
-> @@ -224,7 +212,6 @@ static const struct drm_connector_funcs drm_bridge_co=
-nnector_funcs =3D {
->  	.reset =3D drm_atomic_helper_connector_reset,
->  	.detect =3D drm_bridge_connector_detect,
->  	.fill_modes =3D drm_helper_probe_single_connector_modes,
-> -	.destroy =3D drm_bridge_connector_destroy,
->  	.atomic_duplicate_state =3D drm_atomic_helper_connector_duplicate_state,
->  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,
->  	.debugfs_init =3D drm_bridge_connector_debugfs_init,
-> @@ -328,7 +315,7 @@ struct drm_connector *drm_bridge_connector_init(struc=
-t drm_device *drm,
->  	int connector_type;
->  	int ret;
-> =20
-> -	bridge_connector =3D kzalloc(sizeof(*bridge_connector), GFP_KERNEL);
-> +	bridge_connector =3D drmm_kzalloc(drm, sizeof(*bridge_connector), GFP_K=
-ERNEL);
-
-So you make destroy's kfree call unnecessary here ...
-
->  	if (!bridge_connector)
->  		return ERR_PTR(-ENOMEM);
-> =20
-> @@ -383,9 +370,9 @@ struct drm_connector *drm_bridge_connector_init(struc=
-t drm_device *drm,
->  		return ERR_PTR(-EINVAL);
->  	}
-> =20
-> -	ret =3D drm_connector_init_with_ddc(drm, connector,
-> -					  &drm_bridge_connector_funcs,
-> -					  connector_type, ddc);
-> +	ret =3D drmm_connector_init(drm, connector,
-> +				  &drm_bridge_connector_funcs,
-> +				  connector_type, ddc);
-
-=2E.. and here of drm_connector_cleanup.
-
-drm_connector_unregister wasn't needed, so can ignore it, but you leak a re=
-ference to
-connector->fwnode since you don't call fwnode_handle_put anymore.
-
-We should register a drmm action right below the call to fwnode_handle_get =
-too.
-
-Maxime
-
---ekqacobahrau4wvb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZmazlwAKCRDj7w1vZxhR
-xXdjAQCzoEg4/T8P/GxJ0eUBeqCJFzarpSs98ongo1PMSwx6aQD9H+jBBp4qbdgn
-k73+39fpZOFL06SsGVHWH2Hxv379EwA=
-=IHay
------END PGP SIGNATURE-----
-
---ekqacobahrau4wvb--
 
