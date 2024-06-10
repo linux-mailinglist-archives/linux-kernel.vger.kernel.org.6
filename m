@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-207749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EFB901B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:59:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334FB901B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9688F1C214A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:59:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 854CEB2137E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217141BF2A;
-	Mon, 10 Jun 2024 06:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093C41CD24;
+	Mon, 10 Jun 2024 07:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C9IWgKrI"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bS3sQ+Zv"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2214E21364
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75791C20;
+	Mon, 10 Jun 2024 07:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718002768; cv=none; b=OmEuJ48VMJzH2JNrF2E0VMTDWRNI6hjw/fFkTtczvyDmNFIm9SPyaCPm+HaGqZAecIQJfuls8v17bgeTPrPvxGpwprb4ICICvoVJiWkQkLWxu1ncvQunx6ydlmwgURaTxAEJGTh+2rjJHpWooC+5xpVlVw/yHnV9aSmaNoGh/Q8=
+	t=1718002953; cv=none; b=ND8RQEAQYD5spfmAj7Kae2OC7zTL8dzDseFtwrDfgVWUhPsYvTx8gFZRYeucmAKlzTSiZuQPciFPZh1wRdX/ev74dD+trWWOz4D2XTnOeF6QzBn8nj9/WlrcnNL3BvGZoPonsXD75zBcZKmRwFNcxTWHpakCgcs4fYiNKA0QI3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718002768; c=relaxed/simple;
-	bh=fpqc3BGiClB/F6MGjNoNK1oIPopFNiKyI7v9DsVa320=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPr7VlTEupAxZwLnHSJdEPdG6+nTQmIO2f7qMRQnB1cUgjjoBElK9/xUUeA5cGE8EPFtu6d4YA5hELyYS5mDQSwSAdds6QdZIJMWBLj4JxCPcwUTbUmD84PsSgtPnRwWyZUhM5FjkEK9edFdTrVUxiqJmMQU/QxkNLDj70oeots=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C9IWgKrI; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso4531798e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718002764; x=1718607564; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=94hswRoG4QejpgWk52uXPLn3esD4s603onPMyFxGKdw=;
-        b=C9IWgKrIY5KC5LK+AbYHhNR2Bw4mIllkbsTvNHpZiFdSQMm67nWyBV9CzrpI//qM3m
-         iXy63QDbDspqK7wdQN1RPVewZP+/813YMTvaxvsuN2Qea2SN7HGB7rfMU+z3HFJiweZ9
-         3/T63iqV6N3EXHkrtYgszCR3M18HYyFCaXcc839FFrC/ij8W1MS3sexd143auxO79tWA
-         0xr+MMYAZBPPPO82ccxRfowdJi9MO2mOBRmvY6WXC3VuFL31kma0TJiCelD9ZiJLtewl
-         W1suoHYKqk82Yi7Ir0dxPSMwjsAqUu0fAtejPKc/3uWI2lbq7Ann6Kqghy+7yVRfiE8G
-         B4xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718002764; x=1718607564;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94hswRoG4QejpgWk52uXPLn3esD4s603onPMyFxGKdw=;
-        b=cY8ItJG5m/S5GRMc2D923P88RUWjnRiAQOUN7qGGVEgbhiJ7//tIuLfNacx8yCIWlA
-         MQ1+6UZoDtoM63oq7B3QJaXfqvD8hXt3MeYnzhtQ+sU3OdlzE+i8xdFFMhbsQ7HKrIS2
-         6gWSkvCZHGMyqGH2Ld0BMYNX578gNNUPpmKjRiW7uv6hDCTrZDLa3fKvqWyJZYKmk7ZK
-         buN0g958DnVadxndzwrPuzZVaf5Jiv52ULkWmSTHQ3RUl+pUiQS8s7iX0QSrnNekUI+v
-         GUjkhZD/5si2x4l5ScnhacaZvCFHfoMpJ1RgRnaI/8ghqUQNO0SMcVbi1qCT7BiMFL2Q
-         ePYw==
-X-Gm-Message-State: AOJu0YwUCtiLWeTbP6hjbz0EGn/oSMSCmuefw0l7FsTChPkEPvGUrWPE
-	+18Infn0W+1Ll6Iyv0pvX9Gzks8+8+yew1Do+3kHyq59HgWAgeG3Odc6dxPwtaztfTCasoY2Js2
-	Z
-X-Google-Smtp-Source: AGHT+IGV/p9GDC5Sd0Kltr9kbdtzm76qQuGxgsNUUNRg21SrgvTvv7W65we9g7WsAzFWS7C0LaFlOQ==
-X-Received: by 2002:a05:6512:1108:b0:52c:81fc:eba2 with SMTP id 2adb3069b0e04-52c81fcecbemr3607177e87.44.1718002764128;
-        Sun, 09 Jun 2024 23:59:24 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e? ([2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f26857582sm949974f8f.77.2024.06.09.23.59.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Jun 2024 23:59:23 -0700 (PDT)
-Message-ID: <3c0235d7-219f-4a3e-bb58-eb662f61f570@suse.com>
-Date: Mon, 10 Jun 2024 09:59:23 +0300
+	s=arc-20240116; t=1718002953; c=relaxed/simple;
+	bh=1FXoLwNeSNlkUZEriabXM2cP2tq7mAsCgeng7zlGrNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ad+xV1jo3LnFX0lHhTUZl3okquoT2OIT960afgQX/+gxHBOBP9TrbuGHwTjl3LQ6yKCYmZB2dKFhJZLpSB5h2eDaHQTeyzFckKMu6KqzUBf1kzNBISkAHSR8A4VJL3H74qkf41QZYQgmEyN+GTWAFQlfseHMvvuGTPeL7v1qykA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bS3sQ+Zv; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45A72G2j051386;
+	Mon, 10 Jun 2024 02:02:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718002936;
+	bh=CBKcCAjTnjMYq/xriU0Yr0ZroUppy6C/UJrsoqsUTSs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=bS3sQ+ZvqChcJ8L3BNj5RSog9CjMxCDoMDRyounmulfRBesy+8DMg1rBbEdZlpS9a
+	 nYtf3v6JFmj7OTQ/m4PtaGcs/A+4J/EQehDatMaWLz9niBg3quuoLzZtZVv8SiZYVP
+	 /J49RiughlKxL2LZTgHg+GTssQfdazeOzqNUcVeU=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45A72G3u007601
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 02:02:16 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 02:02:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 02:02:15 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45A72CuN127867;
+	Mon, 10 Jun 2024 02:02:13 -0500
+Message-ID: <1b03ae72-b1c4-4165-b3cc-df85255b9dbf@ti.com>
+Date: Mon, 10 Jun 2024 12:32:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,48 +64,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpu: Consolidate identical branches
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240521124832.486390-1-nik.borisov@suse.com>
+Subject: Re: [PATCH v3 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with
+ remote proc nodes
+To: Hari Nagalla <hnagalla@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <nm@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20240605124859.3034-1-hnagalla@ti.com>
+ <20240605124859.3034-5-hnagalla@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-In-Reply-To: <20240521124832.486390-1-nik.borisov@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240605124859.3034-5-hnagalla@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
 
-On 21.05.24 г. 15:48 ч., Nikolay Borisov wrote:
-> It's pointless to have 2 identical branches one after the other, simply
-> collapse them in a single branch. No functional changes.
+On 05/06/24 18:18, Hari Nagalla wrote:
+> From: Devarsh Thakkar <devarsht@ti.com>
 > 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> Reserve memory for remote rpoc IPC and bind the mailbox assignments
+> for each remote proc. Two memory regions are reserved for each
+> remote processor. The first region of 1Mb of memory is used for Vring
 
-Ping
+s/1Mb/1MB?
 
+> shared buffers and the second region is used as external memory to the
+> remote processor, resource table and as tracebuffer.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 > ---
->   arch/x86/kernel/cpu/common.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
+>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 68 +++++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 69265c0acaea..369037a166fd 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -1732,12 +1732,11 @@ static void generic_identify(struct cpuinfo_x86 *c)
->   {
->   	c->extended_cpuid_level = 0;
->   
-> -	if (!have_cpuid_p())
-> +	if (!have_cpuid_p()) {
->   		identify_cpu_without_cpuid(c);
-> -
-> -	/* cyrix could have cpuid enabled via c_identify()*/
-> -	if (!have_cpuid_p())
-> +		/* cyrix could have cpuid enabled via c_identify()*/
->   		return;
-> +	}
->   
->   	cpu_detect(c);
->   
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> index fa43cd0b631e..09bb8af53b1e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> @@ -52,11 +52,40 @@ secure_ddr: optee@9e800000 {
+>  			no-map;
+>  		};
+>  
+> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x9c800000 0x00 0x100000>;
+> +			no-map;
+> +		};
+> +
+>  		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>  			compatible = "shared-dma-pool";
+>  			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+>  			no-map;
+>  		};
+> +		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x9b800000 0x00 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x9b900000 0x00 0x0f00000>;
+> +			no-map;
+> +		};
+> +
+> +		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x99800000 0x00 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		c7x_0_memory_region: c7x-memory@99900000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x99900000 0x00 0x01efffff>;
+
+0x01efffff -> are you sure this is correct? Just missing a byte to a
+nice round number size. looks like typo of using range vs size?
+
+> +			no-map;
+> +		};
+>  	};
+>  
+>  	vmain_pd: regulator-0 {
+> @@ -721,3 +750,42 @@ dpi1_out: endpoint {
+>  		};
+>  	};
+>  };
+> +
+> +&mailbox0_cluster0 {
+> +	mbox_r5_0: mbox-r5-0 {
+> +		ti,mbox-rx = <0 0 0>;
+> +		ti,mbox-tx = <1 0 0>;
+> +	};
+> +};
+> +
+> +&mailbox0_cluster1 {
+> +	mbox_c7x_0: mbox-c7x-0 {
+> +		ti,mbox-rx = <0 0 0>;
+> +		ti,mbox-tx = <1 0 0>;
+> +	};
+> +};
+> +
+> +&mailbox0_cluster2 {
+> +	mbox_mcu_r5_0: mbox-mcu-r5-0 {
+> +		ti,mbox-rx = <0 0 0>;
+> +		ti,mbox-tx = <1 0 0>;
+> +	};
+> +};
+> +
+> +&c7x_0 {
+> +	mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
+> +	memory-region = <&c7x_0_dma_memory_region>,
+> +			<&c7x_0_memory_region>;
+> +};
+> +
+> +&wkup_r5fss0_core0 {
+> +	mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
+> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+> +		<&wkup_r5fss0_core0_memory_region>;
+> +};
+> +
+> +&mcu_r5fss0_core0 {
+> +	mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
+> +	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+> +			<&mcu_r5fss0_core0_memory_region>;
+> +};
+
+-- 
+Regards
+Vignesh
 
