@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-208095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D839F90208E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:43:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A4390208C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF86A1C20371
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2EF1F212BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06FB7D414;
-	Mon, 10 Jun 2024 11:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAFD7E0E8;
+	Mon, 10 Jun 2024 11:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Os6FGw/+"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tSfnduN5"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC807BB17;
-	Mon, 10 Jun 2024 11:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7437711A;
+	Mon, 10 Jun 2024 11:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019825; cv=none; b=D90ZaLwrJh7HBfF0B1wLSkXi5JMXZgQdp3ZdwpcjTs+kwIIPce184Y352Iyjbfl7GCLNvwMbB/UmFRhqSiblc3HGkrCeVCLq4QnveHpDsDdh/L2d7z6pz8Q72JPVGCxoHYpEfrJGlqD9wo0OVJq8QezFROVTeORGf8iSHTz2bY4=
+	t=1718019810; cv=none; b=q8YhLJdZycU7q90F45/XeDV8en6pbe+F7j9ibRmo17b7+l62jRiXIMblgbkXWYqMI8/mS2DdrXxLy1w6KVav0QnfnWcsfBfTjHAD7ee/SSjawPwqNxNiMvP/ON9NIGIJJ9PZIbaNBdm3WnaYcr+pE/ZOYX6s6XI91EMTbGop9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019825; c=relaxed/simple;
-	bh=GXGrN8JOjzod6V+6AHh55MPyMPL+RTr2vIDnmW2E4FI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/quLNUtOUvZ8X5FAay/oG4uvH95IgACMvHtmjKDwoZeWDfX9PVaK1CSeaBofRCix57tHLGaIqZb1dxGrKhswwpje9lgxzq+kTurJjf/uisGYi9cNbBp5a9RKwleSeuJ1A140PaqYvhLQhr9kB7o1PO0Rdxd47OyP2lpYCO9+G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Os6FGw/+; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718019823; x=1749555823;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GXGrN8JOjzod6V+6AHh55MPyMPL+RTr2vIDnmW2E4FI=;
-  b=Os6FGw/+SDZsxO6KKr5LTUot8//Yfu+K6aJTudFp0aRWikX63TXGkepD
-   7X3iRONDBKVklt+FJzYRImyNziFAhN42Kt+jaPFlNvRAjFbHoGUpEjsSf
-   xEBPzvMBEoYjtZcPmzjvnT5OmGVhRBMNvBVCFeBqw3Rgn2WAZAAXJYOmD
-   NFmLjxiwkYJcRtC2bI7OZjuPUnk8O+pdWqZtP4CUysvzkIEXvHm4fIxGK
-   k4/l3K5KA8WY10GDB8Spx2dBSEWjQbPS2CZEOPYblTekLpluazwQvUSGn
-   zVq/CFHHv4hYSLxlTPWdGF7kOwkkq9aUsEwourZO7+llOWaRlI9CnIGPk
-   Q==;
-X-CSE-ConnectionGUID: bqBvcjIJQqGXZZDJOFP4Dw==
-X-CSE-MsgGUID: n69PJzP6RBiJ7E+0iG+U6Q==
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="258055430"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jun 2024 04:43:42 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 10 Jun 2024 04:42:38 -0700
-Received: from daire-X570 (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 10 Jun 2024 04:42:36 -0700
-Date: Mon, 10 Jun 2024 12:42:27 +0100
-From: Daire McNamara <daire.mcnamara@microchip.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 1/2] PCI: microchip: Fix outbound address translation
- tables
-Message-ID: <Zmbl9ZYyJCI9dXyE@daire-X570>
-References: <20240531085333.2501399-2-daire.mcnamara@microchip.com>
- <20240603184516.GA687362@bhelgaas>
+	s=arc-20240116; t=1718019810; c=relaxed/simple;
+	bh=A2UrWvpzcV8mD91bwCSuFpb+wTplVoHZLc2I0ye9+58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/aMC2SJpRf2lKR9VgChi2+znViqimudhZIlBrcvCUbcxLANLkTE5WX2SL4N/C1lMXSEjnxxSUe4lddEm4ac8O1QVoZxay7Eov29ktoA44aqNh2I7E1K3BPqnfOYhUiejXmzPiYq4dUJnULhFKnnb4/l1r1Ar+iwN3cCCf5e6y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tSfnduN5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95BB966F;
+	Mon, 10 Jun 2024 13:43:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718019795;
+	bh=A2UrWvpzcV8mD91bwCSuFpb+wTplVoHZLc2I0ye9+58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tSfnduN55Y2h/duvE2uu4wyNYNhEvYg3wqCkgr02/GJF0jfWiJPKHLkuq4SE77TDw
+	 SGnipWbyc1DI61bmsR4+Pl2BJ49bmOgcMmhloBVKhMMPQFmdzPh5oHi2JYF6MwQx5O
+	 hfI1O9LiR4O3+lNecMDcsO8jT61tNVGhBAdvE8DY=
+Date: Mon, 10 Jun 2024 14:43:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"hn.chen" <hn.chen@sunplusit.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v10 4/6] media: uvcvideo: Allow hw clock updates with
+ buffers not full
+Message-ID: <20240610114306.GR18479@pendragon.ideasonboard.com>
+References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
+ <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
+ <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603184516.GA687362@bhelgaas>
+In-Reply-To: <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
 
-On Mon, Jun 03, 2024 at 01:45:16PM -0500, Bjorn Helgaas wrote:
-> On Fri, May 31, 2024 at 09:53:32AM +0100, Daire McNamara wrote:
-> > On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
-> > three general-purpose Fabric Interface Controller (FIC) buses that
-> > encapsulate an AXI-M interface. That FIC is responsible for managing
-> > the translations of the upper 32-bits of the AXI-M address. On MPFS,
-> > the Root Port driver needs to take account of that outbound address
-> > translation done by the parent FIC bus before setting up its own
-> > outbound address translation tables.  In all cases on MPFS,
-> > the remaining outbound address translation tables are 32-bit only.
+On Wed, May 29, 2024 at 05:03:08PM +0900, Tomasz Figa wrote:
+> On Sat, Mar 23, 2024 at 10:48:05AM +0000, Ricardo Ribalda wrote:
+> > With UVC 1.5 we get as little as one clock sample per frame. Which means
+> > that it takes 32 frames to move from the software timestamp to the
+> > hardware timestamp method.
 > > 
-> > Limit the outbound address translation tables to 32-bit only.
+> > This results in abrupt changes in the timestamping after 32 frames (~1
+> > second), resulting in noticeable artifacts when used for encoding.
 > > 
-> > Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
+> > With this patch we modify the update algorithm to work with whatever
+> > amount of values are available.
 > > 
-> > Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> > Tested-by: HungNien Chen <hn.chen@sunplusit.com>
+> > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > > ---
-> >  drivers/pci/controller/pcie-microchip-host.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
 > > 
-> > diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
-> > index 137fb8570ba2..0795cd122a4a 100644
-> > --- a/drivers/pci/controller/pcie-microchip-host.c
-> > +++ b/drivers/pci/controller/pcie-microchip-host.c
-> > @@ -983,7 +983,8 @@ static int mc_pcie_setup_windows(struct platform_device *pdev,
-> >  		if (resource_type(entry->res) == IORESOURCE_MEM) {
-> >  			pci_addr = entry->res->start - entry->offset;
-> >  			mc_pcie_setup_window(bridge_base_addr, index,
-> > -					     entry->res->start, pci_addr,
-> > +					     entry->res->start & 0xffffffff,
-> > +					     pci_addr & 0xffffffff,
-> >  					     resource_size(entry->res));
+> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > index d6ca383f643e3..af25b9f1b53fe 100644
+> > --- a/drivers/media/usb/uvc/uvc_video.c
+> > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > @@ -768,10 +768,10 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
+> >  
+> >  	spin_lock_irqsave(&clock->lock, flags);
+> >  
+> > -	if (clock->count < clock->size)
+> > +	if (clock->count < 2)
+> >  		goto done;
+> >  
+> > -	first = &clock->samples[clock->head];
+> > +	first = &clock->samples[(clock->head - clock->count + clock->size) % clock->size];
+> >  	last = &clock->samples[(clock->head - 1 + clock->size) % clock->size];
+> >  
+> >  	/* First step, PTS to SOF conversion. */
+> > @@ -786,6 +786,18 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
+> >  	if (y2 < y1)
+> >  		y2 += 2048 << 16;
+> >  
+> > +	/*
+> > +	 * Have at least 1/4 of a second of timestamps before we
+> > +	 * try to do any calculation. Otherwise we do not have enough
+> > +	 * precision. This value was determined by running Android CTS
+> > +	 * on different devices.
+> > +	 *
+> > +	 * dev_sof runs at 1KHz, and we have a fixed point precision of
+> > +	 * 16 bits.
+> > +	 */
+> > +	if ((y2 - y1) < ((1000 / 4) << 16))
+> > +		goto done;
 > 
-> Is this masking something that the PCI core needs to be aware of when
-> it allocates address space for BARs?
-I don't believe so.
+> Not a comment for this patch directly, but...
 > 
-> The PCI core knows about the CPU physical address range of each bridge
-> window and the corresponding PCI address range.  From this patch, it
-> looks like only the low 32 bits of the CPU address are used by the
-> Root Port.  That might not be a problem as long as the windows
-> described by DT are correct and none of them overlap after masking out
-> the upper 32 bits.  But for example, if DT has windows like this:
-> 
->   [mem 0x1'0000'0000-0x1'8000'0000]
->   [mem 0x2'0000'0000-0x2'8000'0000]
-> 
-> the PCI core will assume they are valid and non-overlapping, when
-> IIUC, they *do* overlap.
-True, but I can't see how that could happen on any real system - in my mind,
-a PolarFire Soc designer (or indeed any designer on any chip) will know where
-its rootport is actually attached in its memory map. On PolarFire SoC, for
-example, a designer can only reach a rootport over a FIC, and - if they were
-to attach to the rootport over two FICs at the same time, that would be a
-blunder and would be picked up during design phase.  I can't imagine any
-reason anyone would release a product with that arrangement.
+> This kind of makes me wonder if we don't want to have some documentation
+> that specifies what the userspace can expect from the timestamps, so
+> that this isn't changed randomly in the future breaking what was fixed
+> by this patch.
 
+I think timestamp handling should really be moved to userspace. It will
+be easier to handle with floating-point arithmetic there. That would
+have been difficult to manage for applications a while ago, but now that
+we have libcamera, we could implement it there. This isn't high on my
+todo list though.
+
+> Anyway:
 > 
-> But also only the low 32 bits of the PCI address are used, and it
-> seems like the PCI core will need to know that so it doesn't program a
-> 64-bit BAR with a value above 4GB?
-Yeah, I'll send around a v2 shortly to address this - I was rather
-over-zealous when I prevented that.
-> 
-> >  			index++;
-> >  		}
-> > @@ -1117,8 +1118,8 @@ static int mc_platform_init(struct pci_config_window *cfg)
-> >  	int ret;
-> >  
-> >  	/* Configure address translation table 0 for PCIe config space */
-> > -	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
-> > -			     cfg->res.start,
-> > +	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & 0xffffffff,
-> > +			     cfg->res.start & 0xffffffff,
-> >  			     resource_size(&cfg->res));
-> >  
-> >  	/* Need some fixups in config space */
-> > -- 
-> > 2.34.1
-> > 
-> 
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+
+-- 
+Regards,
+
+Laurent Pinchart
 
