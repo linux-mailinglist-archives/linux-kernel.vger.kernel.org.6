@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-208505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18639025F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166279025F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4E4288C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B042C1F233EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C0142E98;
-	Mon, 10 Jun 2024 15:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77D84D13;
+	Mon, 10 Jun 2024 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fwii7sXn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPXxitam"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719C140364;
-	Mon, 10 Jun 2024 15:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CF912F5B3
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718034403; cv=none; b=gtMWixQuwS2Fi3r9UIQlUgTf9WDqgqyiwKRU/+4a+cbG2Qe1HdaHbQ9ZFm/DqV7UGdPPTehM40NCTz/6Yl8hnSJXCtATREwferZNtwvEjU5jnsJXRmT2D97gBXT1r/JMUkOnb1AR/eUhWuC86nTssiiLEIoooXBNP5ffDj0nJSg=
+	t=1718034446; cv=none; b=D24BdDzfz000R9+OEdfNfWPJP6kKIeFDmLysn3TUhDYAsuS+oGTYAxlvzkgC9To7S824+b/ZDHfGRTXYyKII8c02o6bsdiTVnK+erZop+Z0rrtBI7izq4AgpE+AjJXgOdYqXM0peBj9SeOGLi/iyLfnZl+EvlTvYNJFA44edEqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718034403; c=relaxed/simple;
-	bh=+4/zPi4hkw9UfPxusBsUfwuVq79GZtvtVsjTstppxQc=;
+	s=arc-20240116; t=1718034446; c=relaxed/simple;
+	bh=38t/JExcQpwmA9V33/BHVXcGuwHyn8JHlJSnIUEBdLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBh+J2oMCMJ9xiLkZYzbIS7AGzcK/YWtLUU0+LBbmGF5Vt6ED+Q+Ll4uDvZxQNk1pEMKf3tB16bKd+eIL7AnWYECo+VVDGyitBkZkOyvz6Xi9HB/rKN7Dkm4MzUcrRE7Qzk45Z/pz8Cu/BD99mvtL0sZPth86e3t7otvDbLf1X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fwii7sXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C8DC2BBFC;
-	Mon, 10 Jun 2024 15:46:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrxILJp3oLQoS4tihp1gleCHoJ6+g6EN2INju3yMLKSDjwlclz0H9aL6rDDKVhvN+YLQcfrQyLE4Axd/x7Ot3upQwqVIueNWCqyg98tPH8770fqSrvihRLVso8BrEFC/14xq6C3m4z6thumRxCgYSNTfeN55/77EO9NuxZprPhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPXxitam; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694B3C2BBFC;
+	Mon, 10 Jun 2024 15:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718034402;
-	bh=+4/zPi4hkw9UfPxusBsUfwuVq79GZtvtVsjTstppxQc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Fwii7sXnqnhyPe9nfsJEx4HelbDSAwAq539Cs4TUF7W/nwWo/mkQZnwbqkz1hJCsx
-	 Gl7rGNsG6Y36dslQZqhMohi69OBawmwEWammQElV+FoIvi/t62YOM6TW6enEwgGOKE
-	 ppouJINyhxUq85WZiR51gjaXEe+uiTRqdWXCnSizNl4ClunIQF/HIlhljzVXslV7zv
-	 OeNcLtKfBQj2/M4NYZAEcz7By8mW5z+uNvP6XbbHCGkJPaOoHEvysPmJJ+Vdpz4451
-	 YcgIftKDpf74Hr06mW4GdGG/67vUamk2Pg1UsSHXeVh/chMDR1k9JXvuCQ9rxGcJ9v
-	 InhdFxKuunayQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0B026CE2373; Mon, 10 Jun 2024 08:46:42 -0700 (PDT)
-Date: Mon, 10 Jun 2024 08:46:42 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-6-Julia.Lawall@inria.fr>
- <20240610112223.151faf65@rorschach.local.home>
+	s=k20201202; t=1718034446;
+	bh=38t/JExcQpwmA9V33/BHVXcGuwHyn8JHlJSnIUEBdLE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPXxitam7LTKlI1ll/Q9BA9FjLPW0XLN9HIsnJ9yF6BOxmLMWgGp9e3C2QwBaQmEF
+	 NKLcO1C+/A1U8zP1P32m3ENNpB6dXWBUloo0THF525QA+F8zDIm3NtT0hVtGLTQvYE
+	 7m/8uXRLqnpZ/deX1CLRjGsyh44S/VopN2Upff7xenLiqXoFWgUQX97IXmwdNA+0YT
+	 YlEswTMihS3/eIbbkum7MKBA9Ot7DnvBExmA6JE1coCogt/X91YylOUzgTL7F9nNnk
+	 JQFZt99WL+G25fQE0qp82giA5jB7yvOHeK2iDBd+/yu5n6277cqnFXqX1AhOjSrny4
+	 Cj6ooLJZ5w7TQ==
+Date: Mon, 10 Jun 2024 16:47:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH 1/1] regulator: core: add warning for not-recoverable
+ state
+Message-ID: <ZmcgCmqDXAMtz6MI@finisterre.sirena.org.uk>
+References: <20240610120025.405062-1-gnstark@salutedevices.com>
+ <20240610120025.405062-2-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iidhu6ORF0fIzF/J"
+Content-Disposition: inline
+In-Reply-To: <20240610120025.405062-2-gnstark@salutedevices.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--iidhu6ORF0fIzF/J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610112223.151faf65@rorschach.local.home>
 
-On Mon, Jun 10, 2024 at 11:22:23AM -0400, Steven Rostedt wrote:
-> On Sun,  9 Jun 2024 10:27:17 +0200
-> Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> 
-> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> > index 7c29f4afc23d..338c52168e61 100644
-> > --- a/fs/tracefs/inode.c
-> > +++ b/fs/tracefs/inode.c
-> > @@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
-> >  	return &ti->vfs_inode;
-> >  }
-> >  
-> > -static void tracefs_free_inode_rcu(struct rcu_head *rcu)
-> > -{
-> > -	struct tracefs_inode *ti;
-> > -
-> > -	ti = container_of(rcu, struct tracefs_inode, rcu);
-> > -	kmem_cache_free(tracefs_inode_cachep, ti);
-> 
-> Does this work?
-> 
-> tracefs needs to be freed via the tracefs_inode_cachep. Does
-> kfree_rcu() handle specific frees for objects that were not allocated
-> via kmalloc()?
+On Mon, Jun 10, 2024 at 03:00:25PM +0300, George Stark wrote:
+> If regulator is always-on or boot-on then it's expected to be on while
+> being probed so add warning if such a regulator is in not-recoverable
+> state during initialization.
 
-A recent change to kfree() allows it to correctly handle memory allocated
-via kmem_cache_alloc().  News to me as of a few weeks ago.  ;-)
+I don't see that these regulators are especially magical, and IIRC we
+have several cases where we simply lack the ability to read back the
+configuration at any time so expect to write out what we need during
+normal operation.
 
-							Thanx, Paul
+--iidhu6ORF0fIzF/J
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> -- Steve
-> 
-> 
-> > -}
-> > -
-> >  static void tracefs_free_inode(struct inode *inode)
-> >  {
-> >  	struct tracefs_inode *ti = get_tracefs(inode);
-> > @@ -70,7 +62,7 @@ static void tracefs_free_inode(struct inode *inode)
-> >  	list_del_rcu(&ti->list);
-> >  	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
-> >  
-> > -	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
-> > +	kfree_rcu(ti, rcu);
-> >  }
-> >  
-> >  static ssize_t default_read_file(struct file *file, char __user *buf,
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnIAkACgkQJNaLcl1U
+h9AIDQf7BA+yQBOoO5J91E4VKrU3HYSmE3MJrth7vuSVUXHjbG2HLRNt0aTzvjUV
+dBAMAabfB3DG6ELBbduuA5hmfrOHCdI1/bbao7pAxXn1SxKVmGr+FVsUKrx0ZSAX
+CwNwyJiqUuV9kMb0JYgmyh8q9okQBH06BQZwqNc6/FGmLyhqoEz9cU0s4qeMGXrC
+J3IFHucGOPYWVw3aez5Lai1ZlogJp8aHW7p5DnQloEYyoUQ/2mxNxn54tna3fGqK
+rG10J+gD8LxEWF0fb/NehMCLSQzz3nMS3tIFbt+2oGJZ7BLDqByjBlXxaT6u0Ptm
+DWVxDI+ATGfoOOekkBSYniiQEI8Bjg==
+=PCcP
+-----END PGP SIGNATURE-----
+
+--iidhu6ORF0fIzF/J--
 
