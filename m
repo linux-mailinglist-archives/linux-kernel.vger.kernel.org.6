@@ -1,378 +1,148 @@
-Return-Path: <linux-kernel+bounces-207598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8D390197F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0D4901982
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1021C20DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 03:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16544281BE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 03:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB4FE54C;
-	Mon, 10 Jun 2024 03:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D02D7482;
+	Mon, 10 Jun 2024 03:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="SV+6lMUh"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tso34vRF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E37E567F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 03:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39B3C0C;
+	Mon, 10 Jun 2024 03:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717988427; cv=none; b=QT/qh0aw8DTtoffc9F79kcB2DFppOKu1FDV+VDMPc5lBQFSoFyHlJ+XwIfa2hQKT58KBQIQ1wt2IJTDZmaO1NebstQpjo1JDQz+qhUmungNJpX+g8OxWBsndvnlq8EEMBpLLNCTs09LR5bR1OwCxJc36bZL6sM22+IDEdghfFoM=
+	t=1717988979; cv=none; b=V/tj1Nb0wQMFZgJOQZaWLmyck6y/3S4C8c2e+OMzdu47QvkMYzLh+C1pW2iL4b5gqUbEDqlWvT1TWjPR9nD/m3OZh99U3/Dwq84HsNv2feQzSeDx+XUAPs2a0GBf+ocFAUKZx9xXZ/i77+J6hhGzEfXQ7TzuAjxt1KdjvvDaOvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717988427; c=relaxed/simple;
-	bh=ls8lVLZI/JhlfN+lgoyPul05RRsn+IGQbtKfefjyEOk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k2EXZ1/qwqVkgTcWF9Yndvs+MVP72Lvp1yNgNc2rWc6irwy8T5ehYEkqZ3csMuCLEM8OwYUqsPZzPUHYQo5Nh9m3sm+Iijq6uDN9HTWFNVk+ebyCaovfAWkZvJ0uGVq3pHC7NNRLqcSJrwKeztspQC4mF6dc6fgE73TEaa1ZBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=SV+6lMUh; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A44322C08BD;
-	Mon, 10 Jun 2024 15:00:24 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1717988424;
-	bh=P+Uxl+bBGM3zIF9XJgAP57gt674Rp7XeAf9PcWUJgXI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SV+6lMUhh8UdauBt/Iu3RBv6YEXLC1OhQhV6MiCzxLD7iR9ukVQhbunOgz1YroVnu
-	 gG5LTCOEMWeTOty8HXmgMGtl2eioDKnD6Q63rtTRmPBl8HqMJvgJDuLEwQaaIMjb54
-	 vH2FJ2+7yqdIqLPXrupHOEquHNonqU5yFR6Rh6s+7/0M3Me1ywTI8G84tI6Umrtgpc
-	 nRazvhFNyWu9n5xI9zH/VrmWgkOLnM6UxHhOhO18JGQMy/jr16gVxlUV4wHWGB0aMi
-	 A6+i3ZqN+BCjVxI6doUMvhmPKUfcrflVHpDaNbxMQ+MPg2+/o2qDmJI3GHYEoogv7g
-	 HNP8kAWw5wgPg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66666c480000>; Mon, 10 Jun 2024 15:00:24 +1200
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id 6ACCA13EE2B;
-	Mon, 10 Jun 2024 15:00:24 +1200 (NZST)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 688F72A2270; Mon, 10 Jun 2024 15:00:24 +1200 (NZST)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: andi.shyti@kernel.org
-Cc: aryan.srivastava@alliedtelesis.co.nz,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] i2c: octeon: Add block-mode r/w operations
-Date: Mon, 10 Jun 2024 14:59:55 +1200
-Message-ID: <20240610025955.2308688-3-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240610025955.2308688-1-aryan.srivastava@alliedtelesis.co.nz>
-References: <20240610025955.2308688-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1717988979; c=relaxed/simple;
+	bh=Wj11lGYu3WhMhBwkounnR1AUHlkuhFRRPVG9yWN6Bms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLmwx+sw5vd07brpNAuc35+cHtluXwXir3Tctqj3Ga5VexcxskUAXbjsz2x00yTONKZlvwKgBDxBa4D3xI9IS2E3+flGh4wQQbRpP0+n32AXEzjUqy8lar6E4mm0vQIGQzCz8nwGh6WLh6hMRrBw80tB3S9kFkQPoNllLASlRiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tso34vRF; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717988977; x=1749524977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wj11lGYu3WhMhBwkounnR1AUHlkuhFRRPVG9yWN6Bms=;
+  b=Tso34vRFDCsjnG1D7j9dczPUYkwaB09cIzsHlvk0ZcFHD0qHrmiPxTtX
+   /+fr1kpVrq9rpRCyVSY3YF+WWYF9KJhniSl6Yq6O12lXuarld4rYg2xHW
+   z2UpE+tH6r0l7PXbXqo6pYAmHnXS+asEyDP1QrPqV1xYJeCXk6mN478AZ
+   ve4uNQXElc7lBmESrbqUMj4hV6JaUn48adSSx9379Oa9jUeLb5vXCUeAc
+   UOOIe48lFuI88vjXkT6EiqvydJcy+0luYntr2ASHMiN84af0KglqcLLc4
+   cph/KO/xUnpATeu45HcIr911OIDFwjtbuXd/0xMookwvwSVvRmoTnPlg8
+   w==;
+X-CSE-ConnectionGUID: A2GS6remTDCx8lvD0WT3zg==
+X-CSE-MsgGUID: L6I7MHU0Tyqn0RrqGzNh2w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="14813717"
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="14813717"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 20:09:36 -0700
+X-CSE-ConnectionGUID: DOrcTPmaQCSduc8ZxamjnQ==
+X-CSE-MsgGUID: uO0dE4BRQO204xwXNkATKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="38844834"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 09 Jun 2024 20:09:34 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGVPY-0001nu-0F;
+	Mon, 10 Jun 2024 03:09:32 +0000
+Date: Mon, 10 Jun 2024 11:09:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+Message-ID: <202406101035.nanF90LS-lkp@intel.com>
+References: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=66666c48 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=_GL4yYo1NFTcpOcRNZkA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1@linaro.org>
 
-Add functions to perform block r/w operations. This applies
-for cases where the requested operation is for >8 bytes of data.
+Hi Neil,
 
-When not using the block mode transfer, the driver will attempt a
-series 8 byte r/w operations until it reaches the desired total.
-For example, for a 40 byte request the driver will complete 5
-separate transactions. This results in large i2c transactions taking
-significant time to process.
+kernel test robot noticed the following build warnings:
 
-Add block mode r/w such that the driver can request larger transactions,
-up to 1024 bytes in one transaction.
+[auto build test WARNING on c3f38fa61af77b49866b006939479069cd451173]
 
-Many aspects of the block mode r/w is common with the regular 8 byte
-r/w operations. Use generic functions for parts or the message
-construction and sending the message. The key difference for the
-block mode is the usage of separate FIFO buffer to store data.
+url:    https://github.com/intel-lab-lkp/linux/commits/Neil-Armstrong/ASoC-dt-bindings-convert-tas571x-txt-to-dt-schema/20240607-175726
+base:   c3f38fa61af77b49866b006939479069cd451173
+patch link:    https://lore.kernel.org/r/20240607-topic-amlogic-upstream-bindings-convert-tas57xx-v1-1-ebf1e4919bb1%40linaro.org
+patch subject: [PATCH] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20240610/202406101035.nanF90LS-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406101035.nanF90LS-lkp@intel.com/reproduce)
 
-Write to this buffer in the case of an i2c write (before command send).
-Read from this buffer in the case of an i2c read (after command send).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406101035.nanF90LS-lkp@intel.com/
 
-Data is written into this buffer by placing data into the MSB onwards.
-This means the bottom 8 bits of the r/w data will match the top 8 bits,
-and so on and so forth.
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:263.22-266.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:268.22-273.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:275.24-278.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:280.22-283.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:285.22-288.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:290.29-293.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:305.11-309.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi:311.11-315.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: audio-codec@1d: Unevaluated properties are not allowed ('port' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld11-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+--
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:396.22-399.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@3: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:401.22-406.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@4: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:408.24-411.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@5: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:413.22-416.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@6: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:418.22-421.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@7: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:423.29-426.6: Warning (unit_address_vs_reg): /soc@0/audio@56000000/port@8: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:438.11-442.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi:444.11-448.6: Warning (unit_address_vs_reg): /soc@0/codec@57900000/port@1: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:71.10-75.5: Warning (unit_address_vs_reg): /spdif-out/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts:82.10-86.5: Warning (unit_address_vs_reg): /comp-spdif-out/port@0: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: audio-codec@1b: Unevaluated properties are not allowed ('port' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/sound/ti,tas57xx.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/smpctrl@59801000: failed to match any schema with compatible: ['socionext,uniphier-smpctrl']
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: /soc@0/usb@65a00000: failed to match any schema with compatible: ['socionext,uniphier-dwc3', 'snps,dwc3']
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
+   arch/arm64/boot/dts/socionext/uniphier-ld20-global.dtb: comp-spdif-out: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/linux,spdif-dit.yaml#
 
-Set specific bits in message for block mode, enable block mode transfers
-from global i2c management registers, construct message, send message,
-read or write from FIFO buffer as required.
-
-The block-mode transactions result in a significant speed increase in
-large i2c r/w requests.
-
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/i2c/busses/i2c-octeon-core.c     | 146 ++++++++++++++++++++++-
- drivers/i2c/busses/i2c-octeon-core.h     |  14 +++
- drivers/i2c/busses/i2c-thunderx-pcidrv.c |   4 +
- 3 files changed, 158 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-octeon-core.c b/drivers/i2c/busses/i2=
-c-octeon-core.c
-index 6772359ca6c8..03d30e179728 100644
---- a/drivers/i2c/busses/i2c-octeon-core.c
-+++ b/drivers/i2c/busses/i2c-octeon-core.c
-@@ -130,6 +130,25 @@ static void octeon_i2c_hlc_disable(struct octeon_i2c=
- *i2c)
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB);
- }
-=20
-+static void octeon_i2c_block_enable(struct octeon_i2c *i2c)
-+{
-+	if (i2c->block_enabled || !TWSI_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D true;
-+	octeon_i2c_writeq_flush(TWSI_MODE_STRETCH
-+		| TWSI_MODE_BLOCK_MODE, i2c->twsi_base + TWSI_MODE(i2c));
-+}
-+
-+static void octeon_i2c_block_disable(struct octeon_i2c *i2c)
-+{
-+	if (!i2c->block_enabled || !TWSI_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D false;
-+	octeon_i2c_writeq_flush(TWSI_MODE_STRETCH, i2c->twsi_base + TWSI_MODE(i=
-2c));
-+}
-+
- /**
-  * octeon_i2c_hlc_wait - wait for an HLC operation to complete
-  * @i2c: The struct octeon_i2c
-@@ -268,6 +287,7 @@ static int octeon_i2c_start(struct octeon_i2c *i2c)
- 	u8 stat;
-=20
- 	octeon_i2c_hlc_disable(i2c);
-+	octeon_i2c_block_disable(i2c);
-=20
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB | TWSI_CTL_STA);
- 	ret =3D octeon_i2c_wait(i2c);
-@@ -606,6 +626,112 @@ static int octeon_i2c_hlc_comp_write(struct octeon_=
-i2c *i2c, struct i2c_msg *msg
- 	return ret;
- }
-=20
-+/**
-+ * octeon_i2c_hlc_block_comp_read - high-level-controller composite bloc=
-k read
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, place read data into msg[1]
-+ *
-+ * i2c core command is constructed and written into the SW_TWSI register=
-.
-+ * The execution of the command will result in requested data being
-+ * placed into a FIFO buffer, ready to be read.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of re=
-ad data.
-+ *
-+ * Returns 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct=
- i2c_msg *msgs)
-+{
-+	int len, ret =3D 0;
-+	u64 cmd =3D 0;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)(len), i2c->twsi_base + TWSI_BLOCK_CTL(i2c=
-));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Send core command */
-+	ret =3D octeon_i2c_hlc_cmd(i2c, msgs[0], cmd);
-+	if (ret)
-+		return ret;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0)
-+		return octeon_i2c_check_status(i2c, false);
-+
-+	/* read data in FIFO */
-+	octeon_i2c_writeq_flush(TWSI_BLOCK_STS_RESET_PTR, i2c->twsi_base + TWSI=
-_BLOCK_STS(i2c));
-+	for (int i =3D 0; i < len; i +=3D 8) {
-+		u64 rd =3D __raw_readq(i2c->twsi_base + TWSI_BLOCK_FIFO(i2c));
-+		/* Place data into msg buf from FIFO, MSB onwards */
-+		for (int j =3D 7; j >=3D 0; j--)
-+			msgs[1].buf[i + (7 - j)] =3D (rd >> (8 * j)) & 0xff;
-+	}
-+
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
-+/**
-+ * octeon_i2c_hlc_block_comp_write - high-level-controller composite blo=
-ck write
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, msg[1] contains data to be written
-+ *
-+ * i2c core command is constructed and write data is written into the FI=
-FO buffer.
-+ * The execution of the command will result in HW write, using the data =
-in FIFO.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of wr=
-ite data.
-+ *
-+ * Returns 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_write(struct octeon_i2c *i2c, struc=
-t i2c_msg *msgs)
-+{
-+	bool set_ext =3D false;
-+	int len, ret =3D 0;
-+	u64 cmd, ext =3D 0;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)(len), i2c->twsi_base + TWSI_BLOCK_CTL(i2c=
-));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_SOVR;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Set parameters for extended message (if required) */
-+	set_ext =3D octeon_i2c_hlc_ext(i2c, msgs[0], &cmd, &ext);
-+
-+	/* Write msg into FIFO buffer */
-+	octeon_i2c_writeq_flush(TWSI_BLOCK_STS_RESET_PTR, i2c->twsi_base + TWSI=
-_BLOCK_STS(i2c));
-+	for (int i =3D 0; i < len; i +=3D 8) {
-+		u64 buf =3D 0;
-+		/* Place data from msg buf into FIFO, MSB onwards */
-+		for (int j =3D 7; j >=3D 0; j--)
-+			buf |=3D (msgs[1].buf[i + (7 - j)] << (8 * j));
-+		octeon_i2c_writeq_flush(buf, i2c->twsi_base + TWSI_BLOCK_FIFO(i2c));
-+	}
-+	if (set_ext)
-+		octeon_i2c_writeq_flush(ext, i2c->twsi_base + SW_TWSI_EXT(i2c));
-+
-+	/* Send command to core (send data in FIFO) */
-+	ret =3D octeon_i2c_hlc_cmd_send(i2c, cmd);
-+	if (ret)
-+		return ret;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0)
-+		return octeon_i2c_check_status(i2c, false);
-+
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
- /**
-  * octeon_i2c_xfer - The driver's master_xfer function
-  * @adap: Pointer to the i2c_adapter structure
-@@ -631,13 +757,21 @@ int octeon_i2c_xfer(struct i2c_adapter *adap, struc=
-t i2c_msg *msgs, int num)
- 		if ((msgs[0].flags & I2C_M_RD) =3D=3D 0 &&
- 		    (msgs[1].flags & I2C_M_RECV_LEN) =3D=3D 0 &&
- 		    msgs[0].len > 0 && msgs[0].len <=3D 2 &&
--		    msgs[1].len > 0 && msgs[1].len <=3D 8 &&
-+		    msgs[1].len > 0 &&
- 		    msgs[0].addr =3D=3D msgs[1].addr) {
--			if (msgs[1].flags & I2C_M_RD)
--				ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
--			else
--				ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
--			goto out;
-+			if (msgs[1].len <=3D 8) {
-+				if (msgs[1].flags & I2C_M_RD)
-+					ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
-+				else
-+					ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
-+				goto out;
-+			} else if (msgs[1].len <=3D 1024 && TWSI_BLOCK_CTL(i2c)) {
-+				if (msgs[1].flags & I2C_M_RD)
-+					ret =3D octeon_i2c_hlc_block_comp_read(i2c, msgs);
-+				else
-+					ret =3D octeon_i2c_hlc_block_comp_write(i2c, msgs);
-+				goto out;
-+			}
- 		}
- 	}
-=20
-diff --git a/drivers/i2c/busses/i2c-octeon-core.h b/drivers/i2c/busses/i2=
-c-octeon-core.h
-index 9bb9f64fdda0..81fcf413c890 100644
---- a/drivers/i2c/busses/i2c-octeon-core.h
-+++ b/drivers/i2c/busses/i2c-octeon-core.h
-@@ -85,6 +85,11 @@
- #define TWSI_INT_SDA		BIT_ULL(10)
- #define TWSI_INT_SCL		BIT_ULL(11)
-=20
-+#define TWSI_MODE_STRETCH		BIT_ULL(1)
-+#define TWSI_MODE_BLOCK_MODE		BIT_ULL(2)
-+
-+#define TWSI_BLOCK_STS_RESET_PTR	BIT_ULL(0)
-+#define TWSI_BLOCK_STS_BUSY		BIT_ULL(1)
- #define I2C_OCTEON_EVENT_WAIT 80 /* microseconds */
-=20
- /* Register offsets */
-@@ -92,11 +97,19 @@ struct octeon_i2c_reg_offset {
- 	unsigned int sw_twsi;
- 	unsigned int twsi_int;
- 	unsigned int sw_twsi_ext;
-+	unsigned int twsi_mode;
-+	unsigned int twsi_block_ctl;
-+	unsigned int twsi_block_sts;
-+	unsigned int twsi_block_fifo;
- };
-=20
- #define SW_TWSI(x)	(x->roff.sw_twsi)
- #define TWSI_INT(x)	(x->roff.twsi_int)
- #define SW_TWSI_EXT(x)	(x->roff.sw_twsi_ext)
-+#define TWSI_MODE(x)	(x->roff.twsi_mode)
-+#define TWSI_BLOCK_CTL(x)	(x->roff.twsi_block_ctl)
-+#define TWSI_BLOCK_STS(x)	(x->roff.twsi_block_sts)
-+#define TWSI_BLOCK_FIFO(x)	(x->roff.twsi_block_fifo)
-=20
- struct octeon_i2c {
- 	wait_queue_head_t queue;
-@@ -110,6 +123,7 @@ struct octeon_i2c {
- 	void __iomem *twsi_base;
- 	struct device *dev;
- 	bool hlc_enabled;
-+	bool block_enabled;
- 	bool broken_irq_mode;
- 	bool broken_irq_check;
- 	void (*int_enable)(struct octeon_i2c *);
-diff --git a/drivers/i2c/busses/i2c-thunderx-pcidrv.c b/drivers/i2c/busse=
-s/i2c-thunderx-pcidrv.c
-index a77cd86fe75e..abde98117d7e 100644
---- a/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-+++ b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-@@ -165,6 +165,10 @@ static int thunder_i2c_probe_pci(struct pci_dev *pde=
-v,
- 	i2c->roff.sw_twsi =3D 0x1000;
- 	i2c->roff.twsi_int =3D 0x1010;
- 	i2c->roff.sw_twsi_ext =3D 0x1018;
-+	i2c->roff.twsi_mode =3D 0x1038;
-+	i2c->roff.twsi_block_ctl =3D 0x1048;
-+	i2c->roff.twsi_block_sts =3D 0x1050;
-+	i2c->roff.twsi_block_fifo =3D 0x1058;
-=20
- 	i2c->dev =3D dev;
- 	pci_set_drvdata(pdev, i2c);
---=20
-2.43.2
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
