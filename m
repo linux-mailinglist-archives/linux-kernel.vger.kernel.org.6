@@ -1,159 +1,201 @@
-Return-Path: <linux-kernel+bounces-208427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30E090250B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDBE902509
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C87F281573
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43ACF2826AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F274813DB92;
-	Mon, 10 Jun 2024 15:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFDC1384A9;
+	Mon, 10 Jun 2024 15:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDyhZWhS"
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyZT3uH6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8E013959A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E75A13212B;
+	Mon, 10 Jun 2024 15:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032258; cv=none; b=ZVM1oW6+q5CaFmpZbfxY0c61S7O3G+Tux5ZhzfvNFaei247anX4FCLkVQtcDRYQ0gk2gdLqWqdgwuKnRpiC813A+R9auQVdAvCSguMEdjXuO4lQnBO/R+q+ctfg163MaNi7ZYvaJZGP2hIR6dOKKMAA2brzj/ut4LZXFolQ8DZ8=
+	t=1718032255; cv=none; b=ioU6qdjt8+mVN4tUs/PskSH3CIANqmRXEJPAAjN4qCXqlcWnCb11X/gRXck56377uFLglQyBqM9b0kVTQQHEGr7Z51oF29Ovs+6MzBoogF5Ki5t1JH3IUtXQFgc5A2c+sABgCt9jX8BKFGXW4ONvJBR2hzIqxh0ER52snQC8ZgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032258; c=relaxed/simple;
-	bh=ERuOVVdn5GsO46O7DDRbGcmv/ifApz+1KsqrXPoPF7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lVSLSuivCWNM0TBeKcMe3FOsEy9ElcC5dDtKKaayG6cg5DLh5M5RqO80VQDcrPKIKSYVMsUCVzYpQRB8fctaKhrxU6Jmfi2mTX6qVNn0AS9Xm0EKGAvIK8t3H+VifGJVm6u0klRACerMjBRdV1Jh/6ac2iPdMEc4ybLl6ZRDzFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDyhZWhS; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-804ee8b03afso1300359241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718032255; x=1718637055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cycnwNbB2QbkiUYzy7U9ut8XvQ6A+eLFN2UjpJnGLXE=;
-        b=CDyhZWhSg8kFmnHloRpT/QLPvZk93+jwTKxDYE787mn05m0VSws0DoS3cLyUgop45Y
-         PscYumdM7geKthqIUmDpD8/6mpD90nUtYT0ZB0Vbj/tamXA10V8/8PPKrrk8IWZx+9QU
-         v6ejSq4TVSPxvYir/SoUfEXnSLYIZMNoQjLKhnUmss97fnPnUSACgHGkq7J9KEkNlKTP
-         tnfXyO1jNftig4+ql3QaUK+qhHTice41ZsrLm/PmBHxPL8ZuQRXJeP6tcajTOQZuO96i
-         z1AzGsIFUe4PwlYJr8cu88umqgXKSMV6uj8FUbJaBFWZZi5hukdqjdrhVAiSwmbDlFrw
-         IWog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718032255; x=1718637055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cycnwNbB2QbkiUYzy7U9ut8XvQ6A+eLFN2UjpJnGLXE=;
-        b=e456t3GPpPVXZry+ashS7PBy6cB8iTcbASMWMO6axs9DEmzMRdg4Ema0hC9SI/C/YX
-         IcOkAR29ViO4CmiVnPc3TfXmSuS8+AeGsq9rS9Hbnxi0oR7FKZsnk+qouHLrvwswhSFd
-         mOh4TZmfncQ750kw/gyrE80jE+xyxuNkUf6NhLALIk4tPvtwsP68ibCFSLBxRjG8j4MH
-         HrtmUEeGugx+d7iLY+G6ntKgK7gIuNs08QLNJtjtbKzsngJYP14r7rKkmSIVyz/uFeZl
-         ambX1idJ1YjrN1Tg1GxZsSlng4W+P3VcyHvmLweXdkcSWqsWLcoovFv2rHcrMagx1Geq
-         ArzA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8D7iv7CYu9eDwt73StMuVE1l2Yv20n40Ri52vLgtmRxzB8zDRbCmZy1R3+NyWm4Cvz1sxJjm5ufJCrkn0qYF1Yzu335OeSwJlGv5d
-X-Gm-Message-State: AOJu0YyOkAXAg8fv+vRFK1lbgFSmAla9q0l4cHIAV9oNHGU0Ts5UYJ7Y
-	vS+qzHTFmrIwoW5//6lNmru5BNXuxOPBiizHSlS3xvsbXO2jX7OKssZeM+c7ILlOder1EOszDlC
-	wwT+2CU7Txk4+AKCwflbq8etVGmCGns+q
-X-Google-Smtp-Source: AGHT+IE1bBht3Q/RKtsJwKtDwwtiDOLpGrE5Ye4Ip0oqyDxrr1J0UcUl9iVD/cn4DnAfDoA5lFDmV46W8zkQB61nLSE=
-X-Received: by 2002:a05:6122:298a:b0:4df:4498:cc with SMTP id
- 71dfb90a1353d-4eb562325d3mr10040880e0c.6.1718032254029; Mon, 10 Jun 2024
- 08:10:54 -0700 (PDT)
+	s=arc-20240116; t=1718032255; c=relaxed/simple;
+	bh=6AlFxH4NIHxQy7Ir3kIGMAcdMCTeUeBcXMZVbDgDHQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZrz2QIQSCioHKJIq3yKBcUCxpZ54N5xDgOM/O6gF9S/6xyFDb0OevlvD1ZUZep9gkPWPMkNlBRSdc1fqi8xSbXdW1mR5diRGONE4KDCpTX9mt6ri0gfC1haizhopvnBOu6QPt6jTUKjSeCBpDsxSOkh9GUx+maEYrWa2Q8HCnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyZT3uH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D064C2BBFC;
+	Mon, 10 Jun 2024 15:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718032255;
+	bh=6AlFxH4NIHxQy7Ir3kIGMAcdMCTeUeBcXMZVbDgDHQM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=CyZT3uH68inUrPXz5GzpHEUS53QFtQ/YVgvPnJcBMKRNMXs+hiVUeG69JiYo+utc9
+	 +w/NwxXiZUXO+J56yN8IMSU3RgjB8GuhxtDjccvt/iep4H0q8YU6L8eaYsrBryMs+b
+	 TXfN4looZ5DRppmaPFj+gpRC0l35C/86Cs2qi31sa3Tjp2V+ctyRsMnsdxvHYXWe2D
+	 l64DWtjjBAk9qW7X0735xhPrMxSIcY1PwqmtdrYaEpFb7IckG89drxPfEvSbLlKkPp
+	 t+RE/fUFoX5EbmN1Nl3+iPZKca1ckc9mqvN5qytR1M1Mp8WATM2wehrQeODZCHdyWu
+	 ZFgjF06ZgxDjQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B00B6CE2373; Mon, 10 Jun 2024 08:10:54 -0700 (PDT)
+Date: Mon, 10 Jun 2024 08:10:54 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH rcu 6/9] rcu: Add rcutree.nocb_patience_delay to reduce
+ nohz_full OS jitter
+Message-ID: <50efb4a3-578a-4df9-9bb2-550eb8c17d43@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-6-paulmck@kernel.org>
+ <ZmaJmhgpzVVyZtnC@LeoBras>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606095213.4087668-1-chao@kernel.org> <d38a2712-f7cc-4aea-a343-00335a5215a0@kernel.org>
-In-Reply-To: <d38a2712-f7cc-4aea-a343-00335a5215a0@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Mon, 10 Jun 2024 08:10:41 -0700
-Message-ID: <CACOAw_x3s2m70-cBhA0X0h5AetCQgDzVh7hRM00OVm=0Od5FUA@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to add missing sb_{start,
- end}_intwrite() for ckpt thread
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmaJmhgpzVVyZtnC@LeoBras>
 
-On Sat, Jun 8, 2024 at 5:36=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/6/6 17:52, Chao Yu wrote:
-> > After commit 261eeb9c1585 ("f2fs: introduce checkpoint_merge mount
-> > option"), checkpoint can be triggered in background thread, it missed
-> > to cover f2fs inner checkpoint operation w/ sb_{start,end}_intwrite(),
-> > fix it.
->
-> It needs to use sb_start_intwrite_trylock(), otherwise, it will cause
-> deadlock as below:
->
-> - freeze_super
->   - sb_wait_write(SB_FREEZE_WRITE)
->   - sb_wait_write(SB_FREEZE_PAGEFAULT)
->   - sb_wait_write(SB_FREEZE_FS)
->                                         - sync
->                                          - iterate_supers
->                                           - super_lock_shared
->                                            - down_read(&sb->s_umount)
->                                            - sync_fs_one_sb
->                                             - f2fs_sync_fs
->                                              - f2fs_issue_checkpoint
->                                               - wait_for_completion
->                                                                         -=
- issue_checkpoint_thread
->                                                                          =
-- sb_start_intwrite(sbi->sb);
->
-> - thaw_super
->   - super_lock_excl
->    - down_write(&sb->s_umount)
->
-> Thanks,
->
-> >
-> > Fixes: 261eeb9c1585 ("f2fs: introduce checkpoint_merge mount option")
-> > Cc: Daeho Jeong <daehojeong@google.com>
-> > Signed-off-by: Chao Yu <chao@kernel.org>
+On Mon, Jun 10, 2024 at 02:05:30AM -0300, Leonardo Bras wrote:
+> On Tue, Jun 04, 2024 at 03:23:52PM -0700, Paul E. McKenney wrote:
+> > If a CPU is running either a userspace application or a guest OS in
+> > nohz_full mode, it is possible for a system call to occur just as an
+> > RCU grace period is starting.  If that CPU also has the scheduling-clock
+> > tick enabled for any reason (such as a second runnable task), and if the
+> > system was booted with rcutree.use_softirq=0, then RCU can add insult to
+> > injury by awakening that CPU's rcuc kthread, resulting in yet another
+> > task and yet more OS jitter due to switching to that task, running it,
+> > and switching back.
+> > 
+> > In addition, in the common case where that system call is not of
+> > excessively long duration, awakening the rcuc task is pointless.
+> > This pointlessness is due to the fact that the CPU will enter an extended
+> > quiescent state upon returning to the userspace application or guest OS.
+> > In this case, the rcuc kthread cannot do anything that the main RCU
+> > grace-period kthread cannot do on its behalf, at least if it is given
+> > a few additional milliseconds (for example, given the time duration
+> > specified by rcutexperiementationree.jiffies_till_first_fqs, give or take 
+> > scheduling
+> > delays).
+> > 
+> > This commit therefore adds a rcutree.nocb_patience_delay kernel boot
+> > parameter that specifies the grace period age (in milliseconds)
+> > before which RCU will refrain from awakening the rcuc kthread.
+> > Preliminary experiementation suggests a value of 1000, that is,
+> 
+> Just a nit I found when cherry-picking here
+> s/experiementation/experimentation/
+
+Good eyes!  I will fix this on my next rebase, thank you!
+
+							Thanx, Paul
+
+> Thanks!
+> Leo
+> 
+> > one second.  Increasing rcutree.nocb_patience_delay will increase
+> > grace-period latency and in turn increase memory footprint, so systems
+> > with constrained memory might choose a smaller value.  Systems with
+> > less-aggressive OS-jitter requirements might choose the default value
+> > of zero, which keeps the traditional immediate-wakeup behavior, thus
+> > avoiding increases in grace-period latency.
+> > 
+> > [ paulmck: Apply Leonardo Bras feedback.  ]
+> > 
+> > Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> > 
+> > Reported-by: Leonardo Bras <leobras@redhat.com>
+> > Suggested-by: Leonardo Bras <leobras@redhat.com>
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Reviewed-by: Leonardo Bras <leobras@redhat.com>
 > > ---
-> >   fs/f2fs/checkpoint.c | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 55d444bec5c0..66eaad591b60 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -1828,8 +1828,11 @@ static int issue_checkpoint_thread(void *data)
-> >       if (kthread_should_stop())
-> >               return 0;
-> >
-> > -     if (!llist_empty(&cprc->issue_list))
-> > +     if (!llist_empty(&cprc->issue_list)) {
-> > +             sb_start_intwrite(sbi->sb);
-> >               __checkpoint_and_complete_reqs(sbi);
-> > +             sb_end_intwrite(sbi->sb);
-> > +     }
-> >
-> >       wait_event_interruptible(*q,
-> >               kthread_should_stop() || !llist_empty(&cprc->issue_list))=
-;
->
->
-
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
-
-Thanks.
-
-
-
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+> >  kernel/rcu/tree.c                               | 10 ++++++++--
+> >  kernel/rcu/tree_plugin.h                        | 10 ++++++++++
+> >  3 files changed, 26 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 500cfa7762257..2d4a512cf1fc6 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5018,6 +5018,14 @@
+> >  			the ->nocb_bypass queue.  The definition of "too
+> >  			many" is supplied by this kernel boot parameter.
+> >  
+> > +	rcutree.nocb_patience_delay= [KNL]
+> > +			On callback-offloaded (rcu_nocbs) CPUs, avoid
+> > +			disturbing RCU unless the grace period has
+> > +			reached the specified age in milliseconds.
+> > +			Defaults to zero.  Large values will be capped
+> > +			at five seconds.  All values will be rounded down
+> > +			to the nearest value representable by jiffies.
+> > +
+> >  	rcutree.qhimark= [KNL]
+> >  			Set threshold of queued RCU callbacks beyond which
+> >  			batch limiting is disabled.
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 35bf4a3736765..408b020c9501f 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -176,6 +176,9 @@ static int gp_init_delay;
+> >  module_param(gp_init_delay, int, 0444);
+> >  static int gp_cleanup_delay;
+> >  module_param(gp_cleanup_delay, int, 0444);
+> > +static int nocb_patience_delay;
+> > +module_param(nocb_patience_delay, int, 0444);
+> > +static int nocb_patience_delay_jiffies;
+> >  
+> >  // Add delay to rcu_read_unlock() for strict grace periods.
+> >  static int rcu_unlock_delay;
+> > @@ -4344,11 +4347,14 @@ static int rcu_pending(int user)
+> >  		return 1;
+> >  
+> >  	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> > -	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> > +	gp_in_progress = rcu_gp_in_progress();
+> > +	if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> > +	     (gp_in_progress &&
+> > +	      time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay_jiffies))) &&
+> > +	    rcu_nohz_full_cpu())
+> >  		return 0;
+> >  
+> >  	/* Is the RCU core waiting for a quiescent state from this CPU? */
+> > -	gp_in_progress = rcu_gp_in_progress();
+> >  	if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progress)
+> >  		return 1;
+> >  
+> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > index 340bbefe5f652..31c539f09c150 100644
+> > --- a/kernel/rcu/tree_plugin.h
+> > +++ b/kernel/rcu/tree_plugin.h
+> > @@ -93,6 +93,16 @@ static void __init rcu_bootup_announce_oddness(void)
+> >  		pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
+> >  	if (gp_cleanup_delay)
+> >  		pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
+> > +	if (nocb_patience_delay < 0) {
+> > +		pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n", nocb_patience_delay);
+> > +		nocb_patience_delay = 0;
+> > +	} else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
+> > +		pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n", nocb_patience_delay, 5 * MSEC_PER_SEC);
+> > +		nocb_patience_delay = 5 * MSEC_PER_SEC;
+> > +	} else if (nocb_patience_delay) {
+> > +		pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n", nocb_patience_delay);
+> > +	}
+> > +	nocb_patience_delay_jiffies = msecs_to_jiffies(nocb_patience_delay);
+> >  	if (!use_softirq)
+> >  		pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
+> >  	if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
+> > -- 
+> > 2.40.1
+> > 
+> 
 
