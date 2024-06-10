@@ -1,170 +1,302 @@
-Return-Path: <linux-kernel+bounces-208728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D52A90289F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:25:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150DE9028A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44BC81C20FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679ADB22B89
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93FC14B953;
-	Mon, 10 Jun 2024 18:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AB514E2FB;
+	Mon, 10 Jun 2024 18:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="B/67php/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aZVo2f/h"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NryYOI1v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D4215A8;
-	Mon, 10 Jun 2024 18:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BC414BF89;
+	Mon, 10 Jun 2024 18:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718043941; cv=none; b=X7p0eFqd/nmdPw74G1+RwQkpLtmLwDxFS/0I1WchQNEniRwchuaVycWA2SFI3UfYbr1Xsr8GfST3Ej+3s0cpRg/7yLF3YmG/gqm85mb9jU+Iig0gtc0bzjGLTKmYYGRz1yMFQUVp1txHyvyCU1GhvogX4PQtO3QEuZKpRe1IFbY=
+	t=1718043946; cv=none; b=LCdBtuP7lCL5pivwzE045YQ078h+vMikOm1ysTOXxvSwgdRTsjRkxrjaP8h8bOM5Cd+M7bu3m9gljroi99/W/17wSJIC/3h37dejHfuknbqFwp103ISS5j5RUvhqweCalqpIOEtTFapW8ozWhofuRWnG5kq8eJuLOuLOBlELo7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718043941; c=relaxed/simple;
-	bh=aP9cBapF3uNo1FI3ZpJLWwcc9xHK/PpDMbxjJDR6N/Y=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=tHPfac90X8fTPp/6a0BjU7kGpif2M1hKDyGInksFbMr+5UWAMpDbc9R83AodxBbCPPszNPTV7lUI2Xa3hTMQ9DpVe+/WIiSpp9rzjy/uBkUf50uxuNlsXHNidvh+TOnMqExy5Jm3bFCC6PCU/9hmoxywewt3WK1/q15TI8FYeys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=B/67php/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aZVo2f/h; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 43FCB18000BA;
-	Mon, 10 Jun 2024 14:25:38 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 10 Jun 2024 14:25:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718043937;
-	 x=1718130337; bh=vY0HlAqLR+9vVLht9gOAcC05xIRzjm1Orljq/RiGYz8=; b=
-	B/67php/Rvpfq7xJAzp7JETj7d7LxHNcEYBxCdZr2S0xEY/COiXxiARQQna1g5Zx
-	UEAlfrtPB7ai5Qd7HPLxRFqWz6Hcp/9htXjSKG1G4Qwlpni6k/gIVrFTqyT5RCjn
-	mHFLW3N4ZXOCaAsOME1le4k8Rq6jD+j19ABgnW3FGiE2CjNVc3AIV6Ws60lvEyiv
-	Pwbwbngbgj7EKe7pxaUUJj3YO9AYyCd+89jdBZ3FcFZiaMS/mQu6J6Uynb9hz3bg
-	ToLd+vIcr/VLg4hTMIrU8ca+wlSP0OmYZ9VGDGclKQfPal0Li8colOpeRjsaURVl
-	13fP/OF7iGWgFHBhy+9ZKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718043937; x=
-	1718130337; bh=vY0HlAqLR+9vVLht9gOAcC05xIRzjm1Orljq/RiGYz8=; b=a
-	ZVo2f/hcnhew9AfvgyeNJcm0bu7wzwdwDPcA8GSCbPWmQOq62Z4qBKvxBy6p1jct
-	1+o+1E2SKuH/nW3wGR2d9Ce5y8hdCd4OYpzkUrepbt9YgLp4ftO8fn3CdR8kQuIU
-	T8XSp9rO4hJc6R6XR0eJQItTiNUsuFpsiMdi8WhD4ltHM6r448u6oa4s5X5klJ/7
-	jiQ/afvr8TtBIVJOyShLcyaOvMPZ2uUQCoyMsBtasxmvZpA8HLJB5xMUWxlqyDt5
-	jizyWUDJTBpv8LxRYGOyoX5xNIO51/RTJsd0XynhNNFI1v3DQX1qbJnsPfQfK5ZL
-	uWPhw2qBfbJ5LLD9qR00g==
-X-ME-Sender: <xms:IUVnZrBesjXipWnxLWj5wW3zikfcZATjdmm0svKXcy_of4QjyCNQsQ>
-    <xme:IUVnZhiNOlDfhKF9V4FwcGOFNkA5YIwlbpk6XjPp3Zo6zQkjYxgfv-4WRnVFhjXCf
-    kgSJoC_gw_3GE5pkPc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedutddguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
-    grthhtvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudek
-    tdfgjeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:IUVnZmn7MZ2HrzSB5xGTghJISPueeZ412EmaqKXd5QN8uec2vLzMYA>
-    <xmx:IUVnZtzN1-0lDvxZ49LhH8D27qc58vM42H6xQ8VLiv71xTi6IuyM3w>
-    <xmx:IUVnZgQT6vLcMojKG1XEDBN8YdXZiPstr9jJ4EzcHbmTBBcfBY-s9w>
-    <xmx:IUVnZgZNVjvf4kXrjZih0WXLKdA-aVhK_Eyg0ZLXztfv-9LIc0-CAQ>
-    <xmx:IUVnZp8dLPh4U0s72TBIcnOvLHd9_Grg4WGJfI-kLmaugoKMkeY5D3Ff>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5554BB6008D; Mon, 10 Jun 2024 14:25:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718043946; c=relaxed/simple;
+	bh=CgmItXHuKGWcIesgbvrU1YmJC+ezBX6HnPlt5t9/mW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=R13rzZn7zgpOH9V7trfU6AxWNU807xqlKeFaX4OvlA2Ex9Cv8qmMj7AXNICiq3OeGIfMTYY4uk2OhNA+jeC+csq4QHLcx9aUzu95NyRMtyLVWgti2+52zCzOlj+o68c3DwxsfLKy3do02dSA/TPfLZq+CG9jmHeKv9tHTbaYSX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NryYOI1v; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718043943; x=1749579943;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CgmItXHuKGWcIesgbvrU1YmJC+ezBX6HnPlt5t9/mW4=;
+  b=NryYOI1voFAeFymqbO1zlyqHj4mJ/qnuYozuO3Q6M98eSjYjobOiaIqi
+   vM+KZdYGkOzVERcUXSuUGyGmi3Ha+X3R34mjQbRqXW0zk9lTYkD1fAP5C
+   zGm7KvhejypenGx/UFCMkOCs5BBp+ZKfCVdedz4QhuY3pw1JDqENXPHsu
+   DcAO8yCBpoBdK90pOJ3LGeVsOUHRm5jDByFI51swxt5WwaroiBp9Jdr57
+   /ARc3uHigHHUrjh4epL6LGGAlMwC+WYRpZ/kLN90ADx+tLc+zv4V6ZiQh
+   ClJGEmaahz5F09jXoIOoEfafwsJZXX7eXIVGXQPdMupOvoRNhvZK751VU
+   Q==;
+X-CSE-ConnectionGUID: KKXZA2BsTzubx1INK6vSzw==
+X-CSE-MsgGUID: WKoy/RoFRbyeemWn3sTEAA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14875069"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="14875069"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:25:40 -0700
+X-CSE-ConnectionGUID: NiCEtLYBR4uuKU4UnhCsvg==
+X-CSE-MsgGUID: NUJPxep2SRmonOwv0NR+dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="44072142"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:25:41 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: isaku.yamahata@intel.com,
+	pbonzini@redhat.com,
+	erdemaktas@google.com,
+	vkuznets@redhat.com,
+	seanjc@google.com,
+	vannapurve@google.com,
+	jmattson@google.com,
+	mlevitsk@redhat.com,
+	xiaoyao.li@intel.com,
+	chao.gao@intel.com,
+	rick.p.edgecombe@intel.com,
+	yuan.yao@intel.com
+Cc: reinette.chatre@intel.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V8 0/2] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+Date: Mon, 10 Jun 2024 11:25:33 -0700
+Message-Id: <cover.1718043121.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <8d93cdd6-379b-48e7-8a10-9df190b12623@app.fastmail.com>
-In-Reply-To: <Zmcwlt6Kfpt09tKi@fedora>
-References: <20240529094816.1859073-1-arnd@kernel.org>
- <ZmSi5_-4mD4AaIJW@fedora>
- <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
- <Zmcwlt6Kfpt09tKi@fedora>
-Date: Mon, 10 Jun 2024 20:25:15 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Jiri Kosina" <jikos@kernel.org>,
- "Benjamin Tissoires" <bentiss@kernel.org>,
- "Rahul Rameshbabu" <rrameshbabu@nvidia.com>,
- "Fabio Baltieri" <fabiobaltieri@chromium.org>,
- "Ivan Gorinov" <linux-kernel@altimeter.info>,
- "Johannes Roith" <johannes@gnu-linux.rocks>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple modules
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024, at 18:57, Jos=C3=A9 Exp=C3=B3sito wrote:
-> On Mon, Jun 10, 2024 at 08:24:51AM +0200, Arnd Bergmann wrote:
->> On Sat, Jun 8, 2024, at 20:28, Jos=C3=A9 Exp=C3=B3sito wrote:
->
-> Turns out that, since the last time I checked the KUnit docs,
-> we have "EXPORT_SYMBOL_IF_KUNIT" available now.
->
-> I think we can use it and your final patch, without the MODULE_*
-> changes, could look like:
+Changes from v7:
+- v7: https://lore.kernel.org/lkml/cover.1717695426.git.reinette.chatre@intel.com/
+- Use appropriate ioctl() return type.
+- Let new tsc_khz used by KVM selftest be of the same type as same variable
+  used in kernel.
+- Please refer to individual patches for detailed changes.
 
-Looks good to me, can you send that with
+Changes from v6:
+- V6: https://lore.kernel.org/lkml/cover.1715017765.git.reinette.chatre@intel.com/
+- KVM changes were merged into kvm-x86 misc and subsequently dropped from
+  this submission. This submission only contains the selftest changes.
+  https://lore.kernel.org/lkml/ZmBw9R_jkNLYXkJh@google.com/
+- New patch to add udelay() utility to x86_64 KVM selftests. (Sean)
+- Many changes to APIC bus frequency selftest. Please refer to the patch
+  for detailed changes.
+- Series applies cleanly to next branch of kvm-x86 with HEAD
+  af0903ab52ee6d6f0f63af67fa73d5eb00f79b9a.
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Changes from v5:
+- v5: https://lore.kernel.org/lkml/cover.1714081725.git.reinette.chatre@intel.com/
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
+- Added Xiaoyao Li and Yuan Yao's Reviewed-by tags.
+- Use the KVM selftest vm_create() wrapper instead of open coding it. (Zide)
+- Improve grammar of selftest description. (Zide)
 
-?
+Changes from v4:
+- v4: https://lore.kernel.org/lkml/cover.1711035400.git.reinette.chatre@intel.com/
+- Rename capability from KVM_CAP_X86_APIC_BUS_FREQUENCY to
+  KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li).
+- Include "Testing" section in cover letter.
+- Add Rick's Reviewed-by tags.
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
 
-Feel free to take my original changelog text if that helps
+Changes from v3:
+- v3: https://lore.kernel.org/all/cover.1702974319.git.isaku.yamahata@intel.com/
+- Reworked all changelogs.
+- Regarding code changes: patches #1 and #2 are unchanged, patch #3 was
+  reworked according to Sean's guidance, and patch #4 (the test)
+  needed changes after rebase to kvm-x86/next and the implementation
+  (patch #3) changes.
+- Added Reviewed-by tags to patches #1, #2, and #4, but removed
+  Maxim's Reviewed-by tag from patch #3 because it changed so much.
+- Added a "Suggested-by" to patch #4 to reflect that it represents
+  Sean's guidance.
+- Reworked cover to match customs (in subject line) and reflect feedback
+  to patches: capability renamed to KVM_CAP_X86_APIC_BUS_FREQUENCY, clarify
+  distinction between "core crystal clock" and "bus clock", and update
+  pro/con list.
+- Please refer to individual patches for detailed changes.
 
-     Arnd
+Changes from v2:
+- v2: https://lore.kernel.org/lkml/cover.1699936040.git.isaku.yamahata@intel.com/
+- Removed APIC_BUS_FREQUENCY and apic_bus_frequency of struct kvm-arch.
+- Update the commit messages.
+- Added reviewed-by (Maxim Levitsky)
+- Use 1.5GHz instead of 1GHz as frequency for the test case.
 
-> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> index ce71b53ea6c5..e40f1ddebbb7 100644
-> --- a/drivers/hid/Makefile
-> +++ b/drivers/hid/Makefile
-> @@ -154,10 +154,8 @@ obj-$(CONFIG_HID_WINWING)  +=3D hid-winwing.o
->  obj-$(CONFIG_HID_SENSOR_HUB)   +=3D hid-sensor-hub.o
->  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR) +=3D hid-sensor-custom.o
->=20
-> -hid-uclogic-test-objs          :=3D hid-uclogic-rdesc.o \
-> -                                  hid-uclogic-params.o \
-> -                                  hid-uclogic-rdesc-test.o
-> -obj-$(CONFIG_HID_KUNIT_TEST)   +=3D hid-uclogic-test.o
-> +hid-uclogic-test-objs          :=3D hid-uclogic-rdesc-test.o
-> +obj-$(CONFIG_HID_KUNIT_TEST)   +=3D hid-uclogic.o hid-uclogic-test.o
->=20
->  obj-$(CONFIG_USB_HID)          +=3D usbhid/
->  obj-$(CONFIG_USB_MOUSE)                +=3D usbhid/
-> diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic=
--rdesc.c
-> index b6dfdf6356a6..6c7a90417569 100644
-> --- a/drivers/hid/hid-uclogic-rdesc.c
-> +++ b/drivers/hid/hid-uclogic-rdesc.c
-> @@ -17,6 +17,7 @@
->  #include "hid-uclogic-rdesc.h"
->  #include <linux/slab.h>
->  #include <asm/unaligned.h>
-> +#include <kunit/visibility.h>
->=20
->  /* Fixed WP4030U report descriptor */
->  __u8 uclogic_rdesc_wp4030u_fixed_arr[] =3D {
-> @@ -1242,3 +1243,4 @@ __u8 *uclogic_rdesc_template_apply(const __u8=20
-> *template_ptr,
->=20
->         return rdesc_ptr;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(uclogic_rdesc_template_apply);
->
-> I hope that helps,
-> Jose
+Changes from v1:
+- v1: https://lore.kernel.org/all/cover.1699383993.git.isaku.yamahata@intel.com/
+- Added a test case
+- Fix a build error for i386 platform
+- Add check if vcpu isn't created.
+- Add check if lapic chip is in-kernel emulation.
+- Updated api.rst
+
+Summary
+-------
+Add KVM_CAP_X86_APIC_BUS_CYCLES_NS capability to configure the APIC
+bus clock frequency for APIC timer emulation.
+Allow KVM_ENABLE_CAPABILITY(KVM_CAP_X86_APIC_BUS_CYCLES_NS) to set the
+frequency in nanoseconds. When using this capability, the user space
+VMM should configure CPUID leaf 0x15 to advertise the frequency.
+
+Description
+-----------
+Vishal reported [1] that the TDX guest kernel expects a 25MHz APIC bus
+frequency but ends up getting interrupts at a significantly higher rate.
+
+The TDX architecture hard-codes the core crystal clock frequency to
+25MHz and mandates exposing it via CPUID leaf 0x15. The TDX architecture
+does not allow the VMM to override the value.
+
+In addition, per Intel SDM:
+    "The APIC timer frequency will be the processor’s bus clock or core
+     crystal clock frequency (when TSC/core crystal clock ratio is
+     enumerated in CPUID leaf 0x15) divided by the value specified in
+     the divide configuration register."
+
+The resulting 25MHz APIC bus frequency conflicts with the KVM hardcoded
+APIC bus frequency of 1GHz.
+
+The KVM doesn't enumerate CPUID leaf 0x15 to the guest unless the user
+space VMM sets it using KVM_SET_CPUID. If the CPUID leaf 0x15 is
+enumerated, the guest kernel uses it as the APIC bus frequency. If not,
+the guest kernel measures the frequency based on other known timers like
+the ACPI timer or the legacy PIT. As reported in [1] the TDX guest kernel
+expects a 25MHz timer frequency but gets timer interrupt more frequently
+due to the 1GHz frequency used by KVM.
+
+To ensure that the guest doesn't have a conflicting view of the APIC bus
+frequency, allow the userspace to tell KVM to use the same frequency that
+TDX mandates instead of the default 1Ghz.
+
+There are several options to address this:
+1. Make the KVM able to configure APIC bus frequency (this series).
+   Pro: It resembles the existing hardware.  The recent Intel CPUs
+        adopts 25MHz.
+   Con: Require the VMM to emulate the APIC timer at 25MHz.
+2. Make the TDX architecture enumerate CPUID leaf 0x15 to configurable
+   frequency or not enumerate it.
+   Pro: Any APIC bus frequency is allowed.
+   Con: Deviates from TDX architecture.
+3. Make the TDX guest kernel use 1GHz when it's running on KVM.
+   Con: The kernel ignores CPUID leaf 0x15.
+4. Change CPUID leaf 0x15 under TDX to report the crystal clock frequency
+   as 1 GHz.
+   Pro: This has been the virtual APIC frequency for KVM guests for 13
+        years.
+   Pro: This requires changing only one hard-coded constant in TDX.
+   Con: It doesn't work with other VMMs as TDX isn't specific to KVM.
+   Con: Core crystal clock frequency is also used to calculate TSC frequency.
+   Con: If it is configured to value different from hardware, it will
+        break the correctness of INTEL-PT Mini Time Count (MTC) packets
+        in TDs.
+
+Testing
+-------
+Tested on non-TDX host using included kselftest. Host running kernel
+with this series applied to "next" branch of
+https://github.com/kvm-x86/linux.git
+
+Tested on TDX host and TD using a modified version
+of x86/apic.c:test_apic_timer_one_shot() available from
+https://github.com/intel/kvm-unit-tests-tdx/blob/tdx/x86/apic.c.
+Host running TDX KVM development patches and QEMU with corresponding TDX
+changes.
+The test needed to be modified to (a) stop any lingering timers before the
+test starts, and (b) use CPUID 0x15 in TDX to accurately determine the TSC
+and APIC frequencies instead of making 1GHz assumption and use similar
+check as the kselftest test introduced in this series (while increasing
+the amount with which the frequency is allowed to deviate by 1%).
+
+The core changes made to x86/apic.c:test_apic_timer_one_shot() for this
+testing are shown below for reference. Work is in progress to upstream
+these modifications.
+
+@@ -477,11 +478,29 @@ static void lvtt_handler(isr_regs_t *regs)
+ 
+ static void test_apic_timer_one_shot(void)
+ {
+-	uint64_t tsc1, tsc2;
+ 	static const uint32_t interval = 0x10000;
++	uint64_t measured_apic_freq, tsc2, tsc1;
++	uint32_t tsc_freq = 0, apic_freq = 0;
++	struct cpuid cpuid_tsc = {};
+ 
+ #define APIC_LVT_TIMER_VECTOR    (0xee)
+ 
++	/*
++	 * CPUID 0x15 is not available in VMX, can use it to obtain
++	 * TSC and APIC frequency for accurate testing
++	 */
++	if (is_tdx_guest()) {
++		cpuid_tsc = raw_cpuid(0x15, 0);
++		tsc_freq = cpuid_tsc.c * cpuid_tsc.b / cpuid_tsc.a;
++		apic_freq = cpuid_tsc.c;
++	}
++	/*
++	   stop already fired local timer
++	   the test case can be negative failure if the timer fired
++	   after installed lvtt_handler but *before*
++	   write to TIMICT again.
++	 */
++	apic_write(APIC_TMICT, 0);
+ 	handle_irq(APIC_LVT_TIMER_VECTOR, lvtt_handler);
+ 
+ 	/* One shot mode */
+@@ -503,8 +522,16 @@ static void test_apic_timer_one_shot(void)
+ 	 * cases, the following should satisfy on all modern
+ 	 * processors.
+ 	 */
+-	report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
+-	       "APIC LVT timer one shot");
++	if (is_tdx_guest()) {
++		measured_apic_freq = interval * (tsc_freq / (tsc2 - tsc1));
++		report((lvtt_counter == 1) &&
++		       (measured_apic_freq < apic_freq * 102 / 100) &&
++		       (measured_apic_freq > apic_freq * 98 / 100),
++		       "APIC LVT timer one shot");
++	} else {
++		report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
++		"APIC LVT timer one shot");
++	}
+ }
+
+[1] https://lore.kernel.org/lkml/20231006011255.4163884-1-vannapurve@google.com/
+
+Isaku Yamahata (1):
+  KVM: selftests: Add test for configure of x86 APIC bus frequency
+
+Reinette Chatre (1):
+  KVM: selftests: Add x86_64 guest udelay() utility
+
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/include/x86_64/apic.h       |   8 +
+ .../selftests/kvm/include/x86_64/processor.h  |  15 ++
+ .../selftests/kvm/lib/x86_64/processor.c      |  12 +
+ .../kvm/x86_64/apic_bus_clock_test.c          | 219 ++++++++++++++++++
+ 5 files changed, 255 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
+
+-- 
+2.34.1
+
 
