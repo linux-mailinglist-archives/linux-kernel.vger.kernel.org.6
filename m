@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-208542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FAC902680
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FAA90268A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C143F1F244A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144FF1F25A5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E068143885;
-	Mon, 10 Jun 2024 16:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D660A142E98;
+	Mon, 10 Jun 2024 16:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcUCHTx2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XnlQn7cc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1F043146;
-	Mon, 10 Jun 2024 16:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984CB43146;
+	Mon, 10 Jun 2024 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036390; cv=none; b=NquIehsDORvGBBgPKFjc9o87ZTp0+pMyViL+We8/V0mwgYUYlM2avI0T6srY2rfpfXt3AH0eKUifwaAEcd/YXHsnmkgGvzghdn3Io/XnHpWhXd0gC4nuP3us9mX09SjNgEo0ZSZGIC3EXhLJiL8em+gXe1vaz2Vka5PY9BnHgZw=
+	t=1718036465; cv=none; b=OQkE0rca4bWq49ISH8GcxHQiFq7N5QLni1zR2MCy78LhFgM/SKo5iVcxtgju7Wpzv7RZdYQtL9vXKAy5FZ5fmgk7l64Enj/c7h9cPjdU6usDiXsdML2oumzYMyzfqmAiY4DTzIb+nXWXZ43zBxyOdmQfGhx7+Tc8j3AzXG78w2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036390; c=relaxed/simple;
-	bh=R6WzIULq9+fnQYcQS1bKOAdon3jwK1WH/CKRPxb9Dg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qj/hwgUyvSoonkv3miGfcWmZ4Zg7y1Q8mH5UcqcS+ZdCWveXrELnVEmuq7JFr0wCZ6ux3m+6lOOQAF05D7pxRId2E2VOkEDpaMRoxbroIF2uufUazXyLEKjO2ezZbrJ7fQPStSmhI8+M78LsJg4gITC63HmRWjSKuETizNNfHF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcUCHTx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7CBC2BBFC;
-	Mon, 10 Jun 2024 16:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718036389;
-	bh=R6WzIULq9+fnQYcQS1bKOAdon3jwK1WH/CKRPxb9Dg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WcUCHTx2EYJ/GmvexbgWlXn/OfbnPQSqd7Ez4p3BHSxY17Zysbn59If0ApIbKoL8X
-	 dfuMWERYIYCSIfs9Y+5D9NXh8Sa+ovgFSVd9ZWe4w/HdTpVWeyQoVkGuQvskYmi03w
-	 jRS1wiQ9jpbd+YasQZ7/8IzhTbbgL7ycFng863AT5ChQnNdvVgh2USaFXEwAStnpQi
-	 pEErYLW8kKB8/VnkteCKuf9zsk4OVBNTXYvcRLZV91t52Tf9jUbpww3YL4ojm82zD7
-	 N7RLatbkOjGPMs/W4md3UjI8PPNu4xVmmMB4fOXqzamMy7L8+CTP029x76g2W8c2I2
-	 ubSRFZdU3vO6A==
-Date: Mon, 10 Jun 2024 17:19:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Julien Stephan <jstephan@baylibre.com>,
-	Louis Kuo <louis.kuo@mediatek.com>,
-	Phi-Bang Nguyen <pnguyen@baylibre.com>,
-	Andy Hsieh <andy.hsieh@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Florian Sylvestre <fsylvestre@baylibre.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v4 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
- interface
-Message-ID: <20240610-eligibly-gainfully-7b1caad07aaa@spud>
-References: <20240110141443.364655-1-jstephan@baylibre.com>
- <20240110141443.364655-2-jstephan@baylibre.com>
- <e0bf8667-cbb8-49ba-bb44-3edf93b019b8@linaro.org>
- <CAEHHSvYt-aqFahi=B_si=duJH8xDgy_9nndgR-P0+U5THX69uw@mail.gmail.com>
- <20240607144154.GD18479@pendragon.ideasonboard.com>
- <cf49fbb3-9de6-4e57-bc38-d720f76118a7@linaro.org>
- <20240610085424.GH26663@pendragon.ideasonboard.com>
- <e9a44b0b-1930-42fa-ab5e-a7eac1470041@linaro.org>
- <20240610-roping-ninja-56074ad61f77@spud>
+	s=arc-20240116; t=1718036465; c=relaxed/simple;
+	bh=25JnKzM0oSveF/yU7V7v0D6gw5AxNyK/vndNnfQoSrU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Zh4PxSCGdmUy9qNAZysqnOcCYLh75KXFfAtTqLekkfmt3T3q2LAeYXouN8qpzVYKroaqOvXJVaQ8rLhyLbNbL6n2zzndewoR/Cpl4A29FlkzeOBDm7wXxT21q7zjLKsouIrwu7d11W/tLY8k3qpqFLYxxSR+9x0ISDhYj7AbHmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XnlQn7cc; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718036463; x=1749572463;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=25JnKzM0oSveF/yU7V7v0D6gw5AxNyK/vndNnfQoSrU=;
+  b=XnlQn7ccB54t/oSEA5JGo/6LiKG3dyaTLoz1SWkF0ga1XQwbV77MC8od
+   CY+EX0RN/Lvmny5jm2AUXqoR81dJJ0hhAv+VM8x3geq+mufKNygtwm+Ii
+   Kuz+Co0z8Xd7B4x6aAoor5M9CSkpIoJQrf0Jfc3JW8f6Jl43Fuk18RRY9
+   SNp14vmBsbVy3j6ZAC5+L5YB+z2jvRrtnHXGASgh3G/1sPPsX5BBgvNKf
+   SgeIdLkma7QNoip/FcnnBPBcNBG/wUHSDawq6OUPV2I7qBJyIfz/4BcWf
+   pGVkIRwkId8E2vWj+w/nHhdwBytk94ByYsAGSK10ssGoytVFLqBfoEM4p
+   Q==;
+X-CSE-ConnectionGUID: AnObiPa7SBm2+07YT3aV0A==
+X-CSE-MsgGUID: 3yg7AYAyQXy+U37OR09pYA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12001676"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="12001676"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 09:21:03 -0700
+X-CSE-ConnectionGUID: VQzS7yZASHyNN6S6cncpoQ==
+X-CSE-MsgGUID: F8rUVy+KQdCCIr86/WK5nQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="39672367"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.194])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 09:20:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Jun 2024 19:20:55 +0300 (EEST)
+To: Babu Moger <babu.moger@amd.com>
+cc: fenghua.yu@intel.com, Reinette Chatre <reinette.chatre@intel.com>, 
+    shuah@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-kselftest@vger.kernel.org, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    peternewman@google.com, eranian@google.com
+Subject: Re: [PATCH v2] selftests/resctrl: Fix noncont_cat_run_test for AMD
+In-Reply-To: <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
+Message-ID: <91052cec-071b-7cc7-5f85-4fa29ec2aea4@linux.intel.com>
+References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com> <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="krd0kZavuSZAemTC"
-Content-Disposition: inline
-In-Reply-To: <20240610-roping-ninja-56074ad61f77@spud>
+Content-Type: text/plain; CHARSET=US-ASCII
+Content-ID: <048478a2-4626-4610-9ef9-7e66f358abf2@linux.intel.com>
+
+On Mon, 10 Jun 2024, Babu Moger wrote:
+
+> The selftest noncont_cat_run_test fails on AMD with the warnings. Reason
+
+noncont_cat_run_test()
+
+(In general, use () when refering to a function, same thing in the 
+shortlog).
+
+"the warnings" sounds like I should know about what warning it fails with
+but there's no previous context which tells that information. I suggest 
+you either use "a warning" or quote the warning it fails with into the 
+commit message.
+
+> is, AMD supports non contiguous CBM masks but does not report it via CPUID.
+
+non-contiguous
+
+> Update noncont_cat_run_test to check for the vendor when verifying CPUID.
+
+()
+
+> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+> v2: Moved the non contiguous verification to a new function
+>     arch_supports_noncont_cat.
+> 
+> v1:
+> This was part of the series
+> https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
+> Sending this as a separate fix per review comments.
+> ---
+>  tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
+>  1 file changed, 22 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
+> index d4dffc934bc3..742782438ca3 100644
+> --- a/tools/testing/selftests/resctrl/cat_test.c
+> +++ b/tools/testing/selftests/resctrl/cat_test.c
+> @@ -288,11 +288,30 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
+>  	return ret;
+>  }
+>  
+> +static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+> +{
+> +	unsigned int eax, ebx, ecx, edx;
+> +
+> +	/* AMD always supports non-contiguous CBM. */
+> +	if (get_vendor() == ARCH_AMD)
+> +		return true;
+> +
+> +	/* Intel support for non-contiguous CBM needs to be discovered. */
+> +	if (!strcmp(test->resource, "L3"))
+> +		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> +	else if (!strcmp(test->resource, "L2"))
+> +		__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> +	else
+> +		return false;
+> +
+> +	return ((ecx >> 3) & 1);
+> +}
+> +
+>  static int noncont_cat_run_test(const struct resctrl_test *test,
+>  				const struct user_params *uparams)
+>  {
+>  	unsigned long full_cache_mask, cont_mask, noncont_mask;
+> -	unsigned int eax, ebx, ecx, edx, sparse_masks;
+> +	unsigned int sparse_masks;
+>  	int bit_center, ret;
+>  	char schemata[64];
+>  
+> @@ -301,15 +320,8 @@ static int noncont_cat_run_test(const struct resctrl_test *test,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (!strcmp(test->resource, "L3"))
+> -		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> -	else if (!strcmp(test->resource, "L2"))
+> -		__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> -	else
+> -		return -EINVAL;
+> -
+> -	if (sparse_masks != ((ecx >> 3) & 1)) {
+> -		ksft_print_msg("CPUID output doesn't match 'sparse_masks' file content!\n");
+> +	if (arch_supports_noncont_cat(test) != sparse_masks) {
+> +		ksft_print_msg("Hardware and kernel differ on non-contiguous CBM support!\n");
+>  		return 1;
+
+This looks better than the previous version, thanks.
 
 
---krd0kZavuSZAemTC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 10, 2024 at 05:10:51PM +0100, Conor Dooley wrote:
-> On Mon, Jun 10, 2024 at 12:18:12PM +0200, Krzysztof Kozlowski wrote:
-> > On 10/06/2024 10:54, Laurent Pinchart wrote:
-> > >>
-> > >>> There's also the camsv IP in the same series that needs a generic n=
-ame.
-> > >>> I really don't know what to propose for it. Could you recommend
-> > >>> something that would make you happy ?
-> > >>
-> > >> Sorry,that's almost half year old thread. Not present in my inbox.
-> > >=20
-> > > I remember someone presenting a talk titled "Beginner Linux kernel
-> > > maintainer's toolbox" in Prague last year. The talk mentioned a tool
-> > > call b4. I highly recommend it ;-)
-> >=20
-> > Wouldn't solve it. I would need to download the thread and import to
-> > mailbox (several clicks needed) or open in some other tool just to see
-> > the email. Or find it on lore.kernel.org - anyway just not convenient.
->=20
-> Apparently you can use b4 from within mutt to populate threads, but I am
-> yet to figure out if it works with non-local maildirs:
-> https://b4.docs.kernel.org/en/latest/maintainer/mbox.html#using-with-mutt
-
-That should read "how to make it work", I know it doesn't work like
-documented there with non-local mailboxes.
-
-
-
---krd0kZavuSZAemTC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmcnoAAKCRB4tDGHoIJi
-0qtrAP9YPh0+sV/kjtNmXMwP7T5usLhhX5vZzAjPc0mwr5965wD/Wx7GB6CXgeXI
-q3vmSBs2jnhda3KzpGbgmbxGrNjp0Qw=
-=HyAB
------END PGP SIGNATURE-----
-
---krd0kZavuSZAemTC--
+-- 
+ i.
 
