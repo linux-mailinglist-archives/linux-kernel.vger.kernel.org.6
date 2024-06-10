@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-208192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1362902225
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE91B902233
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38011C2156B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 649151F2108D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E9081748;
-	Mon, 10 Jun 2024 12:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7468481205;
+	Mon, 10 Jun 2024 12:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJ9yMHim"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o99VGThd"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FA580C1D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034FF7FBA8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718024244; cv=none; b=XVuIe02WCmklFNAwHjzCMBx2tT4GsgUJdUud0ypk+yhOATO5t/TE8vmV9VtyLJbDjWPfL4pxSIl59zve2ivK6pOx4U5vPNw50XvvMqtX2MOjGL0SIO2wkwN4AyYJhnRj3CsayUZn636WmJqo/I4atYOiX1B8LtWvKs3vA7oJ3UQ=
+	t=1718024329; cv=none; b=Th7dKPv/tF6Muqm5QxHPj31CCrVtmuW1Ol5J0N5Us7GnZ7oZo45+yH7OwL6PlmtfB6rdpNVOS48bIu16kNgtSEAkF3lOJcM9GJCekW9roxbbMViYcoR5z+Zt/6G/g0QbuRd4jSsgwLiOpAj25IRlUTXTBoCQFvNAg0wUoOHqsr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718024244; c=relaxed/simple;
-	bh=yg1xPoHNtnIUumoATGu6LmkAR1aS+hHVXOLPzoPOgE0=;
+	s=arc-20240116; t=1718024329; c=relaxed/simple;
+	bh=69yZ/2KQxzDzZZIRemtwFN2dhIn84qTlZc+PTH2+QiU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r/Trv0RHLABELcU6ucv7D1L22iH7DIoCXVkJfI3QrYLTeWXDrCNDmZCy+3rJUhIPjI2hwFc/EaIjY97MDhnotSi1bbvbNTTX37v2f4INqzOEjr+YcGXAehm5FWDI3jNJut5Tzu+/6/t5wCCLhUp6X2FnSOMS5hTVQE0bQznTKrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dJ9yMHim; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:Content-Type; b=Porso8XpSy4dmTDWlzUYCH/7fQfQsXenvgNryY54TI87QAzIlL+oUkUKpKO3XPvx68Yrj1S5zpQSk3VpXXSVQvvz/KlRRM94wrrS8PlW/y/anM/rR0yuknjXNmet4F5oGnAaDUj02DeMNe0b/7NCXQH3wLJr1Gdm0jfallJ6AW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o99VGThd; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a677d3d79so9912795a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:57:22 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso6450968a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718024241; x=1718629041; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718024326; x=1718629126; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4YW+LJlPWVCF1oCUQwCJYAu8LrhPqKFR1EwKZrTF2U=;
-        b=dJ9yMHimpc8YQQPWERTOEtoAoO84Fw2Qy1c+fN8TAZVg3dbFaws20GjVQ/6p4U2d8l
-         GsgueHSdLfP4HFNSVKcdkYpqdVwwjyAMPBiCCKoFt71lfhI3rSfnDUEWtP7J72dbpI+/
-         8SKZUOHa7JI6u6UDzyLDbBoJ0YvPcJhxi86XJm2ZXLM6QMVgZbsR/SS6XL6gRwxl82Pe
-         10coWBnbHn5Oy7WRXcMqxkDw/jpuAUVLf7dVEvV0afbGFAaRJiDx6WEnW7Eyhxi+7f6k
-         XCDIEZ5+rHZptr9VOE1RzrGi+GQnBDUGd+51KGFTHw6kPxtaFJM628tIGN8QnVMxvL7e
-         kDqg==
+        bh=KAUSKKQr31j0lfTllkRYhCjky92C69fh0mBqZOOmhtQ=;
+        b=o99VGThdJeuGk0QU6HRTEiuKmSq+eEkka6C8Qas9tsQHprqiOJg1TShKz2lJqs+HNi
+         gJLXFCxGkWB5WllaJwDGVwjsYj5qf8DaY+OmtVoCPSRUS3hDMGBNjzxQMDrrsyiTzsQh
+         F/eFX3vp6VKQWIIg1XOJRUk1hsYtJQ8/AYlz5Yr0tNXseM3ghn/kwps8TNLmoHVdfpyj
+         DWeWWRkyz/tIdDqMQ0Q4n0yGdvIIXiAIOb5fZVas05oIgx8ZDY0fIXhLsu6uCMGbHYnl
+         QoTDGjQJvQ57GO9DvorFOYb1wMhDceBgQ5OahCJz2fy5F2wle+7ydLhXtxhdYjmwibKA
+         zHsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718024241; x=1718629041;
+        d=1e100.net; s=20230601; t=1718024326; x=1718629126;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P4YW+LJlPWVCF1oCUQwCJYAu8LrhPqKFR1EwKZrTF2U=;
-        b=nSlc9XAgd9OOsLR7HlUMOikpu5RmZDYOWTCC96LWyjfaJPbILClSfLh++rZnMgmi5Q
-         Aqlt0+lQMpnACUeOq7trOtgoi5SauCZq9Xkpjm7j+2z3nl4EZwnyiU86hu4tjvLtSLC2
-         Q8BCe/g4qrjoDzug6HOk3hva9tNMz/oi54z4lmmZcOHCB4qdAD+ywW0M3QqeB0btgI0O
-         cxYGHhPY4xDomzp/xK3+aJRo9qOx27PsBrJXbPWXzN4VormDPdbRwhS7gdhhqtoUV1nv
-         HuuqMUQREv/h6EGr+xxgj1MRPUTBWKXR7cHpjhRQcV08cxXxNOc8DQcIqipUaWvyEcrS
-         RlyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYU0yp3Z3+qw+153AZzT0jH4GeWoF2s9SuMNs7szjKRRQDZTWuIZUwcpjdcWoc5t/5n1SGx94ADlIF1oNp/j1DecBck4DpArWm64I
-X-Gm-Message-State: AOJu0Ywu3wjSwL9caxZIHw0fRuPm50dXxN5XbnATQXDA2OwkbgGgQOFU
-	el6a1OWw4OtKugug5FSU67H3XHckxTXnxjobIsVYVE/dgXmGTan0e7EAkfAltLU=
-X-Google-Smtp-Source: AGHT+IG+FeCeTet+g006PrNx4Oxxdd0ygI0KsztkfpC9VYROLRJPSKBsn/ij3w2B7yqDBKHzj0cmyg==
-X-Received: by 2002:a05:6402:b7b:b0:57c:735f:3967 with SMTP id 4fb4d7f45d1cf-57c735f3978mr2686598a12.8.1718024240999;
-        Mon, 10 Jun 2024 05:57:20 -0700 (PDT)
+        bh=KAUSKKQr31j0lfTllkRYhCjky92C69fh0mBqZOOmhtQ=;
+        b=YskN9rEbV3Jvjo1ZYP8LeSqknkOJoiwWAzlX2M4vqvg/8Azraf/SZgthSzsEeZKbwx
+         FefJiQA6FRPM/Dec/Y9MIS3KUeRZ4ffzFM/cRk+LLfVJYyDMo7vvRQaC0dfq/pd9cAvh
+         kOwezRp3lLsN6ua1kJWHzDavb4vHVNKGKc/DYu0lCLhIdJFxoYPwB5bfea9yneMWb82U
+         e33ZTRR/jTDeZVLqGdEqPo3Sr9oLgUSZYj69wW8jMmwLsrf87iimZ/MypT+ZC4JU9GHw
+         VFneo3/ifQtC2uK87cFvVhyFR4+VE/5uwHlGLRIKO61VLz29k6ZOW53MHsvroXdXGeh7
+         YvVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHo1qRgCqJ2ddJUWEvDTQ/bTjhX25myWdfsJCZqHsLAzsRxrjZiyRUaZ2reugVYkEs5OeRppyY8pUu78wBNYUfoCA/XbllKSAYh4uN
+X-Gm-Message-State: AOJu0YwxuKiVZlnXK3eZg+huK0ej4/q8N1W0ZTbnE7r1dExKjN9m/WQi
+	1mg2l6t94B/GTEvCVRdNPszpj+vrRlZqGcfWeKWJJ8jgiDBUQlVLITNf+WcKCsM=
+X-Google-Smtp-Source: AGHT+IEF2KnAADfbdRtjjWnR2KUo3BAEuzWm3ctSGFFiz4WPn91BY12s9PEsAp3i8HayF5Tp6Xgw+g==
+X-Received: by 2002:a50:9e6d:0:b0:579:fa8e:31a0 with SMTP id 4fb4d7f45d1cf-57aa5410e6bmr9682767a12.10.1718024326380;
+        Mon, 10 Jun 2024 05:58:46 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8f3a0c33sm87824a12.82.2024.06.10.05.57.19
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae20238asm7451990a12.73.2024.06.10.05.58.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 05:57:20 -0700 (PDT)
-Message-ID: <08822480-a909-4724-9250-e7286d5ce90a@linaro.org>
-Date: Mon, 10 Jun 2024 14:57:18 +0200
+        Mon, 10 Jun 2024 05:58:45 -0700 (PDT)
+Message-ID: <8256bca3-5175-4c0a-a3f0-6a9087efd0df@linaro.org>
+Date: Mon, 10 Jun 2024 14:58:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,18 +76,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] dt-bindings: interconnect: qcom: msm8939: Fix example
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
+Subject: Re: [PATCH 1/1] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240609182112.13032-1-a39.skl@gmail.com>
- <20240609182112.13032-8-a39.skl@gmail.com>
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240610080604.291102-1-christophe.roullier@foss.st.com>
+ <06703c03-e1ce-4a94-942d-b556c6084728@linaro.org>
+ <ef4d2ebb-dd2a-423d-acd1-43fdb42c1896@foss.st.com>
+ <e7f1ea08-41af-47e0-b478-652e67e5aebb@linaro.org>
+ <ede482e3-58a1-4664-84b1-f80e59841e28@foss.st.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -134,58 +142,36 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240609182112.13032-8-a39.skl@gmail.com>
+In-Reply-To: <ede482e3-58a1-4664-84b1-f80e59841e28@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/06/2024 20:21, Adam Skladowski wrote:
-> For now example list snoc_mm as children of bimc which is obviously
-> not valid, change example and include rest of nocs in it.
+On 10/06/2024 14:52, Christophe ROULLIER wrote:
 > 
-> Fixes: 462baaf4c628 ("dt-bindings: interconnect: qcom: Fix and separate out MSM8939")
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
->  .../bindings/interconnect/qcom,msm8939.yaml   | 22 ++++++++++++-------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> index fd15ab5014fb..a77e6aa2fbee 100644
-> --- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> @@ -56,19 +56,25 @@ examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmcc.h>
->  
-> -    snoc: interconnect@580000 {
-> -        compatible = "qcom,msm8939-snoc";
-> -        reg = <0x00580000 0x14000>;
-> -        #interconnect-cells = <1>;
-> -    };
-> -
->      bimc: interconnect@400000 {
->          compatible = "qcom,msm8939-bimc";
->          reg = <0x00400000 0x62000>;
-> -        #interconnect-cells = <1>;
-> +        #interconnect-cells = <2>;
-> +    };
-> +
-> +    pcnoc: interconnect@500000 {
-> +        compatible = "qcom,msm8939-pcnoc";
-> +        reg = <0x00500000 0x11000>;
-> +        #interconnect-cells = <2>;
-> +    };
+> On 6/10/24 14:27, Krzysztof Kozlowski wrote:
+>> On 10/06/2024 10:14, Christophe ROULLIER wrote:
+>>>>> @@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
+>>>>>    CONFIG_SPI_SPIDEV=y
+>>>>>    CONFIG_SPMI=y
+>>>>>    CONFIG_PINCTRL_AS3722=y
+>>>>> +CONFIG_PINCTRL_MCP23S08=y
+>>>> This is not an on-SoC pinctrl, so it should be module (=m).
+>>> The stmmac is in built-in, if IO-Expander (MCP23S08) is on module, we
+>>> have huge of message during kernel boot
+>>>
+>>> because stmmac driver is deferred several times. (need to wait that
+>>> module are ready)
+>> Which is normal and not a reason to change defconfig. It it was a
+>> problem, you should solve it not in defconfig but in kernel. That's just
+>> defconfig, an example, reference or debugging tool if you wish, so
+>> fixing issue here is not a fix at all.
+> Ok so it will not be possible to boot in NFS mode
 
-Don't grow the examples.
+Why? You need to fix your initrd, not change defconfig. We all work with
+initrds and modules are not a problem at all.
 
-It is enough to have one example to validate the schema and show how the
-binding is used. If schema covers multiple combinations of devices and
-their properties, then more than one example seems reasonable. This is
-not the case. All of this is redundant... and redundant information is
-not good because as this commit shows it leads to something which people
-think is not correct and they find bugs. So just drop the redundant
-information.
-
-Keep only one, correct example.
+Really, this is jut a defconfig, not a distro config! And even distro
+config would make it a module...
 
 Best regards,
 Krzysztof
