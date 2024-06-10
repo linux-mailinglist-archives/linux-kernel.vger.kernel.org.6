@@ -1,178 +1,126 @@
-Return-Path: <linux-kernel+bounces-207747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125DD901B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:56:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0E2901B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010BA2821E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E123A1F21AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B861CD24;
-	Mon, 10 Jun 2024 06:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C926D1BF2A;
+	Mon, 10 Jun 2024 06:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dst6LuXi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VxUuJ8K2"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AB1803A;
-	Mon, 10 Jun 2024 06:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30E41CA8A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718002568; cv=none; b=cFBMAVE7MDKbAwfNlEBHzV/gK0HRuUkAImfggglY4DeAlnInQyHuYe/VEvA1/r7zeep7HtwM7Rp7M0aj2nLnB1XWvNMynhOmqRRMrwDdzpT3adglZ2Gi7zUoW/DNGSHa4NEbAvXKrPR4p+b5SOEjFmh++YVknSLYLU837+fnMwM=
+	t=1718002752; cv=none; b=m2hOCZkdwte/TM5F1bPc9/Fnf5iWUjhBIq+XrVZfaD5tIBYucDuZHBz5fsSS4RkHM8Bw9SWkn4VIq1OXc5aI5REmTD/TW+gljaNrtO7TrD2Zk7o9NILVYoJ98uuzh9H6lfSW5ipFuqFmRVTmGH4NYhUeTw9eT3oJQEdv0KDw4Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718002568; c=relaxed/simple;
-	bh=9x5lfg5IbS2UuO0/g8a59A4OC0SvPJLLx6ic7z+Xr14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feoX356+eXtScsIFFCXBXfu0+ezha+r+VCnNVx4ypw9NGjQ8D8MsJw8bAhAVsGK7Lw4CproqHVvtFdsAXqXabT75GIrOvPojJhfRBxbTvtekB1ZwGR0QThFplY93cfGjjVqsXElsRrwPOKOVMXsWkP7aSQtwBfmAcAlfF/7VQa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dst6LuXi; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718002565; x=1749538565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9x5lfg5IbS2UuO0/g8a59A4OC0SvPJLLx6ic7z+Xr14=;
-  b=Dst6LuXigxP6RhLsFmHPU6jXxwa35csGmG0m316mDIh6AeauVKWdqOau
-   QUqvcmeR4oROwe3i3pzeZfFRw2jsOPAi6nlMKkZcePvcz0JUFW1EGaMCd
-   eNntt/JGIFJnjr5W2TSlNa1Ul57kUPAQKrjXZx+y5muHON/D42Zwt/8yh
-   8CAsoZq7W09TikxPBTeH0yKjF3qIUZP+1XQayOCGAQCW8GMLmncgJkFFb
-   9Adyj5T7cx6z5NV6+pMwSrffL1lAEWISk9F9oPIXtJ0zIhDZVFvppeqtv
-   Gmqd1TcSchDLi7FyevtOnAIC5twDUj7vqNROh11RcTMj955cXwbjjiPPD
-   w==;
-X-CSE-ConnectionGUID: Ua7UZcqNR1GUI1hTBkZ19A==
-X-CSE-MsgGUID: D4KHS+0rRSy1P86OYU+U/Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="37173137"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="37173137"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 23:56:05 -0700
-X-CSE-ConnectionGUID: e8ykSEwdS3G3DA5FIAt9wA==
-X-CSE-MsgGUID: /5hJAPHkQaCvwzCCQyfC/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="76428104"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 09 Jun 2024 23:56:02 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGYwh-0001vE-2E;
-	Mon, 10 Jun 2024 06:55:59 +0000
-Date: Mon, 10 Jun 2024 14:55:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Richard chien <m8809301@gmail.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, jesse.brandeburg@intel.com,
-	anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Richard chien <richard.chien@hpe.com>
-Subject: Re: [PATCH] igb: Add support for firmware update
-Message-ID: <202406101404.oWWqbJmG-lkp@intel.com>
-References: <20240609081526.5621-1-richard.chien@hpe.com>
+	s=arc-20240116; t=1718002752; c=relaxed/simple;
+	bh=5Ike1B+fHLT0EF5123Js06dxlMZISlziRN1WuRhgGVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MWjxPclzliyFwIkXCzGXtdgiCObP2hXtEbLuGaDiYC9wp35y8x64rcOamtOq/VLHeZfZBQB3tld8XYX1kdlmrKc+aytEYTkpCAXc7oZIuNSZw6kiB18lErHCSPvWPYUYo6XwhzEjKNBj1E3piHIEsxznDGpm353cQ9y3+dvB2R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VxUuJ8K2; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f1c209842so971448f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718002748; x=1718607548; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pIFuZ0MLO/Z7rviC4+IUAxtBbTRnCLpdcVAtAYAsuyM=;
+        b=VxUuJ8K2fREi32DDTuiIwezOeqBUVqpYf6rq/wb0xjFOm5HoAaEolL7FuUTdiu6ADi
+         2B7JnwWZhA9LibIBCnIxAAmYrkGTAeiPf1/H9LqE8JRLzDa6x0xjqL1imHkxOQ0O62fQ
+         V88mvM3oWhewfcfNPWdRZVNpgE7QnDEMoEEzSH7ykcKVmwz5oBXiJHVWKh7Uzonn4HJ8
+         uMA06nOc+QFJ99M7CeLKRubN9iQo91V6ou/8zC4TwYxW6SMRUrW9dcim5jUMB/NkfByj
+         4Ruflyx40GIpbiOvCpF8WtJUdRFmLWGllfm3+TV9E3ERehIQCXgcELGgEt+Gv2UAox9G
+         hYWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718002748; x=1718607548;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIFuZ0MLO/Z7rviC4+IUAxtBbTRnCLpdcVAtAYAsuyM=;
+        b=NePII45ct+3ZCNNubR/0QoA/uPVt+1frcSvHzNqYe0C7DypfHcoCCqospq+cemB0du
+         16zjKXeMQTLHI204+z37lzX/tBf+qHxN22byrToPpsZSBRiKrrMAa30W9Qe4mTnReU2N
+         sMqHoSM0QHzjEoT+ilDJbCfWU7M8/igbQbEH6gWIsx/Uzt1gvJHFoNxjD1xh6fMUSbMk
+         UPJY1WKTb/cqT9u2Xh/HfA3T0hfu8dtjsh0zYiTMenrWwT6RMJSCm6KDAWdgQLmIY/Ay
+         Jc59Va1g7ICXI7e+491mi56evtbqD/vmjjSVNuGmPGclU+KJ/0tdSq0PED8qU9jnkiQ5
+         ifDg==
+X-Gm-Message-State: AOJu0YwyP9KyDXa6uVf6wbQNZ16Z6Dis3OIsKXHMLhthmAYKWNg1FoEn
+	3HrKqbSuLyTbTCewudfrSuVI/vK3XYXIauTa5QDJ/DJ+5J1IWEi8ip5HwUP/09nBgLWjViYqG6N
+	A
+X-Google-Smtp-Source: AGHT+IEBVPMksBc7eWn81M8DKQMfaVWUH6roqpv3NqXRHusfAaJUz01IOTxZ2Gvjp+ucVVwBbfg9JQ==
+X-Received: by 2002:a5d:64a5:0:b0:35f:2091:4f92 with SMTP id ffacd0b85a97d-35f20914fe1mr1830027f8f.67.1718002748191;
+        Sun, 09 Jun 2024 23:59:08 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e? ([2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1a7c663asm4896189f8f.115.2024.06.09.23.59.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Jun 2024 23:59:08 -0700 (PDT)
+Message-ID: <eefd904e-cbba-4062-872f-fdfa981b0cb3@suse.com>
+Date: Mon, 10 Jun 2024 09:59:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609081526.5621-1-richard.chien@hpe.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpu: Move identify_cpu_without_cpuid() into main
+ branch
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240521124823.486372-1-nik.borisov@suse.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240521124823.486372-1-nik.borisov@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on tnguy-next-queue/dev-queue]
-[also build test WARNING on tnguy-net-queue/dev-queue linus/master v6.10-rc3 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 21.05.24 г. 15:48 ч., Nikolay Borisov wrote:
+> No point in duplicating if (!have_cpuid_p()) check. Simply move
+> identify_cpu_without_cpuid() into the else branch. No functional
+> changes.
+> 
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-chien/igb-Add-support-for-firmware-update/20240609-162047
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git dev-queue
-patch link:    https://lore.kernel.org/r/20240609081526.5621-1-richard.chien%40hpe.com
-patch subject: [PATCH] igb: Add support for firmware update
-config: alpha-randconfig-r112-20240610 (https://download.01.org/0day-ci/archive/20240610/202406101404.oWWqbJmG-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240610/202406101404.oWWqbJmG-lkp@intel.com/reproduce)
+ping
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406101404.oWWqbJmG-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/ethernet/intel/igb/igb_ethtool.c:923:34: sparse: sparse: cast to restricted __le16
-   drivers/net/ethernet/intel/igb/igb_ethtool.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/stackdepot.h, ...):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +923 drivers/net/ethernet/intel/igb/igb_ethtool.c
-
-   874	
-   875	static int igb_get_eeprom(struct net_device *netdev,
-   876	                          struct ethtool_eeprom *eeprom, u8 *bytes)
-   877	{
-   878	        struct igb_adapter *adapter = netdev_priv(netdev);
-   879	        struct e1000_hw *hw = &adapter->hw;
-   880	        u16 *eeprom_buff;
-   881	        int first_word, last_word;
-   882	        int ret_val = 0;
-   883	        struct e1000_nvm_access *nvm;
-   884	        u32 magic;
-   885	        u16 i;
-   886	
-   887	        if (eeprom->len == 0)
-   888	                return -EINVAL;
-   889	
-   890	        magic = hw->vendor_id | (hw->device_id << 16);
-   891	        if (eeprom->magic && eeprom->magic != magic) {
-   892	                nvm = (struct e1000_nvm_access *)eeprom;
-   893	                ret_val = igb_nvmupd_command(hw, nvm, bytes);
-   894	                return ret_val;
-   895	        }
-   896	          
-   897	        /* normal ethtool get_eeprom support */
-   898	        eeprom->magic = hw->vendor_id | (hw->device_id << 16);
-   899	
-   900	        first_word = eeprom->offset >> 1;
-   901	        last_word = (eeprom->offset + eeprom->len - 1) >> 1;
-   902	
-   903	        eeprom_buff = kmalloc(sizeof(u16) *
-   904	                        (last_word - first_word + 1), GFP_KERNEL);
-   905	        if (!eeprom_buff)
-   906	                return -ENOMEM;
-   907	
-   908	        if (hw->nvm.type == e1000_nvm_eeprom_spi)
-   909	                ret_val = e1000_read_nvm(hw, first_word,
-   910	                                         last_word - first_word + 1,
-   911	                                         eeprom_buff);
-   912	        else {
-   913	                for (i = 0; i < last_word - first_word + 1; i++) {
-   914	                        ret_val = e1000_read_nvm(hw, first_word + i, 1,
-   915	                                                 &eeprom_buff[i]);
-   916	                        if (ret_val)
-   917	                                break;
-   918	                }
-   919	        }
-   920	
-   921	        /* Device's eeprom is always little-endian, word addressable */
-   922	        for (i = 0; i < last_word - first_word + 1; i++)
- > 923	                eeprom_buff[i] = le16_to_cpu(eeprom_buff[i]);
-   924	
-   925	        memcpy(bytes, (u8 *)eeprom_buff + (eeprom->offset & 1),
-   926	                        eeprom->len);
-   927	        kfree(eeprom_buff);
-   928	
-   929	        return ret_val;
-   930	}
-   931	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>   arch/x86/kernel/cpu/common.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index 2b170da84f97..69265c0acaea 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -1578,9 +1578,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+>   	memset(&c->x86_capability, 0, sizeof(c->x86_capability));
+>   	c->extended_cpuid_level = 0;
+>   
+> -	if (!have_cpuid_p())
+> -		identify_cpu_without_cpuid(c);
+> -
+>   	/* cyrix could have cpuid enabled via c_identify()*/
+>   	if (have_cpuid_p()) {
+>   		cpu_detect(c);
+> @@ -1601,6 +1598,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+>   		if (this_cpu->c_bsp_init)
+>   			this_cpu->c_bsp_init(c);
+>   	} else {
+> +		identify_cpu_without_cpuid(c);
+>   		setup_clear_cpu_cap(X86_FEATURE_CPUID);
+>   		get_cpu_address_sizes(c);
+>   		cpu_init_topology(c);
 
