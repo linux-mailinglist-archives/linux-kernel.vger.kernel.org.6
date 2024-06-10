@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-208737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B959028B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C999028B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53EC1C21987
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919E31C212A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56B614BF8D;
-	Mon, 10 Jun 2024 18:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E4414D6E4;
+	Mon, 10 Jun 2024 18:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzWqFXHL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VWxoyoa/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC726AF6;
-	Mon, 10 Jun 2024 18:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766AF26AF6;
+	Mon, 10 Jun 2024 18:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718044400; cv=none; b=gydSrPMMhfrsI1g5BOe+o0Hj39RsQo1j/Hg2JArLKRdvWOsBPuPUiSXKRlSd5lN1TYjdQdeQeWOOQXmni1LInY9UNcMem3o5MEnztFCT/gpcGoGjzZRPW7QtKGbYUJEmG7aTQvcefuCP2Cvb2iEMsWU8hk4Eo+bSbfvtlFoxbQE=
+	t=1718044429; cv=none; b=jfaSqRIJRGnY8GZbxH6iCsc9X3f5NNxFY0tsV/2xSXDXZuGhi2P83FpiHo46dZ1baYXbZ5u48YLw2Ra0ZDfQsRsUVTdurOPw3onI2x0wM5F9jl6VFdwz2e3ywjzneOTFnkwjWnpxrzmuw4mgeFdHvDe+pmjgeqP+FGUr0m6vASs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718044400; c=relaxed/simple;
-	bh=z7GoEVteVgOtc8npLSzQ50VzcFsj6U4Ypa2U9npOXw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyYXIDZ4DXfAZNYncfnOjGJCpCiDIVU1jbOBxkU51L108jde2QNPiKVuugLHcibxFJCBQTgW/n/XdvSyFPFNo3PRvOqXnBD/eX9PGN4ya4Q9DA57VcJoDxDWqlxh0s1IHWQ59XcKcUjzxIp9F0yK5NGfwM5XzAC/ny0aon+OSbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzWqFXHL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970D9C2BBFC;
-	Mon, 10 Jun 2024 18:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718044399;
-	bh=z7GoEVteVgOtc8npLSzQ50VzcFsj6U4Ypa2U9npOXw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzWqFXHL5/BIn5baIlyMU1n811fD+ayPsVixBIeSOKOiUePsTJkpYe5wS0/Nw4cpp
-	 3o9WDVMHokXbbtKfTUfbsuTlZkHy23s/3joKCh3We6yoIzyJQrrqxUAM2/nwTXui4b
-	 P3f3/OsEv6VSMvMRo4wQM7Sz898CHzmS/veCX/nBtq9a55jj5q8jLD/xfy3MDVzNGC
-	 0BZXwiSL+rwRv08pFWXNAeEusMBhtWzisLvAZPUWzPW/cvMLeTAU/KhJmcZFtv73R9
-	 6wyS/LoeI6GNIlL5vCA8eiA2/qg8U6VeA60HcqQV/y1FFAlK/IVLlhuk0Zqan8ysxP
-	 pBPz2hK/5G/DQ==
-Date: Mon, 10 Jun 2024 11:33:18 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christian Schrefl <chrisi.schrefl@gmail.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kunit/overflow: Adjust for __counted_by with
- DEFINE_RAW_FLEX()
-Message-ID: <20240610183318.GA3321@thelio-3990X>
-References: <20240610182301.work.272-kees@kernel.org>
+	s=arc-20240116; t=1718044429; c=relaxed/simple;
+	bh=MhYkkZlm3UmS4JCGSGG9dMAixhu/CWMEmyoYPi9a+38=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AQeD5IcidJ2c0tMwCQCbvihqMsm9mKiLXv7zw9Iqock7s+LJph/6hOHrnRukzdmtOF0Ej3D1+SYB2VtOk74blS3cMcED/yXXhJ/GkBi/lmWoqAooZDRixkYtr/Vzos2etCWlJVghE8K9MyihXUhcVfb2tiy/NwVqh0d9qy6AQfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VWxoyoa/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AE6Njj008673;
+	Mon, 10 Jun 2024 18:33:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GUH6yhSecG1utkT0x+EZga
+	3Lu1Q63PspR2KXwK5oNSQ=; b=VWxoyoa/Sf7w1T4qjuoxS1NzOHY/bnpKzURJX/
+	dVpRfjOVF3ihZrDQPdna3ZL4HH6ugtfFDJV7c2Ahhc7F5XQlaTlDxmnk/fyZkT+B
+	kxM9cAcihve7QhoiPzDYd7EF2g7C2UQM6w5tq+wn6yus5HooL9dEQH8Al8jTYwg+
+	FL2JCJJRJhU4HZThw/yeHN0VY+oh3wtMoFQ1cgpsPizp64+vlZKXpGp03kvQsTay
+	0hD6/kgWf5WTWIDV1NWX1B1vlieH+6CWj/3sdz3627p0al7KSET2dIxo0F/h0IeQ
+	Bcabv9riTL8KddizYTe/5O2jC3ykZnweW1wcnGCWCN94itNQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgfk4umj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 18:33:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AIXeC4002703
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 18:33:40 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 11:33:39 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 10 Jun 2024 11:33:38 -0700
+Subject: [PATCH] media: v4l: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610182301.work.272-kees@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240610-md-drivers-media-v4l2-core-v1-1-2fe08f6c9a0f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAJHZ2YC/x3MwQrCMAwA0F8ZORvo6hD0V8RD2mZbYO0k0TIY+
+ 3frju/ydjBWYYNHt4NyFZO1NPSXDuJMZWKU1Aze+cHdeoc5YVKprIaZkxDWYfEYV2VM8R5CvI7
+ OBwcteCuPsp3589UcyBiDUonzv1ykfDfMZB9WOI4f7jvVposAAAA=
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Z6PyHy2JK5mEPhQSnWmV44Dua4v4vsS8
+X-Proofpoint-ORIG-GUID: Z6PyHy2JK5mEPhQSnWmV44Dua4v4vsS8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 priorityscore=1501 phishscore=0 adultscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100139
 
-On Mon, Jun 10, 2024 at 11:23:05AM -0700, Kees Cook wrote:
-> When a flexible array structure has a __counted_by annotation, its use
-> with DEFINE_RAW_FLEX() will result in the count being zero-initialized.
-> This is expected since one doesn't want to use RAW with a counted_by
-> struct. Adjust the tests to check for the condition and for compiler
-> support.
-> 
-> Reported-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-> Closes: https://lore.kernel.org/all/0bfc6b38-8bc5-4971-b6fb-dc642a73fbfe@gmail.com/
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-async.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-fwnode.o
 
-Seems reasonable to me.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/v4l2-core/v4l2-async.c  | 1 +
+ drivers/media/v4l2-core/v4l2-fwnode.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-> ---
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: linux-hardening@vger.kernel.org
-> ---
->  lib/overflow_kunit.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
-> index 4ef31b0bb74d..d305b0c054bb 100644
-> --- a/lib/overflow_kunit.c
-> +++ b/lib/overflow_kunit.c
-> @@ -1178,14 +1178,28 @@ struct foo {
->  	s16 array[] __counted_by(counter);
->  };
->  
-> +struct bar {
-> +	int a;
-> +	u32 counter;
-> +	s16 array[];
-> +};
-> +
->  static void DEFINE_FLEX_test(struct kunit *test)
->  {
-> -	DEFINE_RAW_FLEX(struct foo, two, array, 2);
-> +	/* Using _RAW_ on a __counted_by struct will initialize "counter" to zero */
-> +	DEFINE_RAW_FLEX(struct foo, two_but_zero, array, 2);
-> +#if __has_attribute(__counted_by__)
-> +	int expected_raw_size = sizeof(struct foo);
-> +#else
-> +	int expected_raw_size = sizeof(struct foo) + 2 * sizeof(s16);
-> +#endif
-> +	/* Without annotation, it will always be on-stack size. */
-> +	DEFINE_RAW_FLEX(struct bar, two, array, 2);
->  	DEFINE_FLEX(struct foo, eight, array, counter, 8);
->  	DEFINE_FLEX(struct foo, empty, array, counter, 0);
->  
-> -	KUNIT_EXPECT_EQ(test, __struct_size(two),
-> -			sizeof(struct foo) + sizeof(s16) + sizeof(s16));
-> +	KUNIT_EXPECT_EQ(test, __struct_size(two_but_zero), expected_raw_size);
-> +	KUNIT_EXPECT_EQ(test, __struct_size(two), sizeof(struct bar) + 2 * sizeof(s16));
->  	KUNIT_EXPECT_EQ(test, __struct_size(eight), 24);
->  	KUNIT_EXPECT_EQ(test, __struct_size(empty), sizeof(struct foo));
->  }
-> -- 
-> 2.34.1
-> 
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 222f01665f7c..4ffb105bde0b 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -965,4 +965,5 @@ module_exit(v4l2_async_exit);
+ MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
+ MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
+ MODULE_AUTHOR("Ezequiel Garcia <ezequiel@collabora.com>");
++MODULE_DESCRIPTION("V4L2 asynchronous subdevice registration API");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 89c7192148df..f19c8adf2c61 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -1251,6 +1251,7 @@ int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
+ }
+ EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor);
+ 
++MODULE_DESCRIPTION("V4L2 fwnode binding parsing library");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
+ MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240610-md-drivers-media-v4l2-core-dc9bbc3f02b0
+
 
