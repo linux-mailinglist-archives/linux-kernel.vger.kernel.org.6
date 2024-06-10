@@ -1,899 +1,388 @@
-Return-Path: <linux-kernel+bounces-207887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53B0901D90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7B9901DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA9628126A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7A41F23D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D6F7316F;
-	Mon, 10 Jun 2024 08:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A727FBC3;
+	Mon, 10 Jun 2024 08:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="sjqbeUsx"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQcpCe0K"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9474076;
-	Mon, 10 Jun 2024 08:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1CF76F1B;
+	Mon, 10 Jun 2024 08:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718009874; cv=none; b=Sz1TmUu69Q2hLJaLXjh89da2TzzeRWOvMTiKNUE3ITV1C6VtemZt0WSLdSQYPczznxLe6BhZbKUhE3XfdWmth5hg90GpuHFEW2SznJbDq+nqJJcVFLdgq32TgQHVrxOhcjFyh5uOWSCBVl8Rl4lwTHOziJ0BXnE85qpTXyDiWdo=
+	t=1718009930; cv=none; b=J/lgpTv8RbeOaBqyzbyCCEspMgTKFiZw/mSpNgmMbnGHLhO3rg5XUMoJuyF8ivuTELEFS+965MdacfipXu9E9bvuJK+/9kzQZwd6XXfOVllrv/2kudu4RS/adcmdJVMJ6bBpsOaoF9PPZodMKgkavHcNdy/DxavYdRb9Bcw7prs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718009874; c=relaxed/simple;
-	bh=P2DRe2wL/une2JzXiOTZb0PRbaoha7Lnj9v/CwIy5mU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AiPZ6PoSor9YlIz8vrqsLVWmj9Fbe/prL2/h7mFyClmIOoiegGcBdrLc0LDOcgxU4C55cNC+T4irsvAFxMuAW3DDLLmadyvfbGxL6PcdtJEJSkUK6x0o8ardvHtoG877kBb06u4s6vwmnsp54Bi2s+Qp7WoEvd2+IQLg7cssuOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=sjqbeUsx; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718009870;
-	bh=P2DRe2wL/une2JzXiOTZb0PRbaoha7Lnj9v/CwIy5mU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sjqbeUsxotlrV+Udp0Ui/fH5BVWnHre9vNAT6CWJkCSrGafFBugAqlvTvele+ASIF
-	 xe64RwG+bIaAbtqaRbBhz7BWDIaZoddcbeCOhJu25Yw4gfZiD4TAMCAKzbZ18X/7o4
-	 /AWaSb3WTS+FCoNQ7bFYxwdjbndUHfI30bfCLyirrxGSNhJ4bvCUT2GGZHTuSir93k
-	 DcPLwPoyT6SmMBSFwwmxD4wyzgLAqbDNKkx9HItIFtGnmi89D4TM0+a+bi2gG4QpbS
-	 FNSqwGSq9BT4gwkcisEpYQQnTAYZjNUbL+mWzSE7bynL+uiXj51I+ZxqSO+O5YPeWS
-	 pnR1BZkINHveA==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0604A378217A;
-	Mon, 10 Jun 2024 08:57:48 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: djakov@kernel.org
-Cc: robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	keescook@chromium.org,
-	gustavoars@kernel.org,
-	henryc.chen@mediatek.com,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com,
-	wenst@chromium.org,
-	amergnat@baylibre.com
-Subject: [PATCH v6 7/7] interconnect: mediatek: Add MediaTek MT8183/8195 EMI Interconnect driver
-Date: Mon, 10 Jun 2024 10:57:35 +0200
-Message-ID: <20240610085735.147134-8-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
-References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1718009930; c=relaxed/simple;
+	bh=zG9Nk1i9CpO30iwDpBCYAJoPe2JWUw3aG89GN5vsBvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nkVWbJdYCkAHpYrNo3Sm1s45JVWm4k6h0xnPvYGRvq9nOMdun0mj9N9LvciRzj864gSclHdokkItdzDM/x9IhxSaefCAOt1FdEKcSQ5TJEuACmE3Eu4X5OSiDMw3XwE2Qj7xsiNdI7LlEEKSLwUfyLjRpZb+PbbXnMCwEehMVQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQcpCe0K; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-35dc1d8867eso3230888f8f.0;
+        Mon, 10 Jun 2024 01:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718009927; x=1718614727; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qOAtN7oXCzbDYC+AN7vSfI2DUaJdROI9p4SpPCnLXBM=;
+        b=FQcpCe0KLELg9A4nD2R3T85VjMwnJgAQSQ3tCtn7Qot177qYE/2tI0VFdr7ASlSWs0
+         d8ukYNfCyS9ceR8suRg4EDprNGVzpg2sOdd3c0Wqd821+QRgmCN1/WOnMo8udoBow77X
+         zw/IPIq/v+hbwKaRG0BONi7RTDa6vC+oxKrEdhq66kSQKzrvwCLwhur7eXTrr8GxEefE
+         UmUTAA6VwUBUeixqZL8rxuCcVF6p1qc98Bx2KvGaAEVk7xCUrPh18PZXPDEmAIwjrXZP
+         +3TKI91jS4LjcVDCxfffgeJqvSXk2ri8KdpNsnXvcDetTyT2oSu7QK3jaqG9GK7dRtb7
+         itzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718009927; x=1718614727;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qOAtN7oXCzbDYC+AN7vSfI2DUaJdROI9p4SpPCnLXBM=;
+        b=nN/yCDvzSohP5tG/4HsbmYOT4+1HBpVrIz8+EVpIjh8NP6b9YTtKk3ohxcYiBTDFj6
+         bqocGC+cOf5XyBO1VBoe63ajFA4wisF9J31sdc3LufynM6AghO9JdKhh4sCFBFhT1Qv4
+         Mo1w03U38slAXdrwDoU1UhAP/pIa5VdC30HQw5lXmgZqlIAAL4AF3GPTC73x+hI0BXvM
+         UcUCpRKUPmg7IODovzqFk9Ys3uvNciRaRLsddUEH4yqrJru9uqRISZLQHcdspzojq89B
+         mOG46sUXJRkaPUNhdyNJQ/omjJOJypdmDZpYtmrIRTFNSRnEjeRCnoOjRlvJTetPFbqa
+         GbMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjEaBxrcMdIuTIrfNl97VSlP3FI0InXY1nos45DIAtKHZiJofjIbqaH1eVw1umHuXVUfDWO0djOaHmzpbUeqq7CwNql8qcPrQD3u78Svfi40ZLLLyZ7wJ8Ez30MtQfq7A0Kijb/CcShA==
+X-Gm-Message-State: AOJu0Yxpv0sHHoJgG6Nsm9J85+dMf7Tv+Wwvh9NnN2zVlmWNhYsJnYfi
+	feUx05eavy8tXN/KvpJifNBvCjhj8Q6dZXgDCDOR+CJlSjMtCcOu97dotY1ost4HG3ZCaNyMUvX
+	X84OVml6OBR7gbxPNvPMS8x7aTeU=
+X-Google-Smtp-Source: AGHT+IFPU6+LOf8PgX7KOs5qPDS8vsX5Vv8RXv8XleCs5E5DIcHCc8fIioa/JjHQYg24T8SZZtlR3JvXWMYc84EnZ4U=
+X-Received: by 2002:adf:b1dc:0:b0:35d:bd46:960a with SMTP id
+ ffacd0b85a97d-35efed4e09emr7157345f8f.23.1718009926938; Mon, 10 Jun 2024
+ 01:58:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CADFWO8EQUkGcbE=RXjxXbub2tZge9+ss=gB-Q6wngFAvwFygRg@mail.gmail.com>
+ <20240505181829.49864540@jic23-huawei>
+In-Reply-To: <20240505181829.49864540@jic23-huawei>
+From: Petar Stoykov <pd.pstoykov@gmail.com>
+Date: Mon, 10 Jun 2024 10:58:35 +0200
+Message-ID: <CADFWO8FGqD5GyrRtvFptjMdYBhfFFwOzgZ1XnVVEPeY3E8CZPg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] iio: pressure: Add driver for Sensirion SDP500
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Angel Iglesias <ang.iglesiasg@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an interconnect driver for the External Memory Interface (EMI),
-voting for bus bandwidth over the Dynamic Voltage and Frequency Scaling
-Resource Collector (DVFSRC).
+On Sun, May 5, 2024 at 7:18=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Tue, 30 Apr 2024 17:27:24 +0200
+> Petar Stoykov <pd.pstoykov@gmail.com> wrote:
+>
+> > From 6ae7537517f551540121ca6fb3b99080b7580410 Mon Sep 17 00:00:00 2001
+> > From: Petar Stoykov <pd.pstoykov@gmail.com>
+> > Date: Mon, 15 Jan 2024 12:21:26 +0100
+> > Subject: [PATCH 2/3] iio: pressure: Add driver for Sensirion SDP500
+> >
+> > Sensirion SDP500 is a digital differential pressure sensor. The sensor =
+is
+> > accessed over I2C.
+> >
+> > Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
+> Hi Petar
+>
+> Ignoring the patch formatting which others have already given feedback on=
+,
+> a few minor comments inline.
+>
+> Also, I'd expect some regulator handling to turn the power on.
+> Obviously on your particular board there may be nothing to do but good to
+> have the support in place anyway and it will be harmless if the power
+> is always on.
+>
+> Jonathan
+>
+Hi Jonathan,
 
-             ICC provider         ICC Nodes
-                              ----          ----
-             ---------       |CPU |   |--- |VPU |
-    -----   |         |-----  ----    |     ----
-   |DRAM |--|DRAM     |       ----    |     ----
-   |     |--|scheduler|----- |GPU |   |--- |DISP|
-   |     |--|(EMI)    |       ----    |     ----
-   |     |--|         |       -----   |     ----
-    -----   |         |----- |MMSYS|--|--- |VDEC|
-             ---------        -----   |     ----
-               /|\                    |     ----
-                |change DRAM freq     |--- |VENC|
-             ----------               |     ----
-            |  DVFSR   |              |
-            |          |              |     ----
-             ----------               |--- |IMG |
-                                      |     ----
-                                      |     ----
-                                      |--- |CAM |
-                                            ----
+Thank you for looking past the formatting!
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/interconnect/Kconfig            |   1 +
- drivers/interconnect/Makefile           |   1 +
- drivers/interconnect/mediatek/Kconfig   |  29 ++
- drivers/interconnect/mediatek/Makefile  |   5 +
- drivers/interconnect/mediatek/icc-emi.c | 153 +++++++++++
- drivers/interconnect/mediatek/icc-emi.h |  40 +++
- drivers/interconnect/mediatek/mt8183.c  | 143 ++++++++++
- drivers/interconnect/mediatek/mt8195.c  | 339 ++++++++++++++++++++++++
- 8 files changed, 711 insertions(+)
- create mode 100644 drivers/interconnect/mediatek/Kconfig
- create mode 100644 drivers/interconnect/mediatek/Makefile
- create mode 100644 drivers/interconnect/mediatek/icc-emi.c
- create mode 100644 drivers/interconnect/mediatek/icc-emi.h
- create mode 100644 drivers/interconnect/mediatek/mt8183.c
- create mode 100644 drivers/interconnect/mediatek/mt8195.c
+I wrongly assumed the power regulator would be handled automatically :)
+I see examples of how to do it in other pressure drivers now.
 
-diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-index 5faa8d2aecff..f2e49bd97d31 100644
---- a/drivers/interconnect/Kconfig
-+++ b/drivers/interconnect/Kconfig
-@@ -12,6 +12,7 @@ menuconfig INTERCONNECT
- if INTERCONNECT
- 
- source "drivers/interconnect/imx/Kconfig"
-+source "drivers/interconnect/mediatek/Kconfig"
- source "drivers/interconnect/qcom/Kconfig"
- source "drivers/interconnect/samsung/Kconfig"
- 
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index d0888babb9a1..b0a9a6753b9d 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -5,6 +5,7 @@ icc-core-objs				:= core.o bulk.o debugfs-client.o
- 
- obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
- obj-$(CONFIG_INTERCONNECT_IMX)		+= imx/
-+obj-$(CONFIG_INTERCONNECT_MTK)		+= mediatek/
- obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
- obj-$(CONFIG_INTERCONNECT_SAMSUNG)	+= samsung/
- 
-diff --git a/drivers/interconnect/mediatek/Kconfig b/drivers/interconnect/mediatek/Kconfig
-new file mode 100644
-index 000000000000..985c849efac3
---- /dev/null
-+++ b/drivers/interconnect/mediatek/Kconfig
-@@ -0,0 +1,29 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config INTERCONNECT_MTK
-+	bool "MediaTek interconnect drivers"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  Support for MediaTek's bus interconnect hardware.
-+
-+config INTERCONNECT_MTK_DVFSRC_EMI
-+	tristate "MediaTek DVFSRC EMI interconnect driver"
-+	depends on INTERCONNECT_MTK && MTK_DVFSRC
-+	help
-+	  This is a driver for the MediaTek External Memory Interface
-+	  interconnect on SoCs equipped with the integrated Dynamic
-+	  Voltage Frequency Scaling Resource Collector (DVFSRC) MCU
-+
-+config INTERCONNECT_MTK_MT8183
-+	tristate "MediaTek MT8183 interconnect driver"
-+	depends on INTERCONNECT_MTK_DVFSRC_EMI
-+	help
-+	  This is a driver for the MediaTek bus interconnect on MT8183-based
-+	  platforms.
-+
-+config INTERCONNECT_MTK_MT8195
-+	tristate "MediaTek MT8195 interconnect driver"
-+	depends on INTERCONNECT_MTK_DVFSRC_EMI
-+	help
-+	  This is a driver for the MediaTek bus interconnect on MT8195-based
-+	  platforms.
-diff --git a/drivers/interconnect/mediatek/Makefile b/drivers/interconnect/mediatek/Makefile
-new file mode 100644
-index 000000000000..8e2283a9a5b5
---- /dev/null
-+++ b/drivers/interconnect/mediatek/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_INTERCONNECT_MTK_DVFSRC_EMI) += icc-emi.o
-+obj-$(CONFIG_INTERCONNECT_MTK_MT8183) += mt8183.o
-+obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8195.o
-diff --git a/drivers/interconnect/mediatek/icc-emi.c b/drivers/interconnect/mediatek/icc-emi.c
-new file mode 100644
-index 000000000000..d420c55682d0
---- /dev/null
-+++ b/drivers/interconnect/mediatek/icc-emi.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * MediaTek External Memory Interface (EMI) Interconnect driver
-+ *
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2024 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <linux/interconnect.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/mediatek/dvfsrc.h>
-+
-+#include "icc-emi.h"
-+
-+static int mtk_emi_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				 u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	struct mtk_icc_node *in = node->data;
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max_t(u32, *agg_peak, peak_bw);
-+
-+	in->sum_avg = *agg_avg;
-+	in->max_peak = *agg_peak;
-+
-+	return 0;
-+}
-+
-+static int mtk_emi_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct mtk_icc_node *node = dst->data;
-+	struct device *dev;
-+	int ret;
-+
-+	if (unlikely(!src->provider))
-+		return -EINVAL;
-+
-+	dev = src->provider->dev;
-+
-+	switch (node->ep) {
-+	case 0:
-+		break;
-+	case 1:
-+		ret = mtk_dvfsrc_send_request(dev, MTK_DVFSRC_CMD_PEAK_BW, node->max_peak);
-+		if (ret) {
-+			dev_err(dev, "Cannot send peak bw request: %d\n", ret);
-+			return ret;
-+		}
-+
-+		ret = mtk_dvfsrc_send_request(dev, MTK_DVFSRC_CMD_BW, node->sum_avg);
-+		if (ret) {
-+			dev_err(dev, "Cannot send bw request: %d\n", ret);
-+			return ret;
-+		}
-+		break;
-+	case 2:
-+		ret = mtk_dvfsrc_send_request(dev, MTK_DVFSRC_CMD_HRT_BW, node->sum_avg);
-+		if (ret) {
-+			dev_err(dev, "Cannot send HRT bw request: %d\n", ret);
-+			return ret;
-+		}
-+		break;
-+	default:
-+		dev_err(src->provider->dev, "Unknown endpoint %u\n", node->ep);
-+		return -EINVAL;
-+	};
-+
-+	return 0;
-+}
-+
-+int mtk_emi_icc_probe(struct platform_device *pdev)
-+{
-+	const struct mtk_icc_desc *desc;
-+	struct device *dev = &pdev->dev;
-+	struct icc_node *node;
-+	struct icc_onecell_data *data;
-+	struct icc_provider *provider;
-+	struct mtk_icc_node **mnodes;
-+	int i, j, ret;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	mnodes = desc->nodes;
-+
-+	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-+	if (!provider)
-+		return -ENOMEM;
-+
-+	data = devm_kzalloc(dev, struct_size(data, nodes, desc->num_nodes), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	provider->dev = pdev->dev.parent;
-+	provider->set = mtk_emi_icc_set;
-+	provider->aggregate = mtk_emi_icc_aggregate;
-+	provider->xlate = of_icc_xlate_onecell;
-+	INIT_LIST_HEAD(&provider->nodes);
-+	provider->data = data;
-+
-+	for (i = 0; i < desc->num_nodes; i++) {
-+		if (!mnodes[i])
-+			continue;
-+
-+		node = icc_node_create(mnodes[i]->id);
-+		if (IS_ERR(node)) {
-+			ret = PTR_ERR(node);
-+			goto err;
-+		}
-+
-+		node->name = mnodes[i]->name;
-+		node->data = mnodes[i];
-+		icc_node_add(node, provider);
-+
-+		for (j = 0; j < mnodes[i]->num_links; j++)
-+			icc_link_create(node, mnodes[i]->links[j]);
-+
-+		data->nodes[i] = node;
-+	}
-+	data->num_nodes = desc->num_nodes;
-+
-+	ret = icc_provider_register(provider);
-+	if (ret)
-+		goto err;
-+
-+	platform_set_drvdata(pdev, provider);
-+
-+	return 0;
-+err:
-+	icc_nodes_remove(provider);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(mtk_emi_icc_probe);
-+
-+void mtk_emi_icc_remove(struct platform_device *pdev)
-+{
-+	struct icc_provider *provider = platform_get_drvdata(pdev);
-+
-+	icc_provider_deregister(provider);
-+	icc_nodes_remove(provider);
-+}
-+EXPORT_SYMBOL_GPL(mtk_emi_icc_remove);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_AUTHOR("Henry Chen <henryc.chen@mediatek.com>");
-+MODULE_DESCRIPTION("MediaTek External Memory Interface interconnect driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/interconnect/mediatek/icc-emi.h b/drivers/interconnect/mediatek/icc-emi.h
-new file mode 100644
-index 000000000000..9512a50db6fa
---- /dev/null
-+++ b/drivers/interconnect/mediatek/icc-emi.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2024 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#ifndef __DRIVERS_INTERCONNECT_MEDIATEK_ICC_EMI_H
-+#define __DRIVERS_INTERCONNECT_MEDIATEK_ICC_EMI_H
-+
-+/**
-+ * struct mtk_icc_node - Mediatek EMI Interconnect Node
-+ * @name:      The interconnect node name which is shown in debugfs
-+ * @ep:        Type of this endpoint
-+ * @id:        Unique node identifier
-+ * @sum_avg:   Current sum aggregate value of all average bw requests in kBps
-+ * @max_peak:  Current max aggregate value of all peak bw requests in kBps
-+ * @num_links: The total number of @links
-+ * @links:     Array of @id linked to this node
-+ */
-+struct mtk_icc_node {
-+	unsigned char *name;
-+	int ep;
-+	u16 id;
-+	u64 sum_avg;
-+	u64 max_peak;
-+
-+	u16 num_links;
-+	u16 links[] __counted_by(num_links);
-+};
-+
-+struct mtk_icc_desc {
-+	struct mtk_icc_node **nodes;
-+	size_t num_nodes;
-+};
-+
-+int mtk_emi_icc_probe(struct platform_device *pdev);
-+void mtk_emi_icc_remove(struct platform_device *pdev);
-+
-+#endif /* __DRIVERS_INTERCONNECT_MEDIATEK_ICC_EMI_H */
-diff --git a/drivers/interconnect/mediatek/mt8183.c b/drivers/interconnect/mediatek/mt8183.c
-new file mode 100644
-index 000000000000..24245085c7a9
---- /dev/null
-+++ b/drivers/interconnect/mediatek/mt8183.c
-@@ -0,0 +1,143 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2024 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/interconnect.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/interconnect/mediatek,mt8183.h>
-+
-+#include "icc-emi.h"
-+
-+static struct mtk_icc_node ddr_emi = {
-+	.name = "ddr-emi",
-+	.id = SLAVE_DDR_EMI,
-+	.ep = 1,
-+};
-+
-+static struct mtk_icc_node mcusys = {
-+	.name = "mcusys",
-+	.id = MASTER_MCUSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node gpu = {
-+	.name = "gpu",
-+	.id = MASTER_MFG,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node mmsys = {
-+	.name = "mmsys",
-+	.id = MASTER_MMSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node mm_vpu = {
-+	.name = "mm-vpu",
-+	.id = MASTER_MM_VPU,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_disp = {
-+	.name = "mm-disp",
-+	.id = MASTER_MM_DISP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_vdec = {
-+	.name = "mm-vdec",
-+	.id = MASTER_MM_VDEC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_venc = {
-+	.name = "mm-venc",
-+	.id = MASTER_MM_VENC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_cam = {
-+	.name = "mm-cam",
-+	.id = MASTER_MM_CAM,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_img = {
-+	.name = "mm-img",
-+	.id = MASTER_MM_IMG,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_mdp = {
-+	.name = "mm-mdp",
-+	.id = MASTER_MM_MDP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node *mt8183_emi_icc_nodes[] = {
-+	[SLAVE_DDR_EMI] = &ddr_emi,
-+	[MASTER_MCUSYS] = &mcusys,
-+	[MASTER_MFG] = &gpu,
-+	[MASTER_MMSYS] = &mmsys,
-+	[MASTER_MM_VPU] = &mm_vpu,
-+	[MASTER_MM_DISP] = &mm_disp,
-+	[MASTER_MM_VDEC] = &mm_vdec,
-+	[MASTER_MM_VENC] = &mm_venc,
-+	[MASTER_MM_CAM] = &mm_cam,
-+	[MASTER_MM_IMG] = &mm_img,
-+	[MASTER_MM_MDP] = &mm_mdp
-+};
-+
-+static const struct mtk_icc_desc mt8183_emi_icc = {
-+	.nodes = mt8183_emi_icc_nodes,
-+	.num_nodes = ARRAY_SIZE(mt8183_emi_icc_nodes),
-+};
-+
-+static const struct of_device_id mtk_mt8183_emi_icc_of_match[] = {
-+	{ .compatible = "mediatek,mt8183-emi", .data = &mt8183_emi_icc },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, mtk_mt8183_emi_icc_of_match);
-+
-+static struct platform_driver mtk_emi_icc_mt8183_driver = {
-+	.driver = {
-+		.name = "emi-icc-mt8183",
-+		.of_match_table = mtk_mt8183_emi_icc_of_match,
-+		.sync_state = icc_sync_state,
-+	},
-+	.probe = mtk_emi_icc_probe,
-+	.remove_new = mtk_emi_icc_remove,
-+
-+};
-+module_platform_driver(mtk_emi_icc_mt8183_driver);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_DESCRIPTION("MediaTek MT8183 EMI ICC driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/interconnect/mediatek/mt8195.c b/drivers/interconnect/mediatek/mt8195.c
-new file mode 100644
-index 000000000000..710e14c5447c
---- /dev/null
-+++ b/drivers/interconnect/mediatek/mt8195.c
-@@ -0,0 +1,339 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2024 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/interconnect.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/interconnect/mediatek,mt8195.h>
-+
-+#include "icc-emi.h"
-+
-+static struct mtk_icc_node ddr_emi = {
-+	.name = "ddr-emi",
-+	.id = SLAVE_DDR_EMI,
-+	.ep = 1,
-+};
-+
-+static struct mtk_icc_node mcusys = {
-+	.name = "mcusys",
-+	.id = MASTER_MCUSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node gpu = {
-+	.name = "gpu",
-+	.id = MASTER_GPUSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node mmsys = {
-+	.name = "mmsys",
-+	.id = MASTER_MMSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node mm_vpu = {
-+	.name = "mm-vpu",
-+	.id = MASTER_MM_VPU,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_disp = {
-+	.name = "mm-disp",
-+	.id = MASTER_MM_DISP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_vdec = {
-+	.name = "mm-vdec",
-+	.id = MASTER_MM_VDEC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_venc = {
-+	.name = "mm-venc",
-+	.id = MASTER_MM_VENC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_cam = {
-+	.name = "mm-cam",
-+	.id = MASTER_MM_CAM,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_img = {
-+	.name = "mm-img",
-+	.id = MASTER_MM_IMG,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node mm_mdp = {
-+	.name = "mm-mdp",
-+	.id = MASTER_MM_MDP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MMSYS }
-+};
-+
-+static struct mtk_icc_node vpusys = {
-+	.name = "vpusys",
-+	.id = MASTER_VPUSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node vpu_port0 = {
-+	.name = "vpu-port0",
-+	.id = MASTER_VPU_0,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_VPUSYS }
-+};
-+
-+static struct mtk_icc_node vpu_port1 = {
-+	.name = "vpu-port1",
-+	.id = MASTER_VPU_1,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_VPUSYS }
-+};
-+
-+static struct mtk_icc_node mdlasys = {
-+	.name = "mdlasys",
-+	.id = MASTER_MDLASYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node mdla_port0 = {
-+	.name = "mdla-port0",
-+	.id = MASTER_MDLA_0,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_MDLASYS }
-+};
-+
-+static struct mtk_icc_node ufs = {
-+	.name = "ufs",
-+	.id = MASTER_UFS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node pcie0 = {
-+	.name = "pcie0",
-+	.id = MASTER_PCIE_0,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node pcie1 = {
-+	.name = "pcie1",
-+	.id = MASTER_PCIE_1,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node usb = {
-+	.name = "usb",
-+	.id = MASTER_USB,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node wifi = {
-+	.name = "wifi",
-+	.id = MASTER_WIFI,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node bt = {
-+	.name = "bt",
-+	.id = MASTER_BT,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node netsys = {
-+	.name = "netsys",
-+	.id = MASTER_NETSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node dbgif = {
-+	.name = "dbgif",
-+	.id = MASTER_DBGIF,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node hrt_ddr_emi = {
-+	.name = "hrt-ddr-emi",
-+	.id = SLAVE_HRT_DDR_EMI,
-+	.ep = 2,
-+};
-+
-+static struct mtk_icc_node hrt_mmsys = {
-+	.name = "hrt-mmsys",
-+	.id = MASTER_HRT_MMSYS,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_HRT_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node hrt_mm_disp = {
-+	.name = "hrt-mm-disp",
-+	.id = MASTER_HRT_MM_DISP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_mm_vdec = {
-+	.name = "hrt-mm-vdec",
-+	.id = MASTER_HRT_MM_VDEC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_mm_venc = {
-+	.name = "hrt-mm-venc",
-+	.id = MASTER_HRT_MM_VENC,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_mm_cam = {
-+	.name = "hrt-mm-cam",
-+	.id = MASTER_HRT_MM_CAM,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_mm_img = {
-+	.name = "hrt-mm-img",
-+	.id = MASTER_HRT_MM_IMG,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_mm_mdp = {
-+	.name = "hrt-mm-mdp",
-+	.id = MASTER_HRT_MM_MDP,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { MASTER_HRT_MMSYS }
-+};
-+
-+static struct mtk_icc_node hrt_dbgif = {
-+	.name = "hrt-dbgif",
-+	.id = MASTER_HRT_DBGIF,
-+	.ep = 0,
-+	.num_links = 1,
-+	.links = { SLAVE_HRT_DDR_EMI }
-+};
-+
-+static struct mtk_icc_node *mt8195_emi_icc_nodes[] = {
-+	[SLAVE_DDR_EMI] = &ddr_emi,
-+	[MASTER_MCUSYS] = &mcusys,
-+	[MASTER_GPUSYS] = &gpu,
-+	[MASTER_MMSYS] = &mmsys,
-+	[MASTER_MM_VPU] = &mm_vpu,
-+	[MASTER_MM_DISP] = &mm_disp,
-+	[MASTER_MM_VDEC] = &mm_vdec,
-+	[MASTER_MM_VENC] = &mm_venc,
-+	[MASTER_MM_CAM] = &mm_cam,
-+	[MASTER_MM_IMG] = &mm_img,
-+	[MASTER_MM_MDP] = &mm_mdp,
-+	[MASTER_VPUSYS] = &vpusys,
-+	[MASTER_VPU_0] = &vpu_port0,
-+	[MASTER_VPU_1] = &vpu_port1,
-+	[MASTER_MDLASYS] = &mdlasys,
-+	[MASTER_MDLA_0] = &mdla_port0,
-+	[MASTER_UFS] = &ufs,
-+	[MASTER_PCIE_0] = &pcie0,
-+	[MASTER_PCIE_1] = &pcie1,
-+	[MASTER_USB] = &usb,
-+	[MASTER_WIFI] = &wifi,
-+	[MASTER_BT] = &bt,
-+	[MASTER_NETSYS] = &netsys,
-+	[MASTER_DBGIF] = &dbgif,
-+	[SLAVE_HRT_DDR_EMI] = &hrt_ddr_emi,
-+	[MASTER_HRT_MMSYS] = &hrt_mmsys,
-+	[MASTER_HRT_MM_DISP] = &hrt_mm_disp,
-+	[MASTER_HRT_MM_VDEC] = &hrt_mm_vdec,
-+	[MASTER_HRT_MM_VENC] = &hrt_mm_venc,
-+	[MASTER_HRT_MM_CAM] = &hrt_mm_cam,
-+	[MASTER_HRT_MM_IMG] = &hrt_mm_img,
-+	[MASTER_HRT_MM_MDP] = &hrt_mm_mdp,
-+	[MASTER_HRT_DBGIF] = &hrt_dbgif
-+};
-+
-+static struct mtk_icc_desc mt8195_emi_icc = {
-+	.nodes = mt8195_emi_icc_nodes,
-+	.num_nodes = ARRAY_SIZE(mt8195_emi_icc_nodes),
-+};
-+
-+static const struct of_device_id mtk_mt8195_emi_icc_of_match[] = {
-+	{ .compatible = "mediatek,mt8195-emi", .data = &mt8195_emi_icc },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, mtk_mt8195_emi_icc_of_match);
-+
-+static struct platform_driver mtk_emi_icc_mt8195_driver = {
-+	.driver = {
-+		.name = "emi-icc-mt8195",
-+		.of_match_table = mtk_mt8195_emi_icc_of_match,
-+		.sync_state = icc_sync_state,
-+	},
-+	.probe = mtk_emi_icc_probe,
-+	.remove_new = mtk_emi_icc_remove,
-+
-+};
-+module_platform_driver(mtk_emi_icc_mt8195_driver);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_DESCRIPTION("MediaTek MT8195 EMI ICC driver");
-+MODULE_LICENSE("GPL");
--- 
-2.45.2
+> >  st_pressure-$(CONFIG_IIO_BUFFER) +=3D st_pressure_buffer.o
+> > diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp50=
+0.c
+> > new file mode 100644
+> > index 000000000000..7efcc69e829c
+> > --- /dev/null
+> > +++ b/drivers/iio/pressure/sdp500.c
+> > @@ -0,0 +1,144 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +#include <linux/i2c.h>
+> > +#include <linux/crc8.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <asm/unaligned.h>
+> > +
+> > +#define SDP500_CRC8_POLYNOMIAL  0x31   // x8 + x5 + x4 + 1 (normalized=
+ to 0x31)
+> > +#define SDP500_READ_SIZE        3
+> > +#define SDP500_CRC8_WORD_LENGTH 2
+>
+> As below. I'd establish these off the data the are the lengths of by usin=
+g
+> a structure definition.  That will be more obvious and less fragile than
+> defines hiding up here.
+>
+>
+> > +#define SDP500_CRC8_INIT        0x00
+>
+> I'd just use the number inline.  Can't see what the define is adding.
 
+I've been taught to avoid magic numbers as much as possible.
+Giving it a define directly explains what the number is, even if it's used =
+once.
+But I'll follow the community (in this case, you) for this.
+
+>
+> > +
+> > +#define SDP500_SCALE_FACTOR 60
+> > +
+> > +#define SDP500_I2C_START_MEAS 0xF1
+> > +
+> > +struct sdp500_data {
+> > +    struct device *dev;
+> > +};
+> > +
+> > +DECLARE_CRC8_TABLE(sdp500_crc8_table);
+> > +
+> > +static int sdp500_start_measurement(struct sdp500_data *data, const
+> > struct iio_dev *indio_dev)
+> > +{
+> > +    struct i2c_client *client =3D to_i2c_client(data->dev);
+> > +
+> > +    return i2c_smbus_write_byte(client, SDP500_I2C_START_MEAS);
+> Doesn't seem worth a wrapper function. I would just put this code inline.
+> > +}
+> > +
+> > +static const struct iio_chan_spec sdp500_channels[] =3D {
+> > +    {
+> > +        .type =3D IIO_PRESSURE,
+> > +        .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
+>
+> As below. It's a linear scale factor, so I would prefer _RAW and _SCALE
+> to let userspace deal with the maths.
+
+I saw your other e-mail with further explanation and I begrudgingly agree.
+I would much prefer if the "SDP500_SCALE_FACTOR" return code is not
+accepted for the "IIO_CHAN_INFO_PROCESSED" case. And I also saw
+other drivers do the same as me which gave me confidence it was the right
+thing to do.
+But, again, it makes sense to avoid this so I'll change it as suggested.
+
+>
+> > +    },
+> > +};
+> > +
+> > +static int sdp500_read_raw(struct iio_dev *indio_dev,
+> > +              struct iio_chan_spec const *chan,
+> > +              int *val, int *val2, long mask)
+> > +{
+> > +    int ret;
+> > +    u8 rxbuf[SDP500_READ_SIZE];
+> You could define this as a struct so all the data types are obvious.
+>
+>         struct {
+>                 __be16 data;
+>                 u8 crc;
+>         } __packed rxbuf;
+> The  __packed let's you use sizeof(rxbuf) for the transfer size.
+> Beware though as IIRC that will mean data is not necessarily aligned
+> so you'll still need the unaligned accessors.
+>
+
+I know, but I prefer to receive data in simple arrays and then deal with it=
+.
+
+> > +    u8 rec_crc, calculated_crc;
+> > +    s16 dec_value;
+> > +    struct sdp500_data *data =3D iio_priv(indio_dev);
+> > +    struct i2c_client *client =3D to_i2c_client(data->dev);
+> > +
+> > +    switch (mask) {
+> > +    case IIO_CHAN_INFO_PROCESSED:
+> > +        ret =3D i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> > +        if (ret < 0) {
+> > +            dev_err(indio_dev->dev.parent, "Failed to receive data");
+> > +            return ret;
+> > +        }
+> > +        if (ret !=3D SDP500_READ_SIZE) {
+> > +            dev_err(indio_dev->dev.parent, "Data is received wrongly")=
+;
+>
+> I'd guess indio_dev->dev.parent =3D=3D data->dev
+> If so use data->dev as more compact and that's where you are getting the
+> i2c_client from.
+>
+
+Makes sense.
+
+> > +            return -EIO;
+> > +        }
+> > +
+> > +        rec_crc =3D rxbuf[2];
+> > +        calculated_crc =3D crc8(sdp500_crc8_table, rxbuf,
+> > SDP500_CRC8_WORD_LENGTH,
+>
+> I'd use the number 2 for length directly as it's useful to know this is t=
+he
+> __be16 only, or sizeof(__be16)
+> What is the point in rec_crc local variable?
+
+Ok, I will use sizeof(rxbuff) - 1 instead of the define.
+The rec_crc is again for readability, like the SDP500_CRC8_INIT define.
+I will change it to "received_crc" which is clearer though.
+
+>
+> > +            SDP500_CRC8_INIT);
+> > +        if (rec_crc !=3D calculated_crc) {
+> > +            dev_err(indio_dev->dev.parent, "calculated crc =3D 0x%.2X,
+> > received 0x%.2X",
+> > +                calculated_crc, rec_crc);
+> > +            return -EIO;
+> > +        }
+> > +
+> > +        dec_value =3D get_unaligned_be16(rxbuf);
+> > +        dev_dbg(indio_dev->dev.parent, "dec value =3D %d", dec_value);
+>
+> When you move to returning scale and _raw this print won't add anything s=
+o
+> drop it.
+>
+> > +
+> > +        *val =3D dec_value;
+> > +        *val2 =3D SDP500_SCALE_FACTOR;
+> For linear transforms like this it is normally better to provide separate
+> raw and scale interfaces.
+>
+> Then if anyone does want to add buffered support in the future that is ea=
+sier
+> to do as it is much more compact + userspace has floating point which is =
+always
+> going to be better for division than we can do in kernel.
+>
+> > +        return IIO_VAL_FRACTIONAL;
+> > +    default:
+> > +        return -EINVAL;
+> > +    }
+> > +}
+> > +
+> > +static const struct iio_info sdp500_info =3D {
+> > +    .read_raw =3D &sdp500_read_raw,
+> > +};
+> > +
+> > +static int sdp500_probe(struct i2c_client *client)
+> > +{
+> > +    struct iio_dev *indio_dev;
+> > +    struct sdp500_data *data;
+> > +    struct device *dev =3D &client->dev;
+> > +    int ret;
+> > +    u8 rxbuf[SDP500_READ_SIZE];
+> > +
+> > +    indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
+> > +    if (!indio_dev)
+> > +        return -ENOMEM;
+> > +
+> > +    /* has to be done before the first i2c communication */
+> > +    crc8_populate_msb(sdp500_crc8_table, SDP500_CRC8_POLYNOMIAL);
+> > +
+> > +    data =3D iio_priv(indio_dev);
+> > +    data->dev =3D dev;
+> > +
+> > +    indio_dev->name =3D "sdp500";
+> > +    indio_dev->channels =3D sdp500_channels;
+> > +    indio_dev->info =3D &sdp500_info;
+> > +    indio_dev->modes =3D INDIO_DIRECT_MODE;
+> > +    indio_dev->num_channels =3D ARRAY_SIZE(sdp500_channels);
+> > +
+> > +    ret =3D sdp500_start_measurement(data, indio_dev);
+> > +    if (ret)
+> > +        return dev_err_probe(dev, ret, "Failed to start measurement");
+>
+> Blank line here would help readability a tiny bit.
+>
+> > +    /* First measurement is not correct, read it out to get rid of it =
+*/
+> > +    i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> > +
+> > +    ret =3D devm_iio_device_register(dev, indio_dev);
+> > +    if (ret < 0)
+> > +        return dev_err_probe(dev, ret, "Failed to register indio_dev")=
+;
+>
+> We rarely bother with error prints on failure to register as it is unlike=
+ly
+> to fail because of something that happened at runtime and if it does, tha=
+t
+> is easy to track down.  So I'd drop this print.
+> If you really want to keep it I don't mind that much.
+>
+> > +
+> > +    return 0;
+> > +}
+> > +
+> > +static const struct i2c_device_id sdp500_id[] =3D {
+> > +    { "sdp500" },
+> > +    { }
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, sdp500_id);
+> > +
+> > +static const struct of_device_id sdp500_of_match[] =3D {
+> > +    { .compatible =3D "sensirion,sdp500" },
+> > +    { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, sdp500_of_match);
+> > +
+> > +static struct i2c_driver sdp500_driver =3D {
+> > +    .driver =3D {
+> > +        .name    =3D "sensirion,sdp500",
+> > +        .of_match_table =3D sdp500_of_match,
+> > +    },
+> > +    .probe       =3D sdp500_probe,
+> > +    .id_table    =3D sdp500_id,
+> I'd not bother with aligning =3D signs. It just tends to create noise
+> as drivers evolve and people try to keep things aligned (resulting in rea=
+ligning
+> everything).
+>
+
+Good point. It does also bothers me when commits are muddied by
+realigning things.
+
+> > +};
+> > +module_i2c_driver(sdp500_driver);
+> > +
+> > +MODULE_AUTHOR("Thomas Sioutas <thomas.sioutas@prodrive-technologies.co=
+m>");
+> > +MODULE_DESCRIPTION("Driver for Sensirion SDP500 differential pressure =
+sensor");
+> > +MODULE_LICENSE("GPL");
+>
+
+I will test the driver with the suggested changes as soon as I get the
+hardware again
+and I will try using the b4 tool with "web submission endpoint". Thanks aga=
+in!
 
