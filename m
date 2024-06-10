@@ -1,133 +1,94 @@
-Return-Path: <linux-kernel+bounces-208525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689FD90263A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:01:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D2C9027A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4DF61F2327F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:01:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6341C2125F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8579C14884F;
-	Mon, 10 Jun 2024 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8K05pxP"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B74314658E;
-	Mon, 10 Jun 2024 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C206814659A;
+	Mon, 10 Jun 2024 17:19:39 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E55A145328;
+	Mon, 10 Jun 2024 17:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035241; cv=none; b=B2xmRyovmeFDfmyeaTTvvf4stuZkCEy7PjIUmpiayuc/iOqbI6u34YholMzPewyYhRP6m7w0Z3nB3lARGrjqDMzYRxAdgiqqjOI4UfqWAGpNZRSJ+UPntQ1wzAu/U2NZIPbpNJkP0PQhvHxYydeWIIIYEaBXoUYF1Gv2DRnHR3A=
+	t=1718039979; cv=none; b=Ypl0IYYvUff8MEZ58+uv2wQKqVRsKHxjhGvdrTFEjN+KZssMV3ADXrUgpc9ZBZsdDTHf3Nd2VUEYwRKF0uEEe7iel4RnGrbERLwk1AiEUJN8fs3tRbVISrbpiE0sKlsr1XhisBp7XtKZjaiWeqXzYVVeALQBplwQtzkz0ZexrrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035241; c=relaxed/simple;
-	bh=+MIiiCbdWxNTXrUyRNbG+b13pi9WFUp7fmDjl+ZCGnU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nWf/2rmH8mAwHPiO6PGxUnEjR9ktU4obntlJEu1FsXajt2MVshS/Adz9JYXT2DF2yx0/kyCv5UKRrKl/EceDMYkiUX9OoaDRgEr8cPZgChVrkXzEMzypgtBphTnQ+xmuAL3vnWNFYrCPZ1v6XCYkK4YeeCBXmcXVM+r/+cpc4FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8K05pxP; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7046211e455so878373b3a.3;
-        Mon, 10 Jun 2024 09:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718035240; x=1718640040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e55PJUTGJquoA8apS39Yj2O1Aiis5PKLgqTtAScEy6s=;
-        b=G8K05pxP7qfddRf97gAxXyjPOPgh2EQlsCEFOFhOwjI4js9s5/GR3CqhthitS8VofR
-         47wwbsTd6sqc4XUN+A3k9K2EuxL7Mcdv79hiomWj/lPCuUTa2FoCcBfMjPUwrDfFfgKs
-         zQgJhDFqEh0bnLrSg9cgn1cwB/OVWG6zbQ3DtLQTbH3eziMDIhZ8nMEqgJDiWNBker0F
-         7XdCswziBADBEpJ9QhELct9qYRUYNMeNhvl5BuG4PuKylQar1bXLzAAXhtCNUXzwZOb4
-         IGicMInAV9yJG0GwgUKzBIRs28nv8gAylX1u61KNhgPfTVA2ywJcojpDihhfrfHkMROb
-         sJOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718035240; x=1718640040;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e55PJUTGJquoA8apS39Yj2O1Aiis5PKLgqTtAScEy6s=;
-        b=D6LZgqdIh5ow8/Za5V3KBDzgrnWbNSe+tJUhs/VnOSwrIiPUgYE6X0aX9Jx1YO4j6c
-         c+PIyQNNYJ3zG/wnC+d8qTmDXOCgYNYnIT0GL4QlxDkoWdFYL06hlgO13d/S6oxh2z4R
-         n0kMltMA8tQEGyi81LMIdtBPMOgVo+PQ59dJGHu54rD3gJZXxh4mPlVQCmbRh059H9Gb
-         tXc7c1vsEL9nI95WVZG9vyrfvoQopue+1jrjw64KqvT8EqTuZIJDV3sHRsyANoKc8jMt
-         VaRjGkEcdYcI9j6YsBCbPXdasIzJRnZKPe38emaHQgaeGeANoojQbR/4z22BUjZlzkkS
-         N6bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzVmvu6ZFxar0H/29tp3LwL67X1id4sXMzbw3bEu69MRI2uSwuyVLENRgaI42MieEj056RrFyrrgl4jlA1QMRPwsfvM5AdNLLNCQssLUCMgtgdhFthWlIWpa3fs/Ivm3Y2H5165kYy6KLj9Q==
-X-Gm-Message-State: AOJu0Yw27Z8/83RjxCdCTjkElu2PVoBYU4K7zqWeqYoWNfWeUPVfnIvL
-	vi1lnQZwQyTOnGBoE2TBDYLzxHqGUtvCCcBjaNCPJTFExmHqPWaW
-X-Google-Smtp-Source: AGHT+IGiEFs8Aut7LobpCXj5NsxQBIaxTqD/6/qlgjEDxm9l2MYyHo4ZKuqutmqOKYkGm7uexbY4WQ==
-X-Received: by 2002:a05:6a20:3948:b0:1b7:edea:e36 with SMTP id adf61e73a8af0-1b7edea118dmr2333039637.22.1718035239641;
-        Mon, 10 Jun 2024 09:00:39 -0700 (PDT)
-Received: from carrot.. (i223-217-185-141.s42.a014.ap.plala.or.jp. [223.217.185.141])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e4532507casm4872411a12.62.2024.06.10.09.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:00:39 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH -mm 2/2] nilfs2: do not call inode_attach_wb() directly
-Date: Tue, 11 Jun 2024 01:00:29 +0900
-Message-Id: <20240610160029.7673-3-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240610160029.7673-1-konishi.ryusuke@gmail.com>
-References: <20240610160029.7673-1-konishi.ryusuke@gmail.com>
+	s=arc-20240116; t=1718039979; c=relaxed/simple;
+	bh=41nEsnnCsKwXDdxo654ikec4MjyqGigRJTVzBXlKI2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7+MUlM4L4yrqT9gwUPZ4clVdi9fsxaRR5fPMd7MdBdOnCPZmx2Yjb6l/kLnHEOLj/WKvz+USR/D/O0oL2Kt/qUdDmuPs0M+Gv1eOAwnebMCAwjruNzNg9G0m60RucMw+NAEL2eQyrCJBOHuadtT3ki0sz/abs0h6CQWVt9ARRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sGi0z-0000qj-00; Mon, 10 Jun 2024 18:37:01 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 7FBF4C031A; Mon, 10 Jun 2024 17:17:44 +0200 (CEST)
+Date: Mon, 10 Jun 2024 17:17:44 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v2 0/3] Add support for the Mobileye EyeQ6H SoC
+Message-ID: <ZmcZGC0Q91rd6uSI@alpha.franken.de>
+References: <20240513-eyeq6h-v2-0-ae8c1974b52b@bootlin.com>
+ <87zfrsetws.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfrsetws.fsf@BLaptop.bootlin.com>
 
-Call mark_buffer_dirty() for segment summary and super root block
-buffers on the backing device's page cache, thereby indirectly calling
-inode_attach_wb().
+On Mon, Jun 10, 2024 at 04:47:47PM +0200, Gregory CLEMENT wrote:
+> > Following the support of the EyeQ5 SoC, this series adds the initial
+> > support for a newer SoC, the EyeQ6H.
+> >
+> > The EyeQ6H (or "High") from Mobileye is still based on the MIPS I6500
+> > architecture as the EyeQ5. The 2 clusters of this SoC contain 4 cores
+> > each, which are capable of running 4 threads per core. Besides this,
+> > it features multiple controllers such as the classic UART, high-speed
+> > I2C, SPI, as well as CAN-FD, PCIe Gen4, Octal/Quad SPI Flash
+> > interface, Gigabit Ethernet, MIPI CSI-2, MIPI DSI, and eMMC 5.1. It
+> > also includes a Hardware Security Module, Functional Safety Hardware,
+> > and video encoders, among other features.
+> >
+> > For now, this series just adds initial support with UART and Pinctrl
+> > support. Another current limitation pointed out in patch 3 is that
+> > only one CPU is actually running. This limitation will be solved with
+> > upcoming series.
+> >
+> > The main change in this new version is the use of the new way to name
+> > the clock nodes.
+> 
+> I sent this second version a month ago and the first version even before
+> that, and I still haven't received any feedback from your side. Does it
+> mean that you will merge it?
 
-Then remove the no longer needed call to inode_attach_wb() in
-nilfs_attach_log_writer(), resolving the concern about its
-layer-violating use.
+I will this week. The second version came around merge window, so I didn't
+want to include it.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
- fs/nilfs2/segment.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thomas.
 
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index a92609816bc9..36e0bb38e1aa 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -1678,6 +1678,7 @@ static void nilfs_prepare_write_logs(struct list_head *logs, u32 seed)
- 	list_for_each_entry(segbuf, logs, sb_list) {
- 		list_for_each_entry(bh, &segbuf->sb_segsum_buffers,
- 				    b_assoc_buffers) {
-+			mark_buffer_dirty(bh);
- 			if (bh->b_folio == bd_folio)
- 				continue;
- 			if (bd_folio) {
-@@ -1694,6 +1695,7 @@ static void nilfs_prepare_write_logs(struct list_head *logs, u32 seed)
- 	/* Prepare to write super root block */
- 	bh = NILFS_LAST_SEGBUF(logs)->sb_super_root;
- 	if (bh) {
-+		mark_buffer_dirty(bh);
- 		if (bh->b_folio != bd_folio) {
- 			folio_lock(bd_folio);
- 			folio_wait_writeback(bd_folio);
-@@ -2843,8 +2845,6 @@ int nilfs_attach_log_writer(struct super_block *sb, struct nilfs_root *root)
- 	if (!nilfs->ns_writer)
- 		return -ENOMEM;
- 
--	inode_attach_wb(nilfs->ns_bdev->bd_mapping->host, NULL);
--
- 	err = nilfs_segctor_start_thread(nilfs->ns_writer);
- 	if (unlikely(err))
- 		nilfs_detach_log_writer(sb);
 -- 
-2.34.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
