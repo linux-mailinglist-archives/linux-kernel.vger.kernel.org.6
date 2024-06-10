@@ -1,66 +1,81 @@
-Return-Path: <linux-kernel+bounces-207660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C01901A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB25E901A5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3ECE281A90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5DE281352
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C6523775;
-	Mon, 10 Jun 2024 05:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D039511CA1;
+	Mon, 10 Jun 2024 05:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FfTpgH48"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="X4L0ESC3"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E7C20B34;
-	Mon, 10 Jun 2024 05:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D32D18633
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717998070; cv=none; b=qwAq1b+kQk5eVWQXqHZ/ttvnY6s3Q1gRTs1Twnpx7eTKH+/rZeJle9EZycUszg5gtLZsJmgoB3Prxss8iw6CMChL3StVvWMWylyUv4LRMx/DI//sM6JgTyoz8U6Ym+Jd+63V+VLOHn2U6zvLXhc1ICs1vT83K9SMl6ELnf+8wio=
+	t=1717998540; cv=none; b=mlEJgJqJnXeQzN1araEdf5N85I1Kqb3HVQct85F837bYlL6ymjRp2engkfL4MiUT4482HeXCQ1Rih4OENCnRgshol1Hh1SNd1ORSH9wSyO/OlssElTuOydntS4izspoVsZ4RJ/ZsgsR267Xm4D7eHbB93/BqpNne/2kjJow5AjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717998070; c=relaxed/simple;
-	bh=ipCczr7QYa5QI1mKS580Ngx2AkBjsXEeRuQtWBoAi+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qiQ/BJMAOGPMixLP5hH/gc+q23vyc6hT2pvntEgSM7TNW/CuittQNNCDoobPijCYyGOP+ojQaApQcxrzLBrbkT1oH/NXQBZwJrZpoLibCBABUV9rD1JeiRI8m7vWmeENGRF7b5koPnNlKbDFpulOJlRmv/Jl86DtLlsJ5WTaiWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FfTpgH48; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717998067;
-	bh=ipCczr7QYa5QI1mKS580Ngx2AkBjsXEeRuQtWBoAi+0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FfTpgH48OTFMQWvJPP210pCXJj/fkW3rvBBFELUBcJntVuuHcLHDNM8huW5HjhDSN
-	 J5ENl9mSdRNzTKqsBkZnLuoJPs/xYFncLucQRdQr2+6kOi5n99OiBh/8m2M/PfIzNY
-	 4H434f15+WSGpytIIIbAB5HALnfiY6X46HeJFFGKi+EK2jlPxJH9m83uyhVR3SSTpq
-	 y9nKR08fMYdB3tgsiJyS/Z8OrFStlKxgh9YW1A2PHaN6A/P75N3/q++Y8ewzREGYUR
-	 GD+Jpkp/AKlfQbZxyipJFOfNc3XUciaeTxPKFM9rOLr95fMrjvcIPZ1acPEN5ZFk2P
-	 SEMqGEZM1jRng==
-Received: from deb.www.tendawifi.com (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8D296378217A;
-	Mon, 10 Jun 2024 05:41:05 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com
-Subject: [PATCH v2 4/4] kselftests: vdso: vdso_test_gettimeofday: conform test to TAP output
-Date: Mon, 10 Jun 2024 10:41:29 +0500
-Message-Id: <20240610054129.1527389-5-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240610054129.1527389-1-usama.anjum@collabora.com>
-References: <20240610054129.1527389-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1717998540; c=relaxed/simple;
+	bh=bms1Ws3k7s8Pn4nPyg6h+fF059moWEuj8WzmZ/gedPM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tLQ5cxtfyQGDbOjFmS7Mv+wWsXlQ1F4+KQnei12LuEfPlKhEN5wv6RriL370QDIh1SIQK6QafFX62RclkFQLZW5qQ1i9kiI1Sx3a1IWGKgp0Maoo4vgVSYT92Qi1T7cgLHryeRFVeyWjaCoXbky2CYxK4homzOQZY9IhuzgH3Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=X4L0ESC3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f70509b811so5910245ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 22:48:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=darkphysics.net; s=google; t=1717998537; x=1718603337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGXyZQ0AhWdPiVFf18ve/MIj+b/D+nKo1h7kD/lhLtU=;
+        b=X4L0ESC3yBtbOneQ9/GHrHdZXoyQyAnPN2bktyHs2gHd+hk301z8b7WCD705p07Gyk
+         cncQdiuM5aNMsFbaAT/UnFe/Zr37jczAz9aE/6Ks/7sQdVaj9nGGRU98ddNQiKDMoAtJ
+         kWqJzfRU302ceb1XWeuAG8GR8Cwg2gFLIuCFp/oEIvt0gX7qg+rJjQnS8hP/FyN4EOb3
+         dvH2WCJ6CnMTDQaG/dOwZCdGtCvt+SBFjNngGFhY80zh9DhKViTyeIjWx36P6RZy1ZIV
+         /X7rM8cZDkbaK6lbnkOlCJJQz2Gc70taMH0aYCtOKvih2XqFG+8BkQqTGs/bu9IbKuss
+         7Lvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717998537; x=1718603337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kGXyZQ0AhWdPiVFf18ve/MIj+b/D+nKo1h7kD/lhLtU=;
+        b=WYUUPSszUDpZIx8XkUdFzZGl11y+3LZMuPEAac9P3WJ3p1FhOmZcQa7SzFeCo+yt9x
+         aDeuR6+9p0HgrkbFcZa0Gj2Udio3tYxEGkuDFv+yU9ZqxI5e8bNQUDgJRGcMrepwj2D2
+         PzR4p583S1aThFvGYHaX+MfuGJJFRWEgSpLgNj/T3BTaFQcX30UQn9l9IPdU8g3kvS/L
+         wD7Bqxg8o4wOfy0Rhq/m/O1FignynpIcIpeUuZmqXL+T7fUBRvIxapdmGmIefaPi44/U
+         3XQB4eVxFhrmvGJFiqpo3uQC2bLtZ/1geWpz0kC+xBnw/uagYyj2NawA+uCiFsH2w7fN
+         kFRA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/bgOvx5Vn/xww43q2p1IcLNeMK6NVhVDoE1tjLJPMQlzfv/r45dbTsOuiqwPyGnfzrbv3cIGioSTJdYsPRPe9G+U33B0j3baMuQFI
+X-Gm-Message-State: AOJu0YzSzhtA5U+9DM0Tj+fNzXAwB5NP7UK34wtNwKcdmsPYynfqePsv
+	SUegqJDOCH8L+bMrlYffLQDOJQWRJ1mlhD1wwlmR4Yi+P+I16OcqVm4q6/XnXPZPITJSQvvlslS
+	X8SM=
+X-Google-Smtp-Source: AGHT+IFMxxwA/HgDSWHBK0vQ0QSReULjfORoxLkKeGsZKml2iVYQktdR8yJZIilL5zEqPi0X8+l4jA==
+X-Received: by 2002:a17:902:c408:b0:1f4:7713:8f6 with SMTP id d9443c01a7336-1f6d0388ea1mr104816145ad.52.1717998537417;
+        Sun, 09 Jun 2024 22:48:57 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f1aced64sm35653725ad.9.2024.06.09.22.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 22:48:56 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com,
+	anjan@momi.ca
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH 00/24] Staging: rtl8192e: Maintenance renames and cleanup
+Date: Sun,  9 Jun 2024 22:44:25 -0700
+Message-Id: <20240610054449.71316-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,63 +84,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Conform the layout, informational and status messages to TAP. No
-functional change is intended other than the layout of output messages.
+This patch series attacks CamelCase variable renames, removes
+un-used variables and adjusts alignment issues found in
+rtllib_rx.c and rtllib_tx.c. 
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- .../selftests/vDSO/vdso_test_gettimeofday.c   | 23 ++++++++++---------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+This completes the last of the remaining checkpatch issues 
+for rtllib_tx.c.
 
-diff --git a/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c b/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-index ee4f1ca56a71a..2f42277b29ffe 100644
---- a/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-@@ -24,10 +24,13 @@ int main(int argc, char **argv)
- {
- 	const char *version = versions[VDSO_VERSION];
- 	const char **name = (const char **)&names[VDSO_NAMES];
--
- 	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
- 	if (!sysinfo_ehdr) {
--		printf("AT_SYSINFO_EHDR is not present!\n");
-+		ksft_print_msg("AT_SYSINFO_EHDR is not present!\n");
- 		return KSFT_SKIP;
- 	}
- 
-@@ -38,20 +41,18 @@ int main(int argc, char **argv)
- 	gtod_t gtod = (gtod_t)vdso_sym(version, name[0]);
- 
- 	if (!gtod) {
--		printf("Could not find %s\n", name[0]);
-+		ksft_print_msg("Could not find %s\n", name[0]);
- 		return KSFT_SKIP;
- 	}
- 
- 	struct timeval tv;
- 	long ret = gtod(&tv, 0);
- 
--	if (ret == 0) {
--		printf("The time is %lld.%06lld\n",
--		       (long long)tv.tv_sec, (long long)tv.tv_usec);
--	} else {
--		printf("%s failed\n", name[0]);
--		return KSFT_FAIL;
--	}
-+	if (ret == 0)
-+		ksft_test_result_pass("The time is %lld.%06lld\n",
-+				      (long long)tv.tv_sec, (long long)tv.tv_usec);
-+	else
-+		ksft_test_result_fail("%s failed\n", name[0]);
- 
--	return 0;
-+	ksft_finished();
- }
+Thank you in advance to all reviewers.
+~Tree
+
+
+Tree Davies (24):
+  Staging: rtl8192e: Rename variable bHwSec
+  Staging: rtl8192e: Rename variable bIsMulticast
+  Staging: rtl8192e: Rename variable HTCurrentOperaRate
+  Staging: rtl8192e: Rename variable HTOpMode
+  Staging: rtl8192e: Rename variable bRTSEnable
+  Staging: rtl8192e: Rename variable bRTSBW
+  Staging: rtl8192e: Rename variable bCTSEnable
+  Staging: rtl8192e: Rename variable bRTSUseShortGI
+  Staging: rtl8192e: Rename variable bforced_tx20Mhz
+  Staging: rtl8192e: Rename variable bPacketBW
+  Staging: rtl8192e: Rename variable bBroadcast
+  Staging: rtl8192e: Rename variable CntAfterLink
+  Staging: rtl8192e: Rename variable bUseShortGI
+  Staging: rtl8192e: Rename function TsStartAddBaProcess()
+  Staging: rtl8192e: Fix spaces/tab alignment to match open parenthesis
+  Staging: rtl8192e: Rename function rtllib_query_BandwidthMode
+  Staging: rtl8192e: Rename function rtllib_query_ShortPreambleMode
+  Staging: rtl8192e: Rename function rtllib_query_HTCapShortGI
+  Staging: rtl8192e: Rename variable bUseShortPreamble
+  Staging: rtl8192e: Rename variable bRTSSTBC
+  Remove parameter bIsAmsdu from rtllib_classify()
+  Remove variable IsAmsdu from rtllib_xmit_inter()
+  Fix space/tab alignment to match open parenthesis in rtllib_tx.c
+  Fix space/tab alignment to match open parenthesis in rtllib_rx.c
+
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |  16 +--
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c  |   6 +-
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.c    |   8 +-
+ drivers/staging/rtl8192e/rtl8192e/rtl_wx.c    |   2 +-
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     |   2 +-
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     |   2 +-
+ drivers/staging/rtl8192e/rtllib.h             |  28 ++--
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c  |   4 +-
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c  |  10 +-
+ drivers/staging/rtl8192e/rtllib_crypt_wep.c   |   4 +-
+ drivers/staging/rtl8192e/rtllib_rx.c          |  45 +++---
+ drivers/staging/rtl8192e/rtllib_tx.c          | 131 +++++++++---------
+ 12 files changed, 126 insertions(+), 132 deletions(-)
+
 -- 
-2.39.2
+2.30.2
 
 
