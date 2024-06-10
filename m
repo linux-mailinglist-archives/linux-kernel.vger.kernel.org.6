@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-207959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA811901E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:44:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B386901E87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3D61F245B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0802283A5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCF774E0A;
-	Mon, 10 Jun 2024 09:43:52 +0000 (UTC)
-Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749D4763FD;
+	Mon, 10 Jun 2024 09:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9eYEZah"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF517406A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4837581A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012632; cv=none; b=mKMkiVnMClM5AxMcJ1EPGbUzhMcQT9+T9Qv/WLtjnqjJVvoAMqgKYbZrI26vJGq+oNy01/R/KjxF1woarsJw/ZSba516TPuQ6OpuSj46MVTqE7i2qGPYIzbgymSkeNpn7iHj4dSUog7o//+c4LTDpuOg8EOs6mvhBzaYCFJY8p8=
+	t=1718012634; cv=none; b=oTkgkn+G0IinnvuviHY7ptoy6f1xa5i2OM3utVjuRamy3ojtartS6hM5cZ4JlMsAmUb7T7D0JTG1LCm0DJyZVjqQ3lfvwUBi3nbhY6yROrowPyK1bs7xjZ4/41uvDOHIZmFEackQae5WYqi7oVWl09OK18kYX0KO1YiBgO+JBj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012632; c=relaxed/simple;
-	bh=VDzE3RSwnrxU/yC/vUrKtkweZzQ3kekLxfWWailNru4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ii2VuU3mIy4CNJBDkXC9KeBDGO7DHGGgFSMx190yYa8KZNZKEQXpicSCMhCubyEK1Qc7BHXQKoFPVkX7Xb/t3ForVEb5FL4IkEzj0Ljorsn7dLULDDe4pZO0CwCabVBDvMDTm985AkT6o8Wlggco8gfguhWyMJu0M26SOmkl3NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.173])
-	by sina.com (10.75.12.45) with ESMTP
-	id 6666CAC600006219; Mon, 10 Jun 2024 17:43:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 40054931457759
-X-SMAIL-UIID: 3FB5AC4B5CAB4E03AA8A8F19874F619D-20240610-174337-1
-From: Hillf Danton <hdanton@sina.com>
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: kbusch@kernel.org,
-	sagi@grimberg.me,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	sachinp@linux.vnet.com
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-Date: Mon, 10 Jun 2024 17:43:25 +0800
-Message-Id: <20240610094325.2156-1-hdanton@sina.com>
-In-Reply-To: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
-References: 
+	s=arc-20240116; t=1718012634; c=relaxed/simple;
+	bh=bS5RlvgxIgcjRqjmYWH6qB32WZu/LwYze/3RpeQ2ypM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6kIGiD9T7hRlKKHbj2O5KUn6n24oQx3Bv4BK1wahsMz29w/Mtw4pvsKB5VJ7su3E//ZaTXjb34PVQ+TKY9So4KilHBlaBnITa7V+yXqR0ejrmUs7r/h8iUDHDHxkOX5gnD5daVUZXQM3uXOXngV+FTgKAzNRcCWyVEf8zE5i40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9eYEZah; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4eb1233862dso1423813e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718012632; x=1718617432; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xjhpNNupYWVZWKcUvHP1lyKNkdexlWuohzaYbXqZdQg=;
+        b=M9eYEZahAt9kIC38bmUjOYlZ/ICqNz40VuR2a0zqZ6UpaeAhxmnhPf7uYFqq3H937L
+         Aaq7NtwUzWext9/ZkqG/tVMeCA1mPejVScqMpzC7p8qDOn+QzlyrHc0MoI3eVX9OFQMD
+         7JNmySegS6Ujl+4rlGGdIwSQoQDpcNwdL2lBjVqZKzVsPlmHXhG2SwYIuPtq1yEMRcck
+         lxnLcKQCQoUxgDFNR6rB/AJT5hzNVzPrTlnpVQS1z7zPycNzmapUi11+ANZt4Z2TWZcX
+         agNQCBw+OZwWJ8CoJ6y9xReT645mM8HkGdmQC0DKtp5om/z9TzUkIjP8vF7+G7J+mPrr
+         I6Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718012632; x=1718617432;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xjhpNNupYWVZWKcUvHP1lyKNkdexlWuohzaYbXqZdQg=;
+        b=hZpqIAQ+3mrePAsRJVw8MJAEJUXpTR4CWE9yTANCmvAStTq+/0xWGN/d+Q8EFUyzfb
+         l3Pl/2bBUbQZ/CGgG/gFrJrOy/L/jPSZcygAN9D0LhnJC5Ql7fUt2An6+msAGTB/ydVT
+         KA7NpqFGYI3hZQ3qG40ZPifGwzq7KMfemEpysrFkgd5Dri75mSx5RmkTAFw/1hnDgPi9
+         6KkmBDk7HFA/qMPl3MWSUqEmkIR44g/vq6WuTj5nzty4VEtfV3Ca84Rr3DmfvLy3e5X5
+         m6r7cdm0jykycZUrwkal5QLURhlk13SXHRahiKNuILbQNPEqDCZoHG+rSsscER+HSBlV
+         q1gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSDUUdH997rCmIkKHrDVVY3Cu8iXSZ/M0JaZIgUG+fMa+bL2ax9BjzsD6XYwSBTtyyn7nN87HlRF5Qw217GvGXeJWykRvWaqYOX/r+
+X-Gm-Message-State: AOJu0YzmDNCjf9N061NQEchsFyv6eD9V/YDqzqgrhbMJG2W4OIfY+dzi
+	qE/oaSqdEd22aHvWEj00T0xON9zzPcwURSVpNN2p2lbk4w3lAS7J2eTV0DN/80JjynJPfKnu+AY
+	hsqJMyPYYax/Q+wRJBm8ihKd4Hl3ewA7q8LadjA==
+X-Google-Smtp-Source: AGHT+IGsldTxg6rRfZyz1ipYFZ2s2KO6v7Z4ILO2JX+E0oYUdd+a45WFPOs1q7SluiHdxBw4X8zaRbxU1Xtk02Z0Mks=
+X-Received: by 2002:a05:6122:1799:b0:4eb:5fb9:1654 with SMTP id
+ 71dfb90a1353d-4eb5fb91857mr6829841e0c.8.1718012632207; Mon, 10 Jun 2024
+ 02:43:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240609113903.732882729@linuxfoundation.org> <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
+In-Reply-To: <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 10 Jun 2024 15:13:40 +0530
+Message-ID: <CA+G9fYvW+FmBVJO+3928H8_tBKKLQMa9bBdEKnUMd56G0f_itA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+To: Pavel Machek <pavel@denx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 10 Jun 2024 13:21:00 +0530 Venkat Rao Bagalkote wrote:
-> Greetings!!!
-> 
-> Observing Kernel OOPS, while creating namespace on a NVMe device.
-> 
-> [  140.209777] BUG: Unable to handle kernel data access at 
-> 0x18d7003065646fee
-> [  140.209792] Faulting instruction address: 0xc00000000023b45c
-> [  140.209798] Oops: Kernel access of bad area, sig: 11 [#1]
-> [  140.209802] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=8192 NUMA pSeries
-> [  140.209809] Modules linked in: rpadlpar_io rpaphp xsk_diag 
-> nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet 
-> nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat 
-> bonding nf_conntrack tls nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set 
-> nf_tables nfnetlink vmx_crypto pseries_rng binfmt_misc fuse xfs 
-> libcrc32c sd_mod sg ibmvscsi scsi_transport_srp ibmveth nvme nvme_core 
-> t10_pi crc64_rocksoft_generic crc64_rocksoft crc64
-> [  140.209864] CPU: 2 PID: 129 Comm: kworker/u65:3 Kdump: loaded Not 
-> tainted 6.10.0-rc3 #2
-> [  140.209870] Hardware name: IBM,9009-42A POWER9 (raw) 0x4e0202 
-> 0xf000005 of:IBM,FW950.A0 (VL950_141) hv:phyp pSeries
-> [  140.209876] Workqueue: nvme-wq nvme_scan_work [nvme_core]
-> [  140.209889] NIP:  c00000000023b45c LR: c008000006a96b20 CTR: 
-> c00000000023b42c
-> [  140.209894] REGS: c0000000506078a0 TRAP: 0380   Not tainted (6.10.0-rc3)
-> [  140.209899] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
-> CR: 24000244  XER: 00000000
-> [  140.209915] CFAR: c008000006aa80ac IRQMASK: 0
-> [  140.209915] GPR00: c008000006a96b20 c000000050607b40 c000000001573700 
-> c000000004291ee0
-> [  140.209915] GPR04: 0000000000000000 c000000006150080 00000000c0080005 
-> fffffffffffe0000
-> [  140.209915] GPR08: 0000000000000000 18d7003065646f6e 0000000000000000 
-> c008000006aa8098
-> [  140.209915] GPR12: c00000000023b42c c00000000f7cdf00 c0000000001a151c 
-> c000000004f2be80
-> [  140.209915] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [  140.209915] GPR20: c000000004dbcc00 0000000000000006 0000000000000002 
-> c000000004911270
-> [  140.209915] GPR24: 0000000000000000 0000000000000000 c0000000ee254ffc 
-> c0000000049111f0
-> [  140.209915] GPR28: 0000000000000000 c000000004911260 c000000004291ee0 
-> c000000004911260
-> [  140.209975] NIP [c00000000023b45c] synchronize_srcu+0x30/0x1c0
-> [  140.209984] LR [c008000006a96b20] nvme_ns_remove+0x80/0x2d8 [nvme_core]
-> [  140.209994] Call Trace:
-> [  140.209997] [c000000050607b90] [c008000006a96b20] 
-> nvme_ns_remove+0x80/0x2d8 [nvme_core]
-> [  140.210008] [c000000050607bd0] [c008000006a972b4] 
-> nvme_remove_invalid_namespaces+0x144/0x1ac [nvme_core]
-> [  140.210020] [c000000050607c60] [c008000006a9dbd4] 
-> nvme_scan_ns_list+0x19c/0x370 [nvme_core]
-> [  140.210032] [c000000050607d70] [c008000006a9dfc8] 
-> nvme_scan_work+0xc8/0x278 [nvme_core]
-> [  140.210043] [c000000050607e40] [c00000000019414c] 
-> process_one_work+0x20c/0x4f4
-> [  140.210051] [c000000050607ef0] [c0000000001950cc] 
-> worker_thread+0x378/0x544
-> [  140.210058] [c000000050607f90] [c0000000001a164c] kthread+0x138/0x140
-> [  140.210065] [c000000050607fe0] [c00000000000df98] 
-> start_kernel_thread+0x14/0x18
-> [  140.210072] Code: 3c4c0134 384282d4 7c0802a6 60000000 7c0802a6 
-> fbc1fff0 fba1ffe8 fbe1fff8 7c7e1b78 f8010010 f821ffb1 e9230010 
-> <e9290080> 7c2004ac 71290003 41820008
-> [  140.210093] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
-> 
-> Reverting it, issue is not seen.
+On Mon, 10 Jun 2024 at 01:04, Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > This is the start of the stable review cycle for the 6.6.33 release.
+> > There are 741 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+>
+> 6.6 seems to have build problem on risc-v:
+>
+>   CC      kernel/locking/qrwlock.o
+> 690
+>   CC      lib/bug.o
+> 691
+>   CC      block/blk-rq-qos.o
+> 692
+> arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
+> 693
+> arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
+> 694
+>    14 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> 695
+>       |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> 696
+>       |                                                                  RISCV_ISA_EXT_ZIFENCEI
+> 697
 
-See if refcnt leak existed before be647e2c76b2
+Thanks for the report I do see these Riscv build failures.
 
---- x/drivers/nvme/host/core.c
-+++ y/drivers/nvme/host/core.c
-@@ -4078,6 +4078,7 @@ static void nvme_scan_work(struct work_s
- 		return;
- 	}
- 
-+	nvme_get_ctrl(ctrl);
- 	if (test_and_clear_bit(NVME_AER_NOTICE_NS_CHANGED, &ctrl->events)) {
- 		dev_info(ctrl->device, "rescanning namespaces.\n");
- 		nvme_clear_changed_ns_log(ctrl);
-@@ -4097,6 +4098,7 @@ static void nvme_scan_work(struct work_s
- 			nvme_scan_ns_sequential(ctrl);
- 	}
- 	mutex_unlock(&ctrl->scan_lock);
-+	nvme_put_ctrl(ctrl);
- }
- 
- /*
---
+ - Naresh
 
