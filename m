@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-207746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C541901B76
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:55:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125DD901B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDC31F21F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010BA2821E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81891865B;
-	Mon, 10 Jun 2024 06:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B861CD24;
+	Mon, 10 Jun 2024 06:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rDnh85qo"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dst6LuXi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A3A1CA8A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AB1803A;
+	Mon, 10 Jun 2024 06:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718002516; cv=none; b=pprrSKcGxRbLV/EamDAaxT4UyFPz4iIfM8DjS1vxPvormZdkZc4vpGsxqSGSZ8ybpxr/Bl6HAftSJ8YxdCT98Q7AHCsF+ZWDsZK+zmMOvCntn7SJ1s6fjwjI3OMbTSDB+nx3HnE9LpoiSbJzxy/FmPyC4IL7kNzKJVT6CvU9NB0=
+	t=1718002568; cv=none; b=cFBMAVE7MDKbAwfNlEBHzV/gK0HRuUkAImfggglY4DeAlnInQyHuYe/VEvA1/r7zeep7HtwM7Rp7M0aj2nLnB1XWvNMynhOmqRRMrwDdzpT3adglZ2Gi7zUoW/DNGSHa4NEbAvXKrPR4p+b5SOEjFmh++YVknSLYLU837+fnMwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718002516; c=relaxed/simple;
-	bh=icWl2mW4gsTh79Dtr/VKuHNw5qX2jEW3RdcJNZb3MJ0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Mfh3MUO3Yi3YQXNb7RebSz8UhqbUbaSrLtIXevWGCjATllmPQaJQxbrY81SHBDJHyCVlI4W2oWwm9HF4A4+saKqD7OsDzLROpIW8WiUS+CymEJpXoPOHA28EqzvScNH38WOxTYpW+SAeePsj9xd7SLLPbLlcxm/rCFSDVuebpGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rDnh85qo; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718002495; x=1718607295; i=markus.elfring@web.de;
-	bh=9BY2lnviANQt5LFXardZ1Ja67QMdHaXFtOahZxl5GW0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=rDnh85qobaTZx5plf8ucIjiGjCwBja+3QWE/P01kWherzc1ghScWR40sacik7cuo
-	 QWkmYPLX7trRudLGzykfNOOkmSDF74AYySu0qusN5wxcRgj8lYHnIrC/JDGxes+vr
-	 SiuNkmS+gyyH1jgiUDO//rM0xeAlzwuIKKyTAddfwGfN3Puwp5bkQ2dkCaVe39iJ+
-	 Yz8Qqo/2ga+EbYUKy8KpJDnwDEU59ufGlrn4lCRDbN/5vDtSLii5YbmUJd+XfV1qa
-	 opV21U43yxswV4quw7p3xcEHfdLebcXoXUe0c8rvHVsGeUK7d+Fk73+9i21byOMEm
-	 uF9i0RGJrLiRX9KOZA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUCz3-1rpv7k26cd-00PHkN; Mon, 10
- Jun 2024 08:54:55 +0200
-Message-ID: <2904522f-8981-459c-8f8a-5dfa6de40331@web.de>
-Date: Mon, 10 Jun 2024 08:54:43 +0200
+	s=arc-20240116; t=1718002568; c=relaxed/simple;
+	bh=9x5lfg5IbS2UuO0/g8a59A4OC0SvPJLLx6ic7z+Xr14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feoX356+eXtScsIFFCXBXfu0+ezha+r+VCnNVx4ypw9NGjQ8D8MsJw8bAhAVsGK7Lw4CproqHVvtFdsAXqXabT75GIrOvPojJhfRBxbTvtekB1ZwGR0QThFplY93cfGjjVqsXElsRrwPOKOVMXsWkP7aSQtwBfmAcAlfF/7VQa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dst6LuXi; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718002565; x=1749538565;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9x5lfg5IbS2UuO0/g8a59A4OC0SvPJLLx6ic7z+Xr14=;
+  b=Dst6LuXigxP6RhLsFmHPU6jXxwa35csGmG0m316mDIh6AeauVKWdqOau
+   QUqvcmeR4oROwe3i3pzeZfFRw2jsOPAi6nlMKkZcePvcz0JUFW1EGaMCd
+   eNntt/JGIFJnjr5W2TSlNa1Ul57kUPAQKrjXZx+y5muHON/D42Zwt/8yh
+   8CAsoZq7W09TikxPBTeH0yKjF3qIUZP+1XQayOCGAQCW8GMLmncgJkFFb
+   9Adyj5T7cx6z5NV6+pMwSrffL1lAEWISk9F9oPIXtJ0zIhDZVFvppeqtv
+   Gmqd1TcSchDLi7FyevtOnAIC5twDUj7vqNROh11RcTMj955cXwbjjiPPD
+   w==;
+X-CSE-ConnectionGUID: Ua7UZcqNR1GUI1hTBkZ19A==
+X-CSE-MsgGUID: D4KHS+0rRSy1P86OYU+U/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="37173137"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="37173137"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 23:56:05 -0700
+X-CSE-ConnectionGUID: e8ykSEwdS3G3DA5FIAt9wA==
+X-CSE-MsgGUID: /5hJAPHkQaCvwzCCQyfC/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="76428104"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 09 Jun 2024 23:56:02 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGYwh-0001vE-2E;
+	Mon, 10 Jun 2024 06:55:59 +0000
+Date: Mon, 10 Jun 2024 14:55:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Richard chien <m8809301@gmail.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, jesse.brandeburg@intel.com,
+	anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Richard chien <richard.chien@hpe.com>
+Subject: Re: [PATCH] igb: Add support for firmware update
+Message-ID: <202406101404.oWWqbJmG-lkp@intel.com>
+References: <20240609081526.5621-1-richard.chien@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Alexandr Sapozhnikov <alsp705@gmail.com>, linux-nvme@lists.infradead.org,
- lvc-project@linuxtesting.org, Chaitanya Kulkarni <kch@nvidia.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240607134340.11-1-alsp705@gmail.com>
-Subject: Re: [PATCH] drivers: nvme: target: core: deref after null
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240607134340.11-1-alsp705@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uMo2DT30EkJwd/lQVOYtidkkkXOcQVOo4S3SIygw+m8jw8Qz6qf
- FlIwe3QTsMUAzR8NhF3h6PVroXnYEvom0CN6NHcHtDZ6q4lvkplTX8VKM6UnKbWHN//WVyA
- LaTJ4IyaBYFw4TQSOB2suhWbQ+YzAuIq9wa+9pketoVZEQPUTe1EVsjS0kNpzyXAOM3B9eG
- XIyqIVVRl+FHZ72FLFULg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7gBCsE6Z9MA=;0ar/JH+9Rf2g0rpBzMwAVqrPfrU
- OK7Y3Oi/zo2W7Zlm+U5rL4+34TyqaMZtNrLBRkqQ/QplOsiV3zWt2DrKdH7qolwKmta/I6g19
- 0S/DazL/MZz43fwwZK6nHFQeV3LKv+3Nn3opGb8CTp0yceg4RKMdQuuZ27uSiPGgmjpivtBw9
- qxFHQ9/5Ab7Ah8pLOnHgRtSaU+IjaeHV1bQxpPIGwEqV3ymg3tpBDbp607G7YV5xwJKeYGxiQ
- K1JOG/loEY+hpr1beWBgG5J+SRALwL4H5gfk5Q+a5ixZcNKTSIWHjraTZH4jfJDuMfFWiKTRS
- ZNkBniFP+GmR45l4+8AVBFP0W6I6+PZM6CTGz+Uo2cFdwJAhO5rMmjYabMA/dT+nft9EpG797
- 9MRqj8TDJVJBoiEWFiOQmrjDWexc4CBzdtvnyTuzpFXjVFaM2WGTKxLd1Qr8B+sQ+gUXWLnK8
- dGsc6XHeICYsfMJWEwO3Ts1tzDRMWK+bv8NrJ+FB3KYlQpbnfurQpPyUtanZ7lf7eqh2oF4dx
- P7mdW852WmPQxVwPUXalSh7k3kXD4vLQBCisS4kAEXwdN1kVLhZz2AlZbVr6NEVjqVjg2sH5+
- jNeIcxCfvjCw/S0qo/uqHtd6+0Vbqas8IllgNtFZDbo7M87nCqMygXNfIY/OxfrNGehqeVDiH
- tmg2RRGkPco2wqvpe2mVxgp8KMmr5MC6Cz+ekfq1EL7DdvPDoswEmaJK+ylP9Tx8PT0b+Z04+
- WKxB3JefCSdChNUnrBsXS1As0/G1vJ8IrGtaentloABXrGY018RkYtXUWxEUeW9zJ7BILwsES
- oadLL8j5NQrJYFJ4kENn+ddBJTRahAq0vbLsfn3kl51c0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609081526.5621-1-richard.chien@hpe.com>
 
-> After having been compared to a NULL value at core.c:813,
-> pointer '(**sq->ctrl).sqs' is dereferenced at core.c:838.
+Hi Richard,
 
-* Please choose another imperative wording for an improved change descript=
-ion.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
+kernel test robot noticed the following build warnings:
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+[auto build test WARNING on tnguy-next-queue/dev-queue]
+[also build test WARNING on tnguy-net-queue/dev-queue linus/master v6.10-rc3 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-* How do you think about to use the summary phrase =E2=80=9CAvoid null poi=
-nter dereference
-  in nvmet_sq_destroy()=E2=80=9D?
+url:    https://github.com/intel-lab-lkp/linux/commits/Richard-chien/igb-Add-support-for-firmware-update/20240609-162047
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git dev-queue
+patch link:    https://lore.kernel.org/r/20240609081526.5621-1-richard.chien%40hpe.com
+patch subject: [PATCH] igb: Add support for firmware update
+config: alpha-randconfig-r112-20240610 (https://download.01.org/0day-ci/archive/20240610/202406101404.oWWqbJmG-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240610/202406101404.oWWqbJmG-lkp@intel.com/reproduce)
 
-* Is the subsystem specification =E2=80=9Cnvmet=E2=80=9D more appropriate?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406101404.oWWqbJmG-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/ethernet/intel/igb/igb_ethtool.c:923:34: sparse: sparse: cast to restricted __le16
+   drivers/net/ethernet/intel/igb/igb_ethtool.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/stackdepot.h, ...):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
 
-Regards,
-Markus
+vim +923 drivers/net/ethernet/intel/igb/igb_ethtool.c
+
+   874	
+   875	static int igb_get_eeprom(struct net_device *netdev,
+   876	                          struct ethtool_eeprom *eeprom, u8 *bytes)
+   877	{
+   878	        struct igb_adapter *adapter = netdev_priv(netdev);
+   879	        struct e1000_hw *hw = &adapter->hw;
+   880	        u16 *eeprom_buff;
+   881	        int first_word, last_word;
+   882	        int ret_val = 0;
+   883	        struct e1000_nvm_access *nvm;
+   884	        u32 magic;
+   885	        u16 i;
+   886	
+   887	        if (eeprom->len == 0)
+   888	                return -EINVAL;
+   889	
+   890	        magic = hw->vendor_id | (hw->device_id << 16);
+   891	        if (eeprom->magic && eeprom->magic != magic) {
+   892	                nvm = (struct e1000_nvm_access *)eeprom;
+   893	                ret_val = igb_nvmupd_command(hw, nvm, bytes);
+   894	                return ret_val;
+   895	        }
+   896	          
+   897	        /* normal ethtool get_eeprom support */
+   898	        eeprom->magic = hw->vendor_id | (hw->device_id << 16);
+   899	
+   900	        first_word = eeprom->offset >> 1;
+   901	        last_word = (eeprom->offset + eeprom->len - 1) >> 1;
+   902	
+   903	        eeprom_buff = kmalloc(sizeof(u16) *
+   904	                        (last_word - first_word + 1), GFP_KERNEL);
+   905	        if (!eeprom_buff)
+   906	                return -ENOMEM;
+   907	
+   908	        if (hw->nvm.type == e1000_nvm_eeprom_spi)
+   909	                ret_val = e1000_read_nvm(hw, first_word,
+   910	                                         last_word - first_word + 1,
+   911	                                         eeprom_buff);
+   912	        else {
+   913	                for (i = 0; i < last_word - first_word + 1; i++) {
+   914	                        ret_val = e1000_read_nvm(hw, first_word + i, 1,
+   915	                                                 &eeprom_buff[i]);
+   916	                        if (ret_val)
+   917	                                break;
+   918	                }
+   919	        }
+   920	
+   921	        /* Device's eeprom is always little-endian, word addressable */
+   922	        for (i = 0; i < last_word - first_word + 1; i++)
+ > 923	                eeprom_buff[i] = le16_to_cpu(eeprom_buff[i]);
+   924	
+   925	        memcpy(bytes, (u8 *)eeprom_buff + (eeprom->offset & 1),
+   926	                        eeprom->len);
+   927	        kfree(eeprom_buff);
+   928	
+   929	        return ret_val;
+   930	}
+   931	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
