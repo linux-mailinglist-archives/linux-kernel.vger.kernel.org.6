@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-207745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F139901B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C541901B76
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6F01C20F68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDC31F21F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7561C6A4;
-	Mon, 10 Jun 2024 06:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81891865B;
+	Mon, 10 Jun 2024 06:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N7+p5tiP"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rDnh85qo"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB76224E8;
-	Mon, 10 Jun 2024 06:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A3A1CA8A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718002434; cv=none; b=Xazj0YFLhhKhC9nXRrnZPE5EtjkNDMQcEDyb4YqQtE008690IwEP3j+Wld3cMfS47cKZEmLqYJSZ+t+gF3zbOa4waW24IYtdThN1I8kiMwnH/86ltYjX9ysoOLITRZdAPZ3qJIJYXx4ofZZxotzjDC3aDRoO5IW+SSxyE/9sKKw=
+	t=1718002516; cv=none; b=pprrSKcGxRbLV/EamDAaxT4UyFPz4iIfM8DjS1vxPvormZdkZc4vpGsxqSGSZ8ybpxr/Bl6HAftSJ8YxdCT98Q7AHCsF+ZWDsZK+zmMOvCntn7SJ1s6fjwjI3OMbTSDB+nx3HnE9LpoiSbJzxy/FmPyC4IL7kNzKJVT6CvU9NB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718002434; c=relaxed/simple;
-	bh=UUCkxg6F+ZFRb1qsY17FUuhKbviHXLlzPpVxYybdOew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WziG1Ld/SwBNeAYIliVp8piWKk0N/ustnhpBkw2VRe8xFtS+xdFVzHYQ8Y/u3tEYEjY499HKDA07K2TWFhfrAdPhp0ef86OndSwxPpz2mJIHjgtjHDFubyRTGpxI2cGY6n3KtGdYZAs1EeYhNA1p0LfJ3pYVNPinjT6YGBH89uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N7+p5tiP; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45A6rgTQ062074;
-	Mon, 10 Jun 2024 01:53:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718002422;
-	bh=PxnIiwyzOSMm+O787G/I/NLCdKWBirKxD1GYw/nsyIU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=N7+p5tiPlvsZQvFvwivsnqRlra8BPzjGA184BMns9VSKNEkxyxB2dN+oKMEp+n8kB
-	 8mNj5MKwjfeuAGLwgO9P1WS7wTv0CYypqJdwHlmHHos0qCmtjwp0HMT+rd9Fe/vQTA
-	 LjqbArHlGoMgwUb74IJ7/fJ1WbPrGqKTq4AcSo3Y=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45A6rgZI125131
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 01:53:42 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 01:53:42 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 01:53:42 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45A6rbgZ112839;
-	Mon, 10 Jun 2024 01:53:37 -0500
-Message-ID: <1156c363-93a8-4c31-8305-39d5da99653e@ti.com>
-Date: Mon, 10 Jun 2024 12:23:36 +0530
+	s=arc-20240116; t=1718002516; c=relaxed/simple;
+	bh=icWl2mW4gsTh79Dtr/VKuHNw5qX2jEW3RdcJNZb3MJ0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Mfh3MUO3Yi3YQXNb7RebSz8UhqbUbaSrLtIXevWGCjATllmPQaJQxbrY81SHBDJHyCVlI4W2oWwm9HF4A4+saKqD7OsDzLROpIW8WiUS+CymEJpXoPOHA28EqzvScNH38WOxTYpW+SAeePsj9xd7SLLPbLlcxm/rCFSDVuebpGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rDnh85qo; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718002495; x=1718607295; i=markus.elfring@web.de;
+	bh=9BY2lnviANQt5LFXardZ1Ja67QMdHaXFtOahZxl5GW0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rDnh85qobaTZx5plf8ucIjiGjCwBja+3QWE/P01kWherzc1ghScWR40sacik7cuo
+	 QWkmYPLX7trRudLGzykfNOOkmSDF74AYySu0qusN5wxcRgj8lYHnIrC/JDGxes+vr
+	 SiuNkmS+gyyH1jgiUDO//rM0xeAlzwuIKKyTAddfwGfN3Puwp5bkQ2dkCaVe39iJ+
+	 Yz8Qqo/2ga+EbYUKy8KpJDnwDEU59ufGlrn4lCRDbN/5vDtSLii5YbmUJd+XfV1qa
+	 opV21U43yxswV4quw7p3xcEHfdLebcXoXUe0c8rvHVsGeUK7d+Fk73+9i21byOMEm
+	 uF9i0RGJrLiRX9KOZA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUCz3-1rpv7k26cd-00PHkN; Mon, 10
+ Jun 2024 08:54:55 +0200
+Message-ID: <2904522f-8981-459c-8f8a-5dfa6de40331@web.de>
+Date: Mon, 10 Jun 2024 08:54:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,188 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] arm64: dts: ti: k3-j722s: Switch to
- k3-am62p-j722s-common.dtsi
-To: Roger Quadros <rogerq@kernel.org>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>, <nm@ti.com>, <afd@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
-        <danishanwar@ti.com>, <srk@ti.com>
-References: <20240604085252.3686037-1-s-vadapalli@ti.com>
- <20240604085252.3686037-5-s-vadapalli@ti.com>
- <79eedaea-bf4f-4a20-8a52-751ce7187523@ti.com>
- <c6d1b64b-48bf-435f-823c-fb4c588819cc@kernel.org>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <c6d1b64b-48bf-435f-823c-fb4c588819cc@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To: Alexandr Sapozhnikov <alsp705@gmail.com>, linux-nvme@lists.infradead.org,
+ lvc-project@linuxtesting.org, Chaitanya Kulkarni <kch@nvidia.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240607134340.11-1-alsp705@gmail.com>
+Subject: Re: [PATCH] drivers: nvme: target: core: deref after null
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240607134340.11-1-alsp705@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uMo2DT30EkJwd/lQVOYtidkkkXOcQVOo4S3SIygw+m8jw8Qz6qf
+ FlIwe3QTsMUAzR8NhF3h6PVroXnYEvom0CN6NHcHtDZ6q4lvkplTX8VKM6UnKbWHN//WVyA
+ LaTJ4IyaBYFw4TQSOB2suhWbQ+YzAuIq9wa+9pketoVZEQPUTe1EVsjS0kNpzyXAOM3B9eG
+ XIyqIVVRl+FHZ72FLFULg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7gBCsE6Z9MA=;0ar/JH+9Rf2g0rpBzMwAVqrPfrU
+ OK7Y3Oi/zo2W7Zlm+U5rL4+34TyqaMZtNrLBRkqQ/QplOsiV3zWt2DrKdH7qolwKmta/I6g19
+ 0S/DazL/MZz43fwwZK6nHFQeV3LKv+3Nn3opGb8CTp0yceg4RKMdQuuZ27uSiPGgmjpivtBw9
+ qxFHQ9/5Ab7Ah8pLOnHgRtSaU+IjaeHV1bQxpPIGwEqV3ymg3tpBDbp607G7YV5xwJKeYGxiQ
+ K1JOG/loEY+hpr1beWBgG5J+SRALwL4H5gfk5Q+a5ixZcNKTSIWHjraTZH4jfJDuMfFWiKTRS
+ ZNkBniFP+GmR45l4+8AVBFP0W6I6+PZM6CTGz+Uo2cFdwJAhO5rMmjYabMA/dT+nft9EpG797
+ 9MRqj8TDJVJBoiEWFiOQmrjDWexc4CBzdtvnyTuzpFXjVFaM2WGTKxLd1Qr8B+sQ+gUXWLnK8
+ dGsc6XHeICYsfMJWEwO3Ts1tzDRMWK+bv8NrJ+FB3KYlQpbnfurQpPyUtanZ7lf7eqh2oF4dx
+ P7mdW852WmPQxVwPUXalSh7k3kXD4vLQBCisS4kAEXwdN1kVLhZz2AlZbVr6NEVjqVjg2sH5+
+ jNeIcxCfvjCw/S0qo/uqHtd6+0Vbqas8IllgNtFZDbo7M87nCqMygXNfIY/OxfrNGehqeVDiH
+ tmg2RRGkPco2wqvpe2mVxgp8KMmr5MC6Cz+ekfq1EL7DdvPDoswEmaJK+ylP9Tx8PT0b+Z04+
+ WKxB3JefCSdChNUnrBsXS1As0/G1vJ8IrGtaentloABXrGY018RkYtXUWxEUeW9zJ7BILwsES
+ oadLL8j5NQrJYFJ4kENn+ddBJTRahAq0vbLsfn3kl51c0=
+
+> After having been compared to a NULL value at core.c:813,
+> pointer '(**sq->ctrl).sqs' is dereferenced at core.c:838.
+
+* Please choose another imperative wording for an improved change descript=
+ion.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
+
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+
+* How do you think about to use the summary phrase =E2=80=9CAvoid null poi=
+nter dereference
+  in nvmet_sq_destroy()=E2=80=9D?
+
+* Is the subsystem specification =E2=80=9Cnvmet=E2=80=9D more appropriate?
 
 
-
-On 06/06/24 13:04, Roger Quadros wrote:
-> 
-> 
-> On 06/06/2024 07:05, Vignesh Raghavendra wrote:
->>
->>
->> On 04/06/24 14:22, Siddharth Vadapalli wrote:
->>> Update "k3-j722s.dtsi" to use "k3-am62p-j722s-common.dtsi" which
->>> contains the nodes shared with AM62P, followed by including the J722S
->>> specific main domain peripherals contained in "k3-j722s-main.dtsi".
->>>
->>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->>> ---
->>> v4:
->>> https://lore.kernel.org/r/20240601121554.2860403-5-s-vadapalli@ti.com/
->>> No changes since v4.
->>>
->>>  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 97 +++++++++++++++++++++++++++-
->>>  1 file changed, 96 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
->>> index c75744edb143..9e04e6a5c0fd 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
->>> @@ -10,12 +10,107 @@
->>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
->>>  
->>> -#include "k3-am62p5.dtsi"
->>> +#include "k3-am62p-j722s-common.dtsi"
->>> +#include "k3-j722s-main.dtsi"
->>>  
->>>  / {
->>>  	model = "Texas Instruments K3 J722S SoC";
->>>  	compatible = "ti,j722s";
->>>  
->>> +	cpus {
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>> +
->>> +		cpu-map {
->>> +			cluster0: cluster0 {
->>> +				core0 {
->>> +					cpu = <&cpu0>;
->>> +				};
->>> +
->>> +				core1 {
->>> +					cpu = <&cpu1>;
->>> +				};
->>> +
->>> +				core2 {
->>> +					cpu = <&cpu2>;
->>> +				};
->>> +
->>> +				core3 {
->>> +					cpu = <&cpu3>;
->>> +				};
->>> +			};
->>> +		};
->>> +
->>> +		cpu0: cpu@0 {
->>> +			compatible = "arm,cortex-a53";
->>> +			reg = <0x000>;
->>> +			device_type = "cpu";
->>> +			enable-method = "psci";
->>> +			i-cache-size = <0x8000>;
->>> +			i-cache-line-size = <64>;
->>> +			i-cache-sets = <256>;
->>> +			d-cache-size = <0x8000>;
->>> +			d-cache-line-size = <64>;
->>> +			d-cache-sets = <128>;
->>> +			next-level-cache = <&l2_0>;
->>> +			clocks = <&k3_clks 135 0>;
->>> +		};
->>> +
->>> +		cpu1: cpu@1 {
->>> +			compatible = "arm,cortex-a53";
->>> +			reg = <0x001>;
->>> +			device_type = "cpu";
->>> +			enable-method = "psci";
->>> +			i-cache-size = <0x8000>;
->>> +			i-cache-line-size = <64>;
->>> +			i-cache-sets = <256>;
->>> +			d-cache-size = <0x8000>;
->>> +			d-cache-line-size = <64>;
->>> +			d-cache-sets = <128>;
->>> +			next-level-cache = <&l2_0>;
->>> +			clocks = <&k3_clks 136 0>;
->>> +		};
->>> +
->>> +		cpu2: cpu@2 {
->>> +			compatible = "arm,cortex-a53";
->>> +			reg = <0x002>;
->>> +			device_type = "cpu";
->>> +			enable-method = "psci";
->>> +			i-cache-size = <0x8000>;
->>> +			i-cache-line-size = <64>;
->>> +			i-cache-sets = <256>;
->>> +			d-cache-size = <0x8000>;
->>> +			d-cache-line-size = <64>;
->>> +			d-cache-sets = <128>;
->>> +			next-level-cache = <&l2_0>;
->>> +			clocks = <&k3_clks 137 0>;
->>> +		};
->>> +
->>> +		cpu3: cpu@3 {
->>> +			compatible = "arm,cortex-a53";
->>> +			reg = <0x003>;
->>> +			device_type = "cpu";
->>> +			enable-method = "psci";
->>> +			i-cache-size = <0x8000>;
->>> +			i-cache-line-size = <64>;
->>> +			i-cache-sets = <256>;
->>> +			d-cache-size = <0x8000>;
->>> +			d-cache-line-size = <64>;
->>> +			d-cache-sets = <128>;
->>> +			next-level-cache = <&l2_0>;
->>> +			clocks = <&k3_clks 138 0>;
->>> +		};
->>> +	};
->>> +
->>> +	l2_0: l2-cache0 {
->>> +		compatible = "cache";
->>> +		cache-unified;
->>> +		cache-level = <2>;
->>> +		cache-size = <0x80000>;
->>> +		cache-line-size = <64>;
->>> +		cache-sets = <512>;
->>> +	};
->>> +
->>>  	cbass_main: bus@f0000 {
->>>  		compatible = "simple-bus";
->>>  		#address-cells = <2>;
->>
->>
->> You would need to move the rest of main domain overrides and cbass_main
->> definitions to k3-j722s-main.dtsi and limit this file to CPU definitions
->> similar to k3-am62p5.dtsi
-> 
-> Not exactly.
-> In existing cases there are 2 soc.dtsi files. e.g. k3-am62p.dtsi and k3-am62p5.dtsi.
-> or k3-am2.dtsi and k3-am625.dtsi.
-> 
-> The former includes everything that is required for the SOC variant except the CPU, OPP and cache.
-> The later includes just the CPU, OPP and cache.
-> 
-> I suppose this only makes sense if there are multiple variants of the SoC where only
-> the number of CPUs change. Would this be the case for J722S?
-
-
-Part numbers with different OPPs are expected besides difference in
-number of cores for J722s.
-
-> 
-> If not then one soc.dtsi file should be sufficient. If yes then we need to have 2 soc.dtsi files
-> for J722S like the rest.
-> 
-
--- 
-Regards
-Vignesh
+Regards,
+Markus
 
