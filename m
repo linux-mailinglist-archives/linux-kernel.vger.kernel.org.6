@@ -1,300 +1,245 @@
-Return-Path: <linux-kernel+bounces-208217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A329F902273
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC51690227A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 285BA1F25685
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4367C1F2567E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1487881AB1;
-	Mon, 10 Jun 2024 13:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41477823CD;
+	Mon, 10 Jun 2024 13:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6M0HsFM"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="cZI00csU"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2D381AA3;
-	Mon, 10 Jun 2024 13:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2013261FF6;
+	Mon, 10 Jun 2024 13:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025019; cv=none; b=WHxEekg5nn+4klm41+v4QNRJYtPLnNDpmqbmr5d2qZRqxk6hREA0EY6eiouJFJ87sQY3echscNLN10MSB89gl2zzDZoBqeMYxtMyd89YW8w3Sd4GkPgwO4CTuOZIsak9kAVpzQMMylr4WxQMePSZs5M4IN1ieXs5SgnoXoXhNaw=
+	t=1718025151; cv=none; b=hK5DkvHUHzoiMaQrBmVqRDpQf14L8Xygv2N+xDdrssDre4eCdMxI3PGSIYoFglquDzL7pQnYAP8fQLdPWsyKym203iPGD8i0fhDJclpOitFBX9M5H2EaeUENU7dOV4IXGHemSUXk5hd6ODkV9b1XZLV+de5t5WuqYEjb3MWyEVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025019; c=relaxed/simple;
-	bh=rpnzjkzZRJoH5xNjY/jyUr59J9J55liY1k0khb0kVqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASA74I5sPPHTOgTA38Ys3+PdXnDOnc2WtEY+G/5aacRa5tENvcoLUKYmw2m9FyDXMrs+At69jZxD8Dm7LvpaXRl1NxxcCYr3ckpYaD3d0zJQbrKhmnZVsVX73pgC+0c6Ckir0ynmwVa/0w2r+YWe/VPnv9SV3zQ4B6rnfYoLQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6M0HsFM; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f47f07acd3so40441465ad.0;
-        Mon, 10 Jun 2024 06:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718025017; x=1718629817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqQv+T68Z77ieKbOSSWpRumFodMN2xfZwuCPpy+rybg=;
-        b=Z6M0HsFMFHLOMdYhqo2/HQNk1sOLLwKSHCN1sMJXb9gzrAT00VS4oYi1UBB8PXZIJA
-         Of07mZwbuCk5ggSB5rcjjuNm3wVyvbGQK6YmWR5thP9Cd1FirDa961uO6bnXhugFKZOz
-         E0+Qgdecj3drFfDxpXRnjYcZiLFPwh4RlmRb9P1u4hK2pKz5PQcWTP9OwyddxKLxE7ed
-         9VfB68EHFSzKcwR2EY2koQb+IaWZAucu1ujqufdUko1lNgqp2tQ9oAkEaUiJ7u04G27i
-         kvVVsJnL9EPix0crXH5ssdZ1ULSBve2qPy3cPcHi1CcbEGR6YAmVpNE+u8qu2cu9rraS
-         wh9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718025017; x=1718629817;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JqQv+T68Z77ieKbOSSWpRumFodMN2xfZwuCPpy+rybg=;
-        b=rgyB1ObmcpM15qxjg1ut8M4fVExLOai97oF5HBi+y5EQmIpQUhkbCA+6PsPTTlWq0p
-         IRqqN02Uu3Zx5sIPaNfj3t7ncQKGpQ+Qgk9qFDu+6Aeu44yAxVNl3uis9H3eJ6DPpV2l
-         pUaXUqx2Z6KRTdKltxpOMIsWu8CC1ecxuTBnzTHFnyQjen4uJtj+UcPqbxg08DQZtPbY
-         2SEdrZOIu3G2UVKnW+5OY/o8G3VmY0BSVEaydzbNcGKnO9dczbhV6gA1vpONQFNVnIGM
-         kgOG4IeGMBUBuXBzy73EWdgrCVhUwC6dYcVdQh/Yo0IBtudj2STHHYqEq8vvICpDF359
-         qXCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX13MI6lTxr3ypRWpqljhuTN9fke5ztDjkDgN4NsFqzqMxUDUh1rkMoMfRjq9Jd6twfH3Mb7VVHzc1AwjhA5aZAtBaoc/bnm9wgyMc5VqtElegOKnJfYR1oXZZASUKpE2FLZHCxEZtfUOc/YWoOXhNwzhRnZncHtl5x/ub57a/VyeYNNBaiyl7v/801cPbXVOn8pPXb7XQ3hbh3rXRxesLUAQGoTpa1j3kK+A==
-X-Gm-Message-State: AOJu0Yw4rMZQ31Il8oKE9WM1YpRtmrOW9gFg3YLIXfH6joJYilZwpg2h
-	kMqG5bePrwwOrW94K28RBdX2POOkhhbElrWZr/Av9fpsHSUj9Lxe
-X-Google-Smtp-Source: AGHT+IFEw7OtWfkzx2pwUoIKN7qZKIAsOjNAjB8U7pQ6n7MIYx7TDtVWcRYxQ55Lvb2r/mqRzscouw==
-X-Received: by 2002:a17:903:183:b0:1f6:6426:8da4 with SMTP id d9443c01a7336-1f6d03c14demr118275555ad.66.1718025016816;
-        Mon, 10 Jun 2024 06:10:16 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.105])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e3e66sm81938285ad.182.2024.06.10.06.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 06:10:16 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v1] perf trace: BTF-based enum pretty printing
-Date: Mon, 10 Jun 2024 21:10:32 +0800
-Message-ID: <20240610131032.516323-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718025151; c=relaxed/simple;
+	bh=ymeOZU7Z2tgdqyG1BMQRe55vCcHS2BQDdDO3NvijkUg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfyJcKMrA4CKz2H0XXTpig0GRa6hjB1IEH7EvHTyCyIcGZrU6r2AOtKr55sipqZ0tsEfnu+CtbUvkJHzqrANCZKoEYEkJaM66JcFBp+40Z2Bni0DG79gOjsYZr4uEmWFfDi7CZvKigzVx4MmyuEw838LZB/A4RRIR43j/86fgp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=cZI00csU; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 5C69A120006;
+	Mon, 10 Jun 2024 16:12:25 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 5C69A120006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1718025145;
+	bh=IWZrEwuTJkoogvnkxqBjRGrdkBJ1nExW1PH+tGB1JV4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=cZI00csUWK7nsz5ngl+sFZ+eEfWCnXrncjuMczxN/ArQhIZ7r7L5u4GAAb68huASr
+	 9tjxRx5AIudNcD5P2QwlaOx3m3PZXeheTRpwO/3vkqS+yzq+YylytunwafIr/aGvQh
+	 Paj8M/Q9hJW1wGGO3EdrUV98EdkuVzX5VYj3aKkDcdd+9VtbS1COF244zaYd5ZmCCm
+	 19sBZVIUftbQbZvIcZkkjYnm4h4wgRi1xVacIFSiJx+6SosLbhKSBfxT8UstcPCHBP
+	 y6m0xWqLnJJodoAdKCHaWLA1+L4ihH0LM7olgnHlGdwZTPGG9kqzcZRbvcXC5OVS8m
+	 zLF1TRnQXxIUg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 10 Jun 2024 16:12:25 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
+ 2024 16:12:24 +0300
+Date: Mon, 10 Jun 2024 16:12:24 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/7] clk: meson: a1: pll: support 'syspll'
+ general-purpose PLL for CPU clock
+Message-ID: <20240610131224.u7u4ov245igatavj@CAB-WSD-L081021>
+References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
+ <20240515185103.20256-4-ddrokosov@salutedevices.com>
+ <1jzfrtp12h.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jzfrtp12h.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185833 [Jun 10 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 11:09:00 #25535815
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-This is a feature implemented on the basis of the previous bug fix
-https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
+On Mon, Jun 10, 2024 at 12:03:02PM +0200, Jerome Brunet wrote:
+> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> 
+> > The 'syspll' PLL, also known as the system PLL, is a general and
+> > essential PLL responsible for generating the CPU clock frequency.
+> > With its wide-ranging capabilities, it is designed to accommodate
+> > frequencies within the range of 768MHz to 1536MHz.
+> >
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > ---
+> >  drivers/clk/meson/a1-pll.c | 72 ++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/meson/a1-pll.h |  6 ++++
+> >  2 files changed, 78 insertions(+)
+> >
+> > diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> > index 60b2e53e7e51..286e83199d17 100644
+> > --- a/drivers/clk/meson/a1-pll.c
+> > +++ b/drivers/clk/meson/a1-pll.c
+> > @@ -138,6 +138,76 @@ static struct clk_regmap hifi_pll = {
+> >  	},
+> >  };
+> >  
+> > +static const struct pll_mult_range sys_pll_mult_range = {
+> > +	.min = 32,
+> > +	.max = 64,
+> > +};
+> > +
+> > +static const struct reg_sequence sys_pll_init_regs[] = {
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL1, .def = 0x01800000 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL2, .def = 0x00001100 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL3, .def = 0x10022300 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL4, .def = 0x00300000 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL0, .def = 0x01f18432 },
+> 
+> That last entry is clearly an hard coded rate being poked.
+> Drop it please
+> 
 
-In this patch, I use BTF to turn enum value to the corresponding name.
-There is only one system call that uses enum value as its argument,
-that is `landlock_add_rule`.
+Ah, of course, you are totally right. I will remove hard coded rate in
+the next version.
 
-The vmlinux btf is loaded lazily, when user decided to trace the
-`landlock_add_rule` syscall. But if one decide to run `perf trace`
-without any arguments, the behaviour is to trace `landlock_add_rule`,
-so vmlinux btf will be loaded by default.
+> > +};
+> > +
+> > +static struct clk_regmap sys_pll = {
+> > +	.data = &(struct meson_clk_pll_data){
+> > +		.en = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 28,
+> > +			.width   = 1,
+> > +		},
+> > +		.m = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 0,
+> > +			.width   = 8,
+> > +		},
+> > +		.n = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 10,
+> > +			.width   = 5,
+> > +		},
+> > +		.frac = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL1,
+> > +			.shift   = 0,
+> > +			.width   = 19,
+> > +		},
+> > +		.l = {
+> > +			.reg_off = ANACTRL_SYSPLL_STS,
+> > +			.shift   = 31,
+> > +			.width   = 1,
+> > +		},
+> > +		.current_en = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 26,
+> > +			.width   = 1,
+> > +		},
+> > +		.l_detect = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL2,
+> > +			.shift   = 6,
+> > +			.width   = 1,
+> > +		},
+> > +		.range = &sys_pll_mult_range,
+> > +		.init_regs = sys_pll_init_regs,
+> > +		.init_count = ARRAY_SIZE(sys_pll_init_regs),
+> > +		/*
+> > +		 * The sys_pll clock is usually enabled and initialized in the
+> > +		 * bootloader stage. Additionally, the cpu_clk is connected to
+> > +		 * sys_pll. As a result, it is not allowed to initialize the
+> > +		 * cpu_clk again, as doing so would prevent the CPU from
+> > +		 * executing any instructions.
+> > +		 */
+> > +		.flags = CLK_MESON_PLL_NOINIT_ENABLED,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data){
+> > +		.name = "sys_pll",
+> > +		.ops = &meson_clk_pll_ops,
+> > +		.parent_names = (const char *[]){ "syspll_in" },
+> > +		.num_parents = 1,
+> > +	},
+> > +};
+> > +
+> >  static struct clk_fixed_factor fclk_div2_div = {
+> >  	.mult = 1,
+> >  	.div = 2,
+> > @@ -283,6 +353,7 @@ static struct clk_hw *a1_pll_hw_clks[] = {
+> >  	[CLKID_FCLK_DIV5]	= &fclk_div5.hw,
+> >  	[CLKID_FCLK_DIV7]	= &fclk_div7.hw,
+> >  	[CLKID_HIFI_PLL]	= &hifi_pll.hw,
+> > +	[CLKID_SYS_PLL]		= &sys_pll.hw,
+> >  };
+> >  
+> >  static struct clk_regmap *const a1_pll_regmaps[] = {
+> > @@ -293,6 +364,7 @@ static struct clk_regmap *const a1_pll_regmaps[] = {
+> >  	&fclk_div5,
+> >  	&fclk_div7,
+> >  	&hifi_pll,
+> > +	&sys_pll,
+> >  };
+> >  
+> >  static struct regmap_config a1_pll_regmap_cfg = {
+> > diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+> > index 4be17b2bf383..666d9b2137e9 100644
+> > --- a/drivers/clk/meson/a1-pll.h
+> > +++ b/drivers/clk/meson/a1-pll.h
+> > @@ -18,6 +18,12 @@
+> >  #define ANACTRL_FIXPLL_CTRL0	0x0
+> >  #define ANACTRL_FIXPLL_CTRL1	0x4
+> >  #define ANACTRL_FIXPLL_STS	0x14
+> > +#define ANACTRL_SYSPLL_CTRL0	0x80
+> > +#define ANACTRL_SYSPLL_CTRL1	0x84
+> > +#define ANACTRL_SYSPLL_CTRL2	0x88
+> > +#define ANACTRL_SYSPLL_CTRL3	0x8c
+> > +#define ANACTRL_SYSPLL_CTRL4	0x90
+> > +#define ANACTRL_SYSPLL_STS	0x94
+> >  #define ANACTRL_HIFIPLL_CTRL0	0xc0
+> >  #define ANACTRL_HIFIPLL_CTRL1	0xc4
+> >  #define ANACTRL_HIFIPLL_CTRL2	0xc8
+> 
+> -- 
+> Jerome
 
-The laziest behaviour is to load vmlinux btf when a
-`landlock_add_rule` syscall hits. But I think you could lose some
-samples when loading vmlinux btf at run time, for it can delay the
-handling of other samples. I might need your precious opinions on
-this...
-
-before:
-
-```
-perf $ ./perf trace -e landlock_add_rule
-     0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
-     0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
-```
-
-after:
-
-```
-perf $ ./perf trace -e landlock_add_rule
-     0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
-     0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
-```
-
-P.S.
-If you don't apply the patch "perf trace: Fix syscall untraceable
-bug", there will be no output whatsoever when running
-`perf trace -e landlock_add_rule`
-
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c | 69 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5cbe1748911d..5acb9a910ea1 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -19,6 +19,7 @@
- #ifdef HAVE_LIBBPF_SUPPORT
- #include <bpf/bpf.h>
- #include <bpf/libbpf.h>
-+#include <bpf/btf.h>
- #ifdef HAVE_BPF_SKEL
- #include "bpf_skel/augmented_raw_syscalls.skel.h"
- #endif
-@@ -110,6 +111,7 @@ struct syscall_arg_fmt {
- 	const char *name;
- 	u16	   nr_entries; // for arrays
- 	bool	   show_zero;
-+	bool	   is_enum;
- };
- 
- struct syscall_fmt {
-@@ -140,6 +142,7 @@ struct trace {
- #ifdef HAVE_BPF_SKEL
- 	struct augmented_raw_syscalls_bpf *skel;
- #endif
-+	struct btf		*btf;
- 	struct record_opts	opts;
- 	struct evlist	*evlist;
- 	struct machine		*host;
-@@ -887,6 +890,36 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- 
- #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
- 
-+static size_t btf_enum_scnprintf(char *bf, size_t size, int val,
-+			  struct btf *btf, const char *type)
-+{
-+	const struct btf_type *bt;
-+	struct btf_enum *e;
-+	char enum_prefix[][16] = {"enum", "const enum"}, *ep;
-+	int id;
-+
-+	for (size_t i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
-+		ep = enum_prefix[i];
-+		if (strlen(type) > strlen(ep) + 1 && strstr(type, ep) == type)
-+			type += strlen(ep) + 1;
-+	}
-+
-+	id = btf__find_by_name(btf, type);
-+	if (id < 0)
-+		return 0;
-+
-+	bt = btf__type_by_id(btf, id);
-+	e = btf_enum(bt);
-+
-+	for (int i = 0; i < btf_vlen(bt); i++, e++) {
-+		if (e->val == val)
-+			return scnprintf(bf, size, "%s",
-+					 btf__name_by_offset(btf, e->name_off));
-+	}
-+
-+	return 0;
-+}
-+
- #define STRARRAY(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY, \
- 	    .strtoul	= STUL_STRARRAY, \
-@@ -1238,6 +1271,7 @@ struct syscall {
- 	bool		    is_exit;
- 	bool		    is_open;
- 	bool		    nonexistent;
-+	bool		    use_btf;
- 	struct tep_format_field *args;
- 	const char	    *name;
- 	const struct syscall_fmt  *fmt;
-@@ -1756,6 +1790,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			continue;
- 
- 		len = strlen(field->name);
-+		arg->is_enum = false;
- 
- 		if (strcmp(field->type, "const char *") == 0 &&
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-@@ -1782,6 +1817,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			 * 7 unsigned long
- 			 */
- 			arg->scnprintf = SCA_FD;
-+		} else if (strstr(field->type, "enum")) {
-+			arg->is_enum = true;
- 		} else {
- 			const struct syscall_arg_fmt *fmt =
- 				syscall_arg_fmt__find_by_name(field->name);
-@@ -1798,7 +1835,13 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 
- static int syscall__set_arg_fmts(struct syscall *sc)
- {
--	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
-+	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args),
-+				*field = sc->args;
-+	struct syscall_arg_fmt *arg = sc->arg_fmt;
-+
-+	for (; field; field = field->next, ++arg)
-+		if (arg->is_enum)
-+			sc->use_btf = true;
- 
- 	if (last_field)
- 		sc->args_size = last_field->offset + last_field->size;
-@@ -1811,6 +1854,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- 	char tp_name[128];
- 	struct syscall *sc;
- 	const char *name = syscalltbl__name(trace->sctbl, id);
-+	int err;
- 
- #ifdef HAVE_SYSCALL_TABLE_SUPPORT
- 	if (trace->syscalls.table == NULL) {
-@@ -1883,7 +1927,17 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
- 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
- 
--	return syscall__set_arg_fmts(sc);
-+	err = syscall__set_arg_fmts(sc);
-+
-+	/* after calling syscall__set_arg_fmts() we'll know whether use_btf is true */
-+	if (sc->use_btf && trace->btf == NULL) {
-+		trace->btf = btf__load_vmlinux_btf();
-+		if (verbose > 0)
-+			fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
-+							    "Failed to load vmlinux BTF\n");
-+	}
-+
-+	return err;
- }
- 
- static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
-@@ -2050,7 +2104,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 				      unsigned char *args, void *augmented_args, int augmented_args_size,
- 				      struct trace *trace, struct thread *thread)
- {
--	size_t printed = 0;
-+	size_t printed = 0, p;
- 	unsigned long val;
- 	u8 bit = 1;
- 	struct syscall_arg arg = {
-@@ -2103,6 +2157,15 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			if (trace->show_arg_names)
- 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
- 
-+			if (sc->arg_fmt[arg.idx].is_enum == true && trace->btf) {
-+				p = btf_enum_scnprintf(bf + printed, size - printed, val,
-+						       trace->btf, field->type);
-+				if (p) {
-+					printed += p;
-+					continue;
-+				}
-+			}
-+
- 			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
- 								  bf + printed, size - printed, &arg, val);
- 		}
 -- 
-2.45.2
-
+Thank you,
+Dmitry
 
