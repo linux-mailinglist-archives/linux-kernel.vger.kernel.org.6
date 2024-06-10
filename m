@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-208283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B4E902321
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E15E902335
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70161B25D7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3427285212
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E5F157E9F;
-	Mon, 10 Jun 2024 13:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE185132101;
+	Mon, 10 Jun 2024 13:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z7NC400z"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AyoVZndU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A04157A49;
-	Mon, 10 Jun 2024 13:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AD7A702;
+	Mon, 10 Jun 2024 13:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718027055; cv=none; b=qp88rAj7KRZEI3yj0WMJLiwtnWqpTH0jcFWf4bxcrYqB1RNi186adkbaJNNGhgkTbd+Kd2zKXfb/npBWlunL4F+Xluo/WokZqmKjYEE+ml+fqlTIi5a2UcpF51TjKNtDzzhrOrPWaob4P62Do8l5O4iN8fwMrVwkKaiGnvJ8Tl0=
+	t=1718027211; cv=none; b=d3RdfIN5DAVplnDKf08nh5WLeCe3kWCRljJoAF3mQPnG7KUYR7aRisFCicPTGm4DaKwgWcCdJ4F/+NBr1Vd02X+EHdCZteg1d7PEBePmMhsl/hYH6pLtF8LrczaLv5VQmDgu8xDPSEFlo5ZiTi0atBEnwmofpfKRHb1zYVS53YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718027055; c=relaxed/simple;
-	bh=6whD5BlfPkc/QXVawZYc6zaMAcHZDXkfeq80yqWQhFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EDtvC97M9ijiwUMvPqzrgzf0m4KBBeCzcsVHjZv8cTeCbcyR0mdlO24aDIA9wDtue0hEz8SdI1LTB9cG5/hhheWjp4pbDgNGbOq5gJQhwLzjOW+uTa2m10EhKkIRso/COqcLWzWIJ3fdJzK8FjaWs6olW9K714KzpMYvK4zd3eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z7NC400z; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ADi9xj027827;
-	Mon, 10 Jun 2024 08:44:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718027049;
-	bh=vXTNQpYiFCEGscRvW5gsaNUTZPm4hZbQ7RlNRX5SwOg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Z7NC400zQSneRRg3jYzLhE0gmiJObRspKLkJWwL++nI8k/PI1g/+c/gGpYkDkRaMz
-	 Wchxe/byMX/ktu2fvO+bzsnlj33JnQRGuBTPMc5wotjoDlB7iRz6x0aThj0HH5jZei
-	 4vApvXwmgO+iPhI0fXhu4rYLp4LLBGdzHnEMkyFM=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ADi97k030826
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 08:44:09 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 08:44:08 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 08:44:08 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ADi8T7018764;
-	Mon, 10 Jun 2024 08:44:08 -0500
-Message-ID: <c08d2d51-e2e1-4b68-a4fb-ebf3a919c1b8@ti.com>
-Date: Mon, 10 Jun 2024 08:44:08 -0500
+	s=arc-20240116; t=1718027211; c=relaxed/simple;
+	bh=g/5Lsq36RXklS9o2TtS/yIjiPAe6FbbGCXZi44gE7k8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBJaAgaRqDqNWvP52JiO0y+Ou9WOPm/zz1ku+bWjHHpl+4mPjSVmxXL7yhLZtEWL8j8b3XK3pHGgFnPU9KwD5kR5/4r+ozipLqBuQMspNzgxElQNuihTnX0ETo3Uk0g+zSlcNE679un9xcayEPVNmcn5XexY2lDX82LWBzB0QgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AyoVZndU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=k2bfY9bURGyuauj9Z1BJWbBxRd9HHOxCDFbFWjTnfUg=; b=AyoVZndUcFYK+q90o/VRnVpisW
+	YDI7GqfNEusKJHmfeKLReZVB4hfTA8sj7SNt+4MQeUNGjXUguJ3MTfS5pWwDrUtGC3REaXsZBmS/5
+	Ilk5dRTanlJGbOLDFxtSrqxwuT5p8y+0AoK8QaAJhssnjy+mqiydf15Zkclsm7zsvyoo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGfM0-00HIrZ-K8; Mon, 10 Jun 2024 15:46:32 +0200
+Date: Mon, 10 Jun 2024 15:46:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrew Davis <afd@ti.com>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 3/6] ARM: orion5x: Switch to new sys-off handler API
+Message-ID: <c0e284cf-f3c9-4634-8cfc-9ab0b95cc55f@lunn.ch>
+References: <20240610125924.86003-1-afd@ti.com>
+ <20240610125924.86003-3-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] counter: ti-eqep: enable clock at probe
-To: David Lechner <dlechner@baylibre.com>,
-        William Breathitt Gray
-	<wbg@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240609-ti-eqep-enable-clock-v1-1-1e9e7626467e@baylibre.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20240609-ti-eqep-enable-clock-v1-1-1e9e7626467e@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610125924.86003-3-afd@ti.com>
 
-Hi David,
-
-On 6/9/24 3:27 PM, David Lechner wrote:
-> The TI eQEP clock is both a functional and interface clock. Since it is
-> required for the device to function, we should be enabling it at probe.
+On Mon, Jun 10, 2024 at 07:59:21AM -0500, Andrew Davis wrote:
+> Kernel now supports chained power-off handlers. Use
+> register_platform_power_off() that registers a platform level power-off
+> handler. Legacy pm_power_off() will be removed once all drivers and archs
+> are converted to the new sys-off API.
 > 
-> Up to now, we've just been lucky that the clock was enabled by something
-> else on the system already.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->   drivers/counter/ti-eqep.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
-> index 072b11fd6b32..825ae22c3ebc 100644
-> --- a/drivers/counter/ti-eqep.c
-> +++ b/drivers/counter/ti-eqep.c
-> @@ -6,6 +6,7 @@
->    */
->   
->   #include <linux/bitops.h>
-> +#include <linux/clk.h>
->   #include <linux/counter.h>
->   #include <linux/kernel.h>
->   #include <linux/mod_devicetable.h>
-> @@ -376,6 +377,7 @@ static int ti_eqep_probe(struct platform_device *pdev)
->   	struct counter_device *counter;
->   	struct ti_eqep_cnt *priv;
->   	void __iomem *base;
-> +	struct clk *clk;
->   	int err;
->   
->   	counter = devm_counter_alloc(dev, sizeof(*priv));
-> @@ -415,6 +417,10 @@ static int ti_eqep_probe(struct platform_device *pdev)
->   	pm_runtime_enable(dev);
->   	pm_runtime_get_sync(dev);
->   
-> +	clk = devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(clk))
+> Signed-off-by: Andrew Davis <afd@ti.com>
 
-I think it would be nice to have print here in case the we fail to get
-the clock.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-~ Judith
-
-> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable clock\n");
-> +
->   	err = counter_add(counter);
->   	if (err < 0) {
->   		pm_runtime_put_sync(dev);
-> 
-> ---
-> base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
-> change-id: 20240609-ti-eqep-enable-clock-91697095ca81
-
+    Andrew
 
