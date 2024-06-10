@@ -1,158 +1,402 @@
-Return-Path: <linux-kernel+bounces-208338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D459023C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856209023B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78BADB23811
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D62928EAE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A37A12FF91;
-	Mon, 10 Jun 2024 14:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC821369AC;
+	Mon, 10 Jun 2024 14:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4hHeUqQ"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="CLTGjL3B"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D110D12FB26
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0A915A8;
+	Mon, 10 Jun 2024 14:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028584; cv=none; b=mpWxtk9qDN1oRbYampbXkOC1Wgewa1wKpHKp56CuXsg92oT/ixjmEN46xHdCn2YVQUvQRxMoKr8kfyXi2CcxF7o1SjQA5/z0Btgw/ATLYWR39utfn/RZao9em3sVKjW/55KtsHxQukliBmMDHRkeJESI4i02KDQFgjTMKcuKJzU=
+	t=1718028613; cv=none; b=qwjKDIT8RZ9amNP92Ldlbn3GT3yuxzkra+dUFE6vvX48AP57h0LA2ZoM2KHknDKdwZK7M99LlMLjPs7EmoBrwxvS72ioKZOMZf+O5wWrRILfYqp6eoqtLEK3xt6FP0rFqDWSSMtCZPnuyKCO/lXr93QA5xtRyt0+XjsSQm/ulKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028584; c=relaxed/simple;
-	bh=4aaAgEJ4no9Xmp4mAov9FrzUsh19wG6FNUPI7ez7R6M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lEdq7k1W7+IC0sxN+PITsDYCreuABu1Mo84eQymMudi1trLJ6TF/Kr34qLOjt35hOBbTI1RqZYHtpu4WAb6ZSkyVdIgJjB5XC+427ujbmFcxFnXNL9tILemFLeykxdfambdZp4CFei+6CM1d7Rdw1vDF5uEVv2MLvvc54g1ofo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B4hHeUqQ; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfab38b7f6bso7036817276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718028582; x=1718633382; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dgenhHanHHj3lnmpj2N/ZQ5FyHhx2VF3uOYFtsXU2e4=;
-        b=B4hHeUqQTdR9/6sc+/8ej7P3vjULmwRZVzp6Mmi2/PKlcTT2FMwIEglnJzb+y1+7Ig
-         FggeewVtvTqSGj/eVHdNJdN3IRhId543Xj12DVjEfGjCxZLF/NwoaAtLewtHY6pQcPXJ
-         JbSeQSr5xef5bwSL5gIxrHu4VayrJEIqgMJn5vaCx0KUec3mbamJk7hL0xpJ0l7zVDmL
-         +aEa9mjt6YAoUn7GjB6Ls/SLg8rPH1/1XCQS/EbmGps901El864m2DvOm7Y5PcquneuH
-         RNTfQfNKZWkvlExtBgH9tGT7/4fj2V41RgtnSxlN7iMdDSowmks9dAKpR/TH8P80x8LG
-         j9Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718028582; x=1718633382;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dgenhHanHHj3lnmpj2N/ZQ5FyHhx2VF3uOYFtsXU2e4=;
-        b=gomsDdFq7o2u/BY9Hgntc88rWxSqt/qo1Gx++BRwXH+XXNcPeov9eQJBPxwV4OjRN5
-         0kKq6k0Li5RWwe5WtTHFt3TYwxVLWkY1Lzk+3UeDatocc0mcujMCxlDzR7Bu7uyvA+Qc
-         L4y0QtxKKxmX3cKVvJgIGUFnYiqKFOVnMTuzXdMYNZw3lcRv8r5XZOu2/YpTHjZUcGb+
-         2r3ypC59sUXQn8dV4noAgZo1uZleAfvXs2xgEiJSeyHil/BWPmGBH3ueokhmrOSTcqCZ
-         Sjqft9/86EJ/166C+HqD6/HQvKZE+12WnSRGJXoM6jktL5L6frN3fopN2z1e8kFk31t5
-         Bq5A==
-X-Gm-Message-State: AOJu0YxK4zIhF7Iuwj0WRXRZopxS1a+Zi0bkz2sOJ1B+vm0Z3jDMr8fb
-	gt4sH+dKl0CocwLWVV1wk37xv05rgCzwcHmQBdWe1JfDB7Ydx0cjDOQHob5b7xjL6dJwgQ==
-X-Google-Smtp-Source: AGHT+IHCyPKX79a5tm9JTqThqIgBdA0usaL7W5XvXzJtEvNSBvVv/Xx7RKZXpJ+F65zXBGGopWTjXMu4
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
- (user=ardb job=sendgmr) by 2002:a05:6902:70b:b0:dfb:210f:3ad5 with SMTP id
- 3f1490d57ef6-dfb210f3d5cmr1232075276.11.1718028581873; Mon, 10 Jun 2024
- 07:09:41 -0700 (PDT)
-Date: Mon, 10 Jun 2024 16:09:33 +0200
+	s=arc-20240116; t=1718028613; c=relaxed/simple;
+	bh=yrvsW6NpIyyvUzCuw7XD/v8m6AxV1qlSrNJk9MBhaio=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PMsW195owhTyNdZtF7wVax6iYMmTQCKno32tWpXKTYfnOGRFfRk3ZcFgeCocjExYSYzbfGxqB3jZCtiFu+wuup82lF/HS7S9oVTPl6GpatGYs6xrF5rs/bULcsl7mq7DCP/WERKjIbGQnrhTD2PplVfR/cSxFf/hH9nnpxrLqtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=CLTGjL3B; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 83D4A1FB6F;
+	Mon, 10 Jun 2024 16:10:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1718028608;
+	bh=YkGB/2C2PmPaw5Fgoeug/KCYvx1pa2uTv5PzS+7PUHo=; h=From:To:Subject;
+	b=CLTGjL3BIWIdo5p7FKFB94y7rgpgH2kqmc6uPfaI34mtfEcW7dTEPOARknXsrtLhP
+	 zfgR262AEbFmCiziNL4Qm2GpYDgYpIT0zRYqL/aL3Acj+IO283Sd3VqO7JpovZZNtG
+	 IeFU+EUuzuEgh1T+uU3rXZOfiQfWUdej5l5RS1qBGetARADhSLCdAUgw5l51ngt2xn
+	 hUdGSSiC/Cc7EPoqjLTWPiVgQ/Qko9ak4uccdvlPK7SIJ3cWizqp13MuycrAsmXCVt
+	 1vHubB1QXNjiazyjR0XGDSAgot8FhykazyD3/d4BZlQyUa6hGamuqTMB0AKTMD5205
+	 IBIPXe+zzpJGQ==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] arm64: dts: freescale: imx8mp-verdin: add HDMI support
+Date: Mon, 10 Jun 2024 16:10:01 +0200
+Message-Id: <20240610141001.32034-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2783; i=ardb@kernel.org;
- h=from:subject; bh=7tiDVDTWIXbfAudS++fHHxGeLcuYd15jw6ZEmeO+/MU=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIS2dU9az1Pxb3uenUiVclcU1PN5qVm32v5zOOZyJKvD++
- ihkalZHKQuDGAeDrJgii8Dsv+92np4oVes8SxZmDisTyBAGLk4BmIjnP0aG26Ux2Xcmy3AcLN9+
- VjxE7nVQn75Ox6HN9hs9lM3ksv99ZPjv7HhEeN3/U5Zpp6wubl54XfX8c2M3mxpHI+YNmYsTrqz mBAA=
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240610140932.2489527-2-ardb+git@google.com>
-Subject: [PATCH] x86/efi: Free EFI memory map only when installing a new one.
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-The logic in __efi_memmap_init() is shared between two different
-execution flows:
-- mapping the EFI memory map early or late into the kernel VA space, so
-  that its entries can be accessed;
-- cloning the EFI memory map in order to insert new entries that are
-  created as a result of creating a memory reservation
-  (efi_arch_mem_reserve())
+Enable HDMI output on Verdin iMX8MP on all the supported carrier boards
+(dev, dahlia, mallow and yavia).
 
-In the former case, the underlying memory containing the kernel's view
-of the EFI memory map (which may be heavily modified by the kernel
-itself on x86) is not modified at all, and the only thing that changes
-is the virtual mapping of this memory, which is different between early
-and late boot.
+HDMI DDC I2C is used in regular I2C mode, see link on the related
+dt-bindings patch.
 
-In the latter case, an entirely new allocation is created that carries a
-new, updated version of the kernel's view of the EFI memory map. When
-installing this new version, the old version will no longer be
-referenced, and if the memory was allocated by the kernel, it will leak
-unless it gets freed.
+Fix CEC and HPD pinctrl, having a pull-down on HPD and a pull-up on CEC.
 
-The logic that implements this freeing currently lives on the code path
-that is shared between these two use cases, but it should only apply to
-the latter. So move it to the correct spot.
-
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Link: https://lore.kernel.org/all/20240515062753.111746-1-marex@denx.de/
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- arch/x86/platform/efi/memmap.c | 5 +++++
- drivers/firmware/efi/memmap.c  | 5 -----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ .../dts/freescale/imx8mp-verdin-dahlia.dtsi   | 37 +++++++++++++++++++
+ .../boot/dts/freescale/imx8mp-verdin-dev.dtsi | 37 +++++++++++++++++++
+ .../dts/freescale/imx8mp-verdin-mallow.dtsi   | 37 +++++++++++++++++++
+ .../dts/freescale/imx8mp-verdin-nonwifi.dtsi  |  3 +-
+ .../dts/freescale/imx8mp-verdin-wifi.dtsi     |  3 +-
+ .../dts/freescale/imx8mp-verdin-yavia.dtsi    | 37 +++++++++++++++++++
+ .../boot/dts/freescale/imx8mp-verdin.dtsi     | 13 +++++--
+ 7 files changed, 160 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
-index 4ef20b49eb5e..4990244e5168 100644
---- a/arch/x86/platform/efi/memmap.c
-+++ b/arch/x86/platform/efi/memmap.c
-@@ -97,6 +97,11 @@ int __init efi_memmap_install(struct efi_memory_map_data *data)
- 	if (efi_enabled(EFI_PARAVIRT))
- 		return 0;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-dahlia.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-dahlia.dtsi
+index 6e6b9c2c4640..fbcd93e33aea 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-dahlia.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-dahlia.dtsi
+@@ -4,6 +4,18 @@
+  */
  
-+	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
-+		__efi_memmap_free(efi.memmap.phys_map,
-+				  efi.memmap.desc_size * efi.memmap.nr_map,
-+				  efi.memmap.flags);
+ / {
++	native-hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "X21";
++		type = "a";
 +
- 	return __efi_memmap_init(data);
- }
++		port {
++			native_hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_out>;
++			};
++		};
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,bitclock-master = <&codec_dai>;
+@@ -94,6 +106,27 @@ &gpio4 {
+ 	pinctrl-0 = <&pinctrl_ctrl_sleep_moci>;
+ };
  
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 3365944f7965..3759e95a7407 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -51,11 +51,6 @@ int __init __efi_memmap_init(struct efi_memory_map_data *data)
- 		return -ENOMEM;
- 	}
++/* Verdin HDMI_1 */
++&hdmi_pvi {
++	status = "okay";
++};
++
++&hdmi_tx {
++	status = "okay";
++
++	ports {
++		port@1 {
++			hdmi_tx_out: endpoint {
++				remote-endpoint = <&native_hdmi_connector_in>;
++			};
++		};
++	};
++};
++
++&hdmi_tx_phy {
++	status = "okay";
++};
++
+ /* Current measurement into module VCC */
+ &hwmon {
+ 	status = "okay";
+@@ -139,6 +172,10 @@ &i2c5 {
+ 	status = "okay";
+ };
  
--	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
--		__efi_memmap_free(efi.memmap.phys_map,
--				  efi.memmap.desc_size * efi.memmap.nr_map,
--				  efi.memmap.flags);
--
- 	map.phys_map = data->phys_map;
- 	map.nr_map = data->size / data->desc_size;
- 	map.map_end = map.map + data->size;
++&lcdif3 {
++	status = "okay";
++};
++
+ /* Verdin PCIE_1 */
+ &pcie {
+ 	vpcie-supply = <&reg_pcie>;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-dev.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-dev.dtsi
+index 42ed44a11711..09733fea036d 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-dev.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-dev.dtsi
+@@ -4,6 +4,18 @@
+  */
+ 
+ / {
++	native-hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "X37";
++		type = "a";
++
++		port {
++			native_hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_out>;
++			};
++		};
++	};
++
+ 	reg_eth2phy: regulator-eth2phy {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+@@ -103,6 +115,27 @@ &gpio_expander_21 {
+ 	vcc-supply = <&reg_1p8v>;
+ };
+ 
++/* Verdin HDMI_1 */
++&hdmi_pvi {
++	status = "okay";
++};
++
++&hdmi_tx {
++	status = "okay";
++
++	ports {
++		port@1 {
++			hdmi_tx_out: endpoint {
++				remote-endpoint = <&native_hdmi_connector_in>;
++			};
++		};
++	};
++};
++
++&hdmi_tx_phy {
++	status = "okay";
++};
++
+ /* Current measurement into module VCC */
+ &hwmon {
+ 	status = "okay";
+@@ -141,6 +174,10 @@ &i2c5 {
+ 	status = "okay";
+ };
+ 
++&lcdif3 {
++	status = "okay";
++};
++
+ /* Verdin PCIE_1 */
+ &pcie {
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-mallow.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-mallow.dtsi
+index 1d15f7449c58..3a40338cf2d8 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-mallow.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-mallow.dtsi
+@@ -11,6 +11,18 @@
+ #include <dt-bindings/leds/common.h>
+ 
+ / {
++	native-hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "X14";
++		type = "a";
++
++		port {
++			native_hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_out>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -91,6 +103,27 @@ &flexcan2 {
+ 	status = "okay";
+ };
+ 
++/* Verdin HDMI_1 */
++&hdmi_pvi {
++	status = "okay";
++};
++
++&hdmi_tx {
++	status = "okay";
++
++	ports {
++		port@1 {
++			hdmi_tx_out: endpoint {
++				remote-endpoint = <&native_hdmi_connector_in>;
++			};
++		};
++	};
++};
++
++&hdmi_tx_phy {
++	status = "okay";
++};
++
+ /* Temperature sensor on Mallow */
+ &hwmon_temp {
+ 	compatible = "ti,tmp1075";
+@@ -117,6 +150,10 @@ &i2c5 {
+ 	status = "okay";
+ };
+ 
++&lcdif3 {
++	status = "okay";
++};
++
+ /* Verdin PCIE_1 */
+ &pcie {
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi.dtsi
+index 91d597391b7c..2ee91f31e7f0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi.dtsi
+@@ -41,8 +41,7 @@ &iomuxc {
+ 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
+ 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
+ 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
+-		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>,
+-		    <&pinctrl_hdmi_hog>;
++		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>;
+ };
+ 
+ /*
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi.dtsi
+index ef94f9a57e20..efcab00c0142 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi.dtsi
+@@ -55,8 +55,7 @@ &iomuxc {
+ 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
+ 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
+ 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
+-		    <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>, <&pinctrl_gpio_hog4>,
+-		    <&pinctrl_hdmi_hog>;
++		    <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>, <&pinctrl_gpio_hog4>;
+ };
+ 
+ /* On-module Bluetooth */
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-yavia.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-yavia.dtsi
+index a7b261ff3e4c..533b7fe218ce 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin-yavia.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-yavia.dtsi
+@@ -6,6 +6,18 @@
+ #include <dt-bindings/leds/common.h>
+ 
+ / {
++	native-hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "J15";
++		type = "a";
++
++		port {
++			native_hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_out>;
++			};
++		};
++	};
++
+ 	/* Carrier Board Supply +V1.8 */
+ 	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+@@ -105,6 +117,27 @@ &gpio4 {
+ 	pinctrl-0 = <&pinctrl_ctrl_sleep_moci>;
+ };
+ 
++/* Verdin HDMI_1 */
++&hdmi_pvi {
++	status = "okay";
++};
++
++&hdmi_tx {
++	status = "okay";
++
++	ports {
++		port@1 {
++			hdmi_tx_out: endpoint {
++				remote-endpoint = <&native_hdmi_connector_in>;
++			};
++		};
++	};
++};
++
++&hdmi_tx_phy {
++	status = "okay";
++};
++
+ &hwmon_temp {
+ 	status = "okay";
+ };
+@@ -127,6 +160,10 @@ &i2c5 {
+ 	status = "okay";
+ };
+ 
++&lcdif3 {
++	status = "okay";
++};
++
+ /* Verdin PCIE_1 */
+ &pcie {
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
+index aef4bef4bccd..834236db86fe 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
+@@ -457,6 +457,13 @@ &gpio4 {
+ 			  "SODIMM_44";
+ };
+ 
++/* Verdin HDMI_1 */
++&hdmi_tx {
++	ddc-i2c-bus = <&i2c5>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hdmi>;
++};
++
+ /* On-module I2C */
+ &i2c1 {
+ 	clock-frequency = <400000>;
+@@ -1117,10 +1124,10 @@ pinctrl_gpio_keys: gpiokeysgrp {
+ 			<MX8MP_IOMUXC_SAI1_RXFS__GPIO4_IO00		0x1c4>;	/* SODIMM 252 */
+ 	};
+ 
+-	pinctrl_hdmi_hog: hdmihoggrp {
++	pinctrl_hdmi: hdmigrp {
+ 		fsl,pins =
+-			<MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC	0x40000019>,	/* SODIMM 63 */
+-			<MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD	0x40000019>;	/* SODIMM 61 */
++			<MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC	0x140>,	/* SODIMM 63 */
++			<MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD	0x180>;	/* SODIMM 61 */
+ 	};
+ 
+ 	/* On-module I2C */
 -- 
-2.45.2.505.gda0bf45e8d-goog
+2.39.2
 
 
