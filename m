@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-208158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85DD9021AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F6E9021A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D56A1F23C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5699A1C20BCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C658062E;
-	Mon, 10 Jun 2024 12:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Rkh5jNcX"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E68004A;
+	Mon, 10 Jun 2024 12:29:49 +0000 (UTC)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F127FBA8;
-	Mon, 10 Jun 2024 12:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906E97E767;
+	Mon, 10 Jun 2024 12:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718022607; cv=none; b=q0E9z5DX8sK3oE62OPzUpK2e0VPCFekXmAm+cx0oBdgWGgmGBc+6D2Yd6jpB1nswAGGBnOmkRzyhlMcmIRZv9iPmKj37BrY4urS0pYM0Z3/8jnZqbkwqJP+RqdgjkWi6woTM270Ub5fH0ddsCzMr8LYm4JwazJxZM1GqvbvnOGs=
+	t=1718022589; cv=none; b=ngw5RDXLZugvKD5fca63PptDvhcMi66veR1Ey8ElkCTjQTwPSb9QZL2RtcOam9h9B5G1LX2VDYem5fSsxCr8/n8YBzp4rv3e05vGQtD5A+ICGKPb0gYYJ5qb7jij5HT+xyRiagrz7JC/j8WH9Ot/0u4A3u1WKf7Enm6agDIVzFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718022607; c=relaxed/simple;
-	bh=wuJQnRYB08ec6imUGRWGaKR53UgTGv9ukbD4T7WaEcg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=f25W11wYbTzselwFyPXoHIzMfJG7zb+cTf1KF+XZ3Uj7XyMevq3DrXhL1DaTaYe17jdVDhmHjqmoPWFTN39a7s5ZAJd5Z/dVKxzMxkf/EyDO+6fHYkOYa3s7V9nkT01ef90RU21uflQFPWWsI0pwzgbhRxUfOoyOrPyRnNaOQF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Rkh5jNcX; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718022496; x=1718627296; i=markus.elfring@web.de;
-	bh=D4Pv1t+P1y3mZ1KhtEA6vVUjt5e+QyYarpSPtOTxoLA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Rkh5jNcXIXoQTjWnF6EkIqPHSsd48v0//cmfBxu1+bDZPMtAUHbqywfNA5GmV37e
-	 Vo/YkHNlNCXLLhSwga933B8KPm3H5stqJb8jxs+XcGvgyh40zAcwD4lVsgLEYc0HY
-	 /SRvp4mbUqX8lKWX7yExtG5Pt4oRZwN5zQSppOBcAC1CZF0baXXR2YCmAULoJ7naW
-	 aovi2mfS8PE8MDER3bMTnldBjUmTNYWH6kJHgZ2WWcjm1MW4p59n7s6LLJBDaxSTi
-	 odIf7xa77dFD/AM3vIVIuWlGbloqbbO63/AMZiHhL0VqSWcnLMfOeVhx3PQBd8TWY
-	 fl7l94Qn3UO3NMmmGw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTvvy-1rpb3S1aOA-00K8Ks; Mon, 10
- Jun 2024 14:28:16 +0200
-Message-ID: <f8dfa410-bce0-48fe-b3d1-19fb5f5768a8@web.de>
-Date: Mon, 10 Jun 2024 14:28:07 +0200
+	s=arc-20240116; t=1718022589; c=relaxed/simple;
+	bh=VIqDUZJagne6zz+2zSLweAY3KkWozkQKO/O688GBJLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bscEzQY+7EokYcyPRF2gyvfsQIZWXHVx7paMWxS7HBnUXFOsbQrs1khZS0JmO97033+nCnQqbHI8KsDex52YZ7YZftOt8R0fsSVfXCYlZzoJaivpStfRgBPXTWDtd8xExMySbUBgRbJL+C5Zk8vpjiJJCK24xhJ+ZL5pcPvpKCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso4726712276.3;
+        Mon, 10 Jun 2024 05:29:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718022584; x=1718627384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G0B9aDmcWue3KnNlLkfet4LKN9uGSsJqdVbpd70/2GI=;
+        b=Xz8daYen5gZXJBi/zChs5BNd+kAnu5oo9CGiPYAuDNlxW/APEY45A21wZ/i10LjYbh
+         by48eJCaGPib5lvOidVrbQUiUdT4DUi0lf30oRo7fhDg5MpI0Yb9cezFH3T23foo3pZe
+         D/1cOgO/0ZfdQSNhZc/8+T0c1i/wF7apHv2BwGWBj3TFYV9DRGw3insJ2wpbewfFXAho
+         lL9kQosC3stLJCCsrGajNDg8xrDTuYx5F86uC4JtXEVFPbLrPKbAFsv7BOA0KwE8wW17
+         dLG0lW73AgBoZmYoimUV39AuRVB10NxtoyC1OVQO6f+SGEHjD8V9BR/rg3jZ+N9Gmdmv
+         qSvg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5CrLnMZSDpveZX30ZljwlVgnJa0pvi9Bou5r//upKw91BrlX7oZb72t4HcELgcufDENfYqemP/2rEgWifIwboQ3GV8KdC3jvL/YiPSOvusfUqd+D5bPGdZrtbA1gKOTdPSLVVePILzNgNq71Aum0=
+X-Gm-Message-State: AOJu0YztQsIB7NW8TKTJQjVXeIfLJlx9sUHWMHQRHADyl1r+ynJ3iihm
+	hAq6ZjhsnrHZv/5RvyKmAtRsy558aDo1p8aQswNO5HIMiq4+Q2NOAMTgfoXQ
+X-Google-Smtp-Source: AGHT+IGAqFtQ9rXh0+V2oTzRdbhH914JMzDzpxBkDSy5SrUE/wgKIBXF+D77w//qWLMJnrD+/gnKfg==
+X-Received: by 2002:a25:ae44:0:b0:de5:a13d:92a1 with SMTP id 3f1490d57ef6-dfaf6532148mr9163409276.27.1718022584441;
+        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae515a8f6sm1612730276.0.2024.06.10.05.29.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a0849f5a8so42271277b3.2;
+        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6bdksejr/jrS8sKevU6QLCC39OsVB5pcCcCc8rT0wTR/IuA7wXHrx6gPyxMiOlFX8cVAoi0lIeABvvpPwQ4/DYLax7Tzk23Vc7ZftbJjsgGL6zqlsJsMekD5IZx817TZEjHMoaTw4RDwQmzm5f40=
+X-Received: by 2002:a81:b1c9:0:b0:622:f7ef:7bc4 with SMTP id
+ 00721157ae682-62cd55f6e71mr87651227b3.31.1718022583526; Mon, 10 Jun 2024
+ 05:29:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chen Ridong <chenridong@huawei.com>, bpf@vger.kernel.org,
- cgroups@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Roman Gushchin <roman.gushchin@linux.dev>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Tejun Heo <tj@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, Zefan Li <lizefan.x@bytedance.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240607110313.2230669-1-chenridong@huawei.com>
-Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
- cgroup_bpf_release
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240607110313.2230669-1-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240605153708.613610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240605153708.613610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Jun 2024 14:29:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX=w6OokwpexaSeJABWXtwG1VDOZEBQE1UP5pQ3gbj+dg@mail.gmail.com>
+Message-ID: <CAMuHMdX=w6OokwpexaSeJABWXtwG1VDOZEBQE1UP5pQ3gbj+dg@mail.gmail.com>
+Subject: Re: [RESEND RFC PATCH] reset: Add devm_reset_control_deassert helper
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fmuK/VTR2YmSFLF2VDqjJtmVhTUzsI5l3pGMntg9UQYcsMbycmj
- +DSIdivBBL62ghxa3h9pU+c/GSmkts8QTF+2OvzfenG91FB8OSkKyy8xMktKwS/8zT6LFpw
- RT9znp2Zi6CxM09H1KMHHXuz4xWj/7+3Izuh/nT5g4JttQvRfWmi4QWB5Zk3agPzs02+7nq
- sYjc7gKvFhlTLyknF2hXA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jIa/TUJcvPQ=;og0TU1hehFZUopo0uOcnVoVQ2SE
- 3Hl8UUIUEF7aUsdg3iEOM8wuAg2C1lC/RcyRXdWbBdyXtT3M1oCs3W9fmEbRSvxclKMi1Xfsq
- K/pC07ZkhlfxkD7DGLn2PWUQW9XFt4DZ3vjZ34cufPmcworgk3twYQqkdw796tGHTqFoCWPT7
- dt3cy1XjqqYn8zypQQMnZvFLneZcZtFro+FUvw18rx5aFQi8oYiw4rbL70TKl3QfDaXsuKdYm
- z5kCE5EYV1lEqZR95mM3L4/39CGhRibzIagsnjmUmMswjkZI0MotoGE8lZpCezDB7mWAkKdRk
- g31NBO3YWVqWqSZ8cwC4qBT+DXOE9pUyw1V9WPUsbyrG9BQbgS3vRoItT26pXnQ2c9L5FGuuX
- sskWhPN4z8R0yM3XlNh5hiXBCVIa6peRtb2Ek/pb+dBI0ve+ma3JSdmUOwVorHNWEhY89obdu
- xPENgzF/tS6VPKyywwtZ4kYaNgP0XTYLQXiTmTqfDXFeUQ4Bb4DGBBtupWnPW7Sxvtu3Rn5yR
- IX9aVlBRSnI1P4CkBN9rL8pJw0V6IFccQLoxEhICfyNyiAY6BIN1KxI7uXEmxdpVeUYIfz+9B
- Mcr7aDy2AuyTBoR4X8x+yEypYMwJTY9ZCNrWfFiPWlDw+RZb6G7RR/h3NGjJp4As+069E9zxe
- MOkZPNdF/laInksUqqbw+m8zOOUuMsPHTCoTydJev9J4igwBB0aEB7srpAl822MPYlntY3+0d
- wkZ0D/w0DvCpjQBGO9ajL3dTczP9fSMOYpylFNLwXj1XVwsW7kPgxKTPy+0DtPRjZrG9oIwtk
- Lus04zZxyMBp/DboVtZp7cJRZW7ZE2eUtDZTitw0xA5CU=
 
-> We found an AA deadlock problem as shown belowed:
+On Wed, Jun 5, 2024 at 5:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> A typical code pattern for reset_control_deassert() call is to call it in
+> the _probe function and to call reset_control_assert() both from _probe
+> error path and from _remove function.
+>
+> Add helper function to replace this bolierplate piece of code. Calling
+> devm_reset_control_deassert() removes the need for calling
+> reset_control_assert() both in the probe()'s error path and in the
+> remove() function.
+>
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-                                           below?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-* How was an =E2=80=9CAA deadlock=E2=80=9D problem detected?
+Gr{oetje,eeting}s,
 
-* Were any special analysis tools involved?
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-=E2=80=A6
-> preblem is solved.
-
-  problem?
-
-
-Regards,
-Markus
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
