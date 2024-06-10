@@ -1,73 +1,49 @@
-Return-Path: <linux-kernel+bounces-208147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B781902174
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:19:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE6C902180
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A934B264C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E1B1C2121F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030D80BF5;
-	Mon, 10 Jun 2024 12:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABC48062A;
+	Mon, 10 Jun 2024 12:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Pct1v/i0"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw8BhUag"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DB98004A;
-	Mon, 10 Jun 2024 12:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA9E7BB13;
+	Mon, 10 Jun 2024 12:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021949; cv=none; b=KtONH0hcthwCItqaOe/GgwqyJdwfm7LFclWQM3WwqBkONKPvvwolE1Ej2LPLxLXVYa/hdxwPqAt/MvDa9O7zOnrEBZNhY4qtDyKU5btXhRVQX8YWtlmb608+Yvy1VMIwB68IZCELgK1B7UVzFt3PoR6689B9C6Ezm+cshSpOCug=
+	t=1718022033; cv=none; b=gTYJ5Pu5jTp5YqH/pWZOjgO56XZGvnhJ9CHpfJTiFIb2jUYcYMOIyNMDTEyN7xvjBG9u831dWz2hkg2vP/g0pVwm9NLcvjWZcXRdwA1Ts4W64YOEoI0UpPkIfX0OpUrW0rbWXsfmCqVTNrz1kPjVWFNjiFsrq2IBSqqRaSJcUZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021949; c=relaxed/simple;
-	bh=Qb9Up+t11DzcZW8H2Jjuu7ECFDelJkgS8AlOnO1SlWE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C5ECk+TccB2LXf+tmBOygMYXcjkrb+bXUj9StbTFhe0Gchy3buyqsTEAfIxos2f5Gs0rf+WmchGFFp8SOrYFTJKMkaCL9xn63yN84hjtHEQmpWvLCIHJsCw9oN/jVmNLWhs1oinmWmRzJnEuQ+ts1Pks/jzhZHYxaY7mOFpDLDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Pct1v/i0; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718021948; x=1749557948;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Qb9Up+t11DzcZW8H2Jjuu7ECFDelJkgS8AlOnO1SlWE=;
-  b=Pct1v/i0QSycSw3VrPzjiY4lS/WAWQbL1vL4fFsV/jgZBwrJyH6AfO1I
-   Mg4AtPq4QsSYGMwxbs+FmgWqlM4QFv/PGlPUYJngkRlk40+wmf0NHGUU/
-   WRm7qh5qkEcxs//MYRdA5l9e1me1KRYrJetFVNY7L29dIuUd5iqTSo5VW
-   BR+3Ns9nGVuXBGejQGA0AVPIQPKYyW5+UCs2sDIcooANtOxlWrTTjKn2z
-   yqsPJ6N7HRWKbYNA6Sm1j6hIp8WMr9d9fSmsXwPyKVTVpl9ZG1C5OStYL
-   s3hqpq3oXuJSBx3xfuMgvXQR28l9qjg+HaJALz29XaZoC0PV9dIQVChHm
-   w==;
-X-CSE-ConnectionGUID: nZYSrxyTSBy6GiOz7aIYFw==
-X-CSE-MsgGUID: gcpetgnSQTuJ3BvErvJgGQ==
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="258056938"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jun 2024 05:19:05 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 10 Jun 2024 05:18:34 -0700
-Received: from daire-X570.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 10 Jun 2024 05:18:32 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <daire.mcnamara@microchip.com>
-Subject: [PATCH v2 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Mon, 10 Jun 2024 13:18:22 +0100
-Message-ID: <20240610121822.2636971-4-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240610121822.2636971-1-daire.mcnamara@microchip.com>
-References: <20240610121822.2636971-1-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1718022033; c=relaxed/simple;
+	bh=1OuZml5USsmYoEs1/r0Su7k3UDbGKKRBRcGAZhqHhl0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jUse/dsQJADrqcGm2YNIjq4wyegEeTL9q8bXv040QiSa2m/GFYfgrxEBGH5oFqeTfrCImQl1/GshiKoJeAfptarmGaQ9HHg6ylNNIRPlZTqWY3pgNvUFK//BDOI/zMQm366mTrapjgxwuJRmw57/4aP9q+oDJEn1fetPIJVvi2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw8BhUag; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 51879C4AF49;
+	Mon, 10 Jun 2024 12:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718022033;
+	bh=1OuZml5USsmYoEs1/r0Su7k3UDbGKKRBRcGAZhqHhl0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=pw8BhUagEoI3utHICFWxDz6/0xQHsMh+/SjpRlAY+T63opiX2xm1qwcLrx95R5voE
+	 /mxzIj+Upk/ckkovRiw7b0+pKwKdfgaGn8dsB5OJxouroNrjmpXaB5P2qlcVKSNb8C
+	 IZsZlsXaRQf4c7zX0iQMo2QPywxBlg4NH5+WX4yZc0a339E/bn9behep0lHf7eq1V5
+	 M5gLsr198+MwnUzl8UobuLVaIwKvhHBed7DeUJLjZ2lxhGHO306Wle0woT61QRpjdM
+	 OLeLB0R8F8dAjJph4X4lhGUg10jjLTz0z5fnB0xvv54OgdSRLf4UbR8Q2GgrN7in+1
+	 G4EUK6zs9pp5w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 417F7E7C770;
+	Mon, 10 Jun 2024 12:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,33 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Subject: Re: [PATCH net v2 1/1] net dsa: qca8k: fix usages of
+ device_get_named_child_node()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171802203326.2008.17101566039398967862.git-patchwork-notify@kernel.org>
+Date: Mon, 10 Jun 2024 12:20:33 +0000
+References: <20240606161354.2987218-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240606161354.2987218-1-andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hello:
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu,  6 Jun 2024 19:13:03 +0300 you wrote:
+> The documentation for device_get_named_child_node() mentions this
+> important point:
+> 
+> "
+> The caller is responsible for calling fwnode_handle_put() on the
+> returned fwnode pointer.
+> "
+> 
+> [...]
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index f7a3c2636355..c84e1ae20532 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -52,6 +52,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-noncoherent: true
-+
-   interrupts:
-     minItems: 1
-     items:
+Here is the summary with links:
+  - [net,v2,1/1] net dsa: qca8k: fix usages of device_get_named_child_node()
+    https://git.kernel.org/netdev/net/c/d029edefed39
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
