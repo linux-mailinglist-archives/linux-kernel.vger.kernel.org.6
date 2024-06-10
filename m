@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-208798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023EA902944
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:28:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E289902948
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126951C22D05
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:28:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5886B227B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AB14F9D1;
-	Mon, 10 Jun 2024 19:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B0A2230F;
+	Mon, 10 Jun 2024 19:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzjQlIS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HVFUtOwG"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F9C14F10E;
-	Mon, 10 Jun 2024 19:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E1215A8;
+	Mon, 10 Jun 2024 19:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047708; cv=none; b=S0rlFD+LJrqBGLH9WE1dB6iWor6+RjfC/WEZg90s/NqZsFMuEFg2ffrf2/bRL3xwjstYQPo5uGkCb6Qe/AAc+SXtdJ0bjjopq0zhaYSiZXRPu+T4UCH4STTm2NT9tUCfX/bucYOOJdnVGaDX0qfOlMIrmcoKfzg/F2sILJe1EQw=
+	t=1718047844; cv=none; b=m+Bz0vPdSHHsixBzalpJtITfpzIwSj6yRKmMqh2ac56N5YGdz/alZmCwiafckQ6CgpJShXMjUYFlGggr49wbMXO69dnNszYtoG+norYc161+B8pXXtad1DEuK+JBgti+l3P/0oA0WXDqfXVqMapwvrqrqXgfDxV0fvELfILwLP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047708; c=relaxed/simple;
-	bh=9PZjDT0V6Lj4GRK41zPSetvsgEiAtuFunhoEXkc3IY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFvHkgMLTUO8m9y+g99r6QUDcO4GX4oK/0Vl4wjICoN1FzQd/ORgqWmHUwyGNA4soHMaIA6FwETvvyqDpMg+G3q0QPYSDkUyyxg3+vfMmxCaU7D8VXUlNvPP2/VQNUHIm84FJMw3C2SH8lslBOpLrmKZ0hIsnXC8MZmqDiUDYtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzjQlIS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468B4C4AF1A;
-	Mon, 10 Jun 2024 19:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718047708;
-	bh=9PZjDT0V6Lj4GRK41zPSetvsgEiAtuFunhoEXkc3IY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TzjQlIS/V6CcADcn39qu2MVD/FOA+Yr1qULzWAMawj4+ebOtJTsjTS8PWQReYHTUG
-	 t+b10QtTD4rZWBvXYcPEAXJyraxXaxdRcUcmIa/r/WJBUz8+ASC1ep3qdO5S8FAOBU
-	 OBfzwXkUZW57K73lsfZdzbkmqc3oyftFUt8BMrHSkwiTqIovF/ssJpOtVa9PkT7fJb
-	 W4+IRELYJ3POTYVbrVtiGU6Vl1PfN4RwR978eiSDoU7Dr/53/hcmvcGsZWM9uyEIsa
-	 P+HafwBaOUMhDp8SPgHnxzpgbr8YJHO+llEdJbpVEgLymDlFY+Q3jKcbI47wglfe73
-	 ALVBkh4DUZJdg==
-Date: Mon, 10 Jun 2024 20:28:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 02/13] dt-bindings: thead: add a vlen register length
- property
-Message-ID: <20240610-envision-impart-7211e512f987@spud>
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
- <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
- <20240610-unaltered-crazily-5b63e224d633@spud>
- <Zmcr7pP+XEWHYTsy@ghost>
+	s=arc-20240116; t=1718047844; c=relaxed/simple;
+	bh=QNo/Hi+24ofyIL/ZiJqEl6sZHnzgkMG8cAmo6Kt4Ai4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tG3fkRxQdHYT818dmF7V9BVRHER16e24P6KNSrzyATXoo17fgqLfpcYb1u+BPWRhpGNIBpalfjDax1Qo3PIm84l18+HEe+tZjRYLB1bdj4Qi+80ULgmTrOC3iS9B93Z1v3H8QrjJNFyRCwCoO0hQGQLa1YbV+hKlvtoYd19Mm04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HVFUtOwG; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AJUGhS097546;
+	Mon, 10 Jun 2024 14:30:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718047816;
+	bh=hW6VCMkxCCGg6hLZeTeC/jrZH1rZBd54xaTw67pHzdU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=HVFUtOwGAHHa1OaI7U5McdTKy6kaGY3xz1HHpSA4ED0rpJXxtAHeA7u1algi/tyCu
+	 F+zxPgD2K774huKmrGcTRXS5hjiPwdei2xf2JvHIezdD/acYmiTMMuvHqBKn/Kdfpy
+	 kUAsLXoAwwaztcBKOf7ruBICfEKT/185lyur34wk=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AJUFRf073656
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 14:30:16 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 14:30:15 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 14:30:15 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AJUFNB021618;
+	Mon, 10 Jun 2024 14:30:15 -0500
+Date: Mon, 10 Jun 2024 14:30:15 -0500
+From: Bryan Brattlof <bb@ti.com>
+To: Hari Nagalla <hnagalla@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with
+ remote proc nodes
+Message-ID: <20240610193015.flfynlomz6gzwbx6@bryanbrattlof.com>
+X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
+References: <20240605124859.3034-1-hnagalla@ti.com>
+ <20240605124859.3034-5-hnagalla@ti.com>
+ <20240606171620.h3twptxb5mrxbqxh@bryanbrattlof.com>
+ <e820d497-9327-8d8b-d1b2-7f6707e593aa@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zZEd5eFtiVuoCvyW"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <Zmcr7pP+XEWHYTsy@ghost>
+In-Reply-To: <e820d497-9327-8d8b-d1b2-7f6707e593aa@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+On June 10, 2024 thus sayeth Hari Nagalla:
+> On 6/6/24 12:16, Bryan Brattlof wrote:
+> > > +
+> > > +		c7x_0_memory_region: c7x-memory@99900000 {
+> > > +			compatible = "shared-dma-pool";
+> > > +			reg = <0x00 0x99900000 0x00 0x01efffff>;
+> > > +			no-map;
+> > > +		};
+> > >   	};
+> > This seems highly specific to the demos we're currently running for our
+> > reference boards. If someone wants to develop their own app say with
+> > Zypher they would instantly need to change this.
+> > 
+> > If these absolutely need to be in here could they go in a TI-demo overly?
+> > 
+> > ~Bryan
+> Hey Bryan,
+> You are correct, these carveouts match the TI provided firmware binaries.
+> Ideally, these could go into an overlay. Just following the carveout model
+> used with the rest of the TI SoCs (AM6x/J72x), to avoid confusion to the
+> users.
 
---zZEd5eFtiVuoCvyW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah yeah, I was planning to rip those out too ;) 
 
-On Mon, Jun 10, 2024 at 09:38:06AM -0700, Charlie Jenkins wrote:
-> On Mon, Jun 10, 2024 at 05:29:23PM +0100, Conor Dooley wrote:
-> > On Sun, Jun 09, 2024 at 09:45:07PM -0700, Charlie Jenkins wrote:
-> > > Add a property analogous to the vlenb CSR so that software can detect
-> > > the vector length of each CPU prior to it being brought online.
-> > > Currently software has to assume that the vector length read from the
-> > > boot CPU applies to all possible CPUs. On T-Head CPUs implementing
-> > > pre-ratification vector, reading the th.vlenb CSR may produce an ille=
-gal
-> > > instruction trap, so this property is required on such systems.
-> > >=20
-> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/riscv/thead.yaml | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/riscv/thead.yaml b/Doc=
-umentation/devicetree/bindings/riscv/thead.yaml
-> > > index 301912dcd290..5e578df36ac5 100644
-> > > --- a/Documentation/devicetree/bindings/riscv/thead.yaml
-> > > +++ b/Documentation/devicetree/bindings/riscv/thead.yaml
-> > > @@ -28,6 +28,13 @@ properties:
-> > >            - const: sipeed,lichee-module-4a
-> > >            - const: thead,th1520
-> > > =20
-> > > +thead,vlenb:
-> >=20
-> > This needs to move back into cpus.yaml, this file documents root node
-> > compatibles (boards and socs etc) and is not for CPUs. If you want to
-> > restrict this to T-Head CPUs only, it must be done in cpus.yaml with
-> > a conditional `if: not: ... then: properties: thead,vlenb: false`.
-> >=20
-> > Please test your bindings.
->=20
-> Now that I know `make dt_binding_check` exists I will use that in the
-> future!
+My idea was to throw them into our SDK layers so that other distros 
+don't have to work around them anymore. This also gives the maintainers 
+of those meta- layers the control of the reserved-memory{} node so they 
+can carve it up or move it around as they need along with the firmware 
+they build.
 
-And in this case dtbs_check would also complain about riscv,vlenb being
-undocumented - and complain about thead,vlenb not being a permitted cpu
-property either.
-
-Thanks,
-Conor.
-
---zZEd5eFtiVuoCvyW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmdT1gAKCRB4tDGHoIJi
-0gELAP9N4Tu6RdQuKtMCvloFTO6BrRXNU2iSwXxMepsikmv0PQEAsVNMYTrc/cIX
-AooXc0b3saxiQGxb2MiZo/UtbA/dcAo=
-=DctY
------END PGP SIGNATURE-----
-
---zZEd5eFtiVuoCvyW--
+~Bryan
 
