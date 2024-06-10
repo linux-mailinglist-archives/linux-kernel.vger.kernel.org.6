@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-207842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CC1901CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31838901CEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C49CB22D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E72C282581
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2E76F2E0;
-	Mon, 10 Jun 2024 08:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3676F2E1;
+	Mon, 10 Jun 2024 08:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I+ItxFrd"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRTxXx3h"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED5D3BBC5;
-	Mon, 10 Jun 2024 08:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55C03BBC5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718008093; cv=none; b=qywvWhag0Fetinaij5/zK1N4rcerodl+zoKEFdX/SzlBHKJ3a2CPRpshQCFmrAbbpNDCnOKGlLnZzZ4JwPt2tfP5vCfmukJy5w27oSzbge4yXNKojgUlMFZ6tJIuYgBntJ2XbKttveVys9k2ni8OFB/FzIlnZxjNHQCmdLhz5Ng=
+	t=1718008126; cv=none; b=BmjvXTxNYMvKW2sUsd4NLgtD+ab7prgkAyhwihYNMRiLz1eL5nOrRexkwhtJ1RlYfo7QHeW0HaH2Yl9zkHX3oSXn7RwKY/4jjBpVIVSOVszOKFG5VoMutiaes53MsTRr9rBl02vWyjJP4eeYYUT7zsBNvXUrt99O4WNbXOyIMpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718008093; c=relaxed/simple;
-	bh=77a5ilB2nTJ6IsP4JbR1r9Z3pyXjF+7OpvhGRP9P4bw=;
+	s=arc-20240116; t=1718008126; c=relaxed/simple;
+	bh=dM6k5DbWIP8ixdzmtFZSfJNzZE44gJhJcdHlZIYPzic=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CX5V/QtOpXFR2qKq3k7CnBY6mFvNriY35PmpQE6VtxoddVDGVrMvQYZIkX9c97PDDv0bLrh1BxPpStkrgb/dMrKRU43e/3VhTNin4sJ9gOq4HGQSFxId3PfC/2XFZLLd/sPNMB5rRyKW8/rJ44njHG2iNAqTozskvA3cYNIsLhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I+ItxFrd; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718008090;
-	bh=77a5ilB2nTJ6IsP4JbR1r9Z3pyXjF+7OpvhGRP9P4bw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I+ItxFrdkchDgmlZlRtLv/xLaQ7CLAayNIkW/mOtnGoxYS0CZrh426PEYYULDPALs
-	 v55PywnNZ6QkvkjIaf9nmCPgrLxtfRMunE3DpTKGmzUnBljvztIWICqEHx2Uu2cNrn
-	 Ro/Yk71+NpC/00y0uKsjz6TahYBYpEdtR6cJ+FALqUcDOMPFAwgo4psEqZmLkYgBcV
-	 w2OonlJkItmJmgCoftOGlOAARazgiAr8H3V+U2H8+EfbcIyAeALuBKzSGhwTwa84bI
-	 XfRQ5i7ufocQT1PkikkDhMQNKZrsecMaECAO2pu4tVXuk2fPfzeibtkaZftZ6ZZSgZ
-	 lPM4oiNUw8mUA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BF5EA3780626;
-	Mon, 10 Jun 2024 08:28:08 +0000 (UTC)
-Message-ID: <47f05439-815e-4ca1-b20d-8e427fef0a2a@collabora.com>
-Date: Mon, 10 Jun 2024 10:28:08 +0200
+	 In-Reply-To:Content-Type; b=OfZR8KAxHafnUQvKpd61j+ZEJKpjBpwC3cBEAoD6rnR9Fluf/v7tDnM1XsFoIqzIxtdBr+iW1cyrx1EwVOk9I/KdJv6stw6EH/qSJXp1DKw0Sdn+5s+6y4hIh9WPXyVAZelW64NE6q13zRIoY94zZjf3pftO2p3idp2THF50t/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRTxXx3h; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f1a7386d5so1128585f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718008123; x=1718612923; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sAIjV9YREPOA3y7uEEQgAajQX3eo8bQN1I0xBsKhc/E=;
+        b=NRTxXx3hL6pYhkm1sYUfkyJI1noFstOgG2GHcuMMhBfQfLP+GQXsaQdHRukdbRdU/x
+         Pf+aPoruCZ9qClHKBLtndYyvuAtQf3wJ24HMSd+lipVzdtTL3hDUo4kYwU5MV6SHDMhE
+         EW4NHoOv5viBI7ILJALP3dAcmoxp3fMuUv0iIdPORAmGH0FtyXF2Q6bEK/ALlMFuvMBC
+         4AgqBKRO2bwFqdB18y9UNfAR6ZND/6m/PvZR3rNgVCnENwXiu96vSRarXbPpoJJeGqJc
+         3RUVnNrc/Thh8tjHMdpZ7hCYyhzmGvM0pK/eyViSJZRQgVmLd7kV4DEYkFQoz7PU/vi5
+         mFng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718008123; x=1718612923;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sAIjV9YREPOA3y7uEEQgAajQX3eo8bQN1I0xBsKhc/E=;
+        b=LQmAdgFuoT9g6lS8lMIr2gGO1zhY/qxMGZLLvoSKbzWQ+ItMWasAepWdVurMCJthTw
+         dbvepZGK9gBZU8Kyt2+NFML9/fWG94k5/qDy5iGjBowRzoZcC75p+IFmDc+4pBpOVt2r
+         KoytPml26ZZEkhLFNZl3WAPn6rUY3UXqp/s1IchSzza/trTBqKjFHH//W8LMV/ra5LfJ
+         fecSQnmi7xEziWcQ8WZpvIZFSjhU3OulGFPC0aJ1vZcFCtTm4jxEW/Okj5eGL8NRIwER
+         2huJt6wtPZ/FWQ3DKqxuYlbS1uwMOo9hJI8e4WyekKmP8JmNj95v8Le4VzDQHO/bTTVE
+         rtjQ==
+X-Gm-Message-State: AOJu0YwyKNJJ+YXpzx6nv41mqgMz6oXGJVvAampFcpjRNrR7Uc/uaVYH
+	HWerHp5cpoKWKs9X6l+EMwBqB8DxCgY8/jNCiWmEqDGhmPOod3ipZnb2Z2ecCzcnV/BADEFwQjk
+	3
+X-Google-Smtp-Source: AGHT+IHPCRLdBIjnYoKmaoO0wJ+nCvloZ3gIQJhkNoof6djxllay6FKmoB4Bzi5wPFS51BxbZin8xw==
+X-Received: by 2002:a5d:53c3:0:b0:35f:234a:9c0e with SMTP id ffacd0b85a97d-35f234a9cd9mr1585362f8f.30.1718008122991;
+        Mon, 10 Jun 2024 01:28:42 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35f2210ae90sm2862139f8f.97.2024.06.10.01.28.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 01:28:42 -0700 (PDT)
+Message-ID: <dd446bf6-05ca-4861-b3b1-f113c3528f13@linaro.org>
+Date: Mon, 10 Jun 2024 10:28:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,236 +75,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "amergnat@baylibre.com" <amergnat@baylibre.com>
-References: <20240521075717.50330-1-angelogioacchino.delregno@collabora.com>
- <20240521075717.50330-3-angelogioacchino.delregno@collabora.com>
- <e7845300fa822413f6308cb6297222cde89c39e0.camel@mediatek.com>
- <0e0fe86c-92da-43f5-89d7-8084274a908a@collabora.com>
- <0f20214ab3a86f68669ad1392398b16228e699ee.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 2/8] thermal/debugfs: Do not extend mitigation episodes
+ beyond system resume
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+References: <5794974.DvuYhMxLoT@kreacher> <2337425.ElGaqSPkdT@kreacher>
 Content-Language: en-US
-In-Reply-To: <0f20214ab3a86f68669ad1392398b16228e699ee.camel@mediatek.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <2337425.ElGaqSPkdT@kreacher>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 06/06/24 07:29, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
+On 28/05/2024 16:53, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> On Wed, 2024-06-05 at 13:15 +0200, AngeloGioacchino Del Regno wrote:
->> Il 05/06/24 03:38, CK Hu (胡俊光) ha scritto:
->>> Hi, Angelo:
->>>
->>> On Tue, 2024-05-21 at 09:57 +0200, AngeloGioacchino Del Regno wrote:
->>>> Document OF graph on MMSYS/VDOSYS: this supports up to three DDP paths
->>>> per HW instance (so potentially up to six displays for multi-vdo SoCs).
->>>>
->>>> The MMSYS or VDOSYS is always the first component in the DDP pipeline,
->>>> so it only supports an output port with multiple endpoints - where each
->>>> endpoint defines the starting point for one of the (currently three)
->>>> possible hardware paths.
->>>>
->>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>>> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>>    .../bindings/arm/mediatek/mediatek,mmsys.yaml | 28 +++++++++++++++++++
->>>>    1 file changed, 28 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>> index b3c6888c1457..0ef67ca4122b 100644
->>>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>> @@ -93,6 +93,34 @@ properties:
->>>>      '#reset-cells':
->>>>        const: 1
->>>>    
->>>> +  port:
->>>> +    $ref: /schemas/graph.yaml#/properties/port
->>>> +    description:
->>>> +      Output port node. This port connects the MMSYS/VDOSYS output to
->>>> +      the first component of one display pipeline, for example one of
->>>> +      the available OVL or RDMA blocks.
->>>> +      Some MediaTek SoCs support multiple display outputs per MMSYS.
->>>
->>> This patch looks good to me. Just want to share another information for you.
->>> Here is an example that mmsys/vdosys could point to the display interface node.
->>>
->>> vdosys0: syscon@1c01a000 {
->>>             mmsys-display-interface = <&dsi0>, <&dsi1>, <&dp_intf0>;
->>> };
->>>    
->>> vdosys1: syscon@1c100000 {
->>>             mmsys-display-interface = <&dp_intf1>;
->>> };
->>>
->>> There is no conflict that mmsys/vdosys point to first component of one display pipeline or point to display interface.
->>> Both could co-exist.
->>>
->>
->> Hey CK,
->>
->> yes, this could be an alternative to the OF graphs, and I'm sure that it'd work,
->> even though this kind of solution would still require partial hardcoding of the
->> display paths up until mmsys-display-interface (so, up until DSI0, or DSI1, etc).
->>
->> The problem with a solution like this is that, well, even though it would work,
->> even if we ignore the suboptimal partial hardcoding, OF graphs are something
->> generic, while the mmsys-display-interface would be a MediaTek specific/custom
->> property.
->>
->> In the end, reusing generic kernel apis/interfaces/etc is always preferred
->> compared to custom solutions, especially in this case, in which the generic
->> stuff is on-par (or actually, depending purely on personal opinions, superior).
->>
->> As for the two to co-exist, I'm not sure that this is actually needed, as the
->> OF graphs are already (at the end of the graph) pointing to the display interface.
->>
->> In any case, just as a reminder: if there will be any need to add any custom
->> MediaTek specific properties later, it's ok and we can do that at any time.
+> Because thermal zone handling by the thermal core is started from
+> scratch during resume from system-wide suspend, prevent the debug
+> code from extending mitigation episodes beyond that point by ending
+> the mitigation episode currently in progress, if any, for each thermal
+> zone.
+
+Why it is done at resume time and not at suspend time ?
+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
 > 
-> The alternative solution is using OF graphs to point display interface and use MediaTek specific property to first component:
+> v1 -> v2: Rebase.
 > 
-> vdosys0: syscon@1c01a000 {
->            ports {
->                     port@0 {
->                               endpoint {
->                                        remote-endpoint = <&dsi0_endpoint>;
->                               };
->                     };
+> ---
+>   drivers/thermal/thermal_core.c    |    1 +
+>   drivers/thermal/thermal_debugfs.c |   36 ++++++++++++++++++++++++++++++++++++
+>   drivers/thermal/thermal_debugfs.h |    2 ++
+>   3 files changed, 39 insertions(+)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -1641,6 +1641,7 @@ static void thermal_zone_device_resume(s
 >   
->                     port@1 {
->                               endpoint {
->                                        remote-endpoint = <&dsi1_endpoint>;
->                               };
->                     };
+>   	tz->suspended = false;
 >   
->                     port@2 {
->                               endpoint {
->                                        remote-endpoint = <&dp_intf0_endpoint>;
->                               };
->                     };
->            };
+> +	thermal_debug_tz_resume(tz);
+>   	thermal_zone_device_init(tz);
+>   	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
 >   
->            display-first-component = <&ovl0>;
-> };
+> Index: linux-pm/drivers/thermal/thermal_debugfs.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_debugfs.c
+> +++ linux-pm/drivers/thermal/thermal_debugfs.c
+> @@ -926,3 +926,39 @@ void thermal_debug_tz_remove(struct ther
+>   	thermal_debugfs_remove_id(thermal_dbg);
+>   	kfree(trips_crossed);
+>   }
+> +
+> +void thermal_debug_tz_resume(struct thermal_zone_device *tz)
+> +{
+> +	struct thermal_debugfs *thermal_dbg = tz->debugfs;
+> +	ktime_t now = ktime_get();
+> +	struct tz_debugfs *tz_dbg;
+> +	struct tz_episode *tze;
+> +	int i;
+> +
+> +	if (!thermal_dbg)
+> +		return;
+> +
+> +	mutex_lock(&thermal_dbg->lock);
+> +
+> +	tz_dbg = &thermal_dbg->tz_dbg;
+> +
+> +	if (!tz_dbg->nr_trips)
+> +		goto out;
+> +
+> +	/*
+> +	 * A mitigation episode was in progress before the preceding system
+> +	 * suspend transition, so close it because the zone handling is starting
+> +	 * over from scratch.
+> +	 */
+> +	tze = list_first_entry(&tz_dbg->tz_episodes, struct tz_episode, node);
+> +
+> +	for (i = 0; i < tz_dbg->nr_trips; i++)
+> +		tz_episode_close_trip(tze, tz_dbg->trips_crossed[i], now);
+> +
+> +	tze->duration = ktime_sub(now, tze->timestamp);
+> +
+> +	tz_dbg->nr_trips = 0;
+> +
+> +out:
+> +	mutex_unlock(&thermal_dbg->lock);
+> +}
+> Index: linux-pm/drivers/thermal/thermal_debugfs.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_debugfs.h
+> +++ linux-pm/drivers/thermal/thermal_debugfs.h
+> @@ -7,6 +7,7 @@ void thermal_debug_cdev_remove(struct th
+>   void thermal_debug_cdev_state_update(const struct thermal_cooling_device *cdev, int state);
+>   void thermal_debug_tz_add(struct thermal_zone_device *tz);
+>   void thermal_debug_tz_remove(struct thermal_zone_device *tz);
+> +void thermal_debug_tz_resume(struct thermal_zone_device *tz);
+>   void thermal_debug_tz_trip_up(struct thermal_zone_device *tz,
+>   			      const struct thermal_trip *trip);
+>   void thermal_debug_tz_trip_down(struct thermal_zone_device *tz,
+> @@ -20,6 +21,7 @@ static inline void thermal_debug_cdev_st
+>   						   int state) {}
+>   static inline void thermal_debug_tz_add(struct thermal_zone_device *tz) {}
+>   static inline void thermal_debug_tz_remove(struct thermal_zone_device *tz) {}
+> +static inline void thermal_debug_tz_resume(struct thermal_zone_device *tz) {}
+>   static inline void thermal_debug_tz_trip_up(struct thermal_zone_device *tz,
+>   					    const struct thermal_trip *trip) {};
+>   static inline void thermal_debug_tz_trip_down(struct thermal_zone_device *tz,
 > 
-> And I agree to it's better to keep only OF graphs property, so it would be
 > 
-> vdosys0: syscon@1c01a000 {
->            ports {
->                     port@0 {
->                               endpoint {
->                                        remote-endpoint = <&dsi0_endpoint>;
->                    
->             };
->                     };
->   
->                     port@1 {
->                               endpoint {
->                                        remote-endpoint = <&dsi1_endpoint>;
->                            
->     };
->                     };
->   
->                     port@2 {
->                               endpoint {
->                                        remote-endpoint = <&dp_intf0_endpoint>;
->                               }
-> ;
->                     };
->            };
-> };
-> 
-> Maybe we could use OF graphs for both first component and display interface and drop using MediaTek specific property.
 > 
 
-We could, or we can simply walk through the OF Graph in the driver and get the
-display interface like that, as it's board-specific ;-)
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-...but anyway, let's see that later: after getting this series upstreamed, I will
-convert all MediaTek boards (including Chromebooks) to use the graphs instead, and
-you'll see that, at least for the currently supported boards, there's no need for
-any custom property.
-
-Also, setting the DSI0/1/dpintf endpoint to VDO0 is technically wrong, as that is
-supposed to be the last one, and a graph is conceptually supposed to go from the
-first to the last in sequence.
-
-*if* we will ever need (probably not) to get the VDO0 node to point directly to
-the last node for whatever reason, the right way would be the first one you said,
-so, mediatek,mmsys-display-interface = <&dsi0>, <&dsi1>, etc etc
-
-...or mediatek,mmsys-possible-displays = < ... phandles >
-
-...or anyway, many other solutions are possible - but again, I think this is not
-the right time to think about that. Knowing that there are eventual solutions for
-any need that might arise in the future is enough, IMO :-)
-
-Cheers,
-Angelo
-
-> Regards,
-> CK
-> 
->>
->> Cheers!
->> Angelo
->>
->>> Regards,
->>> CK
->>>
->>>> +    properties:
->>>> +      endpoint@0:
->>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>> +        description: Output to the primary display pipeline
->>>> +
->>>> +      endpoint@1:
->>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>> +        description: Output to the secondary display pipeline
->>>> +
->>>> +      endpoint@2:
->>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>> +        description: Output to the tertiary display pipeline
->>>> +
->>>> +    anyOf:
->>>> +      - required:
->>>> +          - endpoint@0
->>>> +      - required:
->>>> +          - endpoint@1
->>>> +      - required:
->>>> +          - endpoint@2
->>>> +
->>>>    required:
->>>>      - compatible
->>>>      - reg
->>
->>
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
