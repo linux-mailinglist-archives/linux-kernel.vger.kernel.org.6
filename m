@@ -1,132 +1,151 @@
-Return-Path: <linux-kernel+bounces-208672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB5F9027F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EDD9027FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 230AD1F22F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FBF1C21EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48F2148FF8;
-	Mon, 10 Jun 2024 17:46:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA9C1482F6;
+	Mon, 10 Jun 2024 17:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="HdZy45Vn"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1A055884;
-	Mon, 10 Jun 2024 17:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7051C14B95F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718041572; cv=none; b=PdoUx0wCmRK02XjfQwp+mLBVNQzFnQbbPR0uoYKRoFfvzJFyQsxJwA3wn2OpDvc4u42v8ZZFzyc8WnKwI0PXGWwGJutulprcLO2yoJgV/WKTtg9npPVteHpj8w0BIoDlWI0BkE5GuIEIhzP2h8tZFbJfX3JrjCUd2wfjdJSyEpQ=
+	t=1718041787; cv=none; b=gIAusL1bjTeJS1gxcY4q35t2DniSTOduUqXugARVs1EsI0YDLDaptYD5LBNwTLlYc7KNTIgSldonNKxFzzijlFx2m/DY3iBUmlPlp8odkuIchJ4pNdNok9tkfVhqzTlsS38MpMs+owD1+lCgzGvEUp2BDzKiB6WhZpolNp5Dcz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718041572; c=relaxed/simple;
-	bh=Rpc1vYA+Vsw5eEf1wrOwknnjMSPbRupjy7yAinzLOC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibZFa8g5q7gNr/6dnm2iZQYl/87sSPu7fDCCAhMFv9bgB1tn8wWeYAlmX7oiJtpN2WI/XWy3V/KIhBoY5gspfKKLWAEXrM2+ZgoumSD2D4m6YtGnwHhnARkmlbIgJ/aim2pwdePM6VIc4y6Dc2Sr6xTJa0tnv1rVO5Rshz44EzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB9FC2BBFC;
-	Mon, 10 Jun 2024 17:46:08 +0000 (UTC)
-Date: Mon, 10 Jun 2024 18:46:06 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Steven Price <steven.price@arm.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 00/14] arm64: Support for running as a guest in Arm CCA
-Message-ID: <Zmc73jAL2XdLU49P@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ZmMjam3-L807AFR-@arm.com>
- <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ZmbWpNOc7MiJEjqL@arm.com>
- <SN6PR02MB4157E83EAFA5EBEF5C5889BFD4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1718041787; c=relaxed/simple;
+	bh=kaN+OH8u0mjuLsUgDZzqsqHcd5qKUZnSBirUfTBy/rs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=k55CG5SqmKYCrmNjuvn0ZWgI8mdN8XYw41x6CsGO1aC/OKFRSM2FBgOozvI1Jx4niXvNaqoIl4bhDyraqzeTbFTwijNvqnd7LlniEQURPzRid8ahkJYRuaJRAGiATGYFWmlyp7rIDtsbzza3OhEMqKcobNH6TfJEJHJteF0Xsv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=HdZy45Vn; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so41308175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:49:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1718041783; x=1718646583; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Zyb+ujtIGgfui3VzqiGKyVsxQvcv7H95kxqnj+CmxU=;
+        b=HdZy45VnEKiQ+w8OWBY/zHujgtcZXRFEAEziOdL+tkGektfnFC2af1F3ya7tmHVtNB
+         OcJP5t4BzifNIohd4fJWUPM8KGy7At1uQ5MRY+rd19ONb1heKniuRh8X8cZHKSQgmefp
+         Xk1d2RstDNSGJdiYOx8nU/j5jD6JPRQBvvU+K1ZdqMSVegOiS3TziZdQ6kkjFATVEsvo
+         Tyf93Y19Nz+XuH1LyBQwt5uF2AwnJMxIihwaPD5Lqh8VzCaSHl05eIxlxDTxU5TF3EAe
+         ynAnS40CZ68yCZJPr1uhgFIFMOGsgCaIoW0Ear4295v2x+TEOM3ALQFd9j0Xv3QVNcyH
+         20Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718041783; x=1718646583;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Zyb+ujtIGgfui3VzqiGKyVsxQvcv7H95kxqnj+CmxU=;
+        b=SojbmUXDh25hpeaAXNY1JFxlawawkXk6sIVGncuglFIgNig1WnJK3AsOjnBsswDpvB
+         QWSwxKG1sg4cWtvM2yuRkw3MqmHUiZB1valXxUusF2qyzwLgPStVcoQjJvrBQ7OkRXg2
+         HNoRqZoX2ELvYblkU8J1piEG9SJILaIB4WOdXLskgU9Tc2eEYtg1RVWNfMkSG+38aMVl
+         d9makUN0pfYCyoBP/LIvnD/xcGPdMOcHbz8OFAeT7qcWtsf7JKpbrDKWPQevgYoa42Px
+         rHKWmEmR1Ksq/tVkSpOPuDPshpLAcqH1WiExz22vF2x5DnsC4TDv5QeFFCWl8PN85fEb
+         M8UA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2AkB2jIN09xlCJLp9nUcH49QTpzkVSc+YdynpZdIQHZcZGm+aaehT1vt+dXWfpxUL23clCx5hSHy0FFylrr6F+YfGQwT5UAqW/65b
+X-Gm-Message-State: AOJu0YxSAU7rCdVrYozRFzXWTthraG3QF1RpzcArVaQGI614BCliolDb
+	e4qETnTNO8B1AdL4GJLOQjk088InFnSWI6UtpRGMTwlhNPyciJRBODzCaaSnRIE=
+X-Google-Smtp-Source: AGHT+IGOL4J84jhPB6MOYY7C/yQXa66itQV4TEzYbITX4tGHe/3k2ra5FCnezqsLOntd6VEWEWr5PA==
+X-Received: by 2002:a05:600c:1ca3:b0:421:6b79:8900 with SMTP id 5b1f17b1804b1-4216b798c9cmr55824915e9.41.1718041782597;
+        Mon, 10 Jun 2024 10:49:42 -0700 (PDT)
+Received: from smtpclient.apple ([131.111.5.201])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e97dsm149074925e9.5.2024.06.10.10.49.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2024 10:49:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157E83EAFA5EBEF5C5889BFD4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH 03/13] riscv: dts: allwinner: Add xtheadvector to the
+ D1/D1s devicetree
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <20240609-xtheadvector-v1-3-3fe591d7f109@rivosinc.com>
+Date: Mon, 10 Jun 2024 18:49:30 +0100
+Cc: Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Jisheng Zhang <jszhang@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>,
+ Guo Ren <guoren@kernel.org>,
+ Evan Green <evan@rivosinc.com>,
+ Andy Chiu <andy.chiu@sifive.com>,
+ linux-riscv <linux-riscv@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-sunxi@lists.linux.dev,
+ linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FD6771F5-5739-469A-9C0B-952AAC62AB68@jrtc27.com>
+References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
+ <20240609-xtheadvector-v1-3-3fe591d7f109@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Mon, Jun 10, 2024 at 05:03:44PM +0000, Michael Kelley wrote:
-> From: Catalin Marinas <catalin.marinas@arm.com> Sent: Monday, June 10, 2024 3:34 AM
-> > I wonder whether something like __GFP_DECRYPTED could be used to get
-> > shared memory from the allocation time and avoid having to change the
-> > vmalloc() ranges. This way functions like netvsc_init_buf() would get
-> > decrypted memory from the start and vmbus_establish_gpadl() would not
-> > need to call set_memory_decrypted() on a vmalloc() address.
-> 
-> I would not have any conceptual objections to such an approach. But I'm
-> certainly not an expert in that area so I'm not sure what it would take
-> to make that work for vmalloc(). I presume that __GFP_DECRYPTED
-> should also work for kmalloc()?
-> 
-> I've seen the separate discussion about a designated pool of decrypted
-> memory, to avoid always allocating a new page and decrypting when a
-> smaller allocation is sufficient. If such a pool could also work for page size
-> or larger allocations, it would have the additional benefit of concentrating
-> decrypted allocations in fewer 2 Meg large pages vs. scattering wherever
-> and forcing the break-up of more large page mappings in the direct map.
+On 10 Jun 2024, at 05:45, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>=20
+> The D1/D1s SoCs support xtheadvector so it can be included in the
+> devicetree. Also include vlenb for the cpu.
+>=20
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+> arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi =
+b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+> index 64c3c2e6cbe0..50c9f4ec8a7f 100644
+> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
+> riscv,isa =3D "rv64imafdc";
+> riscv,isa-base =3D "rv64i";
+> riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c", "zicntr", =
+"zicsr",
+> -       "zifencei", "zihpm";
+> +       "zifencei", "zihpm", "xtheadvector";
+> + riscv,vlenb =3D <128>;
 
-Yeah, my quick, not fully tested hack here:
+thread,vlenb
 
-https://lore.kernel.org/linux-arm-kernel/ZmNJdSxSz-sYpVgI@arm.com/
+Jess
 
-It's the underlying page allocator that gives back decrypted pages when
-the flag is passed, so it should work for alloc_pages() and friends. The
-kmalloc() changes only ensure that we have separate caches for this
-memory and they are not merged. It needs some more work on kmem_cache,
-maybe introducing a SLAB_DECRYPTED flag as well as not to rely on the
-GFP flag.
+> #cooling-cells =3D <2>;
+>=20
+> cpu0_intc: interrupt-controller {
+>=20
+> --=20
+> 2.44.0
+>=20
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-For vmalloc(), we'd need a pgprot_decrypted() macro to ensure the
-decrypted pages are marked with the appropriate attributes (arch
-specific), otherwise it's fairly easy to wire up if alloc_pages() gives
-back decrypted memory.
-
-> I'll note that netvsc devices can be added or removed from a running VM.
-> The vmalloc() memory allocated by netvsc_init_buf() can be freed, and/or
-> additional calls to netvsc_init_buf() can be made at any time -- they aren't
-> limited to initial Linux boot.  So the mechanism for getting decrypted
-> memory at allocation time must be reasonably dynamic.
-
-I think the above should work. But, of course, we'd have to get this
-past the mm maintainers, it's likely that I missed something.
-
-> Rejecting vmalloc() addresses may work for the moment -- I don't know
-> when CCA guests might be tried on Hyper-V.  The original SEV-SNP and TDX
-> work started that way as well. :-) Handling the vmalloc() case was added
-> later, though I think on x86 the machinery to also flip all the alias PTEs was
-> already mostly or completely in place, probably for other reasons. So
-> fixing the vmalloc() case was more about not assuming that the underlying
-> physical address range is contiguous. Instead, each page must be processed
-> independently, which was straightforward.
-
-There may be a slight performance impact but I guess that's not on a
-critical path. Walking the page tables and changing the vmalloc ptes
-should be fine but for each page, we'd have to break the linear map,
-flush the TLBs, re-create the linear map. Those TLBs may become a
-bottleneck, especially on hardware with lots of CPUs and the
-microarchitecture. Note that even with a __GFP_DECRYPTED attribute, we'd
-still need to go for individual pages in the linear map.
-
--- 
-Catalin
 
