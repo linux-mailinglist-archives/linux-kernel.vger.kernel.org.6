@@ -1,203 +1,151 @@
-Return-Path: <linux-kernel+bounces-208487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCA69025A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FCE9025AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591791F2717F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7641F275CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7B9142E88;
-	Mon, 10 Jun 2024 15:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5385626;
+	Mon, 10 Jun 2024 15:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="okom6Ki0"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yzo0oYLe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC11142624;
-	Mon, 10 Jun 2024 15:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7385B12FB34
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033336; cv=none; b=i4bWdB9JZU4Q6L0IUnc1pMbuJzHBg6TBMZ1gjnHrm12xlniXx3/vJ3OZVvbZP0wHjzeBwlwVWI67Hm61rnL++RsQanA2m2Ry2kyYfdqwWui5AgaupWpUHDO7RHiBkERbNNJVulGM5ELLvrR+DEYCpikmCRSDEFVLSKfJgvBAJ40=
+	t=1718033443; cv=none; b=Dm6HEGB925ONKpM81JxHbsXVGqjoS9EEcmzsfX18B9SbfDiQVV5iNIaP2y15Io/gI0G0YFfbFJps1kf9pKgldm1kMTfPoggvOGdtu6qPTOmkajh5hKiTRXe0Hvuu0KAUJcZ/s9BRU3OOw5f2nGc+MFxdg7j2ho8nEFzxLfGNwCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033336; c=relaxed/simple;
-	bh=zRnGYwKBxb8rEXOmr0bMdweQrWUjhdVu2QR81He6TCQ=;
+	s=arc-20240116; t=1718033443; c=relaxed/simple;
+	bh=Istud4qCqYqq73UZC0sVn9z3Zj4w5osCP+6Eby9OE1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a3FzQLkOMkwJmKsqs+qBRXQFFbik1cL6FB5qmqWVWx4P+14yw3z7clr/VnFx0Hhkd5IbP/MDl/6Nz6ZW+84N01rSA27clS5Vx76lG8B/3O4WXeYglR5NAhI923/08UvwhBXJoban/vfeDotfLhS4XQOejIoYrqom4yXFfflsvUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=okom6Ki0; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 241A539F;
-	Mon, 10 Jun 2024 17:28:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718033321;
-	bh=zRnGYwKBxb8rEXOmr0bMdweQrWUjhdVu2QR81He6TCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=okom6Ki06UsNkQzHrakvp2IpuXLO6LDdjKvRpt6Jy5/5O6u+EFC5kx/sXmAV+Oj6K
-	 FLhHcFOK5DMRRzGKmFb2b3JaE/6ME9d+CHAD83O6I49KFNFhpKCR/Ri+m2uW4Db8si
-	 uzQKYD3fzLH09PyUIkqycEqoCr+pxo+ZHEqZ97jg=
-Date: Mon, 10 Jun 2024 18:28:33 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Clark Wang <xiaoning.wang@nxp.com>
-Subject: Re: [PATCH v4 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <20240610152833.GW18479@pendragon.ideasonboard.com>
-References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
- <20240608141633.2562-5-laurent.pinchart@ideasonboard.com>
- <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XovdTeg+KaMx0Fpuyvke9Y98x32Gfh42DUJG/cuFLU/aWxRxgb0bW6I6ka2OEmBZerMm4XIRPXxU5x9ibiVmMTSoc2ytOvcAhtfAl6uF4D8krtYTHK91AfzUlbMhZOA1qxfd6q0D9xgNTIHv2glROJV/TSaRcjOHfMSpo64bZmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yzo0oYLe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718033441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7PZDk4vp4nL/ROlBCKtZCvfKec6ibW5k+B7eKz8dX1I=;
+	b=Yzo0oYLeeinMaJt3jhXhwHKZuj0/RdZQkNv/KE0tlOGBV/HqM4ZCh/NpuOW5w6xaMZRmRd
+	uiro/ZXSXX0ku/J3Bwk1wnmX/m5iNKFh1ygTsihpAiblM+ultL9kxeyrqGoA+zTFK9DNvI
+	sISdRZSiEt2EgatkHK2HO1uXTr67qh0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-gBFvI-MjPHexSoZMvQn31A-1; Mon,
+ 10 Jun 2024 11:30:37 -0400
+X-MC-Unique: gBFvI-MjPHexSoZMvQn31A-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A69411956063;
+	Mon, 10 Jun 2024 15:30:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C018B1956055;
+	Mon, 10 Jun 2024 15:30:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Jun 2024 17:29:05 +0200 (CEST)
+Date: Mon, 10 Jun 2024 17:29:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] exit: kill signal_struct->quick_threads
+Message-ID: <20240610152902.GC20640@redhat.com>
+References: <20240609142342.GA11165@redhat.com>
+ <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
+In-Reply-To: <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Jun 10, 2024 at 06:06:51PM +0300, Andy Shevchenko wrote:
-> Sat, Jun 08, 2024 at 05:16:33PM +0300, Laurent Pinchart kirjoitti:
-> > From: Clark Wang <xiaoning.wang@nxp.com>
-> > 
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > This driver supports the PWM function using the platform device
-> > registered by the core MFD driver.
-> > 
-> > The driver is derived from an initial implementation from NXP, available
-> > in commit 113113742208 ("MLK-25922-1 pwm: adp5585: add adp5585 PWM
-> > support") in their BSP kernel tree. It has been extensively rewritten.
-> 
-> ...
-> 
-> > +#define ADP5585_PWM_OSC_FREQ_HZ		1000000U
-> 
-> (1 * HZ_PER_MHZ) ?
-> 
-> Variant to use MEGA. Or even #define MHz in units.h if you wish.
-> Putting a few 0:s in a row is error prone.
+Hi Eric, thanks for looking at this.
 
-Feel free to send follow-up patches.
+Let me answer your questions out-of-order. But, before anything else,
+do you see anything wrong in 1/1 ?
 
-Andy, we're reaching a level of nitpicking and yakshaving that even I
-can't deal with. I will have to simply ignore the comments I disagree
-with.
-
-> ...
-> 
-> > +	ret = regmap_write(regmap, ADP5585_PWM_OFFT_LOW,
-> > +			   off & 0xff);
-> > +	if (ret)
-> > +		return ret;
-> > +	ret = regmap_write(regmap, ADP5585_PWM_OFFT_HIGH,
-> > +			   (off >> 8) & 0xff);
-> > +	if (ret)
-> > +		return ret;
-> 
-> This is regular I²C regmap, why do you avoid using regmap bulk APIs?
-> 
-> > +	ret = regmap_write(regmap, ADP5585_PWM_ONT_LOW,
-> > +			   on & 0xff);
-> > +	if (ret)
-> > +		return ret;
-> > +	ret = regmap_write(regmap, ADP5585_PWM_ONT_HIGH,
-> > +			   (on >> 8) & 0xff);
-> > +	if (ret)
-> > +		return ret;
-> 
-> Ditto.
-> 
-> ...
-> 
-> > +static int pwm_adp5585_get_state(struct pwm_chip *chip,
-> > +				 struct pwm_device *pwm,
-> > +				 struct pwm_state *state)
-> > +{
-> > +	struct regmap *regmap = pwmchip_get_drvdata(chip);
-> > +	unsigned int on, off;
-> > +	unsigned int val;
-> > +
-> > +	regmap_read(regmap, ADP5585_PWM_OFFT_LOW, &off);
-> > +	regmap_read(regmap, ADP5585_PWM_OFFT_HIGH, &val);
-> > +	off |= val << 8;
-> 
-> Ditto.
-> 
-> > +	regmap_read(regmap, ADP5585_PWM_ONT_LOW, &on);
-> > +	regmap_read(regmap, ADP5585_PWM_ONT_HIGH, &val);
-> > +	on |= val << 8;
-> 
-> Ditto.
-> 
-> > +	state->duty_cycle = on * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-> > +	state->period = (on + off) * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-> > +
-> > +	state->polarity = PWM_POLARITY_NORMAL;
-> > +
-> > +	regmap_read(regmap, ADP5585_PWM_CFG, &val);
-> > +	state->enabled = !!(val & ADP5585_PWM_EN);
-> > +
-> > +	return 0;
-> 
-> Besides that, how do you guarantee that no IO may happen in between of those
-> calls? Probably you want a driver explicit lock? In that case, would you still
-> want to have a regmap internal lock?
-> 
-> > +}
-> 
-> ...
-> 
-> > +static int adp5585_pwm_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct adp5585_dev *adp5585 = dev_get_drvdata(dev->parent);
-> > +	struct pwm_chip *chip;
-> > +	int ret;
-> > +
-> > +	chip = devm_pwmchip_alloc(dev, ADP5585_PWM_CHAN_NUM, 0);
-> > +	if (IS_ERR(chip))
-> > +		return PTR_ERR(chip);
-> 
-> > +	device_set_of_node_from_dev(dev, dev->parent);
-> 
-> Still unclear to me why only few drivers use this.
-> 
-> > +	pwmchip_set_drvdata(chip, adp5585->regmap);
-> > +	chip->ops = &adp5585_pwm_ops;
-> > +
-> > +	ret = devm_pwmchip_add(dev, chip);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> 
-> > +static const struct platform_device_id adp5585_pwm_id_table[] = {
-> > +	{ "adp5585-pwm" },
-> > +	{ /* Sentinel */ },
-> 
-> Drop comma. Otherwise it's not a sentinel strictly speaking.
+On 06/10, Eric W. Biederman wrote:
 >
-> > +};
+> May I ask which direction you are coming at this from?  Are you trying
+> to reduce the cost of do_exit?  Are you interested in untangling the
+> mess that is exiting threads in a process?
 
--- 
-Regards,
+I am trying to understand why do we need another counter.
 
-Laurent Pinchart
+And, I'd like to cleanup the usage of task->signal->live, I think it
+should be avoided (if possible) when task != current. IIRC, we even
+discussed this some time ago but I can't find any reference.
+
+See also another thread about css_task_iter_advance().
+
+> > Eric, I can't understand why the commit ("signal: Guarantee that
+> > SIGNAL_GROUP_EXIT is set on process exit") added the new
+> > quick_threads counter. And why, if we forget about --quick_threads,
+> > synchronize_group_exit() has to take siglock unconditionally.
+> > Did I miss something obvious?
+>
+> At a minimum it is the exact same locking as everywhere else that sets
+> signal->flags, signal->group_exit_code, and signal->group_stop_count
+> uses.
+>
+> So it would probably require some significant reason to not use
+> the same locking and complicate reasoning about the code.  I suspect
+> setting those values without siglock held is likely to lead to
+> interesting races.
+
+I guess I was not clear. Of course, SIGNAL_GROUP_EXIT must be always
+set under ->siglock. But I think synchronize_group_exit() can just
+return if SIGNAL_GROUP_EXIT is already set? If nothing else, this is
+what do_group_exit() does.
+
+Or I misunderstood you?
+
+> That is where signal->quick_threads comes from.  In the work it is a
+> part of I wind up moving the decrement up much sooner to the point where
+> individual threads decide to exit.  The decrement of signal->live comes
+> much too late to be useful in that context.
+
+And that is why this patch moves the decrement of signal->live to the
+start of do_exit().
+
+> It is also part of me wanting to be able to uniformly use
+> SIGNAL_GROUP_EXIT and signal->group_exit_code when talking about the
+> process state, and p->exit_code when talking about the per task state.
+
+Agreed,
+
+> At the moment I am staring at wait_task_zombie and trying to understand
+> how:
+>
+> 	status = (p->signal->flags & SIGNAL_GROUP_EXIT)
+> 		? p->signal->group_exit_code : p->exit_code;
+>
+> works without any locks or barriers.
+
+Agreed, at first glance this looks worrying without siglock... I'll try
+to take a look, perhaps we can simply kill the SIGNAL_GROUP_EXIT check,
+not sure.
+
+But this patch should not make any difference ?
+
+Oleg.
+
 
