@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-207801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1763A901C62
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 300B3901C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1501D1C21C06
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B831C21BA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7C557C8E;
-	Mon, 10 Jun 2024 08:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8F557323;
+	Mon, 10 Jun 2024 08:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="harg0rQW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fbc2JGTX"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7B339A8;
-	Mon, 10 Jun 2024 08:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2F63C7;
+	Mon, 10 Jun 2024 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006872; cv=none; b=kdLpGkcAKqQvIywj1Ox1HpYqG5igkU9cLvK+GWjIiVjZLfWwdPB7urEIjgcemTP5FhEToG9cfA8j3p2b8OJP5wl1Fxf1P71EKwf9jv95r2ZAEiUScOCsySXVpRa2TsZHbcKpJTED6BXkunkCNFY4VOfIO9Mi2DjCc4PdQxa3e+w=
+	t=1718006815; cv=none; b=uI3C+QxYVoaFPODrxh+7O6nkWWQvP1GjOI+qnOISANTAy4QsapuxwGe25ex+bqxPgeC9+ZOLC++IMMNRqQJOGLxFVoRyATyw/ww+XsyXBFBY4fpwfkxUvItv1an5ljPa5NdE7eWfMORiiMBbR75FC+GK0JpM9TbvHdajNMCl+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006872; c=relaxed/simple;
-	bh=yBWutYD+y9qJBSEWzb+gA5jjH4xI73/rWVc0YuUDBNg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KYNHYDbFOVVyQnwDgEFa88CBR6NzkK+Wglv7bYm7uZgaQQqavNpVzztBAU3a8Hx+TOFMpd9oJ88B3zr5j63zWz0niiwy9O57Z+PEPqGfn3jxsS07WGUExO6ya0bySJmtBImcYJIYV0P5Bh4exVE2Y/LKi1qMdVJ3QI4XpfOgWPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=harg0rQW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A7Z61V020310;
-	Mon, 10 Jun 2024 10:07:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=Enas9aIy2Kupmq8Hnvo20L
-	OvOZZaAjZWGbSb3rp4BoY=; b=harg0rQW0nkCDUic+CQjkGXLcoIwYEhHnc5CP0
-	pOL2VbEXE7LBB5iy1HSZ09xVNoOz3NmBalrPedsKlL6V8lnT15voljk8cBB9RcIB
-	p2Gt9gcY5lTG193191M9cB/3yywvhAev8Tn/htTKjZ1o+TM4oMZRfPyhDrfarBAA
-	YB6DrXkzbX+cA9iCUjvqWlvDujpCvHDZODStEu3bzPr6r8JBQ5f2gEdjxbHuKPzV
-	pVSiENB3IKa8afLhrjkgw8YL9fVY/2QQdaMV7xHr0ec50XjCJvPZWQBTjUJvu4YP
-	gGZPZu0DnVFp9N6+RchZebqkbeZlaixaV6yumPmX6r9BuS3Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymemxnpqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 10:07:23 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B52A14002D;
-	Mon, 10 Jun 2024 10:07:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 475CE211959;
-	Mon, 10 Jun 2024 10:06:06 +0200 (CEST)
-Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
- 2024 10:06:05 +0200
-From: Christophe Roullier <christophe.roullier@foss.st.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/1] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
-Date: Mon, 10 Jun 2024 10:06:04 +0200
-Message-ID: <20240610080604.291102-1-christophe.roullier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718006815; c=relaxed/simple;
+	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiIiSnnOxBjTPL8iB+CMLzSMKSaoI4ldkWk2W44h3wuDv9n6B2l4tCnNRfNT7FsQPFN3yeLMSpmuuEhKPYYn0Pg4Uml32ErUjQ35DeDmJ+RvujHbJK4Z/THvwuPPP6Uv7mrGnH9iRykqeaiSsQFjW+3LcPTgYR6aHKdEuOYIqs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fbc2JGTX; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718006811;
+	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fbc2JGTXECrFLODOjNn5zPCS+TLlAAFYhQsu2hcMV7wlYO+4bYbR+S8HFQTxnSQVJ
+	 6Lw4UXYbpVRg64axJD5r39bybViwB7dZRlj7x84GupRvj2cbdsQ5+UjO4joFxWbFhQ
+	 hYssLYCiK4OTf/t3g9+LVyhiaJx5dVOusA3Cm3KCXl9wJh6gQ3Vb0vLY0Gr1MPMKpz
+	 mnHV33QC32ZPJinIxRZ+yjf/gyt9Wkzqwg/4amvXJz/uAbjzenkmBekdVnWkxylBMS
+	 ZxGV0Hb/jugOFt00Svd/44yfxnsSyv+M3SA+WB21BMhiEogAj5jYLtDvdyuG9e4S9F
+	 mQrVlBtltHCxA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E36503780575;
+	Mon, 10 Jun 2024 08:06:49 +0000 (UTC)
+Message-ID: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
+Date: Mon, 10 Jun 2024 10:06:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-pwm@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ kernel-janitors@vger.kernel.org
+References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable MCP23S08 I/O expanders to manage Ethernet PHY
-reset in STM32MP135F-DK board.
+Il 07/06/24 18:02, Jeff Johnson ha scritto:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This addresses all of the issues in driver/pwm
+> 
+> Let me know if you want any of the individual module changes
+> segregated into separate patches.
+> ---
+>   drivers/pwm/pwm-imx1.c      | 1 +
+>   drivers/pwm/pwm-imx27.c     | 1 +
+>   drivers/pwm/pwm-intel-lgm.c | 1 +
+>   drivers/pwm/pwm-mediatek.c  | 1 +
+>   drivers/pwm/pwm-pxa.c       | 1 +
+>   drivers/pwm/pwm-samsung.c   | 1 +
+>   drivers/pwm/pwm-spear.c     | 1 +
+>   drivers/pwm/pwm-visconti.c  | 1 +
+>   8 files changed, 8 insertions(+)
+> 
 
-Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+..snip..
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 86bf057ac3663..9758f3d41ad70 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
- CONFIG_SPI_SPIDEV=y
- CONFIG_SPMI=y
- CONFIG_PINCTRL_AS3722=y
-+CONFIG_PINCTRL_MCP23S08=y
- CONFIG_PINCTRL_MICROCHIP_SGPIO=y
- CONFIG_PINCTRL_OCELOT=y
- CONFIG_PINCTRL_PALMAS=y
--- 
-2.25.1
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index 19a87873ad60..0b5d68a90e83 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
+>   module_platform_driver(pwm_mediatek_driver);
+>   
+>   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
+> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
+
+MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
+for the Display PWM, and it is located in the DDP block.
+
+So, there are two PWM IPs in one SoC:
+  - A general purpose PWM IP
+  - A DDP PWM IP
+
+This driver is for the general purpose PWM IP.. so, please, can we change this
+to "MediaTek general purpose Pulse Width Modulator driver"?
+
+After which,
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+>   MODULE_LICENSE("GPL v2");
 
 
