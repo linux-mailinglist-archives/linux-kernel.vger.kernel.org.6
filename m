@@ -1,165 +1,130 @@
-Return-Path: <linux-kernel+bounces-208369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6F1902420
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA5F902422
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1441F233EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4720B1F2353E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF12136E01;
-	Mon, 10 Jun 2024 14:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F48E84A4A;
+	Mon, 10 Jun 2024 14:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VdpOOJRm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EVEKJivB"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E3213213D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7CF38FB0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718029880; cv=none; b=USNh2f84/EDHI1b0F1oGpgu8cy13VnX5LmR3FMKJ1lc2wEBNoYl2kgn0v3hbCZt41ZXCyt19vI0TCPDzbgI5xDOcHF5F3cvFRWFwFLFyhB2F1p2QdMpRY1UHgamUUdpV6z+xQF14dMiZSrFWyuotla9kdNi5E7XUbN2vLRzvzZQ=
+	t=1718029923; cv=none; b=AOCAddk75Kkxn7ovlS3NQf6S0egtfG9B1iaP87xMbYUzg457J1sULet0txHhKB2Z/MbXvQgvdI7UWRAwAwcGXTn+ipFjju24FRz0lbvwb/jAIedGLwjyjwUblDk/CSyZJ3JXw1O2zJ0os0CALiJRTZLwMqRyNk0QV/ZxrBXHXME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718029880; c=relaxed/simple;
-	bh=V1664uLxF5b82ZVSpeCZtQWSqHB1NRXdy49enW9INw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGmuUdNHFGyMwAW/Hy0sS0v4ZXG0/hyn5j0778mZY2e6eAjKrKcI1O6acI8A28mzY2obZidtBMKdtK79qUJ8icjgMCJ+6xITSUmIuJTcLH24N4RVTcZ/cSUhRsXPcFIvsnLjK1nPySsyLr5Qqk6Wf7jIhu294CxViV0JsVYBH7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VdpOOJRm; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718029879; x=1749565879;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V1664uLxF5b82ZVSpeCZtQWSqHB1NRXdy49enW9INw0=;
-  b=VdpOOJRmYj7wRufBUV6ZVxZArimN27EATiGSdbp4my6c23p7GKaZQC6v
-   sboc/9XB1OIXVGKTEa0X6hNjPh1RIZJJ4K4dXvr7bM2ms7kZIfZRq+tti
-   YP/oX6Fly4MCMcXh6X/U7FPZA1BY/4INzlbR9ykCLRsKoOYKiQ6WNiru7
-   ljjHRNrY0BN17NdkVicd7DAhHYEegt3ngQkdZ+yFbeczDPED4tp4lbdTJ
-   vkZQ18jLhU3amTwVigt5NurJCa9h0IZMJoeaYwcrDCiiBO9bcwE0YwzqL
-   9fsggqbRy+fry0lHGl/lYPQj8OZzaE0c+RxU7TmjfLwJTAh8CYZZuxjRd
-   g==;
-X-CSE-ConnectionGUID: 7IO0izl3TZK/nc2WsXfhWA==
-X-CSE-MsgGUID: Bz1uICMbTo6GGDIBHXqW+Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="18479011"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="18479011"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 07:31:19 -0700
-X-CSE-ConnectionGUID: L87bjZU3T/qAYUEqdtGp5A==
-X-CSE-MsgGUID: FnG0LBQfSWOZuDsm57oIyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39528182"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 10 Jun 2024 07:31:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 770921FD; Mon, 10 Jun 2024 17:31:14 +0300 (EEST)
-Date: Mon, 10 Jun 2024 17:31:14 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, cho@microsoft.com, decui@microsoft.com, 
-	John.Starks@microsoft.com
-Subject: Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
-Message-ID: <ajxusvtisufqbl644hkdnq6c3tpamoppvjifhbj4nqctl4vyt7@nhak7gkergqf>
-References: <20240528100919.520881-1-kirill.shutemov@linux.intel.com>
- <4df2ebee-40c0-4ea3-8909-13b90f049ff1@intel.com>
+	s=arc-20240116; t=1718029923; c=relaxed/simple;
+	bh=YwIDCtzDhcwh+1uI494r2VXwyUPw8bVwvu4UDqPjf5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTtc+XuY58RWnum5U8TMpYyE+5fJge9+VCkHr7qWxbyDCG5PlBP5MW3dghxylctLw9dbv+bVBPCwDJ7nSGXaIo4ygB1c3iBrFMDccLRbX/pC7R8+ReP2ELPrE75YSgBYaYIC9gA8cW5kcT+7bNGYtbAn/K+HnMiUB59XVQKMBc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EVEKJivB; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35f24fabb81so884802f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718029919; x=1718634719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3MaVOnN+h3M1y5FOd67tuekS93xubaycuhC8Oc45qW0=;
+        b=EVEKJivBGbUjzJqEc0CMn9mnotjVbNs/1tpiymES2xeYbNDQAMcM7y1d4FjXyGfxSe
+         pAZrlGCcESnNv1/lFFRpA5cQWqvLshl5E3XORgDnGXv0l6/+IpcGGZ2aN1jaaZ1tLj+7
+         y/3oilo5U9ER2F9u39NpQD20tCWLJKX4RIF1iqizM1jWlQsXFIF8XBQETObWcd3ObHKY
+         VfjFYcKKCzKVUCVVNLe+Qt5LoxHIkGwKHWfS6w0ao5la0AQT3d8pG1fr2cfK8cvHnAny
+         UKO8BUuD/TaEfXWqS2PE0lArJxxdZsXWCgWqNUiJzJjqadNwTEKOGBwwRH+ZC+NamN6D
+         E2Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718029919; x=1718634719;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MaVOnN+h3M1y5FOd67tuekS93xubaycuhC8Oc45qW0=;
+        b=EBrw1Ytb4ZCxHt/qc/WF2c52gyXVorYhIChE8/uOyy00jEQasvQ6MSaJaWpOXssqOQ
+         rzwK/Vn3pCtWrINCmP3V95KLH18iecPOGdL2E3VEqbc4LfxJ/lkOgmsth1QCbZXCSHJW
+         csNapaDjA7Q274R1t2JCHRIjfVIW5lsTbfokbwBuBx31VO1jbtU+PewdtFbaNEVEL1Mv
+         FOv4R5+68SgRnDo/fWJqdtzakV2EytrKCgnJQNYIJFaILITUjHsOXmCoM6OTxMtWvRn9
+         8bGQwfo6uDI4ySrVTRx+1mHOU0jMFmfD7a5Kw5jUV5c9rZh4kXv7zMLiUi9k5SjXxgwr
+         ucEA==
+X-Gm-Message-State: AOJu0YyJfFJUr05Osu+KS9tSCMX5mqArkL4WaTxGhj11itCmnDCtAK0d
+	RgVq5vCw2IyAzu/W3lVGfjM3q8MEdKPEvOIqwn5eUlf7A1L6IUvxKgtlBnEQkL4=
+X-Google-Smtp-Source: AGHT+IFM0m8eDu9ido96KegdI7AUOr01Ju6ZSbYdJA57J4Z2HgSEkq/gW2EIjFIZmC/4phuZXkgFPw==
+X-Received: by 2002:a5d:4dd0:0:b0:358:4af8:b76e with SMTP id ffacd0b85a97d-35efee2dddbmr6455167f8f.62.1718029919618;
+        Mon, 10 Jun 2024 07:31:59 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f24ebfbbbsm2714509f8f.61.2024.06.10.07.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 07:31:59 -0700 (PDT)
+Message-ID: <231a8ee8-b66d-4d40-a9ff-9fdf4918944b@suse.com>
+Date: Mon, 10 Jun 2024 17:31:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4df2ebee-40c0-4ea3-8909-13b90f049ff1@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpu: Move identify_cpu_without_cpuid() into main
+ branch
+To: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240521124823.486372-1-nik.borisov@suse.com>
+ <87wmmwx5bk.ffs@tglx>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <87wmmwx5bk.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 06:55:56AM -0700, Dave Hansen wrote:
-> On 5/28/24 03:09, Kirill A. Shutemov wrote:
-> > Currently, attempting to perform MMIO from userspace in a TDX guest
-> > leads to a warning about an unexpected #VE and SIGSEGV being delivered
-> > to the process.
+
+
+On 10.06.24 г. 17:03 ч., Thomas Gleixner wrote:
+> On Tue, May 21 2024 at 15:48, Nikolay Borisov wrote:
+>> No point in duplicating if (!have_cpuid_p()) check. Simply move
+>> identify_cpu_without_cpuid() into the else branch. No functional
+>> changes.
 > 
-> Does it _always_ result in a #VE?  Or is this only when guests mmap()
-> something like from a driver and the host doesn't back the shared memory?
-
-See below.
-
-> > Enlightened userspace may choose to handle MMIO on their own if the
-> > kernel does not emulate it.
-> > 
-> > Handle the EPT_VIOLATION exit reason for userspace and deliver SIGBUS
-> > instead of SIGSEGV. SIGBUS is more appropriate for the MMIO situation.
+> You wish :)
 > 
-> Is any userspace _actually_ doing this?  Sure, SIGBUS is more
-> appropriate but in practice unprepared userspace crashes either way.
-
-Microsoft folks have plans to do this. I don't know if any current code
-handles SIGBUS this way.
-
-> > @@ -641,17 +647,20 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
-> >  	switch (ve->exit_reason) {
-> >  	case EXIT_REASON_CPUID:
-> >  		return handle_cpuid(regs, ve);
-> > +	case EXIT_REASON_EPT_VIOLATION:
-> > +		if (is_private_gpa(ve->gpa))
-> > +			panic("Unexpected EPT-violation on private memory.");
-> > +
-> > +		force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)ve->gla);
-> > +
-> > +		/* Return 0 to avoid incrementing RIP */
-> > +		return 0;
+>> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+>> ---
+>>   arch/x86/kernel/cpu/common.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+>> index 2b170da84f97..69265c0acaea 100644
+>> --- a/arch/x86/kernel/cpu/common.c
+>> +++ b/arch/x86/kernel/cpu/common.c
+>> @@ -1578,9 +1578,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+>>   	memset(&c->x86_capability, 0, sizeof(c->x86_capability));
+>>   	c->extended_cpuid_level = 0;
+>>   
+>> -	if (!have_cpuid_p())
+>> -		identify_cpu_without_cpuid(c);
+>> -
 > 
-> This _really_ needs a comment, probably even a helper function where you
-> can actually explain what is going on.
+> You might look what identify_cpu_without_cpuid() does and how the
+> comment right here might be related:
+
+Doh, fair enough. OTOH is Cyrix still relevant? Google says Defunct: 
+November 11, 1997; 26 years ago
+
+
 > 
-> I could barely remember what this is for today.  There's no hope for me
-> in a couple of years.
+>>   	/* cyrix could have cpuid enabled via c_identify()*/
+>>   	if (have_cpuid_p()) {
 > 
-> Just thinking through the possibilities here:
+> Thanks,
 > 
-> Private=> Private      	: no #VE
-> Private=> Anything else	: fatal shutdown
-> Shared => Shared	: no #VE
-> Shared => Private	: #VE (end up here)
-> Shared => !Present      : #VE (end up here)
-
-Are you talking about page state vs. page mapping here?
-
-It is wrong frame to think about it.
-
-We get here as result of EPT violation. Either shared or secret EPT.
-So we don't have an present EPT entry for the page or allowed permissions
-doesn't match the access.
-
-The is_private_gpa() check catches cases when private EPT doesn't have a
-valid entry for page accessed via private mapping: page is not accepted or
-removed by VMM. This case is only reachable for debug-TD. In for non-debug
-TD it leads to unrecoverable TD exit. The same story as for kernel
-addresses.
-
-Normal shared memory doesn't cause #VE even if the memory was not
-converted to shared explicitly. On the first access to a page via shared
-mapping VMM will allocate a new page and fill EPT[*]. Except for GPA
-ranges dedicated for MMIO. For these VMM will not fill EPT and it causes
-#VE which interpreted as MMIO access.
-
-Note that only emulated devices require such mechanism to get MMIO
-working. For device passthrough, device MMIO range mapped directly into
-the guest and handled transparently for the guest kernel.
-
-Does it make sense?
-
-[*] I don't like this implicit conversion to shared. I would prefer #VE
-here too, but it is what we have.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+>          tglx
 
