@@ -1,121 +1,124 @@
-Return-Path: <linux-kernel+bounces-208086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCDA90207A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35333902080
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC231C219C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACCE1C21C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78627E576;
-	Mon, 10 Jun 2024 11:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5187B7CF25;
+	Mon, 10 Jun 2024 11:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nVSdMfSR"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t55c8XQt"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38BF2594
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5D17EF09
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019534; cv=none; b=K49Wu4bWObq03eBC2W/SJdyZSdiVD/fjWhiHFjXRPW8WFC5LEL5jHqSDgIxTWAIpmuzUl7cvMYIdTKxS54iXPK/ZuubxOTz4CZqVvJ4tY3hCyxcL++S+saTMh3k0kjG0Qg4OqthikgxMyu0pk3ygefYoP8R9uU4dqyfFv8m+jV4=
+	t=1718019540; cv=none; b=NEl4IwlFnkk78FtGVUrqpAq0dtW8puyho/UifZL/9nqttNwyhhfLqEkBbgeR5tbSwNVdwTN4ZtdFbtTPs8BuoWWTrmwzYUTVYzNxcyqHXYuq4DmFppOJQnvOr4uHir1bmt2qOBrFYbsJtuL0V6/3Ytco83U214OT9+NfNGozp9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019534; c=relaxed/simple;
-	bh=pBG0UlM50yZg5Bbse3Cohd5B0E6o8sQa9JGojhr4uco=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=QkzsHXORS0veM2VyftLZcBEnmfbJlXs49J2KsFWvqqrTJoR9vchmx2ouEknrdFmHU2jpgCJQ20S7eaplBTNlfOPvnv78iic5rjtCZDsoLE+4dhQjn3cfxgCjQARO27rxnPjO+m7UCUJa9R3cvv0EjFAUaOqZn30eIgON+9m95pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nVSdMfSR; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1718019540; c=relaxed/simple;
+	bh=4g0jh8mVTXXIWWd6K8v/g22BWViRX2KKtDtoBlE5OWo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
+	 References; b=bxORjaa7pWDqPTw00jH3G2wSOygFSa6uxLbTk2I5eV7yW0DKw8/vGVfn8sO99zo+dFN4jvFZSZbGAzZDtpTvU6XfSgn7mEIqT0Rr/CaZHnUr4pncd86EKt9cnvVw6soRSYzG0bCCTwtZVIpYmQSV8WgyvxOnpiJ4sYBn+94Eg3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t55c8XQt; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240610113849epoutp01a8d070eeccf5fa6b5de4f2c93c0d451e~XoajH6taH2119921199epoutp01Z
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240610113849epoutp01a8d070eeccf5fa6b5de4f2c93c0d451e~XoajH6taH2119921199epoutp01Z
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240610113850epoutp023127d4f45ad13d102fc7931b846c69af~XoakMCuHC0095700957epoutp02u
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240610113850epoutp023127d4f45ad13d102fc7931b846c69af~XoakMCuHC0095700957epoutp02u
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718019529;
-	bh=o1CDSyOoTgCiZY7HyEcJEnwcOy53MJY9SBw9n/FUbIo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=nVSdMfSROTNgWDGUnZ1btxtKgOQkA/nmSlX5FHuqfe1oEg6nt4c9T3cFDTJqSLyhl
-	 6ekvqxv8YKB1lS3YN/e55WZBeCli8rcRaRh3NXz6Vw+M2c/sPB8Dst0LYYl3zrKVm1
-	 IN63CU377VqlPDFR6Z8GswYdWKdNDtDY85UwveO8=
+	s=mail20170921; t=1718019530;
+	bh=CYNsfsElRoaTG9v3KypueJ6qSMPhqLeAdpy+lkpm4r0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t55c8XQtKtc9f09itfza3EDkv6W7X6wMTdP9vT6ovF24m75lblYCRfWl/JZLMgKhY
+	 6ZiQLPcp2KAWHhoZUWYQMitMIRNrOmYeJg2XkkzinbSbVZThOue7ge3NwAXI+B0rDh
+	 q7DL3qj1LxRFrzAZk3chOgIJNHKUZhgu9MOzofxQ=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240610113848epcas2p115eb5f2774f3926b39c5f0823d857f4d~XoaixYbxk3199331993epcas2p1_;
-	Mon, 10 Jun 2024 11:38:48 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VyVF41cbJz4x9Pv; Mon, 10 Jun
-	2024 11:38:48 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240610113849epcas2p388dc65dc0f10e659b47a897794f7946b~Xoaj3mQwl2563025630epcas2p3g;
+	Mon, 10 Jun 2024 11:38:49 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VyVF52xsYz4x9Pv; Mon, 10 Jun
+	2024 11:38:49 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
 	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	22.F3.09485.8C5E6666; Mon, 10 Jun 2024 20:38:48 +0900 (KST)
+	C2.F3.09485.9C5E6666; Mon, 10 Jun 2024 20:38:49 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240610113847epcas2p15182d509cb4b46b2cda6f781748264b8~XoahyYIik1532215322epcas2p1W;
-	Mon, 10 Jun 2024 11:38:47 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240610113848epcas2p3742cffc295e0ebb35713a761c06e1c47~Xoai0nwFN2563025630epcas2p3f;
+	Mon, 10 Jun 2024 11:38:48 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240610113847epsmtrp1dbe65cb1a60e24e79a2e23a287c5c557~XoahxuDJp2171421714epsmtrp1O;
-	Mon, 10 Jun 2024 11:38:47 +0000 (GMT)
-X-AuditID: b6c32a46-19bfa7000000250d-52-6666e5c85e6f
+	20240610113848epsmtrp18a605a9b73dccedda64478d9dbc69a99~Xoai0CNZ92145221452epsmtrp1c;
+	Mon, 10 Jun 2024 11:38:48 +0000 (GMT)
+X-AuditID: b6c32a46-19bfa7000000250d-56-6666e5c96fff
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	76.12.07412.7C5E6666; Mon, 10 Jun 2024 20:38:47 +0900 (KST)
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.57.18846.8C5E6666; Mon, 10 Jun 2024 20:38:48 +0900 (KST)
 Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240610113847epsmtip2b0e4b7d7c89004c907ae5db8b890ba67~XoahlL2I11349813498epsmtip2c;
-	Mon, 10 Jun 2024 11:38:47 +0000 (GMT)
+	20240610113848epsmtip2812169bd042b5df7bfa52ac1001c6990~Xoain6lk21349813498epsmtip2d;
+	Mon, 10 Jun 2024 11:38:48 +0000 (GMT)
 From: Daehwan Jung <dh10.jung@samsung.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen
 	<Thinh.Nguyen@synopsys.com>, Mathias Nyman <mathias.nyman@intel.com>
 Cc: linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
 	linux-kernel@vger.kernel.org (open list), h10.kim@samsung.com, Daehwan Jung
 	<dh10.jung@samsung.com>
-Subject: [PATCH v3 0/3] usb: Add quirk for writing high-low order
-Date: Mon, 10 Jun 2024 20:39:10 +0900
-Message-Id: <1718019553-111939-1-git-send-email-dh10.jung@samsung.com>
+Subject: [PATCH v3 1/3] usb: dwc3: Support quirk for writing high-low order
+Date: Mon, 10 Jun 2024 20:39:11 +0900
+Message-Id: <1718019553-111939-2-git-send-email-dh10.jung@samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsWy7bCmme6Jp2lpBuvusVrcWTCNyaJ58Xo2
-	i7+3L7JaXN41h81i0bJWZovmTVNYLVYtOMDuwO6xeM9LJo/9c9ewe/RtWcXosWX/Z0aPz5vk
-	Alijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgM5Q
-	UihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+WlllgZGhgYmQIV
-	JmRnTHvTx1ywk6ei7VIvUwPjUq4uRk4OCQETiU/HnjJ1MXJxCAnsYJTY9OEBlPOJUaL961Fm
-	COcbo8TSUw+ZYFo+TrnLApHYyyjxsO8jO0hCSOAHo0Rzd2gXIwcHm4CWxPeFjCA1IgIdjBJH
-	n59mA3GYBRYwSjw4uYgRpEFYwFFi7oW3YM0sAqoS8w9cZgOxeQXcJL5OOc0IsU1O4ua5TrAz
-	JAQ2sUtM+LUY6gwXifkXDkDZwhKvjm9hh7ClJF72t0HZxRK3nj+Dam5hlFjxqoUZImEsMetZ
-	OyPIqcwCmhLrd+mDmBICyhJHbrGAVDAL8El0HP7LDhHmlehoE4JoVJaYfnkCK4QtKXHw9Tmo
-	gR4SX3f8gYZDrMS7v2dYJzDKzkKYv4CRcRWjWGpBcW56arFRgRE8lpLzczcxgpOWltsOxilv
-	P+gdYmTiYDzEKMHBrCTCK5SRnCbEm5JYWZValB9fVJqTWnyI0RQYXhOZpUST84FpM68k3tDE
-	0sDEzMzQ3MjUwFxJnPde69wUIYH0xJLU7NTUgtQimD4mDk6pBqacfd5JnzQvzRKqa9EViyl7
-	/NPru8RSS7u6fe6C9y2cHl8v2JIfNklnTerFn4wviozfmD8NVlRvFl5XnPzCr/1WQ+ZNhp3Z
-	wv0TBUJ+NpfvflX5oDpS62+sb6CC6MGTkXK8LZWStu5xwW0hs/R2fd5yasl8v7yZQXycR76d
-	1K8wbGhv1vT/GLXog3syF0vdPo5bxfZy7xnm9l/+0Gj4ZmetpvakssMK3AHPlq3arMgiV1ah
-	9MzlndtSk/o1x+1fPv/y9Ocm3Vuh1apXPyvVHhHblHWJp/Aw54WsGW1X5tjHH/Q5nXPOze6o
-	2sE5+5W5756t3XQ4XeH7wu9b454zPq05P+XBtZhbWqfyr52cWq/EUpyRaKjFXFScCAA7ajIt
-	4wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgluLIzCtJLcpLzFFi42LZdlhJXvf407Q0g0OPlC3uLJjGZNG8eD2b
+In-Reply-To: <1718019553-111939-1-git-send-email-dh10.jung@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJKsWRmVeSWpSXmKPExsWy7bCmue7Jp2lpBhcbhC3uLJjGZNG8eD2b
 	xd/bF1ktLu+aw2axaFkrs0XzpimsFqsWHGB3YPdYvOclk8f+uWvYPfq2rGL02LL/M6PH501y
-	AaxRXDYpqTmZZalF+nYJXBnT3vQxF+zkqWi71MvUwLiUq4uRk0NCwETi45S7LF2MXBxCArsZ
-	Ja49vMoOkZCUWDr3BpQtLHG/5QgrRNE3RomVLQfZuhg5ONgEtCS+L2QEiYsIdDFKPNh0B2wS
-	s8AiRok3vXcYQbqFBRwl5l54CzaJRUBVYv6By2wgNq+Am8TXKacZITbISdw818k8gZFnASPD
-	KkbJ1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT83E2M4EDS0tjBeG/+P71DjEwcjIcYJTiYlUR4
-	hTKS04R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGs6YnSIkkJ5YkpqdmlqQWgSTZeLglGpgOt29
-	oO+HgujvtvMxzWxPXF97x2ycEbasj/mbbKW8XVZvgPvWhxteqxrosXv16PHVuShdcThoIsPV
-	enh1gKHSZvaUV0kz5t5rWJ0iJN///V1FilPvkoLn79dNba7582lB4tEKn52FQi9roqL1f83+
-	sGAi0w5rbsk7zw6phn0Jq1n72iojqn26WGCa/tSvi1JywkK71F4sWDor4uwvz9IHBv/djhlr
-	G15Q7ux+qftdMVj3v53ap6oFaXaT79nbpR3Mlmf/oHC4xHVmiI5w8LONDPt1u5bO2c6SFPLd
-	8i5n9gN+x9gaxdWVuqE2n7azta/6P4Px2uLq5dPVDWw+pWcIGlp23Q27zGxSv8vOh1WJpTgj
-	0VCLuag4EQDFi9aKkwIAAA==
-X-CMS-MailID: 20240610113847epcas2p15182d509cb4b46b2cda6f781748264b8
+	AaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGco
+	KZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEK
+	E7IzGn4pFNzgqeg8MIuxgfEwVxcjJ4eEgInEnitXWUBsIYEdjBKv2zS7GLmA7E+MEstamhkh
+	EkDO9m2aMA075h9mhyjaySix7ms3lPODUWLjlQXMXYwcHGwCWhLfFzKCxEUEOhgljj4/zQbi
+	MAssYJR4cHIRI0iRsIC3xOLLViBTWQRUJRYencwKEuYVcJPYv0oMYpmcxM1zncwgNqeAu8TL
+	+X9ZQMZICBxjl1i8rZ8RoshFYv+388wQtrDEq+Nb2CFsKYmX/W1QdrHErefPmCGaWxglVrxq
+	gWowlpj1rB3sHmYBTYn1u/RBTAkBZYkjt8ChwizAJ9Fx+C87RJhXoqNNCKJRWWL65QmsELak
+	xMHX56AGekj09nWxQoJkFqPExHN3GScwys1CWLCAkXEVo1hqQXFuemqxUYERPLqS83M3MYLT
+	mJbbDsYpbz/oHWJk4mA8xCjBwawkwiuUkZwmxJuSWFmVWpQfX1Sak1p8iNEUGHYTmaVEk/OB
+	iTSvJN7QxNLAxMzM0NzI1MBcSZz3XuvcFCGB9MSS1OzU1ILUIpg+Jg5OqQamwrX/RPatYpwZ
+	Ev7huuyapY81AkuK8/tvOyju3/vEIjrs2s0p9W57Zc0rXgZV/1dKXLG91iEm5b7VpvDj7fK9
+	zB/KZs5Zc7zRNOvRDnGBLYX/OX99TT7wrclJz7Jotq+WVOMMofWclxS7tL+tnf9cXy5s/cKV
+	K44cd7v92uCIoMPkjsrfFl3PQkPvcem/bWSRfXxHj9X1dWFMmGtcYmQ62wr9T9lCwpdFOy70
+	dj6o3Pt9DZ/lhjmmF6cf/rNDS7y1Mf3y/S+CIoGcv28ELvNaFbGh3dpzuR7P9Re3L5Zl/nrT
+	l71bTYtjoerafQsChR3XsvdtPvRm38zT2+MFtVNU7ut8M47RaW78LGxtbnlNiaU4I9FQi7mo
+	OBEAGHbrGewDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSvO6Jp2lpBpe+a1ncWTCNyaJ58Xo2
+	i7+3L7JaXN41h81i0bJWZovmTVNYLVYtOMDuwO6xeM9LJo/9c9ewe/RtWcXosWX/Z0aPz5vk
+	AlijuGxSUnMyy1KL9O0SuDIafikU3OCp6Dwwi7GB8TBXFyMnh4SAicSO+YfZQWwhge2MEl+X
+	10PEJSWWzr3BDmELS9xvOcLaxcgFVPONUeLpg58sXYwcHGwCWhLfFzKCxEUEuhglHmy6wwLi
+	MAssYpR403uHEaRIWMBbYvFlK5BBLAKqEguPTmYFCfMKuEnsXyUGMV9O4ua5TmYQm1PAXeLl
+	/L8sEPe4SZw9vYplAiPfAkaGVYyiqQXFuem5yQWGesWJucWleel6yfm5mxjBgaYVtINx2fq/
+	eocYmTgYDzFKcDArifAKZSSnCfGmJFZWpRblxxeV5qQWH2KU5mBREudVzulMERJITyxJzU5N
+	LUgtgskycXBKNTDlTLxVuPzYiYZVQjZGwTNvMG2fwWI/Jflayr0Jxi1lCfd8hAJlJhquu/iq
+	tKVm4c21a0yXOb01SRFxzBM9klI44fv/p6LMq7V5812O3pLcMnH5w1f2dYdvLaj7x5vzpeEU
+	v1zK+nVMN59791k6HWv/3vzn/wznD6Iv9ktKMy7Kb/1yR7TPmO3TgVlPvlUz+SQsX9IdfMn8
+	dPyEbQsC95b4sfBftZnSWrXllWr6Mv6yK+xTszuKDGVv/bitNTX6U5fOrDlmP+8+m2JWtDid
+	5cb1X/O2SL44cmFG0LmDrlJTpX4dvK3q+b6Jv8U6rXeT7kO2xLNWhYd0DVZLrpsgWX+ob/GO
+	iFOf58rkm6xRK/5YpsRSnJFoqMVcVJwIANFQsLqjAgAA
+X-CMS-MailID: 20240610113848epcas2p3742cffc295e0ebb35713a761c06e1c47
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240610113847epcas2p15182d509cb4b46b2cda6f781748264b8
-References: <CGME20240610113847epcas2p15182d509cb4b46b2cda6f781748264b8@epcas2p1.samsung.com>
+X-CMS-RootMailID: 20240610113848epcas2p3742cffc295e0ebb35713a761c06e1c47
+References: <1718019553-111939-1-git-send-email-dh10.jung@samsung.com>
+	<CGME20240610113848epcas2p3742cffc295e0ebb35713a761c06e1c47@epcas2p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -128,38 +131,43 @@ the ERSTBA is programmed ERSTBA_HI before ERSTBA_LO. But, writing operations
 in xHCI is done low-high order following xHCI spec. xHCI specification 5.1
 "Register Conventions" states that 64 bit registers should be written in
 low-high order. Synopsys dwc3 needs workaround for high-low order. That's why
-I add new quirk to support this.
+adding new quirk is needed to support this.
 
+Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
 ---
-Changes in v3:
-- remove dt-bindings of dwc3/xhci
-- pass quirk property unconditionally from dwc3 to xhci platform
-- add description and change note in each patch
-Link to v2: https://lore.kernel.org/r/1717135657-120818-1-git-send-email-dh10.jung@samsung.com/
-
-Changes in v2:
-- add a quirk in dwc3
-- add dt-bindings of dwc3/xhci
-- set the quirk in xhci-plat from dwc3
-Link to v1: https://lore.kernel.org/r/1716875836-186791-1-git-send-email-dh10.jung@samsung.com/
-
-Changes in v1:
-- add a quirk in xhci
-- use the quirk for programming ERST high-low order
-Link to RFC: https://lore.kernel.org/r/1716339839-44022-1-git-send-email-dh10.jung@samsung.com/
+v1 -> v2:
+- this patch is added newly in the patchset
+- add a property in dwc3 structure
+v2 -> v3:
+- add change note
+- add description in commit message
+- remove the property in dwc3 structure to pass it unconditionally
 ---
+ drivers/usb/dwc3/host.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Daehwan Jung (3):
-  usb: dwc3: Support quirk for writing high-low order
-  xhci: Add a quirk for writing ERST in high-low order
-  usb: host: xhci-plat: Add support for XHCI_WRITE_64_HI_LO
-
- drivers/usb/dwc3/host.c      | 4 +++-
- drivers/usb/host/xhci-mem.c  | 5 ++++-
- drivers/usb/host/xhci-plat.c | 3 +++
- drivers/usb/host/xhci.h      | 2 ++
- 4 files changed, 12 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+index a171b27..e0533ce 100644
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
+@@ -126,7 +126,7 @@ static int dwc3_host_get_irq(struct dwc3 *dwc)
+ 
+ int dwc3_host_init(struct dwc3 *dwc)
+ {
+-	struct property_entry	props[5];
++	struct property_entry	props[6];
+ 	struct platform_device	*xhci;
+ 	int			ret, irq;
+ 	int			prop_idx = 0;
+@@ -162,6 +162,8 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 
+ 	props[prop_idx++] = PROPERTY_ENTRY_BOOL("xhci-sg-trb-cache-size-quirk");
+ 
++	props[prop_idx++] = PROPERTY_ENTRY_BOOL("write-64-hi-lo-quirk");
++
+ 	if (dwc->usb3_lpm_capable)
+ 		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
+ 
 -- 
 2.7.4
 
