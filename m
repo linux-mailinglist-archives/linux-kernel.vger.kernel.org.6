@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-207821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6A7901CAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141A8901CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 305D1B20DD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:15:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8551C281B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D24E558B6;
-	Mon, 10 Jun 2024 08:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ECB5B69E;
+	Mon, 10 Jun 2024 08:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lW0ACqbh"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rZPTBWm0"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2603858AB9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0DE21A0D;
+	Mon, 10 Jun 2024 08:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007255; cv=none; b=lNqXP1gwvkN+m/yI4AaFpR1dADKZ46E/zGGK35EapuYZaShKLlGE6/XBGWPSJAwGchItiL67E/fSunIcwqgWT46YdOTemmW/s+qe0kp/RTz9L/HW3xJvP8DD125XaQmbzGq36egrwYqjfYNsig0aCrsPNJE9WSpxc/obKSjCTxs=
+	t=1718007373; cv=none; b=sfWxg7Ruu5FXXHN8H9yIT0hMBWoyBaBXz4jaFJtbLMO0wX15gUJ9jVT4cu9+G6gdYlhy4PcIlYqUBOAKJHZglF104DE60wHgxKxe4M0+Vft4zDYFqATN3zKYs0OfT+kWKrRjxo/C3qKJQ4rxy6Qo2YQq4Wt/VyPC7HNtKUhQg6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007255; c=relaxed/simple;
-	bh=J1o7GUOJzCSDHzhvzvHGZsnc3g+z5nolKVnnUTDks00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNL52316DtyIw4xMiW4XcT2htLiRCZeaxudap+F+Q99PgIQ0/btUIg+yJ35ecjnn6CpQjMRSyAOdn6xEefurbyxUjU3E1ckGwQbRpO71bGBCHwxUxF5KQmfnEOspkCewdJ13cudZIX1eZkbREn2j1kRkh0wIf2W1Suq8bBA4+HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lW0ACqbh; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718007252;
-	bh=J1o7GUOJzCSDHzhvzvHGZsnc3g+z5nolKVnnUTDks00=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lW0ACqbhxTzXDV5cwzEwamHYYJWcHpT2kKhiPxWvzG/+zG0WyPKrb81HgJ/xCJ9lc
-	 ZWPVNv4ULxyTfRPlBlM2BsMMPRpo2wugYVb5KNJYrhoWaqwAtUWFfYke+KQCDBrmmc
-	 NnflFzlyqkxw8EwQ2TF8QzoCwAbqRAM5dHXOL3+fRvHNEOTv+JLQe5y14zygZHRH7k
-	 UrFs+TQnKcj2SjXtT7Sg42aM55bqI52qBs9BZoRPd+D+Ffjbfcvq0E1u50oG4TW/19
-	 Vs3JgJluo+szSnOV4yCaYFICrJNn7IUo+4y93SoeMBuvXXCxnqZgo77pxgOr0dQdnM
-	 mChRDO1UKVhTQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 49BC53780575;
-	Mon, 10 Jun 2024 08:14:11 +0000 (UTC)
-Message-ID: <07a45bb1-4444-4ea3-a650-b42392c6fea9@collabora.com>
-Date: Mon, 10 Jun 2024 10:14:10 +0200
+	s=arc-20240116; t=1718007373; c=relaxed/simple;
+	bh=rRQys8joHD9dH+r0LBeh4CsDcfuPa7n+yqWQ2JDoZlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cPpptO1ZRNgEmYNmaRl1Wv95bGxh+c1k0Z7XgkVXoZmtq7U6zawgBa0gvIQEKPwX/de5wXc848a/u77CW6wDbfa/aaGUf5RPILJBnLWnuPYl6XILFSjB1fAOHsE6VnAJEnJvrvkDln3xqDBKvMjgHyLI8kDKMaKM9kCKT/qvYFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rZPTBWm0; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459LdCa7025381;
+	Mon, 10 Jun 2024 10:15:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	luPvYi2+bdeQnMajOwT0mxxtNvrSHDJwHEH0GYgBZKI=; b=rZPTBWm0ZyRUTdUs
+	WQGUpECn8E4EU1jCXf/0waiFKus+/i4Tmh5mvEjeN3RVZkjIMk5x53R459Hsnezh
+	ig2jrKrG74gbb739nA5b/jD9wFs3JlBpUXqAwOnNGw1GCDt9fLfZJvP2HwvVnLEf
+	GMu3rZkR/a/ADJbV9tgiG6h3ekCl8oVgA2zrOHVTqnSkFyv6k1A0UNXly0AzdAPM
+	wx6mHzoQhLLdj6KlEfq3t1sjS1k92jQqIgfvHroQ7rrPU31o5aNqcbqaneK1ttRB
+	xBiUlVIQJcNABkxgOgj8hkG62cSDyAyleV80Ob4btGGTl1wAKhffIybjXGG1eU4T
+	FxyFyg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yme6d5nm4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 10:15:43 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1CDB74002D;
+	Mon, 10 Jun 2024 10:15:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 78892211F37;
+	Mon, 10 Jun 2024 10:14:20 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 10:14:18 +0200
+Message-ID: <ef4d2ebb-dd2a-423d-acd1-43fdb42c1896@foss.st.com>
+Date: Mon, 10 Jun 2024 10:14:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,34 +66,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 07/16] drm/mediatek: Support more 10bit formats in OVL
-To: Shawn Sung <shawn.sung@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- Bibby Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
- "Nancy . Lin" <nancy.lin@mediatek.com>, Sean Paul <sean@poorly.run>,
- Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>,
- Fei Shao <fshao@chromium.org>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240606092635.27981-1-shawn.sung@mediatek.com>
- <20240606092635.27981-8-shawn.sung@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/1] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240610080604.291102-1-christophe.roullier@foss.st.com>
+ <06703c03-e1ce-4a94-942d-b556c6084728@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20240606092635.27981-8-shawn.sung@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <06703c03-e1ce-4a94-942d-b556c6084728@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
-Il 06/06/24 11:26, Shawn Sung ha scritto:
-> From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> 
-> Support more 10bit formats in OVL.
-> 
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Hi Krzysztof,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On 6/10/24 10:09, Krzysztof Kozlowski wrote:
+> On 10/06/2024 10:06, Christophe Roullier wrote:
+>> Enable MCP23S08 I/O expanders to manage Ethernet PHY
+>> reset in STM32MP135F-DK board.
+>>
+>> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+>> ---
+>>   arch/arm/configs/multi_v7_defconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>> index 86bf057ac3663..9758f3d41ad70 100644
+>> --- a/arch/arm/configs/multi_v7_defconfig
+>> +++ b/arch/arm/configs/multi_v7_defconfig
+>> @@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
+>>   CONFIG_SPI_SPIDEV=y
+>>   CONFIG_SPMI=y
+>>   CONFIG_PINCTRL_AS3722=y
+>> +CONFIG_PINCTRL_MCP23S08=y
+> This is not an on-SoC pinctrl, so it should be module (=m).
 
+The stmmac is in built-in, if IO-Expander (MCP23S08) is on module, we 
+have huge of message during kernel boot
 
+because stmmac driver is deferred several times. (need to wait that 
+module are ready)
+
+Thanks
+
+>
+> Best regards,
+> Krzysztof
+>
 
