@@ -1,110 +1,183 @@
-Return-Path: <linux-kernel+bounces-207731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D98901B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:21:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7968901B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A15D1C20EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD0181C21324
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FEF17BAA;
-	Mon, 10 Jun 2024 06:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49F2168C7;
+	Mon, 10 Jun 2024 06:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maD5NkFL"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Wsscs9Pi"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9F117556;
-	Mon, 10 Jun 2024 06:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6D115E81
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718000475; cv=none; b=pQmW/SeFD0rAPz0RVUM4EyQjPnxOpMUBiJjSKU4yXgCCIXjFPTi0TZsXsSz+JZe1+oBiXEfQoUcXfQeq7HlPNSrQsZz1VfNW3OqRofGOuPVjOxg/AyQNl76ohcGe9yWqfIFEp/zpQYKgMRAOrTLahG1S0HCJ/fbJge8GQCRTztk=
+	t=1718000536; cv=none; b=oE1uTCoeATVhgdC8z1sutknQwhtRkotyJsXmI78amyw1j4hGTek8amT0RV1c50yjE7tk6WdSm270lU16J2Ft9tHeajhjC9uOq/rBdjFaFw/Ys0EsZm/Bw6PDWYveoqXDw5nI4datybBuFCZsNn40nWREilz2iNEoHP2HiiSbvXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718000475; c=relaxed/simple;
-	bh=htMYL62EBgOyd3NO98KvEswQedQdv3hijD5lAZErPDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=L1wOuq4BYxJRDle2gqKs4EvkKW1Rhgjh/Sa2Mq4fed4yOsnBmGV4jKCerjcUNBHLp1ZND9Ep77WHYm7WI5PDOSxqnDBXiHe5yiPe/sIfymUSlKRTHV2rIHlddXmYG/lESsB+jnncKk/X29J3dCEEAwDACIXfngRWS06N2dWiT/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maD5NkFL; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso29384366b.3;
-        Sun, 09 Jun 2024 23:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718000472; x=1718605272; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qswQsB6GG8jzu3P/wsKzIrL88cPkFRyaSp1SLy9L8Mg=;
-        b=maD5NkFLfZrBb7/OzLIZXmcXUF1IDNvRVZg4wMMpXKtL+36dGruk61Rki8WIWB/6bv
-         L0/bSxCnXRnTfzOa/jKtJebo6XLtH4sfTxxJwTPuTOeBVtBOqYLrejYQmABAErL8uGS0
-         zQgkfD4aWiYO1m6SILrvLfCX+dEG2cpA45PaLFijd1tFXiifagMo03/K6bD6unoJiA9Y
-         oSflNH0BGOx/wvLPQgn9iQFacCC/G9Zm3O09AebRegQQw+w14SRgbDHlrSYjIG3T8nAW
-         LNJxNc5Uzy18HLV2R/DpmE9LYnZlkzIBXxFmsMyaFs7pEl3TBlrh9nleuXxbiMS++8Ux
-         Mp9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718000472; x=1718605272;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qswQsB6GG8jzu3P/wsKzIrL88cPkFRyaSp1SLy9L8Mg=;
-        b=fGeL40Sx/FAVvfWSY1FG7Hh1HtzbhsJsYqdmKb+BA3OeHkwGvo5nJeAgUATYyaB5gw
-         +nHMqC9LGXBF+/Jc9G6No+SlFn7BMP+joH9PlQCnHPfuMyAVwF4/VDhPZDpBsv7wMape
-         fC21Ixpw3iuA8nznu9n/eqSs2RIrOHnPJMmcDeTgNQSvn9LoNtHN8D+a91dyNfqWcTYK
-         cFAtbXT0wpULw4izlb0NnkYX6flncr8TMxRLCbYuPetduhKXxlp9mN1IVrXwP2klZfyq
-         XJI5MpYoK/8rYAHVmLJUcluo8ILU0B2rZLlGm82Q0RjgJrXmw+Mez8rXQT2IgHRkPj87
-         gwtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ/Pb1Wu34Biu/fbituRiJlselWwKFm4dZcGzgocrm964kNMK8EmutXYw1m84AUwOJaS8dzH9X6xPdUVn5YdmwWSrqbSDaXrABUMY5dyg1evn5kH+B9yKRlYivlRHZjAvI8VjUvY2U6vo5rZBQQErUph2ivZn89XEyU3iq7MB/fpVwn8wwZNNeiBSz4zG3BxixaXvpT8GEI8XqtFcyISM=
-X-Gm-Message-State: AOJu0YwYdLJ+Z2dMha6zdiTljbMiuc+7n57F7yumvecssZ/7+Ahb8oIi
-	NgTqVeMeuZFg50dMMzDkccTX/zvVXOEYtdS/b2Z9G5wXuC4NK7d3
-X-Google-Smtp-Source: AGHT+IFqLPALWZIZIbUadkqAjMgHaOSVsBi7G9vJUL51aSZdsu42FcyFDDDbBNSEzUxFl7u7eCdaIg==
-X-Received: by 2002:a17:906:46da:b0:a6f:2dd9:1449 with SMTP id a640c23a62f3a-a6f2dd91a59mr849466b.49.1718000472082;
-        Sun, 09 Jun 2024 23:21:12 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805cc38csm600798666b.71.2024.06.09.23.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 23:21:11 -0700 (PDT)
-Date: Mon, 10 Jun 2024 08:21:09 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	krzk+dt@kernel.org, lee@kernel.org, linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, robh@kernel.org, ukleinek@kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: Add Analog Devices ADP5585
-Message-ID: <ZmabVXaztPbp1ENV@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1718000536; c=relaxed/simple;
+	bh=Sd+jpsXblCMWsEnT2TX9KHW6JYOLO3g8AfDLow37J2M=;
+	h=Subject:To:Cc:References:From:In-Reply-To:Message-ID:Date:
+	 MIME-Version:Content-Type; b=VHB2MKwOODRZQOAcqBL5jRlmmPJu/Q3QEt/LDCSQh3MSvd+yau3W7z+jE3HLaiQXGyxy/yO4eeGeoT/hfCPbf1XsX/Mj9hej7PSI7jbSgenCnmaJtStkAzM0ertWndfZftkSHMzRSRO3hNHpDY+9u/VXzquA/QE+1ygJ+zRnZr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Wsscs9Pi; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id GV18sFjQ3SLKxGYPvspgdr; Mon, 10 Jun 2024 06:22:07 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id GYPtsocegiKqRGYPusEexg; Mon, 10 Jun 2024 06:22:06 +0000
+X-Authority-Analysis: v=2.4 cv=I9quR8gg c=1 sm=1 tr=0 ts=66669b8e
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=N659UExz7-8A:10 a=T1WGqf2p2xoA:10 a=-Ou01B_BuAIA:10 a=p0WdMEafAAAA:8
+ a=pFyQfRViAAAA:8 a=mXlUVCVxYxfRKeMwRAQA:9 a=3ZKOabzyN94A:10 a=pILNOxqGKmIA:10
+ a=oJz5jJLG1JtSoe7EL652:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:In-Reply-To:From:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iqbjLat+ztyTz4aTRhzLzYjJrZgWcXS/Xu9bkns3xKc=; b=Wsscs9PixE2NvHCYxvy/kHFtE7
+	plX7nLGtE9qGDFATaUaiuTy8IednGhnNJJHaG9UKR/jLLiWReLkZX4EUyf/UwBfMw1qRZ5vG4aUks
+	/sHzSW2Ji7xdhYK6W8LlS96MhO34rHXUX6hORndfKbYvm99NdJKhkHfScXwdmw1Sh9IMuD7JFHXQc
+	nHffzThv+we8cpWVHGLdsYbZ8qkUgGtIimzoynIZf+zgEzMElpS1h4EI21Msfa8c37JES5enADHv4
+	RF/Kv2HWk7d8PYJkG8RgKTvKPMGjzt82MnwhtZlATEjbdvaBrOVJwE2Fr21OYqvdT1PSamZqWmb9i
+	FP71OsjA==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:42662 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sGYPo-003BCq-2S;
+	Mon, 10 Jun 2024 00:22:00 -0600
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+To: Pavel Machek <pavel@denx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240609113903.732882729@linuxfoundation.org>
+ <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
+Message-ID: <ad13afda-6d20-fa88-ae7f-c1a69b1f5a40@w6rz.net>
+Date: Sun, 9 Jun 2024 23:21:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608141633.2562-2-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1sGYPo-003BCq-2S
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:42662
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 5
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPdZ6kRZ+XG2Z4zJKRx7+ZKcRWtrNlqq89WU1961SlDR5qhj+rZ2Vssqb1WWa6eVOZ2zgvieEUJuX6+gzYFZu3k/nvBwlDYkwtWf2skh0SLFFbd9wae1
+ A5jv5ghCT2ekEN5Cm3d60ZzQBeep20hp+LKxpNFkxSKbLoVZvkQ2sYH4NVwjGslzoAxZEU2jOHrsSden8RyU6vb1ENFKnEMjuqk=
 
-Hi Laurent,
+On 6/9/24 12:34 PM, Pavel Machek wrote:
+> Hi!
+>
+>> This is the start of the stable review cycle for the 6.6.33 release.
+>> There are 741 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+> 6.6 seems to have build problem on risc-v:
+>
+>    CC      kernel/locking/qrwlock.o
+> 690
+>    CC      lib/bug.o
+> 691
+>    CC      block/blk-rq-qos.o
+> 692
+> arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
+> 693
+> arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
+> 694
+>     14 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> 695
+>        |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> 696
+>        |                                                                  RISCV_ISA_EXT_ZIFENCEI
+> 697
+> arch/riscv/kernel/suspend.c:14:66: note: each undeclared identifier is reported only once for each function it appears in
+> 698
+>    CC      io_uring/io-wq.o
+> 699
+> arch/riscv/kernel/suspend.c: In function 'suspend_restore_csrs':
+> 700
+> arch/riscv/kernel/suspend.c:37:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
+> 701
+>     37 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> 702
+>        |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> 703
+>        |                                                                  RISCV_ISA_EXT_ZIFENCEI
+> 704
+> make[4]: *** [scripts/Makefile.build:243: arch/riscv/kernel/suspend.o] Error 1
+> 705
+> make[3]: *** [scripts/Makefile.build:480: arch/riscv/kernel] Error 2
+> 706
+> make[2]: *** [scripts/Makefile.build:480: arch/riscv] Error 2
+> 707
+> make[2]: *** Waiting for unfinished jobs....
+> 708
+>    CC      lib/buildid.o
+> 709
+>
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/7053222239
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1324369118
+>
+> No problems detected on 6.8-stable and 6.1-stable.
+>
+> Best regards,
+> 								Pavel
 
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> index 0a419453d183..91e62df4b296 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -39,10 +39,6 @@ properties:
->              # AD5110 - Nonvolatile Digital Potentiometer
->            - adi,ad5110
->              # Analog Devices ADP5585 Keypad Decoder and I/O Expansion
-> -          - adi,adp5585
-> -            # Analog Devices ADP5585 Keypad Decoder and I/O Expansion with support for Row5
-> -          - adi,adp5585-02
-> -            # Analog Devices ADP5589 Keypad Decoder and I/O Expansion
->            - adi,adp5589
->              # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase Step-Down Silent Switcher
->            - adi,lt7182s
+I'm seeing the same thing here. Somehow some extra patches got slipped 
+in between rc1 and rc2. The new patches for RISC-V are:
 
-seems like you removed the wrong comment here? With this, ADP5589 would have
-a comment describing ADP5585.
+Samuel Holland <samuel.holland@sifive.com>
+     riscv: Save/restore envcfg CSR during CPU suspend
 
-Regards,
-Stanislav
+commit 88b55a586b87994a33e0285c9e8881485e9b77ea
+
+Samuel Holland <samuel.holland@sifive.com>
+     riscv: Fix enabling cbo.zero when running in M-mode
+
+commit 8c6e096cf527d65e693bfbf00aa6791149c58552
+
+The first patch "riscv: Save/restore envcfg CSR during CPU suspend" 
+causes the build failure.
+
 
