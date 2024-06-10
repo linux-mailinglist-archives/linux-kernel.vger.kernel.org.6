@@ -1,364 +1,194 @@
-Return-Path: <linux-kernel+bounces-207975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F49E901EA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813C7901EA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A239B2115E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31FB3285401
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3730770F4;
-	Mon, 10 Jun 2024 09:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B0175817;
+	Mon, 10 Jun 2024 09:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOzlAhiP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VP6MXRfk"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2044.outbound.protection.outlook.com [40.107.101.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691A42AA1;
-	Mon, 10 Jun 2024 09:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718013340; cv=none; b=UFUN66YDGVx4WIcsyE7VO5wYawbVbj/wTK6WoQgnIyB/7b+XRxDUH7/dFWvXOKzQPSXG0b9/wEDXSaDPBqlQTnglGCLK//h7UXyJqqH1zGWMwQXX8yK3cjiE9CmGLGkYvScIIjQILzCx7X618EBfkJoNNB+/WE2E4xKVe0dwvD8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718013340; c=relaxed/simple;
-	bh=qP3A/bPQSWOrxCQjGjByVI5xJWXodHkxEeKNixMY78k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYh3aDzYDRa3zIU59PYAyYxm9nfKezsENEwMIJ19xVdMXz44Zt1ZoGj5O0k73+YZRDwEMXPKnF+LhF1a1IcGD3cB6lNenrmHAotg1TKeu8rTri/DL7KhIu8bnDQ5KGpqrgVkmE3RnastE13x9DPLXXv2+bKTcoC4bVbU73B7GGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOzlAhiP; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718013339; x=1749549339;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qP3A/bPQSWOrxCQjGjByVI5xJWXodHkxEeKNixMY78k=;
-  b=MOzlAhiPo/4QaFM423UTk5b6pYFuWCaWPu2VztCWAjEp7Dc+aldGldSv
-   Jk05bNQnShsbQw6fRBwWcI7rqpZbwKklkrupya7/QHZAN+N4V4AzMA5Io
-   LD+p+T3/QCCebzgQAqZdqAzAmBf8xYdJoeKJVJjZxUdDQQYDOEPS6YaY5
-   DdUSET4uIN/Ycr3jP8d2X81z1lXVU9aUcR6x8Az5O5ILT0o0rAY13Ht7G
-   eMoUZAk0v8PgD1splUOkH8rOnF1YIVkJ70CFQJu1uRnkw3KpRhUBtpf7w
-   14hOYRH5JqLD0B22eSzoXZ30hxyo3gfz+bKlefNjqO8GJMToA+MGj7B9+
-   A==;
-X-CSE-ConnectionGUID: iNRrUx+rRbWf2y+aOAAvkA==
-X-CSE-MsgGUID: fMrzlGlLTHq9mdOi+kY3Qg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="14397401"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14397401"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 02:55:38 -0700
-X-CSE-ConnectionGUID: MkV92I2KQourMl9gtN6Vyw==
-X-CSE-MsgGUID: aSJXRSOETPugBl8FAbyybA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="43935030"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 10 Jun 2024 02:55:34 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGbkR-00022r-1R;
-	Mon, 10 Jun 2024 09:55:31 +0000
-Date: Mon, 10 Jun 2024 17:55:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] interconnect: qcom: qcs404: Add regmaps and more bus
- descriptions
-Message-ID: <202406101715.AMP9VWkx-lkp@intel.com>
-References: <20240609182112.13032-7-a39.skl@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B3E7440B;
+	Mon, 10 Jun 2024 09:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718013421; cv=fail; b=FpTxvXNUIssMgq4Ke5ZbZSeXsJQ70Vorab7S/Vw/5iQZtOplb/U8AeStZDc+TqOjIWvnmIPvXJ5QvMI5Qg/EeXAFIBMo7c1kF0RNFpvHWfQ00V7pJPsHA6vP1B0S+wxy/5zyxLo2etqCECpdhzO7IkwxCaJ81N5FiRzyJNodHHE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718013421; c=relaxed/simple;
+	bh=2+gM5B6OHxO88DWWN60o9FwTuKgwM8+lmwjCZUtM+4o=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=SpyzTs5qj2Mx6AqxjhMV0XEMwKWMuQtTXepH0wsBzgD7klnBxn7+PI4MckK0O9j75+Ccsxki9uvZc5evdFQATfODc74EyulXCFEvXg6jTHOyNYnJSA3pRl+aYpFCfOEzF0fXwUmRJzTAmQgpWt+6dO50m0AaUEeinUFYOhK0T9I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VP6MXRfk; arc=fail smtp.client-ip=40.107.101.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rf6vm/n0DeqPk5c+nwgdr3JGpL0gltP8Nim0cD78+Vuk6SiX9bfN4AsthJAD1cef2W++dbJLjxoD0sFj7Nnt5blnzZXyQ0t9ddDACS+N/BuUdJ1UGxhm/Ssb3Pk1A7kC0JMLfO/R/YBEmj1/2AUPUU0QZDvXdrfm7JlcLsJY/cdRqHT5zd5ZJmqH57+jvcYaU1IBA9OYLwGSek02BJwolRfJgnSolQKyqqTMrzFC32BM8lrX1HMaraul8X6MyEmLRdN2u6+K5ScH6dgBHQrVUVV4IZNsEndruBD+v6qRcGhEV/DerkkjHQPnsqP6TvaoekVznjGBkYPWauF8e7GtnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hw0YV3l9VvSx+5+SqyWCGxFN52y7oV0Xif5sLIFFWBI=;
+ b=MHxGb7q3lxA73cREGHkoYiw9lIb38OsXKOCB6wDFLj5kmwluAAkzFfjsMLUlEfYPKH2epQ+dvlBUMBJMA4cJMvac2I4TNK+tp7VOfBk4gSDB9jNSRq9NKz0WkxlqSA4JfcCPAYUMeeFDTTfs3lxF85up5pk4sISeDdES6YkPBUgNG9DxeP27issp24rf2AIQq6auLwNptC2akoLVELQZn/2MsSyewOr6S3ufvqQYiu3dspLzWjKQ8XtOyyzzf0Vk2lMgQBd66QmxlKrBvasdxJxvxr8OFOSdzebnkKb2KnfHlhbcW7pK5yi34S8Ms4A1fgCrOrhkOoM+PpRUBCPDaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hw0YV3l9VvSx+5+SqyWCGxFN52y7oV0Xif5sLIFFWBI=;
+ b=VP6MXRfk3Avo3vGlJwTIStx1yrSoVGmtzMVAJu2nwTW2DeqFPyHX1fceG2nDIEM1e/rNLNO32VzgEYAJIJPBTk/jfBrjv9ih9RrcbZOdOukbAHD4RmhId30SikCjK+Lco9F/DA+toPIPoTxVubJWrQmCdJbBdQWmPr2w63yhLjhV8I+Svog6bjcyvxl1EGf9HX2NW7D7h2yfGD37jC4/QFl/iKvQm2k+FJLwwoBpu9TxeExERAyskJ64qus190D4/YdGglf9XEFPVIt0erbWlns7XJvKEFzfdI8X9y7kqCeW3ag4oLw4ClZP7jNcsRRZHC1Ss0WscupqS8+t+IsIDw==
+Received: from CH2PR05CA0021.namprd05.prod.outlook.com (2603:10b6:610::34) by
+ SJ1PR12MB6196.namprd12.prod.outlook.com (2603:10b6:a03:456::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.36; Mon, 10 Jun 2024 09:56:56 +0000
+Received: from CH3PEPF0000000F.namprd04.prod.outlook.com (2603:10b6:610::4) by
+ CH2PR05CA0021.outlook.office365.com (2603:10b6:610::34) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.17 via Frontend Transport; Mon, 10 Jun 2024 09:56:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Mon, 10 Jun 2024 09:56:56 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 10 Jun
+ 2024 02:56:48 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 10 Jun 2024 02:56:48 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 10 Jun 2024 02:56:48 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
+References: <20240609113903.732882729@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609182112.13032-7-a39.skl@gmail.com>
+Message-ID: <116d80cb-7dce-41d6-b279-90201e253d7e@drhqmail201.nvidia.com>
+Date: Mon, 10 Jun 2024 02:56:48 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|SJ1PR12MB6196:EE_
+X-MS-Office365-Filtering-Correlation-Id: 516b260e-407e-44e1-f09f-08dc8933a9c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|376005|36860700004|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a0xXUVdpbWdRelZMQVJzczFBZlE4WXlIYW96c3Yyd010SW05WWhaYytBb21j?=
+ =?utf-8?B?UzljTlF6YkszSE9sMDcwbnNpRXEvSVpFMkVlVmxxdTNXa0FGUTh0Z09CZTQ1?=
+ =?utf-8?B?VE9TbDNpc2srbDJ2YXVxNmRkRC9PU1A4ZmhmQ3d2Y2Q3MDdSVnNsT2dPNFVt?=
+ =?utf-8?B?eVEwbndRZXIwdEMyMlhpWmNDSDRtelVRTE02UDhmOThRYjJ0amxyNUkzbHd0?=
+ =?utf-8?B?aVlzOFNSanhISHBsRnhXY0FDVzI3VnNESit4RFYxL3l4U3JFOHVXU1prUHEx?=
+ =?utf-8?B?UlFGQ2c4aFJYN1liTnFDZ20yUnowTFRzT2E0MlZ5TWpOU1FmbndOUXFGMjNm?=
+ =?utf-8?B?UzB4UGFQZlhGWll0QzY2TjViYUs1WW1MMVhGV2V0cDFYenJUMEhkM2tPZ3ND?=
+ =?utf-8?B?TTk0d2ZQc3kyWmJkNUFWZjE3OGFwZnQ2WXlOcVJ3T2JLUzdyVXhWMzkremhB?=
+ =?utf-8?B?a3BYemxiMmE0eTUzV1kzck5VYUk5QlhiZGVwRkZnd2YrQTlIWVRnTEIzTWl1?=
+ =?utf-8?B?dDdta3pZckM4ZUIyTDU1b3NjL1ZzZGNQVmc1MG5wcVdwbVFxSWRIMVhBK3BR?=
+ =?utf-8?B?Qk5qUG1hQkRvcWUxVUxxOERmb1FNem1ZZTVZSlRoZUJHNGpjZGo4UnZDUVc1?=
+ =?utf-8?B?RkM1T0pBZGxaMUhianc5MHZFS0IyL0dzNmtkRVJwd2RTcTlFZWFkUDJZMXJM?=
+ =?utf-8?B?VWlTQTVQMDVjUE1XQi9zK3ZLSGRHQW51Q0F6dTNpUnRiYzg3d0EwcUN0Zitw?=
+ =?utf-8?B?aGJqQmx1VUdDcFRkMklVakJ0dzAvd2JiMFFIaTc5QTAwbXpxeDE0MUFHU0hh?=
+ =?utf-8?B?LzYzWWxQMkFzNXJ0OUtwejd0eVJWUFppY3Vkd3lPM3lhS0JBOE94QXVRak1y?=
+ =?utf-8?B?bDIxMFFzc0p2MitySWJLYzJZM0tnZnJpdnhSNG9ud1ZwV3hDRWc5YWdBL0hu?=
+ =?utf-8?B?QzlNSVJVeGJYVUdLcUFHOHpJZW9CekkxMHNsRkV5YXM3VmY2NXhCUFk5ek1l?=
+ =?utf-8?B?djlkK0wxVG5YaWMzUFl6T1ZmSG1tTzBrVTBwejVPaVNEbUdQM0REa3pPMFVF?=
+ =?utf-8?B?T2xNSmYwWWtaYnBoWGRhY3ZXaXc3QWRXZ1lrajQ5MDBjZ3gwVUpPOWJDcWdp?=
+ =?utf-8?B?RmJudjl3bjh1Wk9xYWdOUDlRajcwdmJuTnZwR0JnNFU2WDNTdzRSUFNPV3Qw?=
+ =?utf-8?B?N1JsQmNaMFRCUGxlZWFpaE9nbGtIejhCQ1pPV2c5RFUwK3dUZTFVQ2x4VDlN?=
+ =?utf-8?B?QlBaa0tRU2FBWjhVMG4zaVQvelYxRndCRVVFelNpTDFJclV6anEra2RFSGFV?=
+ =?utf-8?B?RGs0RENQelgrelpCT09WNFdUcEVCK0Q0UHNxdk0zRmM0ZmNNVXQ2a1h2cDZ2?=
+ =?utf-8?B?dXlMdFdmQmtvK0dQejhsUVFkUEF3b1VFTU8yODQ1MTdxTXMvR2wwMUJublhX?=
+ =?utf-8?B?Und0NTJJbENxckh1aHQrdUpPemg4VEk1aDFIcG1qTkRnb0VtWGRtZzM0ekw5?=
+ =?utf-8?B?V0QxNjhiQWpVRVhSemVVRGwxUk5wRURhWXZqMldmMXlCRnNMeVRCWU9hNjJZ?=
+ =?utf-8?B?Mkl5OEVBU0VRM3pUNEkvdVdEbkpTYy9LUGRGNFdnMUJWOWJ1WjB6WVcyY1JM?=
+ =?utf-8?B?TmxSUVV2cGhyK2FrR2pyRHVXSXRBMHBkbHZ6Q2NWS2xSRUl0QlJKWGhDUUtK?=
+ =?utf-8?B?Tzh3cGRYeGdVZmVBZFhzdForRStQVUVNL3U0VEJQK0YycUltb0owbmtNcTFF?=
+ =?utf-8?B?clJmQUw0ckQ3QWVUbGc1TzdEbU5FSkZHbTBOVnJKemw1RmE4S1FNZE5ONkZm?=
+ =?utf-8?B?S2dWYlczYk9wVUZaMVBRQ0Y4cDhpUWJENzhKSHJYMjlHamI5bTVoVm9mMHQr?=
+ =?utf-8?B?c1NiY1FYVDBNVS9yWWllWURUcjJBQ3VkQWJXQXNrV2xFQlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(376005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 09:56:56.2758
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 516b260e-407e-44e1-f09f-08dc8933a9c1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6196
 
-Hi Adam,
+On Sun, 09 Jun 2024 13:41:16 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 741 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-kernel test robot noticed the following build errors:
+All tests passing for Tegra ...
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.10-rc3 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adam-Skladowski/dt-bindings-interconnect-Add-Qualcomm-MSM8976-DT-bindings/20240610-022416
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240609182112.13032-7-a39.skl%40gmail.com
-patch subject: [PATCH 6/7] interconnect: qcom: qcs404: Add regmaps and more bus descriptions
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240610/202406101715.AMP9VWkx-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406101715.AMP9VWkx-lkp@intel.com/reproduce)
+Linux version:	6.6.33-rc2-g7fa271200aef
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406101715.AMP9VWkx-lkp@intel.com/
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-All error/warnings (new ones prefixed by >>):
-
->> drivers/interconnect/qcom/qcs404.c:1070:21: error: variable 'qcs404_bimc_regmap_config' has initializer but incomplete type
-    1070 | static const struct regmap_config qcs404_bimc_regmap_config = {
-         |                     ^~~~~~~~~~~~~
->> drivers/interconnect/qcom/qcs404.c:1071:10: error: 'const struct regmap_config' has no member named 'reg_bits'
-    1071 |         .reg_bits = 32,
-         |          ^~~~~~~~
->> drivers/interconnect/qcom/qcs404.c:1071:21: warning: excess elements in struct initializer
-    1071 |         .reg_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1071:21: note: (near initialization for 'qcs404_bimc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1072:10: error: 'const struct regmap_config' has no member named 'reg_stride'
-    1072 |         .reg_stride = 4,
-         |          ^~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1072:23: warning: excess elements in struct initializer
-    1072 |         .reg_stride = 4,
-         |                       ^
-   drivers/interconnect/qcom/qcs404.c:1072:23: note: (near initialization for 'qcs404_bimc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1073:10: error: 'const struct regmap_config' has no member named 'val_bits'
-    1073 |         .val_bits = 32,
-         |          ^~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1073:21: warning: excess elements in struct initializer
-    1073 |         .val_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1073:21: note: (near initialization for 'qcs404_bimc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1074:10: error: 'const struct regmap_config' has no member named 'max_register'
-    1074 |         .max_register = 0x80000,
-         |          ^~~~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1074:25: warning: excess elements in struct initializer
-    1074 |         .max_register = 0x80000,
-         |                         ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1074:25: note: (near initialization for 'qcs404_bimc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1075:10: error: 'const struct regmap_config' has no member named 'fast_io'
-    1075 |         .fast_io = true,
-         |          ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1075:20: warning: excess elements in struct initializer
-    1075 |         .fast_io = true,
-         |                    ^~~~
-   drivers/interconnect/qcom/qcs404.c:1075:20: note: (near initialization for 'qcs404_bimc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1137:21: error: variable 'qcs404_pcnoc_regmap_config' has initializer but incomplete type
-    1137 | static const struct regmap_config qcs404_pcnoc_regmap_config = {
-         |                     ^~~~~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1138:10: error: 'const struct regmap_config' has no member named 'reg_bits'
-    1138 |         .reg_bits = 32,
-         |          ^~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1138:21: warning: excess elements in struct initializer
-    1138 |         .reg_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1138:21: note: (near initialization for 'qcs404_pcnoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1139:10: error: 'const struct regmap_config' has no member named 'reg_stride'
-    1139 |         .reg_stride = 4,
-         |          ^~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1139:23: warning: excess elements in struct initializer
-    1139 |         .reg_stride = 4,
-         |                       ^
-   drivers/interconnect/qcom/qcs404.c:1139:23: note: (near initialization for 'qcs404_pcnoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1140:10: error: 'const struct regmap_config' has no member named 'val_bits'
-    1140 |         .val_bits = 32,
-         |          ^~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1140:21: warning: excess elements in struct initializer
-    1140 |         .val_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1140:21: note: (near initialization for 'qcs404_pcnoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1141:10: error: 'const struct regmap_config' has no member named 'max_register'
-    1141 |         .max_register = 0x15080,
-         |          ^~~~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1141:25: warning: excess elements in struct initializer
-    1141 |         .max_register = 0x15080,
-         |                         ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1141:25: note: (near initialization for 'qcs404_pcnoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1142:10: error: 'const struct regmap_config' has no member named 'fast_io'
-    1142 |         .fast_io = true,
-         |          ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1142:20: warning: excess elements in struct initializer
-    1142 |         .fast_io = true,
-         |                    ^~~~
-   drivers/interconnect/qcom/qcs404.c:1142:20: note: (near initialization for 'qcs404_pcnoc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1178:21: error: variable 'qcs404_snoc_regmap_config' has initializer but incomplete type
-    1178 | static const struct regmap_config qcs404_snoc_regmap_config = {
-         |                     ^~~~~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1179:10: error: 'const struct regmap_config' has no member named 'reg_bits'
-    1179 |         .reg_bits = 32,
-         |          ^~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1179:21: warning: excess elements in struct initializer
-    1179 |         .reg_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1179:21: note: (near initialization for 'qcs404_snoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1180:10: error: 'const struct regmap_config' has no member named 'reg_stride'
-    1180 |         .reg_stride = 4,
-         |          ^~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1180:23: warning: excess elements in struct initializer
-    1180 |         .reg_stride = 4,
-         |                       ^
-   drivers/interconnect/qcom/qcs404.c:1180:23: note: (near initialization for 'qcs404_snoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1181:10: error: 'const struct regmap_config' has no member named 'val_bits'
-    1181 |         .val_bits = 32,
-         |          ^~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1181:21: warning: excess elements in struct initializer
-    1181 |         .val_bits = 32,
-         |                     ^~
-   drivers/interconnect/qcom/qcs404.c:1181:21: note: (near initialization for 'qcs404_snoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1182:10: error: 'const struct regmap_config' has no member named 'max_register'
-    1182 |         .max_register = 0x23080,
-         |          ^~~~~~~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1182:25: warning: excess elements in struct initializer
-    1182 |         .max_register = 0x23080,
-         |                         ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1182:25: note: (near initialization for 'qcs404_snoc_regmap_config')
-   drivers/interconnect/qcom/qcs404.c:1183:10: error: 'const struct regmap_config' has no member named 'fast_io'
-    1183 |         .fast_io = true,
-         |          ^~~~~~~
-   drivers/interconnect/qcom/qcs404.c:1183:20: warning: excess elements in struct initializer
-    1183 |         .fast_io = true,
-         |                    ^~~~
-   drivers/interconnect/qcom/qcs404.c:1183:20: note: (near initialization for 'qcs404_snoc_regmap_config')
->> drivers/interconnect/qcom/qcs404.c:1070:35: error: storage size of 'qcs404_bimc_regmap_config' isn't known
-    1070 | static const struct regmap_config qcs404_bimc_regmap_config = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/interconnect/qcom/qcs404.c:1137:35: error: storage size of 'qcs404_pcnoc_regmap_config' isn't known
-    1137 | static const struct regmap_config qcs404_pcnoc_regmap_config = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/interconnect/qcom/qcs404.c:1178:35: error: storage size of 'qcs404_snoc_regmap_config' isn't known
-    1178 | static const struct regmap_config qcs404_snoc_regmap_config = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/qcs404_bimc_regmap_config +1070 drivers/interconnect/qcom/qcs404.c
-
-  1069	
-> 1070	static const struct regmap_config qcs404_bimc_regmap_config = {
-> 1071		.reg_bits = 32,
-> 1072		.reg_stride = 4,
-> 1073		.val_bits = 32,
-> 1074		.max_register = 0x80000,
-> 1075		.fast_io = true,
-  1076	};
-  1077	
-  1078	static const struct qcom_icc_desc qcs404_bimc = {
-  1079		.type = QCOM_ICC_BIMC,
-  1080		.nodes = qcs404_bimc_nodes,
-  1081		.num_nodes = ARRAY_SIZE(qcs404_bimc_nodes),
-  1082		.bus_clk_desc = &bimc_clk,
-  1083		.regmap_cfg = &qcs404_bimc_regmap_config,
-  1084		.qos_offset = 0x8000,
-  1085		.ab_coeff = 153,
-  1086	};
-  1087	
-  1088	static struct qcom_icc_node * const qcs404_pcnoc_nodes[] = {
-  1089		[MASTER_SPDM] = &mas_spdm,
-  1090		[MASTER_BLSP_1] = &mas_blsp_1,
-  1091		[MASTER_BLSP_2] = &mas_blsp_2,
-  1092		[MASTER_XI_USB_HS1] = &mas_xi_usb_hs1,
-  1093		[MASTER_CRYPT0] = &mas_crypto,
-  1094		[MASTER_SDCC_1] = &mas_sdcc_1,
-  1095		[MASTER_SDCC_2] = &mas_sdcc_2,
-  1096		[MASTER_SNOC_PCNOC] = &mas_snoc_pcnoc,
-  1097		[MASTER_QPIC] = &mas_qpic,
-  1098		[PCNOC_INT_0] = &pcnoc_int_0,
-  1099		[PCNOC_INT_2] = &pcnoc_int_2,
-  1100		[PCNOC_INT_3] = &pcnoc_int_3,
-  1101		[PCNOC_S_0] = &pcnoc_s_0,
-  1102		[PCNOC_S_1] = &pcnoc_s_1,
-  1103		[PCNOC_S_2] = &pcnoc_s_2,
-  1104		[PCNOC_S_3] = &pcnoc_s_3,
-  1105		[PCNOC_S_4] = &pcnoc_s_4,
-  1106		[PCNOC_S_6] = &pcnoc_s_6,
-  1107		[PCNOC_S_7] = &pcnoc_s_7,
-  1108		[PCNOC_S_8] = &pcnoc_s_8,
-  1109		[PCNOC_S_9] = &pcnoc_s_9,
-  1110		[PCNOC_S_10] = &pcnoc_s_10,
-  1111		[PCNOC_S_11] = &pcnoc_s_11,
-  1112		[SLAVE_SPDM] = &slv_spdm,
-  1113		[SLAVE_PDM] = &slv_pdm,
-  1114		[SLAVE_PRNG] = &slv_prng,
-  1115		[SLAVE_TCSR] = &slv_tcsr,
-  1116		[SLAVE_SNOC_CFG] = &slv_snoc_cfg,
-  1117		[SLAVE_MESSAGE_RAM] = &slv_message_ram,
-  1118		[SLAVE_DISP_SS_CFG] = &slv_disp_ss_cfg,
-  1119		[SLAVE_GPU_CFG] = &slv_gpu_cfg,
-  1120		[SLAVE_BLSP_1] = &slv_blsp_1,
-  1121		[SLAVE_BLSP_2] = &slv_blsp_2,
-  1122		[SLAVE_TLMM_NORTH] = &slv_tlmm_north,
-  1123		[SLAVE_PCIE] = &slv_pcie,
-  1124		[SLAVE_ETHERNET] = &slv_ethernet,
-  1125		[SLAVE_TLMM_EAST] = &slv_tlmm_east,
-  1126		[SLAVE_TCU] = &slv_tcu,
-  1127		[SLAVE_PMIC_ARB] = &slv_pmic_arb,
-  1128		[SLAVE_SDCC_1] = &slv_sdcc_1,
-  1129		[SLAVE_SDCC_2] = &slv_sdcc_2,
-  1130		[SLAVE_TLMM_SOUTH] = &slv_tlmm_south,
-  1131		[SLAVE_USB_HS] = &slv_usb_hs,
-  1132		[SLAVE_USB3] = &slv_usb3,
-  1133		[SLAVE_CRYPTO_0_CFG] = &slv_crypto_0_cfg,
-  1134		[SLAVE_PCNOC_SNOC] = &slv_pcnoc_snoc,
-  1135	};
-  1136	
-> 1137	static const struct regmap_config qcs404_pcnoc_regmap_config = {
-  1138		.reg_bits = 32,
-  1139		.reg_stride = 4,
-  1140		.val_bits = 32,
-  1141		.max_register = 0x15080,
-  1142		.fast_io = true,
-  1143	};
-  1144	
-  1145	static const struct qcom_icc_desc qcs404_pcnoc = {
-  1146		.type = QCOM_ICC_NOC,
-  1147		.nodes = qcs404_pcnoc_nodes,
-  1148		.num_nodes = ARRAY_SIZE(qcs404_pcnoc_nodes),
-  1149		.bus_clk_desc = &bus_0_clk,
-  1150		.qos_offset = 0x7000,
-  1151		.keep_alive = true,
-  1152		.regmap_cfg = &qcs404_pcnoc_regmap_config,
-  1153	};
-  1154	
-  1155	static struct qcom_icc_node * const qcs404_snoc_nodes[] = {
-  1156		[MASTER_QDSS_BAM] = &mas_qdss_bam,
-  1157		[MASTER_BIMC_SNOC] = &mas_bimc_snoc,
-  1158		[MASTER_PCNOC_SNOC] = &mas_pcnoc_snoc,
-  1159		[MASTER_QDSS_ETR] = &mas_qdss_etr,
-  1160		[MASTER_EMAC] = &mas_emac,
-  1161		[MASTER_PCIE] = &mas_pcie,
-  1162		[MASTER_USB3] = &mas_usb3,
-  1163		[QDSS_INT] = &qdss_int,
-  1164		[SNOC_INT_0] = &snoc_int_0,
-  1165		[SNOC_INT_1] = &snoc_int_1,
-  1166		[SNOC_INT_2] = &snoc_int_2,
-  1167		[SLAVE_KPSS_AHB] = &slv_kpss_ahb,
-  1168		[SLAVE_WCSS] = &slv_wcss,
-  1169		[SLAVE_SNOC_BIMC_1] = &slv_snoc_bimc_1,
-  1170		[SLAVE_IMEM] = &slv_imem,
-  1171		[SLAVE_SNOC_PCNOC] = &slv_snoc_pcnoc,
-  1172		[SLAVE_QDSS_STM] = &slv_qdss_stm,
-  1173		[SLAVE_CATS_0] = &slv_cats_0,
-  1174		[SLAVE_CATS_1] = &slv_cats_1,
-  1175		[SLAVE_LPASS] = &slv_lpass,
-  1176	};
-  1177	
-> 1178	static const struct regmap_config qcs404_snoc_regmap_config = {
-  1179		.reg_bits = 32,
-  1180		.reg_stride = 4,
-  1181		.val_bits = 32,
-  1182		.max_register = 0x23080,
-  1183		.fast_io = true,
-  1184	};
-  1185	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jon
 
