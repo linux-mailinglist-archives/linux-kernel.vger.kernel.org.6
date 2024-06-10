@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-207792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10981901C3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:01:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4CA901C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0111F2286E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7111B2823F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46C1558B9;
-	Mon, 10 Jun 2024 08:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B155892;
+	Mon, 10 Jun 2024 08:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E0dNFPWF"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EKlc5Pgy"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F562B9D4;
-	Mon, 10 Jun 2024 08:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5075558AD;
+	Mon, 10 Jun 2024 08:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006461; cv=none; b=aijPMY/0k06MG319ByyVD247kcx05rQWL3iUTWnPM/Cioi9ei0mZmd2Rp7ssg4ewE8pE2YEcTjncpvbeLd38lDldwa8bb18rUXMfHSXRYSoZ+7zpRXl8ELmocgIBSt66AqTYRI2lwyaTqJoO713N3z1Pu6vRkglzPrqH+PCjS6g=
+	t=1718006722; cv=none; b=r7nWiqWgeD7vgNKVcA+p/A87jY3gs8tCvmuinh4XuUNI5nAcxxE0LP9YZaC6JNW8L9WAWNRxE3+MWkbbBvFCDzq4G873pYFVkD/N7P/45qjAEuP2sK27jfR7z6PRsL4DiMKxLnBovl3gTuGmu9n9JsFxWoD5HomKL4fvL3uKGfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006461; c=relaxed/simple;
-	bh=1qc8sEPJXgX5QVHao+W1jv64OvLM7kYZ9yU+Gf0Z1dI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCYD8uCflWRNlj71PV9OHQuG3ZY2ZxdyLbgsMcNlDYyvzilpWoM7pzfgD6jpteiK90wf6pdA84F5GAiNLevkaTz044D949+eL6Ms6szn1Pncx2916gjj+5bIblPOttFxXfrOH5OWT067dQFJcDLGFKTJvJ6TN+at9xe09Dl+usY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E0dNFPWF; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718006457;
-	bh=1qc8sEPJXgX5QVHao+W1jv64OvLM7kYZ9yU+Gf0Z1dI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E0dNFPWFdu9QwVQ4mckqkzCeoKk+njabiRFivBjbv15atGBo7I9qaQPBmaW7/n6Uc
-	 3X3nXznhVVgzRjDCKXiBHSrwf8uH9+5XcjX7PneBkrSZonZZ0bholbelAR5GMynrKP
-	 M1zLUkSI4x65uIz3V3SlFVXoGCfXab9tc3iZbFaIfwtSEhOCfsRL8D6EvAIiw577VJ
-	 NJsd6JIp7RTwYZNluGNt+1Z9n+ex0jMkaE7lYtqDIPp0/jlF1Qu1eEJTyPR6vM3MLs
-	 04o9wsTQ2sRbMYpQFf0QjwrMnspMkN2pVwlhjDRiofbx3NigwoeW9PLdWONe53j33Q
-	 Z8ATGX7jzsuIw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E996B3780575;
-	Mon, 10 Jun 2024 08:00:55 +0000 (UTC)
-Message-ID: <e71a38a9-7a92-4156-a7f0-52f71d461d61@collabora.com>
-Date: Mon, 10 Jun 2024 10:00:55 +0200
+	s=arc-20240116; t=1718006722; c=relaxed/simple;
+	bh=DM5/3D0EhcPSfTYo/bsWdkHu5NuG7JJOggRRZv5PDvs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AjcFP7yp7Zna3AktJ130SvD+YvkRQDJAWXMJ0RT9dnZAblyWd+cee7xHrpOEMZLG5ghWesxupDyk4qF5GYYMpBW1QQB9sEz+ZBZFVxHTEnHFvYk3lBkJvtf01FV2qCZFqOl41ovnU6reO7INtDs+C+oCTIevHvFkwSszy4uxFAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EKlc5Pgy; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A7jaH3009359;
+	Mon, 10 Jun 2024 10:04:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=IEtb4KLuy/9rGMriSQ9JkQ
+	yG0IXoKUzi25O4/LQFtO8=; b=EKlc5Pgy67pFTY7YxSLbs6/5yrQv1S+vhYh5vB
+	LJlrC/eG08VIPRwFPDVRUoEt1FGPpDRaFNoFYK/zZJpGzVPGHrhTBENAw/pLUwcv
+	iDxw/qdw7U71jRjBAQWeDOGYaP09P957DxvwjQRB3U0G4WNPooXljE2G4LucP3Eu
+	X3Y89juXdKn7LDaS9IFDFExLIHx7bqmVD223SQdFFTRiadUVKWQlRRiToGTnQYsh
+	B1IATxlxp5SijUys3MZr0VCtq6DVMpCFSEUdzn4b+/fMxPdp+z6FW7AVXuMLNw7p
+	CQQX7D7vh9cYX8CK/E6nAsfYi/gCqRe1/cyTckRsKgAJ26Jw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymemxnp94-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 10:04:51 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 12DD140047;
+	Mon, 10 Jun 2024 10:04:47 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3C6B621197C;
+	Mon, 10 Jun 2024 10:03:34 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 10:03:31 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] Series DTs to deliver Ethernet for STM32MP13
+Date: Mon, 10 Jun 2024 10:03:06 +0200
+Message-ID: <20240610080309.290444-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
- AUXADC
-To: Rob Herring <robh@kernel.org>
-Cc: jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
- andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, marius.cristea@microchip.com,
- marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
- mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
- kernel@collabora.com
-References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
- <20240604123008.327424-2-angelogioacchino.delregno@collabora.com>
- <20240605235239.GA3455504-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240605235239.GA3455504-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
-Il 06/06/24 01:52, Rob Herring ha scritto:
-> On Tue, Jun 04, 2024 at 02:30:04PM +0200, AngeloGioacchino Del Regno wrote:
->> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
->> providing various ADC channels for both internal temperatures and
->> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
->> usually on a 3.5mm jack) other than some basic battery statistics
->> on boards where the battery is managed by this PMIC.
->>
->> Also add the necessary dt-binding headers for devicetree consumers.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../iio/adc/mediatek,mt6359-auxadc.yaml       | 33 +++++++++++++++++++
->>   .../iio/adc/mediatek,mt6357-auxadc.h          | 21 ++++++++++++
->>   .../iio/adc/mediatek,mt6358-auxadc.h          | 22 +++++++++++++
->>   .../iio/adc/mediatek,mt6359-auxadc.h          | 22 +++++++++++++
->>   4 files changed, 98 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->> new file mode 100644
->> index 000000000000..6497c416094d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->> @@ -0,0 +1,33 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek MT6350 series PMIC AUXADC
->> +
->> +maintainers:
->> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> +
->> +description:
->> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
->> +  in some MediaTek PMICs, performing various PMIC related measurements
->> +  such as battery and PMIC internal voltage regulators temperatures,
->> +  accessory detection resistance (usually, for a 3.5mm audio jack)
->> +  other than voltages for various PMIC internal components.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - mediatek,mt6357-auxadc
->> +      - mediatek,mt6358-auxadc
->> +      - mediatek,mt6359-auxadc
->> +
->> +  "#io-channel-cells":
->> +    const: 1
-> 
-> Why do you need a node here? Just add #io-channel-cells to the parent
-> node.
-> 
+STM32MP13 is STM32 SOC with 2 GMACs instances
+    GMAC IP version is SNPS 4.20.
+    GMAC IP configure with 1 RX and 1 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
 
-Because some boards will want to avoid probing the related driver, as that will
-trigger a reset and this may not play well with ECs (namely, some Chromebooks),
-which are reading the same AUXADC block.
+Christophe Roullier (3):
+  ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
+  ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-DK board
+  ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board
 
-If I avoid using a new node, instead of just using `status`, I'll have to add a
-"mediatek,disable-auxadc" property to the parent node, which isn't pretty...
+ arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi | 71 +++++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp131.dtsi        | 38 +++++++++++
+ arch/arm/boot/dts/st/stm32mp133.dtsi        | 31 +++++++++
+ arch/arm/boot/dts/st/stm32mp135f-dk.dts     | 23 +++++++
+ 4 files changed, 163 insertions(+)
 
-Cheers,
-Angelo
 
->> +
->> +required:
->> +  - compatible
->> +  - "#io-channel-cells"
->> +
->> +additionalProperties: false
-
+base-commit: 28f961f9d5b7c3d9b9f93cc59e54477ba1278cf9
+-- 
+2.25.1
 
 
