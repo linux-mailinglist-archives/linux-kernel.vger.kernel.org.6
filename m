@@ -1,214 +1,177 @@
-Return-Path: <linux-kernel+bounces-207591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6368490195B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B078901963
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87EC3B2149A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDDD1C20E4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ACC6FBE;
-	Mon, 10 Jun 2024 02:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RIf4KEIU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADADEB641;
+	Mon, 10 Jun 2024 02:33:07 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C9137B;
-	Mon, 10 Jun 2024 02:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF136A;
+	Mon, 10 Jun 2024 02:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717986106; cv=none; b=nRkavPJu+8JSlIHcLHtBsj1Z6Zm/0h5djlbiNjLlrH4C4Q61l5VsW//+y5hcgNZ+GHxaCnhJFK2RCY3qpxRIVQKH4qB/sCfI9h/yfLhJrv2Gt0bF20KG062eYwW0BloR+Oc3yfqyENL/aiLe27CSu3wHij44L2bJ2nrdUhqaXfQ=
+	t=1717986787; cv=none; b=owhSqJAQSOgU6vC3jGYJs6RtU2ojNK0iUa88OSYKLm3yWMEeJ4fEOzHJppSMvx8J31PNdhdjkdcpe9+r9/XfPLeC47pRZopT2m9RlzyTv/AqkSF9aJSYJjwVCkLl4u7OLPgjf+5T8uAOvXdyB2z1XtF1S8ogCt8JOd8/QwMco5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717986106; c=relaxed/simple;
-	bh=temh3GWDe8csOvN1HEol0Fh2OT0MGFy8HGOe+fdk4Nw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sK3fU5W4DIZwGDOVyJ2KjDdiFtuUDAbAmfhKHJPHzyQdfAGGum1Z3x9ezPgvRJTR6yjz58+mDwVLQp/F2lmFzdxJ2Q0AVwInXz4s4VVdOY0hI0M4EbQTnORAk6eoJ6Ig54ObcTeisD1CydO1ddStKshnZs6ljG1MWJRp3uCEoWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RIf4KEIU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A1vFqv024507;
-	Mon, 10 Jun 2024 02:21:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=FaS7UVPglZYt5wqWsJFyaz
-	f0/L3Vrqak+m7hqBPt4+w=; b=RIf4KEIU1KXNz5Fy7FRzh6kr+6uUvIS0iTy2uD
-	DEU75UxypqQoJSYgNIxnkoOdlQb9VEi/HkmVA967gQFogz538GsXVJDCV0RIYSI1
-	T5Air6QgF7lWTg6pBl/CJgWhDc64ob1bGJxiaVLOkBGV2aAiJMuKGlEhUiVvpwGb
-	WTvFQcvJxoft6xpiqzRhvNJcgeWrx4xjznnuZGmR8/3+0MIDPCD33mRMdSR1RlAX
-	jJ6QZ44FJpy0ZSGKVW0jB+n/cF6w+FdWN5slAjYqkg5mURli0z+CC6eBS0sOwlXT
-	9o9S/i8JbdCA8CsXv6c9s/8qZsAP8qawTF7imAlIvtQ1tuNg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmtfwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 02:21:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45A2LUQ0008473
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 02:21:30 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 19:21:29 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 19:21:28 -0700
-Subject: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717986787; c=relaxed/simple;
+	bh=HbycHs7DADBVRvhki7EX2pSnnSjZWAfNBicUJiliqt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtY4YQLcj1Aj1Ja0JxvG905IMPg0QEv5mTgltCPzPYh8NC0JxKGtAGQo0vCPSerSycGmMe8RliNr1+jE1YbaC8rYdMqqqtcetY6Ki8l+NnsD+0tc8VpX9bmEphsqJKEG9R5UqSAs1cgQ1STDkxOC/kExeAW6vtsEtXx96RY6vSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 63BEA234; Sun,  9 Jun 2024 21:33:01 -0500 (CDT)
+Date: Sun, 9 Jun 2024 21:33:01 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
+	John Johansen <john.johansen@canonical.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
+ caps
+Message-ID: <20240610023301.GA2183903@mail.hallyn.com>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-3-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACdjZmYC/x3MQQrCMBBG4auUWTsQg4j1KuJi2vyxAybKjC2F0
- rsbXX6L9zZymMLp2m1kWNT1VRuOh47GSeoDrKmZYoincA49l8TJdIE5l5wYOaCPiPmShFr0NmR
- d/8PbvXkQBw8mdZx+m6fWeeUi/oHRvn8BplOLm38AAAA=
-To: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-        Liviu Dudau
-	<liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>
-CC: <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fNSLfaQVD5hvbpEjrH7wwIjmA0LHQH8C
-X-Proofpoint-ORIG-GUID: fNSLfaQVD5hvbpEjrH7wwIjmA0LHQH8C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_18,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100016
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240609104355.442002-3-jcalmels@3xx0.net>
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
+On Sun, Jun 09, 2024 at 03:43:35AM -0700, Jonathan Calmels wrote:
+> This patch adds a new capability security bit designed to constrain a
+> task’s userns capability set to its bounding set. The reason for this is
+> twofold:
+> 
+> - This serves as a quick and easy way to lock down a set of capabilities
+>   for a task, thus ensuring that any namespace it creates will never be
+>   more privileged than itself is.
+> - This helps userspace transition to more secure defaults by not requiring
+>   specific logic for the userns capability set, or libcap support.
+> 
+> Example:
+> 
+>     # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
+>             -c 'unshare -r grep Cap /proc/self/status'
+>     CapInh: 0000000000000000
+>     CapPrm: 000001fffffdffff
+>     CapEff: 000001fffffdffff
+>     CapBnd: 000001fffffdffff
+>     CapAmb: 0000000000000000
+>     CapUNs: 000001fffffdffff
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-files which have a MODULE_LICENSE().
+But you are not (that I can see, in this or the previous patch)
+keeping SECURE_USERNS_STRICT_CAPS in securebits on the next
+level unshare.  Though I think it's ok, because by then both
+cap_userns and cap_bset are reduced and cap_userns can't be
+expanded.  (Sorry, just thinking aloud here)
 
-This includes mfd-core.c and vexpress-sysreg.c which, although they
-did not produce a warning with the x86 allmodconfig configuration, may
-cause this warning with other configurations.
+> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> ---
+>  include/linux/securebits.h      |  1 +
+>  include/uapi/linux/securebits.h | 11 ++++++++++-
+>  kernel/user_namespace.c         |  5 +++++
+>  3 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
+> index 656528673983..5f9d85cd69c3 100644
+> --- a/include/linux/securebits.h
+> +++ b/include/linux/securebits.h
+> @@ -5,4 +5,5 @@
+>  #include <uapi/linux/securebits.h>
+>  
+>  #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
+> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
+>  #endif /* !_LINUX_SECUREBITS_H */
+> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
+> index d6d98877ff1a..2da3f4be4531 100644
+> --- a/include/uapi/linux/securebits.h
+> +++ b/include/uapi/linux/securebits.h
+> @@ -52,10 +52,19 @@
+>  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
+>  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
+>  
+> +/* When set, user namespace capabilities are restricted to their parent's bounding set. */
+> +#define SECURE_USERNS_STRICT_CAPS			8
+> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
+> +
+> +#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CAPS))
+> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
+> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
+> +
+>  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
+>  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
+>  				 issecure_mask(SECURE_KEEP_CAPS) | \
+> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
+> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
+> +				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
+>  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+>  
+>  #endif /* _UAPI_LINUX_SECUREBITS_H */
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 7e624607330b..53848e2b68cd 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/cred.h>
+>  #include <linux/securebits.h>
+>  #include <linux/security.h>
+> +#include <linux/capability.h>
+>  #include <linux/keyctl.h>
+>  #include <linux/key-type.h>
+>  #include <keys/user-type.h>
+> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucounts)
+>  
+>  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
+>  {
+> +	/* Limit userns capabilities to our parent's bounding set. */
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/mfd/arizona-core.c         | 1 +
- drivers/mfd/intel_soc_pmic_bxtwc.c | 1 +
- drivers/mfd/mfd-core.c             | 1 +
- drivers/mfd/pcf50633-gpio.c        | 1 +
- drivers/mfd/rt4831.c               | 1 +
- drivers/mfd/ssbi.c                 | 1 +
- drivers/mfd/timberdale.c           | 1 +
- drivers/mfd/vexpress-sysreg.c      | 1 +
- 8 files changed, 8 insertions(+)
+In the case of userns_install(), it will be the target user namespace
+creator's bounding set, right?  Not "our parent's"?
 
-diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
-index 19a0adf8ce3d..85ff8717d850 100644
---- a/drivers/mfd/arizona-core.c
-+++ b/drivers/mfd/arizona-core.c
-@@ -1429,4 +1429,5 @@ int arizona_dev_exit(struct arizona *arizona)
- }
- EXPORT_SYMBOL_GPL(arizona_dev_exit);
- 
-+MODULE_DESCRIPTION("Wolfson Arizona core driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-index 8dac0d41f64f..ba32cacfc499 100644
---- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-+++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-@@ -581,5 +581,6 @@ static struct platform_driver bxtwc_driver = {
- 
- module_platform_driver(bxtwc_driver);
- 
-+MODULE_DESCRIPTION("Intel Broxton Whiskey Cove PMIC MFD core driver");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Qipeng Zha <qipeng.zha@intel.com>");
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 6ad5c93027af..b2742b1dce0c 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -437,5 +437,6 @@ int devm_mfd_add_devices(struct device *dev, int id,
- }
- EXPORT_SYMBOL(devm_mfd_add_devices);
- 
-+MODULE_DESCRIPTION("Core MFD support");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov");
-diff --git a/drivers/mfd/pcf50633-gpio.c b/drivers/mfd/pcf50633-gpio.c
-index 4d2b53b12eeb..3e368219479a 100644
---- a/drivers/mfd/pcf50633-gpio.c
-+++ b/drivers/mfd/pcf50633-gpio.c
-@@ -88,4 +88,5 @@ int pcf50633_gpio_power_supply_set(struct pcf50633 *pcf,
- }
- EXPORT_SYMBOL_GPL(pcf50633_gpio_power_supply_set);
- 
-+MODULE_DESCRIPTION("NXP PCF50633 GPIO Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/mfd/rt4831.c b/drivers/mfd/rt4831.c
-index f8d6dc55b558..1ab8870e4ebf 100644
---- a/drivers/mfd/rt4831.c
-+++ b/drivers/mfd/rt4831.c
-@@ -115,4 +115,5 @@ static struct i2c_driver rt4831_driver = {
- module_i2c_driver(rt4831_driver);
- 
- MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-+MODULE_DESCRIPTION("Richtek RT4831 core driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
-index f849f2d34ec7..6e7aff6e2746 100644
---- a/drivers/mfd/ssbi.c
-+++ b/drivers/mfd/ssbi.c
-@@ -319,6 +319,7 @@ static struct platform_driver ssbi_driver = {
- };
- module_platform_driver(ssbi_driver);
- 
-+MODULE_DESCRIPTION("Qualcomm Single-wire Serial Bus Interface (SSBI) driver");
- MODULE_LICENSE("GPL v2");
- MODULE_VERSION("1.0");
- MODULE_ALIAS("platform:ssbi");
-diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
-index a41e9a3e2064..333d5b874de3 100644
---- a/drivers/mfd/timberdale.c
-+++ b/drivers/mfd/timberdale.c
-@@ -853,4 +853,5 @@ module_pci_driver(timberdale_pci_driver);
- 
- MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
- MODULE_VERSION(DRV_VERSION);
-+MODULE_DESCRIPTION("Timberdale FPGA MFD driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
-index eab82619ec31..d34d58ce46db 100644
---- a/drivers/mfd/vexpress-sysreg.c
-+++ b/drivers/mfd/vexpress-sysreg.c
-@@ -132,4 +132,5 @@ static struct platform_driver vexpress_sysreg_driver = {
- };
- 
- module_platform_driver(vexpress_sysreg_driver);
-+MODULE_DESCRIPTION("Versatile Express system registers driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240609-md-drivers-mfd-ef0e92e2f8da
-
+> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
+> +		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
+> +
+>  	/* Start with the capabilities defined in the userns set. */
+>  	cred->cap_bset = cred->cap_userns;
+>  	cred->cap_permitted = cred->cap_userns;
+> -- 
+> 2.45.2
 
