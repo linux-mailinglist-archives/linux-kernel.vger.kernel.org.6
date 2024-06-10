@@ -1,189 +1,109 @@
-Return-Path: <linux-kernel+bounces-208490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BB09025AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3350C9025B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597211F27818
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD41B2810FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24D01422CA;
-	Mon, 10 Jun 2024 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4560F13D8A7;
+	Mon, 10 Jun 2024 15:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/cDA5Mv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bGdcck0n"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784E013F450;
-	Mon, 10 Jun 2024 15:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4FE757EE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033456; cv=none; b=Bbw4WFSgAk/6Ro73Hz/oJVbGLru8kzhIs7LK65IhAkXxXK46LhqcXwYVk6D7bsDt/6fG2ykq2cVqJ6dWv8l185Mf6b+v+ML5p+XPVbhgPXsy7u0roJQUhrDqEy/E6lkqrQGCQvPh33uqq5kwnpQTl5veu3GUVrGHTfvdumHS0NI=
+	t=1718033519; cv=none; b=UwAXWY/EJjHIvMoEJmJrSf3C+0ywIFnRmGuxAAdzySQ2DBfqT78VLGcKlW5a4qIbvrNCu114PSHW+v/sBUl3+eZy3LwQExyZypvFAKy4vY7KpOP33Z4qFAerTYf31yLPm0Heg4MjsP3DmPy8TVdl1LGqYh6Aq7l5LGJFgfQ85c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033456; c=relaxed/simple;
-	bh=iKyqX56r+EgSOmMQluTvLMOh9m7hcIcp9NB6Ui81e2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GERjR7jmurAAjiBLD/qKi0Tw45uTGaND91V5/gs3C8p1d1G/I2Dz7kwsMLGulbfVspzqVHvsEXSbUUSutXW8TOllhZXN+zZRi19ZcsIj+rJdLOvzRBAMfLC09CEFx03b2fWctFxxuJwLFo4w0Ti6Eo8ReiUXl/MtABkMTyU6bdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/cDA5Mv; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718033454; x=1749569454;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iKyqX56r+EgSOmMQluTvLMOh9m7hcIcp9NB6Ui81e2A=;
-  b=W/cDA5MvuVlgsycJPzyEVl0sJcwz7JRflyACIkiTyE77aWwvu1w8mYRp
-   cr8GeQZK5PpEHhc5YDXrfkGTB5l8+6A8XtgmoqD/MSL6Ipb8d8MAL+4vL
-   AE2y79PLNCbqLZB143gwgl+pneptPDRe5FVnU+rsrf3pUZEuSnY4UaZHr
-   qPwFYmWMMgzRRojpf0jlv2ghTo0xWDu3i/c6H9a3RcHSpAC+Q6bLMavpx
-   Jw3vidV8yAhbNE4XcupNjThS4Z7w8Stt4E+2kiLw7eiCCpJ+RF27sdvaU
-   dVodRkbEK35xb9kjpP2aHBAqdkMLwfCmNxBQ6S7hvJuDRx7QwX44mDHYS
-   Q==;
-X-CSE-ConnectionGUID: bGjccpmITCKRMQNrMIX4wg==
-X-CSE-MsgGUID: pOP0lA+yS2y32thDSEomrQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14854893"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14854893"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 08:30:54 -0700
-X-CSE-ConnectionGUID: OvsHo99mTbmHyP838esLMA==
-X-CSE-MsgGUID: cZ9jOguASvm+QrACeEky3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="70267100"
-Received: from unknown (HELO [10.125.110.62]) ([10.125.110.62])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 08:30:53 -0700
-Message-ID: <aa8b551a-a2ba-408b-aaaf-8af363bed961@intel.com>
-Date: Mon, 10 Jun 2024 08:30:52 -0700
+	s=arc-20240116; t=1718033519; c=relaxed/simple;
+	bh=LH7CkPUe4TLzm+MhcEbpCny1djMnHoviw+ltVt8clu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m0PZKmaSyKdlj2D3YM+Mp39/2eyutYC9jppGbd4Ua3zD/xytEBcJGgqRlLtRWjr/iSh+jB4KCxAAku1fIU/ztjS2q94x+fR1tnsNYxd0pLtafKbJre0BGWC6oaDJB6GMifRdU+7JAgh1XiAPPwamaCzQBIgfLvgu9mkduHtEq1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bGdcck0n; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e72224c395so387761fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718033516; x=1718638316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LH7CkPUe4TLzm+MhcEbpCny1djMnHoviw+ltVt8clu8=;
+        b=bGdcck0nAt6IY26I8MRj1EkT2CnWtAg7Gn2bvgK6O84/rJoCQHzGcyouH3RNKs2MPZ
+         9EmB5ETO6wUYggZTGZ/gQQJMIJdsPpf0127mntGRBmbQtvXbCl4hqUOiWSN0TpNBrzVt
+         zv0aRYZm+ef18a4Ri5Xu+juyiLIYC4oaoFsQV7dYgNvixFCsMpmItBwaQV3g3Ewf/+lS
+         MESwLOpXgsNUVzaW/u7LwI9+0GyUpQrUwIhxuRGPiViZ8XEw8yy1ZlnvNWb0xrnPL9EA
+         KLGOHyQdKRtDWMBTwW7Awjnj29IWAH1zYes3gELpvfALc4+X0FPvjx7wOJHAURxeMVIC
+         KFCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718033516; x=1718638316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LH7CkPUe4TLzm+MhcEbpCny1djMnHoviw+ltVt8clu8=;
+        b=lbx7FIVkMsZmQFr1Gs6qbO2kkcr/vyrYa39FJ2vFgyhobmefDk1xnKGffbyrlgP5iS
+         uxiTdB3rJV1S+ZTmcarL1VUZduO8oOCybaTRU8NtEEX4jRyTkwjaFcROFPoDHTygXFor
+         t5Zzl/AyhlBSFndOGFJHnL80Z+33cFZsxACoKP6y2Hm+nz9vjzr5hzxYgb98MN+dy8Zp
+         C3rNmKHRc4WErW3GPi8MsdyPx46dgLbhU9dqoLU27kroCGIcqN3cCUXz6xgCAluccGE7
+         Ax5GftodA/k2f8cLBaR5qfGYgfA3cwt2s/Js/LWfYIVQbYWQpKbmCcqseDz5ZNLbaHGW
+         P/Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWR3JpnGJQSTOgPymY++ORhqsIA8buR29vBdoZT9zm7vnkhLQ2P7APPbiGbCEgIEApbOUp6jCYOskBVubAeUbYgjCe1yl0i08efksp
+X-Gm-Message-State: AOJu0Yzm3EIuFzZhXpliamNCKytYT8OBsx/x0xPXMjmBwDlYMGQmQ4+8
+	WDm/2RGKElqEvKo7LZ6oMeobf7hsLySpBkK6glMTNTWVhFHdNRphgJ8M1TS4X4QvDjEGGCX1Vlb
+	VKedPVBx9O3GMXmBeB++h3GHScFnYcqC0HTpsGQ==
+X-Google-Smtp-Source: AGHT+IHt56foHYbztiRQh26pF9sjT2Cdgbl29gsKoWGNRwhvCdGzRV/upJZIYfjgtzdkT1n5RncPmsnKstFG+L6O74g=
+X-Received: by 2002:a2e:98d9:0:b0:2eb:e8ab:7d40 with SMTP id
+ 38308e7fff4ca-2ebe8ab7d96mr15522031fa.44.1718033515892; Mon, 10 Jun 2024
+ 08:31:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: switchtec: make switchtec_class constant
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
- Logan Gunthorpe <logang@deltatee.com>, Jon Mason <jdmason@kudzu.us>,
- Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- ntb@lists.linux.dev
-References: <2024061053-online-unwound-b173@gregkh>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <2024061053-online-unwound-b173@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240610140548.35358-1-brgl@bgdev.pl> <20240610140548.35358-4-brgl@bgdev.pl>
+ <CAHp75VczROHVKwAi8j4fxR=L3oKJ_5om6rEAriDNFxh1dMRxRw@mail.gmail.com>
+In-Reply-To: <CAHp75VczROHVKwAi8j4fxR=L3oKJ_5om6rEAriDNFxh1dMRxRw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 10 Jun 2024 17:31:44 +0200
+Message-ID: <CAMRc=Mc593Zgt-jkx7T_D4s2gAFeccA9SdguM4vtFc9H701bUQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: sim: use devm_mutex_init()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, 10 Jun 2024 at 17:24, Andy Shevchenko <andy.shevchenko@gmail.com> w=
+rote:
+>
+> On Mon, Jun 10, 2024 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Drop the hand-coded devres action callback for destroying the mutex in
+> > favor of devm_mutex_init().
+>
+> All three LGTM,
 
+Can you leave your tags under the cover letter in such cases? This
+will make b4 pick it up for all patches automatically.
 
-On 6/10/24 1:20 AM, Greg Kroah-Hartman wrote:
-> Now that the driver core allows for struct class to be in read-only
-> memory, we should make all 'class' structures declared at build time
-> placing them into read-only memory, instead of having to be dynamically
-> allocated at runtime.
-> 
-> Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Jon Mason <jdmason@kudzu.us>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Allen Hubbe <allenbh@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: ntb@lists.linux.dev
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
+Bart
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  2 +-
->  drivers/pci/switch/switchtec.c         | 16 ++++++++--------
->  include/linux/switchtec.h              |  2 +-
->  3 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> index d6bbcc7b5b90..31946387badf 100644
-> --- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> +++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> @@ -1565,7 +1565,7 @@ static struct class_interface switchtec_interface  = {
->  
->  static int __init switchtec_ntb_init(void)
->  {
-> -	switchtec_interface.class = switchtec_class;
-> +	switchtec_interface.class = &switchtec_class;
->  	return class_interface_register(&switchtec_interface);
->  }
->  module_init(switchtec_ntb_init);
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 5a4adf6c04cf..c7e1089ffdaf 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -37,7 +37,9 @@ MODULE_PARM_DESC(nirqs, "number of interrupts to allocate (more may be useful fo
->  static dev_t switchtec_devt;
->  static DEFINE_IDA(switchtec_minor_ida);
->  
-> -struct class *switchtec_class;
-> +const struct class switchtec_class = {
-> +	.name = "switchtec",
-> +};
->  EXPORT_SYMBOL_GPL(switchtec_class);
->  
->  enum mrpc_state {
-> @@ -1363,7 +1365,7 @@ static struct switchtec_dev *stdev_create(struct pci_dev *pdev)
->  
->  	dev = &stdev->dev;
->  	device_initialize(dev);
-> -	dev->class = switchtec_class;
-> +	dev->class = &switchtec_class;
->  	dev->parent = &pdev->dev;
->  	dev->groups = switchtec_device_groups;
->  	dev->release = stdev_release;
-> @@ -1851,11 +1853,9 @@ static int __init switchtec_init(void)
->  	if (rc)
->  		return rc;
->  
-> -	switchtec_class = class_create("switchtec");
-> -	if (IS_ERR(switchtec_class)) {
-> -		rc = PTR_ERR(switchtec_class);
-> +	rc = class_register(&switchtec_class);
-> +	if (rc)
->  		goto err_create_class;
-> -	}
->  
->  	rc = pci_register_driver(&switchtec_pci_driver);
->  	if (rc)
-> @@ -1866,7 +1866,7 @@ static int __init switchtec_init(void)
->  	return 0;
->  
->  err_pci_register:
-> -	class_destroy(switchtec_class);
-> +	class_unregister(&switchtec_class);
->  
->  err_create_class:
->  	unregister_chrdev_region(switchtec_devt, max_devices);
-> @@ -1878,7 +1878,7 @@ module_init(switchtec_init);
->  static void __exit switchtec_exit(void)
->  {
->  	pci_unregister_driver(&switchtec_pci_driver);
-> -	class_destroy(switchtec_class);
-> +	class_unregister(&switchtec_class);
->  	unregister_chrdev_region(switchtec_devt, max_devices);
->  	ida_destroy(&switchtec_minor_ida);
->  
-> diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
-> index 8d8fac1626bd..cdb58d61c152 100644
-> --- a/include/linux/switchtec.h
-> +++ b/include/linux/switchtec.h
-> @@ -521,6 +521,6 @@ static inline struct switchtec_dev *to_stdev(struct device *dev)
->  	return container_of(dev, struct switchtec_dev, dev);
->  }
->  
-> -extern struct class *switchtec_class;
-> +extern const struct class switchtec_class;
->  
->  #endif
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Thanks!
+>
 
