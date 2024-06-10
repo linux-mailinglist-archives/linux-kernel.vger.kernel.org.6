@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-208738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C999028B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1FF9028BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919E31C212A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A541C21A12
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E4414D6E4;
-	Mon, 10 Jun 2024 18:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC80F14D719;
+	Mon, 10 Jun 2024 18:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VWxoyoa/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJOQ7Fem"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766AF26AF6;
-	Mon, 10 Jun 2024 18:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E58C26AF6;
+	Mon, 10 Jun 2024 18:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718044429; cv=none; b=jfaSqRIJRGnY8GZbxH6iCsc9X3f5NNxFY0tsV/2xSXDXZuGhi2P83FpiHo46dZ1baYXbZ5u48YLw2Ra0ZDfQsRsUVTdurOPw3onI2x0wM5F9jl6VFdwz2e3ywjzneOTFnkwjWnpxrzmuw4mgeFdHvDe+pmjgeqP+FGUr0m6vASs=
+	t=1718044493; cv=none; b=kUYPaSZ6YD4uZWSn7FggdYIZebHvesKrlIvHdTSi7U6yFitXM5svxdGpzPQFb4OB6Eu2rjj5swFDjFj5biQcuycswDmJewm72d7xhI7G0aR8eUgvRhue/wDKekYgFW0nW2KXNEAOlkvrUBddEQL6UAvmCBw+NXVa0mgP0Clz6iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718044429; c=relaxed/simple;
-	bh=MhYkkZlm3UmS4JCGSGG9dMAixhu/CWMEmyoYPi9a+38=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AQeD5IcidJ2c0tMwCQCbvihqMsm9mKiLXv7zw9Iqock7s+LJph/6hOHrnRukzdmtOF0Ej3D1+SYB2VtOk74blS3cMcED/yXXhJ/GkBi/lmWoqAooZDRixkYtr/Vzos2etCWlJVghE8K9MyihXUhcVfb2tiy/NwVqh0d9qy6AQfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VWxoyoa/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AE6Njj008673;
-	Mon, 10 Jun 2024 18:33:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=GUH6yhSecG1utkT0x+EZga
-	3Lu1Q63PspR2KXwK5oNSQ=; b=VWxoyoa/Sf7w1T4qjuoxS1NzOHY/bnpKzURJX/
-	dVpRfjOVF3ihZrDQPdna3ZL4HH6ugtfFDJV7c2Ahhc7F5XQlaTlDxmnk/fyZkT+B
-	kxM9cAcihve7QhoiPzDYd7EF2g7C2UQM6w5tq+wn6yus5HooL9dEQH8Al8jTYwg+
-	FL2JCJJRJhU4HZThw/yeHN0VY+oh3wtMoFQ1cgpsPizp64+vlZKXpGp03kvQsTay
-	0hD6/kgWf5WTWIDV1NWX1B1vlieH+6CWj/3sdz3627p0al7KSET2dIxo0F/h0IeQ
-	Bcabv9riTL8KddizYTe/5O2jC3ykZnweW1wcnGCWCN94itNQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgfk4umj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 18:33:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AIXeC4002703
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 18:33:40 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 11:33:39 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 11:33:38 -0700
-Subject: [PATCH] media: v4l: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718044493; c=relaxed/simple;
+	bh=WPuFe8huwPGs/GSyM0zQKwNNQ8mwcgXUhLersMgj9X4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZJHhrVRtdnbA1i43NkEuQ3AIfFvFYhnG5H9IWfpkns7R5fTeBdCpLzvDL5ovMV9kCFe94RHUbLR0fTADGmYMwoyoescfX3xL0ZG90ph78xwkJkytLwVIWoncp5Q2It9NzYgrBmzP+ApD464pPuflmOIm8e6ELdZLD1b5LjkizBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJOQ7Fem; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso292972e87.2;
+        Mon, 10 Jun 2024 11:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718044490; x=1718649290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RZaJ7Ax6XS9yjm2q4xEVEsYCrC5+rOLb/CKvNzm00rU=;
+        b=LJOQ7FemVOylz19TpYxzE6DiBdHuM2Dnl4uV/Ae8PEBYfJE6ZoM0h2ml9ExwFRgqqE
+         DUXw/ZLvsnId+sP9cofTwGIQCw1aq3RZl3WDhXlAVvxHmQGAvoofPjG/WfWn2kspRlkw
+         5XF5Mrl1V+onhfpl1iKFU3u/lnut0lz8WgAwc6E0cFWRmwGgWkpY3IB2YSUUeYV9cvWm
+         IcLCx1kgrX9gLCGt+hmKdcBSYGqT5Py3Ka3gkoFVoKlXb37VgScn6BOnIeP7tgI3JqYz
+         O9vzASvi/7avCwRcxXiRh6Sq4Nmcp60k9pcVINWdiawYC6NmFBTYLsebGa1JlroF/pDt
+         LvsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718044490; x=1718649290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RZaJ7Ax6XS9yjm2q4xEVEsYCrC5+rOLb/CKvNzm00rU=;
+        b=uw81xWKbPVE3js9nZ0CNwhi7OG4lY8cYnarGpkOz5Itelht3Ia91ube7YYtm4ZkGcf
+         VCvPiPmyqt6eXfKY3lRtW/nrRQmgjMhM3OX85VXo4wBy3mkDbHXMJQMPI45Ahe8s95Kc
+         qct3T5LQ6GmzVdhImFMHWQ5s4tLFaLAKJ/BrorsoaD3GUL/qvxGsZnxK6Dx98fzYMhm4
+         gLlh5yyNP99u/59m2rEe06JGh9IjisjZCEBuIbKmScIiPusCXoruFyVkNVfu4dfbuwV4
+         /O2j6GLTO6yHN/zwMISDGCxWqRgwwXcZdDamG33ZOD98SkY4r1kK43PJL9gevfGGwrne
+         k83A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpcxHwPVqDFdLk3q4La8QKMInJchFaaAn+lOswgBUchJxDpKRQ5Teh3PUx/xE0kZmhz+Rzld7iriqc3jrgJjiLEBcp5nnYW0MjnZ+a1DmRQ9DDBEFwsI/RlcICfpGb/tBCX8yXax0MG90i6Geh64tSt4lCm5hhxhR8IZz58TbE0AdBSInikmi+gz95I+YhbSrdLlgVkKYkTX6DSJaYZ0ArCV1T75WGHPnHZl5enReOjXext+9wuoReRsE=
+X-Gm-Message-State: AOJu0YwAvuz1Ghr/7VjvwHAkDyTjxqz7mV2SMOD00jpfoKvaTDU4fejd
+	rWg1pWPGvymnkmg/1DjiNPfM4kMf41Mk9x/egH9+Inj7oZ+OGwzRvgvg5lNguyGSPRVd/mHAIq5
+	b02LNmunVOr1Cl3H9gjDRGvb19IUjeamO
+X-Google-Smtp-Source: AGHT+IHbH8fMKiTXnmFjqlSUKOIDXxzjBI4mqmnkXgV0MOjcwHwDhL1oxLso/YlotpEoeGgLzuzEKDgynJdu0bxHjr0=
+X-Received: by 2002:ac2:539c:0:b0:52c:7f9a:5053 with SMTP id
+ 2adb3069b0e04-52c7f9a513cmr4238127e87.23.1718044489271; Mon, 10 Jun 2024
+ 11:34:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-media-v4l2-core-v1-1-2fe08f6c9a0f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAJHZ2YC/x3MwQrCMAwA0F8ZORvo6hD0V8RD2mZbYO0k0TIY+
- 3frju/ydjBWYYNHt4NyFZO1NPSXDuJMZWKU1Aze+cHdeoc5YVKprIaZkxDWYfEYV2VM8R5CvI7
- OBwcteCuPsp3589UcyBiDUonzv1ykfDfMZB9WOI4f7jvVposAAAA=
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Z6PyHy2JK5mEPhQSnWmV44Dua4v4vsS8
-X-Proofpoint-ORIG-GUID: Z6PyHy2JK5mEPhQSnWmV44Dua4v4vsS8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 priorityscore=1501 phishscore=0 adultscore=0 spamscore=0
- malwarescore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100139
+References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org> <20240608-hid_bpf_struct_ops-v3-3-6ac6ade58329@kernel.org>
+In-Reply-To: <20240608-hid_bpf_struct_ops-v3-3-6ac6ade58329@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 10 Jun 2024 11:34:37 -0700
+Message-ID: <CAADnVQJDZju=QMiAH=TpYHr6KQh3-TT-jNtJ-O2u7JstY5486Q@mail.gmail.com>
+Subject: Re: [PATCH HID v3 03/16] HID: bpf: implement HID-BPF through bpf_struct_ops
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Alexei Starovoitov <ast@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-async.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-fwnode.o
+On Sat, Jun 8, 2024 at 2:01=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.o=
+rg> wrote:
+>
+> +
+> +static int hid_bpf_ops_init_member(const struct btf_type *t,
+> +                                const struct btf_member *member,
+> +                                void *kdata, const void *udata)
+> +{
+> +       u32 moff =3D __btf_member_bit_offset(t, member) / 8;
+> +       u32 flags;
+> +
+> +       switch (moff) {
+> +       case offsetof(struct hid_bpf_ops, hid_id):
+> +               /* For hid_id and flags fields, this function has to copy=
+ it
+> +                * and return 1 to indicate that the data has been handle=
+d by
+> +                * the struct_ops type, or the verifier will reject the m=
+ap if
+> +                * the value of those fields is not zero.
+> +                */
+> +               ((struct hid_bpf_ops *)kdata)->hid_id =3D ((struct hid_bp=
+f_ops *)udata)->hid_id;
+> +               return 1;
+> +       case offsetof(struct hid_bpf_ops, flags):
+> +               flags =3D ((struct hid_bpf_ops *)udata)->flags;
+> +               if (flags & ~BPF_F_BEFORE)
+> +                       return -EINVAL;
+> +               ((struct hid_bpf_ops *)kdata)->flags =3D flags;
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+minor nit: I'd cast kdata/udate in the beginning of
+the function to make the lines shorter and less verbose.
+Similar to how bpf_tcp_ca_init_member() does it.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/media/v4l2-core/v4l2-async.c  | 1 +
- drivers/media/v4l2-core/v4l2-fwnode.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 222f01665f7c..4ffb105bde0b 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -965,4 +965,5 @@ module_exit(v4l2_async_exit);
- MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
- MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
- MODULE_AUTHOR("Ezequiel Garcia <ezequiel@collabora.com>");
-+MODULE_DESCRIPTION("V4L2 asynchronous subdevice registration API");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 89c7192148df..f19c8adf2c61 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -1251,6 +1251,7 @@ int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
- }
- EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor);
- 
-+MODULE_DESCRIPTION("V4L2 fwnode binding parsing library");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
- MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-media-v4l2-core-dc9bbc3f02b0
-
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
