@@ -1,204 +1,67 @@
-Return-Path: <linux-kernel+bounces-208548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8691E9026AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD88C9026AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2279428BC8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBD01F26D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA9214387C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91DA1442F1;
 	Mon, 10 Jun 2024 16:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiMbKDcM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A661422C5;
-	Mon, 10 Jun 2024 16:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6F5B1F8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036779; cv=none; b=llHMkgC+kliTwR+ZJJmrIf0lLg4NTS8sIfn3VX4cfBlRPJeGUZIIZUoJR+8NNnaIt8wZ2pFtalYCjUnQE3jy/9QX4jxbpYKMtnHdcCNTB+LizA9piOPrV/Yrv/VSed31N88yWm/qAfPva+nplHAWT9XyxpxOPT7s4JL6cgmiwV8=
+	t=1718036780; cv=none; b=VSIgNzVJItTLaJgUuxhtxBxYroSCtZb6K0OnbMTWIWFaV5M3oLr2p659SR90Q3tgoHQ9IrkIvTYdUftzNEAmz6A4rpacA34Yau8hi2d/MAlx+HjC32G/aJDPYJIZ+Oo17jMxZAYNaXpIr9cI6zBRy6u9aEJeDNI3XwBL40yOplc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036779; c=relaxed/simple;
-	bh=3UIaTShxInkjQ1pe5ZJloG0WAaJI7u1kBfrsEMbDQZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5PmWWUG2UyuKO/dpzYqcyQApB6XCwrfTlD+3Q+c8vMA7XhB3Hdb/FrNsve2iZu/RiyFLkhgFUTxLrkuxREw/i/mhIh+FlOBsR2zG0F5SdIoS5UYM0NLVHLXGjYQAgzR38PO+gp147lVtNt/+0t76D3hUe9JrdPIynON40FNCXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiMbKDcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A21EC2BBFC;
-	Mon, 10 Jun 2024 16:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718036779;
-	bh=3UIaTShxInkjQ1pe5ZJloG0WAaJI7u1kBfrsEMbDQZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IiMbKDcMuesDyvDpScf+uzY9N15WDFL2TEbbvcXbuaDQi4quSO4LZSZgDoHDo+vJf
-	 XLXvRyXSb9tKLQwwjW3fO/1ZhK2sixRt88ZKibbFE/keLp9nCivgZRs3+MGJawIKnF
-	 RbwW2JEWe1kgbgqp0POECn9HZdpCNM2jQGJv/cBkXYipGs9libJJ50+AHvwyS41xtg
-	 qFA3JOqi4msxRDtdliZz+mpChRqxWMC4evZs5SjYuuThDaF6riZJ3UbNDHDpaHsTTw
-	 ygnhdXrDTKTOiDIM+OSTyUSNaVjdgZaogn5nJhxzMag6c9P08frv9sf8m6Mk8KA2V3
-	 oh2PYNQ5V3Mlw==
-Date: Mon, 10 Jun 2024 17:26:13 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christophe Roullier <christophe.roullier@foss.st.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next,PATCH v6 1/8] dt-bindings: net: add STM32MP13
- compatible in documentation for stm32
-Message-ID: <20240610-relay-vanquish-b939690775dc@spud>
-References: <20240610071459.287500-1-christophe.roullier@foss.st.com>
- <20240610071459.287500-2-christophe.roullier@foss.st.com>
+	s=arc-20240116; t=1718036780; c=relaxed/simple;
+	bh=Kwx+EJLRwe6soqlnYy6YwfclcluOBYoiKcgcm4phmCU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lemyM3Cgi67odJCb2Hedy48p1I19ETTgerY1qxCIaM8kPCFip0fC0Awuzz/6BUIh426R9/9r07lNxVBJj9+qcezv16X7yWgtqKWkBHxMakVIlEmohInUlIJDnyyWxN2HAJI3gueNpCGJmfvqziCpiOkh3IJj0/NdITzk3jQXHho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 292e310c-2746-11ef-80e9-005056bdfda7;
+	Mon, 10 Jun 2024 19:26:16 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 10 Jun 2024 19:26:16 +0300
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 0/3] gpio: sim: driver improvements
+Message-ID: <ZmcpKFulXNq-9Wuk@surfacebook.localdomain>
+References: <20240610140548.35358-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="chgm6HB084fcCxg1"
-Content-Disposition: inline
-In-Reply-To: <20240610071459.287500-2-christophe.roullier@foss.st.com>
-
-
---chgm6HB084fcCxg1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240610140548.35358-1-brgl@bgdev.pl>
 
-On Mon, Jun 10, 2024 at 09:14:52AM +0200, Christophe Roullier wrote:
-> New STM32 SOC have 2 GMACs instances.
-> GMAC IP version is SNPS 4.20.
->=20
-> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
-> ---
->  .../devicetree/bindings/net/stm32-dwmac.yaml  | 43 ++++++++++++++++---
->  1 file changed, 36 insertions(+), 7 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Doc=
-umentation/devicetree/bindings/net/stm32-dwmac.yaml
-> index 7ccf75676b6d5..f6e5e0626a3fb 100644
-> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> @@ -22,18 +22,17 @@ select:
->          enum:
->            - st,stm32-dwmac
->            - st,stm32mp1-dwmac
-> +          - st,stm32mp13-dwmac
->    required:
->      - compatible
-> =20
-> -allOf:
-> -  - $ref: snps,dwmac.yaml#
-> -
->  properties:
->    compatible:
->      oneOf:
->        - items:
->            - enum:
->                - st,stm32mp1-dwmac
-> +              - st,stm32mp13-dwmac
->            - const: snps,dwmac-4.20a
->        - items:
->            - enum:
-> @@ -75,12 +74,15 @@ properties:
->    st,syscon:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      items:
-> -      - items:
-> +      - minItems: 2
-> +        items:
->            - description: phandle to the syscon node which encompases the=
- glue register
->            - description: offset of the control register
-> +          - description: field to set mask in register
->      description:
->        Should be phandle/offset pair. The phandle to the syscon node which
-> -      encompases the glue register, and the offset of the control regist=
-er
-> +      encompases the glue register, the offset of the control register a=
-nd
-> +      the mask to set bitfield in control register
-> =20
->    st,ext-phyclk:
->      description:
-> @@ -112,12 +114,39 @@ required:
-> =20
->  unevaluatedProperties: false
-> =20
-> +allOf:
-> +  - $ref: snps,dwmac.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp1-dwmac
-> +              - st,stm32-dwmac
-> +    then:
-> +      properties:
-> +        st,syscon:
-> +          items:
-> +            minItems: 2
-> +            maxItems: 2
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp13-dwmac
-> +    then:
-> +      properties:
-> +        st,syscon:
-> +          items:
-> +            minItems: 3
-> +            maxItems: 3
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
->      #include <dt-bindings/clock/stm32mp1-clks.h>
-> -    #include <dt-bindings/reset/stm32mp1-resets.h>
-> -    #include <dt-bindings/mfd/stm32h7-rcc.h>
+Mon, Jun 10, 2024 at 04:05:45PM +0200, Bartosz Golaszewski kirjoitti:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Andy had some suggestions in his review of the gpio-virtuser that also
+> apply to gpio-sim so let's use them.
 
-Unrelated change. Otherwise,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>                                                                                                        
 
-Thanks,
-Conor.
+-- 
+With Best Regards,
+Andy Shevchenko
 
->      //Example 1
->       ethernet0: ethernet@5800a000 {
->             compatible =3D "st,stm32mp1-dwmac", "snps,dwmac-4.20a";
-> --=20
-> 2.25.1
->=20
 
---chgm6HB084fcCxg1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmcpJQAKCRB4tDGHoIJi
-0tffAQDMCZd4Y8qJBiuAkUt0ppGvuLVuiB+9OHGL+/fRrxrGNQD/XXHMOtOGzn7O
-9e8VAL9hwogjnLKXF/R6ClOO4Hj/ZgI=
-=LIXm
------END PGP SIGNATURE-----
-
---chgm6HB084fcCxg1--
 
