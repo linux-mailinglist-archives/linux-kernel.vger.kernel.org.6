@@ -1,122 +1,261 @@
-Return-Path: <linux-kernel+bounces-208682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCE4902816
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA9EB902818
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B9A1F2362B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770BC288194
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF51482F6;
-	Mon, 10 Jun 2024 17:54:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5366148841;
+	Mon, 10 Jun 2024 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgUBGxyq"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4E147C74;
-	Mon, 10 Jun 2024 17:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733FF1482F6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042062; cv=none; b=PTo6GWOY1N4C3SILLeGAtlQZuaq/cCkLGmx8fBPRtNmTGUrQAgIJJccVBWHEj+gbUTlBaMxk3n+QcdZawscTjZTzfADm5B9KqDEA3dYgd96w7GC+Jp+Q/GX1tr56En3q4RvknJ4rhcaC7iSq7XJiJQgwAxOit6WynQEJ0UwyVXU=
+	t=1718042154; cv=none; b=c5/w0jvlg45YaH2YkGYf8Eff25bosqkEf6eRiFVso5JDgwzMhzVZZBVCFBjGsuHbiymeRkjVt8bEmVe8E3spS06nX5pISrIkl10KCnS7mvsPJK6+Su4eOb5LNfjQwCWDp40KdcjRGMrrLJdtdr4UFamq5e02gBvkKFp+OjmehG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042062; c=relaxed/simple;
-	bh=leKKf29U173teK1FhuP+pu+V4jq3YaQC555HqoGy8Fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhlSxc0ePThzxBi61CJgPCjdIKESBfO4KQtbbIAwi9fe57LXgwm23WKgy7eaol5basMHNbZufZNxx1SNboF8Fd3BpyX5XO10hsgfQ4lnaOwfP9jWgn324+6OELOw8xfUKBksrlFkMMhcn5A/JFnc1Iu7pMpILxkrROia2NjmklQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4248FC2BBFC;
-	Mon, 10 Jun 2024 17:54:17 +0000 (UTC)
-Date: Mon, 10 Jun 2024 23:24:12 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Devi Priya <quic_devipriy@quicinc.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH V5 6/6] PCI: qcom: Add support for IPQ9574
-Message-ID: <20240610175412.GB7660@thinkpad>
-References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
- <20240512082858.1806694-7-quic_devipriy@quicinc.com>
- <20240530144730.GG2770@thinkpad>
- <f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com>
+	s=arc-20240116; t=1718042154; c=relaxed/simple;
+	bh=dNjI23WLp0imEmdkBxjx2VmizbZl9IeRvfhVp0aj6lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FpU1QyEvUK9aV4ZxTe+oHt47zAUz/eoWX00VkHadOa1qmIESMxg+o2h+wY4eM6PAaMTJTfLxOVZcIX0SN/f8NqGIEx4cz8b5wxUF3SQHHZ7w3QbPgHpqWPyo/UcbyDtMi4eIK7YT0bOCb3up6HjRQsd5ZPvkimgUR+IiNcFHoL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dgUBGxyq; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4eb14d993c6so1334468e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:55:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718042151; x=1718646951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+JeefLMklHAV+yI9qNZHPNA7M9EgyySno86Vwa9gbA=;
+        b=dgUBGxyq/fcVIEtn9zuN40+c8UdD2x5D71HmzNvU6KDq0K9J0WG0i4kd9wE4sGErZG
+         jHBH0IRruGIDjajhOrjOrGjWYU8MGE1oRkoq2lCvEdoW7K95k81yEp5Jlg+Pnee2JuPL
+         ITM+0Wk9VIkSkWsLj7Qbx+vNBYKdl5fVR6blnUlZBPcILUbIH9r7AfPYnBngZfC3KNSI
+         p9/2OY8f2Bf4xXEab69+hBPF7xjnmhowLuDb+dbG6yVPTbCDYZr3Gj+XEzPfs1q7OQkV
+         ClXTTx3XmmiR8m/LZqCa50NsABT0n1xVlev3tVhIQZgFO2fiH4C5tke0p74f2emWm9dE
+         0sLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718042151; x=1718646951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y+JeefLMklHAV+yI9qNZHPNA7M9EgyySno86Vwa9gbA=;
+        b=a9QwcdMFdotFhQK3jS/RI48bkQw+cGjc7jVdxk56N6jnM40UANJCuylddwEFkQ93W3
+         4d6DAYOwR7WDvxAw7WQ1z7FX8P2tYmltjt9uYbh9blYtEDPCdIpHyv8byKwG+4HRLhuz
+         /C9bW+7g3mrZZ9Xi0Q6SRonhnVb83XmZ9I3dl1C5XtQZkcoSsLBhNFMb4ZBZ/PHiMx2k
+         GmxtUK6oEO3ZOZ5g1CCrZr2R5dqHWiRUSpcazt694ee7OOsyALxsq2fNPAUfd8LZgb5T
+         Px3cTL7u2w3fyuiYm23Jxn9oAiFaE+/4ZGCWwnaUmbY3FUWkUdvI2LOZ2BvzVJxDRgcY
+         OhNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUR4yN3sUOoWQV50jVLEAtvRKoROWe9cGgwik2K5yncZblVSkd05hIYEgt7uNDeqjinOygpHTjaiVOqtzWbYDP6UgJCGp3gvyJnM+kn
+X-Gm-Message-State: AOJu0YwRGpjvl9eIPXHnWM/FrRRzZDAl30f7sQ9BQvWSp/ZxztLmlfRt
+	46CG6zPR0rdnBPDDrkHGxOyOR5gW065PlI8UUu7XMAzHX43qT9HmbQa2fo90CZh9AZ2Wzvub3Ag
+	sveazDTpTIoH6EX6ivVMnvYPnsYw9xzIwtR5CKA==
+X-Google-Smtp-Source: AGHT+IEdg744iLrX6ZtbyA6vFCgoj3lzq+ppqtfCzhKioG9uraYqBhXuiuKLGd4W4eaRkB7Qken+1OHN4uBNCiH7lcM=
+X-Received: by 2002:a05:6122:16a1:b0:4de:daa8:b8e2 with SMTP id
+ 71dfb90a1353d-4eb5621e208mr11288152e0c.3.1718042151230; Mon, 10 Jun 2024
+ 10:55:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com>
+References: <20240609113903.732882729@linuxfoundation.org>
+In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 10 Jun 2024 23:25:39 +0530
+Message-ID: <CA+G9fYs1zvpNDYiRL83Cs5D_o++QHQ5rpwjQHSDCPr3GM1bAQQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 11:15:55AM +0530, Devi Priya wrote:
-> 
-> 
-> On 5/30/2024 8:17 PM, Manivannan Sadhasivam wrote:
-> > On Sun, May 12, 2024 at 01:58:58PM +0530, devi priya wrote:
-> > > The IPQ9574 platform has 4 Gen3 PCIe controllers:
-> > > two single-lane and two dual-lane based on SNPS core 5.70a
-> > > 
-> > > The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
-> > > Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
-> > > which reuses all the members of 'ops_2_9_0' except for the post_init
-> > > as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
-> > > and 1_27_0.
-> > > 
-> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> > > Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> > > Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> > > Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> > > ---
-> > >   Changes in V5:
-> > > 	- Rebased on top of the below series which adds support for fetching
-> > > 	  clocks from the device tree
-> > > 	  https://lore.kernel.org/linux-pci/20240417-pci-qcom-clk-bulk-v1-1-52ca19b3d6b2@linaro.org/
-> > > 
-> > >   drivers/pci/controller/dwc/pcie-qcom.c | 36 +++++++++++++++++++++++---
-> > >   1 file changed, 32 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > index 3d2eeff9a876..af36a29c092e 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > @@ -106,6 +106,7 @@
-> > >   /* PARF_SLV_ADDR_SPACE_SIZE register value */
-> > >   #define SLV_ADDR_SPACE_SZ			0x10000000
-> > > +#define SLV_ADDR_SPACE_SZ_1_27_0		0x08000000
-> > 
-> > Can you please explain what this value corresponds to? Even though there is an
-> > old value, I didn't get much info earlier on what it is.
-> 
-> The PARF_SLV_ADDR_SPACE_SIZE register indicates the range of RC accesses
-> to the EP's memory space. Default PoR value is 16MB, which seems to be
-> sufficient for IPQ9574 SoC.
-> As per the memory map, the memory space corresponding to each PCIe region is
-> 128Mb. As the older value corresponds to 256Mb we see PCIe enumeration
-> failures.
+On Sun, 9 Jun 2024 at 17:11, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 741 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.33-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-What kind of failure? Is it because kernel is trying to allocate memory region >
-128MB range?
+Results from Linaro=E2=80=99s test farm.
+Build regressions on riscv reported.
 
-> This register should either be updated to 128Mb(0x8000000) or left at the
-> PoR value 16Mb (0x1000000).
-> 
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Ok, so this is essentially the same as the PCI MEM region defined in DT? In that
-case, this value should be extracted from DT instead of being hardcoded.
+## Build
+* kernel: 6.6.33-rc2
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.6.y
+* git commit: 7fa271200aef4ae8f0bed8a8ed81629ecd5ed2ab
+* git describe: v6.6.32-742-g7fa271200aef
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
+2-742-g7fa271200aef
 
-But PCI MEM region range in DT is low on many platforms. Maybe that's due to all
-PCIe instances sharing the 256MB range?
+## Test Regressions (compared to v6.6.32)
 
-- Mani
+* riscv, build
+  - clang-18-defconfig
+  - clang-18-lkftconfig
+  - gcc-13-defconfig
+  - gcc-13-lkftconfig
+  - gcc-8-defconfig
 
--- 
-மணிவண்ணன் சதாசிவம்
+## Metric Regressions (compared to v6.6.32)
+
+## Test Fixes (compared to v6.6.32)
+
+## Metric Fixes (compared to v6.6.32)
+
+## Test result summary
+total: 237984, pass: 198342, fail: 13030, skip: 26078, xfail: 534
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 29 total, 29 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 33 total, 33 passed, 0 failed
+* riscv: 17 total, 6 passed, 11 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
