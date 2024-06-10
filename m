@@ -1,186 +1,251 @@
-Return-Path: <linux-kernel+bounces-207744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2909901B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:53:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F139901B6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F236280CED
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6F01C20F68
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969C81865B;
-	Mon, 10 Jun 2024 06:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7561C6A4;
+	Mon, 10 Jun 2024 06:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qPj5C8aw"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N7+p5tiP"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5493AD2E5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB76224E8;
+	Mon, 10 Jun 2024 06:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718002416; cv=none; b=JnjrrfW//0oYKMdyIopoHREAKPMYx87MRT9n2/zh12LiAUVBjSkIKOhjTwApt7Ka3nqoM9OsCUt4fMM4Y6kneWRY3cadL1gGDCJh/XR1WZqtokbdYDqCgOSNRU3XY03FgP9kAXcD4uFP0t1UH/soeIDb1Ch2I3W8sEAGT9mxtBI=
+	t=1718002434; cv=none; b=Xazj0YFLhhKhC9nXRrnZPE5EtjkNDMQcEDyb4YqQtE008690IwEP3j+Wld3cMfS47cKZEmLqYJSZ+t+gF3zbOa4waW24IYtdThN1I8kiMwnH/86ltYjX9ysoOLITRZdAPZ3qJIJYXx4ofZZxotzjDC3aDRoO5IW+SSxyE/9sKKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718002416; c=relaxed/simple;
-	bh=mRZh5+OagwrYksdm05IvR/+1yNl8KYHz8Qj7URz+FVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHS621mBCCcarUjfVwf8B76Dhqz8pHjPTNksVes4m0fHE2yLnBfZtuBntduLVIuURaM5kHjyf0Jfp2NLla0peILWHzhS8hBEMvlO+U730aVSN2Bbn3QzityWI5MJAOtzEt1Zw6wLdLYMQzYLHoaRMdReXqW0r1sg8mCmtbdUfO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qPj5C8aw; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6e40d54e4a3so1723295a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718002415; x=1718607215; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q79+Rla3cX6Hmnq2eCF4cwSxfS8g2qeMA5niTT4AJrk=;
-        b=qPj5C8awILJqh3c/ngE7eXKXeYZ0SQOicLTFq5jZzuiL9aHGzEYvh25QB2h713dsMt
-         3c+MYas5fDMuGrH8mO4sx57ojueo6ftuPopnJa8wRmTz/AM8UYoXfiKFHSX5FXJbANil
-         FXb2sSUzmTcDjagabFJSpcd5Sf6WY1j3W5R9gjYUHCNy7BL30CnnEcV8NFyanyR2uSUr
-         s6qJy1tSl33o4XhZyubNBuquojl/ZVvDXJCp+1zIsYAwS8gjZi9sQv0ENu8wSMRglpwD
-         pPYl6Kd2rlSRWDZPNjBVzziIsusmJ9rwKqw4ylTnOAzRRRRUP7wdfPSva9Qt1AESroYZ
-         Mh4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718002415; x=1718607215;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q79+Rla3cX6Hmnq2eCF4cwSxfS8g2qeMA5niTT4AJrk=;
-        b=Byxrr0c12/8M9e7urC3QAaxcfAU1tqdbU+XaSzkrOlEieOwU/q4wOOwYZ/Au1rC7Jt
-         Ysk3aDMXSbhJeBoddF+7WX5uJvFSTGzdtkFB/EZN0UR/JYJbjILduuQYV5fOAsaqGnO6
-         PIcwA8Chd0FBytF0CVrcoiJm/Hctu/F7bj0H3TrXVSbj+ZbmhRP/JL9M75YQvDxjUsUD
-         9Lzo4e+q7+lrso/26fY1a0JfMtKqAWJfopAQzCEpH3pWnLPTUyJ0UxF3Z2trPm/E2FAI
-         BjKGCEkIMWG1umfpNIK1/1YnSzcKH8OlrSOEMB6zbZpTgqw/IZ5UStDbACldeNm2iajd
-         kj9w==
-X-Forwarded-Encrypted: i=1; AJvYcCX+7gCodPMHspMJQRCjK8aGi+QMXpN52U2WJv/ihRftQNXMotU4ReQf8teOmVSBv3+bvau1ERJ60TMGnv9b4UdcIAIHIaUzQWnBeSBR
-X-Gm-Message-State: AOJu0YzJ/JY5XzxITBDD7JuB7B3gpW86VR6CCgBFqt+jXf151qiN5PnK
-	gvtTf6ayH/As1qYNS6q2yfN8R7yUTHyDA7hwDV/jzHQfp/NXPVnE4h1TZnYvSQ==
-X-Google-Smtp-Source: AGHT+IGiQnfID/w2ovEqOtXmdaUmHolv4W8npj5rXP4hlu3K/zYS4n6pz5nKcO0YwT4Ao+fhHzZlGg==
-X-Received: by 2002:a17:90b:b12:b0:2c2:c3fb:b13c with SMTP id 98e67ed59e1d1-2c2c3fbb277mr5727406a91.44.1718002414578;
-        Sun, 09 Jun 2024 23:53:34 -0700 (PDT)
-Received: from thinkpad ([220.158.156.236])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c3094cfe3dsm1355898a91.15.2024.06.09.23.53.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 23:53:34 -0700 (PDT)
-Date: Mon, 10 Jun 2024 12:23:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 0/5] PCI: endpoint: Add EPC 'deinit' event and
- dw_pcie_ep_linkdown() API
-Message-ID: <20240610065324.GA7660@thinkpad>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+	s=arc-20240116; t=1718002434; c=relaxed/simple;
+	bh=UUCkxg6F+ZFRb1qsY17FUuhKbviHXLlzPpVxYybdOew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WziG1Ld/SwBNeAYIliVp8piWKk0N/ustnhpBkw2VRe8xFtS+xdFVzHYQ8Y/u3tEYEjY499HKDA07K2TWFhfrAdPhp0ef86OndSwxPpz2mJIHjgtjHDFubyRTGpxI2cGY6n3KtGdYZAs1EeYhNA1p0LfJ3pYVNPinjT6YGBH89uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N7+p5tiP; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45A6rgTQ062074;
+	Mon, 10 Jun 2024 01:53:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718002422;
+	bh=PxnIiwyzOSMm+O787G/I/NLCdKWBirKxD1GYw/nsyIU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=N7+p5tiPlvsZQvFvwivsnqRlra8BPzjGA184BMns9VSKNEkxyxB2dN+oKMEp+n8kB
+	 8mNj5MKwjfeuAGLwgO9P1WS7wTv0CYypqJdwHlmHHos0qCmtjwp0HMT+rd9Fe/vQTA
+	 LjqbArHlGoMgwUb74IJ7/fJ1WbPrGqKTq4AcSo3Y=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45A6rgZI125131
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 01:53:42 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 01:53:42 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 01:53:42 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45A6rbgZ112839;
+	Mon, 10 Jun 2024 01:53:37 -0500
+Message-ID: <1156c363-93a8-4c31-8305-39d5da99653e@ti.com>
+Date: Mon, 10 Jun 2024 12:23:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/7] arm64: dts: ti: k3-j722s: Switch to
+ k3-am62p-j722s-common.dtsi
+To: Roger Quadros <rogerq@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, <nm@ti.com>, <afd@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-5-s-vadapalli@ti.com>
+ <79eedaea-bf4f-4a20-8a52-751ce7187523@ti.com>
+ <c6d1b64b-48bf-435f-823c-fb4c588819cc@kernel.org>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <c6d1b64b-48bf-435f-823c-fb4c588819cc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Jun 06, 2024 at 12:56:33PM +0530, Manivannan Sadhasivam wrote:
-> Hi,
-> 
-> This series includes patches that were left over from previous series [1] for
-> making the host reboot handling robust in endpoint framework.
-> 
-> When the above mentioned series got merged to pci/endpoint, we got a bug report
-> from LKP bot [2] and due to that the offending patches were dropped.
-> 
-> This series addressed the issue reported by the bot by adding the stub APIs in
-> include/pci/pci-epc.h and also removed the unused dwc wrapper as concluded in
-> [3].
-> 
-> Testing
-> =======
-> 
-> This series is tested on Qcom SM8450 based development board with 2 SM8450 SoCs
-> connected over PCIe.
-> 
-> - Mani
-> 
 
-Applied patch 2/5 to pci/endpoint! Krzysztof, please apply patches 1/5 and 5/5
-to controller/dwc (patches 3/5 and 4/5 are already applied by you).
 
-- Mani
+On 06/06/24 13:04, Roger Quadros wrote:
+> 
+> 
+> On 06/06/2024 07:05, Vignesh Raghavendra wrote:
+>>
+>>
+>> On 04/06/24 14:22, Siddharth Vadapalli wrote:
+>>> Update "k3-j722s.dtsi" to use "k3-am62p-j722s-common.dtsi" which
+>>> contains the nodes shared with AM62P, followed by including the J722S
+>>> specific main domain peripherals contained in "k3-j722s-main.dtsi".
+>>>
+>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>>> ---
+>>> v4:
+>>> https://lore.kernel.org/r/20240601121554.2860403-5-s-vadapalli@ti.com/
+>>> No changes since v4.
+>>>
+>>>  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 97 +++++++++++++++++++++++++++-
+>>>  1 file changed, 96 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>>> index c75744edb143..9e04e6a5c0fd 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>>> @@ -10,12 +10,107 @@
+>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>>  
+>>> -#include "k3-am62p5.dtsi"
+>>> +#include "k3-am62p-j722s-common.dtsi"
+>>> +#include "k3-j722s-main.dtsi"
+>>>  
+>>>  / {
+>>>  	model = "Texas Instruments K3 J722S SoC";
+>>>  	compatible = "ti,j722s";
+>>>  
+>>> +	cpus {
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <0>;
+>>> +
+>>> +		cpu-map {
+>>> +			cluster0: cluster0 {
+>>> +				core0 {
+>>> +					cpu = <&cpu0>;
+>>> +				};
+>>> +
+>>> +				core1 {
+>>> +					cpu = <&cpu1>;
+>>> +				};
+>>> +
+>>> +				core2 {
+>>> +					cpu = <&cpu2>;
+>>> +				};
+>>> +
+>>> +				core3 {
+>>> +					cpu = <&cpu3>;
+>>> +				};
+>>> +			};
+>>> +		};
+>>> +
+>>> +		cpu0: cpu@0 {
+>>> +			compatible = "arm,cortex-a53";
+>>> +			reg = <0x000>;
+>>> +			device_type = "cpu";
+>>> +			enable-method = "psci";
+>>> +			i-cache-size = <0x8000>;
+>>> +			i-cache-line-size = <64>;
+>>> +			i-cache-sets = <256>;
+>>> +			d-cache-size = <0x8000>;
+>>> +			d-cache-line-size = <64>;
+>>> +			d-cache-sets = <128>;
+>>> +			next-level-cache = <&l2_0>;
+>>> +			clocks = <&k3_clks 135 0>;
+>>> +		};
+>>> +
+>>> +		cpu1: cpu@1 {
+>>> +			compatible = "arm,cortex-a53";
+>>> +			reg = <0x001>;
+>>> +			device_type = "cpu";
+>>> +			enable-method = "psci";
+>>> +			i-cache-size = <0x8000>;
+>>> +			i-cache-line-size = <64>;
+>>> +			i-cache-sets = <256>;
+>>> +			d-cache-size = <0x8000>;
+>>> +			d-cache-line-size = <64>;
+>>> +			d-cache-sets = <128>;
+>>> +			next-level-cache = <&l2_0>;
+>>> +			clocks = <&k3_clks 136 0>;
+>>> +		};
+>>> +
+>>> +		cpu2: cpu@2 {
+>>> +			compatible = "arm,cortex-a53";
+>>> +			reg = <0x002>;
+>>> +			device_type = "cpu";
+>>> +			enable-method = "psci";
+>>> +			i-cache-size = <0x8000>;
+>>> +			i-cache-line-size = <64>;
+>>> +			i-cache-sets = <256>;
+>>> +			d-cache-size = <0x8000>;
+>>> +			d-cache-line-size = <64>;
+>>> +			d-cache-sets = <128>;
+>>> +			next-level-cache = <&l2_0>;
+>>> +			clocks = <&k3_clks 137 0>;
+>>> +		};
+>>> +
+>>> +		cpu3: cpu@3 {
+>>> +			compatible = "arm,cortex-a53";
+>>> +			reg = <0x003>;
+>>> +			device_type = "cpu";
+>>> +			enable-method = "psci";
+>>> +			i-cache-size = <0x8000>;
+>>> +			i-cache-line-size = <64>;
+>>> +			i-cache-sets = <256>;
+>>> +			d-cache-size = <0x8000>;
+>>> +			d-cache-line-size = <64>;
+>>> +			d-cache-sets = <128>;
+>>> +			next-level-cache = <&l2_0>;
+>>> +			clocks = <&k3_clks 138 0>;
+>>> +		};
+>>> +	};
+>>> +
+>>> +	l2_0: l2-cache0 {
+>>> +		compatible = "cache";
+>>> +		cache-unified;
+>>> +		cache-level = <2>;
+>>> +		cache-size = <0x80000>;
+>>> +		cache-line-size = <64>;
+>>> +		cache-sets = <512>;
+>>> +	};
+>>> +
+>>>  	cbass_main: bus@f0000 {
+>>>  		compatible = "simple-bus";
+>>>  		#address-cells = <2>;
+>>
+>>
+>> You would need to move the rest of main domain overrides and cbass_main
+>> definitions to k3-j722s-main.dtsi and limit this file to CPU definitions
+>> similar to k3-am62p5.dtsi
+> 
+> Not exactly.
+> In existing cases there are 2 soc.dtsi files. e.g. k3-am62p.dtsi and k3-am62p5.dtsi.
+> or k3-am2.dtsi and k3-am625.dtsi.
+> 
+> The former includes everything that is required for the SOC variant except the CPU, OPP and cache.
+> The later includes just the CPU, OPP and cache.
+> 
+> I suppose this only makes sense if there are multiple variants of the SoC where only
+> the number of CPUs change. Would this be the case for J722S?
 
-> [1] https://lore.kernel.org/linux-pci/20240430-pci-epf-rework-v4-0-22832d0d456f@linaro.org/
-> [2] https://lore.kernel.org/linux-pci/202405130815.BwBrIepL-lkp@intel.com/
-> [3] https://lore.kernel.org/linux-pci/20240529141614.GA3293@thinkpad/
+
+Part numbers with different OPPs are expected besides difference in
+number of cores for J722s.
+
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (5):
->       PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
->       PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers
->       PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown() API to handle Link Down event
->       PCI: qcom-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
->       PCI: layerscape-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
-> 
->  drivers/pci/controller/dwc/pci-dra7xx.c           |   2 +-
->  drivers/pci/controller/dwc/pci-imx6.c             |   2 +-
->  drivers/pci/controller/dwc/pci-keystone.c         |   2 +-
->  drivers/pci/controller/dwc/pci-layerscape-ep.c    |   4 +-
->  drivers/pci/controller/dwc/pcie-artpec6.c         |   2 +-
->  drivers/pci/controller/dwc/pcie-designware-ep.c   | 116 +++++++++++++---------
->  drivers/pci/controller/dwc/pcie-designware-plat.c |   2 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |  10 +-
->  drivers/pci/controller/dwc/pcie-keembay.c         |   2 +-
->  drivers/pci/controller/dwc/pcie-qcom-ep.c         |   5 +-
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |   2 +-
->  drivers/pci/controller/dwc/pcie-tegra194.c        |   3 +-
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |   2 +-
->  drivers/pci/endpoint/functions/pci-epf-mhi.c      |  19 ++++
->  drivers/pci/endpoint/functions/pci-epf-test.c     |  17 +++-
->  drivers/pci/endpoint/pci-epc-core.c               |  25 +++++
->  include/linux/pci-epc.h                           |  13 +++
->  include/linux/pci-epf.h                           |   2 +
->  18 files changed, 162 insertions(+), 68 deletions(-)
-> ---
-> base-commit: 7d96527bc16e46545739c6fe0ab6e4c915e9910e
-> change-id: 20240606-pci-deinit-2e6cdf1bd69f
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> If not then one soc.dtsi file should be sufficient. If yes then we need to have 2 soc.dtsi files
+> for J722S like the rest.
 > 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Regards
+Vignesh
 
