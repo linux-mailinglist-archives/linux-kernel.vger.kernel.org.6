@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-208770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A90A9028F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 025F69028FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86467B210C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:02:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1C1B21CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526FC78C64;
-	Mon, 10 Jun 2024 19:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KBx0Ic5e"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4703414BF8D;
+	Mon, 10 Jun 2024 19:05:06 +0000 (UTC)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEA72E620;
-	Mon, 10 Jun 2024 19:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B421B5A4;
+	Mon, 10 Jun 2024 19:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718046138; cv=none; b=mb0zUikBtsWAoR+R/tyld4hu5FR1s34E5deyLKrjfOpOKqC4uvErl1FgNZfdjd05k8f2AlMjiTxshKAEFLS+ZEFb/HIq3ocvKNuZ+MaTIRo7vNel93xdigMZEzcrUOnrRA2lfH2mUu0vjznZCog85vXjeRCgrBPxCfVkMm1BRGU=
+	t=1718046305; cv=none; b=sTV5QnvsuW/It3EzX2ttk5FnN5XkCtzkergYH0syAB7u8uCxhal2yODriqOxuy3Ftm4EtyXqKtDdCjJVrUiwLH6B8poOUdHFlXnS8/qtMJaNtoZ5Zx32+8YyKHzwmv4hgjK7rWQNeuva3PCq24RimIZYIRrvyxAt0N7yQcBHOKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718046138; c=relaxed/simple;
-	bh=HIxZJDBw8lvC6AgonODjlRnJnG+poyxOoaYJhz1KzqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O90EwdyMub7L1HGCLW3PxYHEY+evx/FDc3Aa1FOAW2qNglOKkjyPjjxAkv0+NBMQbw6FOpc3gnjlSSkGm60wp14ikTd+QU1ZH8aSVGMBUMcJnel3F4nbsRoOjXrE9awI+mcBokDKsm14GpYNNS0TuHxDLy92v9GJLa/BomKTE4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KBx0Ic5e; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=s7Gyb9953r9ixu7af9wBM8hywUzKBl8Kmb/xfyNTRSg=; b=KBx0Ic5eGRnV/iKzQO1aiPoOB2
-	BVinSNWUG8COIh+VgcALGirLNWYTUUJ4SBSUSgbdnL7X9BNTRmt2tIjFFiLAjHViVYHY866EjogIr
-	fucVRg1upRTcTHZAkCXEtviW3XaPQR1Wu0cdtQOM4dRNv8fPSBZ3PxsDOieH4/YUigloV+reuxXP6
-	bFisFazK7KSbFczNQkeI/c1Q0eCQp3OoKWrN3enEcVmTTozm5wWFeFSOEI/MgFzPtHHgO2jfMUOxQ
-	ywgOf0A9/7Fs3VAGr/P2EvcM2Og8F24rtaK3plNMMun2YyWhRI36qLSl7Zj/iN0sbmt94e33KtB4E
-	ArWrRwTQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGkGa-00000001cAp-2O4d;
-	Mon, 10 Jun 2024 19:01:23 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1B245300439; Mon, 10 Jun 2024 21:01:19 +0200 (CEST)
-Date: Mon, 10 Jun 2024 21:01:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ben Gainey <Ben.Gainey@arm.com>
-Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	"acme@kernel.org" <acme@kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	James Clark <James.Clark@arm.com>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/4] perf: Support PERF_SAMPLE_READ with inherit
-Message-ID: <20240610190118.GV8774@noisy.programming.kicks-ass.net>
-References: <20240606144059.365633-1-ben.gainey@arm.com>
- <20240606144059.365633-2-ben.gainey@arm.com>
- <20240607093254.GN8774@noisy.programming.kicks-ass.net>
- <451afb8eb03f1519c482a84a6c1cbd1e62222988.camel@arm.com>
- <20240607110214.GQ8774@noisy.programming.kicks-ass.net>
- <60ed550e8cb5e5aa4004fb2d3857a605ba1da23e.camel@arm.com>
+	s=arc-20240116; t=1718046305; c=relaxed/simple;
+	bh=DYw5X4U5HLsZyrnq7FpFUJMkaKGQJYDLUdfj4fuMRHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmUa+Ikq0UMKs8X6FAGcl08wTJn+VRkykEZ53rLnBuuyB9egzc+maUbbd3jndk5dxFv9XDPpm7U6nJS7W/zEt9K/KqAUevu2VDn86YeWUkCUPAah6y22EHCzy7S7QADdY7wqQ8rnX98uEiAXUhLPBHTAeU1GO12DgN3jQIQQ3+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f223c99a3so194840f8f.2;
+        Mon, 10 Jun 2024 12:05:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718046302; x=1718651102;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RzcwVjd3wuF7qA5HimwlYDFzQ23qzUuT3/7uHPghCl4=;
+        b=N/ubT16tvDEjiT7yngOASYbvLe/IWGMQzox2Ir16q98InmbvHvJll2CCPpq35sjNAo
+         eL9a7E1/8uhl2ZPybJ0z7qjO4BJYJs34oBCNP07FAF5J3UtoXYHf8bKzCYGMCKPB/r4Y
+         p7BFTlPI5ihf1ugmSIuA+Fag36iTq/hCLGgU8wBIoMSQxPbgDbK/tgQE2xKux36/0R6c
+         UxzTXhspx6bjxIfZB/u/k1yd1WaiPir9LxgrqOVy9abK0yGVtcIQbvDX81WBOqsbZcid
+         Y7+7jlRzqHEovXJO0jXw7S3c6DMIUUJOZVjDghu47SdrNOCUaM2+sZLTohipHtrdXa9L
+         cv/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVqSU0klp6g5Y9HIKrwcP07z4gEN19KcojrvT4xgvekXPbG0E0hM9B+QoXZoJyW4ZGYkMR0zkMQx/suTjscgnfti0uh1jhma2ahTEzs
+X-Gm-Message-State: AOJu0YzTmM36sDKPngMpf7pzmvGU4PFw5dxdUckYzedGSjeGbWlOpx+2
+	faVG1Cjm7BfHRSOGSkuARZjrUdTPHBlagFOzV5mKMYG9wKfOHWTy
+X-Google-Smtp-Source: AGHT+IEvwv08TmpZPro//md103k727X8OXUPGA54WdjDUCV07StJHAMkwZJmFcCstU1jB4eMBih7gA==
+X-Received: by 2002:a5d:526a:0:b0:35f:1412:fa8a with SMTP id ffacd0b85a97d-35f1412fcddmr4011456f8f.1.1718046302401;
+        Mon, 10 Jun 2024 12:05:02 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.205.146.dynamic.barak-online.net. [85.65.205.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0f2b0d85sm7800267f8f.42.2024.06.10.12.05.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 12:05:02 -0700 (PDT)
+Message-ID: <e8fa4c36-49e5-40b8-9cea-6b3b61aa3240@grimberg.me>
+Date: Mon, 10 Jun 2024 22:05:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60ed550e8cb5e5aa4004fb2d3857a605ba1da23e.camel@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Kernel OOPS while creating a NVMe Namespace
+To: Keith Busch <kbusch@kernel.org>,
+ Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
+References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
+ <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 07, 2024 at 02:04:49PM +0000, Ben Gainey wrote:
 
-> > IIRC they all originate in a single location around
-> > perf_output_read(),
-> > that already has the event and could easily 'correct' the semantic
-> > meaning by doing the above once or so.
-> > 
-> 
-> As far as I can tell, you can mix events in a group with inconsistent
-> values of PERF_SAMPLE_READ which means that doing it at the top level
-> introduces an inconsistency/confusing behaviour since it makes the
-> "thread-local-ness" of the read_format values a property of the event
-> that caused the sample, rather than of the specific event to which the
-> value belongs. The current implementation makes it a property of the
-> specific event not the sample event. Specifically, when
-> perf_output_read_group reads a child event that does not have
-> PERF_SAMPLE_READ, the sample event must have PERF_SAMPLE_READ, meaning
-> the child event will give the thread-local value even though it was not
-> created as inherit+PERF_SAMPLE_READ
-> 
-> I can either:
-> 
->  * Keep it so that the perf_output_read_group uses per-event value for
-> self
 
-Having the lot be inconsistent seems bad.
+On 10/06/2024 21:53, Keith Busch wrote:
+> On Mon, Jun 10, 2024 at 01:21:00PM +0530, Venkat Rao Bagalkote wrote:
+>> Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
+> My mistake. The namespace remove list appears to be getting corrupted
+> because I'm using the wrong APIs to replace a "list_move_tail". This is
+> fixing the issue on my end:
+>
+> ---
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 7c9f91314d366..c667290de5133 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3959,9 +3959,10 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
+>   
+>   	mutex_lock(&ctrl->namespaces_lock);
+>   	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
+> -		if (ns->head->ns_id > nsid)
+> -			list_splice_init_rcu(&ns->list, &rm_list,
+> -					     synchronize_rcu);
+> +		if (ns->head->ns_id > nsid) {
+> +			list_del_rcu(&ns->list);
+> +			list_add_tail_rcu(&ns->list, &rm_list);
+> +		}
+>   	}
+>   	mutex_unlock(&ctrl->namespaces_lock);
+>   	synchronize_srcu(&ctrl->srcu);
+> --
 
->  * Rework the deliver_sample_value in session.c to base its decision on
-> the sample event rather than the specific event
-
-The code as it exists seems to use the read_format from the event that
-actually triggers the sample -- which makes sense. I would expect this
-new thing to follow that.
-
-Mixing inherit between events in a group gets you crap, but that's what
-you asked for I suppose :-) But otherwise let the sampling event set the
-format.
-
->  * Forbid inconsistent PERF_SAMPLE_READ for events in a group
-
-Not possible I think, you can have non-sampling events in a group.
+Can we add a reproducer for this in blktests? I'm assuming that we can 
+easily trigger this
+with adding/removing nvmet namespaces?
 
