@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-207838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167B2901CDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:23:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CF8901CE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE511C21BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 707EA1F229D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA2E6F30D;
-	Mon, 10 Jun 2024 08:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A35FBB1;
+	Mon, 10 Jun 2024 08:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fUirGyiP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HTq3qqMh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5052F4D8BC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369A626CB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007776; cv=none; b=FF5NRBGulZyqgrX/7UKRw7YGPk5ZCjQdAUivgDVszb2rDogIrqsZcOCGtyHhvmrEeE5dVpy1GKNbuByAwB1TpSB1xNvClMNZgMlQ+btPbhP1uXgyKFMZTwpCXG3rufyxguJvV4JfUz6JUEJO4Jna6h4a0LapnInT5mcKRNIaUEE=
+	t=1718007804; cv=none; b=nWkT5E43pNBTapnb4E9Gs32NkEOUYhrFEVeo3W+dav3rbTa/3CsvDU/8GxYRtgt+bm0UcuAXyIaAdmpgJVZi7feAmVIUSo8FORHRDJTSfhRATuach9z+NaSSHJI+XkoZrcqZy/jpZJjPlCa2CpbRFaS26I7nIXGQddMP5jFK3N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007776; c=relaxed/simple;
-	bh=hEBukUBlcmDWfYdPsb5ySeXNcf/nzndX3LGPcIab4XE=;
+	s=arc-20240116; t=1718007804; c=relaxed/simple;
+	bh=7H6rvGaT4DFEOtMwhT/kKnnO2qwSElK624H5zwb18C8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iGcYME/4YmsbMDOOY0iBbKIA+cr4HCVSzatxO8ZbNg3MY8oqrKuuWQcsLaQteLA8CrR4cR/qjyu+OU3mnCD7HGw8Eotsa8JYd5ir4bXyuB41Z5AKoQ0tqB6Rg9CajeEiMBWQD1YVU/NE7tHRmh/toE3jdqLN5IjDrwk92Q1tcI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fUirGyiP; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=Rr+swfXtGVJbHMEmnGD4xsrnGDQtXrVchBDhR/FDqy/65HikG8PfcvCeOfU2/A9xxqR2slZKaBxBI/xSKirLBV54dry6C5UAKYpIDvmdekwDrQqIIkRPNW10x1fKzBn1rui96uxZWm1QmYDFSsCh/upndRtHTUPZkHvlt1SKPPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HTq3qqMh; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718007774;
+	s=mimecast20190719; t=1718007801;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uQm94nL2wcwwj4Yok2tcIqgLd6gdn6Bo1KbQpN6pxO4=;
-	b=fUirGyiPJUe5H7hBq96F67l8d1L7C4QTL0wUI4mBADjaan5K73wYqISPqHgdm0E2gHVaGg
-	CllXUpXvq7Vf7BBD/nY1jBK5Lkj1yxB+6uJBTC+pWxfIC60cdT+xudPSsso8GDJei307xm
-	tGXruz6nW26vcci42Qxi4otYOvJutTk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=2Dcfclgq21FPBivkIafQK0Leu/x2r2ds/GVh9jZYY4k=;
+	b=HTq3qqMh/PoPjbnWgwf3kkwr0WSOHzNf9TTSIBrA9p83zQkMq2PjyVF+XHGw/HbvalxwjS
+	NJgfH2+DlE3qbh8t7teVipb0M9+ZAuT/QA3JmwP4kxuoxMmulATKzUxPnNve2mM+0igLZI
+	CP7Vqwtq6IbzpRUKWtxLR+KvLgTt8eY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-151-q9P2er48MjqfalDM4RINtA-1; Mon, 10 Jun 2024 04:22:52 -0400
-X-MC-Unique: q9P2er48MjqfalDM4RINtA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42181c64596so6464985e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:22:52 -0700 (PDT)
+ us-mta-490-7Y6RllCoOwiFGJNL2JCt_g-1; Mon, 10 Jun 2024 04:23:17 -0400
+X-MC-Unique: 7Y6RllCoOwiFGJNL2JCt_g-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35e7cce4c32so2778242f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:23:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718007771; x=1718612571;
+        d=1e100.net; s=20230601; t=1718007796; x=1718612596;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=uQm94nL2wcwwj4Yok2tcIqgLd6gdn6Bo1KbQpN6pxO4=;
-        b=ANyilXV9kozKXOQdlBRqIX9FVqp7Zwz4H/N/Y9K07HFNhFrAfN+wv73vdXEc3l/YFt
-         TFISRN7AoeTUBOp/uUWSqsba01+TlSi52wLzlIBKLSe59xUIDORZH+b8DUm0EQ/jUf0A
-         KS9R+STV2pIgaK4LAZWDZDTDdy3rGXORWqFuE1t9tBNm5lGlafVWxMUFC66+OIVbFjV4
-         mBQJ4Vm0Xv5CuT4aM2MeA3MASMZQI2xlqMBqCGT9XjoVvz7R4O1tadZZqXWDCZPbm6m0
-         HR3g/XwTZS8l5cI/HT5e69Hucd9rntAevyZ81s0thnR5mhujNNPPJP1SGnuEGCsgCCGQ
-         Wo0Q==
-X-Gm-Message-State: AOJu0Yw4lBqQg/tw8SH1SOarJrWFs8Kr8zoPt2BXLPL9aKiUwWNXBguT
-	fjD9IklRue1hhUQiN3Pw+mDmnLfGNP6ud4F03P4DKMGWQrvtXljcJn2CBn7yY2vOQX04FxYbEKM
-	Lv7ITrGNz4y/EcpRQR0M8tM7MWPaErC06aY3vnGdTycmshtPWhCveEJqRa5qDpw==
-X-Received: by 2002:a05:600c:4fc2:b0:421:f73e:f8f9 with SMTP id 5b1f17b1804b1-421f73efc1cmr7437415e9.20.1718007771216;
-        Mon, 10 Jun 2024 01:22:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfUoeL/w8zp+aKFdBRrJU7RWMxen1rSihCIKXIWfSKhVR/jt2hqJ8auH9cttn9H6Jhkm0Pcg==
-X-Received: by 2002:a05:600c:4fc2:b0:421:f73e:f8f9 with SMTP id 5b1f17b1804b1-421f73efc1cmr7437225e9.20.1718007770661;
-        Mon, 10 Jun 2024 01:22:50 -0700 (PDT)
+        bh=2Dcfclgq21FPBivkIafQK0Leu/x2r2ds/GVh9jZYY4k=;
+        b=BFmmoDth4yP8GVxwcwUu21LOEDOlLFqPoiLDdyXOXeHYUYq3DPIq2cRVv68d66y4CL
+         qOhL4s1aR+2Hy8NAELT3bhOCGEZuiYhJOb41ynUmkMAXkHisavGx8kXdb1nKf4j1xsaN
+         OcGRMGT1JUn4e+8BlxAiqhDFeg3HlkUWYpap7+d+yig8WkOSI6itTUfNyNzjvIf89E5e
+         l0c4izt7ex7pHlniQog/M5Ut/oensXVkodj7U0q1kDmpoS5hMqbAiwYNmR7fzIRlLDkF
+         6HWtI39xt/FX550mpVElIzRxtw/0tUPHR51AjtGNevJxvhlTD9qsUkzb7II5st/vqfAS
+         d+eA==
+X-Gm-Message-State: AOJu0Ywadk8VisdUjOpTZb3gET3C1yQKb+8JqctNOgLtv6GjrtefrdQ5
+	9X9TfR4jutX1RcJFBu00OZNxnxuonFP3wXdk3HKpG6CBgoO6aG5S81UeqLQQHfHKN/Yb5/GZdtj
+	YyCC8I/vk6NAcELW+UhJ/arUIl0Lc45bkSwAySVcabNECqFiO6jp9P8bkBTTgpwyD32LuZg==
+X-Received: by 2002:a5d:5f48:0:b0:35f:1f29:3f with SMTP id ffacd0b85a97d-35f1f2900a2mr3240089f8f.44.1718007796201;
+        Mon, 10 Jun 2024 01:23:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkhzqCmI4Yi0LYUsvqynsFVEBG+GLFL+xg0B/saHZoZvTsiNvGDNz5brJLRVMPUPMEnLkpow==
+X-Received: by 2002:a5d:5f48:0:b0:35f:1f29:3f with SMTP id ffacd0b85a97d-35f1f2900a2mr3240068f8f.44.1718007795781;
+        Mon, 10 Jun 2024 01:23:15 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d66d0esm10333805f8f.51.2024.06.10.01.22.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d69e71sm10308617f8f.65.2024.06.10.01.23.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 01:22:50 -0700 (PDT)
-Message-ID: <99073d55-5b18-4ed2-b860-8c09e056f585@redhat.com>
-Date: Mon, 10 Jun 2024 10:22:49 +0200
+        Mon, 10 Jun 2024 01:23:14 -0700 (PDT)
+Message-ID: <962615d7-d20f-43c2-84a4-a7b99d8dfeca@redhat.com>
+Date: Mon, 10 Jun 2024 10:23:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,13 +83,12 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1 2/2] mm/highmem: make nr_free_highpages() return
  "unsigned long"
-To: Oscar Salvador <osalvador@suse.de>
+To: Wei Yang <richard.weiyang@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Wei Yang <richard.weiyang@gmail.com>
+ Andrew Morton <akpm@linux-foundation.org>
 References: <20240607083711.62833-1-david@redhat.com>
  <20240607083711.62833-3-david@redhat.com>
- <ZmZ1x6QQYPFSOd7O@localhost.localdomain>
+ <20240608005144.ypbq4442bh46tmqb@master>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -137,11 +136,11 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZmZ1x6QQYPFSOd7O@localhost.localdomain>
+In-Reply-To: <20240608005144.ypbq4442bh46tmqb@master>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.06.24 05:40, Oscar Salvador wrote:
+On 08.06.24 02:51, Wei Yang wrote:
 > On Fri, Jun 07, 2024 at 10:37:11AM +0200, David Hildenbrand wrote:
 >> It looks rather weird that totalhigh_pages() returns an
 >> "unsigned long" but nr_free_highpages() returns an "unsigned int".
@@ -151,43 +150,10 @@ On 10.06.24 05:40, Oscar Salvador wrote:
 >>
 >> While at it, use a plain "0" instead of a "0UL" in the !CONFIG_HIGHMEM
 >> totalhigh_pages() implementation, to make these look alike as well.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ...
->> -static inline unsigned int nr_free_highpages(void) { return 0; }
->> -static inline unsigned long totalhigh_pages(void) { return 0UL; }
->> +static inline unsigned long nr_free_highpages(void) { return 0; }
->> +static inline unsigned long totalhigh_pages(void) { return 0; }
 > 
-> Although I doubt it has any consequences, I would just leave them both with UL,
-> so the return type is consistent with what we are returning.
+> I am not sure why not use 0UL for both?
 
-These suffixes are only required when using constants that would not fit
-into the native (int) type, or converting from that native (int) type to
-something else automatically by the compiler would mess things up (for example,
-undesired sign extension). For 0 that is certainly impossible :)
-
-
-That's also the reason why in include/linux we now have:
-
-t14s: ~/git/linux/include/linux $ git grep "return 0UL;"
-skbuff.h:       return 0UL;
-uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
-t14s: ~/git/linux/include/linux $ git grep "0UL;"
-bitmap.h:               *dst = ~0UL;
-dax.h:          return ~0UL;
-mtd/map.h:                      r.x[i] = ~0UL;
-netfilter.h:    return ((ul1[0] ^ ul2[0]) | (ul1[1] ^ ul2[1])) == 0UL;
-skbuff.h:       return 0UL;
-uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
-
-
-... compared to a long list if "unsigned long" functions that simply "return 0;"
-
-
-So I prefer to just drop it.
-
-Thanks!
+See my reply to Oscar, thanks for the review!
 
 -- 
 Cheers,
