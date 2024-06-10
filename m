@@ -1,172 +1,158 @@
-Return-Path: <linux-kernel+bounces-208340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF029023B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:11:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D459023C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4DEB1F20FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:11:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78BADB23811
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066638527D;
-	Mon, 10 Jun 2024 14:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A37A12FF91;
+	Mon, 10 Jun 2024 14:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRM1CBXR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4hHeUqQ"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DA423B0;
-	Mon, 10 Jun 2024 14:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D110D12FB26
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028648; cv=none; b=LCs7aI3mHHQ916BqaTAPAZnQlowyL988hew5shaolyZIJhKch7vTxx6Y52DRg1l/XbmigvWYsxdEbLrQlNbx5l+VxNcnvcHzwFBKpkKDHjVpAzLcZsuadA0vlHeKTw8SG1wZCumXckqbD+bD3Mv6MqJlei1m08O5J5I3Y26bd0Q=
+	t=1718028584; cv=none; b=mpWxtk9qDN1oRbYampbXkOC1Wgewa1wKpHKp56CuXsg92oT/ixjmEN46xHdCn2YVQUvQRxMoKr8kfyXi2CcxF7o1SjQA5/z0Btgw/ATLYWR39utfn/RZao9em3sVKjW/55KtsHxQukliBmMDHRkeJESI4i02KDQFgjTMKcuKJzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028648; c=relaxed/simple;
-	bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S5jl0YU55lyuzNJo9rAsmOtEzCVF2lp7ZuUwlam8hyvZ3TG+kSqrZxAzOpY4rrlqqyLAyhiQepPYFm6dqU24U3XWsfsvElYqHedMV/ON6V9s02ROslqfRW5Rj4FcO2Xax10T5xyR4uIFPzE/NU+ib+h6T9w5sRQPNkj5cBg8a5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRM1CBXR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A755C2BBFC;
-	Mon, 10 Jun 2024 14:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718028647;
-	bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VRM1CBXRqwMoesfO3Wii8BrMsr5/tU4dKUfTJOL1f0kZY/3iQs6v0UGxgI0vQkJf7
-	 orT66yVpsiQJ2jA/516zMTzxsK/k85RO88j6AEXB++9N6+Z7JAZ0acMcao40QFOWyt
-	 w9TxJdP6PkAg0G6VqOzOJmWBLx8324I/jW+53dkb0WVfYi+f0Z7B14gZBPMaGf3KcW
-	 L3+/P5NHvK5esZyJYqF2oDvdoGXAXgjub6JWdxkfrqnLY8nPlZmuLXeveLF2WeM9uA
-	 2qOU9tuDg03H0jQdXRQ2jpcR2J5xI26Vjx/2glj4jwr3tJVS7YBB/eLbTkHnVFqLF3
-	 V8zaklaa6yM7A==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon, 10 Jun 2024 16:09:10 +0200
-Message-ID: <20240610-vfs-fixes-a84527e50cdb@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718028584; c=relaxed/simple;
+	bh=4aaAgEJ4no9Xmp4mAov9FrzUsh19wG6FNUPI7ez7R6M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lEdq7k1W7+IC0sxN+PITsDYCreuABu1Mo84eQymMudi1trLJ6TF/Kr34qLOjt35hOBbTI1RqZYHtpu4WAb6ZSkyVdIgJjB5XC+427ujbmFcxFnXNL9tILemFLeykxdfambdZp4CFei+6CM1d7Rdw1vDF5uEVv2MLvvc54g1ofo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B4hHeUqQ; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfab38b7f6bso7036817276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718028582; x=1718633382; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dgenhHanHHj3lnmpj2N/ZQ5FyHhx2VF3uOYFtsXU2e4=;
+        b=B4hHeUqQTdR9/6sc+/8ej7P3vjULmwRZVzp6Mmi2/PKlcTT2FMwIEglnJzb+y1+7Ig
+         FggeewVtvTqSGj/eVHdNJdN3IRhId543Xj12DVjEfGjCxZLF/NwoaAtLewtHY6pQcPXJ
+         JbSeQSr5xef5bwSL5gIxrHu4VayrJEIqgMJn5vaCx0KUec3mbamJk7hL0xpJ0l7zVDmL
+         +aEa9mjt6YAoUn7GjB6Ls/SLg8rPH1/1XCQS/EbmGps901El864m2DvOm7Y5PcquneuH
+         RNTfQfNKZWkvlExtBgH9tGT7/4fj2V41RgtnSxlN7iMdDSowmks9dAKpR/TH8P80x8LG
+         j9Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718028582; x=1718633382;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dgenhHanHHj3lnmpj2N/ZQ5FyHhx2VF3uOYFtsXU2e4=;
+        b=gomsDdFq7o2u/BY9Hgntc88rWxSqt/qo1Gx++BRwXH+XXNcPeov9eQJBPxwV4OjRN5
+         0kKq6k0Li5RWwe5WtTHFt3TYwxVLWkY1Lzk+3UeDatocc0mcujMCxlDzR7Bu7uyvA+Qc
+         L4y0QtxKKxmX3cKVvJgIGUFnYiqKFOVnMTuzXdMYNZw3lcRv8r5XZOu2/YpTHjZUcGb+
+         2r3ypC59sUXQn8dV4noAgZo1uZleAfvXs2xgEiJSeyHil/BWPmGBH3ueokhmrOSTcqCZ
+         Sjqft9/86EJ/166C+HqD6/HQvKZE+12WnSRGJXoM6jktL5L6frN3fopN2z1e8kFk31t5
+         Bq5A==
+X-Gm-Message-State: AOJu0YxK4zIhF7Iuwj0WRXRZopxS1a+Zi0bkz2sOJ1B+vm0Z3jDMr8fb
+	gt4sH+dKl0CocwLWVV1wk37xv05rgCzwcHmQBdWe1JfDB7Ydx0cjDOQHob5b7xjL6dJwgQ==
+X-Google-Smtp-Source: AGHT+IHCyPKX79a5tm9JTqThqIgBdA0usaL7W5XvXzJtEvNSBvVv/Xx7RKZXpJ+F65zXBGGopWTjXMu4
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
+ (user=ardb job=sendgmr) by 2002:a05:6902:70b:b0:dfb:210f:3ad5 with SMTP id
+ 3f1490d57ef6-dfb210f3d5cmr1232075276.11.1718028581873; Mon, 10 Jun 2024
+ 07:09:41 -0700 (PDT)
+Date: Mon, 10 Jun 2024 16:09:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4766; i=brauner@kernel.org; h=from:subject:message-id; bh=2eh5fXSWeeSBjf8qN/ZVFdd9bpC1U/JqDHicBRIk/Pw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSlc8asD7dKf5/7cc81ybuSCtmN/vO2pq+QXT09OpeT8 3x68s2IjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkkXmb4p2UdonB/wduKg9YW vRc/qi9Z7eP03dXNdrXuCtvZxXJxDIwMWw88Yl20dMvWQ+WTAl/cKdRedPpgxfS3CyJZy0/Fvy3 4ywwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2783; i=ardb@kernel.org;
+ h=from:subject; bh=7tiDVDTWIXbfAudS++fHHxGeLcuYd15jw6ZEmeO+/MU=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIS2dU9az1Pxb3uenUiVclcU1PN5qVm32v5zOOZyJKvD++
+ ihkalZHKQuDGAeDrJgii8Dsv+92np4oVes8SxZmDisTyBAGLk4BmIjnP0aG26Ux2Xcmy3AcLN9+
+ VjxE7nVQn75Ox6HN9hs9lM3ksv99ZPjv7HhEeN3/U5Zpp6wubl54XfX8c2M3mxpHI+YNmYsTrqz mBAA=
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240610140932.2489527-2-ardb+git@google.com>
+Subject: [PATCH] x86/efi: Free EFI memory map only when installing a new one.
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>, 
+	Mike Rapoport <rppt@kernel.org>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Linus,
+From: Ard Biesheuvel <ardb@kernel.org>
 
-/* Summary */
-This contains fixes for this merge window:
+The logic in __efi_memmap_init() is shared between two different
+execution flows:
+- mapping the EFI memory map early or late into the kernel VA space, so
+  that its entries can be accessed;
+- cloning the EFI memory map in order to insert new entries that are
+  created as a result of creating a memory reservation
+  (efi_arch_mem_reserve())
 
-* Restore debugfs behavior of ignoring unknown mount options.
-* Fix kernel doc for netfs_wait_for_oustanding_io().
-* Remove unneeded fdtable.h include in cachefiles.
-* Fix struct statx comment after new addition for this cycle.
-* Fix data zeroing behavior when an extent spans the block that contains i_size.
-* Restore i_size increasing in iomap_write_end() for now to avoid stale data
-  exposure on xfs with a realtime device.
-* Fix a check in find_next_fd().
-* Improve trace output for cachefiles_obj_{get,put}_ondemand_fd().
-* Remove requests from the request list in cachefiles to prevent accessing
-  already freed requests.
-* Fix UAF when issuing restore command while the daemon is still alive by
-  adding an additional reference count to cachefile requests.
-* Fix UAF in cachefiles by grabbing a reference during xarray lookup with
-  xa_lock() held.
-* Simplify error handling in cachefiles_ondemand_daemon_read().
-* Add consistency checks to cachefiles read and open requests to avoid crashes.
-* Add a spinlock to protect ondemand_id variable which is used to determine
-  whether an anonymous cachefiles fd has already been closed.
-* Make on-demand reads for cachefiles killable allowing to handle broken
-  cachefiles daemon better.
-* Flush all requests after the kernel has been marked dead via CACHEFILES_DEAD
-  to avoid hung-tasks.
-* Ensure that closed requests are marked as such to avoid reusing them with a
-  reopen request.
-* Defer fd_install() until after copy_to_user() succeeded in cachefiles and
-  thereby get rid of having to use close_fd().
-* Ensure that anonymous cachefiles on-demand fds are reused while they are
-  valid to avoid pinning already freed cookies.
+In the former case, the underlying memory containing the kernel's view
+of the EFI memory map (which may be heavily modified by the kernel
+itself on x86) is not modified at all, and the only thing that changes
+is the virtual mapping of this memory, which is different between early
+and late boot.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (27)
-gcc: (Debian 13.2.0-25) 13.2.0
+In the latter case, an entirely new allocation is created that carries a
+new, updated version of the kernel's view of the EFI memory map. When
+installing this new version, the old version will no longer be
+referenced, and if the memory was allocated by the kernel, it will leak
+unless it gets freed.
 
-All patches are based on mainline. No build failures or warnings were observed.
+The logic that implements this freeing currently lives on the code path
+that is shared between these two use cases, but it should only apply to
+the latter. So move it to the correct spot.
 
-/* Conflicts */
-No known conflicts.
+Cc: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/platform/efi/memmap.c | 5 +++++
+ drivers/firmware/efi/memmap.c  | 5 -----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-The following changes since commit 2bfcfd584ff5ccc8bb7acde19b42570414bf880b:
+diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
+index 4ef20b49eb5e..4990244e5168 100644
+--- a/arch/x86/platform/efi/memmap.c
++++ b/arch/x86/platform/efi/memmap.c
+@@ -97,6 +97,11 @@ int __init efi_memmap_install(struct efi_memory_map_data *data)
+ 	if (efi_enabled(EFI_PARAVIRT))
+ 		return 0;
+ 
++	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
++		__efi_memmap_free(efi.memmap.phys_map,
++				  efi.memmap.desc_size * efi.memmap.nr_map,
++				  efi.memmap.flags);
++
+ 	return __efi_memmap_init(data);
+ }
+ 
+diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+index 3365944f7965..3759e95a7407 100644
+--- a/drivers/firmware/efi/memmap.c
++++ b/drivers/firmware/efi/memmap.c
+@@ -51,11 +51,6 @@ int __init __efi_memmap_init(struct efi_memory_map_data *data)
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
+-		__efi_memmap_free(efi.memmap.phys_map,
+-				  efi.memmap.desc_size * efi.memmap.nr_map,
+-				  efi.memmap.flags);
+-
+ 	map.phys_map = data->phys_map;
+ 	map.nr_map = data->size / data->desc_size;
+ 	map.map_end = map.map + data->size;
+-- 
+2.45.2.505.gda0bf45e8d-goog
 
-  Merge tag 'pmdomain-v6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm (2024-05-27 08:18:31 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc4.fixes
-
-for you to fetch changes up to f5ceb1bbc98c69536d4673a97315e8427e67de1b:
-
-  iomap: Fix iomap_adjust_read_range for plen calculation (2024-06-05 17:27:03 +0200)
-
-Please consider pulling these changes from the signed vfs-6.10-rc4.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.10-rc4.fixes
-
-----------------------------------------------------------------
-Baokun Li (11):
-      cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
-      cachefiles: remove requests from xarray during flushing requests
-      cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
-      cachefiles: fix slab-use-after-free in cachefiles_ondemand_daemon_read()
-      cachefiles: remove err_put_fd label in cachefiles_ondemand_daemon_read()
-      cachefiles: add consistency check for copen/cread
-      cachefiles: add spin_lock for cachefiles_ondemand_info
-      cachefiles: never get a new anonymous fd if ondemand_id is valid
-      cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
-      cachefiles: flush all requests after setting CACHEFILES_DEAD
-      cachefiles: make on-demand read killable
-
-Christian Brauner (3):
-      debugfs: continue to ignore unknown mount options
-      netfs: fix kernel doc for nets_wait_for_outstanding_io()
-      Merge patch series "cachefiles: some bugfixes and cleanups for ondemand requests"
-
-Gao Xiang (1):
-      cachefiles: remove unneeded include of <linux/fdtable.h>
-
-John Garry (1):
-      statx: Update offset commentary for struct statx
-
-Ritesh Harjani (IBM) (1):
-      iomap: Fix iomap_adjust_read_range for plen calculation
-
-Yuntao Wang (1):
-      fs/file: fix the check in find_next_fd()
-
-Zhang Yi (1):
-      iomap: keep on increasing i_size in iomap_write_end()
-
-Zizhi Wo (1):
-      cachefiles: Set object to close if ondemand_id < 0 in copen
-
- fs/cachefiles/daemon.c            |   3 +-
- fs/cachefiles/internal.h          |   5 +
- fs/cachefiles/ondemand.c          | 218 ++++++++++++++++++++++++++++----------
- fs/debugfs/inode.c                |  10 +-
- fs/file.c                         |   4 +-
- fs/iomap/buffered-io.c            |  56 +++++-----
- include/linux/netfs.h             |   2 +-
- include/trace/events/cachefiles.h |   8 +-
- include/uapi/linux/stat.h         |   2 +-
- 9 files changed, 215 insertions(+), 93 deletions(-)
 
