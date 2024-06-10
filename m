@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-208467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9A3902579
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B20490257C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869471C23B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90CB2899B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404121459F0;
-	Mon, 10 Jun 2024 15:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC933155332;
+	Mon, 10 Jun 2024 15:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z28A4Rja"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2089.outbound.protection.outlook.com [40.107.249.89])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZaKaYaq1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2AB81754;
-	Mon, 10 Jun 2024 15:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16681422C4;
+	Mon, 10 Jun 2024 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032672; cv=fail; b=ficmlSGC8xLOH7IHAD1qne2JoOm/L3AsZLIuzIJIfJv7YcvWXN3eIpfsHKhpjmQ9d7xZGiFulUCY3TFQhyD9VkTGlWx/v1q+JSfyDwlfAqDoXn2pZL449v1DJCZBz+j79eB+bYCbcqzPz+bS6K5wzWFAljQaDbXbPSGhgEZZI4w=
+	t=1718032681; cv=fail; b=h/Q5z4WiLHdijN3SJZ41cW/diitLDO2698srov6Uhn+MbdkZ9Z3QqedJG6zCvxQa53JTYe1JccXzfopXUSYlJ3XkZfSotxIHXGsJvaP2TtwYVomU3V8EYoZI1BR/TjPhLX8r70kDiwFb7Igytkc7LYBf0W8UY6EkX6LgXqKd5eI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032672; c=relaxed/simple;
-	bh=UPquH0Xx5B1KBhKAIEjH60hINXd3/J5QmZNr/K77F2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=crmHW5PIn5LXmVVxY1BT9Ndv3iFpjWQ1bA5Xdw0d7lGZeFdrs09NqJSbiX/0vxux+sN0lKFE2Obfrqm9KcMO8MndDmhDfUWm+zbwffMIXAH/KmnhmzfwcUqZS9WVRxQ5YURC29oIIdIoKU8Wg3Wa+g3qbsXyMwBMltrovJH4QCU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z28A4Rja; arc=fail smtp.client-ip=40.107.249.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1718032681; c=relaxed/simple;
+	bh=rGUE6GcFvPEnqoL559RuFvcLoP4vJYQlIaOQKjoTFOo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hLfZ+nT6mRZXiVk5i1NrFNDg1O2cc+modPS6K/CJdumbSgJ+m2avdPUqnG9JdkQ90qSrLjhWCubrGvbSxsCSAVpscWQeMt9vU8QHxNkWAxbqj2e9RrcAV6LNNUJaQHgefc988PQF/NVgB0CbXbflJKX8CT1b9tJ2LDD/KiK7NR0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZaKaYaq1; arc=fail smtp.client-ip=40.107.220.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dsh/p2jxYN0EK6znYa/jdD6Hn6hhgpi6XBSqO23wAdJIIZcmkLPQ06FX85XEddB0Pt34ZZU1j/dFFAeAtvqBZWJTg3vagTQydF77yhTugm3Lqd7UGuaSsCpWeJXs72jbTi3GZKWhT4JFMKXGZNCNbQfN07b4tJZCXacSpp8VcCM13qSmeuG9sBtY1SuWlYAFTjj4VmI2S7CgjtH80un8NSJBntcnc++xSvihSuPsSXWO++54uxuwoZ3iRKa1yhaXACwOaI2anO5TZLaXRRDPQS6rQjn6cnQXRNnCpWfVVztTK1bIX+Se36ew1Jx31R66tulAssMJbLxTrXbF8Er3qg==
+ b=Bjb4hqK6y25d+yEQ856mP7o0s/UnzwZlKfXjDwt+CYMHel12qz0F0IKcQVA5pn7LwVv6wa5f6Z66cUmawvqNjs7EzpBZd6L9qw9+6dXSQzjlFjkiwiADNHoh0Q7KMq3NzdQjjm+WExYJP5OTb3DT/2Ez6gzXN58RBvvdVoq6Cj9RQEvb7Y71G4hqe1sy4yoI2sPHNx0SDS5jSlpvcZZEd5DfDbIzfp7pv1Dyc9Yx/ykDePSN3rew5RXu+HoOYJPj3muj8ZIUWpctlcQKC3rOSQXnYGdCwIlo6gizv9AOj4et1TvDH+ms6qWM+JTgc0nRuffR5fYsj9iOVcpn3/jQAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8FnKMxcRjOSfC4FvKkOmz8vcKvoSRA4N6QqvD/2qA7A=;
- b=msAQUV63H5LIoBTIySkFIxcFXp6LTzgqry+c7x2OeNEVBVlkVHxACPhiIALh5gSnGov2T3rA1+rHrksVpBRggilgoWRbRcxhj4YD+kmvPhLyftz1O0CrE4zNN4CHf9HoScqaud+csqmzkwJLXVUeYZuQLPYzlt1qC4GYBQTMbVRHZIkNaSMGjGDRIyod83sdWZtxIbzS1aqr1hNvGwCS4l1VyzgXLT+jvJhEjq/Mn1r/mWQnkQBSxNEcZMJQbTr/MxjI8jv+eYSqFqbGvmC7EtfImPTrXbkeA71lUKJldm3FzCA9GNLgZ00qskJo7mobI84C/PWF8B5tp4tqoeJl0w==
+ bh=2uYKUfv1DVEpIwdbitrYJBrIs4pV+c/ATcMVAOLLSZ8=;
+ b=EuqJf0b+oCJGQrYSxeE7K3w6TmO+Uju3O6RNk8Qrd+JC/nU/pfLdcG3iZ24OoT6cOcPrgHEzO2rAngAwIe7ieZkrhbVJ2X9Ir9Ic8Rvq3tjO4bGfHMeGKofeif/rOKWwL7gRWfO2Czwof3ho2O+8UCSXejk1ZJaYmil3fKVVDT7njwah1raqn5BB32OZLSvPhsRyVWyQ9YGbbPfshfVJZIQ/hXEKc0cQp6fUGX9EnOaG8YSrWwnWZxLlu9CDj56WWGgfNgP4EowfaEFu3T4T56jY+lhFyG/NrZa0Jn0SBmEv893BW624kR7t8pyH2siQrOQlCJUfHG+zYGQl7u8qRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8FnKMxcRjOSfC4FvKkOmz8vcKvoSRA4N6QqvD/2qA7A=;
- b=Z28A4Rja0QVBvbyyAJF43PYqidHRhAA/vShN270Fth3viPEuursenOoRaVBpcU/yHZ8dh0OPFToynQXT1xZ6QtU3oH8AafTnQXpkKAiVhSr6bBO+7WSqp7He+FT/HSg0ucwwAeeSgUy3fAs6tfFGhUau80Cnn4j8RlERk4j+OkE=
+ bh=2uYKUfv1DVEpIwdbitrYJBrIs4pV+c/ATcMVAOLLSZ8=;
+ b=ZaKaYaq1/7JOGJgbbeZlUBXOmrG27QvL6tt5mgRY+wICylom98UG1G67Qt7a34JDYXsMnVPBDetAVFElYde7258zpoW3ANb7LkWeKs2nOo6v1L8z+2a5Dlm2//Zp3Nz9rXpah2I8hC7AePkQJWYDO2A/zmrEltf5EYBU7P23ndM=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB9259.eurprd04.prod.outlook.com (2603:10a6:10:371::5) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+ by SA0PR12MB4400.namprd12.prod.outlook.com (2603:10b6:806:95::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 15:17:47 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 15:17:46 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: krzk@kernel.org
-Cc: Frank.li@nxp.com,
-	andersson@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	mathieu.poirier@linaro.org,
-	peng.fan@nxp.com,
-	robh@kernel.org,
-	s.hauer@pengutronix.de,
-	shawnguo@kernel.org
-Subject: [PATCH v3 1/1] dt-bindings: remoteproc: imx_rproc: add minItems for power-domain
-Date: Mon, 10 Jun 2024 11:17:21 -0400
-Message-Id: <20240610151721.274424-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
+ 2024 15:17:56 +0000
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9%6]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
+ 15:17:56 +0000
+Message-ID: <cfd0a622-89bc-4303-a972-4b5c8380eb76@amd.com>
+Date: Mon, 10 Jun 2024 20:47:42 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] Add per-core RAPL energy counter support for AMD CPUs
+To: Oleksandr Natalenko <oleksandr@natalenko.name>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, kees@kernel.org, gustavoars@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, ravi.bangoria@amd.com,
+ sandipan.das@amd.com, linux-pm@vger.kernel.org
+References: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
+ <2733323.mvXUDI8C0e@natalenko.name>
+Content-Language: en-US
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <2733323.mvXUDI8C0e@natalenko.name>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0072.namprd05.prod.outlook.com
- (2603:10b6:a03:332::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+X-ClientProxiedBy: MA0PR01CA0107.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:af::15) To LV8PR12MB9207.namprd12.prod.outlook.com
+ (2603:10b6:408:187::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,143 +86,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9259:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1198caf-cc27-4935-d52c-08dc89607bdf
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SA0PR12MB4400:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46497c75-56ae-4485-4790-08dc8960812b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|7416005|376005|366007|1800799015|38350700005;
+	BCL:0;ARA:13230031|1800799015|366007|7416005|376005|921011;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4+KpHsJSS66vZF/UfMnNXHaHNFIbaoX8ZEjYu1+bofC0CZWwLu8gaL8G5L/+?=
- =?us-ascii?Q?U3WwoTaE44dUCI4lL4LguIFfP+AR5DuRKu8CG75iTtNd5ZTTDfQ7oYcEQW2u?=
- =?us-ascii?Q?pog93aGdRJE3ZCtGhNHiI70Gbh+mUJOixUF1/CdzbGStCnUiU25b2tWsELZp?=
- =?us-ascii?Q?5FzQZpdc7MUB0HTfkujPuwkqM0HyppBqYyGVz+rdgQsAd/MmtMn+7kL3U1jM?=
- =?us-ascii?Q?Sx8UssS6mrl+/WAq/jV9KPKp6w9PbOpaQOLKrWdcnnQLNTWw4B9yv8q+h8b9?=
- =?us-ascii?Q?/6y7c94jQBZWOn693CTA33rMQbUMX9VbowL5Cj7qSuljaLnNCxkptjmw32l3?=
- =?us-ascii?Q?8vL3LZv7DA5V/l2FacdnOI404qTm25DIUkKxq7HYzQ/DYTW8y+ygJv4Jrwrl?=
- =?us-ascii?Q?db1gvYjKB27Oug+Ek6GdrNrw7luu8YABQ0RgKR4aB5fZNaY6E77Xt14gUcNT?=
- =?us-ascii?Q?tN5e30tocGX5OPv6+RfUmduhKfg8Lq1BSC2f6ILWzcwqLCpwFwl5TKmlh/s2?=
- =?us-ascii?Q?oqCsEeMcT2XQB4IN64VN3S/S7TGcKMAOl93Ucczl/x0iMV7oAtniGgXI/e5f?=
- =?us-ascii?Q?51CWnjMzG9Sr0L5lfEcIdjsdiraau3mppXAjw+PIeU0f4tnFafOHY0piCxl4?=
- =?us-ascii?Q?RLCwj+WJJ8PHnQTFaElXwtLQKIYIJqSCURMjpp8LQyNIuhIKWCmo3il8titv?=
- =?us-ascii?Q?BEEDeWcryOP6PsYIazOsFufdLJK0Amp5GB1ETHcHSRENoTsdKNS7xmjNuYt3?=
- =?us-ascii?Q?hSD65+IWPwEwPrKLeAmHuJFEYmJA0CHZSNtvjNT5AyHbl6my/Fnpr8rUnR77?=
- =?us-ascii?Q?rxYr8yj7RkEu3+d5VPpPRyDQD9iwS9knQpUuKHCy+gX5C7Lp63+81tTqtofY?=
- =?us-ascii?Q?EOojmG5OAUqHS1cKgsKzaCuYXykgG2hmPRtrYK+GKxEkUQ70savEshJcSenB?=
- =?us-ascii?Q?Iy04tHhIrPF0KSfh/Lq5SRbtOu7Shm2KxyUWQaszOgFfVWTs5EFUlROR5ZQ1?=
- =?us-ascii?Q?GgF0DhPFRuRtb1uI3FnhIZEtEesWps4yGcg6tA0J+niceab3qTfWtrD99kVC?=
- =?us-ascii?Q?Job7gR1Nujo5LeIXpXQpBvVKoV1GHfGiGlj8gUcdwt6Jd10oRpcMV7vLRl7P?=
- =?us-ascii?Q?TTB4GxYDdqxiLX17kLIYaNcUB9n6kd8MMZMkZNrUDuBs1jIPdlH/S1KNYvZ1?=
- =?us-ascii?Q?i3Jp2ZMwoTJTsQjrg1rdtq13SBcnxxeU5XSliB42FgJPDEVzhg6Mjw+OE8+g?=
- =?us-ascii?Q?/0LYV+8Pwyg+gPypbgkUMx+so8tHLmvO13WVg8CvQtteC4nVPIcXAlPH2CzC?=
- =?us-ascii?Q?wGonS1tKLo1/KYz2XtXDOxrR6BrsfKsf3bGDXf2LqOLnlu8nSSEjX1K0s7T1?=
- =?us-ascii?Q?ZMmh6UE=3D?=
+	=?utf-8?B?LzQ2N1g4ODIyVUZlUC82R1czczd0OEE1aHk0L05oMVdsVDlIQk9adDF2bEo0?=
+ =?utf-8?B?Y0QyYnZoU1NqZ3hySXBtYzRlaTYwS1JSY2NqTjZYVURod0tiR3NGNnZDWUI0?=
+ =?utf-8?B?R0JNa0RsSXFYYkRMbTBTdWNzRCswanRFemNOaTlOYlFuQ2pVUlo4djlpZmpQ?=
+ =?utf-8?B?WnVJNTNwdnV3YzVTQUVPUHlPMHBidm9XN05hRDdENG5Wazl4SXNIMjc3blJN?=
+ =?utf-8?B?VkZHbjIxRWxWNjJRdnVwM3JRTnVIVmxKZThRenpCTmIvNFMyWlJVdE4yZTFV?=
+ =?utf-8?B?NzBpR0VSN1BRNnRqczcwN01MWkRzMTV1UzUyenJJOTRQQld2Qm5HU2lRbnNO?=
+ =?utf-8?B?MHpadkRNTUZWcE04YzlrSjFqeUdJV0gvOWcvZnVEcUN4aTEyUlNwZis2NzBL?=
+ =?utf-8?B?aDBScUFweEdDUnZZS2laSTl0VVFycmxqaU4zS2tIdzVUYmlLS1gyR2FvTHpY?=
+ =?utf-8?B?N2FYQ0wzQWhGVUhJcXhrTHJDTUozaEh1WHZKY2QvYk9tWUgrcWdRVXhpZXhD?=
+ =?utf-8?B?TDJzUHNuYXBMZFBya1JFVnN3ZWJVcStFSnpXayt2WHNQRW5xYUxrV2g0Yzhk?=
+ =?utf-8?B?RDFXdHV4RWhnbmcwRHRWRzlaY2RscmJIeGFSRllVbXFxbk5sS1dZaklaWS9N?=
+ =?utf-8?B?a1BzM1plK3ljN2xXZWo1UEtuZUxISEFJSWFMdDRGN0VjVUpzbm9LZVVLZEdz?=
+ =?utf-8?B?cTlBZzA1cEJycS9NdXQ3RlN3QSs0V0tENEp3NVhwNTcxck9mbmY4UEZhaFph?=
+ =?utf-8?B?YTVvMFBoeFJuWGYydnZMY1IwR3p1cDk3anR4QlZpSnMrUDVTSnRMQU1FU1R6?=
+ =?utf-8?B?bk1qQ0NSTTF0NmpyVis5Uk5ZcmhMeTdwekppYXptakVrdTVrcHlmcjBqbmc5?=
+ =?utf-8?B?dXZVQVE3R0VFeEkwTkU3cXJEUFRDeEhPdGxIVm9BT3lER2tlLyt5dk5lQmdw?=
+ =?utf-8?B?N01qeTJkaWlKVGQzSm1GdFFuS0tLditPUG9JS3BSVk5UVGJYUG5yaiticndM?=
+ =?utf-8?B?R1MyT0ljanI4SExTeDN5SW5OQTR0NlUvKzNqUE9kZGdvS0Qvc0NDYjd5aGpR?=
+ =?utf-8?B?YURLNzRsT0tIRm1FWkw3cHVhQVpwK3d6Y1dmR09UK0JvZEdkYWRvbDg5QytR?=
+ =?utf-8?B?N200M2prUTdPeW1abkZOQkw2aUI2Ui9XdVFJYTlPTFVyV3FPVFdsVXJkNnZq?=
+ =?utf-8?B?cUU0NWFoakxra0tHN1RlVFcxelkwVGc2V2dUc2J4SEFzWVhnOUswcGVLcXlk?=
+ =?utf-8?B?UFFMYTFpZ0NiZngrQ1B6SU56T1lFTFVyNXcxQmhPem5aN2dGdXV2TUZTOEpO?=
+ =?utf-8?B?Y3J3MmhaNGxKUUNUZ2xNcHZYdXV6Ylc4OUJaejBjZkJaK0FJT3Jma2JwN0Nz?=
+ =?utf-8?B?N0VQamFBOVR3b3ZKTEhEdUpndjVobDR2eGpNZ2dIVFFKT2pkUlpCV1MyN3d3?=
+ =?utf-8?B?NTJnR0J4QWNIeGNpdGJJL2VBSmwzZ3c1bCs1SjNOc2Z3UWFoQXVVSERyVXdK?=
+ =?utf-8?B?Uk9BYjlwdHBrOXRvZk1mM252TnNCVnpuSjE0ZElGOWh4T1oyaldXTU5saysw?=
+ =?utf-8?B?OXAxYTdTTXhqdFhUK1BSRGhVNTlNNm50QjJHYlJEOE9wN3FkdHNQSzhjU2Ur?=
+ =?utf-8?B?UGVOOU9xWHRTUlhzM2JzcXFUNGpTcVJuRGd5a3l3azNiS1l6dnJ1QkhMTzhZ?=
+ =?utf-8?B?Y3luWnhtVlVtOVlZZ2NpN2ZLUFdnK2lVV1YyZkRCZHpNamxzRG9GNjNobnhX?=
+ =?utf-8?B?cE1oSXBJcEJVVnFKdUNXYmFmVUtnOVZqRU1GOVluT29lRjBXNDk1Nmk1c25q?=
+ =?utf-8?Q?hHbqF4iZDCYjEp1CGikqOauL9t50a2v5mk8aw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(7416005)(376005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005)(921011);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?35Ym1Nz8w7ebgky+n0iofjUQsQID1Vqa9B1YuyE0kQ/g/bQRi4hbWzFLW+wR?=
- =?us-ascii?Q?sZO8ZSRAisDGUBQ/r+y8dHTGZBiira9/FsXLf7si8WfJdiBny4hRZz3M/QbO?=
- =?us-ascii?Q?E3MXqZDkRvHUpg6r1jzesYb9NtC7AQKJEkeq2OiTFAjQhDtSIA6AaGxO/Z7Y?=
- =?us-ascii?Q?LY/JQFNw38Auiyudj/nEK6FcUQa14vlAguOPu5zJtJBdyVKMO/L5SilM/pjZ?=
- =?us-ascii?Q?RAW5xKvnCOy+W6nsaEIoR/WLW848wnLYYWbaTwP68WqF3yiDP3h9zk4o0PVn?=
- =?us-ascii?Q?2E3pSHBYwC2ICYSk08IfNa8yb4oAfB8pEueFUfMbFF6FdLLr2DdxulDUI1v+?=
- =?us-ascii?Q?U8xCf/9CI3CiYA1/JYpG7CV0nC5jNUmQnsOi6fUi0gsWaQOjd91gcreVQXdR?=
- =?us-ascii?Q?b7f/5Bek0iCFBhgENlxhGlWn3QdX8LHOd/DUvCLkvQJfueqsv9j4OfJiWjNF?=
- =?us-ascii?Q?gLppE/q+rrqvPIp6pr164EHHnRn5jYVTmWrdAGcvbA+NIWyRYZx3+2cs3mO6?=
- =?us-ascii?Q?QX1q+47hF2/bqmJ8D4+PMZxZ+6KKzaQMP3ha3toIdfT0wqXXYhCbK9+vbK9R?=
- =?us-ascii?Q?Hw0D5ehbVrZmfIb2n27JxaZab+Ttk387d32jbUtnIBGmJwv+kAS2rqMPBy9e?=
- =?us-ascii?Q?AmOF42L9/Td1TN3I8xIva5VItI45N7tkBbBDIRFwtGcaofcLxlbgQmNRp8m3?=
- =?us-ascii?Q?ozomHcJPl19mDLM0jhSX/w22a4XOtqw0js/LNEQoLk1lAGdslMnYywbxZFIk?=
- =?us-ascii?Q?5wpP79DfnB6bK/1l59iP6RwBbrjnmZBR0oMpsLp8+urhiVfE3kpc2WDp9pqs?=
- =?us-ascii?Q?IQbDMhtqrBBUrqe0BdXxmt89OpPRC3u2ZG4SWdtaXfQYni0mFVMCmP9SFBoa?=
- =?us-ascii?Q?/DvnubthfzV99t4qFrmAh63QFjKs2CGgH4RtdKHu2FNsR+TjChDfWcmuq2yF?=
- =?us-ascii?Q?dxYKwH2O6xjFa9bA6iHelxly3lBbOsJ27JpVrEr65AN1tB5CbbencoYfnDfd?=
- =?us-ascii?Q?P+DbEbP5U72ney22eIrk2rQauscZTGTpivgfgbAYqWXP9QKnjpwlis/o+2L1?=
- =?us-ascii?Q?ZEBFh8FkDmZf1UwsledpAXkKGclV1OaAkBc3eK+I5jb+Cu5zIV9p2LdwTo/q?=
- =?us-ascii?Q?RR0NiQ9Ar37j047je8FwIq5Cc6VzKLB1Ra4jQA/XKkWTZLfX+czHljFyYwPp?=
- =?us-ascii?Q?/rf7qXkoVqcPJQveU6TYnKTE5RMgH1znS1TwEUocY2dV1/DBUNKBVNqnGQiy?=
- =?us-ascii?Q?/ODBDWqtwtKXEfnMR9L2VEG8l6p2tAcjBSQ3rVSiB6JvRzRk34t8r/EQdfDi?=
- =?us-ascii?Q?LOb9ONTWHJnb5mdF3F9D8pLbdYXdgK13qdEkUPNGq8zu/zjgUZGY909QaE5s?=
- =?us-ascii?Q?PQosgvyKMsFfPrQxuzAVl4HdH8lYLqPCWjNqkGROO4kMCYyUbG6HRc4F7vrB?=
- =?us-ascii?Q?glgzaoncge0E22l3wyYq9Dhpq8Jyt5db5uQLYwBAa6BE1DOytt7VTP/NWfLx?=
- =?us-ascii?Q?6HZ3lsW7A6g76sREDsK+NdaL5uteKs8iNRSHh2ibwAgEXhFBfPm3uTEwqZsG?=
- =?us-ascii?Q?cpvuwz+JuksAX4AE9p+jK8Lp2j2dwK7DDR1tCOYS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1198caf-cc27-4935-d52c-08dc89607bdf
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?utf-8?B?emErU2hsRnBpd0RUSkRzMElHVWp5czV6T2pxMVQ5N1VSblIveWt6bGxrRGl5?=
+ =?utf-8?B?R0Q3aGp6elF0cm5JMnliNVlDbmRlK0xGUUk4WXVxcmdoTXhOekQycWt0L3ZP?=
+ =?utf-8?B?OEVaY3VMNTluM0c2L1B0b3ZyVTB6aU04aDY3ZDlRRklmUlg1MS9CaWtMc0xW?=
+ =?utf-8?B?L1lMTlNmNHArTUQ5WlY2RC9XeWZ3M3BCVGpOejMrcy9uUFJNam9kTTlsU29t?=
+ =?utf-8?B?RWxuS24rM1NXc3dtdWYzTVkvZk45UjlZZVVIRWRtbzlxNlRXWmdGSVgwS1Rt?=
+ =?utf-8?B?OEc3YzI0b3g1a3paeUVheS9hOW1mMi9jMHdBMkdiUFREVW9KRjBpQjRUWGQy?=
+ =?utf-8?B?eEZSV2xOUkZnVm9XUWZHSDR3V0pmYllHWkYzemFtdXc2TSs0ZmVEQW5NTWx1?=
+ =?utf-8?B?emh0bjZ0YkFCZmtCRTNFOFJBWkpjN2N3aFdnNUk4V0I3RUZZRGpKNUQ2QnM4?=
+ =?utf-8?B?eXFPcVVQL0xyTXJjY2N2TjhnU28vaTNVL1JLdERxSUEwcVd1VldJdENMR3Ew?=
+ =?utf-8?B?NmVvSDBBZVFZS2F4TWlQZXo1UVdOcTZ6UGF2SlczTE5nM3BlcHBma1Blc1hR?=
+ =?utf-8?B?aG9VOFUweXgrWHRrWVFzOTFGOWp1QytiY0VDQzFFUzM3b2p3eG9hL1BFV2pQ?=
+ =?utf-8?B?WkJCSHF2VmZYZG5XMzBUbnlzMU8xVU9EQjdnTGM5bWQ2OHRza21LQW14TU9F?=
+ =?utf-8?B?a2NhMjk4a0k5Zlp5NFJuOUw3MUsvTnEvTmlEZlRzVzd2cXlOc2FtSU5UZ0xS?=
+ =?utf-8?B?bUs3UFhiVDQ4SnZDTjNrRmtBM2g1eWpDREN2MTUwaGtqWGU1cFF4NFlKeG12?=
+ =?utf-8?B?bWx3V1JIZ0t2KzNHZmgwN2V4VWhRL0RmRUtHTk1KWjAySXlUMVVuK0dZWHhQ?=
+ =?utf-8?B?YkNEZzF6SDVwYjNrYzhESldRZ0hLd0FETjlaRzRiYUFQKzVQc2kwTlBRZXR5?=
+ =?utf-8?B?NmdNVnpoOWFiTUJ5Qk53Y0ZNTi8rWlNXcGI4TE5iSWdRRThDMFZKS0xFWnhT?=
+ =?utf-8?B?NFQxTEowOUVNeVB5blhtYUlRangrbmFDdTd6Wk5sc2NZQm14dSt5SXlHZXph?=
+ =?utf-8?B?c2IyVlRSNG9EN3laa3B1RGwvdFhRWXhGWWdFdytaS3RJRWhGZWZacENIMXhz?=
+ =?utf-8?B?YzZLaHdldEVBaHNqODExd2NHQ28zcCtaQTIxYmV5QnhnY1RDSm5NN1NLbTZS?=
+ =?utf-8?B?Z1YzT3UxZTk4eS9kNnIwL0N3SGl2aVBZcDNIWE54dUdSdllJdVdpVmtUK25s?=
+ =?utf-8?B?QXRnVWtQUWMvdFFlRWo0aWFJU0llWHVISnZqbUl3eUdmMk5qNmZ3US9YTnZy?=
+ =?utf-8?B?TU0yYklBTHNnVXBBL0ZGU2VSVGdjSXByWEd1c2liREhxS0pqaVhoVHNCR3Rj?=
+ =?utf-8?B?TzR3TDFjSzNsNlo2S0tjWndIbXNMTkxkVXVLS1BQWVhwZVZISUZtOHMvRzVG?=
+ =?utf-8?B?WE9CV2ZGQmxrT2JTelFmQ2RzUTZOSTk2SW5TeS9odmsrckQ2QjN5WnRDRWZr?=
+ =?utf-8?B?bEdINHhwN2dYSG9vbm5vaVd3MFh6cm54dXh1TFZUTDcvUnpnOTZVQlZyZmp6?=
+ =?utf-8?B?QmE3VHpWUTNHQnhwcVd5cmRRTThuNzVnMFpxMmx3aFBEeXJSUDB3SW5sa0FE?=
+ =?utf-8?B?K1JCNEx3WUNhUENsUHRGaWM4a2ZZTDlwR1Z2ZzhGR0hpQ2xUSHdSVm5aRGhz?=
+ =?utf-8?B?cjhhTjZWbFVMb1V5OWlhS0hiYmVCSXpNZy8vQ1p3NytDSGhqc295UTd4MHhk?=
+ =?utf-8?B?dE1SV3o1UkdraHhwSmlWY2pleWVHMjlqSUhWQmMrMVRWdVdiU05kbVlKb0hU?=
+ =?utf-8?B?ZGp2bzhrVHFFM3NzRXhUU0pSZDNnSTV3WmsxZ3FSVjBQdUtvVmpUbVdFV2c2?=
+ =?utf-8?B?UE15SjAxV0FmVXBjUFB2WDhLT3pZUm1WWnlqUGlmMlN2WTc2UE0zLzB3b0pm?=
+ =?utf-8?B?WWNpYzB1azdlbFVMci84bVNHanlKMUE1a05BQzRiQW1kL0tPd2pQNkpNcTNO?=
+ =?utf-8?B?MlN4TnoyRlRpSlRZVGRIUFZ0emp3QjdVTStWcVVuVGMyMW9yM3hBMWROVGZE?=
+ =?utf-8?B?cUZ2eXB6NmoxYXVXN0VMM3dhSWFIZ0NqVW45TzFsWk1yei90bCtlVmNJSTZX?=
+ =?utf-8?Q?OEOEs0yvyHSTICvWjm9VQ+rbz?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46497c75-56ae-4485-4790-08dc8960812b
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 15:17:46.9353
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 15:17:56.0282
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TlToZKl0dz8g4Yh0EZyw5oeTtfj4tT4wmaf86rCEwVr4/3qXmyGhBGnsRWMce3MSR1jHzK/JIVC/oM6Ehp2ugg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9259
+X-MS-Exchange-CrossTenant-UserPrincipalName: y+licGruIJjNcYR+3Qc5ETDO/Sn+jxy72X9WCeYZHq2iDiI/mwr4Pnxo7Bx8eXinhdbCz0OFZrH8SqnfVvGFsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4400
 
-"fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Other
-platform doesn't require 'power-domain'.
+Hello Oleksandr,
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
+On 6/10/2024 7:58 PM, Oleksandr Natalenko wrote:
+> Hello.
+> 
+> On pondělí 10. června 2024 12:07:45, SELČ Dhananjay Ugwekar wrote:
+>> Currently the energy-cores event in the power PMU aggregates energy
+>> consumption data at a package level. On the other hand the core energy
+>> RAPL counter in AMD CPUs has a core scope (which means the energy 
+>> consumption is recorded separately for each core). Earlier efforts to add
+>> the core event in the power PMU had failed [1], due to the difference in 
+>> the scope of these two events. Hence, there is a need for a new core scope
+>> PMU.
+>>
+>> This patchset adds a new "power_per_core" PMU alongside the existing
+>> "power" PMU, which will be responsible for collecting the new
+>> "energy-per-core" event.
+>>
+>> Tested the package level and core level PMU counters with workloads
+>> pinned to different CPUs.
+>>
+>> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa 
+>> machine:
+>>
+>> $ perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
+>>
+>>  Performance counter stats for 'system wide':
+>>
+>> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
+>> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
+>> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
+>>
+>> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@linux.intel.com/
+>>
+>> This patchset applies cleanly on top of v6.10-rc3 as well as latest 
+>> tip/master.
+>>
+>> Dhananjay Ugwekar (6):
+>>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+>>   perf/x86/rapl: Rename rapl_pmu variables
+>>   perf/x86/rapl: Make rapl_model struct global
+>>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
+>>   perf/x86/rapl: Add wrapper for online/offline functions
+>>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
+>>
+>>  arch/x86/events/rapl.c | 311 ++++++++++++++++++++++++++++++-----------
+>>  1 file changed, 233 insertions(+), 78 deletions(-)
+>>
+>>
+> 
+> With my CPU:
+> 
+>   Model name:             AMD Ryzen 9 5950X 16-Core Processor
+> 
+> and this workload:
+> 
+> $ taskset -c 1 dd if=/dev/zero of=/dev/null
+> 
+> the following result is got:
+> 
+> $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
+> 
+>  Performance counter stats for 'system wide':
+> 
+> S0-D0-C0              1               1,70 Joules power_per_core/energy-per-core/
+> S0-D0-C1              1               8,83 Joules power_per_core/energy-per-core/
+> S0-D0-C2              1               0,17 Joules power_per_core/energy-per-core/
+> S0-D0-C3              1               0,33 Joules power_per_core/energy-per-core/
+> S0-D0-C4              1               0,14 Joules power_per_core/energy-per-core/
+> S0-D0-C5              1               0,33 Joules power_per_core/energy-per-core/
+> S0-D0-C6              1               0,25 Joules power_per_core/energy-per-core/
+> S0-D0-C7              1               0,19 Joules power_per_core/energy-per-core/
+> S0-D0-C8              1               0,66 Joules power_per_core/energy-per-core/
+> S0-D0-C9              1               1,71 Joules power_per_core/energy-per-core/
+> S0-D0-C10             1               0,38 Joules power_per_core/energy-per-core/
+> S0-D0-C11             1               1,69 Joules power_per_core/energy-per-core/
+> S0-D0-C12             1               0,22 Joules power_per_core/energy-per-core/
+> S0-D0-C13             1               0,11 Joules power_per_core/energy-per-core/
+> S0-D0-C14             1               0,49 Joules power_per_core/energy-per-core/
+> S0-D0-C15             1               0,37 Joules power_per_core/energy-per-core/
+> 
+>        1,002409590 seconds time elapsed
+> 
+> If it is as expected, please add my:
+> 
+> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 
-Notes:
-    Change from v2 to v3
-    - only imx8qxp and imx8qm need power-domain, other platform don't need it.
-    - update commit message.
-    
-    Change from v1 to v2
-    - set minitem to 2 at top
-    - Add imx8qm compatible string also
-    - use not logic to handle difference compatible string restriction
-    - update commit message.
-    
-    pass dt_binding_check.
-    
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-      CHKDT   Documentation/devicetree/bindings
-      LINT    Documentation/devicetree/bindings
-      DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
-      DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
+We can see that after you affined the workload to cpu 1, energy 
+consumption of core 1 is considerably higher than the other cores, 
+which is as expected, will add your tested-by in next version.
 
- .../bindings/remoteproc/fsl,imx-rproc.yaml        | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+P.S: I'm assuming here that cpu 1 is part of core 1 in your system, 
+please let me know if that assumption is wrong.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-index df36e29d974ca..57d75acb0b5e5 100644
---- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-@@ -59,6 +59,7 @@ properties:
-     maxItems: 32
- 
-   power-domains:
-+    minItems: 2
-     maxItems: 8
- 
-   fsl,auto-boot:
-@@ -99,6 +100,20 @@ allOf:
-       properties:
-         fsl,iomuxc-gpr: false
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - fsl,imx8qxp-cm4
-+              - fsl,imx8qm-cm4
-+    then:
-+      required:
-+        - power-domains
-+    else:
-+      properties:
-+        power-domains: false
-+
- additionalProperties: false
- 
- examples:
--- 
-2.34.1
+Thanks for testing the patch!
 
+Regards,
+Dhananjay
+
+> 
+> Thank you.
+> 
 
