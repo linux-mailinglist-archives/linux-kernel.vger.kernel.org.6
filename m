@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-207752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68DE901B8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E06901B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758D61C2118C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A020E1F21E80
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE920319;
-	Mon, 10 Jun 2024 07:07:34 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FBDEAC0;
+	Mon, 10 Jun 2024 07:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HRJTc3ud"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC31C20
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC9B1C6AF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718003254; cv=none; b=rBAew/pFbbU9NOXDg9X/M4j3fh5Bt6Fc+7SJmsh4GIWBv1VsOFesIMqKtENcdAgdxcZf37aR9W1hd6IRmkWQgaq4g4kSV/52Eys1CPwmV/1YywlSI+C6ugIM9iqRz9kov7o/m5OguYek7kuDSAH/ApmS3+yuaf2p5FmnpBG+KS4=
+	t=1718003303; cv=none; b=K5R10HTx5NbUi8BQhgNTxEr2vKSE++Y22jqf0Kzw6GTotZSRMx9hrthe4LtaZgjIvNKRAhQmvx6tsrR84BDBkRXnodsEiNc5fgaRW4TZGqBGtuI3nRVK+LfdzkIDMdH0W12YEr4r0Xv0LPDcajmGkfqhQfYuK4LUXlE5o3UUKx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718003254; c=relaxed/simple;
-	bh=RaHyHSxriqBbzMxLUty0EheUNUvcvMTdWobKqxk4+xE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=J0EvK3ajNd0r5ukRcRsDdwyLSl8p7mIRVxspJvlHoVPRGadDJ1hFdDaZbqwqHc1Tv/qngYetqm1ITJdd+LNcseTucF3Fg5dFG3I8XlFe7EfH8TmzQ9E0QpNkTT6kQbqOl2v9DxEiVrhQI2+avwf+6UWkS0EAl+smSsX21Kkivf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3745fb76682so44607335ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:07:32 -0700 (PDT)
+	s=arc-20240116; t=1718003303; c=relaxed/simple;
+	bh=QEP/zaNAd6rVQEJ7AQSX8sXbT4ui22VLn/jbIusAu0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=InUMVuoxpdwqQmktll4bRtvenYu81Am9xZi9rjYz2s8alRUPtcu3YgG9yhiY7ZeMluvkYKyRbDtDgrPzjgPGMEfE8sOFiSgNPRgyntYXJ0pTXnelEYhg/bMcWIVQWXfc8MxxT9XXTpMHKTuesdF5Vcio/bTqstKdNxnQxn/Qp0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HRJTc3ud; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so5896867a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718003300; x=1718608100; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iVrI5GsrQNLTME723VL0GXEMwV6fiHKNH1QpwFztIZA=;
+        b=HRJTc3udHCGHshWdZL93VbqnKKjErnegxjtkRgw1Wo0PKCawTN9ohGQLP9h0TA17Zf
+         fbF+1/U3GipxYUNwSu6y3aMwrASCy4uAZ9ygrvproX7lftE41KqagrEYPt0CFTxv6O9M
+         X2XQLMzeJ27Z4HiQrwbrjiKKKGgxdpIheSgpVfdmiNEreRIUVKFmz2TBdtq5r2iwggQq
+         B6FiXo4l2RHrmgBQanBksYLraQ6VvUJWkzmNBIAM7cL8BLCjvIGhc4Wtz2YZsKIfoNpB
+         DfUv/JM0h+T/98IkMU7unGJESIDudKYyVKxA2iprezwTMdF/gyKVV6xlEiFgkTIwZMlN
+         1CIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718003252; x=1718608052;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aOWDa8s7scwwzepO7HM8stjaYWxEuHOf7DjzQ2t/x20=;
-        b=boY5VHR1uc/PFFwvKnK/NwzVLNkl4i1A8Vm84YpAbRRfpDFBGlkR4BNxlYRp9H549i
-         1XBt2YixC2LkbFrPdBk/qyL+bcWEpsGD72vg/X6y8rQDvOHc19Rj5+cJAo4hS/EcjGSE
-         lfEWhJuI86ojZ8hvWZZLS7CS4Tqn633aOK6caam+z7iwhgY7iyIn5n9yQx8HG9HfZl/G
-         F/mC0S/3sK2SnZqBF4duQulFMtH/jZLYjhkUAGslvPnirppNTn5id1UyFlGQtbalcpsA
-         ZRedm1vXmKK3ta7H8TKBCdra4BWijRAyewXyoYGg86VFprby0Sp60D9X2ZNtWxVTi5MM
-         6Ctg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjRi/gWkY1Vmna47vM2kbHS+17MWYC/fhDg4Q/WiuZ+1coRo1ypdB8of+ymilGubShPfWna65r57c+kwQexHxZejBDaVXPvhnfK4Wc
-X-Gm-Message-State: AOJu0YyFtVv/TPUeg+Fgs21BlHcEvtPZR8/AgMEg5QkSDsigiafLxIcg
-	klnWxDK1WyFkujWQiGAhuNKCITklkjrWZShBo2Y8yv7C8GOvTo5HyFsSxMEoQRTsj/BJdQy4B1U
-	UzcRBsCpIhcAemKL9QUSjzaWFEzlUsZo2D+z3IioBbYbnaOdos3sVTOI=
-X-Google-Smtp-Source: AGHT+IE2s84k+Qu3XNTICX1W0U0I076P1nY/KKjv8VFmf3d/qG9B0njUo8HMbxxfLpWDKLhXtSEGe0SLsTxUzC+wpEV7bO4IC+Ox
+        d=1e100.net; s=20230601; t=1718003300; x=1718608100;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVrI5GsrQNLTME723VL0GXEMwV6fiHKNH1QpwFztIZA=;
+        b=SdYWhclUGNxHQEL91O7uZ4cjryCEkZY0zTZ2M+ZJMmVFFT+X3pZW/f+JCe1ZFAZq4B
+         svsNEX8RKRzWpDtU2+chEX2Lmf6CK2DyClB1lOYOYMcDJJOg+UmtV7MitKNNbPJVS/FE
+         pql/kVJ3Le/OUxLMw4KETayYjLs0tsaqNlq4DA0Z+fU/AACuq6jTc25/IBsK1djHU4zv
+         EFekR4JslO6m4EEf4/ia5wsqNmMocA90meCf/cgKYVO0VIMCbw60WnqTNlDcOweILpiO
+         VvEQCv6ivCW6pkeLCwKeXhIwnzrCgIxawhTlK62sgtt4XX0xoQ4OGR80PzrKCd/7cJty
+         +jEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFcdx0sVw3pos4F7LhCRkx7wtty38lF+w4foQknys+hmzV2jPMYz+uHBaHCnfwsMimQwW3+PxWBu+3t9/xb0n+oC+dQB7TKxEUavQq
+X-Gm-Message-State: AOJu0YwkHFl1c1piwBw0riQlarwt0wHW6dbvuERp+VNArVm5rzhNJydl
+	y7i9qc52CVlNSMnMRQKmlirBP8mM/EYEaESKtCwWfdwXlRtVK+GRJ0Qxwg9gc1k=
+X-Google-Smtp-Source: AGHT+IHrLJutCqFB6QyRHYps/IiSSbjoC3LCsYCwOb37kfga8SmQTAXj6uBl+DbsZS27mM1A/ddGQg==
+X-Received: by 2002:a50:ab1a:0:b0:57c:6c98:b61f with SMTP id 4fb4d7f45d1cf-57c6c98b88emr3430720a12.42.1718003300041;
+        Mon, 10 Jun 2024 00:08:20 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e? ([2a10:bac0:b000:7579:f459:e30d:c5ec:5a8e])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7681d659sm2427026a12.54.2024.06.10.00.08.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 00:08:19 -0700 (PDT)
+Message-ID: <d827e5ab-6204-4a47-a8af-a1eedd76b070@suse.com>
+Date: Mon, 10 Jun 2024 10:08:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:375:a50d:7f2d with SMTP id
- e9e14a558f8ab-375a50d8283mr2045565ab.1.1718003252146; Mon, 10 Jun 2024
- 00:07:32 -0700 (PDT)
-Date: Mon, 10 Jun 2024 00:07:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009140e4061a83cda3@google.com>
-Subject: [syzbot] [net?] WARNING in bond_xdp_get_xmit_slave (2)
-From: syzbot <syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com>
-To: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com, 
-	j.vosburgh@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    f8f0de9d58d9 Merge branch 'mlx5-fixes'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=1638d2ce980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f3fd9f91ee48/disk-f8f0de9d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4f0153e67f84/vmlinux-f8f0de9d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6abab02f18cf/bzImage-f8f0de9d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
-
-bond9: Unknown bonding mode 6 for xdp xmit
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 14901 at drivers/net/bonding/bond_main.c:5502 bond_xdp_get_xmit_slave+0x519/0x690 drivers/net/bonding/bond_main.c:5502
-Modules linked in:
-CPU: 1 PID: 14901 Comm: syz-executor.1 Not tainted 6.10.0-rc1-syzkaller-00179-gf8f0de9d58d9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:bond_xdp_get_xmit_slave+0x519/0x690 drivers/net/bonding/bond_main.c:5502
-Code: be 69 13 00 00 48 c7 c2 a0 73 54 8c e8 d0 35 1e fb eb 98 e8 69 96 41 fb 4c 89 e7 48 c7 c6 80 94 54 8c 89 da e8 48 50 31 05 90 <0f> 0b 90 eb a6 e8 4d 96 41 fb 48 85 db 74 0a e8 43 96 41 fb e9 72
-RSP: 0018:ffffc9000da6f6c8 EFLAGS: 00010246
-RAX: 2059da9abcd8c700 RBX: 0000000000000006 RCX: 2059da9abcd8c700
-RDX: ffffc9001616c000 RSI: 0000000000002218 RDI: 0000000000002219
-RBP: ffff888056026038 R08: ffffffff8176812c R09: fffffbfff1c3998c
-R10: dffffc0000000000 R11: fffffbfff1c3998c R12: ffff888057b5c000
-R13: ffff888057b5c000 R14: ffff888057b5cca0 R15: dffffc0000000000
-FS:  00007f8b32a0a6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30d22000 CR3: 00000000629b4000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- xdp_master_redirect+0x104/0x250 net/core/filter.c:4317
- bpf_prog_run_xdp include/net/xdp.h:518 [inline]
- xdp_test_run_batch net/bpf/test_run.c:313 [inline]
- bpf_test_run_xdp_live+0x15eb/0x1e60 net/bpf/test_run.c:384
- bpf_prog_test_run_xdp+0x80e/0x11b0 net/bpf/test_run.c:1275
- bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4291
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
- __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8b31c7cf69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8b32a0a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007f8b31db4050 RCX: 00007f8b31c7cf69
-RDX: 0000000000000050 RSI: 0000000020000040 RDI: 000000000000000a
-RBP: 00007f8b31cda6fe R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f8b31db4050 R15: 00007fff9cacb078
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+From: Nikolay Borisov <nik.borisov@suse.com>
+To: Kees Cook <kees@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <202405310923.78257B2B3@keescook>
+ <a54db95c-e22a-4e13-ae4b-6a5a67d1c49b@suse.com>
+Content-Language: en-US
+In-Reply-To: <a54db95c-e22a-4e13-ae4b-6a5a67d1c49b@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 1.06.24 г. 10:27 ч., Nikolay Borisov wrote:
+> 
+> 
+> On 31.05.24 г. 19:28 ч., Kees Cook wrote:
+>> On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
+>>> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
+>>>>
+>>>>
+>>>> On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
+>>>>> As discussed in [1] add a prototype for __fortify_panic() to fix the
+>>>>> 'make W=1 C=1' warning:
+>>>>>
+>>>>> arch/x86/boot/compressed/misc.c:535:6: warning: symbol 
+>>>>> '__fortify_panic' was not declared. Should it be static?
+>>>>
+>>>> Actually doesn't it make sense to have this defined under ../string.h ?
+>>>> Actually given that we don't have any string fortification under the
+>>>> boot/  why have the fortify _* functions at all ?
+>>>
+>>> I'll let Kees answer these questions since I just took guidance from 
+>>> him :)
+>>
+>> Ah-ha, I see what's happening. When not built with
+>> CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
+>> has the function definition, we get a warning that the function
+>> declaration was never seen. This is likely the better solution:
+> 
+> fortify-strings.h is used in include/linux/string.h. However all the 
+> files in the decompressor are using a local copy of string.h and not the 
+> kernel-wide. When pre-processing misc.c with FORTIFY_SOURCE enabled 
+> here's the status:
+> 
+> $ grep -i fortify  arch/x86/boot/compressed/misc.i
+> void __fortify_panic(const u8 reason, size_t avail, size_t size)
+> 
+> It seems the decompressor is not using fortify-string at all because 
+> it's not using the global string.h ?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Kees, care to comment about my observation? Have I missed anything? 
+Reading the following articles : 
+https://www.redhat.com/en/blog/enhance-application-security-fortifysource
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+it seems that fortification comes from using the system header string.h 
+(in our case that'd be include/linux/string.h) which is not being used 
+by the decompressor at all so simply removing the function definition 
+should be the correct fix, no ?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+<snip>
 
