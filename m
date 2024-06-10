@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-208699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B026902849
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:07:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AE4902966
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCFE2848B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F860B21005
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AB914E2EF;
-	Mon, 10 Jun 2024 18:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30B514D719;
+	Mon, 10 Jun 2024 19:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SSfNPLY9"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="gPqWTyCL"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C4412F5B6;
-	Mon, 10 Jun 2024 18:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD5C2230F;
+	Mon, 10 Jun 2024 19:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042792; cv=none; b=AchoulY61nNql4/m7h3H+VZ54/dm9jd7ziSKh4/2ofCUw9t51YmZUTKIDq6eirP+wJtzC+Ut+It/KG/EJD+lF2udZAXbnlI2o/wvIIQKRO+KPGs6aJewFLXvq6ro3Vnts6CLiqCBU0t/nlWkUWE0FQlkV2fqBc3xETTr4bdDJNI=
+	t=1718048095; cv=none; b=eoNpzWaJpPUSV2L/w1edUJmGEzF2XCIeVuUqHqSarNI/gqv+yZtfyLlZOOZECmEo1Ov/Jl9pHhja1DPlhnXDO7su8nfhr5esGXzN7nu7C55jch46Z8YtWXMHOAtn6DIeijNhP/0OKhVII1PY3ZtCwDYKsm5Rs7xDPEEg5HtaAI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042792; c=relaxed/simple;
-	bh=205vA25fJGdQp7gx2fSzwIASczYJ2XhK1BNSi8Cu6a0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vsu5uUovr0KgwontyybOAg6EVZ+bXYQNLHCQv8mBh3gBWA4XvWoAA3xZkFOMCdEuDdcgBUr8RfsZF3QealMDG0eTIzH8IcIpkdaP/qKsXlKRra73LCit9BWT1aQR0RHgSEOsgerdzoBuZe77rm3KppyvZVaafXrZUPbVm9Lt0iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SSfNPLY9; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6JXA024752;
-	Mon, 10 Jun 2024 13:06:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718042779;
-	bh=c++NXaRcOYOcHcUH4HHfdQIPtUkQdhjeGSyzyykhV4s=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=SSfNPLY9q1gSm/ldaF7CB+TV4+DEWbbhFkqBDx/atLbMcc9JLg/CVXiKpnMdvDrcA
-	 y3tzCtcZ7ShWbBdCaC6PCcNaL/1TZM4Dopmu5a8nOKrWKSyj/ce0ytABqtMcyWnQRp
-	 HhCrzhXbE33QI6Vfj4l+d0zIKCgQzu22Ir0kWitc=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AI6JFp022917
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 13:06:19 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 13:06:19 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 13:06:19 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6Gtk056905;
-	Mon, 10 Jun 2024 13:06:19 -0500
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth
- Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hari Nagalla
-	<hnagalla@ti.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis <afd@ti.com>
-Subject: [PATCH v10 5/8] arm64: dts: ti: k3-am64: Add M4F remoteproc node
-Date: Mon, 10 Jun 2024 13:06:12 -0500
-Message-ID: <20240610180615.313622-6-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240610180615.313622-1-afd@ti.com>
-References: <20240610180615.313622-1-afd@ti.com>
+	s=arc-20240116; t=1718048095; c=relaxed/simple;
+	bh=iSlArSiy4r9V/ntgrh4SI4jK9M/oixVSelyA9EMIjfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i18shE8UW+8Eu2cTt3TXhkwRIXCqa1EqGwQUcAFRgrur7owmwdUIXp6x/S0rCTW7AOEKOwtopvzPSraIdiaWiYcnIcohvHsZIO2Ky+E6ONNOxOKkf8KRrbfpGkoGAC6qZxyZU5UUDMQzqEKeM4KV245DRQ8n0oW2rBeFKujQBtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=gPqWTyCL; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355087.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ABZrwt014133;
+	Mon, 10 Jun 2024 18:05:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	DKIM202306; bh=2Gnp3PO7oU3dzU8H0CiRDGU9SqVqHXr7nHqbHwRrpoI=; b=g
+	PqWTyCL08I1N1ID/+RSvgaTdHLhCFmZrFRumuHAWaXMs5xfa16+338NCZVNm+KHb
+	DjGeQ68GayAEF4bQHJeTAMBTf6bbhjwiORLA8/MpXRycRk7rc5t3rgCaFiOI2e1I
+	LCaw8Q28thG5bjACawtrE0oHoIeMwqPEyDgn0M2TR6D3fVo4Oc0kOfElIqEeaJnv
+	stQuTB1zOY0doh15A5tCYUKf2uuD8g4I44+pGonMyPZ08VSTguPQHeQX9XrxoPEH
+	zJcwz9SpZ5X/rDtbv1CxSnwZu9V5iUe1F8DRVIfxodzMUPiHFoAeQniJW+r2uMi0
+	joDM2Omegj6pLM4hhZUbw==
+Received: from va32lpfpp03.lenovo.com ([104.232.228.23])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 3yn45gt5mt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 18:05:04 +0000 (GMT)
+Received: from va32lmmrp01.lenovo.com (va32lmmrp01.mot.com [10.62.177.113])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp03.lenovo.com (Postfix) with ESMTPS id 4Vyfpl4n6rz4xlJn;
+	Mon, 10 Jun 2024 18:05:03 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp01.lenovo.com (Postfix) with ESMTPSA id 4Vyfpl0VB7z2VZRs;
+	Mon, 10 Jun 2024 18:05:03 +0000 (UTC)
+Date: Mon, 10 Jun 2024 13:05:01 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v5 0/3] Support kCFI + BPF on arm64
+Message-ID: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-ORIG-GUID: yExqa3DDXgG_6TxFLeimNwxPhcMuFVJh
+X-Proofpoint-GUID: yExqa3DDXgG_6TxFLeimNwxPhcMuFVJh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 clxscore=1011 mlxlogscore=999
+ phishscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100136
 
-From: Hari Nagalla <hnagalla@ti.com>
+Adds CFI checks to BPF dispatchers on aarch64.
 
-The AM64x SoCs of the TI K3 family have a Cortex M4F core in the MCU
-domain. This core can be used by non safety applications as a remote
-processor. When used as a remote processor with virtio/rpmessage IPC,
-two carveout reserved memory nodes are needed.
+E.g.
+	<bpf_dispatcher_*_func>:
+	paciasp
+	stp x29, x30, [sp, #-0x10]!
+	mov x29, sp
+	+ ldur w16, [x2, #-0x4]
+	+ movk w17, #0x1881
+	+ movk w17, #0xd942, lsl #16
+	+ cmp w16, w17
+	+ b.eq <bpf_dispatcher_*_func+0x24>
+	+ brk #0x8222
+	blr x2
+	ldp x29, x30, [sp], #0x10
+	autiasp
+	ret
 
-Disable by default as this node is not complete until mailbox data
-is provided in the board level DT.
+Changes in v4->v5
+https://lore.kernel.org/all/wtb6czzpvtqq23t4g6hf7on257dtxzdb4fa4nuq3dtq32odmli@xoyyrtthafar/
+- Fix failing BPF selftests from misplaced variable declaration
 
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Changes in v3->v4
+https://lore.kernel.org/all/fhdcjdzqdqnoehenxbipfaorseeamt3q7fbm7ghe6z5s2chif5@lrhtasolawud/
+- Fix authorship attribution.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-index ec17285869da6..b98e8ad453289 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-@@ -160,4 +160,17 @@ mcu_esm: esm@4100000 {
- 		reg = <0x00 0x4100000 0x00 0x1000>;
- 		ti,esm-pins = <0>, <1>;
- 	};
-+
-+	mcu_m4fss: m4fss@5000000 {
-+		compatible = "ti,am64-m4fss";
-+		reg = <0x00 0x5000000 0x00 0x30000>,
-+		      <0x00 0x5040000 0x00 0x10000>;
-+		reg-names = "iram", "dram";
-+		resets = <&k3_reset 9 1>;
-+		firmware-name = "am64-mcu-m4f0_0-fw";
-+		ti,sci = <&dmsc>;
-+		ti,sci-dev-id = <9>;
-+		ti,sci-proc-ids = <0x18 0xff>;
-+		status = "disabled";
-+	};
- };
--- 
+Changes in v2->v3:
+https://lore.kernel.org/all/20240324211518.93892-1-puranjay12@gmail.com/
+- Simplify cfi_get_func_hash to avoid needless failure case
+- Use DEFINE_CFI_TYPE as suggested by Mark Rutland
+
+Changes in v1->v2:
+https://lore.kernel.org/bpf/20240227151115.4623-1-puranjay12@gmail.com/
+- Rebased on latest bpf-next/master
+
+Mark Rutland (1):
+  cfi: add C CFI type macro
+
+Maxwell Bland (1):
+  arm64/cfi,bpf: Use DEFINE_CFI_TYPE in arm64
+
+Puranjay Mohan (1):
+  arm64/cfi,bpf: Support kCFI + BPF on arm64
+
+ arch/arm64/include/asm/cfi.h    | 23 ++++++++++++++++++++++
+ arch/arm64/kernel/alternative.c | 18 +++++++++++++++++
+ arch/arm64/net/bpf_jit_comp.c   | 21 +++++++++++++++++---
+ arch/riscv/kernel/cfi.c         | 34 ++------------------------------
+ arch/x86/kernel/alternative.c   | 35 +++------------------------------
+ include/linux/cfi_types.h       | 23 ++++++++++++++++++++++
+ 6 files changed, 87 insertions(+), 67 deletions(-)
+ create mode 100644 arch/arm64/include/asm/cfi.h
+
+--
+
+Sorry for the extreme delay Puranjay and other maintainers on the
+submission for this. The past month I was on incident response rotation
+here at Moto and my hands were full with scripting build scanning steps
+and other product deployment nonsense. Better late than never, though,
+if these changes have not been merged yet. (-:
+
+Tested on a cortex-a76 qemu instance and self-tests are matching the
+baseline bpf-next success rate (Summary: 509/3700 PASSED, 77 SKIPPED, 37
+FAILED).
+
+Thanks for your review and regards,
+Maxwell
+
 2.39.2
 
 
