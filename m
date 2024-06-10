@@ -1,233 +1,135 @@
-Return-Path: <linux-kernel+bounces-207825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCBA2901CB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:16:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30F0901CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D88DFB21AB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D721C213EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138DE6F30E;
-	Mon, 10 Jun 2024 08:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199856BFCA;
+	Mon, 10 Jun 2024 08:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/xA20+5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLvBV7No"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C0742056;
-	Mon, 10 Jun 2024 08:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ECF5B69E;
+	Mon, 10 Jun 2024 08:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007388; cv=none; b=AFBOAWIjNZLYBcojrlXun9CtK5Eix1zRM9YiElZj6w4lAusgKLQuw8VmkQadUKzs7w+jQfij0nwOSRC4nRnDafddshj6u7jpe7f1H6AKIeGlmYdGPyiAAONglW0XNwN+s1TNimE/uaW7VBSY+FGuVbrW73t1CnHU25Sh8qyQjLI=
+	t=1718007469; cv=none; b=XbWgv3KzmCu1KkWVAf/Lybnd7ienETNfI1h22N0Dba59poll1kYYFLviyu4tmDdDrL8zQoBiPc1Fcg92P8gDOLHbwaIaeJh3vTDCFSm5VPQpiJbLS3RbTZgxlsLz40ZNT+8KbeJkJTH/PtFjwIGnDVauQImWfuWsHBCrCPjjKZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007388; c=relaxed/simple;
-	bh=iJG9paNBMZPt8l4VAY32K2nphAQ0d4kuAbkyrwYCr9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkOw5UG+3DqAQ3/PqtEZd5o5nuRGViVTw2Fa/JqlyckuhBcSAj4ErkzjOgQfq21/XVebCnxQ+M/WZmKpKebw3Uu2F0+AfEZlR/Y3V/N5carWjjQY4pFVRuBTMStDh6gtUVOQQAFPCrk8x/WdJREh0ZoBx4pjoAAFiBM2DlqNQp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/xA20+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEDCCC2BBFC;
-	Mon, 10 Jun 2024 08:16:22 +0000 (UTC)
+	s=arc-20240116; t=1718007469; c=relaxed/simple;
+	bh=cbNYI/JUGMzrLwfYyXouN/cF0pszrXdfoVeq804JEfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NPMfo+w+Pf12bzLAMLJsbRZhMoRvHFzVR5jvf1UkWYcnSlXRzgL289mVqvNI6gMMz8rKVpgZKAb26aQTe1UMeWytvnDBG8KnqlbefAWuEKaCmrFk4tVyvtnNT0bs9NuqbLuyOry9VvosKq6u2Oeym87hq3UgzIKFEDCo8Q1QC0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLvBV7No; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD21DC4AF48;
+	Mon, 10 Jun 2024 08:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718007387;
-	bh=iJG9paNBMZPt8l4VAY32K2nphAQ0d4kuAbkyrwYCr9M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B/xA20+58yhxvsOmW9D633bQNjuuMJhKBIBlVyDng4GirPctaFHwZYn4uWtG68luw
-	 8cnXsgtdLr0QH16nNKBp77hwAThJTddPhYEhVxFWTKylQNApQ1pPM4VjIlZZzQilm+
-	 WfiGK2gK4hSvchHwC6slsOV2ur9PZN0oFdjXV7OoxC0JkT3xOX1VbTjZMajkpMo6UR
-	 TSi8DpqQWFtr8zSqDW7ndqS6GtKqCgH2ccmSAJRvfxCt4i6kKOSGFAflPHDnn+s8x+
-	 ow0+bivGhfvaQePpGSzhtzTbsIANtV7ngSnDlRdouMlaqU+kczPjFoUqTM4wxKHjgD
-	 9Dvafjsae40gg==
-Message-ID: <e7444ff4-763a-44c6-9a73-0c5f590ceaad@kernel.org>
-Date: Mon, 10 Jun 2024 10:16:20 +0200
+	s=k20201202; t=1718007468;
+	bh=cbNYI/JUGMzrLwfYyXouN/cF0pszrXdfoVeq804JEfc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vLvBV7No0kB2BepWGhre1nP3OiOMW4b21mhPm8F0xP0Az6MTU1iZy9KteXD6rt4wq
+	 3hPV667DqfBpjob+ofl4v27cNX04ZHkJrDJ0/qXcJHkUpYaHn4HA1bRMoVyXIIDTl+
+	 eDxEbiyZ9aShZkW0/7UGx0roE010DHfisfOfpQx0nMoNs7AwvL+lrun8mXnfifVPOX
+	 0OWG0hftNlVxC79/JFjNK8gH1kQJ++DByn/78VjGYWxWJBxVlDcQ1vb7chms0rvwzj
+	 oDQL7RREM+I+MLWdDmrfWbRKQkSG3mpH5Dfh24xasB0CZtRL7OjMqaH8BQ85DTfstr
+	 5crc8Xkf5QZ3A==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso14671791fa.0;
+        Mon, 10 Jun 2024 01:17:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWOJTD0ooCiZrgX81DPnNu8LSkpm9jcqdC7F3veXLVJPhmdEkXTtqX3esJRekKG9BHyS+sGvULLffZ34ENVQSS4h2iUxh7ogwEenRI1
+X-Gm-Message-State: AOJu0YxDQFfsGCQbQCTp9XPkk4KZwsC9Zkj7AP0mlWU7Foy9BADtmHBx
+	m4C4cTvH6b8fg+Ngj+lWYGRM+nfqweGjLP/0FcbujEzy28+7Yw52aOyS2T3RXpZI1gI2aOAeTHp
+	WKZrK5fiRhkkopgWtwtwJk18xtsQ=
+X-Google-Smtp-Source: AGHT+IGr2LP3LHmaDB4qM/6C4+LArNs0Zzj0ctXZ5LyiUueT4uMS8/SxcBC+5PescZpGMznq7XkmGuvVFf6JYcOk8t4=
+X-Received: by 2002:a2e:8712:0:b0:2eb:e312:5af1 with SMTP id
+ 38308e7fff4ca-2ebe3125cd4mr20814711fa.22.1718007467129; Mon, 10 Jun 2024
+ 01:17:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/17] dt-bindings: net: wireless: cc33xx: Add
- ti,cc33xx.yaml
-To: michael.nemanov@ti.com, Sabeeh Khan <sabeeh-khan@ti.com>,
- Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240609182102.2950457-1-michael.nemanov@ti.com>
- <20240609182102.2950457-18-michael.nemanov@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240609182102.2950457-18-michael.nemanov@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <xm26bk4dlqnp.fsf@bsegall.svl.corp.google.com>
+In-Reply-To: <xm26bk4dlqnp.fsf@bsegall.svl.corp.google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 10 Jun 2024 10:17:35 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGnVu7UxEAzL1g2rJB92fN80qMZ5SjT236R-VKrT3JBqQ@mail.gmail.com>
+Message-ID: <CAMj1kXGnVu7UxEAzL1g2rJB92fN80qMZ5SjT236R-VKrT3JBqQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Don't add the EFI stub to targets, again
+To: Benjamin Segall <bsegall@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arvind Sankar <nivedita@alum.mit.edu>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/06/2024 20:21, michael.nemanov@ti.com wrote:
-> From: Michael Nemanov <michael.nemanov@ti.com>
-> 
+On Thu, 6 Jun 2024 at 23:14, Benjamin Segall <bsegall@google.com> wrote:
+>
+> This is a re-commit of the commit da05b143a308 ("x86/boot: Don't add the
+> EFI stub to targets") after the tagged patch incorrectly reverted it.
+>
+> To summarize: vmlinux-objs-y is added to targets, with an assumption
+> that they are all relative to $(obj); adding a $(objtree)/drivers/...
+> path causes the build to incorrectly create a useless
+> arch/x86/boot/compressed/drivers/... directory tree.
+>
+> Fix this just by using a different make variable for the EFI stub.
+>
+> Fixes: cb8bda8ad443 ("x86/boot/compressed: Rename efi_thunk_64.S to efi-mixed.S")
+> Signed-off-by: Ben Segall <bsegall@google.com>
 
-Missing commit msg (explain the hardware), missing SoB.
+Oops, my bad.
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+
+Please add
+
+Cc: <stable@vger.kernel.org> # v6.1+
+
+One nit below.
+
 
 > ---
->  .../bindings/net/wireless/ti,cc33xx.yaml      | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> new file mode 100644
-> index 000000000000..08ab2ed93dba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/wireless/ti,cc33xx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments CC33xx Wireless LAN Controller
-> +
-> +maintainers:
-> +  - Michael Nemanov <michael.nemanov@ti.com>
-> +
-> +description:
-> +  These are dt entries for the IEEE 802.11ax chips CC33xx from Texas Instruments.
+>  arch/x86/boot/compressed/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 243ee86cb1b1..5245c8fedc17 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -103,13 +103,13 @@ vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
+>  vmlinux-objs-$(CONFIG_INTEL_TDX_GUEST) += $(obj)/tdx.o $(obj)/tdcall.o $(obj)/tdx-shared.o
+>  vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
+>
+>  vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+>  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+> -vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+> +efi-obj-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+>
 
-Describe hardware not "dt entries, regardless of what "dt entries" are.
+I'd prefer to call this vmlinux-libs-y rather than efi-obj-y, because
+static libraries and locally built objects are being treated
+differently here. The other EFI related objects are added to
+vmlinux-objs-y, making it entirely unintuitive why this distinction
+exists.
 
-> +  Currently, these chips must be connected via SDIO.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,cc3300
-> +      - ti,cc3301
-> +      - ti,cc3350
-> +      - ti,cc3351
-> +
-> +  reg:
-> +    description:
-> +      For WLAN communication, <reg> must be set to 2.
 
-And for other cases it can be something else? What else could it be if
-not a WLAN controller (description says WLAN)
 
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: The interrupt line. Can be IRQ_TYPE_EDGE_RISING or IRQ_TYPE_LEVEL_HIGH.
-> +      When SDIO is used, the "in-band" interrupt provided by the SDIO bus is used
-> +      unless an interrupt is defined in the Device Tree.
-
-Does not look wrapped at 80 (see coding style).
-
-I don't understand the comment. You describe SDIO interface here, so how
-it could be conditional "when SDIO is used"? What is the other case?
-This binding has so many weird statements.
-
-Describe *fully* hardware, not your drivers.
-
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-
-additionalProperties instead... or this is somehow incomplete
-(properties, $ref?).
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    // SDIO example:
-> +    mmc3 {
-
-mmc
-
-> +        vmmc-supply = <&wlan_en_reg>;
-> +        bus-width = <4>;
-> +        cap-power-off-card;
-> +        keep-power-in-suspend;
-
-Drop all these, not relevant.
-
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        cc33xx: cc33xx@0 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-Drop unused label
-
-> +            compatible = "ti,cc3300";
-> +            reg = <2>;
-> +            interrupts = <19 IRQ_TYPE_EDGE_RISING>;
-> +        };
-> +    };
-
-Best regards,
-Krzysztof
-
+> -$(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+> +$(obj)/vmlinux: $(vmlinux-objs-y) $(efi-obj-y) FORCE
+>         $(call if_changed,ld)
+>
+>  OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
+>  $(obj)/vmlinux.bin: vmlinux FORCE
+>         $(call if_changed,objcopy)
+> --
+> 2.45.2.505.gda0bf45e8d-goog
+>
 
