@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-208326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A551C902394
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD58902399
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010D228BCB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216801F2386E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34DB1514C1;
-	Mon, 10 Jun 2024 14:03:35 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC813FD9C;
+	Mon, 10 Jun 2024 14:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aseErW4D"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CC112FF88;
-	Mon, 10 Jun 2024 14:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B6084DE7;
+	Mon, 10 Jun 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028215; cv=none; b=WrI5/DpA7Lfd2HAyb5VWDQNbpCzxND4GLyO8JmIlMrSorLISgOvigMZc7vzvg/+VGMBSa25e8Ozyt2Dmg0epqfJSpd57wU1pFmdfhmy9o2lultOyKE9ar6WvFbD+vRjwBz2sXgWlFDs+4UR5ZHIB0g/I3S+JBEitLcXCDw/5Uqg=
+	t=1718028230; cv=none; b=rqEVnnptM+WhlsheU/VsQx0e/RZDxVvgQSx3QxH0NvSN+7vwZ9aPbEPxsjjlNR9TLKDHUzJNXNWcDCG7Z69l7+D/HPz/XUTwXF2j23fCcsgPPW4q8+XqGYLP2I7ED48PzyJp/xq5cQsLT8/0bZtWf2Ve5jLF5u4O4lcQN/2WaXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028215; c=relaxed/simple;
-	bh=2dirzJRuwbGhd+6OQ/fShUFZb95MtmFHC/hdTU38XuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dPm7TrkyVHW8zIGjUyCWUPEIAMHq5QMKeHRXAe1HmJ1i75VQWNrab6kZVBd7sX2AobDb6XDQL6Tt8ChQPBn7IngLCyNWS2BMp/60u6GSJ8VO5lpDERE4OLMYryQLY8jxfLQ3h9bd9SwIkuxfVNqFIvy9WQJ+/jpqIfA7OvMehl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=9905c7c8d6=ms@dev.tdt.de>)
-	id 1sGfcS-00A3ix-8k; Mon, 10 Jun 2024 16:03:32 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sGfcR-00CSba-Nu; Mon, 10 Jun 2024 16:03:31 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 736BB240053;
-	Mon, 10 Jun 2024 16:03:31 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 070DA240050;
-	Mon, 10 Jun 2024 16:03:31 +0200 (CEST)
-Received: from mschiller1.dev.tdt.de (unknown [10.2.3.20])
-	by mail.dev.tdt.de (Postfix) with ESMTPSA id D0D9C36F2E;
-	Mon, 10 Jun 2024 16:03:30 +0200 (CEST)
-From: Martin Schiller <ms@dev.tdt.de>
-To: martin.blumenstingl@googlemail.com,
-	hauke@hauke-m.de,
-	andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ms@dev.tdt.de
-Subject: [PATCH net-next v3 12/12] net: dsa: lantiq_gswip: Improve error message in gswip_port_fdb()
-Date: Mon, 10 Jun 2024 16:02:19 +0200
-Message-ID: <20240610140219.2795167-13-ms@dev.tdt.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240610140219.2795167-1-ms@dev.tdt.de>
-References: <20240610140219.2795167-1-ms@dev.tdt.de>
+	s=arc-20240116; t=1718028230; c=relaxed/simple;
+	bh=en/b4B2m0bS4AIKpzZ62en2PDTKoDle7YefUFrHhWK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pBXkyb8J1xidGgbhTy2DiFZnuFw4S6ybta+n79IfLpLP1abPyUeKBP9J3PLn4CisOx5G/Czd5I2RW0HS9/gDrX2YjK+7XgXI5iszI+rkHj2KgWZEaUPuxTQPYJa4Zth+Tq8VY+Xrc4wDCkacOtItgURw6MDy/l/DDCLVf6h4J4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aseErW4D; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A007X0005752;
+	Mon, 10 Jun 2024 14:03:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9ui7K6c1TFM4qAOoMEcObMwQOrPa+CdhoIX2EmgCBQI=; b=aseErW4DBwTn4fNg
+	g5xen3Qy8XLgTq8pFgVlxa60NnrybQqlYYJ9bGRhDOlVDjxmzt03mLFUhe2vSdqj
+	pK/IntOsrz7cowzwjPCD9+9xO1hld8Dz9+OyUvBSMhM5F8PbUaW3YURAaMONo6AP
+	W+j6KH88opXr2Ckgrvyz0lol26OFiHrEaQlRHrQieOQk1aQMxNeLHENvvbWpw9+h
+	ck9YPPIXqqabzAaUIlaxATaZmnJODehJ1HkYxoXxgxpCO7kyda9BiZHyJSG/Ndrk
+	gXVIjYlwlXOaRwsxRzV7uTbfTpBgNgvqVAPIQ9cxkjGhNxh3uxwPMfOVbsJeIr29
+	umwDug==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0ec8da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:03:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AE3cZf008592
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:03:38 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 07:03:38 -0700
+Message-ID: <0dcef87c-e5e0-4298-bf83-1794bbbc60ed@quicinc.com>
+Date: Mon, 10 Jun 2024 07:03:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-purgate: clean
-X-purgate-type: clean
-X-purgate-ID: 151534::1718028212-36129522-E7DB901A/0/0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] nvdimm: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        Oliver O'Halloran
+	<oohall@gmail.com>
+CC: <nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <virtualization@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
+References: <20240526-md-drivers-nvdimm-v1-1-9e583677e80f@quicinc.com>
+ <6667067e7e152_1700b5294ed@iweiny-mobl.notmuch>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <6667067e7e152_1700b5294ed@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8uMlKcmwmExDFwKQnRukTvNSsFyjlamy
+X-Proofpoint-ORIG-GUID: 8uMlKcmwmExDFwKQnRukTvNSsFyjlamy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100107
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On 6/10/2024 6:58 AM, Ira Weiny wrote:
+> Jeff Johnson wrote:
+>> Fix the 'make W=1' warnings:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/libnvdimm.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_pmem.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_btt.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_e820.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/of_pmem.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_virtio.o
+> 
+> Just to double check.  This is a resend of this patch?
+> 
+> https://lore.kernel.org/all/20240526-md-drivers-nvdimm-v1-1-172e682e76bd@quicinc.com/
+> 
+> Dave Jiang, I'm picking up all these for the nvdimm tree and I think there
+> were a couple I was not CC'ed on.  I'll coordinate with you because I'm
+> still seeing a couple of these warnings on other modules in the test
+> build.
+> 
+> Also I want to double check all the descriptions before I send for 6.11.
+> 
+> Jeff is it ok if I alter the text?  I know you mentioned to Jonathan you
+> really just wanted to see the errors go away.
 
-Print that no FID is found for bridge %s instead of the incorrect
-message that the port is not part of a bridge.
+Yes, please make the text whatever makes the most sense. In most of these
+cases I'm not a domain expert so I construct these descriptions based upon
+code comments, Kconfig descriptions, and git descriptions, and in some cases
+these are originally wrong due to cut-n-paste or the drivers have evolved so
+that information is no longer accurate.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/net/dsa/lantiq_gswip.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I need to add a version of that to my b4 cover letter!
 
-diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswi=
-p.c
-index ec52c62eadce..fcd4505f4925 100644
---- a/drivers/net/dsa/lantiq_gswip.c
-+++ b/drivers/net/dsa/lantiq_gswip.c
-@@ -1370,7 +1370,8 @@ static int gswip_port_fdb(struct dsa_switch *ds, in=
-t port,
- 	}
-=20
- 	if (fid =3D=3D -1) {
--		dev_err(priv->dev, "Port not part of a bridge\n");
-+		dev_err(priv->dev, "no FID found for bridge %s\n",
-+			bridge->name);
- 		return -EINVAL;
- 	}
-=20
---=20
-2.39.2
-
+/jeff
 
