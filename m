@@ -1,209 +1,252 @@
-Return-Path: <linux-kernel+bounces-208130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA18902131
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:05:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9D190213F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53008288556
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE89B20E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECD7E576;
-	Mon, 10 Jun 2024 12:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF60C7E575;
+	Mon, 10 Jun 2024 12:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sww0ylM9"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2067.outbound.protection.outlook.com [40.107.95.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwYnUqMH"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77C1BA53;
-	Mon, 10 Jun 2024 12:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021093; cv=fail; b=GPiw1SoQl7w8ksEq9+W+3DeAVOOp2ddW+bnDHqEYimyE3pZkEi14JiEs5mLRf9G0d4EwpEn8xYuPlzlvulqCOBcYZFWatDTxxQAVPRCTe2RpwGz/Bqy1ifr6YFbCzWYsbpGuLpVxYmket70cNFtE6paMVKf0uz0Ne3ZSxd9A7gY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021093; c=relaxed/simple;
-	bh=eSfh/IaALT210cmEFH7QmtHYOnVrtjS6m1zm/MjXDDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lUTWm4MbSRE4GkxpXOzY/Zy2fc0uXQJlwiazgUGK8c7TOJHH7MZC4GFVdCib53FiZ4icBAeThxvpTwgrp80KUqXX7nScGHtiqWrvQAN9qdce9SRbQTWdcGne8eF8iCH2LFBDZZcYOf4/CDUt+gCPqxs4M0a9D1Y6blqXb9m3Y7U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sww0ylM9; arc=fail smtp.client-ip=40.107.95.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CTCh1Ximc/ZUNZkdWMCiRJ1vmJOCzkN9juFMAwQTdU5poOoeYkFvFRsg28AZ9dKtExtTKr/DA21tpj3nJqZEGmGE31V8wWPcJDhXX6MHIBnQH0iNUmM6VhrtsU4aO3WxNqYr2YOVOnxr0tzO3IBJtfGvEf64ePZMaE/X/cYVbekw4pCRGjXhs7xdK0xWCnziVoitgsOS83eGnt8jI88Lsvfg00zwSJXWXRZeTSTUUG7DX4GuNdScph348D0rX/XsfrMdIkgoWGs1AMYMwQdKV10J4DlF64bIBdrjiHpQYbHVxWvu1XocW4IN7W4ALHvcYFg+F0RMWF8bZUznnQGV/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wA8jYMkFCrehX9YcdRhjxfrLUSU6kgJvqM5ZgAOSZCY=;
- b=LLHSe3olYyB9O+eeGVtM0pOTZCuNGybcf5QSkDWKq1EeuAwhH8Bwy+AXAE4Tz5XgAoY+dG6GLigEpAs1NKwRroY4QppdRBaUHz7WZuOcaXT44w87jtHIaAJn+9HHOlHXUTpDnJGKa2BpSe1AbrEKbsUWVuMarT3zSa9MjFEdJ/fYBoI7a3k1C2EAdrSme3ZAXiOUnTfyGeIM9WVixMQPxepoJt8UqTKoWP2J6GXeTN/9fx3pcYNN1lRpyxAmXaUcoJ+gOegTjZM3lO33GbEV5rZP6k9VM2xcWeHkbaRUgDpWXHcz47/i3EIKU0uey4/u0oWCTWSl9BnAN4ybFYGBpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wA8jYMkFCrehX9YcdRhjxfrLUSU6kgJvqM5ZgAOSZCY=;
- b=sww0ylM9oAB/J5eGKhi1ApEEKcSvr4OB+G+LfQBuH7xW1y0cAqAjLbGgp/M650FBEoE5z7w010/WvibIe0zE1cVP3f9PXyCfXDdam6PLybxMw2z7bN98+GWGVtKo4ccFA/h5YA2v2S5TNqhb7Xu5Koq8iRPmUUc7/+TwOzvcCXSUF5EfI00Szvwx50t2NHNNR0JPEYxqHfamAuR0vNjKHUOLiK+b1x4/E45H1rw3JE20qWTCh5kGkUwojfuyppkiZ1n7zliLZouy1hQCwcrVFgjrywpOMwFq8+chSFzFuPF4iJef9iWS8XazJ5dJze7GGY7bR56JO6v+IB4Uv79rUA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by SA3PR12MB7922.namprd12.prod.outlook.com (2603:10b6:806:314::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 12:04:48 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 12:04:47 +0000
-Date: Mon, 10 Jun 2024 09:04:46 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
-	"jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
-	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <20240610120446.GP19897@nvidia.com>
-References: <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
- <ZluWXYQjroz0fqqn@nvidia.com>
- <Zl03rsgZl/msa3I+@nvidia.com>
- <20240606182423.GF19897@nvidia.com>
- <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
- <20240607002707.GJ19897@nvidia.com>
- <BN9PR11MB527604637EC37B3B03FBBE468CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240607144917.GK19897@nvidia.com>
- <ZmN5WZkvDeIS7RRH@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmN5WZkvDeIS7RRH@Asurada-Nvidia>
-X-ClientProxiedBy: BL1PR13CA0412.namprd13.prod.outlook.com
- (2603:10b6:208:2c2::27) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52291F171
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718021194; cv=none; b=h8aIBe0VK1YKO0q22Bw5Ip9FO0QoUtaXhJ+btacJSUQdtmCWqrZRLWm2v6cuH1xzzX2ciHsAKb6JE5toxuKZbCsvy9M9FPdOzDMxpo0et3UB0oXXZXOWl25kSPleDzSJd37W3uHzuJ2JQp9IUi1rqnyGnJxy/9+6t437PT8jmlA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718021194; c=relaxed/simple;
+	bh=RgmkqwOeLDy5DxsGKQkSYd477fFHSA3uoHghvi9luWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EjTyQsRSSPZyrTiZw8ABied/GYVbvGgeOoCH4evP1g3cNHVqT5HU5uSiLABn0QKMmKDrhW9niFrUjiT43cMq8Ej8w/3JTAE0DBZpq+ZzkrdAR0Tw4GEhGJfiEeuadQBmqLL83jj7Q++GazJReCXI4u1tmlc9upnazSnLxzry5Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwYnUqMH; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7042882e741so1243438b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718021192; x=1718625992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YOOpP3mhn3ktm+AdbLZ/EN2VmROk6QDShkqGnjdgrDU=;
+        b=BwYnUqMHKCrIieS+ybqIjtcHGSU68ojqcBl4jr+qFVZ7+xHguCZyksyH3IIooFVY1p
+         X9WsLcl4Yw7rjBf5yTBruRLRjVZllujKtiNzEOv31ApW9tkK+4easgMhn4QfcRrU4FAU
+         YBlQYUUuGNDEjpChAgQywWoiumPwQO/lKOrfqcN1K0ZHsMiglRg6XkcyoNRWNg0mX0yP
+         DD+oY9OAFjWaB0bWeLlB27xNPpVVMpDvI0MoiB31UvwdtU1vV00bb4jba7ArkuD8aXW3
+         pFIzmzDC27JQU05R4PJ2LiTXJj47dtAIotrRbPjXLmlQkcE4UKzg4pqpd0Yre1nelz2Z
+         jpIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718021192; x=1718625992;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YOOpP3mhn3ktm+AdbLZ/EN2VmROk6QDShkqGnjdgrDU=;
+        b=a2HyUirPUCO5sAUMFpkyY6AsAkpWRC1HI7eSv8NspQ2V9CnrZuqRZ1GJVl+i8tX9c8
+         iIl9EqhT/dHdQVz+NBcPe49me7vbeeTm3oI5MsQK7e5FXcAAWsGqfc8DlR5eY6vMLxIp
+         LsY0q7ECJXuGk4KlGGtkShA8wpkbixXoHeM6Oovk3YtOsqT2hhAt+ItgXxnFB4eoU7Je
+         8oAK+ckMrgIN1gXdu1wOtlVkKdf1oBxoPMuxK/OPngKhnMo3pf0dn4gJ9YTsewQtCcJs
+         TdjQgS/KiaTpJf2+DGqLcMFV46WLE+auZDrxDA/WoisS0UY96d/+dIX+PkV3QZ/pRKf3
+         BHMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWFRLSuigDxfCAe5zsBPDaiCD64hyxBtp2R7RvvOZmX/jte7aGNwUln9LoVhJYWHZXcLr8/OyN6EHTsxsHfSJbd68iN6D9JrLgLRYH
+X-Gm-Message-State: AOJu0Yxo8xGVKFHUz9zM5h5qngbk88zO9kuqR0MxN3aA5shFbHHKx8kp
+	lPEEI7QxebE9UYfCyUsdUr3IwKSi5gLYaqqGGhHItt4y72TjozpA
+X-Google-Smtp-Source: AGHT+IHuuLA3IkOVWnemUAiXi6DwNGqf6nD+qxo5av/4Kb4vZP8/N6Adb31SMqw2zaGmXf2b8MhZIQ==
+X-Received: by 2002:a05:6a20:8423:b0:1af:7646:fc14 with SMTP id adf61e73a8af0-1b2f151f841mr9176853637.0.1718021191815;
+        Mon, 10 Jun 2024 05:06:31 -0700 (PDT)
+Received: from LancedeMBP.lan.lan ([2403:2c80:6::304c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7043aa52899sm2182250b3a.25.2024.06.10.05.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 05:06:31 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: ioworker0@gmail.com
+Cc: 21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	david@redhat.com,
+	fengwei.yin@intel.com,
+	libang.li@antgroup.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	maskray@google.com,
+	mhocko@suse.com,
+	minchan@kernel.org,
+	peterx@redhat.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	sj@kernel.org,
+	songmuchun@bytedance.com,
+	wangkefeng.wang@huawei.com,
+	willy@infradead.org,
+	xiehuan09@gmail.com,
+	ziy@nvidia.com,
+	zokeefe@google.com
+Subject: [PATCH v7 3/4] mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+Date: Mon, 10 Jun 2024 20:06:18 +0800
+Message-Id: <20240610120618.66520-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20240610120209.66311-1-ioworker0@gmail.com>
+References: <20240610120209.66311-1-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SA3PR12MB7922:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bd5fff5-9764-482a-844c-08dc89458636
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G1a4cfYV53N3vvkL1tZJ9BHNGhB3ZH9ZO7hyeoZYjQyJQC6bs5BGS0FCB2c8?=
- =?us-ascii?Q?1CJOGyFo8a3vOPzFZJt0lpAOLoYWICCa2pVX4VPP0IpCDbHR0WMUSeUE8scA?=
- =?us-ascii?Q?YxF8F7BxCCuFEAqgQsCy+pqrMXXhebbRiKMXNulb0gAPato2azELUXGVRBo8?=
- =?us-ascii?Q?Flx59UFEc+lpf+F4/D3B3d4KXeSBj2wzfzqE8WciBIh8qfJAmbGxN+mzrdsy?=
- =?us-ascii?Q?6ou7tluY9YWfip8jSrB1lkcjGGwekERVwHOc/ug/XbmlRkYyxnVktWv7QcUd?=
- =?us-ascii?Q?ci8F/LOKhK+XQw2iK8Q5f5a+BzK0H4fXy2udKHjX1uE7uwf+85eL6QXIp5DB?=
- =?us-ascii?Q?vOPGF+OrtPcHuo6ZjDsZcrmyJItJE4Fe1YMAEzu5Giv6pQcZLXK/XdKSYs0c?=
- =?us-ascii?Q?V/tkTDqGsS2tF/QAZk+hcDVUFMDygG6AjT9Ieo48VIpcqRWwzS+AnVjdAZYv?=
- =?us-ascii?Q?GA/HX8h7AwxBQlGFleO7M30zY2kIrU4qLnPeMIN1Pz6RhSNeBkGMi+5k4a2u?=
- =?us-ascii?Q?3s1y99BhP6/2FefwcAdRoOjLCUcvndXfQw9GnRjBmaU3gkBq5EYVywU/Lqh7?=
- =?us-ascii?Q?2oP53h3TRhEPPfDfMl/Tl2Rs9hxDxcRANnsw/hwL07ICvVHTRxa2yj/s8fDa?=
- =?us-ascii?Q?k3f33BlBTZpRnGc9559N8bx0XBy0y12yv0+OwhbO4NN4/kwozThFKyfT2puF?=
- =?us-ascii?Q?FlkvTpxxBT9a/C64szPAfX7MYMgSQj+wirZs4e9+A+mSoyKTbhWMeuGC1T0H?=
- =?us-ascii?Q?/RZt+VXXIjNUgLOLE4C5vVkf/LTpwlviOO/D/Dq1dBE4wlTijbj+QUrb0Z8v?=
- =?us-ascii?Q?4jIpdcoMBOpYcpiqqNchBLfVUQZbunGFj1x0HK0PAxn9uVdA96dMyy7f8VMr?=
- =?us-ascii?Q?rbL/M/cl1N2q1X5OphQJUfP6NQdAqYpE1ivdzuhidKu37DfT/z6LkiQIs6p4?=
- =?us-ascii?Q?Q9wEJ1SRndvkYxUq8/bIMeO66puirDuzUYqY9TQBFYe1cOfFVj+1kNJkfODm?=
- =?us-ascii?Q?1LcF28GsUhxD/R5M4UCYPP1WXg3SIMqKsMC5+/1sfpPea8neTsOL91OIGnYC?=
- =?us-ascii?Q?Mi0XQrnUFu7plLPW8sHMXV3QH+NGGMQDK7TRI3S5Dsu1CiR7Rn0E1xW6STti?=
- =?us-ascii?Q?Ane2VCi7qCPx+uXcG1KWVuSqpX3U4bK4LNsLv6NJsGbQOzQU0f9b/4ae3XiB?=
- =?us-ascii?Q?mZpR94+zqWpLsSiABw0Wa13nNSkA7m4cgGUEaVVONQIC/njXMh2HpnA06YWV?=
- =?us-ascii?Q?mmg2IQCZiqijn/9SaJAACU3kq5zidqVY6jkZh8pq6wlIplL2y7Lk5qrE+BwN?=
- =?us-ascii?Q?cAtrf2jcMFaw322vU+eVKmq5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?875xRoxFDky81HnxUPlbLvNDdqq7geWFoT616I26fOg6xjbkFSr8Rc1mzmIL?=
- =?us-ascii?Q?aPJ1fKFBEKXdm8iUNCfqSHNZKnlfog8dJqyYzr4ZfoGU6h3aEJiof4QMtYma?=
- =?us-ascii?Q?ZxPmFzfgItJZLSbjOkZu5vbUr/2qvnBb/PSxMoLZUKeM3v2B2Wr9das4He0h?=
- =?us-ascii?Q?omInQWVBYgalhHKnQq2LblNcNTb/W7t0020i0vCbt8SD0j1nt7ij3ipdbCi5?=
- =?us-ascii?Q?11YZ4Yn4NWC3r6ExS35E0B7u9n1nEtRbi1vFNotB/0DK6SQT1Lhl3svkEoWY?=
- =?us-ascii?Q?86TyaN+uASOHG3IVsOb5TQZ+XnGfBoongRPpR+K6ANN+tKU0vjP0XabRDB6k?=
- =?us-ascii?Q?2/YPe8WD00fAljYZkGEqtBh5Q3uqrsVWKHIwroSCU/ck3ULgu8sHuUoTLPqy?=
- =?us-ascii?Q?0+5eIEQukU1aKeGvp7hFA486i0owK+Q1bfsT+IUnuBqMieCzVOEDHCbhu4LA?=
- =?us-ascii?Q?/uk4WTSCjhHCtPSePibKVIHJaU9VUqKtDmCmWGCpE27c/reh9ZEceVFrndjR?=
- =?us-ascii?Q?x3yuB4vDRi5tAJJPTzPJJLoavYgxUmFZJkLkJ78jrCOJCzS8oZ+6XcvkZ1K0?=
- =?us-ascii?Q?hSVtIISKFDtTFbutKQcM7w91mlaBCpJN7FK+jo+/jexwQlFRTV5PaY2BmN3h?=
- =?us-ascii?Q?LoE2QfATx5ivu4FvG2Fv1Gw9zckv16/O21YVibtkHWS4kBKlKF9+KPegJrBp?=
- =?us-ascii?Q?DWKuvTssYZpWesTPCaQwaqhSi8B/LKEwE1uP3mgGM1zLb7jSnAfBISdtvrbv?=
- =?us-ascii?Q?KCJwZh6Nq/shmvlk/G+q7cVMFpvuGJcV3TgRgoe3C3YN/b0sTI0cxD1pOOMv?=
- =?us-ascii?Q?Woo7yRo13rlL4RiP716Hc9ZdmNzO0CVLVH6XqFcRSjs2e03ysOSXg4IYKu1w?=
- =?us-ascii?Q?cEIsigPAbl71DY0b/u/0fysk9+avBMvgdvlqNyiL2k04oy/AybOFMOJNmaq1?=
- =?us-ascii?Q?0QjOPbCh/AG4CHXDKrffMLS732rvG1Mt5q5m9FvZ80MmSsZy0EntDwOgFlpb?=
- =?us-ascii?Q?1rWgJv8BecvzUr/5+MFDnzaXP+ODJ97dmqNHJKWDF+mUjZkRrkf573jgEnSP?=
- =?us-ascii?Q?ECRWnt8YBTZNADpzyxhPE8Wlx5uvVdBrXXHWgwKEWfeyc9ZSdYLGfvk+RnaH?=
- =?us-ascii?Q?1SpxsX0ol4e+eGjs67rjMLiJvpB8+fLW4Yt+8lTuL+irufYu+gMWrcLXDqQZ?=
- =?us-ascii?Q?dc34odiWQfP9VZWd6GejmXHFWee07QS7/lIGZDReZTBLlGMzIecyELTHPxVW?=
- =?us-ascii?Q?qn8vPmuRChTcDk/vSdma8ZSqCaidt/sHno8wu5/PSOBoJ1bvRoC5CRWqfYTW?=
- =?us-ascii?Q?6VY7+DZYJysPdZK6/puIPlukXzAiwSPUywhn8lSDLQtruBDLgED+NAqKTbMl?=
- =?us-ascii?Q?T4sG0TFGJjLAqjA3WoEUp/iT23HSk5XZYexstdsOi9lkwCBpE697UyZBV4LL?=
- =?us-ascii?Q?ruO4yHKjzAWaWCNwfCkzBvbkbRhAzeq1xrH7UG2YbvYvOnEfjQM0s4Dvkszo?=
- =?us-ascii?Q?zbCPSyOSUOcmgxTtYsBQimeeJjmtpV/gV0nQn+1dEgo/wmHn/GL24nKmX9rn?=
- =?us-ascii?Q?OpspAB5nENSleoI3dHOiEY2GRvyrvy1BbKJx7qO4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bd5fff5-9764-482a-844c-08dc89458636
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 12:04:47.8942
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IkRx5QB9xRR8HDPHeaUTIiO1fwDCOVx7WEWNqtfOP5nwKKZ/YdvTHSaf7YDwn2ap
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7922
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 07, 2024 at 02:19:21PM -0700, Nicolin Chen wrote:
+In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+folios, start the pagewalk first, then call split_huge_pmd_address() to
+split the folio.
 
-> > IOTLB efficiency will suffer though when splitting 1p -> 2v while
-> > invalidation performance will suffer when joining 2p -> 1v.
-> 
-> I think the invalidation efficiency is actually solvable. So,
-> basically viommu_invalidate would receive a whole batch of cmds
-> and dispatch them to different pSMMUs (nested_domains/devices).
-> We already have a vdev_id table for devices, yet we just need a
-> new vasid table for nested_domains. Right?
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
+---
+ include/linux/huge_mm.h |  6 ++++++
+ mm/huge_memory.c        | 42 +++++++++++++++++++++--------------------
+ mm/rmap.c               | 21 +++++++++++++++------
+ 3 files changed, 43 insertions(+), 26 deletions(-)
 
-You can't know the ASID usage of the hypervisor from the VM, unless
-you also inspect the CD table memory in the guest. That seems like
-something we should try hard to avoid.
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 088d66a54643..4670c6ee118b 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -415,6 +415,9 @@ static inline bool thp_migration_supported(void)
+ 	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+ }
+ 
++void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
++			   pmd_t *pmd, bool freeze, struct folio *folio);
++
+ #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ static inline bool folio_test_pmd_mappable(struct folio *folio)
+@@ -477,6 +480,9 @@ static inline void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 		unsigned long address, bool freeze, struct folio *folio) {}
+ static inline void split_huge_pmd_address(struct vm_area_struct *vma,
+ 		unsigned long address, bool freeze, struct folio *folio) {}
++static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
++					 unsigned long address, pmd_t *pmd,
++					 bool freeze, struct folio *folio) {}
+ 
+ #define split_huge_pud(__vma, __pmd, __address)	\
+ 	do { } while (0)
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index e6d26c2eb670..d2697cc8f9d4 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2581,6 +2581,27 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+ 	pmd_populate(mm, pmd, pgtable);
+ }
+ 
++void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
++			   pmd_t *pmd, bool freeze, struct folio *folio)
++{
++	VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
++	VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
++	VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
++	VM_BUG_ON(freeze && !folio);
++
++	/*
++	 * When the caller requests to set up a migration entry, we
++	 * require a folio to check the PMD against. Otherwise, there
++	 * is a risk of replacing the wrong folio.
++	 */
++	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
++	    is_pmd_migration_entry(*pmd)) {
++		if (folio && folio != pmd_folio(*pmd))
++			return;
++		__split_huge_pmd_locked(vma, pmd, address, freeze);
++	}
++}
++
+ void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 		unsigned long address, bool freeze, struct folio *folio)
+ {
+@@ -2592,26 +2613,7 @@ void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 				(address & HPAGE_PMD_MASK) + HPAGE_PMD_SIZE);
+ 	mmu_notifier_invalidate_range_start(&range);
+ 	ptl = pmd_lock(vma->vm_mm, pmd);
+-
+-	/*
+-	 * If caller asks to setup a migration entry, we need a folio to check
+-	 * pmd against. Otherwise we can end up replacing wrong folio.
+-	 */
+-	VM_BUG_ON(freeze && !folio);
+-	VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
+-
+-	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
+-	    is_pmd_migration_entry(*pmd)) {
+-		/*
+-		 * It's safe to call pmd_page when folio is set because it's
+-		 * guaranteed that pmd is present.
+-		 */
+-		if (folio && folio != pmd_folio(*pmd))
+-			goto out;
+-		__split_huge_pmd_locked(vma, pmd, range.start, freeze);
+-	}
+-
+-out:
++	split_huge_pmd_locked(vma, range.start, pmd, freeze, folio);
+ 	spin_unlock(ptl);
+ 	mmu_notifier_invalidate_range_end(&range);
+ }
+diff --git a/mm/rmap.c b/mm/rmap.c
+index ddffa30c79fb..b77f88695588 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 	if (flags & TTU_SYNC)
+ 		pvmw.flags = PVMW_SYNC;
+ 
+-	if (flags & TTU_SPLIT_HUGE_PMD)
+-		split_huge_pmd_address(vma, address, false, folio);
+-
+ 	/*
+ 	 * For THP, we have to assume the worse case ie pmd for invalidation.
+ 	 * For hugetlb, it could be much worse if we need to do pud
+@@ -1668,9 +1665,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 	mmu_notifier_invalidate_range_start(&range);
+ 
+ 	while (page_vma_mapped_walk(&pvmw)) {
+-		/* Unexpected PMD-mapped THP? */
+-		VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+-
+ 		/*
+ 		 * If the folio is in an mlock()d vma, we must not swap it out.
+ 		 */
+@@ -1682,6 +1676,21 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			goto walk_done_err;
+ 		}
+ 
++		if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
++			/*
++			 * We temporarily have to drop the PTL and start once
++			 * again from that now-PTE-mapped page table.
++			 */
++			split_huge_pmd_locked(vma, pvmw.address, pvmw.pmd,
++					      false, folio);
++			flags &= ~TTU_SPLIT_HUGE_PMD;
++			page_vma_mapped_walk_restart(&pvmw);
++			continue;
++		}
++
++		/* Unexpected PMD-mapped THP? */
++		VM_BUG_ON_FOLIO(!pvmw.pte, folio);
++
+ 		pfn = pte_pfn(ptep_get(pvmw.pte));
+ 		subpage = folio_page(folio, pfn - folio_pfn(folio));
+ 		address = pvmw.address;
+-- 
+2.33.1
 
-> With that being said, it would make the kernel design a bit more
-> complicated. And the VMM still has to separate the commands for
-> passthrough devices (HW iotlb) from commands for emulated devices
-> (emulated iotlb), unless we further split the topology at the VM
-> level to have a dedicated vSMMU for all passthrough devices --
-> then VMM could just forward its entire cmdq to the kernel without
-> deciphering every command (likely?).
-
-I would not include the emulated devices in a shared SMMU.. For the
-same reason, we should try hard to avoid inspecting the page table
-memory.
-
-If a viommu is needed for emulated then virtio-iommu may be more
-appropriate..
-
-That said I'm sure someone will want to do this, so as long as it is
-possible in the VMM, as slow as it may be, then it is fine.
-
-Jason
 
