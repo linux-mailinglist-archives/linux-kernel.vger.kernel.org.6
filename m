@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-208209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7513590225A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:05:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FCA902255
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C47A1F23818
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E527EB209D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422848287C;
-	Mon, 10 Jun 2024 13:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C94181AAB;
+	Mon, 10 Jun 2024 13:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YWLZW0yx"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PeyMyi5x"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A2E8286A;
-	Mon, 10 Jun 2024 13:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42B17F490;
+	Mon, 10 Jun 2024 13:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718024685; cv=none; b=tJUxDkKrmwkaZbjTddDG/zVp6+NLFzmqimEyKzyBiisUmM9kDgpK+i/tCeVJe1FfGyZPIVSiz1oVs4BMQCJYkWklbytqeD3Scsg4fiHOKgMlLE/7xksruAVGKhh+FXoBsLsIGHymV+7BckM++oKooCNiHKDc1nJ8p5oRNM9JAII=
+	t=1718024671; cv=none; b=PsDXJn2L0JxpvyqnSj+i+MVl6IDoWmJm8ZO3IYW+/ORc+GuWZSXZ+/DdLKcG34MC6/aUeXeKD9dKiv0u6NPpw+k6K9bElW1Hzt6d298NYFzo5xX1JOBgTDPWvbwuFgIbNG+anjYVTVtbApZC489QDuyfFP8Q/3SNHgmL4zbq2ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718024685; c=relaxed/simple;
-	bh=j3unPiR6cYjkj+QmmQQQODvkHswhgr4ev71KQWbcj1Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CjsGnVAGssUDQEwRzGw+dYRpFY/D5GVOxi/RBR4C9TCeQOcr/0pWMCcaOJxa9/8sIP0Dw0yz8NwwSzCV30a0m7B2nibZViOU55w3rKgP5h5Owm5wJ+G/QLvEY9gUrdYrEazAc6ATNysn8UVBaVl+y0dkI+gbYNPLMUyG1X+f1Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YWLZW0yx; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718024645; x=1718629445; i=markus.elfring@web.de;
-	bh=j3unPiR6cYjkj+QmmQQQODvkHswhgr4ev71KQWbcj1Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YWLZW0yxBi+tEZH0kDTStkErGCoHMAKQGxv0mAO78dlsZhrKyCfzmy9qyMNLUxjo
-	 nPLX6SqH0653WhmBZmVWjOtZ93494oob94pGUuXQJjtqC4eITVM4qJ54xQCSA/vql
-	 H844uAOMjcR6N9LkA35IYMSMrYNGtbOcI30me6hNGiMM//U8XEEe1GaTAnU1aTsBQ
-	 mQuFIWPFrhPFx8D4q59DoQGBp+aCXx6jvP/1doOxzpqgCjhrw2qEP9qPneOsmxPbn
-	 jOpgMBq8kH8SMMqRmwr36L9s3jwX8x5jVDDnUYSQmz/C4xhAA6iIYfea6jcFpi3sn
-	 SNlIF5FeAQjVPHOcfg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mxpmc-1scyfj39Be-015VYr; Mon, 10
- Jun 2024 15:04:05 +0200
-Message-ID: <4bd94a7c-370c-4784-aae6-17d4b2a2ace0@web.de>
-Date: Mon, 10 Jun 2024 15:04:02 +0200
+	s=arc-20240116; t=1718024671; c=relaxed/simple;
+	bh=gFy5uq8seL4hCY4Xr66+ZSvpftxpN7tTfAvbCIN2ksM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qgLaNSz4B+KDJjZPoTM+NGF/ced1iwbyuOAjASYwU2U7DxGbYjlZ4Iwivksa/Kn2fooyTVUskRCXvatsw5MsudUdXZuNX6qfF8H05FY3zEup+GsNBXicpq1z3C+6W9sj5UrnGsbdlrdGuyOmnQBRvYyggWezP/9y/CF/hnDEI+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PeyMyi5x; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so1542554a12.2;
+        Mon, 10 Jun 2024 06:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718024668; x=1718629468; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3OjOSiZjNWeHaOOIBvf7oQi5YB7w/ApxVFJxVWV++I=;
+        b=PeyMyi5xMn16o+ga1q+c9z5GdP4ztuUVBokqi43gDVT0v2gCPxiPDQh9Cw9ZYNtKkV
+         AZBgwK1B+ce5fI9yFHaP0NzF87jewpz/XvVuFhcWpRkXhwO2aa+85FMgzpC4GikJhpUu
+         hTQfkVg3EKks/hgXvrH5L/eOjMgelC3YEJXr4bKN4BFdaRGJxuDaUq6NDK6zSEHrbvJ6
+         w2wPXwokxhgWs2pRXr9afu7PTZLhAvHZthMkvjkI8pMYD1dhb49IxHZQks5+gARvc/am
+         WSL32S2tnrBUepPNV0+Sr59Ur4LC2JZ5F2Bo5ETTbm/s2ez8oAI9JdmUUXvKzGgRBaJp
+         M78Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718024668; x=1718629468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w3OjOSiZjNWeHaOOIBvf7oQi5YB7w/ApxVFJxVWV++I=;
+        b=FABlygSoZNKl7YVlSZvfewtsp3ZDAjZYzNZOJA//PBFEefH58zcFZJVKeC6BJ16GrM
+         uBst2R9diEF9F2W1VOTB+gOhYGnXF6uVL5uPO9P7nCFbQBDXFgVsN7mJVxpALlpT+elv
+         Qio+8nbn7q9GzyiIAYgwSS/XDT1o0uVlLiCfkEAIQXzKbs623bPt/1GkAkpTYPeJ0kNQ
+         rKB8Hz/sPbJb+RIBpOf5/bQiwmDLzAvNk/oYTgz9copXkYbQ2edHLqCyAiuhJuNtrNRN
+         xMCUrMImxrLRGRCKA8PXm2Md6KahrjCwDRUcvTL21QQIt3mnbt0Gay2zsmQKPt3CH72j
+         uNgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBYCBW7ERns0XgRxVcONUqKv1slxg7q7W0ZwXDV/aWjZsPruuQT6KyVPaGv2KrkU1PN67cBy6r2re9+z85KrvD08V2EB61KKLRjvOx5A3LAYC/vWUm/bWsgSUkdWtZIoM0BAIKcjH8+0Hz8iPLbab4GfFrLldMfK80gjPJYRm5zPDw
+X-Gm-Message-State: AOJu0Yzs7ZcrYr6tk6HB3qDw3m7s3zxifshgrey0rPtVJt0Mg+zTZMIJ
+	YHqyeg46nlDXMG04K3DYSj3a2wtFE9mr1IN3HHGM5t8XVZMBgsk8
+X-Google-Smtp-Source: AGHT+IGbeFftNngfs9iL+yY74aZcfhDYvjQpagAyudvjfKRUhBWAwokvtihjLWAYPWlZ8CMAiBlLXw==
+X-Received: by 2002:a50:9b4b:0:b0:57c:5f58:58c8 with SMTP id 4fb4d7f45d1cf-57c5f585accmr4550127a12.40.1718024667895;
+        Mon, 10 Jun 2024 06:04:27 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c708136b2sm3888560a12.83.2024.06.10.06.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 06:04:27 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 10 Jun 2024 15:04:25 +0200
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: shuah@kernel.org, ast@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
+	daniel@iogearbox.net, olsajiri@gmail.com, quentin@isovalent.com,
+	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com,
+	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+	haoluo@google.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix
+ bpf_session_cookie() kfunc prototype
+Message-ID: <Zmb52Qp__CBzbgDh@krava>
+References: <cover.1717881178.git.dxu@dxuuu.xyz>
+ <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
- linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240610025955.2308688-2-aryan.srivastava@alliedtelesis.co.nz>
-Subject: Re: [PATCH v5 1/2] i2c: octeon: refactor hlc r/w operations
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240610025955.2308688-2-aryan.srivastava@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RDyYRvTaajZboBrUhgUvo02yyVdLboN8QBYaBY4rRJSjr6HecjG
- +KOKaIvOm8j0KioFE1Op7ZsUh9DoMPPzUeQDCzHwAnD5f6KOzvGrHEWaColKNp84LdaQSmf
- 6njWQ7VTrUXpgMnVjhXTDrWa03aEAnCw0I5lxxo7R1pqrShEkoimHfmXdiN+GYcalcqbn2G
- oUubC91ZAbDYUPV+f25xQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CsBIpItxYLU=;reCkyHB7FhGeCbO7+M48dCz99Ei
- STW5LC554tuie/aV1Gb5kQWLGUaH+D83BCoEiN3L24Dp5qupJipz1Ob75MEUj5nLNYcdQOmpo
- 4DDgi7txFOczW6EZ35Gh/eI1TxJmXEzGzaueatzpqFXL01tSWHuub0Gscf0vW33+dKBSfUKrB
- HQxv3jmwuYUhlfbjbwn8W3IRUh1jDX6KaNsRNR+DbVO3yJ9th6WJ/FZWd8dbJGGDBeChkBRLD
- aCAicrBBnL8HTt39ab8ti4LJruUVyYULm7HWgYLU26+14xMr+3hoKFJFXiLLEGuW3Epr6vWF4
- KjQeikQ+vWMOqbQQZJ1OnYj9b3UXY+nkIdH/Di8W8TMan/sK3Xd23qbZCvhR1PX0XR1PFVHn7
- 8HaxCRwVXjPnn1UDyWwduN1c8gGoq7rSe+Lm9qilkHraxrv3ALwk8ZqyAEflNjhmaFAqi08n4
- e6ki4QYZth0zFp/yHL/0ZHErEWLuRMQE+MJcZnDizqS4DCXqmDDDd1QCfB6Gdbo/4jM3H1HK2
- TWo/7qXiAYx6MhU4Q+fGGyaTNmgrnKTG5C3n/5zUW2N+qY+Xz1OEu2lHpfExUxsMyMvVciIWy
- 3Pd5XmZUwiMj4wVEwFVltrFWxTSOuA6XORHUxT/iNHnsh7OClUIVrd4nuWWyWskAyjxPAEllt
- 6JdXtfVL5TCXEztQZvLZCuNg8jm29Cx6GyLOkFsHYQaX9midk8PPCF9kXq57S7FgT8CskRK+h
- vB01/8RrU1OxI6eRwgU5BYHWABRjYRPhosphefH8RRD5GBv07JVP/BJ/BAFBqDRKXo0LM8RHf
- 5BoNHRw7Iphm7Gnc8sdUepy3Ad2y1b9tyaAOq9vxr3MBk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
 
-=E2=80=A6
-> The write commands cannot be made entirely into common
-> code as there are distinct differences in the block mode
-=E2=80=A6
+On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
+> The prototype defined in bpf_kfuncs.h was not in line with how the
+> actual kfunc was defined. This causes compilation errors when kfunc
+> prototypes are generated from BTF.
+> 
+> Fix by aligning with actual kfunc definition.
+> 
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ---
+>  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 +-
+>  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> index be91a6919315..3b6675ab4086 100644
+> --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
+> +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+>  				      struct bpf_key *trusted_keyring) __ksym;
+>  
+>  extern bool bpf_session_is_return(void) __ksym __weak;
+> -extern long *bpf_session_cookie(void) __ksym __weak;
+> +extern __u64 *bpf_session_cookie(void) __ksym __weak;
 
-You may put more than 56 characters into text lines of such change descrip=
-tions.
+the original intent was to expose long instead of __u64 :-\
 
-Regards,
-Markus
+could we rather change the bpf_session_cookie function to return long?
+should be just return value type change
+
+thanks,
+jirka
+
+
+>  #endif
+> diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> index d49070803e22..0835b5edf685 100644
+> --- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> +++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> @@ -25,7 +25,7 @@ int BPF_PROG(trigger)
+>  
+>  static int check_cookie(__u64 val, __u64 *result)
+>  {
+> -	long *cookie;
+> +	__u64 *cookie;
+>  
+>  	if (bpf_get_current_pid_tgid() >> 32 != pid)
+>  		return 1;
+> -- 
+> 2.44.0
+> 
 
