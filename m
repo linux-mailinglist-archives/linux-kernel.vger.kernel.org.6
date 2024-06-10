@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-207571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32EA901902
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:37:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874A5901906
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4A071C2124A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF9D1C21130
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DA7566A;
-	Mon, 10 Jun 2024 00:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="csbBepzg"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C3117EF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAA51869;
+	Mon, 10 Jun 2024 00:38:16 +0000 (UTC)
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C987917C2;
+	Mon, 10 Jun 2024 00:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717979857; cv=none; b=deywAfT9wHu13R9ADfkDLCWmLyjlNveZYuSCLrPkw43JtV3295d1hZJXCrwchI6AV93FJxOj9zsokR1oP4FGIbY6SfrcQvcVx0RNN5/QrMP501qskZm7BD3gh5oEoE2WRQau3l9DtcfA2k51dXpIRT2JSZUQDCPA5Cl9Y7ypM0Q=
+	t=1717979896; cv=none; b=T2erOU74uQBvPONne1ancbN2x5tDjlIUzpUJ4uhxUq4fJ03K3LneNuKoYCQPdMUQbkWvFYH2G2e4ewgtZ5T+HoeXA1JywFfem5icH4n5Jj5wAKPBHnXThcz8h2wGt6OIiym+43TsLTtzM17GhTjmkkWDPpz/72a5PgsTrP9/qo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717979857; c=relaxed/simple;
-	bh=+o3cil3us8SguPa7qsyp1XhJLUxH5Q1E4SZdY/0NVqE=;
+	s=arc-20240116; t=1717979896; c=relaxed/simple;
+	bh=twC7u+cnCs40QAYIo4dxWxJGIYDno4mxjFJPtF2cimw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVcTPaBN9xzn0vHL5M6i30IiZXZkhiPWKBdBeTpr86KLCF6TH233veigmb9dufXFI7L5kAA1UOtW0KC6RrC+P01AyjvPwBvLiwygHmleXXF8vb8ijm6zL3QWLwQPpmiFf8VRU1nKvAB5g+WzNjTbBaeHGhO8tf6GmUbA7ZIaIkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=csbBepzg; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f70fdc9644so3577225ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 17:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1717979855; x=1718584655; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hS7n98TDY72tf1Gt3gpPTHvSO7f4fNN8VMGdhY9nX8c=;
-        b=csbBepzgCy2/sm2grtPo5g7NMbzBmk7v6xdD7k9AGN/GGEKXViC9xqtY5trb2MBYIh
-         i/kq0rArDrfFJRBYl7JNV2H8R10/VpZv39Mhiwjx7+eqJc9vvzKQfrDIXk+AH6v0oPJP
-         /m1BIHOSWOi6f914KovjaOrhM+ZpSpOpmYhQoSsW/WzzSG1ozTyM+Si65w24c11BvF5K
-         ds/aIs0C+NLJ1aug8mEOL5Vvr/IRx4jKPvuGTNh+1EyOOGCcWqcAdFlUA41OR0s8erXB
-         a7DTLae18dW9nGXgt/R/sdo6KDcwoqOHFdF/8dd8H1hocHE3+GM8HDA0EW5XJwemWmjC
-         qyiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717979855; x=1718584655;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hS7n98TDY72tf1Gt3gpPTHvSO7f4fNN8VMGdhY9nX8c=;
-        b=KbE6pHN+AhflvMFvMeSd0NQ6JhdYpdJDd6MOYYzcaiAkZblXGuf+UfDyjY8ufhxgkQ
-         vAHJd6HkG+LBkeHqWNF+CEsjfe77KXyx8lDVEgrULM/sI9eG5iDECXVHG19eHL8217mU
-         YvSVOXdFQcmjNquyhKWlAIMc5oqelnPU9nVje3TGovWsXXRVwuAcpHqYZyCXaeitqsoe
-         /+81Gh/5MflWjoDKTzdgw4/HYASTVLiZasNqLUbtvtP8IeOZzaXlOc/hKeiGwjXiZXW2
-         7zL6H57OSSsC5KGR53mwGkJTk211ZKKAP/twRO+LVN646REdNKK7T7GL3J1GLotm1JQD
-         YQQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyTi2t7RbsPYZtbKrz3luuAkve5iiQdG0mdT0yqjcMdvK4itKREKLrY4oPE0EI2qz6fUlVq7WvoHAjM4KSSIM0zi2RcnX+Weuv1CRs
-X-Gm-Message-State: AOJu0YyiLzEmQuyMoLBgnW6ubatQV63B0Ebek9s+gLuxZAmaNiKY7SnN
-	3ISjwmXD+ecLFBt5NtN0smr5a9qZvLiqZTqy41NyhQzospqAKLIQtSEJquqV3qc=
-X-Google-Smtp-Source: AGHT+IF/jQhCZx2Abw7DSxRG+gkk1EZNGK2154m819MXP2LbgwzefTTWrobn4NY5q6T/kzn7SpSdLA==
-X-Received: by 2002:a17:903:32c6:b0:1f7:18cf:a70f with SMTP id d9443c01a7336-1f718cfab0amr8620855ad.34.1717979855488;
-        Sun, 09 Jun 2024 17:37:35 -0700 (PDT)
-Received: from [192.168.1.8] (174-21-189-109.tukw.qwest.net. [174.21.189.109])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76c240sm71665825ad.89.2024.06.09.17.37.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Jun 2024 17:37:35 -0700 (PDT)
-Message-ID: <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
-Date: Sun, 9 Jun 2024 17:37:33 -0700
+	 In-Reply-To:Content-Type; b=Wjn72MmnLM8ikCcPvdkUaGcHITHsbMEWzDF3Xo6Hbaq6bjsFUWdYU5aQHCS3KP8oBclLUjHSPxCoJQQmqgUDSKwbP8sAPCNx52FVKkUMlMdezU1llExTUn+jJCOai/i/bRa2+8oXb3TeVDn6OARGU82m56Mm8EXptizTfRCKjyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrABXr8fVSmZmUbBpAQ--.63384S2;
+	Mon, 10 Jun 2024 08:37:41 +0800 (CST)
+Received: from [192.168.1.10] (unknown [117.152.240.122])
+	by gateway (Coremail) with SMTP id _____wCH9C3RSmZmlMr6AA--.45419S2;
+	Mon, 10 Jun 2024 08:37:39 +0800 (CST)
+Message-ID: <c477a8d2-c71e-43f9-a796-4ddc4abe85de@hust.edu.cn>
+Date: Mon, 10 Jun 2024 08:37:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,72 +41,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-Content-Language: en-GB
-To: Jason Gunthorpe <jgg@ziepe.ca>, David Ahern <dsahern@kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
- Mina Almasry <almasrymina@google.com>, Christoph Hellwig
- <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+Subject: Re: [PATCH] docs/zh_CN: update the translation of security-bugs
+To: Zenghui Yu <zenghui.yu@linux.dev>
+Cc: Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
  Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-3-almasrymina@google.com>
- <ZlqzER_ufrhlB28v@infradead.org>
- <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
- <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
- <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
- <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
- <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
- <20240607145247.GG791043@ziepe.ca>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20240607145247.GG791043@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240607025842.24321-1-dzm91@hust.edu.cn>
+ <fdbbe5d0-65ea-49ef-9a4c-26fe7a691c64@linux.dev>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <fdbbe5d0-65ea-49ef-9a4c-26fe7a691c64@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrABXr8fVSmZmUbBpAQ--.63384S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1fJFykKFy3Kr4xCF1DGFg_yoW8Kr4fpa
+	4kKFyxK3ZxAF15GrWxGr12gF1IyFWxG398GFs0qw18tFn5ArsYqrsIq3s0gFZ5XrWrJay8
+	Xr4rKrW5uryYyrDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
+	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
+	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
+	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
+	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUnb4S5UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On 2024-06-07 17:52, Jason Gunthorpe wrote:
-> IMHO it seems to compose poorly if you can only use the io_uring
-> lifecycle model with io_uring registered memory, and not with DMABUF
-> memory registered through Mina's mechanism.
 
-By this, do you mean io_uring must be exclusively used to use this
-feature?
+On 2024/6/9 16:20, Zenghui Yu wrote:
+>
+> On 2024/6/7 10:58, Dongliang Mu wrote:
+>> Update to commit 5928d411557e ("Documentation: Document the Linux Kernel
+>> CVE process")
+>>
+>> commit 0217f3944aeb ("Documentation: security-bugs.rst: linux-distros
+>> relaxed their rules")
+>> commit 3c1897ae4b6b ("Documentation: security-bugs.rst: clarify CVE
+>> handling")
+>> commit 4fee0915e649 ("Documentation: security-bugs.rst: update
+>> preferences when dealing with the linux-distros group")
+>> commit 44ac5abac86b ("Documentation/security-bugs: move from 
+>> admin-guide/
+>> to process/")
+>>
+>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>> ---
+>>  .../translations/zh_CN/admin-guide/index.rst  |  1 -
+>>  .../translations/zh_CN/process/index.rst      |  3 +-
+>>  .../zh_CN/process/security-bugs.rst           | 84 +++++++++++++++++++
+>>  3 files changed, 86 insertions(+), 2 deletions(-)
+>>  create mode 100644 
+>> Documentation/translations/zh_CN/process/security-bugs.rst
+>>
+>> diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst 
+>> b/Documentation/translations/zh_CN/admin-guide/index.rst
+>> index ac2960da33e6..773c53956000 100644
+>> --- a/Documentation/translations/zh_CN/admin-guide/index.rst
+>> +++ b/Documentation/translations/zh_CN/admin-guide/index.rst
+>> @@ -37,7 +37,6 @@ Todolist:
+>>
+>>     reporting-issues
+>>     reporting-regressions
+>> -   security-bugs
+>
+> It's be good to remove the old zh_CN/admin-guide/security-bugs.rst file
 
-And you'd rather see the two decoupled, so userspace can register w/ say
-dmabuf then pass it to io_uring?
 
-> 
-> Jason
+Yeah, thanks. I've sent a v2 patch.
+
+
+> as well and update all references to it:
+>
+> % git grep "admin-guide/security-bugs.rst" 
+> Documentation/translations/zh_CN/
+> Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:Documentation/translations/zh_CN/admin-guide/security-bugs.rst 
+> ，
+> Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:更多信息请参见 
+> Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
+> Documentation/translations/zh_CN/process/submitting-patches.rst:参见 
+> Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
+>
+> Thanks,
+> Zenghui
+
 
