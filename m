@@ -1,151 +1,157 @@
-Return-Path: <linux-kernel+bounces-208674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EDD9027FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:50:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E7A9027FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FBF1C21EAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:50:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F381F2353A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA9C1482F6;
-	Mon, 10 Jun 2024 17:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0D0148841;
+	Mon, 10 Jun 2024 17:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="HdZy45Vn"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="axT/7pGA"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7051C14B95F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1541422A2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718041787; cv=none; b=gIAusL1bjTeJS1gxcY4q35t2DniSTOduUqXugARVs1EsI0YDLDaptYD5LBNwTLlYc7KNTIgSldonNKxFzzijlFx2m/DY3iBUmlPlp8odkuIchJ4pNdNok9tkfVhqzTlsS38MpMs+owD1+lCgzGvEUp2BDzKiB6WhZpolNp5Dcz4=
+	t=1718041778; cv=none; b=UUOtuUKfZBbyiCZa6Io5H4BslGPN29VCWgXkdXsb8Lywnn4UfBgWltVSXqpWVY8xqfm7svvCWGYtJjT+ylgKDhmbuDkUOzvQtCBzsb5V4UbxuVqDAGEUt0gRB3dH8K4Qli7E+6+akdtHbJeDNb6vnqQoIHSJHP24j4YyyPB6Mgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718041787; c=relaxed/simple;
-	bh=kaN+OH8u0mjuLsUgDZzqsqHcd5qKUZnSBirUfTBy/rs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=k55CG5SqmKYCrmNjuvn0ZWgI8mdN8XYw41x6CsGO1aC/OKFRSM2FBgOozvI1Jx4niXvNaqoIl4bhDyraqzeTbFTwijNvqnd7LlniEQURPzRid8ahkJYRuaJRAGiATGYFWmlyp7rIDtsbzza3OhEMqKcobNH6TfJEJHJteF0Xsv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=HdZy45Vn; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so41308175e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:49:44 -0700 (PDT)
+	s=arc-20240116; t=1718041778; c=relaxed/simple;
+	bh=iOCQA3gFhsaGFrQM1y+O+3mLLYJQ5KrPcSjHAx+iK2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KtUDxi+BpkeA5vaJ1lFwyNP3odSrdMGocpFkGJoCltlR4NwEVdOQd+a564FcI8jMtbJec4dMjJ4kzxxdcnDQD+NdKJz42IywnCQyqs6VE2/uM96C/UTPHWC5WHitG5K4bMdo0DYRT3e7/exIA+qOwtXwXx9+4EJvjvqRa87ZNkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=axT/7pGA; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a0849f5a8so46528197b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:49:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jrtc27.com; s=gmail.jrtc27.user; t=1718041783; x=1718646583; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Zyb+ujtIGgfui3VzqiGKyVsxQvcv7H95kxqnj+CmxU=;
-        b=HdZy45VnEKiQ+w8OWBY/zHujgtcZXRFEAEziOdL+tkGektfnFC2af1F3ya7tmHVtNB
-         OcJP5t4BzifNIohd4fJWUPM8KGy7At1uQ5MRY+rd19ONb1heKniuRh8X8cZHKSQgmefp
-         Xk1d2RstDNSGJdiYOx8nU/j5jD6JPRQBvvU+K1ZdqMSVegOiS3TziZdQ6kkjFATVEsvo
-         Tyf93Y19Nz+XuH1LyBQwt5uF2AwnJMxIihwaPD5Lqh8VzCaSHl05eIxlxDTxU5TF3EAe
-         ynAnS40CZ68yCZJPr1uhgFIFMOGsgCaIoW0Ear4295v2x+TEOM3ALQFd9j0Xv3QVNcyH
-         20Og==
+        d=ziepe.ca; s=google; t=1718041776; x=1718646576; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rLnQ2l5LC4vBk1KAktpJMA8+PgPoixo2FswnJOlP1yg=;
+        b=axT/7pGA2KuK2hmbj9U2tGetDxGEFcgntD6ROfNX7iatlqMW33wmcsZZEPxtq1PaXA
+         37gaRouVg3yZZuOOnwh9n6bnMYjJNn+cnRbuW9AmCJusoGIEJDCLEACN0yCiHOsIGovQ
+         YBftl/ag4CTDFHsKcv4db06QKFhPMo2siXIIX8xKu0fNBB4wVo8hDttdH8b96m63inEk
+         bizGbAi7MIEO+QO2U5nkoILiheGJrSkGVWYP+0eTR3EEC4j5oaoOqbDR9Nz6G1GtblHT
+         79NVNv4OgPuCCeLFzuTK/7RN4M2gS/LIzqyPYrzzzhuyyR/x/g9vRYT1EopZgEiAD4iH
+         KSfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718041783; x=1718646583;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Zyb+ujtIGgfui3VzqiGKyVsxQvcv7H95kxqnj+CmxU=;
-        b=SojbmUXDh25hpeaAXNY1JFxlawawkXk6sIVGncuglFIgNig1WnJK3AsOjnBsswDpvB
-         QWSwxKG1sg4cWtvM2yuRkw3MqmHUiZB1valXxUusF2qyzwLgPStVcoQjJvrBQ7OkRXg2
-         HNoRqZoX2ELvYblkU8J1piEG9SJILaIB4WOdXLskgU9Tc2eEYtg1RVWNfMkSG+38aMVl
-         d9makUN0pfYCyoBP/LIvnD/xcGPdMOcHbz8OFAeT7qcWtsf7JKpbrDKWPQevgYoa42Px
-         rHKWmEmR1Ksq/tVkSpOPuDPshpLAcqH1WiExz22vF2x5DnsC4TDv5QeFFCWl8PN85fEb
-         M8UA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AkB2jIN09xlCJLp9nUcH49QTpzkVSc+YdynpZdIQHZcZGm+aaehT1vt+dXWfpxUL23clCx5hSHy0FFylrr6F+YfGQwT5UAqW/65b
-X-Gm-Message-State: AOJu0YxSAU7rCdVrYozRFzXWTthraG3QF1RpzcArVaQGI614BCliolDb
-	e4qETnTNO8B1AdL4GJLOQjk088InFnSWI6UtpRGMTwlhNPyciJRBODzCaaSnRIE=
-X-Google-Smtp-Source: AGHT+IGOL4J84jhPB6MOYY7C/yQXa66itQV4TEzYbITX4tGHe/3k2ra5FCnezqsLOntd6VEWEWr5PA==
-X-Received: by 2002:a05:600c:1ca3:b0:421:6b79:8900 with SMTP id 5b1f17b1804b1-4216b798c9cmr55824915e9.41.1718041782597;
-        Mon, 10 Jun 2024 10:49:42 -0700 (PDT)
-Received: from smtpclient.apple ([131.111.5.201])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e97dsm149074925e9.5.2024.06.10.10.49.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2024 10:49:42 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1718041776; x=1718646576;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rLnQ2l5LC4vBk1KAktpJMA8+PgPoixo2FswnJOlP1yg=;
+        b=mT8XwFD45Q7Qm+FVuKHG9sOFmzJqd9fTYZMPKaX5GkCOvwlXPcSIt9v54KboMfLF85
+         SpuMgxkq6DkDKmm7u3IAgIgDCupBTI38vEkRY5ioLaFWHJ1J8rho097fQXfFH01SEujV
+         XsEmDtIaiTb7F1GVl3fwFPEcy98fqCIrjw8GBzpKCZO/d1TmHwU7kZUZwwMUWQJn/lWz
+         8LP6t3Qz9F3Nkh9ex6JftO5fQM1+AaTFKw4eEB4kNk2Uxrh9eAw5FyiBZAhNfy2Kha7g
+         3S7ssCdGX1mLpYb0cnM05L9McpWWsPn7L5NdkPXd9Y7168QeyPya2KlzCVjrBPEC3NMu
+         87mA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEBkhHvHwC6cTna56BxfbEvnTBctAIYPj/LpRMe0g8lBaTWbeISrwf23uOaHj2Nsk4P3zvIOMvYvA5+vj9JAxFKHqx9woPAcuuujV8
+X-Gm-Message-State: AOJu0YxbbKyVcLYLeCGwNs/5GJfK/2G7toM/+Ej7sHXWZkG//ZGBNgB0
+	ox5S9tfk3zkSY4M32ou9kP6s4s36Edj898WZbpklIva2ZJvQ7k2J2R4x8Zbuddc=
+X-Google-Smtp-Source: AGHT+IFe8OwLGzvnbALaK/BDvvOAZwFQVf4gWc79kKkP946QP6T5IhIBj387LfKTGJKnPwAn+7jYYg==
+X-Received: by 2002:a05:690c:72f:b0:627:7ff0:fb4e with SMTP id 00721157ae682-62cd55f3aa3mr88716287b3.26.1718041776199;
+        Mon, 10 Jun 2024 10:49:36 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.89])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04fa1a628sm48037996d6.136.2024.06.10.10.49.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 10:49:35 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sGj9C-00Etv9-1y;
+	Mon, 10 Jun 2024 14:49:34 -0300
+Date: Mon, 10 Jun 2024 14:49:34 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zong Li <zong.li@sifive.com>
+Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux@rivosinc.com,
+	Lu Baolu <baolu.lu@linux.intel.com>, Jim Shu <jim.shu@sifive.com>,
+	Vincent Chen <vincent.chen@sifive.com>
+Subject: Re: [PATCH v6 5/7] iommu/riscv: Device directory management.
+Message-ID: <20240610174934.GM791043@ziepe.ca>
+References: <cover.1716578450.git.tjeznach@rivosinc.com>
+ <e18ec8ac169ae7f76e9044c26d0768e6469bad19.1716578450.git.tjeznach@rivosinc.com>
+ <CANXhq0p4gERQeROSCSKqxnRZq9-fGfmROGV8JZyqFaenNpnsLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH 03/13] riscv: dts: allwinner: Add xtheadvector to the
- D1/D1s devicetree
-From: Jessica Clarke <jrtc27@jrtc27.com>
-In-Reply-To: <20240609-xtheadvector-v1-3-3fe591d7f109@rivosinc.com>
-Date: Mon, 10 Jun 2024 18:49:30 +0100
-Cc: Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>,
- Guo Ren <guoren@kernel.org>,
- Evan Green <evan@rivosinc.com>,
- Andy Chiu <andy.chiu@sifive.com>,
- linux-riscv <linux-riscv@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-sunxi@lists.linux.dev,
- linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FD6771F5-5739-469A-9C0B-952AAC62AB68@jrtc27.com>
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
- <20240609-xtheadvector-v1-3-3fe591d7f109@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANXhq0p4gERQeROSCSKqxnRZq9-fGfmROGV8JZyqFaenNpnsLA@mail.gmail.com>
 
-On 10 Jun 2024, at 05:45, Charlie Jenkins <charlie@rivosinc.com> wrote:
->=20
-> The D1/D1s SoCs support xtheadvector so it can be included in the
-> devicetree. Also include vlenb for the cpu.
->=20
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
-> arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi =
-b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> index 64c3c2e6cbe0..50c9f4ec8a7f 100644
-> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
-> riscv,isa =3D "rv64imafdc";
-> riscv,isa-base =3D "rv64i";
-> riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c", "zicntr", =
-"zicsr",
-> -       "zifencei", "zihpm";
-> +       "zifencei", "zihpm", "xtheadvector";
-> + riscv,vlenb =3D <128>;
+On Fri, May 31, 2024 at 02:25:15PM +0800, Zong Li wrote:
 
-thread,vlenb
+> > +static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+> > +                                    struct device *dev, u64 fsc, u64 ta)
+> > +{
+> > +       struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> > +       struct riscv_iommu_dc *dc;
+> > +       u64 tc;
+> > +       int i;
+> > +
+> > +       /* Device context invalidation ignored for now. */
+> > +
+> > +       /*
+> > +        * For device context with DC_TC_PDTV = 0, translation attributes valid bit
+> > +        * is stored as DC_TC_V bit (both sharing the same location at BIT(0)).
+> > +        */
+> > +       for (i = 0; i < fwspec->num_ids; i++) {
+> > +               dc = riscv_iommu_get_dc(iommu, fwspec->ids[i]);
+> > +               tc = READ_ONCE(dc->tc);
+> > +               tc |= ta & RISCV_IOMMU_DC_TC_V;
+> > +
+> > +               WRITE_ONCE(dc->fsc, fsc);
+> > +               WRITE_ONCE(dc->ta, ta & RISCV_IOMMU_PC_TA_PSCID);
+> > +               /* Update device context, write TC.V as the last step. */
+> > +               dma_wmb();
+> > +               WRITE_ONCE(dc->tc, tc);
+> > +       }
+> 
+> Does it make sense to invalidate the DDTE after we update the DDTE in
+> memory? This behavior will affect the nested IOMMU mechanism. The VMM
+> has to catch the event of a DDTE update from the guest and then
+> eventually go into the host IOMMU driver to configure the IOMMU
+> hardware. 
 
-Jess
+Right, this is why I asked about negative caching.
 
-> #cooling-cells =3D <2>;
->=20
-> cpu0_intc: interrupt-controller {
->=20
-> --=20
-> 2.44.0
->=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+The VMMs are a prime example of negative caching, in something like
+the SMMU implementation the VMM will cache the V=0 STE until they see
+an invalidation.
 
+Driving the VMM shadowing/caching entirely off of the standard
+invalidation mechanism is so much better than any other option.
+
+IMHO you should have the RISCV spec revised to allow negative caching
+in any invalidated data structure to permit the typical VMM design
+driven off of shadowing triggered by invalidation commands.
+
+Once the spec permits negative caching then the software would have to
+invalidate after going V=0 -> V=1.
+
+Jason
 
