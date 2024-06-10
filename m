@@ -1,204 +1,130 @@
-Return-Path: <linux-kernel+bounces-208833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5977C9029B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:08:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029C79029B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600991C23180
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3E2285ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4AE14F121;
-	Mon, 10 Jun 2024 20:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFF914F9D5;
+	Mon, 10 Jun 2024 20:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iLx/Oj+H"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ond31ySz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD23D14E2CC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CC71B812;
+	Mon, 10 Jun 2024 20:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050066; cv=none; b=GvmDTkF87hodk2pm2ldxq4SAtZZH7TzI/MFgj8RQml2NKDJ9X+Js4OIrss+AF2sjivI10e+aW+Zknxq4GiAydKsHO6+o0rS2SNGL1GLTURa8Ut2yYeHwVotfg1aAsd14vtBYe2hf5NKc2TQKwjbwDM3bs1dvXkXdHEEOFht0mKo=
+	t=1718050123; cv=none; b=qgf6edIWa5nSEIfZa3PtviQV9MTvbo5s5tY92ZQbhdzYyruF+u4LFC5QC7mf7jnL0/ylnke3EqP1Re9vkQfIfw5278HiawiG/DjO0jVClv2KzC+ShM0uaIyjaJgwOsmdHYFGLnSBiA6WDPGfnfS3AFg5vPBVlmfZtp8J6oLpaU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050066; c=relaxed/simple;
-	bh=AVwvkyK+QfwnXB8dsA/WxUOo0rA7BRZfw4QqNw4utwc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PzXPsRjiZcaRoIBagJC1FCxtR1V4QqmvcG1wwNAKbg1SuHjk1pwyV+c6yxRek5j/pZvx7tjpWXrezucrSDubaAzSgg2ch3Y9Dt4WSdZXCOs9AolWlK0McsO/JSlY5P458omYZkMSsQa01+V+ImcTVIKJ4VQxQK4tJU2BaunB6X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iLx/Oj+H; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1718050061; x=1718309261;
-	bh=5jgdFYZWMFkdcxhAGWY4bzY1aHJjynRB5K3U4qiCAsw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=iLx/Oj+HjYHTmkkwWTn1g8PZJslcvdPCNMv20BEQx9wk55B+6f5moINgTz051sEuV
-	 ovPnhX69/pOa8x4DtZqkJ47qpW34Gq0HsYOUBaZs71jawwgJnuKAo+R43N3DzyBaMk
-	 dvUPmy7IyAMK5l/JvD3PwBrA5LthpkSzFZSzFyc2EDiCeHjhvM3fO2aWVFoVzuwyp/
-	 B7CNvXS0ySdUUYSYHLqELKlv5HxXV2JLMVeZ/M5pa7MJetLY2shNfoHwvBz6ZojuXM
-	 RW5+50bBs1z3b7Go0AiQbzjquz0zlihrnrobyQUs7HVQObH+X3RJj3ryfjPYha4XVb
-	 HluHfpESS/MAA==
-Date: Mon, 10 Jun 2024 20:07:37 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, =?utf-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, Joel Granados <j.granados@samsung.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez
-	<da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, open list <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [PATCH v4 1/3] rust: block: introduce `kernel::block::mq` module
-Message-ID: <f3e45a41-cc54-4c1f-885b-0f868ebf8744@proton.me>
-In-Reply-To: <87y17lqb8q.fsf@metaspace.dk>
-References: <20240601134005.621714-1-nmi@metaspace.dk> <20240601134005.621714-2-nmi@metaspace.dk> <b6b8e3e6-a2b9-4ddd-bf0f-e924d5d65653@proton.me> <87mso2me0p.fsf@metaspace.dk> <925fe0fe-9303-4f49-b473-c3a3ecc5e2e6@proton.me> <87y17lqb8q.fsf@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e088cf28736281f159b5929e71db72c79baa7ad3
+	s=arc-20240116; t=1718050123; c=relaxed/simple;
+	bh=1gswl6hf4KHobVmATfrT2dR7m2dVBSRQN13oHELIETA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YgwoAV7aHCLtqSLQqodcNzMottpH/2H9LRIdRSFBh+ToSmvvOAoe1Tzq5sYKKto0oYojy4jFriznuipSEro8TkXIQ6li0zrUoeWb4qn9hsr3vJSvMBRp3sDhePTV8cosqSQwBIQ3Ik7bLLzYX3+CJpgVbSkfqrRW8b8dKXvS/jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ond31ySz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AFA5dr002816;
+	Mon, 10 Jun 2024 20:08:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=buLfj6Ltji1S/aYhBziLxu
+	GbOEFEO5iPEML74KGy2gc=; b=ond31ySz1HuKj+g4aQrtaMlziTBcV14tiHLn15
+	ydupiJYKsU3JQsbdXTaQvAy3YUkagsDhB51dfnuMQzc3cD8KOwKJwihXBAx5En+I
+	udh9gw8qCaM6sWFVjgCAgsqzu3M9jDHuYmO50dCyKyKQuxphHyy+bIXRe8I2DD0J
+	mR9x0WMtTVRW5HKLYBi2qktvPqsSYPmnw8QssgiMVOdl5q/xDiZ/yL+6fAnWJmun
+	22xSOvZUQU1TeR2I1iB5Jb37ab+urI6xgwD19F//Ts4ehuvHPpalC+TPT7cy97dK
+	9fl3KUeSNmDi2zUqJwU7tcfuqE1BG1jeszQynDsBPeLkgBgw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8vn8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 20:08:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AK8bXZ031737
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 20:08:37 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 13:08:37 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 10 Jun 2024 13:08:36 -0700
+Subject: [PATCH] media: go7007: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240610-md-drivers-media-usb-go7007-v1-1-89f1087750af@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAENdZ2YC/x3MwQqDMAwA0F+RnBdodUy2Xxk7pG3UwFpHoiKI/
+ 75ux3d5BxirsMGjOUB5E5O5VPhLA3GiMjJKqobWtVd38w5zwqSysRpmTkK4WsBx7p3rsfMx0nA
+ PXaAAdfgoD7L/9+erOpAxBqUSp9/5lrLumMkWVjjPL+rxnBGMAAAA
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yAodk-ZHKSt6IhEavRCceAi9tMa18nog
+X-Proofpoint-ORIG-GUID: yAodk-ZHKSt6IhEavRCceAi9tMa18nog
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_06,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=939 mlxscore=0 adultscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1011
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100152
 
-On 04.06.24 11:59, Andreas Hindborg wrote:
-> Benno Lossin <benno.lossin@proton.me> writes:
->=20
-> [...]
->=20
->>>>> +impl<T: Operations> OperationsVTable<T> {
->>>>> +    /// This function is called by the C kernel. A pointer to this f=
-unction is
->>>>> +    /// installed in the `blk_mq_ops` vtable for the driver.
->>>>> +    ///
->>>>> +    /// # Safety
->>>>> +    ///
->>>>> +    /// - The caller of this function must ensure `bd` is valid
->>>>> +    ///   and initialized. The pointees must outlive this function.
->>>>
->>>> Until when do the pointees have to be alive? "must outlive this
->>>> function" could also be the case if the pointees die immediately after
->>>> this function returns.
->>>
->>> It should not be plural. What I intended to communicate is that what
->>> `bd` points to must be valid for read for the duration of the function
->>> call. I think that is what "The pointee must outlive this function"
->>> states? Although when we talk about lifetime of an object pointed to by
->>> a pointer, I am not sure about the correct way to word this. Do we talk
->>> about the lifetime of the pointer or the lifetime of the pointed to
->>> object (the pointee). We should not use the same wording for the pointe=
-r
->>> and the pointee.
->>>
->>> How about:
->>>
->>>     /// - The caller of this function must ensure that the pointee of `=
-bd` is
->>>     ///   valid for read for the duration of this function.
->>
->> But this is not enough for it to be sound, right? You create an `ARef`
->> from `bd.rq`, which potentially lives forever. You somehow need to
->> require that the pointer `bd` stays valid for reads and (synchronized)
->> writes until the request is ended (probably via `blk_mq_end_request`).
->=20
-> The statement does not say anything about `*((*bd).rq)`. `*bd` needs to
-> be valid only for the duration of the function. It carries a pointer to
-> a `struct request` in the `rq` field. The pointee of that pointer must
-> be exclusively owned by the driver until the request is done.
->=20
-> Maybe like this:
->=20
-> # Safety
->=20
-> - The caller of this function must ensure that the pointee of `bd` is
->   valid for read for the duration of this function.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/go7007/go7007.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/go7007/go7007-usb.o
 
-"valid for reads"
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-> - This function must be called for an initialized and live `hctx`. That
->   is, `Self::init_hctx_callback` was called and
->   `Self::exit_hctx_callback()` was not yet called.
-> - `(*bd).rq` must point to an initialized and live `bindings:request`.
->   That is, `Self::init_request_callback` was called but
->   `Self::exit_request_callback` was not yet called for the request.
-> - `(*bd).rq` must be owned by the driver. That is, the block layer must
->   promise to not access the request until the driver calls
->   `bindings::blk_mq_end_request` for the request.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/usb/go7007/go7007-driver.c | 1 +
+ drivers/media/usb/go7007/go7007-usb.c    | 1 +
+ 2 files changed, 2 insertions(+)
 
-Sounds good!
-
-> [...]
->=20
->>>>> +    /// This function is called by the C kernel. A pointer to this f=
-unction is
->>>>> +    /// installed in the `blk_mq_ops` vtable for the driver.
->>>>> +    ///
->>>>> +    /// # Safety
->>>>> +    ///
->>>>> +    /// This function may only be called by blk-mq C infrastructure.=
- `set` must
->>
->> `set` doesn't exist (`_set` does), you are also not using this
->> requirement.
->=20
-> Would be nice if there was a way in `rustdoc` no name arguments
-> explicitly.
->=20
->>
->>>>> +    /// point to an initialized `TagSet<T>`.
->>>>> +    unsafe extern "C" fn init_request_callback(
->>>>> +        _set: *mut bindings::blk_mq_tag_set,
->>>>> +        rq: *mut bindings::request,
->>>>> +        _hctx_idx: core::ffi::c_uint,
->>>>> +        _numa_node: core::ffi::c_uint,
->>>>> +    ) -> core::ffi::c_int {
->>>>> +        from_result(|| {
->>>>> +            // SAFETY: The `blk_mq_tag_set` invariants guarantee tha=
-t all
->>>>> +            // requests are allocated with extra memory for the requ=
-est data.
->>>>
->>>> What guarantees that the right amount of memory has been allocated?
->>>> AFAIU that is guaranteed by the `TagSet` (but there is no invariant).
->>>
->>> It is by C API contract. `TagSet`::try_new` (now `new`) writes
->>> `cmd_size` into the `struct blk_mq_tag_set`. That is picked up by
->>> `blk_mq_alloc_tag_set` to allocate the right amount of space for each r=
-equest.
->>>
->>> The invariant here is on the C type. Perhaps the wording is wrong. I am
->>> not exactly sure how to express this. How about this:
->>>
->>>             // SAFETY: We instructed `blk_mq_alloc_tag_set` to allocate=
- requests
->>>             // with extra memory for the request data when we called it=
- in
->>>             // `TagSet::new`.
->>
->> I think you need a safety requirement on the function: `rq` points to a
->> valid `Request`. Then you could just use `Request::wrapper_ptr` instead
->> of the line below.
->=20
-> I cannot require `rq` to point to a valid `Request`, because that would
-> require the private data area to already be initialized as a valid
-> `RequestDataWrapper`. Using the `wrapper_ptr` is good =F0=9F=91=8D. How i=
-s this:
->=20
->=20
->     /// # Safety
->     ///
->     /// - This function may only be called by blk-mq C infrastructure.
->     /// - `_set` must point to an initialized `TagSet<T>`.
->     /// - `rq` must point to an initialized `bindings::request`.
->     /// - The allocation pointed to by `rq` must be at the size of `Reque=
-st`
->     ///   plus the size of `RequestDataWrapper`.
-
-Also sounds good to me.
+diff --git a/drivers/media/usb/go7007/go7007-driver.c b/drivers/media/usb/go7007/go7007-driver.c
+index eb03f98b2ef1..468406302cd5 100644
+--- a/drivers/media/usb/go7007/go7007-driver.c
++++ b/drivers/media/usb/go7007/go7007-driver.c
+@@ -736,4 +736,5 @@ void go7007_update_board(struct go7007 *go)
+ }
+ EXPORT_SYMBOL(go7007_update_board);
+ 
++MODULE_DESCRIPTION("WIS GO7007 MPEG encoder support");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/usb/go7007/go7007-usb.c b/drivers/media/usb/go7007/go7007-usb.c
+index 762c13e49bfa..334cdde81a5c 100644
+--- a/drivers/media/usb/go7007/go7007-usb.c
++++ b/drivers/media/usb/go7007/go7007-usb.c
+@@ -1352,4 +1352,5 @@ static struct usb_driver go7007_usb_driver = {
+ };
+ 
+ module_usb_driver(go7007_usb_driver);
++MODULE_DESCRIPTION("WIS GO7007 USB support");
+ MODULE_LICENSE("GPL v2");
 
 ---
-Cheers,
-Benno
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240610-md-drivers-media-usb-go7007-31ccaf9b3bab
 
 
