@@ -1,261 +1,217 @@
-Return-Path: <linux-kernel+bounces-208683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9EB902818
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:56:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A049D90281B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770BC288194
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D7C1F23644
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5366148841;
-	Mon, 10 Jun 2024 17:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D96114B963;
+	Mon, 10 Jun 2024 17:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgUBGxyq"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWX6DN5+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733FF1482F6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C2F1487F1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042154; cv=none; b=c5/w0jvlg45YaH2YkGYf8Eff25bosqkEf6eRiFVso5JDgwzMhzVZZBVCFBjGsuHbiymeRkjVt8bEmVe8E3spS06nX5pISrIkl10KCnS7mvsPJK6+Su4eOb5LNfjQwCWDp40KdcjRGMrrLJdtdr4UFamq5e02gBvkKFp+OjmehG0=
+	t=1718042217; cv=none; b=T4UUlk8xlOVJ6lrZtUzPpJrCgtXKnibN3EqVUvEiipIa/c6r4++GZFJSGhCoZDTdHTsB7uOqybX4Z1pWraGbIShstU4cQ35jf0fhxLAJqqPUTF46mNtI8BEwaEZOUu/iaSH2hy/mx8gL+iuOlHNfjr9pUkrgZbhutKUkZOi7FTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042154; c=relaxed/simple;
-	bh=dNjI23WLp0imEmdkBxjx2VmizbZl9IeRvfhVp0aj6lk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FpU1QyEvUK9aV4ZxTe+oHt47zAUz/eoWX00VkHadOa1qmIESMxg+o2h+wY4eM6PAaMTJTfLxOVZcIX0SN/f8NqGIEx4cz8b5wxUF3SQHHZ7w3QbPgHpqWPyo/UcbyDtMi4eIK7YT0bOCb3up6HjRQsd5ZPvkimgUR+IiNcFHoL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dgUBGxyq; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4eb14d993c6so1334468e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718042151; x=1718646951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y+JeefLMklHAV+yI9qNZHPNA7M9EgyySno86Vwa9gbA=;
-        b=dgUBGxyq/fcVIEtn9zuN40+c8UdD2x5D71HmzNvU6KDq0K9J0WG0i4kd9wE4sGErZG
-         jHBH0IRruGIDjajhOrjOrGjWYU8MGE1oRkoq2lCvEdoW7K95k81yEp5Jlg+Pnee2JuPL
-         ITM+0Wk9VIkSkWsLj7Qbx+vNBYKdl5fVR6blnUlZBPcILUbIH9r7AfPYnBngZfC3KNSI
-         p9/2OY8f2Bf4xXEab69+hBPF7xjnmhowLuDb+dbG6yVPTbCDYZr3Gj+XEzPfs1q7OQkV
-         ClXTTx3XmmiR8m/LZqCa50NsABT0n1xVlev3tVhIQZgFO2fiH4C5tke0p74f2emWm9dE
-         0sLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042151; x=1718646951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y+JeefLMklHAV+yI9qNZHPNA7M9EgyySno86Vwa9gbA=;
-        b=a9QwcdMFdotFhQK3jS/RI48bkQw+cGjc7jVdxk56N6jnM40UANJCuylddwEFkQ93W3
-         4d6DAYOwR7WDvxAw7WQ1z7FX8P2tYmltjt9uYbh9blYtEDPCdIpHyv8byKwG+4HRLhuz
-         /C9bW+7g3mrZZ9Xi0Q6SRonhnVb83XmZ9I3dl1C5XtQZkcoSsLBhNFMb4ZBZ/PHiMx2k
-         GmxtUK6oEO3ZOZ5g1CCrZr2R5dqHWiRUSpcazt694ee7OOsyALxsq2fNPAUfd8LZgb5T
-         Px3cTL7u2w3fyuiYm23Jxn9oAiFaE+/4ZGCWwnaUmbY3FUWkUdvI2LOZ2BvzVJxDRgcY
-         OhNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR4yN3sUOoWQV50jVLEAtvRKoROWe9cGgwik2K5yncZblVSkd05hIYEgt7uNDeqjinOygpHTjaiVOqtzWbYDP6UgJCGp3gvyJnM+kn
-X-Gm-Message-State: AOJu0YwRGpjvl9eIPXHnWM/FrRRzZDAl30f7sQ9BQvWSp/ZxztLmlfRt
-	46CG6zPR0rdnBPDDrkHGxOyOR5gW065PlI8UUu7XMAzHX43qT9HmbQa2fo90CZh9AZ2Wzvub3Ag
-	sveazDTpTIoH6EX6ivVMnvYPnsYw9xzIwtR5CKA==
-X-Google-Smtp-Source: AGHT+IEdg744iLrX6ZtbyA6vFCgoj3lzq+ppqtfCzhKioG9uraYqBhXuiuKLGd4W4eaRkB7Qken+1OHN4uBNCiH7lcM=
-X-Received: by 2002:a05:6122:16a1:b0:4de:daa8:b8e2 with SMTP id
- 71dfb90a1353d-4eb5621e208mr11288152e0c.3.1718042151230; Mon, 10 Jun 2024
- 10:55:51 -0700 (PDT)
+	s=arc-20240116; t=1718042217; c=relaxed/simple;
+	bh=unUvIdc/8vzuqCyuMyO99iFQBGvazBdMbdZCF1G4HtM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=A4vppVAgCqLbSgxmQ3kMY0eQWIbxweuwoaIQKfXlTUw68UCJ+C3SD9k/8jV+Ba8ZNtyIBtyuWmXhN6cHqPv00EcGYTRWhm8JUjuCDXAmfI2/AClGcmVx+i3spQ405rGHdG1nQz7A3Hu5CFbPkxhwR8LJsK0RFT3HRe6IvpT4h7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWX6DN5+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718042216; x=1749578216;
+  h=date:from:to:cc:subject:message-id;
+  bh=unUvIdc/8vzuqCyuMyO99iFQBGvazBdMbdZCF1G4HtM=;
+  b=fWX6DN5+39VuA0mR49Pougga5LcYZolTZYhTVYI+kUUU++8tISw9AC+O
+   HjY8CKXOOERIjRcgyRPYr4VJiI6yyK172zfQXLJMeZw5wqfcjhbWyaD/N
+   7bx1NG1xw4wnkvLdxx+eoj2AHbJtiXNIQvcZM+GhXI0jx5f9mwzQfdKh5
+   XtQzM6YWhdEjw9gYhoI6XMmwQzFRIgoGCNTFTiAdudfJiNmDbhgKLLEy7
+   2ws6+wqAK0ZenlXBQfXbYDGGSaaRpBXn3cR5Ru9vAX/m0zLCj1HtFrUsr
+   YaajCuGBy32gRNM3kdJJP7QRa5oibBnVKUaIg0eAy2UFv9bw/kObOqph4
+   A==;
+X-CSE-ConnectionGUID: HyM5UnmnQpKop+hI5Z6jOA==
+X-CSE-MsgGUID: x1qGcnJ4SOCoBkVhtTZ/Jw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14666176"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="14666176"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 10:56:54 -0700
+X-CSE-ConnectionGUID: BNn4ZUM+R6WqYggpBOlVZQ==
+X-CSE-MsgGUID: Fdk35mDURlSRdWz16uqKlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="70305836"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 10 Jun 2024 10:56:51 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGjGE-0002MS-1t;
+	Mon, 10 Jun 2024 17:56:50 +0000
+Date: Tue, 11 Jun 2024 01:56:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:next] BUILD SUCCESS
+ f395ae346be5c56cef189dfa5530d4608ff7af5c
+Message-ID: <202406110103.j9xqzStI-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240609113903.732882729@linuxfoundation.org>
-In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 10 Jun 2024 23:25:39 +0530
-Message-ID: <CA+G9fYs1zvpNDYiRL83Cs5D_o++QHQ5rpwjQHSDCPr3GM1bAQQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, 9 Jun 2024 at 17:11, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 741 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.33-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git next
+branch HEAD: f395ae346be5c56cef189dfa5530d4608ff7af5c  Merge branches 'doc.2024.06.06a', 'fixes.2024.06.06a', 'mb.2024.06.03a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a' and 'rcutorture.2024.06.06a' into HEAD
 
-Results from Linaro=E2=80=99s test farm.
-Build regressions on riscv reported.
+elapsed time: 1450m
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+configs tested: 125
+configs skipped: 3
 
-## Build
-* kernel: 6.6.33-rc2
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.6.y
-* git commit: 7fa271200aef4ae8f0bed8a8ed81629ecd5ed2ab
-* git describe: v6.6.32-742-g7fa271200aef
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-2-742-g7fa271200aef
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-## Test Regressions (compared to v6.6.32)
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arm                               allnoconfig   clang
+arm                                 defconfig   clang
+arm                          pxa910_defconfig   gcc  
+arm                             rpc_defconfig   clang
+arm                         s5pv210_defconfig   gcc  
+arm                          sp7021_defconfig   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                            allyesconfig   clang
+arm64                               defconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                                defconfig   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240610   clang
+i386         buildonly-randconfig-002-20240610   gcc  
+i386         buildonly-randconfig-003-20240610   gcc  
+i386         buildonly-randconfig-004-20240610   clang
+i386         buildonly-randconfig-005-20240610   gcc  
+i386         buildonly-randconfig-006-20240610   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240610   gcc  
+i386                  randconfig-002-20240610   gcc  
+i386                  randconfig-003-20240610   gcc  
+i386                  randconfig-004-20240610   gcc  
+i386                  randconfig-005-20240610   clang
+i386                  randconfig-006-20240610   gcc  
+i386                  randconfig-011-20240610   clang
+i386                  randconfig-012-20240610   clang
+i386                  randconfig-013-20240610   clang
+i386                  randconfig-014-20240610   clang
+i386                  randconfig-015-20240610   clang
+i386                  randconfig-016-20240610   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                       m5208evb_defconfig   gcc  
+m68k                        mvme16x_defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                         bigsur_defconfig   gcc  
+mips                            gpr_defconfig   clang
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                generic-32bit_defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                 linkstation_defconfig   clang
+powerpc                  mpc885_ads_defconfig   clang
+powerpc                     taishan_defconfig   clang
+powerpc                     tqm8560_defconfig   gcc  
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                          r7780mp_defconfig   gcc  
+sh                          rsk7203_defconfig   gcc  
+sh                          rsk7264_defconfig   gcc  
+sh                        sh7763rdp_defconfig   gcc  
+sh                          urquell_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-002-20240610   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-003-20240610   clang
+x86_64                randconfig-006-20240610   clang
+x86_64                randconfig-011-20240610   clang
+x86_64                randconfig-015-20240610   clang
+x86_64                randconfig-016-20240610   clang
+x86_64                randconfig-072-20240610   clang
+x86_64                randconfig-073-20240610   clang
+x86_64                randconfig-075-20240610   clang
+x86_64                randconfig-076-20240610   clang
+x86_64                           rhel-8.3-bpf   gcc  
+x86_64                          rhel-8.3-func   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                            allnoconfig   gcc  
 
-* riscv, build
-  - clang-18-defconfig
-  - clang-18-lkftconfig
-  - gcc-13-defconfig
-  - gcc-13-lkftconfig
-  - gcc-8-defconfig
-
-## Metric Regressions (compared to v6.6.32)
-
-## Test Fixes (compared to v6.6.32)
-
-## Metric Fixes (compared to v6.6.32)
-
-## Test result summary
-total: 237984, pass: 198342, fail: 13030, skip: 26078, xfail: 534
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 36 total, 36 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 33 total, 33 passed, 0 failed
-* riscv: 17 total, 6 passed, 11 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
