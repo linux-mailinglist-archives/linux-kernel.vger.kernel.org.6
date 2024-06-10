@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-208401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E378D90248E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:50:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A9D9024BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A1E1F23FD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98DCB295B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F36D13D8BB;
-	Mon, 10 Jun 2024 14:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6411C13212B;
+	Mon, 10 Jun 2024 14:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NGa9YuF1"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D805D13A89A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KUtjUmW5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9669132113;
+	Mon, 10 Jun 2024 14:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718030901; cv=none; b=DsWweezHLpwix0wN+fg20o4bCpB1paRl9d60tdGwiPCn4ibESAfm7J8+LmR/2HiyqZZLH7PTJDuEeacu14erSquCzYalOKqWtg3YgKIXEZlRnFmUuJFiWDRgC5qyXtXU5X3NP7OFTEZj7lA5h5w01SaC0K7xhhoNedp4ctFKA3o=
+	t=1718031028; cv=none; b=iNuB/9dgxND1Ug8vo3S3Qm+/r9Yraak2dYdLUMWD3y9xeHgMDfPucSmixXJKP4XiMkil2tCrbbbDaUDwoO8kw3yfWcifImFRopsvAOMGnfUXpz5uLpQq/YeXHKl7evxqAZxL6BZMf2EyMylbCYnekXZDYWb1aqMpef5DbJ3QiEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718030901; c=relaxed/simple;
-	bh=x5DrS7FQZMXT49cldFh+kXWFHLyDBEI8B/KA9evGjOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhjXSqc6HnzXcScelh2P1wxU0Y3Pe228Dkm3i3xuMIZthdbHMHHUYVRWawk+QrQT2fxnG4G6VEzfeB6ahL7Cez+Wp6B4rgPRTmzAKdSZHWBEUPgRHm9t1TJEcraBzQlCGBgKlHaeyjXCYnBw8RBulVZs6uh0S77TLet/tu4jMwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NGa9YuF1; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=x5Dr
-	S7FQZMXT49cldFh+kXWFHLyDBEI8B/KA9evGjOY=; b=NGa9YuF11u2hrn/bd/t+
-	Tm7OfHnd6oCpAjYC/WNxX1qknVGXQ6AZvZ24O5Y5xnfF7eyivlmvhHHAMvNyogj8
-	j9FgIAwfltcec/YLi/zMidFWLQ6jo5FNekS+A9vnMkiBIX9qB9vUK4Hp0M4xX/fB
-	wqldMmCbjIePedIZJ3+NaSV70n6z55mCNj7rudDkWwQREbfnhW35vDIScCTi+zW3
-	HKI7w4yBjqX3RCI6M1bKo448vMW1zjHJsuxYUIj56t+peyh5BAg2DdwtaGFv1x06
-	AbaAt7MCjrb+E2WeMlEuPHJ1UPNQldwn8dHZGiZeE3I+3/uZ9pndx/3wmcEFHn+I
-	iw==
-Received: (qmail 113496 invoked from network); 10 Jun 2024 16:48:12 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jun 2024 16:48:12 +0200
-X-UD-Smtp-Session: l3s3148p1@bZkDPYoaPJ1ehhrL
-Date: Mon, 10 Jun 2024 16:48:11 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
-Message-ID: <6ldatdtijc2jbzkasbzvze2m3vche5wmcogjfh2h2k4jsbtry4@oj7efn32ucoz>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-References: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
+	s=arc-20240116; t=1718031028; c=relaxed/simple;
+	bh=Bu/1Eza/p7DLVmqlX9siAp8nBNaky3a3wcHUbzcBwJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OuT5SjgNsm3y2tOddGu6BPCcvruoEuOut5TAuh+p7+VpQSwpqmCGAetnYh4mGK4PZj9872eYVpBF05BOw9bKEDVWiZPUfsSi5QfYGU7GC209BDFOil4c+uEwioIlMZW7yAEImmbRJWIUhb+mSXGwMimJnjCi6oo5S5mNpvoIkvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KUtjUmW5; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=DZquqoa+k8YMi8hvyXrMyI884vgcezINgyGLYQPzP+o=;
+	b=KUtjUmW5QDfyHwmKFr2qs6s7/OywIOhBoCxWnYAjif8VWO9T84bmt6OlunBWqf
+	tt7vngQt52w2iJnkQMEZNqFM51QL9v5iyySeMT4bPiQLlPXWHpa17jM3HxB4R+fl
+	Uzmjk7MNQtGFCHLXyVAaNEkNLi8oUe7vUHGwv/tTStnwI=
+Received: from [192.168.1.26] (unknown [183.195.6.47])
+	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wDn77NEEmdmGNrcCQ--.11657S2;
+	Mon, 10 Jun 2024 22:48:36 +0800 (CST)
+Message-ID: <59380ae7-47f6-4a3d-a3e1-bc8b5762086c@163.com>
+Date: Mon, 10 Jun 2024 22:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rl6f7hqoje2ggj43"
-Content-Disposition: inline
-In-Reply-To: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] kobject_uevent: Fix OOB access within
+ zap_modalias_env()
+To: Zijun Hu <quic_zijuhu@quicinc.com>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, akpm@linux-foundation.org, dmitry.torokhov@gmail.com
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <1717074877-11352-1-git-send-email-quic_zijuhu@quicinc.com>
+Content-Language: en-US
+From: Lk Sii <lk_sii@163.com>
+In-Reply-To: <1717074877-11352-1-git-send-email-quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDn77NEEmdmGNrcCQ--.11657S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AF48Gw1ftr45GF4DZr17trb_yoW8ZFyDp3
+	WfZr43K34UtFn7Jw1SvFs8WF1Uu34kWrnxGa4rWFyrJrW5Zrn7tFy8Jr1kWrWjyFykA3Wx
+	AF12q3ZFka4DJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRXyCXUUUUU=
+X-CM-SenderInfo: 5onb2xrl6rljoofrz/1tbiyR35NWV4JkR3BgABsX
 
 
---rl6f7hqoje2ggj43
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 07:17:18AM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc=
-_spi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_m=
-mc_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/renesa=
-s_sdhi_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_co=
-re.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
-_simple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
-_sd8787.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
-_emmc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_u=
-art.o
->=20
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On 2024/5/30 21:14, Zijun Hu wrote:
+> zap_modalias_env() wrongly calculates size of memory block to move, so
+> will cause OOB memory access issue if variable MODALIAS is not the last
+> one within its @env parameter, fixed by correcting size to memmove.
+> 
+> Fixes: 9b3fa47d4a76 ("kobject: fix suppressing modalias in uevents delivered over netlink")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> V3: Correct inline comments and take Dmitry's suggestion
+> V2: Correct commit messages and add inline comments
+> 
+> Previous discussion links:
+> https://lore.kernel.org/lkml/ZlYo20ztfLWPyy5d@google.com/
+> https://lore.kernel.org/lkml/0b916393-eb39-4467-9c99-ac1bc9746512@quicinc.com/T/#m8d80165294640dbac72f5c48d14b7ca4f097b5c7
+> 
+>  lib/kobject_uevent.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index 03b427e2707e..b7f2fa08d9c8 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -433,8 +433,23 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
+>  		len = strlen(env->envp[i]) + 1;
+>  
+>  		if (i != env->envp_idx - 1) {
+> +			/* @env->envp[] contains pointers to @env->buf[]
+> +			 * with @env->buflen chars, and we are removing
+> +			 * variable MODALIAS here pointed by @env->envp[i]
+> +			 * with length @len as shown below:
+> +			 *
+> +			 * 0               @env->buf[]      @env->buflen
+> +			 * ---------------------------------------------
+> +			 * ^             ^              ^              ^
+> +			 * |             |->   @len   <-| target block |
+> +			 * @env->envp[0] @env->envp[i]  @env->envp[i + 1]
+> +			 *
+> +			 * so the "target block" indicated above is moved
+> +			 * backward by @len, and its right size is
+> +			 * @env->buflen - (@env->envp[i + 1] - @env->envp[0]).
+> +			 */
+>  			memmove(env->envp[i], env->envp[i + 1],
+> -				env->buflen - len);
+> +				env->buflen - (env->envp[i + 1] - env->envp[0]));
+>  
+>  			for (j = i; j < env->envp_idx - 1; j++)
+>  				env->envp[j] = env->envp[j + 1] - len;
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for TMIO and=
- SDHI
+Reviewed-by: Lk Sii <lk_sii@163.com>
 
-
---rl6f7hqoje2ggj43
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZnEicACgkQFA3kzBSg
-KbbOoBAAgJ9UCaAhB+6Ip3/eQ9lYimnwlKzdejrL6uWwiqmX6v9VR/O/9Q6phaz2
-4txU9LHS2K3f7rnQUGS6kuDZF5v2BagNg1HTdVXTGvKgIp7SJeC8BsaZVczlKB9Y
-JddntTCF60+teenVaVmb5CBOQyRFymJE/xNdRejYLJwtYoU4aaG1WbQiYE5nbiub
-OMigd5HMAg3hj076VF7ocCyBoJbLn18vSb3tOWHCze4AIJ1yQtIdbSfA9kUf8H75
-b+cKpHXNpZrg1ZnuO4VxS7uUQPT22rH4HS8mU4sQId0g+K3yJOey7/Q2rqdbKL0W
-cTaKDO/c5QQEXoUcqoSIUW5Z42Lc5vG/M8Cw7602jx5DCZYkOWq0Ii8y1YzP+J6Q
-c2XaVUzfzZDbi/9cIOw4z2SZu1/Og/C9ZbC5pejiw9OXqAnk866h4cHqB0f4kSZW
-ZxLICmsQycLU2guIPCEsCkyehVGe4YOASBTap302FWhb8NWyMzaW6iYeD+jFvoLF
-/G92HIBeZqzh4b6iCk8xutpc3AbORw/YsaTmvbU9nbm2RFGlxuYnB1RKzCqdywCM
-P0o9ACagy9M4wi/mb2eTLF3flGY/EAQjd41y5/iRT+MpgOnIZqMAAf3cgxXUMfdq
-wbMbOWqjAiUxGts7XGD26FYScY+JTKn5iow3rzPMWsruJu/Rgdw=
-=/mFQ
------END PGP SIGNATURE-----
-
---rl6f7hqoje2ggj43--
 
