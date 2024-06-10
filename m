@@ -1,196 +1,516 @@
-Return-Path: <linux-kernel+bounces-207767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9441B901BCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:21:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776BB901BDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906521C21461
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE6B282F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0B93F8C7;
-	Mon, 10 Jun 2024 07:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CE33E47E;
+	Mon, 10 Jun 2024 07:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="bahgPCZQ"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2113.outbound.protection.outlook.com [40.107.247.113])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gqwbo/7M";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="a+d59YO7"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F0022612;
-	Mon, 10 Jun 2024 07:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247EF3BBC5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718004066; cv=fail; b=ksPkjsqkkCLYCpTfIHDtbWq/FmDzGc2KAIGM8TI642nnkbbdAdJWq42EKpLegKebmqKVbdYTS5vp4YUQJRQ9qzZAmhNkXi91HFH39Fjw/SSK1MhQepYHurdDTqgiEVK8e9L5d6ZnEIN4gPSJs4zS08twhYcXpq2h66Q9hZeOzv4=
+	t=1718004288; cv=fail; b=uBymjNK74yWZVSVK6wk8Z3OF4SUxvwFqDOfpHQ/Xcs7OEAib8w2pvRd5Ou7ju+HC0KS3gJXwh2bQlYBC42vTBvWtWjPYnoy7eed6TInT5p5jVQ8mp01b4A9Sxm6Vus8wyYHJQ1prl50vRHBpQRDSW8MRrO23CUD2mZH8S4CRHG0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718004066; c=relaxed/simple;
-	bh=SuXsMcackJSRmDzz1WjGNlm4nccKPW2VzLEe5+010SM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PYsD8q+ACaRDqt97tcE5jNXeMjJjEXMb+AeDI2iNeOG5LVAHS9+w2KFJlqrm04f/P3qAJ6OgVN9Dmh72TmZdoqZnB9FjDUxF30LgLqJPy2+91ryeozyf21R3ACckeGmHEBhat4+46LmQZadNJrjiXIhLh4oD3pXKIocwUtcvAYw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=bahgPCZQ; arc=fail smtp.client-ip=40.107.247.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+	s=arc-20240116; t=1718004288; c=relaxed/simple;
+	bh=FS4hl9A/hYU4pePf2SfPsOEsOUDcu7P/KbvdjdEy/5I=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=jtrY0lo1op+xmcifJmPXlWbYsl6GvGl/7CuRvtp/csgyolznkFZUnoj1qsp9tA3968Y26CWhqUxsYB7E7kOjpqJVr3zMSg0iYRVHWEjMU105HPiS0BQMQWr0ef6K8HNY7S3kZckGk0zE+CWCYq9m4F4kl0USwlTyb9lx+we8LGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Gqwbo/7M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=a+d59YO7; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A4BRar024983;
+	Mon, 10 Jun 2024 07:23:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	references:from:to:cc:subject:in-reply-to:date:message-id
+	:content-type:mime-version; s=corp-2023-11-20; bh=i9ICgC04IzHkam
+	JNwn7fb/VkGj1RDnM/JIYH08qEnf8=; b=Gqwbo/7Mf4BzcuxbAT5GTLE5ziCLWZ
+	WfuFjdxjJZru+plgWbeL8e9WhsYPpOCPmCnoBBbCZwoLYh3D8ByhBlz0lZAWllJK
+	zcOSEjoox0O6IyS6RbN00JjNBkq5SEjIY7LFXZDOV0eMu9rQp6n3PSReLrWgXZoE
+	e7YRe8QTH+Rrhp35b9zyCWSLEttqZ3M8PGLCieb4OWo3YoDKMrQgmuuMow8e+S3H
+	PpawLTMRML93b6BROtr1Gjoh3czzgbgA39N+n2VHZu5/fhfrs8Ln8RwAYHSUqpHq
+	EWCPC1MeBzhAZzj9sUqEBm5QGmJ+0ZBx/ucE0WoElUzwRsaOdleENkUQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7dhw7w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Jun 2024 07:23:46 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45A5VWLi020366;
+	Mon, 10 Jun 2024 07:23:45 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncasnefn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Jun 2024 07:23:45 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mWjppCOSH8YdvabfzZ30DTsVrg4YibcZWFwvGAQPqBfXkmR4+Ocqoo3fBYRDbyyg4u9A4vZ1ValLrwYGOz71uWH27IWCfKSKoN+Pe3i5t6hA1smnwNviF614UqaKV8J/eaS8X4NxdYXht+v/PpWcDw4gy5zfq6ZMkaapwRXLrn5M8WkBn6m1zv67tUo0RMSGUomTLRUdOeRQVHbKu2OaCHiPwlkFWuZpvjquAn4DMTlb7Owhzkn48+X6moecrWnwyaguITXwNzxYytgJtNAWi2V+cXq05PWu+QzncAF4QWuDUQL0cJUmKdNEA6huPYGtLwN74e9vPTtj7ORZmqnP0A==
+ b=OEDth+kakK6+LSO9wxJ+9KTIT/ie0Sf3Ne9UHsXpMVyT9OEmiYX8veRmeo/tCYq/6Suuc4HZu0dwNyYcDgXEH6itje/Rh6yCGrwARspe3n/4J0DBTTi2gRU0/OSsMtYc+jYy0g6a9nd2Iw471USNA41XC9xQCn8/SXwhAFMXUUXqeAS9E1RghT7nN5S11LcJNZ1cxhMAoGqAIkAqW7EHP/xSN7Qh6PVUXz9GSPHhyPM3zL9LQnSMjQIHYG3z9I+fnxUf0evaZYlpvMOtgZ6XUnIWfxKRKePye6eowCLTl4fRdUgGxfKudQdBtYjWp5DeJGcVIM7CRw6CKWmhnMeAiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SuXsMcackJSRmDzz1WjGNlm4nccKPW2VzLEe5+010SM=;
- b=Jmpx842zx9MiURLfPtnI5zzfFLhjCoBrFrCsojYlvOP2G1bHJmK9UipLjO07VjTO0nSUP22lx8dz02NfuZZHj90ceeswNFcqDFQqzSuV9gG9nhQZZfVg8eGdaNcxWD220BN55X6SyDEB4BlrX0ZdpqHF7tsg0uecr35PI7CBhit9CQ4LPl9GkbWobHM4SXa8iMxdS5k0JT2U2eJemTyzpAcf1OnhTSXilDKhVKq//M6tiD9N7A4kInWi6tkuQW+c0MQmZ6QHkI8bq/MH9vF7yxq2qbtOmJCIMdFGv44tjpTFwjrkPpAse6sqnXz3ClXEQzUHeNilJLzBhoQ2bPTDmg==
+ bh=i9ICgC04IzHkamJNwn7fb/VkGj1RDnM/JIYH08qEnf8=;
+ b=BEidhHhyLBoCAous+qUnXfttC7UVBJa341Q1Hsuu77j4cuew6QVK6RYKnUzWQBvB3OUR/Tt2Fm76iSzfLUhzg7uxdvKNYd8wLDpmT56w7lkfMyzAut8hH5J50rtw3jIYoOPDBnUqr6fQoVXFLzTuXB6gNTF4E+/GsEE7Ygh8oL/cHhsPIJBmN0xQRoDcsU8M746tVA46gJz/7gVIGI4gcACMciAopMwJhV/qSsfDB48gB/Ashcc9QEFo/fumxCmzje0A0WzxJc64uGinpwAxRZmh1Np5eq8lh0e+UmVvvDt2B6Jia4/uMXnc4nrc5ycwS0WYOv4RN3C+vgZPMcA3GA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SuXsMcackJSRmDzz1WjGNlm4nccKPW2VzLEe5+010SM=;
- b=bahgPCZQX+VtgXYeadq3IhIqTvBM5nnuRb97gjf6xz03FkOqJwnl3+s83VG+YYSfWSm4Abjbr1LIZ5istU9SE6Y3gHgCq/2eEQFwUVussqaCYt/ry68BmoKozb6K6qxXn0jwJwKN1B9ohyg1Dwr/RKsEm+uiEjCLa3rnTBUyTdA=
-Received: from DB9PR83MB0537.EURPRD83.prod.outlook.com (2603:10a6:10:300::16)
- by PA1PR83MB0774.EURPRD83.prod.outlook.com (2603:10a6:102:48d::8) with
+ bh=i9ICgC04IzHkamJNwn7fb/VkGj1RDnM/JIYH08qEnf8=;
+ b=a+d59YO7UVAOHYhG0vBKFynQ7mLq/rmmgi/GSFarWrOdVDXfi4qgQ/+ClKitsQRacMp0Z7iTwP/y0QoJ+TKYTo/+E+lyTGiPAc7MyY0jQm1MfC6QF/IeM/QxHnU5dItY5vTBIL9UP7d0xbBDgHvsSvxOBCtZRrR3JIdPu/XKUHU=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by MW5PR10MB5692.namprd10.prod.outlook.com (2603:10b6:303:1a3::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.17; Mon, 10 Jun
- 2024 07:21:00 +0000
-Received: from DB9PR83MB0537.EURPRD83.prod.outlook.com
- ([fe80::f1f1:b6f3:3fda:937b]) by DB9PR83MB0537.EURPRD83.prod.outlook.com
- ([fe80::f1f1:b6f3:3fda:937b%6]) with mapi id 15.20.7677.014; Mon, 10 Jun 2024
- 07:21:00 +0000
-From: Konstantin Taranov <kotaranov@microsoft.com>
-To: Leon Romanovsky <leon@kernel.org>, Konstantin Taranov
-	<kotaranov@linux.microsoft.com>
-CC: Wei Hu <weh@microsoft.com>, "sharmaajay@microsoft.com"
-	<sharmaajay@microsoft.com>, Long Li <longli@microsoft.com>, "jgg@ziepe.ca"
-	<jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH rdma-next v2 1/1] RDMA/mana_ib: process QP error events in
- mana_ib
-Thread-Topic: [PATCH rdma-next v2 1/1] RDMA/mana_ib: process QP error events
- in mana_ib
-Thread-Index: AQHauwa+WBinT+4qmk+08x+b+okzuw==
-Date: Mon, 10 Jun 2024 07:21:00 +0000
-Message-ID:
- <DB9PR83MB0537451CDAA082BA24BC5723B4C62@DB9PR83MB0537.EURPRD83.prod.outlook.com>
-References: <1717754897-19858-1-git-send-email-kotaranov@linux.microsoft.com>
- <20240609104618.GC8976@unreal>
-In-Reply-To: <20240609104618.GC8976@unreal>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=2e8b61c5-bcea-4689-96ec-a2d422e5c14c;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-06-10T07:18:01Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR83MB0537:EE_|PA1PR83MB0774:EE_
-x-ms-office365-filtering-correlation-id: 651b904d-840b-43d2-5791-08dc891de13c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cUt5VlBJM2xLdUtCT3NsVENxQ1ZpM0dyMlJPNEJUVkxXLy9VbSs4QU1yK2NR?=
- =?utf-8?B?Q2lVS0ZJdWczZXgyRC9ML1NPUkdrbm9BYVR4MWliLzVQSFhwV3RlRmc5U1Bi?=
- =?utf-8?B?ZTBGRExXbGJSamorNUduMjhaR2tqTWpFdlMvZndwYW5FZjJLdEdKMU5lSjlM?=
- =?utf-8?B?ekxjemxKTjEyV0JMWnd1YXczTlFZRGpDUHNqUElPai90Z0hnSmpMV2VlL0VL?=
- =?utf-8?B?L3R5WkJjWStHZU1CSzN6OFU2eXAxaDJMWHJINnFIam96RW1lWFBIVHpYcFJ2?=
- =?utf-8?B?a2RJNE1KNy9QZTR4M01JcUFPMkxNWDR1N3FBbFNaMEJRb0gzak1LaE1wV1RF?=
- =?utf-8?B?cHNESlNHWG52NTh6ekxTcWtEekJmVmlHSGQ5SXY1eUFET21jWi9nWHVSc3Bp?=
- =?utf-8?B?bkNIRHNyVk50SHlLbXVRVEFTZmZtNTJWT1dwWXplTFlKWEh5b0pUbThWclZC?=
- =?utf-8?B?QVJnWUM2eFZWQklLbjVkVTJ5aUhRZ0N6VGhhbWxRSFZ6MS9oN0R4QzVmdklT?=
- =?utf-8?B?R0tsMDViaCtxWSs5NHhFSlhxTEFFbVREeGtLNGRib0k1T092cytSV0o1c2ll?=
- =?utf-8?B?MmRJQVJmcjl4NmZoTmVwNWt5b0Q0VW1jQm1vZkRCRkkyazluMjY4QmpOYUQ2?=
- =?utf-8?B?YkwzTE0yZFA4Z2xEMmQ4TXFodWdmMjM2bWJCanZQcDhRRW5MMVV2N1k4MEtJ?=
- =?utf-8?B?WEh1bHpGdEJ0SnIzOWtZTVNBekJYdFdsNzhhLzk3N2thNzgyRjBwek9rdWhF?=
- =?utf-8?B?MkhrNW14UGpRVmZGVVhCeTBpN2hWMjIvaHFlSEswTU5FZ1p0U2Y0cEhkZFZD?=
- =?utf-8?B?ZExpdzhhemFUMHdTeW1nUnFhc2FiUW5NQytrR0RFTjVOL3pxOFJITm5MNHVi?=
- =?utf-8?B?Ykl6Z0pMVXBrQTJhQzcyNkFMcTBWbVJkbVR1VHBmbGw1ck0zTEs2cXlmbmsy?=
- =?utf-8?B?MXlmWmlCN1ZxTEI5MFlkNW45d2dFVkVvTkZudnduOUwvS0xzajRjbi9xNFAr?=
- =?utf-8?B?QmFMRXIrYytuRGFWbmJWREY4OG5hbXI1YnZ1U3N3MGFxbWxTSEJLTndwNlh1?=
- =?utf-8?B?eTB3T2Y0RWQzemNXVU5WUW1ISkM3OFNTZlJFWVNNV1paWVV3aDAzT05kaG1y?=
- =?utf-8?B?MmN4NVRhVkdNUWlGVG5ORWhqL1hTV1pvTlUwUEtJbTRNQUY4NXc5cFV4T0JV?=
- =?utf-8?B?cTJGbXk4THRsT2VLVkVTdjBoOXFTbGIxSTZnQ3hKaU14VU9VZ1IxRE96em9L?=
- =?utf-8?B?WEhDSG8yaXo3UDhWSU9LaTUwdHYxcnFtUEcvZDExSnArKzI1cVptbnlHRktK?=
- =?utf-8?B?VjlvM0xjM0gxZjZlOXl3NGN6N1V3YTF1aG1OVElMVnVWcXdDdG1sSG1odTVI?=
- =?utf-8?B?UWhIZnZsMHVZcEwvaURaaXZNd0hQNGZnSTlDZDMvdHFMUGhYcUdrMXRodGZy?=
- =?utf-8?B?ZzlXMFZjdFRSTGJXeThtYzdwMEkrSFZEQmxUSHMxanFldDJVcmk4YWtMM1E0?=
- =?utf-8?B?RUtlU1lDQW9ubWd4a1hoNFJIS1JRSFU2WTZtVnMrNFUwdDh4L2hVM0lEa1VZ?=
- =?utf-8?B?dDZBdUdFRVFSU05JT2RLclZ6T1EvRmdqbllzTjhwN0xwc052dlEvWjR2Vmln?=
- =?utf-8?B?cjJtZ3NNTWNOOGtOVzczUHBESld0WGRzMnFUWHBacnVBWFkzZnd5Sm9FdTN0?=
- =?utf-8?B?MmViRHIvYjlSOFg5QWQ5c3BYSlBTeWhQdmF4K1pqcHBJY0EvMW1ySWUwNXNI?=
- =?utf-8?B?UkRlMGhXczhqTFJPdWxMWEtUTnJrQnVzVEdwTk42QXJGTENrRXVMTGpLYk5l?=
- =?utf-8?Q?vyScFtStp8uhLBDRy4voQmxrq4VmzAwoVQlsw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR83MB0537.EURPRD83.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Qm8wbHZRZnlVN1Rxb0lDZ1pCaTVTM0tLMlNaR2NRdmVkaDhWRG4yYmtuUE1W?=
- =?utf-8?B?SW94eGZHMGtENVpuTHZNMnJYTnZ3dG5xT2xmMmZ2aFNUYmJBekZQWkt6dytm?=
- =?utf-8?B?ZXhHMGZycFAyOU91UW9sRnhZdFlya0M2VWhKcTRTWDU4ZWlVeEJwdnViMmU5?=
- =?utf-8?B?N2RrKytxcnFoN3hiajRCcGxTd1pRdUIwekJJYUhEY1dVNUJlcHdObUZoSWlv?=
- =?utf-8?B?Y213bi9PUVZmNGRaM1o1NXRqM3lHdjZxTHZkcFFtNzZFdGV5bUZVY3ZZUVpM?=
- =?utf-8?B?OExQamQ2V25IM0VsK3hHK1I5NVlhMlRGUmVkMmhpVTd0SEFHUk9PL2hBQ0RH?=
- =?utf-8?B?ZnAyWDZqQ1lsQXBQVmw4emRUaktnM3l3TTJuTGxEbDdJM25RakpNSlRPMFNm?=
- =?utf-8?B?ZVZzVGJBRExMTm55clRYVUdsRXFZbVRNQkhkakRnRzhjL1paMXNTUlc5Vjlr?=
- =?utf-8?B?b1U1ZG1RYUszMk1KcThBTWE0ZGVQeDNRaFBadUE0NzFYVEN5cUpVMHJxRHow?=
- =?utf-8?B?ZjJPV3hNQmY1NHFRbFJ3MUdQNFhRN0FYdGRTRGFUY01KcG55WG1BU2I5QllT?=
- =?utf-8?B?OUxlY3l6NUtsbHBnQStiYnIxc1o2dHFFNjFzTzhWakUrTEQ1YjBRQ3l4eFIv?=
- =?utf-8?B?cjBPZ0IrNGpIQ2xaekdxWEZSYTVKV09HaVdhU3EzMHRadkdDMVVuUGI2c29n?=
- =?utf-8?B?Vlk3K3NQY29NM0hkMXFrWXF4WmVHZkZjaG1oc2dockhXM2lLdnZBbU92VHNq?=
- =?utf-8?B?VDdMSXBVMjZaMi9VWElTaGFpb21qKzFvcWlwdis0eW5YRXV4cE5oRWVJd003?=
- =?utf-8?B?Tk1relJMLzJjcTNMWk9iWXMyZ2h6K3ljRTZaYndXTFdvQ2ozODU2bUd3dFZO?=
- =?utf-8?B?VTlIMUh5UE82WGN6V0NnV0RaVEtnMGkvSkZTSHJmcEdLVVhwSFR4UjdyZWVr?=
- =?utf-8?B?bStyLzkzTE9VSHFYN3RhSUt0dExIWVZFVW8reWZWR01vTk1rY1haWHViUGJj?=
- =?utf-8?B?UUw5RldxZlNKdy80dTF3aVlJV3FMdlAxL1pvU2laTS9NVWRFS1JycjE5akdX?=
- =?utf-8?B?KytvbngyTE9sU0lFbEw3azV3WUtJc1JMbzNrSTErSDJwdnhoaDhaWW0zM0lT?=
- =?utf-8?B?KzRjcUEwbC9qTHc1RzAxQ3lNZXNlZFVqbXFUSU5zOGN1cWVRR3pUTlg0a1d3?=
- =?utf-8?B?Qm9EMUdiVldGM3Jva1NlckhrTlBCVzNJamovUmwvaTBOMGdjaHZkV0pqRmxY?=
- =?utf-8?B?ZjI4aVRWclVnd3ZCdVRNdmZmYkNnRmlGSHUzNEh4Qm9obnFxWU05S1dhUlM4?=
- =?utf-8?B?TXk5clJMMk1RU2hCT1FKT3dxWFJHRlA4bkNKb2xMWTBPQUpmVThYblZZdXR4?=
- =?utf-8?B?OUxwY2YwMnlNME4ySVVlMkh2MDBmYTF2bDFlZDRvKzdlYkFXUXlzWmlvOUJp?=
- =?utf-8?B?TUpsYXZpWEhOLzVCc3RHeWVvbkloOVV5OTE0VmlBTGpjdGFqOUtPZXVDTU5D?=
- =?utf-8?B?MG5rTllZckcyeGw5dXRuT2JiZ0x4YlhZRjBjeW41VFIxQkJZdTNZaWh4ZGdn?=
- =?utf-8?B?WVNUZGFWa1djUVdYbjRXVFdsMThMMy8wRXlkTDVnSSt1aFU1ODNEVGNlSmdL?=
- =?utf-8?B?UGVDWHJwN0lvdWxMN0NPUkpYOUZ1Tjd5WDc1dUYwMjRmeS9zbVFYSG1PN3B6?=
- =?utf-8?B?TlQyaWpMQnVONVlVTThueFpGMjgyQXoxdUh3U2VzUFhCZ2N4Tll2cDBTYWZH?=
- =?utf-8?B?cVZqeURFSDBBS05uWm1waUloYlJzM0NLY2pjMWxQSlhlS0VBdXJvSDZCK1dF?=
- =?utf-8?B?cnAyUDNmU3MzM0cwdUhURmlHN0xVRTRGV202SXRSTkppRml0Z1VRVmpWb2d6?=
- =?utf-8?B?eFhGdngwWndCZjBQTzNpOUUrQmlBSzQ3TXYrM0c1dFdyeVhqdmdzbGlKeGlQ?=
- =?utf-8?B?dWpsMDdRRWUxZnpOL0NqZ2JMbXdQVzY1ekl1aCtLVXRqVURZRngxYmgxRi82?=
- =?utf-8?B?NG13eCt4Vit6MXM0UUp2SmduRFY0VzBiblVFZ0dYVmllbkxiKzIwZmNYSHFB?=
- =?utf-8?Q?QLYPWj?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
+ 2024 07:23:41 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e%3]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
+ 07:23:41 +0000
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
+ <8734pw51he.fsf@oracle.com>
+ <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
+ <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
+        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        LKML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
+In-reply-to: <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
+Date: Mon, 10 Jun 2024 00:23:38 -0700
+Message-ID: <87zfrts1l1.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0141.namprd04.prod.outlook.com
+ (2603:10b6:303:84::26) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|MW5PR10MB5692:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f45616b-add1-4f7a-998f-08dc891e40fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?HRHnstolAz1qJJymuT7eV7q35FJiVlr9EjTC3kPzbWZnGtaoD72mEb0mI9JK?=
+ =?us-ascii?Q?EKSGZQ+BOI+/phkcy/3nBkru4acVR3v9wT9euPcP5UCOAw5fbFoES5GBdKMr?=
+ =?us-ascii?Q?QgCgzS0zyPzIay9FiSQbqY3IKi76P5YktHn5zG5FElwqtWOybCQBBwwWXXfx?=
+ =?us-ascii?Q?zNxh8erfML8OXGv/XDMPVLRacY7sc/rfW5yAQ5zG+kaFl0q1ciBSQxrN8o/7?=
+ =?us-ascii?Q?WNlLQeLJp0jdelVkBf9eQ5+aOPr9XdDjt0w5CRcO0pC5663Y84cGlSON1hqT?=
+ =?us-ascii?Q?tmRYPaOYVsXJWX33b9R3hfy4jNzb6BC61hzNO+kpxY6j5w1niYw/lcrfhyOq?=
+ =?us-ascii?Q?YNR0sVA7Qmkn11zuy4jjG95t5yZkDvTRwN7ABSYdfJtN2ujX2evmW+L6AxRY?=
+ =?us-ascii?Q?W5CTQz5o5JG54coF3qfgOBsbHuWnVbVVegxx5qUFL1iU4i9U4XzgnHrNB2US?=
+ =?us-ascii?Q?cDfluVWLVTWU3mtsD6F//4xMcrUJaf6nDrnMvFreAkDPBruCw2uMxmlYKuhj?=
+ =?us-ascii?Q?HHIntXfzIe0+ucVI2FFlLGUiHzJy9iHcDJgui8KKT+XfICnMe1b/Q+SWi4Vw?=
+ =?us-ascii?Q?7wYG10otS+wnZF+V4UCmz3+DPFQBhSDNzUmvHeNkmP1+Edf5oXEgdb1gAWvK?=
+ =?us-ascii?Q?OiS5aU0oHOfayYcdxCQ8lpxmkHI83XMV64yeZ4T1uwypC82Ga2KW2jYI8iNl?=
+ =?us-ascii?Q?CHhOb+2z2dPd2QzFftO6xm5j6RGzCs4bysLnBKMv0ZOlkXhaXW+F/5/Z7eno?=
+ =?us-ascii?Q?iNI+5drmsdRdJKZJTuhICN77JJnX/wVoHDf4REOwcisdgXkOfvbkPC5ssb8j?=
+ =?us-ascii?Q?XyZNwCIUj8i7nE22KPHwH9AMw+ON48rvYmuhbQwXxD1ITPmrgYaQEdB+CdW9?=
+ =?us-ascii?Q?otOJ1M1j2BmPrf5q5R/ijCrocPLEl3VUjJ5oHhIdyIpdsO/ys3OA7AbzZe7r?=
+ =?us-ascii?Q?pQ0qzwMq0X+ZsFntwzYQD9J9MxX+d2tLu6W0kXjL8PXm2mue4tSLuJPQT9Vz?=
+ =?us-ascii?Q?iPHgiP4MKLf8+sYdE94NCSGejGggosxzyi/iy2He8LQIMlKZnnCkMxUrElQ3?=
+ =?us-ascii?Q?yr4cDCXnSxo9AoTrkd1XEw3+IKfEvoZO/5OSnSAm+mZMabsoVnI094StL9f6?=
+ =?us-ascii?Q?tHxntGXY+HYLiXxz/NtFP32/D/IgDd1RrgH6TPQcyCe/HgwxByFPZg87ZfLS?=
+ =?us-ascii?Q?lBb37JBylKR8viBjcEhkZrQqmn+1m7UzawurSMVDaFMGXjU9Tk/30U5HPpbP?=
+ =?us-ascii?Q?0luibo5DdXg/8X+n8+RQucXknnfU0Iv3xXhb636mpuUZ1s6lifdw4pa/xfy+?=
+ =?us-ascii?Q?M+NKUaAPXZVdWPSds07SHm+I?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?UZDS6zDhpjmht4sDQMh8bVXLaia+M2It9nslmQ65ThGUtwrhd/6pkzni45QQ?=
+ =?us-ascii?Q?87Co9daJM5pveEyqb5UgzaPhNLPblvjnDaHFnuKTaQPmKuUJSxl8qmRR7N15?=
+ =?us-ascii?Q?MnNY3z/Us1cDlIqgxxX0CU9lT7RavU2bQoCsM2ZM3awNZmKr6I+89v390FYB?=
+ =?us-ascii?Q?oguIeuGihhDqq3uiM+9J9QlfsRlbc38VpZwgQjvHV9AttUWFECWmZc5/nHA4?=
+ =?us-ascii?Q?R8Yqq9buFXqsiAuqgnMQLoabWa6JfBwMT12xGpX3Q8/8Z3UjAK0AS9LgeFCA?=
+ =?us-ascii?Q?frn1r8/tHr1ogEI6KTIHA/W6/O7IkBzo5gEyQb+tzv5CduHGcks6BPk5vStf?=
+ =?us-ascii?Q?kt1yvRL8taa6QDAJYF6MFGVRSe2gKwzXxL9oG3x/OiOPuCB61QBqMkvp4tD2?=
+ =?us-ascii?Q?CohVL2ykwMzbJdGYmtNbOfxb/8HS0p9cL+Rp7t2JL6sIuzSOP/BdBulov01E?=
+ =?us-ascii?Q?+bsY9jECOGurCtUJ1Co30+WyZcAmNfKnRBvN5AaHw4OgeCPmMU6n1iLbS5Ek?=
+ =?us-ascii?Q?kdM1413gHIZ6TkJ/TUQaABxHXeintX6bmdoFGolTllweXWyXwdV7Fkm5LoAU?=
+ =?us-ascii?Q?HW5ctv1qx8nOZk18x/8jBCrH1DpsnJxO3UFJTN+e4PE2xE2WAPCZFSjyd4a1?=
+ =?us-ascii?Q?xdZCGzyLhPitR8P0Mm248DlU1FSiHmps3WjcuNZ5peqxKYaFU9HN7U/CUp4p?=
+ =?us-ascii?Q?atmBuRWoZedrePsXatOBKXUaGmMDnY3Mj/pTQwYkRc4KzFFw7NKk1qUgRr+9?=
+ =?us-ascii?Q?jZchgWNc/djmHwcReicjkK56hWZ09OqCIXDEF2We0CursLNXjLnLkDJ4oQ2a?=
+ =?us-ascii?Q?TWxyO7fr9fwWyN5DDIErJVbcOGAa9bHnA6hnxBUJyVgW3avV9/Z+23si3q1l?=
+ =?us-ascii?Q?W8/Ud08LVzm7vmZv4EQlcR/DNpOPJCAkZ8P8lXdybUhkTu2FHI4kAYFfGbO7?=
+ =?us-ascii?Q?KM5fM45CikfmUJTW+dzRQ0y1kvMiUbMctWSLM5r35bIh6YiJqRIhpWRp0xqX?=
+ =?us-ascii?Q?4wvOBB+BUfnE4qYwQsrHxPfW3zyUWakOkFxV+n2AK2mG6b85odt85psUNt0Q?=
+ =?us-ascii?Q?RcNbch7R9Mpk9PxXwiqoLICy1tG1P7TL5wsnq1jU/pjN4zGO4Pl0SCCTg2gm?=
+ =?us-ascii?Q?RjZu8qhULvXato/1kLH9coEm/lPW4IKE01ijtfSc4Q51v3BDLQF7eNt+D6xL?=
+ =?us-ascii?Q?rniV7b9UI2ekEPpOBwspTAP/3v/dX/E6PbIYCBXUUa1ywFo90ALDdtjKJepo?=
+ =?us-ascii?Q?x0z1iiM5201I8P3qyryxwalxzthY0HXz3Yj/eyyNKwjxWIPs2UIahbG9Xfdm?=
+ =?us-ascii?Q?NbilLoPkd9nTUlOe8B1RRqyhtM5VhzOQhPUwl4KTErntmQjkwzXSZeCNFdVT?=
+ =?us-ascii?Q?u4Y+goc6ZgIZYsfjeX4KsvRFaiD0t8C3vOzWNgGDC2aVwT8n2OYZcTZjN49D?=
+ =?us-ascii?Q?GaMk6VqUOI018dpZDBGji0oVa4R4OkkRFF0xp0VUOiK7z9UPTft/N9A7XBhA?=
+ =?us-ascii?Q?TrwZqKqC/dGA3MUpuKkOTmkAyeyuGcWTejfVyUwySreulTYn2o48+yPCD9Ax?=
+ =?us-ascii?Q?IZLsNlSQpokRs7c7fTbSm7ju6wDn1hcaDL7NG78pwI1ZzkWPp3g6PBmo8g2K?=
+ =?us-ascii?Q?YxKcjiE5lPQumJGEa3bSLtg=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	YDdXgtIf4YqvPC5BlqT/5xhmiDCa4JkJGkK/tAXAfvUgSKrB0NN48p6SFQ9QUCE+B5Y0abpSPCQFHE3Qj5rgQ1vY3YfQbFdqn/PtSRK0rYHgjf/cQ509thwxl3Q0CkZ9VLBsonkb2jdKRxIXBtTxnF8YLN7xTy82607o2oQONmL6OtzpZfs7pq4Io69yPeMgp8vLTxUv0CXoZahZ8DHfm5fyaGL04/xKdLT9KC6WgVetIUsSk/wfXrgEeLxfWIz9/9R+yAFuxljtsThR+LoPg+t6420/VMGhHcHcHrlrYlwGqW3gDkfgBF41AnA8I2EtHDuOnEHcxXd2mz0MTOGVgBhmDTclvFbKy1Jkt518MpWRlMuGWr2UflVyoOsjDL9bmCXnfOIJpXpewaPObUaovhkCWIr3R6DWyHr9FueI3KrvhSSexpoaMWyoDH9RS1AtS6Jb0Qpli0hzLwE88gbwJ+e+joa1SXO/zfXjXvs/1fUy3gs82+xgOcZPuvXSyIr3/G4jLmduQ6NmHtsBJ6hg9PeAKCbEoOwMC8HB2dKRYq05fdPOGqpUF8Z6FfB8Rq/mW9Vhzzn/Fg6nBmk13Vk7kQgkCFZsVSb78zpnyL2fQLY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f45616b-add1-4f7a-998f-08dc891e40fb
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR83MB0537.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 651b904d-840b-43d2-5791-08dc891de13c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2024 07:21:00.5347
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 07:23:41.7234
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G7OFieQsl48F6CRGcR9EB9kpY0EvweOWYws3bWexIxN2euuirgrk3647VD3Xgjy44tCS9+gfgtYDWOUe9zhbpg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR83MB0774
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Se44wobizlI+9CdeCq5yZPDNOY5LS7N46/IDdyUR46z9efFLkkdx5h6aXXh0FdXiutHCM1fqj41qKiXisAojKHRt+o7K60x+WZ9MZmFOa78=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5692
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406100056
+X-Proofpoint-GUID: GJD7KfofpUUQx3kyPkiPBBuD8aDHnoI8
+X-Proofpoint-ORIG-GUID: GJD7KfofpUUQx3kyPkiPBBuD8aDHnoI8
 
-PiBQbGVhc2UgcnVuIGNoZWNrcGF0Y2gucGwgb24geW91ciBwYXRjaGVzIGJlZm9yZSBzZW5kaW5n
-IHRoZW0uIEkgZml4ZWQgaXQgYW5kDQo+IGFwcGxpZWQuDQoNClRoYW5rcywgTGVvbiEgSSBjb21w
-bGV0ZWx5IGZvcmdvdCB0byByZS1jaGVjay4gSXQgd2lsbCBub3QgaGFwcGVuIGFnYWluLg0KDQo+
-IA0KPiDinpwgIGtlcm5lbCBnaXQ6KHdpcC9sZW9uLWZvci1uZXh0KSBta3QgY2kNCj4gODc4YThl
-NzUyMDQxIChIRUFEIC0+IGJ1aWxkKSBSRE1BL21hbmFfaWI6IHByb2Nlc3MgUVAgZXJyb3IgZXZl
-bnRzIGluDQo+IG1hbmFfaWINCj4gV0FSTklORzogbGluZSBsZW5ndGggb2YgODggZXhjZWVkcyA4
-MCBjb2x1bW5zDQo+ICMxMzM6IEZJTEU6IGRyaXZlcnMvaW5maW5pYmFuZC9ody9tYW5hL21hbmFf
-aWIuaDozNDA6DQo+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBtYW5hX2liX3FwICptYW5hX2dldF9x
-cF9yZWYoc3RydWN0IG1hbmFfaWJfZGV2DQo+ICsqbWRldiwgdWludDMyX3QgcWlkKQ0KPiANCj4g
-V0FSTklORzogbGluZSBsZW5ndGggb2YgODIgZXhjZWVkcyA4MCBjb2x1bW5zDQo+ICMxNjc6IEZJ
-TEU6IGRyaXZlcnMvaW5maW5pYmFuZC9ody9tYW5hL3FwLmM6NDA1Og0KPiArICAgICAgIHJldHVy
-biB4YV9pbnNlcnRfaXJxKCZtZGV2LT5xcF90YWJsZV93cSwgcXAtPmlicXAucXBfbnVtLCBxcCwN
-Cj4gKyBHRlBfS0VSTkVMKTsNCj4gDQo+IFdBUk5JTkc6IGxpbmUgbGVuZ3RoIG9mIDgxIGV4Y2Vl
-ZHMgODAgY29sdW1ucw0KPiAjMTcwOiBGSUxFOiBkcml2ZXJzL2luZmluaWJhbmQvaHcvbWFuYS9x
-cC5jOjQwODoNCj4gK3N0YXRpYyB2b2lkIG1hbmFfdGFibGVfcmVtb3ZlX3FwKHN0cnVjdCBtYW5h
-X2liX2RldiAqbWRldiwgc3RydWN0DQo+ICttYW5hX2liX3FwICpxcCkNCj4gDQo+IFRoYW5rcw0K
+
+Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+
+> On 6/4/24 1:02 PM, Shrikanth Hegde wrote:
+>>
+>>
+>> On 6/1/24 5:17 PM, Ankur Arora wrote:
+>>>
+>>> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+>>>
+>>>> On 5/28/24 6:04 AM, Ankur Arora wrote:
+>>>>> Hi,
+>>>>>
+>>>>> This series adds a new scheduling model PREEMPT_AUTO, which like
+>>>>> PREEMPT_DYNAMIC allows dynamic switching between a none/voluntary/full
+>>>>> preemption model. Unlike, PREEMPT_DYNAMIC, it doesn't depend
+>>>>> on explicit preemption points for the voluntary models.
+>>>>>
+>>>>> The series is based on Thomas' original proposal which he outlined
+>>>>> in [1], [2] and in his PoC [3].
+>>>>>
+>>>>> v2 mostly reworks v1, with one of the main changes having less
+>>>>> noisy need-resched-lazy related interfaces.
+>>>>> More details in the changelog below.
+>>>>>
+>>>>
+>>>> Hi Ankur. Thanks for the series.
+>>>>
+>>>> nit: had to manually patch 11,12,13 since it didnt apply cleanly on
+>>>> tip/master and tip/sched/core. Mostly due some word differences in the change.
+>>>>
+>>>> tip/master was at:
+>>>> commit e874df84d4a5f3ce50b04662b62b91e55b0760fc (HEAD -> master, origin/master, origin/HEAD)
+>>>> Merge: 5d145493a139 47ff30cc1be7
+>>>> Author: Ingo Molnar <mingo@kernel.org>
+>>>> Date:   Tue May 28 12:44:26 2024 +0200
+>>>>
+>>>>     Merge branch into tip/master: 'x86/percpu'
+>>>>
+>>>>
+>>>>
+>>>>> The v1 of the series is at [4] and the RFC at [5].
+>>>>>
+>>>>> Design
+>>>>> ==
+>>>>>
+>>>>> PREEMPT_AUTO works by always enabling CONFIG_PREEMPTION (and thus
+>>>>> PREEMPT_COUNT). This means that the scheduler can always safely
+>>>>> preempt. (This is identical to CONFIG_PREEMPT.)
+>>>>>
+>>>>> Having that, the next step is to make the rescheduling policy dependent
+>>>>> on the chosen scheduling model. Currently, the scheduler uses a single
+>>>>> need-resched bit (TIF_NEED_RESCHED) which it uses to state that a
+>>>>> reschedule is needed.
+>>>>> PREEMPT_AUTO extends this by adding an additional need-resched bit
+>>>>> (TIF_NEED_RESCHED_LAZY) which, with TIF_NEED_RESCHED now allows the
+>>>>> scheduler to express two kinds of rescheduling intent: schedule at
+>>>>> the earliest opportunity (TIF_NEED_RESCHED), or express a need for
+>>>>> rescheduling while allowing the task on the runqueue to run to
+>>>>> timeslice completion (TIF_NEED_RESCHED_LAZY).
+>>>>>
+>>>>> The scheduler decides which need-resched bits are chosen based on
+>>>>> the preemption model in use:
+>>>>>
+>>>>> 	       TIF_NEED_RESCHED        TIF_NEED_RESCHED_LAZY
+>>>>>
+>>>>> none		never   		always [*]
+>>>>> voluntary       higher sched class	other tasks [*]
+>>>>> full 		always                  never
+>>>>>
+>>>>> [*] some details elided.
+>>>>>
+>>>>> The last part of the puzzle is, when does preemption happen, or
+>>>>> alternately stated, when are the need-resched bits checked:
+>>>>>
+>>>>>                  exit-to-user    ret-to-kernel    preempt_count()
+>>>>>
+>>>>> NEED_RESCHED_LAZY     Y               N                N
+>>>>> NEED_RESCHED          Y               Y                Y
+>>>>>
+>>>>> Using NEED_RESCHED_LAZY allows for run-to-completion semantics when
+>>>>> none/voluntary preemption policies are in effect. And eager semantics
+>>>>> under full preemption.
+>>>>>
+>>>>> In addition, since this is driven purely by the scheduler (not
+>>>>> depending on cond_resched() placement and the like), there is enough
+>>>>> flexibility in the scheduler to cope with edge cases -- ex. a kernel
+>>>>> task not relinquishing CPU under NEED_RESCHED_LAZY can be handled by
+>>>>> simply upgrading to a full NEED_RESCHED which can use more coercive
+>>>>> instruments like resched IPI to induce a context-switch.
+>>>>>
+>>>>> Performance
+>>>>> ==
+>>>>> The performance in the basic tests (perf bench sched messaging, kernbench,
+>>>>> cyclictest) matches or improves what we see under PREEMPT_DYNAMIC.
+>>>>> (See patches
+>>>>>   "sched: support preempt=none under PREEMPT_AUTO"
+>>>>>   "sched: support preempt=full under PREEMPT_AUTO"
+>>>>>   "sched: handle preempt=voluntary under PREEMPT_AUTO")
+>>>>>
+>>>>> For a macro test, a colleague in Oracle's Exadata team tried two
+>>>>> OLTP benchmarks (on a 5.4.17 based Oracle kernel, with the v1 series
+>>>>> backported.)
+>>>>>
+>>>>> In both tests the data was cached on remote nodes (cells), and the
+>>>>> database nodes (compute) served client queries, with clients being
+>>>>> local in the first test and remote in the second.
+>>>>>
+>>>>> Compute node: Oracle E5, dual socket AMD EPYC 9J14, KVM guest (380 CPUs)
+>>>>> Cells (11 nodes): Oracle E5, dual socket AMD EPYC 9334, 128 CPUs
+>>>>>
+>>>>>
+>>>>> 				  PREEMPT_VOLUNTARY                        PREEMPT_AUTO
+>>>>> 				                                        (preempt=voluntary)
+>>>>>                               ==============================      =============================
+>>>>>                       clients  throughput    cpu-usage            throughput     cpu-usage         Gain
+>>>>>                                (tx/min)    (utime %/stime %)      (tx/min)    (utime %/stime %)
+>>>>> 		      -------  ----------  -----------------      ----------  -----------------   -------
+>>>>>
+>>>>>
+>>>>>   OLTP                  384     9,315,653     25/ 6                9,253,252       25/ 6            -0.7%
+>>>>>   benchmark	       1536    13,177,565     50/10               13,657,306       50/10            +3.6%
+>>>>>  (local clients)       3456    14,063,017     63/12               14,179,706       64/12            +0.8%
+>>>>>
+>>>>>
+>>>>>   OLTP                   96     8,973,985     17/ 2                8,924,926       17/ 2            -0.5%
+>>>>>   benchmark	        384    22,577,254     60/ 8               22,211,419       59/ 8            -1.6%
+>>>>>  (remote clients,      2304    25,882,857     82/11               25,536,100       82/11            -1.3%
+>>>>>   90/10 RW ratio)
+>>>>>
+>>>>>
+>>>>> (Both sets of tests have a fair amount of NW traffic since the query
+>>>>> tables etc are cached on the cells. Additionally, the first set,
+>>>>> given the local clients, stress the scheduler a bit more than the
+>>>>> second.)
+>>>>>
+>>>>> The comparative performance for both the tests is fairly close,
+>>>>> more or less within a margin of error.
+>>>>>
+>>>>> Raghu KT also tested v1 on an AMD Milan (2 node, 256 cpu,  512GB RAM):
+>>>>>
+>>>>> "
+>>>>>  a) Base kernel (6.7),
+>>>>>  b) v1, PREEMPT_AUTO, preempt=voluntary
+>>>>>  c) v1, PREEMPT_DYNAMIC, preempt=voluntary
+>>>>>  d) v1, PREEMPT_AUTO=y, preempt=voluntary, PREEMPT_RCU = y
+>>>>>
+>>>>>  Workloads I tested and their %gain,
+>>>>>                     case b           case c       case d
+>>>>>  NAS                +2.7%              +1.9%         +2.1%
+>>>>>  Hashjoin,          +0.0%              +0.0%         +0.0%
+>>>>>  Graph500,          -6.0%              +0.0%         +0.0%
+>>>>>  XSBench            +1.7%              +0.0%         +1.2%
+>>>>>
+>>>>>  (Note about the Graph500 numbers at [8].)
+>>>>>
+>>>>>  Did kernbench etc test from Mel's mmtests suite also. Did not notice
+>>>>>  much difference.
+>>>>> "
+>>>>>
+>>>>> One case where there is a significant performance drop is on powerpc,
+>>>>> seen running hackbench on a 320 core system (a test on a smaller system is
+>>>>> fine.) In theory there's no reason for this to only happen on powerpc
+>>>>> since most of the code is common, but I haven't been able to reproduce
+>>>>> it on x86 so far.
+>>>>>
+>>>>> All in all, I think the tests above show that this scheduling model has legs.
+>>>>> However, the none/voluntary models under PREEMPT_AUTO are conceptually
+>>>>> different enough from the current none/voluntary models that there
+>>>>> likely are workloads where performance would be subpar. That needs more
+>>>>> extensive testing to figure out the weak points.
+>>>>>
+>>>>>
+>>>>>
+>>>> Did test it again on PowerPC. Unfortunately numbers shows there is regression
+>>>> still compared to 6.10-rc1. This is done with preempt=none. I tried again on the
+>>>> smaller system too to confirm. For now I have done the comparison for the hackbench
+>>>> where highest regression was seen in v1.
+>>>>
+>>>> perf stat collected for 20 iterations show higher context switch and higher migrations.
+>>>> Could it be that LAZY bit is causing more context switches? or could it be something
+>>>> else? Could it be that more exit-to-user happens in PowerPC? will continue to debug.
+>>>
+>>> Thanks for trying it out.
+>>>
+>>> As you point out, context-switches and migrations are signficantly higher.
+>>>
+>>> Definitely unexpected. I ran the same test on an x86 box
+>>> (Milan, 2x64 cores, 256 threads) and there I see no more than a ~4% difference.
+>>>
+>>>   6.9.0/none.process.pipe.60:       170,719,761      context-switches          #    0.022 M/sec                    ( +-  0.19% )
+>>>   6.9.0/none.process.pipe.60:        16,871,449      cpu-migrations            #    0.002 M/sec                    ( +-  0.16% )
+>>>   6.9.0/none.process.pipe.60:      30.833112186 seconds time elapsed                                          ( +-  0.11% )
+>>>
+>>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:       177,889,639      context-switches          #    0.023 M/sec                    ( +-  0.21% )
+>>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:        17,426,670      cpu-migrations            #    0.002 M/sec                    ( +-  0.41% )
+>>>   6.9.0-00035-gc90017e055a6/none.process.pipe.60:      30.731126312 seconds time elapsed                                          ( +-  0.07% )
+>>>
+>>> Clearly there's something different going on powerpc. I'm travelling
+>>> right now, but will dig deeper into this once I get back.
+>>>
+>>> Meanwhile can you check if the increased context-switches are voluntary or
+>>> involuntary (or what the division is)?
+>>
+>>
+>> Used "pidstat -w -p ALL 1 10" to capture 10 seconds data at 1 second interval for
+>> context switches per second while running "hackbench -pipe 60 process 100000 loops"
+>>
+>>
+>> preempt=none				6.10			preempt_auto
+>> =============================================================================
+>> voluntary context switches	    	7632166.19	        9391636.34(+23%)
+>> involuntary context switches		2305544.07		3527293.94(+53%)
+>>
+>> Numbers vary between multiple runs. But trend seems to be similar. Both the context switches increase
+>> involuntary seems to increase at higher rate.
+>>
+>>
+>
+>
+> Continued data from hackbench regression. preempt=none in both the cases.
+> From mpstat, I see slightly higher idle time and more irq time with preempt_auto.
+>
+> 6.10-rc1:
+> =========
+> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> 09:45:23 AM  all    4.14    0.00   77.57    0.00   16.92    0.00    0.00    0.00    0.00    1.37
+> 09:45:24 AM  all    4.42    0.00   77.62    0.00   16.76    0.00    0.00    0.00    0.00    1.20
+> 09:45:25 AM  all    4.43    0.00   77.45    0.00   16.94    0.00    0.00    0.00    0.00    1.18
+> 09:45:26 AM  all    4.45    0.00   77.87    0.00   16.68    0.00    0.00    0.00    0.00    0.99
+>
+> PREEMPT_AUTO:
+> ===========
+> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> 10:09:56 AM  all    3.11    0.00   72.59    0.00   21.34    0.00    0.00    0.00    0.00    2.96
+> 10:09:57 AM  all    3.31    0.00   73.10    0.00   20.99    0.00    0.00    0.00    0.00    2.60
+> 10:09:58 AM  all    3.40    0.00   72.83    0.00   20.85    0.00    0.00    0.00    0.00    2.92
+> 10:10:00 AM  all    3.21    0.00   72.87    0.00   21.19    0.00    0.00    0.00    0.00    2.73
+> 10:10:01 AM  all    3.02    0.00   72.18    0.00   21.08    0.00    0.00    0.00    0.00    3.71
+>
+> Used bcc tools hardirq and softirq to see if irq are increasing. softirq implied there are more
+> timer,sched softirq. Numbers vary between different samples, but trend seems to be similar.
+
+Yeah, the %sys is lower and %irq, higher. Can you also see where the
+increased %irq is? For instance are the resched IPIs numbers greater?
+
+> 6.10-rc1:
+> =========
+> SOFTIRQ          TOTAL_usecs
+> tasklet                   71
+> block                    145
+> net_rx                  7914
+> rcu                   136988
+> timer                 304357
+> sched                1404497
+>
+>
+>
+> PREEMPT_AUTO:
+> ===========
+> SOFTIRQ          TOTAL_usecs
+> tasklet                   80
+> block                    139
+> net_rx                  6907
+> rcu                   223508
+> timer                 492767
+> sched                1794441
+>
+>
+> Would any specific setting of RCU matter for this?
+> This is what I have in config.
+
+Don't see how it could matter unless the RCU settings are changing
+between the two tests? In my testing I'm also using TREE_RCU=y,
+PREEMPT_RCU=n.
+
+Let me see if I can find a test which shows a similar trend to what you
+are seeing. And, then maybe see if tracing sched-switch might point to
+an interesting difference between x86 and powerpc.
+
+
+Thanks for all the detail.
+
+Ankur
+
+> # RCU Subsystem
+> #
+> CONFIG_TREE_RCU=y
+> # CONFIG_RCU_EXPERT is not set
+> CONFIG_TREE_SRCU=y
+> CONFIG_NEED_SRCU_NMI_SAFE=y
+> CONFIG_TASKS_RCU_GENERIC=y
+> CONFIG_NEED_TASKS_RCU=y
+> CONFIG_TASKS_RCU=y
+> CONFIG_TASKS_RUDE_RCU=y
+> CONFIG_TASKS_TRACE_RCU=y
+> CONFIG_RCU_STALL_COMMON=y
+> CONFIG_RCU_NEED_SEGCBLIST=y
+> CONFIG_RCU_NOCB_CPU=y
+> # CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
+> # CONFIG_RCU_LAZY is not set
+> # end of RCU Subsystem
+>
+>
+> # Timers subsystem
+> #
+> CONFIG_TICK_ONESHOT=y
+> CONFIG_NO_HZ_COMMON=y
+> # CONFIG_HZ_PERIODIC is not set
+> # CONFIG_NO_HZ_IDLE is not set
+> CONFIG_NO_HZ_FULL=y
+> CONFIG_CONTEXT_TRACKING_USER=y
+> # CONFIG_CONTEXT_TRACKING_USER_FORCE is not set
+> CONFIG_NO_HZ=y
+> CONFIG_HIGH_RES_TIMERS=y
+> # end of Timers subsystem
+
+
+--
+ankur
 
