@@ -1,51 +1,69 @@
-Return-Path: <linux-kernel+bounces-207965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D549D901E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FB9901E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66D31C21397
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 726FD1F262BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD7745F4;
-	Mon, 10 Jun 2024 09:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD9173453;
+	Mon, 10 Jun 2024 09:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Kgyhg8UP"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="DbH62QL3"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743B3CA62
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E65CA62
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012901; cv=none; b=WBUbPHblfOoAAN/BPS4ZPIUKKoe6TKS0DCsQVA8twfGnURgRbDHBFUJD+tO/Pri9gzKWapzjQOm18jPYY+vTxyyVJ/H9L5RZFKG+jxSNfBatloiOXoPHNlI/2arZRw7keErTMFCdWTlYlbkl8VEbw701D/cKtpqa/yKYzYuySbE=
+	t=1718013036; cv=none; b=nt7OmS7303d7lfdkdpc1nU20zBr2KpuryCWrXbutGzmj4Xjxjc75YXd368t1BrkduG817KG8XTZIvH6VA9aYBORaXqjFyIaDTCb13vxCsVmj2j4nM6SxzoTDKZAqDjUVOowpi0j+bcIQ3VVrZs0omZQjF3NR8BBsD/dxA89y1Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012901; c=relaxed/simple;
-	bh=yz5UXgktrm1OmtnGfF4heciSBKjtRB9npZl4EeMkMOY=;
+	s=arc-20240116; t=1718013036; c=relaxed/simple;
+	bh=kNNDXK7b4Xh+VnuAituAR6H2aCNCWwfL0tJnJ02Fld0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1680MTmtkZug23QbR97Xb2J5GoLkSkvlAWYzjsXrMnMjD1vk+4jAtjER7+WThA4ZxV+qG55LcUCB0Sg5+XSIKxUtkVxSQSigtlOQAsZwboGoXvWL/+I3E/Auc1XPD9SqmEhRPhKae6f9AGaRfpLLKkueQp3ScwoC1gvivdU+k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Kgyhg8UP; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DFC691BF20A;
-	Mon, 10 Jun 2024 09:48:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718012892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3o0fJjNj4JP0TVjAXgD7eXygR+eJ+q4ORuB5LSyFd+Y=;
-	b=Kgyhg8UPaC0J69nmpfaonXblGn3t/yyfKce2ZAhN892k7F4HjIfAUEuXVH4RnuURdVFgp/
-	j599GCn1AgGPHBvrPd5zRqy8+OSoZA/r7mc93ZDVklbVA4CyHZDkxG/7QF5w1V705JNvJj
-	P0+44nKGzfpjTHK3XlbM41Hlq9NwFMpWG1PYheS6M/Dgk0ASxJU5vVUp8DtoH2Txzu4B97
-	mxzeJC1gyg7JHpR7tYz0rljJDEdqvs4BFF2OZ4LKzZ838DA2iffVSiy0LJBsv/w2SYC2qu
-	9JX9UWG085A2bA/YRdmIoWlhUt1d82Q+fi5hx21uYvClgiuUk6hZVLFAp/1v6w==
-Message-ID: <ad6b8caf-0ad6-42da-9324-e4a33a05f0cc@bootlin.com>
-Date: Mon, 10 Jun 2024 11:48:11 +0200
+	 In-Reply-To:Content-Type; b=JW5w3ju7xXKEL+R5H/N1rwnVXp8svl/sIdVtswG+4X1Hzl8gP6I2ECbI4LCik6LnhJcy2Oi8NX8wPo3tBlzCPPkCaZqRTVkg48KELAVo/Y8nBXXdOYu5M8CP5ZNHClpML8B9CjrM3D7NZKeA94EZCXEQ6vNRlHwCkYoHOymUqSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=DbH62QL3; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso2907011e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1718013033; x=1718617833; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KhQD8jBDixvGePNZ6fOoJzlYpyPik3HQbXqtSjqWnKg=;
+        b=DbH62QL3Yf09vLs8vSQcXvmymxPi1BL8P2Fki5BgHN3KE12OybJQmw/ArDgBakIrFh
+         a+ANP8SaFqXBjIreefD1TJrpAAuDJR3t6ELDnIUTv3F8gKHU3Lvy/ebycEqE1vjyziQt
+         SiAW+LztaboFD7VcFXbWe4duKltiHkZSyNEF8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718013033; x=1718617833;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KhQD8jBDixvGePNZ6fOoJzlYpyPik3HQbXqtSjqWnKg=;
+        b=sTTNATTFWue6grzK4mBqDQecr6UEIvOXCIP++Chfnq+/65Jw3Cqr9WUgLDBiVmfiaf
+         aTW6B18vXv5qPsHA/lXc+w8DlR2cv2BfZ3GBCf/Xgvga2KCSXj0Z7jFfbOt52zx/fZGx
+         I1u/FJB0Vx9AFLe9eS0jSQjH2URHV/5IuI1/BqmVmlmvDiNStOA+e0J9GWMZg86P/isA
+         0Pygof0RYWg1WxloUyn6Zg6/nNFrNZFN1m3RFDUy0LL+jdvrLuV+yeyTo9YUPyWReydF
+         cz4zHPfHGGUzQJRylx9I+a2mXSYj6BPw4g5jrpaNT+t6xdkjIeIe6XUmeHkuaF5lVuEf
+         UO8g==
+X-Gm-Message-State: AOJu0Yzqc5JM4jwSqKTw82CCaEfWW67LJMuN1RR1R1+B2/EqXqPd/Kvi
+	SDKgm1lJKSLvsVmNVMt6jCbP4kODK5z10ft2uJ0jd3PtRM8+ap9E/66I+jH3GMU=
+X-Google-Smtp-Source: AGHT+IFXRyQyWFMKLYjD/GBJg5pDqk4f2+NssyhuQ2d4Jvbvj9FZNmR27tUBN89axQ8hkLV0zY+hdg==
+X-Received: by 2002:a05:6512:3e25:b0:52b:c195:5d9c with SMTP id 2adb3069b0e04-52bc195620fmr7292894e87.61.1718013032740;
+        Mon, 10 Jun 2024 02:50:32 -0700 (PDT)
+Received: from [172.16.11.116] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c8f4f52c1sm101195e87.266.2024.06.10.02.50.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 02:50:32 -0700 (PDT)
+Message-ID: <29a8ceb4-a699-433b-8a11-be6b3c9fd045@rasmusvillemoes.dk>
+Date: Mon, 10 Jun 2024 11:50:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,55 +71,278 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: tps6594-regulator: Fix the number of irqs for
- TPS65224 and TPS6594
-To: Nishanth Menon <nm@ti.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, m.nirmaladevi@ltts.com,
- bhargav.r@ltts.com, lee@kernel.org, linux-kernel@vger.kernel.org,
- gregory.clement@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com
-References: <20240603170100.2394402-1-thomas.richard@bootlin.com>
- <20240604121055.lztvn2wu62qqrla6@maximize>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20240604121055.lztvn2wu62qqrla6@maximize>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ linux-arch <linux-arch@vger.kernel.org>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+Content-Language: en-US, da
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <20240608193504.429644-2-torvalds@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
 
-On 6/4/24 14:10, Nishanth Menon wrote:
-> On 19:01-20240603, Thomas Richard wrote:
->> The number of irqs is computed to allocate the right amount of memory for
->> the irq data. An array of struct tps6594_regulator_irq_data is allocated
->> one time for all the irqs. Each irq uses one cell of the array.
->>
->> If the computed number of irqs is not correct, not allocated memory could
->> be used.
->>
->> Fix the	values used in the calculation for TPS6594 and TPS65224.
->>
->> Fixes: 00c826525fba (regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators)
->> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
->> ---
+On 08/06/2024 21.35, Linus Torvalds wrote:
+> Needs more comments and testing, but it works, and has a generic
+> fallback for architectures that don't support it.
 > 
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> ---
 > 
-> Thanks a ton for fixing this - this solved a bunch of random regressions
-> we were tracking:
-> am62axx_sk, am69_sk, j721e-idk, j721s2-evm in addition to J7200 evm as
-> well.
+> Notes from the first hack: I renamed the infrastructure from "static
+> const" to "runtime const".  We end up having a number of uses of "static
+> const" that are related to the C language notion of "static const"
+> variables or functions, and "runtime constant" is a bit more descriptive
+> anyway. 
 > 
-> Tested-by: Nishanth Menon <nm@ti.com>
+> And this now is properly abstracted out, so that any architecture can
+> choose to implement their own version, but it all falls back on "just
+> use the variable".
+
+Well, I think it lacks a little. I made it so that an arch didn't need
+to implement support for all runtime_const_*() helpers (I'll use that
+name because yes, much better than rai_), but could implement just
+runtime_const_load() and not the _shift_right thing, and then the base
+pointer would be loaded as an immediate, and the shift count would also
+be loaded as an immediate, but into a register, and the actual shift
+would be with the shift amount from that register, so no D$ access.
+
+So I think it should be something like
+
+#ifndef runtime_const_load(x)
+#define runtime_const_load(x) (x)
+#endif
+#ifndef runtime_const_shift_right_32
+#define runtime_const_shift_right_32(val, sym) ((u32)val >>
+runtime_const_load(sym))
+#endif
+
+etc. (This assumes we add some type-generic runtime_const_load that can
+be used both for pointers and ints; supporting sizeof() < 4 is probably
+not relevant, but could also be done).
+
+Otherwise, if we want to add some runtime_const_mask32() thing to
+support hash tables where we use that model, one would have to hook up
+support on all architectures at once. Similarly, architectures that are
+late to the party won't need to do the full monty at once, just
+implementing runtime_const_load() would be enough to get some of the win.
+
+> Rasmus - I've cleaned up my patch a lot, and it now compiles fine on
+> other architectures too, although obviously with the fallback of "no
+> constant fixup".  As a result, my patch is actually smaller and much
+> cleaner, and I ended up liking my approach more than your RAI thing
+> after all. 
+
+Yeah, it's nice and small. I was probably over-ambitious, as I also
+wanted to, eventually, use runtime_const_load() for lots of the *_cachep
+variables and similar. With my approach I didn't have to modify the
+linker script every time a new use is introduced, and also didn't have
+to modify the place that does the initialization - but it did come at
+the cost of only patching everything at once at the end of init, thus
+requiring the trampoline to do the loads from memory in the meantime.
+But that was partly also for another too ambitious thing: eventually
+allowing this to be used for __read_mostly and not just __ro_after_init
+stuff (various run-time limits etc.).
+
 > 
+>  arch/x86/include/asm/runtime-const.h | 61 ++++++++++++++++++++++++++++
+>  arch/x86/kernel/vmlinux.lds.S        |  3 ++
+>  fs/dcache.c                          | 24 +++++++----
+>  include/asm-generic/Kbuild           |  1 +
+>  include/asm-generic/runtime-const.h  | 15 +++++++
+>  include/asm-generic/vmlinux.lds.h    |  8 ++++
+>  6 files changed, 104 insertions(+), 8 deletions(-)
+>  create mode 100644 arch/x86/include/asm/runtime-const.h
+>  create mode 100644 include/asm-generic/runtime-const.h
 > 
-> This was definitely a 6.10 regression, could we fast track it in?
+> diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+> new file mode 100644
+> index 000000000000..b4f7efc0a554
+> --- /dev/null
+> +++ b/arch/x86/include/asm/runtime-const.h
+> @@ -0,0 +1,61 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_RUNTIME_CONST_H
+> +#define _ASM_RUNTIME_CONST_H
+> +
+> +#define runtime_const_ptr(sym) ({				\
+> +	typeof(sym) __ret;					\
+> +	asm("mov %1,%0\n1:\n"					\
+> +		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
+> +		".long 1b - %c2 - .\n\t"			\
+> +		".popsection"					\
+> +		:"=r" (__ret)					\
+> +		:"i" ((unsigned long)0x0123456789abcdefull),	\
+> +		 "i" (sizeof(long)));				\
+> +	__ret; })
+> +
+> +// The 'typeof' will create at _least_ a 32-bit type, but
+> +// will happily also take a bigger type and the 'shrl' will
+> +// clear the upper bits
+> +#define runtime_const_shift_right_32(val, sym) ({		\
+> +	typeof(0u+(val)) __ret = (val);				\
+> +	asm("shrl $12,%k0\n1:\n"				\
+> +		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
+> +		".long 1b - 1 - .\n\t"				\
+> +		".popsection"					\
+> +		:"+r" (__ret));					\
+> +	__ret; })
 
-Hi Nishanth,
+Don't you need a cc clobber here? And for both, I think asm_inline is
+appropriate, as you really want to tell gcc that this just consists of a
+single instruction, the .pushsection games notwithstanding.
 
-FYI, I also found an other 6.10 regression for j721s2-evm and j7200-evm:
+I know it's a bit more typing, but the section names should be
+"runtime_const_shift" etc., not merely "runtime_shift".
 
-https://lore.kernel.org/all/20240603082110.2104977-1-thomas.richard@bootlin.com/
 
-Regards,
 
-Thomas
+> +
+> +#define runtime_const_init(type, sym, value) do {	\
+> +	extern s32 __start_runtime_##type##_##sym[];	\
+> +	extern s32 __stop_runtime_##type##_##sym[];	\
+> +	runtime_const_fixup(__runtime_fixup_##type,	\
+> +		(unsigned long)(value), 		\
+> +		__start_runtime_##type##_##sym,		\
+> +		__stop_runtime_##type##_##sym);		\
+> +} while (0)
+> +
+> +/*
+> + * The text patching is trivial - you can only do this at init time,
+> + * when the text section hasn't been marked RO, and before the text
+> + * has ever been executed.
+> + */
+> +static inline void __runtime_fixup_ptr(void *where, unsigned long val)
+> +{
+> +	*(unsigned long *)where = val;
+> +}
+> +
+> +static inline void __runtime_fixup_shift(void *where, unsigned long val)
+> +{
+> +	*(unsigned char *)where = val;
+> +}
+> +
+> +static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
+> +	unsigned long val, s32 *start, s32 *end)
+> +{
+> +	while (start < end) {
+> +		fn(*start + (void *)start, val);
+> +		start++;
+> +	}
+> +}
+> +
+> +#endif
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index 3509afc6a672..6e73403e874f 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -357,6 +357,9 @@ SECTIONS
+>  	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
+>  #endif
+>  
+> +	RUNTIME_CONST(shift, d_hash_shift)
+> +	RUNTIME_CONST(ptr, dentry_hashtable)
+> +
+
+Hm, doesn't this belong in the common linker script? I mean, if arm64
+were to implement support for this, they'd also have to add this
+boilerplate to their vmlinux.lds.S? And then if another
+RUNTIME_CONST(ptr, ...) use case is added that goes in all
+at-that-point-in-time supporting architectures' vmlinux.lds.S. Doesn't
+seem to scale.
+
+>  	. = ALIGN(PAGE_SIZE);
+>  
+>  	/* freed after init ends here */
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 407095188f83..4511e557bf84 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -97,12 +97,14 @@ EXPORT_SYMBOL(dotdot_name);
+>   */
+>  
+>  static unsigned int d_hash_shift __ro_after_init;
+> -
+>  static struct hlist_bl_head *dentry_hashtable __ro_after_init;
+>  
+> -static inline struct hlist_bl_head *d_hash(unsigned int hash)
+> +#include <asm/runtime-const.h>
+> +
+
+Please keep the #includes together at the top of the file.
+
+> +static inline struct hlist_bl_head *d_hash(unsigned long hashlen)
+>  {
+> -	return dentry_hashtable + (hash >> d_hash_shift);
+> +	return runtime_const_ptr(dentry_hashtable) +
+> +		runtime_const_shift_right_32(hashlen, d_hash_shift);
+>  }
+
+Could you spend some words on this signature change? Why should this now
+(on 64BIT) take the full hash_len as argument, only to let the compiler
+(with the (u32) cast) or cpu (in the x86_64 case, via the %k modifier if
+I'm reading things right) only use the lower 32 bits?
+
+The patch would be even smaller without this, and perhaps it could be
+done as a separate patch if it does lead to (even) better code generation.
+
+>  
+>  static void __d_rehash(struct dentry *entry)
+>  {
+> -	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
+> +	struct hlist_bl_head *b = d_hash(entry->d_name.hash_len);
+>  
+>  	hlist_bl_lock(b);
+>  	hlist_bl_add_head_rcu(&entry->d_hash, b);
+> @@ -3129,6 +3131,9 @@ static void __init dcache_init_early(void)
+>  					0,
+>  					0);
+>  	d_hash_shift = 32 - d_hash_shift;
+> +
+> +	runtime_const_init(shift, d_hash_shift, d_hash_shift);
+> +	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
+>  }
+>  
+>  static void __init dcache_init(void)
+> @@ -3157,6 +3162,9 @@ static void __init dcache_init(void)
+>  					0,
+>  					0);
+>  	d_hash_shift = 32 - d_hash_shift;
+> +
+> +	runtime_const_init(shift, d_hash_shift, d_hash_shift);
+> +	runtime_const_init(ptr, dentry_hashtable, dentry_hashtable);
+>  }
+>  
+
+Aside: That duplication makes me want to make dcache_init() grow an 'int
+early' arg, change the body accordingly and change the call sites to
+dcache_init(1) / dcache_init(0). But since the functions propably only
+change once per decade or something like that, probably not worth it.
+
+> +/*
+> + * This is the fallback for when the architecture doesn't
+> + * support the runtime const operations.
+> + *
+> + * We just use the actual symbols as-is.
+> + */
+> +#define runtime_const_ptr(sym) (sym)
+> +#define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
+> +#define runtime_const_init(type,sym,value) do { } while (0)
+
+Hm, I wonder if there's ever a case where you want to patch using any
+other value than what you've just assigned to sym. IOW, why doesn't
+runtime_const_init just take type,sym args?
+
+It can't be to support some 'struct global { void *this; } g' where you
+then want to use the identifier g_this for the tables and g.this for the
+value, 'cause that wouldn't work with the fallbacks vs the x86
+implementation - one would need runtime_const_ptr(g.this) and the other
+runtime_const_ptr(g_this) at the use sites.
+
+Rasmus
 
 
