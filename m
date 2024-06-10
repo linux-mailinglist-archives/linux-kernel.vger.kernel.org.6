@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-208292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1CF902330
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:56:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8373902334
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13024B22999
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455CAB22468
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D20158DDD;
-	Mon, 10 Jun 2024 13:44:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6C1158DD2;
-	Mon, 10 Jun 2024 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7390812FF88;
+	Mon, 10 Jun 2024 13:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="oswnRRgJ"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088E1824A7;
+	Mon, 10 Jun 2024 13:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718027077; cv=none; b=moDAzQ4YGWMJI2wiHAaE6kdb4hx/k1WURbSUfBi6SmQE+bkdB/J+ZCAAHvCZV1TBsVVebEdgAohzgKncy+VaSfNQj1u9KJ3AkzSLjxQDbHhm610UeYhS3HHW5iRmd9JANejN9PqQXgvhukkFHq1/D9dGxJpBkdx81FFV2W5tZMM=
+	t=1718027130; cv=none; b=PxF8crccpttrEtJfBjVpGn8cA2ojq5VVOOAQcLRteOkjV3C4o/vCenjxCA2VJP8opP4z8XLucVCRF2MntCPLx5eqojAOUo3482OL7NBPxN82AA43NzkxWVmYtSjEYCiDPB0RhnafqJ2nBHblChIH0BdF68Y1giPd1yhmdPu9UXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718027077; c=relaxed/simple;
-	bh=uoNwxgt5fh5rXMXudi0G/6niClMESCEFp788rauQzyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=irYpCx5lwc0Dtz8tTIkm9UtDeES0ENoLldbpubeN5pSKRzi8+Pl7w8e/YR2f0sS9LdXnXTXM3Hg2+1eqSHJJXLdXP3cBMRMSCqRcnkcA2Xgj8arhKl3qcpLpYqRFIsJMkRELUuUhPv2izIxeTUC9OT8aArZLQfw3t1+ILi8/R4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F9EB106F;
-	Mon, 10 Jun 2024 06:45:00 -0700 (PDT)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.35.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A51F23F58B;
-	Mon, 10 Jun 2024 06:44:32 -0700 (PDT)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: [PATCH v3 43/43] KVM: arm64: Allow activating realms
-Date: Mon, 10 Jun 2024 14:42:02 +0100
-Message-Id: <20240610134202.54893-44-steven.price@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240610134202.54893-1-steven.price@arm.com>
-References: <20240610134202.54893-1-steven.price@arm.com>
+	s=arc-20240116; t=1718027130; c=relaxed/simple;
+	bh=HUzVcOKwt3n8v4S633OoGkbwS2m/jgHHZmt+g82ohZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dCH6zQAlChgHc8eE3EmtCVtdMrXcQmaWuMlqP7lEBv+OjtMlYdd8um5oBH6LZG81R5y3Jb2l/ti+bMnBQWl+YtbyC0ncl2Tm1AzlwiGeZSp6GHXRNMmwSVWhyKJ5bH3rP2Rq9HZXnyE+dYaBos1mthXm4rxTsiOGhoxjZ662Rlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=oswnRRgJ; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id CB023883D2;
+	Mon, 10 Jun 2024 15:45:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718027127;
+	bh=z+YAHBI/Z+3VNc3TEhUT33G8bD0GATdmtiU4ObQgIxU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oswnRRgJs0dZeDx6cEzRP+cjqeMFnq3UbuJLyc5aJTofIafPTT9C8bKu9mgtbOqAc
+	 +V6Y9/sXhHD8dNsYWqwsSsyLtHOw25bbSc1AV5moxNghJeMYnZ3x2fZstr6cHrt5rz
+	 A7jNAkDI/liwIuAQk4YweZns11YDYRMu/KdZMjrmm+wMC+NP2uQKd02tqTmUY5i+gC
+	 Hb+ya75YE4ks9RncB4P1ZlH7tG8qdngaFYwSxp31zRfo0SIV1bku5KxLeT/pG1ewzY
+	 tO09rOcb9RaUY3rC5qsLHbJYxQETX/nwayPj9oTG5pBShdPehD5OBmM9TuQRv3zvPU
+	 i/taDf05suEhg==
+Message-ID: <09105afe-1123-407a-96c3-2ea88602aad0@denx.de>
+Date: Mon, 10 Jun 2024 15:43:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,PATCH v6 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240610071459.287500-1-christophe.roullier@foss.st.com>
+ <20240610071459.287500-8-christophe.roullier@foss.st.com>
+ <20139233-4e95-4fe5-84ca-734ee866afca@denx.de>
+ <c5ea12e7-5ee6-4960-9141-e774ccd9977b@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <c5ea12e7-5ee6-4960-9141-e774ccd9977b@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Add the ioctl to activate a realm and set the static branch to enable
-access to the realm functionality if the RMM is detected.
+On 6/10/24 1:45 PM, Christophe ROULLIER wrote:
+> 
+> On 6/10/24 12:39, Marek Vasut wrote:
+>> On 6/10/24 9:14 AM, Christophe Roullier wrote:
+>>
+>> [...]
+>>
+>>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>>> @@ -303,7 +307,7 @@ static int stm32mcu_set_mode(struct 
+>>> plat_stmmacenet_data *plat_dat)
+>>>       dev_dbg(dwmac->dev, "Mode %s", 
+>>> phy_modes(plat_dat->mac_interface));
+>>>         return regmap_update_bits(dwmac->regmap, reg,
+>>> -                 dwmac->ops->syscfg_eth_mask, val << 23);
+>>> +                 SYSCFG_MCU_ETH_MASK, val << 23);
+>>>   }
+>>>     static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, 
+>>> bool suspend)
+>>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
+>>> stm32_dwmac *dwmac,
+>>>           return PTR_ERR(dwmac->regmap);
+>>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>>> &dwmac->mode_reg);
+>>> -    if (err)
+>>> +    if (err) {
+>>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>>> &dwmac->mode_mask);
+>>> +    if (err)
+>>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>>
+>> Isn't this an error , so dev_err() ?
+> No, it is only "warning" information, for MP1 the mask is not needed 
+> (and for backward compatibility is not planned to put mask parameter 
+> mandatory)
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/kvm/rme.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-index 3f2e2aa4ceac..60b41b79db1b 100644
---- a/arch/arm64/kvm/rme.c
-+++ b/arch/arm64/kvm/rme.c
-@@ -1194,6 +1194,20 @@ static int kvm_init_ipa_range_realm(struct kvm *kvm,
- 	return realm_init_ipa_state(realm, addr, end);
- }
- 
-+static int kvm_activate_realm(struct kvm *kvm)
-+{
-+	struct realm *realm = &kvm->arch.realm;
-+
-+	if (kvm_realm_state(kvm) != REALM_STATE_NEW)
-+		return -EINVAL;
-+
-+	if (rmi_realm_activate(virt_to_phys(realm->rd)))
-+		return -ENXIO;
-+
-+	WRITE_ONCE(realm->state, REALM_STATE_ACTIVE);
-+	return 0;
-+}
-+
- /* Protects access to rme_vmid_bitmap */
- static DEFINE_SPINLOCK(rme_vmid_lock);
- static unsigned long *rme_vmid_bitmap;
-@@ -1343,6 +1357,9 @@ int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
- 		r = kvm_populate_realm(kvm, &args);
- 		break;
- 	}
-+	case KVM_CAP_ARM_RME_ACTIVATE_REALM:
-+		r = kvm_activate_realm(kvm);
-+		break;
- 	default:
- 		r = -EINVAL;
- 		break;
-@@ -1599,5 +1616,5 @@ void kvm_init_rme(void)
- 	if (rme_vmid_init())
- 		return;
- 
--	/* Future patch will enable static branch kvm_rme_is_available */
-+	static_branch_enable(&kvm_rme_is_available);
- }
--- 
-2.34.1
-
+Should this be an error for anything newer than MP15 then ?
 
