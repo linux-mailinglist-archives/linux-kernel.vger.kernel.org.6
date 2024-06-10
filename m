@@ -1,111 +1,152 @@
-Return-Path: <linux-kernel+bounces-208523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB375902654
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:11:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E93902641
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BE89B29190
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6136F1F21F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3304142E97;
-	Mon, 10 Jun 2024 16:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366E81422D5;
+	Mon, 10 Jun 2024 16:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9y2KBuQ"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWlBJeyW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11871E86A;
-	Mon, 10 Jun 2024 16:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7031DFF7;
+	Mon, 10 Jun 2024 16:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035237; cv=none; b=fWnswzrW9N384BACWAlBC0nKGH/iKzJjZgP+NiNg8dBaFaJE+77ykrZ2Yi5aZ2L88hhyYm1fKgXuinV9VzRHZMpQWqvX7duH/UHaWEd4EZ9/lERHtEyLb6c5N895VUpoIkagKSRkL52yzkaM4dQ1hVWoF2qfL5XcOCrUQuuHvYY=
+	t=1718035425; cv=none; b=W++EGgAWXfsDcRm23wcksP9dbDELlyIgr1ejGojgbRoRXNRdqvLGwjdCb1buDx2kLPSodWp76pg0Eb44MtFZJ+9AKrXuGMTqEPLZP7VDDu6yFdQbF4MJwSBYQjxVFl0VwIvAyjwWitlrb0H3lnor6lcrGcihilb+2IR14jHm3z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035237; c=relaxed/simple;
-	bh=HCVWtCZ8PFOXlB+wK7c+ca5XoCFrgynMHlDeMP6f9bs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=peskzgWocbvgPLHig2t0ZcQMyL7DMpsqV7VrJSSft+AZPMFy57Qt6U2cSopaPXMs75LOpgtUmzrE0Z73fD1A2PdMIiwk5ZBKfzOIbCmbbl8+G3V8+jnheaQMd1GUfTyaz4CYpG+ZJtSfASfwa692k1KZv98LKx14deWRYJCJn94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9y2KBuQ; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6819d785528so3035035a12.3;
-        Mon, 10 Jun 2024 09:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718035235; x=1718640035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2uFsjZY59HKl17I9IjmNWHWtW0Dkg82qvwOhOjzL78=;
-        b=X9y2KBuQ+1BDrIfDj+Tn3kjfshA6C6Ql8ymKCqSGcxxU4da14ApEfo7cPo1MQgvVIa
-         z3B6/EgFVYQpRBMQcvO4AMFBJIO+2wZOdKct+fDGQgzYMyp3jxMxsZvSw0HGatg87z7s
-         /KtKYAnemDNCiC/tEKKkhbAvtvjbYFwjDUFvB82cgOdZMvG+BEMaghRz0tjVSHoTuhZ1
-         V9pcE/YCiYNv6AVIxtvxrysOR6fC4gaLqU7FrqAxczBeQzBRkPAK7LiHY0GuCe4CxNsV
-         PexoNKum1sJ9UTqwyD7Vqy4UBKRD6qNbFPR7Po94G2Iupe+prxlXx5q79HQRx9y73ICa
-         q9Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718035235; x=1718640035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V2uFsjZY59HKl17I9IjmNWHWtW0Dkg82qvwOhOjzL78=;
-        b=hLxiZOra+MTN4jBYmafGy/zcCOJLoGn9068bEDuqlew27UCR5pN1zpL7vSOo7NZIyU
-         Pdd2ybVo33XZkL02kY4RUSmN470cRMruuuWMjEpNyQJsnG9auqA/s3JGp1tjo5aYYGfk
-         wJeW6nLdVMhhhd1b2+mh+lelP11laTKFQC4hsnwJGbuyQ9hQcfm2Vk840Ho7TS6XIqLH
-         d2YocnlL18iGXRYb9MavCHFa8Htx0E54gtqMjFl8GIg7aH64MJ5Y1pqooKu42KQKPMR7
-         WESYP4QbV7Ff1o/QUgV0fjl6Me7KD/HC6yHmwGfhXxxzkiTK1GkTAwof2ljKONV72h38
-         bToQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4gUGelUv6CHTh9QVKtHFbP21kLBDd7NALzZSWveC1VV5YneANNCaL8v4f3ucYjhiTarmQtdsDxgtGOE9baB5Zdig3zXLXf2cpjGMwXR55g6ZaYUyr+fDr38BQBbnzRAoqmkmLlat5cSXlBg==
-X-Gm-Message-State: AOJu0Yz9XmVrhPwCB6S6wqEFA+eZP349wcPiPDxGLGWiN9082JA8zuJo
-	dO1eQsh5uVsd0K+5WVkM+sphM+B4+96SNNHNYNEu2lDGcyauMcEJD+nSZg==
-X-Google-Smtp-Source: AGHT+IFUKOedVgVc8UW+Trz+83IQFsUxMohgSuzpDt2RYxUt0e0RbJQPgJqCmYkabt4/6uLjxFNJrQ==
-X-Received: by 2002:a05:6a20:948d:b0:1b2:b2b:5698 with SMTP id adf61e73a8af0-1b2f9aad7f0mr7679091637.33.1718035234756;
-        Mon, 10 Jun 2024 09:00:34 -0700 (PDT)
-Received: from carrot.. (i223-217-185-141.s42.a014.ap.plala.or.jp. [223.217.185.141])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e4532507casm4872411a12.62.2024.06.10.09.00.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:00:33 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH -mm 0/2] nilfs2: eliminate the call to inode_attach_wb()
-Date: Tue, 11 Jun 2024 01:00:27 +0900
-Message-Id: <20240610160029.7673-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718035425; c=relaxed/simple;
+	bh=V9fIEFBlHACQSU+XdBBetn3CjXbSlvURx9sdZBrEgxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFpmCbqjgRsivc2/aAtHz9NpiHpehpd2gCzgP01ezEd0DuLGpHrul5H9FaoTYxfmxIwDWN60/opZ/jSI5TmzNMmjTYABhXPCOFD8ixVeA1CJhQLdDNbQn+IMsK3Hhypuvr1RoLJ+cYMJ/1gWXz1fvRkIznl4OaA/9dpccQGB76c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWlBJeyW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66198C32786;
+	Mon, 10 Jun 2024 16:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718035425;
+	bh=V9fIEFBlHACQSU+XdBBetn3CjXbSlvURx9sdZBrEgxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EWlBJeyWsdb0rLnTNGJssv0sPX4kkqjZxnewEOeCxpnhWsrsfvAurWHJ4KLS9Vm+g
+	 RGwpBFGvBzK3SUC8hriMi/z+oQaPC8q/5mQcbFqvmAB6kOkfKQg7U09I5oIRbM6w42
+	 KrxWGrfcd6ap4DgwsHByzzKud6jBaEkAgKMfS8U2qGa3hGiKBkNpr3IuS8zhv2I8sg
+	 hUF11Uh/tDhcvksy4HZqBTj6dzX246cXCp7A4is5W9qIUYfaU9FioF1NfncjPNwVrs
+	 WD735ntYQWf1ChdFdLjrdhvm+OY8TedswiqezpcktPQq8AStHtwvvvmzbzNgpRRwQH
+	 /IAl87viVttYA==
+Date: Mon, 10 Jun 2024 17:03:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	pthombar@cadence.com
+Subject: Re: [PATCH v8 2/4] spi: cadence: Add Marvell xSPI IP overlay changes
+Message-ID: <Zmcj3fZ4DF8r_qf0@finisterre.sirena.org.uk>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-3-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Hi Andrew, please queue this series for the next cycle.
-
-This series eliminates the inode_attach_wb() call from nilfs2, which
-was introduced as a workaround for a kernel bug but is suspected of
-layer violation (in fact, it is undesirable since it exposes a reference
-to the backing device).
-
-Removal of the inode_attach_wb() call is done by simply using
-mark_buffer_dirty() on the backing device's buffers.  To use it safely,
-this series will prepare it in patch 1/2, and perform the replacement
-itself in patch 2/2.
-
-Thanks,
-Ryusuke Konishi
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RkdGdrXXm7o+ukvS"
+Content-Disposition: inline
+In-Reply-To: <20240607151831.3858304-3-wsadowski@marvell.com>
+X-Cookie: Your love life will be... interesting.
 
 
-Ryusuke Konishi (2):
-  nilfs2: prepare backing device folios for writing after adding
-    checksums
-  nilfs2: do not call inode_attach_wb() directly
+--RkdGdrXXm7o+ukvS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- fs/nilfs2/segment.c | 89 +++++++++++++++++++++++++++------------------
- 1 file changed, 54 insertions(+), 35 deletions(-)
+On Fri, Jun 07, 2024 at 08:18:29AM -0700, Witold Sadowski wrote:
+> This commit adds support for the basic v2 Marvell overlay block. Key
+> features included are:
+>     - Clock configuration
+>     - PHY configuration
+>     - Interrupt configuration (enabling)
 
--- 
-2.34.1
+This feels like it could usefully be split up so these three bits are
+separate, and there appear to be other changes buried in here as well.
+I can't tell what changes either the PHY or interrupt configuration
+might be referencing.
 
+> @@ -295,6 +450,10 @@ static void cdns_xspi_set_interrupts(struct cdns_xsp=
+i_dev *cdns_xspi,
+>  				     bool enabled)
+>  {
+>  	u32 intr_enable;
+> +	u32 irq_status;
+> +
+> +	irq_status =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
+> +	writel(irq_status, cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
+> =20
+>  	intr_enable =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_ENABLE_REG);
+>  	if (enabled)
+
+This seems like a separate change which applies to everything, not just
+Marvell versions of the IP, and should be split out and explained.
+
+> @@ -319,6 +478,9 @@ static int cdns_xspi_controller_init(struct cdns_xspi=
+_dev *cdns_xspi)
+>  		return -EIO;
+>  	}
+> =20
+> +	writel(FIELD_PREP(CDNS_XSPI_CTRL_WORK_MODE, CDNS_XSPI_WORK_MODE_STIG),
+> +	       cdns_xspi->iobase + CDNS_XSPI_CTRL_CONFIG_REG);
+> +
+
+This wasn't clearly mentioned in the changelog and is again being done
+unconditionally for all instances of the IP, probably best to split out
+and explain.
+
+> +static void mrvl_ioreadq(void __iomem  *addr, void *buf, int len)
+> +{
+> +	int i =3D 0;
+> +	int rcount =3D len / 8;
+> +	int rcount_nf =3D len % 8;
+> +	uint64_t tmp;
+> +	uint64_t *buf64 =3D (uint64_t *)buf;
+
+Any need to cast away from void * indicates a problem.
+
+> @@ -337,13 +563,11 @@ static void cdns_xspi_sdma_handle(struct cdns_xspi_=
+dev *cdns_xspi)
+> =20
+>  	switch (sdma_dir) {
+>  	case CDNS_XSPI_SDMA_DIR_READ:
+> -		ioread8_rep(cdns_xspi->sdmabase,
+> -			    cdns_xspi->in_buffer, sdma_size);
+> +		cdns_xspi_sdma_memread(cdns_xspi, sdma_size);
+>  		break;
+
+It's feeling like it might make sense to have an ops structure rather
+than sprinkling checks for the Marvell overlay everywhere.
+
+--RkdGdrXXm7o+ukvS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnI9wACgkQJNaLcl1U
+h9CzPgf+JyAR7k5ZPBd12HbSQXaHdbPWE/6SchRs/BN0GDlC5Csl6a5+ZQ6BCE5h
+1JHRAs1RKu57n2zZCs+xR9+tuj9jWg3kfMMHBpH6azUIcYhkw7P16YShyHhckFo+
+M1fbuFMAg9z3r8QuwXiMWM5vqlU2YgL1CscbdJXbT74DIfugc8OwIlcqo9qiPgFp
+6UsO1/Tsdcqj//0DDldViIDt3pyPNRZYAO8DbJ2PHOaADiM1wyDC1TYto00yJfwV
+QTV1CPRsd8qWZtICX39LkHoNj4WSye8GsaSocu8ncgNS4rL4ik4GxBohG+fViMMz
+pbRU8JPrCzezMdbFkluhWugrV66aIw==
+=MVb7
+-----END PGP SIGNATURE-----
+
+--RkdGdrXXm7o+ukvS--
 
