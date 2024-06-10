@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-208128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF589902127
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9248690212C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A4E287C95
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F5E288086
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55717F499;
-	Mon, 10 Jun 2024 12:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wczqxt6x"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F6F7E58C;
+	Mon, 10 Jun 2024 12:03:41 +0000 (UTC)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB074D8AB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7559ABA53;
+	Mon, 10 Jun 2024 12:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020956; cv=none; b=mgR1QY2WXbedcLm2voa+HXbzcFuaf/NL0mO7KsFgJNaNbkZw4lDTlomAXspaUqmraB0CWlTO6tKosc2aGsHQPXjfGsM7vw5f7CRcPGaYRub0HHiKG3TzGgW3h+OXnKlIq6A+KgxSmfaBKdVsMmdf2BjW8amUGnLMXEIaslcfrN0=
+	t=1718021021; cv=none; b=UfqWdwy+fMWFu1z+NIigCRD3Es/GuwqfQIDAMQF4tnrNFVflBG+mM4bEdbSvt3HEc3mNuVJ4R5Sq6HJSoQIeu1NBONOAZFXfFyDqtVkvyH/qS+hAWcV0Sg+w0LoYS2RINJNRkL0iTEiOmw8v4/gEZEw4pNsWQH7QG3AQXMRgweo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020956; c=relaxed/simple;
-	bh=/J8Ceo0Ki62a3kVYpxtqOWLGxQqfruh6wipVZOBmjlU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PIO/xmHRgdzkf1DDhK0B5gTVgAXtgb05roix2dOuQbnY/CGhxDf5mxF8mUsvfCH9SUk6xtTEL5eipRg1hw+PpooXB1aT9HvDnEg6RrmhZLYVO94Hor76CHfEXeJ1eAJ9F8dQ7LFGANMwsk0NGb/7v9yQF2kpLQ8yn5V54i90sws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wczqxt6x; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718021021; c=relaxed/simple;
+	bh=ctBUqaam8iQNZErhA9WWZJlGDdiavoN30AxZewA8Y9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7H3YuN1Pv5P818OTPKsmtXXKDUHcA+D6RzZOiPVdmnrN90Yos/liCgKgSuhBtFtOut9xaWjU3SdFAq/8bJ9s2u9eZwC0WOo0KygAWyDeOtT8xl/Wft/A09ISIulDSFDOcMaAcQtpBfILMwCQxH+I4R3XzCDfa6gb9PxkpmOl/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6ce533b6409so3258158a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718020954; x=1718625754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Jta2NpH0Yo3jq0n3rdl7lcfRrUI+PWrFp0wIskmVQ4=;
-        b=Wczqxt6xzFFyJUedQG21e5PJp/+ZtQcfflLq81Q/bnX2pE0diN9K8f6vgJ/kVlrHKA
-         eyVIBqVKw5CSmFEkSujoGU0Vix/mfAZXBP+VZdGs10Ripa8ZrkszbxuUMJ4iC2EFFB85
-         jRfwmOtzYfzRolh2R2TmwgVcD3QU1q5DTgkm8rUkeHEjqv/0ha/AmgBxfiHTZIn45Msi
-         siDH/IwnA1Vlt6rAOvhYnfcOAZZmUMeV00Es+a+b34T6z3OLOrw8ryqluiu2LfDc23Re
-         7uZd38iMq0DLQqNFksw9qLo8a5amPBie5SAoDe4s5vjQF05UtPFUhrWVfYbxl8ttKqkn
-         DQQQ==
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df771b45e13so4258068276.2;
+        Mon, 10 Jun 2024 05:03:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718020954; x=1718625754;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718021018; x=1718625818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1Jta2NpH0Yo3jq0n3rdl7lcfRrUI+PWrFp0wIskmVQ4=;
-        b=kDhWYV+nWRgA6N3Ma/VyydbQKXgxOWUQIPYZpnOMV3IWs8nasjN47zgZp5xveBN+aI
-         wiQNki3CYbuW8sxNbN7ksmnFL4cSlTqZmUf6X+K1mSU3v3ZVvd/3WjyzCfA+QaubyoNT
-         8aF6Cpri4r1WXcWpWXu/MjH/BcFGBLTHPhSkQPjWh9vxKiMM3+LnBPC99mh5o3gdvUrT
-         k0JAisImREeuPBCDknMKrlS9Vgnc3vLna2Xne/dytSgWpf+9Zvfc1+y3B8cCrCMX8yqd
-         Frp8qw/hopONapSIFEl/t+dKALayTiuJ2EgMzPFTGPplEL3/Yinbes2n+eyZKmFn5tqQ
-         /gMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4CP1gG20XKRM4ICTAKxdocMB6bGVsWmxJCBR9hJ4a+ZFMFx2A/Q4eSPcV91N63HXrkEd0CyJwy1GPR1gaEZ9nIx2AOPSKQZn0FI0I
-X-Gm-Message-State: AOJu0Yw2Sv1syL5ZSFKust2KCxOmQO5YjSWv78WNwuC/oB/OKUjKGH8z
-	RUjeqaSic1MDQzPQfiO5yNgg/7FaQNetctkkLzgxioOHKetKYQnP
-X-Google-Smtp-Source: AGHT+IHRNhyGYjU+bbHW3Rl/BwTn9HYeOw84bchXR2tVdnHVYoifBRotkcCaIuC++at7Grjg8V1JGQ==
-X-Received: by 2002:a17:90a:d581:b0:2c0:238c:4ee6 with SMTP id 98e67ed59e1d1-2c2bc9ba465mr8733353a91.2.1718020954042;
-        Mon, 10 Jun 2024 05:02:34 -0700 (PDT)
-Received: from LancedeMBP.lan.lan ([2403:2c80:6::304c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c302f0ebdcsm2478478a91.23.2024.06.10.05.02.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 05:02:33 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	sj@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	maskray@google.com,
-	ziy@nvidia.com,
-	ryan.roberts@arm.com,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	mhocko@suse.com,
-	fengwei.yin@intel.com,
-	zokeefe@google.com,
-	shy828301@gmail.com,
-	xiehuan09@gmail.com,
-	libang.li@antgroup.com,
-	wangkefeng.wang@huawei.com,
-	songmuchun@bytedance.com,
-	peterx@redhat.com,
-	minchan@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v7 2/4] mm/rmap: add helper to restart pgtable walk on changes
-Date: Mon, 10 Jun 2024 20:02:07 +0800
-Message-Id: <20240610120209.66311-3-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20240610120209.66311-1-ioworker0@gmail.com>
-References: <20240610120209.66311-1-ioworker0@gmail.com>
+        bh=DuMtyLzsYwWi/omfJccKRsq2ATwslUW7nz8GjD0/Dlk=;
+        b=WsNFFzF7sePXtksWbF8MkoNXO9WQsYKbfn5WPtE9lHqSVmRR3hid7fiKv0Ce6VHDYe
+         9U0GayC3jrIShY6U2uG4kDkaaNPPJuoIHF7Vx31SGhkWDpyjNh9dEUCwmK0pGBgK99qA
+         Zw+Fn/vDVpyymDkX6NRjWlGpK3kNdiFWx/5OpVULIfRRl+f51+9bHz21b6BitTqBM2Vb
+         ds3Tw0Mx6A7rOuncJYQoKqioZJfvhkkRrvAI+wEg20s9zBEV/OAaHxBvWxNY7VvYNek1
+         p+cXqgjzOg53R8x3nCr/irgDGmMvJ55VMtH8PxmdXyE32LrD2YAqf+HEw1derz+DwNix
+         J3Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWnwSx6Bj1M7HlLzUwIcRV0iFxiVTrcfyYdcXvtdjBpD3xCA+TPo+RRIoEDAIFnQ4GwOw9ZLV54oxGLXClUrvK48Eqe5X7td3t/S3T
+X-Gm-Message-State: AOJu0Yz4z2vf3ccdTVpQREM/FTREbupug5aGKt1sBmODzwmW3pUqZuZu
+	G+XsQi3h4AXg/+kLt7G92e6AK0fog6brvJ8QDCgRd49AjNqI5PHcYpZkhCBn
+X-Google-Smtp-Source: AGHT+IG2pO8qmWUwFzbhkyvO3sp+Cr38b9pbbbIL5vjheF9RfoI0QjoMpY8DvH9N6Ify4VBuuZyJcQ==
+X-Received: by 2002:a25:ade6:0:b0:dfa:4a32:3c04 with SMTP id 3f1490d57ef6-dfb3f71c848mr819428276.23.1718021017264;
+        Mon, 10 Jun 2024 05:03:37 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfb0bd09b1dsm931251276.41.2024.06.10.05.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 05:03:36 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62a08099115so42409727b3.0;
+        Mon, 10 Jun 2024 05:03:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVoA0SQu9tJo9OoWYBX99fctZK6RsFkgcP/nIOBBIKYSdREZlqiPvhtVm/T3CY1imurnewTsloWCvW1ofGWDtO5zTrYg85FHeBlGgti
+X-Received: by 2002:a05:690c:640d:b0:62c:f7ae:48e1 with SMTP id
+ 00721157ae682-62cf7ae4dabmr44787837b3.45.1718021016577; Mon, 10 Jun 2024
+ 05:03:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240610114554.82496-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240610114554.82496-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Jun 2024 14:03:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXOHHsyvZKME75qHk0M9sVf6A8EnA0YwJpbDSHt48tTVw@mail.gmail.com>
+Message-ID: <CAMuHMdXOHHsyvZKME75qHk0M9sVf6A8EnA0YwJpbDSHt48tTVw@mail.gmail.com>
+Subject: Re: [PATCH] checkpatch: really skip LONG_LINE_* when LONG_LINE is ignored
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Andy Whitcroft <apw@canonical.com>, 
+	Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce the page_vma_mapped_walk_restart() helper to handle scenarios
-where the page table walk needs to be restarted due to changes in the page
-table, such as when a PMD is split. It releases the PTL held during the
-previous walk and resets the state, allowing a new walk to start at the
-current address stored in pvmw->address.
+Hi Wolfram,
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Lance Yang <ioworker0@gmail.com>
----
- include/linux/rmap.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On Mon, Jun 10, 2024 at 1:46=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> For this to happen, all types must be set to "show". So, AND is needed
+> for the flags, not OR.
+>
+> Fixes: 47e0c88b37a5 ("checkpatch: categorize some long line length checks=
+")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 7229b9baf20d..5f18509610cc 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -710,6 +710,28 @@ static inline void page_vma_mapped_walk_done(struct page_vma_mapped_walk *pvmw)
- 		spin_unlock(pvmw->ptl);
- }
- 
-+/**
-+ * page_vma_mapped_walk_restart - Restart the page table walk.
-+ * @pvmw: Pointer to struct page_vma_mapped_walk.
-+ *
-+ * It restarts the page table walk when changes occur in the page
-+ * table, such as splitting a PMD. Ensures that the PTL held during
-+ * the previous walk is released and resets the state to allow for
-+ * a new walk starting at the current address stored in pvmw->address.
-+ */
-+static inline void
-+page_vma_mapped_walk_restart(struct page_vma_mapped_walk *pvmw)
-+{
-+	WARN_ON_ONCE(!pvmw->pmd);
-+	WARN_ON_ONCE(!pvmw->ptl);
-+
-+	if (pvmw->ptl)
-+		spin_unlock(pvmw->ptl);
-+
-+	pvmw->ptl = NULL;
-+	pvmw->pmd = NULL;
-+}
-+
- bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw);
- 
- /*
--- 
-2.33.1
+Thanks for your patch!
 
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3858,7 +3858,7 @@ sub process {
+>                         }
+>
+>                         if ($msg_type ne "" &&
+> -                           (show_type("LONG_LINE") || show_type($msg_typ=
+e))) {
+> +                           (show_type("LONG_LINE") && show_type($msg_typ=
+e))) {
+
+I don't know if the change in logic is correct, but if it is, you
+probably want to remove one set of parentheses:
+A && (B && C) =3D> A && B && C
+
+>                                 my $msg_level =3D \&WARN;
+>                                 $msg_level =3D \&CHK if ($file);
+>                                 &{$msg_level}($msg_type,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
