@@ -1,256 +1,101 @@
-Return-Path: <linux-kernel+bounces-208689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12822902825
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B88C90282C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F3CB27280
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF02C1F23718
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E925F14AD3E;
-	Mon, 10 Jun 2024 17:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3454757E3;
+	Mon, 10 Jun 2024 18:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B6uYFWB3"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XlTQC4ud";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v7Cpm8oq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CB914900C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF311C92
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042320; cv=none; b=ddRdpLjq+SIEAnI5dqz2LlZXvgxHTKEYTjp9v9h5UuC2CCALFTarG3Fo/kGcgSVDKAv8k0udW9p5DGRjqiEr23oq/nQp3e8wIjgY7yEu63roIR5SB5Qwebja3thCu5w98jWMJCdjWAWvbjMnC+gDs2b0u4GX2MWOjM6Xe56VOuk=
+	t=1718042440; cv=none; b=iBnhkNnIR1YK7LlxHJ2nMuZTKdiSHEGGU3AC8iSAYFm8BeyU8k9c+ZlJ3BN2DAA+BBpSTTyIaJFeUpaCemvANXnpTzf5lkVqDM+qdCHBSbOCNWvgbFdxvAqEaxwj94fH3egY1a22pDE9ApsQgXKK6wGuOLCj6fvRV0jS2JDs7fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042320; c=relaxed/simple;
-	bh=hO6nnDmuhkUErx75fBkprBGAIkEHIr9E1JJw8oC4y1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xe/N9W81xl5GR54L6Rwosu2ElfG55Tf2jzWiAm97RIPvCwIyVrGoN+OSBAQ6ZivbZiDQbzrgsXoVoz5H8V0ai5Rkx7Bd7QdqdzIyrlzxx8zIZd9Uk8mLil2OtoIYugAoXaZjngtcxZCOgW3NuRzNSyYyvWfKfbFCGcQdW2iFa0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B6uYFWB3; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so2429331fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718042316; x=1718647116; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bQX4a1uB13mXlhl/FxYuXCoDhG2XSW0BFXyW6YKkaDg=;
-        b=B6uYFWB392WDEcYr0HbznBnOc65vMkmbWesae73GUt4mybcRD4siviUw6vNx4qdp1R
-         IxO08I+AFOHO51Zu/sdVI03lQhK7O2CB7ePLaD6iMyem/FGvoTN6VssUJiNTEocj9+tw
-         ifuTpVtCHbuZhlMkS4/teuJHTrgbfvkhhJxLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042316; x=1718647116;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bQX4a1uB13mXlhl/FxYuXCoDhG2XSW0BFXyW6YKkaDg=;
-        b=BcxexQHjkj/c6GCQFFssZcmvwH+AiLBE4JIJNLTVG5XlEKNfXItR4nw6WiwiCpZRo5
-         R+Uxu6k8NOc5q/SDfpwOyAu9cQnz8LkFJoMlcJB7XvuLqzxAAIzfAsVTXDiuJBIslldg
-         wpItIAaX2YScel4VsGGkLyEKDq/nIFuZ36/xSGyNPLp8ZaouJFBnmBrzCp2k7Yy+F50I
-         ZDnhmaSwDfpQYNvSEAg61DFA5GQBTwiCoM5KmF3AAFC7N8gVKN4xCU53qC57TysSHBkM
-         lslt6dbeinOQQ0zPU0KZs0BXLejt+O9y5+suxPpQSqfIxlciJxaOGqtnm2YtW9w2cD49
-         cNQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBTYuItpaNVJvQAzaEzvx6xoy7X2OpnQKKcNu2waSezrXAQebJL7myEfwonP+NPlFF7La3IFrHdwipfTw94TS8BBfoHMjXzzPj2Zfz
-X-Gm-Message-State: AOJu0Ywwk4GXwOjyAAnRts6wOePgbPasyOW8bBV3V7BTK7pUCtcF3di4
-	NBCn8urUKbKc7LoddjGm7HDLa0jTnBSgO/V8XOoEOUDAtlc/1RNtyrQ8ewlkVj/71bWA6aKEdfj
-	7bnA=
-X-Google-Smtp-Source: AGHT+IH+nflCgXgGyqWM75VImrtNQOkew5rCmDGxFjCBCz5Ya67tvW31aP3boayESY9TC3YU1oKsCg==
-X-Received: by 2002:a2e:3502:0:b0:2eb:d696:4b80 with SMTP id 38308e7fff4ca-2ebd6965d7bmr51041131fa.52.1718042315791;
-        Mon, 10 Jun 2024 10:58:35 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae234204sm7781388a12.87.2024.06.10.10.58.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 10:58:34 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6ef8e62935so22102866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:58:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9hMnkO37W1gsY0SF1ty1+BzFdIqgDRvVitlQ5+5p7pm/BwEgi0k7Or1+GsVYU/hYV4ZOw0E/6+mfGWvWmdcZiGqNOpDoNyAJJbXnz
-X-Received: by 2002:a17:906:11ca:b0:a6e:139b:996d with SMTP id
- a640c23a62f3a-a6e139b9d75mr689185666b.32.1718042314389; Mon, 10 Jun 2024
- 10:58:34 -0700 (PDT)
+	s=arc-20240116; t=1718042440; c=relaxed/simple;
+	bh=Kzud7mDi/sRVDiToDacdZFm99lOJUCh1GoEbWtF9/G4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d99UJJ+OTwUfR9e5ua7MmwhITWngCKk5IqSwlkwruNywKQzB9ejUvvcR9A8W/Z20f/HYyVKJ/qfOEFdGM72c71/L10YOtozhm+I6EBPr5VYqgBKD+/3q/26b7xrpet6uQRdA6ynGTUuT6HzepJU9Up5fihf/8D/1wwlE1DugpK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XlTQC4ud; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v7Cpm8oq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718042436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cu3gjdhgicAYVTH3FjaDJi2aUNwjyAypvLFcNgDGEeM=;
+	b=XlTQC4udf7OvxxOGii4XvwDLYiYQ0jiFvnlq29trCdSsx/PDvWUdQmZLMyiAICl1/dTwLv
+	Tg/saumcZbx60LvZ6LUQ1xu5n9feC71sG9eTQhq57wSGyRODPypYLl7+qhVKKo3g7ees0O
+	ZQvCQAuTYuC5trNw6wuvAm2BuXmYRsNW51NEWQv3ZA/LyAgYtXN/ReOcxY7bN5W2FqoAn/
+	OG0Alwe+kQcQCV4fsat19lrMJ5OF9iW5aubA6aMWw5PzTR/E5hoM80YsoBumZW46HwvVnB
+	d8ctED8pwDDXxM5dl5AdGWLzXkk7hYSEXZwcjQHRzEJz+R3PuJpQofxnwapD8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718042436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cu3gjdhgicAYVTH3FjaDJi2aUNwjyAypvLFcNgDGEeM=;
+	b=v7Cpm8oq11qJFQnlu7iKc+nZF2wazM26YmV1401nkSJ0LE6Fo7ep8mdhhMhvd6oGRvVoBS
+	QrSe2sqyFfD/imDw==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Sam Sun <samsun1006219@gmail.com>, x86@kernel.org,
+ syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
+Subject: Re: [patch 2/4] jump_label: Fix concurrency issues in
+ static_key_slow_dec()
+In-Reply-To: <20240610175756.GU8774@noisy.programming.kicks-ass.net>
+References: <87bk49xf15.ffs@tglx> <20240610124258.109097511@linutronix.de>
+ <20240610124406.422897838@linutronix.de>
+ <20240610175756.GU8774@noisy.programming.kicks-ass.net>
+Date: Mon, 10 Jun 2024 20:00:36 +0200
+Message-ID: <87cyoowud7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org> <29a8ceb4-a699-433b-8a11-be6b3c9fd045@rasmusvillemoes.dk>
-In-Reply-To: <29a8ceb4-a699-433b-8a11-be6b3c9fd045@rasmusvillemoes.dk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Jun 2024 10:58:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wirUHJ8DWzWjb3ZxatjQaomeTzM4uPjemrkbSjVvYOaGQ@mail.gmail.com>
-Message-ID: <CAHk-=wirUHJ8DWzWjb3ZxatjQaomeTzM4uPjemrkbSjVvYOaGQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Mon, 10 Jun 2024 at 02:50, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+On Mon, Jun 10 2024 at 19:57, Peter Zijlstra wrote:
+> On Mon, Jun 10, 2024 at 02:46:36PM +0200, Thomas Gleixner wrote:
 >
-> Well, I think it lacks a little. I made it so that an arch didn't need
-> to implement support for all runtime_const_*() helpers
-
-Honestly, normally the number of helpers would max out at probably
-three or four.
-
-The only helpers you need is for the different constant sizes and the
-placement in the instructions. For example, on x86-64, you almost
-certainly end up with just three fixup functions (byte, 32-bit and
-64-bit) and then *maybe* a couple of "operation" helpers.
-
-Honestly, the only op helpers that are likely to exist are
-add/mask/shift. But I didn't add macros for creating these ops,
-because I don't actually believe very many exist in the first place.
-
-And yes, x86-64 ends up being fairly simple, because it doesn't have
-multiple different ways of encoding immediates in different places of
-the instruction. But even that isn't going to make for very many
-operations.
-
-In fact, one of the whole design points here was KISS - Keep It Simple
-Stupid. Very much *not* trying to handle all operations. This is not
-something that will ever be like the atomic ops, where we have a
-plethora of them.
-
-To use a runtime constant, the code has to be really *really*
-critical. Honestly, I have only ever seen one such function.
-__d_lookup_rcu() really has shown up for over a decace as one of the
-hottest kernel functions on real and relevant loads.
-
-For example, in your RAI patches six years ago, you did the dentry
-cache, and you did the inode_cachep thing.
-
-And honestly, while I've never seen the inode_cachep in a profile. If
-you ever look up the value of inode_cachep, it's because you're doing
-to allocate or free an inode, and the memory load is the *least* of
-your problems.
-
-> name because yes, much better than rai_), but could implement just
-> runtime_const_load() and not the _shift_right thing,
-
-Not a single relevant architecture would find that AT ALL useful.
-
-If you have a constant shift, that constant will be encoded in the
-shift instruction. Only completely broken and pointless architectures
-would ever have to use a special "load constant into register, then
-shift by register".
-
-I'm sure such horrors exist - hardware designers sometimes have some
-really odd hang-ups - but none of the relevant architectures do that.
-
-> Otherwise, if we want to add some runtime_const_mask32() thing to
-> support hash tables where we use that model, one would have to hook up
-> support on all architectures at once.
-
-See above: when we're talking about a couple of operations, I think
-trying to abstract it is actually *wrong*. It makes the code less
-readable, not more.
-
-> Don't you need a cc clobber here?
-
-"cc" clobbers aren't actually needed on x86. All inline asms are
-assumed to clobber cc
-
-It's not wrong to add them, but we generally don't.
-
-> And for both, I think asm_inline is appropriate
-
-Yup. Will do.
-
-> I know it's a bit more typing, but the section names should be
-> "runtime_const_shift" etc., not merely "runtime_shift".
-
-I actually had that initially. It wasn't the "more typing". It was
-"harder to read" because everything became so long and cumbersome.
-
-The noise in the names basically ended up just overwhelming all the
-RealCode(tm).
-
-> > +     RUNTIME_CONST(shift, d_hash_shift)
-> > +     RUNTIME_CONST(ptr, dentry_hashtable)
-> > +
+>> @@ -247,20 +247,25 @@ EXPORT_SYMBOL_GPL(static_key_disable);
+>>  
+>>  static bool static_key_slow_try_dec(struct static_key *key)
+>>  {
+>> +	int v;
+>>  
+>>  	/*
+>> +	 * Go into the slow path if key::enabled is less than or equal than
+>> +	 * one. One is valid to shut down the key, anything less than one
+>> +	 * is an imbalance, which is handled at the call site.
+>> +	 *
+>> +	 * That includes the special case of '-1' which is set in
+>> +	 * static_key_slow_inc_cpuslocked(), but that's harmless as it is
+>> +	 * fully serialized in the slow path below. By the time this task
+>> +	 * acquires the jump label lock the value is back to one and the
+>> +	 * retry under the lock must succeed.
 >
-> Hm, doesn't this belong in the common linker script?
-
-I actually went back and forth on this and had it both ways. I ended
-up worrying that different architectures would want to have these
-things in particular locations, closer to the text section etc.
-
-IOW, I ended up putting it in the architecture-specific part because
-that's where the altinstructions sections were, and it fit that
-pattern.
-
-It could possibly go into the
-
-        INIT_DATA_SECTION
-
-thing in the generic macros, but it has to go *outside* the section
-that is called ".init.data" because the section name has to match.
-
-See why I didn't do that?
-
-> I mean, if arm64 were to implement support for this, they'd also have to add this
-> boilerplate to their vmlinux.lds.S?
-
-See
-
-    https://lore.kernel.org/all/CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com/
-
-doing arm64 was always the plan - ti was doing perf profiles on arm64
-that showed this nasty pattern to me once again (and honestly, showed
-it much more: I have 14% of all time in __d_lookup_rcu() because while
-this machine has lots of cores, it doesn't have lots of cache, so it's
-all very nasty).
-
-Notice how small that patch is. Yes, it adds two lines to the arm64
-vmlinux.lds.S file. But everything else is literally just the required
-"this is how you modify the instructions".
-
-There is no extra fat there.
-
-> Please keep the #includes together at the top of the file.
-
-Yes, my original plan was to do
-
-    #ifdef CONFIG_RUNTIME_CONST
-    #include <asm/runtime-const.h>
-    .. do the const version of d_hash() ..
-   #else
-   .. do the non-const one ..
-  #endif
-
-but the asm-generic approach meant that I didn't even need to make it
-a CONFIG variable.
-
-
-> > +static inline struct hlist_bl_head *d_hash(unsigned long hashlen)
+> Harmless yes, but it really should not happen to begin with. If this
+> happens it means someone wants to disable a key that is in the middle of
+> getting enabled for the first time.
 >
-> Could you spend some words on this signature change? Why should this now
-> (on 64BIT) take the full hash_len as argument, only to let the compiler
-> (with the (u32) cast) or cpu (in the x86_64 case, via the %k modifier if
-> I'm reading things right) only use the lower 32 bits?
+> I'm tempted to want a WARN here instead. Hmm?
 
-I'll separate it out, but it boils down to both x86 and arm64 doing
-32-bit shifts that clear the upper 32 bits.
-
-So you do *not* want a separate instruction just to turn a "unsigned
-long" into a "u32".
-
-And while arm64 can take a 32-bit input register and output a 64-bit
-output, on x86-64 the input and output registers are the same, and you
-cannot tell the compiler that the upper 32 bits don't matter on input
-to the asm.
-
-End result: you actually want to keep the input to the constant shift
-as the native register size.
-
-But I'll separate out the d_hash() interface change from the actual
-runtime constant part.
-
-               Linus
+No strong opinion
 
