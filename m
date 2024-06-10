@@ -1,178 +1,114 @@
-Return-Path: <linux-kernel+bounces-208503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2DF9025F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:46:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4243A9025CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E8D1F22C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:46:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838C6B26A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E9E146590;
-	Mon, 10 Jun 2024 15:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6F13D8BF;
+	Mon, 10 Jun 2024 15:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktG1mqw5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFi6707w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFD914387E;
-	Mon, 10 Jun 2024 15:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2712FF86
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718034312; cv=none; b=cqOYAtRED0db3O+1Wp0g4SA5Zh5y6mH1AlGVBAXjvxkdrhCRWqcLGQI3hNdVjRYYDn5YXnRs/W1+RJMwkpLK7asbNGO/m+SZUrhq+xrdfrA/ecQoPnJKoFsOY9RuHiImxtTNHbPq97j1+bXjb88gQZcaQ4ytxshyt3o+jdbTIfY=
+	t=1718033861; cv=none; b=QQLs41+WqyvEKWHS113BdklEHM0EUu47KGhMZaNDydJAL11qYoqoU5yBroqHCqHNzEihVHyf0yH/14GxbxALxiUa/VsqhUYxb763vCwWte2auhGhd1wsS7fcnPvtxv8KLZEoK9z82ZPfEZMKv09NzLYTJWlUIVzxGuduQJIrIa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718034312; c=relaxed/simple;
-	bh=77taguqMlOk9palmEIZHwzEPuGl4cXRwnQzwDICfdrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CW2gOfReW99FyEn2P0H1C5F03DjpShkAxLkWcVceXsqmGfz1EOQD8CqqDCEcIvx9+W7wpdzOA9hfhFssrrsAajYmjEUVDWF9C7KbCavCZ216a4bwFFQ99h9/0mEYcpSDkyAQI5joQ4ITdOknY3c6prUcefJEBggLK8hpWWSK4Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktG1mqw5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718034311; x=1749570311;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=77taguqMlOk9palmEIZHwzEPuGl4cXRwnQzwDICfdrM=;
-  b=ktG1mqw5L1iYa4cKb9v7KEp82MHmR59PjwKhxKr1PUZ1gpR/kWNnwhJ7
-   GkMUNX5HomyEtbb4IzrfOf1gFIsJH3GOi1W4reSRj5BaTMJNgHk9g0Rs7
-   G9IyW4HplM+0O9/kamMhCmRbKr2WLXC1DK5uy9K7QpUTxHeSEkMGLZ+RZ
-   zPOXbuN54gTFv/Mst6Xx5hgCVzGf6hZFobjr7rNCBlmxPnOXl2ypBTyB1
-   Z20q4b1Fd1LDrgyMMjLGTIo0TPjZFyZQlVxARZRC9ZPD8f/rKg2aeF7DP
-   4uXyy6/grI9/qBaVLJWU3YOKt5+4sZh9tCFX2ofSC/XerBI/T1oz1EK48
-   w==;
-X-CSE-ConnectionGUID: Xg8+b+XOQJyhftiEc0YARw==
-X-CSE-MsgGUID: TgZBS62HT7mM4Ywd/ByQ3A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="26119872"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="26119872"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 08:45:10 -0700
-X-CSE-ConnectionGUID: uVaJisceRt+8/TSVPvmkGA==
-X-CSE-MsgGUID: vCchazQYRsOqkyP5o3Padg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="43679782"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Jun 2024 08:45:05 -0700
-Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 0CFDD312D8;
-	Mon, 10 Jun 2024 16:44:52 +0100 (IST)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	magnus.karlsson@intel.com,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Igor Bagnucki <igor.bagnucki@intel.com>
-Subject: [PATCH iwl-net 3/3] ice: make NAPI setting code aware that rtnl-locked request is waiting
-Date: Mon, 10 Jun 2024 17:37:15 +0200
-Message-ID: <20240610153716.31493-4-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240610153716.31493-1-larysa.zaremba@intel.com>
-References: <20240610153716.31493-1-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1718033861; c=relaxed/simple;
+	bh=DS3uBb7Unwhd1jiU6S/xkwKPy764hQ4TYvNxIj8Dvus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCgbWxp1Wqqw5MOxCMZ4Ip+2MI7ykoNqT0U7cSJjmADkHfh1OJGo0qQy1Yag7t0HmRF3s1U2qWweSbDV1ZH56+0FJr/huNr7ksdE2umDLCrUKV9wWE+SuZDgVMSWbg57b0unpVCfiyRPU20FRzx66crZA61gplL/N1ekxdkyfkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFi6707w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93ECAC32786;
+	Mon, 10 Jun 2024 15:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718033860;
+	bh=DS3uBb7Unwhd1jiU6S/xkwKPy764hQ4TYvNxIj8Dvus=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UFi6707wcUbSi/lMOM/1R/3w4Tp0Nhzr1BaLI7BOl+P6JZYyX8C7QoxmYJ39wbldC
+	 3+t/MxWxvdx5yYbREMJzMAz2RUBROKuMAKKhu+9tsa6hQTZygr5lZl+Gbe9JMbRhCU
+	 YB7IOee4GcNJLYCcQCAgKyWnN9H6McvJxFQpRMBgJ7Xce4wHeUePpOWzztdmRe7I8L
+	 Oza/7bj9F+jkKZmJnmnPacw9cnpk/ZpLAmRx8bczk1ZHZ2bhZFnov3XvHGiOxIS3n/
+	 Zyvc6IHupMLlQXSKMjbpU6tbdtehqHfbkVrsnydpkhOc1qzbrCI1VAT6lA6ZkzAhHL
+	 eZBImHbP6TUuQ==
+Date: Mon, 10 Jun 2024 16:37:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH 0/1] pwm-regulator with voltage table problem
+Message-ID: <Zmcdvm7XbtU1JlQr@finisterre.sirena.org.uk>
+References: <20240610120025.405062-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3aWJOhdwdUY4seBS"
+Content-Disposition: inline
+In-Reply-To: <20240610120025.405062-1-gnstark@salutedevices.com>
+X-Cookie: Your love life will be... interesting.
 
-ice_vsi_rebuild() is a critical section in the reset path. Sometimes,
-rtnl-locked callbacks have to wait for it to finish. However, it is
-possible they will wait for an eternity, because the critical section
-contains calls to ice_queue_set_napi() that try to take rtnl_lock.
 
-Make ice_queue_set_napi() aware that some rtnl-locked code is waiting and
-skip taking the lock, if this is the case.
+--3aWJOhdwdUY4seBS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 080b0c8d6d26 ("ice: Fix ASSERT_RTNL() warning during certain scenarios")
-Reviewed-by: Igor Bagnucki <igor.bagnucki@intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- drivers/net/ethernet/intel/ice/ice.h      |  1 +
- drivers/net/ethernet/intel/ice/ice_lib.c  | 18 +++++++++++++++---
- drivers/net/ethernet/intel/ice/ice_main.c |  5 ++++-
- 3 files changed, 20 insertions(+), 4 deletions(-)
+On Mon, Jun 10, 2024 at 03:00:24PM +0300, George Stark wrote:
 
-diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
-index 76590cfcaf68..7c1e24afa34b 100644
---- a/drivers/net/ethernet/intel/ice/ice.h
-+++ b/drivers/net/ethernet/intel/ice/ice.h
-@@ -307,6 +307,7 @@ enum ice_pf_state {
- 	ICE_PHY_INIT_COMPLETE,
- 	ICE_FD_VF_FLUSH_CTX,		/* set at FD Rx IRQ or timeout */
- 	ICE_AUX_ERR_PENDING,
-+	ICE_RTNL_WAITS_FOR_RESET,
- 	ICE_STATE_NBITS		/* must be last */
- };
- 
-diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
-index 4774bcc4d5a8..a5dc6fc6e63d 100644
---- a/drivers/net/ethernet/intel/ice/ice_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_lib.c
-@@ -2740,12 +2740,24 @@ ice_queue_set_napi(struct ice_vsi *vsi, unsigned int queue_index,
- 	if (current_work() == &pf->serv_task ||
- 	    test_bit(ICE_PREPARED_FOR_RESET, pf->state) ||
- 	    test_bit(ICE_DOWN, pf->state) ||
--	    test_bit(ICE_SUSPENDED, pf->state))
-+	    test_bit(ICE_SUSPENDED, pf->state)) {
-+		bool rtnl_held_here = true;
-+
-+		while (!rtnl_trylock()) {
-+			if (test_bit(ICE_RTNL_WAITS_FOR_RESET, pf->state)) {
-+				rtnl_held_here = false;
-+				break;
-+			}
-+			usleep_range(1000, 2000);
-+		}
- 		__ice_queue_set_napi(vsi->netdev, queue_index, type, napi,
--				     false);
--	else
-+				     true);
-+		if (rtnl_held_here)
-+			rtnl_unlock();
-+	} else {
- 		__ice_queue_set_napi(vsi->netdev, queue_index, type, napi,
- 				     true);
-+	}
- }
- 
- /**
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index cd8be3c3b956..37b3dd22cdc2 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -3103,8 +3103,11 @@ static int ice_xdp(struct net_device *dev, struct netdev_bpf *xdp)
- 		return -EINVAL;
- 	}
- 
--	while (test_and_set_bit(ICE_CFG_BUSY, pf->state))
-+	while (test_and_set_bit(ICE_CFG_BUSY, pf->state)) {
-+		set_bit(ICE_RTNL_WAITS_FOR_RESET, pf->state);
- 		usleep_range(1000, 2000);
-+	}
-+	clear_bit(ICE_RTNL_WAITS_FOR_RESET, pf->state);
- 
- 	switch (xdp->command) {
- 	case XDP_SETUP_PROG:
--- 
-2.43.0
+> The situation: bootloader sets mean cpu power and mean cpu clock.
+> but that cpu power is not found in the voltage table (value is between table items)
+> due to different versions of bootloader and kernel and the regulator core sets
+> the minimal power but cpu clock stays the same. CPU hangs somewhere during boot.
 
+Why not just add this OPP to the table the kernel knows about?  Clearly
+it's something the vendor set and presumably thinks the device can
+actually operate at.  As far as I can tell you're only having problems
+here because you've got a software defined regulator but haven't given
+the software information about this configuration so it's got no idea
+what's going on when bootstrapping.
+
+> The core problem as I see it is if regulator is bound to CPU (or some other
+> complex consumer) it can't be changed except by the consumer at any stage. So
+> the regulator driver (core part) should wait for the own consumer to init
+> it properly but regulator can't be in unknown state after probing.
+
+If the regulator is configured outside the constraints configured for it
+in the binding then the core will bring the regulator within those
+constraints, some systems with regulator configurations fixed in
+silicon rely on this for correct performance.  Regulators with
+unreadable hardware are very much an edge case when it comes to this,
+what works for one system will be broken for another one so we just have
+to pick a behaviour that will hopefully work more often than it breaks.
+We can't rely on consumers setting a voltage since consumers are only
+expected to set a voltage if they are actively managing it at runtime,
+other consumers should rely on system configuration.
+
+--3aWJOhdwdUY4seBS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnHb0ACgkQJNaLcl1U
+h9BW6Qf/WIuMS8uIx2ZHM7+DDfzW8oMEPSZhAn+6hAHbZBFtXbaN9EV+/5XBs3Nf
+8FxLWoXL3BAnNBWyjJ+9czOV1j9HN9tkafoxo18nQszEKymJ2YpDqV5bQr+02UpE
+9RZkGX2nQneh4K8sM7wQkYCfSZL5GsrgnW8qDtOkDNyhjyZ08qZ9OhmHzmeg2EZl
+FbzerDL3ScuXNIrGoTOz2F+VecOae2hA/rQ3/MyK5Ia0GGRA4wdQi66FmzUxY4QQ
+WknYteXBroHzq1eBn08gdug5PdrLjBCN+m0VBUlI+bjAarEpehVH6/PTt3nJRypP
+pKryb9HMCkXp8RfNmfqMcR1GigqWBQ==
+=zXqV
+-----END PGP SIGNATURE-----
+
+--3aWJOhdwdUY4seBS--
 
