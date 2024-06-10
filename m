@@ -1,126 +1,410 @@
-Return-Path: <linux-kernel+bounces-208241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CD09022C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4799022C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970C5B2277C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2050D1C21A96
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2918248B;
-	Mon, 10 Jun 2024 13:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8534812EBE8;
+	Mon, 10 Jun 2024 13:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="YZfXVTZA"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="hdNWpc/U"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1974F5FA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414F082D9F;
+	Mon, 10 Jun 2024 13:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718026719; cv=none; b=hiOEkRelmB0taApplAC+gh7hKd4rFRcfYqe0n1zSYoRcmqNFKQTX8A3hlM7gXqq5cgh5iWWzU+dNaf0JC+vTuacf8gPv/uKwCVGNw0gTwvlUbh75vyP0aHS20Lvxyqv2KAe9eWjdoP0V6uMEhwok6VuEkC4i3XBly+IC6gq9kuI=
+	t=1718026775; cv=none; b=QOfRevvVmv6KOh/l84mpRpzAwPDbZg0O6FuMEyDmnF6L9ox5ljymiDkltFan0zqoNkmfSvj8UJ2WLo8gKr2frOr4mrtKwxLZCEakkZ+n7xMsA0JTuYJvh4OnFjOQllDFxZEZg/l8XkDci4LVtE57j0vPReH9cplvR5Gz7RS6s6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718026719; c=relaxed/simple;
-	bh=nNiMFN3UUVyLRK8hNS+Knebs+73HcK7zuHQH11+IUf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AddwhGRmOTpnHiF7CPInXsF+FDRUZVg3ZkpH+UdoVw9go6xEz2wKMZ+AUpIvj0d34afK1fjDekBos3oOZAckBYQak/AOGUxkjg3CmiqGRw9VgK1A41qAO+ghirqyRKM0cwimJ8pDLdQViGwkA4vdjDmfzZ/tlwj0ypD6rX6L6KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=YZfXVTZA; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso1062336e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1718026716; x=1718631516; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6MVOT7ev6J5lLl/iba6yrd0EhvDJDU0eNfpHSBAIuOY=;
-        b=YZfXVTZAALZBsckulSZUV7g14E6MmT8NndgV0d2sZnmqeHlfdH/7H+gpxNtIH/E1gI
-         GmsnAniYZlJuJZPjObXzgHCDpm2n/97HZQjJAaarmsAHVOoN/iKVTNhyjVoulTRmpCWF
-         X2a8EGWQwyRDxzqkJtEzaeMmgJegKGZeBM5Ys=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718026716; x=1718631516;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MVOT7ev6J5lLl/iba6yrd0EhvDJDU0eNfpHSBAIuOY=;
-        b=c6ARL7Ep5KjD3YG2gpKSBd13HhbXl9gdSTVXViqz4THNTXmpwiNxqb6NCfukNiTeEq
-         2de6eP3XnuPwBDwZBHxvYsYFheKsLQ3GeHeNQN/hfm0GSgnV5koo+hZMQPM7lDQ94YjT
-         2T7k4NKCCrDi0I0QN/4muwnSAitFvvJw2vMl1v7ecoyjdg4o/RW/0e1VZIjicCftMOnv
-         cvZljTdo4yz0ChnRX2bz5ISf1uzyzo5lSjFiacS1658FhX6n8mY2AnTO2/Uc5JxcPwUU
-         UaOaYF+950BSm+ES4HZGqzIzy7sG8Nnz4XfVf+zsG4GQHixOQwKfHNsePA5zJ61vnNPb
-         OU3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3wO8qJxG/UzsF25IP3XmqSf9HCgDFNCnjFR2X5W1+yHgUu/7wALynHMRYZdlPHXlT7J5v7Z35w3GuhiJNlMC/d4vv0we8GbXMc7sZ
-X-Gm-Message-State: AOJu0Ywr62iII6zkKNxkS8dtbR3iO8muhYabKNLdnSLgnAELAxZPZFKd
-	kL9rZQv6NikgWt2K7Cz9Klh9FvbCGgmoiKMVJIx+1L4sWz2gFtEZwxH8WBgzWZ8=
-X-Google-Smtp-Source: AGHT+IH951ow2F1ZsFqXx5A89eENuF5pKIETipiyl7d5mCQzoHtS+0ARN21s6WcTQmJex2EIY9cvBw==
-X-Received: by 2002:a19:641a:0:b0:52b:797d:efd4 with SMTP id 2adb3069b0e04-52bb9f6deafmr5369729e87.16.1718026716105;
-        Mon, 10 Jun 2024 06:38:36 -0700 (PDT)
-Received: from [172.16.11.116] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb41e1bd6sm1668882e87.48.2024.06.10.06.38.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 06:38:35 -0700 (PDT)
-Message-ID: <f967d835-d26e-47af-af35-c3c79746f7d9@rasmusvillemoes.dk>
-Date: Mon, 10 Jun 2024 15:38:34 +0200
+	s=arc-20240116; t=1718026775; c=relaxed/simple;
+	bh=M5RsQEnsTDlU0Md7Yhpm15IuRc2nG+wXMSsAeqxzCy0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HeNigdUlTli2Tudw9LugFFpkWIe60FOQtRUbTWnG7r7aSWU2q/h0bDrG7U8a3HF+gWChZyZjgTAgmIb8esrgf8RO3/jEw2T/8xxkh0umTPO4znyGJNEWTv60MKQW8yKiXzcB0RnrU8CEACb1YSsAZor19y5E/pSfjaJttYQiX/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=hdNWpc/U; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 50186884C5;
+	Mon, 10 Jun 2024 15:39:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718026770;
+	bh=GB8/QkBbsCqKEb4kYbgLiNrQS+hPUvvTTVlAjkvKmP4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hdNWpc/U0GLb60bFGjtdDtj7alXU55NzrfWEJgcQUdAc5Prwn0Yoyy144aWYfngBo
+	 /vIm6sBmVws21saJu3z87ai3nHNKD2m7Di0sek7p6gluL9PmgDwLAS7I2EEAf6gIqH
+	 ZhbeUHp8/5P58ayfBBAdRNeVy7xuTGY5UTv62OJhH7TykxMRqooFKH7Tk97MRN4QrS
+	 nw6+WtGC4IUNlG9y7P4bwSpVQ9wvXj0c+hD/xn4cDiuwsutQ6+KuJa1p9/NZUyhWyN
+	 AssXmyZJzBXFyVM//NEG0POL5/4gJaK//zMDgjM4rQ/J/wD7nXmM1Zx3UeU3rhQVyt
+	 qCo/Gd0toVZTQ==
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Arvid Brodin <Arvid.Brodin@xdin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Geliang Tang <tanggeliang@kylinos.cn>,
+	Shuah Khan <shuah@kernel.org>,
+	Shigeru Yoshida <syoshida@redhat.com>,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v3 net-next] net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data
+Date: Mon, 10 Jun 2024 15:39:14 +0200
+Message-Id: <20240610133914.280181-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- the arch/x86 maintainers <x86@kernel.org>,
- linux-arch <linux-arch@vger.kernel.org>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net>
-Content-Language: en-US, da
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-In-Reply-To: <20240610104352.GT8774@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 10/06/2024 12.43, Peter Zijlstra wrote:
-> On Sat, Jun 08, 2024 at 12:35:05PM -0700, Linus Torvalds wrote:
+This patch provides support for sending supervision HSR frames with
+MAC addresses stored in ProxyNodeTable when RedBox (i.e. HSR-SAN) is
+enabled.
 
->> Comments?
-> 
-> It obviously has the constraint of never running the code before the
-> corresponding runtime_const_init() has been done, otherwise things will
-> go sideways in a hurry, but this also makes the whole thing a *lot*
-> simpler.
-> 
-> The only thing I'm not sure about is it having a section per symbol,
-> given how jump_label and static_call took off, this might not be
-> scalable.
-> 
-> Yes, the approach is super simple and straight forward, but imagine
-> there being like a 100 symbols soon :/
-> 
-> The below hackery -- it very much needs cleanup and is only compiled on
-> x86_64 and does not support modules, boots for me.
+Supervision frames with RedBox MAC address (appended as second TLV)
+are only send for ProxyNodeTable nodes.
 
-As can be seen in my other reply, yes, I'm also worried about the
-scalability and would like to see this applied to more stuff.
+This patch series shall be tested with hsr_redbox.sh script.
 
-But if we do this, surely that's what scripts/sorttable is for, right?
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
 
-Alternatively, if we just keep emitting to per-symbol
-__runtime_const_##sym sections but collect them in one __runtime_const,
-just using __runtime_const { *(SORT_BY_NAME(__runtime_const_*)) } in the
-linker script should already be enough to allow that binary search to
-work (with whatever : AT(ADDR() ... ) magic is also required), with no
-post-processing at build or runtime required.
+Changes for v2:
+- Fix the Reverse Christmas Tree formatting
+- Return directly values from hsr_is_node_in_db() and ether_addr_equal()
+- Change the internal variable check
 
-Rasmus
+Changes for v3:
+- Change 'const unsigned char addr[ETH_ALEN]' to
+  'const unsigned char *addr' in send_hsr/prp_supervision_frame() functions
+
+- Add sizeof(struct hsr_sup_payload) to pskb_may_pull to assure that the
+  payload is present.
+---
+ net/hsr/hsr_device.c   | 63 ++++++++++++++++++++++++++++++++++--------
+ net/hsr/hsr_forward.c  | 37 +++++++++++++++++++++++--
+ net/hsr/hsr_framereg.c | 12 ++++++++
+ net/hsr/hsr_framereg.h |  2 ++
+ net/hsr/hsr_main.h     |  4 ++-
+ net/hsr/hsr_netlink.c  |  1 +
+ 6 files changed, 105 insertions(+), 14 deletions(-)
+
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index e6904288d40d..e4cc6b78dcfc 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -73,9 +73,15 @@ static void hsr_check_announce(struct net_device *hsr_dev)
+ 			mod_timer(&hsr->announce_timer, jiffies +
+ 				  msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL));
+ 		}
++
++		if (hsr->redbox && !timer_pending(&hsr->announce_proxy_timer))
++			mod_timer(&hsr->announce_proxy_timer, jiffies +
++				  msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL) / 2);
+ 	} else {
+ 		/* Deactivate the announce timer  */
+ 		timer_delete(&hsr->announce_timer);
++		if (hsr->redbox)
++			timer_delete(&hsr->announce_proxy_timer);
+ 	}
+ }
+ 
+@@ -279,10 +285,11 @@ static struct sk_buff *hsr_init_skb(struct hsr_port *master)
+ 	return NULL;
+ }
+ 
+-static void send_hsr_supervision_frame(struct hsr_port *master,
+-				       unsigned long *interval)
++static void send_hsr_supervision_frame(struct hsr_port *port,
++				       unsigned long *interval,
++				       const unsigned char *addr)
+ {
+-	struct hsr_priv *hsr = master->hsr;
++	struct hsr_priv *hsr = port->hsr;
+ 	__u8 type = HSR_TLV_LIFE_CHECK;
+ 	struct hsr_sup_payload *hsr_sp;
+ 	struct hsr_sup_tlv *hsr_stlv;
+@@ -296,9 +303,9 @@ static void send_hsr_supervision_frame(struct hsr_port *master,
+ 		hsr->announce_count++;
+ 	}
+ 
+-	skb = hsr_init_skb(master);
++	skb = hsr_init_skb(port);
+ 	if (!skb) {
+-		netdev_warn_once(master->dev, "HSR: Could not send supervision frame\n");
++		netdev_warn_once(port->dev, "HSR: Could not send supervision frame\n");
+ 		return;
+ 	}
+ 
+@@ -321,11 +328,12 @@ static void send_hsr_supervision_frame(struct hsr_port *master,
+ 	hsr_stag->tlv.HSR_TLV_length = hsr->prot_version ?
+ 				sizeof(struct hsr_sup_payload) : 12;
+ 
+-	/* Payload: MacAddressA */
++	/* Payload: MacAddressA / SAN MAC from ProxyNodeTable */
+ 	hsr_sp = skb_put(skb, sizeof(struct hsr_sup_payload));
+-	ether_addr_copy(hsr_sp->macaddress_A, master->dev->dev_addr);
++	ether_addr_copy(hsr_sp->macaddress_A, addr);
+ 
+-	if (hsr->redbox) {
++	if (hsr->redbox &&
++	    hsr_is_node_in_db(&hsr->proxy_node_db, addr)) {
+ 		hsr_stlv = skb_put(skb, sizeof(struct hsr_sup_tlv));
+ 		hsr_stlv->HSR_TLV_type = PRP_TLV_REDBOX_MAC;
+ 		hsr_stlv->HSR_TLV_length = sizeof(struct hsr_sup_payload);
+@@ -340,13 +348,14 @@ static void send_hsr_supervision_frame(struct hsr_port *master,
+ 		return;
+ 	}
+ 
+-	hsr_forward_skb(skb, master);
++	hsr_forward_skb(skb, port);
+ 	spin_unlock_bh(&hsr->seqnr_lock);
+ 	return;
+ }
+ 
+ static void send_prp_supervision_frame(struct hsr_port *master,
+-				       unsigned long *interval)
++				       unsigned long *interval,
++				       const unsigned char *addr)
+ {
+ 	struct hsr_priv *hsr = master->hsr;
+ 	struct hsr_sup_payload *hsr_sp;
+@@ -396,7 +405,7 @@ static void hsr_announce(struct timer_list *t)
+ 
+ 	rcu_read_lock();
+ 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
+-	hsr->proto_ops->send_sv_frame(master, &interval);
++	hsr->proto_ops->send_sv_frame(master, &interval, master->dev->dev_addr);
+ 
+ 	if (is_admin_up(master->dev))
+ 		mod_timer(&hsr->announce_timer, jiffies + interval);
+@@ -404,6 +413,37 @@ static void hsr_announce(struct timer_list *t)
+ 	rcu_read_unlock();
+ }
+ 
++/* Announce (supervision frame) timer function for RedBox
++ */
++static void hsr_proxy_announce(struct timer_list *t)
++{
++	struct hsr_priv *hsr = from_timer(hsr, t, announce_proxy_timer);
++	struct hsr_port *interlink;
++	unsigned long interval = 0;
++	struct hsr_node *node;
++
++	rcu_read_lock();
++	/* RedBOX sends supervisory frames to HSR network with MAC addresses
++	 * of SAN nodes stored in ProxyNodeTable.
++	 */
++	interlink = hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
++	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
++		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
++			continue;
++		hsr->proto_ops->send_sv_frame(interlink, &interval,
++					      node->macaddress_A);
++	}
++
++	if (is_admin_up(interlink->dev)) {
++		if (!interval)
++			interval = msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL);
++
++		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
++	}
++
++	rcu_read_unlock();
++}
++
+ void hsr_del_ports(struct hsr_priv *hsr)
+ {
+ 	struct hsr_port *port;
+@@ -590,6 +630,7 @@ int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
+ 	timer_setup(&hsr->announce_timer, hsr_announce, 0);
+ 	timer_setup(&hsr->prune_timer, hsr_prune_nodes, 0);
+ 	timer_setup(&hsr->prune_proxy_timer, hsr_prune_proxy_nodes, 0);
++	timer_setup(&hsr->announce_proxy_timer, hsr_proxy_announce, 0);
+ 
+ 	ether_addr_copy(hsr->sup_multicast_addr, def_multicast_addr);
+ 	hsr->sup_multicast_addr[ETH_ALEN - 1] = multicast_spec;
+diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
+index 05a61b8286ec..960ef386bc3a 100644
+--- a/net/hsr/hsr_forward.c
++++ b/net/hsr/hsr_forward.c
+@@ -117,6 +117,35 @@ static bool is_supervision_frame(struct hsr_priv *hsr, struct sk_buff *skb)
+ 	return true;
+ }
+ 
++static bool is_proxy_supervision_frame(struct hsr_priv *hsr,
++				       struct sk_buff *skb)
++{
++	struct hsr_sup_payload *payload;
++	struct ethhdr *eth_hdr;
++	u16 total_length = 0;
++
++	eth_hdr = (struct ethhdr *)skb_mac_header(skb);
++
++	/* Get the HSR protocol revision. */
++	if (eth_hdr->h_proto == htons(ETH_P_HSR))
++		total_length = sizeof(struct hsrv1_ethhdr_sp);
++	else
++		total_length = sizeof(struct hsrv0_ethhdr_sp);
++
++	if (!pskb_may_pull(skb, total_length + sizeof(struct hsr_sup_payload)))
++		return false;
++
++	skb_pull(skb, total_length);
++	payload = (struct hsr_sup_payload *)skb->data;
++	skb_push(skb, total_length);
++
++	/* For RedBox (HSR-SAN) check if we have received the supervision
++	 * frame with MAC addresses from own ProxyNodeTable.
++	 */
++	return hsr_is_node_in_db(&hsr->proxy_node_db,
++				 payload->macaddress_A);
++}
++
+ static struct sk_buff *create_stripped_skb_hsr(struct sk_buff *skb_in,
+ 					       struct hsr_frame_info *frame)
+ {
+@@ -499,7 +528,8 @@ static void hsr_forward_do(struct hsr_frame_info *frame)
+ 					   frame->sequence_nr))
+ 			continue;
+ 
+-		if (frame->is_supervision && port->type == HSR_PT_MASTER) {
++		if (frame->is_supervision && port->type == HSR_PT_MASTER &&
++		    !frame->is_proxy_supervision) {
+ 			hsr_handle_sup_frame(frame);
+ 			continue;
+ 		}
+@@ -637,6 +667,9 @@ static int fill_frame_info(struct hsr_frame_info *frame,
+ 
+ 	memset(frame, 0, sizeof(*frame));
+ 	frame->is_supervision = is_supervision_frame(port->hsr, skb);
++	if (frame->is_supervision && hsr->redbox)
++		frame->is_proxy_supervision =
++			is_proxy_supervision_frame(port->hsr, skb);
+ 
+ 	n_db = &hsr->node_db;
+ 	if (port->type == HSR_PT_INTERLINK)
+@@ -688,7 +721,7 @@ void hsr_forward_skb(struct sk_buff *skb, struct hsr_port *port)
+ 	/* Gets called for ingress frames as well as egress from master port.
+ 	 * So check and increment stats for master port only here.
+ 	 */
+-	if (port->type == HSR_PT_MASTER) {
++	if (port->type == HSR_PT_MASTER || port->type == HSR_PT_INTERLINK) {
+ 		port->dev->stats.tx_packets++;
+ 		port->dev->stats.tx_bytes += skb->len;
+ 	}
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 614df9649794..73bc6f659812 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -36,6 +36,14 @@ static bool seq_nr_after(u16 a, u16 b)
+ #define seq_nr_before(a, b)		seq_nr_after((b), (a))
+ #define seq_nr_before_or_eq(a, b)	(!seq_nr_after((a), (b)))
+ 
++bool hsr_addr_is_redbox(struct hsr_priv *hsr, unsigned char *addr)
++{
++	if (!hsr->redbox || !is_valid_ether_addr(hsr->macaddress_redbox))
++		return false;
++
++	return ether_addr_equal(addr, hsr->macaddress_redbox);
++}
++
+ bool hsr_addr_is_self(struct hsr_priv *hsr, unsigned char *addr)
+ {
+ 	struct hsr_self_node *sn;
+@@ -591,6 +599,10 @@ void hsr_prune_proxy_nodes(struct timer_list *t)
+ 
+ 	spin_lock_bh(&hsr->list_lock);
+ 	list_for_each_entry_safe(node, tmp, &hsr->proxy_node_db, mac_list) {
++		/* Don't prune RedBox node. */
++		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
++			continue;
++
+ 		timestamp = node->time_in[HSR_PT_INTERLINK];
+ 
+ 		/* Prune old entries */
+diff --git a/net/hsr/hsr_framereg.h b/net/hsr/hsr_framereg.h
+index 7619e31c1d2d..993fa950d814 100644
+--- a/net/hsr/hsr_framereg.h
++++ b/net/hsr/hsr_framereg.h
+@@ -22,6 +22,7 @@ struct hsr_frame_info {
+ 	struct hsr_node *node_src;
+ 	u16 sequence_nr;
+ 	bool is_supervision;
++	bool is_proxy_supervision;
+ 	bool is_vlan;
+ 	bool is_local_dest;
+ 	bool is_local_exclusive;
+@@ -35,6 +36,7 @@ struct hsr_node *hsr_get_node(struct hsr_port *port, struct list_head *node_db,
+ 			      enum hsr_port_type rx_port);
+ void hsr_handle_sup_frame(struct hsr_frame_info *frame);
+ bool hsr_addr_is_self(struct hsr_priv *hsr, unsigned char *addr);
++bool hsr_addr_is_redbox(struct hsr_priv *hsr, unsigned char *addr);
+ 
+ void hsr_addr_subst_source(struct hsr_node *node, struct sk_buff *skb);
+ void hsr_addr_subst_dest(struct hsr_node *node_src, struct sk_buff *skb,
+diff --git a/net/hsr/hsr_main.h b/net/hsr/hsr_main.h
+index 23850b16d1ea..ab1f8d35d9dc 100644
+--- a/net/hsr/hsr_main.h
++++ b/net/hsr/hsr_main.h
+@@ -170,7 +170,8 @@ struct hsr_node;
+ 
+ struct hsr_proto_ops {
+ 	/* format and send supervision frame */
+-	void (*send_sv_frame)(struct hsr_port *port, unsigned long *interval);
++	void (*send_sv_frame)(struct hsr_port *port, unsigned long *interval,
++			      const unsigned char addr[ETH_ALEN]);
+ 	void (*handle_san_frame)(bool san, enum hsr_port_type port,
+ 				 struct hsr_node *node);
+ 	bool (*drop_frame)(struct hsr_frame_info *frame, struct hsr_port *port);
+@@ -197,6 +198,7 @@ struct hsr_priv {
+ 	struct list_head	proxy_node_db;	/* RedBox HSR proxy nodes */
+ 	struct hsr_self_node	__rcu *self_node;	/* MACs of slaves */
+ 	struct timer_list	announce_timer;	/* Supervision frame dispatch */
++	struct timer_list	announce_proxy_timer;
+ 	struct timer_list	prune_timer;
+ 	struct timer_list	prune_proxy_timer;
+ 	int announce_count;
+diff --git a/net/hsr/hsr_netlink.c b/net/hsr/hsr_netlink.c
+index 898f18c6da53..f6ff0b61e08a 100644
+--- a/net/hsr/hsr_netlink.c
++++ b/net/hsr/hsr_netlink.c
+@@ -131,6 +131,7 @@ static void hsr_dellink(struct net_device *dev, struct list_head *head)
+ 	del_timer_sync(&hsr->prune_timer);
+ 	del_timer_sync(&hsr->prune_proxy_timer);
+ 	del_timer_sync(&hsr->announce_timer);
++	timer_delete_sync(&hsr->announce_proxy_timer);
+ 
+ 	hsr_debugfs_term(hsr);
+ 	hsr_del_ports(hsr);
+-- 
+2.20.1
 
 
