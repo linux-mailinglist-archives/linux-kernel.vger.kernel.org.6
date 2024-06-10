@@ -1,134 +1,186 @@
-Return-Path: <linux-kernel+bounces-209071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8265D902C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD81902CA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B960CB2227A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2717DB22A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5274915278A;
-	Mon, 10 Jun 2024 23:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5DF152782;
+	Mon, 10 Jun 2024 23:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WmVwVdni"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RHeTcGX2"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8A415250D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C23BB48;
+	Mon, 10 Jun 2024 23:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718063553; cv=none; b=plwI/V3TdZCTdvVzDdqWMFyV6A4pz8w/6lpWyfeh97ZETwYPhxLKiQJktj+N5WLnFaN3I37enO6g1ewjZ8KMLgkCUP3ZI/PiZc6QmPohoKL4K6OznXGI0my7h7ENef4ekiBNoWO3PoCWC8HO9QUuS6JFzS2VwVZis5IYkTrr2eo=
+	t=1718063691; cv=none; b=KVqOUt9mkVBCVKp3e3Hf4JtoqYMMp7W9WbMwec1iVZalk5LfR9mg0gcX47RkRCsiEmEH48O1WjcG+LU8BCgCP2aMjHkodpuG3JsX/kepTSv8lyDrkCm6ep1VKl9iO5cRfKjFM66C0qS3aNmW/fxI/CODdMKKmkplEOl6XNtvzmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718063553; c=relaxed/simple;
-	bh=yhoEmJg27/Tq8Hg3TZJQhkLMO/opRq6IHsJgd01KjZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qlv1WEPkySDg6iFXFZRv2wjqIH6yXOt+crS88oaIV2b7xwmbvwIa/ZbyT7C74DebwmXB76UL5qpjnJn0kn9G+4hlE7NXWvTyxF9t9PBvzSNsKR8tqERMVW9GfqSDn5UHCP9PUG8842PV1e30Rm+Czh/63ZdQ8t5JMJ7C9SryDeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WmVwVdni; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-797a7f9b52eso59138785a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718063549; x=1718668349; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yI7oeA4ugo7i1lcCgMOoLmqHrdLmEsXBFh/0GoJ3ACI=;
-        b=WmVwVdnipZpHlvS7riXFMqBE6Do2jNis2xcyFz+ruKmYrUhpbha0UW+alxhvxLE+o4
-         jircyJS0iN9SBtxld55r3L1N0cyjOweNb01Ipj6H4kxMglh3wzVHrDxw3A/w+9ZRTf9k
-         2GpGXlVXq9cq/of1jFmW4i7rk69dz0+4GmtQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718063549; x=1718668349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yI7oeA4ugo7i1lcCgMOoLmqHrdLmEsXBFh/0GoJ3ACI=;
-        b=nufGwRvtuq25qa2W7N7ECTjAhN0XmDzyrc7y0WmD96UmM56G6Me7cnxgG2YcU2pDdk
-         oNswNT9cG5f5jXD+KLbwS4dlet2A2PXIAxhV/uLT8/puH1418FSd6A1Mz75V6+Dp8qsK
-         DEI7xiAjSO3DRiog2RL5CqrMuDAmFA5xeH46Ic1s2POV5BPW8aS166TaXeSvaP3LZwmz
-         rIdLWgzhkQBWJV3rK3FplKUTHwAI/+73tZbHhzaR8Fauydc/UbZCYaD0cO9f8oyWTnnU
-         1IPBj38tiEhqMnDrfzKg98KrVOIu+J68t3gnSQcCDDl2IjAHWhetWHwXmpxKcb+T66z6
-         f5sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOIm7m0yLh9hJDKzvTLmoFwdhyrpWnI4+VVl6KSpY0E21WGQA4VOq0bqB2ySCi0h/93gGj9Dtmc/oO1BdYAsLdgYXhEprNkKi6nngP
-X-Gm-Message-State: AOJu0Yy2qtZDaSkLJnLTCoulh5gTv12Havjvi8KZfNXj/0akpHefb+Fc
-	wTbHe+ztrKwFysikMspIDSaNJ3rEg/Ur2uYilOwtuIlXQoiWjF7yb3tiY3Fv6Z9DyjvNNYKmwWY
-	=
-X-Google-Smtp-Source: AGHT+IHxVv0x1UMOvwTKijUlRoxRJxmPR0tmkcqEdOm2Potej0OQJ6GQoeT+MkfvMnnr7a+Ei9rkiQ==
-X-Received: by 2002:a05:6214:5681:b0:6b0:73c1:bcd3 with SMTP id 6a1803df08f44-6b073c1be45mr80548606d6.4.1718063548633;
-        Mon, 10 Jun 2024 16:52:28 -0700 (PDT)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06ae2266bsm30391896d6.3.2024.06.10.16.52.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 16:52:28 -0700 (PDT)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44056f72257so140781cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:52:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVBJaai3NOIdae+t14TL6jXjPVLa85i1a+/chXYwpGZ4T85aWp56nhWtGunYyHUy3qMEAGiqnLhssre9lpHbZKFzmAOX14F5MjaFno
-X-Received: by 2002:a05:622a:5b09:b0:441:4920:1fc4 with SMTP id
- d75a77b69052e-44149202169mr577491cf.28.1718063547155; Mon, 10 Jun 2024
- 16:52:27 -0700 (PDT)
+	s=arc-20240116; t=1718063691; c=relaxed/simple;
+	bh=7108FfqKDS2AoueEaQoE2SvY/tEoGg1AWLOfJWgP2o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTZtKbkT1RPzV6is+jWjw6rIn+/osXYErrb7rhhQAdIqZPLlSwSqI2Qu0y+jm3gTZMyOaJQTiZooMsz0gly8WmOpWhd1YnRsYrycfC+yit9TCB1ACptzXSfSly0DBCV5juw6Cf9iydrM4pArHnMt6h4264HMIPkNm1Gd620wDKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RHeTcGX2; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1C91329A;
+	Tue, 11 Jun 2024 01:54:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718063675;
+	bh=7108FfqKDS2AoueEaQoE2SvY/tEoGg1AWLOfJWgP2o8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RHeTcGX2fWDOd8ZPvYpR+Eiskko+q00VB/BYDyvThkE31xfchmhOWkJwbTLhFCCIt
+	 U28eGIlDGwyyNWpkw41Msz4aSluDcoJnh6Qmz1XIxIu2RHiTguyKC4zjxpbrz14D+A
+	 O2dbpO67j2iatUq2K/eUwRDw3dVV4565RsFBvNQc=
+Date: Tue, 11 Jun 2024 02:54:27 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Christopher Obbard <chris.obbard@collabora.com>
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: imx8mp-debix-model-a: Enable HDMI
+ output
+Message-ID: <20240610235427.GD31989@pendragon.ideasonboard.com>
+References: <20240610234307.96766-1-chris.obbard@collabora.com>
+ <20240610234307.96766-2-chris.obbard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517170246.1.Ia769fe5fbeaa6aca2edfb01b82eb7df0c6955459@changeid>
-In-Reply-To: <20240517170246.1.Ia769fe5fbeaa6aca2edfb01b82eb7df0c6955459@changeid>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 10 Jun 2024 16:52:10 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wd4UdjGdFODGCa4acviQG2V_YuM9J8oxi8A--ZmseNUA@mail.gmail.com>
-Message-ID: <CAD=FV=Wd4UdjGdFODGCa4acviQG2V_YuM9J8oxi8A--ZmseNUA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: qca: If memdump doesn't work, re-enable IBS
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Stephen Boyd <swboyd@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Sai Teja Aluvala <quic_saluvala@quicinc.com>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240610234307.96766-2-chris.obbard@collabora.com>
 
-Hi,
+Hi Chris,
 
-On Fri, May 17, 2024 at 5:03=E2=80=AFPM Douglas Anderson <dianders@chromium=
-.org> wrote:
->
-> On systems in the field, we are seeing this sometimes in the kernel logs:
->   Bluetooth: qca_controller_memdump() hci0: hci_devcd_init Return:-95
->
-> This means that _something_ decided that it wanted to get a memdump
-> but then hci_devcd_init() returned -EOPNOTSUPP (AKA -95).
->
-> The cleanup code in qca_controller_memdump() when we get back an error
-> from hci_devcd_init() undoes most things but forgets to clear
-> QCA_IBS_DISABLED. One side effect of this is that, during the next
-> suspend, qca_suspend() will always get a timeout.
->
-> Let's fix it so that we clear the bit.
->
-> Fixes: 06d3fdfcdf5c ("Bluetooth: hci_qca: Add qcom devcoredump support")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Thank you for the patch.
+
+On Tue, Jun 11, 2024 at 12:42:38AM +0100, Christopher Obbard wrote:
+> Enable the HDMI output on the Debix Model A SBC, using the HDMI encoder
+> present in the i.MX8MP SoC.
+> 
+> This has been tested with a generic 1080p HDMI display, along with a
+> smaller 1280x800 HDMI display.
+> 
+> Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
+
+I've been running with this patch in my tree for a while,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Shawn, could you merge this for v6.11 ?
+
 > ---
-> I'm nowhere near an expert on this code so please give extra eyes on
-> this patch. I also have no idea how to reproduce the problem nor even
-> how to trigger a memdump to test it. I'd love any advice that folks
-> could give. ;-)
->
->  drivers/bluetooth/hci_qca.c | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> Changes in v2:
+> - Do not set SION (Software Input ON) bit in pinmux pin config register.
+> - Small changes to commit log/cover letter.
+> - v1: https://lore.kernel.org/linux-arm-kernel/20240415114135.25473-1-chris.obbard@collabora.com/
+> 
+>  .../dts/freescale/imx8mp-debix-model-a.dts    | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts b/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
+> index 9b8f97a84e61..af02af9e5334 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
+> @@ -20,6 +20,18 @@ chosen {
+>  		stdout-path = &uart2;
+>  	};
+>  
+> +	hdmi-connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi_tx_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+>  		pinctrl-names = "default";
+> @@ -94,6 +106,28 @@ ethphy0: ethernet-phy@0 { /* RTL8211E */
+>  	};
+>  };
+>  
+> +&hdmi_pvi {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_tx {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hdmi>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			hdmi_tx_out: endpoint {
+> +				remote-endpoint = <&hdmi_connector_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmi_tx_phy {
+> +	status = "okay";
+> +};
+> +
+>  &i2c1 {
+>  	clock-frequency = <400000>;
+>  	pinctrl-names = "default";
+> @@ -239,6 +273,10 @@ &i2c6 {
+>  	status = "okay";
+>  };
+>  
+> +&lcdif3 {
+> +	status = "okay";
+> +};
+> +
+>  &snvs_pwrkey {
+>  	status = "okay";
+>  };
+> @@ -356,6 +394,15 @@ MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16				0x19
+>  		>;
+>  	};
+>  
+> +	pinctrl_hdmi: hdmigrp {
+> +		fsl,pins = <
+> +			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL			0x1c3
+> +			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA			0x1c3
+> +			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD				0x19
+> +			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC				0x19
+> +		>;
+> +	};
+> +
+>  	pinctrl_i2c1: i2c1grp {
+>  		fsl,pins = <
+>  			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL					0x400001c2
 
-Totally fine if you just need more time, but I wanted to follow up and
-check to see if there is anything you need me to do to help move this
-patch forward. If not, I'll snooze this patch and check up on it again
-sometime around the end of July.
+-- 
+Regards,
 
-
-Thanks!
-
--Doug
+Laurent Pinchart
 
