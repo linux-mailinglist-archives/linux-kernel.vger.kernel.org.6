@@ -1,135 +1,92 @@
-Return-Path: <linux-kernel+bounces-207741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8FC901B53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:34:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68255901B5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBB76B23A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CEF281542
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28A208B0;
-	Mon, 10 Jun 2024 06:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEamhiTa"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321B1C6AF;
+	Mon, 10 Jun 2024 06:41:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F64E628
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BAB11725
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718001207; cv=none; b=l1HOoRj4CM32Wm94xatQ9ahOUQNokXScq4jg/mKQR8dSq+nlmd5LlYilXLumm0Q11U3cnrNuyawmJTRuLHXlpP6zYO4RbKzXU6o++QEyEjo+YBpjfkvWgVy2ArK3j1oHHpK4Vz+ACvxFRmnoO6ntcOi8WjI4ETLLGIlrUhnYqZI=
+	t=1718001665; cv=none; b=eGcJDaLt9vZ+eM7yWMKdOXemOTozMyx56UrCUa9JZmSkmSgCHwr1iSV24ff1B73czTI/+VKG3WjXKlo8uZQ/nJGKHyrjthrlT8KIs7EqiSqVN6hI/oeWp/AbZfkrUysi1c0H7KDOX+JomLZEdeqpzJ1P/KkybEtr5FGVGJZgOhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718001207; c=relaxed/simple;
-	bh=3GEEKaNRr4/oruHtaq3+7nIuJ2iAjEYceDiAt+oneM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cpegnbpr0rZqyZpq0MhjKn+PASbCaSkYxdyLFH+m7ceOpB9SPB01T3NKHBcTb4P0eP9MNTWHmuKLRX84LJWabu8K1/imVtBDmlkInnvx6MllI0EERq2e8SYFCTRA6A3D4hD/jBqZw8WxPthCVue29mDg/BTAN4ItFidIc1480Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEamhiTa; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so35072255e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718001204; x=1718606004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gK6zqTgKpjlACg4h6HavLGiLDLBpp/UYAUaHXrcTgs=;
-        b=EEamhiTagPFDS+1bisWHhNaToQxgVJqFNDomud43LYa/dRBMIw3T527JVtYO0RwUBF
-         G3EyDE2Hspvnn4jvfcYXGWG066WFfM5ADbQ4FvHh7c4A1VbsVpPEcg3vGNeDoc36xu2q
-         4GhwK7Lipco5YUBP3aemcv9fxtsdN9EdLVaFWTbPbvWCreYpU3ZgSEGq+UyBnzVDReK9
-         gfH1biiQXPYZfqfrdjkzoEeY1NVKOphgaQXi7v2bf/9W0P5hJDNqoK4Y5arBonF/uQZp
-         kst9w5No6NZ4ckcBfbPq5sECZyNjPpMSQ5Nedd9t8S1M8SLEKzmZx4ji3DiZ6k0cXD9W
-         vXkw==
+	s=arc-20240116; t=1718001665; c=relaxed/simple;
+	bh=98ieg/cde//OTWMmliLOuelMNzAd4GX0SgVonSrQHeQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cunbFiG8lF77qA5A3q9TyYM/QJHSvprOZfCv+WBcId2f2Nszohqvx+XftbIkqXVdD6Qa/fZxC1x7XyXIuu+SY1toqlLvTknrwD6pThEZO5qJ+sBTajlprbTDjWHisPeyrk5NElhVTjl0wihG0hpbqs7Q3kkJHuPM1ps45XmGON4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso122291239f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:41:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718001204; x=1718606004;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9gK6zqTgKpjlACg4h6HavLGiLDLBpp/UYAUaHXrcTgs=;
-        b=mxR49CAcx3hMwNs4hDjkwhRWtXGTaQ1zUkpe+8n9/LrEOUKx0cVYYlE1mz+grV5zAw
-         8uaWiIp8qnir+xeKXLuYnPvQdxML5WfHpTQg9RG+aUjY86XbViYwAkTjVk0j7T0kYAfU
-         6cckaqZII/1zxSi834r/1tWnoX7odhtBCyXG6/n1tY+wi1PhtTPxmbF5ErO6Q1ns+moN
-         g7wIfR+Dg9ejOw7WXX59Six20ENX7b8vcr0fuLGyqOWRYc37tjgn1cUXJkpCvAdLhTb3
-         llG8YSrEmw5w2jsiTTICDvSOh5AT1ePmpfJzeFpoZzIszrMjbhU1QQN9QQKQUdRIsY5i
-         lWMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAmonBAsLIJpYB1j3BMqxq9LrohoAQ3zwcsHiwBTbIUFgrCrAdDVGpqYxKCUedJJy/yxxF+FOd7RzVYtOOGp7amVzZ/S+weUKDhoBy
-X-Gm-Message-State: AOJu0YzcXe63rmFwXl4Eb3kBxezMMcnl3hOzLx2w49C2uWQTBInCUTS8
-	9pynqiIkJdZ24/xyIsKfKCPc8TcMiSlBC2jCxG4uSzKQ441l+BMN
-X-Google-Smtp-Source: AGHT+IE4PgCLDptw5Ma68CssX1LOhrsjIOV7PZMFDb+09RpgYoNOthdv8HAHnHZSj2IKK550s9peLA==
-X-Received: by 2002:a05:600c:154a:b0:421:7e88:821 with SMTP id 5b1f17b1804b1-4217e883770mr30775375e9.32.1718001203532;
-        Sun, 09 Jun 2024 23:33:23 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421e91c47b4sm15246425e9.35.2024.06.09.23.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 23:33:23 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: [PATCH RESEND -tip] x86/percpu: Fix "multiple identical address spaces specified for type" clang warning
-Date: Mon, 10 Jun 2024 08:32:52 +0200
-Message-ID: <20240610063310.4498-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1718001663; x=1718606463;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uQsBqkk32ikBJNFCWFdQbHJ972MB7cWh+PL5hVVVQwo=;
+        b=MfWnbqITYHPyu+pO+XeQChruJ4PFRBrWVmRYv3r1cihifaTitmzItp5thiMlvXLcXn
+         K0CfHl52l5YP6UXEdqEsxqS54tk162SmcmAXznlBva/zg4k8f9v8OjEQavUFnF/fh1g1
+         x6088tOPoWv3GW35hJkSfddUr3ciCkx4JI1uZMhbIUxIrxLold4JOxLU3IG9hyFh1iJZ
+         pf/TbrI4IVI4AUFX1be+LIlCRGXZASrJWytvNO3CkY9rU0l1TeQ4fTJyC3E9lO7LMvm1
+         Ansjc2CCNYwy76sQjm0O3OvCizZ5/A+W2hlJhZymOBzT+3wCWCh8SlxWiMgGrGzkSGrr
+         vg3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrLzuurWn02bwLdW2fL2M9r8VPEgbwPL3mGPvuud2fJdGOqyfKE8mNjXCYrJabXgm9cGDphH/rBoT1BiXLHb+0DkEChMMSh3uv4Ony
+X-Gm-Message-State: AOJu0YxplQhO1s7RhRjIaPwdhgPtPe/D+vWB/8iWEIstV8ClXXmyNc9o
+	ufDJoD/lBBSWbn9PBQZ1Ae6n1W6/dhn2maUdTzVmVZXJ6AtzEFAaFbFOwiaKz8ub1pPXigQRVTe
+	L8PJr9XkNjESbqRS66ZVlEYYoFzvulz1IJT7JBMj5ZwVxhnFxjfSHYc8=
+X-Google-Smtp-Source: AGHT+IFkNdIwSPeERkP6c3etIHOS/lMPBlpCPwSSt9/oGMTtFUpU5IGfqAqpJUspbuH+/XwJ41jkOcor7hXs3bJkm5Krjk3AGG/E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b23:b0:374:9c67:1dea with SMTP id
+ e9e14a558f8ab-375804362c3mr4249895ab.5.1718001663484; Sun, 09 Jun 2024
+ 23:41:03 -0700 (PDT)
+Date: Sun, 09 Jun 2024 23:41:03 -0700
+In-Reply-To: <000000000000e5738d05f0f46309@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e034e7061a836eb4@google.com>
+Subject: Re: [syzbot] [mm?] INFO: task hung in __unmap_and_move (4)
+From: syzbot <syzbot+b7ad168b779385f8cd58@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, hdanton@sina.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, liushixin2@huawei.com, syzkaller-bugs@googlegroups.com, 
+	tujinjiang@huawei.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-The clang build with named address spaces enabled currently fails with:
+syzbot suspects this issue was fixed by commit:
 
-error: multiple identical address spaces specified for type [-Werror,-Wduplicate-decl-specifier]
+commit 0fd44ab213bcfb26c47eedaa0985e4b5dbf0a494
+Author: Liu Shixin <liushixin2@huawei.com>
+Date:   Fri Mar 22 09:35:54 2024 +0000
 
-The warning is emitted when accessing const_pcpu_hot structure,
-which is already declared in __seg_gs named address space.
+    mm/readahead: break read-ahead loop if filemap_add_folio return -ENOMEM
 
-Use specialized accessor for __raw_cpu_read_const() instead, avoiding
-redeclaring __seg_gs named address space via __raw_cpu_read().
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fabe96980000
+start commit:   72a85e2b0a1e Merge tag 'spi-fix-v6.2-rc1' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4db06888b17328d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7ad168b779385f8cd58
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143d0688480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154e3cac480000
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Acked-by: Nathan Chancellor <nathan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Bill Wendling <morbo@google.com>
-Cc: Justin Stitt <justinstitt@google.com>
----
- arch/x86/include/asm/percpu.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+If the result looks correct, please mark the issue as fixed by replying with:
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index c55a79d5feae..aeea5c8a17de 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -160,7 +160,10 @@ do {									\
- 	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp)) = (val);	\
- } while (0)
- 
--#define __raw_cpu_read_const(pcp)	__raw_cpu_read(, , pcp)
-+#define __raw_cpu_read_const(pcp)					\
-+({									\
-+	*(typeof(pcp) *)(__force uintptr_t)(&(pcp));			\
-+})
- 
- #else /* !CONFIG_USE_X86_SEG_SUPPORT: */
- 
--- 
-2.45.2
+#syz fix: mm/readahead: break read-ahead loop if filemap_add_folio return -ENOMEM
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
