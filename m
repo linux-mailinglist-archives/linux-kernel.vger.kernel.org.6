@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-208156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F6E9021A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DF19021A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5699A1C20BCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD7228469A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E68004A;
-	Mon, 10 Jun 2024 12:29:49 +0000 (UTC)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D8880C02;
+	Mon, 10 Jun 2024 12:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNbrZeyx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906E97E767;
-	Mon, 10 Jun 2024 12:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B8780023;
+	Mon, 10 Jun 2024 12:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718022589; cv=none; b=ngw5RDXLZugvKD5fca63PptDvhcMi66veR1Ey8ElkCTjQTwPSb9QZL2RtcOam9h9B5G1LX2VDYem5fSsxCr8/n8YBzp4rv3e05vGQtD5A+ICGKPb0gYYJ5qb7jij5HT+xyRiagrz7JC/j8WH9Ot/0u4A3u1WKf7Enm6agDIVzFs=
+	t=1718022606; cv=none; b=HO4cxztqAc4SQr94eI541JiSYc6PgmRZlQH/QifL7ZRpIpZGSwf+UhWm+KkMjBgj8Mxl9mJo4TmpQVnUiQRYfxjrr+qYZt4/ONjG/+zK/QoPnOo0/UQydn+6Rk5fuGwRq6IE63JE9qfn/pqudAHJXk8lr7DO64yrBo/jEhAfC1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718022589; c=relaxed/simple;
-	bh=VIqDUZJagne6zz+2zSLweAY3KkWozkQKO/O688GBJLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bscEzQY+7EokYcyPRF2gyvfsQIZWXHVx7paMWxS7HBnUXFOsbQrs1khZS0JmO97033+nCnQqbHI8KsDex52YZ7YZftOt8R0fsSVfXCYlZzoJaivpStfRgBPXTWDtd8xExMySbUBgRbJL+C5Zk8vpjiJJCK24xhJ+ZL5pcPvpKCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso4726712276.3;
-        Mon, 10 Jun 2024 05:29:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718022584; x=1718627384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G0B9aDmcWue3KnNlLkfet4LKN9uGSsJqdVbpd70/2GI=;
-        b=Xz8daYen5gZXJBi/zChs5BNd+kAnu5oo9CGiPYAuDNlxW/APEY45A21wZ/i10LjYbh
-         by48eJCaGPib5lvOidVrbQUiUdT4DUi0lf30oRo7fhDg5MpI0Yb9cezFH3T23foo3pZe
-         D/1cOgO/0ZfdQSNhZc/8+T0c1i/wF7apHv2BwGWBj3TFYV9DRGw3insJ2wpbewfFXAho
-         lL9kQosC3stLJCCsrGajNDg8xrDTuYx5F86uC4JtXEVFPbLrPKbAFsv7BOA0KwE8wW17
-         dLG0lW73AgBoZmYoimUV39AuRVB10NxtoyC1OVQO6f+SGEHjD8V9BR/rg3jZ+N9Gmdmv
-         qSvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5CrLnMZSDpveZX30ZljwlVgnJa0pvi9Bou5r//upKw91BrlX7oZb72t4HcELgcufDENfYqemP/2rEgWifIwboQ3GV8KdC3jvL/YiPSOvusfUqd+D5bPGdZrtbA1gKOTdPSLVVePILzNgNq71Aum0=
-X-Gm-Message-State: AOJu0YztQsIB7NW8TKTJQjVXeIfLJlx9sUHWMHQRHADyl1r+ynJ3iihm
-	hAq6ZjhsnrHZv/5RvyKmAtRsy558aDo1p8aQswNO5HIMiq4+Q2NOAMTgfoXQ
-X-Google-Smtp-Source: AGHT+IGAqFtQ9rXh0+V2oTzRdbhH914JMzDzpxBkDSy5SrUE/wgKIBXF+D77w//qWLMJnrD+/gnKfg==
-X-Received: by 2002:a25:ae44:0:b0:de5:a13d:92a1 with SMTP id 3f1490d57ef6-dfaf6532148mr9163409276.27.1718022584441;
-        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae515a8f6sm1612730276.0.2024.06.10.05.29.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a0849f5a8so42271277b3.2;
-        Mon, 10 Jun 2024 05:29:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6bdksejr/jrS8sKevU6QLCC39OsVB5pcCcCc8rT0wTR/IuA7wXHrx6gPyxMiOlFX8cVAoi0lIeABvvpPwQ4/DYLax7Tzk23Vc7ZftbJjsgGL6zqlsJsMekD5IZx817TZEjHMoaTw4RDwQmzm5f40=
-X-Received: by 2002:a81:b1c9:0:b0:622:f7ef:7bc4 with SMTP id
- 00721157ae682-62cd55f6e71mr87651227b3.31.1718022583526; Mon, 10 Jun 2024
- 05:29:43 -0700 (PDT)
+	s=arc-20240116; t=1718022606; c=relaxed/simple;
+	bh=wXWzKQNVmmoknWUuxl5TpIguOxzloEaxf0SrpN6DQ50=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NhRvAypBMOMSnvCNSKOFJn33FzRHT3FKJLEqE28RnC18a4mnIjrOIr84lKAnis7tq0ggdfE+PKaBJUuM7oHj6dyxhnl7GidoCeYL2K3K8eFfMrvcvc6+GsXzwJCUenD5J5EHHvGPR+zLT0GUDs0bDAH+d77lyLNYG3GXtymreBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNbrZeyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89951C2BBFC;
+	Mon, 10 Jun 2024 12:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718022605;
+	bh=wXWzKQNVmmoknWUuxl5TpIguOxzloEaxf0SrpN6DQ50=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=FNbrZeyxJjw3h2m1C/E86shrnvRv1IW5oyAmmeWnus0p2qpTaY+bQhmh68VRaEGxz
+	 xSn2H0bHfdCEqXMOk8PU51kEJTnLdWnZf7dAG96XfuR/awJcFe1VclLYpH8wcM25ME
+	 +MXEUbpN3FeLFAGcpG5nJnbRK2xsb7vNv0r5WYEMASbr23hPNzjORNbAP4lIOnJ8Ua
+	 aw50UmjMsyz79jIp5Tmyuwh89SF/dzvUO8lWNYmumWpvJuqq/RPuWivsW04jyoc+tk
+	 wOKDlBB9Qs9Cj+Z813j94Dk5FKgC5nNG6X2CUQLSg/O6Ea+cn2tCP+DhHnuG6ELk/J
+	 aBWnUPcw9nTCQ==
+Message-ID: <8901d498-d30a-43db-bda2-25d3d1d58e8d@kernel.org>
+Date: Mon, 10 Jun 2024 14:29:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605153708.613610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240605153708.613610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Jun 2024 14:29:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX=w6OokwpexaSeJABWXtwG1VDOZEBQE1UP5pQ3gbj+dg@mail.gmail.com>
-Message-ID: <CAMuHMdX=w6OokwpexaSeJABWXtwG1VDOZEBQE1UP5pQ3gbj+dg@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH] reset: Add devm_reset_control_deassert helper
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ robh@kernel.org, ulf.hansson@linaro.org
+References: <20240605185046.1057877-1-Frank.Li@nxp.com>
+ <b1c51acc-441d-4484-adef-1da368571097@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b1c51acc-441d-4484-adef-1da368571097@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 5, 2024 at 5:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> A typical code pattern for reset_control_deassert() call is to call it in
-> the _probe function and to call reset_control_assert() both from _probe
-> error path and from _remove function.
->
-> Add helper function to replace this bolierplate piece of code. Calling
-> devm_reset_control_deassert() removes the need for calling
-> reset_control_assert() both in the probe()'s error path and in the
-> remove() function.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 06/06/2024 08:44, Krzysztof Kozlowski wrote:
+> On 05/06/2024 20:50, Frank Li wrote:
+>> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
+>>
+>> Addtional change during convert:
+>> - Deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
+>> - Add "reg" and "interrupts" property.
+>> - Change example "sdhci@2e000" to "mmc@2e000".
+>> - Compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
+>> most existed dts file.
+>> - Set clock-frequency to 100mhz in example.
+>>
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Or not... are you sure that DTS validates? Did you test it? kbuild has a
+bit different opinion.
 
-Gr{oetje,eeting}s,
+Best regards,
+Krzysztof
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
