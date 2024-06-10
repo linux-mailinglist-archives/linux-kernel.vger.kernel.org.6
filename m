@@ -1,101 +1,168 @@
-Return-Path: <linux-kernel+bounces-207649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6E5901A32
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:27:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A31901A39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1CF1C20E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:27:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E74B2145B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40654F9F5;
-	Mon, 10 Jun 2024 05:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PpmVAcZQ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9478101E2;
+	Mon, 10 Jun 2024 05:39:29 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35941A935;
-	Mon, 10 Jun 2024 05:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9497AD53
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717997270; cv=none; b=skGPEdpxYYg71XPVlcgqO0yUFKIgclKu9AQW0WrlYRmkE3Xrls6cmC5WMEVHCT66eEEkH8i/yhV2Vw7nlPJokX7rSqvbp8G0fXHHAUaQSQKSO/8SF3XJKIdeWH2VknfDYCkaC5V1YcaRMFLYsBb5wzoEJjRDNPOB9c+lJqxplmQ=
+	t=1717997969; cv=none; b=OvqC+OKIyCNqnCEPjkQJBussA1lCszQ2RA3/i5obkg7/BRmNnOoBtgG2f72adcoAiGxxHnnImgZIVWRWELnqjdNKBg/RfRLkKewXwbCfvKf7FvjKZ4AUOYhJBqvr6/UhYhr6nwFFUW/YHorguWuc0YJtILvfcPtU2DIMa+1glWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717997270; c=relaxed/simple;
-	bh=Q5CPkw7W5Qs1+jCVle///FndTMVAPqB2MwLBM/VCMgA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rRVHmWb5o6z2TXKssgkJJMdGg7CdpX2Qqyps6TONhDoudyC5Y3dCmcrjEdkjN0wsPL8NKRUbmyeNdh1aAwmdJsn6W6a83R5SIVo1fAyEAffQt9FXU/c5gJ1OWyKYaRrtOAFQLEgXS1A0iGl/jQqb0sQhRS64K3DXotutxxJK7iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PpmVAcZQ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717997267;
-	bh=Q5CPkw7W5Qs1+jCVle///FndTMVAPqB2MwLBM/VCMgA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PpmVAcZQe5LjjEdKjqwh4bVflJNL3csSYsBxjMTOI9VVQOGdSC5IWQsVVp0tspWPh
-	 bu3h8nN0pdw5aYuO2Ruvff5xf0k996kCy0DMwzG0zY51EQ3tO2AX6MJ1TbYiSuiqJ/
-	 +MgfCa8AXvgNbiE1wGxSUOs+AEC7ipp3Ul0sj8js0PO156cskeJ9dRRPZs5cdlRx9L
-	 aAtyOCVQEiw333lAPS26iHiL7q7BL0JdukcmRqsWN1DErgnhkJjEPSIsybdyhNHNuv
-	 vh0KDsWJR6eJ6RAFKVfM2dLLZ515oOMkNK0W0K/lszuUdM1qwC8WOsBidjQSZ3jxPp
-	 MKTFV5xdg9vsQ==
-Received: from deb.www.tendawifi.com (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ED2303782009;
-	Mon, 10 Jun 2024 05:27:44 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: skhan@linuxfoundation.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH] MAINTAINERS: Add selftests/x86 entry
-Date: Mon, 10 Jun 2024 10:28:10 +0500
-Message-Id: <20240610052810.1488793-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717997969; c=relaxed/simple;
+	bh=Maw+9jceAd4vds85zeu6HMJdkGcTrBHkzihWaBcDoqw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QkKt4lvF9Vbam5s0RALij550QFzrT/c+ubabUtFzD/khy7bF/5PYQVxW3cnX9S98dIMaVf8L6xD53/3expAfIWo74b9zXeattufBNhKzY7Hck2HGpU2QdXlrXB5jdrXgbjZgV5qPtJMC2OTdcpMtoGhp7d08vt4cHT2FDMzW78M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-375a1dbdd4dso7939975ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 22:39:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717997967; x=1718602767;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eurAxd79nImOWAEqQAoNdKFqjO092AUxG6aiQcVx56w=;
+        b=RGu8sSDHn4pp1iJLPHf2DfDxaK6JnFSZshuEu9EH07qZHUmK28ddhPlNIbF95za7cY
+         P47ohunJrUChvm8RBNziOddO63/zZiUEpOwgcboTirTohyfrIxqLAfw4oFoRVkOsHWrA
+         I1T4D7PZhEjIzyXZwPVE9xxgfuM26B+u3coyfWRsYwdbwjiivlni4Jn1dn8/ujWT+kbu
+         1hVfPCimw/+3SEBIRLVy8MRqZyJsWW1SOLLu065GlYw8Cj2FYa/TtqmXy4L1SpSx+2BG
+         L35BQiD9yKMc7MfAxR+TwJmTQLB3euo+UfAHcqYvgJEF+oynY7YkmIwhXzgUZQZN4d5w
+         fzHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRRH3YYYmR2SWRZ3SjORovVE3xD/wbRueghCQLUBfoTMsLvMnXdcaTbDGfQCI6SyEtDToPfO5eEubCdwXpufs2EEO8KV4OmDGIcQEQ
+X-Gm-Message-State: AOJu0YypoWAklHOBcaEo9LBcrqvKuu2SAXYKQUikk6h9IjAlQdITBu6v
+	eSbRx490IAgD07G0rjrsy74jHRxtKY56i6/t9nWeRLGXCmHNXixjgYmaLKG/WIH7ylHpjYkfB2U
+	4kzVHopPbHaY/sbnWNj6AAmIWW0TvRNkQ4v6w4CdBmx0B6r5vsam8xnE=
+X-Google-Smtp-Source: AGHT+IEYYv/lxvs7/13ZwZYQkwTpSEMUvuVmiXV5zT+xK1Aei3T7m0ckIeAIFMrWQ7rXqU7w9Y3rHTAiYhWxuRXOebhv6ouF8AVb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1fc9:b0:374:a840:e5be with SMTP id
+ e9e14a558f8ab-375802379b1mr4857795ab.0.1717997966838; Sun, 09 Jun 2024
+ 22:39:26 -0700 (PDT)
+Date: Sun, 09 Jun 2024 22:39:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000089ded8061a829247@google.com>
+Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
+ bch2_bkey_format_invalid (2)
+From: syzbot <syzbot+e5292b50f1957164a4b6@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-There are no maintainers specified for tools/testing/selftests/x86.
-Shuah has mentioned [1] that the patches should go through x86 tree or
-in special cases directly to Shuah's tree after getting ack-ed from x86
-maintainers. Different people have been confused when sending patches as
-correct maintainers aren't found by get_maintainer.pl script. Fix
-this by adding entry to MAINTAINERS file.
+Hello,
 
-[1] https://lore.kernel.org/all/90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org
+syzbot found the following issue on:
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=13fc4362980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
+dashboard link: https://syzkaller.appspot.com/bug?extid=e5292b50f1957164a4b6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a262ce980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15dc0cba980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/662edb25db9f/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e5292b50f1957164a4b6@syzkaller.appspotmail.com
+
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=ro,metadata_checksum=none,data_checksum=xxhash,compression=zstd,nojournal_transaction_names,read_only
+bcachefs (loop0): recovering from clean shutdown, journal seq 10
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/bkey.c:664:22
+shift exponent 64 is too large for 64-bit type 'unsigned long long'
+CPU: 0 PID: 6246 Comm: syz-executor702 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:468
+ bch2_bkey_format_invalid+0x6a0/0x6e0 fs/bcachefs/bkey.c:664
+ validate_bset+0x10ec/0x1d24 fs/bcachefs/btree_io.c:822
+ bch2_btree_node_read_done+0x16f0/0x4ac8 fs/bcachefs/btree_io.c:1140
+ btree_node_read_work+0x50c/0xe04 fs/bcachefs/btree_io.c:1345
+ bch2_btree_node_read+0x1f4c/0x2818 fs/bcachefs/btree_io.c:1730
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
+ bch2_btree_root_read+0x2a8/0x534 fs/bcachefs/btree_io.c:1793
+ read_btree_roots+0x21c/0x730 fs/bcachefs/recovery.c:475
+ bch2_fs_recovery+0x31c4/0x5488 fs/bcachefs/recovery.c:803
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1031
+ bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2123
+ bch2_mount+0x4fc/0xe18 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+ vfs_get_tree+0x90/0x288 fs/super.c:1780
+ do_new_mount+0x278/0x900 fs/namespace.c:3352
+ path_mount+0x590/0xe04 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+---[ end trace ]---
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 10
+bcachefs (loop0): flagging btree alloc lost data
+error reading btree root alloc l=0: btree_node_read_error, shutting down
+bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
+bcachefs (loop0): shutting down
+bcachefs (loop0): shutdown complete
+
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 523d84b2d6139..f3a17e5d954a3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24378,6 +24378,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
- F:	Documentation/arch/x86/
- F:	Documentation/devicetree/bindings/x86/
- F:	arch/x86/
-+F:	tools/testing/selftests/x86
- 
- X86 ENTRY CODE
- M:	Andy Lutomirski <luto@kernel.org>
--- 
-2.39.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
