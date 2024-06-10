@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-208789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0561F90292E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:22:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C899902930
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8261C2177E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D92B2366B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071B614E2F4;
-	Mon, 10 Jun 2024 19:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4A714F13F;
+	Mon, 10 Jun 2024 19:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdSLRZxq"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="yu4AdpGP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA77D14D2A4;
-	Mon, 10 Jun 2024 19:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1B1DDD1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047258; cv=none; b=EcQSuf31VElppyxPioMqDmLVWxl7/v9tpCcjtzZUttePbfP3HLSAIXFEASWPmfDCTXggtbsb+60ZVroOrMAdF5VKr0bf/5pZbcGuJGg+uaC7FVlRh1tlG0A689Mkee1oUv81a7NuzemJhfF14E4bxw2qmQd0HvI+KBagouuzVII=
+	t=1718047306; cv=none; b=E/j0wvWltLEhux40pufwiUCM6CkU5uGMTQ2e+yXPkvq6WLL1Uvd9+kqFPO35PMa42JhoK1pN/E0mf4FF/K4GjIPEHKUKUIOkNbyPInMgNpVk4mi0FzsmOYsy1NEinOHkfxqUf2mYK25PBTPHMuxwJdCMvPpQXc3JDnZgwe0qsi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047258; c=relaxed/simple;
-	bh=kt1bp0olkBGzyt6Nu7UC9ZUgmN10seHUl6pXobv+WAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gI8veqZopNcA1nWZTeKjzfGUWnATOFR45gwpu58DR3g4jXh0ymx2hdTXIhquAH1jPU5NRg81y1R+OY6o/OCPyJoR/1pi2yY3cVUnOPuar82Rwiz4T4CmxBXSs4J6KSFbW47FBR2kU5De0bJ5nwG7fYlaA/PBykh3S6DN4WYsxpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdSLRZxq; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f06861ae6so2729340f8f.2;
-        Mon, 10 Jun 2024 12:20:56 -0700 (PDT)
+	s=arc-20240116; t=1718047306; c=relaxed/simple;
+	bh=sRPSbauIiYaJtGBZEqHyUjPGKFPTk5/HdK22FraU4hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyvPxH6mEjCWc3fkDjXrAMrOEiFjvCc9DDtwgvNsA0TTvlInpbUiYKiuAANxxLGvM2V9h4mO/vd/fkGawqcBCCLwvWCqJaOy47ivLvaRazyRYZmfB6RmrV7VBM/KsTibpsU0KVzI+eEsX0w+mXhKpjvS+DtWO8vVscdtnn8Fjws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=yu4AdpGP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4217990f8baso22835655e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718047255; x=1718652055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Fwxg+U8/L4kUngah1ecBeYb5cChpXVPmYuFhLTZliY=;
-        b=OdSLRZxqHU2CTmGvdAUHUreIpsGOMoqqUpK4iEI3dIR2IIE3RAsymFMSkWp6gQJAvv
-         8eJ0Fam8LNh24sYdamtPNg7Pk77CNORwZzE3+1YvuJ8jCAoD+X9beynX9fGjWuw21K+5
-         gXnAVbeb6vQGA7sgLurqKPE9s/3GevpPCWKUy2+TCyhZs2RxVXpNLjbmQ9rnJJwBggao
-         +aWlUrCSV/zKGBDYG0iOLnetrhvxK/NdagY2OHlYuzCF1DluJFrJu26DUlqCBrH5LyE7
-         v3dYPTkwOSRm5ZyxEtR1C1KV/961a87bGO6exYMFjc/FExPN2LnpfiR0zKruC92UUU2K
-         +DWg==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718047303; x=1718652103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qBntJYSpEKXr0eXUi25C7jSWwKZG1Ap3DYhbE+QGCrQ=;
+        b=yu4AdpGPnGacd6cwDL/DtvxZdGK7JNjq6XhqddfsUOrB9ei6PFiw9i+1x+XCuAeY0p
+         23+RU+W+zLREQV9HwK8KBYtOrpYNJy5UavMnUMZ/lIFargodujaMzg5YBo4gNcRouLS/
+         dCAlI/AXRrRr0hte6iC79QKf3wcx3kr2qhDRxVpen/FvdMBkVLz9OHmV2PskG7TBXJSd
+         G2hrJubxJ6oaXs0SFJHQh2ixFBQoB45sPXW/GLH70gWUT6UrH++tnKjk8dJd/vVVHQqY
+         NbIZTKoJ8TGVZeQq4JCT6ZFSPDc1yGd6MVliszLBXrJ56JwkDHsOrv3Kvkr4jv+eSVF0
+         pgkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718047255; x=1718652055;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Fwxg+U8/L4kUngah1ecBeYb5cChpXVPmYuFhLTZliY=;
-        b=B6LsrhR1159jOrhxd+9GuJ9O3HC9wYBpY8BAmrjkA8uNX/QZHpOaSV7987fuaQV4fy
-         a9VMK9V+bvZtNQkMZvwblZp3jIV67X05+cwi7wK6i6rP/86ip1UtWpT5ncICdSA3hdnk
-         zfNFW6vTZlk1eEdSIlt3Dwht9War7MiHMMh21sFvdgzFrw9mgt6CO7oOAacG7wrwWd9v
-         hQBdlETWm+6660llOTfGO4jAfp0Aclb/RqPjGs9DgVApoxzGmZOT9e9I7CQmzhQPKHrP
-         NmH0+4FgoEKN92/vsNZdLqnPyZIT8HuJOzCvEG63YWzMb5QxXmRCldbgK/QfKplf0RSi
-         HlPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcgomRAYvXI1EMhxWX55BQJT/B8gK98cocetPOrOOG54jwW6gDzAiR20HlgysNcpUA197tAlCxzF30MWy0pxSdXlx6ymwLkdiwpw5P0jIY3ymYDOFyXJIcdpxvN96g/AhMC2eizwB9MKe2f1a9
-X-Gm-Message-State: AOJu0YwnBMGF3+YmOZvZwtI9uM2VDhIQv0H0wqNdhbOQjw6sfsptbg7r
-	07iRncfp7em43mzL/NUIke95XgS61ryX7ch5PgG29zpzNkzxPmIKIvKCCD9M
-X-Google-Smtp-Source: AGHT+IFat6zDS6FF0+LTYBRonG3fD/7yN5MDQC6zZI3WaIUFD/lehrkeGgjA7zSlbf7b6aPG2bP7Gw==
-X-Received: by 2002:adf:e9c5:0:b0:35f:9d8:9a48 with SMTP id ffacd0b85a97d-35f09d89bfemr5721228f8f.56.1718047254956;
-        Mon, 10 Jun 2024 12:20:54 -0700 (PDT)
-Received: from [10.5.1.156] (188-22-218-164.adsl.highway.telekom.at. [188.22.218.164])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm2824329f8f.79.2024.06.10.12.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 12:20:54 -0700 (PDT)
-Message-ID: <06f85db2-10b2-4921-b3d6-0061e9801e0c@gmail.com>
-Date: Mon, 10 Jun 2024 21:20:53 +0200
+        d=1e100.net; s=20230601; t=1718047303; x=1718652103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qBntJYSpEKXr0eXUi25C7jSWwKZG1Ap3DYhbE+QGCrQ=;
+        b=ZXgnXXmUcWIGQZzYeXlnsh5PsRHKeNUNNCgjYOBd6bTNr6FPt+kyzHoQkPEYM75Phk
+         KGjM3MV2CnMM6OhePcryHIB6J2CM/7OzQ6DRb/NzNtIs70wFR5uESBSjqB5kAj2KI/n6
+         gbnfhgwYGQsaqucTaWFqI/DiV/axZ1apANj+3lKBiIpz5nHViALuiMsSIaf5eJYtH2PE
+         900OyYcfCn45qT1Y27u9rV336pCW21tUz+KufDHU77z2qlNhqpAkEitOcSDJOFWB3FO/
+         XyIKWz5LISygoImyH3UhvaesF7ih4ay8o8n21KHHS//GeIf4D2g3yhYlrco0nbIbZsR/
+         SIZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWokY/v2RxcduiQmgCXLalWKcVbdWchmML0u4NlnLv0RPwezcRF3bNppC6gq05GsnUHqMxAj1PaRbWJ0O5iQAPkNJqpgRMzBzIq773Z
+X-Gm-Message-State: AOJu0YwwqZR8LnXIqcrtI+mFOvaLbyltD6Lon1OQggXbQ/0XZOGyXdDj
+	9Ml0FQIwTwUeU9IzeLE3TfZ/vsUUZv43M7CTocAkYx1gd6FdmGlHZWwylHOfzFs=
+X-Google-Smtp-Source: AGHT+IG5R+6QdrL5vtPI3P3UQJ+Eps+bOHM+4T1uVpoya5SI1oL4hgnotnXL1Fs02cAYdrCTAMaMxg==
+X-Received: by 2002:a05:600c:138e:b0:421:2df2:2850 with SMTP id 5b1f17b1804b1-42164a21d60mr105810015e9.31.1718047303182;
+        Mon, 10 Jun 2024 12:21:43 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4218193b0c0sm65469985e9.31.2024.06.10.12.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 12:21:42 -0700 (PDT)
+Date: Mon, 10 Jun 2024 20:21:41 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Metin Kaya <metin.kaya@arm.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v5 1/2] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240610192141.dibvhzrvx7hacvd7@airbuntu>
+References: <20240604144228.1356121-1-qyousef@layalina.io>
+ <20240604144228.1356121-2-qyousef@layalina.io>
+ <b298bca1-190f-48a2-8d2c-58d54b879c72@redhat.com>
+ <20240605093246.4h0kCR67@linutronix.de>
+ <20240605132454.cjo4sjtybaeyeuze@airbuntu>
+ <af031e33-74db-40ba-abdd-ef1bf32e4caf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kunit/overflow: Adjust for __counted_by with
- DEFINE_RAW_FLEX()
-To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610182301.work.272-kees@kernel.org>
-Content-Language: en-US
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <20240610182301.work.272-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <af031e33-74db-40ba-abdd-ef1bf32e4caf@redhat.com>
 
-
-On 10.06.24 8:23 PM, Kees Cook wrote:
-> When a flexible array structure has a __counted_by annotation, its use
-> with DEFINE_RAW_FLEX() will result in the count being zero-initialized.
-> This is expected since one doesn't want to use RAW with a counted_by
-> struct. Adjust the tests to check for the condition and for compiler
-> support.
+On 06/05/24 16:07, Daniel Bristot de Oliveira wrote:
+> On 6/5/24 15:24, Qais Yousef wrote:
+> >>> But rt is a shortened version of realtime, and so it is making *it less*
+> >>> clear that we also have DL here.
+> >> Can SCHED_DL be considered a real-time scheduling class as in opposite
+> >> to SCHED_BATCH for instance? Due to its requirements it fits for a real
+> >> time scheduling class, right?
+> >> And RT (as in real time) already includes SCHED_RR and SCHED_FIFO.
+> > Yeah I think the usage of realtime to cover both makes sense. I followed your
+> > precedence with task_is_realtime().
+> > 
+> > Anyway. If people really find this confusing, what would make sense is to split
+> > them and ask users to call rt_task() and dl_task() explicitly without this
+> > wrapper. I personally like it better with the wrapper. But happy to follow the
+> > crowd.
 > 
-> Reported-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-> Closes: https://lore.kernel.org/all/0bfc6b38-8bc5-4971-b6fb-dc642a73fbfe@gmail.com/
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-Thanks for the quick fix!
-
-Seems reasonable and the test passes now.
-
-Tested-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: linux-hardening@vger.kernel.org
-> ---
->  lib/overflow_kunit.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
+> For me, doing dl_ things it is better to keep them separate, so I can
+> easily search for dl_ specific checks.
 > 
-> diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
-> index 4ef31b0bb74d..d305b0c054bb 100644
-> --- a/lib/overflow_kunit.c
-> +++ b/lib/overflow_kunit.c
-> @@ -1178,14 +1178,28 @@ struct foo {
->  	s16 array[] __counted_by(counter);
->  };
->  
-> +struct bar {
-> +	int a;
-> +	u32 counter;
-> +	s16 array[];
-> +};
-> +
->  static void DEFINE_FLEX_test(struct kunit *test)
->  {
-> -	DEFINE_RAW_FLEX(struct foo, two, array, 2);
-> +	/* Using _RAW_ on a __counted_by struct will initialize "counter" to zero */
-> +	DEFINE_RAW_FLEX(struct foo, two_but_zero, array, 2);
-> +#if __has_attribute(__counted_by__)
-> +	int expected_raw_size = sizeof(struct foo);
-> +#else
-> +	int expected_raw_size = sizeof(struct foo) + 2 * sizeof(s16);
-> +#endif
-> +	/* Without annotation, it will always be on-stack size. */
-> +	DEFINE_RAW_FLEX(struct bar, two, array, 2);
->  	DEFINE_FLEX(struct foo, eight, array, counter, 8);
->  	DEFINE_FLEX(struct foo, empty, array, counter, 0);
->  
-> -	KUNIT_EXPECT_EQ(test, __struct_size(two),
-> -			sizeof(struct foo) + sizeof(s16) + sizeof(s16));
-> +	KUNIT_EXPECT_EQ(test, __struct_size(two_but_zero), expected_raw_size);
-> +	KUNIT_EXPECT_EQ(test, __struct_size(two), sizeof(struct bar) + 2 * sizeof(s16));
->  	KUNIT_EXPECT_EQ(test, __struct_size(eight), 24);
->  	KUNIT_EXPECT_EQ(test, __struct_size(empty), sizeof(struct foo));
->  }
+> rt_or_dl_task(p);
+
+I posted a new version with this suggestion as the top patch so that it can be
+shredded more :-)
+
+Thanks for having a look.
+
+
+Cheers
+
+--
+Qais Yousef
 
