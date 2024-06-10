@@ -1,174 +1,125 @@
-Return-Path: <linux-kernel+bounces-208386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DEE90245C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643E190245B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D90B285AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:43:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0DE1C220F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E830314387A;
-	Mon, 10 Jun 2024 14:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269FD139578;
+	Mon, 10 Jun 2024 14:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YG6FDjzJ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ENvOjd4s"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A587614263B;
-	Mon, 10 Jun 2024 14:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324FB12F5BE;
+	Mon, 10 Jun 2024 14:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718030482; cv=none; b=ENDDC78mOwTMgheXOd0R95QBKfSaCzf2GepRycBPw6KxVm/YsOxPGT+DJS0F1u22h7+FW11fZJMuSaqJuRmhv+mYwJr341OLYgMwvqFM+OpY9QW+f2BmzR2ukwQjecyBaDxIpbYwD248HbWCE3Txz/FzNL+6HOUH5I+8BJbpxkA=
+	t=1718030615; cv=none; b=cj6RIaFAVqiwiQ4ODgaDrJyqV9AZjSuSNsmlKIZw83f2V+ZgplnSrVvL1zkLVST38H7Ze7L/b5FXeNnJ86B2Dl5lAszRsGoRdHK209JPTKHXPkbQzuQskiRzXD/XFIBGb1ZgeUEYISxxth8PPtg5gXORhOjZWmK83brIUuA8bp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718030482; c=relaxed/simple;
-	bh=eqaMSv5Aa4/kBy5g0iKnICdAo6+fypqw8AFbKQnuxkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a7HNfKF780ENGb8952PGtSGE++x2FCR8pNIM9wn4paeNLmaymY6yiV9IQSZeM7213c8oS63/avpPy66HfO1GFaYCNASlpxqzTq65a+aUoE2vCO4ArnDTlaNrwNT5CoQS/Q4/nhbbeIF9zLjM8jG3MA7ZsV6bogGveWc9xAfB1Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YG6FDjzJ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7023b6d810bso3545051b3a.3;
-        Mon, 10 Jun 2024 07:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718030479; x=1718635279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BKkziaSKSr/muOq1HRAFyB+WD5eSBI8YIdJmSO2EbMk=;
-        b=YG6FDjzJsOxT2GbicoQBxzx2W+NiI0ywx6nSe7kX5n6OB9CS81eDIq3GOioYuipo/C
-         ga2uG8Kn3HWw2ZuIIyzuNFLfYZpLxdOaHh648iL5BWfWsnRrL2IqT8QGXHRA1PYnp4hs
-         Dv6P6TmLybgCfaxJGO/46ZuA1SuFqAAEniPvhJCKrhvPrBb+SLHSzVQ0LYFnBWvJ1vmN
-         X5Zz/yQvi9XmElOuDo6GgWzmr9UBkEdaOvvNQtOrGqVaUIpNQU9cpMOxS1JAeAZiWuKs
-         Y4NsBfwKD+tJGqGMfBUOHSzaXNxPvb6fWKhVYiHysIZ8UtT8kuHXMzJ4rfKf6da/iAOq
-         XomQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718030479; x=1718635279;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BKkziaSKSr/muOq1HRAFyB+WD5eSBI8YIdJmSO2EbMk=;
-        b=iRaL39HMk1CgysRHT0IuOCq89yEnAGGhbIuJwLU/lpE/g6H6sZw15eW0666olJfLdO
-         6GgrqqqV2DFs5ViJlfrGMwLn29/bQCnmN3DDUEWP65qgpqg4mv7mKSAyEorlDdtHW3JZ
-         Rs3cwLPl4ysB/7FfWYB97vTUnNMI4b8niqE0CFP5wUiBmfVDsaE4tcS+yBmdJibCKDNW
-         DQI21lU7jGM/pgxMfPCKwFaWiOGTUy1F5Q7/uwjzSWtQMO2sMI+ytpaCJbXx9lyht803
-         tBTnE1LQvi0D5eESHGaTUyfQP29NSy229m84MWCx+eu/oQOUYoRGxT6PVcZHKyzmCIC2
-         pvPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8FIgx6OQFwtRZK0Ztcs+yXOfjY8M8H8eJd97RHsBcNfBuAM++Xk9+e3DI5soPYRWe/vdv8he2PzeubDKdFkboKXf8BSc47XbuFWbZZosSzsf+5Qe++SM87I6VNcXweR4ihRNRwtkVDg==
-X-Gm-Message-State: AOJu0YwY9iUOgyWrjC4jAujCMi/oZKMnYaR2i/IB3BlCc3GtjtPVOXXg
-	gThudZv75m3ogyGvnkHm8R8SLvVD/DgAUaAEy+GyDcBoQjLPa+GuY79ndg==
-X-Google-Smtp-Source: AGHT+IEGygyaEEzNJcvfGUiBscSz6qRFlJq4IfwsDQFQ9QBMcu4Vuk/Vz3+vZUX2LI4nK8RxdU3dFQ==
-X-Received: by 2002:a05:6a00:4790:b0:704:13d0:a7cb with SMTP id d2e1a72fcca58-70413d0aeccmr6270995b3a.13.1718030479556;
-        Mon, 10 Jun 2024 07:41:19 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705382784b9sm2146318b3a.48.2024.06.10.07.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 07:41:18 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: linux-hwmon@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Ren=C3=A9=20Rebe?= <rene@exactcode.de>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Armin Wolf <W_Armin@gmx.de>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v5 6/6] hwmon: (spd5118) Add configuration option for auto-detection
-Date: Mon, 10 Jun 2024 07:41:03 -0700
-Message-Id: <20240610144103.1970359-7-linux@roeck-us.net>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240610144103.1970359-1-linux@roeck-us.net>
-References: <20240610144103.1970359-1-linux@roeck-us.net>
+	s=arc-20240116; t=1718030615; c=relaxed/simple;
+	bh=AdW/5ZmyQ0sdPt/jZjRQEIa5QlnW52hwp6qF3wI62xE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s6ONWdohQ/+MHrtiexSEr0mdfZjjz+jw1XrosP7aQD8rPlaohM/VgHxjh0DONOj3naf/hc446ogfhuTtmqEyFQ4l4zH92XeuUWRXpFnybk7JKytx4g+JjerYfvv9pl4N5rOTGu4xfxhdrECZ2dxvyr2v/j6v75aXzQX6ocSdzfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ENvOjd4s; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A0FHmi002948;
+	Mon, 10 Jun 2024 14:43:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/UQQ9H++oZe+xwgJihFR6a+g++Sf6h5Yv7IgtvZo3fk=; b=ENvOjd4sXGajIdHU
+	+7e/xb3ey0KYVCPCPva0Ih461Egi/g+FaTRqpZQlKdFRaqWlQDVMB8+/Kc2ZCuQR
+	HDTburlqOnhEfnwRELlqnmE8lQfmb+z0oTubku4tpGHtiPFeTUbAzFNtG1vvlDZa
+	SInmOrRv9Igxhgjsyz/6ATA52KGs7KBXOO1ikwnIwu47gdzSADGiUkgnajTRomLb
+	sYvj6kEJnHZbBbrpPcxVuXgerpNsH6CBgt/1jn3JYb1RoTmZ3370V+G7oT1THiB7
+	npKJFOwOfXkdPWkllG+47XChiBgkLBk1k+PL3BXzzMaI5sb7fT9CnLWnxS4tteiH
+	JTz6kA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2ekx98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:43:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEhLg1028882
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:43:21 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 07:43:20 -0700
+Message-ID: <15a49eeb-aeca-4bd7-8761-5e42fe30aee3@quicinc.com>
+Date: Mon, 10 Jun 2024 07:43:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-regulator-v1-1-da338665db7a@quicinc.com>
+ <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ziACR76-LJqII_3YKXKQuU1PmWJvYdmL
+X-Proofpoint-GUID: ziACR76-LJqII_3YKXKQuU1PmWJvYdmL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ clxscore=1015 adultscore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100112
 
-With SPD5118 chip detection for the most part handled by the i2c-smbus
-core using DMI information, the spd5118 driver no longer needs to
-auto-detect spd5118 compliant chips.
+On 6/10/2024 1:43 AM, AngeloGioacchino Del Regno wrote:
+> Il 09/06/24 06:53, Jeff Johnson ha scritto:
+>> --- a/drivers/regulator/mtk-dvfsrc-regulator.c
+>> +++ b/drivers/regulator/mtk-dvfsrc-regulator.c
+>> @@ -211,4 +211,5 @@ static void __exit mtk_dvfsrc_regulator_exit(void)
+>>   module_exit(mtk_dvfsrc_regulator_exit);
+>>   
+>>   MODULE_AUTHOR("Arvin wang <arvin.wang@mediatek.com>");
+>> +MODULE_DESCRIPTION("MediaTek DVFSRC regulator driver");
+> 
+> Can you please drop this one?
+> I have a series floating that is removing this driver entirely and replacing it
+> with a refactored one. Though, it has the same issue, so I'll have to send a v6.
+> 
+> Anyway, v5 is there:
+> 
+> https://lore.kernel.org/r/20240424095416.1105639-1-angelogioacchino.delregno@collabora.com
 
-Auto-detection by the driver is still needed on systems with no DMI support
-or on systems with more than eight DIMMs and can not be removed entirely.
-However, it affects boot time and introduces the risk of mis-identifying
-chips. Add configuration option to be able to disable it on systems where
-chip detection is handled outside the driver.
+Your v5 looks fine to me:
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-v5: Added Tested-by: tag
-    Replaced #ifdef with IS_ENABLED() and included address_list in
-    conditional code
++MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
++MODULE_AUTHOR("Dawei Chien <dawei.chien@mediatek.com>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("MediaTek DVFSRC driver");
 
-v4a:
-    Do not auto-select SENSORS_SPD5118_DETECT if DMI is disabled
-    Modify help text of SENSORS_SPD5118_DETECT
-    Default SENSORS_SPD5118_DETECT to y if (!DMI || !X86)
-
-v4: New patch
-
- drivers/hwmon/Kconfig   | 19 +++++++++++++++++++
- drivers/hwmon/spd5118.c |  4 ++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 7a84e7637b51..d5eced417fc3 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2193,6 +2193,25 @@ config SENSORS_SPD5118
- 	  This driver can also be built as a module. If so, the module
- 	  will be called spd5118.
- 
-+config SENSORS_SPD5118_DETECT
-+	bool "Enable detect function"
-+	depends on SENSORS_SPD5118
-+	default (!DMI || !X86)
-+	help
-+	  If enabled, the driver auto-detects if a chip in the SPD address
-+	  range is compliant to the SPD51888 standard and auto-instantiates
-+	  if that is the case. If disabled, SPD5118 compliant devices have
-+	  to be instantiated by other means. On X86 systems with DMI support
-+	  this will typically be done from DMI DDR detection code in the
-+	  I2C SMBus subsystem. Devicetree based systems will instantiate
-+	  attached devices if the DIMMs are listed in the devicetree file.
-+
-+	  Disabling the detect function will speed up boot time and reduce
-+	  the risk of mis-detecting SPD5118 compliant devices. However, it
-+	  may result in missed DIMMs under some circumstances.
-+
-+	  If unsure, say Y.
-+
- config SENSORS_TC74
- 	tristate "Microchip TC74"
- 	depends on I2C
-diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
-index de6cf07f3007..ac94a6779360 100644
---- a/drivers/hwmon/spd5118.c
-+++ b/drivers/hwmon/spd5118.c
-@@ -646,8 +646,8 @@ static struct i2c_driver spd5118_driver = {
- 	},
- 	.probe		= spd5118_probe,
- 	.id_table	= spd5118_id,
--	.detect		= spd5118_detect,
--	.address_list	= normal_i2c,
-+	.detect		= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? spd5118_detect : NULL,
-+	.address_list	= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? normal_i2c : NULL,
- };
- 
- module_i2c_driver(spd5118_driver);
--- 
-2.39.2
 
 
