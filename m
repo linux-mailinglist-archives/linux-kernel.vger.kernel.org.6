@@ -1,187 +1,172 @@
-Return-Path: <linux-kernel+bounces-208613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966B7902730
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A8C90272B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214BE1F21D93
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838DF1F21A59
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AD915A49F;
-	Mon, 10 Jun 2024 16:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AE714C581;
+	Mon, 10 Jun 2024 16:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGN7TOZO"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="voPagU8F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5E1Hqcc8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67192158DCA;
-	Mon, 10 Jun 2024 16:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726D7158A12
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037789; cv=none; b=fQNVaUQLeV1esEOipyzaG4Ok+8IGzJbAjeOeoHhnjkfs6pUZ2sGVgI/RZVJ6jSMIruay8S5W6XRHJrP4kVKB32+x3lRWS8ylLnFT9dP7X3ouHBmW4L5LFb43Mh678I7xk75J+klQvQklbfqi1teVtSC1xLrKrVukZ56JHLYZasw=
+	t=1718037783; cv=none; b=MGm2cWX0TJzUDElUa7KuSCCovvHNXSjSNYbyPHEV8odUHJUVT5QHKxSI/Lsvh5+tVKp8xIL79iSP0dlIeZ3fPzPlQ8pesLsFxryAUJJKBg9KWzsNYHct0Qs1MyYSH0UJX2v5bL3esmNbMcSsdg9yNtxocyr5jkp0R3jCWdHq3nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037789; c=relaxed/simple;
-	bh=IwQTSFOWJavyEcAjjcodGL3Y5hzxqdXA53v2nXnt/u8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G1rEOwdQJGUXCffzdheiDf6OKbe6J0JjuCH1+K9K2931WyDoD9kYup9irjBoE+6EW1TsM29+uC49NDlB1q/l0XYG1d1jlyQSYV2GsziUVzLPj0I9jMogyv8OO/IognXm6z9MBxiCYUnb4+0KYmRfPgT7hE96fZz542yphF9yIME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGN7TOZO; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6819d785528so3075427a12.3;
-        Mon, 10 Jun 2024 09:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718037786; x=1718642586; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aknRXtfNpDT3/xW3+oSc9LSjDIZNf+C1csd3Fn/F4Pc=;
-        b=WGN7TOZOtukQpT1tcpzEXy4aTNFYSqav5snLmMslY8wEDIDGWl6/4Kadmvr8KFiyoD
-         6MDEAmn6I0IvWHd+p76bZZEZOKRgstO5sT0W0U1G1ULwXmxFG9wH1DT4eOSa4nabwyuJ
-         cESrvSpJT6StggS+DLSj+W/ChodXoVYg7wJw7244qaJuWgpnxksJWvI/NzNMm3IniHgH
-         w6hUL5gKjs4tL+t+0LCUwmBZuYJGIO2MBX6fjS8kIvHw4j+6llGJ6JDP8dfxOon+cn9I
-         x8B9MbiO2or52h2E26la5x0Vpd949exOCysyaEgB0gfiu3nONbiAPlBgOnt0Cx4yU29K
-         ZoxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718037786; x=1718642586;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aknRXtfNpDT3/xW3+oSc9LSjDIZNf+C1csd3Fn/F4Pc=;
-        b=UOUEftlUaHv/r2mVvW+6Ma8gAIIabQY1UWGAhhdNKqn0N795xTBgmfriElzPF+5FQT
-         2zn1PTGRAPWLprdQB1XgDnGTP2IS/LhlkdVKKlwA/feVjaG88iP9GG8R03PbCswEfsZG
-         bw/Up3lK1Veay3ePStwTBeQc+zBN9YHJ8T+GcpZsUQaTD5BOvKTEHd9MN89/VUcMxuXm
-         uIcb3gDS0D2/H+bCruf1P0JZgmPLCeN8K1ab3MopmTh2JZr4zGZ1Czu7G0HYWztm3huY
-         viOLsJ0DZNFIF7UztaaXZpJHxMVLYbfOoUQqRGLurD4JDcXnN/g8Bscq6WB4ZQSPfeZE
-         goMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXv9vVKl4cIcwbvMPNRSK8nSFNhkqF1ZzIK8KvYCyzu+qs6Fpxf9vn7HP0ZF3kCZRmARhEGoCi+i6+AnYskRsx4F5bIzj/sranuCLwp
-X-Gm-Message-State: AOJu0YzmtEMuLtrrA7tASWnrTHYjzYLYYodtu/yIOJMNf/napmkCf166
-	zoPbSF69mtScIQ0bk17mQAjYZFPGLrEMoqRfcJTlQSFb3PcTN7qiIWvXSw==
-X-Google-Smtp-Source: AGHT+IGQYbGCW3K8Egt7GL8o0/riJ5NpNxqOn/9udrMNHxZvhUzXPvqmDpxeSsd78eWiFeGORJ2cow==
-X-Received: by 2002:a17:902:c404:b0:1f7:2135:ce7c with SMTP id d9443c01a7336-1f72135cfdfmr15024635ad.28.1718037786016;
-        Mon, 10 Jun 2024 09:43:06 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:83cc:2314:b3bd:bf64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72479ab2esm5235845ad.308.2024.06.10.09.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:43:05 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org,
-	Nuno Sa <nuno.sa@analog.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] Input: adxl34x - use device core to create driver-specific device attributes
-Date: Mon, 10 Jun 2024 09:42:57 -0700
-Message-ID: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+	s=arc-20240116; t=1718037783; c=relaxed/simple;
+	bh=NFKqTJ9ShtyiYAgy+AdG3Zbk7Do+0qFmxaGilWT4BiI=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=uWlQkormI1HKxbeddJnVQj/GPjS9RtlzwYO4qyyz+WhILfqwA6oCcumr1XrH/Wo+4DESYcyxFyq/6xl51qHetkcKsMBsXoVnPJjmxKrGtl2Q2JKzss6Jjkm4Fp2p4LcsqYsfxKGW5oBz70PVGtIkzdOOrq8qCl6sYl+yhDpN3Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=voPagU8F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5E1Hqcc8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20240610164028.169579977@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718037778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=DxPffv+7izSrJC7n0/k0QCEO3R4CfssBq8UJE3DdsrY=;
+	b=voPagU8F8COwMmHGGbN47wMmLuNp3TGobV8Q/TvLQfTegQJOIYXQZHPf70wDvCQssoXQb3
+	53BHytOlkAOrTR4aC0KJ50vq7s0oj/nusykd4Ez5NCavFdkCxTrqck9rkSgyCKVli64p1b
+	OiUf/cl+3lUoB24K3i4RUnpT9XF6bCeV5lDiMEet/a+n1vDpu4CJKo3OCRwccQXMJE+0Qw
+	egltKzwncibCRj16XbiPvQtheSKdDndMXO7M1UspaKPX/J1Pkp4judFXaRSO5ZJp638UF4
+	oLWZCAithOJfEajm4ka1Gl5PJqFzZqpEN9FRAFmqXjlz41hI7mz6aXpOvLNq7A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718037778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=DxPffv+7izSrJC7n0/k0QCEO3R4CfssBq8UJE3DdsrY=;
+	b=5E1Hqcc848gkJMcSKbyp1r1LM0UryDIT3Gksyc19ZVf9t8BDL4DRKTzky1UH3p8jzAHR+S
+	6xzVJWeabZ/p/4Dg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ John Stultz <jstultz@google.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Oleg Nesterov <oleg@redhat.com>
+Subject: [patch V3 43/51] signal: Cleanup unused posix-timer leftovers
+References: <20240610163452.591699700@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Jun 2024 18:42:58 +0200 (CEST)
 
-Instead of creating driver-specific device attributes with
-sysfs_create_group() have device core do this by setting up dev_groups
-pointer in the driver structure.
+Remove the leftovers of sigqueue preallocation as it's not longer used.
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
+ include/linux/sched/signal.h |    2 --
+ kernel/signal.c              |   43 +++++++------------------------------------
+ 2 files changed, 7 insertions(+), 38 deletions(-)
 
-v2: added Nono's ACK
-
- drivers/input/misc/adxl34x-i2c.c |  1 +
- drivers/input/misc/adxl34x-spi.c |  1 +
- drivers/input/misc/adxl34x.c     | 15 +++++++--------
- drivers/input/misc/adxl34x.h     |  1 +
- 4 files changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/input/misc/adxl34x-i2c.c b/drivers/input/misc/adxl34x-i2c.c
-index d4014e367c77..7531c7b2d657 100644
---- a/drivers/input/misc/adxl34x-i2c.c
-+++ b/drivers/input/misc/adxl34x-i2c.c
-@@ -132,6 +132,7 @@ MODULE_DEVICE_TABLE(of, adxl34x_of_id);
- static struct i2c_driver adxl34x_driver = {
- 	.driver = {
- 		.name = "adxl34x",
-+		.dev_groups = adxl34x_groups,
- 		.pm = pm_sleep_ptr(&adxl34x_pm),
- 		.of_match_table = adxl34x_of_id,
- 	},
-diff --git a/drivers/input/misc/adxl34x-spi.c b/drivers/input/misc/adxl34x-spi.c
-index f1094a8ccdd5..2befcc4df0be 100644
---- a/drivers/input/misc/adxl34x-spi.c
-+++ b/drivers/input/misc/adxl34x-spi.c
-@@ -97,6 +97,7 @@ static void adxl34x_spi_remove(struct spi_device *spi)
- static struct spi_driver adxl34x_driver = {
- 	.driver = {
- 		.name = "adxl34x",
-+		.dev_groups = adxl34x_groups,
- 		.pm = pm_sleep_ptr(&adxl34x_pm),
- 	},
- 	.probe   = adxl34x_spi_probe,
-diff --git a/drivers/input/misc/adxl34x.c b/drivers/input/misc/adxl34x.c
-index a3f45e0ee0c7..fbe5a56c19d1 100644
---- a/drivers/input/misc/adxl34x.c
-+++ b/drivers/input/misc/adxl34x.c
-@@ -664,6 +664,12 @@ static const struct attribute_group adxl34x_attr_group = {
- 	.attrs = adxl34x_attributes,
- };
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -337,8 +337,6 @@ extern void force_fatal_sig(int);
+ extern void force_exit_sig(int);
+ extern int send_sig(int, struct task_struct *, int);
+ extern int zap_other_threads(struct task_struct *p);
+-extern struct sigqueue *sigqueue_alloc(void);
+-extern void sigqueue_free(struct sigqueue *);
+ extern int do_sigaction(int, struct k_sigaction *, struct k_sigaction *);
  
-+const struct attribute_group *adxl34x_groups[] = {
-+	&adxl34x_attr_group,
-+	NULL
-+};
-+EXPORT_SYMBOL_GPL(adxl34x_groups);
-+
- static int adxl34x_input_open(struct input_dev *input)
+ static inline void clear_notify_signal(void)
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -439,8 +439,8 @@ static void __sigqueue_init(struct sigqu
+  * - this may be called without locks if and only if t == current, otherwise an
+  *   appropriate lock must be held to stop the target task from exiting
+  */
+-static struct sigqueue *__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
+-					 int override_rlimit, const unsigned int sigqueue_flags)
++static struct sigqueue *sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
++				       int override_rlimit)
  {
- 	struct adxl34x *ac = input_get_drvdata(input);
-@@ -823,13 +829,9 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
- 		goto err_free_mem;
+ 	struct ucounts *ucounts = sig_get_ucounts(t, sig, override_rlimit);
+ 	struct sigqueue *q;
+@@ -454,14 +454,16 @@ static struct sigqueue *__sigqueue_alloc
+ 		return NULL;
  	}
  
--	err = sysfs_create_group(&dev->kobj, &adxl34x_attr_group);
--	if (err)
--		goto err_free_irq;
--
- 	err = input_register_device(input_dev);
- 	if (err)
--		goto err_remove_attr;
-+		goto err_free_irq;
+-	__sigqueue_init(q, ucounts, sigqueue_flags);
++	__sigqueue_init(q, ucounts, 0);
+ 	return q;
+ }
  
- 	AC_WRITE(ac, OFSX, pdata->x_axis_offset);
- 	ac->hwcal.x = pdata->x_axis_offset;
-@@ -889,8 +891,6 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
- 
- 	return ac;
- 
-- err_remove_attr:
--	sysfs_remove_group(&dev->kobj, &adxl34x_attr_group);
-  err_free_irq:
- 	free_irq(ac->irq, ac);
-  err_free_mem:
-@@ -903,7 +903,6 @@ EXPORT_SYMBOL_GPL(adxl34x_probe);
- 
- void adxl34x_remove(struct adxl34x *ac)
+ static void __sigqueue_free(struct sigqueue *q)
  {
--	sysfs_remove_group(&ac->dev->kobj, &adxl34x_attr_group);
- 	free_irq(ac->irq, ac);
- 	input_unregister_device(ac->input);
- 	dev_dbg(ac->dev, "unregistered accelerometer\n");
-diff --git a/drivers/input/misc/adxl34x.h b/drivers/input/misc/adxl34x.h
-index f9272a2e7a96..67e0ddc5c3eb 100644
---- a/drivers/input/misc/adxl34x.h
-+++ b/drivers/input/misc/adxl34x.h
-@@ -26,5 +26,6 @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
- void adxl34x_remove(struct adxl34x *ac);
+-	if (q->flags & SIGQUEUE_PREALLOC)
++	if (q->flags & SIGQUEUE_PREALLOC) {
++		posixtimer_sigqueue_putref(q);
+ 		return;
++	}
+ 	if (q->ucounts) {
+ 		dec_rlimit_put_ucounts(q->ucounts, UCOUNT_RLIMIT_SIGPENDING);
+ 		q->ucounts = NULL;
+@@ -1065,7 +1067,7 @@ static int __send_signal_locked(int sig,
+ 	else
+ 		override_rlimit = 0;
  
- extern const struct dev_pm_ops adxl34x_pm;
-+extern const struct attribute_group *adxl34x_groups[];
+-	q = __sigqueue_alloc(sig, t, GFP_ATOMIC, override_rlimit, 0);
++	q = sigqueue_alloc(sig, t, GFP_ATOMIC, override_rlimit);
  
- #endif
--- 
-2.45.2.505.gda0bf45e8d-goog
+ 	if (q) {
+ 		list_add_tail(&q->list, &pending->list);
+@@ -1925,37 +1927,6 @@ bool posixtimer_init_sigqueue(struct sig
+ 	return true;
+ }
+ 
+-struct sigqueue *sigqueue_alloc(void)
+-{
+-	return __sigqueue_alloc(-1, current, GFP_KERNEL, 0, SIGQUEUE_PREALLOC);
+-}
+-
+-void sigqueue_free(struct sigqueue *q)
+-{
+-	spinlock_t *lock = &current->sighand->siglock;
+-	unsigned long flags;
+-
+-	if (WARN_ON_ONCE(!(q->flags & SIGQUEUE_PREALLOC)))
+-		return;
+-	/*
+-	 * We must hold ->siglock while testing q->list
+-	 * to serialize with collect_signal() or with
+-	 * __exit_signal()->flush_sigqueue().
+-	 */
+-	spin_lock_irqsave(lock, flags);
+-	q->flags &= ~SIGQUEUE_PREALLOC;
+-	/*
+-	 * If it is queued it will be freed when dequeued,
+-	 * like the "regular" sigqueue.
+-	 */
+-	if (!list_empty(&q->list))
+-		q = NULL;
+-	spin_unlock_irqrestore(lock, flags);
+-
+-	if (q)
+-		__sigqueue_free(q);
+-}
+-
+ static void posixtimer_queue_sigqueue(struct sigqueue *q, struct task_struct *t, enum pid_type type)
+ {
+ 	struct sigpending *pending;
 
 
