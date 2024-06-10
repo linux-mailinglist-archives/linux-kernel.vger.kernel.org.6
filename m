@@ -1,243 +1,192 @@
-Return-Path: <linux-kernel+bounces-207928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145DE901E00
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C315901E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D7C1C21338
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1490280C7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64B774064;
-	Mon, 10 Jun 2024 09:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5D77407D;
+	Mon, 10 Jun 2024 09:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvBB4krZ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F7v86O19"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547EE18C31;
-	Mon, 10 Jun 2024 09:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FF7335A7;
+	Mon, 10 Jun 2024 09:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718011287; cv=none; b=I7Yl/NeV0FGa2QYioqlugLI6X63xras2DoM63e/3QUjMcQoBQz0xT2qcft5MZ18b5m4Kv9AApxQWKGmzdfqmRDb56VXQ089bR1XCYHcXs/xnT1Mkn++KoW/q5G7RKzR/WMYVS51GskOC/x++cKfciI/0ZO2L+ZE2+YLXMDrsRwQ=
+	t=1718011571; cv=none; b=eckhxiPyY3btO8/1xIWwZbFi4bVeNRUaLDnb0y6ndXOa16VZjVST3CkEciRTlDnNgr14XCqXpowir+P/O3iHDBmAhEdzT+Mpy7czL2dpfsmc556fwG/KDvD3jxv/3Sf1M/yD/tDHxLdOri6pmDrOyNc9svV6L1nM8HQPSdHpHgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718011287; c=relaxed/simple;
-	bh=Dmh0tSiP095R+09+1sKqhy9lsjwJ6Iz75sTr8vLeyNk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fFiyRs1JlA3UGCU0aH+SQ+xm47pCk+nFHbxfKeTp5tB9b3DYWgfyO2gnZ4g5Zog1eff4UnjQLyNQeUsrbn32K951YG9xuk7uBblXQJ+PG03x2f5/+03l+OOcci2PnV3gCTpqGAZuO0yxqCvFLGpJPwUhylv//8JFVovUbF5ZfEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvBB4krZ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6cb130027aso181572066b.2;
-        Mon, 10 Jun 2024 02:21:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718011283; x=1718616083; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dhBQ0MbZtPYKqz7VrZSy3TeA8kj9i5egrYX/qx7VZrw=;
-        b=cvBB4krZolE3JnhYxOkO50AU2V+v6lFkd/yV8U0NJ1tqr2AiGE/napiL22ClgNTazV
-         bj3r6KeHRks4dnJDKUbAQpRZE1LJ1dXghOGpkT2L8mmbxlrDssrILnfjT4Ka63f3gB4A
-         gmoTtzSmuPXr23pDZXoo5jnOA/xGu3Mf2wC+dI8ZhaYGUGkJVHrW7dCIx1uTgBV8w2Uj
-         LTc1yad/HlNZl3EjSqznNkP0oLy4LAQvRKntkwaPsaNlnMGOAct2NYV+JUeNvW6kP9SD
-         XyyP2vUqVmlp/ca2I0AOjtOi84m9Hq1IaBurXFryUiupqH4hA/7U0KzSheecKeAVHqWe
-         zKOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718011283; x=1718616083;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dhBQ0MbZtPYKqz7VrZSy3TeA8kj9i5egrYX/qx7VZrw=;
-        b=booK4RE6hZV+kT7s5PblwxE6XzdTY0Ru9vDYprNl1ZznhczGWMPyc9KZW7bbx6CAvn
-         prYCwA3xmM51AqkA43x0L7pHVmpk6m/ka6Sd+3Ym5RCqqfXHgcqISKodLnc3PQkIUp2m
-         phfIjglPPl7oiE1X5pmKiSEaxuqx24Ig/ZBAa3Nv3y4PWHGI+c39M/0F44iG/eR+AWP8
-         ena/mLJ3RlRF+kGpy23sA8BK8n1CcT//8WLUUxdi3CIF9jIXvHHSEGyrbjml+ZSg19uM
-         xU4sTBtmdSiC/WKkhq5C1of0PZQcLaPLZW6H2wV7PR6NuWW1tR6rrmj68yo588Cf0Zu6
-         9j7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjk64+n0Dc+Ds9o+1BDMl930kWOTG0/5MILxdBMFTpQgqv475t9MqwNTDq7Pip+9LP+S23RyhtBPA4HLlUOIJ7Q8lYlhU7t/Br0/jrs8UKi8Pb1PQizmjsL/vD9Xnqz8jrkdiKSU0IXyg=
-X-Gm-Message-State: AOJu0YxZDfkjCzWYxcyMYCh9PWvEG9Q9yqxLzZXmH7OOnnNwRdeoeo5n
-	+/vdzDJhZhhPP0bP0LD0zJNNFWj0zF+awmNMpMjAodbUfv/0hmIyF5V8cj2/8r4=
-X-Google-Smtp-Source: AGHT+IHrIRR9EgSL5eJYKwdAw5JpBl2QEZy9Nc4QdF5/rQ552F0wAeqUqTJT6Wgw+BfB6M0aDIlX+g==
-X-Received: by 2002:a50:999d:0:b0:57c:7826:1dc with SMTP id 4fb4d7f45d1cf-57c78260292mr2310117a12.8.1718011283240;
-        Mon, 10 Jun 2024 02:21:23 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c741b0581sm3121062a12.57.2024.06.10.02.21.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 02:21:22 -0700 (PDT)
-Message-ID: <78fdc86f1957da67963740711054265abc878998.camel@gmail.com>
-Subject: Re: [PATCH 2/3] Input: adxl34x - switch to using managed resources
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 10 Jun 2024 11:25:11 +0200
-In-Reply-To: <20240609234122.603796-2-dmitry.torokhov@gmail.com>
-References: <20240609234122.603796-1-dmitry.torokhov@gmail.com>
-	 <20240609234122.603796-2-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718011571; c=relaxed/simple;
+	bh=3z/wCMzo000cWjGkOKkDvzYB+nRA0ZJj5v7KXtRWU7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BG5w8eiDIt5xlB6bqU5DsTi6vjQzAucOx5Z8gTlrgSUyU9N7D4o2e8Bze8OCiaG1+N+JYRx7Xue+H/xuuTWtGpYTNgp+L4yjvDioAqzdjJyvY02VKUo67YH9LAsBdwl4HYQ8/ispX8t9ywroX9CtxCgYjC8bE9rVptVJklX3nXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F7v86O19; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 03F461C000D;
+	Mon, 10 Jun 2024 09:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718011560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eytCldcOr0ZAkk3Ut2yG/8HucBDVZ65zXES9P1bpuOo=;
+	b=F7v86O19KfamSoyyQR4SuCBgLKUbgTE1YyLhz7eU0oEXQMIimTD1Vts65B0JWY4P5pv/nN
+	pFYXgnNX+5KKMJhd532lAsMkM0I6lqRGOPADXDqFwzpJLfI9F4aGPRoxteC9WVCvjsCpkW
+	aBUGzH/zTWaTkiEk3Fk7g/Xn4KITiYb7Gk7jTK/zrxMap0aFHXYBu6laMX0wWY+fuEFtQ1
+	ftaG6ER1p74ip9WmVcnyD1uYfq7vJ4xlDHcK5r9w24xMQOJ6vuIaUmbE7sZPAjhGQSMouV
+	1AzhhQb/WB5Ggr4Hpv2LB+KoPprBE8OqP2MX0VUkyw/axJSpwgvegEuklwgNwA==
+Date: Mon, 10 Jun 2024 11:25:59 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dent Project
+ <dentproject@linuxfoundation.org>, kernel@pengutronix.de
+Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
+ status with class, power and extended state
+Message-ID: <20240610112559.57806b8c@kmaincent-XPS-13-7390>
+In-Reply-To: <ZmaMGWMOvILHy8Iu@pengutronix.de>
+References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
+	<20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
+	<ZmaMGWMOvILHy8Iu@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Sun, 2024-06-09 at 16:41 -0700, Dmitry Torokhov wrote:
-> Switch the driver to use managed resources to simplify error handling.
+Hello Oleksij,
+
+On Mon, 10 Jun 2024 07:16:09 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> Hi K=C3=B6ry,
 >=20
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> =C2=A0drivers/input/misc/adxl34x-i2c.c |=C2=A0 8 ---
-> =C2=A0drivers/input/misc/adxl34x-spi.c |=C2=A0 8 ---
-> =C2=A0drivers/input/misc/adxl34x.c=C2=A0=C2=A0=C2=A0=C2=A0 | 85 +++++++++=
-++---------------------
-> =C2=A0drivers/input/misc/adxl34x.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
-> =C2=A04 files changed, 30 insertions(+), 72 deletions(-)
+> Thank you for your work.
 >=20
-> diff --git a/drivers/input/misc/adxl34x-i2c.c b/drivers/input/misc/adxl34=
-x-
-> i2c.c
-> index 7531c7b2d657..c05d898898e8 100644
-> --- a/drivers/input/misc/adxl34x-i2c.c
-> +++ b/drivers/input/misc/adxl34x-i2c.c
-> @@ -98,13 +98,6 @@ static int adxl34x_i2c_probe(struct i2c_client *client=
-)
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> -static void adxl34x_i2c_remove(struct i2c_client *client)
-> -{
-> -	struct adxl34x *ac =3D i2c_get_clientdata(client);
-> -
-> -	adxl34x_remove(ac);
-> -}
-> -
-> =C2=A0static const struct i2c_device_id adxl34x_id[] =3D {
-> =C2=A0	{ "adxl34x" },
-> =C2=A0	{ }
-> @@ -137,7 +130,6 @@ static struct i2c_driver adxl34x_driver =3D {
-> =C2=A0		.of_match_table =3D adxl34x_of_id,
-> =C2=A0	},
-> =C2=A0	.probe=C2=A0=C2=A0=C2=A0 =3D adxl34x_i2c_probe,
-> -	.remove=C2=A0=C2=A0 =3D adxl34x_i2c_remove,
-> =C2=A0	.id_table =3D adxl34x_id,
-> =C2=A0};
-> =C2=A0
-> diff --git a/drivers/input/misc/adxl34x-spi.c b/drivers/input/misc/adxl34=
-x-
-> spi.c
-> index 2befcc4df0be..fd716d861832 100644
-> --- a/drivers/input/misc/adxl34x-spi.c
-> +++ b/drivers/input/misc/adxl34x-spi.c
-> @@ -87,13 +87,6 @@ static int adxl34x_spi_probe(struct spi_device *spi)
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> -static void adxl34x_spi_remove(struct spi_device *spi)
-> -{
-> -	struct adxl34x *ac =3D spi_get_drvdata(spi);
-> -
-> -	adxl34x_remove(ac);
-> -}
-> -
-> =C2=A0static struct spi_driver adxl34x_driver =3D {
-> =C2=A0	.driver =3D {
-> =C2=A0		.name =3D "adxl34x",
-> @@ -101,7 +94,6 @@ static struct spi_driver adxl34x_driver =3D {
-> =C2=A0		.pm =3D pm_sleep_ptr(&adxl34x_pm),
-> =C2=A0	},
-> =C2=A0	.probe=C2=A0=C2=A0 =3D adxl34x_spi_probe,
-> -	.remove=C2=A0 =3D adxl34x_spi_remove,
-> =C2=A0};
-> =C2=A0
-> =C2=A0module_spi_driver(adxl34x_driver);
-> diff --git a/drivers/input/misc/adxl34x.c b/drivers/input/misc/adxl34x.c
-> index fbe5a56c19d1..c6c34005f5d2 100644
-> --- a/drivers/input/misc/adxl34x.c
-> +++ b/drivers/input/misc/adxl34x.c
-> @@ -707,21 +707,21 @@ struct adxl34x *adxl34x_probe(struct device *dev, i=
-nt
-> irq,
-> =C2=A0	struct adxl34x *ac;
-> =C2=A0	struct input_dev *input_dev;
-> =C2=A0	const struct adxl34x_platform_data *pdata;
-> -	int err, range, i;
-> +	int error, range, i;
-> =C2=A0	int revid;
-> =C2=A0
-> =C2=A0	if (!irq) {
-> =C2=A0		dev_err(dev, "no IRQ?\n");
-> -		err =3D -ENODEV;
-> -		goto err_out;
-> +		return ERR_PTR(-ENODEV);
-> =C2=A0	}
-> =C2=A0
-> -	ac =3D kzalloc(sizeof(*ac), GFP_KERNEL);
-> -	input_dev =3D input_allocate_device();
-> -	if (!ac || !input_dev) {
-> -		err =3D -ENOMEM;
-> -		goto err_free_mem;
-> -	}
-> +	ac =3D devm_kzalloc(dev, sizeof(*ac), GFP_KERNEL);
-> +	if (!ac)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	input_dev =3D devm_input_allocate_device(dev);
-> +	if (!input_dev)
-> +		return ERR_PTR(-ENOMEM);
-> =C2=A0
-> =C2=A0	ac->fifo_delay =3D fifo_delay_default;
-> =C2=A0
-> @@ -754,14 +754,12 @@ struct adxl34x *adxl34x_probe(struct device *dev, i=
-nt
-> irq,
-> =C2=A0		break;
-> =C2=A0	default:
-> =C2=A0		dev_err(dev, "Failed to probe %s\n", input_dev->name);
-> -		err =3D -ENODEV;
-> -		goto err_free_mem;
-> +		return ERR_PTR(-ENODEV);
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	snprintf(ac->phys, sizeof(ac->phys), "%s/input0", dev_name(dev));
-> =C2=A0
-> =C2=A0	input_dev->phys =3D ac->phys;
-> -	input_dev->dev.parent =3D dev;
-> =C2=A0	input_dev->id.product =3D ac->model;
-> =C2=A0	input_dev->id.bustype =3D bops->bustype;
-> =C2=A0	input_dev->open =3D adxl34x_input_open;
-> @@ -769,18 +767,12 @@ struct adxl34x *adxl34x_probe(struct device *dev, i=
-nt
-> irq,
-> =C2=A0
-> =C2=A0	input_set_drvdata(input_dev, ac);
-> =C2=A0
-> -	__set_bit(ac->pdata.ev_type, input_dev->evbit);
-> -
-> =C2=A0	if (ac->pdata.ev_type =3D=3D EV_REL) {
-> -		__set_bit(REL_X, input_dev->relbit);
-> -		__set_bit(REL_Y, input_dev->relbit);
-> -		__set_bit(REL_Z, input_dev->relbit);
-> +		input_set_capability(input_dev, EV_REL, REL_X);
-> +		input_set_capability(input_dev, EV_REL, REL_Y);
-> +		input_set_capability(input_dev, EV_REL, REL_Z);
-> =C2=A0	} else {
-> =C2=A0		/* EV_ABS */
-> -		__set_bit(ABS_X, input_dev->absbit);
-> -		__set_bit(ABS_Y, input_dev->absbit);
-> -		__set_bit(ABS_Z, input_dev->absbit);
+> On Fri, Jun 07, 2024 at 09:30:19AM +0200, Kory Maincent wrote:
+> > From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com> =20
+>=20
+> ...
+>=20
+> >  /**
+> > diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+> > index 8733a3117902..ef65ad4612d2 100644
+> > --- a/include/uapi/linux/ethtool.h
+> > +++ b/include/uapi/linux/ethtool.h
+> > @@ -752,6 +752,47 @@ enum ethtool_module_power_mode {
+> >  	ETHTOOL_MODULE_POWER_MODE_HIGH,
+> >  };
+> > =20
+> > +/* C33 PSE extended state */
+> > +enum ethtool_c33_pse_ext_state {
+> > +	ETHTOOL_C33_PSE_EXT_STATE_UNKNOWN =3D 1, =20
+>=20
+> I assume, In case the state is unknown, better to set it to 0 and not
+> report it to the user space in the first place. Do we really need it?
 
-Are these somehow default or already set? I guess in input_set_abs_params()=
-...
-Anyways, the move from "raw" __set_bits() to input APIs should maybe be don=
-e in
-a separate patch? They are unrelated with the current one.
+The pd692x0 report this for the unknown state: "Port is not mapped to physi=
+cal
+port, port is in unknown state, or PD692x0 fails to communicate with PD69208
+device allocated for this port."
+Also it has a status for open port (not connected) state.
+(ETHTOOL_C33_PSE_EXT_SUBSTATE_V_OPEN)
+Do you prefer to use the same error for both state?
+=20
+> > +	ETHTOOL_C33_PSE_EXT_STATE_DETECTION,
+> > +	ETHTOOL_C33_PSE_EXT_STATE_CLASSIFICATION_FAILURE,
+> > +	ETHTOOL_C33_PSE_EXT_STATE_HARDWARE_ISSUE,
+> > +	ETHTOOL_C33_PSE_EXT_STATE_VOLTAGE_ISSUE,
+> > +	ETHTOOL_C33_PSE_EXT_STATE_CURRENT_ISSUE,
+> > +	ETHTOOL_C33_PSE_EXT_STATE_POWER_BUDGET_EXCEEDED, =20
+>=20
+> What is the difference between POWER_BUDGET_EXCEEDED and
+> STATE_CURRENT_ISSUE->CRT_OVERLOAD? If there is some difference, it
+> should be commented.
 
-- Nuno S=C3=A1=20
+Current overload seems to be describing the "Overload current detection ran=
+ge
+(Icut)" As described in the IEEE standard.
+Not sure If budget exceeded should use the same error.
 
+> Please provide comments describing how all of this states and substates
+> should be used.
 
+The enum errors I wrote is a bit subjective and are taken from the PD692x0
+port status list. Go ahead to purpose any change, I have tried to make
+categories that make sense but I might have made wrong choice.
+
+> >  /**
+> >   * enum ethtool_pse_types - Types of PSE controller.
+> >   * @ETHTOOL_PSE_UNKNOWN: Type of PSE controller is unknown
+> > diff --git a/include/uapi/linux/ethtool_netlink.h
+> > b/include/uapi/linux/ethtool_netlink.h index b49b804b9495..ccbe8294dfd5
+> > 100644 --- a/include/uapi/linux/ethtool_netlink.h
+> > +++ b/include/uapi/linux/ethtool_netlink.h
+> > @@ -915,6 +915,10 @@ enum {
+> >  	ETHTOOL_A_C33_PSE_ADMIN_STATE,		/* u32 */
+> >  	ETHTOOL_A_C33_PSE_ADMIN_CONTROL,	/* u32 */
+> >  	ETHTOOL_A_C33_PSE_PW_D_STATUS,		/* u32 */
+> > +	ETHTOOL_A_C33_PSE_PW_CLASS,		/* u32 */
+> > +	ETHTOOL_A_C33_PSE_ACTUAL_PW,		/* u32 */
+> > +	ETHTOOL_A_C33_PSE_EXT_STATE,		/* u8 */
+> > +	ETHTOOL_A_C33_PSE_EXT_SUBSTATE,		/* u8 */ =20
+>=20
+> Please, increase the size to u32 for state and substate.
+
+Ack,
+
+> >  	/* add new constants above here */
+> >  	__ETHTOOL_A_PSE_CNT,
+> > diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
+> > index 2c981d443f27..3d74cfe7765b 100644
+> > --- a/net/ethtool/pse-pd.c
+> > +++ b/net/ethtool/pse-pd.c
+> > @@ -86,7 +86,14 @@ static int pse_reply_size(const struct ethnl_req_info
+> > *req_base, len +=3D nla_total_size(sizeof(u32)); /* _C33_PSE_ADMIN_STAT=
+E */
+> >  	if (st->c33_pw_status > 0)
+> >  		len +=3D nla_total_size(sizeof(u32)); /*
+> > _C33_PSE_PW_D_STATUS */ -
+> > +	if (st->c33_pw_class > 0)
+> > +		len +=3D nla_total_size(sizeof(u32)); /* _C33_PSE_PW_CLASS */
+> > +	if (st->c33_actual_pw > 0)
+> > +		len +=3D nla_total_size(sizeof(u32)); /* _C33_PSE_ACTUAL_PW
+> > */
+> > +	if (st->c33_ext_state_info.c33_pse_ext_state)
+> > +		len +=3D nla_total_size(sizeof(u8)); /* _C33_PSE_EXT_STATE */
+> > +	if (st->c33_ext_state_info.__c33_pse_ext_substate)
+> > +		len +=3D nla_total_size(sizeof(u8)); /*
+> > _C33_PSE_EXT_SUBSTATE */ =20
+>=20
+> Substate can be properly decoded only if state is not zero.
+
+Indeed, thanks for spotting that mistake.
+=20
+> Please update Documentation/networking/ethtool-netlink.rst
+
+Oh right, indeed. Forgot to add the netlink docs.=20
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
