@@ -1,91 +1,93 @@
-Return-Path: <linux-kernel+bounces-207720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E69901AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD6A901ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693611F24B8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B037282BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E63014277;
-	Mon, 10 Jun 2024 06:04:28 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A5117BAA;
+	Mon, 10 Jun 2024 06:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0Ra5EcI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916FADDB8;
-	Mon, 10 Jun 2024 06:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11002171D2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717999467; cv=none; b=OwgObNlfycbYt5ns5O5GKkqFb9Us3ZyRf8VFhaqqtVoIPwDKMAr9E+syWD7pppBL6eoVbwpOnjqzGbqD2oHW35kR0+f1XMXJn2w3OEK3eOgSEaXTD2FPfJjzlnGBysqW4RebJIJDVtv9wDeaqW7qO1ViikVEf7CWt3mQiJrCMlE=
+	t=1717999723; cv=none; b=WVJvcupjRiAXS3B882u+ibF9iMNeo0PX04dWBVd/qiO/MsL3r+7FseWM8ieLI+ZVaqgDcvl+NdRq3HxJ5IzF8QLWXMYDoxsB25ylt0SJhCLb9oGEQ+j2f+V90REYJ/hLLjwxnpl9tdjL6Nkif/BNrbDl7xaoDZ1/+q71GgRwBUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717999467; c=relaxed/simple;
-	bh=cSQdX4BBYMrswHnIrE7sy+aIIFqOv+WYoxhqcbK1I0M=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=R/XUwbzSTgaSWh+VY3O0TAa/6MhrMp2hZ2DQBqsV3bzKs/I+sj93G8ikKkWMxYc9wiSEX9XfEuEK42gMC3dTPgikv8pE4Ibza/P4FUFPvii2HVKBllQ8s0nrnd2XdkCoQnDGKH+dyxORGW3h6s4EKpvXCPJ4Loi+fLCiEbR2d0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=9905c7c8d6=ms@dev.tdt.de>)
-	id 1sGY8d-0081Zp-BT; Mon, 10 Jun 2024 08:04:15 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sGY8c-007Uab-NP; Mon, 10 Jun 2024 08:04:14 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 581C3240053;
-	Mon, 10 Jun 2024 08:04:14 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id D9D49240050;
-	Mon, 10 Jun 2024 08:04:13 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 595D9201B0;
-	Mon, 10 Jun 2024 08:04:13 +0200 (CEST)
+	s=arc-20240116; t=1717999723; c=relaxed/simple;
+	bh=ydU3TIHzs/gqixC34SQ/HlD8nJN2Njc1bqn94VBCax0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ng0XnvmrqCXMKsJZ0NB3e11DND5dK7n0toznA+qVp3JH8HaVJi2DtAain1BVc5Xrn69Y70JnNEBSVm0DUOEKjxzYF2P9B/3vzABu+qnJLObtY1yiw2WooFV4bwT13n9Qx3vxxNu/Ljn6acyP1LpUDTew0l0ODSfhrG00ttjju/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0Ra5EcI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A06CC2BBFC;
+	Mon, 10 Jun 2024 06:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717999722;
+	bh=ydU3TIHzs/gqixC34SQ/HlD8nJN2Njc1bqn94VBCax0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J0Ra5EcIeboqGZAuts2bhl2iJ4p1IlqLcdNh3qNs87zOoIaH5ldNi9pwIS+l8aU9C
+	 WlkzxmCZXpqK65yajDYqFaSJ3VtUkB01x29ploDFSPS+ZduVnL4MaTTtIaXtSCL5G9
+	 ttRmi9kxGw2/pMOD+lefA1e1YHzj75KKzCP7zBurp0vOJ5k5qpj2oVMTtNVE2wn98P
+	 gXGFSpHR0dKRCFlP4/gdM4bRgoWwx13WnDeqsPvSmDt/oVcfIF3uyPTy8CA3yqFl50
+	 WL8VJZ8oxUvtdSGsudL+my7hZgeBrvwMwCnUQkZAUCbZEvfdUZ2wipjNvLSyBuSmIO
+	 crKV8N+8sPYVQ==
+Date: Mon, 10 Jun 2024 09:06:37 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Leesoo Ahn <lsahn@ooseel.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Leesoo Ahn <lsahn@wewakecorp.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: sparse: clarify a variable name and its value
+Message-ID: <ZmaX7cnUiWla9FCf@kernel.org>
+References: <20240608152114.867961-1-lsahn@wewakecorp.com>
+ <20240609140341.14ba3a1c62029771d60059ed@linux-foundation.org>
+ <CANTT7qjthRWX+7m749mU_CmGUO1UEvY6O9yKsStm165Lz=tqAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 10 Jun 2024 08:04:13 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
- f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 12/13] net: dsa: lantiq_gswip: Add and use a
- GSWIP_TABLE_MAC_BRIDGE_FID macro
-Organization: TDT AG
-In-Reply-To: <ae0811c79a126e9f034beccf37e61991@dev.tdt.de>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-13-ms@dev.tdt.de>
- <20240607113652.6ryt5gg72he2madn@skbuf>
- <ae0811c79a126e9f034beccf37e61991@dev.tdt.de>
-Message-ID: <de33cde759363a3dedb24375c76939fa@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1717999455-C0C438CF-D4D8639C/0/0
-X-purgate: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANTT7qjthRWX+7m749mU_CmGUO1UEvY6O9yKsStm165Lz=tqAQ@mail.gmail.com>
 
-On 2024-06-07 16:27, Martin Schiller wrote:
-> While looking again at this diff above, I noticed that val[0] is set
-> incorrectly. Shouldn't it be either "port << 4" or (after the previous 
-> patch)
-> "FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_PORT, port);" instead of 
-> "BIT(port)"?
+On Mon, Jun 10, 2024 at 12:39:28PM +0900, Leesoo Ahn wrote:
+> 2024년 6월 10일 (월) 오전 6:03, Andrew Morton <akpm@linux-foundation.org>님이 작성:
+> >
+> > On Sun,  9 Jun 2024 00:21:14 +0900 Leesoo Ahn <lsahn@ooseel.net> wrote:
+> >
+> > > Setting 'limit' variable to 0 might seem like it means "no limit". But
+> > > in the memblock API, 0 actually means the 'MEMBLOCK_ALLOC_ACCESSIBLE'
+> > > enum, which limits the physical address range based on
+> > > 'memblock.current_limit'. This can be confusing.
+> >
+> > Does it?  From my reading, this meaning applies to the range end
+> > address, in memblock_find_in_range_node()?  If your interpretation is
+> > correct, this should be documented in the relevant memblock kerneldoc.
 
-Please ignore this comment. The format of the port specification differs
-for static and dynamic (learned) entries.
+It is :-P
+ 
+> IMO, regardless of memblock documentation, it better uses
+> MEMBLOCK_ALLOC_ACCESSIBLE enum instead of 0 as a value for the variable.
 
+Using MEMBLOCK_ALLOC_ACCESSIBLE is a slight improvement, but renaming the
+variable is not, IMO.
+ 
+> Best regards,
+> Leesoo
+
+-- 
+Sincerely yours,
+Mike.
 
