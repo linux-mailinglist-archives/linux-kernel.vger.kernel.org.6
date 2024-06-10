@@ -1,169 +1,124 @@
-Return-Path: <linux-kernel+bounces-208390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB1090246A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C64CA902484
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFDBBB29C65
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDDE2861F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E7F135A6E;
-	Mon, 10 Jun 2024 14:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6B3143896;
+	Mon, 10 Jun 2024 14:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pw43uUed"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U8nfTTYI"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC4D132112;
-	Mon, 10 Jun 2024 14:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D138813B5AB;
+	Mon, 10 Jun 2024 14:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718030682; cv=none; b=Rs7nAcArPd9KFXe5tv53DOqhUEYgGLPkxikjvuR6HFF67X+xVF7Bxx+FCkh/25vgNlcWMANK27WeW4Lzt5IUnsrBX4fS5tLDzn77NKNxjZbgCbbq+k14WmdNg+xSoJNb/XXiTMur1oyn/H/THElHb/Rr6SPwpf2t4C/KZV5M4Wk=
+	t=1718030851; cv=none; b=HU6fTYbRaCV8kzvCTCFNc89eOUs17Y41AmupzqBSw9zFBWJgtE2st/XE+DX3JXVgfrV6WKZQpr30cpvMo31vXxmQdE1X2dpOCZ7n52bjTXBerbNSyk4s42qXGcYvco2Gi3T/VDxhmOKT6Q9QK5+I8vyw6xReQURTrGqqs0amOtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718030682; c=relaxed/simple;
-	bh=eY9F5kq/mdlMa6zRjS1NBDAumKWUUH16eUTQ0RBgBOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QVq5HNmh/aOrT0gbXCUkBJbxZzLCgrDCr/YTiFTQpSnLGl+wr9pwO9x+QZ0zK2rSwD21Bpyh68c5VrZDy38kgRfsWHl7/ArJ68FdFoDkjM/jUdUx5bJjVhPn1371UOELWDt9vHUwG7Hi7UQDdp01qmHzz+GPQ9+MY0Gw+ntHARI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pw43uUed; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ADUbtR029624;
-	Mon, 10 Jun 2024 14:44:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YerxaNiDrqT++v3tBHV72ahDavLdzSNSM69xaGAmvMA=; b=Pw43uUedZ8KuOXS1
-	/oNwR7m0GP/Kt6W/0Fbq9TGDv3JR19mDb2ibvMKGY/lln1YHY8iKFdt9Az9Fm1fx
-	X74gWD12Mrm9hbEcYMbHaXQ9X8f0jJ4EVr/jRZt6PGKDmRT6Y1XHSWCmDuv5RAzV
-	6UKlt3qxurrWT5PnoMtb4ilDlQbOd1qlsl+c5QYuILroXvvpFfX6YlOQbxDYNMG/
-	c/VJyVK03aBcQJ5TzjAwsQLtZOsHdCRX/45XmaNPNpmHKqzYOGfpx6hGF086Ubk6
-	fzeb6Oo5PMLhriIJaXJXzaY7Tz1mJgFl38jHVD4XPY8IPEi0up4hWlGBmc4qVLqv
-	KoOsgg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymea6kwcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:44:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEiIwZ012751
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:44:18 GMT
-Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:44:17 -0700
-Message-ID: <ea5c6e03-3821-4808-9681-ea5576c65391@quicinc.com>
-Date: Mon, 10 Jun 2024 07:44:16 -0700
+	s=arc-20240116; t=1718030851; c=relaxed/simple;
+	bh=N011t8Qbe74VSNivjs5jkiaGFCzdqpLyIFhuVzRw0Zc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QXCdHKS48KGyXPSczkG1K4Tvj2fktPcsZFoeluqpG3hz8/Wwl4HRTx+UjKK1uoQCUvKK49QLh73h1S7eTg8RBgQsD7e/93oqQ3cVeU0Ex5c3V8erU0qZaozvv+FEvFkvyjqxW6GlGs1UAplwoNq/MtxjjKHnA53i+7eZzpviKHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U8nfTTYI; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AEkb2Q106712;
+	Mon, 10 Jun 2024 09:46:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718030797;
+	bh=GNLw44HVQwjzsrCtDDejjLqQbOTo7IhMoacj1jEQPrU=;
+	h=From:To:CC:Subject:Date;
+	b=U8nfTTYI11J+oWVdl8g93I4bOGIlwh81OZi72w08Y58ueKhskB5+SVqKN8JlfDAwB
+	 HcpqlKpkDyhK6GaK11l5wgIyOPB6POLssKmoYnr9HeMHFIV4UgxAz4JcAyFeAtbOab
+	 qpq2D1hvVy5lnrLMGSwxk3Ac8wgbZVGBhrq0UU/4=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AEkbL6008171
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 09:46:37 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 09:46:37 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 09:46:37 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AEkbZn096515;
+	Mon, 10 Jun 2024 09:46:37 -0500
+From: Judith Mendez <jm@ti.com>
+To: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        William Breathitt Gray <wbg@kernel.org>, Nishanth Menon <nm@ti.com>
+CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        David
+ Lechner <david@lechnology.com>
+Subject: [PATCH v4 0/8] Enable eQEP DT support for Sitara K3 platforms
+Date: Mon, 10 Jun 2024 09:46:29 -0500
+Message-ID: <20240610144637.477954-1-jm@ti.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
- <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BZzjFM6FFRhPIg51RXBqh8PoY2xZ714Q
-X-Proofpoint-ORIG-GUID: BZzjFM6FFRhPIg51RXBqh8PoY2xZ714Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
- malwarescore=0 suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406100112
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/10/2024 1:06 AM, AngeloGioacchino Del Regno wrote:
-> Il 07/06/24 18:02, Jeff Johnson ha scritto:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> This addresses all of the issues in driver/pwm
->>
->> Let me know if you want any of the individual module changes
->> segregated into separate patches.
->> ---
->>   drivers/pwm/pwm-imx1.c      | 1 +
->>   drivers/pwm/pwm-imx27.c     | 1 +
->>   drivers/pwm/pwm-intel-lgm.c | 1 +
->>   drivers/pwm/pwm-mediatek.c  | 1 +
->>   drivers/pwm/pwm-pxa.c       | 1 +
->>   drivers/pwm/pwm-samsung.c   | 1 +
->>   drivers/pwm/pwm-spear.c     | 1 +
->>   drivers/pwm/pwm-visconti.c  | 1 +
->>   8 files changed, 8 insertions(+)
->>
-> 
-> ..snip..
-> 
->> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
->> index 19a87873ad60..0b5d68a90e83 100644
->> --- a/drivers/pwm/pwm-mediatek.c
->> +++ b/drivers/pwm/pwm-mediatek.c
->> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
->>   module_platform_driver(pwm_mediatek_driver);
->>   
->>   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
->> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
-> 
-> MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
-> for the Display PWM, and it is located in the DDP block.
-> 
-> So, there are two PWM IPs in one SoC:
->   - A general purpose PWM IP
->   - A DDP PWM IP
-> 
-> This driver is for the general purpose PWM IP.. so, please, can we change this
-> to "MediaTek general purpose Pulse Width Modulator driver"?
-> 
-> After which,
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
->>   MODULE_LICENSE("GPL v2");
-> 
-Sure, I'll update these in v2
+This patch series adds eQEP DT nodes for K3 Sitara devices:
+- AM62x
+- AM62ax
+- AM62px
+- AM64x
+
+The series also allows the eQEP driver to be built for K3
+architecture.
+
+Changes since v3:
+- Fix pinmux label name
+- Fix eQEP node comment
+
+v3: https://lore.kernel.org/linux-devicetree/20240607162755.366144-1-jm@ti.com/
+v2: https://lore.kernel.org/linux-devicetree/20240523231516.545085-1-jm@ti.com/
+v1: https://lore.kernel.org/linux-devicetree/20240418221417.1592787-1-jm@ti.com/
+
+Judith Mendez (8):
+  dt-bindings: counter: Add new ti,am62-eqep compatible
+  counter/ti-eqep: Add new ti-am62-eqep compatible
+  arm64: dts: ti: k3-am62-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62a-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62p-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64x-sk: Enable eQEP
+  counter: ti-eqep: Allow eQEP driver to be built for K3 devices
+
+ .../devicetree/bindings/counter/ti-eqep.yaml  | 44 ++++++++++++++++---
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi      | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        | 17 +++++++
+ drivers/counter/Kconfig                       |  2 +-
+ drivers/counter/ti-eqep.c                     |  1 +
+ 8 files changed, 166 insertions(+), 6 deletions(-)
+
+-- 
+2.45.1
+
 
