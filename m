@@ -1,277 +1,116 @@
-Return-Path: <linux-kernel+bounces-208177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B059021E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EDD9021F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3D21F21CF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B00F1F21BF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2F80C03;
-	Mon, 10 Jun 2024 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="CB7tWaAS"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7228181ABA;
+	Mon, 10 Jun 2024 12:49:00 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F27380BF3;
-	Mon, 10 Jun 2024 12:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC6A80639;
+	Mon, 10 Jun 2024 12:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718023731; cv=none; b=rwM40I0HLk7iI3P+htqcQk2yiE2PaXm+ray5yQrfvkYqNN3igqbzdF393yX0EprlILoC98IFJYP3CdmwbZnyk2vEVx5ekmO/mz/AXnqcuX7RAtQuEd/ygSsQj9AXH9FW2VL8ZoPHzuy/36+R/Q9C2iCaLczKrc9/3dHlCi1Bvx8=
+	t=1718023740; cv=none; b=HA7RpwOiX2asF24JlGR0cYQtEx5/202ujhFYFD7G5J6z2vNBsAxxn6+q7/O5c+trAWCQw/iCEB6cZHp0mbx2uzX2XysF/d2D/5EjfnL3wzy2KGZJ8uaZdeCEqWJwu6q4kQoPVMduIWKtyx+BZPbwKVCxEy1QzxsI0BgdMkgb4Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718023731; c=relaxed/simple;
-	bh=5xSpIRs+951Kve6tBfW/525+iQeRJrLClC3SoiW2dso=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHSG2k+dO5haRlcK/x3NF550iebSLUnuH7PPfhLECkFMwvT7IFvZd+cdlNdLMeds3tOeenZXOsh8ei95IJpfHjc2dRe96VWln6THkM/m5SHOPNCS6Nj1oKgAeWWH0ytOBiACRDWw+0Xd7HCnz3a1J9JyJl9fh1kx2+mT1xR1Oko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=CB7tWaAS; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 98D27100009;
-	Mon, 10 Jun 2024 15:48:43 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 98D27100009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718023723;
-	bh=j3YIK2h8usjuYp/Fn/WGb0hwIgDEYJptTOyzUDckVro=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=CB7tWaAS8L4T5u/Wb2APAq8IO977ijed2j4sGe3NIrXrMlsmZut3p/ZpF4ctKtlGh
-	 a93blyqI8tBcdKl+ERNn6ynyI01ennDmN7EBkBwdCVE/xj6eocjEVS5v50qcBoOApR
-	 k6T/oldjby4wS8M2XYVAYATdwYZ6CVKmNiCRQUH3kzMXoTLcviYavRJww9XbUnN0xd
-	 HElrjKQV8Y6rCagOJwpUnPd04NzU+sthDEGoiKksRSJ1bdFMAfi7B/5W4tDBHIIdqf
-	 6VxowPklrawKgENcAEbg71g5wzZsypgd46BLgpjg+c7/FUUypunquZhkd7ftdULRzd
-	 0uNyhFXvhkqPw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 10 Jun 2024 15:48:43 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
- 2024 15:48:43 +0300
-Date: Mon, 10 Jun 2024 15:48:42 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: clock: meson: add A1 CPU clock
- controller bindings
-Message-ID: <20240610124842.mpy4rtlwtwasqf7h@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-7-ddrokosov@salutedevices.com>
- <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
- <20240610111826.im3mz64hjfkxrxhr@CAB-WSD-L081021>
- <1j7cexow91.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1718023740; c=relaxed/simple;
+	bh=c1EmVzZERqjSJs/SlkFG6bKIoC5k7IxAp0ghoFzDQa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7hAryKAy3STYX5UC4MdgKTGw/0zxUngdadWGB99c81XMdU9AVWOkZ1YoJCosA44/AUTk0OLIyowZb7oAoEYFjTIceAUzS2KAe3/tdZH9hJPk5jCHHs4VoIA6RiFnVmsAUCwmGsy30/Mr/dY0m71W1iMqHdqRcI7enHEHUOXJrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id EBF00579; Mon, 10 Jun 2024 07:48:55 -0500 (CDT)
+Date: Mon, 10 Jun 2024 07:48:55 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andrew Morgan <morgan@kernel.org>,
+	brauner@kernel.org, ebiederm@xmission.com,
+	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
+	John Johansen <john.johansen@canonical.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
+Message-ID: <20240610124855.GA2193924@mail.hallyn.com>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-2-jcalmels@3xx0.net>
+ <20240610015024.GA2182786@mail.hallyn.com>
+ <6pwskrbtmxjy2ti3xabfslmupjhat7dhrnbftinzhxgxnsveum@5jq5l6ws7hls>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1j7cexow91.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185833 [Jun 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, devicetree.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/10 11:00:00
-X-KSMG-LinksScanning: Clean, bases: 2024/06/10 11:00:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 11:09:00 #25535815
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <6pwskrbtmxjy2ti3xabfslmupjhat7dhrnbftinzhxgxnsveum@5jq5l6ws7hls>
 
-On Mon, Jun 10, 2024 at 01:47:06PM +0200, Jerome Brunet wrote:
-> On Mon 10 Jun 2024 at 14:18, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+On Mon, Jun 10, 2024 at 01:47:13AM -0700, Jonathan Calmels wrote:
+> On Sun, Jun 09, 2024 at 08:50:24PM GMT, Serge E. Hallyn wrote:
+> > On Sun, Jun 09, 2024 at 03:43:34AM -0700, Jonathan Calmels wrote:
+> > > Attackers often rely on user namespaces to get elevated (yet confined)
+> > > privileges in order to target specific subsystems (e.g. [1]). Distributions
+> > 
+> > I'd modify this to say "in order to target *bugs* in specific subsystems" :)
 > 
-> > Hello Jerome,
-> >
-> > Thank you for the review!
-> >
-> > On Mon, Jun 10, 2024 at 12:04:09PM +0200, Jerome Brunet wrote:
-> >> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
-> >> 
-> >> > Add the documentation and dt bindings for Amlogic A1 CPU clock
-> >> > controller.
-> >> >
-> >> > This controller consists of the general 'cpu_clk' and two main parents:
-> >> > 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
-> >> > fixed clock, while the 'syspll' serves as an external input from the A1
-> >> > PLL clock controller.
-> >> >
-> >> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> >> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >> > ---
-> >> >  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
-> >> >  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
-> >> >  2 files changed, 83 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> >> >  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> >> > new file mode 100644
-> >> > index 000000000000..f4958b315ed4
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> >> > @@ -0,0 +1,64 @@
-> >> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >> > +%YAML 1.2
-> >> > +---
-> >> > +$id: http://devicetree.org/schemas/clock/amlogic,a1-cpu-clkc.yaml#
-> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> > +
-> >> > +title: Amlogic A1 CPU Clock Control Unit
-> >> > +
-> >> > +maintainers:
-> >> > +  - Neil Armstrong <neil.armstrong@linaro.org>
-> >> > +  - Jerome Brunet <jbrunet@baylibre.com>
-> >> > +  - Dmitry Rokosov <ddrokosov@salutedevices.com>
-> >> > +
-> >> > +properties:
-> >> > +  compatible:
-> >> > +    const: amlogic,a1-cpu-clkc
-> >> > +
-> >> > +  '#clock-cells':
-> >> > +    const: 1
-> >> > +
-> >> > +  reg:
-> >> > +    maxItems: 1
-> >> > +
-> >> > +  clocks:
-> >> > +    items:
-> >> > +      - description: input fixed pll div2
-> >> > +      - description: input fixed pll div3
-> >> > +      - description: input sys pll
-> >> > +      - description: input oscillator (usually at 24MHz)
-> >> 
-> >> According to the documentation, fdiv5 is also an input of the CPU clock
-> >> tree.
-> >> 
-> >> That is typically the kind of things we'd prefer to get right from the
-> >> beginning to avoid modifying the bindings later.
-> >> 
-> >
-> > Could you please share which documentation you are referencing? I have
-> > the A113L documentation, and there is no mention of the CPU clock IP.
+> Ack
 > 
-> You should get in touch with Amlogic.
+> > > This effectively mimics the inheritable set rules and means that, by
+> > > default, only root in the user namespace can regain userns capabilities
+> > > previously dropped:
+> > 
+> > Something about this last sentence feels wrong, but I'm not sure what
+> > the best alternative would be.  As is, though, it makes it sound as though
+> > root in the userns can always regain previously dropped capabilities, but
+> > that's not true if dropped in ancestor ns, or if root also dropped the
+> > bits from its bounding set (right?).
 > 
+> Right, the wording is a little bit confusing here I admit.
+> What I meant to say is that if a cap is dropped in a *given* namespace,
+> then it can only be regained by root there. But yes, caps can never be
+> regained from ancestors ns. I'll try to rephrase it.
+> 
+> BTW, this is rather strict, but I think that's what we want right,
 
-Okay, I will double check with Amlogic and back with accurate
-information.
+Yes,
 
-> > I retrieved below register map from the vendor's custom driver:
-> >
-> > ===
-> > CPUCTRL_CLK_CTRL0
-> >
-> > bits 1:0 - cpu_fsource_sel0
-> >     0 - xtal
-> >     1 - fclk_div2
-> >     2 - fclk_div3
-> >
-> > bit 2 - cpu_fsel0
-> >     0 - cpu_fsource_sel0
-> >     1 - cpu_fsource_div0
-> >
-> > bit 3 - UNKNONWN
-> >
-> > bits 9:4 - cpu_fsource_div0
-> >     Divider value
-> >
-> > bit 10 - cpu_fclk
-> >     0 - cpu_fsel0
-> >     1 - cpu_fsel1
-> >
-> > bit 11 - cpu_clk
-> >     0 - cpu_fclk
-> >     1 - sys_pll
-> >
-> > bits 15:12 - UNKNONWN
-> >
-> > bits 17:16 - cpu_fsource_sel1
-> >     0 - xtal
-> >     1 - fclk_div2
-> >     2 - fclk_div3
-> >
-> > bit 18 - cpu_fsel1
-> >     0 - cpu_fsource_sel1
-> >     1 - cpu_fsource_div1
-> >
-> > bit 19 - UNKNONWN
-> >
-> > bits 25:20 - cpu_fsource_div1
-> >     Divider value
-> >
-> > bits 31:26 - UNKNONWN
-> > ===
-> >
-> > As you can see it doesn't have any other inputs except fclk_div2,
-> > fclk_div3, sys_pll and xtal.
-> 
-> You might not know what to do with it yet, still it is part of the
-> documentation and should be part of the bindings too
-> 
-> >
-> >> > +
-> >> > +  clock-names:
-> >> > +    items:
-> >> > +      - const: fclk_div2
-> >> > +      - const: fclk_div3
-> >> > +      - const: sys_pll
-> >> > +      - const: xtal
-> >> > +
-> >> > +required:
-> >> > +  - compatible
-> >> > +  - '#clock-cells'
-> >> > +  - reg
-> >> > +  - clocks
-> >> > +  - clock-names
-> >> > +
-> >> > +additionalProperties: false
-> >> > +
-> >> > +examples:
-> >> > +  - |
-> >> > +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-> >> > +    apb {
-> >> > +        #address-cells = <2>;
-> >> > +        #size-cells = <2>;
-> >> > +
-> >> > +        clock-controller@fd000000 {
-> >> > +            compatible = "amlogic,a1-cpu-clkc";
-> >> > +            reg = <0 0xfd000080 0 0x8>;
-> >> 
-> >> If reg is <0 0xfd000080 0 0x8> then node name should be clock-controller@fd000080
-> >> 
-> >
-> > Okay, I will fix that example in the next version.
-> >
-> > [...]
-> 
-> -- 
-> Jerome
+> something simple? Alternative would be to have a new cap masked off by
+> default, but if granted to a userns, allows you to regain ancestors
+> caps.
 
--- 
-Thank you,
-Dmitry
+we absolutely do not want to allow regaining caps dropped in an
+ancestor namespace.
+
+thanks,
+-serge
 
