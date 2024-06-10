@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-208024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A77901F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:34:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7CD901F78
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B1F1C20CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0702823E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B247A705;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C378279B84;
 	Mon, 10 Jun 2024 10:34:18 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0w9U/G0w";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DkfvpsZJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6144278289;
-	Mon, 10 Jun 2024 10:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63E32C190
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718015658; cv=none; b=YlDBc7IqFCRIYj7c6H+3ShpY0tH8qMka69a03p7REK89msl8ZWcY9XY8AqnaWB03g2CBLlZzWw7bvN1/1g3+klscoYx13Q0Pxa15OwEKMfRQEvS93MGY0EhEQTf42Pg9aGYySNUo9iY2BmkXxwX3OhV63MP0zSYv8xw/G5XeqYU=
+	t=1718015658; cv=none; b=GgjwPubNuZYfCx4u51bYQ484OGe2xFYe7YFrcSnbK5bSGLQ22fXPTuIEHBk6H3tEheC2J1PxUbvcyR0lZYVFRyFgwlp6oTqaJVako2IVxNHsCZ4P951vKjMZ7yW7PBLhqXCR8YGpE1gBlupitj2d/LnrW7tCd2/umVuvtrWhPIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718015658; c=relaxed/simple;
-	bh=XtWJks2i9IAdE5AHADeeOUmGvpns41q5F8q5JRssxmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=daGmnfa7lEr2p1A4q6XQjdJvdn+44Oi3hr/dqBys5/9btDGquJZMUTOPa3ChNxJXTqBon+oldyaWcCM/wvqpPZsW5lLj2VY6/JRofsJLJmocN4WYrNY19MN2CiwRA4quvOiE5FGdeVlcm3MC7rV/gevuMTjUVwxz1nI2GF49Ba4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C0DC4AF1A;
-	Mon, 10 Jun 2024 10:34:14 +0000 (UTC)
-Date: Mon, 10 Jun 2024 11:34:12 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Steven Price <steven.price@arm.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 00/14] arm64: Support for running as a guest in Arm CCA
-Message-ID: <ZmbWpNOc7MiJEjqL@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ZmMjam3-L807AFR-@arm.com>
- <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	bh=GgPF/kNWNWiUXah1his2cVQzKbjr5QQj/Znn9RugYT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Et2Ku7y8P624o9MNs3lmKm2wLUhfQuzyLjorJhQoAwbc2L+vO1mA7f3LHU2dtC/PXy5cSe95vTqrwBSK914XPZDKidOVo2RdomdMjK5CK4jkcRCX6dkmCcgkq2y/4L1P5Sm3eIqBDZ4Ly1RHFOANluUtMmx1htEx3UZ6t/rZo5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0w9U/G0w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DkfvpsZJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718015654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YRkx/5RwMgFbzf1uUBRE8Tiy4K15zukz3Dkd3L3xoLM=;
+	b=0w9U/G0wimfijjdKv8E/+itfH4XuYpCZ3bz7C4liI41Zij8X5jfS/+WCBS5tTas0Ih5DWJ
+	qih5WjxbEl0ntA5cl10Luf9/ka25zUColy2oUK2/Q6JXvZJ/sgKa1dTq1s7Zh/N65dJ9sH
+	HvLrj//g6ntSCI5iS5U4D3/aTMfojpQDjMm/A7sh0f9cTysNFS7JS61PDzYNTpYLOVVNZt
+	Io5nRPZzkLsjmX1mvCLlAbVU/wWvD4K/yi736LridoN0Zg8wV+F20hsXGXsc0xeGD7zmo4
+	EMGaCysTz6fsxiAPnyjuQ3eGhg7BDEtTs/s4+NPgDc4kNp9Y37+yxC2MXL5RkA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718015654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YRkx/5RwMgFbzf1uUBRE8Tiy4K15zukz3Dkd3L3xoLM=;
+	b=DkfvpsZJ+vDRqy4Ly9cqY5TKh9zU5gzWjQ8zB3QhnliSMiOlvYQkfdzWSwQNzz9TH7bI/s
+	qd133NcdNxAw2sAg==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Sam Sun <samsun1006219@gmail.com>,
+ linux-kernel@vger.kernel.org, x86@kernel.org,
+ syzkaller-bugs@googlegroups.com, jpoimboe@kernel.org, jbaron@akamai.com,
+ ardb@kernel.org, mingo@redhat.com, Borislav Petkov <bp@alien8.de>,
+ dave.hansen@linux.intel.com, hpa@zytor.com, xrivendell7@gmail.com, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: [Linux kernel bug] WARNING in static_key_slow_inc_cpuslocked
+In-Reply-To: <20240610064651.GS8774@noisy.programming.kicks-ass.net>
+References: <20240609090431.3af238bc@gandalf.local.home>
+ <87o78axlbm.ffs@tglx> <20240609102530.0a292b07@rorschach.local.home>
+ <87le3exfx2.ffs@tglx> <87h6e2xdg1.ffs@tglx>
+ <20240610064651.GS8774@noisy.programming.kicks-ass.net>
+Date: Mon, 10 Jun 2024 12:34:14 +0200
+Message-ID: <87bk49xf15.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain
 
-On Fri, Jun 07, 2024 at 04:36:18PM +0000, Michael Kelley wrote:
-> From: Catalin Marinas <catalin.marinas@arm.com> Sent: Friday, June 7, 2024 8:13 AM
-> > On Fri, Jun 07, 2024 at 01:38:15AM +0000, Michael Kelley wrote:
-> > > In the case of a vmalloc() address, load_unaligned_zeropad() could still
-> > > make an access to the underlying pages through the linear address. In
-> > > CoCo guests on x86, both the vmalloc PTE and the linear map PTE are
-> > > flipped, so the load_unaligned_zeropad() problem can occur only during
-> > > the transition between decrypted and encrypted. But even then, the
-> > > exception handlers have code to fixup this case and allow everything to
-> > > proceed normally.
-> > >
-> > > I haven't looked at the code in your patches, but do you handle that case,
-> > > or somehow prevent it?
-> > 
-> > If we can guarantee that only full a vm_struct area is changed at a
-> > time, the vmap guard page would prevent this issue (not sure we can
-> > though). Otherwise I think we either change the set_memory_*() code to
-> > deal with the other mappings or we handle the exception.
-> 
-> I don't think the vmap guard pages help. The vmalloc() memory consists
-> of individual pages that are scattered throughout the direct map. The stray
-> reference from load_unaligned_zeropad() will originate in a kmalloc'ed
-> memory page that precedes one of these scattered individual pages, and
-> will use a direct map kernel vaddr.  So the guard page in vmalloc space don't
-> come into play. At least in the Hyper-V use case, an entire vmalloc allocation
-> *is* flipped as a unit, so the guard pages do prevent a stray reference from
-> load_unaligned_zeropad() that originates in vmalloc space. At one
-> point I looked to see if load_unaligned_zeropad() is ever used on vmalloc
-> addresses.  I think the answer was "no",  making the guard page question
-> moot, but I'm not sure. :-(
+On Mon, Jun 10 2024 at 08:46, Peter Zijlstra wrote:
+> On Sun, Jun 09, 2024 at 06:56:14PM +0200, Thomas Gleixner wrote:
+>
+>> Ok. Now I found if for real. It's in the jump label core:
+>> 
+>> CPU0                            CPU1
+>> 
+>> static_key_slow_dec()
+>>  static_key_slow_try_dec()
+>> 
+>>    key->enabled == 1
+>>    val = atomic_fetch_add_unless(&key->enabled, -1, 1);
+>>    if (val == 1)
+>>    	return false;
+>> 
+>>    jump_label_lock();
+>>    if (atomic_dec_and_test(&key->enabled)) {
+>>       --> key->enabled == 0
+>>       __jump_label_update()
+>> 
+>>                                 static_key_slow_dec()
+>>                                  static_key_slow_try_dec()
+>> 
+>>                                     key->enabled == 0
+>>                                     val = atomic_fetch_add_unless(&key->enabled, -1, 1);
+>> 
+>>                                     --> key->enabled == -1 <- FAIL
+>> 
+>> static_key_slow_try_dec() is buggy. It needs similar logic as
+>> static_key_slow_try_inc() to work correctly.
+>> 
+>> It's not only the 0, key->enabled can be -1 when the other CPU is in the
+>> slow path of enabling it.
+>
+> Well, the -1 thing is in the 0->1 path, that is, the very first enabler.
+>
+> That *should* not race with a disabler. If it does, there is external
+> confusion. (As I think the follow up email shows..)
 
-My point was about load_unaligned_zeropad() originating in the vmalloc
-space. What I had in mind is changing the underlying linear map via
-set_memory_*() while we have live vmalloc() mappings. But I forgot about
-the case you mentioned in a previous thread: set_memory_*() being called
-on vmalloc()'ed memory directly:
-
-https://lore.kernel.org/r/SN6PR02MB41578D7BFEDE33BD2E8246EFD4E92@SN6PR02MB4157.namprd02.prod.outlook.com/
-
-I wonder whether something like __GFP_DECRYPTED could be used to get
-shared memory from the allocation time and avoid having to change the
-vmalloc() ranges. This way functions like netvsc_init_buf() would get
-decrypted memory from the start and vmbus_establish_gpadl() would not
-need to call set_memory_decrypted() on a vmalloc() address.
-
-> Another thought: The use of load_unaligned_zeropad() is conditional on
-> CONFIG_DCACHE_WORD_ACCESS. There are #ifdef'ed alternate
-> implementations that don't use load_unaligned_zeropad() if it is not
-> enabled. I looked at just disabling it in CoCo VMs, but I don't know the
-> performance impact. I speculated that the benefits were more noticeable
-> in processors from a decade or more ago, and perhaps less so now, but
-> never did any measurements. There was also a snag in that x86-only
-> code has a usage of load_unaligned_zeropad() without an alternate
-> implementation, so I never went fully down that path. But arm64 would
-> probably "just work" if it were disabled.
-
-We shouldn't penalise the performance, especially as I expect a single
-image to run both as a guest or a host. However, I think now the linear
-map is handled correctly since we make the PTE invalid before making the
-page shared and this would force the fault path through the one that
-safely handles load_unaligned_zeropad(). Steven's patches also currently
-reject non-linear-map addresses, I guess this would be a separate
-addition.
-
-> > We also have potential user mappings, do we need to do anything about
-> > them?
-> 
-> I'm unclear on the scenario here.  Would memory with a user mapping
-> ever be flipped between decrypted and encrypted while the user mapping
-> existed? 
-
-Maybe it doesn't matter. Do we expect it the underlying pages to be
-flipped while live mappings other than the linear map exist? I assume
-not, one would first allocate and configure the memory in the kernel
-before some remap_pfn_range() to user with the appropriate pgprot.
-
--- 
-Catalin
+Right, but all of this is too fragile. Let me send out those patches.
 
