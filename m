@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-208157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DF19021A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CB39021AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD7228469A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FE61F23C08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D8880C02;
-	Mon, 10 Jun 2024 12:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24498062A;
+	Mon, 10 Jun 2024 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNbrZeyx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RI6pwL8M"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B8780023;
-	Mon, 10 Jun 2024 12:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFD37FBC3;
+	Mon, 10 Jun 2024 12:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718022606; cv=none; b=HO4cxztqAc4SQr94eI541JiSYc6PgmRZlQH/QifL7ZRpIpZGSwf+UhWm+KkMjBgj8Mxl9mJo4TmpQVnUiQRYfxjrr+qYZt4/ONjG/+zK/QoPnOo0/UQydn+6Rk5fuGwRq6IE63JE9qfn/pqudAHJXk8lr7DO64yrBo/jEhAfC1U=
+	t=1718022656; cv=none; b=K42D8K9KLlmo8TPvnkmpOB+Xdsrel30JUPQJ9lbRw8jEHFKPR63QeIQx2OGjVgADGtJ8+uqJmDX/N+UJX6LQwaq61V8eq20j/yt1dh4fPvMvPVMdeqWnban/mVWkj6UgsWPFavU1pxxC5FIzTYlPr35ESylzgxlEnnci6ZNFHz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718022606; c=relaxed/simple;
-	bh=wXWzKQNVmmoknWUuxl5TpIguOxzloEaxf0SrpN6DQ50=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NhRvAypBMOMSnvCNSKOFJn33FzRHT3FKJLEqE28RnC18a4mnIjrOIr84lKAnis7tq0ggdfE+PKaBJUuM7oHj6dyxhnl7GidoCeYL2K3K8eFfMrvcvc6+GsXzwJCUenD5J5EHHvGPR+zLT0GUDs0bDAH+d77lyLNYG3GXtymreBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNbrZeyx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89951C2BBFC;
-	Mon, 10 Jun 2024 12:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718022605;
-	bh=wXWzKQNVmmoknWUuxl5TpIguOxzloEaxf0SrpN6DQ50=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FNbrZeyxJjw3h2m1C/E86shrnvRv1IW5oyAmmeWnus0p2qpTaY+bQhmh68VRaEGxz
-	 xSn2H0bHfdCEqXMOk8PU51kEJTnLdWnZf7dAG96XfuR/awJcFe1VclLYpH8wcM25ME
-	 +MXEUbpN3FeLFAGcpG5nJnbRK2xsb7vNv0r5WYEMASbr23hPNzjORNbAP4lIOnJ8Ua
-	 aw50UmjMsyz79jIp5Tmyuwh89SF/dzvUO8lWNYmumWpvJuqq/RPuWivsW04jyoc+tk
-	 wOKDlBB9Qs9Cj+Z813j94Dk5FKgC5nNG6X2CUQLSg/O6Ea+cn2tCP+DhHnuG6ELk/J
-	 aBWnUPcw9nTCQ==
-Message-ID: <8901d498-d30a-43db-bda2-25d3d1d58e8d@kernel.org>
-Date: Mon, 10 Jun 2024 14:29:57 +0200
+	s=arc-20240116; t=1718022656; c=relaxed/simple;
+	bh=veByNKSd2kQ7TiJKiXGkl7HROTIQBu6OtkQPiB073wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onuxdYCpk6N/qjO2/DTxbhTTqujHyVNVS28CjGqu5zIFyc9bg1H4aTK5/NwGPQ9T3rtRgQEemr6eKoDOKqfsFleE1AiLn178N6zkjubwh3aBarepIinnPzQl6jTsBj9lTJ9ny8PwE3VZFqzqCHDVJiLK8HSiDtrpuUPhwyia6Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RI6pwL8M; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZAmsJ52qEwd6M60f4uacAxS1bKk0l5sx1M5ZKU+F02g=; b=RI6pwL8Mkl7wa4Jo79n0XYBrkV
+	ro9kjR65ptgoMiajSMTClkDTnPMHfm0b9oXxDSfIpRRzYWC97ceiJ6shdT3fyBRH1TdcFTEpWpHLK
+	PcxHw8B06RELz2fyisz4uMaNIVSTMtmCeylDOqIYfuOSfftgFcIMawAQmfqj2a/WO4EI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGeAY-00HIOs-FV; Mon, 10 Jun 2024 14:30:38 +0200
+Date: Mon, 10 Jun 2024 14:30:38 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Ng, Boon Khai" <boon.khai.ng@intel.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Ang, Tien Sung" <tien.sung.ang@intel.com>,
+	"G Thomas, Rohan" <rohan.g.thomas@intel.com>,
+	"Looi, Hong Aun" <hong.aun.looi@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Tham, Mun Yew" <mun.yew.tham@intel.com>
+Subject: Re: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
+ stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
+Message-ID: <3c32c9b9-be77-41c8-97f7-371bd6f8fa16@lunn.ch>
+References: <20240527093339.30883-1-boon.khai.ng@intel.com>
+ <20240527093339.30883-2-boon.khai.ng@intel.com>
+ <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
+ <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <48673551-cada-4194-865f-bc04c1e19c29@lunn.ch>
+ <DM8PR11MB5751194374C75EC5D5889D6AC1F32@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <322d8745-7eae-4a68-4606-d9fdb19b4662@linux.intel.com>
+ <BL3PR11MB57488DF9B08EACD88D938E2FC1F82@BL3PR11MB5748.namprd11.prod.outlook.com>
+ <734c0d46-63f2-457d-85bf-d97159110583@lunn.ch>
+ <DM8PR11MB5751CD3D8EF4DF0B138DEB7FC1FB2@DM8PR11MB5751.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
- krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- robh@kernel.org, ulf.hansson@linaro.org
-References: <20240605185046.1057877-1-Frank.Li@nxp.com>
- <b1c51acc-441d-4484-adef-1da368571097@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b1c51acc-441d-4484-adef-1da368571097@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR11MB5751CD3D8EF4DF0B138DEB7FC1FB2@DM8PR11MB5751.namprd11.prod.outlook.com>
 
-On 06/06/2024 08:44, Krzysztof Kozlowski wrote:
-> On 05/06/2024 20:50, Frank Li wrote:
->> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
->>
->> Addtional change during convert:
->> - Deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
->> - Add "reg" and "interrupts" property.
->> - Change example "sdhci@2e000" to "mmc@2e000".
->> - Compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
->> most existed dts file.
->> - Set clock-frequency to 100mhz in example.
->>
+On Fri, Jun 07, 2024 at 04:09:37AM +0000, Ng, Boon Khai wrote:
+> > 
+> > Do you have access to all the reference documentation for the IP driven in
+> > dwmac4_core.c, dwxgmac2_core.c and stmmac_main.c? Is it just VLAN which
+> > is the same, and everything else is different? Or are other blocks of the
+> > hardware also identical and the code should be shared?
+> > If VLAN is all that is identical, then stammc_vlan.c would make sense.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Hi Andrew, I only have access to the document for 
+> dwmac4_core.c and dwxgmac2_core.c
 
-Or not... are you sure that DTS validates? Did you test it? kbuild has a
-bit different opinion.
+O.K. So please do look at the VLAN code in other places and see if any
+can be shared.
 
-Best regards,
-Krzysztof
+, I notice that in the linux mainline
+> https://github.com/torvalds/linux/tree/master/drivers/net/ethernet/stmicro/
+> stmmac
+> 
+> it does have stmmac_est.c and stmmac_ptp.c to that support for both
+> dwmac4 and dwxgmac2, with that I think it is suitable for introducing
+> another file called stmmac_vlan?
 
+Yes, stmmac_vlan.c is O.K.
+
+	Andrew
 
