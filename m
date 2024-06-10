@@ -1,211 +1,129 @@
-Return-Path: <linux-kernel+bounces-207827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689DD901CC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:18:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CB3901CC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0214B230FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08981F210B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72B56F313;
-	Mon, 10 Jun 2024 08:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E16D74059;
+	Mon, 10 Jun 2024 08:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd4vuO7J"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rqy95pCH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8370655885;
-	Mon, 10 Jun 2024 08:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C42273453;
+	Mon, 10 Jun 2024 08:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007478; cv=none; b=au27ndr9o+I+rOwfzYOkavZmZ19dHgIDn6srQT5kXaQvoq85BPdmsU4wn41ppEvMEGIlXVwykep+XBnAHG2jfwTtf0n6JQ7tb1tzJtWRNku+A9lj3S42Kg/UhSIVws2tU5oi/eCuHKWKDtLZcOHwiPv/fR8EPyF/tMz7BROWix8=
+	t=1718007483; cv=none; b=WuUhlgnm/UCjhqMSMPziz5dZVcU4yVzyzy6Y4DYeoShjml+Ew/CqzYIDtmMyNPE7nnXSpSkdlrUk0r21zsmknNQGnEnCHBi9bhRz3w+eFw+YUn56qyLSxDdSnqETZHxa9mK+6PbunhyujiORKoTVwPtSaFUXKv/mJhyH7pWK10I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007478; c=relaxed/simple;
-	bh=pX55hZgAslFU347Mp/z056R6oguHdC5TccmaX2t/iog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J74TFdlnIBcYxsgW11rC9S5PhDia7b+ZuplXacEMvBsvwLloRU+yvTUBgfiqZH3gB5B6K9gjACErw7O8gxTUhh8HehBShgmmUCLXonHY8sNFMxriPX+jAhEXMTI3Zr499NbcLYKAppT2USE+aX+B/HZfKX4qvHljZOxNQgkKyfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qd4vuO7J; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c31144881eso372605a91.1;
-        Mon, 10 Jun 2024 01:17:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718007476; x=1718612276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=boO2l3vZN7nH3KvrAr9prlBUcFPwMQHcvTnj1oW/1V8=;
-        b=Qd4vuO7J7pOSzPSTR04IvrxjsOaAJQYOlOgb9umlg3/ECvlDW+6xQgzkGfNtck5Hbk
-         qZs3ED5sJroIpReIpJqODmixSLJ90bkH2QHXYOI0dwrO20DYYJXsyOXe2S3KtVy15UYn
-         UuxKKQGjYI031S5MmNLioFQbUzd3kmJYRrNzF+Rn9yXxHtKR5e7brna3wEWUK8JdkYtw
-         Vqin4HbPRldzYL/+HopnK23/XQQpdbYCRnOeQeFji15Y3WIOklPPHnErsi7neL1DH+Ys
-         rPDkfvL/+9yr6C3+nhx1XH91RsI8bgk8LBn30xtWluLIL9P/v1uf02IHOZdFtZfCqmLa
-         NkBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718007476; x=1718612276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=boO2l3vZN7nH3KvrAr9prlBUcFPwMQHcvTnj1oW/1V8=;
-        b=EYqyJlXbIphDPvfgps06LMd5lmqmpFLD9vnnxdW/Sshd3j2DHgq0abH/uX59L7jiQV
-         BSaVI9vFrFFbmyYLal8qECY67lVjiAKAhAlFSxHtmZGp6taNdTb+Gddxwd7ysheQ1MhZ
-         bYhgqlODQ5yK3U6ba78i63Z7Dh1Ybt1Cjkr12V2bmKtz6x6JYhu48CmQUWyk0affBhMK
-         7Jy3fLuW7mmQ6GR0FqyOEXHjhsChbsKygdF9KsSiyMxxtFxJl44BaJuuw9drnnUkKciG
-         NJbQRtgbJXaQockdNAqcK4TefoH6X8evmxZ20zAy+zO+vK9FW132Q6+78ZUo0I3vma3o
-         c6sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfG/8ELR9vu0D4ezaUDuREOU9vtl9ou/NJMp7QaA0AKOvYQJfCRUohM9gRGB2Pomz29zpopyRG3esBMGduMFHRYCKqSrBDr1ZmEPVymus9Ci6D/jqrMqQ/v6568mTlGMQpoINJHR/3Ueu32Qj1vQ3gj9qvxqj0/O6xMD1GNtlzkQ==
-X-Gm-Message-State: AOJu0YyFQ/g/NO0HmaBaxnyr82Ff+GWBnLAH7LncE6P/HG8HiuqEA/5c
-	6tFVO37nhiv6IT/Qjl67IFOIKaB8HZleVZPlu/GPdkCVDNy7Vf7bx+OUirmUoeUKC3bPDEQPNGR
-	tCqiQcDiOo5Jr9iIW32gK5WB8eT8=
-X-Google-Smtp-Source: AGHT+IH0FNZaeJCNfSLD4WEifC4IPCYbk21g97wqXKFaiT0J77VYQN7/t7VgnP5Uc4iC2YUAA8yNQ8/3tWb10uQonKk=
-X-Received: by 2002:a17:90b:b15:b0:2c2:fe3d:3453 with SMTP id
- 98e67ed59e1d1-2c2fe3d3560mr2157855a91.18.1718007475751; Mon, 10 Jun 2024
- 01:17:55 -0700 (PDT)
+	s=arc-20240116; t=1718007483; c=relaxed/simple;
+	bh=eyKZq1NUnLazD4DdWNbNkdB+8MuoMJmjyqId2jSO94g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H5JFSHvhi+x+BSfb1z+NO3rl/QYUXhwqx3THJI81TRe3Um4kCmZuuFvX29G913UGbdIcYM5ve28ofJrrZ/kjMlU1umXeRZeO6ri7LmaVZbjyXWFLkhQZGSUZdJb3fg6Bi54XNmg/p8GLLT6XWAmG+nKuSiEMuyIEla9sDUxY9bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rqy95pCH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301EDC2BBFC;
+	Mon, 10 Jun 2024 08:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718007483;
+	bh=eyKZq1NUnLazD4DdWNbNkdB+8MuoMJmjyqId2jSO94g=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Rqy95pCHylWsY5EsPvdstij8T+NyhJryNIVn4m9FP8Z3+AGlstNREGLE+TKwnuEVD
+	 s1pR5dZ57Oa3fADs2+S+tax+r14yJw1Lur1evMJBACk/GbbMh8dKucvULJ8yr3UQXj
+	 ohWm9AutTFa8xPBVgGFSC75aagaB4Ugt4aP1+a+sH+pU+uR4NMbKXkOhqBT+K9HZP6
+	 Si9scfd+awCcgtjpZOEfGkzVzKxls+jKIqIkw6ym8eqlJCJkdkALS6rvdHrWrFPz8r
+	 aCTaiJal65K1xXA5fAGuLhVqh7mBHIoiuzY0YdkMN8iUQnvcO92gvecZrJjco6I2o6
+	 bAq/99jIXRZYg==
+Message-ID: <0d4fc078-52a7-4d3b-a95e-fd64e0702a99@kernel.org>
+Date: Mon, 10 Jun 2024 10:17:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-4-andrii@kernel.org>
- <ZmOKMgZn_ki17UYM@gmail.com>
-In-Reply-To: <ZmOKMgZn_ki17UYM@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 10 Jun 2024 09:17:43 +0100
-Message-ID: <CAEf4BzYAQwX0AQ_fbcB9kVBj3vpx0-5pPPZNYKL4VjnX_eYKpg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] fs/procfs: implement efficient VMA querying API
- for /proc/<pid>/maps
-To: Andrei Vagin <avagin@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
-	rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/17] dt-bindings: net: wireless: cc33xx: Add
+ ti,cc33xx.yaml
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: michael.nemanov@ti.com, Sabeeh Khan <sabeeh-khan@ti.com>,
+ Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240609182102.2950457-1-michael.nemanov@ti.com>
+ <20240609182102.2950457-18-michael.nemanov@ti.com>
+ <e7444ff4-763a-44c6-9a73-0c5f590ceaad@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e7444ff4-763a-44c6-9a73-0c5f590ceaad@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 7, 2024 at 11:31=E2=80=AFPM Andrei Vagin <avagin@gmail.com> wro=
-te:
->
-> On Tue, Jun 04, 2024 at 05:24:48PM -0700, Andrii Nakryiko wrote:
-> > /proc/<pid>/maps file is extremely useful in practice for various tasks
-> > involving figuring out process memory layout, what files are backing an=
-y
-> > given memory range, etc. One important class of applications that
-> > absolutely rely on this are profilers/stack symbolizers (perf tool bein=
-g one
-> > of them). Patterns of use differ, but they generally would fall into tw=
-o
-> > categories.
-> >
-> > In on-demand pattern, a profiler/symbolizer would normally capture stac=
-k
-> > trace containing absolute memory addresses of some functions, and would
-> > then use /proc/<pid>/maps file to find corresponding backing ELF files
-> > (normally, only executable VMAs are of interest), file offsets within
-> > them, and then continue from there to get yet more information (ELF
-> > symbols, DWARF information) to get human-readable symbolic information.
-> > This pattern is used by Meta's fleet-wide profiler, as one example.
-> >
-> > In preprocessing pattern, application doesn't know the set of addresses
-> > of interest, so it has to fetch all relevant VMAs (again, probably only
-> > executable ones), store or cache them, then proceed with profiling and
-> > stack trace capture. Once done, it would do symbolization based on
-> > stored VMA information. This can happen at much later point in time.
-> > This patterns is used by perf tool, as an example.
-> >
-> > In either case, there are both performance and correctness requirement
-> > involved. This address to VMA information translation has to be done as
-> > efficiently as possible, but also not miss any VMA (especially in the
-> > case of loading/unloading shared libraries). In practice, correctness
-> > can't be guaranteed (due to process dying before VMA data can be
-> > captured, or shared library being unloaded, etc), but any effort to
-> > maximize the chance of finding the VMA is appreciated.
-> >
-> > Unfortunately, for all the /proc/<pid>/maps file universality and
-> > usefulness, it doesn't fit the above use cases 100%.
-> >
-> > First, it's main purpose is to emit all VMAs sequentially, but in
-> > practice captured addresses would fall only into a smaller subset of al=
-l
-> > process' VMAs, mainly containing executable text. Yet, library would
-> > need to parse most or all of the contents to find needed VMAs, as there
-> > is no way to skip VMAs that are of no use. Efficient library can do the
-> > linear pass and it is still relatively efficient, but it's definitely a=
-n
-> > overhead that can be avoided, if there was a way to do more targeted
-> > querying of the relevant VMA information.
-> >
-> > Second, it's a text based interface, which makes its programmatic use f=
-rom
-> > applications and libraries more cumbersome and inefficient due to the
-> > need to handle text parsing to get necessary pieces of information. The
-> > overhead is actually payed both by kernel, formatting originally binary
-> > VMA data into text, and then by user space application, parsing it back
-> > into binary data for further use.
->
-> I was trying to solve all these issues in a more generic way:
-> https://lwn.net/Articles/683371/
->
+On 10/06/2024 10:16, Krzysztof Kozlowski wrote:
+> On 09/06/2024 20:21, michael.nemanov@ti.com wrote:
+>> From: Michael Nemanov <michael.nemanov@ti.com>
+>>
+> 
+> Missing commit msg (explain the hardware), missing SoB.
 
-Can you please provide a tl;dr summary of that effort?
+And now I found that you actually received such feedback and you just
+ignored it.
 
-> We definitely interested in this new interface to use it in CRIU.
->
-> <snip>
->
-> > +
-> > +     if (karg.vma_name_size) {
-> > +             size_t name_buf_sz =3D min_t(size_t, PATH_MAX, karg.vma_n=
-ame_size);
-> > +             const struct path *path;
-> > +             const char *name_fmt;
-> > +             size_t name_sz =3D 0;
-> > +
-> > +             get_vma_name(vma, &path, &name, &name_fmt);
-> > +
-> > +             if (path || name_fmt || name) {
-> > +                     name_buf =3D kmalloc(name_buf_sz, GFP_KERNEL);
-> > +                     if (!name_buf) {
-> > +                             err =3D -ENOMEM;
-> > +                             goto out;
-> > +                     }
-> > +             }
-> > +             if (path) {
-> > +                     name =3D d_path(path, name_buf, name_buf_sz);
-> > +                     if (IS_ERR(name)) {
-> > +                             err =3D PTR_ERR(name);
-> > +                             goto out;
->
-> It always fails if a file path name is longer than PATH_MAX.
->
-> Can we add a flag to indicate whether file names are needed to be
+Go back to v1 and respond to each feedback you got.
 
-It's already supported. Getting a VMA name is optional. See a big
-comment next to the vma_name_size field in the UAPI header. If
-vma_name_size is set to zero, VMA name is not retrieved at all,
-avoiding the overhead and this issue with PATH_MAX.
+Best regards,
+Krzysztof
 
-> resolved? In criu, we use special names like "vvar", "vdso", but we dump
-> files via /proc/pid/map_files.
->
-> > +                     }
-> > +                     name_sz =3D name_buf + name_buf_sz - name;
-> > +             } else if (name || name_fmt) {
-> > +                     name_sz =3D 1 + snprintf(name_buf, name_buf_sz, n=
-ame_fmt ?: "%s", name);
-> > +                     name =3D name_buf;
-> > +             }
-> > +             if (name_sz > name_buf_sz) {
-> > +                     err =3D -ENAMETOOLONG;
-> > +                     goto out;
-> > +             }
-> > +             karg.vma_name_size =3D name_sz;
-> > +     }
->
-> Thanks,
-> Andrei
 
