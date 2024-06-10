@@ -1,425 +1,190 @@
-Return-Path: <linux-kernel+bounces-208485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC9B9025A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CB29025A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35AF28A52F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:29:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6808728A93C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD3A14535C;
-	Mon, 10 Jun 2024 15:27:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485F1139580;
-	Mon, 10 Jun 2024 15:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466C513DDCD;
+	Mon, 10 Jun 2024 15:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Chzo6pAQ"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A582871
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033269; cv=none; b=c8ihT0hFCWIxdVT9BEcHS4OanFRZDWbN8MRVrCqJSoy1Kmh/1i1chLqMt/0xEprnsZ6Sp1jDBPxgCIkJdgXkjULmhVrVOt2AbVbuOPYFXCoQkInHb4VAVsyQ4iGTSR518arDgezHbuUPdDSgByoI3SujsN83I3FVNr7AVi0s5bw=
+	t=1718033323; cv=none; b=qrVYIn7oIrB7F/IKU50XmeKo4hrPUoxXVsTZY0oPGE2KiJLRMiGaGyYwRtjgoh+Rx6QUQrOItldwrqWZIarJPADKI7yW3mMF3hy7mkAq7p8o6u0lgfP0t/6Azy/+qkVICWMpYFoIB6T5P+S4yddG4DU2Vgjej3jtm9stlAlVqA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033269; c=relaxed/simple;
-	bh=h8hMUgKb5MjoZLOZI4M6SkmcgfbPjGOkBzTRSqRzFvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bO/qF2t/COtlQauMeXY8K/L6ufqVG6DQPwNp+w06vBr0ui7ruKnXd8hk2knQonvnWAaVId9ElObWQSpdibgnn+zoOcv+uahKomQFrVB2Qpwr0KDmlFsSrTmDI1QFgfSNOIZ0N08ddipxsUZJCyOPPSC/sWsn8a9H+8t+Z3GBpnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E136111FB;
-	Mon, 10 Jun 2024 08:28:09 -0700 (PDT)
-Received: from [10.57.42.97] (unknown [10.57.42.97])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D0673F64C;
-	Mon, 10 Jun 2024 08:27:40 -0700 (PDT)
-Message-ID: <78a67d94-a649-4a4c-bb48-80b81d7eeb2a@arm.com>
-Date: Mon, 10 Jun 2024 16:27:38 +0100
+	s=arc-20240116; t=1718033323; c=relaxed/simple;
+	bh=Eg5MXIxFmskfceFeoSMjW5JaXWFMIN6Ka4da5DFW/DA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwR9cG9gunxGxrEioozT3S5O7d0nQ2yn7dT9pObVXhTIS9j041QoVadXRyRZK6nU+Spc+nZIvb6wIn4nTKAy+LOUtE13rDjW4R4IgxFg7b7Ol7Ynm4w6VaXeWDVdx3rpX/RooRP5b6/ZdYztkbpGggD7PAbTkCfG1QvA7fb16VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Chzo6pAQ; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d226c5a157so874302b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1718033319; x=1718638119; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fUARyIEpm9mcxUlH5YwBD2HZnjCRC5iHgPIZ1qpIAq8=;
+        b=Chzo6pAQE8IwuUce79bz/A55Pv2UyP1kHYEvuoz0MDnGdJPeGHUlZPj8GIB8FPGCIZ
+         oYiezWs0nYLqiPjz5gTirG4EJQ+JXid0PwE5HNQv0Ssr+jsSTEHoTg5eHvAn1/iMMkrj
+         F7BGBR5Cb/A+r8kpBtwnsHEpoKbtW7lZ3xcbjqAjvn7JaoT6vTMxgoYPBN/3tRWavq6z
+         wdOfet7jU+/BbVT0iAyvOtWV84ivXzgHDE+7bNugF/2UXoVwBNY3gRNIQDBlL5GjPHlj
+         pMlIR1umgFX7QXqEpwGDprtka8uFG3KmkoWIfCaX9glviQU3wdIEO8eENSKVctRaQ5u7
+         afWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718033319; x=1718638119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUARyIEpm9mcxUlH5YwBD2HZnjCRC5iHgPIZ1qpIAq8=;
+        b=ed2iNHp/MNHVZOSc97QmXplnm8OBNNv8oAWE7zM1Oxurm9rJnCGpWzv43pvXlBWRWw
+         seeMcPeXfn7c5+cKZmPQmU1rKPMBxwvaWXbod/jMP9+mXQOcPH+87KQcVNnEOOT08F3h
+         +I45m8ZHzMHfuBIoTcMWyAEbSEgpCgAEnjJMGfd+fp36lKCIZT5K6f4z8SMLGznYs4so
+         I5JUcD9Zdblre0hCKaCZBRWd/FK4o65DT1ImWChgtQM3EgP78fE4jL6/ZJLGxm1yCoo4
+         o9Fi8aLXqMmtM8NeyQoASaqb2zFRIRGfjDP/wXuBDCQc4VN4/X0yGnlg2yhoKzjJHM9E
+         HzSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUzaSHI1tg1T1aJESsRv4suIKhThASn2PNJa3dQuQhvsclIsNg/3qdOWzCQRoSDkateiKnNg/GyDzDet3QyC8gThVn5AtgufQ0Rmpx
+X-Gm-Message-State: AOJu0Yz5IDv4n4xvYeVG3qT1cZcEAcGHgGvodFc1bX32XpLiFUS5cJYD
+	OabLIlJr2Qf+WvMK3bUoqX1O6ayGGXIRSg6Ok/zbp7YyywZYuxOzBSwWdCqBb00=
+X-Google-Smtp-Source: AGHT+IFyT07TFV5Ytc4/MXNzKU3Je9EmZJpvpo4etZVRacJKdSABCIQxDVPoD1j3wxRiIfTWjsN/nQ==
+X-Received: by 2002:a05:6808:1596:b0:3c9:6e55:e24c with SMTP id 5614622812f47-3d210d27ed6mr12167562b6e.11.1718033319250;
+        Mon, 10 Jun 2024 08:28:39 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79557127817sm210991185a.40.2024.06.10.08.28.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 08:28:38 -0700 (PDT)
+Date: Mon, 10 Jun 2024 11:28:33 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Kalesh Singh <kaleshsingh@google.com>,
+	Chun-Tse Shao <ctshao@google.com>
+Subject: Re: [PATCH V4 00/10] mm: page_alloc: freelist migratetype hygiene
+Message-ID: <20240610152833.GA2298848@cmpxchg.org>
+References: <20240320180429.678181-1-hannes@cmpxchg.org>
+ <CAOUHufbOP-RLmxmG_7Dp1vWAz8TTHvbmyfuR_mtceg0KgZoSnA@mail.gmail.com>
+ <20240513160331.GA320190@cmpxchg.org>
+ <CAOUHufaCQPW=p_r-Sg4oeDgtxwEGp6E5j1MhU3OCrTLUZTymZA@mail.gmail.com>
+ <20240513190400.GA2270702@cmpxchg.org>
+ <CAOUHufb8Daf276SdA2L=fq=LeAWN-JE08F5zW3buC1CBAoS=Ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/16] coresight: Remove pending trace ID release
- mechanism
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
- gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
- leo.yan@linux.dev, anshuman.khandual@arm.com
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240604143030.519906-1-james.clark@arm.com>
- <20240604143030.519906-15-james.clark@arm.com>
- <4165a188-8c78-4675-8557-844b5d270f3d@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <4165a188-8c78-4675-8557-844b5d270f3d@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOUHufb8Daf276SdA2L=fq=LeAWN-JE08F5zW3buC1CBAoS=Ww@mail.gmail.com>
 
+On Tue, Jun 04, 2024 at 10:53:55PM -0600, Yu Zhao wrote:
+> On Mon, May 13, 2024 at 1:04 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > On Mon, May 13, 2024 at 12:10:04PM -0600, Yu Zhao wrote:
+> > > On Mon, May 13, 2024 at 10:03 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > > On Fri, May 10, 2024 at 11:14:43PM -0600, Yu Zhao wrote:
+> > > > > This series significantly regresses Android and ChromeOS under memory
+> > > > > pressure. THPs are virtually nonexistent on client devices, and IIRC,
+> > > > > it was mentioned in the early discussions that potential regressions
+> > > > > for such a case are somewhat expected?
+> > > >
+> > > > This is not expected for the 10 patches here. You might be referring
+> > > > to the discussion around the huge page allocator series, which had
+> > > > fallback restrictions and many changes to reclaim and compaction.
+> > >
+> > > Right, now I remember.
+> > >
+> > > > > On Android (ARMv8.2), app launch time regressed by about 7%; On
+> > > > > ChromeOS (Intel ADL), tab switch time regressed by about 8%. Also PSI
+> > > > > (full and some) on both platforms increased by over 20%. I could post
+> > > > > the details of the benchmarks and the metrics they measure, but I
+> > > > > doubt they would mean much to you. I did ask our test teams to save
+> > > > > extra kernel logs that might be more helpful, and I could forward them
+> > > > > to you.
+> > > >
+> > > > If the issue persists with the latest patches in -mm, a kernel config
+> > > > and snapshots of /proc/vmstat, /proc/pagetypeinfo, /proc/zoneinfo
+> > > > before/during/after the problematic behavior would be very helpful.
+> > >
+> > > Assuming all the fixes were included, do you want the logs from 6.8?
+> > > We have them available now.
+> >
+> > Yes, that would be helpful.
+> >
+> > If you have them, it would also be quite useful to have the vmstat
+> > before-after-test delta from a good kernel, for baseline comparison.
+> 
+> Sorry for taking this long -- I wanted to see if the regression is
+> still reproducible on v6.9.
+> 
+> Apparently we got the similar results on v6.9 with the following
+> patches cherry-picked cleanly from v6.10-rc1:
+> 
+>      1  mm: page_alloc: remove pcppage migratetype caching
+>      2  mm: page_alloc: optimize free_unref_folios()
+>      3  mm: page_alloc: fix up block types when merging compatible blocks
+>      4  mm: page_alloc: move free pages when converting block during isolation
+>      5  mm: page_alloc: fix move_freepages_block() range error
+>      6  mm: page_alloc: fix freelist movement during block conversion
+>      7  mm: page_alloc: close migratetype race between freeing and stealing
+>      8  mm: page_alloc: set migratetype inside move_freepages()
+>      9  mm: page_isolation: prepare for hygienic freelists
+>     10  mm: page_alloc: consolidate free page accounting
+>     11  mm: page_alloc: change move_freepages() to __move_freepages_block()
+>     12  mm: page_alloc: batch vmstat updates in expand()
+> 
+> Unfortunately I just realized that that automated benchmark didn't
+> collect the kernel stats before it starts (since it always starts on a
+> freshly booted device). While this is being fixed, I'm attaching the
+> kernel stats collected after the benchmark finished. I grabbed 10 runs
+> for each (baseline/patched), and if you need more, please let me know.
+> (And we should have the stats before the benchmark soon.)
 
+Thanks for grabbing these, and sorry about the delay, I was traveling
+last week.
 
-On 07/06/2024 14:43, Suzuki K Poulose wrote:
-> On 04/06/2024 15:30, James Clark wrote:
->> Pending the release of IDs was a way of managing concurrent sysfs and
->> Perf sessions in a single global ID map. Perf may have finished while
->> sysfs hadn't, and Perf shouldn't release the IDs in use by sysfs and
->> vice versa.
->>
->> Now that Perf uses its own exclusive ID maps, pending release doesn't
->> result in any different behavior than just releasing all IDs when the
->> last Perf session finishes. As part of the per-sink trace ID change, we
->> would have still had to make the pending mechanism work on a per-sink
->> basis, due to the overlapping ID allocations, so instead of making that
->> more complicated, just remove it.
-> 
-> minor nit: Given that we drastically changed the meaing of the
-> perf_session_start/stop calls to, grab a refcount on idmap, drop
-> refcount, should we rename those helpers as such :
-> 
-> coresight_trace_id_map_get() / _put() ?
-> 
-> 
+You mentioned "THPs are virtually non-existant". But the workload
+doesn't seem to allocate anon THPs at all. For file THP, the patched
+kernel's median for allocation success is 90% of baseline, but the
+inter-run min/max deviation from the median in baseline is 85%/108%
+and in patched and 85%/112% in patched, so this is quite noisy. Was
+that initial comment regarding a different workload?
 
-I don't mind keeping it as coresight_trace_id_perf_start() because it's
-not used in the global map and I can't see it being used for sysfs in
-the future either. It's something quite specific to Perf so it's more
-self documenting this way.
+This other data point has me stumped. Comparing medians, there is a
+1.5% reduction in anon refaults and a 4.8% increase in file
+refaults. And indeed, there is more files and less anon being scanned.
+I think this could explain the PSI delta, since AFAIK you have zram or
+zswap, and anon decompression loads are cheaper than filesystem IO.
 
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> ---
->>   .../hwtracing/coresight/coresight-etm-perf.c  | 11 ++--
->>   .../hwtracing/coresight/coresight-trace-id.c  | 62 +++++--------------
->>   .../hwtracing/coresight/coresight-trace-id.h  | 31 +++++-----
->>   include/linux/coresight.h                     |  6 +-
->>   4 files changed, 34 insertions(+), 76 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 7fb55dafb639..17cafa1a7f18 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -232,15 +232,14 @@ static void free_event_data(struct work_struct
->> *work)
->>           if (!(IS_ERR_OR_NULL(*ppath))) {
->>               struct coresight_device *sink = coresight_get_sink(*ppath);
->>   -            coresight_trace_id_put_cpu_id_map(cpu,
->> &sink->perf_sink_id_map);
->> +            /* mark perf event as done for trace id allocator */
->> +            coresight_trace_id_perf_stop(&sink->perf_sink_id_map);
->> +
->>               coresight_release_path(*ppath);
->>           }
->>           *ppath = NULL;
->>       }
->>   -    /* mark perf event as done for trace id allocator */
->> -    coresight_trace_id_perf_stop();
->> -
->>       free_percpu(event_data->path);
->>       kfree(event_data);
->>   }
->> @@ -328,9 +327,6 @@ static void *etm_setup_aux(struct perf_event
->> *event, void **pages,
->>           sink = user_sink = coresight_get_sink_by_id(id);
->>       }
->>   -    /* tell the trace ID allocator that a perf event is starting up */
->> -    coresight_trace_id_perf_start();
->> -
->>       /* check if user wants a coresight configuration selected */
->>       cfg_hash = (u32)((event->attr.config2 & GENMASK_ULL(63, 32)) >>
->> 32);
->>       if (cfg_hash) {
->> @@ -404,6 +400,7 @@ static void *etm_setup_aux(struct perf_event
->> *event, void **pages,
->>           }
->>             /* ensure we can allocate a trace ID for this CPU */
->> +        coresight_trace_id_perf_start(&sink->perf_sink_id_map);
->>           trace_id = coresight_trace_id_get_cpu_id_map(cpu,
->> &sink->perf_sink_id_map);
->>           if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->>               cpumask_clear_cpu(cpu, mask);
-> 
-> I think we are leaking a reference above, if the allocation of trace id
-> fails. i.e., we don't drop the refcount here, nor we do that in
-> free_event_dat() since the ppath is set to NULL in case of failure ?
-> 
-> 
+The above patches don't do anything that directly influences the
+anon-file reclaim balance. However, if file THPs fall back to 4k file
+pages more, that *might* be able to explain a shift in reclaim
+balance, if some hot subpages in those THPs were protecting colder
+subpages from being reclaimed and refaulting.
 
-Nice catch. I'll move the perf_start() call to where path is assigned
-because that's what guards the perf_stop() call in free_event_data().
-Rather than add an extra perf_stop() call.
+In that case, the root cause would still be a simple THP success rate
+regression. To confirm this theory, could you run the baseline and the
+patched sets both with THP disabled entirely?
 
-> 
->> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c
->> b/drivers/hwtracing/coresight/coresight-trace-id.c
->> index 8a777c0af6ea..acb99ccf96b5 100644
->> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
->> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
->> @@ -18,12 +18,6 @@ static struct coresight_trace_id_map id_map_default
->> = {
->>       .cpu_map = &id_map_default_cpu_ids
->>   };
->>   -/* maintain a record of the pending releases per cpu */
->> -static cpumask_t cpu_id_release_pending;
->> -
->> -/* perf session active counter */
->> -static atomic_t perf_cs_etm_session_active = ATOMIC_INIT(0);
->> -
->>   /* lock to protect id_map and cpu data  */
->>   static DEFINE_SPINLOCK(id_map_lock);
->>   @@ -122,34 +116,18 @@ static void coresight_trace_id_free(int id,
->> struct coresight_trace_id_map *id_ma
->>       clear_bit(id, id_map->used_ids);
->>   }
->>   -static void coresight_trace_id_set_pend_rel(int id, struct
->> coresight_trace_id_map *id_map)
->> -{
->> -    if (WARN(!IS_VALID_CS_TRACE_ID(id), "Invalid Trace ID %d\n", id))
->> -        return;
->> -    set_bit(id, id_map->pend_rel_ids);
->> -}
->> -
->>   /*
->> - * release all pending IDs for all current maps & clear CPU associations
->> - *
->> - * This currently operates on the default id map, but may be extended to
->> - * operate on all registered id maps if per sink id maps are used.
->> + * release all IDs and clear CPU associations
-> 
-> minor nit:
-> 
->     * Release all IDs and clear CPU associations.
-> 
-
-Done
-
->>    */
->> -static void coresight_trace_id_release_all_pending(void)
->> +static void coresight_trace_id_release_all(struct
->> coresight_trace_id_map *id_map)
->>   {
->> -    struct coresight_trace_id_map *id_map = &id_map_default;
->>       unsigned long flags;
->> -    int cpu, bit;
->> +    int cpu;
->>         spin_lock_irqsave(&id_map_lock, flags);
->> -    for_each_set_bit(bit, id_map->pend_rel_ids,
->> CORESIGHT_TRACE_ID_RES_TOP) {
->> -        clear_bit(bit, id_map->used_ids);
->> -        clear_bit(bit, id_map->pend_rel_ids);
->> -    }
->> -    for_each_cpu(cpu, &cpu_id_release_pending) {
->> -        atomic_set(per_cpu_ptr(id_map_default.cpu_map, cpu), 0);
->> -        cpumask_clear_cpu(cpu, &cpu_id_release_pending);
->> -    }
->> +    bitmap_zero(id_map->used_ids, CORESIGHT_TRACE_IDS_MAX);
->> +    for_each_possible_cpu(cpu)
->> +        atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
-> 
-> Do we ever read these values without spinlock ? Do they need to be atomic ?
-> 
-
-Yeah they're still read in a few places without taking the lock.
-Specifically because reading and checking if it's valid is so easy to do
-without locking.
-
->>       spin_unlock_irqrestore(&id_map_lock, flags);
->>       DUMP_ID_MAP(id_map);
->>   }
->> @@ -164,7 +142,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu,
->> struct coresight_trace_id_map
->>       /* check for existing allocation for this CPU */
->>       id = _coresight_trace_id_read_cpu_id(cpu, id_map);
->>       if (id)
->> -        goto get_cpu_id_clr_pend;
->> +        goto get_cpu_id_out_unlock;
->>         /*
->>        * Find a new ID.
->> @@ -185,11 +163,6 @@ static int _coresight_trace_id_get_cpu_id(int
->> cpu, struct coresight_trace_id_map
->>       /* allocate the new id to the cpu */
->>       atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
->>   -get_cpu_id_clr_pend:
->> -    /* we are (re)using this ID - so ensure it is not marked for
->> release */
->> -    cpumask_clear_cpu(cpu, &cpu_id_release_pending);
->> -    clear_bit(id, id_map->pend_rel_ids);
->> -
->>   get_cpu_id_out_unlock:
->>       spin_unlock_irqrestore(&id_map_lock, flags);
->>   @@ -210,15 +183,8 @@ static void _coresight_trace_id_put_cpu_id(int
->> cpu, struct coresight_trace_id_ma
->>         spin_lock_irqsave(&id_map_lock, flags);
->>   -    if (atomic_read(&perf_cs_etm_session_active)) {
->> -        /* set release at pending if perf still active */
->> -        coresight_trace_id_set_pend_rel(id, id_map);
->> -        cpumask_set_cpu(cpu, &cpu_id_release_pending);
->> -    } else {
->> -        /* otherwise clear id */
->> -        coresight_trace_id_free(id, id_map);
->> -        atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
->> -    }
->> +    coresight_trace_id_free(id, id_map);
->> +    atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
-> 
-> Can we do this unconditionally now ? What is another session has
-> reserved this id for the same CPU and that gets scheduled later ?
-> We should simply stop doing the "put_cpu_id()" and instead rely
-> on the perf_session_stop()/(or the suggested trace_id_map_put())
-> to free the ids and clear everything.
-> 
-
-We do do it unconditionally, the Perf code doesn't call put() anymore.
-Only sysfs does but it still needs to because it uses the global map so
-this function can't be dropped completely.
-
->>         spin_unlock_irqrestore(&id_map_lock, flags);
->>       DUMP_ID_CPU(cpu, id);
->> @@ -302,17 +268,17 @@ void coresight_trace_id_put_system_id(int id)
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_put_system_id);
->>   -void coresight_trace_id_perf_start(void)
->> +void coresight_trace_id_perf_start(struct coresight_trace_id_map
->> *id_map)
->>   {
->> -    atomic_inc(&perf_cs_etm_session_active);
->> +    atomic_inc(&id_map->perf_cs_etm_session_active);
->>       PERF_SESSION(atomic_read(&perf_cs_etm_session_active));
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_perf_start);
->>   -void coresight_trace_id_perf_stop(void)
->> +void coresight_trace_id_perf_stop(struct coresight_trace_id_map *id_map)
->>   {
->> -    if (!atomic_dec_return(&perf_cs_etm_session_active))
->> -        coresight_trace_id_release_all_pending();
->> +    if (!atomic_dec_return(&id_map->perf_cs_etm_session_active))
->> +        coresight_trace_id_release_all(id_map);
->>       PERF_SESSION(atomic_read(&perf_cs_etm_session_active));
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_trace_id_perf_stop);
->> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h
->> b/drivers/hwtracing/coresight/coresight-trace-id.h
->> index 840babdd0794..9aae50a553ca 100644
->> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
->> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
->> @@ -17,9 +17,10 @@
->>    * released when done.
->>    *
->>    * In order to ensure that a consistent cpu / ID matching is maintained
->> - * throughout a perf cs_etm event session - a session in progress
->> flag will
->> - * be maintained, and released IDs not cleared until the perf session is
->> - * complete. This allows the same CPU to be re-allocated its prior ID.
->> + * throughout a perf cs_etm event session - a session in progress
->> flag will be
->> + * maintained for each sink, and IDs are cleared when all the perf
->> sessions
->> + * complete. This allows the same CPU to be re-allocated its prior ID
->> when
->> + * events are scheduled in and out.
->>    *
->>    *
->>    * Trace ID maps will be created and initialised to prevent
->> architecturally
->> @@ -66,11 +67,7 @@ int coresight_trace_id_get_cpu_id_map(int cpu,
->> struct coresight_trace_id_map *id
->>   /**
->>    * Release an allocated trace ID associated with the CPU.
->>    *
->> - * This will release the CoreSight trace ID associated with the CPU,
->> - * unless a perf session is in operation.
->> - *
->> - * If a perf session is in operation then the ID will be marked as
->> pending
->> - * release.
->> + * This will release the CoreSight trace ID associated with the CPU.
->>    *
->>    * @cpu: The CPU index to release the associated trace ID.
->>    */
->> @@ -133,21 +130,21 @@ void coresight_trace_id_put_system_id(int id);
->>   /**
->>    * Notify the Trace ID allocator that a perf session is starting.
->>    *
->> - * Increase the perf session reference count - called by perf when
->> setting up
->> - * a trace event.
->> + * Increase the perf session reference count - called by perf when
->> setting up a
->> + * trace event.
->>    *
->> - * This reference count is used by the ID allocator to ensure that
->> trace IDs
->> - * associated with a CPU cannot change or be released during a perf
->> session.
->> + * Perf sessions never free trace IDs to ensure that the ID
->> associated with a
->> + * CPU cannot change during their and other's concurrent sessions.
->> Instead,
->> + * this refcount is used so that the last event to finish always
->> frees all IDs.
->>    */
->> -void coresight_trace_id_perf_start(void);
->> +void coresight_trace_id_perf_start(struct coresight_trace_id_map
->> *id_map);
->>     /**
->>    * Notify the ID allocator that a perf session is stopping.
->>    *
->> - * Decrease the perf session reference count.
->> - * if this causes the count to go to zero, then all Trace IDs marked
->> as pending
->> - * release, will be released.
->> + * Decrease the perf session reference count. If this causes the
->> count to go to
->> + * zero, then all Trace IDs will be released.
->>    */
->> -void coresight_trace_id_perf_stop(void);
->> +void coresight_trace_id_perf_stop(struct coresight_trace_id_map
->> *id_map);
->>     #endif /* _CORESIGHT_TRACE_ID_H */
->> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->> index 9c3067e2e38b..197949fd2c35 100644
->> --- a/include/linux/coresight.h
->> +++ b/include/linux/coresight.h
->> @@ -227,14 +227,12 @@ struct coresight_sysfs_link {
->>    * @used_ids:    Bitmap to register available (bit = 0) and in use
->> (bit = 1) IDs.
->>    *        Initialised so that the reserved IDs are permanently
->> marked as
->>    *        in use.
->> - * @pend_rel_ids: CPU IDs that have been released by the trace source
->> but not
->> - *          yet marked as available, to allow re-allocation to the same
->> - *          CPU during a perf session.
->> + * @perf_cs_etm_session_active: Number of Perf sessions using this ID
->> map.
->>    */
->>   struct coresight_trace_id_map {
->>       DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
->> -    DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
->>       atomic_t __percpu *cpu_map;
->> +    atomic_t perf_cs_etm_session_active;
-> 
-> minor nit: this could simply be :
->     atomic_t map_refcnt;
-> 
-> i.e., number of references to the trace_id map ?
-> 
-> Suzuki
-
-As I mentioned above I think it's clearer to keep this labelled with
-Perf as long is it's still only used for Perf. I'd agree to rename it at
-the point when it is a more generic refcnt though. Not sure what you think?
-
-James
+Can you elaborate more on what the workload is doing exactly? What are
+the parameters of the test machine (CPUs, memory size)? It'd be
+helpful if I could reproduce this locally as well.
 
 
