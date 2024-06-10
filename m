@@ -1,143 +1,155 @@
-Return-Path: <linux-kernel+bounces-208229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFEA9022A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1289022A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10251F23791
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5458D1C20866
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794FB824AE;
-	Mon, 10 Jun 2024 13:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96B74048;
+	Mon, 10 Jun 2024 13:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAxkOFAF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CjQSpkEG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD574048;
-	Mon, 10 Jun 2024 13:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8909C7E0E8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025913; cv=none; b=N3jE+zAN5FB69qhliLTzjhWYD8HZn0e2NhL325Xnh9cWRuJqhfRlLOyryifrMsLwwMtj4hfKRSMHRTTNw2ousI1a7OmxBNFtkqBG4VLRpRI5fRxlz+00lOiIEkXn/0Ka0IYaqvbXLXA569DfuH/297r8AELjAhLSE7ZyRj2nZLY=
+	t=1718025939; cv=none; b=pYC6hy2XLgnwOlrIER/jvGzJpEhRWWkCl08g9Kn8tT9ensQQa3ptQ9yCZZN+GI8VQIh0bA4dqs2UXSJBrEey4lrxrWL8+wQOJvsRGXt5u/d4V6A98awptnIjBX9fUaiAgICjPpAbd6QUffluxTLkheWkh+kfRarplzjrkMG9FMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025913; c=relaxed/simple;
-	bh=liwsA1y2JkmJUr/DFB7s2hY7AppE4hxpOVGmtP0EbV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNNhQOBVXDWW69ztB3KmVz7j+F1QLqhshPE94sE3Rrx+K/DtAN2XsQiqa/17TzC3aocqCTmEzkdI9iaZ1SmIlBRvnkQMpzKoiRZ1NrLKr43/lPsGWaKzj6XSAr35X+wKPmDCe5ssr3b8f6UDmtheqdZNwLqU45VB5Fs1NO6Vchc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAxkOFAF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B391FC2BBFC;
-	Mon, 10 Jun 2024 13:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718025913;
-	bh=liwsA1y2JkmJUr/DFB7s2hY7AppE4hxpOVGmtP0EbV0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IAxkOFAFzGelvEUtHIUUpQCLfq617N/F/YErTcoWdXcc7FeGP0DCUJO669XCIE9HW
-	 gQTAIkRc5Q5n0UNOasVxY/zUo58fQep/vcNNsBtqZd3UIQx9j21EbeDPAmemPg0CJP
-	 gHR/n57+/rQ6bo2F1V+uuDeJqzQM+51WcBSaEVMn3LR8pAH9JvnJyTA2HyWmLOhwC6
-	 mij8Dl55CcT9QObz2F0euQR9flGo4VPGnDif3iRdL+EgQVjEWguyfL51NfG2UP4ZE2
-	 ZQt8Awu3/7GYUohaSpd2PDggsXkDQi1puhE3/UEE2A6mzHxeblYibygnsFjxwbXfUp
-	 WIfFp6iLy/N4w==
-Message-ID: <bdea4e6c-eee5-4f4a-85b9-738d61b19800@kernel.org>
-Date: Mon, 10 Jun 2024 15:25:08 +0200
+	s=arc-20240116; t=1718025939; c=relaxed/simple;
+	bh=Ah9a8Efx4wEnL7RAaVShaay27q/GZtk7dGv4xhEN3ao=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nUTbAkwnraDNr1/BO2uggFlc2ZMjSHtZDjTXsYLbUE6und/u67aHMyTecZVcSC9vUWJS8GXl8ZwtEdVD2UbwcsTehif9nrVge2w+G4xo+G4dCDeQcDF7EOXxC8VsdDYCdinlqbUWkAwnlHhDVBkD38dbWXF6SWwR3Y8NSTJB48k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CjQSpkEG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718025936;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=t92VNX+/8V2N5xX4LSaFwU8u1lEMvFbI4ck5ZnHCQ50=;
+	b=CjQSpkEGfe1fiGb0TpZKiCs+z3PyGAfR2VIvhPGgD68wCIGy0CUACoZe7H3hK47M0+dP2l
+	V0EfQEM9tkA6vWRcHNImKQpwbo/qfkc3FBZTxcs8/pbzdX76mPRJ0jRVxuJBbWtw7MH9mh
+	XtizXZNl4MjheSUn0PpWtdnNnSN9PQk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-hA4nFa50PpKfrt3JzmN-_Q-1; Mon,
+ 10 Jun 2024 09:25:31 -0400
+X-MC-Unique: hA4nFa50PpKfrt3JzmN-_Q-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B4B619560BB;
+	Mon, 10 Jun 2024 13:25:30 +0000 (UTC)
+Received: from localhost (unknown [10.22.8.210])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B733719560AB;
+	Mon, 10 Jun 2024 13:25:29 +0000 (UTC)
+Date: Mon, 10 Jun 2024 10:25:28 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] rtla/osnoise: Use pretty formatting only on interactive
+ tty
+Message-ID: <Zmb-yP_3EDHliI8Z@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] dt-bindings: PCI: microchip,pcie-host: allow
- dma-noncoherent
-To: daire.mcnamara@microchip.com, linux-pci@vger.kernel.org
-Cc: conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com,
- robh@kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20240610121822.2636971-1-daire.mcnamara@microchip.com>
- <20240610121822.2636971-4-daire.mcnamara@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240610121822.2636971-4-daire.mcnamara@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 10/06/2024 14:18, daire.mcnamara@microchip.com wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> PolarFire SoC may be configured in a way that requires non-coherent DMA
-> handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-> property is required to denote buses or devices that are non-coherent.
-> 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+osnoise top performs background/font color formatting that could make
+the text output confusing if not on a terminal. Use the changes from
+commit f5c0cdad6684a ("rtla/timerlat: Use pretty formatting only on
+interactive tty") as an inspiration to fix this problem.
 
-Missing SoB
+Apply the formatting only if running on a tty, and not in quiet mode.
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Suggested-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+Reviewed-by: John Kacur <jkacur@redhat.com>
+Reviewed-by: Clark Williams <williams@redhat.com>
+Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+---
+ tools/tracing/rtla/src/osnoise_top.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline), work on fork of kernel
-(don't, instead use mainline) or you ignore some maintainers (really
-don't). Just use b4 and everything should be fine, although remember
-about `b4 prep --auto-to-cc` if you added new patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-
-
-
-Best regards,
-Krzysztof
+diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+index 07ba55d4ec06f..d539fade99d48 100644
+--- a/tools/tracing/rtla/src/osnoise_top.c
++++ b/tools/tracing/rtla/src/osnoise_top.c
+@@ -42,6 +42,7 @@ struct osnoise_top_params {
+ 	int			hk_cpus;
+ 	int			warmup;
+ 	int			buffer_size;
++	int			pretty_output;
+ 	cpu_set_t		hk_cpu_set;
+ 	struct sched_attr	sched_param;
+ 	struct trace_events	*events;
+@@ -163,7 +164,9 @@ static void osnoise_top_header(struct osnoise_tool *top)
+ 
+ 	get_duration(top->start_time, duration, sizeof(duration));
+ 
+-	trace_seq_printf(s, "\033[2;37;40m");
++	if (params->pretty_output)
++		trace_seq_printf(s, "\033[2;37;40m");
++
+ 	trace_seq_printf(s, "                                          ");
+ 
+ 	if (params->mode == MODE_OSNOISE) {
+@@ -174,12 +177,16 @@ static void osnoise_top_header(struct osnoise_tool *top)
+ 	}
+ 
+ 	trace_seq_printf(s, "                                   ");
+-	trace_seq_printf(s, "\033[0;0;0m");
++
++	if (params->pretty_output)
++		trace_seq_printf(s, "\033[0;0;0m");
+ 	trace_seq_printf(s, "\n");
+ 
+ 	trace_seq_printf(s, "duration: %9s | time is in us\n", duration);
+ 
+-	trace_seq_printf(s, "\033[2;30;47m");
++	if (params->pretty_output)
++		trace_seq_printf(s, "\033[2;30;47m");
++
+ 	trace_seq_printf(s, "CPU Period       Runtime ");
+ 	trace_seq_printf(s, "       Noise ");
+ 	trace_seq_printf(s, " %% CPU Aval ");
+@@ -192,7 +199,8 @@ static void osnoise_top_header(struct osnoise_tool *top)
+ 	trace_seq_printf(s, "          IRQ      Softirq       Thread");
+ 
+ eol:
+-	trace_seq_printf(s, "\033[0;0;0m");
++	if (params->pretty_output)
++		trace_seq_printf(s, "\033[0;0;0m");
+ 	trace_seq_printf(s, "\n");
+ }
+ 
+@@ -619,6 +627,9 @@ osnoise_top_apply_config(struct osnoise_tool *tool, struct osnoise_top_params *p
+ 		auto_house_keeping(&params->monitored_cpus);
+ 	}
+ 
++	if (isatty(1) && !params->quiet)
++		params->pretty_output = 1;
++
+ 	return 0;
+ 
+ out_err:
+-- 
+2.45.2
 
 
