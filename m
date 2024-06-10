@@ -1,139 +1,122 @@
-Return-Path: <linux-kernel+bounces-208655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C949027C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:32:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D59027CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69541B22CF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7B8282586
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C28145B09;
-	Mon, 10 Jun 2024 17:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003DC1474DA;
+	Mon, 10 Jun 2024 17:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1mMHTT1E"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yGaVnFKy"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAD38F6D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0F184E04
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040736; cv=none; b=cIvpfCMY/fcqqs45he0fOHaY9Ax757Kw5ssmIZbLdORkFu/urUdZ8sxfSftyXhP0yITJCMfl0st8VyXBXt7w6k5VqFgrT7vvrA/1xIhOyi5CzFI58rxUR7rbnMbQ+aqTZmCasIiwDtr05FDhMuhbRnQGbDZAcLx2w1TdkWez+yc=
+	t=1718040813; cv=none; b=gt3P8sbztEHktlww5az6giSOH6RY5xUMskNzLgFbvauZfut5Wtipcvb7ZsJrpzHus5n/DIdUc6xG1tq1TaXUrZhaSMORvp/MfNlvNw9ZivnJDUpuW+HAz6Ojdyk6XVNjj9tdgsU72lSz/ZTUNxldoZF2zbOY1EGBj91LO4lvqw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040736; c=relaxed/simple;
-	bh=mdCAFeHPx4NpqBMAT0N/l5bjvvY8+PJwXH20IS5j9M8=;
+	s=arc-20240116; t=1718040813; c=relaxed/simple;
+	bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EB27P0I7ZvBoT+/5sgf+1sVle6iA5vrk6a6eyPSsvmH4qzFS+Sy77s/mufQzaaxtQKmXMVHVuCCEmdbcnEjVMqrwQoK7Olo0zp+bzGDhvsgEyffG+U1dT4TERLGAgxPQ76ErU+WMOBwwUzbkUeMyPVeM6SqHhvaD4qXsdc5fU08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1mMHTT1E; arc=none smtp.client-ip=209.85.167.43
+	 To:Cc:Content-Type; b=XZV0exYR+xJ+44hMq0Bh0LCe27PeBSuU4KseRo4jfME77qsX0ifWYNkoUFPCrUf+ioj4R2Xndz3EDDPu9Dsmy15YaYShUZ3+14uhX52V8lvZEsuN+MAF6bhfzJhZi6AL6kSC4CmogeH8haUsi0db/cQHjErk07GDZHrfB8/YIeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yGaVnFKy; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c9034860dso755437e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:32:14 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375acf90c58so10205ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:33:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718040733; x=1718645533; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718040810; x=1718645610; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=imSBpkTzzqUmvIsygsJYdm0FauCtvu9Q1kXsJDVsYp0=;
-        b=1mMHTT1EyEL6kYPjxmHuEus15h7hQUtN1dkY7Gpkc/ldqx6M5BwR3FGfslTOpvCbVo
-         O+q8YaGqE45WOtWt+lQ301Bpi8i7soqvZULXc6UATRXmgeE31kt0lnHi9JZXA8XkwsjX
-         PJe+uBxVCGGGRN668HlSViMZZKIJ7XUV8X4LqNvXabuCqfClJDrZ5ZOqsxWu7E8qMINE
-         Cg34mJpVIsmwmQCUGL1q5ElbnrlpzK6Y1gXRuj/nbQlm098IPNKqePtSEd5FiOoA4xmV
-         uIoTTDXUrugnwl/v2o+raq8pqEAGA/L8wy95025amWPGAi3w/46wkuaLbJgLA6bybVDi
-         mrkw==
+        bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
+        b=yGaVnFKyg9Rb3zjy0fAVI3x3N5HLyp6OASgZ7cUwUpLkbDNUz8OekH1qdUnh2C+WZg
+         KLmVN05dSsp6ufDulXhbGh7+fhfMxFOuCN0vPHZXwdvU32MLqLUkZzaQIOnygQ06FUat
+         vrhK37pMCb5BAN7G790lwJXNspVSzRyNyMfzWLI7F4d+EJRIvxUYkqJCWYg/f0DQl5/J
+         SzCnACmXpk5+lhv6qdsSyazulC+fQgRyhcUhM4Ab5beORt/Qm2Ar11i9mPY49cYv82WF
+         gtsFALksAAjsEzB4Si6bvRPY8N2OnC0UVOZsCrnl3+FHT+7tJ5GREW79MdYGdxuhZz5c
+         cdKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718040733; x=1718645533;
+        d=1e100.net; s=20230601; t=1718040810; x=1718645610;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=imSBpkTzzqUmvIsygsJYdm0FauCtvu9Q1kXsJDVsYp0=;
-        b=e863eVOvNsfaLt5bLFX/KATtodTRY37dxFQAURVQGadDJnP38w6cinDvRU2S0lNzT4
-         IyA1MBNX1iyqB6muVaguhd5e7wy20Sbep7/TS9M5FHcQMHh1FppQMTBRJysIf3OpBP9o
-         AuL5LDdER2UfwWCHUqBcmy1Yu03VsXvJTQMnZ5ZSZAbb52UuJ7xAYt+Jfq314JftfPn0
-         aNMM/6IlbKu/X90tafjduQYTxI23mK7k2QD8JAztriz0M5RIFRJ2p71Rs377S06/GLqQ
-         kPVWA+3KIvaVqPlJSEI3pC6MIKnh2XRuq9PQGGTiLkzuym673dKZ1jztoMYV99e5cmhZ
-         4IGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+uuwjK2Ktq60J6hTD65R+Fxgj2+NoOy8qGwYH26AkXlP0BP2zNV2uWr6h8P4ScZNg4ilk3AnV6OK+a9g1kz71KE1eXhLVY1d+af0O
-X-Gm-Message-State: AOJu0YxpMn41JnKvSoElTNBWpnDfsoVJWFwx+tChCBuZD0RcUtTY4s+u
-	2pp1HLw9g8ZeDYh/JTtND0oN3PiMyE4F9ATHxmznfd97qfAa4b99NSToqx/WHgzpQ5e1YSue+wh
-	tlpEL3SE2TgLHCxsVB2Yw/kUPRhgGcwQAA4bw
-X-Google-Smtp-Source: AGHT+IFSeNMKWqrQLXEOHa+5P7nb/xJZqIvzN2fuHP58NLsfwKlgg+SFRKV2Ukoyl2SaooUYc/qwxk+POkSzk7Jmi8U=
-X-Received: by 2002:a05:6512:10cd:b0:52c:804e:e831 with SMTP id
- 2adb3069b0e04-52c804ee8a9mr6407306e87.47.1718040732869; Mon, 10 Jun 2024
- 10:32:12 -0700 (PDT)
+        bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
+        b=sCe7CrzkR3s61DF9xSi1HBNEG8pq91mnXfoOmQlc4OaE4XWrort0aXIsVYyFnrJY4Q
+         v26exIQd0ndKGNz8n8G4uGjcNb3xRAsgztim1ZaS32Zvnq3ZZ5r/Ixjk9P9x4zEtGvTG
+         +9u91aPBDWjGt53N345TCxvONjMCGJhC9+59wM/+z2HWzU1x6riFBvcmWCgaQ3GX2ePK
+         kbzTK9egOR1jppXW2tYM2N9FfdFsIrF9OBgDHuXIsZ0+iAY1Y7GNcbzwQ+klYOVc+T8q
+         kvuJ2PiRhhLreLPT2XIguFQkzqnVUyJCKiEzU66YNDTR0ErbUn2yBHcaJhn893fROk23
+         GiNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbgvrM7z20XjjZn54IiKsx9RyFB783adFWJWyZSU3FL7u2/uMLLD7hpG7a67cXJUxRoCmFaRHyqdA3C24Obu2ICM/MEMTzJPB0SxXa
+X-Gm-Message-State: AOJu0YwAYj5Tf3EeZTQUzjv5/54HLaGz6M+85Cxz7SMqkRayZpZvt/Uw
+	fgdkANEpRY6WbdT+1E0FSFhhbNw866RXb8GoQnvXoWe1liWWgnwsR+2nVlSdkOOUiE8EJW7Pa9Z
+	Fg7CWeC3MpxffYqrZu/43UzrOKoeqNJaD4B8Y
+X-Google-Smtp-Source: AGHT+IF4RQZ/xzq/w+dPDVh0tFYJbnw/GaaZTMKotm7PBgdv0bYpxjayBecUgCGMMMYygei/AwTVauljApyCg9dziQQ=
+X-Received: by 2002:a05:6e02:3701:b0:374:8a2a:6557 with SMTP id
+ e9e14a558f8ab-37594fc8d02mr5745345ab.25.1718040810130; Mon, 10 Jun 2024
+ 10:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610143037.812955-1-usamaarif642@gmail.com>
-In-Reply-To: <20240610143037.812955-1-usamaarif642@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 10 Jun 2024 10:31:36 -0700
-Message-ID: <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com>
-Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20240607065343.695369-1-irogers@google.com> <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
+In-Reply-To: <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Jun 2024 10:33:18 -0700
+Message-ID: <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
+Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	James Clark <james.clark@arm.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yicong Yang <yangyicong@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 7:31=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
+On Mon, Jun 10, 2024 at 6:30=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+[snip]
+> I did a test for this patch, it works well for me.
 >
-> start/end writeback combination incorrectly increments NR_WRITTEN
-> counter, eventhough the pages aren't written to disk. Pages successfully
-> stored in zswap should just unlock folio and return from writepage.
+> Tested-by: Leo Yan <leo.yan@arm.com>
 >
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  mm/page_io.c | 2 --
->  1 file changed, 2 deletions(-)
+> Just a nitpick and I think it is not an issue caused by this patch.
+> After hotplug off one CPU and then if specify the CPU with option '-C',
+> the 'perf stat' command still continues to run. This is inconsistent
+> with the 'perf record' which exits with failures immediately.
 >
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index a360857cf75d..501784d79977 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writebac=
-k_control *wbc)
->                 return ret;
->         }
->         if (zswap_store(folio)) {
-> -               folio_start_writeback(folio);
->                 folio_unlock(folio);
-> -               folio_end_writeback(folio);
+> Maybe consider to send an extra patch to address this issue?
 
-Removing these calls will have several effects, I am not really sure it's s=
-afe.
+As you say, this doesn't relate to the problem fixed here. I don't
+have a problem with the command line behavior change but I think my
+getting shouted at budget is fairly well exhausted. How about we trade
+issues, if the following get fixed:
 
-1. As you note in the commit log, NR_WRITTEN stats (and apparently
-others) will no longer be updated. While this may make sense, it's a
-user-visible change. I am not sure if anyone relies on this.
+Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
+priority issue right now.
+Fixing ARM hybrid default perf stat (it is crazy we can accept this
+being broken), opening events on both BIG.little PMUs as done here:
+https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
 
-2. folio_end_writeback() calls folio_rotate_reclaimable() after
-writeback completes to put a folio that has been marked with
-PG_reclaim at the tail of the LRU, to be reclaimed first next time. Do
-we get this call through other paths now?
+I'll address this.
 
-3. If I remember correctly, there was some sort of state machine where
-folios go from dirty to writeback to clean. I am not sure what happens
-if we take the writeback phase out of the equation.
-
-Overall, the change seems like it will special case the folios written
-to zswap vs. to disk further, and we may end up missing important
-things (like folio_rotate_reclaimable()). I would like to see a much
-stronger argument for why it is safe and justified tbh :)
-
-
->                 return 0;
->         }
->         if (!mem_cgroup_zswap_writeback_enabled(folio_memcg(folio))) {
-> --
-> 2.43.0
->
+Thanks,
+Ian
 
