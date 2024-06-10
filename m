@@ -1,154 +1,177 @@
-Return-Path: <linux-kernel+bounces-209013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9E0902BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005E6902BD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B665B21A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583C5B21764
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB56E1509B9;
-	Mon, 10 Jun 2024 22:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115191509A6;
+	Mon, 10 Jun 2024 22:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvmvFSCU"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UvcLL07o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A545466B;
-	Mon, 10 Jun 2024 22:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7DC150981
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718059233; cv=none; b=ix2ZnRgFEzb5Ku0/t+XRzzCl/I+jJaSjQuc24eqZzqEoBkQW3wBb0jWGMvFc9kKwzOc8jcJ+2buWTH5FjOWO3lQGW3roYLXZpl8rQ1BgG4p8Cj59w/J9VpbotePERJALkaq+LpwHQGfutNNjXavJW9Xy2lictv2GV+6Pbt5A/f4=
+	t=1718059262; cv=none; b=dPVH7UnZYYiQlRBN4jwpUZg7fbU0zxjvOre5Sbmk+G7IMn8do1Z8DOJVHef10vKEkKkR5b1RJYeMLyChTpvPl05KLrxkvvg3oL3q0VMutLNu/ar+NNagzzkzAVY/OIgl38FZu0K7UtnMh3mmWV3CYTvKuIz0x9e3gNGs55ell2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718059233; c=relaxed/simple;
-	bh=g10dlOBGYYkPLn3+3Cuj4VRZAJwM6Vn3EQdE5kpHkMY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DtLqYNqL+mt4rX8x4qkiArci6zjwmDOaauE7toHoFpGTRP6Gb/BSB4+EA7u3krKBl8OgAthxb35RBuUTWSuCx81UvFGlRFmzsILI8EvPKMdYVFq6Y6p4aFJotRDkXE5RrZ+RnHzgIlhKoWuYqoTUVUOoFjnmy51Bst7ERfGlm7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvmvFSCU; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f0d6255bdso2755791f8f.1;
-        Mon, 10 Jun 2024 15:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718059229; x=1718664029; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpPyXWTVTerEIWhQ6o8wHto+dQPxy/WMM7tzpvoV1CQ=;
-        b=GvmvFSCULRcafeNEh/wYJb3jCoXJ7i/o5lKlpfZ9QwxmpSRn3QyKoJnw+PuNmD9XTm
-         fF2v+Wg7qJakweGkXDvYTqJpeXPGgjhfFlscLSfZ/YN2Oq85UU1OFKgfMDgdZ04rd3+1
-         oqxpptgVDY1Kw5BqrQBkGqLAu7QlcLVyCurdzH7lff2ows3XQFlsUu13YihyeAfJ0AxH
-         nV++COgTNyXofDmwB133xxsH/fQa+V5iirG4lMikWv2G2gOiBS8gIjoYdAgGE+Gky+kV
-         bIYbr3dqLdK3lM46Gk0Ne8UBcWsDP2ymUUMyFjPWCkv4I691O/G47ViRSeS7gMinlIwV
-         HhpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718059229; x=1718664029;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gpPyXWTVTerEIWhQ6o8wHto+dQPxy/WMM7tzpvoV1CQ=;
-        b=J433hfblN4NlEzzQWdWwEGXkrys0fTLsCMul9F9K8cJE2k2z90hyt52Af0QXQNZ3k8
-         baEuAEczRvxnMNQNV8GJKGCAjlVoT3Qr8kufXDIsl+UfCBaENHaKitUXwChRUzFPrnlN
-         rgzjHg8lto+GgxvNDnOY8QR6o4pq8HvflH2kB3ij1e/OextdnRO8FbCk1MiCTuO/G4CI
-         oJaodf455KskuUwUyUmNRStc0WFnMItdyvu/vaZ1nEz5xShkUK1o/oD2YP2za8Gpe799
-         G24ZXwNeRV5aQ0pFZBprNXRYxU/2tZPJX+vVsMILm/ho9PyauvDcOM0dDLOOuwzEvwF0
-         g+lA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQB51HIS6TYO4jTbv9RU+rtPEhf8NqAcFyTaGin2U/dKjVW8aBu1FzaqIwjKGwt+0kjGR07K2ychXhv7YUm3GZ0/yMtGtDJ1ngqV89RX2+6vHZuDH+VULhSJz6NnooVYyRJ4Bq
-X-Gm-Message-State: AOJu0YwuL0PNv3BubVyQRBnAnQJKGXO5lfqECMA3XA6FWeGCjKmCq6hq
-	/lYL6r6OT/6V/ZBWuHP/2SejPbyWr+2wAmUNrcUT2c4u2kRaXJXK
-X-Google-Smtp-Source: AGHT+IH4nQiCT9WMClPt604ZYVbJsCXhC4V56JFsZoe2WZyh2Jw0qDjY9RyNp0aFPn3YwnD54yHR8Q==
-X-Received: by 2002:a5d:5f8f:0:b0:354:ddba:303a with SMTP id ffacd0b85a97d-35efedd7dbfmr8382883f8f.54.1718059229080;
-        Mon, 10 Jun 2024 15:40:29 -0700 (PDT)
-Received: from [127.0.1.1] (194-208-201-054.tele.net. [194.208.201.54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d6990csm12131971f8f.58.2024.06.10.15.40.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 15:40:28 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Tue, 11 Jun 2024 00:40:26 +0200
-Subject: [PATCH] leds: mt6360: fix memory leak in
- mt6360_init_isnk_properties()
+	s=arc-20240116; t=1718059262; c=relaxed/simple;
+	bh=sLaT1b+jqYY13JWFb12MhvlcS48VvrXkN64Mql/YLgA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VfJCATy2AnCR+Re+51AuyziwxK2WaLMGq6+jVEuXEL3G/0Lvux5RY6EPkgEGv96LEORh4KX+kUUDF+6BE8GhEH7S4sMI+3t4HhyHnfmDz2c9YrIshST/AFZvJMxxdQGW/Yw5oe27toBZhJ+SrBZUb8jWWaIlq9RPS6x568woEVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UvcLL07o; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718059261; x=1749595261;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=sLaT1b+jqYY13JWFb12MhvlcS48VvrXkN64Mql/YLgA=;
+  b=UvcLL07oKDc0Jodmfh6laQUp0+WEsNyboVPhyWqUM659RGB2x4nJMW64
+   OyixrnCcM/UTJ3EB/FtSxhtNH48E8p3qXTk496imh+spzlRnrr24tD1tR
+   Zey3rwpuDOL7RT5M68COuuNJcJQGvrhUfKexTcAZJf1kpmIc/r5ghVyAZ
+   yEO7RwCS/KSWPrkGRMK2Iy+R0I/ezjjqPveIbPvZDhoV1/kAt9MT7fns9
+   /Gi7XKAXoHbnT0ikXdhGfgXDdjmqPBmn3a8lRwdvPWe3qH6ny4ngBprX7
+   6YGILDD6KPCdoEYBL/FEK0LEcCnZJubwazBSmzgy8mRkVThim9cI6Vo7q
+   w==;
+X-CSE-ConnectionGUID: kkfzZfxuSQGNrYJUCpbWuQ==
+X-CSE-MsgGUID: H66Pv34SQc69Q6BodkvX3g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="17663729"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="17663729"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 15:41:00 -0700
+X-CSE-ConnectionGUID: Grgz2+d+TKGhIdtuMwwnWg==
+X-CSE-MsgGUID: +gzXi1AHS2CJ5qX2E9+yYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="43630839"
+Received: from zshen-mobl.amr.corp.intel.com (HELO [10.209.70.146]) ([10.209.70.146])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 15:40:59 -0700
+Message-ID: <0f1ba5d8ecc62f774590077b2f88f5b64dd98452.camel@linux.intel.com>
+Subject: Re: [PATCH 1/8] perf/x86/uncore: Save the unit control address of
+ all units
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
+ eranian@google.com,  ak@linux.intel.com, yunying.sun@intel.com
+Date: Mon, 10 Jun 2024 15:40:59 -0700
+In-Reply-To: <20240610201619.884021-2-kan.liang@linux.intel.com>
+References: <20240610201619.884021-1-kan.liang@linux.intel.com>
+	 <20240610201619.884021-2-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANmAZ2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDM0MD3ZzUlGLd3BIzYzMD3dzU3JzUxGxdc4u0xDTjVBNj0yQDJaDOgqL
- UtMwKsKnRsbW1ACiVgOllAAAA
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718059227; l=1877;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=g10dlOBGYYkPLn3+3Cuj4VRZAJwM6Vn3EQdE5kpHkMY=;
- b=cR0LfOzpw4hwGKrOjdhmiXFbXriHLO5gLjMX4rHeP62PmE4NBWzxHdshrumFnOnhMhbrKZA4G
- Kka9SVk2V8DCemwIhzDYLmjD5RxVyuNqg306XZuey5g6snUaJ2g7f2B
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-The fwnode_for_each_child_node() loop requires manual intervention to
-decrement the child refcount in case of an early return.
+On Mon, 2024-06-10 at 13:16 -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+>=20
+> The unit control address of some CXL units may be wrongly calculated
+> under some configuration on a EMR machine.
+>=20
+> The current implementation only saves the unit control address of the
+> units from the first die, and the first unit of the rest of dies. Perf
+> assumed that the units from the other dies have the same offset as the
+> first die. So the unit control address of the rest of the units can be
+> calculated. However, the assumption is wrong, especially for the CXL
+> units.
+>=20
+> Introduce an RB tree for each uncore type to save the unit control
+> address and ID information for all the units.
+>=20
+> Compared with the current implementation, more space is required to save
+> the information of all units. The extra size should be acceptable.
+> For example, on EMR, there are 221 units at most. For a 2-socket machine,
+> the extra space is ~6KB at most.
+>=20
+> Tested-by: Yunying Sun <yunying.sun@intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  arch/x86/events/intel/uncore_discovery.c | 79 +++++++++++++++++++++++-
+>  arch/x86/events/intel/uncore_discovery.h | 10 +++
+>  2 files changed, 87 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/x86/events/intel/uncore_discovery.c b/arch/x86/events/i=
+ntel/uncore_discovery.c
+> index 9a698a92962a..ce520e69a3c1 100644
+> --- a/arch/x86/events/intel/uncore_discovery.c
+> +++ b/arch/x86/events/intel/uncore_discovery.c
+> @@ -93,6 +93,8 @@ add_uncore_discovery_type(struct uncore_unit_discovery =
+*unit)
+>  	if (!type->box_ctrl_die)
+>  		goto free_type;
+> =20
+> +	type->units =3D RB_ROOT;
+> +
+>  	type->access_type =3D unit->access_type;
+>  	num_discovered_types[type->access_type]++;
+>  	type->type =3D unit->box_type;
+> @@ -120,10 +122,59 @@ get_uncore_discovery_type(struct uncore_unit_discov=
+ery *unit)
+>  	return add_uncore_discovery_type(unit);
+>  }
+> =20
+> +static inline bool unit_less(struct rb_node *a, const struct rb_node *b)
+> +{
+> +	struct intel_uncore_discovery_unit *a_node, *b_node;
+> +
+> +	a_node =3D rb_entry(a, struct intel_uncore_discovery_unit, node);
+> +	b_node =3D rb_entry(b, struct intel_uncore_discovery_unit, node);
+> +
+> +	if (a_node->pmu_idx < b_node->pmu_idx)
+> +		return true;
+> +	if (a_node->pmu_idx > b_node->pmu_idx)
+> +		return false;
+> +
+> +	if (a_node->die < b_node->die)
+> +		return true;
+> +	if (a_node->die > b_node->die)
+> +		return false;
+> +
+> +	return 0;
 
-Add the missing calls to fwnode_handle_put(child) to avoid memory leaks
-in the error paths.
+Will it be better if the rb_node is sorted by id instead
+of pmu_idx+die?=20
 
-Cc: stable@vger.kernel.org
-Fixes: 679f8652064b ("leds: Add mt6360 driver")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-This bug was found while analyzing the code and I have no real hardware
-to validate the fix beyond compilation and static analysis. But given
-that the child node is only used to retrieve some properties within the
-fwnode_for_each_child_node(), and it is not used outside the loop, the
-fix is straightforward.
+Then it will be faster for uncore_find_unit() to run in
+O(log(N)) instead of O(N).  Right now it looks like we
+are traversing the whole tree to find the entry with the
+id.
 
-Nevertheless, any tests to catch regressions with real hardware are
-always welcome.
+Tim
 
-The bug has been around since the driver was added.
----
- drivers/leds/flash/leds-mt6360.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
-index 1b75b4d36834..4c74f1cf01f0 100644
---- a/drivers/leds/flash/leds-mt6360.c
-+++ b/drivers/leds/flash/leds-mt6360.c
-@@ -643,14 +643,17 @@ static int mt6360_init_isnk_properties(struct mt6360_led *led,
- 
- 			ret = fwnode_property_read_u32(child, "reg", &reg);
- 			if (ret || reg > MT6360_LED_ISNK3 ||
--			    priv->leds_active & BIT(reg))
-+			    priv->leds_active & BIT(reg)) {
-+				fwnode_handle_put(child);
- 				return -EINVAL;
-+			}
- 
- 			ret = fwnode_property_read_u32(child, "color", &color);
- 			if (ret) {
- 				dev_err(priv->dev,
- 					"led %d, no color specified\n",
- 					led->led_no);
-+				fwnode_handle_put(child);
- 				return ret;
- 			}
- 
-
----
-base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
-change-id: 20240610-leds-mt6360-memleak-78faf3e435b0
-
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> +}
+> +
+> +static inline struct intel_uncore_discovery_unit *
+> +uncore_find_unit(struct rb_root *root, unsigned int id)
+> +{
+> +	struct intel_uncore_discovery_unit *unit;
+> +	struct rb_node *node;
+> +
+> +	for (node =3D rb_first(root); node; node =3D rb_next(node)) {
+> +		unit =3D rb_entry(node, struct intel_uncore_discovery_unit, node);
+> +		if (unit->id =3D=3D id)
+> +			return unit;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
 
 
