@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-207734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783FD901B31
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:25:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78039901B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18C3281E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F3DDB22C23
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4E517C91;
-	Mon, 10 Jun 2024 06:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD6818633;
+	Mon, 10 Jun 2024 06:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dDnq/ec1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R6woaBMi"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zb3TtYbg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE541168C7;
-	Mon, 10 Jun 2024 06:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E81D17C91;
+	Mon, 10 Jun 2024 06:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718000715; cv=none; b=NmMWA94jyITijWd+lNOIWOTuCyqlUyPuftuL6XBA8CZm37OUNZEE8wTDz2wV3G17Xrfow5agzmT6D67FBm8UTGWJpvPnODLSIsSsL2Jlt96lyr2KwaJibmeZG5yjDPPyk+LpMzcuDmi2XQuRNsxlNF3oqcKTuIKXsvr/hTElQlo=
+	t=1718000728; cv=none; b=QFXvAkQo8sTsQHjJmgEi6pvtBfHeeJ4Ijhq30gaJxqQGFHIdj2r6syGmKsIgjRubD/f83rFKFc0lue1/umBGn1V4q4sPWFA6U+D+fYoexsvopIYe34PptUCO7YDbfR3dSpJhq4RIIupYuZwvbqa5JRLsaweMFuB3iu4jKaf3gLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718000715; c=relaxed/simple;
-	bh=yC+84WD7XLjLTlzTp+zMGOHHC/5b24EuLBM5a2n8PXg=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=lKkwe1IRVa7aJQOOKt046nArshKbsMB1TUHzLiCsS5BaOEks2L8km/2/Izq4CAM5MfENFCB702OazzMVm0zYWHbtfff86/FB8winLqh8YZpTCXudOFmXuBQr/kC3/63lFv31sBNKB6VIhikEXfbZRgm+IMkjBdqhaoRUq6Zr/7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dDnq/ec1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R6woaBMi; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C1677114017D;
-	Mon, 10 Jun 2024 02:25:12 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 10 Jun 2024 02:25:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718000712;
-	 x=1718087112; bh=/B4vf4pTZ3/nCdt+BXZpUnO2EJXjzGYMcK7+73LIL3E=; b=
-	dDnq/ec17Yx2+l6h/w+3T9+CKHR4t8WKb6ed3Mt2rS1ZWcAVsMZOjEtuVi+WlJ8a
-	jHFIohfpMUruTRV18XVqn2chGmWxCq13oarTuBKRC8p29eZM5x7OGaU7qsI2Qmqn
-	xaIJFu+TG4McVh2SFkwh0avqBi1e/JR8e5UHSUYaEooAJOkCAnthVtMir5iwNDCL
-	ZDGXSvpy58GvWl66r1jOK3WxBKbzX/P6fK4ixzNRwywrt6gt3k6vHL9xp8fo0mAq
-	+8CO645jp8SYkd8agRkxcbHZ/wNRVeNWPi9oN4x4SVbMN1ildCAzw33SaqE8/Ojb
-	1YPOx5NYlyCudBkuZ/SeQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718000712; x=
-	1718087112; bh=/B4vf4pTZ3/nCdt+BXZpUnO2EJXjzGYMcK7+73LIL3E=; b=R
-	6woaBMiD7Zyufu8Wl2EVvhPMpyx+mkAqRsSxe0KwJF6Dm6H5P8uAGeJhDj8+nwGU
-	Y6aHs65XDwn3XG9kJbrUCqHJysxhXeRXJk/2qv0h3tRuRkIrtLNjfF8rFK01FNSQ
-	gjKoNlcpZRakuEt5bC5tFdIcdy69px4knufG6Cn0Chri3CQdypSUE+x0ZpktV69B
-	ik1bUXC9YXq5PqH7RABvJwvDxV2th3ExUOj/L7kV9miebqmDD9Zhqy+VIU1+PzFs
-	GJKBbe6tzd7N554Sf1ueucx1Oy7ooNzkUmPhOzOr1q65/cB4RLViQZXY72AiXYP2
-	CEeuQG/jNzE+nNyb0Ng0A==
-X-ME-Sender: <xms:SJxmZrmMoXCtHrgbUphC0AWW2qq4ULsC4oOmnjU8K7y9WpfN1oUMCg>
-    <xme:SJxmZu08uYn0N0kyWBlxnPD7d4MQ1fSY9IKmpR27OXyx9H-VVpB2ZjAhinpnUeLfr
-    S942jxSERSHdm0EPd0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtledgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:SJxmZho3eLgQKVKwHkKGmZfX5q8A_kdTr5a22ZBaKDITua1qdM8nHQ>
-    <xmx:SJxmZjk-jCmP6IkeBXIiwsdZlsgYArGhA2adOw___tNvpgpGk2XQSA>
-    <xmx:SJxmZp14bbdoa4Fouv4apxaLykoKWTLuRzs_Px9M2zZOfRHc4Z1VlQ>
-    <xmx:SJxmZisFnEtqllb3RnwKmwPvm-YH2txmsfNcMWucPnrAZ87-XlTahg>
-    <xmx:SJxmZjxfAVRr1fvgGiP3Vm1ttn4XRv-Fag2W6fLMweooaO343Q4U6vS1>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 6FE1AB6008F; Mon, 10 Jun 2024 02:25:12 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1718000728; c=relaxed/simple;
+	bh=kFnEOlKoCXi9xsfPM/KcDWCHzC3Nd4WkcUBue7po2kU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUlXWB/IW66HwzZyjvvcSSU7gTyPoTSIRYvWOOpkyTKNbGkKhGLLSDM/owehG2sft9A/vNBb4MNDCviHUk8pCuNQWHzqodnKHKL+7mSTzXupfTREgRy1YdCkoQeLjLo9xwEv+Pi8gxhKlxhnXxPlwWDgF1UomlBn2ReOY21pKXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zb3TtYbg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99919C2BBFC;
+	Mon, 10 Jun 2024 06:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718000728;
+	bh=kFnEOlKoCXi9xsfPM/KcDWCHzC3Nd4WkcUBue7po2kU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zb3TtYbg138HkVOo20OzWd9hMHjVPbcQXaAyueVnv6sHDsQLmoQZrR7Q5hIcz0fW7
+	 pJY2k6B9pY1oo4aCj1nJIhqibXQUGM6HFjKDb07QiwNPz6w63+GI5rSLBIr4VGEziU
+	 an7NqRPhvrPcT1d72wjiicrSAiBYMs2t/RioMI38=
+Date: Mon, 10 Jun 2024 08:25:24 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Tree Davies <tdavies@darkphysics.net>
+Cc: philipp.g.hortmann@gmail.com, anjan@momi.ca,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/24] Staging: rtl8192e: Maintenance renames and cleanup
+Message-ID: <2024061059-coziness-tacky-28a0@gregkh>
+References: <20240610054449.71316-1-tdavies@darkphysics.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
-In-Reply-To: <ZmSi5_-4mD4AaIJW@fedora>
-References: <20240529094816.1859073-1-arnd@kernel.org>
- <ZmSi5_-4mD4AaIJW@fedora>
-Date: Mon, 10 Jun 2024 08:24:51 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Jiri Kosina" <jikos@kernel.org>,
- "Benjamin Tissoires" <bentiss@kernel.org>,
- "Rahul Rameshbabu" <rrameshbabu@nvidia.com>,
- "Fabio Baltieri" <fabiobaltieri@chromium.org>,
- "Ivan Gorinov" <linux-kernel@altimeter.info>,
- "Johannes Roith" <johannes@gnu-linux.rocks>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple modules
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610054449.71316-1-tdavies@darkphysics.net>
 
-On Sat, Jun 8, 2024, at 20:28, Jos=C3=A9 Exp=C3=B3sito wrote:
-> On Wed, May 29, 2024 at 11:48:05AM +0200, Arnd Bergmann wrote:
+On Sun, Jun 09, 2024 at 10:44:25PM -0700, Tree Davies wrote:
+> This patch series attacks CamelCase variable renames, removes
+> un-used variables and adjusts alignment issues found in
+> rtllib_rx.c and rtllib_tx.c. 
+> 
+> This completes the last of the remaining checkpatch issues 
+> for rtllib_tx.c.
+> 
+> Thank you in advance to all reviewers.
+> ~Tree
+> 
+> 
+> Tree Davies (24):
+>   Staging: rtl8192e: Rename variable bHwSec
+>   Staging: rtl8192e: Rename variable bIsMulticast
+>   Staging: rtl8192e: Rename variable HTCurrentOperaRate
+>   Staging: rtl8192e: Rename variable HTOpMode
+>   Staging: rtl8192e: Rename variable bRTSEnable
+>   Staging: rtl8192e: Rename variable bRTSBW
+>   Staging: rtl8192e: Rename variable bCTSEnable
+>   Staging: rtl8192e: Rename variable bRTSUseShortGI
+>   Staging: rtl8192e: Rename variable bforced_tx20Mhz
+>   Staging: rtl8192e: Rename variable bPacketBW
+>   Staging: rtl8192e: Rename variable bBroadcast
+>   Staging: rtl8192e: Rename variable CntAfterLink
+>   Staging: rtl8192e: Rename variable bUseShortGI
+>   Staging: rtl8192e: Rename function TsStartAddBaProcess()
+>   Staging: rtl8192e: Fix spaces/tab alignment to match open parenthesis
+>   Staging: rtl8192e: Rename function rtllib_query_BandwidthMode
+>   Staging: rtl8192e: Rename function rtllib_query_ShortPreambleMode
+>   Staging: rtl8192e: Rename function rtllib_query_HTCapShortGI
+>   Staging: rtl8192e: Rename variable bUseShortPreamble
+>   Staging: rtl8192e: Rename variable bRTSSTBC
+>   Remove parameter bIsAmsdu from rtllib_classify()
+>   Remove variable IsAmsdu from rtllib_xmit_inter()
+>   Fix space/tab alignment to match open parenthesis in rtllib_tx.c
+>   Fix space/tab alignment to match open parenthesis in rtllib_rx.c
 
->> @@ -154,10 +152,8 @@ obj-$(CONFIG_HID_WINWING)	+=3D hid-winwing.o
->>  obj-$(CONFIG_HID_SENSOR_HUB)	+=3D hid-sensor-hub.o
->>  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR)	+=3D hid-sensor-custom.o
->> =20
->> -hid-uclogic-test-objs		:=3D hid-uclogic-rdesc.o \
->> -				   hid-uclogic-params.o \
->> -				   hid-uclogic-rdesc-test.o
->> -obj-$(CONFIG_HID_KUNIT_TEST)	+=3D hid-uclogic-test.o
->> +hid-uclogic-test-objs		:=3D hid-uclogic-rdesc-test.o
->> +obj-$(CONFIG_HID_KUNIT_TEST)	+=3D hid-uclogic-test.o hid-uclogic-par=
-ams.o hid-uclogic-params.o
->> =20
->>  obj-$(CONFIG_USB_HID)		+=3D usbhid/
->>  obj-$(CONFIG_USB_MOUSE)		+=3D usbhid/
->
-> I tested your patch with:
->
-> 	hid-uclogic-objs		:=3D hid-uclogic-core.o \
-> 					   hid-uclogic-rdesc.o \
-> 					   hid-uclogic-params.o
-> 	obj-$(CONFIG_HID_UCLOGIC)	+=3D hid-uclogic.o
-> 	[...]
-> 	hid-uclogic-test-objs		:=3D hid-uclogic-rdesc-test.o
-> 	obj-$(CONFIG_HID_KUNIT_TEST)	+=3D hid-uclogic.o hid-uclogic-test.o
->
-> And I think it is a bit more clear and it looks like it does the trick
-> removing the warning.
+Any reason why the last 4 patches lost the "Staging: rtl8192e:" prefix?
 
-Right, that seems fine.
+thanks,
 
-> Also, with that change only "EXPORT_SYMBOL_GPL(uclogic_rdesc_template_=
-apply);"
-> is required. The other EXPORT_SYMBOL_GPL can be removed.
->
-> However, I'm not sure about what are the best practices using EXPORT_S=
-YMBOL_GPL
-> and if it should be used for each function/data in the .h file. Maybe =
-that's
-> why you added them.
-
-No, having only the single export is better here, you should
-have as few of them as possible. I did picked the more complicated
-approach as I wasn't sure if loading the entire driver from the
-test module caused any problems. Let's use your simpler patch
-then.
-
-     Arnd
+greg k-h
 
