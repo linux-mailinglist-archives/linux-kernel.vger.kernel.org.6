@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-208801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A5B90294D
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C964090294E
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE19282B8C
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00A41C219C8
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6BF14E2F5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F6E14E2FC;
 	Mon, 10 Jun 2024 19:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0K4Kui3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCCPr8mr"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109B02032B;
-	Mon, 10 Jun 2024 19:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AC712F38B;
+	Mon, 10 Jun 2024 19:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047874; cv=none; b=nku7Oel2IOLoXjtfEMBeVIJIaYe1SO7VG7BrVQNtuDwRh7Inu6hxDCIXWgg/QE9uMNtR+3RLlJH+Q5k6zIHcec1y5avlqGLzoDizLtdOLFH3zb4zhXP5sAeNpcs6DQupW33YEQ1OnETu6cTb9kznNUsa4NaLXveutgXRKzlNHQI=
+	t=1718047874; cv=none; b=Ks+mB4s/JCWBBEG2Knr1sgWbaP3qXuQDpIIe63yZ6nHosRyieeQxt1vhayBaPlyheOOvlB232p3tulrmLumzLNHKCK6tnYYRVLINSToQ69GIL5JewZ7uT5A4xHEQIk2qiBDh6ehsGWUVo+19wkh1Gt615FF2h36pQEGE86A58Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718047874; c=relaxed/simple;
-	bh=zjV5oimDRqcVon1tOx2Q6+kkWynGBjVjbUDpys9U2Dw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ozblObfr/imBaO95r+fQg129R406MaMeqLW/Zc4nvr4rHb5VOK5LjITU02/NeOmGMEevpEsLhckO8lbcjoaLx3aEa+spzDClrNCrF/ZK7Lg6Q1bAYFd4xF+NCj8KDycNzeua64A6blX8HHTD82aL32qn5sgO1YM3Ko3wvYWHKKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0K4Kui3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73ECBC2BBFC;
-	Mon, 10 Jun 2024 19:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718047873;
-	bh=zjV5oimDRqcVon1tOx2Q6+kkWynGBjVjbUDpys9U2Dw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E0K4Kui3uLSGmW4eyKVIob4E2pks9sNbuolk50G/rA5dyGgGdjiaTjWn5bFf0+46x
-	 /tOAdfqU3zicSLvitI5SOXBtB+LWlVw424aMcmAVlZP4fdWyeZekL0WVlV+Hm7RVyZ
-	 xY1cmiMw0BtIgZkXV7BxiCQtkxXUItRKbaNWUnavRvH+yL7+29uN9U28DLqv7LeYyM
-	 OP9V78PwuOZkHUXXgF8/HZ28BS7W93kYWJzu7yNqzXIP92hvWF3u+Hr1ADxYgRgOsM
-	 eojBGD3/k7iCCvjsjrbWBK3beOwONmBHR1/kKKRZ6wdwJN2r8EsYetzXcI7XHfV5tI
-	 4Ii+oO3z1Btdw==
-Message-ID: <6959494a-98ba-4ccf-973c-14d079b76f27@kernel.org>
-Date: Mon, 10 Jun 2024 22:31:07 +0300
+	bh=Q50+pzgA+aFaIIfbZrZ43KROpRk6pC4JGOrEdAtzXP4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rIeTH90cVNcquD3Hbr7BCkUlleOUUF+0e+KQ2rVh7QPZsIy5nXYmsDra6xeevqhs48AYU2iJw4ctPR5iejwvegEacFDNnmw5RnfWfzdcYBSuIhuJl6XQmG5NByekcThBJYP4qHPU9XK60RZ3NQcDBKP0kSPowUtr1YxOIwVxGVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCCPr8mr; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4218008c613so2754575e9.2;
+        Mon, 10 Jun 2024 12:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718047871; x=1718652671; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a3xFH4RZCQiRLi4fnYYMNNhnFMEw94k73e6T/LCGxBo=;
+        b=hCCPr8mrp9kEbgam6ov8E4UCJfOlZHScnt8FJQhRLGbQ9PhKG0wxwX8h3EJ4FjZ1N2
+         CETgCZg7mONYc9XLrsrHeu20aczVM5Y018PtIuQk+qw8rdzZ8+4Sy7bPwFMwi7LX/IW8
+         DkDno9xWSiWCvv77QWVvhdKaYtaz3N5pYDybTSPB/aO7Lr90YhxvlaNKFRNRLKYYsBg0
+         t8lnc7ZD7sfrCj8bVAORSgHBDRkM7uZMAWOcm8b1mIKYBhAxXtQJBYCLRzzqRSojTlu3
+         VN+1h3aHjnH1lkDGuKHznmVgYAQCDZNK8F34rckdZrWhhlDzoZ98/+mUsTEzCo0KFWw1
+         a/WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718047871; x=1718652671;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3xFH4RZCQiRLi4fnYYMNNhnFMEw94k73e6T/LCGxBo=;
+        b=u7rryJVfh99AuaC7vZ2L57IiQiJo/qzipXavFYtF0ZA5Nlm2CyIVRa6rLT2woCoLdb
+         cQwkaQJlni2kIIHqxvrvDAMwwND10jJ5P+sNpFKEwM/b6bDkUAmh+2jzOkknEpYlgCGe
+         4evuRfNQB1ejuQ/5QuFoMGkLMJdzUjRe53J2WZmZQg+fXR1CZsQY0I5HySs5D0SpIgAP
+         Li9WXou/jpDs2+kMaqYNDcO+XvGFOAt+J5tCKPMxHYwfuBUpN723iCWOGOh3PYK0NrvM
+         XIaKlaB/umOl1VWlL1ltj0Q+UMOeFM+sbuFdLzhQPNcrBLedUMBYv6JGUtuXnVU+c0II
+         rbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb69pSOTEm11za0i3X8onWj74fWvqomw6DwlLGKso0sZKrDsxB4Vimawk5vJ75PBLwT8UTH1QPaAsaEga0EUJSk6i7VJzXGuPDeW8PNAFVLJUPzm58tx1tWx2FxX5HHk1yMuUZEsK2sY/0ONmA7hSTcdLPhDWdD1r9/M8X3/B28w==
+X-Gm-Message-State: AOJu0YweWRrLtXd2PRL62P92pWTcM9k/JMQnd4XBhokenkO4+QyNYuXj
+	mpVGevvUN7c34jnzqMibb9dW51IhJcDt40QHTgR2UzEQcBXuDp7i
+X-Google-Smtp-Source: AGHT+IHepfrYpaX65+ik4OEnU45itbvufBQzHVsM6FY/Wg3C/APHbovBLqE+i03qVnVLFuRjB/dd/w==
+X-Received: by 2002:a05:600c:46cb:b0:422:1609:a7db with SMTP id 5b1f17b1804b1-4221609abf4mr14442965e9.8.1718047870691;
+        Mon, 10 Jun 2024 12:31:10 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421c20e9f51sm49262825e9.17.2024.06.10.12.31.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 12:31:10 -0700 (PDT)
+Subject: Re: [PATCH net-next 2/5] sfc: use
+ flow_rule_is_supp_enc_control_flags()
+To: =?UTF-8?Q?Asbj=c3=b8rn_Sloth_T=c3=b8nnesen?= <ast@fiberby.net>,
+ netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Martin Habets <habetsm.xilinx@gmail.com>,
+ linux-net-drivers@amd.com, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+ linux-rdma@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org,
+ Louis Peens <louis.peens@corigine.com>, oss-drivers@corigine.com,
+ linux-kernel@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+ i.maximets@ovn.org
+References: <20240609173358.193178-1-ast@fiberby.net>
+ <20240609173358.193178-3-ast@fiberby.net>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <07b7f432-bb9a-1285-2431-0f5d2232b0eb@gmail.com>
+Date: Mon, 10 Jun 2024 20:31:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
- am62p-j722s-common-{}.dtsi
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, afd@ti.com, kristo@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
- srk@ti.com
-References: <20240604085252.3686037-1-s-vadapalli@ti.com>
- <20240604085252.3686037-2-s-vadapalli@ti.com>
- <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
- <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240609173358.193178-3-ast@fiberby.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 
-Siddharth,
+On 09/06/2024 18:33, Asbjørn Sloth Tønnesen wrote:
+> Change the existing check for unsupported encapsulation control flags,
+> to use the new helper flow_rule_is_supp_enc_control_flags().
+> 
+> No functional change, only compile tested.
+> 
+> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
 
-On 07/06/2024 14:28, Siddharth Vadapalli wrote:
-> On Thu, Jun 06, 2024 at 10:51:27AM +0300, Roger Quadros wrote:
-> 
-> [...]
-> 
->>>  5 files changed, 10 insertions(+), 7 deletions(-)
->>>  rename arch/arm64/boot/dts/ti/{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} (99%)
->>>  rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
->>>  rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
->>>  rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
->>
->> This is not correct.
->> If J722 has different CBASS components than AM62p then we should leave k3-am62p.dtsi
->> as it is and introduce a new k3-j722.dtsi with relevant CBASS components.
-> 
-> Roger,
-> 
-> The existing hierarchy prior to this series is as follows:
-> k3-am62p.dtsi = k3-am62p-main.dtsi + k3-am62p-mcu.dtsi +
-> 		k3-am62p-wakeup.dtsi + k3-am62p-thermal.dtsi + <delta-1>
-> k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
-> k3-j722s.dtsi = k3-am62p5.dtsi + <delta-3>
-> k3-j722s-evm.dts = k3-j722s.dtsi + <detla-4>
-> 
-> Based on your suggestion, you seem to propose the following hierarchy:
-> k3-am62p-{main,mcu,thermal,wakeup}.dtsi = AM62P specific data
-> k3-am62p.dtsi = k3-am62p-j722s-common-main.dtsi +
-> 		k3-am62p-j722s-common-mcu.dtsi +
-> 		k3-am62p-j722s-common-wakeup.dtsi +
-> 		k3-am62p-j722s-common-thermal.dtsi +
-> 		k3-am62p-{main,mcu,thermal,wakeup}.dtsi +
-> 		<delta-5>
-> k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
-> k3-j722s-{main,mcu,thermal,wakeup}.dtsi = J722S specific data
-> k3-j722s.dtsi = k3-am62p-j722s-common-main.dtsi +
-> 		k3-am62p-j722s-common-mcu.dtsi +
-> 		k3-am62p-j722s-common-wakeup.dtsi +
-> 		k3-am62p-j722s-common-thermal.dtsi +
-> 		k3-j722s-{main,mcu,thermal,wakeup}.dtsi +
-> 		<delta-6>
+Acked-by: Edward Cree <ecree.xilinx@gmail.com>
 
-What is the equivalent of k3-am62p5.dtsi here?
-That should contain k3-j722s.dtsi + CPU and OPP stuff.
-
-I suppose it should be named specific to the SoC variant part number?
-
-> k3-j722s-evm.dts = k3-j722s.dtsi + <delta-4>
+> ---
+>  drivers/net/ethernet/sfc/tc.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> Please let me know whether the above organization of files matches what you
-> expect it to look like. I will post the v6 series based on your feedback.
+> diff --git a/drivers/net/ethernet/sfc/tc.c b/drivers/net/ethernet/sfc/tc.c
+> index 9d140203e273a..0d93164988fc6 100644
+> --- a/drivers/net/ethernet/sfc/tc.c
+> +++ b/drivers/net/ethernet/sfc/tc.c
+> @@ -387,11 +387,8 @@ static int efx_tc_flower_parse_match(struct efx_nic *efx,
+>  		struct flow_match_control fm;
+>  
+>  		flow_rule_match_enc_control(rule, &fm);
+> -		if (fm.mask->flags) {
+> -			NL_SET_ERR_MSG_FMT_MOD(extack, "Unsupported match on enc_control.flags %#x",
+> -					       fm.mask->flags);
+> +		if (flow_rule_has_enc_control_flags(fm.mask->flags, extack))
+>  			return -EOPNOTSUPP;
+> -		}
+>  		if (!IS_ALL_ONES(fm.mask->addr_type)) {
+>  			NL_SET_ERR_MSG_FMT_MOD(extack, "Unsupported enc addr_type mask %u (key %u)",
+>  					       fm.mask->addr_type,
 > 
-> Regards,
-> Siddharth.
 
--- 
-cheers,
--roger
 
