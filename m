@@ -1,302 +1,336 @@
-Return-Path: <linux-kernel+bounces-209016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BFB902BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1328902BDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8281F22CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0C2283028
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F773BB48;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00851514DE;
 	Mon, 10 Jun 2024 22:50:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF37F46BA0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302E5481DA
 	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718059836; cv=none; b=FrVVeOAxIVj/WZTOvP7Yz6vdCiGo9CTgZu51ewMP61Jln9RrM6KLIHyMrCluQGc6JPLnmOomYLNMhdqjPuI5riDodGUbZTdod7VRtDgIK1ZMAO9WL/8kG6Yx/+7rVUhAn77qRPYMRU65xmQ3S3FproJUh84IIZ3DGGb6tl1cLhE=
+	t=1718059837; cv=none; b=LlEqHpKpbAZDnwcFbvMZIrxI+iGNuUBWAe3V0eUOv2vgRzbNRkprH1EfO8gbXjQZTqfFQCwTIgf4VUeBktu8FBQYWFxN6gjloEBUCrhadbFYKdVFeP4Eo+5nNBWhtX/5yuI+jrxSAjZFV79GS012I0cn+lqSdgOViQMpjqSn1lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718059836; c=relaxed/simple;
-	bh=SdrMLM0X76Lz3eesK1AUMrCirYKnN2i925GAP7moYKc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lL8W8I3f7kgDaRGUjPXIegXn8mPZ4qvv/kdwZLV7GyiPkoo5Wg7nHKD4H1BfSoVZ1pt4+yXxgM1F8sM0kr+QXlj0UnHPekVyCr+H9bdkEZhK9dxvdBNMIuV7BSIvweoyM7xcH3doVHwAlAxbGgjZfrNdAx4r7csqyyT4EUFriBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+	s=arc-20240116; t=1718059837; c=relaxed/simple;
+	bh=2iBHUC4QPXd3W1eGIj88wI1FtpPKcYHcGeHyqkzCdGU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PaAXubfU2N2A6LPXi6Hm+S5DqBzplwWTDCzXIyQ79Vl8s+j1/6QL/9uNzKtxy6nILOU6c6UHbmsajFtVXcenH97cM0KxYs06nmyYCCMp6TkS20GNzK9KaUmcL897RQ66Vl5J0jRkKzAESSAA3w4vwtmiNdaxSPTUUlwdr+3V6Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-375a1820034so17383105ab.2
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb80de5e7dso41599439f.3
         for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:50:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718059834; x=1718664634;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AHfWAAC/2TT/ld2cmM8MOk7yk+g+NdvIy+37TQNEWEo=;
-        b=I+h+6J6FCVzO/3CT+btrNQNcVwwTGQdJTKdDa7IwF8NtrIqtbWGbtZ0H6Hp8kDKfua
-         IHDk7hzz2c4sBpRlrBtVmJGpWZ/FAcQKVZ03sJ0yaEin5GX0efDfa2+CPpYFbDhyEg98
-         VQS4xLaNLyI6DHCy6vIRLqDPVw2rwlCAyXyr8Fr0faHDFe1mPhqeIzGoYfq2rPDePTlW
-         ntaLcpLUXCOiZcFfdm9IdaQ3q9swrZKpAMYs2zXSPF2oaY5rFkd4tzk3ZUZ0MIm7byCw
-         xUjk6b6uNnicjeKwLNbWo7ztulPmy7WBND1nlX0DqZ3Zf9EcmMaAZkD0r8oEFCqdKU3o
-         Jtrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEURq+TScNdOeGn7O2AWzuNubnVkJA8Ap5lGCD642hAi9ErY318BsLeNr35z07hL8zSlpX9roi8yAhMkiKoYMHw1H1BKjzQLmMNt/0
-X-Gm-Message-State: AOJu0YwU4Hw2WyQr4PsnL1L4Z0gWOD2Ert7us2rO9SaOUrbVibpBk77E
-	8rTDiKFpeboNLDVggYs6ML25zpqlZwXLLeKXvyehGdtkRRl4Xz3ikAfPqamK+V4Ej2WaiaxAl2+
-	/n3pm5iNA2cVyQacxgpsrhClegQodMd0kgTwV0Nx2peKqxHr57ojMvn4=
-X-Google-Smtp-Source: AGHT+IGBdo1Y+jSeVbk2HaCjJifKMFMnHJFmqqr+89LhBAeG3oBsouIVsYgIh9kUolkaT9GfWfoJQvUWPsOam5lkvtRdu3b34g9j
+        bh=Y5utWOrdfx8y7ZVnfXaC1Ab6azeYl0T2mqo58QFjZGs=;
+        b=spFEHQPasVFhRASLm/Utyh1atsgk9unIn99gQhBsN+CgmBOImgda7Gx2NCWIVCh9pX
+         S/DIJkLFSx3fgBrUeEv853qtnsN0MxymbtIS0xTMvmPdtXvvKvaFF0I71kovynUFGthj
+         9D86klNeM+gwFCwYyW/odtO0kuCRRHz5V/mS6f5C02PUzC8bKm9VULotmAR+YBtMX4+B
+         xXKiavhwIUUZFVhRgiHLsomlZuekepdEv3Dou4XvAboovWbAvAQPowUcq5ME+M8Ot3rF
+         G3fkAjmTvTnKcdCnn73fpgPdr9xrrplRYG2iYIcuTbuiiKT8wN63IkeQHYx4YGL+Ydaz
+         cMZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJXLR+lH4IdpuQk1zWzWV8ZiNT4vqFJABAWW2NsObSvkQdzjEtMJntEetFw5AcOSbYMu4XB145xc/eOEV5plDP2j52KSRRUeisSrzk
+X-Gm-Message-State: AOJu0YxF0+17w4HbanXkwZ8TfZpNxRdLCQDZ6IcXs3Aade35i1i5TCsT
+	NizDBh2DYA67znNS+GuFcb5DhCBdttwJYWbMMxKkOEjI+l9RySzdngHWJgTO4+LiSQfSjUt/POd
+	EZcxYoeGqlummjRPdo2u6DotnWLEAR+aJAjLOGYx/KxKq9SoHrkbLm0k=
+X-Google-Smtp-Source: AGHT+IEgnkEeTzAAujFvGhZVTwtDaAaMV++DF9ZGuEopf7IM6+K2SaA8IwvzjiQwKOApQjNAqbnEok7Zg+BuQY1c8BgMpjcH9bCE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e8:b0:374:acd0:def1 with SMTP id
- e9e14a558f8ab-375803c6586mr5359485ab.5.1718059833995; Mon, 10 Jun 2024
- 15:50:33 -0700 (PDT)
-Date: Mon, 10 Jun 2024 15:50:33 -0700
+X-Received: by 2002:a05:6638:40a7:b0:4b9:165a:ffbe with SMTP id
+ 8926c6da1cb9f-4b9165b0475mr233722173.0.1718059834254; Mon, 10 Jun 2024
+ 15:50:34 -0700 (PDT)
+Date: Mon, 10 Jun 2024 15:50:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001bc420061a90fac5@google.com>
-Subject: [syzbot] [net?] possible deadlock in kvfree_call_rcu (2)
-From: syzbot <syzbot+e3daf47e87cd1583d197@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000001fb6bb061a90fa73@google.com>
+Subject: [syzbot] [jfs?] possible deadlock in jfs_rename
+From: syzbot <syzbot+456e180af22874103cc8@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    b0c9a2643541 net: wwan: iosm: Fix tainted pointer delete i..
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16b243fc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=e3daf47e87cd1583d197
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c4d20a980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11aa4362980000
+HEAD commit:    d30d0e49da71 Merge tag 'net-6.10-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f4bfd6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=96fd46a1ee1615e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=456e180af22874103cc8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/62df44056b9e/disk-b0c9a264.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c6fbd552be98/vmlinux-b0c9a264.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/aaed51bb11ba/bzImage-b0c9a264.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d30d0e49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/970e3906a552/vmlinux-d30d0e49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d80af4a76ff6/bzImage-d30d0e49.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e3daf47e87cd1583d197@syzkaller.appspotmail.com
+Reported-by: syzbot+456e180af22874103cc8@syzkaller.appspotmail.com
 
 ======================================================
 WARNING: possible circular locking dependency detected
-6.10.0-rc1-syzkaller-00199-gb0c9a2643541 #0 Not tainted
+6.10.0-rc2-syzkaller-00222-gd30d0e49da71 #0 Not tainted
 ------------------------------------------------------
-swapper/1/0 is trying to acquire lock:
-ffff8880b9529430 (krc.lock){..-.}-{2:2}, at: krc_this_cpu_lock kernel/rcu/tree.c:3298 [inline]
-ffff8880b9529430 (krc.lock){..-.}-{2:2}, at: add_ptr_to_bulk_krc_lock kernel/rcu/tree.c:3697 [inline]
-ffff8880b9529430 (krc.lock){..-.}-{2:2}, at: kvfree_call_rcu+0x18a/0x790 kernel/rcu/tree.c:3782
+syz-executor.1/17764 is trying to acquire lock:
+ffff888000379448 (&jfs_ip->commit_mutex/1){+.+.}-{3:3}, at: jfs_rename+0x602/0x19d0 fs/jfs/namei.c:1163
 
 but task is already holding lock:
-ffff8880b952a718 (&base->lock){-.-.}-{2:2}, at: lock_timer_base+0x112/0x240 kernel/time/timer.c:1051
+ffff88804844f0c8 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: jfs_rename+0x5e6/0x19d0 fs/jfs/namei.c:1162
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #1 (&base->lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       lock_timer_base+0x112/0x240 kernel/time/timer.c:1051
-       __mod_timer+0x1ca/0xeb0 kernel/time/timer.c:1132
-       queue_delayed_work_on+0x1ca/0x390 kernel/workqueue.c:2572
-       kvfree_call_rcu+0x47f/0x790 kernel/rcu/tree.c:3810
-       rtnl_register_internal+0x482/0x590 net/core/rtnetlink.c:265
-       rtnl_register+0x36/0x80 net/core/rtnetlink.c:315
-       ip_rt_init+0x2f6/0x3a0 net/ipv4/route.c:3696
-       ip_init+0xe/0x20 net/ipv4/ip_output.c:1663
-       inet_init+0x3d8/0x580 net/ipv4/af_inet.c:1983
-       do_one_initcall+0x248/0x880 init/main.c:1267
-       do_initcall_level+0x157/0x210 init/main.c:1329
-       do_initcalls+0x3f/0x80 init/main.c:1345
-       kernel_init_freeable+0x435/0x5d0 init/main.c:1578
-       kernel_init+0x1d/0x2b0 init/main.c:1467
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+-> #5 (&jfs_ip->commit_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
+       diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+       diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
+       diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
+       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+       jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
+       vfs_mkdir+0x57d/0x860 fs/namei.c:4131
+       do_mkdirat+0x301/0x3a0 fs/namei.c:4154
+       __do_sys_mkdir fs/namei.c:4174 [inline]
+       __se_sys_mkdir fs/namei.c:4172 [inline]
+       __ia32_sys_mkdir+0xf0/0x140 fs/namei.c:4172
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #4 (&jfs_ip->rdwrlock/1){++++}-{3:3}:
+       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1651
+       diAlloc+0x3ea/0x1a70 fs/jfs/jfs_imap.c:1385
+       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+       jfs_create+0x23e/0xb40 fs/jfs/namei.c:92
+       lookup_open.isra.0+0x10a1/0x13c0 fs/namei.c:3505
+       open_last_lookups fs/namei.c:3574 [inline]
+       path_openat+0x92f/0x29f0 fs/namei.c:3804
+       do_filp_open+0x1dc/0x430 fs/namei.c:3834
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1405
+       do_sys_open fs/open.c:1420 [inline]
+       __do_sys_creat fs/open.c:1496 [inline]
+       __se_sys_creat fs/open.c:1490 [inline]
+       __ia32_sys_creat+0xcc/0x120 fs/open.c:1490
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #3 (&(imap->im_aglock[index])){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
+       jfs_evict_inode+0x3d4/0x4b0 fs/jfs/inode.c:156
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
--> #0 (krc.lock){..-.}-{2:2}:
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3783 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3797
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3890 [inline]
+       slab_alloc_node mm/slub.c:3980 [inline]
+       __do_kmalloc_node mm/slub.c:4120 [inline]
+       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4134
+       kmalloc_noprof include/linux/slab.h:664 [inline]
+       ea_get+0x21f/0x12c0 fs/jfs/xattr.c:487
+       __jfs_setxattr+0x1ed/0xfb0 fs/jfs/xattr.c:718
+       __jfs_xattr_set+0xc6/0x150 fs/jfs/xattr.c:917
+       __vfs_setxattr+0x173/0x1e0 fs/xattr.c:200
+       __vfs_setxattr_noperm+0x127/0x660 fs/xattr.c:234
+       __vfs_setxattr_locked+0x182/0x260 fs/xattr.c:295
+       vfs_setxattr+0x146/0x350 fs/xattr.c:321
+       do_setxattr+0x146/0x170 fs/xattr.c:629
+       setxattr+0x15d/0x180 fs/xattr.c:652
+       path_setxattr+0x179/0x1e0 fs/xattr.c:671
+       __do_sys_lsetxattr fs/xattr.c:694 [inline]
+       __se_sys_lsetxattr fs/xattr.c:690 [inline]
+       __ia32_sys_lsetxattr+0xbd/0x160 fs/xattr.c:690
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #1 (&jfs_ip->xattr_sem){++++}-{3:3}:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+       __jfs_getxattr+0xee/0x360 fs/jfs/xattr.c:805
+       jfs_get_acl+0x7c/0x170 fs/jfs/acl.c:38
+       __get_acl+0x378/0x4e0 fs/posix_acl.c:159
+       get_inode_acl fs/posix_acl.c:184 [inline]
+       posix_acl_create+0x14c/0x5f0 fs/posix_acl.c:647
+       jfs_init_acl+0x9a/0x3a0 fs/jfs/acl.c:135
+       jfs_create+0x2d9/0xb40 fs/jfs/namei.c:103
+       lookup_open.isra.0+0x10a1/0x13c0 fs/namei.c:3505
+       open_last_lookups fs/namei.c:3574 [inline]
+       path_openat+0x92f/0x29f0 fs/namei.c:3804
+       do_filp_open+0x1dc/0x430 fs/namei.c:3834
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1405
+       do_sys_open fs/open.c:1420 [inline]
+       __do_sys_creat fs/open.c:1496 [inline]
+       __se_sys_creat fs/open.c:1490 [inline]
+       __ia32_sys_creat+0xcc/0x120 fs/open.c:1490
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (&jfs_ip->commit_mutex/1){+.+.}-{3:3}:
        check_prev_add kernel/locking/lockdep.c:3134 [inline]
        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-       krc_this_cpu_lock kernel/rcu/tree.c:3298 [inline]
-       add_ptr_to_bulk_krc_lock kernel/rcu/tree.c:3697 [inline]
-       kvfree_call_rcu+0x18a/0x790 kernel/rcu/tree.c:3782
-       trie_delete_elem+0x546/0x6a0 kernel/bpf/lpm_trie.c:540
-       bpf_prog_2c29ac5cdc6b1842+0x42/0x46
-       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
-       __bpf_prog_run include/linux/filter.h:691 [inline]
-       bpf_prog_run include/linux/filter.h:698 [inline]
-       __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
-       bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2444
-       trace_timer_start include/trace/events/timer.h:52 [inline]
-       enqueue_timer+0x3ce/0x570 kernel/time/timer.c:663
-       internal_add_timer kernel/time/timer.c:688 [inline]
-       __mod_timer+0xa0e/0xeb0 kernel/time/timer.c:1183
-       dsp_cmx_send+0x21bf/0x2240 drivers/isdn/mISDN/dsp_cmx.c:1839
-       call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
-       expire_timers kernel/time/timer.c:1843 [inline]
-       __run_timers kernel/time/timer.c:2417 [inline]
-       __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
-       run_timer_base kernel/time/timer.c:2437 [inline]
-       run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
-       handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
-       __do_softirq kernel/softirq.c:588 [inline]
-       invoke_softirq kernel/softirq.c:428 [inline]
-       __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
-       irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
-       instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
-       sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
-       asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-       native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-       arch_safe_halt arch/x86/include/asm/irqflags.h:86 [inline]
-       acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:112
-       acpi_idle_enter+0xe4/0x140 drivers/acpi/processor_idle.c:707
-       cpuidle_enter_state+0x112/0x480 drivers/cpuidle/cpuidle.c:267
-       cpuidle_enter+0x5d/0xa0 drivers/cpuidle/cpuidle.c:388
-       call_cpuidle kernel/sched/idle.c:155 [inline]
-       cpuidle_idle_call kernel/sched/idle.c:236 [inline]
-       do_idle+0x375/0x5d0 kernel/sched/idle.c:332
-       cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:430
-       __pfx_ap_starting+0x0/0x10 arch/x86/kernel/smpboot.c:313
-       common_startup_64+0x13e/0x147
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       jfs_rename+0x602/0x19d0 fs/jfs/namei.c:1163
+       vfs_rename+0xf84/0x20a0 fs/namei.c:4887
+       do_renameat2+0xc54/0xdc0 fs/namei.c:5044
+       __do_sys_renameat2 fs/namei.c:5078 [inline]
+       __se_sys_renameat2 fs/namei.c:5075 [inline]
+       __ia32_sys_renameat2+0xeb/0x130 fs/namei.c:5075
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
 other info that might help us debug this:
+
+Chain exists of:
+  &jfs_ip->commit_mutex/1 --> &jfs_ip->rdwrlock/1 --> &jfs_ip->commit_mutex
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(&base->lock);
-                               lock(krc.lock);
-                               lock(&base->lock);
-  lock(krc.lock);
+  lock(&jfs_ip->commit_mutex);
+                               lock(&jfs_ip->rdwrlock/1);
+                               lock(&jfs_ip->commit_mutex);
+  lock(&jfs_ip->commit_mutex/1);
 
  *** DEADLOCK ***
 
-4 locks held by swapper/1/0:
- #0: ffffc90000a18c00 ((&dsp_spl_tl)){+.-.}-{0:0}, at: call_timer_fn+0xc0/0x650 kernel/time/timer.c:1789
- #1: ffffffff8f339f98 (dsp_lock){..-.}-{2:2}, at: dsp_cmx_send+0x26/0x2240 drivers/isdn/mISDN/dsp_cmx.c:1632
- #2: ffff8880b952a718 (&base->lock){-.-.}-{2:2}, at: lock_timer_base+0x112/0x240 kernel/time/timer.c:1051
- #3: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #3: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #3: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2402 [inline]
- #3: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x1fc/0x540 kernel/trace/bpf_trace.c:2444
+8 locks held by syz-executor.1/17764:
+ #0: ffff88801bb26420 (sb_writers#22){.+.+}-{0:0}, at: do_renameat2+0x3d6/0xdc0 fs/namei.c:4974
+ #1: ffff88801bb26730 (&type->s_vfs_rename_key#8){+.+.}-{3:3}, at: lock_rename fs/namei.c:3078 [inline]
+ #1: ffff88801bb26730 (&type->s_vfs_rename_key#8){+.+.}-{3:3}, at: do_renameat2+0x4ef/0xdc0 fs/namei.c:4979
+ #2: ffff88804844f480 (&type->i_mutex_dir_key#17/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #2: ffff88804844f480 (&type->i_mutex_dir_key#17/1){+.+.}-{3:3}, at: lock_two_directories+0x162/0x2d0 fs/namei.c:3054
+ #3: ffff88804844a140 (&type->i_mutex_dir_key#17/5){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #3: ffff88804844a140 (&type->i_mutex_dir_key#17/5){+.+.}-{3:3}, at: lock_two_directories+0x199/0x2d0 fs/namei.c:3055
+ #4: ffff888000379800 (&sb->s_type->i_mutex_key#29){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #4: ffff888000379800 (&sb->s_type->i_mutex_key#29){+.+.}-{3:3}, at: lock_two_nondirectories+0x195/0x200 fs/inode.c:1111
+ #5: ffff88804844aa80 (&sb->s_type->i_mutex_key#29/4){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #5: ffff88804844aa80 (&sb->s_type->i_mutex_key#29/4){+.+.}-{3:3}, at: lock_two_nondirectories+0xed/0x200 fs/inode.c:1113
+ #6: ffff88804844a638 (&jfs_ip->rdwrlock#3){++++}-{3:3}, at: jfs_rename+0xf08/0x19d0 fs/jfs/namei.c:1144
+ #7: ffff88804844f0c8 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: jfs_rename+0x5e6/0x19d0 fs/jfs/namei.c:1162
 
 stack backtrace:
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.10.0-rc1-syzkaller-00199-gb0c9a2643541 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+CPU: 0 PID: 17764 Comm: syz-executor.1 Not tainted 6.10.0-rc2-syzkaller-00222-gd30d0e49da71 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
 Call Trace:
- <IRQ>
+ <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
  check_prev_add kernel/locking/lockdep.c:3134 [inline]
  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- krc_this_cpu_lock kernel/rcu/tree.c:3298 [inline]
- add_ptr_to_bulk_krc_lock kernel/rcu/tree.c:3697 [inline]
- kvfree_call_rcu+0x18a/0x790 kernel/rcu/tree.c:3782
- trie_delete_elem+0x546/0x6a0 kernel/bpf/lpm_trie.c:540
- bpf_prog_2c29ac5cdc6b1842+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
- bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2444
- trace_timer_start include/trace/events/timer.h:52 [inline]
- enqueue_timer+0x3ce/0x570 kernel/time/timer.c:663
- internal_add_timer kernel/time/timer.c:688 [inline]
- __mod_timer+0xa0e/0xeb0 kernel/time/timer.c:1183
- dsp_cmx_send+0x21bf/0x2240 drivers/isdn/mISDN/dsp_cmx.c:1839
- call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
-RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:72 [inline]
-RIP: 0010:acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:113
-Code: 90 90 90 90 90 90 90 90 90 65 48 8b 04 25 00 d5 03 00 48 f7 00 08 00 00 00 75 10 66 90 0f 00 2d b5 f4 a2 00 f3 0f 1e fa fb f4 <fa> c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc900001a7d08 EFLAGS: 00000246
-RAX: ffff888017ae8000 RBX: ffff88801b6f9864 RCX: 000000000001bdc9
-RDX: 0000000000000001 RSI: ffff88801b6f9800 RDI: ffff88801b6f9864
-RBP: 000000000003a5b8 R08: ffff8880b9537d0b R09: 1ffff110172a6fa1
-R10: dffffc0000000000 R11: ffffffff8b868960 R12: ffff88801c718800
-R13: 0000000000000000 R14: 0000000000000001 R15: ffffffff8eace380
- acpi_idle_enter+0xe4/0x140 drivers/acpi/processor_idle.c:707
- cpuidle_enter_state+0x112/0x480 drivers/cpuidle/cpuidle.c:267
- cpuidle_enter+0x5d/0xa0 drivers/cpuidle/cpuidle.c:388
- call_cpuidle kernel/sched/idle.c:155 [inline]
- cpuidle_idle_call kernel/sched/idle.c:236 [inline]
- do_idle+0x375/0x5d0 kernel/sched/idle.c:332
- cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:430
- start_secondary+0x100/0x100 arch/x86/kernel/smpboot.c:313
- common_startup_64+0x13e/0x147
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ jfs_rename+0x602/0x19d0 fs/jfs/namei.c:1163
+ vfs_rename+0xf84/0x20a0 fs/namei.c:4887
+ do_renameat2+0xc54/0xdc0 fs/namei.c:5044
+ __do_sys_renameat2 fs/namei.c:5078 [inline]
+ __se_sys_renameat2 fs/namei.c:5075 [inline]
+ __ia32_sys_renameat2+0xeb/0x130 fs/namei.c:5075
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf730b579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5efd5ac EFLAGS: 00000292 ORIG_RAX: 0000000000000161
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000020000340
+RDX: 0000000000000005 RSI: 00000000200003c0 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
  </TASK>
+find_entry called with index = 0
+read_mapping_page failed!
+ERROR: (device loop1): txAbort: 
+
 ----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	90                   	nop
-   8:	90                   	nop
-   9:	65 48 8b 04 25 00 d5 	mov    %gs:0x3d500,%rax
-  10:	03 00
-  12:	48 f7 00 08 00 00 00 	testq  $0x8,(%rax)
-  19:	75 10                	jne    0x2b
-  1b:	66 90                	xchg   %ax,%ax
-  1d:	0f 00 2d b5 f4 a2 00 	verw   0xa2f4b5(%rip)        # 0xa2f4d9
-  24:	f3 0f 1e fa          	endbr64
-  28:	fb                   	sti
-  29:	f4                   	hlt
-* 2a:	fa                   	cli <-- trapping instruction
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
   2b:	c3                   	ret
-  2c:	cc                   	int3
-  2d:	cc                   	int3
-  2e:	cc                   	int3
-  2f:	cc                   	int3
-  30:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-  37:	00 00
-  39:	90                   	nop
-  3a:	90                   	nop
-  3b:	90                   	nop
-  3c:	90                   	nop
-  3d:	90                   	nop
-  3e:	90                   	nop
-  3f:	90                   	nop
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
 ---
@@ -309,10 +343,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
