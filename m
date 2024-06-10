@@ -1,77 +1,72 @@
-Return-Path: <linux-kernel+bounces-208651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B189027C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9179027C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168951F22B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0177D1F22CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3491474DA;
-	Mon, 10 Jun 2024 17:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D1B147C89;
+	Mon, 10 Jun 2024 17:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZzQrSY57"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNpdFrgy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400EF145FEF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7271145FEF;
+	Mon, 10 Jun 2024 17:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040520; cv=none; b=rjjIhd78zQc75zPUiDeWQMWHsBg8yPBJyO4dpWmeBoaxyDq96HaAqN6+nLDGJrw/1eJgsy8ExtCxslDn7DMJkyadskTQfcEMPU0/xXBfdLMInB+ulsysQuV1pzQkRJhR/UuquQfEgjgH10LqR7uhv533lBAx/x5vI8rIN7Dd77M=
+	t=1718040533; cv=none; b=aohNyqK1Xy37WfTp00oCeRsml1JLSme8FiGO5XBDBjfOYcAsUQZStPJIrPDhL2T02zJtN5d+ED8EXyxGPPq2QDk2d6QjUpO9a4Zt09ehNEK0EC7hRoyadSFANzixoBtY/A1pi/cc/blfiZwMjyHvPtOI5V9ql1idTJazEBwWBik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040520; c=relaxed/simple;
-	bh=E9w89+B2B7+pHEOspQLd1KCD1iOqsKdjTUWoD8G4oyY=;
+	s=arc-20240116; t=1718040533; c=relaxed/simple;
+	bh=hsXdp2QwbthzBhOSFd6YbbgLNTqyXSDvwcDh62NNNiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSz9mZRrB8uHVXi1zFA8INp+7Lo2WLt3cjZUolwiHzUTm8tG0IP7239/qAx4w90JoveHeEJsZ0J26GmK37EJEOf15ljjxEs8EwvbjT+uS1Jv4gTdwj8k1+pYj5greWNtzmLDdNRb5HVjCq5crCXcoIhfVDVWpG/GeY1ZTzlrFsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZzQrSY57; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718040517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Ss+jn32vMkFORsgEtb9NzBOj1J/8gbZRcW5oNqfgF8=;
-	b=ZzQrSY57HY3GQNdVyWz4DWwmQ2I/DDkfj9FWudGSciMNR2OYvXCzecxSCOX0yUWKNq1uNa
-	QW07dqp9e/ZjUru2fmwKCStbP3/1yzsKmv7Jy22jyyaeN7OW5aa7Ha8QkXNkjki6/dzGV/
-	IEfQvXqPN53FsZU7jACig6c9M/cyfZY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-274-Z9pgwgGBNoeVKBMxF7Atag-1; Mon,
- 10 Jun 2024 13:28:34 -0400
-X-MC-Unique: Z9pgwgGBNoeVKBMxF7Atag-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43AC219560B4;
-	Mon, 10 Jun 2024 17:28:33 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F6F619560AB;
-	Mon, 10 Jun 2024 17:28:32 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 45AHSVBf801304
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 13:28:31 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 45AHSUBI801303;
-	Mon, 10 Jun 2024 13:28:30 -0400
-Date: Mon, 10 Jun 2024 13:28:30 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-        dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH] dm: Add support for escaped characters in
- str_field_delimit()
-Message-ID: <Zmc3vrfFglYISw1P@redhat.com>
-References: <20240609141721.52344-1-jain.abhinav177@gmail.com>
- <Zmczy8EijOK-D7ZE@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNpc9Vhw66yefjY3JIvi0ZZ5Q3xqfmTSvDagfbYrAFQVXC/utjgbhH54e0Jckhg1qa0Ev7uqIzK9lSBxmwMZk/1pAsosZJl6w4tMC52WivIwr8LxU/2hY6RBMnTmBJQCrP5TTPNFDxpfaIOG4y8owxz46XQWeiCz/TmADJSZPKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNpdFrgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52D87C2BBFC;
+	Mon, 10 Jun 2024 17:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718040533;
+	bh=hsXdp2QwbthzBhOSFd6YbbgLNTqyXSDvwcDh62NNNiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aNpdFrgy5Zza1DDVY23kZJNbw/0JA56+1KNloDqPZnNNfPbTnlj+hn4pOK4Czyakl
+	 /mOUHYorQi9awPhEnKK70KmfiZViAMbYcH7p/uuDpVqq+RsHyylTJp1EIZDPGb4n7M
+	 L2UZeq/Vv0BDdJwq9PsThFKWQX7c9U0hzvbtX8AoIMUEMKXqHuyfx82Ltmhb2ql5Qw
+	 rwP7azFkzipdwQanc/NhpRb7JaqUFsQhRjsVZiYPXxzQoRmJZFC732CmFuKeuubuI5
+	 zdBKP4p1y+1aWACQ75TI5Ta2ITCt4yWds0rtsqyvm+HYlZedAG8K5ODb1zqGI6Z5hy
+	 MY6Yi5AEWDmng==
+Date: Mon, 10 Jun 2024 10:28:52 -0700
+From: Kees Cook <kees@kernel.org>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <202406101010.E1C77AE9D@keescook>
+References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,79 +75,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zmczy8EijOK-D7ZE@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
 
-On Mon, Jun 10, 2024 at 01:11:40PM -0400, Benjamin Marzinski wrote:
-> On Sun, Jun 09, 2024 at 02:17:21PM +0000, Abhinav Jain wrote:
-> > Add a new variable for escaped characters.
-> > 
-> > If an escaped character (\) is found before the separator, and if the 
-> > separator is not found or if the escaped character is located before the
-> > separator, then move the separator ahead and continue searching for the
-> > next separator.
-> > 
-> > Return the pointer to remainder string after the delimiter. If the
-> > separator was found, return a pointer to the character immediately after
-> > the delimiter (s + 1). If the separator was not found, return NULL.
+On Sat, Jun 01, 2024 at 06:56:15PM +0200, Erick Archer wrote:
+> Hi everyone,
 > 
-> This doesn't do anything to the escape character. Presumably you want to
-> pass the field containing a separator down to dm_eary_create(). But you
-> don't want to pass the escape character itself.
-> 
-> To work correctly, this code needs to remove all those escape characters
-> that come before separators. It probably needs to do something like:
-> 
-> 1. Find a next non-escaped separator and change it to NULL, so you have
-> your field string.
+> This is an effort to get rid of all multiplications from allocation
+> functions in order to prevent integer overflows [1][2].
 
-And by NULL, I mean '\0'.
+I didn't actually see these 3 patches in this thread nor via lore.
 
--Ben
+> In the first patch, the "struct amd_uncore_ctx" can be refactored to
+> use a flex array for the "events" member. This way, the allocation/
+> freeing of the memory can be simplified. Then, the struct_size()
+> helper can be used to do the arithmetic calculation for the memory
+> to be allocated.
 
-> 
-> 2. Find all the escaped separators in the field string, and shift the
-> rest of the string over to overwrite the escape character with the rest
-> of the string.
-> 
-> -Ben
-> 
-> > 
-> > Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> > ---
-> >  drivers/md/dm-init.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-> > index 2a71bcdba92d..bef6a582a4ae 100644
-> > --- a/drivers/md/dm-init.c
-> > +++ b/drivers/md/dm-init.c
-> > @@ -87,11 +87,21 @@ static void __init dm_setup_cleanup(struct list_head *devices)
-> >   */
-> >  static char __init *str_field_delimit(char **str, char separator)
-> >  {
-> > -	char *s;
-> > +	char *s, *escaped;
-> >  
-> > -	/* TODO: add support for escaped characters */
-> >  	*str = skip_spaces(*str);
-> >  	s = strchr(*str, separator);
-> > +
-> > +	/* Check for escaped character */
-> > +	escaped = strchr(*str, '\\');
-> > +	if (escaped && (s == NULL || escaped < s)) {
-> > +		/*
-> > +		 * If escaped character comes before the separator, move
-> > +		 * the separator ahead & continue searching for next one.
-> > +		 */
-> > +		s = strchr(escaped + 1, separator);
-> > +	}
-> > +
-> >  	/* Delimit the field and remove trailing spaces */
-> >  	if (s)
-> >  		*s = '\0';
-> > -- 
-> > 2.34.1
-> > 
+I like this patch because it reduces the allocation from 2 to 1. This
+isn't what Peter might see as "churn": this is an improvement in resource
+utilization.
 
+I think it's here:
+https://lore.kernel.org/linux-hardening/AS8PR02MB7237E4848B44A5226BD3551C8BE02@AS8PR02MB7237.eurprd02.prod.outlook.com/
+
+> In the second patch, as the "struct intel_uncore_box" ends in a
+> flexible array, the preferred way in the kernel is to use the
+> struct_size() helper to do the arithmetic instead of the calculation
+> "size + count * size" in the kzalloc_node() function.
+
+This is
+https://lore.kernel.org/linux-hardening/AS8PR02MB7237F4D39BF6AA0FF40E91638B392@AS8PR02MB7237.eurprd02.prod.outlook.com/
+
+I prefer this style, as it makes things unambiguous ("this will never
+wrap around") without having to check the associated types and doesn't make
+the resulting binary code different in the "can never overflow" case.
+
+In this particular case:
+
+int size = sizeof(*box) + numshared * sizeof(struct intel_uncore_extra_reg);
+
+"int numshared" comes from struct intel_uncore_type::num_shared_regs,
+which is:
+
+        unsigned num_shared_regs:8;
+
+And the struct sizes are:
+
+$ pahole -C intel_uncore_box gcc-boot/vmlinux | grep size:
+        /* size: 488, cachelines: 8, members: 19 */
+$ pahole -C intel_uncore_extra_reg gcc-boot/vmlinux | grep size:
+        /* size: 96, cachelines: 2, members: 5 */
+
+So we have:
+
+s32 size = 488 + u8 * 96
+
+Max size here is 24968 so it can never overflow an s32, so I can see
+why Peter views this as "churn".
+
+I still think the patch is a coding style improvement, but okay.
+
+> In the third patch, as the "struct perf_buffer" also ends in a
+> flexible array, the preferred way in the kernel is to use the
+> struct_size() helper to do the arithmetic instead of the calculation
+> "size + count * size" in the kzalloc_node() functions. At the same
+> time, prepare for the coming implementation by GCC and Clang of the
+> __counted_by attribute.
+
+This is
+https://lore.kernel.org/linux-hardening/AS8PR02MB72379B4807F3951A1B926BA58BE02@AS8PR02MB7237.eurprd02.prod.outlook.com/
+
+This provides __counted_by coverage, and I think this is important to
+gain in ever place we can. Given that this is part of a ring buffer
+implementation that is arbitrarily sized, this is exactly the kind of
+place I'd like to see __counted_by used. This is a runtime robustness
+improvement, so I don't see this a "churn" at all.
+
+
+Peter, for patches 1 and 3, if you'd prefer not to carry them, I could
+put them in the hardening tree to keep them out of your way. It seems
+clear you don't want patch 2 at all.
+
+-Kees
+
+-- 
+Kees Cook
 
