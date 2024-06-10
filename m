@@ -1,251 +1,152 @@
-Return-Path: <linux-kernel+bounces-208539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6AE90267E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78FD90267B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271F9B2A4B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823F01F223C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85181143757;
-	Mon, 10 Jun 2024 16:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6314142E9F;
+	Mon, 10 Jun 2024 16:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txBNSTf1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCBZuDqG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7C81754;
-	Mon, 10 Jun 2024 16:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D85E81754;
+	Mon, 10 Jun 2024 16:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036311; cv=none; b=Hpx/d+XIxJIJnoHKvEItSCOMNlZgHu+5Bj6VjwGMF6uL22mwQH8m+IxD2USJHuVEm0QRTTsbrFaFiglPVMsDzfzGXDmh9sxAPWdNKlrMnOnDceEFjvgKrV0TNrX9XXRw4xc7nHS0d8OZqsyPwxxo3RIqBMNnM0FG+CTTnqT4MbI=
+	t=1718036360; cv=none; b=Qf0Tx4OZiPAh+9UN5DBYycSc9ibX2Bov5cRNghcL0Wn1FrxhGoBcxNAsU0fNGZ1hqvcaHtVTR2Z6zGDr3+Zrn4hgl66urS/yV2xI9hqkj3/8hNr1Df3YI+1U90Mj3bNVn/qTP3xcUYxztjCCmYmR+gIU9NQCISQh/TqSM7NJX9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036311; c=relaxed/simple;
-	bh=uZtlK/h+IV89qKq/D7HEEGiIqU3n+5uR+aMUW6bSTYI=;
+	s=arc-20240116; t=1718036360; c=relaxed/simple;
+	bh=BbqJ1v2auCLBE0bToKR5V2m6jVtwM9b3QEfzCJ0IEGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/X3C/8uf1aNsfF0tFg64gVY3KVSVlLsifbWJkTOcVd5fwa5wPVm4y1M1sZCGz2uF2kvnNj5WlVosE0leE5wtvv2F9ndrHSVUnxQqFHnlXNEGQczE0UXXu4pnPHFeudCIE0LI9es+epw0rhZ9zFMIo1vMNBmlDsncgd7R2xslqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txBNSTf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270DCC2BBFC;
-	Mon, 10 Jun 2024 16:18:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKe4/V0V9ulX9YeEzXsx7UGAvxBZG0nZX62es1vCf5ygD8aG++jdXJTU2ukLgNAL6guLXNPBCBFZbqv0201BWmc1wt2HvrWzpAZ3oicg7qtl1nZZlSrKjWp9P2PBOITbdhpeW81kY2pWRi1pvlGhzSio2M1k8x6U07fGFMUfqm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCBZuDqG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7C4C2BBFC;
+	Mon, 10 Jun 2024 16:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718036311;
-	bh=uZtlK/h+IV89qKq/D7HEEGiIqU3n+5uR+aMUW6bSTYI=;
+	s=k20201202; t=1718036359;
+	bh=BbqJ1v2auCLBE0bToKR5V2m6jVtwM9b3QEfzCJ0IEGk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=txBNSTf1+1t4Xc9gPPh5vQRc5XfFN8nPv3Ro8SB/Yq/j5yEFp8jrN0I+5Vvp5KhOC
-	 31eIcQtv4gSFNYkJWu5tiUYcRsGWbQIFh2b2tiBQYfLYxsJieRJiOTdFhWwTvQJF/M
-	 fUzjRO+rL2bVJQVsXagyKG+uCYHiF1TBWgw463NfDzmu1rm2XEkNCph2ZdlBvKMPM0
-	 Gr/XbPplhRTbNTmuXHWyp/dAQvRpoJf5jrDLG/1hP72FEcChZfoVi0qm5BQFx6ewcw
-	 vpY5DbRGJh+Zpb2hIoVs4KxbjfSUVKLSS1z59lmFu0jrgvvdpMja9j94fZRFY7GnNT
-	 znfhgKqB0z4zQ==
-Date: Mon, 10 Jun 2024 19:18:26 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Zeng, Oak" <oak.zeng@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Brost, Matthew" <matthew.brost@intel.com>,
-	"Hellstrom, Thomas" <thomas.hellstrom@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"jack@suse.com" <jack@suse.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	"Bommu, Krishnaiah" <krishnaiah.bommu@intel.com>,
-	"Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
-Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to two steps
-Message-ID: <20240610161826.GA4966@unreal>
-References: <cover.1709635535.git.leon@kernel.org>
- <SA1PR11MB6991CB2B1398948F4241E51992182@SA1PR11MB6991.namprd11.prod.outlook.com>
- <20240503164239.GB901876@ziepe.ca>
- <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+	b=UCBZuDqGMZksQ02K0c6Tu0igtY4udAd2HSprodAzpj7y20CG1Rp94dBhi67W4sV4B
+	 FhxwAU00PLHQNegE7o9BEdkh5U+D7udL5MwHWWoZrVh2WfsZGTz66KaZmYvVZQVLCf
+	 xwGRR8JC3MnNGlePNimuEgxrBFE03d8DilPpCt5P5tdrZKUiM9AgItec9FwZva0xTX
+	 KK7oBHuHbIXWXJSzDJy+m+WXd/pYdmKi1ZK6pr30JO5EADzooTkT8fu7Q5HaWrciHb
+	 Dj6ZjPLUBy8/5Q0Am01/D1LK5yfOG+VtG+FipVcnVWt/TTN0x3Ivu/inudTdlekQ/t
+	 qFyzKDvshmAGQ==
+Date: Mon, 10 Jun 2024 17:19:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	pthombar@cadence.com
+Subject: Re: [PATCH v8 4/4] spi: cadence: Add MRVL overlay xfer operation
+ support
+Message-ID: <ZmcnhGH2fcmrXn1G@finisterre.sirena.org.uk>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-5-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QscN4rSe5xkktnMl"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+In-Reply-To: <20240607151831.3858304-5-wsadowski@marvell.com>
+X-Cookie: Your love life will be... interesting.
 
-On Mon, Jun 10, 2024 at 03:12:25PM +0000, Zeng, Oak wrote:
-> Hi Jason, Leon,
-> 
-> I come back to this thread to ask a question. Per the discussion in another thread, I have integrated the new dma-mapping API (the first 6 patches of this series) to DRM subsystem. The new API seems fit pretty good to our purpose, better than scatter-gather dma-mapping. So we want to continue work with you to adopt this new API.
 
-Sounds great, thanks for the feedback.
+--QscN4rSe5xkktnMl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> Did you test the new API in RDMA subsystem? 
+On Fri, Jun 07, 2024 at 08:18:31AM -0700, Witold Sadowski wrote:
 
-This version was tested in our regression tests, but there is a chance
-that you are hitting flows that were not relevant for RDMA case.
+> +static int cdns_xspi_prepare_generic(int cs, const void *dout, int len, int glue, u32 *cmd_regs)
+> +{
+> +	u8 *data = (u8 *)dout;
+> +	int i;
+> +	int data_counter = 0;
+> +
+> +	memset(cmd_regs, 0x00, 6*4);
 
-> Or this RFC series was just some untested codes sending out to get people's design feedback? 
+The magic numbers here aren't great...
 
-RFC was fully tested in VFIO and RDMA paths, but not NVMe patch.
+> +static unsigned char reverse_bits(unsigned char num)
+> +{
+> +	unsigned int count = sizeof(num) * 8 - 1;
+> +	unsigned int reverse_num = num;
+> +
+> +	num >>= 1;
+> +	while (num) {
+> +		reverse_num <<= 1;
+> +		reverse_num |= num & 1;
+> +		num >>= 1;
+> +		count--;
+> +	}
+> +	reverse_num <<= count;
+> +	return reverse_num;
+> +}
 
-> Do you have refined version for us to try? I ask because we are seeing some issues but not sure whether it is caused by the new API. We are debugging but it would be good to also ask at the same time.
+I can't help but think there ought to be a helper for this though I
+can't think what it is off the top of my head.  If there isn't it
+probably makes sense to add this as one.
 
-Yes, as an outcome of the feedback in this thread, I implemented a new
-version. Unfortunately, there are some personal matters that are preventing
-from me to send it right away.
-https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=dma-split-v1
+> +	/* Enable xfer state machine */
+> +	if (!cdns_xspi->xfer_in_progress) {
+> +		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
+> +
+> +		cdns_xspi->current_xfer_qword = 0;
+> +		cdns_xspi->xfer_in_progress = true;
+> +		xfer_control |= (MRVL_XFER_RECEIVE_ENABLE |
+> +				 MRVL_XFER_CLK_CAPTURE_POL |
+> +				 MRVL_XFER_FUNC_START |
+> +				 MRVL_XFER_SOFT_RESET |
+> +				 FIELD_PREP(MRVL_XFER_CS_N_HOLD, (1 << cs)));
+> +		xfer_control &= ~(MRVL_XFER_FUNC_ENABLE | MRVL_XFER_CLK_DRIVE_POL);
+> +		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
+> +	}
 
-There are some differences in the API, but the main idea is the same.
-This version is not fully tested yet.
+Could this just be a prepare_transfer_hardware() and we could just use
+transfer_one()?
 
-Thanks
+> +	list_for_each_entry(t, &m->transfers, transfer_list) {
+> +		u8 *txd = (u8 *) t->tx_buf;
+> +		u8 *rxd = (u8 *) t->rx_buf;
+> +		u8 data[10];
+> +		u32 cmd_regs[6];
+> +
+> +		if (!txd)
+> +			txd = data;
+> +
+> +		cdns_xspi->in_buffer = txd + 1;
+> +		cdns_xspi->out_buffer = txd + 1;
 
-> 
-> Cc Himal/Krishna who are also working/testing the new API.
-> 
-> Thanks,
-> Oak
-> 
-> > -----Original Message-----
-> > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > Sent: Friday, May 3, 2024 12:43 PM
-> > To: Zeng, Oak <oak.zeng@intel.com>
-> > Cc: leon@kernel.org; Christoph Hellwig <hch@lst.de>; Robin Murphy
-> > <robin.murphy@arm.com>; Marek Szyprowski
-> > <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
-> > Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
-> > Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
-> > <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>; Jens
-> > Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
-> > Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
-> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian, Kevin
-> > <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
-> > Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
-> > foundation.org>; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
-> > iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
-> > kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
-> > <bvanassche@acm.org>; Damien Le Moal
-> > <damien.lemoal@opensource.wdc.com>; Amir Goldstein
-> > <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
-> > <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
-> > <dan.j.williams@intel.com>; jack@suse.com; Leon Romanovsky
-> > <leonro@nvidia.com>; Zhu Yanjun <zyjzyj2000@gmail.com>
-> > Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
-> > two steps
-> > 
-> > On Thu, May 02, 2024 at 11:32:55PM +0000, Zeng, Oak wrote:
-> > 
-> > > > Instead of teaching DMA to know these specific datatypes, let's separate
-> > > > existing DMA mapping routine to two steps and give an option to
-> > advanced
-> > > > callers (subsystems) perform all calculations internally in advance and
-> > > > map pages later when it is needed.
-> > >
-> > > I looked into how this scheme can be applied to DRM subsystem and GPU
-> > drivers.
-> > >
-> > > I figured RDMA can apply this scheme because RDMA can calculate the
-> > > iova size. Per my limited knowledge of rdma, user can register a
-> > > memory region (the reg_user_mr vfunc) and memory region's sized is
-> > > used to pre-allocate iova space. And in the RDMA use case, it seems
-> > > the user registered region can be very big, e.g., 512MiB or even GiB
-> > 
-> > In RDMA the iova would be linked to the SVA granual we discussed
-> > previously.
-> > 
-> > > In GPU driver, we have a few use cases where we need dma-mapping. Just
-> > name two:
-> > >
-> > > 1) userptr: it is user malloc'ed/mmap'ed memory and registers to gpu
-> > > (in Intel's driver it is through a vm_bind api, similar to mmap). A
-> > > userptr can be of any random size, depending on user malloc
-> > > size. Today we use dma-map-sg for this use case. The down side of
-> > > our approach is, during userptr invalidation, even if user only
-> > > munmap partially of an userptr, we invalidate the whole userptr from
-> > > gpu page table, because there is no way for us to partially
-> > > dma-unmap the whole sg list. I think we can try your new API in this
-> > > case. The main benefit of the new approach is the partial munmap
-> > > case.
-> > 
-> > Yes, this is one of the main things it will improve.
-> > 
-> > > We will have to pre-allocate iova for each userptr, and we have many
-> > > userptrs of random size... So we might be not as efficient as RDMA
-> > > case where I assume user register a few big memory regions.
-> > 
-> > You are already doing this. dma_map_sg() does exactly the same IOVA
-> > allocation under the covers.
-> > 
-> > > 2) system allocator: it is malloc'ed/mmap'ed memory be used for GPU
-> > > program directly, without any other extra driver API call. We call
-> > > this use case system allocator.
-> > 
-> > > For system allocator, driver have no knowledge of which virtual
-> > > address range is valid in advance. So when GPU access a
-> > > malloc'ed/mmap'ed address, we have a page fault. We then look up a
-> > > CPU vma which contains the fault address. I guess we can use the CPU
-> > > vma size to allocate the iova space of the same size?
-> > 
-> > No. You'd follow what we discussed in the other thread.
-> > 
-> > If you do a full SVA then you'd split your MM space into granuals and
-> > when a fault hits a granual you'd allocate the IOVA for the whole
-> > granual. RDMA ODP is using a 512M granual currently.
-> > 
-> > If you are doing sub ranges then you'd probably allocate the IOVA for
-> > the well defined sub range (assuming the typical use case isn't huge)
-> > 
-> > > But there will be a true difficulty to apply your scheme to this use
-> > > case. It is related to the STICKY flag. As I understand it, the
-> > > sticky flag is designed for driver to mark "this page/pfn has been
-> > > populated, no need to re-populate again", roughly...Unlike userptr
-> > > and RDMA use cases where the backing store of a buffer is always in
-> > > system memory, in the system allocator use case, the backing store
-> > > can be changing b/t system memory and GPU's device private
-> > > memory. Even worse, we have to assume the data migration b/t system
-> > > and GPU is dynamic. When data is migrated to GPU, we don't need
-> > > dma-map. And when migration happens to a pfn with STICKY flag, we
-> > > still need to repopulate this pfn. So you can see, it is not easy to
-> > > apply this scheme to this use case. At least I can't see an obvious
-> > > way.
-> > 
-> > You are already doing this today, you are keeping the sg list around
-> > until you unmap it.
-> > 
-> > Instead of keeping the sg list you'd keep a much smaller datastructure
-> > per-granual. The sticky bit is simply a convient way for ODP to manage
-> > the smaller data structure, you don't have to use it.
-> > 
-> > But you do need to keep track of what pages in the granual have been
-> > DMA mapped - sg list was doing this before. This could be a simple
-> > bitmap array matching the granual size.
-> > 
-> > Looking (far) forward we may be able to have a "replace" API that
-> > allows installing a new page unconditionally regardless of what is
-> > already there.
-> > 
-> > Jason
+Oh?
+
+--QscN4rSe5xkktnMl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnJ4QACgkQJNaLcl1U
+h9Dp1wf/WWCSFxYA9ICwOA6a517Qv5oZM6qYTRD9DXmo/lVgjct+IPOYv8EzpMJn
+6R13HN446bDgxlYUEKBj3khExObjLdA+JbrEa50OV6ylKDWUcYfhGw7l4FNKQdmp
+dlztImDchBdOisfrcVyLk/yzZZ5YHlFzmYldqrcVDQYQySDtuRt3uGm7wwWDdcu4
+BaOSqwoBskBGobu3S/TFdOa1wNusmc8s6K3Ti5j6y0q0X1lgRfmanltHuD6XBWn5
+NGrkO7xN/v2DyQKmCkKcDpSWUllFYEqHDhDZjr8EkrUQlkIvhtI5Tf1/E1r5qyOY
+kkyDt6TcBguiNI+NuByW8RL9kB2QjA==
+=LJaH
+-----END PGP SIGNATURE-----
+
+--QscN4rSe5xkktnMl--
 
