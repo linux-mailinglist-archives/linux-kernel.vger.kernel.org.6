@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-208443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147C2902546
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:18:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C435902548
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D91EB253B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD6E1C234EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA51713DDCE;
-	Mon, 10 Jun 2024 15:15:45 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1746B14B084;
+	Mon, 10 Jun 2024 15:16:20 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB956140E29
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAC882483;
+	Mon, 10 Jun 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032545; cv=none; b=qUrdgs6giH3o8XjwZ8SIfpy9G+PbS3TQYQDw2jEDug2y42mKjbBMmb0NcvWH6nLdeWmZMLd19APneMGcetn36+Jn8JT+QYwW8d+dM+9AdeEOXUEA3+KOzAK75cuPOKXBRiqv95CXeudgGMVW6ycNW7LuVqfRHB+csiXoF57l9oQ=
+	t=1718032579; cv=none; b=B4nFFNh0fhfFR1BUHFPKk4bSFroJWGD1mixVQ3v6G/HTHpV71QM2ptdt7un1oDA2JvDHL8ywwW02Sj2dyDEu0BmiFezkdLfz2rRY31OBLO1Ef6kN+GsXOL6Os/99WoUPbSWAAx4jIl7e6g0cOaSGmQYelzjfxyuKXtyOoC0oO5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032545; c=relaxed/simple;
-	bh=8KtWSjxLbsgn32+Bg/uorKQ1tVssn2+9i3jD0uQL6OM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWVvMSMpzpIGIQytojRpJjsfz8m6r6xU/Qhq7o1h+cY0kiQerdmZxF9Mwzri7SRAvE4lqCPQ/MhfJUabXVWvSuWO9Tj8jPFz3P0rI4UXL3uBmxRFtSrxVwWXyyhONcOrjrSp92zKqL/dpQIM1jo7XyZjlvSb8ioG9RIGYbeCd7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 4c993003-273c-11ef-8e54-005056bdf889;
-	Mon, 10 Jun 2024 18:15:41 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Jun 2024 18:15:40 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v4 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <ZmcYnDf0YIWA9A85@surfacebook.localdomain>
-References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
- <20240608141633.2562-4-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1718032579; c=relaxed/simple;
+	bh=7WETetKobdT3s6/DNAZaGWym4aHxPPI1/kHjkxitoXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P4nYVsbhnK1wlq64iPc8zp/5t5qF2F3wf4F3hi5L1BcB8L4Hxli6hx7RwmD+Th2NgcDTHa9TibKMzFdlZ/yQgYU1Fw+/kTzsgp3Z35y1fUemhQKRO5KNWhKqKqxjw+5kMcbiT/XXNriQE5FgIK2/2kKKl9AEDmIXB7FB3hQvx30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C33C2BBFC;
+	Mon, 10 Jun 2024 15:16:15 +0000 (UTC)
+Date: Mon, 10 Jun 2024 11:16:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org,
+ bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "Borislav
+ Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, "Edgecombe, Rick P"
+ <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCHv7 bpf-next 0/9] uprobe: uretprobe speed up
+Message-ID: <20240610111614.1448e721@rorschach.local.home>
+In-Reply-To: <CAEf4Bzbc99bwGcmtCa3iekXSvSrxMQzfnTViT5Y-dn8qbvJy7A@mail.gmail.com>
+References: <20240523121149.575616-1-jolsa@kernel.org>
+	<CAEf4Bza-+=04GG7Tg4U4pCQ28Oy_2F_5872EPDsX6X3Y=jhEuw@mail.gmail.com>
+	<CAEf4Bzbc99bwGcmtCa3iekXSvSrxMQzfnTViT5Y-dn8qbvJy7A@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608141633.2562-4-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Sat, Jun 08, 2024 at 05:16:32PM +0300, Laurent Pinchart kirjoitti:
-> From: Haibo Chen <haibo.chen@nxp.com>
+On Wed, 5 Jun 2024 09:42:45 -0700
+Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+
+> Another ping. It's been two weeks since Jiri posted the last revision
+> that got no more feedback to be addressed and everyone seems to be
+> happy with it.
+
+Sorry, there's been a lot going on.
+
 > 
-> The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> matrix decoder, programmable logic, reset generator, and PWM generator.
-> This driver supports the GPIO function using the platform device
-> registered by the core MFD driver.
+> This is an important speed up improvement for uprobe infrastructure in
+> general and for BPF ecosystem in particular. "Uprobes are slow" is one
+> of the top complaints from production BPF users, and sys_uretprobe
+> approach is significantly improving the situation for return uprobes
+> (aka uretprobes), potentially enabling new use cases that previously
+> could have been too expensive to trace in practice and reducing the
+> overhead of the existing ones.
 > 
-> The driver is derived from an initial implementation from NXP, available
-> in commit 451f61b46b76 ("MLK-25917-2 gpio: adp5585-gpio: add
-> adp5585-gpio support") in their BSP kernel tree. It has been extensively
-> rewritten.
+> I'd appreciate the engagement from linux-trace maintainers on this
+> patch set. Given it's important for BPF and that a big part of the
+> patch set is BPF-based selftests, we'd also be happy to route all this
+> through the bpf-next tree (which would actually make logistics for us
+> much easier, but that's not the main concern). But regardless of the
+> tree, it would be nice to make a decision and go forward with it.
 
-...
+I'll be talking with Masami about this later today.
 
-> +static const struct platform_device_id adp5585_gpio_id_table[] = {
-> +	{ "adp5585-gpio" },
-
-> +	{ /* Sentinel */ },
-
-Drop the comma.
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Steve
 
