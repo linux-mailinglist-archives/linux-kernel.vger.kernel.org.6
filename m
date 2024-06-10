@@ -1,177 +1,292 @@
-Return-Path: <linux-kernel+bounces-208707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA00902859
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DCA90285C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815F01F21982
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4712B1C22FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5307E14D2AB;
-	Mon, 10 Jun 2024 18:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D3814F123;
+	Mon, 10 Jun 2024 18:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bOb58nJJ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="075F3kaJ"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD6B152DE7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2914EC43;
+	Mon, 10 Jun 2024 18:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042826; cv=none; b=YX6Z+f+o6479e8ADMESIXDDGSow6xGAhAgLv9LgjH+PUtQqcgAVxhTlh65nrVgleq7wFmsQzLP0/Iq3qc9IEdhZ88LoU40i1jieB27mL/CCyFTft4aAFJ5BclMLYPdKuIXisbF5gdKbUyLj+Rc3tWr1xUzpyS6QxBPxzmEHDDQE=
+	t=1718042914; cv=none; b=RzD7rZMnsw3l8IiV5PQ/ZDiEER+xS7VMMY3xnawKQpGK7G6BfI/diowKDyLBD0NR0YzghG2qSGWcwQCM5QNXn2vl4TWVa+x1XCGWvk1HImfVTPx5cDETKLuDSwRKoxd7ZVclxSpeqEbXjlHQn7xnCM4rPfEQNBCxrRz+jK3MHnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042826; c=relaxed/simple;
-	bh=IEMruENEL3ierTK2Q7GOjtcBtiocQYEg6s5U0b0zRD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pxX27Ki90BHUoFym3ys3wTXUckjI4EzgS+yqYs2YqJXxyVZ9071UsXvyXUh6OtUEs8X27q0g3gqG2m9KtUJoI0Ya4DBMMat1F0rTW1v8HqbHGHV8qrt5YWStWmt23ZFk4aB/i00et7uMFwY9O9VimSjg9FEiEUZ3axn9klfLhMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bOb58nJJ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6ef8bf500dso24276566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718042822; x=1718647622; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYkLMdQHI9XJCb3iOQ1AqKkfh0e7ysMUAFGnmxGuJNM=;
-        b=bOb58nJJhzfM9JkysFi7LP/OeEECDtiwHtxOh51dUyiTT0jM3V6/cAj0o+ttk0LmSL
-         HB9KSE7sLoUT2X9LDIECfSctrB1qK3fyiYGggXKWVBWycyslKuSE+fg+9L4hwC5Dqaj/
-         JOn/NwEaxua+mwHD8y9vBl/4GgGOIX7m2r8sQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042822; x=1718647622;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uYkLMdQHI9XJCb3iOQ1AqKkfh0e7ysMUAFGnmxGuJNM=;
-        b=tc1kWPslN4h0wG2oag5rVadC6HYxvl4tEPwTVEq+f8NqXdkTUvDNj0KOcfrcZPXRmg
-         RauVrD+Qc1OHLHTydmk2Kw9HqVtjyvk0fjv9gvTJ3gurNn/LoWEpDCCp7GjZ624aFRO0
-         APE2Fl3yaPm+NtzlaP0DoMX/KvSqcgC/ZyF9hO1Fo2dhfzn2eQZq87sC+/QkN1m0hL0j
-         Lz1IPHg2oUhOOLGoFaFVdQTVCnHKKPzgZ1NMT7fnbutpVwL/oZMGrFGNDPi8Gea1Xjv3
-         5j+5PLLOqkQo79ljjtBApVD18+j3cwSkqSyi1SwHpWKJJL8TGxpI2/0IJNnIvLj7picH
-         CYIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkZjVwFX65dnD6FHWwFOIEtJ0uZ3RaY52kcMBbrwsRmbHt9lkSA/XeCUJhieySQlb04kcfjdSybLI81uqKA5mT/E9OP63RKy/RGsy3
-X-Gm-Message-State: AOJu0Yx1pqMMW85L0s2HuQRioviHWyO1FRATjBtzAeshQ1rUbi2cdv0Q
-	iu7DysykjwrS7q3dLGdLd4wE2dVD27D3jqjmYQBW2lMhmG7/iaOoMej6lokzxaZAbyoQVGCknW2
-	/JVI=
-X-Google-Smtp-Source: AGHT+IFxw/acVB2EHXtGZZlJaDbxlYnAu6aKebw9z4yx/qtmDxzS9skXmVZFl0IZoKHs9NrcnbeOMA==
-X-Received: by 2002:a17:907:9723:b0:a6f:1f7b:6a8b with SMTP id a640c23a62f3a-a6f1f7b6be5mr236570566b.66.1718042822298;
-        Mon, 10 Jun 2024 11:07:02 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0d7b35d5sm333715566b.192.2024.06.10.11.07.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 11:07:01 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a52dfd081so169651a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:07:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwk7pAX34YgkGjDtFaqygu9v2HC0aY9I+jlwPeEr0pvgfHxtAq9BGJ29eOefbUzr1pYwt2vtWZhzfQOp37aEbyBwGU9hR8ro6fdqqT
-X-Received: by 2002:a50:8d54:0:b0:574:ec8a:5267 with SMTP id
- 4fb4d7f45d1cf-57c50990bc5mr6829442a12.31.1718042821079; Mon, 10 Jun 2024
- 11:07:01 -0700 (PDT)
+	s=arc-20240116; t=1718042914; c=relaxed/simple;
+	bh=HxCncfQzHTMpPDipk6mSk/zlzD+RXv8C8N029dOqrh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+gRlsZEg7C+gqsrniZlzYOLA6Z52E2bR2m+uiKNLUmoTi3Qisl8ANkKlO06DEiSg9sH0TbyG2zFZR8V2sDXpOcqf0owRn4qpGkh3ezGpbzqwFjbgW8O1nsywMqmGO70odaHAlegKqe3aAwsD6Flm0Ko8v9v/cjuoNOl310t1/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=075F3kaJ; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355085.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AAmVdp008871;
+	Mon, 10 Jun 2024 18:08:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=zCXqu8mkzuFukRtuaMpwrCH
+	i2EiAu2vEBQ8tPVD6epU=; b=075F3kaJ4WGXDQPNltaMpX1RMlQPoLpOjL+4nhb
+	40bsiJZxtlplLnae5J7vvuRY8H/qrQkuL40QiSCResw/sLJp5oxRuPrpDntJQqfy
+	sObfNbXfmQE/tinjM2SVk6cPv8RYeUOG7d/2lSvMReA2o1A+8y+Ng5xSppvClJaw
+	/U8tis4DQ3jC/tTBPORNHyFYfoJ+8G38iSEX0Oh9h7w18iWK4Mkl/K9yeO24Hfhb
+	aOz7/Hv9eboSXiT6bG1dlvy/x4/V37CIjzjX66cG5JvynqQcsKTOwmMOkQd+h3So
+	G420xn/DpDXvM0V/ZTno2XywNjGT7kH/6zwmMLyO4VTHbDw==
+Received: from ilclpfpp02.lenovo.com ([144.188.128.68])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 3yn5tfa4md-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 18:08:09 +0000 (GMT)
+Received: from va32lmmrp01.lenovo.com (va32lmmrp01.mot.com [10.62.177.113])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ilclpfpp02.lenovo.com (Postfix) with ESMTPS id 4VyftD5jj8zfBb2;
+	Mon, 10 Jun 2024 18:08:04 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp01.lenovo.com (Postfix) with ESMTPSA id 4VyftD0KPNz2VZRs;
+	Mon, 10 Jun 2024 18:08:04 +0000 (UTC)
+Date: Mon, 10 Jun 2024 13:08:02 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v5 2/3] arm64/cfi,bpf: Support kCFI + BPF on arm64
+Message-ID: <jc5sstn54ij75hmiongrstg3ak37ckdrbnhqrrpmwcj43vq5ts@6i6ubxmy6f4t>
+References: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org> <20240610104352.GT8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240610104352.GT8774@noisy.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Jun 2024 11:06:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh5DAR=a12cbKbxDy875hTOtPmNUDEn+dU2VS47h9MgcQ@mail.gmail.com>
-Message-ID: <CAHk-=wh5DAR=a12cbKbxDy875hTOtPmNUDEn+dU2VS47h9MgcQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
+X-Proofpoint-ORIG-GUID: 5LRj_HWEogKoAQwt4nsp31fMmekyNfWw
+X-Proofpoint-GUID: 5LRj_HWEogKoAQwt4nsp31fMmekyNfWw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100137
 
-On Mon, 10 Jun 2024 at 03:43, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> --- linux-2.6.orig/arch/Kconfig
-> +++ linux-2.6/arch/Kconfig
-> @@ -1492,6 +1492,9 @@ config HAVE_SPARSE_SYSCALL_NR
->  config ARCH_HAS_VDSO_DATA
->         bool
->
-> +config HAVE_RUNTIME_CONST
-> +       bool
+From: Puranjay Mohan <puranjay12@gmail.com>
 
-No. We're not adding a stupid config variable, when nothing actually wants it.
+Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
+calling BPF programs from this interface doesn't cause CFI warnings.
 
-> +#define __runtime_const(sym, op, type)                 \
-> +({                                                     \
-> +       typeof(sym) __ret;                              \
-> +       asm(op " %1, %0\n1:\n"                          \
-> +           ".pushsection __runtime_const, \"aw\"\n\t"  \
-> +           ".long %c3 - .      # sym \n\t"             \
-> +           ".long %c2          # size \n\t"            \
-> +           ".long 1b - %c2 - . # addr \n\t"            \
-> +           ".popsection\n\t"                           \
-> +           : "=r" (__ret)                              \
-> +           : "i" ((type)0x0123456789abcdefull),        \
-> +             "i" (sizeof(type)),                       \
-> +             "i" ((void *)&sym));                      \
-> +       __ret;                                          \
-> +})
-> +
-> +#define runtime_const(sym)                                             \
-> +({                                                                     \
-> +       typeof(sym) __ret;                                              \
-> +       switch(sizeof(sym)) {                                           \
-> +       case 1: __ret = __runtime_const(sym, "movb", u8); break;        \
-> +       case 2: __ret = __runtime_const(sym, "movs", u16); break;       \
-> +       case 4: __ret = __runtime_const(sym, "movl", u32); break;       \
-> +       case 8: __ret = __runtime_const(sym, "movq", u64); break;       \
-> +       default: BUG();                                                 \
-> +       }                                                               \
-> +       __ret;                                                          \
-> +})
+When BPF programs are called directly from C: from BPF helpers or
+struct_ops, CFI warnings are generated.
 
-And no. We're not adding magic "generic" helpers that have zero use
-and just make the code harder to read, and don't even work on 32-bit
-x86 anyway.
+Implement proper CFI prologues for the BPF programs and callbacks and
+drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
+prologue when a struct_ops trampoline is being prepared.
 
-Because I didn't test, but I am pretty sure that clang will not
-compile the above on x86-32, because clang verifies the inline asm,
-and "movq" isn't a valid instruction.
+Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+---
+ arch/arm64/include/asm/cfi.h    | 23 ++++++++++++++
+ arch/arm64/kernel/alternative.c | 54 +++++++++++++++++++++++++++++++++
+ arch/arm64/net/bpf_jit_comp.c   | 21 +++++++++++--
+ 3 files changed, 95 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/include/asm/cfi.h
 
-We had exactly that for the uaccess macros, and needed to special-case
-the 64-bit case for that reason.
+diff --git a/arch/arm64/include/asm/cfi.h b/arch/arm64/include/asm/cfi.h
+new file mode 100644
+index 000000000000..670e191f8628
+--- /dev/null
++++ b/arch/arm64/include/asm/cfi.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_ARM64_CFI_H
++#define _ASM_ARM64_CFI_H
++
++#ifdef CONFIG_CFI_CLANG
++#define __bpfcall
++static inline int cfi_get_offset(void)
++{
++	return 4;
++}
++#define cfi_get_offset cfi_get_offset
++extern u32 cfi_bpf_hash;
++extern u32 cfi_bpf_subprog_hash;
++extern u32 cfi_get_func_hash(void *func);
++#else
++#define cfi_bpf_hash 0U
++#define cfi_bpf_subprog_hash 0U
++static inline u32 cfi_get_func_hash(void *func)
++{
++	return 0;
++}
++#endif /* CONFIG_CFI_CLANG */
++#endif /* _ASM_ARM64_CFI_H */
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index 8ff6610af496..1715da7df137 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -13,6 +13,7 @@
+ #include <linux/elf.h>
+ #include <asm/cacheflush.h>
+ #include <asm/alternative.h>
++#include <asm/cfi.h>
+ #include <asm/cpufeature.h>
+ #include <asm/insn.h>
+ #include <asm/module.h>
+@@ -298,3 +299,56 @@ noinstr void alt_cb_patch_nops(struct alt_instr *alt, __le32 *origptr,
+ 		updptr[i] = cpu_to_le32(aarch64_insn_gen_nop());
+ }
+ EXPORT_SYMBOL(alt_cb_patch_nops);
++
++#ifdef CONFIG_CFI_CLANG
++struct bpf_insn;
++
++/* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
++extern unsigned int __bpf_prog_runX(const void *ctx,
++				    const struct bpf_insn *insn);
++
++/*
++ * Force a reference to the external symbol so the compiler generates
++ * __kcfi_typid.
++ */
++__ADDRESSABLE(__bpf_prog_runX);
++
++/* u32 __ro_after_init cfi_bpf_hash = __kcfi_typeid___bpf_prog_runX; */
++asm (
++"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
++"	.type	cfi_bpf_hash,@object				\n"
++"	.globl	cfi_bpf_hash					\n"
++"	.p2align	2, 0x0					\n"
++"cfi_bpf_hash:							\n"
++"	.word	__kcfi_typeid___bpf_prog_runX			\n"
++"	.size	cfi_bpf_hash, 4					\n"
++"	.popsection						\n"
++);
++
++/* Must match bpf_callback_t */
++extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
++
++__ADDRESSABLE(__bpf_callback_fn);
++
++/* u32 __ro_after_init cfi_bpf_subprog_hash = __kcfi_typeid___bpf_callback_fn; */
++asm (
++"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
++"	.type	cfi_bpf_subprog_hash,@object			\n"
++"	.globl	cfi_bpf_subprog_hash				\n"
++"	.p2align	2, 0x0					\n"
++"cfi_bpf_subprog_hash:						\n"
++"	.word	__kcfi_typeid___bpf_callback_fn			\n"
++"	.size	cfi_bpf_subprog_hash, 4				\n"
++"	.popsection						\n"
++);
++
++u32 cfi_get_func_hash(void *func)
++{
++	u32 hash;
++
++	if (get_kernel_nofault(hash, func - cfi_get_offset()))
++		return 0;
++
++	return hash;
++}
++#endif
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 720336d28856..211e1c29f004 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -17,6 +17,7 @@
+ #include <asm/asm-extable.h>
+ #include <asm/byteorder.h>
+ #include <asm/cacheflush.h>
++#include <asm/cfi.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/insn.h>
+ #include <asm/patching.h>
+@@ -162,6 +163,12 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
+ 		emit(insn, ctx);
+ }
+ 
++static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
++{
++	if (IS_ENABLED(CONFIG_CFI_CLANG))
++		emit(hash, ctx);
++}
++
+ /*
+  * Kernel addresses in the vmalloc space use at most 48 bits, and the
+  * remaining bits are guaranteed to be 0x1. So we can compose the address
+@@ -311,7 +318,6 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
+ 	const u8 tcc = bpf2a64[TCALL_CNT];
+ 	const u8 fpb = bpf2a64[FP_BOTTOM];
+ 	const u8 arena_vm_base = bpf2a64[ARENA_VM_START];
+-	const int idx0 = ctx->idx;
+ 	int cur_offset;
+ 
+ 	/*
+@@ -337,6 +343,9 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
+ 	 *
+ 	 */
+ 
++	emit_kcfi(is_main_prog ? cfi_bpf_hash : cfi_bpf_subprog_hash, ctx);
++	const int idx0 = ctx->idx;
++
+ 	/* bpf function may be invoked by 3 instruction types:
+ 	 * 1. bl, attached via freplace to bpf prog via short jump
+ 	 * 2. br, attached via freplace to bpf prog via long jump
+@@ -1849,9 +1858,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 		jit_data->ro_header = ro_header;
+ 	}
+ 
+-	prog->bpf_func = (void *)ctx.ro_image;
++	prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
+ 	prog->jited = 1;
+-	prog->jited_len = prog_size;
++	prog->jited_len = prog_size - cfi_get_offset();
+ 
+ 	if (!prog->is_func || extra_pass) {
+ 		int i;
+@@ -2104,6 +2113,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	/* return address locates above FP */
+ 	retaddr_off = stack_size + 8;
+ 
++	if (flags & BPF_TRAMP_F_INDIRECT) {
++		/*
++		 * Indirect call for bpf_struct_ops
++		 */
++		emit_kcfi(cfi_get_func_hash(func_addr), ctx);
++	}
+ 	/* bpf trampoline may be invoked by 3 instruction types:
+ 	 * 1. bl, attached to bpf prog or kernel function via short jump
+ 	 * 2. br, attached to bpf prog or kernel function via long jump
+-- 
+2.39.2
 
-And we don't *need* to. All of the above is garbage waiting for a use
-that shouldn't exist.
-
-> +++ linux-2.6/kernel/runtime_const.c
-> @@ -0,0 +1,119 @@
-
-And here you basically tripled the size of the patch in order to have
-just one section, when I had per-symbol sections.
-
-So no.
-
-I envision a *couple* of runtime constants. The absolutely only reason
-to use a runtime constant is that it is *so* hot that the difference
-between "load a variable" and "write code with a constant" is
-noticeable.
-
-I can point to exactly one such case in the kernel right now.
-
-I'm sure there are others, but I'd expect that "others" to be mainly a handful.
-
-This needs to be simple, obvious, and literally designed for very targeted use.
-
-This is a *very* special case for a *very* special code. Not for generic use.
-
-I do not ever expect to see this used by modules, for example. There
-is no way in hell I will expose the instruction rewriting to a module.
-The *use* of a constant is a _maybe_, but it's questionable too. By
-definition, module code cannot be all that core.
-
-             Linus
 
