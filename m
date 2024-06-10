@@ -1,175 +1,131 @@
-Return-Path: <linux-kernel+bounces-209052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBFF902C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:17:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3FE902C65
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0167D1C21244
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF771F2283D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81650152196;
-	Mon, 10 Jun 2024 23:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA0E152176;
+	Mon, 10 Jun 2024 23:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8n43H8i"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7m+kI7V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1A73BBE9;
-	Mon, 10 Jun 2024 23:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE29D54FAD;
+	Mon, 10 Jun 2024 23:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718061438; cv=none; b=jnU9DZPsYpUq5iAtc+975ga3KiaFM4DP+A1hSb5zR3dGfKHuBA8BAuw63DvCoNMM59asbE9XVAg/jRy4cZZJSW4v2SMsFtbd3l+f1Sf4JIxnksuUK6EUZraEJQW57dIPDOI9EC+EVqv239utt0dl6PRtEXPAmGE/k6wzPObjftQ=
+	t=1718061525; cv=none; b=XLjIho1/Y4tQFhGKpGR0axiwKlCdfPi8u08/9UIQLNzmk8pF1hlZvw1zU5NeO0eFOjmDa7h7/cXkPNHdGhMLZoZEmi/uFzk0zN3hOIHgmNLHDxm6iYj81BnHiTziNByhpGtWm4mhPDhuI4/AEhss+86w5b6dcM84/xolV3sMNdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718061438; c=relaxed/simple;
-	bh=uMfuVL5fsGtx8MCah3bVJ0vQiUR/RK2xK2BIcZKa+hM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Imv0Ubij1UVPuUMX3gCkDB4Fx9kLSjnWM9iDxFt2InN7dOUfsa4gvMIRyaiIFDyQNAK98mdCxTarzTtqPq7zGbz6OBbVC0IoihjLlIXUaPmk+GoMf6Li5sx2ITA1w1oNA6+MvoR64XoCxnqEJsKLnOqt5ng1RPS8mroJ8pUAOaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8n43H8i; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c2fe7f07c4so1587998a91.2;
-        Mon, 10 Jun 2024 16:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718061436; x=1718666236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+mvW7YorewnAQOa3UdIoxNwoNJQ5gL2cRcp8dw6Hbdk=;
-        b=T8n43H8idj1wZCNw2p32z4MjNRVjpdwstk2Q6aWEpDAq+WSUxW3MDYnlAf0EkE/mwB
-         spo7KFM50dN42tE1j2i6ngCWgQ+970zcpekDjkldjPrqog85yCnqZdsos+ejOMo7ORHY
-         iMj5L5DOBVHFW4hwsLSRFV6sMRnm3a3RnD3OjPA3zzZ2RJRrp/AdkaJb1IWw1M3lGdPj
-         zaWIfwsbuFgGfJbVwOHbjmryagB76J9xL+/AnoqFt0BWrmT8Ac38pKHL05Ysq2nvkMBf
-         8GeRoC9wxY1snq2gyZ8w6o4BOPCzqD/5g0m8gbIT/VzIdTBbG458fyf/Wqy4j+iwI5IY
-         OVDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718061436; x=1718666236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+mvW7YorewnAQOa3UdIoxNwoNJQ5gL2cRcp8dw6Hbdk=;
-        b=eq0q+ds2bMgL2hLdMJl9tUpWfgcGH/LqSJSOrXGORhp/RgDGWyVPFAu/aBthJOHQlG
-         tZz2yjBMiVofLKoIo4O3fjHD+UqY0AcpxX3304dPyuVvq0rHP98WzJywL4yU5I4aaz1K
-         GaPi+kFyUKrX8cog8xpUwnXi1rdtss4OHwIKorCZJIQW+ZvQPKWDlM72pL2EM5auVW16
-         dJ1nYMIWfzq0FVuLDLiqQEJuPSvs2ile1NeNQ7tUhDzJp0wkWS07XGqDQyKCk6ucZaZR
-         vKtXU5nVaXWq/5R6tasT9BXVKuTU9XKyKIklKwWrkO0U/amsHo/aZzJedRY28rA9c6Ez
-         fqiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdUoS6sNWFkudCWnxn/JQgmZAwML4HSWJOgUDm5XmI51hHHUaJfEY+mcuLeUGL3vP45X2+XjrFtwKjzWZ6HwBDVdULCkNExtC+i6bRZ8VrSwjSF8Bfvd7Ut/Kg1cx3NG0E+CMp80qDKX4RYSQM
-X-Gm-Message-State: AOJu0Ywl1gaDi0HDLb1wAEtCShSHmpOkWXWBzCnqpqMH7qaAcZHPRLsh
-	cZntpawmgTe49J7A74WNR+eXRNDu3H9LbFZPCTh6r4FKblZpbsTIp3U7K8jcCIQyyVJCl8li6w/
-	xaI6aWJzcb2MuX73U8LjbZ9ljJAI=
-X-Google-Smtp-Source: AGHT+IGNN82l2lMyi/E0/dQG+zmrRfChcRly38cTdDLtcXFs6dRfpl7el+Dp7tFC7y3pRAYFDV+J7LQf/WTl5BALGEU=
-X-Received: by 2002:a17:90a:e394:b0:2c2:97c2:1424 with SMTP id
- 98e67ed59e1d1-2c2bcafcde7mr9856796a91.25.1718061436338; Mon, 10 Jun 2024
- 16:17:16 -0700 (PDT)
+	s=arc-20240116; t=1718061525; c=relaxed/simple;
+	bh=KIyL2/Hl4FaIl2MR/Gi9klRT1Z9ieuVHLhL4igv4HKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5ZMa+qYXsHxw+wjUda0lHfMIPqLEF/aSvseaQQxIDFjrQtshL3l42kuJGeIAufPAi1fc4k8rWsvtj32Zxqb4NK6Sj4BF42VAEAwzZDqkGOra3hRIypO55fRYnKhRaPK6JHCcjzKMkgU+PAp6/ZLbufk7thE+BSCg86EZh9ec1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7m+kI7V; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718061522; x=1749597522;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KIyL2/Hl4FaIl2MR/Gi9klRT1Z9ieuVHLhL4igv4HKw=;
+  b=e7m+kI7VAbj1qz69uuH11lW+LphIRjgygNpKzMBi/2ugUjLSSJADuJG/
+   p/cBpz5rDukLsf8sCJU/Ubn4WqtFgyujNjJBMw5Qkf995SUOYFdYXT7yF
+   8C5HW61TS/9gRJAIUcUEo835I/wYFM25sXj2bYJilQijqzWx+xMHSDKVn
+   iylV0JDxZdjjDPUGB3GLCPIIN5wpGbXYjBKtCDyKf/m1CEzk++rhUqOQm
+   AOkVOCQwTRtuxlUhK2L2gRxzK1kksrm4ijZUuiddq21QcMr8k/BORK84Z
+   Yc1vcoSQR23ZwIgxfYt7vV8kDkcyniTjkj9AIpCSnKTkRnbmvwy6q+fXO
+   w==;
+X-CSE-ConnectionGUID: LfkXujOERxGJFOfRwhNM4w==
+X-CSE-MsgGUID: qLNlt7UdRZuQVbg4VMzngw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12008205"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="12008205"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 16:18:42 -0700
+X-CSE-ConnectionGUID: 26nkzdepRRavkqvQZ6bjbg==
+X-CSE-MsgGUID: 0M+KnpDiQsGcNL9mbEd6OA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="76672525"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 10 Jun 2024 16:18:39 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGoHc-0002Zd-3A;
+	Mon, 10 Jun 2024 23:18:36 +0000
+Date: Tue, 11 Jun 2024 07:18:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: oe-kbuild-all@lists.linux.dev, arulponn@cisco.com, djhawar@cisco.com,
+	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: Re: [PATCH 06/14] scsi: fnic: Add and integrate support for FDMI
+Message-ID: <202406110734.p2v8dq9v-lkp@intel.com>
+References: <20240610215100.673158-7-kartilak@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606183032.684481-1-andreas@kemnade.info> <CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
- <20240606221941.333a9704@aktux> <CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
- <20240608212004.3707d8ea@aktux>
-In-Reply-To: <20240608212004.3707d8ea@aktux>
-From: Adam Ford <aford173@gmail.com>
-Date: Mon, 10 Jun 2024 18:17:05 -0500
-Message-ID: <CAHCN7xLDjnW1gK8DF4codzFLEvC_hDgeACR8wtWF8nxCJ=+RBg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, marcel@holtmann.org, johan@kernel.org, 
-	pmenzel@molgen.mpg.de, jirislaby@kernel.org, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	Tony Lindgren <tony@atomide.com>, tomi.valkeinen@ideasonboard.com, 
-	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, robh@kernel.org, 
-	hns@goldelico.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610215100.673158-7-kartilak@cisco.com>
 
-On Sat, Jun 8, 2024 at 2:20=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
-o> wrote:
->
-> Hi Adam,
->
-> On Sat, 8 Jun 2024 14:00:38 -0500
-> Adam Ford <aford173@gmail.com> wrote:
->
-> > On Thu, Jun 6, 2024 at 3:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade=
-.info> wrote:
-> > >
-> > > Hi Luiz,
-> > >
-> > > On Thu, 6 Jun 2024 16:04:10 -0400
-> > > Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
-> > >
-> > > > Hi Andreas,
-> > > >
-> > > > On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@kem=
-nade.info> wrote:
-> > > > >
-> > > > > Some of these chips have GNSS support. In some vendor kernels
-> > > > > a driver on top of misc/ti-st can be found providing a /dev/tigps
-> > > > > device which speaks the secretive Air Independent Interface (AI2)=
- protocol.
-> >
-> > I think you may have sent me a file to test, but I can't find the
-> > e-mail.   Can you tell me what tool you used to test it?  I can get
-> > gnss0 to enumerate, so I am close.
-> >
-> hmm, /bin/cat is sufficient. It should spit out nmea now by default.
->
-> For playing around with raw mode, you need the ai2raw parameter
-> and then you can play around with read-gps from
-> https://github.com/akemnade/bt200tools
->
-> > [   20.759857] hci-ti serial0-0: using DT
-> > '/ocp@68000000/serial@4806c000/bluetooth-gnss' for 'enable' GPIO
-> > lookup
-> > [   20.770263] of_get_named_gpiod_flags: parsed 'enable-gpios'
-> > property of node '/ocp@68000000/serial@4806c000/bluetooth-gnss[0]' -
-> > status (0)
-> > [   29.221588] gnss: GNSS driver registered with major 244
-> >
-> That is nice.
+Hi Karan,
 
-I think I am stuck.  The closed-sourced GPS binary that Logic PD did
-was done a 3rd party which has since been sold, and Logic PD never had
-the source code, I just get junk with this driver:
+kernel test robot noticed the following build warnings:
 
-$GPGLL,,,,,,V,N*64
-$GPRMC,,V,,,,,,,,,,N*53
-$GPGGA,,,,,,0,,,,,,,,*66
-$GPVTG,,T,,M,,N,,K,N*2C
-$GPGSA,M,1,,,,,,,,,,,,,,,*12
-$GPGSV,1,1,00*79
-$GPGLL,,,,,,V,N*64
-$GPRMC,,V,,,,,,,,,,N*53
-$GPGGA,,,,,,0,,,,,,,,*66
-$GPVTG,,T,,M,,N,,K,N*2C
-$GPGSA,M,1,,,,,,,,,,,,,,,*12
-$GPGSV,1,1,00*79
-$GPGLL,,,,,,V,N*64
-$GPRMC,,V,,,,,,,,,,N*53
-$GPGGA,,,,,,0,,,,,,,,*66
-$GPVTG,,T,,M,,N,,K,N*2C
-$GPGSA,M,1,,,,,,,,,,,,,,,*12
-$GPGSV,1,1,00*79
+[auto build test WARNING on mkp-scsi/for-next]
+[also build test WARNING on jejb-scsi/for-next linus/master v6.10-rc3 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I am not 100% positive, but I think the antenna might be required to
-be powered.  I'll talk with the HW engineer who designed the Torpedo +
-Wireless SOM and see if he remembers anyhthing about the GPS.  I know
-for a fact that Logic PD doesn't have the source code for their GPS
-demo, and I know it doesn't work with modern kernels, so i can't
-compare the performance.
+url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-pr_info-pr_err/20240611-060227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20240610215100.673158-7-kartilak%40cisco.com
+patch subject: [PATCH 06/14] scsi: fnic: Add and integrate support for FDMI
+reproduce: (https://download.01.org/0day-ci/archive/20240611/202406110734.p2v8dq9v-lkp@intel.com/reproduce)
 
-:-(
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406110734.p2v8dq9v-lkp@intel.com/
 
-adam
+versioncheck warnings: (new ones prefixed by >>)
+   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
+   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
+   	-name '*.[hcS]' -type f -print | sort \
+   	| xargs perl -w ./scripts/checkversion.pl
+   ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
+   ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
+>> ./drivers/scsi/fnic/fnic_pci_subsys_devid.c: 11 linux/version.h not needed.
+   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
+   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
+   ./samples/trace_events/trace_custom_sched.c: 11 linux/version.h not needed.
+   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
+   ./tools/lib/bpf/bpf_helpers.h: 423: need linux/version.h
+   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
+   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
 
-
->
-> Regards,
-> Andreas
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
