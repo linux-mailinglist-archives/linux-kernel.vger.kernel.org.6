@@ -1,208 +1,152 @@
-Return-Path: <linux-kernel+bounces-209050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E061F902C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B0A902C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A331C211EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4D81F21391
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FCD153838;
-	Mon, 10 Jun 2024 23:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501B515219B;
+	Mon, 10 Jun 2024 23:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U/88Gwdh"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fXUiwL9I"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07356152178;
-	Mon, 10 Jun 2024 23:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718061102; cv=fail; b=Lk87eGA6Ep3Oxx/58HgiTLP2SYlJoYh54tHvQsTEi+2NPU9Fz8DBVoPS9eeHRo4bm2t0XUQW7fPONcM4YqrvKRyJ/Zz1Tj8K03oS59NDkv+pWCNwRQsTD5OoXSQ0jzzsPqNFPLiaCLDIA/U10ip8YTtQ68BKnZRO2j0QvNfb8+U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718061102; c=relaxed/simple;
-	bh=HMgSG8UkjeWErtNe1andYEpfGcAFGBVJ6ibXuKvKmmA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=E4gODxz0pf3GkZIax6NwxtBIwERwnvHxgyPl2r28wDZ7iBD2/8U8aUyiy3YNQi5acBLZY9MKGCTwKWqv8MK0gT0kOIHm4Wd/hP5EZNHSDpb1OJ3dXRL9JFTEBAFCiF0v53j7IMJ+f77vhQRAHEsNlv4tANoft7B7VAU4J0ZT0N8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U/88Gwdh; arc=fail smtp.client-ip=40.107.220.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oSKEqcxmQJDQlvoD3tNeVvzREqZkm+mcc0ewGLR0Rwe37qtc8wsXzKsuw6uan3xEEQkpe1DP9bPoXMf0d0uIiVzncmdUATMERM6KGyFVNXVQN5NKnEGBJ7aOdYbyQvxAN8xHiHoU74ekWhNPazDxsYb2P6qOguAOIqlsQcFSrBV1mVdBJMTg4BiyE76DTUP8EaV+vsUzCRZiZlRQtnrAlRopT6bhB1Dmfmq7vf5klVg+4E1TxAr357ceNuI+0jHee4zlQYjXfB9yBbbVzgWDI3V7MP0OiH4PDyrhgSmyTT/qhJ4nZp/0R3WPkhfspM4ZLOiT6ze+8GDXFI2X5UXO7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNygtwb2wnTXpfJn1S3LaaLSTo239Rak/iLV0Pld/1w=;
- b=PnINjiqfP1bdCRW2BUjjdbf6lJqoM7Uas6fvTAZagRUQl4EOctan0hK8USEp0OolOBOaRbrx0GAAGUt9A56zR0bkKPXDmb/XdM9Rsc1h/6nExvpoSNc4SxEuR6vaJhWat7XIyIJxyfsEGRsK0k003t/BYrzh7xeVYS5Afkhh1ztAS3JngvvXxnrqAXtMIzHQektdS25PUujxzUBucbAu/c5xrJnvvvFgXEQg7ZMunF65yrcN2grgAOJ6lEyYd2Glgcf8o+7HzYpbYvL+UT3Ex59v+afju0+jxtdCfvxKYg35jRJj3F/+ljlEh46sRdEQtWKHegoptfXVZCuEgV5iuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aNygtwb2wnTXpfJn1S3LaaLSTo239Rak/iLV0Pld/1w=;
- b=U/88GwdhLKCCZk0aO6XNI5GfG+jHMdFFsWF59Q3wlXeS/aUxgHW4Qxfnl0gFuR/lZM8XNLqnxfs0bebvt5xftH21nteKbcFubq1pV7QlewMQUoI4QPSwKiZkZT1PPXn1mOZ+as5LFRhjo9A/uub1I1RVnNO//VBy5EXhefkCaFE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by PH7PR12MB5854.namprd12.prod.outlook.com (2603:10b6:510:1d5::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 23:11:35 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 23:11:34 +0000
-Message-ID: <3078aee7-acbe-f912-9a99-941154dc4b13@amd.com>
-Date: Mon, 10 Jun 2024 18:11:31 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v2] selftests/resctrl: Fix noncont_cat_run_test for AMD
-Content-Language: en-US
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, fenghua.yu@intel.com, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- ilpo.jarvinen@linux.intel.com, maciej.wieczor-retman@intel.com,
- peternewman@google.com, eranian@google.com
-References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
- <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
- <6a78de4e-8d36-400c-9eb5-d3d6aa9e1e23@intel.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <6a78de4e-8d36-400c-9eb5-d3d6aa9e1e23@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0086.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:35e::27) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE3B4779E;
+	Mon, 10 Jun 2024 23:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718061244; cv=none; b=RmMIKLzuENVx2/HxBjHoOHrkZSdJJYFCJRQunI/0YaaVFfCdxOUuj2YWZQ6r1Mf4kA0ewqttYEqtTemgEf0ceqRGOyg6rYxz9f37qtFSnFBv6KhabznvE01Sx9HoV/EAbUEErsku91HSbFJT1HFlZj/anvxNMSwYzvxZEDRLMbk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718061244; c=relaxed/simple;
+	bh=XU6BOh2DEWLUvg1y8dXWq4FHicB8QmFWvgMoo960iAE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ygq0IPiep5AZMmDA+K6/QrCt/0Ptt+xgeoeS2GpEU2kkVyt0CB1bxL74cGMUajZJkGAUtH+b1eMyuvocESqtTuaU2pChW+cFzNlXOYL87sESbYxG4SLIyw6/xiMHi0ubNUDD5+Qj4EkiSvy6gjb7EhE2Xpe0Z8t66tS+LrjQgSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fXUiwL9I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ADUbXf029624;
+	Mon, 10 Jun 2024 23:13:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=098YuThUKLesrwkEfnSYpE
+	zw/0qjZqI3rNn+/RSq+G0=; b=fXUiwL9IkAt5DuJwKP3P2UpNW5ed2GtjmUFvVQ
+	djdDf1u0hVw0rDCla2CPT/jz06OsmrU++Fo9SDAEVQ3LRlzge49tetqQfe4/F53r
+	RegjwWo7jIeK7iSIk0nGdhh+konGlGLPNHY8e16nQZFyAUoz01KY94uqFPNa1Jnr
+	rne1HdwKNlMPjSReoAdrTxp6wl2QYaKDf08ojVjVDhfCE2rUM8rZY+znR77yuFTY
+	dZO9PcAjG97Fv3yghtdb+yMtPyCY3Tm30BYNmUfEMsvg8sCyCommMM3jGNnPzjQG
+	LeLjVxXC23Jq/K02b12tjwHhwNaHn6/4tnJBV6zn6ihJKa6w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymea6mv79-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 23:13:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ANDuux031529
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 23:13:56 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 16:13:55 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 10 Jun 2024 16:13:55 -0700
+Subject: [PATCH] pmdomain: amlogic: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH7PR12MB5854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55b4ba2b-3806-4e99-e73f-08dc89a2ac2b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkZ0azFLZHpnYnh0VkNCNitQWDhzMjRUczd1M2RYYVhuZElDQXBOUDVsaVBM?=
- =?utf-8?B?a25Ya3ljbVJ1dDVMWVk4UVhERXZPQ2tpUFBpNklUZXk2SUl4YmcyRmNwNk5q?=
- =?utf-8?B?MDhsVkVaMkM0bG9nYVJEb1RIWUpnYnZpZW9kYW5NaGdtdGJ5M3Z6T3BlSnRi?=
- =?utf-8?B?WDhMUElkazFjSnl5djB3QVhPOUVhcmtwYXRZNGhhdEhlK1pHZE4rdEFVd0Fh?=
- =?utf-8?B?TnFTQnpaMG9RQ2RMNFZiL3M0alBZbzVaU2wzaUpXc3BJOGQ1anJVSHJpSDA5?=
- =?utf-8?B?MlVQMUlSQXlIbWJkcGxiT1hKR2V0SHE0QjFwL0x2bThtWXplR003RGp3Ung5?=
- =?utf-8?B?ajBUWi95ZUlkS01ZVGU3VUZBd2pCYlFqL2ZwcDIwTFpwcEFhSSt0djU1QmIr?=
- =?utf-8?B?L1VPNjZIbVJNdlZJVmhPbHhFUXJxKzVhbVUxeGcvZE9qa2FJTU1ZemhZb2hX?=
- =?utf-8?B?OUlvWk1uY3l3Ujh6VXUxVnBVSGcrVUh5YWU1ekFsVU5aUEYvd2VqMTJMWXAv?=
- =?utf-8?B?M0IzODBEa2ZOcVM2SGlFdHE2NzdWWnpoOVhIT3p4Q2ZvcGMxVUxJRUc4ZGl2?=
- =?utf-8?B?bWxPc3dWMnN0UlRVUUdYQ3dCL25sa0JaK1NIOGZKQnpSaTJ3d0FYa0FUYXRH?=
- =?utf-8?B?ZHpqRmk5RElWRWdBOFMwZ0NmTlYwbHExbURrcDhJeVZ6VkVpM1VNRGhqMEhT?=
- =?utf-8?B?WlRmZFV6aUVGaXRpT1E3bXJjeS9taFFyTml4TU9aYWNpajBEeUwyajJPRFI1?=
- =?utf-8?B?akpxb3kvdm9veXlCUXpKNzUyRG5tQmd0NmFkL2ErUFJOVEJkTXlwT0xUWjg3?=
- =?utf-8?B?TkxOWmJUR0o4L25BdTdTbHBKNXE0dnpzVTl5blo4bjVpR2JydlRZOVBUSXIv?=
- =?utf-8?B?bzBqZEg1ZDBWWWpFWDYxNTZVQ3V4RWJtZzRFcWFFdGpydURQbFR5SlhWVHNR?=
- =?utf-8?B?OGJYNEk2R0crSzY5OHNEVVV1c1p6MHgwZzUvMDNyeGpkelhLZUx0U0xIOStL?=
- =?utf-8?B?OHYzUkM4RU5IcDczdm8vSGZuMGZwOXpGb25CNmkxSzB5akFhQUtoTDRSclpR?=
- =?utf-8?B?WEJiWk91TGpCQkcwVERuc09wNnJuMFdZeEJJbTVNQ05xM0JUV2x2K2Q1c1R2?=
- =?utf-8?B?Umg3UWl2SERKZlg2R0N5WjRSQ3JtZkJRR3JEdUhIekhiVzlmazFWWkszaDBP?=
- =?utf-8?B?bE5oV1RRZTd0RFpuT0hzL1lHMmVKUE80OVJDRGsrT21GTThZcGM1ZzdNVmVn?=
- =?utf-8?B?TXhnVkdmc1ZWWFQ0NTJUYXpTdkQ1M1JOZVE0SFVnZEpIektHenlzOGFqWUNC?=
- =?utf-8?B?Q0NXdzVjTzNBWEI3ZDBYS0RWaW1wam1lT0lXTHJXRXhYN3BaQXYySFE5UzJh?=
- =?utf-8?B?RWVXNjlRcVFrN2hoUS80QlQ4b1JzOGw4V3NuZ0pvZVpVc0syWVlORWZ5UGVH?=
- =?utf-8?B?OVpERnQ4RHBNNzBQL0Z0NXR6eitTbkNtcUFnQ3RyNmRJS0dWS1lyb0dEQ1Zl?=
- =?utf-8?B?cVBRcjYweERDZU5QMWs3YlVLQkx2U3NhM1dDalYweHEwcmhDa3ZGY0RQY3BN?=
- =?utf-8?B?Ulg1cHRVQ0toS2ZGWW1DYk42NHVKa2ZFY0Npbm9qRDlkMTF1dDRnK3B3ZXlz?=
- =?utf-8?B?L2pCaHVDMm9hTWxCSjFMV0ttby9SQ283a2g2NThBMEt0WDVQVTl0NTJzSkx2?=
- =?utf-8?B?TEhONUlpdm5sSkVKMWRTR1M2VE1lcm44dWp5MHdUb0ZpQXVSQ1I2N0V6NjJ6?=
- =?utf-8?Q?OUnV+VFVYFe67xxcwJL6M7ohRv/u4z8RXuMK9Y5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YVF0SFpWZzVEWjhjVEcvdmlkSkswMkx6VERWLy9IcDQ2VTQ3Wk4yYUhSYnFB?=
- =?utf-8?B?ZU9XLzBxM0NGaHAxdlVlUHA1Z1JpeS9rZjlQQ3RGQWE1OWpteVlYNmhnVVFT?=
- =?utf-8?B?TXViRzd1K1BzNVdwS04wcUx4QmtUeVdQeGt0N25teVFtS1NJR3BlQnZvd3Zt?=
- =?utf-8?B?QmdtbXFTYmZFa0NsNFdPMlQ4OVRPZElLcmVKeFFWU1NLd21sWjg3MmlmcW4y?=
- =?utf-8?B?b2tva0JGNitpNVJyVzE2SUhNUHRYZjFXamk0SEh6NkNYcmVucWFnT2I1VCtJ?=
- =?utf-8?B?M0FzQU1qQWRHZUFtN2wxR0hmQ1JVQjN6amlLNlBvZ3R4WHBmZVcwQklPMGk2?=
- =?utf-8?B?L3RCLzFDSEt5THdWWEJqMjNFZHduanY3UFkzUCtNa2pXcDMvQXh0azFHQ0Rj?=
- =?utf-8?B?V1RqQjA2WmVVOWxQNGNwbks5QnF5d0M1SGRoYTV5VmRFcGliWW5LS3RqTnM4?=
- =?utf-8?B?UUdGc2ZGQlFUNzJqZ3BUWVVscklpNEJVd1hROWNJTDlTRzZiYmpSeHpwb0tI?=
- =?utf-8?B?KzVQcDdVanRFNlAyZ1pxa25UVUFIcHlSVXZURkdZMm5XTXFKdGFpSExRVDVX?=
- =?utf-8?B?N2E4K0lBaFF6N09ETzBja2lTUFRYYklNZktCaHVyOUt5OXMveGFKbXJnZFNL?=
- =?utf-8?B?eEJWS2NCQUluMkxBdkZFa2dIMVFidXVFL3dqNGw5REtQbE1mY3ZhSlAwVU1B?=
- =?utf-8?B?M3VVR1dnQUhpYXovZkhDU3lzbmQrWXBrRlQrOXhwSHNvMVY4OHBGY3dqV1N5?=
- =?utf-8?B?RVpzT1MxaDNPS3pZVTBwaCtkVzBtU2k3Z1BqSllEVlFkUmpuTE5haEJmNFVS?=
- =?utf-8?B?Tytad0xLcm5rV09mWWRaemQzc3ZCSTBPdlNLNGNzTUQybXZmQWx4ZHZpUFlB?=
- =?utf-8?B?akpsSFMvbHl5UWg3SmlwczhTZVRTUXNSRWhJUEFSUHhEL0hCaUtyUnF0Qjhy?=
- =?utf-8?B?U2U5WU5KNDY2QmswaVhGQnBZTElXMmF3NGg0eVdlRHN0aTdPNkdYSFVGZ3lZ?=
- =?utf-8?B?dkFrTmo5UFdhTityek1WT1QxNG9Zb1VKNldNVmpQUGZMT3dQdDFWeXpDeURV?=
- =?utf-8?B?TjVlM0xSbG80bzQyWGFFMzREcVZIY0k4eVYyUkhzZU05V2piWmlTVFovK25v?=
- =?utf-8?B?dytva290K2ZoRU15aFlhMFR2SkxHb05sWnA5SW1kWWE4V3NucFBOOHhZWk41?=
- =?utf-8?B?WHNRQVpSbi9LbE5uRVdSNzFFYnpEazRYdDUxb1JyTU5NcnhQbERGUFpZMDdB?=
- =?utf-8?B?cmlVU3QzS05SVWZEWklpZmxrQ3pUQUpBaWI5cmZob3BYMlZpSHpkamVuc1pB?=
- =?utf-8?B?WjFnWDNEOXhGTE1QQnQzVVFmVEpUdVhKSTdFT0l6RVVhTlBkUEFRRUJJVThO?=
- =?utf-8?B?ajJjK0YwQWhRc3pHTm1aMHJzYlpUb3JiRUx0ckxCR3VKelMwMnNSSWtkdnBq?=
- =?utf-8?B?ZmVISGRXQ0NUWktQdFBpd2JVcnBZZ1lmbk5JdzQwaXdpOGxNQlhaSmNJNmla?=
- =?utf-8?B?cUJVNGJ5VEtVb0Mxc1lQMTBSakh3elVWZjFZQUlTQXU5RGpicEc1b0xTSG0x?=
- =?utf-8?B?NkV0SjJDNkxxb3piMUJCWFFzRHhQZUYxanBnK1BCZlUvb3JFeFdlb0plUnVT?=
- =?utf-8?B?cjR5eGRSUDRETjRReUgrUElobjhSL2k1enFpUVpyM1cvcloyNEYycWd1eE8z?=
- =?utf-8?B?cUhOZzBjQkI1WERZVXVEcTdrdWhWMWhhQUpwaG0zWE9hSUdjNkVLRHZFak1O?=
- =?utf-8?B?aU1Cc1pjbkdpNjYwWGcxeitXQW9WSmRSMFZwNEVua01KSzVQbmh0WUV0eVRj?=
- =?utf-8?B?aFRvZVNQS0xPMUhmTlUzSFFMK3p1eVljVncrUnZXZE5GWU8zbGZiVW9TQ2J3?=
- =?utf-8?B?c2YwSkpjTGRhT3pVQzRDYlYwcFh5RGkySXRKWWZnUytUUHJINERHejNwMUdt?=
- =?utf-8?B?ZWRKL01sVEpDaEYwS3pGVFdXajl3Zlk2bnFyRjVmNkZkQWUzYWRWT1p2V1lL?=
- =?utf-8?B?YXNLQjhxV1ZEQXMzOWpuNXdZN0NIaDQ5V2tNV295Y2puU1RoNzhaYUhJN2NL?=
- =?utf-8?B?cTJaQ2hkTitxMUh1WTViVGxDa1J1S3hEY0xMNVFXUGVwT1VyQk95KzhEdmw2?=
- =?utf-8?Q?/KaFHyStwlVHMiyFML0G9DPqP?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55b4ba2b-3806-4e99-e73f-08dc89a2ac2b
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 23:11:34.7392
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3PyNq/GHiMyYIZ0rgfxoyjY60puaV0tNjzskn7V3qdyh97OWiZdoouVvrzwaX5zz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5854
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALKIZ2YC/x3MwQqDMAwA0F+RnBdI3XBsvzJ2iG3UgG0ldSKI/
+ 75ux3d5BxQxlQLP5gCTTYvmVOEuDfiJ0yiooRpaam/UOcIYMJhuYgWXGHJkTchxzqN6HJy7P67
+ UEQlDHRaTQff//npX91wEe+Pkp985a/rsGLmsYnCeXyKdRE+MAAAA
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Jerome
+ Brunet" <jbrunet@baylibre.com>,
+        Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>
+CC: <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -3o1y20JkrcZJ8gLc3NK2SDvoJ6_HOJ6
+X-Proofpoint-ORIG-GUID: -3o1y20JkrcZJ8gLc3NK2SDvoJ6_HOJ6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_06,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406100172
 
-Hi Reinette,
+On x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-ee-pwrc.o
 
-On 6/10/2024 4:32 PM, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> (please do not send new version of patch in response to previous version)
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE().
 
-Yes. I saw your comments on other thread. I will take care of it.
+This includes meson-secure-pwrc.c which, although it did not produce a
+warning with the x86 allmodconfig configuration, may cause this
+warning with other configurations where CONFIG_MESON_SM is enabled.
 
-> 
-> On 6/10/24 9:00 AM, Babu Moger wrote:
->> The selftest noncont_cat_run_test fails on AMD with the warnings. Reason
->> is, AMD supports non contiguous CBM masks but does not report it via 
->> CPUID.
->>
->> Update noncont_cat_run_test to check for the vendor when verifying CPUID.
->>
->> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT 
->> test")
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
-> 
-> The changelog needs to be reworked based on discussion in other thread.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/pmdomain/amlogic/meson-ee-pwrc.c     | 1 +
+ drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 1 +
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c | 1 +
+ 3 files changed, 3 insertions(+)
 
-Sure.
+diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+index fcec6eb610e4..fbb2b4103930 100644
+--- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
++++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+@@ -648,4 +648,5 @@ static struct platform_driver meson_ee_pwrc_driver = {
+ 	},
+ };
+ module_platform_driver(meson_ee_pwrc_driver);
++MODULE_DESCRIPTION("Amlogic Meson Everything-Else Power Domains driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+index 33df520eab95..6028e91664a4 100644
+--- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
++++ b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+@@ -376,4 +376,5 @@ static struct platform_driver meson_gx_pwrc_vpu_driver = {
+ 	},
+ };
+ module_platform_driver(meson_gx_pwrc_vpu_driver);
++MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+index 4d5bda0d60fc..b50e5678abe3 100644
+--- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
++++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+@@ -355,4 +355,5 @@ static struct platform_driver meson_secure_pwrc_driver = {
+ 	},
+ };
+ module_platform_driver(meson_secure_pwrc_driver);
++MODULE_DESCRIPTION("Amlogic Meson Secure Power Domains driver");
+ MODULE_LICENSE("Dual MIT/GPL");
 
-> With that complete, for this patch you can add:
-> | Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240610-md-drivers-pmdomain-amlogic-f117930600ea
 
-Thanks
-
--- 
-- Babu Moger
 
