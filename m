@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-207778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A127901BF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:35:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43BB901BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0537283489
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADAD1C21913
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F75224211;
-	Mon, 10 Jun 2024 07:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45DB2C1B4;
+	Mon, 10 Jun 2024 07:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCKzm/+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xq+M6SYo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5559E63C7;
-	Mon, 10 Jun 2024 07:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051DE22081;
+	Mon, 10 Jun 2024 07:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718004948; cv=none; b=EHxn8LcgVUVnVJQ1rpMowhfYB6mJdrVTwDJYcBiSLLtVq24812EZjruLG8Kjk3tXXVp2o2/QGmhdt4aOreVoPcZuUlt/VMIEtSf3e6dq09mu3GYW+TctkBkW2jqEpGz/NXd4Yi/7qSH1ZTMTu7mIqRyo3fa+E9JW7tEbE+PZjv4=
+	t=1718005084; cv=none; b=Q+PKJsEMR5hhM8otjPWee0mVKdc8cm0fmhMFGPOPIeVHMxb33pSw6Mr9oBeeK2CiNa0I/kCBYeRqhFHrh5eTO/F2F4pR9veDVSAsj+x6DIMQVMDytKJ6IjZZs4G6mRgxn3/Mk3yFQsQ/6dkiFO+O9ixULIaiUqGJ/+dZmUqG7uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718004948; c=relaxed/simple;
-	bh=f6xNCJInzwwc6J3blEhD9YRdX/urTk6EYS9v+XsIGYw=;
+	s=arc-20240116; t=1718005084; c=relaxed/simple;
+	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6zH0qPxHyZC5+LsnnVg5YZZbHB8SkpiZJqeEmXz1Mp0CLrRdfRj9TXuhogHRBpNLUdkJhogQtDuOzsi1qgRyV6eE3WSQekAqEEomfCKki3AmUISP/lRJGG97a+sdk5yAo/+nAoqzkDXu/k1Lv2/dUx06ZThP/cun93L4UEEt3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCKzm/+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C74C2BBFC;
-	Mon, 10 Jun 2024 07:35:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=FDeQ3hKhI3k1l8/+7rV6n5sufJMGT3Q5BW4apyCLf6/8z1BTMadKhOhB8pBXdrqMJrYZTtBRx9nxojevQPLWuaUG6h95w6wO5ph+oOwmDnByuZDLv0jcBaBBe/IHdsCwFxKiJZwT/wSVWw63h+OIqXbEAYHoaNuNtcXoqS95rmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xq+M6SYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A3C2BBFC;
+	Mon, 10 Jun 2024 07:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718004947;
-	bh=f6xNCJInzwwc6J3blEhD9YRdX/urTk6EYS9v+XsIGYw=;
+	s=k20201202; t=1718005083;
+	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZCKzm/+YE5tqBCK0O0TzEQcGC3ztan10KMmMDgeXTCX5EtLQ7uXkNe2m5Hu+TNnOv
-	 hdUmSsuuKCzGph/5MRRZCkzvtb2i+VC0VruIuZPyQ5oEULSK+rrkXr4Vey5mXIat1i
-	 1Ilfl0pmhnHzESkMu3JRor7OLzNkkQ9bOExaE5IBelRRq73LRNS057sm5LAvwF/S2g
-	 XjGSoQkCqHflcbhkzC1q+foKR9SNL9HfzY2vdvBwxT75PEuBDbonbb1W618G45nUWl
-	 qxLXltf1XEKUjRlg/MGNjn9uSYco1fHgQpUPVK0wWdnW6HmIy3m7yY/hWanMTj3Xzl
-	 iPRKVq2bo+6XQ==
-Message-ID: <f8afafff-1fc5-416f-aca0-b284a02a6e37@kernel.org>
-Date: Mon, 10 Jun 2024 09:35:41 +0200
+	b=Xq+M6SYoiXTTgSBMjBLlIarHnOx21mTKAc77p3F/gX5OraHEk47d/6C25s+4a+ZW+
+	 SwAba5UtfZ8nZRgTjBHOVAWJS/arx4aJ35R6ijq+lTvJNbRLFOe9Nrl99bN7JKhGGs
+	 U2cuvYvom6JZYKoqHdEr6BSHZepKlbrreOvW6Znl18D8Kcosg/Gqd/+12PGsgRsOMk
+	 WNJjh0BLPv0oHDwNlSkQPKoxcEdYkl69Exi7RuVb3/pttgYWhMNnqiz6juo8dAR3ZF
+	 RsDURgHU8B79HiqfVnihSySRTaER3X1cxN+mczemkwnZhoTMIjDexJUSKnYexZUfIM
+	 8tgteJvwX+U2A==
+Message-ID: <d78b7a50-8f79-4733-bf2b-ee7d70501c47@kernel.org>
+Date: Mon, 10 Jun 2024 09:37:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings:iio:proximity: Add hx9023s binding
-To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
-Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
- u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
-References: <20240607114138.390272-1-yasin.lee.x@outlook.com>
- <SN7PR12MB810129D8180B1C9593A8E078A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
+ for power-domain
+To: Frank Li <Frank.li@nxp.com>
+Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ mathieu.poirier@linaro.org, peng.fan@nxp.com, robh@kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org
+References: <20240606150030.3067015-1-Frank.Li@nxp.com>
+ <19058054-5138-4d37-860f-dd430abd3a0f@kernel.org>
+ <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,38 +106,76 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <SN7PR12MB810129D8180B1C9593A8E078A4FB2@SN7PR12MB8101.namprd12.prod.outlook.com>
+In-Reply-To: <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/06/2024 13:41, Yasin Lee wrote:
-> From: Yasin Lee <yasin.lee.x@gmail.com>
+On 07/06/2024 17:19, Frank Li wrote:
+> On Fri, Jun 07, 2024 at 09:32:26AM +0200, Krzysztof Kozlowski wrote:
+>> On 06/06/2024 17:00, Frank Li wrote:
+>>> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Keep
+>>> the same restriction for other compatible string.
+>>>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>
+>>> Notes:
+>>>     Change from v1 to v2
+>>>     - set minitem to 2 at top
+>>>     - Add imx8qm compatible string also
+>>>     - use not logic to handle difference compatible string restriction
+>>>     - update commit message.
+>>>     
+>>>     pass dt_binding_check.
+>>>     
+>>>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
+>>>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>>>       CHKDT   Documentation/devicetree/bindings
+>>>       LINT    Documentation/devicetree/bindings
+>>>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
+>>>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
+>>>
+>>>  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 14 ++++++++++++++
+>>>  1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> index df36e29d974ca..da108a39df435 100644
+>>> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> @@ -59,6 +59,7 @@ properties:
+>>>      maxItems: 32
+>>>  
+>>>    power-domains:
+>>> +    minItems: 2
+>>>      maxItems: 8
+>>>  
+>>>    fsl,auto-boot:
+>>> @@ -99,6 +100,19 @@ allOf:
+>>>        properties:
+>>>          fsl,iomuxc-gpr: false
+>>>  
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          not:
+>>> +            contains:
+>>> +              enum:
+>>> +                - fsl,imx8qxp-cm4
+>>> +                - fsl,imx8qm-cm4
+>>> +    then:
+>>> +      properties:
+>>> +        power-domains:
+>>> +          minItems: 8
+>>
+>> What happened with the "else:"? How many power domains is needed for
+>> other devices?
 > 
-> A capacitive proximity sensor
+> So far, only fsl,imx8qxp-cm4 ind fsl,imx8qm-cm4 need power domain (2-8). 
+> Power-domains is option property. 
 > 
-> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+> Can I just remove whole "if"?
 
-Not much improved. You still ignored feedback. Please respond to each
-feedback and acknowledge it.
-
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline), work on fork of kernel
-(don't, instead use mainline) or you ignore some maintainers (really
-don't). Just use b4 and everything should be fine, although remember
-about `b4 prep --auto-to-cc` if you added new patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time, thus I will skip this patch entirely till you follow
-the process allowing the patch to be tested.
-
-Please kindly resend and include all necessary To/Cc entries.
+No, I rather expect else.
 
 Best regards,
 Krzysztof
