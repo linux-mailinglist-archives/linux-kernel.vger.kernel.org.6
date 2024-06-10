@@ -1,193 +1,165 @@
-Return-Path: <linux-kernel+bounces-208093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE3F902086
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D839F90208E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B29BB243A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF86A1C20371
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B1F7D40D;
-	Mon, 10 Jun 2024 11:41:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D143537E9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06FB7D414;
+	Mon, 10 Jun 2024 11:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Os6FGw/+"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC807BB17;
+	Mon, 10 Jun 2024 11:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019673; cv=none; b=SpgUxzwl1Y9IssoUDclN4LasAlPATyPfQXXchG+QPAs+ZX4diNwc/9yXQVlsmOrTksTHSP+7oqR4B/UH2M38Zx8RzfHk6Acysseqvr3m+haKqvm4mgKhrEZKfKPu8pWoxQiuQkt+23Da+cQpQzwEgyqyupVoLEYOCD5gr3W0vrk=
+	t=1718019825; cv=none; b=D90ZaLwrJh7HBfF0B1wLSkXi5JMXZgQdp3ZdwpcjTs+kwIIPce184Y352Iyjbfl7GCLNvwMbB/UmFRhqSiblc3HGkrCeVCLq4QnveHpDsDdh/L2d7z6pz8Q72JPVGCxoHYpEfrJGlqD9wo0OVJq8QezFROVTeORGf8iSHTz2bY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019673; c=relaxed/simple;
-	bh=nyqfG2kuYiSkZ7XrIH7o5AupFxSBg0C40ywehmENuIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxvcKzdsQJ2c5lDY4FCb1OzBSfkjZph+YMaJk3ThgWA12q66T8BQG+N8xY7D6Wc3nBm3E60q6wHZ8DTIozSeWJNuh5DXLnwcBG7+CKQG5vLUoTjEgiTnPSp3myvB5fxARK1y/X/fxt/s+NxpWvORtNX96t/L3bQQ2/h39SwAAf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 215711688
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:41:35 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6AE6C3F73B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:41:10 -0700 (PDT)
-Date: Mon, 10 Jun 2024 12:41:00 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZmbmTEt2cP4tS2Nn@e110455-lin.cambridge.arm.com>
-References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
+	s=arc-20240116; t=1718019825; c=relaxed/simple;
+	bh=GXGrN8JOjzod6V+6AHh55MPyMPL+RTr2vIDnmW2E4FI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/quLNUtOUvZ8X5FAay/oG4uvH95IgACMvHtmjKDwoZeWDfX9PVaK1CSeaBofRCix57tHLGaIqZb1dxGrKhswwpje9lgxzq+kTurJjf/uisGYi9cNbBp5a9RKwleSeuJ1A140PaqYvhLQhr9kB7o1PO0Rdxd47OyP2lpYCO9+G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Os6FGw/+; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718019823; x=1749555823;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GXGrN8JOjzod6V+6AHh55MPyMPL+RTr2vIDnmW2E4FI=;
+  b=Os6FGw/+SDZsxO6KKr5LTUot8//Yfu+K6aJTudFp0aRWikX63TXGkepD
+   7X3iRONDBKVklt+FJzYRImyNziFAhN42Kt+jaPFlNvRAjFbHoGUpEjsSf
+   xEBPzvMBEoYjtZcPmzjvnT5OmGVhRBMNvBVCFeBqw3Rgn2WAZAAXJYOmD
+   NFmLjxiwkYJcRtC2bI7OZjuPUnk8O+pdWqZtP4CUysvzkIEXvHm4fIxGK
+   k4/l3K5KA8WY10GDB8Spx2dBSEWjQbPS2CZEOPYblTekLpluazwQvUSGn
+   zVq/CFHHv4hYSLxlTPWdGF7kOwkkq9aUsEwourZO7+llOWaRlI9CnIGPk
+   Q==;
+X-CSE-ConnectionGUID: bqBvcjIJQqGXZZDJOFP4Dw==
+X-CSE-MsgGUID: n69PJzP6RBiJ7E+0iG+U6Q==
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="258055430"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jun 2024 04:43:42 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 10 Jun 2024 04:42:38 -0700
+Received: from daire-X570 (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 10 Jun 2024 04:42:36 -0700
+Date: Mon, 10 Jun 2024 12:42:27 +0100
+From: Daire McNamara <daire.mcnamara@microchip.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 1/2] PCI: microchip: Fix outbound address translation
+ tables
+Message-ID: <Zmbl9ZYyJCI9dXyE@daire-X570>
+References: <20240531085333.2501399-2-daire.mcnamara@microchip.com>
+ <20240603184516.GA687362@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
+In-Reply-To: <20240603184516.GA687362@bhelgaas>
 
-On Sun, Jun 09, 2024 at 07:21:28PM -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
+On Mon, Jun 03, 2024 at 01:45:16PM -0500, Bjorn Helgaas wrote:
+> On Fri, May 31, 2024 at 09:53:32AM +0100, Daire McNamara wrote:
+> > On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
+> > three general-purpose Fabric Interface Controller (FIC) buses that
+> > encapsulate an AXI-M interface. That FIC is responsible for managing
+> > the translations of the upper 32-bits of the AXI-M address. On MPFS,
+> > the Root Port driver needs to take account of that outbound address
+> > translation done by the parent FIC bus before setting up its own
+> > outbound address translation tables.  In all cases on MPFS,
+> > the remaining outbound address translation tables are 32-bit only.
+> > 
+> > Limit the outbound address translation tables to 32-bit only.
+> > 
+> > Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
+> > 
+> > Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> > ---
+> >  drivers/pci/controller/pcie-microchip-host.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+> > index 137fb8570ba2..0795cd122a4a 100644
+> > --- a/drivers/pci/controller/pcie-microchip-host.c
+> > +++ b/drivers/pci/controller/pcie-microchip-host.c
+> > @@ -983,7 +983,8 @@ static int mc_pcie_setup_windows(struct platform_device *pdev,
+> >  		if (resource_type(entry->res) == IORESOURCE_MEM) {
+> >  			pci_addr = entry->res->start - entry->offset;
+> >  			mc_pcie_setup_window(bridge_base_addr, index,
+> > -					     entry->res->start, pci_addr,
+> > +					     entry->res->start & 0xffffffff,
+> > +					     pci_addr & 0xffffffff,
+> >  					     resource_size(entry->res));
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
+> Is this masking something that the PCI core needs to be aware of when
+> it allocates address space for BARs?
+I don't believe so.
 > 
-> This includes mfd-core.c and vexpress-sysreg.c which, although they
-> did not produce a warning with the x86 allmodconfig configuration, may
-> cause this warning with other configurations.
+> The PCI core knows about the CPU physical address range of each bridge
+> window and the corresponding PCI address range.  From this patch, it
+> looks like only the low 32 bits of the CPU address are used by the
+> Root Port.  That might not be a problem as long as the windows
+> described by DT are correct and none of them overlap after masking out
+> the upper 32 bits.  But for example, if DT has windows like this:
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/mfd/arizona-core.c         | 1 +
->  drivers/mfd/intel_soc_pmic_bxtwc.c | 1 +
->  drivers/mfd/mfd-core.c             | 1 +
->  drivers/mfd/pcf50633-gpio.c        | 1 +
->  drivers/mfd/rt4831.c               | 1 +
->  drivers/mfd/ssbi.c                 | 1 +
->  drivers/mfd/timberdale.c           | 1 +
->  drivers/mfd/vexpress-sysreg.c      | 1 +
->  8 files changed, 8 insertions(+)
+>   [mem 0x1'0000'0000-0x1'8000'0000]
+>   [mem 0x2'0000'0000-0x2'8000'0000]
 > 
-> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
-> index 19a0adf8ce3d..85ff8717d850 100644
-> --- a/drivers/mfd/arizona-core.c
-> +++ b/drivers/mfd/arizona-core.c
-> @@ -1429,4 +1429,5 @@ int arizona_dev_exit(struct arizona *arizona)
->  }
->  EXPORT_SYMBOL_GPL(arizona_dev_exit);
->  
-> +MODULE_DESCRIPTION("Wolfson Arizona core driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-> index 8dac0d41f64f..ba32cacfc499 100644
-> --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-> +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-> @@ -581,5 +581,6 @@ static struct platform_driver bxtwc_driver = {
->  
->  module_platform_driver(bxtwc_driver);
->  
-> +MODULE_DESCRIPTION("Intel Broxton Whiskey Cove PMIC MFD core driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Qipeng Zha <qipeng.zha@intel.com>");
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index 6ad5c93027af..b2742b1dce0c 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -437,5 +437,6 @@ int devm_mfd_add_devices(struct device *dev, int id,
->  }
->  EXPORT_SYMBOL(devm_mfd_add_devices);
->  
-> +MODULE_DESCRIPTION("Core MFD support");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov");
-> diff --git a/drivers/mfd/pcf50633-gpio.c b/drivers/mfd/pcf50633-gpio.c
-> index 4d2b53b12eeb..3e368219479a 100644
-> --- a/drivers/mfd/pcf50633-gpio.c
-> +++ b/drivers/mfd/pcf50633-gpio.c
-> @@ -88,4 +88,5 @@ int pcf50633_gpio_power_supply_set(struct pcf50633 *pcf,
->  }
->  EXPORT_SYMBOL_GPL(pcf50633_gpio_power_supply_set);
->  
-> +MODULE_DESCRIPTION("NXP PCF50633 GPIO Driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/mfd/rt4831.c b/drivers/mfd/rt4831.c
-> index f8d6dc55b558..1ab8870e4ebf 100644
-> --- a/drivers/mfd/rt4831.c
-> +++ b/drivers/mfd/rt4831.c
-> @@ -115,4 +115,5 @@ static struct i2c_driver rt4831_driver = {
->  module_i2c_driver(rt4831_driver);
->  
->  MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-> +MODULE_DESCRIPTION("Richtek RT4831 core driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
-> index f849f2d34ec7..6e7aff6e2746 100644
-> --- a/drivers/mfd/ssbi.c
-> +++ b/drivers/mfd/ssbi.c
-> @@ -319,6 +319,7 @@ static struct platform_driver ssbi_driver = {
->  };
->  module_platform_driver(ssbi_driver);
->  
-> +MODULE_DESCRIPTION("Qualcomm Single-wire Serial Bus Interface (SSBI) driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_VERSION("1.0");
->  MODULE_ALIAS("platform:ssbi");
-> diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
-> index a41e9a3e2064..333d5b874de3 100644
-> --- a/drivers/mfd/timberdale.c
-> +++ b/drivers/mfd/timberdale.c
-> @@ -853,4 +853,5 @@ module_pci_driver(timberdale_pci_driver);
->  
->  MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
->  MODULE_VERSION(DRV_VERSION);
-> +MODULE_DESCRIPTION("Timberdale FPGA MFD driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
-> index eab82619ec31..d34d58ce46db 100644
-> --- a/drivers/mfd/vexpress-sysreg.c
-> +++ b/drivers/mfd/vexpress-sysreg.c
-> @@ -132,4 +132,5 @@ static struct platform_driver vexpress_sysreg_driver = {
->  };
->  
->  module_platform_driver(vexpress_sysreg_driver);
-> +MODULE_DESCRIPTION("Versatile Express system registers driver");
->  MODULE_LICENSE("GPL v2");
-
-For the vexpress-sysreg.c:
-
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
+> the PCI core will assume they are valid and non-overlapping, when
+> IIUC, they *do* overlap.
+True, but I can't see how that could happen on any real system - in my mind,
+a PolarFire Soc designer (or indeed any designer on any chip) will know where
+its rootport is actually attached in its memory map. On PolarFire SoC, for
+example, a designer can only reach a rootport over a FIC, and - if they were
+to attach to the rootport over two FICs at the same time, that would be a
+blunder and would be picked up during design phase.  I can't imagine any
+reason anyone would release a product with that arrangement.
 
 > 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240609-md-drivers-mfd-ef0e92e2f8da
+> But also only the low 32 bits of the PCI address are used, and it
+> seems like the PCI core will need to know that so it doesn't program a
+> 64-bit BAR with a value above 4GB?
+Yeah, I'll send around a v2 shortly to address this - I was rather
+over-zealous when I prevented that.
 > 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+> >  			index++;
+> >  		}
+> > @@ -1117,8 +1118,8 @@ static int mc_platform_init(struct pci_config_window *cfg)
+> >  	int ret;
+> >  
+> >  	/* Configure address translation table 0 for PCIe config space */
+> > -	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
+> > -			     cfg->res.start,
+> > +	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & 0xffffffff,
+> > +			     cfg->res.start & 0xffffffff,
+> >  			     resource_size(&cfg->res));
+> >  
+> >  	/* Need some fixups in config space */
+> > -- 
+> > 2.34.1
+> > 
+> 
 
