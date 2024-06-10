@@ -1,101 +1,121 @@
-Return-Path: <linux-kernel+bounces-208479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6DD902595
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1142A9025B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627701C214A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58065B2C481
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7190D145B38;
-	Mon, 10 Jun 2024 15:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0973A81754;
+	Mon, 10 Jun 2024 15:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mxfnup4i"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/nWUu4h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9895513E8AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4993982871;
 	Mon, 10 Jun 2024 15:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033075; cv=none; b=mE1jOPsCvG4udg5sNHFvCtFP2K1HsMgMfvEeFmyfwaVsqx2j0aDOdWaqFW4Cv6E88ztXBj5rwDxefGny6Qu8V/hAuX2v2KK2Ky9LBPwtf7KUDm7tRJAJdUmI7Y3Kt9JgUMRsuJPH0FVvowKRjdiIsAzKu45xOb7JRAP0EhnpX1o=
+	t=1718033074; cv=none; b=pds4yPT+8FiHBIRpHD39MzqLx12vAZ5/2AiiJbxbZjiM/1rqhDzEr+O1wYe2f+nyvvrz6XDZdPPUJDfmkoIqyI4+D/FZVWhJ2TtC+OTjzLpaSRD9j9n4WjSRnXrZ7LZhT/MJSLfVG/rcrBJzR+lVcyb8MjAlZGtuN2tUgzO7zV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033075; c=relaxed/simple;
-	bh=q9+FJLbpkmGw2WAIUMbjsJpwfWDGBNPE/bBMMS6IF5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aR7KYHa8CX/plFFzdj/V1eo2iO59On/v5R2J0TnhYZpEwgOaSc4COAsE3Qolu8xVzMpvMd8Mtadw881u1E62ceFtZc9d0RDpHpbu4YVJ9LoCC5ZS7eedaY6zG9803ZAj7wvm2Y9sor6ne4Mfr6bojBRJPlUUlKVQCU6F6IMbqhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mxfnup4i; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c7ec8f1fcso1681855a12.0;
-        Mon, 10 Jun 2024 08:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718033072; x=1718637872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9+FJLbpkmGw2WAIUMbjsJpwfWDGBNPE/bBMMS6IF5Q=;
-        b=Mxfnup4i74kDWNVbQalM7szw8mF8c6DVlZ9FqVvE8luECfYuGjUSPBjmNiMGHVAplV
-         PeaJYDTHGpniUXnamu2vD8KJz563oEzJRYZrClMsspMxRv3Ncos7hwkjD5fgPO1XHBes
-         ciABWRkqE3BR12BbWcbg8osOc4tiJXWEmkaNuI/Zi+U6/1LoWnI9FtYZyfV8opg13+8f
-         /OXrBwbdXifuUSjyNCHPDePTzXbi8SfjoHFP5Zvz8ifGam5KNiuimyiZVbaShArtxDkY
-         LMDWNcYA0T1aTMxJeEZrNklgKzYBzV46F70kaRJpn3YJ29FzTsYX1xGksCQzrq1qgHjX
-         Mv/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718033072; x=1718637872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9+FJLbpkmGw2WAIUMbjsJpwfWDGBNPE/bBMMS6IF5Q=;
-        b=QQyLRb5097h+0OFfOl11TQpUz1WjDtyRSRRD/g8jgZ/sbd3lA/Bbxg7sLH5d5V5Tvq
-         zrIcHAC9pTAIcZRO2ybNoIseFIL7QOdOV0ZE2+aRSKjKUfV/iXUB5X8rg6laDjscgmiM
-         wNN0qV5I80bHybfO4YhEaHeq7ahDFSu/0WZxLrR8zbp3Ki2wk0yn78oGyOXdG4CaT4Q/
-         cJiwa3cv1MUg5E3FarUg+tKMcdkBInRoIZDjKosjlndMRQJUP5CXKl/rtqdKAeWC0Yqa
-         NPHgO5uuv1DQPozobW1sShwZP+xAJ3SmywqCWgJF80p2LItlXq42v75i/Gf64CGTDpC4
-         TOAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdkJiWH6wNavrdUtwsT2SbUmcLPBaKWXF4PojIj+kpBUKYBJ0YoPo8LkVRQuaosLakXTIPuEkRovR0n2rfani5mbjxW4qkez3ArvHskjwEVJTxRJX+GxoncL3AOnxIKGZ4HQ5rvnVJzg==
-X-Gm-Message-State: AOJu0YxuhiraIB5321EdhhiDsy5uXAYH+M5csHmVbYiWFiWNGbLtrcla
-	RatST1sE/bCV1dCLjDm6BK8sc5VM6f92z2V1oO5Opxq5GHK/+KMCEZeMGRsMrrMB+ypggvhLg0z
-	1usUOv3v8+tSUW/2GmzXgy3XQmWYD3HOb
-X-Google-Smtp-Source: AGHT+IFNyQ15jXyjkoVZr6dT7/WR+f/DHHqul6Tv80j455lbaX93ut+WTVwOmCHosMzgej2TJF5rkgJv+/hwOZox0lk=
-X-Received: by 2002:a17:906:fe07:b0:a6d:b66f:7b24 with SMTP id
- a640c23a62f3a-a6db66f7fdamr753842266b.75.1718033071698; Mon, 10 Jun 2024
- 08:24:31 -0700 (PDT)
+	s=arc-20240116; t=1718033074; c=relaxed/simple;
+	bh=c+9tcVpryK4i0tWGtMFCJFNSadZ6QzJfj6WWubKCwGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRP89lpXYeU1kzxSglqXNrN3wmAjKzbZsy/ksu+yRUYjmppXB76VZ7Jlnyj+vqpN85PVDmn9493G03ZJ8RFhpH3dufQgQMRuMjuEHdj0jFx9dt2fPfBjKQhbH1DWIbyzHjllKPdKkYu3zxHDCCmLSNhRUV80JmnZqKpLuKhBEsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/nWUu4h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 594F5C2BBFC;
+	Mon, 10 Jun 2024 15:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718033073;
+	bh=c+9tcVpryK4i0tWGtMFCJFNSadZ6QzJfj6WWubKCwGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/nWUu4hZHsmtMj7BwbWmxTDIpaGKacW5pGjV1FwnnGC4DMq6Eynz6PmWgVLlU/Ka
+	 pP/srzoz+rurgOkuM9Ou4J75djzS11vJTZ3Ols3pXmPsfY2NsyO2rJFWkYAfItQQJ7
+	 fjKi1WGNJN99lia7LYw+vzMCKf7ASqcOAyG3PUQPpPyE8hugC5dU/jnln+W0drTqRv
+	 fjL8Xin3RePaFeXq6isQtQam/I3E62Mhlzcxo0lq09qAVcrWb97CrZStbwKla5gFxz
+	 Xv7l88tQVS36GhF2hQjqLmGURkQU/U8XUtATAzoUiLbzIEm/lLnLgz4yg4cZzxXmEE
+	 ktMuIkZ6OX69w==
+Date: Mon, 10 Jun 2024 09:24:31 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Sagi Grimberg <sagi@grimberg.me>
+Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
+Subject: Re: Kernel OOPS while creating a NVMe Namespace
+Message-ID: <Zmcar50yXDJW9_Ho@kbusch-mbp.dhcp.thefacebook.com>
+References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
+ <2285ff6e-533f-41dc-90d0-e8ca538da152@grimberg.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610140548.35358-1-brgl@bgdev.pl> <20240610140548.35358-4-brgl@bgdev.pl>
-In-Reply-To: <20240610140548.35358-4-brgl@bgdev.pl>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Jun 2024 18:23:55 +0300
-Message-ID: <CAHp75VczROHVKwAi8j4fxR=L3oKJ_5om6rEAriDNFxh1dMRxRw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] gpio: sim: use devm_mutex_init()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2285ff6e-533f-41dc-90d0-e8ca538da152@grimberg.me>
 
-On Mon, Jun 10, 2024 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Drop the hand-coded devres action callback for destroying the mutex in
-> favor of devm_mutex_init().
+On Mon, Jun 10, 2024 at 12:57:02PM +0300, Sagi Grimberg wrote:
+> On 10/06/2024 10:51, Venkat Rao Bagalkote wrote:
+> > 
+> > [  140.209777] BUG: Unable to handle kernel data access at 0x18d7003065646fee
+> > [  140.209792] Faulting instruction address: 0xc00000000023b45c
+> > [  140.209798] Oops: Kernel access of bad area, sig: 11 [#1]
+> > [  140.209802] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=8192 NUMA pSeries
+> > [  140.209864] CPU: 2 PID: 129 Comm: kworker/u65:3 Kdump: loaded Not tainted 6.10.0-rc3 #2
+> > [  140.209870] Hardware name: IBM,9009-42A POWER9 (raw) 0x4e0202 0xf000005 of:IBM,FW950.A0 (VL950_141) hv:phyp pSeries
+> > [  140.209876] Workqueue: nvme-wq nvme_scan_work [nvme_core]
+> > [  140.209889] NIP:  c00000000023b45c LR: c008000006a96b20 CTR: c00000000023b42c
+> > [  140.209894] REGS: c0000000506078a0 TRAP: 0380   Not tainted (6.10.0-rc3)
+> > [  140.209899] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24000244  XER: 00000000
+> > [  140.209975] NIP [c00000000023b45c] synchronize_srcu+0x30/0x1c0
+> > [  140.209984] LR [c008000006a96b20] nvme_ns_remove+0x80/0x2d8 [nvme_core]
+> > [  140.209994] Call Trace:
+> > [  140.209997] [c000000050607b90] [c008000006a96b20] nvme_ns_remove+0x80/0x2d8 [nvme_core]
+> > [  140.210008] [c000000050607bd0] [c008000006a972b4] nvme_remove_invalid_namespaces+0x144/0x1ac [nvme_core]
+> > [  140.210020] [c000000050607c60] [c008000006a9dbd4] nvme_scan_ns_list+0x19c/0x370 [nvme_core]
+> > [  140.210032] [c000000050607d70] [c008000006a9dfc8] nvme_scan_work+0xc8/0x278 [nvme_core]
+> > [  140.210043] [c000000050607e40] [c00000000019414c] process_one_work+0x20c/0x4f4
+> > [  140.210051] [c000000050607ef0] [c0000000001950cc] worker_thread+0x378/0x544
+> > [  140.210058] [c000000050607f90] [c0000000001a164c] kthread+0x138/0x140
+> > [  140.210065] [c000000050607fe0] [c00000000000df98] start_kernel_thread+0x14/0x18
+> > [  140.210072] Code: 3c4c0134 384282d4 7c0802a6 60000000 7c0802a6 fbc1fff0 fba1ffe8 fbe1fff8 7c7e1b78 f8010010 f821ffb1 e9230010 e9290080> 7c2004ac 71290003 41820008
+> > [  140.210093] ---[ end trace 0000000000000000 ]---
+> > 
+> > Issue is introduced by the patch:
+> > be647e2c76b27f409cdd520f66c95be888b553a3.
+> 
+> Exactly this was the concern when introducing a behavior change in a
+> sensitive area of the code
+> to silence lockdep...
 
-All three LGTM,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Thanks!
+No risk, no reward. :)
 
---=20
-With Best Regards,
-Andy Shevchenko
+If we really can't figure this out, we can always revert and revisit for
+the next merge.
+
+> I'm assuming that the bad dereference is:
+>         synchronize_srcu(&ns->ctrl->srcu);
+
+That would have to be it based on the report. Not sure what the problem
+could be, though, the ns->ctrl must have been valid or we would have
+failed earlier, and the srcu struct can't be released while the
+controller is still in use by any namespace.
+
+Anyway, I tested this path quite a bit, but I'll revisit with dynamic
+attachments instead and see if that helps.
+
+> btw, looking at the code again, I'm assuming that synchronizing srcu in
+> every ns remove
+> slows down batch removal of many namespaces greatly...
+
+I may need to test this out, but I thought srcu sync was pretty quick if
+there were no active readers, which there shouldn't be here outside
+unusual cases.
 
