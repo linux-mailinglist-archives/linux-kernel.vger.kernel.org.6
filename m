@@ -1,92 +1,193 @@
-Return-Path: <linux-kernel+bounces-208092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A10902084
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:41:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE3F902086
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FCF1B2119C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B29BB243A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723E67F470;
-	Mon, 10 Jun 2024 11:39:55 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852117E11E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B1F7D40D;
+	Mon, 10 Jun 2024 11:41:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D143537E9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019595; cv=none; b=kwrvgOKu4x7ZC5+eNGM4jKYWbyFx8rGn7raqi40JWPCMkEa98r9O9AwrMjtJMUm7MNc+S837Suw76gadAjeHGFLFeAyg86DFnTRzIc8AiSl5wcDVGS1BPn+XTV/FMqGceVnMFjKOrSvEj2JNqZiYLKwlwKtePKARDSgK8U3eGeg=
+	t=1718019673; cv=none; b=SpgUxzwl1Y9IssoUDclN4LasAlPATyPfQXXchG+QPAs+ZX4diNwc/9yXQVlsmOrTksTHSP+7oqR4B/UH2M38Zx8RzfHk6Acysseqvr3m+haKqvm4mgKhrEZKfKPu8pWoxQiuQkt+23Da+cQpQzwEgyqyupVoLEYOCD5gr3W0vrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019595; c=relaxed/simple;
-	bh=3t1zH8lWA6hAOLQwdM5tCL2gpZqqPqfReHV1J9dY840=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U8mhCqe/aToTkLD7IgoaHZFfDKu21UZXXk06Zran66Xrk4EuvEdP2kK5oTBAhRA6AvLqdJVt+HPDlRA6PG6wYsfQC3sZepwbm2c4DpC9xl7+WMBd0rmTwxsRtAxHKLHViN6FTpWRrkUzhqJhyavIW7zRID2pG1ksnUO2I4MbUeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso6292182a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:39:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718019592; x=1718624392;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fn34km5UaNBjNBAmsFz5GWZ1ooBH26HA5g5UuzpgHTQ=;
-        b=UJYFQZ7mwSIP5M5n7O6AXh2nBcawkIGKGwpJDO8o+0R4kd8f52kNMzkyNPV6eOKQSn
-         MG/JamZP8bUrwvRO6rWYkJUr2ncGOHMRK1blyM/Ao5MiWq/rL1FklUYmKni7WRs1wyE8
-         K/f/eeVypyblxD130uiE0j3u1y5KoJ2Ujqiudv+qfhlDsKgIh/u4IDh/vkEXaUgdlSKd
-         DrJ4Nk7OL68YalRcIO4twmAKm7Ttqc/BfULHUCLWmezYV9/XdrDFcHnccHhTK3+VXyCX
-         Lj4+BYuS77sLjPIXngD5tYgy1hejKAsEd4NbTWSDZp7FML8KKAJrq0FPvJdN5AnGfjJM
-         DPkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkcEK9eCMV4dgfybzljwWrV49QeeHVc0yUFKm6Kwk5b49y1G4CdhX4Lv7iq3o/Xz2UY2chRF7PhSF52e3MKyp1G6N2a2qsAYGZraKw
-X-Gm-Message-State: AOJu0Yy4cN/cxyqcDsRwHY9L2gwhYQLOSUTjd68wm7ARRGMhKD054O/V
-	d0VO+pCUXsX8UEMAV97iutUCHIwYoW83zpkr5QUSqtz0I8KDGTY0
-X-Google-Smtp-Source: AGHT+IHHWvddDK/61Te74ZGcqqgHF9vLhoVZLaoH5cZ5OA/L/jUM9+dBbMHQtYX9FsAphp1eTVGyKA==
-X-Received: by 2002:a50:9b57:0:b0:57c:7f3a:6c81 with SMTP id 4fb4d7f45d1cf-57c7f3ac25amr1941107a12.8.1718019591640;
-        Mon, 10 Jun 2024 04:39:51 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f7253800fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f725:3800:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8c1821bbsm632922a12.52.2024.06.10.04.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 04:39:51 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: morbidrsa@gmail.com,
-	linux@treblig.org
-Cc: Johannes Thumshirn <jth@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mcb: remove unused struct 'mcb_parse_priv'
-Date: Mon, 10 Jun 2024 13:39:41 +0200
-Message-ID: <171801953563.18763.5887920314358774645.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240523204921.235746-1-linux@treblig.org>
-References: <20240523204921.235746-1-linux@treblig.org>
+	s=arc-20240116; t=1718019673; c=relaxed/simple;
+	bh=nyqfG2kuYiSkZ7XrIH7o5AupFxSBg0C40ywehmENuIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxvcKzdsQJ2c5lDY4FCb1OzBSfkjZph+YMaJk3ThgWA12q66T8BQG+N8xY7D6Wc3nBm3E60q6wHZ8DTIozSeWJNuh5DXLnwcBG7+CKQG5vLUoTjEgiTnPSp3myvB5fxARK1y/X/fxt/s+NxpWvORtNX96t/L3bQQ2/h39SwAAf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 215711688
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:41:35 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6AE6C3F73B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:41:10 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:41:00 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZmbmTEt2cP4tS2Nn@e110455-lin.cambridge.arm.com>
+References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
 
-
-On Thu, 23 May 2024 21:49:21 +0100, linux@treblig.org wrote:
-> 'mcb_parse_priv' has been unused since the initial
-> commit 3764e82e5150 ("drivers: Introduce MEN Chameleon Bus").
+On Sun, Jun 09, 2024 at 07:21:28PM -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
 > 
-> Remove it.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
 > 
+> This includes mfd-core.c and vexpress-sysreg.c which, although they
+> did not produce a warning with the x86 allmodconfig configuration, may
+> cause this warning with other configurations.
 > 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/mfd/arizona-core.c         | 1 +
+>  drivers/mfd/intel_soc_pmic_bxtwc.c | 1 +
+>  drivers/mfd/mfd-core.c             | 1 +
+>  drivers/mfd/pcf50633-gpio.c        | 1 +
+>  drivers/mfd/rt4831.c               | 1 +
+>  drivers/mfd/ssbi.c                 | 1 +
+>  drivers/mfd/timberdale.c           | 1 +
+>  drivers/mfd/vexpress-sysreg.c      | 1 +
+>  8 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+> index 19a0adf8ce3d..85ff8717d850 100644
+> --- a/drivers/mfd/arizona-core.c
+> +++ b/drivers/mfd/arizona-core.c
+> @@ -1429,4 +1429,5 @@ int arizona_dev_exit(struct arizona *arizona)
+>  }
+>  EXPORT_SYMBOL_GPL(arizona_dev_exit);
+>  
+> +MODULE_DESCRIPTION("Wolfson Arizona core driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> index 8dac0d41f64f..ba32cacfc499 100644
+> --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
+> +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> @@ -581,5 +581,6 @@ static struct platform_driver bxtwc_driver = {
+>  
+>  module_platform_driver(bxtwc_driver);
+>  
+> +MODULE_DESCRIPTION("Intel Broxton Whiskey Cove PMIC MFD core driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Qipeng Zha <qipeng.zha@intel.com>");
+> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+> index 6ad5c93027af..b2742b1dce0c 100644
+> --- a/drivers/mfd/mfd-core.c
+> +++ b/drivers/mfd/mfd-core.c
+> @@ -437,5 +437,6 @@ int devm_mfd_add_devices(struct device *dev, int id,
+>  }
+>  EXPORT_SYMBOL(devm_mfd_add_devices);
+>  
+> +MODULE_DESCRIPTION("Core MFD support");
+>  MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov");
+> diff --git a/drivers/mfd/pcf50633-gpio.c b/drivers/mfd/pcf50633-gpio.c
+> index 4d2b53b12eeb..3e368219479a 100644
+> --- a/drivers/mfd/pcf50633-gpio.c
+> +++ b/drivers/mfd/pcf50633-gpio.c
+> @@ -88,4 +88,5 @@ int pcf50633_gpio_power_supply_set(struct pcf50633 *pcf,
+>  }
+>  EXPORT_SYMBOL_GPL(pcf50633_gpio_power_supply_set);
+>  
+> +MODULE_DESCRIPTION("NXP PCF50633 GPIO Driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/mfd/rt4831.c b/drivers/mfd/rt4831.c
+> index f8d6dc55b558..1ab8870e4ebf 100644
+> --- a/drivers/mfd/rt4831.c
+> +++ b/drivers/mfd/rt4831.c
+> @@ -115,4 +115,5 @@ static struct i2c_driver rt4831_driver = {
+>  module_i2c_driver(rt4831_driver);
+>  
+>  MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
+> +MODULE_DESCRIPTION("Richtek RT4831 core driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
+> index f849f2d34ec7..6e7aff6e2746 100644
+> --- a/drivers/mfd/ssbi.c
+> +++ b/drivers/mfd/ssbi.c
+> @@ -319,6 +319,7 @@ static struct platform_driver ssbi_driver = {
+>  };
+>  module_platform_driver(ssbi_driver);
+>  
+> +MODULE_DESCRIPTION("Qualcomm Single-wire Serial Bus Interface (SSBI) driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_VERSION("1.0");
+>  MODULE_ALIAS("platform:ssbi");
+> diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
+> index a41e9a3e2064..333d5b874de3 100644
+> --- a/drivers/mfd/timberdale.c
+> +++ b/drivers/mfd/timberdale.c
+> @@ -853,4 +853,5 @@ module_pci_driver(timberdale_pci_driver);
+>  
+>  MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
+>  MODULE_VERSION(DRV_VERSION);
+> +MODULE_DESCRIPTION("Timberdale FPGA MFD driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
+> index eab82619ec31..d34d58ce46db 100644
+> --- a/drivers/mfd/vexpress-sysreg.c
+> +++ b/drivers/mfd/vexpress-sysreg.c
+> @@ -132,4 +132,5 @@ static struct platform_driver vexpress_sysreg_driver = {
+>  };
+>  
+>  module_platform_driver(vexpress_sysreg_driver);
+> +MODULE_DESCRIPTION("Versatile Express system registers driver");
+>  MODULE_LICENSE("GPL v2");
 
-Applied, thanks!
+For the vexpress-sysreg.c:
 
-[1/1] mcb: remove unused struct 'mcb_parse_priv'
-      commit: 1789f119d54ad866fe8bb74657ebedd08b421f77
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 
 Best regards,
+Liviu
+
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240609-md-drivers-mfd-ef0e92e2f8da
+> 
+
 -- 
-Johannes Thumshirn <jth@kernel.org>
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
