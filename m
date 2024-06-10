@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-207774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718E5901BE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE397901BEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B11283002
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803741F21A52
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EDE44374;
-	Mon, 10 Jun 2024 07:28:29 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9E722EE5;
+	Mon, 10 Jun 2024 07:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l3RiJSBz"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE673FB3B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF7E63C7;
+	Mon, 10 Jun 2024 07:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718004509; cv=none; b=Z5d7CeVnRLaNJdmz8tmQp/XUsvDsCb02oKx3b3xYRO54e7s/pukuybG2czZlzIhRCacQvjItRU46SORhnsgKzCclGGRJx+qfjje/EV6lU/MsuKAN2YCjtZ+uWDS4IYtcJslHcvUr12NbJQ0fU7xPKk/nUXwAqMPaZ0HzHjgIkaY=
+	t=1718004669; cv=none; b=S4kFhjg2rW72swaHZAG47iX3Kkw9R+DikL2M2v5zF4W2lgicQ7J4sBfq1Q08hIfIoVpoaRlaCptViagK2CxgJ+1XrC7xT05m8NCXCJhpiyjEk5Mn8behf8IHCfYuCNItHjJJTL4hX+G5Vcl8n2mp1+HOL7f4jhyUaftT2MldvbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718004509; c=relaxed/simple;
-	bh=QgUO4y4lJuyGEjk5BVlmE++YnHVFuvNVEthad6igBBQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ilq4AHw6mGVrbxF9fQvTQUKj1mBV3qPLLkkyxUrtSvUYd6SJu8DqWgn1WgbySRlLP6C1JA1sENDE1eiAyC/ny/YXaECNvZ/H9dC9SJGz5UGuMchRA58WQAKmjSRf7oUVv7kkVSLby/4CSp7BDaG23smU45deXxKKFI7u1FH8/gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:8ab6:b788:f6f3:c7ef])
-	by albert.telenet-ops.be with bizsmtp
-	id ZjUR2C00P0kaPLt06jURME; Mon, 10 Jun 2024 09:28:25 +0200
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sGZS5-002zEu-Ki;
-	Mon, 10 Jun 2024 09:28:25 +0200
-Date: Mon, 10 Jun 2024 09:28:25 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-cc: sparclinux@vger.kernel.org
-Subject: Re: Build regressions/improvements in v6.10-rc3
-In-Reply-To: <20240610071049.933142-1-geert@linux-m68k.org>
-Message-ID: <46c5a25-ea8c-4a1-5241-df88a9848a9@linux-m68k.org>
-References: <CAHk-=wiK75SY+r3W5hx+Tt_bjhcSKPLdji-Zf_8HjikRPbn9wg@mail.gmail.com> <20240610071049.933142-1-geert@linux-m68k.org>
+	s=arc-20240116; t=1718004669; c=relaxed/simple;
+	bh=VY9k03Q6E8eehYSZYzaDS3vRHjPtX00/+G7XS8di9bk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OlPr3N/ZQ1y/EVeuGdy9Ow8u5AYu/XFMfS6kKfymiTEr2OumfKgwiRmjWtkZGMqfeNFmHNrmYxur3/yL5Zd1F1BPf0gWHunUYsFXdavGJ/PMuB5EQqm88D5jL6nUyhDswoU+/rK7ZRvfAFC49fNleF20dR2dyMUvqlLmyc0ORbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l3RiJSBz; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 60C7120008;
+	Mon, 10 Jun 2024 07:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718004659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=peXQDKPKM2SH0GrsNM/5NIgqruWO0h7j87RkGy1k6rM=;
+	b=l3RiJSBznUh0cOintGPPJhaYBUBbFovJSVKd0nC42cxVTLliFUFdCdaI4NN5g+I0ohvZ4L
+	MnxTZmSxCxMKNtZyQs89GeDikE5+ZMwD1AUmAGCQT01+vZbw2jp7XAvelDgthvvVsF2A6i
+	U/z5G9jYFBeHhkcOaSmOP73VIn5ZoCYLlQ7WcRttpnOTAUIm1b+TlfmpukwKqB1CUP4ryP
+	HxmTDXgxuMcW6XcxTruFYj/zvkKwdsdIb85gfp5vRRIg46XY0TzlUvcYGWUrC7PCpVMKuD
+	1Og4xUkxg5iHkkRY6pujlE3Shqd/BYclxN/W6giBDm4NHVk3OPENXpMbRt6cgg==
+Message-ID: <addbe5b3-04bc-4f02-be44-bdfe3aeba319@bootlin.com>
+Date: Mon, 10 Jun 2024 09:30:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+User-Agent: Mozilla Thunderbird
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Subject: Re: [PATCH 5/5] riscv: dts: sophgo: Add LicheeRV Nano board device
+ tree
+To: Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Chen Wang <unicorn_wang@outlook.com>, Chao Wei <chao.wei@sophgo.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
+ <20240527-sg2002-v1-5-1b6cb38ce8f4@bootlin.com>
+ <IA1PR20MB49535CBF66DB31C2059C291ABBF02@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Language: en-US
+In-Reply-To: <IA1PR20MB49535CBF66DB31C2059C291ABBF02@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Mon, 10 Jun 2024, Geert Uytterhoeven wrote:
-> JFYI, when comparing v6.10-rc3[1] to v6.10-rc2[3], the summaries are:
->  - build errors: +6/-1
+Thank you for your answer :)
 
-   + error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x4), (.fixup+0xc)
-   + error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x34), (.fixup+0x10), (.fixup+0x0), (.fixup+0x28), (.fixup+0x4), (.fixup+0x18), (.fixup+0x20), (.fixup+0x1c), (.fixup+0x8)
-   + error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text':  => (.head.text+0x5040), (.head.text+0x5100)
-   + error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o:  => (.init.text+0xa4)
+On 5/28/24 12:25 AM, Inochi Amaoto wrote:
 
-sparc64-gcc5/sparc-allmodconfig
-sparc64-gcc13/sparc-allmodconfig
+>> +
+>> +	aliases {
+>> +		serial0 = &uart0;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+> 
+> It is also better to add all already support nodes, such as gpio,
+> other uart port.
 
-   + {standard input}: Error: pcrel too far: 1095, 1074, 1022, 1020, 1021, 1096, 1126 => 1074, 1021, 1255, 1096, 1095, 1020, 1022, 1126, 1254
-   + {standard input}: Error: unknown pseudo-op: `.al':  => 1270
+I'm importing, cv18xx.dtsi through sg2002.dtsi, so GPIOs are already 
+configured and activated by default.
+For the other peripherals, all of them are, with the default pinctrl, 
+set to function that haven't any driver yet (ADC, MIPI, PWM...).
 
-SH ICE crickets
-
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/83a7eefedc9b56fe7bfeff13b6c7356688ffa670/ (all 138 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/c3f38fa61af77b49866b006939479069cd451173/ (all 138 configs)
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+Based on what I just said, I'm not sure to understand what you mean, can 
+you be more specific about the changes you want?
 
