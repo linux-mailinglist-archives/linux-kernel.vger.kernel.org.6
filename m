@@ -1,207 +1,98 @@
-Return-Path: <linux-kernel+bounces-208518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53082902646
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F37390264C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44ED2B2D1A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:55:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4F16B2C5F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874E614373E;
-	Mon, 10 Jun 2024 15:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8E1411DF;
+	Mon, 10 Jun 2024 15:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkZiEQhb"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SvRgusrj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C0142620;
-	Mon, 10 Jun 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AAF13E3F2;
+	Mon, 10 Jun 2024 15:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718034931; cv=none; b=kaOgkI1q4bJgn/QMVukabk2owg0TsnSQEVrVqz4UOiurE26panj7m3iq3PNi2C+I/H196Bap686OeodkqS1h1/D3azd2Fgbe5XvG7nAyDiULEfPGFuBjmgM6TLAlqUKpwFyBcnGPbhKD/OxVVUnC71l17qFavOPl+tfqd37bEOY=
+	t=1718034987; cv=none; b=KWvR8KbYbJX8l+rGe0H3eVpGwr6Y2/K33r9CsV73tsOGiZ6qEwt+HuH3FnRt9m8YpFUaGfP5xKU35fRcaeGDlSks/mGFaQoVBdgHjNiJUx+1XQFRv3wy2BlIi1+b1zEhBlCAWtmVhUypOknJk0bK60Lkg/i6qx7nMssts0mF/lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718034931; c=relaxed/simple;
-	bh=0UAOy9iN/3VaU4DeCVfVA/APVIl8ZsWFbJBPb0K/yFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ea2mYxyD17DJDJuMhX08l4bRWErL5Z5oXOJbO1X410vKsp59ubKyhzs7z8u6lf7S4hYwNjMH/onJR1vQ9acRscJjfcNPTEnP7M+cX5B9yKh3nNCcv3KqV7uinfeKpn1LYyX8Hf2ZyEMcT6YDyv6TmMSRqd6RZvFOvpotz+LRJm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IkZiEQhb; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c195eb9af3so90548a91.0;
-        Mon, 10 Jun 2024 08:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718034929; x=1718639729; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=/z9wCsj/Fmg2uAjDDnmr4Npa382kmTNiC957TY/YawU=;
-        b=IkZiEQhb46XInDECwqc6gS5Gyov6o45EvOuQMSlP+E2ujZBoET6b2U9MWm0MOny7Cc
-         Pv/MoNB4fXt/gyrCIF8ZbGWUHquzOr+8qP0MaI0MDh6y/I4pdetrRWVnNlZwDq2N3ahi
-         AkQXxnZccpUvsbXwuQvQzZ8KvwBaNC3iSTYdZdhHcb79gV/YixiNsXvn0tar7PxQ423Q
-         WQePT4VUh6bCXg/1uIa0mfyNdNJqUiLboenkyr95OVpwLQ7Uodkd3Mo8Jkgx0/Kgx+CD
-         tJ5R68P306QLQo1Pnp811pYwhFw+88Gii69oyb/irPO1eiPV2rzXnJsF5n0a4f+Yobt+
-         7qwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718034929; x=1718639729;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/z9wCsj/Fmg2uAjDDnmr4Npa382kmTNiC957TY/YawU=;
-        b=Io9n6FjVrO4DASRxGhizX/+vk5VyNQHAz24Q6Lg77mb/VYEUHgpBiRwdDqzD5A1mW7
-         sVWTFtBjb71CT3KKcWxbWl0pvkGIq9tZl+Hdge+3yI12CvrVUlGPgVTzt5/Rj5OcQdEG
-         2aRm1YFpevyh73GYire51RWZbRPqlF9Sb+k9gk3k/8+Ld1EPhs5IU61XHi0+ychbQtUA
-         DZJyfagG5TDBgEBRpqakkN+pJWp3B+DZkU0zYPhHog61gAjeCQoj69Q8zHvPfj+Aw9+H
-         FcpHXl39h8Lvuw6fqEllW1MxLgZjlbR5L/60YGuv5P/ufIQ/XZh1NArmoeApy1a1vhIZ
-         fgKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVabRk0z1OxEXrRBNdiNpUC4Q83/m8gf3gxGI/2UcnctxTaHN1J90Aalu4tbF6doA+YCjG7zONQLxDoo9nnb2Idsb1HJBdRzF0J5hG2hKJ+wg22h9K0+tANPnWlJ4aaaXTKuASRFZbTR+bbgxLNWvgt/MJ2m0AmngSoFDEY05egQmimM3pAlr4WUGOO56CDMDN7PsXerhjdxEwtZsugvZEd
-X-Gm-Message-State: AOJu0Yx17+QkljLer8MX9Dr/+BoKwUI8VvvKWCmfat+duQUkFE6iktkz
-	hpgACWRUhAaLc/0+cSKmVi7xWGD9ym2S7E9T/qbvz4g8gyot/HRD
-X-Google-Smtp-Source: AGHT+IEOtZHkEZ180ah272mtnveSAqhNzLRQ3xHgJE7hlmjqg8aropZ+yP48JBqTZCTOonAsyWj/HQ==
-X-Received: by 2002:a17:90a:f98d:b0:2c3:7e3:6be0 with SMTP id 98e67ed59e1d1-2c307e36c7emr2895674a91.31.1718034929238;
-        Mon, 10 Jun 2024 08:55:29 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28066d573sm10747274a91.17.2024.06.10.08.55.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 08:55:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <79f406ae-cfc9-48bb-9c80-20f998c40b69@roeck-us.net>
-Date: Mon, 10 Jun 2024 08:55:26 -0700
+	s=arc-20240116; t=1718034987; c=relaxed/simple;
+	bh=NdsLQXtIKnQUgcAMngPqTOE8svKUVkptCdvAQ9EX1sA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MBVQUEj02pYyXavcxHIMwKJ9Bwg6XsCmzHQnpootSNGm3Ysi01SeFfBORFxdBELSy0kVQz64L86lGTId934jy8matu+NsaBGVVioMxAFtz59AaoU5X7gX2dcmOkfUlVi0PgjCCzthi1+yhMM2aduvti7W5EYkPggsvRzflEBOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SvRgusrj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AFuACL011756;
+	Mon, 10 Jun 2024 10:56:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718034970;
+	bh=7074N/sdQ0CvMJHsCbj+7QDe2Ffm0Xx9w9h9wwazciM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=SvRgusrj2t9r/NnEedCblXvdrKOfr5xlMkPqSOjIwqaf55IEDdDPF1hdg26b1vnos
+	 4GXJQRHjavMpsfkHz+FS/WqMEStb64RPAw4mOobq4xAUMm24U0GZfw7/qxIh6zmSe5
+	 edwMpVra1tohi0lsFhjsS1/rKbo4cDxWFuQtqNPU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AFuATR046511
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 10:56:10 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 10:56:10 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 10:56:10 -0500
+Received: from [10.249.48.175] ([10.249.48.175])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AFuAaa074284;
+	Mon, 10 Jun 2024 10:56:10 -0500
+Message-ID: <4405d53a-bb9b-24bc-9bbc-b5dbecefdba4@ti.com>
+Date: Mon, 10 Jun 2024 10:56:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
- <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
- <a7e38754-ff1a-4e15-99b2-4785827efc83@roeck-us.net>
- <ib6p4ivqdn56l3jzzarsoeijjhwak33bmqvj2qiddbhxdqzchk@txl4gdslx4gq>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with
+ remote proc nodes
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ib6p4ivqdn56l3jzzarsoeijjhwak33bmqvj2qiddbhxdqzchk@txl4gdslx4gq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Vignesh Raghavendra <vigneshr@ti.com>, <kristo@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <nm@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20240605124859.3034-1-hnagalla@ti.com>
+ <20240605124859.3034-5-hnagalla@ti.com>
+ <1b03ae72-b1c4-4165-b3cc-df85255b9dbf@ti.com>
+From: Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <1b03ae72-b1c4-4165-b3cc-df85255b9dbf@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/10/24 07:52, Wolfram Sang wrote:
+On 6/10/24 02:02, Vignesh Raghavendra wrote:
+>> Reserve memory for remote rpoc IPC and bind the mailbox assignments
+>> for each remote proc. Two memory regions are reserved for each
+>> remote processor. The first region of 1Mb of memory is used for Vring
+> s/1Mb/1MB?
 > 
->>> Yes, maybe this could be simplified to "(LP)DDR memory types"
->>>
->>
->> I rephrased it to "Only works for (LP)DDR memory types up to DDR5".
-> 
-> Thanks!
-> 
->> How about "Only works on systems with 1 to 8 memory slots" ?
-> 
-> This is a question for Heiner. I'd think it is is still correct, but I
-> don't know exactly.
-> 
+Yes, will correct it to 1MB.
 
-My interpretation was that it should work if the DIMMs are connected to
-multiplexed I2C busses, but probably not if they are connected to
-different adapters. The error message in that case is a bit misleading,
-though, because it claims that "More than 8 memory slots on a single bus",
-which isn't necessarily the case. For example, it should be perfectly valid
-to have up to 24 DIMMs in this system.
-
-i2c-0/name:SMBus PIIX4 adapter port 0 at 0b00
-i2c-1/name:SMBus PIIX4 adapter port 2 at 0b00
-i2c-2/name:SMBus PIIX4 adapter port 1 at 0b20
-
-... but I guess that is a question for someone with such a system to answer.
-
-Ultimately the handling of systems with more than 8 memory slots will need
-to be updated at some point. On my systems, with 'i2c: piix4: Register SPDs'
-applied, I see
-
-i2c i2c-0: 4/4 memory slots populated (from DMI)
-     [my system is running 6.6.y which still generates that message]
-i2c i2c-0: Successfully instantiated SPD at 0x50
-i2c i2c-0: Successfully instantiated SPD at 0x51
-i2c i2c-0: Successfully instantiated SPD at 0x52
-i2c i2c-0: Successfully instantiated SPD at 0x53
-i2c i2c-1: 4/4 memory slots populated (from DMI)
-i2c i2c-2: 4/4 memory slots populated (from DMI)
-
-meaning the function is called for each adapter (which makes sense).
-However, the code counting the DIMMs doesn't really take the adapter
-into account, meaning adapters 1 and 2 are still probed even though
-all DIMMs were already instantiated from adapter 0.
-
-On a system with more than 8 DIMMs connected to different piix4 adapters
-(without mux) we'd probably see something like
-
-i2c i2c-0: More than 8 memory slots on a single bus, contact i801 maintainer ...
-i2c i2c-1: More than 8 memory slots on a single bus, contact i801 maintainer ...
-i2c i2c-2: More than 8 memory slots on a single bus, contact i801 maintainer ...
-
-which wouldn't be very helpful. I think the main problem may be that
-the i801 driver implements sub-adapters as muxes, but the piix4 driver
-doesn't do (or need) that. The message is also i801 centric which doesn't
-apply anymore after 'i2c: piix4: Register SPDs' is applied.
-
-However, I would not want to even try changing that code without access
-to a system using piix4 and supporting more than 8 memory slots.
-
-Thanks,
-Guenter
-
+ >> +			reg = <0x00 0x99900000 0x00 0x01efffff>;
+ > 0x01efffff -> are you sure this is correct? Just missing a byte to a
+ > nice round number size. looks like typo of using range vs size?
+ >
+You are right. Will round it to 0x01f00000.
 
