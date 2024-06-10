@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-207890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F0901D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A710B901D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7146F1C21CF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0F21F22F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8163775811;
-	Mon, 10 Jun 2024 08:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893167D3EF;
+	Mon, 10 Jun 2024 08:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROcHXMYK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V1CfF+fO"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E7757F5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831177581A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718009908; cv=none; b=cQKTe2RUIT+LEgBNR80L9QvZaR9QI90L++qIQKT7WsRBBki3gw17/3+YDKzb0+u4ruksM6jrV0BwqK6JBqhkWR3x8E6P889SBLAwNhZ9TQsrTrh3Ri6mIL0/OIcPmFsQGPeO1tqHDYrp1IRrr7safnfBh16L1EiszaxAJVThjX0=
+	t=1718009913; cv=none; b=hSVrB2ayY6BcGSMT12JoSQJIiRL3+tCrkz3AoSY9uz4GwM1r392wEUEDD6yrokytWjCQ3YI4zLl89kriwoTOpqNcallh1cPNfZKQcrCY1PaRR6umkpbtZhNhcqCofsV9C853/gOWpNBCZkm2CASWKA1zRCFzdsCSrFXy6Ghxx0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718009908; c=relaxed/simple;
-	bh=V0sWEWGdvvTEoPPivf5bf1akoI1gM9dFCowdFsNKU9w=;
+	s=arc-20240116; t=1718009913; c=relaxed/simple;
+	bh=oIx+E7QQWhC/YdRYd5TEuDpoPJpROL8sRrH8nFOhCTw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rVVgfZ9u/lJopaqWYuJPUl1leH7q7XpeJI6mL3XbtDAt2P3PZuXN9aWgVjomtQOLZUlUWl0uCjhCL/wqZ+Xk6Kn+SoY9N1m3UKlW2kb0q5NVu/3TxPjjL4zjWcMsHGMTWzr9XHwKRyGk1n/oGB5AxVRk+IISh2h17Fu14SmjuRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROcHXMYK; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=axme61TB8A/P+Wi/wuDLRHGVla+zbeaweRYXz3pohDL8qLef4E4GAEJgXTPmxcp+dLF/6yIS7h7mDXGLTP8PSCrHP0PZSyV7Vo9ywMGJmhOzcOSMuTLSb2XTdtt9SWL0UPgoD7cKWXiBWlIsx352+MtUiYglQyEQSCPkBFw+jEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V1CfF+fO; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718009907; x=1749545907;
+  t=1718009912; x=1749545912;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=V0sWEWGdvvTEoPPivf5bf1akoI1gM9dFCowdFsNKU9w=;
-  b=ROcHXMYKP54nH8Xi+UwodyM6nIL9wO0eCDuKLCEy+OkwwbDvrdHMgus3
-   2SDx2dO3BGRh2Sk2vwjCXmmjIDe/AgZtVM2Ohp8soMwitgRnmPLI1sFew
-   lc0P5GdaVoJj7Mtda22RjhMkENEOKeM8HZD0gzqdyBITze0lfwNj22G00
-   3X3wEpQHcyMv19SxsBLfkUYzah66C7vq7gZHYlN9iKPgZUSuA0aiG00fb
-   qH1SwAnex5ilSGzQDeO4vYy0TL5jff9j5TCS5fq7pOzOMZJsu14Pq5rZH
-   Rz8+fFZfZ9GlHvjwHULK3NrQWtOxwdqm9W1EFbAxVTlogly5+g37t/1ut
+  bh=oIx+E7QQWhC/YdRYd5TEuDpoPJpROL8sRrH8nFOhCTw=;
+  b=V1CfF+fO+clMJL4q7ejfy2Sg/ONrUj4OC8CfkgJaNQYI6ByC2L+vceRK
+   r/w17WlWNy0naex/JKD43VV85jdHsN1av4JX2yeM1r20C5T9JHtyBLioI
+   R63jLtGZLuJrV1cgLHjo0hGWZDZ6Gl8rm0itfj4BlvpXxcpvBl2gvOpa1
+   9/3JgNHsAv0q5ouLUb7iqCpVazlyRR2cDZr9659vq/GFO0h+fZsIXP85R
+   FcfN+drKqTuslzPn3zrhMYGt1TvRyUQT4Adp9Vr80QW1Qa/KnOvFtNHsr
+   kdt/C7zrI8h/YstkknazmeQOFfMdi/u7Xmq3UAf+mBHtWdYW4thrpj/Qw
    g==;
-X-CSE-ConnectionGUID: ZLuUsjyZTmmlytgtLrPFOA==
-X-CSE-MsgGUID: NG03Zw0qTBS+4voIY/MIMg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="17581531"
+X-CSE-ConnectionGUID: iV9ZDWLjS8mBppfirYwAog==
+X-CSE-MsgGUID: 3nQmjHrjR8eLbXb2skEOPw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="17581552"
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="17581531"
+   d="scan'208";a="17581552"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 01:58:27 -0700
-X-CSE-ConnectionGUID: bhp1h+vXQo6jelkBwQxcTg==
-X-CSE-MsgGUID: deHpkp5nSxiuSR3yUuqFZw==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 01:58:32 -0700
+X-CSE-ConnectionGUID: whhgEdvaSOaveMThVGT9OA==
+X-CSE-MsgGUID: 6IyxwBSmQmmkJc1+Qq2yEg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="43432419"
+   d="scan'208";a="43432439"
 Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Jun 2024 01:58:23 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 10 Jun 2024 01:58:28 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -82,9 +82,9 @@ Cc: Yi Liu <yi.l.liu@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v3 02/21] iommufd: Use iommu_paging_domain_alloc()
-Date: Mon, 10 Jun 2024 16:55:36 +0800
-Message-Id: <20240610085555.88197-3-baolu.lu@linux.intel.com>
+Subject: [PATCH v3 03/21] vfio/type1: Use iommu_paging_domain_alloc()
+Date: Mon, 10 Jun 2024 16:55:37 +0800
+Message-Id: <20240610085555.88197-4-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240610085555.88197-1-baolu.lu@linux.intel.com>
 References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
@@ -96,34 +96,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the iommu driver doesn't implement its domain_alloc_user callback,
-iommufd_hwpt_paging_alloc() rolls back to allocate an iommu paging domain.
-Replace iommu_domain_alloc() with iommu_user_domain_alloc() to pass the
-device pointer along the path.
+Replace iommu_domain_alloc() with iommu_paging_domain_alloc().
 
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/iommu/iommufd/hw_pagetable.c | 7 ++++---
+ drivers/vfio/vfio_iommu_type1.c | 7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
-index 33d142f8057d..cbddfa3ca95a 100644
---- a/drivers/iommu/iommufd/hw_pagetable.c
-+++ b/drivers/iommu/iommufd/hw_pagetable.c
-@@ -137,9 +137,10 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
- 		}
- 		hwpt->domain->owner = ops;
- 	} else {
--		hwpt->domain = iommu_domain_alloc(idev->dev->bus);
--		if (!hwpt->domain) {
--			rc = -ENOMEM;
-+		hwpt->domain = iommu_paging_domain_alloc(idev->dev);
-+		if (IS_ERR(hwpt->domain)) {
-+			rc = PTR_ERR(hwpt->domain);
-+			hwpt->domain = NULL;
- 			goto out_abort;
- 		}
- 	}
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 3a0218171cfa..0960699e7554 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -2135,7 +2135,7 @@ static int vfio_iommu_domain_alloc(struct device *dev, void *data)
+ {
+ 	struct iommu_domain **domain = data;
+ 
+-	*domain = iommu_domain_alloc(dev->bus);
++	*domain = iommu_paging_domain_alloc(dev);
+ 	return 1; /* Don't iterate */
+ }
+ 
+@@ -2192,11 +2192,12 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	 * us a representative device for the IOMMU API call. We don't actually
+ 	 * want to iterate beyond the first device (if any).
+ 	 */
+-	ret = -EIO;
+ 	iommu_group_for_each_dev(iommu_group, &domain->domain,
+ 				 vfio_iommu_domain_alloc);
+-	if (!domain->domain)
++	if (IS_ERR(domain->domain)) {
++		ret = PTR_ERR(domain->domain);
+ 		goto out_free_domain;
++	}
+ 
+ 	if (iommu->nesting) {
+ 		ret = iommu_enable_nesting(domain->domain);
 -- 
 2.34.1
 
