@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-208104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7659020C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479B9020FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A6A1C214BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A82F1F21956
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4C080043;
-	Mon, 10 Jun 2024 11:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F77782871;
+	Mon, 10 Jun 2024 11:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/VUPn2X"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z2gvYhOR"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18B97FBBA;
-	Mon, 10 Jun 2024 11:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42B77E78E;
+	Mon, 10 Jun 2024 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020487; cv=none; b=RESOmOlaj04Y6fQADaaKFtHWDjQQLJOUY37yPKFUpDmi/1y16XzoTSdSgIoSnHeG1BlTG3sbNVXF6bBRr3SEgDQT3OGGuBDk5kwEtzClga8yoD6Khe0gMqPY1txBT32FLbJKJs2CTf95cqOWE2ftlYfeLid3sgx8OOjsBg+Qw5g=
+	t=1718020596; cv=none; b=lAwH5Y2C7tusT3JoiZcAfFaTtiGhXDK6JgZ39oS6gvwljOlm4G0QS0yfdfVxbUj969637AaDOICkeD8+pCVzZe8rRtBPCDOUxE1g7OTGXWd88aAaqsHaN99sKqKeXzzpGElbl9bHAZPHcAmFh+i9S1P8SVcc/Y/pNC31RjcnbRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020487; c=relaxed/simple;
-	bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UtXAJ8pvr6qqe240RP/f3SlaieQJo11zDaw90wri4u/yrZXA1aebcVq4wirzGvd/Svjzp2fsYtT8sW1S2Vzlf0qPgXmZK1Yowf4URYg6d5vfT32Sq6j+ZyxB77YXpjVP5mcmh8J5RB5Db7s1xcbBVEv8sITe1iKaeZgO+3uRR58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/VUPn2X; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a626919d19dso951781666b.0;
-        Mon, 10 Jun 2024 04:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718020484; x=1718625284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-        b=G/VUPn2XG2q/33H5H8X95CvxqKDw50XgJ/QxCnRRiqMXpCXc4Or+gwknBvpBW2Ptiz
-         E0Gs4/NpGHxAneQAlYYcY9XrPv2rNTsuVa8FGXV4cMgQgOJSJi+U60G/T9tAEwxZPTuF
-         VchwBiSG4mVT2atbpNnSV1pRjuGUuQRVBGMbnNMU86Ijb2V7hwjCbTN5p5Zyls/pRc86
-         t6d2YzHNRKg7C7baZ5au+J5fKTVGIN+VFfUG9nvpfveQPerUFZfla0J4ddl+U/silfC9
-         7tvgWXKqCEYq36bCRvL5/1YOtGJnwHda+ZmZ9Ek0GIWW88vA/cuWBxxNNXo2piwIYgfo
-         XOAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718020484; x=1718625284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-        b=acuU2x9gNya+l5hZ/8fpk0e1ne7NNivp/cxTby728Kpm5ddwZ3TikYurl394dsmtCE
-         EmOqb4QDyyDMz2K31F1SJhAST3S2N6zGXf9fyVhSuKgETxOr8ZaOtH41Qs0XLYo3sMuS
-         JHsfWMdUUukyUNvfqBw2nSbcEWG6Hhqy2BDynvjG/XYvHGXTTOP5zDD2f7BXlfCZbFEh
-         bbPQFmsXpKuFDBo/CauamIQj6O70047HdVZyhH1WGsIGR55HdJoKKn2V9zLZMFWlNOEj
-         wn7wkdneYHb+3H1B3K+il2KqFNE4gLKBkln624Lb08Tew0zIPrZiF1doNKEuu9EMnJ4p
-         6AHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEvnIcakfxr9lDwEL6qoVqXyWhkIPXqoba2S/P5LAGVBg/fpd8yc2vrJ8hRaeGrLXL6Z9WWJESwv5rLBP1EPikFiHJAR4Sm5d63QVhRrDp3WFoJtoJF1GG159ASVH01niIjlrG57zal68e6M9bvzOD5cJ0fRYuHEsOXUlBVe0Qancm34aYiJ45NTmJ/g==
-X-Gm-Message-State: AOJu0Yw51ExoT2iT9FPqsFMJVDdX2cy1r79wduaubl1bS3sMuKUyHJ0A
-	/iqoi/wIK2ag4gqxHivQoroge9BzZnIBYiL5usBD632ON+jtlpJTlxWkMgrIK72NpI8g+8xyKil
-	FU1SPMqh5HAItuITpqSOIsrsl390=
-X-Google-Smtp-Source: AGHT+IE2khVru4e8G4r78+VGQCZHUL1FvNUobqQ6rFka8hb4rGTSgOypy2uF7tpyhfYFbf2i7vAxHLN2y4c3YWAEFkA=
-X-Received: by 2002:a17:906:f1ca:b0:a6e:7720:7e39 with SMTP id
- a640c23a62f3a-a6e772086a4mr597115166b.8.1718020483971; Mon, 10 Jun 2024
- 04:54:43 -0700 (PDT)
+	s=arc-20240116; t=1718020596; c=relaxed/simple;
+	bh=aIZpj99P0sU05RD8b9KavtNB/mKvvZDjucVlsvQeQ18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rmEK9jHFukGbJngiLFskrfyQj/+UXJkGPALtLJToHf5q32yw4Lug3qXT84anUCg8uGs4Av24lEYXXExevHfRKRVNSXnEiRnKlEfsUVwYy6py/BfNn6YUwLXK4u7muf/4jVKt1DroxGYjlK5fyyJ+KYr7v537n1DCQ0JJgNCI3WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Z2gvYhOR; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A8Xick019005;
+	Mon, 10 Jun 2024 13:56:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ljxA0CMixUpfWg1txgwTXMZ7NWYzNR9MGl6rj1rR4Us=; b=Z2gvYhORT3qNBZUJ
+	4aIzn/P4fL5XmmKy0Zc2CWu0f3Yev282KotP0hkcZhn+84tHa4l9qWcoav4oQTef
+	oAq2sFzNQ+X1LoTBJsqRK2AjojTRJtr/ssRFjsJTIQiZQcOxdEPzb1+J2KgWscdC
+	/n+k86q6vCdP8A9VmWJNAJALKk90xEGiAFMZ20nnGn4oU6u57FFQqJ45Id6DYh1C
+	zMkUqBzt/nxxp4/Gi0QW7cRAduIIZmgSDiU5w9Qi+j8QaDUrWDRKoSTGKwsMAaxl
+	fDi8WE/NMTHoQ1cxvGfiJYBoniJSa+sD/UGWD47B+9oWPzg8/j+k51XkrUmH1AUf
+	m0SG0A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yn0v14m1r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 13:56:02 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A670B4002D;
+	Mon, 10 Jun 2024 13:55:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9E0F921685E;
+	Mon, 10 Jun 2024 13:54:39 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 13:54:38 +0200
+Message-ID: <e4614975-a7a8-4bfa-a1e2-bf9c31547be9@foss.st.com>
+Date: Mon, 10 Jun 2024 13:54:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Jun 2024 14:54:07 +0300
-Message-ID: <CAHp75Vc1Ld6NFwFnjFDFbYScsQExg13MoXXwCCXoU_2Rw6ChfQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] net: stmmac: dwmac-stm32: Separate out external
+ clock rate validation
+To: Ratheesh Kannoth <rkannoth@marvell.com>
+CC: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
+ <20240607095754.265105-3-christophe.roullier@foss.st.com>
+ <20240610114607.GA3818685@maili.marvell.com>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <20240610114607.GA3818685@maili.marvell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
 
-On Mon, Jun 10, 2024 at 5:21=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
->
-> On x86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gp=
-io.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.=
-o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_p=
-mic_bxtwc.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
->
-> This includes mfd-core.c and vexpress-sysreg.c which, although they
-> did not produce a warning with the x86 allmodconfig configuration, may
-> cause this warning with other configurations.
+Hi Ratheesh,
 
-Acked-by: Andy Shevchenko <andy@kernel.org> # for Intel Broxton PMIC
+On 6/10/24 13:46, Ratheesh Kannoth wrote:
+> On 2024-06-07 at 15:27:44, Christophe Roullier (christophe.roullier@foss.st.com) wrote:
+>> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
+>> +{
+>> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+>> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
+> nit: reverse xmas tree, split definitions and assignment.
 
---=20
-With Best Regards,
-Andy Shevchenko
+It is not possible ;-)
+
+second declaration need first one.
+
 
