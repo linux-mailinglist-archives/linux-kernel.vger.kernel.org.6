@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-208586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FC49026FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:46:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C259026FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B85D1F21B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30201286031
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91E9155352;
-	Mon, 10 Jun 2024 16:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7D155CA0;
+	Mon, 10 Jun 2024 16:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n3W1Hu20";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PVSxu5x8"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bOl04P/V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XfXAlRMy"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E2E155381
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47729155A2B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037757; cv=none; b=FGcx2hayA02PPoaQFlvycH68id6EUA0S3CPoXQDOC1V5xPJ6hNA0GCjOUiERiHY3zYn36z9ysJGEG6JQrx1r34mfHcja5I7+VK//QQTYddMrvo4LmOqGbMrrgomeKaar7UlFEXOGkNtXi8+jlWYMRpE7cMa+b0S1d5heWg3AcaY=
+	t=1718037759; cv=none; b=NIsUsw/tlwcqQmijmlTHfffYnaToCSMN5iutREaFNg1VfNpahwRBhZbxJsHhtKNTLYn6rhTWo7esxzPFGnZ4AXX6Asl/EuEBxqsrTVm1S2DbICKfMDGfsqxkucHZFuphBuYhsJP7Wx+R7CuKuvTnTSlKE/1RfHXz+aVpDUpNChc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037757; c=relaxed/simple;
-	bh=+8eJhLmLaBhsdGTxPY+WrOPg4LBJu0d/eL03Sd/TxJs=;
+	s=arc-20240116; t=1718037759; c=relaxed/simple;
+	bh=d1BJ7Kja+UEwMgVwc6Tt6tmvcnKhbXaS3H8LE3K80r4=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=mUwa/LrONYnMOKsxaLnGT3pH/mF+NP3G5PPWCAb0522sIVR5hsGiHByUpjIOKlyWstEAGKMlhBaGLeH3NZRnZz2XDg/OfN+m+RLKpYiX/7VZE9+/bhU8IFyOCu1z/1alHhZRMS1LUjwboTxjzDF9luW/dWMD8+skIybl40QhSR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n3W1Hu20; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PVSxu5x8; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=PGoOUDn7vN50wuEld5F43hbUoUxynowObQrPB0afh4GgDXVnGRjqQ4FOm6+nUlIDS8sm0nEqUwqixp/JrilVsmukNrHUFGeJrCtZ7yukdU6/ZLl9RedmusNPD8v7ihTl1MfzB2+0E+V1vBBDBKkV/+3hAhLa7olauZxI0KHNZCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bOl04P/V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XfXAlRMy; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20240610164026.929337144@linutronix.de>
+Message-ID: <20240610164026.992475995@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718037754;
+	s=2020; t=1718037755;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Uf6CyGlUDp6ZuYdKBwWfggnizxjbUvxBehy8Wo6qoQk=;
-	b=n3W1Hu20fjU+TPQ3CcsNkobldImCjKMtoXzFo1J2iVqeaXrCADKhwDBntwsSWlwQetD/8S
-	PCoyJ/67OgDyI2yLXtGx5HIH8t0nLrGmarBv/vuvUAKadUDKuFQ83v0OBNOnWMi/6IUUAX
-	O8wsvvjA392UL2fMJG4Gi8JoZcnOdARszK914P6Mp8y10gtU828b51Z3w0wmz3BXhHg1q7
-	e4alGwlQcckXqiF7/y/9b7+yIPzNKyiS33pAnsvX74twnV3/YyRUTFVlxvD0Z2Jymjgqwi
-	AZgDhasuefxchmFz+8pnW/e3Yufv3ogk0DB8H0j9WtVFv7p4GT5rnbWS6oWNzw==
+	 references:references; bh=Qgv0rOS1X6FuYj5LENG49jFoHaTII1ldHQt4poVGsnc=;
+	b=bOl04P/VxIRlk0A/cs0WrD231whGwrzsLd+OpYoKeVyecflRVg3Yp6TOBUL7QJypZC4FDT
+	l10eCKY0ELR79UMYtZR3V5yjAgO/Xn109WU6YnPlKOVoF0KYjwtsWII3NF8RdRtUVZb1Ow
+	3/acV3dUEujIqqHSEK6w5rlpu2g6lRBQyn3tAQaIR5E62aLPCwgWJkhrv6CA5UmjZYT23y
+	T4kjLF3b1djHKKG7zeqc9e3rEDTPUz1oAxCFzkYQeDg5ZCsOXBiHeIPPJgNn2IAn+Dh2/I
+	CbBizImIDELWodIjSXZo4KuiaYKW+KzyWdq80bh4JLBHXz+ea26W/1cCCXW4SA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718037754;
+	s=2020e; t=1718037755;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Uf6CyGlUDp6ZuYdKBwWfggnizxjbUvxBehy8Wo6qoQk=;
-	b=PVSxu5x8RiiGKvQESDosM+e4/uD8tBBqN5iVjWpwqlpE5uGJFX4rKVxYu0v5crEOdA/v0Z
-	4kKALu2Rql99aeBg==
+	 references:references; bh=Qgv0rOS1X6FuYj5LENG49jFoHaTII1ldHQt4poVGsnc=;
+	b=XfXAlRMy8hhmQtBX6rTA1Kcq7EoUOaaf+WPuOAY21WOpp7eEjgSrQrt/P2tucKmhetqOo9
+	LtdAtMBa/q/dDXBA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -59,7 +59,7 @@ Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
  Stephen Boyd <sboyd@kernel.org>,
  Eric Biederman <ebiederm@xmission.com>,
  Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V3 23/51] signal: Remove task argument from dequeue_signal()
+Subject: [patch V3 24/51] signal: Replace BUG_ON()s
 References: <20240610163452.591699700@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,120 +68,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Jun 2024 18:42:33 +0200 (CEST)
+Date: Mon, 10 Jun 2024 18:42:34 +0200 (CEST)
 
-The task pointer which is handed to dequeue_signal() is always current. The
-argument along with the first comment about signalfd in that function is
-confusing at best. Remove it and use current internally.
-
-Update the stale comment for dequeue_signal() while at it.
+These really can be handled gracefully without killing the machine.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- fs/signalfd.c                |    4 ++--
- include/linux/sched/signal.h |    5 ++---
- kernel/signal.c              |   23 ++++++++++-------------
- 3 files changed, 14 insertions(+), 18 deletions(-)
+ kernel/signal.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -160,7 +160,7 @@ static ssize_t signalfd_dequeue(struct s
- 	DECLARE_WAITQUEUE(wait, current);
- 
- 	spin_lock_irq(&current->sighand->siglock);
--	ret = dequeue_signal(current, &ctx->sigmask, info, &type);
-+	ret = dequeue_signal(&ctx->sigmask, info, &type);
- 	switch (ret) {
- 	case 0:
- 		if (!nonblock)
-@@ -175,7 +175,7 @@ static ssize_t signalfd_dequeue(struct s
- 	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
- 	for (;;) {
- 		set_current_state(TASK_INTERRUPTIBLE);
--		ret = dequeue_signal(current, &ctx->sigmask, info, &type);
-+		ret = dequeue_signal(&ctx->sigmask, info, &type);
- 		if (ret != 0)
- 			break;
- 		if (signal_pending(current)) {
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -276,8 +276,7 @@ static inline void signal_set_stop_flags
- extern void flush_signals(struct task_struct *);
- extern void ignore_signals(struct task_struct *);
- extern void flush_signal_handlers(struct task_struct *, int force_default);
--extern int dequeue_signal(struct task_struct *task, sigset_t *mask,
--			  kernel_siginfo_t *info, enum pid_type *type);
-+extern int dequeue_signal(sigset_t *mask, kernel_siginfo_t *info, enum pid_type *type);
- 
- static inline int kernel_dequeue_signal(void)
- {
-@@ -287,7 +286,7 @@ static inline int kernel_dequeue_signal(
- 	int ret;
- 
- 	spin_lock_irq(&task->sighand->siglock);
--	ret = dequeue_signal(task, &task->blocked, &__info, &__type);
-+	ret = dequeue_signal(&task->blocked, &__info, &__type);
- 	spin_unlock_irq(&task->sighand->siglock);
- 
- 	return ret;
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -618,20 +618,18 @@ static int __dequeue_signal(struct sigpe
- }
+@@ -1940,10 +1940,11 @@ struct sigqueue *sigqueue_alloc(void)
  
- /*
-- * Dequeue a signal and return the element to the caller, which is
-- * expected to free it.
-- *
-- * All callers have to hold the siglock.
-+ * Try to dequeue a signal. If a deliverable signal is found fill in the
-+ * caller provided siginfo and return the signal number. Otherwise return
-+ * 0.
-  */
--int dequeue_signal(struct task_struct *tsk, sigset_t *mask,
--		   kernel_siginfo_t *info, enum pid_type *type)
-+int dequeue_signal(sigset_t *mask, kernel_siginfo_t *info, enum pid_type *type)
+ void sigqueue_free(struct sigqueue *q)
  {
-+	struct task_struct *tsk = current;
- 	bool resched_timer = false;
- 	int signr;
+-	unsigned long flags;
+ 	spinlock_t *lock = &current->sighand->siglock;
++	unsigned long flags;
  
--	/* We only dequeue private signals from ourselves, we don't let
--	 * signalfd steal them
--	 */
-+	lockdep_assert_held(&tsk->sighand->siglock);
-+
- 	*type = PIDTYPE_PID;
- 	signr = __dequeue_signal(&tsk->pending, mask, info, &resched_timer);
- 	if (!signr) {
-@@ -2787,8 +2785,7 @@ bool get_signal(struct ksignal *ksig)
- 		type = PIDTYPE_PID;
- 		signr = dequeue_synchronous_signal(&ksig->info);
- 		if (!signr)
--			signr = dequeue_signal(current, &current->blocked,
--					       &ksig->info, &type);
-+			signr = dequeue_signal(&current->blocked, &ksig->info, &type);
+-	BUG_ON(!(q->flags & SIGQUEUE_PREALLOC));
++	if (WARN_ON_ONCE(!(q->flags & SIGQUEUE_PREALLOC)))
++		return;
+ 	/*
+ 	 * We must hold ->siglock while testing q->list
+ 	 * to serialize with collect_signal() or with
+@@ -1971,7 +1972,10 @@ int send_sigqueue(struct sigqueue *q, st
+ 	unsigned long flags;
+ 	int ret, result;
  
- 		if (!signr)
- 			break; /* will return 0 */
-@@ -3642,7 +3639,7 @@ static int do_sigtimedwait(const sigset_
- 	signotset(&mask);
+-	BUG_ON(!(q->flags & SIGQUEUE_PREALLOC));
++	if (WARN_ON_ONCE(!(q->flags & SIGQUEUE_PREALLOC)))
++		return 0;
++	if (WARN_ON_ONCE(q->info.si_code != SI_TIMER))
++		return 0;
  
- 	spin_lock_irq(&tsk->sighand->siglock);
--	sig = dequeue_signal(tsk, &mask, info, &type);
-+	sig = dequeue_signal(&mask, info, &type);
- 	if (!sig && timeout) {
- 		/*
- 		 * None ready, temporarily unblock those we're interested
-@@ -3661,7 +3658,7 @@ static int do_sigtimedwait(const sigset_
- 		spin_lock_irq(&tsk->sighand->siglock);
- 		__set_task_blocked(tsk, &tsk->real_blocked);
- 		sigemptyset(&tsk->real_blocked);
--		sig = dequeue_signal(tsk, &mask, info, &type);
-+		sig = dequeue_signal(&mask, info, &type);
- 	}
- 	spin_unlock_irq(&tsk->sighand->siglock);
- 
+ 	ret = -1;
+ 	rcu_read_lock();
+@@ -2006,7 +2010,6 @@ int send_sigqueue(struct sigqueue *q, st
+ 		 * If an SI_TIMER entry is already queue just increment
+ 		 * the overrun count.
+ 		 */
+-		BUG_ON(q->info.si_code != SI_TIMER);
+ 		q->info.si_overrun++;
+ 		result = TRACE_SIGNAL_ALREADY_PENDING;
+ 		goto out;
 
 
