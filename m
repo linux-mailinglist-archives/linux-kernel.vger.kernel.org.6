@@ -1,479 +1,176 @@
-Return-Path: <linux-kernel+bounces-207587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B76690194F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 03:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C165E901951
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5679281DAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 01:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0786D1F21B7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBFBA929;
-	Mon, 10 Jun 2024 01:56:47 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E138F46BF;
+	Mon, 10 Jun 2024 02:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LGy2wb64"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C11869;
-	Mon, 10 Jun 2024 01:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADA61C3E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717984606; cv=none; b=WvZr3cKFr2YpszOHvgWeA//q7Hw+yw0Y7WLQTMHMVUSikxKuJsPhUVNt892PcXwILMulB5aaAZvkNcDC8+UQKMtYivp/IbZhUyrFOHbuuHbbHDHFE9OQoRm2dRn+mrW5LISR8k+fFaR1nR4R+SDEZHB1w99v+mEnooyXtRXvtEU=
+	t=1717984817; cv=none; b=N52RdALk60bDVuG0Tz8NBwHY47C/GDsg2fStWfARA9DeyS8h/vbFGn52XlZxFlDfvKddRQwNtBMDugcdhPYslCyfbz2Xsdc/3ETZ6MG1znv/vmLTBQEsBC0sB7AmMBfRZslypzUQhtfBgeldm8jNaCaOm2p1wI6+un7XPGY83mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717984606; c=relaxed/simple;
-	bh=9RtOrIRG7Q5rLyGf+dPFSpjxT8d+KyE+OSPnO8gZjyE=;
+	s=arc-20240116; t=1717984817; c=relaxed/simple;
+	bh=SXB30ZzUlkp5H3QAvEGmgh4pmYdO5hRaa1DkR4J7vMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elVTftVsT+uWZTBxlxGMSxGFtL4QnOmanE1O0oSya2HztvRVpcb6mF5B1BLC0yMHRfB3pv68+ERrgz19rbwLQbKbze51YOxGQxNzspTYeA8PorWLCuttkujiFSd5BcurXpjk27uoejQwbiIjmFPBMAFH7NpgCyXv8xqkZcVZwNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id CF129234; Sun,  9 Jun 2024 20:50:24 -0500 (CDT)
-Date: Sun, 9 Jun 2024 20:50:24 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>, Andrew Morgan <morgan@kernel.org>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
-Message-ID: <20240610015024.GA2182786@mail.hallyn.com>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-2-jcalmels@3xx0.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gF0WccUXgA9bi1ZDgJ194X/aO9BvSU+H+/f1rxuzGy0jY7rJ6k+F5ecNfbQgA5KjLMrh3j7MwwHP3cz1MSBp4yxO0+qGNJYoi41bVxbrMToVo4wNbBmqQwwltWz0sUTdeo58ITh1/q5LibQKYAgwFDndwpEDo4Fu/OAdJFAatFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LGy2wb64; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717984814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aOO4GVvcO0xxLYThv3Qu7QqLhlBUXRK/6CUBfcNRt6Y=;
+	b=LGy2wb64h1F78ziEBLYogCwV4Bf9o6pr8jRJ4UiF7IEhzAjTbLNQH3I68oV6RyMwYuQfbf
+	eT4t8802JECYwEPLo96VHxTMPk7dPBHyPv9JFytgiw/0b9HbK04xKVr0oLpqteHDOLQEP+
+	RNos7VFur3ULf67CMtyijLzbHmcY2ew=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-371-YTJnEZSHN1GUcLYIlQdWmg-1; Sun, 09 Jun 2024 22:00:10 -0400
+X-MC-Unique: YTJnEZSHN1GUcLYIlQdWmg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2CC085A5B5;
+	Mon, 10 Jun 2024 02:00:09 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.124])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 97CCF175ED;
+	Mon, 10 Jun 2024 02:00:07 +0000 (UTC)
+Date: Mon, 10 Jun 2024 10:00:05 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_byb" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH v4 2/7] crash_dump: make dm crypt keys persist for the
+ kdump kernel
+Message-ID: <ZmZeJVa/kpyfZ47g@MiWiFi-R3L-srv>
+References: <20240523050451.788754-1-coxu@redhat.com>
+ <20240523050451.788754-3-coxu@redhat.com>
+ <Zl7Vd3BqxDXdMHkL@MiWiFi-R3L-srv>
+ <epa3mtnac3ekyoq7zykyjnhu3i27mivbtlkss6mbjyaa3kmhof@qwbfshfbtei4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609104355.442002-2-jcalmels@3xx0.net>
+In-Reply-To: <epa3mtnac3ekyoq7zykyjnhu3i27mivbtlkss6mbjyaa3kmhof@qwbfshfbtei4>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Sun, Jun 09, 2024 at 03:43:34AM -0700, Jonathan Calmels wrote:
+On 06/07/24 at 08:27pm, Coiby Xu wrote:
+> On Tue, Jun 04, 2024 at 04:51:03PM +0800, Baoquan He wrote:
+> > Hi Coiby,
+> 
+> Hi Baoquan,
+> 
+> > 
+> > On 05/23/24 at 01:04pm, Coiby Xu wrote:
+> > > A sysfs /sys/kernel/crash_dm_crypt_keys is provided for user space to make
+> > > the dm crypt keys persist for the kdump kernel. User space can send the
+> > > following commands,
+> > > - "init KEY_NUM"
+> > >   Initialize needed structures
+> > > - "record KEY_DESC"
+> > >   Record a key description. The key must be a logon key.
+> > > 
+> > > User space can also read this API to learn about current state.
+> > 
+> > From the subject, can I think the luks keys will persist forever? or
+> > only for a while?
+> 
+> Yes, you are right. The keys need to stay in kdump reserved memory.
 
-(Adding amorgan as he doesn't seem to be on cc list)
+Hmm, there are two different concepts we may need differentiate. From
+security keys's point of view, the keys need be stored for a while so
+that kdump loading take action to get it, that's done through sysfs;
+Froom kdump's point of view, the keys need be stored forever till kdump
+kernel use it. I can't see what you are referring to from the subject,
+esepcially you stress the newly added sysfs
+/sys/kernel/crash_dm_crypt_keys.
 
-> Attackers often rely on user namespaces to get elevated (yet confined)
-> privileges in order to target specific subsystems (e.g. [1]). Distributions
+> 
+> > If need and can only keep it for a while, can you
+> > mention it and tell why and how it will be used. Because you add a lot
+> > of codes, but only simply mention the sysfs, that doesn't make sense.
+> 
+> Thanks for raising the concern! I've added
+> Documentation/ABI/testing/crash_dm_crypt_keys and copy some text in the
+> cover letter to this patch in v5.
+> 
+> > 
+> > > 
+> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > > ---
+> > >  include/linux/crash_core.h   |   5 +-
+> > >  kernel/Kconfig.kexec         |   8 +++
+> > >  kernel/Makefile              |   1 +
+> > >  kernel/crash_dump_dm_crypt.c | 113 +++++++++++++++++++++++++++++++++++
+> > >  kernel/ksysfs.c              |  22 +++++++
+> > >  5 files changed, 148 insertions(+), 1 deletion(-)
+> > >  create mode 100644 kernel/crash_dump_dm_crypt.c
+> > > 
+> > > diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+> > > index 44305336314e..6bff1c24efa3 100644
+> > > --- a/include/linux/crash_core.h
+> > > +++ b/include/linux/crash_core.h
+> > > @@ -34,7 +34,10 @@ static inline void arch_kexec_protect_crashkres(void) { }
+> > >  static inline void arch_kexec_unprotect_crashkres(void) { }
+> > >  #endif
+> [...]
+> > > +static int init(const char *buf)
+> >              ~~~~ A more interesting name with more description?
+> 
+> Thanks for the suggestion! I've added some comments for this function
+> in v5. But I can't come up with a better name after looking at current
+> kernel code. You are welcome to suggest any better name:)
 
-I'd modify this to say "in order to target *bugs* in specific subsystems" :)
+Usually init() is for the whole driver module. Your init() here only
+receive the passed total keys number, and allocate the key_header, how
+can you simply name it init()? If you call it init_keys_header(), I
+would think it's much more meaningful.
 
-> have been pretty adamant that they need a way to configure these, most of
-> them carry out-of-tree patches to do so, or plainly refuse to enable them.
-> As a result, there have been multiple efforts over the years to introduce
-> various knobs to control and/or disable user namespaces (e.g. [2][3][4]).
 > 
-> While we acknowledge that there are already ways to control the creation of
-> such namespaces (the most recent being a LSM hook), there are inherent
-> issues with these approaches. Preventing the user namespace creation is not
-> fine-grained enough, and in some cases, incompatible with various userspace
-> expectations (e.g. container runtimes, browser sandboxing, service
-> isolation)
+> > > +static int process_cmd(const char *buf, size_t count)
+> >                                                  ~~~~
+> > If nobody use the count, why do you add it?
 > 
-> This patch addresses these limitations by introducing an additional
-> capability set used to restrict the permissions granted when creating user
-> namespaces. This way, processes can apply the principle of least privilege
-> by configuring only the capabilities they need for their namespaces.
+> Good catch! Yes, this is no need to use count in v4. But v5 now needs it to avoid
+> buffer overflow.
 
-I think this is precisely the right thing to do.  In each of these cases,
-there is a kernel bug in code which is only reachable with some
-CAP_X, regardless of which user namespace the CAP_X is targeted towards.
-So there's really no better way to resist this (apart from not having the
-bugs in the first place) than to allow CAP_X to be denied in unprivileged
-user namespaces.
+OK, did you add code comment telling what 'count' stands for?
 
-> For compatibility reasons, processes always start with a full userns
-> capability set.
-> 
-> On namespace creation, the userns capability set (pU) is assigned to the
-> new effective (pE), permitted (pP) and bounding set (X) of the task:
-> 
->     pU = pE = pP = X
-> 
-> The userns capability set obeys the invariant that no bit can ever be set
-> if it is not already part of the task’s bounding set. This ensures that
-> no namespace can ever gain more privileges than its predecessors.
-> Additionally, if a task is not privileged over CAP_SETPCAP, setting any bit
-> in the userns set requires its corresponding bit to be set in the permitted
-> set. This effectively mimics the inheritable set rules and means that, by
-> default, only root in the user namespace can regain userns capabilities
-> previously dropped:
+And the name 'process_cmd()' is also ambiguous. We may need avoid this
+kind of name, e.g process_cmd, do_things, handle_stuff. Can you add a
+more specific name?
 
-Something about this last sentence feels wrong, but I'm not sure what
-the best alternative would be.  As is, though, it makes it sound as though
-root in the userns can always regain previously dropped capabilities, but
-that's not true if dropped in ancestor ns, or if root also dropped the
-bits from its bounding set (right?).
-
->     p’U = (pE & CAP_SETPCAP) ? X : (X & pP)
-> 
-> Note that since userns capabilities are strictly hierarchical, policies can
-> be enforced at various levels (e.g. init, pam_cap) and inherited by every
-> child namespace.
-> 
-> Here is a sample program that can be used to verify the functionality:
-> 
-> /*
->  * Test program that drops CAP_SYS_RAWIO from subsequent user namespaces.
->  *
->  * ./cap_userns_test unshare -r grep Cap /proc/self/status
->  * CapInh: 0000000000000000
->  * CapPrm: 000001fffffdffff
->  * CapEff: 000001fffffdffff
->  * CapBnd: 000001fffffdffff
->  * CapAmb: 0000000000000000
->  * CapUNs: 000001fffffdffff
->  */
-> 
-> int main(int argc, char *argv[])
-> {
->     if (prctl(PR_CAP_USERNS, PR_CAP_USERNS_LOWER, CAP_SYS_RAWIO, 0, 0) < 0)
->             err(1, "cannot drop userns cap");
-> 
->     execvp(argv[1], argv + 1);
->     err(1, "cannot exec");
-> }
-> 
-> [1] https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html
-> [2] https://lore.kernel.org/lkml/1453502345-30416-1-git-send-email-keescook@chromium.org
-> [3] https://lore.kernel.org/lkml/20220815162028.926858-1-fred@cloudflare.com
-> [4] https://lore.kernel.org/containers/168547265011.24337.4306067683997517082-0@git.sr.ht
-> 
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-
-Thanks.
-
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-> ---
->  Documentation/filesystems/proc.rst     |  1 +
->  Documentation/security/credentials.rst |  6 +++
->  fs/proc/array.c                        |  9 ++++
->  include/linux/cred.h                   |  3 ++
->  include/uapi/linux/prctl.h             |  7 +++
->  kernel/cred.c                          |  3 ++
->  kernel/umh.c                           | 15 +++++++
->  kernel/user_namespace.c                | 12 +++--
->  security/commoncap.c                   | 62 ++++++++++++++++++++++++--
->  security/keys/process_keys.c           |  3 ++
->  10 files changed, 111 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 7c3a565ffbef..b5de4eaf1b7b 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -294,6 +294,7 @@ It's slow but very precise.
->   CapEff                      bitmap of effective capabilities
->   CapBnd                      bitmap of capabilities bounding set
->   CapAmb                      bitmap of ambient capabilities
-> + CapUns                      bitmap of user namespace capabilities
->   NoNewPrivs                  no_new_privs, like prctl(PR_GET_NO_NEW_PRIV, ...)
->   Seccomp                     seccomp mode, like prctl(PR_GET_SECCOMP, ...)
->   Speculation_Store_Bypass    speculative store bypass mitigation status
-> diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
-> index 357328d566c8..7ee904237023 100644
-> --- a/Documentation/security/credentials.rst
-> +++ b/Documentation/security/credentials.rst
-> @@ -148,6 +148,7 @@ The Linux kernel supports the following types of credentials:
->  	- Set of permitted capabilities
->  	- Set of inheritable capabilities
->  	- Set of effective capabilities
-> +	- Set of user namespace capabilities
->  	- Capability bounding set
->  
->       These are only carried by tasks.  They indicate superior capabilities
-> @@ -170,6 +171,11 @@ The Linux kernel supports the following types of credentials:
->       ``execve()``, especially when a binary is executed that will execute as
->       UID 0.
->  
-> +     The user namespace set limits the capabilities granted to user namespaces.
-> +     It defines what capabilities will be available in the other sets after
-> +     creating a new user namespace, such as when calling ``clone()`` or
-> +     ``unshare()`` with ``CLONE_NEWUSER``.
-> +
->   3. Secure management flags (securebits).
->  
->       These are only carried by tasks.  These govern the way the above
-> diff --git a/fs/proc/array.c b/fs/proc/array.c
-> index 34a47fb0c57f..364e8bb19f9d 100644
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -313,6 +313,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
->  	const struct cred *cred;
->  	kernel_cap_t cap_inheritable, cap_permitted, cap_effective,
->  			cap_bset, cap_ambient;
-> +#ifdef CONFIG_USER_NS
-> +	kernel_cap_t cap_userns;
-> +#endif
->  
->  	rcu_read_lock();
->  	cred = __task_cred(p);
-> @@ -321,6 +324,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
->  	cap_effective	= cred->cap_effective;
->  	cap_bset	= cred->cap_bset;
->  	cap_ambient	= cred->cap_ambient;
-> +#ifdef CONFIG_USER_NS
-> +	cap_userns	= cred->cap_userns;
-> +#endif
->  	rcu_read_unlock();
->  
->  	render_cap_t(m, "CapInh:\t", &cap_inheritable);
-> @@ -328,6 +334,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
->  	render_cap_t(m, "CapEff:\t", &cap_effective);
->  	render_cap_t(m, "CapBnd:\t", &cap_bset);
->  	render_cap_t(m, "CapAmb:\t", &cap_ambient);
-> +#ifdef CONFIG_USER_NS
-> +	render_cap_t(m, "CapUNs:\t", &cap_userns);
-> +#endif
->  }
->  
->  static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index 2976f534a7a3..adab0031443e 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -124,6 +124,9 @@ struct cred {
->  	kernel_cap_t	cap_effective;	/* caps we can actually use */
->  	kernel_cap_t	cap_bset;	/* capability bounding set */
->  	kernel_cap_t	cap_ambient;	/* Ambient capability set */
-> +#ifdef CONFIG_USER_NS
-> +	kernel_cap_t	cap_userns;	/* User namespace capability set */
-> +#endif
->  #ifdef CONFIG_KEYS
->  	unsigned char	jit_keyring;	/* default keyring to attach requested
->  					 * keys to */
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 35791791a879..b58325ebdc9e 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -198,6 +198,13 @@ struct prctl_mm_map {
->  # define PR_CAP_AMBIENT_LOWER		3
->  # define PR_CAP_AMBIENT_CLEAR_ALL	4
->  
-> +/* Control the userns capability set */
-> +#define PR_CAP_USERNS			48
-> +# define PR_CAP_USERNS_IS_SET		1
-> +# define PR_CAP_USERNS_RAISE		2
-> +# define PR_CAP_USERNS_LOWER		3
-> +# define PR_CAP_USERNS_CLEAR_ALL	4
-> +
->  /* arm64 Scalable Vector Extension controls */
->  /* Flag values must be kept in sync with ptrace NT_ARM_SVE interface */
->  #define PR_SVE_SET_VL			50	/* set task vector length */
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 075cfa7c896f..9912c6f3bc6b 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -56,6 +56,9 @@ struct cred init_cred = {
->  	.cap_permitted		= CAP_FULL_SET,
->  	.cap_effective		= CAP_FULL_SET,
->  	.cap_bset		= CAP_FULL_SET,
-> +#ifdef CONFIG_USER_NS
-> +	.cap_userns		= CAP_FULL_SET,
-> +#endif
->  	.user			= INIT_USER,
->  	.user_ns		= &init_user_ns,
->  	.group_info		= &init_groups,
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index 598b3ffe1522..0a5a9cf10d83 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -32,6 +32,9 @@
->  
->  #include <trace/events/module.h>
->  
-> +#ifdef CONFIG_USER_NS
-> +static kernel_cap_t usermodehelper_userns = CAP_FULL_SET;
-> +#endif
->  static kernel_cap_t usermodehelper_bset = CAP_FULL_SET;
->  static kernel_cap_t usermodehelper_inheritable = CAP_FULL_SET;
->  static DEFINE_SPINLOCK(umh_sysctl_lock);
-> @@ -94,6 +97,9 @@ static int call_usermodehelper_exec_async(void *data)
->  	new->cap_bset = cap_intersect(usermodehelper_bset, new->cap_bset);
->  	new->cap_inheritable = cap_intersect(usermodehelper_inheritable,
->  					     new->cap_inheritable);
-> +#ifdef CONFIG_USER_NS
-> +	new->cap_userns = cap_intersect(usermodehelper_userns, new->cap_userns);
-> +#endif
->  	spin_unlock(&umh_sysctl_lock);
->  
->  	if (sub_info->init) {
-> @@ -560,6 +566,15 @@ static struct ctl_table usermodehelper_table[] = {
->  		.mode		= 0600,
->  		.proc_handler	= proc_cap_handler,
->  	},
-> +#ifdef CONFIG_USER_NS
-> +	{
-> +		.procname	= "userns",
-> +		.data		= &usermodehelper_userns,
-> +		.maxlen		= 2 * sizeof(unsigned long),
-> +		.mode		= 0600,
-> +		.proc_handler	= proc_cap_handler,
-> +	},
-> +#endif
->  };
->  
->  static int __init init_umh_sysctls(void)
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 0b0b95418b16..7e624607330b 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -42,15 +42,13 @@ static void dec_user_namespaces(struct ucounts *ucounts)
->  
->  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
->  {
-> -	/* Start with the same capabilities as init but useless for doing
-> -	 * anything as the capabilities are bound to the new user namespace.
-> -	 */
-> -	cred->securebits = SECUREBITS_DEFAULT;
-> +	/* Start with the capabilities defined in the userns set. */
-> +	cred->cap_bset = cred->cap_userns;
-> +	cred->cap_permitted = cred->cap_userns;
-> +	cred->cap_effective = cred->cap_userns;
->  	cred->cap_inheritable = CAP_EMPTY_SET;
-> -	cred->cap_permitted = CAP_FULL_SET;
-> -	cred->cap_effective = CAP_FULL_SET;
->  	cred->cap_ambient = CAP_EMPTY_SET;
-> -	cred->cap_bset = CAP_FULL_SET;
-> +	cred->securebits = SECUREBITS_DEFAULT;
->  #ifdef CONFIG_KEYS
->  	key_put(cred->request_key_auth);
->  	cred->request_key_auth = NULL;
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 162d96b3a676..59fafbfcfc5e 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -214,10 +214,10 @@ int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
->  }
->  
->  /*
-> - * Determine whether the inheritable capabilities are limited to the old
-> + * Determine whether the capabilities are limited to the old
->   * permitted set.  Returns 1 if they are limited, 0 if they are not.
->   */
-> -static inline int cap_inh_is_capped(void)
-> +static inline int cap_is_capped(void)
->  {
->  	/* they are so limited unless the current task has the CAP_SETPCAP
->  	 * capability
-> @@ -228,6 +228,29 @@ static inline int cap_inh_is_capped(void)
->  	return 1;
->  }
->  
-> +/*
-> + * Determine whether a userns capability can be raised.
-> + * Returns 1 if it can, 0 otherwise.
-> + */
-> +#ifdef CONFIG_USER_NS
-> +static inline int cap_uns_is_raiseable(unsigned long cap)
-> +{
-> +	if (!!cap_raised(current_cred()->cap_userns, cap))
-> +		return 1;
-> +
-> +	/*
-> +	 * A capability cannot be raised unless the current task has it in
-> +	 * its bounding set and, without CAP_SETPCAP, its permitted set.
-> +	 */
-> +	if (!cap_raised(current_cred()->cap_bset, cap))
-> +		return 0;
-> +	if (cap_is_capped() && !cap_raised(current_cred()->cap_permitted, cap))
-> +		return 0;
-> +
-> +	return 1;
-> +}
-> +#endif
-> +
->  /**
->   * cap_capset - Validate and apply proposed changes to current's capabilities
->   * @new: The proposed new credentials; alterations should be made here
-> @@ -246,7 +269,7 @@ int cap_capset(struct cred *new,
->  	       const kernel_cap_t *inheritable,
->  	       const kernel_cap_t *permitted)
->  {
-> -	if (cap_inh_is_capped() &&
-> +	if (cap_is_capped() &&
->  	    !cap_issubset(*inheritable,
->  			  cap_combine(old->cap_inheritable,
->  				      old->cap_permitted)))
-> @@ -1382,6 +1405,39 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  			return commit_creds(new);
->  		}
->  
-> +#ifdef CONFIG_USER_NS
-> +	case PR_CAP_USERNS:
-> +		if (arg2 == PR_CAP_USERNS_CLEAR_ALL) {
-> +			if (arg3 | arg4 | arg5)
-> +				return -EINVAL;
-> +
-> +			new = prepare_creds();
-> +			if (!new)
-> +				return -ENOMEM;
-> +			cap_clear(new->cap_userns);
-> +			return commit_creds(new);
-> +		}
-> +
-> +		if (((!cap_valid(arg3)) | arg4 | arg5))
-> +			return -EINVAL;
-> +
-> +		if (arg2 == PR_CAP_USERNS_IS_SET)
-> +			return !!cap_raised(current_cred()->cap_userns, arg3);
-> +		if (arg2 != PR_CAP_USERNS_RAISE && arg2 != PR_CAP_USERNS_LOWER)
-> +			return -EINVAL;
-> +		if (arg2 == PR_CAP_USERNS_RAISE && !cap_uns_is_raiseable(arg3))
-> +			return -EPERM;
-> +
-> +		new = prepare_creds();
-> +		if (!new)
-> +			return -ENOMEM;
-> +		if (arg2 == PR_CAP_USERNS_RAISE)
-> +			cap_raise(new->cap_userns, arg3);
-> +		else
-> +			cap_lower(new->cap_userns, arg3);
-> +		return commit_creds(new);
-> +#endif
-> +
->  	default:
->  		/* No functionality available - continue with default */
->  		return -ENOSYS;
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index b5d5333ab330..e3670d815435 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -944,6 +944,9 @@ void key_change_session_keyring(struct callback_head *twork)
->  	new->cap_effective	= old->cap_effective;
->  	new->cap_ambient	= old->cap_ambient;
->  	new->cap_bset		= old->cap_bset;
-> +#ifdef CONFIG_USER_NS
-> +	new->cap_userns		= old->cap_userns;
-> +#endif
->  
->  	new->jit_keyring	= old->jit_keyring;
->  	new->thread_keyring	= key_get(old->thread_keyring);
-> -- 
-> 2.45.2
 
