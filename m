@@ -1,334 +1,225 @@
-Return-Path: <linux-kernel+bounces-208905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D033902A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0015902A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F571F249A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDB81C220CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E126F306;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6456F2EE;
 	Mon, 10 Jun 2024 21:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E75d12JX"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FSbpHbeJ"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C947A40
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8051879;
+	Mon, 10 Jun 2024 21:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718053939; cv=none; b=G7Bdh0XKlBrgMyGiqP0xl+Ghhj33q3sRG+iy4HXeWivT9CLUi4b2EiAAgubXAc3xCWsidPMH1oGVA2HYrNhL+ANT9zzWZttnU9EFX0Cvoyg2JCJjkz/AK9SEwMEwEu6sQRbFnlNUCUgYyqtZzaPew3cgUAjxVIogbZVbE41dbCw=
+	t=1718053939; cv=none; b=LVVKsgTj+b6XItx7Wd1nUlx34Jeg3dTNRt4FYGO7gyEdGAMzcOu7Tmp3NJoRyAAEfEMUYROkGCL6wIIRz0JlQYcXz/1vtyCGPTID3yiikEyaugazNOmC2WVYZoQBwpqpMR8ZmW2Yie2rpe9rxKUoKOqqPePyqy/orMFlLUE0E7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718053939; c=relaxed/simple;
-	bh=6HhADaMBbEyoScJs8v/thCbLenv1FNwaIsawu+YyByE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=imbprcDPxU7Mp/hPQlNHt1Fk5s/uN7C+Bjb2F8Ep4qiTcGW+37bU5Cb/Ag0KeLr7EK9u//cWMAdCbHRRZL9MqCPSXE/eL3AZxQvRN+VgJFINyXkXl0HE83bZrdG4mE73M6HQx35KtJJpX+gvlYH2QIX9HIj+NGrTiNjGpXKc6fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E75d12JX; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6efe62f583so28095166b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718053936; x=1718658736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Uy3FcrR56dAJ33BptXmeq82zQbFLSxbtr1pm6OxI94=;
-        b=E75d12JXgFIRLQ2/fRUzMkO4+N/oFAyBXT4oB7zeyA+6PZsTg+5PtaYcO9fBVXAopk
-         PfQo+GoyzTprIlFePNPgfqxDz1mHBMzvT0k8kV5jwSQrhma0DKdGSMqFeg1Yx7HZbP9K
-         6TYj92u5r7kcWyX5a4pY8qGaH7hZXDkqG6Yaq5qAHiXgN9Z1mvF8GZc7z3mX6XmSXBeq
-         WDwNWnmJtej9SlezbmGx7X2VmOzDfqU7rBDgH6tWIPVtlhsHOEKtae+B2vPBNmviuI7V
-         zwz4XXuMERlVNGo7OjjI8rhafCxmOXvfoNkPPZyd03oLSZ6LbT9C0UvGr7ddCMJMdLJj
-         lhsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718053936; x=1718658736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Uy3FcrR56dAJ33BptXmeq82zQbFLSxbtr1pm6OxI94=;
-        b=A77+MhMilCFradBXkCmYy1LLU5cKTG80X0Mp0zpgLIH1vnAjXHWNu3ReeH0kY7f/Pn
-         PEiqZZ/xrBi6YXL5d825htmtzFqHotCO7AyMdW075Hpq1Fj2S+gTSbji2L/zw+O0ZkV0
-         NkkY3m2FGbgRuxhTEqD4vekNGyxt8F/gQBk468JnQv1HzDjfdNRiQ7vPygJbxG9Tj/fE
-         5zO5SrF6jIwTnjyB9AsaL4Hl/PuHqVDaIqcAIUEv1imNTjulqciewpftlQ48JOq0etuW
-         VmReCktiiO/Q5zEIWpkvCsdU1CsxLVnEb4jytxskKG8TtxIt21RcgymwN8BqRD0BVYRg
-         loCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+R4x5LHjDIJPD5KGXWTYSLO1y76XzSYVoL+bX0OfrNA7J8oo4MCzrAHhPm1oTMxhF1EcixFpm90zvkf9PNj1CeF7dgIxaRmwycUep
-X-Gm-Message-State: AOJu0YyysAgxsoSArNwNf0kU9AnFgFaatBRineHdGD1rGd+cjFMZ9bnX
-	dAHlvJJglAZ/Fs2VB47CkFJDOkgGAl0ruTMU6JoIBZQN6xYMf2PK6IqiPpQWqSXb44arETjVgPU
-	+yei/IYFJ+D5Gl/RFAw6NALi3pKmweWzoDd9F
-X-Google-Smtp-Source: AGHT+IEASnD5ua9yfrdUtvIzu+Lw46QXFzbx9CRxofl4dQ+vje03VpXXKBLIh1iGcqO9u1jSSMdugvsncTIN1lM0/tY=
-X-Received: by 2002:a17:906:7fd0:b0:a6e:2275:95b8 with SMTP id
- a640c23a62f3a-a6e2275962emr460685966b.64.1718053935639; Mon, 10 Jun 2024
- 14:12:15 -0700 (PDT)
+	bh=L6idWEylvQppgYHhQF7YKp4UwnmESQ6eDx18yypSxo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OwCqnCpuQPyrxRaWQGHoELnMYYYqLm1Q8f7Ow9FtaLusrnBhzYihjDw0pxhCeXYZ7cMslXask/l+uSIwqApr/pTD9rZVRBeH4TU7d8M3p483SYh1XpYgAMPyOF320BeIxN/4uCjh79pDhhXdQD2vQDgLsuAP2huJEDoZtfhF8Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FSbpHbeJ; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.83] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EA0BE40FC9;
+	Mon, 10 Jun 2024 21:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1718053927;
+	bh=0+CsIHZM4SguLeaiX+nC4gxIoEzogxF06SwIBnAaJt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=FSbpHbeJ0qs8ahd0/RIZF8ZdBAdo315IAdFQ9tI7YpABFM9GR8ENuv/wcQaY5ALTy
+	 4O/iscNJCO9tCrEPM2U+Smpe0vkPzg2buaPqVAY7XIwhb+pZ/cSd+rLmysOdEreLNB
+	 tlVCs88sRtTcqCBA654FwfvPgsU4csCpEKSjUwFz0JNx6m4B2HMn2ZKHXxkYnj3Tbn
+	 Yl4FBS+yDxThTxFsiU0mnSWBYBNkS731+cmrGfN1/HQTY2Br1SKtR9bsm0j5XEiFgk
+	 1UJEVB91SFy9PbHey6QQiLkSQISQ9wTOVHt/r4tK38CMpGHxQSu3TxK2hzOhYcx+/o
+	 yrBNYQC0MnuUQ==
+Message-ID: <4cfca86d-ceb7-4abe-8b6b-35194fc55565@canonical.com>
+Date: Mon, 10 Jun 2024 14:12:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608023654.3513385-1-yosryahmed@google.com>
- <CAGsJ_4yVmDKtcKKAdjPOkOMWB+=ZT5TrrWz188xJaTV4EpM1Bw@mail.gmail.com>
- <CAJD7tkaHLVcjUgiUFfBK+ztCqxBTRfyVbSVH9vytK=5JYOw+Sw@mail.gmail.com>
- <CAGsJ_4w-magFysq4uLBm46AzHLD+r=v6pJphwmQn+OFvECHjrA@mail.gmail.com>
- <CAJD7tkYdq533Z7nubjFT5jQYuS4oq2u15RAz2oGHGxYSk5Oicg@mail.gmail.com> <CAGsJ_4zNxC5u088RRnKeM18skEJvwTd22mB_FWSA67K3S-CKPw@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zNxC5u088RRnKeM18skEJvwTd22mB_FWSA67K3S-CKPw@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 10 Jun 2024 14:11:36 -0700
-Message-ID: <CAJD7tkb0Rv4mSPS3DXqF888iVwd++nd99N3WrZYuJhLPDN+dhA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
-To: Barry Song <21cnbao@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] capability: introduce new capable flag
+ CAP_OPT_NOAUDIT_ONDENY
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ linux-security-module@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Roberto Sassu <roberto.sassu@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Khadija Kamran <kamrankhadijadj@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+ apparmor@lists.ubuntu.com, selinux@vger.kernel.org, bpf@vger.kernel.org
+References: <20240315113828.258005-1-cgzones@googlemail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 2:00=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Tue, Jun 11, 2024 at 4:12=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
-m> wrote:
-> >
-> > On Mon, Jun 10, 2024 at 1:06=E2=80=AFPM Barry Song <21cnbao@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Jun 11, 2024 at 1:42=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
-e.com> wrote:
-> > > >
-> > > > On Fri, Jun 7, 2024 at 9:13=E2=80=AFPM Barry Song <21cnbao@gmail.co=
-m> wrote:
-> > > > >
-> > > > > On Sat, Jun 8, 2024 at 10:37=E2=80=AFAM Yosry Ahmed <yosryahmed@g=
-oogle.com> wrote:
-> > > > > >
-> > > > > > Zswap does not support storing or loading large folios. Until p=
-roper
-> > > > > > support is added, attempts to load large folios from zswap are =
-a bug.
-> > > > > >
-> > > > > > For example, if a swapin fault observes that contiguous PTEs ar=
-e
-> > > > > > pointing to contiguous swap entries and tries to swap them in a=
-s a large
-> > > > > > folio, swap_read_folio() will pass in a large folio to zswap_lo=
-ad(), but
-> > > > > > zswap_load() will only effectively load the first page in the f=
-olio. If
-> > > > > > the first page is not in zswap, the folio will be read from dis=
-k, even
-> > > > > > though other pages may be in zswap.
-> > > > > >
-> > > > > > In both cases, this will lead to silent data corruption. Proper=
- support
-> > > > > > needs to be added before large folio swapins and zswap can work
-> > > > > > together.
-> > > > > >
-> > > > > > Looking at callers of swap_read_folio(), it seems like they are=
- either
-> > > > > > allocated from __read_swap_cache_async() or do_swap_page() in t=
-he
-> > > > > > SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios,=
- so
-> > > > > > everything is fine for now.
-> > > > > >
-> > > > > > However, there is ongoing work to add to support large folio sw=
-apins
-> > > > > > [1]. To make sure new development does not break zswap (or get =
-broken by
-> > > > > > zswap), add minimal handling of incorrect loads of large folios=
- to
-> > > > > > zswap.
-> > > > > >
-> > > > > > First, move the call folio_mark_uptodate() inside zswap_load().
-> > > > > >
-> > > > > > If a large folio load is attempted, and any page in that folio =
-is in
-> > > > > > zswap, return 'true' without calling folio_mark_uptodate(). Thi=
-s will
-> > > > > > prevent the folio from being read from disk, and will emit an I=
-O error
-> > > > > > because the folio is not uptodate (e.g. do_swap_fault() will re=
-turn
-> > > > > > VM_FAULT_SIGBUS). It may not be reliable recovery in all cases,=
- but it
-> > > > > > is better than nothing.
-> > > > > >
-> > > > > > This was tested by hacking the allocation in __read_swap_cache_=
-async()
-> > > > > > to use order 2 and __GFP_COMP.
-> > > > > >
-> > > > > > In the future, to handle this correctly, the swapin code should=
-:
-> > > > > > (a) Fallback to order-0 swapins if zswap was ever used on the m=
-achine,
-> > > > > > because compressed pages remain in zswap after it is disabled.
-> > > > > > (b) Add proper support to swapin large folios from zswap (fully=
- or
-> > > > > > partially).
-> > > > > >
-> > > > > > Probably start with (a) then followup with (b).
-> > > > > >
-> > > > > > [1]https://lore.kernel.org/linux-mm/20240304081348.197341-6-21c=
-nbao@gmail.com/
-> > > > > >
-> > > > > > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > > > > > ---
-> > > > > >
-> > > > > > v1: https://lore.kernel.org/lkml/20240606184818.1566920-1-yosry=
-ahmed@google.com/
-> > > > > >
-> > > > > > v1 -> v2:
-> > > > > > - Instead of using VM_BUG_ON() use WARN_ON_ONCE() and add some =
-recovery
-> > > > > >   handling (David Hildenbrand).
-> > > > > >
-> > > > > > ---
-> > > > > >  mm/page_io.c |  1 -
-> > > > > >  mm/zswap.c   | 22 +++++++++++++++++++++-
-> > > > > >  2 files changed, 21 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/mm/page_io.c b/mm/page_io.c
-> > > > > > index f1a9cfab6e748..8f441dd8e109f 100644
-> > > > > > --- a/mm/page_io.c
-> > > > > > +++ b/mm/page_io.c
-> > > > > > @@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, s=
-truct swap_iocb **plug)
-> > > > > >         delayacct_swapin_start();
-> > > > > >
-> > > > > >         if (zswap_load(folio)) {
-> > > > > > -               folio_mark_uptodate(folio);
-> > > > > >                 folio_unlock(folio);
-> > > > > >         } else if (data_race(sis->flags & SWP_FS_OPS)) {
-> > > > > >                 swap_read_folio_fs(folio, plug);
-> > > > > > diff --git a/mm/zswap.c b/mm/zswap.c
-> > > > > > index b9b35ef86d9be..ebb878d3e7865 100644
-> > > > > > --- a/mm/zswap.c
-> > > > > > +++ b/mm/zswap.c
-> > > > > > @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
-> > > > > >
-> > > > > >         VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> > > > > >
-> > > > > > +       /*
-> > > > > > +        * Large folios should not be swapped in while zswap is=
- being used, as
-> > > > > > +        * they are not properly handled. Zswap does not proper=
-ly load large
-> > > > > > +        * folios, and a large folio may only be partially in z=
-swap.
-> > > > > > +        *
-> > > > > > +        * If any of the subpages are in zswap, reading from di=
-sk would result
-> > > > > > +        * in data corruption, so return true without marking t=
-he folio uptodate
-> > > > > > +        * so that an IO error is emitted (e.g. do_swap_page() =
-will sigfault).
-> > > > > > +        *
-> > > > > > +        * Otherwise, return false and read the folio from disk=
-.
-> > > > > > +        */
-> > > > > > +       if (folio_test_large(folio)) {
-> > > > > > +               if (xa_find(tree, &offset,
-> > > > > > +                           offset + folio_nr_pages(folio) - 1,=
- XA_PRESENT)) {
-> > > > > > +                       WARN_ON_ONCE(1);
-> > > > > > +                       return true;
-> > > > > > +               }
-> > > > > > +               return false;
-> > > > >
-> > > > > IMHO, this appears to be over-designed. Personally, I would opt t=
-o
-> > > > > use
-> > > > >
-> > > > >  if (folio_test_large(folio))
-> > > > >                return true;
-> > > >
-> > > > I am sure you mean "return false" here. Always returning true means=
- we
-> > > > will never read a large folio from either zswap or disk, whether it=
-'s
-> > > > in zswap or not. Basically guaranteeing corrupting data for large
-> > > > folio swapin, even if zswap is disabled :)
-> > > >
-> > > > >
-> > > > > Before we address large folio support in zswap, it=E2=80=99s esse=
-ntial
-> > > > > not to let them coexist. Expecting valid data by lunchtime is
-> > > > > not advisable.
-> > > >
-> > > > The goal here is to enable development for large folio swapin witho=
-ut
-> > > > breaking zswap or being blocked on adding support in zswap. If we
-> > > > always return false for large folios, as you suggest, then even if =
-the
-> > > > folio is in zswap (or parts of it), we will go read it from disk. T=
-his
-> > > > will result in silent data corruption.
-> > > >
-> > > > As you mentioned before, you spent a week debugging problems with y=
-our
-> > > > large folio swapin series because of a zswap problem, and even afte=
-r
-> > > > then, the zswap_is_enabled() check you had is not enough to prevent
-> > > > problems as I mentioned before (if zswap was enabled before). So we
-> > > > need stronger checks to make sure we don't break things when we
-> > > > support large folio swapin.
-> > > >
-> > > > Since we can't just check if zswap is enabled or not, we need to
-> > > > rather check if the folio (or any part of it) is in zswap or not. W=
-e
-> > > > can only WARN in that case, but delivering the error to userspace i=
-s a
-> > > > couple of extra lines of code (not set uptodate), and will make the
-> > > > problem much easier to notice.
-> > > >
-> > > > I am not sure I understand what you mean. The alternative is to
-> > > > introduce a config option (perhaps internal) for large folio swapin=
-,
-> > > > and make this depend on !CONFIG_ZSWAP, or make zswap refuse to get
-> > > > enabled if large folio swapin is enabled (through config or boot
-> > > > option). This is until proper handling is added, of course.
-> > >
-> > > Hi Yosry,
-> > > My point is that anybody attempts to do large folios swap-in should
-> > > either
-> > > 1. always use small folios if zswap has been once enabled before or n=
-ow
-> > > or
-> > > 2. address the large folios swapin issues in zswap
-> > >
-> > > there is no 3rd way which you are providing.
-> > >
-> > > it is over-designed to give users true or false based on if data is z=
-swap
-> > > as there is always a chance data could be in zswap. so before approac=
-h
-> > > 2 is done, we should always WARN_ON large folios and report data
-> > > corruption.
-> >
-> > We can't always WARN_ON for large folios, as this will fire even if
-> > zswap was never enabled. The alternative is tracking whether zswap was
-> > ever enabled, and checking that instead of checking if any part of the
-> > folio is in zswap.
-> >
-> > Basically replacing xa_find(..) with zswap_was_enabled(..) or something=
-.
->
-> My point is that mm core should always fallback
->
-> if (zswap_was_or_is_enabled())
->      goto fallback;
->
-> till zswap fixes the issue. This is the only way to enable large folios s=
-wap-in
-> development before we fix zswap.
+On 3/15/24 04:37, Christian Göttsche wrote:
+> Introduce a new capable flag, CAP_OPT_NOAUDIT_ONDENY, to not generate
+> an audit event if the requested capability is not granted.  This will be
+> used in a new capable_any() functionality to reduce the number of
+> necessary capable calls.
+> 
+> Handle the flag accordingly in AppArmor and SELinux.
+> 
+> CC: linux-block@vger.kernel.org
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-I agree with this, I just want an extra fallback in zswap itself in
-case something was missed during large folio swapin development (which
-can evidently happen).
+> ---
+> v5:
+>     rename flag to CAP_OPT_NOAUDIT_ONDENY, suggested by Serge:
+>       https://lore.kernel.org/all/20230606190013.GA640488@mail.hallyn.com/
+> ---
+>   include/linux/security.h       |  2 ++
+>   security/apparmor/capability.c |  8 +++++---
+>   security/selinux/hooks.c       | 14 ++++++++------
+>   3 files changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 41a8f667bdfa..c60cae78ff8b 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -70,6 +70,8 @@ struct lsm_ctx;
+>   #define CAP_OPT_NOAUDIT BIT(1)
+>   /* If capable is being called by a setid function */
+>   #define CAP_OPT_INSETID BIT(2)
+> +/* If capable should audit the security request for authorized requests only */
+> +#define CAP_OPT_NOAUDIT_ONDENY BIT(3)
+>   
+>   /* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+>   #define SECURITY_LSM_NATIVE_LABELS	1
+> diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
+> index 9934df16c843..08c9c9a0fc19 100644
+> --- a/security/apparmor/capability.c
+> +++ b/security/apparmor/capability.c
+> @@ -108,7 +108,8 @@ static int audit_caps(struct apparmor_audit_data *ad, struct aa_profile *profile
+>    * profile_capable - test if profile allows use of capability @cap
+>    * @profile: profile being enforced    (NOT NULL, NOT unconfined)
+>    * @cap: capability to test if allowed
+> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
+> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
+> + *	record is generated
+>    * @ad: audit data (MAY BE NULL indicating no auditing)
+>    *
+>    * Returns: 0 if allowed else -EPERM
+> @@ -126,7 +127,7 @@ static int profile_capable(struct aa_profile *profile, int cap,
+>   	else
+>   		error = -EPERM;
+>   
+> -	if (opts & CAP_OPT_NOAUDIT) {
+> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && error)) {
+>   		if (!COMPLAIN_MODE(profile))
+>   			return error;
+>   		/* audit the cap request in complain mode but note that it
+> @@ -143,7 +144,8 @@ static int profile_capable(struct aa_profile *profile, int cap,
+>    * @subj_cred: cred we are testing capability against
+>    * @label: label being tested for capability (NOT NULL)
+>    * @cap: capability to be tested
+> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
+> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
+> + *	record is generated
+>    *
+>    * Look up capability in profile capability set.
+>    *
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 3448454c82d0..1a2c7c1a89be 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1624,7 +1624,7 @@ static int cred_has_capability(const struct cred *cred,
+>   	u16 sclass;
+>   	u32 sid = cred_sid(cred);
+>   	u32 av = CAP_TO_MASK(cap);
+> -	int rc;
+> +	int rc, rc2;
+>   
+>   	ad.type = LSM_AUDIT_DATA_CAP;
+>   	ad.u.cap = cap;
+> @@ -1643,11 +1643,13 @@ static int cred_has_capability(const struct cred *cred,
+>   	}
+>   
+>   	rc = avc_has_perm_noaudit(sid, sid, sclass, av, 0, &avd);
+> -	if (!(opts & CAP_OPT_NOAUDIT)) {
+> -		int rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
+> -		if (rc2)
+> -			return rc2;
+> -	}
+> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && rc))
+> +		return rc;
+> +
+> +	rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
+> +	if (rc2)
+> +		return rc2;
+> +
+>   	return rc;
+>   }
+>   
+
 
