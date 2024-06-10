@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-207844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E961F901CEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2B1901CEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60AD2825A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:29:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A0B1F216DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17096F079;
-	Mon, 10 Jun 2024 08:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE4A6F2E7;
+	Mon, 10 Jun 2024 08:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="BoACHtEm"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UnZk/cki"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0413BBC5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD7B23B0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718008139; cv=none; b=gNpwbwshoKWbCNMXw1SkCsARlEPyCn5NG2OfqBviCGhpB2L59v70+Yi0/A/AJGn9ALxsVylSOjrlvBNNwSVdurZnbuFMIdkIn2hvA0DFvxlP5395IQJB39mTSpiVZqO4OhRfmGUlgAoJWtlAqRXdGoafqPov9w4xyz2eZH10jII=
+	t=1718008182; cv=none; b=mrODSBIoXi4XJW5GvZaIMnG2MVn0glcV5pKLKZIef9eqMi+/ezA4WJFAo7OmhKmnOVRw+U/turw/PSwKyKiiH0HJW9YCUww0WL+Kd9q1IIekmKfl+F2Z4GBLcU8NGXq/YpaFB6bx9d5s1h3QqWpKb2b9ZVnCtFnCaHxdka3Lbik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718008139; c=relaxed/simple;
-	bh=939idIW3iUubqcYM5q5pS4Y7ZHwRh013h9LSvEp/ihs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Lu3jLRF01MP2rSy841/hRQ3yE3KdKLdQacFmdl9z816wH+FR8u6dOR4pTzyn/qU1FOguLtbWON8dNvvrH6yzW6uRKtZsqyf5JqnLbBN/Y4vSpWqaGKXGii5qb0ZPPQir4kuoEqnYaSmUiHfwaQo6kdKQz+CDKpIuJDEpIbb7miQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=BoACHtEm; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f0c3d0792so176218966b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:28:56 -0700 (PDT)
+	s=arc-20240116; t=1718008182; c=relaxed/simple;
+	bh=gYUI0TcjL8jeMg7TO1X8UyEUwhAOyW6uLBMqp42OMR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FxmHAOtp0+SdGOS5UBGcHaHOr7zM/JefcWhCek3NiLXnG+W5/tJsNiHmwUGeRwQ+5WgobsjbY1ukstWZm2J5sUorePVEx4XoeEEM/SyXRaZwIjNA7BAZjQ4hXjjBO8AmrhVv4NZY7Ukj6ug5ywjT+2AkORH81S9vMgK6OkI+zgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UnZk/cki; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42172ed3597so14719415e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1718008135; x=1718612935; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=939idIW3iUubqcYM5q5pS4Y7ZHwRh013h9LSvEp/ihs=;
-        b=BoACHtEm/A8T+JrzGpXG4xuebX6Bc02or4HoZrT0ewQlUKymwNehZ/6wlo2OdZP8zJ
-         ukmcuJXKIfsHQvKjbXgxYHF+sycGvwRTZxABoEqfZt0BlC952vm8T87JUYfmRRluQbB0
-         O7KUrIk5bBKDgVGVNuEryjR1Id4IWgfTDDdLyB0FS2rHAFiNlpfCbv7dfGJaOv2JzhjQ
-         ZnD63whKZxbAll8mCOj7nXhcDKLYqxDLpI7O5S9vu79RLMznzsC38VAq+EHEQoczqlFc
-         ZFPlMiyoGKzSV6fWSilwdD525mNU83L0uQZ1Kl2rtmvmB5DyJqXIG5B9Zs1dDh1nR1mR
-         AUxQ==
+        d=linaro.org; s=google; t=1718008179; x=1718612979; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B5Z/eCEgsGGP99POdRTfA1A5PmBds/NTCrk296+lqgA=;
+        b=UnZk/ckiunAd0E5Cd864OM5/x1n8yEv6TMKYGF9V2odeTKBM/Zo/ecikPhDRHWwfU+
+         o0DCmCCdKA6pR+4xMWJZSBRyY4CP5ViHMDOtpLjF6taCedBygS6I2db1qsFem+zaWOAU
+         Sm24/OlEYoaDS/NcFkDlS4GRGmcfCRmmpJ0EC7/6fXC0iHYTFuzSX5dHlc/miJo4Zwe4
+         F72Ys2ut4EG1P3xdkTsbbRUsiLoslZrcV+8JufR1NgGwEn3JT+pPnr4jbA8wrIrFKkZD
+         LAsAs5RCYqTPExQ2rb5VRpPb/BBZ8HAgxGHNUCO9FtRUVi/vRSlAU6JSO3jXg1Rf+6eA
+         Qoiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718008135; x=1718612935;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=939idIW3iUubqcYM5q5pS4Y7ZHwRh013h9LSvEp/ihs=;
-        b=OH9l8yKkxGwTklGrUkRXeODE8ietb8e7eRRqKw08deNHL6T1lWW3p+k8ayRFcJ5Zzw
-         jH254bnKguZ6q3NCcQfDkpwVhyuGfQ1jQ3nPWrOETzMIyrRYFU/bhFXMCFFUEHdLLAkF
-         3qgHbpx/BeS5ybHBjsxFX62rwSE2r0RC6jT+/6ouAu7evN05t+blwtePetArb0IJqlYa
-         /n96JFPV9lDUo92VfGRx98jO4T/8V6JqrYHRgUU5MDi7rCNXUZ6vQZecnQj3VduVwDCw
-         I7+1Vfdrpo9qUxjJJJT1aD+0lkQUp2X/y8292XE0lM6u0tl4S5Jofkzh/m+Nfx1BbZIi
-         qjxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoPGXDIOTieYPyQck/S8WM28frv34k4eVCnhXLrBN5PyLMzsQ4h5Q3xXp8HS84VZswB+cjSID8YHT44RcbkHmwvlLyFgMyugCdkUYJ
-X-Gm-Message-State: AOJu0Yyz2zUQODWvpoXHpNG+zzvaobRLA03hhsn700GBDCH6iIew6Y+9
-	tLUA7l5MikoZ+6mS2TTrD+rF5fxe3S4j8Xuseg7LA0EkiD2L8kF1kq0BzR8btk+7Z7JmUB8bcZZ
-	8xbnfxT+X2CgzbbY/vf0vwe0g+NjUtXu61Mah135vBdJxU1J0olM=
-X-Google-Smtp-Source: AGHT+IEAkeujwQKBhYRjerusld3RiXkjqZSWWJJO4IZwmGkOuMOsGdNlacEBsMnqERjUgwH37hXZ69TikhOfP1/qoew=
-X-Received: by 2002:a17:906:407:b0:a6e:fbdd:1066 with SMTP id
- a640c23a62f3a-a6efbdd11a5mr354806366b.67.1718008134905; Mon, 10 Jun 2024
- 01:28:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718008179; x=1718612979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B5Z/eCEgsGGP99POdRTfA1A5PmBds/NTCrk296+lqgA=;
+        b=XYH42p4zEwS65lrCuGme1/LEq184lxOj03jYWS5PC4Qn5o7lVJqH3Mx0M69Zzi9izw
+         gwJl/KtnWfC03K6zCTLaXI5pxhrTDhn+aZ41zzNCgGoPR4O2zqD3vSZAvvuFfcrjvR8U
+         zau8m9Xf0okT+vRxQXR7WsJZM2ZbSeIUMN8P4zY7BPOjgXmUDCopznlc7H/WBACHwSDB
+         whd3XuD98VSWJloq6knR70FVkZtnlRFojLwTEzm2Fuf24uaqdZ8nUFeNRZuG3W69XINq
+         kp3Nth6qRJvkMkG6ZvtqKib69smoVJo8ZvAdMMC3w1KojjZS40OrhdPzvuXz3kn/JNhn
+         o+iw==
+X-Gm-Message-State: AOJu0YzCgocGGfwEN9UTIdDmSmZ+oJgO3A7zWa9thLpQcJdysYhsg2Xw
+	evVAn3YzmWgjcumARGpL8bDmaZbeJ99ZzqsRT4aG8WfKMKPRerriHWbrakcw42U=
+X-Google-Smtp-Source: AGHT+IFtnR9tlknSYMkx8Ww9jAaqIQehSpo1yhNw2e6iu1WeKOUZnOdeyvnjwD9HnnSofsGo9TnDbw==
+X-Received: by 2002:a05:600c:4713:b0:421:5a2a:3cca with SMTP id 5b1f17b1804b1-4215acf6800mr109533205e9.10.1718008178684;
+        Mon, 10 Jun 2024 01:29:38 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35f2598ac1esm1533854f8f.93.2024.06.10.01.29.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 01:29:38 -0700 (PDT)
+Message-ID: <c83306dd-60a5-4f46-83c9-257058f6e848@linaro.org>
+Date: Mon, 10 Jun 2024 10:29:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
-In-Reply-To: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 10 Jun 2024 10:28:44 +0200
-Message-ID: <CAKPOu+8oS1qn94R1f45CW2MMLhvvE=t7_vPtvq==CiD6nAjscw@mail.gmail.com>
-Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
-To: Johannes Weiner <hannes@cmpxchg.org>, surenb@google.com, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] thermal/debugfs: Print mitigation timestamp value
+ in milliseconds
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+References: <5794974.DvuYhMxLoT@kreacher> <1898781.tdWV9SEqCh@kreacher>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <1898781.tdWV9SEqCh@kreacher>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 4, 2024 at 9:16=E2=80=AFAM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
-> One of the servers is still running with this problem, and I can
-> access it with gdb on /proc/kcore. I'll keep it that way for some more
-> time, so if you have any idea what to look for, let me know.
+On 28/05/2024 16:55, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Because mitigation episode duration is printed in milliseconds, there
+> is no reason to print timestamp information for mitigation episodes in
+> smaller units which also makes it somewhat harder to interpret the
+> numbers.
+> 
+> Print it in milliseconds for consistency.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
 
-It's been a week since I reported this kernel bug, but nobody replied.
-I will have to reboot this server soon, so this is the last chance to
-extract information about the bug.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Max
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
