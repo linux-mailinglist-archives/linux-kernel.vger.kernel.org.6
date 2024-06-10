@@ -1,169 +1,162 @@
-Return-Path: <linux-kernel+bounces-208830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E599029AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A79029AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77341F2226B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385CA1C2140D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDCA14F9D5;
-	Mon, 10 Jun 2024 20:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DCF1509A4;
+	Mon, 10 Jun 2024 20:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BsaCejra"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iOmHeJ0J"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47E61DDD1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BE214F9CA;
+	Mon, 10 Jun 2024 20:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718049967; cv=none; b=aIFbr6ong1TJiMf0cXupnoD4kMNVP89GHOKOixnbSQjDEO9xGnLP5GxLtwr3SJsGACGdGpxAkkwT+5qmYU+ZHVbBs7tW80mI+I6UDfuWlpSaZ8yTId8hiXQ3m1B1r2hdcZCBagpXlfnbt3GoPjFKhPgnGP5E4bvvQq+USK1F/UQ=
+	t=1718049969; cv=none; b=rmXfymatjVuwwqTb/kYJW78uYdoP424QOZ0NOsNNjt+VHVgkC+X97YIsYbu7aR2okrP4IbPJJssDVVz6byVY60NWyejRivH9XGfH9/0+OeM5vYoMYlblYgdSq1uwyS9WxlY8p6zsY7KtGgGTSlg43+RQN/38YQ659zAnFKwwjjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718049967; c=relaxed/simple;
-	bh=f7o4Qays3Bp7G7fRXPGGXUPWmsl2Lhom+FJnP4EDqTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UvDy4Wxl8+visZIpuxvNR1oiUEbTfaA+FnzLiZCqMGi+vhbDZIgJfiWHC0x26A3dtSjJf53mvu6THfJAKz74djKjkRKezGrzgYnNxW/U58vBhiaHAhcr9dPJ9gmX4Arl9qqttpfUDDVzH/Vj7RT55ZxKnZRxRRg5pZDdZpjmFP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BsaCejra; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a62ef52e837so618693666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718049964; x=1718654764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EOwI6DcCCI12dNBNkZD00pCUv7/h5/UDISzx/oKHb3g=;
-        b=BsaCejrapp0GdtUCXhTaZrxVSkYRAOvakruaAuKthx4UQb5WpqOLuxxb+zJ1ITw7Hc
-         lxe/mJX7hr3ewQAg82jx74J7ceWIB8bueQ09GkSTcRxMNSrX3TAJ2y68CL+EisnoFHOs
-         8YxHtqgVwqseQXkr5PK28E/Gxt1Qx9Ztgaq7/HZsFNQPvtH09QvZE4GTHhLNCzvOiOpF
-         c3bnFIm9Y6wriQHyA7+LPaedLQmJoOcCK9/U7i56933qh/v0nSdeL3TY9c1T7X4seqcP
-         T08MxAu3iEePJtvHekghuuIipYVTG+3qeciw4NEDhlMyGmwnAnQ3wJi8Y0UDavJYB+VK
-         dCjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718049964; x=1718654764;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EOwI6DcCCI12dNBNkZD00pCUv7/h5/UDISzx/oKHb3g=;
-        b=bJ0hG+pfMkZEoXhrKHFHrxMH9+OlIVDM97BTBq+WZP0MKS4QNHGLIVboPVPRun857I
-         Lmqlw2NMeADXa06RUtcp4iK776hCLAN9Of4ZAUTwYf3zocK/eEmFZTVp0rjNS8H/ls0o
-         NysSQZpznakrNP2ha8D4kkf8/40+IfyMgvw9p/JBzKnzOfrp8LHVVv++GDPJaqzn+MTC
-         07Hh5KXoQDY0DrT9W8SkgEmQH5gk98e6w4cLGG0TVsndVqGT8YP0TUURAfMr9pxMRZ7j
-         l5c8CbJfTuueapJRPFKE7nwsEdug/imXDAtDpeWNl3Q4QFAe1BERcfquQJcGf5K1rFqY
-         D17Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUfxgyQ4aEzzuKyFVK6zU+fsT06s2jsSrM/xfFy58U2nuvBMoiIMMXyZ1FCeGZneS/Oj3UhfhIYNA1ZB6Li9X50WFR00Xu9hapKfD5y
-X-Gm-Message-State: AOJu0YzUtpbrxgvy2AmgyQUzX7Mb7wl+ryfWLonjUgjrovnSPNe+ZtzK
-	wmP7Md7sly74pkDutWZMwQtzo+xEs9oG7eTd/RgN5+AV5JnyIuUpFrpsfDkjXEFj5GixbdnZ/Il
-	4ic5BNpzLZ9Z2++tGxCmsheGoDivQmmJGKGrK
-X-Google-Smtp-Source: AGHT+IE03edLaD5o4NEBvXfLFP+kMiyLAjRNIwjqBu9SUSMn4dd8ukKhZoCOUCXo52b4yzosP9Ppa4fhfYlxBrh0Mcs=
-X-Received: by 2002:a17:906:3b1a:b0:a6f:3763:3cbe with SMTP id
- a640c23a62f3a-a6f37633da7mr6496966b.67.1718049963596; Mon, 10 Jun 2024
- 13:06:03 -0700 (PDT)
+	s=arc-20240116; t=1718049969; c=relaxed/simple;
+	bh=zbr0m3jaUR9OElayeL3+Puu8aP5BQ6bEGe0ASP77bQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqknMBg5lMy5z9G7c5WIMkgSLzoFrreqdoRoDCjfghHDECqq76VuWf9oFQiA8t+VeJwNSHELOj57VyDOXHJGPvQ+sw2ntTWkQaykXiHjJfqgG2IvSBBcdO7AleaVcCCKTAqvTb3lOc19wSy9O/SG1ileBxKoSTGkhDEAkVadaho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iOmHeJ0J; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fYZ++efrlLdLgl5+5kduErcCwGNkwJxHYJIyw8lDqdM=; b=iOmHeJ0Jsu8Eo6JoXABlbGd0I0
+	bJe+wGiDRyomn+cVqKpgC3q8gDZQQub9Loev8/dZ/XdSZ+MBoea7mS17HbhdVpAlBZE84aGr2xXHw
+	zUvtSHQrQOuBekbu1pUQ743nu1a/ALB8evE0HROV8wKgT2CQleyGaXzXwH6znHymn/CI6yriPHJXW
+	NAuK3OSAKk9PV2kgr1QR6xuuN3pg71/ZDghzKeRvrOb3msh7K+Dm2jYth7NwdfaksTpGj6nq7hbvA
+	4z0ebh713bwfrGtq1LrUWVF3tox2dTC2r25lq4knpgIehmS4xdVoo6fWbRKH5ffXgHhmdURj3I85d
+	0fyzIu6A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGlGw-00000001dwA-2wkK;
+	Mon, 10 Jun 2024 20:05:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F156A300439; Mon, 10 Jun 2024 22:05:44 +0200 (CEST)
+Date: Mon, 10 Jun 2024 22:05:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Erick Archer <erick.archer@outlook.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <20240610200544.GY8774@noisy.programming.kicks-ass.net>
+References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202406101010.E1C77AE9D@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610143037.812955-1-usamaarif642@gmail.com>
- <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com> <y7ourydoftwyfxza3a2vlenh6bzdrhtc25h4msqgq2uyg75ocf@wrfov7zflr3w>
-In-Reply-To: <y7ourydoftwyfxza3a2vlenh6bzdrhtc25h4msqgq2uyg75ocf@wrfov7zflr3w>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 10 Jun 2024 13:05:25 -0700
-Message-ID: <CAJD7tkYcj4Vt9cvJiNTTrjFjwub-W-VAULO9rVnUVqbU7vXn2Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
-	hannes@cmpxchg.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406101010.E1C77AE9D@keescook>
 
-On Mon, Jun 10, 2024 at 12:08=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Mon, Jun 10, 2024 at 10:31:36AM GMT, Yosry Ahmed wrote:
-> > On Mon, Jun 10, 2024 at 7:31=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> > >
-> > > start/end writeback combination incorrectly increments NR_WRITTEN
-> > > counter, eventhough the pages aren't written to disk. Pages successfu=
-lly
-> > > stored in zswap should just unlock folio and return from writepage.
-> > >
-> > > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> > > ---
-> > >  mm/page_io.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > >
-> > > diff --git a/mm/page_io.c b/mm/page_io.c
-> > > index a360857cf75d..501784d79977 100644
-> > > --- a/mm/page_io.c
-> > > +++ b/mm/page_io.c
-> > > @@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writ=
-eback_control *wbc)
-> > >                 return ret;
-> > >         }
-> > >         if (zswap_store(folio)) {
-> > > -               folio_start_writeback(folio);
-> > >                 folio_unlock(folio);
-> > > -               folio_end_writeback(folio);
-> >
-> > Removing these calls will have several effects, I am not really sure it=
-'s safe.
-> >
-> > 1. As you note in the commit log, NR_WRITTEN stats (and apparently
-> > others) will no longer be updated. While this may make sense, it's a
-> > user-visible change. I am not sure if anyone relies on this.
-> >
->
-> I couldn't imagine how this stat can be useful for the zswap case and I
-> don't see much risk in changing this stat behavior for such cases.
+On Mon, Jun 10, 2024 at 10:28:52AM -0700, Kees Cook wrote:
+> On Sat, Jun 01, 2024 at 06:56:15PM +0200, Erick Archer wrote:
+> > Hi everyone,
+> > 
+> > This is an effort to get rid of all multiplications from allocation
+> > functions in order to prevent integer overflows [1][2].
+> 
+> I didn't actually see these 3 patches in this thread nor via lore.
 
-It seems like NR_WRITTEN is only used in 'global_dirty_state' trace event.
+He managed to break threading between 0/n and the rest.
 
-NR_WRITEBACK and NR_ZONE_WRITE_PENDING are state counters, not event
-counters. They are incremented in folio_start_writeback() and
-decremented in folio_end_writeback(). They are probably just causing
-noise.
+> > In the first patch, the "struct amd_uncore_ctx" can be refactored to
+> > use a flex array for the "events" member. This way, the allocation/
+> > freeing of the memory can be simplified. Then, the struct_size()
+> > helper can be used to do the arithmetic calculation for the memory
+> > to be allocated.
+> 
+> I like this patch because it reduces the allocation from 2 to 1. This
+> isn't what Peter might see as "churn": this is an improvement in resource
+> utilization.
 
-I think for both cases it's probably fine and not really visible to userspa=
-ce.
+But then he went and used that struct_size() abomination :/
 
->
-> > 2. folio_end_writeback() calls folio_rotate_reclaimable() after
-> > writeback completes to put a folio that has been marked with
-> > PG_reclaim at the tail of the LRU, to be reclaimed first next time. Do
-> > we get this call through other paths now?
-> >
->
-> The folio_rotate_reclaimable() only makes sense for async writeback
-> pages i.e. not for zswap where we synchronously reclaim the page.
+> I prefer this style, as it makes things unambiguous ("this will never
+> wrap around") without having to check the associated types and doesn't make
+> the resulting binary code different in the "can never overflow" case.
+> 
+> In this particular case:
+> 
+> int size = sizeof(*box) + numshared * sizeof(struct intel_uncore_extra_reg);
+> 
+> "int numshared" comes from struct intel_uncore_type::num_shared_regs,
+> which is:
+> 
+>         unsigned num_shared_regs:8;
+> 
+> And the struct sizes are:
+> 
+> $ pahole -C intel_uncore_box gcc-boot/vmlinux | grep size:
+>         /* size: 488, cachelines: 8, members: 19 */
+> $ pahole -C intel_uncore_extra_reg gcc-boot/vmlinux | grep size:
+>         /* size: 96, cachelines: 2, members: 5 */
+> 
+> So we have:
+> 
+> s32 size = 488 + u8 * 96
+> 
+> Max size here is 24968 so it can never overflow an s32, so I can see
+> why Peter views this as "churn".
+> 
+> I still think the patch is a coding style improvement, but okay.
 
-Looking at pageout(), it seems like we will clear PG_reclaim if the
-folio is not under writeback, and in shrink_folio_list() if the folio
-is not dirty or under writeback, we will reclaim right away. I thought
-zswap being synchronous was an odd case, but apparently there is wider
-support for synchronous reclaim.
+I really detest this thing because it makes what was trivially readable
+into something opaque. Get me that type qualifier that traps on overflow
+and write plain C. All this __builtin_overflow garbage is just that,
+unreadable nonsense.
 
-Thanks for pointing this out.
+> This provides __counted_by coverage, and I think this is important to
+> gain in ever place we can. Given that this is part of a ring buffer
+> implementation that is arbitrarily sized, this is exactly the kind of
+> place I'd like to see __counted_by used. This is a runtime robustness
+> improvement, so I don't see this a "churn" at all.
 
->
-> > 3. If I remember correctly, there was some sort of state machine where
-> > folios go from dirty to writeback to clean. I am not sure what happens
-> > if we take the writeback phase out of the equation.
-> >
->
-> Is there really such a state machine? We only trigger writeback if the
-> page is dirty and we have cleared it. The only thing I can think of is
-> the behavior of the waiters on PG_locked bit but the window of
-> PG_writeback is so small that it seems like it does not matter.
+Again, mixed in with that other crap. Anyway, remind me wth this
+__counted_by thing actually does?
 
-I remember Matthew talking about it during LSF/MM this year when he
-was discussing page flags, but maybe I am misremembering.
+> Peter, for patches 1 and 3, if you'd prefer not to carry them, I could
+> put them in the hardening tree to keep them out of your way. It seems
+> clear you don't want patch 2 at all.
+
+I prefer to not have struct_size() anywhere at all. Please just write
+readable code.
+
+Again, if you really care about that overflow muck, get a useable C type
+qualifier or something so we can write readable code.
 
