@@ -1,163 +1,221 @@
-Return-Path: <linux-kernel+bounces-208088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84AC90207D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1F5902083
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44711B244C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185F21F215F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA97D7F7F5;
-	Mon, 10 Jun 2024 11:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8519B7E111;
+	Mon, 10 Jun 2024 11:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jy7fJjkQ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="hhcPhmlB"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C6F7CF25
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2C47E0E8;
+	Mon, 10 Jun 2024 11:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019537; cv=none; b=dbOrjVE5cumJOEJ0XF1yT60YJfURiyjbhOklTi1CsxSsYuOGabeH3uGP7jZqmfJy/S5BJKpXrg8L2THe3GRS1CVhxaac6llu4PQqCZ5cHnYHIP63w9Z4cSLCjTkbtNi4Dr+eUmEB/FaVAm9ZGr9qoRo8XSLKrwscvK5S5dcaaKY=
+	t=1718019571; cv=none; b=lk+2hajQAUN7s1HNEhqWUGYx2LxYtBcnf7fx1mGEHlQ/o/o08VViCNgPh3O080T9E1jn8aROVUrp4nU2UsFyUgzqsBl0JhqGlTjZTy/3BPbdL9+cMzgb8SpuFTlcJnT0Y31k2faD2Fwu0aN8XWUTj1QBBaitJmFIXKCYap7D9YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019537; c=relaxed/simple;
-	bh=w4aoBE2RHPHu2ZSiA+i0yxvAaX2L0ErPKpUGuL84L88=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=Wq7iasAkTONxqUxiON9ixt/IILFmk1EsoU8nb4EhMwgZTUPl8Pw8t8XDdoy0N5rIOxySRc+DWjWU5B24RGM9/uKK6tYY8RD5Tm15b6DSTjSxTywFKalyPk93VrA0hJUqynCGQ9r/JUZlloe3QGS2KPqbH4tw1LWVKzUMRCyeOLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jy7fJjkQ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240610113851epoutp049208c844cd69376ca096c3ca542fea3e~XoalwFJY51836418364epoutp04C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:38:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240610113851epoutp049208c844cd69376ca096c3ca542fea3e~XoalwFJY51836418364epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718019532;
-	bh=JxfLXLQD8x6rYjmBvtf0D1L1IPRfMZxdKMeIJSsIEUc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jy7fJjkQ2G3HbCVR4a0gTk/+we1dtDbCi0OPYeFQAVwlg7QdrNLIGQVWBinNKOQuw
-	 MHaUnh2pgAQ1iPNw7w9tWX7fA4grGz2I/Rs7oLu2/XZgmKcvZst12HhNu4TATC/p+K
-	 Zv4esQu8uJt8QNuOJwu1FGGjsYZwVn9I11QpXnnE=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20240610113850epcas2p30a935a008aea087500307f1836f90d32~XoaknCzlL2317623176epcas2p35;
-	Mon, 10 Jun 2024 11:38:50 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VyVF61SWvz4x9Pv; Mon, 10 Jun
-	2024 11:38:50 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EB.6F.09806.AC5E6666; Mon, 10 Jun 2024 20:38:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240610113849epcas2p4a61cf754aeb74e62fbcc305f3e5dac59~XoajzS1Bv1984319843epcas2p4B;
-	Mon, 10 Jun 2024 11:38:49 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240610113849epsmtrp15769d572ecd01bfd5af42ac753b30462~Xoajyp4o82171421714epsmtrp1P;
-	Mon, 10 Jun 2024 11:38:49 +0000 (GMT)
-X-AuditID: b6c32a47-c6bff7000000264e-db-6666e5cab052
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	80.52.08622.9C5E6666; Mon, 10 Jun 2024 20:38:49 +0900 (KST)
-Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240610113849epsmtip277a0976d343b66485873ab18d29d59be~XoajnR-TK1851618516epsmtip2H;
-	Mon, 10 Jun 2024 11:38:49 +0000 (GMT)
-From: Daehwan Jung <dh10.jung@samsung.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>, Mathias Nyman <mathias.nyman@intel.com>
-Cc: linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list), h10.kim@samsung.com, Daehwan Jung
-	<dh10.jung@samsung.com>
-Subject: [PATCH v3 3/3] usb: host: xhci-plat: Add support for
- XHCI_WRITE_64_HI_LO
-Date: Mon, 10 Jun 2024 20:39:13 +0900
-Message-Id: <1718019553-111939-4-git-send-email-dh10.jung@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1718019553-111939-1-git-send-email-dh10.jung@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsWy7bCmqe6pp2lpBi2X2SzuLJjGZNG8eD2b
-	xd/bF1ktLu+aw2axaFkrs0XzpimsFqsWHGB3YPdYvOclk8f+uWvYPfq2rGL02LL/M6PH501y
-	AaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGco
-	KZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEK
-	E7Iz9s8KLpjEWfFna2YD40X2LkZODgkBE4n2iy1sXYxcHEICOxgldrXeYIVwPjFK7D+1lgnC
-	+cYo8fLzHyaYlrf7/jJCJPYySixtuQPV/4NRYsXsfqAqDg42AS2J7wvBikQEOhgljj4/DVbE
-	LLCAUeLByUWMIKOEBYIlTr9YzALSwCKgKjFxlwlImFfATWLPgnaobXISN891MoPYnALuEi/n
-	/2UBmSMhcIxdYvu7c4wQRS4ST/bthGoQlnh1fAvUd1ISL/vboOxiiVvPnzFDNLcAXfqqhRki
-	YSwx61k7I8gRzAKaEut36YOYEgLKEkdusYBUMAvwSXQc/ssOEeaV6GgTgmhUlph+eQIrhC0p
-	cfD1OaiBHhKzt1yEhtwsoE0X7rJPYJSbhbBgASPjKkax1ILi3PTUYqMCY3iEJefnbmIEpzIt
-	9x2MM95+0DvEyMTBeIhRgoNZSYRXKCM5TYg3JbGyKrUoP76oNCe1+BCjKTDsJjJLiSbnA5Np
-	Xkm8oYmlgYmZmaG5kamBuZI4773WuSlCAumJJanZqakFqUUwfUwcnFINTB3/ZvNfdkluWnvg
-	9MEbvP3vnhZvTtKveP+/b57rrLhdbkeZvfXLIhjuz/k+z+r5qb28ma+V6t4Kthm5NStcbChY
-	17Y/7NOfZTl27/e3pTg9usRwVOl+X/zvljaJrIobJbJieXE2Uu+/cotb/nKf3zU9UMOJ79FB
-	qRMfPIoF/v//k/6zdfmMw4UKl31yHja/kt58N2MCh+4Uu+Vq1aslnzz/d3TWm9zemsa99nHh
-	ofbNptMWri/p/l9yYK/5t0MO5t4Hrz2cE1MbtNZOOvj8rfjbs+NVu15fthY0fP/5fXj+lbyE
-	aTF/SpLUJ96P+/pow5XHoQnxTzl+8D/XC98T/+pIh/DZn/+n3Io6ZnBsznUlluKMREMt5qLi
-	RADZ2XkR7gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKLMWRmVeSWpSXmKPExsWy7bCSvO7Jp2lpBlfuGljcWTCNyaJ58Xo2
-	i7+3L7JaXN41h81i0bJWZovmTVNYLVYtOMDuwO6xeM9LJo/9c9ewe/RtWcXosWX/Z0aPz5vk
-	AlijuGxSUnMyy1KL9O0SuDL2zwoumMRZ8WdrZgPjRfYuRk4OCQETibf7/jJ2MXJxCAnsZpRY
-	tbGPGSIhKbF07g2oImGJ+y1HWCGKvjFKbFu9iKmLkYODTUBL4vtCsGYRgS5GiQeb7rCAOMwC
-	ixgl3vTeYQTpFhYIlPh4ez8jSAOLgKrExF0mIGFeATeJPQvamSAWyEncPNcJtphTwF3i5fy/
-	LCC2EFDN2dOrWCYw8i1gZFjFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcclpaOxj3
-	rPqgd4iRiYPxEKMEB7OSCK9QRnKaEG9KYmVValF+fFFpTmrxIUZpDhYlcd5vr3tThATSE0tS
-	s1NTC1KLYLJMHJxSDUziR5UijW599XU8Z1h4aKGC1Rd9q7Alx13sFG8vzHKaLS+mdskrYta2
-	73qua4Ln/W2fvqc07MIK/beOdQnfGQ8FFDfGbQiSaJ73r7W1T/NLw4eiSxWCYQcf1Unvq0tV
-	/vc+8rJijDhDQI/byfmqR4ukzno77Xu3Ijv70rzUbNmCa4/W/3d5r1fwrdHHy1343ZyaOyU2
-	6evUq3a9nNGSxT9n/cWrnqqP36lan3u0r2u5e6Ptp8R1wTpFv/07F0f5bc+J0GnQy3O8l3La
-	y+vcq/P6viYdWoxhXqWsdTfCVS/XFtyZXRHDdPJiW878/3O1Jma/DO1Q4f07SdrXx2jmvcpP
-	v3d7tltYmdxKmJ25VYmlOCPRUIu5qDgRADl8s6qoAgAA
-X-CMS-MailID: 20240610113849epcas2p4a61cf754aeb74e62fbcc305f3e5dac59
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240610113849epcas2p4a61cf754aeb74e62fbcc305f3e5dac59
-References: <1718019553-111939-1-git-send-email-dh10.jung@samsung.com>
-	<CGME20240610113849epcas2p4a61cf754aeb74e62fbcc305f3e5dac59@epcas2p4.samsung.com>
+	s=arc-20240116; t=1718019571; c=relaxed/simple;
+	bh=OiP6Bx2iI8AAJBotZLPsERecn+WuQKicWwj+JsxImZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7mqwRrccKNZciA/etNX7V7y14DdEoxkMsPxhka5xjjtbxsp7OFlKQU/JEoNGEgvmOpb67lkf6iGxUxkbYQcleXTOH1Zwl9BOKklCNe20XOcY/uNke1tEFW8UgyfrjkaYIdHvE5w345U9BN7s9YIwV4kyQaA7HdOOHupjloZY6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=hhcPhmlB; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yXg8ExlqjWnKLMYOlLaWW7wX0EdTDT1fjpBKYh1NfqU=; b=hhcPhmlB99XIy0K+waoY6iousa
+	vtZgnYLiwy+GQKn/AaUVP1W7SYmLZZbVOaW4HUUPGGfS8QL7GOxyH2m79nut+BpXcMmHGe04j568J
+	97irjGfNlp7qdK2pjwFpijZBuqzO/5pwMVh9IlFtFZLDv//MsJ/0zX1JR7qSnGWJLEjgyAURZsbba
+	G3Hp7xLQ/vP9zInEvljPhW3/EdOArL7CorWEOA/uYNkjYzTWElrFl2iv/PWTNxkcHwrtV4cZ2yk1l
+	3LGmZXUNnxsl4oI1+GtTm0Z5i7enLUWSo3LZss0GLayjGpY7CQUGvVSLk5hcJIw7ZKo1BANYzSrkv
+	0AU56lxQ==;
+Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:42114 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1sGdMv-00Bzgp-24;
+	Mon, 10 Jun 2024 13:39:21 +0200
+Message-ID: <00ec4120-19ca-4b20-85d0-754c05bdc669@norik.com>
+Date: Mon, 10 Jun 2024 13:39:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] OPP: ti: Use devm_pm_opp_set_config_regulators
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+References: <20240606113334.396693-1-primoz.fiser@norik.com>
+ <20240606113334.396693-2-primoz.fiser@norik.com>
+ <20240610042250.xccda2pr277v6asf@vireshk-i7>
+From: Primoz Fiser <primoz.fiser@norik.com>
+Content-Language: en-US
+Organization: Norik systems d.o.o.
+In-Reply-To: <20240610042250.xccda2pr277v6asf@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-xHCI specification 5.1 "Register Conventions" states that 64 bit
-registers should be written in low-high order. All writing operations
-in xhci is done low-high order following the spec.
+Hi Viresh,
 
-Add a new quirk to support workaround for high-low order.
+On 10. 06. 24 06:22, Viresh Kumar wrote:
+> Hi Primoz,
+> 
+> Thanks for your changes, they look exactly as we discussed earlier, but .. 
+> 
+> On 06-06-24, 13:33, Primoz Fiser wrote:
+>> Function ti_opp_supply_probe() since commit 6baee034cb55 ("OPP: ti:
+>> Migrate to dev_pm_opp_set_config_regulators()") returns wrong values
+>> when all goes well and hence driver probing eventually fails.
+>>
+>> Switch to using devm_pm_opp_set_config_regulators() function that
+>> correctly handles return values and doesn't require us to handle
+>> returned tokens.
+>>
+>> Fixes: 6baee034cb55 ("OPP: ti: Migrate to dev_pm_opp_set_config_regulators()")
+>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+>> ---
+>>  drivers/opp/ti-opp-supply.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/opp/ti-opp-supply.c b/drivers/opp/ti-opp-supply.c
+>> index e3b97cd1fbbf..8a4bcc5fb9dc 100644
+>> --- a/drivers/opp/ti-opp-supply.c
+>> +++ b/drivers/opp/ti-opp-supply.c
+>> @@ -392,7 +392,7 @@ static int ti_opp_supply_probe(struct platform_device *pdev)
+>>  			return ret;
+>>  	}
+>>  
+>> -	ret = dev_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+>> +	ret = devm_pm_opp_set_config_regulators(cpu_dev, ti_opp_config_regulators);
+>>  	if (ret < 0)
+>>  		_free_optimized_voltages(dev, &opp_data);
+> 
+> -- I made a mistake.
 
-Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
----
-v1 -> v2:
-- this patch is added newly in the patchset
-- add setting the hi-lo quirk in xhci platform
-v2 -> v3:
-- add description in commit message.
----
- drivers/usb/host/xhci-plat.c | 3 +++
- 1 file changed, 3 insertions(+)
+:(
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 3d071b8..31bdfa5 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -256,6 +256,9 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
- 		if (device_property_read_bool(tmpdev, "xhci-sg-trb-cache-size-quirk"))
- 			xhci->quirks |= XHCI_SG_TRB_CACHE_SIZE_QUIRK;
- 
-+		if (device_property_read_bool(tmpdev, "write-64-hi-lo-quirk"))
-+			xhci->quirks |= XHCI_WRITE_64_HI_LO;
-+
- 		device_property_read_u32(tmpdev, "imod-interval-ns",
- 					 &xhci->imod_interval);
- 	}
--- 
-2.7.4
+> 
+> The driver gets probed with a platform device, while
+> devm_pm_opp_set_config_regulators() works with cpu device. And so the
+> issue related to module insertion/removal/insertion will still be
+> there :(.
+> 
+> Did you try that though ?
 
+I didn't because of:
+
+config ARM_TI_CPUFREQ
+
+        bool "Texas Instruments CPUFreq support"
+
+
+is a built-in driver.
+
+Anyway, I guess one could trigger this also with:
+
+$ cd /sys/devices/platform/ocp/4a003b20.opp-supply/driver
+$ echo 4a003b20.opp-supply > unbind
+$ echo 4a003b20.opp-supply > bind
+
+[  164.231781] ------------[ cut here ]------------
+[  164.236450] WARNING: CPU: 1 PID: 230 at drivers/opp/core.c:2474
+dev_pm_opp_set_config+0x384/0x634
+[  164.245422] Modules linked in: sha256_generic libsha256 sha256_arm
+cfg80211 uas usb_storage xhci_plat_hcd xhci_hcd usbcore dwc3 roles
+udc_core pru_rproc irq_pruss_intc usb_common rpmsg_ctrl rpmsg_char etnaviv
+ ti_vpe ti_vip snd_soc_simple_card gpu_sched ti_sc bq27xxx_battery_hdq
+bq27xxx_battery snd_soc_simple_card_utils pvrsrvkm(O) snd_soc_omap_hdmi
+ahci_dwc ti_csc libahci_platform v4l2_mem2mem ti_vpdma libahci omap_
+aes_driver videobuf2_dma_contig libaes videobuf2_memops videobuf2_v4l2
+c_can_platform pruss libata videobuf2_common c_can omap_wdt
+phy_omap_usb2 can_dev omap_hdq dwc3_omap omap_des
+snd_soc_tlv320aic3x_i2c snd_so
+c_tlv320aic3x libdes rtc_omap wire at24 omap_crypto palmas_pwrbutton
+extcon_palmas rtc_palmas omap_sham crypto_engine omap_remoteproc
+virtio_rpmsg_bus rpmsg_ns sch_fq_codel cryptodev(O) cmemk(O)
+[  164.318298] CPU: 1 PID: 230 Comm: sh Tainted: G           O
+6.1.80-bsp-yocto-ampliphy-am57x-kirkstone #1
+[  164.328369] Hardware name: Generic DRA74X (Flattened Device Tree)
+[  164.334472]  unwind_backtrace from show_stack+0x10/0x14
+[  164.339752]  show_stack from dump_stack_lvl+0x40/0x4c
+[  164.344818]  dump_stack_lvl from __warn+0x94/0xc0
+[  164.349578]  __warn from warn_slowpath_fmt+0x1a4/0x1ac
+[  164.354736]  warn_slowpath_fmt from dev_pm_opp_set_config+0x384/0x634
+[  164.361236]  dev_pm_opp_set_config from devm_pm_opp_set_config+0xc/0x44
+[  164.367889]  devm_pm_opp_set_config from ti_opp_supply_probe+0x1c8/0x2f4
+[  164.374633]  ti_opp_supply_probe from platform_probe+0x5c/0xbc
+[  164.380493]  platform_probe from really_probe+0xc8/0x2ec
+[  164.385833]  really_probe from __driver_probe_device+0x88/0x1a0
+[  164.391815]  __driver_probe_device from device_driver_attach+0x40/0x98
+[  164.398376]  device_driver_attach from bind_store+0x80/0xec
+[  164.403991]  bind_store from kernfs_fop_write_iter+0x10c/0x1cc
+[  164.409851]  kernfs_fop_write_iter from vfs_write+0x2a0/0x3c8
+[  164.415649]  vfs_write from ksys_write+0x5c/0xd4
+[  164.420288]  ksys_write from ret_fast_syscall+0x0/0x4c
+[  164.425445] Exception stack(0xf2359fa8 to 0xf2359ff0)
+[  164.430511] 9fa0:                   00000014 00539568 00000001
+00539568 00000014 00000000
+[  164.438751] 9fc0: 00000014 00539568 b6f5c5a0 00000004 00000014
+0050cc08 00000000 00000000
+[  164.446960] 9fe0: 00000004 bed839d8 b6e80827 b6e01ae6
+[  164.452056] ---[ end trace 0000000000000000 ]---
+[  164.456726] ti_opp_supply: probe of 4a003b20.opp-supply failed with
+error -16
+-sh: echo: write error: Device or resource busy
+
+so the error comes from drivers/opp/core.c block:
+
+	/* This should be called before OPPs are initialized */
+	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+		ret = -EBUSY;
+		goto err;
+	}
+
+
+> 
+> The only way to get this solved is probably by introducing a remove()
+> method, which clears the OPP config and stores the token returned by
+> dev_pm_opp_set_config_regulators().
+> 
+
+I did some additional experiments today by adding .remove_new callback
+and calling dev_pm_opp_clear_config() in it.
+
+However I still get the same error as above.
+
+Unforunatelly, I cannot test on latest master since it doesn't boot yet
+on my board (still using linux-ti 6.1).
+
+Shall we store token and not call dev_pm_opp_set_config_regulators() in
+probe() if token has been already aquired once?
+
+BR,
+Primoz
 
