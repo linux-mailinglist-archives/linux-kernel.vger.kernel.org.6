@@ -1,242 +1,431 @@
-Return-Path: <linux-kernel+bounces-208865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AF4902A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:42:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CCA902A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 227CEB22DEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5740F1F23FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9374D9E7;
-	Mon, 10 Jun 2024 20:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8B64D8C5;
+	Mon, 10 Jun 2024 20:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yDFRhfrY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/O5jiP+Y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BcesNXaI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9fTgI0L"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NbAFal6+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85B0210E7;
-	Mon, 10 Jun 2024 20:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718052154; cv=none; b=iWJ7OxI7EPq2fQDRjkvBEPnXRph/10fngSb8SA1Qm5miAz3Wsf7ZEjHxMH4LqeRnTMdXNMDRspGCnlwrhvCrByqaTJ8Ooy9pw04FxLgwJu/UeMOsb8k31AZUws/plpn+RrkVCkPVM4R7VkrT1B/Iv29oGyLWXzdzow9Hl4vhwyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718052154; c=relaxed/simple;
-	bh=cDSRUCVBEjAYGxQ/xYORJ64U3JN6qTshWZ+W7hdfAR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CkjYshE6IT1DXS30mtmgYZsOj5vItOQ4MUm/QGyZNIfaMi2ZqzjTUJnf/l9VOsmRUhc8sUnRVa6TP3mN2eGEm2ZugzGOU5Ust8yp0/6meVrFOynV1/58iC8e+QP1VyFyNxf50ekvp0kvTk3OL4OIvjB1jcynugDGPhdMPfbxh2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yDFRhfrY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/O5jiP+Y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BcesNXaI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9fTgI0L; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D80291F837;
-	Mon, 10 Jun 2024 20:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718052151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
-	b=yDFRhfrYJGRl3Y3smKWFduNidqeJ31w2D1TLlKqYx9T+AMvU8qTW5XiZI7Kevaq+jFW1cr
-	KI4mYFUUPH/zhgoUPn5qosZQzEe4KGavkCwCKqOGKvd2mT2uABNtxYDtzbEBlTvJKjpZIT
-	J4sVczW+GsPXdtZ6w8vAkhSDRdji+DY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718052151;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
-	b=/O5jiP+YiJ5Y06lpH1HPmhyLBCmfGd25fSADO2CAhkf+RIiRgxUj5JxwURjjCyZXa63bbx
-	v/4h03Kc3jHp8tDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BcesNXaI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w9fTgI0L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718052150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
-	b=BcesNXaILY41Vt2KPd56+WB+xRmtEcX4HfdKa1fsK4zrruLWhOIyxKMRmyCcEX2m1HADVt
-	Js7wQPwrfy25+UxV0YQ6kAwyedSGhnCpndjohSUZE/67bdd9N8zpSmQylMNXTFxbIo5F2r
-	ZG8K49t7H+A0pD0IwO3OsPJJTDyfH2Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718052150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
-	b=w9fTgI0LPneUEjPXHHPRmfkKQVYSsPH7jyvvKy5jXmx2AFfUYK5vm/SsrdE3RexEM0XQvU
-	2NgwMEL2Pq85O+DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B524113A7F;
-	Mon, 10 Jun 2024 20:42:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mWGMKzZlZ2YyKgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 10 Jun 2024 20:42:30 +0000
-Message-ID: <ce62eb86-8539-4c7f-b929-926cec94e1f0@suse.cz>
-Date: Mon, 10 Jun 2024 22:42:30 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDBE4D8AF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718052177; cv=fail; b=ZFgQJZlABZ4onydOO/f9nzPYT4x5WkjSyNR7GU7YTjiYRZZiJQ2kcKWX2g7SDrrSX7mee+repHWR0bI336l4reUEROI2vV04Tu9HBq6fbMwex7dxHysYag6eU8moMncxYLkQkG+twN7QanFguI6WEhvWm5JpF+Y2swyBumTyiXQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718052177; c=relaxed/simple;
+	bh=uIsbdytB6DyggprjNjX+VAD50PYi+nkdkCmNqZNaPyQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=E0eG5fOBCC7xaRl2+c7pK4200VC5a3KqNNRzPL2zkLIPv8/CqFRZz5fWA5pHYnb8x5KmNsApji+aSsNxoqfhcS5IMwivkqiBoVZ+hODZyekHnB3Dubq4giHUQVjB8LtPPLXkGtQ+yWPkqJ1+kMGnXS//Uy6SHthZGFK1OumKqzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NbAFal6+; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718052175; x=1749588175;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=uIsbdytB6DyggprjNjX+VAD50PYi+nkdkCmNqZNaPyQ=;
+  b=NbAFal6+YrBh8QO28qeRBncAhoqfMB9+kcAw60kMUwhEDJJ1OQthzpYq
+   AAO1ktcLgXNwF2PZY3mJOQQNtb77Vj4Eet/hnxfkBy55ylvJ1K1zfz2LW
+   ANYMz+I0LKdolbkoN1QM81KTWTxqkJVrrR1gTpTw0urzbwm6H68oltCIC
+   C2FncWplS1Z4kMyZYZz2QXdgTIJPz3s+XbxHlYKL3Y8MFye1IhOzT7Aje
+   FxGamWb0P50PNqSwWXurccFgiNhKeO52sL+ZA/BsX2AWYRWfEODT8zIDJ
+   wcINhovIt8uUxFajun5isZXSdD+zrahDuTraQ8iQzl3cNKUKo/UPidyBC
+   Q==;
+X-CSE-ConnectionGUID: 6IbBmQD8RCyJr0dio/bTMQ==
+X-CSE-MsgGUID: 6DDpsqTKQMu6Ev0/GrqLsw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="40134517"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="40134517"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 13:42:53 -0700
+X-CSE-ConnectionGUID: QpNHWgFpRxWSqNY8UB2wiQ==
+X-CSE-MsgGUID: jjWK+WhhQf2nuZ6YwXyt3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="39177714"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Jun 2024 13:42:53 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 10 Jun 2024 13:42:52 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 10 Jun 2024 13:42:52 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 10 Jun 2024 13:42:52 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 10 Jun 2024 13:42:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V24EMssWXuupC/sxe8il+DB6hDy87mcvhPg+YzGgfGm2ku7xc1oZmgely9axtFXp6o8MpNqUxaBeNxn7hwtZcJqw/Nvi/jesR05G+5+NjjSNBASvB5f8jZ9zqUZdKSZeQJwLinWLFVpfL3abdouoUjFjyfhFqVZmCe8tG1Q64lJP6BGCrFo52U2mv2If2nIGaWYe1AIyA1yU5u1UjO4vxGAB/8ci8xGED7lrhD6KzAShpp8qEPTicakzO9S7OEXLuxNzX7IzBJUucrauE8x5ymiQhNnmxxcJ86JDzD1DgRH8RbaOJhpVS5mQpHPxTnbTkyJvCvGXvdeax+gh0D2C4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WyRz/UdZoh3O2weD8bN9KBxYJ3UZrUnFtrXcaOMW89M=;
+ b=i0uKOLpe8mtn+IWtNoGdLjjmWJye7RUP+PQLhmvXR/YnTyc1OYZYLownqsKFVgtzvldoqefipu6+iwLMPq7pxlXJ1rPvOqjJOeFEx/AutQJ6Sua4Efyr5/gP26vSM6lO//yxeGxxjj/nysB6kZcmgTdhpyJMx76jWALEmlQNHTLbCGUORGe5Ya5kNYxi8gXg4HmzK9qQPky5xwKy9DCICXfhVJt5ZWIj0IXnfqXjIcfaId3wqQqJPqxV3UT7dqLRfDOixItQN/YUgWLkc077ph5eQ95A3r/uHFjA9CpaxXYY7YOmnm0FseghZ07j1VFV1wMlxvarqhKL4sAmVKQsDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH0PR11MB5444.namprd11.prod.outlook.com (2603:10b6:610:d3::13)
+ by SJ0PR11MB4847.namprd11.prod.outlook.com (2603:10b6:a03:2d9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
+ 2024 20:42:50 +0000
+Received: from CH0PR11MB5444.namprd11.prod.outlook.com
+ ([fe80::5f89:ba81:ff70:bace]) by CH0PR11MB5444.namprd11.prod.outlook.com
+ ([fe80::5f89:ba81:ff70:bace%4]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
+ 20:42:50 +0000
+From: "Cavitt, Jonathan" <jonathan.cavitt@intel.com>
+To: "Vivi, Rodrigo" <rodrigo.vivi@intel.com>, "Souza, Jose"
+	<jose.souza@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, "Mukesh
+ Ojha" <quic_mojha@quicinc.com>, Johannes Berg <johannes@sipsolutions.net>
+Subject: RE: [PATCH v5 1/2] devcoredump: Add dev_coredumpm_timeout()
+Thread-Topic: [PATCH v5 1/2] devcoredump: Add dev_coredumpm_timeout()
+Thread-Index: AQHau1DoQu8+yrWKRkWaeVYGh7eCRrHBb2wAgAAGpEA=
+Date: Mon, 10 Jun 2024 20:42:50 +0000
+Message-ID: <CH0PR11MB5444A6196C5AC7D3AE960FD3E5C62@CH0PR11MB5444.namprd11.prod.outlook.com>
+References: <20240610161133.156566-1-jose.souza@intel.com>
+ <ZmdfCDCQSZIsAWOQ@intel.com>
+In-Reply-To: <ZmdfCDCQSZIsAWOQ@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR11MB5444:EE_|SJ0PR11MB4847:EE_
+x-ms-office365-filtering-correlation-id: 2bb70e78-7578-4237-35c4-08dc898de4c1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|38070700009;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?CgxEzmvyygFJPdak9n2ZNGbaxAsWuxER6NEu39mhqzWkB7rRPaq1l4OxL7?=
+ =?iso-8859-1?Q?+TMkOS56WXQjStD2K3GQeGb84OJyDpsr7e7XYzcnrCHCDhJ25ev7/+K0FX?=
+ =?iso-8859-1?Q?yV0rRr+u1I2zGnJBih85uMrAvCZVGwVWbCOi0TbA7vDGdhlUKLoWT25Qxe?=
+ =?iso-8859-1?Q?V6kbIIBU1G0fjgF0LxXadBYdXEvF0A1bWPpBB73Dkgz0IFPueqiJeMZ5Nx?=
+ =?iso-8859-1?Q?xK+GpWFVTsvaFq3eWq5EKdj0HiqfTjzOXvWlZ3JDiv7QoXEglBqU0F/uq0?=
+ =?iso-8859-1?Q?F77dRlRTqfVMMIZKtQTzcUUx/jMe0o88GyO/cOArqMaVJ6VRg1amFk5ALd?=
+ =?iso-8859-1?Q?6VoRpynnE+TTVfGd45S9T+H0+3HLoLUWQrEy7F/lfb/F969QQjVB9uXSi6?=
+ =?iso-8859-1?Q?iKX93zIObhSxgbJgZBmojgjPe1RcROzIFYbs0tYTwAB6g3XXyOI8i663zy?=
+ =?iso-8859-1?Q?gqafzHSqfj8amDxsHCeMAQrdsVMokoduNHQCEp362PkOFHMqi1CuiS9hiZ?=
+ =?iso-8859-1?Q?G54Uax1Yv2vcsglHABCsp57QvJvXE64oO+nn4rTOAFVas3/fb1hTcM/bm7?=
+ =?iso-8859-1?Q?7x8djWLoFepaukBGOJqkBE1vP2tela5XPVnmGB7z+sYH24iAljLcpkKs7a?=
+ =?iso-8859-1?Q?EKqbXw1srzB47zn6JOZHxEDUGqtwsNIhHK6Qy/3Vxis62bc3jv23BvhKxc?=
+ =?iso-8859-1?Q?ZT06FZERVOa8VXs40EY5EoJe/hJBb8AAxmVze16QGf7xZ4cgJfQUdqpM3Q?=
+ =?iso-8859-1?Q?o/7dTkzsRc9a88mI5cPCFEm6erI6MuABmQm3Octmh9nmIAWa6Hvh1MZRXJ?=
+ =?iso-8859-1?Q?QrMaGZArSiddjy71EIgw+6Ax0zq1Qg0eznHUUvmdVvLheVFTdIhOyBPYPJ?=
+ =?iso-8859-1?Q?+K0i3RZYauAKI+USmtzRHxsDRBd8bSqRa4vic0+I4bi85WkUVbObjs407a?=
+ =?iso-8859-1?Q?gi4LWuvdRHLZUwp+StOnEwKcdqUeHRiqjLDFdMA5AAz+IVQpxpBrCqonw7?=
+ =?iso-8859-1?Q?H7IeY5GwFB+1Ee0k/y6wtigYbLrL8trH5fCOAw5QquskSyy93F05yHR5yC?=
+ =?iso-8859-1?Q?SfonkI2B8ZRyWSzRbxvGPiEk0s910saSuqPMjSyNZpOMzOq/M7JMRQQ9+2?=
+ =?iso-8859-1?Q?P/uoctk8cqSQQMEqWzrIqWay/z4/3xg/3SB6stRWjVO71vvao+htaG1PhZ?=
+ =?iso-8859-1?Q?ZY9tvquIWIBGdbDA9v9y3cm1SWWHUx54mEjOLPn4ks3uMVz6SPXFDQNXS5?=
+ =?iso-8859-1?Q?5ePzYDwdU4fzwsv2I8HOjxL6Y8iFFuJhUqH2WDPX3PwzxbIzLerjJ/VCaq?=
+ =?iso-8859-1?Q?HL1q/IkmGky7bNPCiuoWE79PiuTGbN0nEkl161AHiAxiwf51+FR9xv7SIG?=
+ =?iso-8859-1?Q?ZDhAqWoIV5nePDBqCDTUzJo09UJqF8LZqAx2zrHvvSOQ5XesxC+gk=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5444.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?+TqXp69oQ6INqpTt1jCW6l1HB3wdz/GKPAL6RcXNnSZzQ9pxfPhqt8HICs?=
+ =?iso-8859-1?Q?KTUopoGyZnJMyCishgzFQfpC9f41qLikdlQ2c5dL0QujYpdl7x17KN91Ek?=
+ =?iso-8859-1?Q?Q5tWXSJOQHdTYwHZQ0DKx4klrsy3yXcY6lcAF1ywVL6Wi4rZOaHQAzD8p7?=
+ =?iso-8859-1?Q?PyRFc8ChX9KBAe+8BGHsYaD0EskcN1p6Eh3xo6HluIqZK7XRyspi/frmh6?=
+ =?iso-8859-1?Q?YycfiIivoalr1hStxYvD2jsjoWH7AIDGNq5e4u/5ZKWY1G7PYb0eoMPF1w?=
+ =?iso-8859-1?Q?H06Y1rf5ykpin4qpSuddyHwTjvWbHj5PG80/0k6eX+AfptFe13+IwX21/P?=
+ =?iso-8859-1?Q?UQvTD26ho7YKMvzB+Gjnx/ALhPs8/EwFLqVq1JB9q3rN68HF2Xz4R+pYXk?=
+ =?iso-8859-1?Q?fBjJI2oDpUz5GzSsOaL+f9rYCSjhbN5bR3485CwgKubNYRF5Iynzbt5y5f?=
+ =?iso-8859-1?Q?DAa5/GeyCC4e4QTE2hYjUQdWLjN17TcatnvgUZMhZjIIcX9QtrKfCWQxUg?=
+ =?iso-8859-1?Q?8ZprgywseHyYiGBmAlnRYSiwSRjClNBXXHG4SgXEGo4CXO+RCFsNK4IDSy?=
+ =?iso-8859-1?Q?Ab/jDQ7ajdxLMoEC+oJLbTgBD3rl4/0NGCYCngtlkuNuDRtVcya1qt54Tv?=
+ =?iso-8859-1?Q?Wbqt2Ql6WWBcA22lk5UzBu4ke73YhQ6Fj3dJCAzvysqXOadqMfiPT2CdMu?=
+ =?iso-8859-1?Q?39n11OJ+SziGcWUNg+x/SNU7cd0BwI5Gz473dZ7ngDEUKpx7zV5/JyRhI/?=
+ =?iso-8859-1?Q?mzQdS2M02pSYJvLlLg5C8p+94Ewlw+hU5gPLnugCItUJDwQJxuoQ9PWsVl?=
+ =?iso-8859-1?Q?SH6KI+alH5gGbxLZ8f4FUDFkTM1pWGY/W7ooX7WCz4GOusTJVgZvuawkR5?=
+ =?iso-8859-1?Q?8ohqNkWb3FJhpR0CYhVsN9Kzvzza3SH9qgSJUFQhx9h80ufw/lGBi1Cznm?=
+ =?iso-8859-1?Q?sQs1v+ZbxJLClel+wbotiRmG1RyX+JdKq5kk3WsBQnW8bCze+0anMMnJk3?=
+ =?iso-8859-1?Q?3qWfq9KxrIOme2QcEDQAy2o1qBfRWiPMfQuE8JrzpnWNMMeBsSnwcBx8iT?=
+ =?iso-8859-1?Q?2PdkjH6akgIDAZQ+mD/NsSP1HcS0die6mjS+e2iv1lCjkGLw5K0iNlyjur?=
+ =?iso-8859-1?Q?LIbREB6yTyjzMxYOOm14XOFFaVQ01vjKBx8KkSZwyDE1T7imlysEtMs24P?=
+ =?iso-8859-1?Q?yBfQqqbyFPWR7bvg1wUARsGF0KUpTrIE63IYbqbSOnVVRBNBf/MIs0+Op3?=
+ =?iso-8859-1?Q?N2KYvZVniU//7iMiNyLqSIfhkkcYmSJwihD7DItNoiP872VsE5aRhAFOKw?=
+ =?iso-8859-1?Q?xGxr164bqYLnBwSKf8e788e/8Zud0Q0pc42nNoG1hCi6/808K2hji1uxMh?=
+ =?iso-8859-1?Q?ieL6NTeJpIG4dR/ZYZGI4YnOi3AejKQ64EuoEUPX5U2ABUuP32kc0q/Ght?=
+ =?iso-8859-1?Q?T8bVMYETOAs9Tt/CfvYkpBY9TZjYkslJFGwDn5nNXL1CVbvnN0xS+ukMDw?=
+ =?iso-8859-1?Q?liN6h2sY/DqhxJnj+WaWYb8JkKRBirWCpU2zvIjqh4skcmIZ/bSGAm5SgA?=
+ =?iso-8859-1?Q?eixeLEdqp2KYX0Gn1KYyBupU0z4ap34j14Tbbdcjk7KG7dJ06BsDMulksD?=
+ =?iso-8859-1?Q?/npur+Zvb+7rqIPWePu/ZJDo4VpzN6P40oLjch9zsjg2nsvqtnPcfe9A?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Content-Language: en-US
-To: paulmck@kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-6-Julia.Lawall@inria.fr>
- <20240610112223.151faf65@rorschach.local.home>
- <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: D80291F837
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB5444.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bb70e78-7578-4237-35c4-08dc898de4c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2024 20:42:50.0952
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: J2yW3aOyxQwCwxV/RH02ulMWGPvVHdiU25iAYFidIYOAfso49U6glUEMw869otCt/m6BAZEVVqR9wWQyZiP2X8TWpe7+amjSGH7wuS37T5Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4847
+X-OriginatorOrg: intel.com
 
-On 6/10/24 5:46 PM, Paul E. McKenney wrote:
-> On Mon, Jun 10, 2024 at 11:22:23AM -0400, Steven Rostedt wrote:
->> On Sun,  9 Jun 2024 10:27:17 +0200
->> Julia Lawall <Julia.Lawall@inria.fr> wrote:
->> 
->> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
->> > index 7c29f4afc23d..338c52168e61 100644
->> > --- a/fs/tracefs/inode.c
->> > +++ b/fs/tracefs/inode.c
->> > @@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
->> >  	return &ti->vfs_inode;
->> >  }
->> >  
->> > -static void tracefs_free_inode_rcu(struct rcu_head *rcu)
->> > -{
->> > -	struct tracefs_inode *ti;
->> > -
->> > -	ti = container_of(rcu, struct tracefs_inode, rcu);
->> > -	kmem_cache_free(tracefs_inode_cachep, ti);
->> 
->> Does this work?
->> 
->> tracefs needs to be freed via the tracefs_inode_cachep. Does
->> kfree_rcu() handle specific frees for objects that were not allocated
->> via kmalloc()?
-> 
-> A recent change to kfree() allows it to correctly handle memory allocated
-> via kmem_cache_alloc().  News to me as of a few weeks ago.  ;-)
+-----Original Message-----
+From: Vivi, Rodrigo <rodrigo.vivi@intel.com>=20
+Sent: Monday, June 10, 2024 1:16 PM
+To: Souza, Jose <jose.souza@intel.com>
+Cc: linux-kernel@vger.kernel.org; intel-xe@lists.freedesktop.org; Mukesh Oj=
+ha <quic_mojha@quicinc.com>; Johannes Berg <johannes@sipsolutions.net>; Cav=
+itt, Jonathan <jonathan.cavitt@intel.com>
+Subject: Re: [PATCH v5 1/2] devcoredump: Add dev_coredumpm_timeout()
+>=20
+> On Mon, Jun 10, 2024 at 09:11:32AM -0700, Jos=E9 Roberto de Souza wrote:
+> > Add function to set a custom coredump timeout.
+> >=20
+> > For Xe driver usage, current 5 minutes timeout may be too short for
+> > users to search and understand what needs to be done to capture
+> > coredump to report bugs.
+> >=20
+> > We have plans to automate(distribute a udev script) it but at the end
+> > will be up to distros and users to pack it so having a option to
+> > increase the timeout is a safer option.
+> >=20
+> > v2:
+> > - replace dev_coredump_timeout_set() by dev_coredumpm_timeout() (Mukesh=
+)
+> >=20
+> > v3:
+> > - make dev_coredumpm() static inline (Johannes)
+> >=20
+> > v5:
+> > - rename DEVCOREDUMP_TIMEOUT -> DEVCD_TIMEOUT to avoid redefinition
+> > in include/net/bluetooth/coredump.h
+> >=20
+> > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>=20
+> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>=20
+> > Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+> > Cc: Johannes Berg <johannes@sipsolutions.net>
+> > Cc: Jonathan Cavitt <jonathan.cavitt@intel.com>
+> > Acked-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
+>=20
+> Jonathan, also ack to merge this through drm-next flow?
 
-Hey, I did try not to keep that a secret :)
-https://lore.kernel.org/all/20230310103210.22372-8-vbabka@suse.cz/
+Ack clear for drm-next flow.  Actually, you can upgrade that to a
+Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
+I provided the Ack back before I knew I was allowed to provide
+Reviewed-bys, or that they were different from Acks even in my
+case.  I trust that my past-self who originally reviewed this meant
+for the Ack to be a stand-in as a non-committal RB.
 
-> 							Thanx, Paul
-> 
->> -- Steve
->> 
->> 
->> > -}
->> > -
->> >  static void tracefs_free_inode(struct inode *inode)
->> >  {
->> >  	struct tracefs_inode *ti = get_tracefs(inode);
->> > @@ -70,7 +62,7 @@ static void tracefs_free_inode(struct inode *inode)
->> >  	list_del_rcu(&ti->list);
->> >  	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
->> >  
->> > -	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
->> > +	kfree_rcu(ti, rcu);
->> >  }
->> >  
->> >  static ssize_t default_read_file(struct file *file, char __user *buf,
->> 
+-Jonathan Cavitt
 
+>=20
+> > Signed-off-by: Jos=E9 Roberto de Souza <jose.souza@intel.com>
+> > ---
+> >  drivers/base/devcoredump.c  | 23 ++++++++--------
+> >  include/linux/devcoredump.h | 54 ++++++++++++++++++++++++++++---------
+> >  2 files changed, 54 insertions(+), 23 deletions(-)
+> >=20
+> > diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+> > index 82aeb09b3d1b5..c795edad1b969 100644
+> > --- a/drivers/base/devcoredump.c
+> > +++ b/drivers/base/devcoredump.c
+> > @@ -18,9 +18,6 @@ static struct class devcd_class;
+> >  /* global disable flag, for security purposes */
+> >  static bool devcd_disabled;
+> > =20
+> > -/* if data isn't read by userspace after 5 minutes then delete it */
+> > -#define DEVCD_TIMEOUT	(HZ * 60 * 5)
+> > -
+> >  struct devcd_entry {
+> >  	struct device devcd_dev;
+> >  	void *data;
+> > @@ -328,7 +325,8 @@ void dev_coredump_put(struct device *dev)
+> >  EXPORT_SYMBOL_GPL(dev_coredump_put);
+> > =20
+> >  /**
+> > - * dev_coredumpm - create device coredump with read/free methods
+> > + * dev_coredumpm_timeout - create device coredump with read/free metho=
+ds with a
+> > + * custom timeout.
+> >   * @dev: the struct device for the crashed device
+> >   * @owner: the module that contains the read/free functions, use %THIS=
+_MODULE
+> >   * @data: data cookie for the @read/@free functions
+> > @@ -336,17 +334,20 @@ EXPORT_SYMBOL_GPL(dev_coredump_put);
+> >   * @gfp: allocation flags
+> >   * @read: function to read from the given buffer
+> >   * @free: function to free the given buffer
+> > + * @timeout: time in jiffies to remove coredump
+> >   *
+> >   * Creates a new device coredump for the given device. If a previous o=
+ne hasn't
+> >   * been read yet, the new coredump is discarded. The data lifetime is =
+determined
+> >   * by the device coredump framework and when it is no longer needed th=
+e @free
+> >   * function will be called to free the data.
+> >   */
+> > -void dev_coredumpm(struct device *dev, struct module *owner,
+> > -		   void *data, size_t datalen, gfp_t gfp,
+> > -		   ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+> > -				   void *data, size_t datalen),
+> > -		   void (*free)(void *data))
+> > +void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+> > +			   void *data, size_t datalen, gfp_t gfp,
+> > +			   ssize_t (*read)(char *buffer, loff_t offset,
+> > +					   size_t count, void *data,
+> > +					   size_t datalen),
+> > +			   void (*free)(void *data),
+> > +			   unsigned long timeout)
+> >  {
+> >  	static atomic_t devcd_count =3D ATOMIC_INIT(0);
+> >  	struct devcd_entry *devcd;
+> > @@ -403,7 +404,7 @@ void dev_coredumpm(struct device *dev, struct modul=
+e *owner,
+> >  	dev_set_uevent_suppress(&devcd->devcd_dev, false);
+> >  	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
+> >  	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+> > -	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
+> > +	schedule_delayed_work(&devcd->del_wk, timeout);
+> >  	mutex_unlock(&devcd->mutex);
+> >  	return;
+> >   put_device:
+> > @@ -414,7 +415,7 @@ void dev_coredumpm(struct device *dev, struct modul=
+e *owner,
+> >   free:
+> >  	free(data);
+> >  }
+> > -EXPORT_SYMBOL_GPL(dev_coredumpm);
+> > +EXPORT_SYMBOL_GPL(dev_coredumpm_timeout);
+> > =20
+> >  /**
+> >   * dev_coredumpsg - create device coredump that uses scatterlist as da=
+ta
+> > diff --git a/include/linux/devcoredump.h b/include/linux/devcoredump.h
+> > index c8f7eb6cc1915..e3de1e545a4a5 100644
+> > --- a/include/linux/devcoredump.h
+> > +++ b/include/linux/devcoredump.h
+> > @@ -12,6 +12,9 @@
+> >  #include <linux/scatterlist.h>
+> >  #include <linux/slab.h>
+> > =20
+> > +/* if data isn't read by userspace after 5 minutes then delete it */
+> > +#define DEVCD_TIMEOUT	(HZ * 60 * 5)
+> > +
+> >  /*
+> >   * _devcd_free_sgtable - free all the memory of the given scatterlist =
+table
+> >   * (i.e. both pages and scatterlist instances)
+> > @@ -50,16 +53,17 @@ static inline void _devcd_free_sgtable(struct scatt=
+erlist *table)
+> >  	kfree(delete_iter);
+> >  }
+> > =20
+> > -
+> >  #ifdef CONFIG_DEV_COREDUMP
+> >  void dev_coredumpv(struct device *dev, void *data, size_t datalen,
+> >  		   gfp_t gfp);
+> > =20
+> > -void dev_coredumpm(struct device *dev, struct module *owner,
+> > -		   void *data, size_t datalen, gfp_t gfp,
+> > -		   ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+> > -				   void *data, size_t datalen),
+> > -		   void (*free)(void *data));
+> > +void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+> > +			   void *data, size_t datalen, gfp_t gfp,
+> > +			   ssize_t (*read)(char *buffer, loff_t offset,
+> > +					   size_t count, void *data,
+> > +					   size_t datalen),
+> > +			   void (*free)(void *data),
+> > +			   unsigned long timeout);
+> > =20
+> >  void dev_coredumpsg(struct device *dev, struct scatterlist *table,
+> >  		    size_t datalen, gfp_t gfp);
+> > @@ -72,12 +76,13 @@ static inline void dev_coredumpv(struct device *dev=
+, void *data,
+> >  	vfree(data);
+> >  }
+> > =20
+> > -static inline void
+> > -dev_coredumpm(struct device *dev, struct module *owner,
+> > -	      void *data, size_t datalen, gfp_t gfp,
+> > -	      ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+> > -			      void *data, size_t datalen),
+> > -	      void (*free)(void *data))
+> > +void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+> > +			   void *data, size_t datalen, gfp_t gfp,
+> > +			   ssize_t (*read)(char *buffer, loff_t offset,
+> > +					   size_t count, void *data,
+> > +					   size_t datalen),
+> > +			   void (*free)(void *data),
+> > +			   unsigned long timeout)
+> >  {
+> >  	free(data);
+> >  }
+> > @@ -92,4 +97,29 @@ static inline void dev_coredump_put(struct device *d=
+ev)
+> >  }
+> >  #endif /* CONFIG_DEV_COREDUMP */
+> > =20
+> > +/**
+> > + * dev_coredumpm - create device coredump with read/free methods
+> > + * @dev: the struct device for the crashed device
+> > + * @owner: the module that contains the read/free functions, use %THIS=
+_MODULE
+> > + * @data: data cookie for the @read/@free functions
+> > + * @datalen: length of the data
+> > + * @gfp: allocation flags
+> > + * @read: function to read from the given buffer
+> > + * @free: function to free the given buffer
+> > + *
+> > + * Creates a new device coredump for the given device. If a previous o=
+ne hasn't
+> > + * been read yet, the new coredump is discarded. The data lifetime is =
+determined
+> > + * by the device coredump framework and when it is no longer needed th=
+e @free
+> > + * function will be called to free the data.
+> > + */
+> > +static inline void dev_coredumpm(struct device *dev, struct module *ow=
+ner,
+> > +				 void *data, size_t datalen, gfp_t gfp,
+> > +				 ssize_t (*read)(char *buffer, loff_t offset, size_t count,
+> > +						 void *data, size_t datalen),
+> > +				void (*free)(void *data))
+> > +{
+> > +	dev_coredumpm_timeout(dev, owner, data, datalen, gfp, read, free,
+> > +			      DEVCD_TIMEOUT);
+> > +}
+> > +
+> >  #endif /* __DEVCOREDUMP_H */
+> > --=20
+> > 2.45.2
+> >=20
+>=20
 
