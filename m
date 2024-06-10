@@ -1,151 +1,185 @@
-Return-Path: <linux-kernel+bounces-208639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E089902789
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EE290279F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3143282E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1BD1C21696
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172F2145A01;
-	Mon, 10 Jun 2024 17:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F179145FF7;
+	Mon, 10 Jun 2024 17:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIa2RXOW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Z1M/GYrl";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IiUfXrmY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7891145328
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A7077F2F;
+	Mon, 10 Jun 2024 17:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718039523; cv=none; b=tunhm3eZHxwHcIVT5t0cRpmX2ACpeTK5Scymn6zUTIKRXt1NlnA7CvihJR+VVa9Qt9SzEygy8+DV9BaY2d3FUGfiRUrvU91PQGXvf0pfQWR5G0MwUk8Vqbsq1co24lIaJSyAkDTcW9P0reFGUwCiMjubb0OocU/sCRcF82oCy4A=
+	t=1718039936; cv=none; b=Q6vk5NQ52PWV4uUPEu6GAvSzWB5hDzMmLKYMzUyR2hYuOJmPvUypPQEOS6aMlw/qyJtXGtf5Jiz3uZkh36aIE5I8/rxpnTzPMg/JZ9wLLvHKEg00/AwZi/Ed2ADZCxxzK4a9TdIFAW6cwRQw/dr8/FlXm3gYR7J8JA6J5Fr5KcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718039523; c=relaxed/simple;
-	bh=i7Mp3njgnUyN6z/w9Oq4Haw9SH5wnRUWpgAjai2AWow=;
+	s=arc-20240116; t=1718039936; c=relaxed/simple;
+	bh=YPbe293cXp4wyBnBVn8gJciGNlMCnXOyG2JdGgRfpd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9UxwXEbJ53+TEaQsjCY3z7jNl3VkdsA1+L+Sap2MkINHBFO356vSHT6aYmoEhcXf2SBoU2TDy4MIFwiRIpHpQw9u9bESx/pB2SSWvy5rFAStU5wJ9bxxqOidohEKCwi0ovITeoVEVKui9ACJdO0c3jASc/WXy1R3ipG5LFjUMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIa2RXOW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718039520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wXFcktEbxkN4ZgnPgOmnqMYkkKSi2uvyDdwHZMWpgWU=;
-	b=BIa2RXOWYNKwXbc57M+HXm3NwNxViyOz3EjCzyCS03jHly6yomWOaEI/lZiw9Sl7b6D/CK
-	f68JCcctuAES/NbvWe5yKrSlIiEXJWO6xIwYbmJoV2w80cQl7mcN/DAzKAFZ8EnHQBmZ4v
-	BZ6iWIR4R333lOkayY+cIy3bNPTY1Es=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-sxKqSlOGN5ep_CpUqxr6UA-1; Mon,
- 10 Jun 2024 13:11:55 -0400
-X-MC-Unique: sxKqSlOGN5ep_CpUqxr6UA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZ1wSts56UjhKaxD9GImwAYYsstqMIAgwuOWDUt+WQQ4WnFhmbQRyqweeLN9NtORz8W/P9MRQV+zaIKDnMOKgzn7v+V+BWb5z54TtV0N9XtIENBAcPpBPdaRQ3Tc+1xdLoKlEBWko8lc0K39XEaAQUo4ZJwmNa3JqqFT5RnSufU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Z1M/GYrl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IiUfXrmY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A61DF1955F35;
-	Mon, 10 Jun 2024 17:11:53 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0889C1956051;
-	Mon, 10 Jun 2024 17:11:52 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 45AHBdiG800812
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 13:11:39 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 45AHBd0o800811;
-	Mon, 10 Jun 2024 13:11:39 -0400
-Date: Mon, 10 Jun 2024 13:11:39 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-        dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH] dm: Add support for escaped characters in
- str_field_delimit()
-Message-ID: <Zmczy8EijOK-D7ZE@redhat.com>
-References: <20240609141721.52344-1-jain.abhinav177@gmail.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CAD4B21DCE;
+	Mon, 10 Jun 2024 17:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718039932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kHNTBGmWI5UU4pjcTxxfF0+a8c0HPOaWXn4XHmPpvTk=;
+	b=Z1M/GYrl2RndZumXJTD8bjtRrpy4rAb+dThD/e8tru4g9hPZKVRnOiNavpjzakKVnORHOv
+	mJBs+ENX6Aol2QkPdRxtkVc4713Nzmgor6trMd1Eobd7iOdd2xYYHYmB7kncC6Yp9F7FPp
+	bH2hnov3NeSWXMT7t0SRY5zeZLFUADs=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=IiUfXrmY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718039931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kHNTBGmWI5UU4pjcTxxfF0+a8c0HPOaWXn4XHmPpvTk=;
+	b=IiUfXrmYjAzS90tV1UmbKYkM6puviM0k8GocVwsTmk4jL/ihdGyg62Hespuk3eSt7ZE2gJ
+	DhvY9dLNruiv+eq6ykY4DBaRkOFt5I/YyxFA+s80cMPZBRB0pg/dTKMfc5/kN+M0DA5gAg
+	bL36frFXF7kG0vC8rivfgoofdl/ro5o=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC80413A51;
+	Mon, 10 Jun 2024 17:18:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kOCRLXs1Z2Y/dgAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Mon, 10 Jun 2024 17:18:51 +0000
+Date: Mon, 10 Jun 2024 19:18:50 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Xavier <ghostxavier@sina.com>
+Cc: longman@redhat.com, lizefan.x@bytedance.com, tj@kernel.org, 
+	hannes@cmpxchg.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] cpuset: use Union-Find to optimize the merging of
+ cpumasks
+Message-ID: <wu4m2m5igc752s5vrmtsnd7ekaq6opeqdtrzegs7oxlwgypdcx@qhcnow5txxiv>
+References: <20240531024837.255293-1-ghostxavier@sina.com>
+ <20240603123101.590760-1-ghostxavier@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fekhs4szurscavjp"
 Content-Disposition: inline
-In-Reply-To: <20240609141721.52344-1-jain.abhinav177@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20240603123101.590760-1-ghostxavier@sina.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.42
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CAD4B21DCE
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.42 / 50.00];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	BAYES_HAM(-0.31)[75.36%];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[sina.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FREEMAIL_TO(0.00)[sina.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
 
-On Sun, Jun 09, 2024 at 02:17:21PM +0000, Abhinav Jain wrote:
-> Add a new variable for escaped characters.
-> 
-> If an escaped character (\) is found before the separator, and if the 
-> separator is not found or if the escaped character is located before the
-> separator, then move the separator ahead and continue searching for the
-> next separator.
-> 
-> Return the pointer to remainder string after the delimiter. If the
-> separator was found, return a pointer to the character immediately after
-> the delimiter (s + 1). If the separator was not found, return NULL.
 
-This doesn't do anything to the escape character. Presumably you want to
-pass the field containing a separator down to dm_eary_create(). But you
-don't want to pass the escape character itself.
+--fekhs4szurscavjp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To work correctly, this code needs to remove all those escape characters
-that come before separators. It probably needs to do something like:
+Hello.
 
-1. Find a next non-escaped separator and change it to NULL, so you have
-your field string.
+On Mon, Jun 03, 2024 at 08:31:01PM GMT, Xavier <ghostxavier@sina.com> wrote:
+> The process of constructing scheduling domains involves multiple loops
+> and repeated evaluations, leading to numerous redundant and ineffective
+> assessments that impact code efficiency.
+>=20
+> Here, we use Union-Find to optimize the merging of cpumasks. By employing
+> path compression and union by rank, we effectively reduce the number of
+> lookups and merge comparisons.
 
-2. Find all the escaped separators in the field string, and shift the
-rest of the string over to overwrite the escape character with the rest
-of the string.
+Nice that you found such an application. (As Waiman wrote, the
+efficiency is not so important here and it may not be dencreased but I
+still think it makes the code more understandable by using standard data
+structures.)
 
--Ben
+Have you looked whether there are other instances of U-F in the kernel?
+(My quick search didn't show any.) Still, I think it'd be a good idea to
+decouple this into two commits -- 1) implementation of the new U-F (into
+lib/), 2) application within cpuset.
 
-> 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> ---
->  drivers/md/dm-init.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-> index 2a71bcdba92d..bef6a582a4ae 100644
-> --- a/drivers/md/dm-init.c
-> +++ b/drivers/md/dm-init.c
-> @@ -87,11 +87,21 @@ static void __init dm_setup_cleanup(struct list_head *devices)
->   */
->  static char __init *str_field_delimit(char **str, char separator)
->  {
-> -	char *s;
-> +	char *s, *escaped;
->  
-> -	/* TODO: add support for escaped characters */
->  	*str = skip_spaces(*str);
->  	s = strchr(*str, separator);
-> +
-> +	/* Check for escaped character */
-> +	escaped = strchr(*str, '\\');
-> +	if (escaped && (s == NULL || escaped < s)) {
-> +		/*
-> +		 * If escaped character comes before the separator, move
-> +		 * the separator ahead & continue searching for next one.
-> +		 */
-> +		s = strchr(escaped + 1, separator);
+> +/*define a union find node struct*/
+> +struct uf_node {
+> +	int parent;
+
+I think this would be better as `struct uf_node *`.
+
+> +	int rank;
+> +};
+
+`unsigned int` if rank cannot be negative?
+
+> +	/* Each node is initially its own parent */
+> +	for (i =3D 0; i < csn; i++) {
+> +		nodes[i].parent =3D i;
+> +		nodes[i].rank =3D 0;
 > +	}
-> +
->  	/* Delimit the field and remove trailing spaces */
->  	if (s)
->  		*s = '\0';
-> -- 
-> 2.34.1
-> 
 
+With the suggestion above, nodes could start with parent =3D NULL and
+self-parent be corrected during the first find_root -- thus whole array
+could be simply init'd to zeroes with kzalloc.
+
+
+My 0.02=E2=82=AC,
+Michal
+
+--fekhs4szurscavjp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZmc1eAAKCRAGvrMr/1gc
+jvyLAQDIN3U4NIzzpH9PYRDkt6vi5r2Od5Fva82LPD+KYsJk0AD+MVtyOpfg+GiR
+jomUt+u2dcuyjjPN2cfbN3PhSJVFnwk=
+=y5ot
+-----END PGP SIGNATURE-----
+
+--fekhs4szurscavjp--
 
