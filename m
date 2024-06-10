@@ -1,299 +1,219 @@
-Return-Path: <linux-kernel+bounces-209018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58D2902BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:55:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F5E902BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FAF2284BEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B552E1C21948
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5C81509BC;
-	Mon, 10 Jun 2024 22:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46E01509BD;
+	Mon, 10 Jun 2024 22:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8LOHIJo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ezcvoj8p"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3F83BB48;
-	Mon, 10 Jun 2024 22:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5003BB48;
+	Mon, 10 Jun 2024 22:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718060114; cv=none; b=sego/ZsRNlLLCp2aAmOqjdxE/l8/f1zZYbyEU1AE42oCeUd6iwH/kCmjyEIi83ZKpLtU7ZX9+WbwxN6mhRjgJNxgHGYFK/ZV3mpVQlyO7813xUGo1Fu47A75VaNc3KbeNeQJ3YDSem46kpStONewKbz8i2vPVJPuZdJhfY7vpkM=
+	t=1718060159; cv=none; b=oSS+lvL4/bb5VOy9KZpdyCeHhXOIo32zTKnM26r/a3AC5CiSlxpugHzYhMrqF3OcWrkTMdCCBd1BXkgtqmDMVHhySUfijov//8bfWPefvWHZueDagvdUZNRlxbT0femY0CVmhZecc40mAWrBYQtZG440K2QpNaB9VydyU3nMKlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718060114; c=relaxed/simple;
-	bh=IGTVyfZEJPfTzIux9gJBo5CPb1G8MlrIO/vrEjzPIgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1ZFf73zOJxVhz6tek1XoJcsGRjO49YH7wxoktDZJ50MJMkZjlCIUOBV1A7M0CL8au65OO6O7Z4wDRNOTOP0OL+PdhC0eFUB7gK6mtoc/w5xgsokgsLGkRG14kOvX//stmrOEcBk6BELj8BdCq+v+wEPZXBqZw3rzt6c1AxyORw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8LOHIJo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28949C2BBFC;
-	Mon, 10 Jun 2024 22:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718060113;
-	bh=IGTVyfZEJPfTzIux9gJBo5CPb1G8MlrIO/vrEjzPIgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8LOHIJoXqqGRYAB0Q1p7dq+CAOaPJeJQ/jXroDFjilIOKHzz04sIeks5LD1uJLYk
-	 e5VoV/lqx+o+rG2xp0sc1JtIvBHg6jDA+WncPTvqG8g5EJ0uWxred5NwSybkf7yDVJ
-	 Y6Z0ppN77koPZNLOEOwu9wtzrGTk9IEPtsqEQB647QF+f5Q+3AQsQ8ciyIDqzWoID2
-	 CPMH8Kxtkig/DNyszbg+620B3vqoLIq9W8NqrT0jSVI0YCliNJ58DIQK2i4ArCxuuE
-	 gI5OeWwMiukJBhSW37phERGUwNoys1K4s19JlLk2z9RDI+G3bx7rWZjZnmE5en/716
-	 WpuoV5EiWZlCA==
-Date: Mon, 10 Jun 2024 15:55:11 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] perf sched map: Add command-name, fuzzy-name options
- to filter the output map
-Message-ID: <ZmeET1yhxU1-D7hy@google.com>
-References: <20240608124915.33860-1-vineethr@linux.ibm.com>
+	s=arc-20240116; t=1718060159; c=relaxed/simple;
+	bh=5c+cupG43q3JxOZFm9CLv4boFt7YHyL3IM0TYOplEQI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lAYTr1GcydhwNCtZPySXFNFsdkMmWoeAJApYVczDERGkbZDhLc1Vb9AAz2N8Oqf/GhhEtJYAkGC210ffGeexnXdqcaAODvKoFz5zum4yt8fR8lqQpjD3uz7tdYY/kr51KRBEE+8biZX8+XvSsorcvDIe7H5NZqtBUP5oZkJndI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ezcvoj8p; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718060152;
+	bh=5c+cupG43q3JxOZFm9CLv4boFt7YHyL3IM0TYOplEQI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ezcvoj8pZwuSFCTOy956WEli/FfETd7rsBuJ2mucC2Y3C6CqWHUFnu6/FKWAD0QbR
+	 kJwAuKJNX5TJMRWoajl0xLjoDtGRRMQCQfNTP38q56dofEEvd11Z7aKleiVVHsIU34
+	 hJRza2Hvc0n8c1rjrvVaZ1KSIR8iE7Rwo+LEIv48mBBYZGrFqp+9gkqfhTx4f7iotX
+	 MqnmjKVelYdeUxOMQIbr31IzhllTErx44mfLN+wETeTk68iE2kkD58FoTukFnhp4aW
+	 HkBAO08Vmtp7il3sw638PhV0yZLsrBdv6ZCk7MM5d+fPmltIX2BZnae0L5feWfW4IP
+	 9IhWKMET/uHCw==
+Received: from [100.77.12.232] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: obbardc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 995FB378113A;
+	Mon, 10 Jun 2024 22:55:51 +0000 (UTC)
+Message-ID: <6c98da19b4978197213cb7b9cbcafc10480c0a73.camel@collabora.com>
+Subject: Re: [PATCH v1 1/1] arm64: dts: imx8mp-debix-model-a: Add HDMI
+ output support
+From: Christopher Obbard <chris.obbard@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ linux-kernel@vger.kernel.org, Daniel Scally <dan.scally@ideasonboard.com>, 
+ kernel@collabora.com, Conor Dooley <conor+dt@kernel.org>, Fabio Estevam
+ <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>,  Shawn Guo <shawnguo@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org
+Date: Mon, 10 Jun 2024 23:55:50 +0100
+In-Reply-To: <20240608150227.GA13024@pendragon.ideasonboard.com>
+References: <20240415114135.25473-1-chris.obbard@collabora.com>
+	 <20240415114135.25473-2-chris.obbard@collabora.com>
+	 <171319369093.2333277.9109576229211275635@ping.linuxembedded.co.uk>
+	 <20240415163520.GA22954@pendragon.ideasonboard.com>
+	 <525f3c7f7f6613c78ac364c9ce0234cca5e1c710.camel@collabora.com>
+	 <20240608150227.GA13024@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240608124915.33860-1-vineethr@linux.ibm.com>
 
-Hello,
+SGkgTGF1cmVudCwKCk9uIFNhdCwgMjAyNC0wNi0wOCBhdCAxODowMiArMDMwMCwgTGF1cmVudCBQ
+aW5jaGFydCB3cm90ZToKPiBPbiBNb24sIEFwciAxNSwgMjAyNCBhdCAwNjowNzoyNFBNICswMTAw
+LCBDaHJpc3RvcGhlciBPYmJhcmQgd3JvdGU6Cj4gPiBPbiBNb24sIDIwMjQtMDQtMTUgYXQgMTk6
+MzUgKzAzMDAsIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6Cj4gPiA+IE9uIE1vbiwgQXByIDE1LCAy
+MDI0IGF0IDA0OjA4OjEwUE0gKzAxMDAsIEtpZXJhbiBCaW5naGFtIHdyb3RlOgo+ID4gPiA+IFF1
+b3RpbmcgQ2hyaXN0b3BoZXIgT2JiYXJkICgyMDI0LTA0LTE1IDEyOjQxOjI3KQo+ID4gPiA+ID4g
+RW5hYmxlIHRoZSBIRE1JIG91dHB1dCBvbiB0aGUgRGViaXggTW9kZWwgQSBTQkMsIHVzaW5nIHRo
+ZSBIRE1JCj4gPiA+ID4gPiBlbmNvZGVyCj4gPiA+ID4gPiBwcmVzZW50IGluIHRoZSBpLk1YOE1Q
+IFNvQy4KPiA+ID4gPiAKPiA+ID4gPiBBaGEsIHlvdSBiZWF0IG1lIHRvIGl0LiBJIGhhdmUgYSBj
+b21taXQgbG9jYWxseSAoRGF0ZWQgMjAyMi0wOS0wNikgYnV0Cj4gPiA+ID4gbm90IHNlbnQgYmVj
+YXVzZSBJIGRpZG4ndCByZWFsaXNlIHRoZSBIRE1JIHN1cHBvcnQgZmluYWxseSBnb3QKPiA+ID4g
+PiB1cHN0cmVhbQo+ID4gPiA+IFxvLwo+ID4gPiA+IAo+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTog
+Q2hyaXN0b3BoZXIgT2JiYXJkIDxjaHJpcy5vYmJhcmRAY29sbGFib3JhLmNvbT4KPiA+ID4gPiA+
+IC0tLQo+ID4gPiA+ID4gCj4gPiA+ID4gPiDCoC4uLi9kdHMvZnJlZXNjYWxlL2lteDhtcC1kZWJp
+eC1tb2RlbC1hLmR0c8KgwqDCoCB8IDQ3Cj4gPiA+ID4gPiArKysrKysrKysrKysrKysrKysrCj4g
+PiA+ID4gPiDCoDEgZmlsZSBjaGFuZ2VkLCA0NyBpbnNlcnRpb25zKCspCj4gPiA+ID4gPiAKPiA+
+ID4gPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAt
+ZGViaXgtbW9kZWwtYS5kdHMKPiA+ID4gPiA+IGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2Nh
+bGUvaW14OG1wLWRlYml4LW1vZGVsLWEuZHRzCj4gPiA+ID4gPiBpbmRleCAyYzE5NzY2ZWJmMDku
+LjI5NTI5YzJlY2FjOSAxMDA2NDQKPiA+ID4gPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
+ZnJlZXNjYWxlL2lteDhtcC1kZWJpeC1tb2RlbC1hLmR0cwo+ID4gPiA+ID4gKysrIGIvYXJjaC9h
+cm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLWRlYml4LW1vZGVsLWEuZHRzCj4gPiA+ID4g
+PiBAQCAtMjAsNiArMjAsMTggQEAgY2hvc2VuIHsKPiA+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBzdGRvdXQtcGF0aCA9ICZ1YXJ0MjsKPiA+ID4gPiA+IMKgwqDCoMKgwqDC
+oMKgIH07Cj4gPiA+ID4gPiDCoAo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoCBoZG1pLWNvbm5lY3Rv
+ciB7Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlID0g
+ImhkbWktY29ubmVjdG9yIjsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGxhYmVsID0gImhkbWkiOwo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+dHlwZSA9ICJhIjsKPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHBvcnQgewo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGhkbWlfY29ubmVjdG9yX2luOiBlbmRwb2ludCB7Cj4gPiA+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHJlbW90ZS1lbmRwb2ludCA9IDwmaGRtaV90eF9vdXQ+Owo+ID4gPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ID4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoCB9Owo+ID4gPiA+
+ID4gKwo+ID4gPiA+IAo+ID4gPiA+IEludGVyZXN0aW5nLiBNeSBwYXRjaCBtaXNzZWQgdGhpcy4g
+QnV0IGl0IGxvb2tzIGNvcnJlY3QuCj4gPiA+ID4gCj4gPiA+ID4gPiDCoMKgwqDCoMKgwqDCoCBs
+ZWRzIHsKPiA+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxl
+ID0gImdwaW8tbGVkcyI7Cj4gPiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+cGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPiA+ID4gPiA+IEBAIC05NCw2ICsxMDYsMjggQEAg
+ZXRocGh5MDogZXRoZXJuZXQtcGh5QDAgeyAvKiBSVEw4MjExRSAqLwo+ID4gPiA+ID4gwqDCoMKg
+wqDCoMKgwqAgfTsKPiA+ID4gPiA+IMKgfTsKPiA+ID4gPiA+IMKgCj4gPiA+ID4gPiArJmhkbWlf
+cHZpIHsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqAgc3RhdHVzID0gIm9rYXkiOwo+ID4gPiA+ID4g
+K307Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArJmhkbWlfdHggewo+ID4gPiA+ID4gK8KgwqDCoMKg
+wqDCoCBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoCBw
+aW5jdHJsLTAgPSA8JnBpbmN0cmxfaGRtaT47Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgIHN0YXR1
+cyA9ICJva2F5IjsKPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqAgcG9ydHMgewo+
+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcG9ydEAxIHsKPiA+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBoZG1pX3R4X291
+dDogZW5kcG9pbnQgewo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZW1vdGUtZW5kcG9pbnQgPQo+ID4gPiA+ID4g
+PCZoZG1pX2Nvbm5lY3Rvcl9pbj47Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIH07Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgIH07Cj4gPiA+ID4gPiArfTsKPiA+ID4g
+PiA+ICsKPiA+ID4gPiA+ICsmaGRtaV90eF9waHkgewo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoCBz
+dGF0dXMgPSAib2theSI7Cj4gPiA+ID4gPiArfTsKPiA+ID4gPiA+ICsKPiA+ID4gPiA+IMKgJmky
+YzEgewo+ID4gPiA+ID4gwqDCoMKgwqDCoMKgwqAgY2xvY2stZnJlcXVlbmN5ID0gPDQwMDAwMD47
+Cj4gPiA+ID4gPiDCoMKgwqDCoMKgwqDCoCBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+ID4g
+PiA+ID4gQEAgLTI0MSw2ICsyNzUsMTAgQEAgJmkyYzYgewo+ID4gPiA+ID4gwqDCoMKgwqDCoMKg
+wqAgc3RhdHVzID0gIm9rYXkiOwo+ID4gPiA+ID4gwqB9Owo+ID4gPiA+ID4gwqAKPiA+ID4gPiA+
+ICsmbGNkaWYzIHsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqAgc3RhdHVzID0gIm9rYXkiOwo+ID4g
+PiA+ID4gK307Cj4gPiA+ID4gPiArCj4gPiA+ID4gCj4gPiA+ID4gRXhjZXB0IGZvciB0aGUgYWRk
+aXRpb24gb2YgdGhlIGNvbm5lY3RvciwgdGhlIGFib3ZlIG1hdGNoZXMgbXkgcGF0Y2gKPiA+ID4g
+PiB0bwo+ID4gPiA+IGhlcmUuCj4gPiA+ID4gCj4gPiA+ID4gPiDCoCZzbnZzX3B3cmtleSB7Cj4g
+PiA+ID4gPiDCoMKgwqDCoMKgwqDCoCBzdGF0dXMgPSAib2theSI7Cj4gPiA+ID4gPiDCoH07Cj4g
+PiA+ID4gCj4gPiA+ID4gQnV0IGluIG15IHBhdGNoIEkgaGF2ZSB0aGUgZm9sbG93aW5nIGh1bmsg
+aGVyZTogKEkgaGF2ZW4ndCBjaGVja2VkIHRvCj4gPiA+ID4gc2VlIGlmIHRoaXMgc3RpbGwgYXBw
+bGllcyBvbiBtYWlubGluZSwgc28gdGFrZSB3aXRoIGEgcGluY2ggb2Ygc2FsdCBpZgo+ID4gPiA+
+IGl0J3Mgbm90IHRoZXJlISkKPiA+ID4gPiAKPiA+ID4gPiAKPiA+ID4gPiDCoCZpb211eGMgewo+
+ID4gPiA+IMKgCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4gPiA+ID4gLQlwaW5jdHJsLTAg
+PSA8JnBpbmN0cmxfaG9nPjsKPiA+ID4gPiAtCj4gPiA+ID4gLQlwaW5jdHJsX2hvZzogaG9nZ3Jw
+IHsKPiA+ID4gPiAtCQlmc2wscGlucyA9IDwKPiA+ID4gPiAtCj4gPiA+ID4gCQkJTVg4TVBfSU9N
+VVhDX0hETUlfRERDX1NDTF9fSERNSU1JWF9IRE1JX1NDTAo+ID4gPiA+IAkJCQkJMHg0MDAwMDFj
+Mwo+ID4gPiA+IC0KPiA+ID4gPiAJCQlNWDhNUF9JT01VWENfSERNSV9ERENfU0RBX19IRE1JTUlY
+X0hETUlfU0RBCj4gPiA+ID4gCQkJCQkweDQwMDAwMWMzCj4gPiA+ID4gLQo+ID4gPiA+IAkJCU1Y
+OE1QX0lPTVVYQ19IRE1JX0hQRF9fSERNSU1JWF9IRE1JX0hQRAo+ID4gPiA+IAkJCQkJCTB4NDAw
+MDAwMTkKPiA+ID4gPiAtCj4gPiA+ID4gCQkJTVg4TVBfSU9NVVhDX0hETUlfQ0VDX19IRE1JTUlY
+X0hETUlfQ0VDCj4gPiA+ID4gCQkJCQkJMHg0MDAwMDAxOQo+ID4gPiA+IC0JCT47Cj4gPiA+ID4g
+LQl9Owo+ID4gPiA+IAo+ID4gPiA+IMKgCXBpbmN0cmxfZXFvczogZXFvc2dycCB7Cj4gPiA+ID4g
+wqAJCWZzbCxwaW5zID0gPAo+ID4gPiA+IMKgCQkJTVg4TVBfSU9NVVhDX0VORVRfTURDX19FTkVU
+X1FPU19NREMJCj4gPiA+ID4gCQo+ID4gPiA+IAkJCQkJMHgzCj4gPiA+ID4gwqAJCQlNWDhNUF9J
+T01VWENfRU5FVF9NRElPX19FTkVUX1FPU19NRElPCQo+ID4gPiA+IAkKPiA+ID4gPiAJCQkJMHgz
+Cj4gPiA+ID4gCj4gPiA+ID4gCj4gPiA+ID4gPiBAQCAtMzU4LDYgKzM5NiwxNSBAQAo+ID4gPiA+
+ID4gTVg4TVBfSU9NVVhDX05BTkRfUkVBRFlfQl9fR1BJTzNfSU8xNsKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4gPiA+IDB4MTkK
+PiA+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA+Owo+ID4gPiA+ID4gwqDC
+oMKgwqDCoMKgwqAgfTsKPiA+ID4gPiA+IMKgCj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgIHBpbmN0
+cmxfaGRtaTogaGRtaWdycCB7Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBmc2wscGlucyA9IDwKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+ID4gPiA+ID4gTVg4TVBfSU9NVVhDX0hETUlfRERDX1NDTF9fSERNSU1J
+WF9IRE1JX1NDTMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4g
+PiA+IDB4NDAwMDAxYzMKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+ID4gPiA+ID4gTVg4TVBfSU9NVVhDX0hETUlfRERDX1NEQV9fSERNSU1J
+WF9IRE1JX1NEQcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4g
+PiA+IDB4NDAwMDAxYzMKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+ID4gPiA+ID4gTVg4TVBfSU9NVVhDX0hETUlfSFBEX19IRE1JTUlYX0hE
+TUlfSFBEwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4g
+PiA+ID4gPiAweDQwMDAwMDE5Cj4gPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4gPiA+IE1YOE1QX0lPTVVYQ19IRE1JX0NFQ19fSERNSU1J
+WF9IRE1JX0NFQ8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oAo+ID4gPiA+ID4gMHg0MDAwMDAxOQo+ID4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgPjsKPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqAgfTsKPiA+ID4gPiA+ICsKPiA+ID4gPiAK
+PiA+ID4gPiBBbmQgbXkgYWRkaXRpb24gaGVyZSBpcyA6Cj4gPiA+ID4gCj4gPiA+ID4gCj4gPiA+
+ID4gKwlwaW5jdHJsX2hkbWk6IGhkbWlncnAgewo+ID4gPiA+ICsJCWZzbCxwaW5zID0gPAo+ID4g
+PiA+ICsJCQlNWDhNUF9JT01VWENfSERNSV9ERENfU0NMX19IRE1JTUlYX0hETUlfU0NMCj4gPiA+
+ID4gCTAKPiA+ID4gPiB4MWMzCj4gPiA+ID4gKwkJCU1YOE1QX0lPTVVYQ19IRE1JX0REQ19TREFf
+X0hETUlNSVhfSERNSV9TREEKPiA+ID4gPiAJMAo+ID4gPiA+IHgxYzMKPiA+ID4gPiArCQkJTVg4
+TVBfSU9NVVhDX0hETUlfSFBEX19IRE1JTUlYX0hETUlfSFBECj4gPiA+ID4gCQo+ID4gPiA+IAkw
+eDE5Cj4gPiA+ID4gKwkJCU1YOE1QX0lPTVVYQ19IRE1JX0NFQ19fSERNSU1JWF9IRE1JX0NFQwo+
+ID4gPiA+IAkKPiA+ID4gPiAJMHgxOQo+ID4gPiA+ICsJCT47Cj4gPiA+ID4gKwl9Owo+ID4gPiA+
+ICsKPiA+ID4gPiAKPiA+ID4gPiAKPiA+ID4gPiBJIGhhdmVuJ3QgbG9va2VkIGludG8gd2hhdCB0
+aGUgMHg0MDAwMDAwMCBkb2VzIHlldCwgYnV0IGp1c3QKPiA+ID4gPiBoaWdobGlnaHRpbmcgdGhl
+IGRpZmZlcmVuY2UgZnJvbSB0aGUgdmVyc2lvbiBJJ3ZlIGJlZW4gdXNpbmcgdG8gbWFrZQo+ID4g
+PiA+IHVzZQo+ID4gPiA+IG9mIEhETUkgc28gZmFyLgo+ID4gPiA+IAo+ID4gPiA+IERvZXMgYW55
+b25lIGVsc2Uga25vdyB0aGUgaW1wYWN0IGhlcmU/IE90aGVyd2lzZSBJJ2xsIHRyeSB0byBmaW5k
+IHRpbWUKPiA+ID4gPiB0byBjaGVjayB0aGlzIGxhdGVyLiAoRm9yIHNvbWUgdW5kZWZpbmVkIHRl
+cm0gb2YgbGF0ZXIuLi4pCj4gPiA+IAo+ID4gPiBJbiBkcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxl
+L3BpbmN0cmwtaW14LmMsCj4gPiA+IAo+ID4gPiAjZGVmaW5lIElNWF9OT19QQURfQ1RMwqAgMHg4
+MDAwMDAwMMKgwqDCoMKgwqAgLyogbm8gcGluIGNvbmZpZyBuZWVkICovCj4gPiA+ICNkZWZpbmUg
+SU1YX1BBRF9TSU9OIDB4NDAwMDAwMDDCoMKgwqDCoMKgwqDCoMKgIC8qIHNldCBTSU9OICovCj4g
+PiA+IAo+ID4gPiBUaGUgU0lPTiAoU29mdHdhcmUgSW5wdXQgT04pIGJpdCBmb3JjZXMgdGhlIGlu
+cHV0IHBhdGggYWN0aXZlIGZvciB0aGUKPiA+ID4gcGluLiBUaGlzIGNhbiBiZSB1c2VkLCBmb3Ig
+aW5zdGFuY2UsIHRvIGNhcHR1cmUgdGhyb3VnaCBHUElPIHRoZSB2YWx1ZQo+ID4gPiBvZiBhIHBp
+biBkcml2ZW4gYnkgYSBtb2R1bGUuIEknbSBub3Qgc3VyZSB0aGF0J3MgbmVlZGVkIGhlcmUuCj4g
+PiAKPiA+IFRoYW5rcyBmb3IgdGhlIGV4cGxhbmF0aW9uLCBtYWtlcyBwZXJmZWN0IHNlbnNlLiBJ
+IHdpbGwgc2VuZCBhIHYyIHdpdGhvdXQKPiA+IHRoZQo+ID4gU0lPTiBiaXQgc2V0IChlLmcgZXhh
+Y3RseSBwZXIgdGhlIGh1bmsgaW4gS2llcmFuJ3MgcGF0Y2gpLgo+IAo+IEknZCBsaWtlIHRvIGdl
+dCB0aGlzIG1lcmdlZCBpbiB2Ni4xMS4gSWYgeW91IGRvbid0IGhhdmUgdGltZSB0byBzZW5kIGEK
+PiB2MiwgSSdtIGhhcHB5IHJlc2VuZGluZyBvdXIgdmVyc2lvbiBvZiB0aGUgcGF0Y2ggaW5zdGVh
+ZCA6LSkKCkkndmUganVzdCBkdXN0ZWQgdGhlIGJvYXJkIG9mZiBhbmQgd2lsbCBzZW5kIHYyIHNo
+b3J0bHkgYWZ0ZXIgdGVzdGluZy4KClRoYW5rcyBmb3IgdGhlIHJlbWluZGVyIDotKS4KCj4gCj4g
+PiA+ID4gPiDCoMKgwqDCoMKgwqDCoCBwaW5jdHJsX2kyYzE6IGkyYzFncnAgewo+ID4gPiA+ID4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZzbCxwaW5zID0gPAo+ID4gPiA+ID4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+ID4gPiA+ID4gTVg4
+TVBfSU9NVVhDX0kyQzFfU0NMX19JMkMxX1NDTMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4gPiA+IDB4NDAwMDAxYzIK
+PiAKPiAtLSAKPiBSZWdhcmRzLAo+IAo+IExhdXJlbnQgUGluY2hhcnQK
 
-On Sat, Jun 08, 2024 at 06:18:29PM +0530, Madadi Vineeth Reddy wrote:
-> By default, perf sched map prints sched-in events for all the tasks
-> which may not be required all the time as it prints lot of symbols
-> and rows to the terminal.
-> 
-> With --command-name option, one could specify the specific command(s)
-> for which the map has to be shown. This would help in analyzing the
-> CPU usage patterns easier for that specific command(s). Since multiple
-> PID's might have the same command name, using command-name filter
-> would be more useful for debugging.
-> 
-> Multiple command names can be given with a comma separator without
-> whitespace.
-> 
-> The --fuzzy-name option can be used if fuzzy name matching is required.
-> For example, "taskname" can be matched to any string that contains
-> "taskname" as its substring.
-> 
-> For other tasks, instead of printing the symbol, ** is printed and
-> the same . is used to represent idle. ** is used instead of symbol
-> for other tasks because it helps in clear visualization of command(s)
-> of interest and secondly the symbol itself doesn't mean anything
-> because the sched-in of that symbol will not be printed(first sched-in
-> contains pid and the corresponding symbol).
-> 
-> 6.10.0-rc1
-> ==========
->   *A0                   213864.670142 secs A0 => migration/0:18
->   *.                    213864.670148 secs .  => swapper:0
->    .  *B0               213864.670217 secs B0 => migration/1:21
->    .  *.                213864.670223 secs
->    .   .  *C0           213864.670247 secs C0 => migration/2:26
->    .   .  *.            213864.670252 secs
-> 
-> 6.10.0-rc1 + patch (--command-name = schbench)
-> =============
->    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
->   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
->   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
-
-I still think some people are interested in sched-out time.  For
-example, we don't know when B0 was scheduled out in the above.  There
-could be other tasks between B0 and C0 on the CPU 0.
-
-
->   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
->   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
->    E0  .  *D0  A0
-> 
-> This helps in visualizing how a benchmark like schbench is spread over
-> the available cpus while also knowing which cpus are idle(.) and which
-> are not(**). This will be more useful as number of CPUs increase.
-> 
-> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <mailto:atrajeev@linux.vnet.ibm.com>>
-> 
-> ---
-> Changes in v2:
-> - Add support for giving multiple command-names in CSV. (Namhyung Kim)
-> - Add fuzzy name matching option. (Chen Yu)
-> - Add Reviewed-and-tested-by tag from Athira Rajeev.
-> - Rebase against perf-tools-next commit d2307fd4f989 ("perf maps: Add/use
->   a sorted insert for fixup overlap and insert")
-> - Link to v1: https://lore.kernel.org/lkml/20240417152521.80340-1-vineethr@linux.ibm.com/
-> ---
->  tools/perf/Documentation/perf-sched.txt |  8 +++++
->  tools/perf/builtin-sched.c              | 41 +++++++++++++++++++++++--
->  2 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-> index a216d2991b19..6901c192eb6f 100644
-> --- a/tools/perf/Documentation/perf-sched.txt
-> +++ b/tools/perf/Documentation/perf-sched.txt
-> @@ -130,6 +130,14 @@ OPTIONS for 'perf sched map'
->  --color-pids::
->  	Highlight the given pids.
->  
-> +--command-name::
-> +	Map output only for the given command name(s). Separate the
-> +	command names with a comma (without whitespace).
-> +	(** indicates other tasks while . is idle).
-> +
-> +--fuzzy-name::
-> +	Given command name can be partially matched (fuzzy matching).
-> +
->  OPTIONS for 'perf sched timehist'
->  ---------------------------------
->  -k::
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index 5977c49ae2c7..364f48170e65 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -156,6 +156,8 @@ struct perf_sched_map {
->  	const char		*color_pids_str;
->  	struct perf_cpu_map	*color_cpus;
->  	const char		*color_cpus_str;
-> +	const char		*command;
-> +	bool			fuzzy;
->  	struct perf_cpu_map	*cpus;
->  	const char		*cpus_str;
->  };
-> @@ -1538,6 +1540,26 @@ map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid
->  	return thread;
->  }
->  
-> +static bool command_matches(const char *comm_str, const char *commands, bool fuzzy_match)
-> +{
-> +	char *commands_copy = strdup(commands);
-> +	char *token = strtok(commands_copy, ",");
-
-Hmm.. copying and parsing the commands whenever it compares the task
-comm looks inefficient.  I think you can parse the input string once and
-keep the list of names.
-
-> +
-> +	bool match_found = false;
-> +
-> +	while (token != NULL) {
-> +		if ((fuzzy_match && strstr(comm_str, token) != NULL) ||
-> +					strcmp(comm_str, token) == 0) {
-> +			match_found = true;
-> +			break;
-> +		}
-> +	token = strtok(NULL, ",");
-> +	}
-
-It could be:
-
-    while (token != NULL && !match_found) {
-        if (fuzzy_match)
-            match_found = !!strstr(comm_str, token);
-        else
-            match_found = !strcmp(comm_str, token);
-
-        token = strtok(NULL, ",");
-    }
-
-But as I said, it'd better not to call strtok() here.
-
-> +
-> +	free(commands_copy);
-> +	return match_found;
-> +}
-> +
->  static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  			    struct perf_sample *sample, struct machine *machine)
->  {
-> @@ -1594,8 +1616,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  
->  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
->  
-> -	printf("  ");
-> -
->  	new_shortname = 0;
->  	if (!tr->shortname[0]) {
->  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
-> @@ -1605,7 +1625,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  			 */
->  			tr->shortname[0] = '.';
->  			tr->shortname[1] = ' ';
-> -		} else {
-> +		} else if (!sched->map.command || command_matches(thread__comm_str(sched_in),
-> +							sched->map.command, sched->map.fuzzy)) {
-
-We usually align the indentation using the open parenthesis.
-Maybe you can rename the function and pass the sched pointer directly
-to reduce the argument.
-
-  bool sched_match_task(struct perf_sched *sched, const char *comm_str)
-  {
-      ...
-  }
-
-Or you could pass thread instead of comm_str and possibly support
-matching with TID too.
-
-Thanks,
-Namhyung
-
-
->  			tr->shortname[0] = sched->next_shortname1;
->  			tr->shortname[1] = sched->next_shortname2;
->  
-> @@ -1618,10 +1639,19 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  				else
->  					sched->next_shortname2 = '0';
->  			}
-> +		} else {
-> +			tr->shortname[0] = '*';
-> +			tr->shortname[1] = '*';
->  		}
->  		new_shortname = 1;
->  	}
->  
-> +	if (sched->map.command && !command_matches(thread__comm_str(sched_in), sched->map.command,
-> +										sched->map.fuzzy))
-> +		goto skip;
-> +
-> +	printf("  ");
-> +
->  	for (i = 0; i < cpus_nr; i++) {
->  		struct perf_cpu cpu = {
->  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
-> @@ -1678,6 +1708,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  out:
->  	color_fprintf(stdout, color, "\n");
->  
-> +skip:
->  	thread__put(sched_in);
->  
->  	return 0;
-> @@ -3560,6 +3591,10 @@ int cmd_sched(int argc, const char **argv)
->                      "highlight given CPUs in map"),
->  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
->                      "display given CPUs in map"),
-> +	OPT_STRING(0, "command-name", &sched.map.command, "command",
-> +		"map output only for the given command name(s)"),
-> +	OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
-> +		"given command name can be partially matched (fuzzy matching)"),
->  	OPT_PARENT(sched_options)
->  	};
->  	const struct option timehist_options[] = {
-> -- 
-> 2.31.1
-> 
 
