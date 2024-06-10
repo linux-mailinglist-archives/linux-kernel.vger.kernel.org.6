@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-208654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A709027C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:31:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF9B902775
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7B81C21634
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88D81F21906
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D1D145352;
-	Mon, 10 Jun 2024 17:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="BI53CnhK"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB78F145352;
+	Mon, 10 Jun 2024 17:08:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694508F6D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9D61E4B0;
+	Mon, 10 Jun 2024 17:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040696; cv=none; b=bue782HqJwNulfyzTrZHp+A1bQB28z9cG3R1RkMxC1tjTMhH8VOMaqMXJFVAlWoxhhHgR30/Zw+qw5AJmsr7mp9MEsFj6TCc55Zy88D2gvxSj0uPxwtgwT9m3HRq+XflKbXSfD3Tgog/IU9qyz+9GsAjALYuBsN+9f53pM+A28g=
+	t=1718039303; cv=none; b=PmywisyMXkJW4cl+I/2DYXYeI3q9rHVreds1sfRSSQNgSLYWSs83yqLglaTefIk763+1lTIkypGKAJX5tJtJ3nadB8DuWVRrShYEtJ5FIQ0b4DpwIpDKlvjnWPdks7vkKbLinKllvPtDyCZYZWJerLFKc1NpHruCqHyCbeqJu3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040696; c=relaxed/simple;
-	bh=WZzDraNl6RoPonM/1zyqOF3B7Wjw0fGAsj4wynKG8IY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=p69vOrGJjJA+Ct2sG9blNOoTsvSbg7iu4y+X3slOfpa3fMlHK6eZ9/pN5TAZuhYe9oVcpMY+RkTAxWPFqih5uSwPSRDqoIbPCKhUNTtyVpEfB9CldsMIVs0tKJlQYM7F9QlqJKF6SA5JJqpUPIOi3bgdJza5t0vLBrl7fzWCMmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=BI53CnhK; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1718039226;
-	bh=WZzDraNl6RoPonM/1zyqOF3B7Wjw0fGAsj4wynKG8IY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=BI53CnhKy1X1kUJArUEq8in9DDpJ3nNOWM9O9tHoKXrsMORVVameIHPCQEEioNhN7
-	 86Fcj8ZWnB/3RUWfkPFJzd/hLJ1wJcViftUadbNKio6bz6cMxXmGvpdD5k2fhdpIQ3
-	 rPG734duE/Nu8+CM8eNdkucgkq84CgH9fd44IN/Y=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id B676640B0F; Mon, 10 Jun 2024 10:07:06 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B59954022C;
-	Mon, 10 Jun 2024 10:07:06 -0700 (PDT)
-Date: Mon, 10 Jun 2024 10:07:06 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Chengming Zhou <chengming.zhou@linux.dev>
-cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    zhouchengming@bytedance.com
-Subject: Re: [PATCH v3 1/3] slab: make check_object() more consistent
-In-Reply-To: <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev>
-Message-ID: <63da08b7-7aa3-3fad-55e6-9fc3928a49de@gentwo.org>
-References: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev> <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev>
+	s=arc-20240116; t=1718039303; c=relaxed/simple;
+	bh=n6IBKtowTYVwvEUkB4cUqJdMY5z4SkmJ78NxUR1jeEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ky8++roDuenXsILD+9XOqIqTLBjn7pAOpQR/N9lkEuAK3u0xXeLlRGJloREmuQv08JT0hHlT1iJLOBMmHvONMGZs4paFerDcDkJ0Qi0x8Nx4YMgDkWtELKOABr1js3jEWLqhRGDBiU6A/wjKbzEmQzudauWM+4fuSDArwQ9EJLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8940EC2BBFC;
+	Mon, 10 Jun 2024 17:08:19 +0000 (UTC)
+Date: Mon, 10 Jun 2024 13:08:18 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
+ <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
+ linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Ross
+ Zwisler <zwisler@google.com>, wklin@google.com, Vineeth Remanan Pillai
+ <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Linus Torvalds
+ <torvalds@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v2 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240610130818.3b97b208@rorschach.local.home>
+In-Reply-To: <aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
+References: <20240606150143.876469296@goodmis.org>
+	<aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 7 Jun 2024, Chengming Zhou wrote:
+On Fri, 7 Jun 2024 16:54:41 -0300
+"Guilherme G. Piccoli" <gpiccoli@igalia.com> wrote:
 
-> There are two inconsistencies in check_object(), which are alignment
-> padding checking and object padding checking. We only print the error
-> messages but don't return 0 to tell callers that something is wrong
-> and needs to be handled. Please see alloc_debug_processing() and
-> free_debug_processing() for details.
+> Some code review in the patches themselves (like a missing
+> EXPORT_SYMBOL_GPL), but all in all, that's a great addition! Feel free
+> to add my:
+> 
+> Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-If the error is in the padding and the redzones are ok then its likely 
-that the objects are ok. So we can actually continue with this slab page 
-instead of isolating it.
+Thanks a lot Guilherme! Much appreciated.
 
-We isolate it in the case that the redzones have been violated because 
-that suggests someone overwrote the end of the object f.e. In that case 
-objects may be corrupted. Its best to isolate the slab and hope for the 
-best.
+I'll send out a v3 with your comments addressed. And may even add parts
+of this email in the change logs on how it does work in various cases.
 
-If it was just the padding then the assumption is that this may be a 
-scribble. So clean it up and continue.
+-- Steve
 
