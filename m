@@ -1,174 +1,255 @@
-Return-Path: <linux-kernel+bounces-208534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1713902659
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4162A90265F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332F428259B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE10284A9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35CA1422D5;
-	Mon, 10 Jun 2024 16:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBE9142E8D;
+	Mon, 10 Jun 2024 16:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTE9o6DI"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLHiNpte"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A871422CA;
-	Mon, 10 Jun 2024 16:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A6F1422DF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035946; cv=none; b=U2VVxNRvqxAo6sVv0RcV/YbZfLQpwuCdW+dMypvzaiLlmiyg6RSCxr/qaqFTm8WHEK6qmK3LkoxoLlaS2PF+fQOsobhYmnmQkakwGBu3FYW1LkfqtS0hAIqhe/GB8RU0sgR2Mf9qPZ3d+5Zjr1HSJTPcVZFPkVJR3+l/FfO9T5I=
+	t=1718036027; cv=none; b=UYeuQOlMTH27WGhVyKvh/gJYpkKiyOR+AwVOt2lVZjAboi05VhmOUCkb3UoedAIlzD5VNAmbrFXGFvbOeMlF9HWJ5YA0EX09niaC0YLQG1pKa13y+rGq2m89BLhULGzM2oYb0pZ/t144J5reULuVNRrXDr8a+3HB6qhldciTZvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035946; c=relaxed/simple;
-	bh=lblZXeRWjDuToTH9KitVv58LFxavQEZoqNO3ZJ8rGVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ljbmsSm4viJga4KAr1p4Fw4ow0O3WxNkg0y6U0wRw5x20P06PmAJqYu+XVACz2/yZVCn2sTQYCW1lhvWKb9igt1jS3bWIr7VOIXBnFJeQkjFLsOQFXWJ7Fs3z+EolWFQJKxu08zb72jRbNZqy7aiJInCpr+axi0BzR9NhCLNIyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTE9o6DI; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-702555eb23bso3595127b3a.1;
-        Mon, 10 Jun 2024 09:12:24 -0700 (PDT)
+	s=arc-20240116; t=1718036027; c=relaxed/simple;
+	bh=ANFTp/weWFW5AIvaKB0ZVMJypGvMDeYp+xero9WkTJY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IOJwBPIkqltifBwyxIT6cYZ/easx+EA1V1THsVluZZoFWw1q6bjDVHNeQ9oUKGShmQhH4lJMdoUf6W4krLIV3HTYkGB+6iggW1uPUlP3jnwGJHiUsKqG8oh684rwa/Cjru66mclqxjyRDoqBDvhs6Ujk7PdM4C8J1BnDimLIOTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pLHiNpte; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80ba034bb3fso374458241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718035944; x=1718640744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHssdS2Z1GPjcz1ZFtMToFtKH98jmrExattb+RM/d9Q=;
-        b=JTE9o6DI/xWCLP3RwEJxKotgqXrQDAUHt/ht95sP7ht/H9vEP39ulrlz/W/uYfeowT
-         jgQvr3B/UNeHisjG1k7M6wR9isXL9nBUCfWx17H998XKjxvx6gUUvpFt2G2yA5x5iyzn
-         6PyXpCMe1aFO8uX2yS3KPBM5S7iKaheotCkHwqZ2BLqJ+30sG29n80BRahPmUGz3bqAm
-         gnk5kNB1200DXTaDx8C6wHcGINx/fWFkejaCMBSeDwb91nMcF2umAhcH+XrUXxz7P6Og
-         6O1Lj8KM4dQ1gGm5nJp5BFJKTwxf+mGPye7yZ1RziE/N95T4H38K1DFhQj3Hw5uOONFi
-         I1Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718035944; x=1718640744;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1718036024; x=1718640824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHssdS2Z1GPjcz1ZFtMToFtKH98jmrExattb+RM/d9Q=;
-        b=p4IUZjBiMCoyv9YNBWV25wwXDUKKTCx0XB77AvgnvMqK1CS9CNoUCuBQHTkLLtbUhZ
-         R6SkLKavzEgGvuEeP/W225NwxB/pi7cpsmBE+DEYuWPt+MxBaCl18d3xMeca0VJvRiTX
-         b+3PMZSKCSO/P2WilbdI340NPUCdW8Cc9J3tM3dIwT5gRJO80j0fSI7yz5caJ1TY1aKK
-         XIo/R6Jh49SyfSm1nIimqkbf5Pp94k3AQkGXoHjPzt6QKFO7kNWet5U6cR4X0E2iJRb6
-         OYVxpk7UydQreUZSiGwa0PYtSqZ8FcjLGplxjuNtZ/Bb0oC/waH63JX2mbzuDtSAx5IN
-         x9PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVi2iBGjTxiT2X/MrMRRqptomV+d15ZrH3vPTozykSKBnrbmyGLL3PIAaIllfWztzBNadUELq74oSluVrm7Kszecxm4hh6wCepYTzdPUxAf7woBQp5jUbTduoXnc1vTkKEEk2QaW4nitDmO8J30TqZhiSCcjT+sLbVCfELAbyvSygRUQA==
-X-Gm-Message-State: AOJu0Yx4qakll/cLX0s1QjYFgJ154dcd6S4EdCuuzdW6QgPdCsymtqAM
-	Wgd841vcUXFm7FbdrE/A3rqr+xikuSU4QyZtlQAWEFc/hSjT358p
-X-Google-Smtp-Source: AGHT+IHicvBtefeiX22cWZLBB3YLefIT/ZQUF5A/TrE+/yto8E4BO/P+114n+uwZPg21/kfGDcJLJA==
-X-Received: by 2002:a05:6a20:8412:b0:1b2:b16f:3b35 with SMTP id adf61e73a8af0-1b2f96d7e5dmr10169936637.10.1718035943620;
-        Mon, 10 Jun 2024 09:12:23 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd510cc9sm7122105b3a.200.2024.06.10.09.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 09:12:22 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <4514c496-a809-45e0-95ee-4e9cc8d237e5@roeck-us.net>
-Date: Mon, 10 Jun 2024 09:12:21 -0700
+        bh=8zy3UT0yyFkK2jWmjzHRfhvJ0XhcxX+WMOHBbMX7TWw=;
+        b=pLHiNpteIO8TsSwvYR6sokualV4gUCv3lS7JSxVX7HpJR99UHpkJXDr3nRw0MS1ZYV
+         DiMiqXQjUGnl43BR2qFUV7UX8ytaCRq4S4kwWANiVJTpa/PSHKrDTHAMpFNnn1LyJhhk
+         ifZGCJFjmjfZDX7YAqq3wYeYUGQZM7WBu+hKTKeRwcAI2t7WF75JaAzh7IernLcsqZLR
+         JQHT5vZLpZtb6FTKvlIARHRhwKholHhlGK1PQQDl787Fey/pXZZeFQF6ChTLsG5nVQn0
+         fWCfZzIaa2L1TYtwNyg6E0rQ0o5MkT2gzmMISSUCfniR1ZcGwKhQsJ8UEr3bs4henof9
+         q4Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718036024; x=1718640824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8zy3UT0yyFkK2jWmjzHRfhvJ0XhcxX+WMOHBbMX7TWw=;
+        b=o5iC3/y7LZGyes8j+8GYYjYQ4w+cGfUToB8lXNhWeoFETyTaN9b12DBrtrIZzJ7kiC
+         a9b28fOcxwFlhozBg5Y+BwoLC40ilqtWY8itY6IoQHKi4xAP9917M1G/TLwb1XBxVbWr
+         hlYxbYJ+IpK4CAniRThjeaE0m7K/p5gDQW3HtKVOUu68zd/CEgX3SAxOvzGJsj4tt1Xz
+         0/zRLNHwyBwwDo2I/m5PO8Ph+pz9MmG8HZOdEWtDOolHE51oI29H2f4zzOCvE2pwWYLc
+         a1mgTDkIgUmdLPYZBtGy/soEEDu6iYWKVWd5LQfODwub+eHVumwaFof+LM2BNEis1GtZ
+         aWiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEw3YOp7CqwkJyi9Saq6az7HdgrwySxxFpXklBLfVM4F/iHzgf/CSAaqD5RJyVxwBjliytibNPk6l/eEgN9k3ww/17TEPEObDD92Ar
+X-Gm-Message-State: AOJu0YyXz+9ZsV3qrEKB/hkdtgdjvwmLGi5r4iBKrEkyg3bSJncTZF8Q
+	V8PWcLFpvcIT1asi0hYlW+IFyEYaOgeiynr3Weo0+lp0KAyshQsKn77qQqFAcH800eoR2UxpCwN
+	N4Ol4jErFbrMdndm3wdNFaoDMDCtNFv1q/m+TKw==
+X-Google-Smtp-Source: AGHT+IFq6tlHdLaJg531GvEs5Ls9kVx7hFFfOKyJyNs5KOTU6Hb1F914Fr2+LSfszlTrbFZPfiOV2GgueH98JuMbDak=
+X-Received: by 2002:a1f:cd87:0:b0:4e9:7f87:4c2b with SMTP id
+ 71dfb90a1353d-4eb5621cd6cmr8361323e0c.3.1718036024400; Mon, 10 Jun 2024
+ 09:13:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] hwmon: Add support for SPD5118 compliant chips
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>, Armin Wolf <W_Armin@gmx.de>,
- Stephen Horvath <s.horvath@outlook.com.au>,
- Paul Menzel <pmenzel@molgen.mpg.de>
-References: <20240610144103.1970359-1-linux@roeck-us.net>
- <12f2b0e5-5130-4e07-be1f-38402f677f0c@t-8ch.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <12f2b0e5-5130-4e07-be1f-38402f677f0c@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240609113803.338372290@linuxfoundation.org>
+In-Reply-To: <20240609113803.338372290@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 10 Jun 2024 21:43:32 +0530
+Message-ID: <CA+G9fYuXrS3vphJ-2keKTN4Voc6gRAkUPJYD10uBrp6LjA3z8Q@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/368] 6.9.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/10/24 08:27, Thomas Weißschuh wrote:
-> On 2024-06-10 07:40:57+0000, Guenter Roeck wrote:
->> Add support for SPD5118 (Jedec JESD300) compliant chips supporting
->> a temperature sensor and SPD NVRAM. Such devices are typically found on
->> DDR5 memory modules.
-> 
-> <snip>
-> 
->> ----------------------------------------------------------------
->> Guenter Roeck (6):
->>        dt-bindings: trivial-devices: Add jedec,spd5118
->>        hwmon: Add support for SPD5118 compliant temperature sensors
->>        hwmon: (spd5118) Add suspend/resume support
->>        hwmon: (spd5118) Add support for reading SPD data
->>        i2c: smbus: Support DDR5 and LPDDR5 SPD EEPROMs
->>        hwmon: (spd5118) Add configuration option for auto-detection
->>
->>   .../devicetree/bindings/trivial-devices.yaml       |   2 +
->>   Documentation/hwmon/index.rst                      |   1 +
->>   Documentation/hwmon/spd5118.rst                    |  63 ++
->>   drivers/hwmon/Kconfig                              |  31 +
->>   drivers/hwmon/Makefile                             |   1 +
->>   drivers/hwmon/spd5118.c                            | 658 +++++++++++++++++++++
->>   drivers/i2c/i2c-smbus.c                            |   6 +-
->>   7 files changed, 761 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/hwmon/spd5118.rst
->>   create mode 100644 drivers/hwmon/spd5118.c
-> 
-> Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
+On Sun, 9 Jun 2024 at 17:11, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.9.4 release.
+> There are 368 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.9.4-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Thanks!
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Guenter
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build
+* kernel: 6.9.4-rc2
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.9.y
+* git commit: 4aee3af1daf2e1e4f2ff4e124cae1ef79b118e90
+* git describe: v6.9.2-797-g4aee3af1daf2
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2=
+-797-g4aee3af1daf2
+
+## Test Regressions (compared to v6.9.2)
+
+## Metric Regressions (compared to v6.9.2)
+
+## Test Fixes (compared to v6.9.2)
+
+## Metric Fixes (compared to v6.9.2)
+
+## Test result summary
+total: 229325, pass: 170430, fail: 35789, skip: 23106, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 38 total, 38 passed, 0 failed
+* i386: 29 total, 29 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
