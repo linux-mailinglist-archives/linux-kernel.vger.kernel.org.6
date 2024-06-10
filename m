@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-207956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740C4901E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:39:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76034901E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E9C1C21941
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BD121C215DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085FA74C14;
-	Mon, 10 Jun 2024 09:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C44757E3;
+	Mon, 10 Jun 2024 09:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PGDpWvDH"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQlh0vnA"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5D9CA62;
-	Mon, 10 Jun 2024 09:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF264CA62
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012385; cv=none; b=T+9PQoiNdhIG8KPj/H+t/oGTFB3/5yfxZU0ajQog8QE8cWC4juLJ9p57QJU36zlh0O1xAJ+3Wbt1bchy+GuKIPlvt3LDX87ci06Rwrxev4S3Vc2AHzJF+1BMyaj67RPikrng4GDWuciJ5wtHHwgEZt+sHhHpZ4fI8e2nOXbdvt0=
+	t=1718012402; cv=none; b=ghT4En6OlWdx6xX/QCViNO7+HNcbJ+CPUWiAW4RdNHb7i/xob8Yj/wxfoTbsy1XET0HebwLLaclRLCksmYZdgVBRMio156UyS8cfNr+IOLr34aiJssq72d302+A1wqsnCJyYQcse94KH9z7aHK+7yki+Cj2Ba308G8ESkQhIbwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012385; c=relaxed/simple;
-	bh=4sDRBYwAnPLox8vS4ELY1A2qb0SwGdJhH/Bm4YEC7Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yg4pOn7H7eGNah4FyhMC+tiqR7oe0Y6kEfSFDCd0kROAh/pGFf9wxs2rPny/Qu0cTnYt16kY/vWvNaAgFMySClH2KZxHw2D/obF/l24x3XM4F35dTQSl2ymeSiSDGaJry4x9oMz+J/pMI8xh3DUq9xPyymUK5VnXytllplDmq8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PGDpWvDH; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 87A2BFF804;
-	Mon, 10 Jun 2024 09:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718012381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DNZzOGuJb6tUoHOZ/zBBQKUASdGttzUiL5NxwXYa0VE=;
-	b=PGDpWvDHoga4WmSbPQsT82tXfFilx9O3w4uXAK1xBc6npFomtrgfPNzQ4+4fd4uwg6q7R3
-	IyH4aEvv3RshRIw/6GCnk4e60Np9bFxvkzllmaxuKcp3sJFWh6OxGrYvZ5ut+BAY746RT2
-	gN0vEtxFUBTj9F1jS1QmcV/d1tEX9QkBBwtSUmSvaXD2hGNANEabKrwSwCChRCuXQigxd7
-	7xDYCrUR5kdJ3il1Y7+Fk9h4I5HY18TbaZHB9oSmTakdehQHrRPWSQyFiLoRCeG+xEQdCb
-	OpI9vGP+ung/GaRdsREjxr6M1Jxwb3EMppd6tZY5PgShCnNiNXPLwNiLdSmgPg==
-Date: Mon, 10 Jun 2024 11:39:39 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
- kernel@pengutronix.de
-Subject: Re: [PATCH net-next v2 3/8] netlink: specs: Expand the PSE netlink
- command with C33 new features
-Message-ID: <20240610113939.41d86109@kmaincent-XPS-13-7390>
-In-Reply-To: <m2bk4dm5ct.fsf@gmail.com>
-References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
-	<20240607-feature_poe_power_cap-v2-3-c03c2deb83ab@bootlin.com>
-	<m2bk4dm5ct.fsf@gmail.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718012402; c=relaxed/simple;
+	bh=Td/N4E9UURCdvg10DSgcFTNUdT3qZG8vl6zhjaJaZbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IfAf5//y9CDmPYigQj8dvjxjnB/3ou0Ux1BS955V3loLGPNDTNl9EG7rPxNJszPOuvAs/R/vSoiNmk5gJFCbp2MMZvT16EyA3xbpThmdc4n3CGQcNcOgWRUcl/yqYJeFuaKx34DMnymBUcJebTZ6rcf0cDmFrHGdW3yc4cJov/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQlh0vnA; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35f22d3abf1so798375f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718012399; x=1718617199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ocMM4wK0KoJUr2SNgjlZ+bFq4hxDtEwVWf5fWyCNQzA=;
+        b=GQlh0vnA/ENo9JZ5o/IbR+H28DbzWybrVyUvMVcnVB30OF/Bh4+Ld+c1Zdpn+8QMx1
+         ZHHwbcwHUgKOCiNf/Jx+fHc7jQKIwd94Hf//0aJJXDoZf6klysH6i8z0/FLVQo0iDq5G
+         8AB4qNdUapHrJsaElTk6hDGQKiFZiwsByfRLDJaR8OIjVQcpR7jhwiH70GDEqTAA+Qv+
+         +zNPnetzCcOzlvTcfYXUPfVhYiR56JbdDhuOVAyfP9p27XEseDIYjziVFHP/jB9C81No
+         DO3gbi+MGXRbOOflXbou4EhRo7Y3etBkAHczGlVNkbzbWkrZ20YOmrvA/MWuMluSjnNE
+         riVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718012399; x=1718617199;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ocMM4wK0KoJUr2SNgjlZ+bFq4hxDtEwVWf5fWyCNQzA=;
+        b=ajMXYtA0pDYGmHRPYHE5Cocm9uPUHh+FMfAHqDNsKoS99udYYSIz9iUmJ0sgIi+xlD
+         3Jy4nALG/LQhDGLjqmK99xTJ+Iv6uvK/Q/XOE0i38KHzghJiskTFYXWxNJrMNr6F/wRa
+         AgLKterdkxDO065ZffXhiLCgpGf4Nh9LTbmeh3B4WcfHvEVj2gTWjMbtbbNT+sGo7Q2Q
+         NRG4eH7zVCfVop3Fc6bkgyH3kvdAWErKXLgld+4Sh948zZGSHwBXZGGkzL4eUSmcNNVp
+         wC26z8MDxC8zVdynjWw1KPiTwN8vXDJLUaLOFAmGDpLt1ajPnnrGYi7rcXdoOXDQCYgt
+         S+9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXX/Cp7zVyiaYPV0mwZPzb+Ko6Sni/WJDQyLyQMmpvivVSVhUfQUyuWRwWNgRMH18LxuEB1K6Eci8SW8dpmi7hU+6ZPXEw6k/ASIcqS
+X-Gm-Message-State: AOJu0YwoGPx2Mr934eCYlatZhn24Eu4355i0Z/rIoVYGfANRBC3UFYWk
+	3JdbkLMQHP/OyuokxJegKkkk7hLrsVLjdhX9DMKVk6Jk0ELnpPBvVCbn1RPIb/g=
+X-Google-Smtp-Source: AGHT+IG9mD8/x+WVTXsrh8hQTA7ERg9+SENT0a0IkJ0cM7ILrlB0FyR88e3665ehddKLwYaoQrystQ==
+X-Received: by 2002:a5d:5987:0:b0:355:4cb:5048 with SMTP id ffacd0b85a97d-35efedd95f9mr7952708f8f.43.1718012398839;
+        Mon, 10 Jun 2024 02:39:58 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e567sm136806365e9.1.2024.06.10.02.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 02:39:58 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:39:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Charles Wang <charles.goodix@gmail.com>,
+	dmitry.torokhov@gmail.com, jikos@kernel.org, bentiss@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, hbarnor@chromium.org,
+	dianders@chromium.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Charles Wang <charles.goodix@gmail.com>
+Subject: Re: [PATCH v3] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Message-ID: <030b639e-f5d1-40a2-8980-f436ca686e6e@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607133709.3518-1-charles.goodix@gmail.com>
 
-On Fri, 07 Jun 2024 11:09:38 +0100
-Donald Hunter <donald.hunter@gmail.com> wrote:
+Hi Charles,
 
-> Kory Maincent <kory.maincent@bootlin.com> writes:
->=20
-> > From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
-> >
-> > Expand the c33 PSE attributes with PSE class, extended state information
-> > and power consumption.
+kernel test robot noticed the following build warnings:
 
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> >
-> > diff --git a/Documentation/netlink/specs/ethtool.yaml
-> > b/Documentation/netlink/specs/ethtool.yaml index 00dc61358be8..8aa064f2=
-f466
-> > 100644 --- a/Documentation/netlink/specs/ethtool.yaml
-> > +++ b/Documentation/netlink/specs/ethtool.yaml
-> > @@ -922,6 +922,22 @@ attribute-sets:
-> >          name: c33-pse-pw-d-status
-> >          type: u32
-> >          name-prefix: ethtool-a-
-> > +      -
-> > +        name: c33-pse-pw-class
-> > +        type: u32
-> > +        name-prefix: ethtool-a-
-> > +      -
-> > +        name: c33-pse-actual-pw
-> > +        type: u32
-> > +        name-prefix: ethtool-a-
-> > +      -
-> > +        name: c33-pse-ext-state
-> > +        type: u8
-> > +        name-prefix: ethtool-a-
-> > +      -
-> > +        name: c33-pse-ext-substate
-> > +        type: u8
-> > +        name-prefix: ethtool-a- =20
->=20
-> I see this is consistent with existing pse attributes in the spec, but
-> are there enumerations for the state and status attributes that could be
-> added to the spec?
+url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Wang/HID-hid-goodix-Add-Goodix-HID-over-SPI-driver/20240607-214042
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240607133709.3518-1-charles.goodix%40gmail.com
+patch subject: [PATCH v3] HID: hid-goodix: Add Goodix HID-over-SPI driver
+config: sparc64-randconfig-r071-20240609 (https://download.01.org/0day-ci/archive/20240610/202406101633.1RJnij1Y-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 13.2.0
 
-Indeed, I can add the enum also in the spec.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406101633.1RJnij1Y-lkp@intel.com/
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+smatch warnings:
+drivers/hid/hid-goodix-spi.c:217 goodix_hid_parse() error: uninitialized symbol 'rdesc'.
+
+vim +/rdesc +217 drivers/hid/hid-goodix-spi.c
+
+bb11c3a1740813 Charles Wang 2024-06-07  214  static int goodix_hid_parse(struct hid_device *hid)
+bb11c3a1740813 Charles Wang 2024-06-07  215  {
+bb11c3a1740813 Charles Wang 2024-06-07  216  	struct goodix_ts_data *ts = hid->driver_data;
+bb11c3a1740813 Charles Wang 2024-06-07 @217  	u8 *rdesc __free(kfree);
+bb11c3a1740813 Charles Wang 2024-06-07  218  	u16 rsize;
+bb11c3a1740813 Charles Wang 2024-06-07  219  	int error;
+bb11c3a1740813 Charles Wang 2024-06-07  220  
+bb11c3a1740813 Charles Wang 2024-06-07  221  	rsize = le16_to_cpu(ts->hid_desc.report_desc_lenght);
+bb11c3a1740813 Charles Wang 2024-06-07  222  	if (!rsize || rsize > HID_MAX_DESCRIPTOR_SIZE) {
+bb11c3a1740813 Charles Wang 2024-06-07  223  		dev_err(ts->dev, "invalid report desc size %d", rsize);
+bb11c3a1740813 Charles Wang 2024-06-07  224  		return -EINVAL;
+                                                        ^^^^^^^^^^^^^^^
+rdesc isn't initialized here.  It should be declared as:
+
+	u8 *rdesc __free(kfree) = NULL;
+
+bb11c3a1740813 Charles Wang 2024-06-07  225  	}
+bb11c3a1740813 Charles Wang 2024-06-07  226  
+bb11c3a1740813 Charles Wang 2024-06-07  227  	rdesc = kzalloc(rsize, GFP_KERNEL);
+
+Or it could be declared here instead.
+
+	u8 *rdesc __free(kfree) = kzalloc(rsize, GFP_KERNEL);
+
+bb11c3a1740813 Charles Wang 2024-06-07  228  	if (!rdesc)
+bb11c3a1740813 Charles Wang 2024-06-07  229  		return -ENOMEM;
+bb11c3a1740813 Charles Wang 2024-06-07  230  
+bb11c3a1740813 Charles Wang 2024-06-07  231  	error = goodix_spi_read(ts, GOODIX_HID_REPORT_DESC_ADDR, rdesc, rsize);
+bb11c3a1740813 Charles Wang 2024-06-07  232  	if (error) {
+bb11c3a1740813 Charles Wang 2024-06-07  233  		dev_err(ts->dev, "failed get report desc, %d", error);
+bb11c3a1740813 Charles Wang 2024-06-07  234  		return error;
+bb11c3a1740813 Charles Wang 2024-06-07  235  	}
+bb11c3a1740813 Charles Wang 2024-06-07  236  
+bb11c3a1740813 Charles Wang 2024-06-07  237  	error = hid_parse_report(hid, rdesc, rsize);
+bb11c3a1740813 Charles Wang 2024-06-07  238  	if (error)
+bb11c3a1740813 Charles Wang 2024-06-07  239  		dev_err(ts->dev, "failed parse report, %d", error);
+bb11c3a1740813 Charles Wang 2024-06-07  240  
+bb11c3a1740813 Charles Wang 2024-06-07  241  	return error;
+bb11c3a1740813 Charles Wang 2024-06-07  242  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
