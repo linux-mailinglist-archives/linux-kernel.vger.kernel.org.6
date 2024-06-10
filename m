@@ -1,201 +1,229 @@
-Return-Path: <linux-kernel+bounces-208852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7B39029DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67C09029D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804801C23A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4906B282E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F691514F2;
-	Mon, 10 Jun 2024 20:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD942481C2;
+	Mon, 10 Jun 2024 20:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DjO6+gUh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXcrQilT"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F46114C5BE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2AA3BB30;
+	Mon, 10 Jun 2024 20:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050677; cv=none; b=YnU10+JU+HTy7vX6GKtKPxNebliV7V92YRE92C+gutuXeyyGAr03B94+z+oc9BBnIR1dYNfBhGPEkfJtvBw8jHNc4syKEKPPjpzs5T72ViNhrPOlQf44jnAXjoTTINl+3nP8S+gI61bwpWX4SafsWey2/ikRFkmSzH7Nncbmr4A=
+	t=1718050601; cv=none; b=kZaScyQuMsd7cHEfc7eMIzIC2BS9GBzwDVyCDXVmUfoDnRt/GkLsS+GhU/0dQaN0VVWiPOQ98j3cgDZFnZr/pe2iTcxf5R4QwNBWBQUq+Fk0cy5fXP+k5hl/WKUrPju0R6gfUKX5GJhHF+oNZQDi3wljTdpRzVg6fPS4Ek49Avk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050677; c=relaxed/simple;
-	bh=wimvY5isq1Qjd2cAKH3TiSNl3khLuKHiYStMxXzBNrY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EpLs8mLjJgjaoYJij5pFGTEZ4i/bGou5kB3UfuDz1gxuJdL+9ezAd58dIYktvbfhf3nyvEjKQURrVcZEHGViOq1RPqX4LBkYbbknvmq78nU7kGKOb2/skWdJU9gEenmYHlcwotb+abo6QeAxtIbFUPNfwpH0CMDP1h0m/nuYVbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DjO6+gUh; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718050676; x=1749586676;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wimvY5isq1Qjd2cAKH3TiSNl3khLuKHiYStMxXzBNrY=;
-  b=DjO6+gUhCLUaCAtQYjZxCVoXQ0lGLR4YYEweApIjGGOpb/Tj5hYbKU94
-   mcztjkm95gMR2PYr82Ow+ezYYLN1QYN+W1rIdwaJEhrT3vE2YfkUNnG+8
-   2KqstjPxMejUdQYKU8xHIcMk+p1PriOL59jLkfrkgS74Xe+ltY2N8Dvix
-   EkeZHUX3W2O6Sb0wOSlpnbc3/i3ec9u76Ztch6IxOEdvEoqzcLLCbI2go
-   2TI0fQNjB1Yoziw6aWmzkvZTcSBiPoVwhuqbRJBBloQxug9v3BM4MxTdn
-   n7ojg2+pC4RiIyzb7NNr7t//hl7Kd4FI+VGqbt9sLyxYzNmgVDn/+BBtY
-   A==;
-X-CSE-ConnectionGUID: mBMhNhc9SSyz1rPZeEhs9Q==
-X-CSE-MsgGUID: 0M8lTslSQeaKbW0BHz3Low==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="18561541"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="18561541"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 13:17:52 -0700
-X-CSE-ConnectionGUID: CQbSNOqcSpmI0knvizJOLw==
-X-CSE-MsgGUID: IzcRmTPiRTS1AHHFJDeYmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39169109"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Jun 2024 13:17:52 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	eranian@google.com,
-	ak@linux.intel.com,
-	yunying.sun@intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 8/8] perf/x86/intel/uncore: Support HBM and CXL PMON counters
-Date: Mon, 10 Jun 2024 13:16:19 -0700
-Message-Id: <20240610201619.884021-9-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240610201619.884021-1-kan.liang@linux.intel.com>
-References: <20240610201619.884021-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1718050601; c=relaxed/simple;
+	bh=//W7kqXFonvLeGOTPZRMLoM6eBxITBOMJLknJtGDK0w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CQsFhtimlbXLbYEsFv0mWIAUr/8fvkFBdrbtyy3zXc6ht5ZbXC2GcK4vt+uY0K8OpwMNQO85joUMTfIn2hpcWjHj4Y0K5IUvl603U/wdTOGys0yOd5R23UN621WMcGfewyQ0Muv9y0BxA/F2hKBx1uhWtBSliFyT0rCYEENWT0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXcrQilT; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a52dfd081so315263a12.2;
+        Mon, 10 Jun 2024 13:16:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718050598; x=1718655398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6pl8T6m4emk3aMt9ImW1yQY4NMWNiVqYmr9bldDIC9w=;
+        b=MXcrQilThMC3TUQlan3B+hdqGB9H8g46rqMOin49aN/cvSWanvwuTtwjV13ELFo8Ys
+         O5ctzAsuv9tzzYUednMoibWftEN0qMs62J2HriS5Yrlc8QjHLRS10NsSNKf0daizwp0a
+         iNs4zlH6YiTbdWD/xH3LA9x1cY4PakMv3IIwcK6UKCgN0CrMU2/aJMjtRhyjHBDbxue8
+         aNzV5Nv+vvgUWOPStaa+ldTnbm87nx69JXdaHx+2oT5RGlniroM9aY6+PPiw9OilJU9F
+         opNskyojmcIWn2tfJqpKtUNjjiqOCTTviLtn1OoCXPXRyZbExP+hYUj5PnoVhE3EGVQv
+         Wzug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718050598; x=1718655398;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6pl8T6m4emk3aMt9ImW1yQY4NMWNiVqYmr9bldDIC9w=;
+        b=aeBi8rducKmJ2MlKb/uMgZwzGWUzvQFrNWhAebkgA8oHMek7HSOwUCbGcyLWJg2PFn
+         wYkj8FFrBlclJsxo0T2uN+vzii6iYW4wpzZ5m9/crMs14PrTTHMoE++c3stgZykDKOyL
+         OL7uh6FYH7d5mWuRVwnMtS+hx+cn74EFCKpW3P+9PMqVAELN2ma/2LT6xBQyWjLoeLrE
+         P8X1cPo9ccY03ANe+nl7fU3qB3OARV0bb6NhHqYsm01HJrrI5ix6mWO4Y97WdnU0VQL8
+         5CQ0itkjMVo2DVpD5vZuXxtjlqsr2LgZOcSYnNJPsyxD7K9XP6kuEOLxdABMbH9Dbu8G
+         hzuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxLuWsW/imoUpe/4MtVM0+0oOxJD6VptrOTkJZ8AngKTtzOM26MzonrMJ/v/EeA0Qy3xSUVTQ4WG4RbH3VnRSxdI68Izxpj7MksYBMThNd1dDNuUwrZJxfy1ITot4uQeyAurimxVybzzvwgw==
+X-Gm-Message-State: AOJu0YzPkKBr5CZNud7HaXw9ASDFuDblzMlQWac69u7vLctpoKoSSGXz
+	aWdSv8kBOaRoPdAVaDPR31VDpPtQNjU0Wh5FAjp7cnXOOeHKSF7U
+X-Google-Smtp-Source: AGHT+IETB9mWF1zLj7DTLQxbvtAnMS46L7eWHIrPUE06xGFBHdTgXwhD+GJm3BDLZNBCIpQ3qOZ1CQ==
+X-Received: by 2002:a17:906:1503:b0:a6f:118c:2622 with SMTP id a640c23a62f3a-a6f118c26aamr371908066b.63.1718050597938;
+        Mon, 10 Jun 2024 13:16:37 -0700 (PDT)
+Received: from ?IPV6:2a02:a466:68ed:1:2173:d612:de41:2058? ([2a02:a466:68ed:1:2173:d612:de41:2058])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f1b7f5b12sm217710466b.196.2024.06.10.13.16.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 13:16:37 -0700 (PDT)
+Message-ID: <364fbb96-006f-4582-a0f8-a0f9edd50f6f@gmail.com>
+Date: Mon, 10 Jun 2024 22:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] tty: serial: switch from circ_buf to kfifo
+From: Ferry Toth <fntoth@gmail.com>
+To: Jiri Slaby <jirislaby@kernel.org>, neil.armstrong@linaro.org,
+ gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Al Cooper <alcooperx@gmail.com>, Alexander Shiyan <shc_work@mail.ru>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Baruch Siach
+ <baruch@tkos.co.il>, Bjorn Andersson <andersson@kernel.org>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Fabio Estevam <festevam@gmail.com>,
+ Hammer Hsieh <hammerh0314@gmail.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Kevin Hilman <khilman@baylibre.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
+ =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ Patrice Chotard <patrice.chotard@foss.st.com>,
+ Peter Korsgaard <jacmet@sunsite.dk>,
+ Richard Genoud <richard.genoud@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stefani Seibold <stefani@seibold.net>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>,
+ Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Timur Tabi <timur@kernel.org>,
+ Vineet Gupta <vgupta@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20240405060826.2521-1-jirislaby@kernel.org>
+ <daf06969-15fd-470e-88b8-a717066fe312@linaro.org>
+ <cebad7f8-3f47-4e6a-93b7-32fcf2367874@kernel.org>
+ <f42ef4a3-4bfe-4354-9220-ed742e093c86@gmail.com>
+Content-Language: en-US
+In-Reply-To: <f42ef4a3-4bfe-4354-9220-ed742e093c86@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hi
 
-Unknown uncore PMON types can be found in both SPR and EMR with HBM or
-CXL.
+Op 07-06-2024 om 22:32 schreef Ferry Toth:
+> Hi,
+> 
+> Op 22-04-2024 om 07:51 schreef Jiri Slaby:
+>> Hi,
+>>
+>> On 19. 04. 24, 17:12, Neil Armstrong wrote:
+>>> On 05/04/2024 08:08, Jiri Slaby (SUSE) wrote:
+>>>> This series switches tty serial layer to use kfifo instead of circ_buf.
+>>>>
+>>>> The reasoning can be found in the switching patch in this series:
+>>>> """
+>>>> Switch from struct circ_buf to proper kfifo. kfifo provides much better
+>>>> API, esp. when wrap-around of the buffer needs to be taken into 
+>>>> account.
+>>>> Look at pl011_dma_tx_refill() or cpm_uart_tx_pump() changes for 
+>>>> example.
+>>>>
+>>>> Kfifo API can also fill in scatter-gather DMA structures, so it easier
+>>>> for that use case too. Look at lpuart_dma_tx() for example. Note that
+>>>> not all drivers can be converted to that (like atmel_serial), they
+>>>> handle DMA specially.
+>>>>
+>>>> Note that usb-serial uses kfifo for TX for ages.
+>>>> """
+>> ...
+>>> This patchset has at least broken all Amlogic and Qualcomm boards so 
+>>> far, only part of them were fixed in next-
+>>
+>> So are there still not fixed problems yet?
+>>
+>>> but this serie has been merged in v1
+>>
+>> Ugh, are you saying that v1 patches are not worth taking? That doesn't 
+>> fit with my experience.
+>>
+>>> with no serious testing
+>>
+>> Sadly, everyone had a chance to test the series:
+>>    
+>> https://lore.kernel.org/all/20240319095315.27624-1-jirislaby@kernel.org/
+>> for more than two weeks before I sent this version for inclusion. And 
+>> then it took another 5 days till this series appeared in -next. But 
+>> noone with this HW apparently cared enough back then. I'd wish they 
+>> (you) didn't. Maybe next time, people will listen more carefully:
+>> ===
+>> This is Request for Testing as I cannot test all the changes
+>> (obviously). So please test your HW's serial properly.
+>> ===
+>>
+>>> and should've been dropped immediately when the first regressions 
+>>> were reported.
+>>
+>> Provided the RFT was mostly ignored (anyone who tested that here, or I 
+>> only wasted my time?), how exactly would dropping help me finding 
+>> potential issues in the series? In the end, noone is running -next in 
+>> production, so glitches are sort of expected, right? And I believe I 
+>> smashed them quickly enough (despite I was sidetracked to handle the 
+>> n_gsm issue). But I might be wrong, as usual.
+> 
+> I arrived at this party a bit late, sorry about that. No good excuses.
+> 
+>> So no, dropping is not helping moving forward, actions taken by e.g. 
+>> Marek Szyprowski <m.szyprowski@samsung.com> do, IMNSHO.
+> 
+> Good news is I tested on Merrifield (Intel Edison) which is slow 
+> (500MHz) and has a HSU that can transmit up to 3.5Mb/s. It really 
+> normally needs DMA and just a single interrupt at the end of transmit 
+> and receive for which I my own patches locally. The bounce buffer I was 
+> using on transmit broke due to this patch, so I dropped that. Still, 
+> with the extra interrupts caused by the circ buffer wrapping around it 
+> seems to work well. Too late to add my Tested-by.
+> 
+> One question though: in 8250_dma.c serial8250_tx_dma() you mention "/* 
+> kfifo can do more than one sg, we don't (quite yet) */".
+> 
+> I see the opportunity to use 2 sg entries to get all the data out in one 
+> dma transfer, but there doesn't seem to be much documentation or 
+> examples on how to do that. It seems just increasing nents to 2 would do 
+> the trick?
 
- $ls /sys/devices/ | grep type
- uncore_type_12_16
- uncore_type_12_18
- uncore_type_12_2
- uncore_type_12_4
- uncore_type_12_6
- uncore_type_12_8
- uncore_type_13_17
- uncore_type_13_19
- uncore_type_13_3
- uncore_type_13_5
- uncore_type_13_7
- uncore_type_13_9
+Nevertheless I got this to work. Very nice. Thanks for this series.
+I am seeing only 2 interrupts (x2 as each interrupt happens twice), one 
+for dma complete. The 2nd, not sure but likely, uart tx done.
+In any case the whole buffer is transferred without interchar gaps.
 
-The unknown PMON types are HBM and CXL PMON. Except for the name, the
-other information regarding the HBM and CXL PMON counters can be
-retrieved via the discovery table. Add them into the uncores tables for
-SPR and EMR.
+> So, what was the reason to "don't (quite yet)"?
 
-The event config registers for all CXL related units are 8-byte apart.
-Add SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT to specially handle it.
+Before considering to send out a patch for this, are there any caveats 
+that I'm overlooking?
 
-Tested-by: Yunying Sun <yunying.sun@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore_snbep.c | 55 +++++++++++++++++++++++++++-
- 1 file changed, 53 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index fde123af9e3a..a7ea221f2f11 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -6163,7 +6163,55 @@ static struct intel_uncore_type spr_uncore_mdf = {
- 	.name			= "mdf",
- };
- 
--#define UNCORE_SPR_NUM_UNCORE_TYPES		12
-+static void spr_uncore_mmio_offs8_init_box(struct intel_uncore_box *box)
-+{
-+	__set_bit(UNCORE_BOX_FLAG_CTL_OFFS8, &box->flags);
-+	intel_generic_uncore_mmio_init_box(box);
-+}
-+
-+static struct intel_uncore_ops spr_uncore_mmio_offs8_ops = {
-+	.init_box		= spr_uncore_mmio_offs8_init_box,
-+	.exit_box		= uncore_mmio_exit_box,
-+	.disable_box		= intel_generic_uncore_mmio_disable_box,
-+	.enable_box		= intel_generic_uncore_mmio_enable_box,
-+	.disable_event		= intel_generic_uncore_mmio_disable_event,
-+	.enable_event		= spr_uncore_mmio_enable_event,
-+	.read_counter		= uncore_mmio_read_counter,
-+};
-+
-+#define SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT()			\
-+	SPR_UNCORE_COMMON_FORMAT(),				\
-+	.ops			= &spr_uncore_mmio_offs8_ops
-+
-+static struct event_constraint spr_uncore_cxlcm_constraints[] = {
-+	UNCORE_EVENT_CONSTRAINT(0x02, 0x0f),
-+	UNCORE_EVENT_CONSTRAINT(0x05, 0x0f),
-+	UNCORE_EVENT_CONSTRAINT(0x40, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x41, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x42, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x43, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x4b, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x52, 0xf0),
-+	EVENT_CONSTRAINT_END
-+};
-+
-+static struct intel_uncore_type spr_uncore_cxlcm = {
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
-+	.name			= "cxlcm",
-+	.constraints		= spr_uncore_cxlcm_constraints,
-+};
-+
-+static struct intel_uncore_type spr_uncore_cxldp = {
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
-+	.name			= "cxldp",
-+};
-+
-+static struct intel_uncore_type spr_uncore_hbm = {
-+	SPR_UNCORE_COMMON_FORMAT(),
-+	.name			= "hbm",
-+};
-+
-+#define UNCORE_SPR_NUM_UNCORE_TYPES		15
- #define UNCORE_SPR_CHA				0
- #define UNCORE_SPR_IIO				1
- #define UNCORE_SPR_IMC				6
-@@ -6187,6 +6235,9 @@ static struct intel_uncore_type *spr_uncores[UNCORE_SPR_NUM_UNCORE_TYPES] = {
- 	NULL,
- 	NULL,
- 	&spr_uncore_mdf,
-+	&spr_uncore_cxlcm,
-+	&spr_uncore_cxldp,
-+	&spr_uncore_hbm,
- };
- 
- /*
-@@ -6656,7 +6707,7 @@ static struct intel_uncore_type gnr_uncore_b2cmi = {
- };
- 
- static struct intel_uncore_type gnr_uncore_b2cxl = {
--	SPR_UNCORE_MMIO_COMMON_FORMAT(),
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
- 	.name			= "b2cxl",
- };
- 
--- 
-2.35.1
-
+>> thanks,
+> 
 
