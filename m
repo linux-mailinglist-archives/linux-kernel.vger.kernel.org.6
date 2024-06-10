@@ -1,265 +1,129 @@
-Return-Path: <linux-kernel+bounces-208773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5843C902901
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A57902902
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1861C21C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7B61F22B99
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED9E14B973;
-	Mon, 10 Jun 2024 19:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B365814B975;
+	Mon, 10 Jun 2024 19:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uQoZkpWe"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jxFSriHx"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1871C85285;
-	Mon, 10 Jun 2024 19:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718046474; cv=fail; b=J8sv378JWKtrGCFgeu71S6Zvo766+7nUEPvdZBfEuW6UP1eTwgQOlj/elk1gZ7cZ8bmi+jvpyiLwz8NCbujvRPX4idZVzLAwBYnhPanE89+F+yM/koY7Z89nvc1eHV3UphtsjZA1ilQ8EFVL6pmd6d50EjQHqZrFM5drtkYCws0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718046474; c=relaxed/simple;
-	bh=3jFigltHPS2kgoXe8GTXcKqYEieww0ib0744r1i6yss=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To:
-	 Content-Type:MIME-Version; b=lAz8Ks9XqplLefyHQJWyxsLUE7vMTLv2Q5877NI9FcIS5vd1vx5PoCKIcy6e5vSGsTo7RDPmQKZzIDN+l3TGrMSAIeefrjJQmh3S4mZ7zt83BD9jicjDnquOs1BvjZ9hsG9QStegfuwhWvff4kcGvOFhzRoFrEwcided+Fzt7aA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uQoZkpWe; arc=fail smtp.client-ip=40.107.220.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lrFpiaXQiQyTlhFiJkYEpyD+6MfhYrwgVsDKL7Ce6FfcePfBKHJozXtw1e6OtFIoDjWskjCWn8Asm+DOlZ3eWuvXBj26v/g0j/neeRXmCrnIqVd+pLZ9ROABV4XH3lZX/2nezyteLMM6oBYOSk4jOldGmVqdDr/UJLOPBGGgBG/qLc0XiQiu3DS8wBBkbhtOkiDS8GSTy6F/DSH2z3s5lEOgvBfaNM+d+O4to/Uwc4Zw003ymmRNWHLLF0YhVIDtBT3dzUY5u53zeG4c14LCu/lQBJEwNxPMwfWVBqwS0irdiDB1SStnw2hbMpaE24zdkSJb0NdX9UGA96vuNVY5DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6Bvh10FB5Xl8XvNWEkEzpdOU5MervGmJltn4QfnkuU=;
- b=FNI+Ub9WH8kCHwYxCk039K2uA8zHLNFer2OFcI9nshGLS+KpAmG6wSadjSmAyKfqtJ7/KGDx0jN9cul687+iVoM2xfuRwNoX2cYhA8sP/4ZDsuxspuqojT0axmtaeUZVwHH+uYT4eyODSqZoCrB/h03DJjBJ0j1yJr/bkDm+L0mJvmMebzn2KrZGxkXsMEcBQZ5z/dxqo6tL0vK6JeDBs4DvGpx81aqhG6D8bUKwI2dRBYIKKkhg2YHnG+eMX5sYbXgwDzLKsfndL9JZYieCQrvNk+3XY6DvkO496TWthq244SJTeSCEfH8TGaVXvTef55ZVtvgQAXQDarX95eYK6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6Bvh10FB5Xl8XvNWEkEzpdOU5MervGmJltn4QfnkuU=;
- b=uQoZkpWeeGuJJ8CDiiBUDb+6qMZMDQ3ASmgbq7YRNEle8+Nc2MgM/eIrc3KKY+5XThlVq0BIUXA+bwYYGOSiyGbJ+CVsfigY6AMxXB+iWHkzRJUZOXI+OFfU7t2eNrNxmsytFfM6CKc1gWik/B5W0dZZWpzMn50pfr2YZGOp934=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BYAPR12MB2869.namprd12.prod.outlook.com (2603:10b6:a03:132::30)
- by DM3PR12MB9391.namprd12.prod.outlook.com (2603:10b6:0:3d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 19:07:50 +0000
-Received: from BYAPR12MB2869.namprd12.prod.outlook.com
- ([fe80::56a2:cd83:43e4:fad0]) by BYAPR12MB2869.namprd12.prod.outlook.com
- ([fe80::56a2:cd83:43e4:fad0%5]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 19:07:49 +0000
-Subject: Re: [PATCH 2/4] acpi/ghes, efi/cper: Recognize and process CXL
- Protocol Errors.
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Alison Schofield <alison.schofield@intel.com>, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
- <Zk6H5jTdVfN4aFhF@aschofie-mobl2>
- <09e0d961-e19f-30d6-5306-1b35609b7d79@amd.com>
- <20240607162622.00000819@Huawei.com>
-From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Message-ID: <7fe041ed-9ee3-7cbe-ddce-fb727fba12c7@amd.com>
-Date: Mon, 10 Jun 2024 12:07:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
-In-Reply-To: <20240607162622.00000819@Huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0265.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::30) To BYAPR12MB2869.namprd12.prod.outlook.com
- (2603:10b6:a03:132::30)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59085626
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718046496; cv=none; b=BZqA+WJjmucXZRm7HLD7WtylFLkMvCx/0kK3pdi9Yv+HM4RPPReia83pnXnn/cBqgJiA/4/h94r44iHmWjpGB72stvpZbJ+kXNoDynytw33srvrWcnmeAfhjmbtvzTb69U/GsLVl36s/pfxIZSLa6pK3kouGFOUigiuSk9jGxF0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718046496; c=relaxed/simple;
+	bh=2LH7Mq758jip3fRWKYW+Igh/ol6AMypsLYGrskJqvb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzzVy+4yGqlIdUX/JWazBl3LxfSjYUfc05z4yMdJZKWyQB0Ux+zrKCqLiDKY419NfWk/BJPPhrYdvhe+2jjyHKJAYycp874xGkkBBVZHfBjFkdELaVOq6zUgKgerZx3JV12VHPj0I5uV9OaxIM9RaFk1Q/h33mayyZWZzt5WYZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jxFSriHx; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yosryahmed@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718046492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oNWYfatfBVCfLA1P/LzD5i97uvPMeL95cxbaUUFmbJA=;
+	b=jxFSriHxLjs7DgVr9cvwy8RV5Qd7kD4SVcugWvrbN4HRE3LBXUSIqI7uhtJK0mgKN9BKoQ
+	AzdNpipPC58OOS7AAeLn9Q0zH835Qnl0rsKj2YmEk/MoAi+7bmgMseV1DfnGRdQb1IHTeA
+	fjBqSP7xyhgLGdkxkn7T/ZPbyNlOMvo=
+X-Envelope-To: usamaarif642@gmail.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: willy@infradead.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: chengming.zhou@linux.dev
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-team@meta.com
+Date: Mon, 10 Jun 2024 12:08:04 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, 
+	willy@infradead.org, hannes@cmpxchg.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
+Message-ID: <y7ourydoftwyfxza3a2vlenh6bzdrhtc25h4msqgq2uyg75ocf@wrfov7zflr3w>
+References: <20240610143037.812955-1-usamaarif642@gmail.com>
+ <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB2869:EE_|DM3PR12MB9391:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd280052-4ebc-4ed7-b5fa-08dc89809f1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K29KMlZJMk1uTEpVcWY4ZEFZVFJSa0FwSkZBY3FxWnZ3OGZmOE1TZEZTbkVL?=
- =?utf-8?B?Wmd3MEF1aEM1NzMycXpCUWlpczZyRmVwajIzVTZYVEZOeittRXdDNWhqWkxG?=
- =?utf-8?B?Z2grUXNGaEZ5Tng2ZWJzWGQraXdTblBLcHJFZHNGckJlM2l1Q2svUWtFZmo3?=
- =?utf-8?B?YllabVBmdDAwd0dvVDJKaEMwTGRNcThJeVhMT2pJclRBT2RlRk42MkJVN21M?=
- =?utf-8?B?cGUwcU5FenZjaUVkL3dNaXRsV29vT3BPaTljd0NSMnVmck9FdHJJMlNBWXp4?=
- =?utf-8?B?ZklIWkJCL3ZPR0RhdFROY1BvSlZUYkttd2tYTkhLMTJmUU8ySEVhclg1Y1Vx?=
- =?utf-8?B?OU1SQ3hsWXVhWWVTM2VyY1RTNnlvUmtib01SdDBlVDNHaHBMM3pJMnllejJI?=
- =?utf-8?B?cmFkbG14enZDNHJmbmFKSWRRRnhnRGJSOGYzQ3pESEsyN1d3Z0dXNXlGYVZD?=
- =?utf-8?B?aDNpcTc4dktvak1MQUFNb1k5MXpzMlZFUnFkLzJKOFNiSzRtMmNnV2tJSGM0?=
- =?utf-8?B?M2twSy90VjJYNVpnRmYxS1FtRDltR3hZUUNKYk81NDEzb1liNml5WkN2TFlz?=
- =?utf-8?B?clVMWDdMczFDcVovWUxVV2x3Tk1mYjZ2L3N6TWFScU5HMVhGK1VIUUppbTYy?=
- =?utf-8?B?U293VDBrOENCVGg1QXF2anE4OTB3MGVWZUdWbDdxM1cxMjRCRnBZK1ZVVHlq?=
- =?utf-8?B?MkllcFJ6RU1ETzZqcm1ocWhtZ3hVMWkxbVA5WXN0Vnh1V3ljdDIxaVF0c0FL?=
- =?utf-8?B?blAwN3JMQjJSOEhyTUhPZDlYaUxqRzgwYk9jaHE5MGt5N1hsK083MDhvOThR?=
- =?utf-8?B?cmxXcG9oZkhRT2kwb0tYV0pWNHdmQkRQRWR1UHBGWG9tUjRBc1pKWTZMZWF0?=
- =?utf-8?B?TEtqRk1UUFBvbktzZWhPWTE4WkF5UnFOcG5GM2NCMkRBNnF1bmFDdGdvNXBn?=
- =?utf-8?B?MzFtUmFIRHl4R3BNcGQvSUVZOHNrRmY0bWYrMk9wcVhqM0tNV0EzVHQ4ZGhR?=
- =?utf-8?B?ZEt4cGJZY3ZMelVtaDQzU2dHUGpKaHlzZXUrMGJqK2ZDQ3pmUFdLajNVNGtn?=
- =?utf-8?B?RTNCdHUrQnVKeWFIdEx5RksyWm9PeTJRMjZSdjN1aUg2enV3Y0MvUUI5WC92?=
- =?utf-8?B?dHhIeS9GNlFmY1U2NXdsamFNK2ZnK1M4UDR5U2RnajJvL0dUN2VZZWlLaFFp?=
- =?utf-8?B?YWFyUWtFMFRJT01iQVdlQzBQSkUrSkxqMUFidjFDU1h2ajZvMDd5ZWc3Rk5V?=
- =?utf-8?B?SkhqY0dWWThIc01qRmhhbDJMQkpUWDQwSXN6M05kODJiUHJvWGJ1ZzBBS2FN?=
- =?utf-8?B?TFE4bFJ0S3B6dG0weUVHRUNjaE1YeGt1YzNVNUErNWFsNjk2ZXBFVU85eWwz?=
- =?utf-8?B?TG80LzgwNndCRUJteFI4c3J0c1diaVYxVHZEYWhnbU5TNERrdHQwSUN0WHFJ?=
- =?utf-8?B?c0xRRU9wR1N4MWdkMllFOEp0elRibGpKTGtXcmhYODAraTVCL2VuVjE0QVNi?=
- =?utf-8?B?K09BclRGRGUrVGUyQWZDbjFFS25neHlpUktzNndRcFNXNVh3ZDh2MXVTMkRX?=
- =?utf-8?B?V1dhYjBPYUt5UXdzb1BTR0ZMQ0xteWkvNzVGa0VVbklJcDNORzUwcDRqbUVn?=
- =?utf-8?B?RnNpbmlmZWNNSDAvTHNiYUNnekNmREZKRy91OStxc3l1Nk1ZemlRVzJ6Z0pv?=
- =?utf-8?B?WnpNcHc1YVNrRVlZS1RUTnJRU1FHdVFBcGdoOGRtbUNpd2JLQTZoZW5Od2l6?=
- =?utf-8?Q?PPNlDx7IMqSI9N0TqRNhHvAsHJPoCqa8eGJM5na?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aUtUYXRYbkw1ZEI1bVB3TGVFTGZtTzNQZ09idnNkSmRiTUE0bGhnTStCcWRD?=
- =?utf-8?B?MDVkcUFtVHd4WllwZWlYNEFjN3FsbFFOdGdSNFVFNXRidnpIa2tLVEhUZHZR?=
- =?utf-8?B?UTBoWmN3YmVMZDVLYnRxdC91bEFDVG11ZnNaQ2Y0NlN1ci9qenhSTGpxOWcy?=
- =?utf-8?B?UklucUoyb2VwdWtCSnNodkdFSDVsTG9TOXNhNkc0MlBaUWh4alBoUlM5STBh?=
- =?utf-8?B?bmNrN1V6NjhmUmE1dVQwRDgwamM4R0F4T1BzN1EyNmhTYXNnVkJucU02VTVr?=
- =?utf-8?B?bVIvOGJTSEpHeHFTY0NpVVV3Z2FleUlLK2xOZGVEYm5DZGYwRUFDa1czRThh?=
- =?utf-8?B?TXU1WGxFQWlaOWprVnVqSEVORFBlNWJEQkdmSFYzOXphRjRTL2trM2JKbnor?=
- =?utf-8?B?VDBwU1JhN0lNMDhxOTBzNi9oNDd5S0RBSUtlbkFiVmp6MmtEZGd2YisycnF0?=
- =?utf-8?B?QmpWTGZEVHZUV0wvaTM4WDIvcjRUTlU0Q3BweTYyb3E5MlRIdFdLWXNmeVJu?=
- =?utf-8?B?cHAvbVhjS0x2cmpvVWxISVN5NXZkWGQzZ3p0cmU2R1Q0VG1JZlFuYmQ2ZXlR?=
- =?utf-8?B?OWRiWXVCdmVCSGR2VW5vc0hsUHp6ci9OYlhyNVVDdXRObG10OHc2dUoyNW9O?=
- =?utf-8?B?bmRkaGtVQnp1NVZJczJ3OFRQdGh4UFhyTFp3TGFjUUdiMVh2MHJ5OVRZVGdm?=
- =?utf-8?B?L3pCR0RCbVFyK0RwYjlNR2VJTHZYOThjVnBDNTVLOW9rTG5tMzJDNnYrZVFk?=
- =?utf-8?B?aWhXR1NnWlFNQVBhNktHMTVHWTBFWm1IVzBHMVRldHNFMEV5MWpsZnlsVkw1?=
- =?utf-8?B?a0tEVU9QWHZBQ1N2OGJEL1c5NmgxTDJNQ1M5K0VaR05FbHZ5c3ZSRTBTR1lv?=
- =?utf-8?B?M2pJejEzRGhWVFVlTEp2WmZVd0k4d2I3NHUvWmt0MGRYakV0MDBzV1RXSjBo?=
- =?utf-8?B?dW1DTEo5dGIvbXo3eUV0N0NDdWdmblFuTk9UUlZldTJWQktEaUVla2tJTWVN?=
- =?utf-8?B?elY5a2V6OVVTTFJzT2pTVExRZmsxaTV3WGVTU1pRVE0yVHhTaVZPUWxKVjVo?=
- =?utf-8?B?dW5wWm44MW4vQlVkQndITnorNWJqWjIyOGlOZWlLRDdGYkcraEg3M2xZRlFZ?=
- =?utf-8?B?SGtDcEpmVzVaVkdvdVdyRmx1cFE5bHZEOHUvbytiQ0NKTXJVK293aGdsbk93?=
- =?utf-8?B?UVYyRERlOEt6cDJxNlppMHFjU3BUanJqS2xIK21Jd0dMcThVU2RDU3Z3ZDZD?=
- =?utf-8?B?aXBXei8vb3ZKT25yRDAwUmZvTEZmNjYyZ2YweWMvTDFSK2ZwYkN4S2ptWmpN?=
- =?utf-8?B?NkV3TDBjM0Y5UFVvRVNldTFWcmw4NHVaUGhwTmpwaEd3OXNzbmJ0WW1UdFdo?=
- =?utf-8?B?d2JRV2d3aWI2YzkwNnlXUzFTOVZyTmFGU2FCWldJbjNBM3E4aVVKUWxDUTFG?=
- =?utf-8?B?Ym1TYXI2NDIyR08yZVZWYjJMV0xqd3ppbDUzWjduU1NZSVlKQ2xKb3kvQmhQ?=
- =?utf-8?B?Y0FyUHlmRkpKR0p5OHovNzhxa0gyOXl1OUZ1K3ZESzFTSExUZE13dDNoaTB5?=
- =?utf-8?B?a0YzU2lUVE1NVnZEaDJkQnAxNE9jRWtGWC80ZUErRUZtYWVEanhUQUFML1I3?=
- =?utf-8?B?ODZyclNOK3hocGpwUG9NODI2dVFjZGJPaGtrcUQ5Y3lZWnBZQWhlZGhWcGd1?=
- =?utf-8?B?bnY5NXp5TGNoL05yMER3R0tPY1lEMmhUdE0xZ0QvOEdKTDJDV3dSaUN6NFZH?=
- =?utf-8?B?MjNuZDhEYVJrY1YyNG4wKzE4V2VoV2JxdC9QWjBmckdoSFZSbDFCSlNCSGcr?=
- =?utf-8?B?S01EaWZIL0dBNXNxVmQ4a1VmOVlScm5LVUJCWUZHWXNGQW1jRjJacGUrTnZJ?=
- =?utf-8?B?U3o2VUE5WCs0YXlwWXdNckx3SXJvRWM3bVNmK1hjOUhjbkxFQUM2ZEcxVFJr?=
- =?utf-8?B?a3QwaDd5SkdrOUx2WnR5dk1kVzBlSDBsZWVIQkhWczd0SWRsUlA3QjdxZWNo?=
- =?utf-8?B?TTNHT21OTjdZdStrWXFrWGw4d0ZDYTk4eFowZllVYTdsdTNXWGZKMG01OVE4?=
- =?utf-8?B?NTRYc3JyWDI4aUErKzhsYlE2MS9UWGVNS3hDemttQkNQVmc2NmIreG51L2gx?=
- =?utf-8?Q?Bbzbx1yDBfsE2Rx4UpVQ/qk+b?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd280052-4ebc-4ed7-b5fa-08dc89809f1a
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 19:07:49.9099
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gp0KZHHsMl4Gkg0yCTKDQW3hSWEgY2SWnL/534JOStseKg5QWdl7+dJsxvQVuw8y6ucO6agwqctRWSGFy2XdTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9391
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 6/7/2024 8:26 AM, Jonathan Cameron wrote:
-> On Thu, 23 May 2024 14:21:40 -0700
-> Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
+On Mon, Jun 10, 2024 at 10:31:36AM GMT, Yosry Ahmed wrote:
+> On Mon, Jun 10, 2024 at 7:31 AM Usama Arif <usamaarif642@gmail.com> wrote:
+> >
+> > start/end writeback combination incorrectly increments NR_WRITTEN
+> > counter, eventhough the pages aren't written to disk. Pages successfully
+> > stored in zswap should just unlock folio and return from writepage.
+> >
+> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> > ---
+> >  mm/page_io.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/mm/page_io.c b/mm/page_io.c
+> > index a360857cf75d..501784d79977 100644
+> > --- a/mm/page_io.c
+> > +++ b/mm/page_io.c
+> > @@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+> >                 return ret;
+> >         }
+> >         if (zswap_store(folio)) {
+> > -               folio_start_writeback(folio);
+> >                 folio_unlock(folio);
+> > -               folio_end_writeback(folio);
 > 
->> Hi Alison,
->>
->> On 5/22/2024 5:03 PM, Alison Schofield wrote:
->>> On Wed, May 22, 2024 at 03:08:37PM +0000, Smita Koralahalli wrote:
->>>> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
->>>>
->>>> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
->>>> Severity, Device ID, Device Serial number and CXL RAS capability struct in
->>>> struct cxl_cper_prot_err. Include this struct as a member of struct
->>>> cxl_cper_work_data.
->>>>
->>>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-
-[snip]
-
-
->>>> +	 * The device ID or agent address is required for CXL RCD, CXL
->>>> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
->>>> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
->>>> +	 */
->>>> +	if (prot_err->agent_type <= 0x7 && prot_err->agent_type != RCH_DP) {
->>>
->>> For this check against agent_type, and the similar one below, would a boolean
->>> array indexed by the agent type work? That would avoid the <= 0x7 and > 0x4
->>> below. It seems one array would suffice for this case, but naming it isn't obvious
->>> to me. Maybe it'll be to you.
->>>
->>> Something similar to what is done for prot_err_agent_type_strs[]
->>>
->>> static const bool agent_requires_id_address_serial[] = {
->>> 	true,	/* RDC */ 	
->>> 	false,	/* RCH_DP */
-> 	[RCD] = false,
+> Removing these calls will have several effects, I am not really sure it's safe.
 > 
-> etc rather than comments would be neater.
-> Given two similar things already. Maybe time for a little structure.
-> 
-> //with better name than this
-> struct agent_reqs {
-> 	bool sn;
-> 	bool sbdf;
-> };
-> 
-> static const agent_reqs agent_reqs[] = {
-> 	[RCD] = { .sn = false, .sbdf = true, },
-> };
-> 
-> etc.
-> 
-> Maybe just bring the the string in as well
-> 
-> struct agent_info {
-> 	const char *string;
-> 	bool req_sn;
-> 	bool req_sbdf;
-> };
-> 
-> static const agent_info agent_info[] = {
-> 	[RD] = {
-> 		.string = "Restricted CXL Device",
-> 		.req_sn = false,
-> 		.req_sbdf = true,
-> 	},
-> };
-> 
-> Values made up, but hopefully conveys that moving to having
-> all the data in one place makes it harder to forget stuff
-> for new entries etc.
+> 1. As you note in the commit log, NR_WRITTEN stats (and apparently
+> others) will no longer be updated. While this may make sense, it's a
+> user-visible change. I am not sure if anyone relies on this.
 > 
 
-Okay. I was considering 2D array without naming before. Something like:
+I couldn't imagine how this stat can be useful for the zswap case and I
+don't see much risk in changing this stat behavior for such cases.
 
-static const bool agent_requires_id_address[][] = {
-        /* Device_ID, Serial_num */
-        {true, true},   /* RCD */
-        {false, false}, /* RCH_DP */
+> 2. folio_end_writeback() calls folio_rotate_reclaimable() after
+> writeback completes to put a folio that has been marked with
+> PG_reclaim at the tail of the LRU, to be reclaimed first next time. Do
+> we get this call through other paths now?
+> 
 
-Let me change to array of structures if naming helps.
+The folio_rotate_reclaimable() only makes sense for async writeback
+pages i.e. not for zswap where we synchronously reclaim the page.
 
-Thanks,
-Smita
+> 3. If I remember correctly, there was some sort of state machine where
+> folios go from dirty to writeback to clean. I am not sure what happens
+> if we take the writeback phase out of the equation.
+> 
 
-[snip]
+Is there really such a state machine? We only trigger writeback if the
+page is dirty and we have cleared it. The only thing I can think of is
+the behavior of the waiters on PG_locked bit but the window of
+PG_writeback is so small that it seems like it does not matter.
+
 
