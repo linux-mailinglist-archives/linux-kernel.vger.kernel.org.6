@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-207753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DCD901B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2BE901BA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8B7282E30
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E248282F2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE8D200C7;
-	Mon, 10 Jun 2024 07:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D090822612;
+	Mon, 10 Jun 2024 07:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlIsVQbT"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VeBkoF70"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6591BF2A;
-	Mon, 10 Jun 2024 07:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA321946F;
+	Mon, 10 Jun 2024 07:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718003264; cv=none; b=OpBZyB/eNnZL72gdQ8XPP3FNu7/21cBmc0f6g3iZLHNEyNvz22cb1gU7GplKD8C+rLAitj9PYkNCnBVtyFTYEq41+rSU3UuVX2KOMRiiDWUGKtiedMsmmGQ2ZzfyAwhH0Dj7s9hr+xp1LUIfv8JzXXMhsyd/nzHirA0agN5eSyc=
+	t=1718003851; cv=none; b=e29mNPcmxruetI1K/YLNKIx19E6K7Mi+twImpudIOCxGMuiNzf0ZxFLP/lf62wbGZJtrN1DeHj0+eica7J9l5nfDU5MDRAHkNhXZ1atdGZKA8NUJC/vXmGTV5v98M2H2jbHkrxouR+ynq+qaJ/l2CIy03jOAOc8UpXuDs5c5xSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718003264; c=relaxed/simple;
-	bh=rclMQqGEozDHSLQO/TvjwfrxT2QCBhUHXn/GOcGA+tU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oEiWVQUl79lxWr0OprT62msg14AeubbZFfwcztBSXR4VQUZ8ea8IaghxI9K/4dk8Ow5XPWxe9ZcaZAlezYkCkpOrHHlC4fgBrBJpg39T19pTYI+4yTT82LvrxgOiavH7fjnh8IkQaC4wynk3u8EvOEC/1HOId4K0Tks2zLNOR8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlIsVQbT; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso5895932a12.0;
-        Mon, 10 Jun 2024 00:07:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718003261; x=1718608061; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9XkB6KvYnfdznF+TEx3muL3K/bTdkLsfM+Ybwn3hwEM=;
-        b=QlIsVQbTYJKox1g30KtTY8gm2tm1Jhts7SOHjtlFy3xgSsr/aMW1iYETtdiEO+PUey
-         5qecnEORzqUQCB2XWR8o18gp3cmJ8n00sPRG9kGRALLvHgD14LcopZ23SSeStvclqwpo
-         nUK2hD5JIoQXTTSXJXWc81DVJ3Z8/iBT1tUxH2qVeqSbr8epNkXI8S+j3WT0PDQScoil
-         Q25pupMp4O/x5irwrBKMurrjOZDpCuGNaWgglfc+6/p3jd69A3hc5GDz+8D1PfvkKD94
-         /bDwiP0IbQ4yMbbBDUyomzwLf0BzODrqXq2+w3u0q9aDQV+gPhqDs4ieV6hdDw2Kgz7z
-         Dy2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718003261; x=1718608061;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9XkB6KvYnfdznF+TEx3muL3K/bTdkLsfM+Ybwn3hwEM=;
-        b=QsaKM28f6S5+vR6XiwdoBZ+T6CfBao1jcoga50KUYaQnRsjiuDjz9i+g4UfwICv0jP
-         OBRi/bvRAX4JnV7Ffu1Xzqb6/ulgU/X99yDpHmHWGXKBASpUPavKTpBAhcewPpjbFX8I
-         kCN1hrUFDWCdfBuxRaJ6rZKEh9niAdraT5dyfT8C7BqzHVeG+7c29QdR+N9zyt9cMwr+
-         eZqexxG4YftGl1zqEwMiLZYYmMDJiqOgRg8+U94j2yeNhPCKKSha6a62U7Qz1fXrGntx
-         2HXvHoPoYUyo6PWN7iuQlnNQl05r3WtFoGG8yADQC/XeRZhc2Y61ZIa0JcgZm5fEPXmE
-         ZQlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs9+k19Vu7GFF66GJexVgNtkcKIM8tsRFS/eq+JQ9YItr2tcFILBJX+cEoqMnwdrMMOQPp1JuCQj68b3+qYGyTN4SDPgiFXbuydcaNU28htS1xv/B1ty/mb4cyUtAPRNwj7JnSqSkO
-X-Gm-Message-State: AOJu0Yz0nfWstLbTJJAaqU8h5MeDp6DttetU+TdMonE5qiUfN9aJyXeY
-	ClSnSKvetVxSxIYuBEykuFIsL20eN+BVDiCVHneGp3/6nemh5Gpa
-X-Google-Smtp-Source: AGHT+IFd5ye8kICHk3VgJyXo4OhSJyan+mcKf8O/5rH86D2NtLWHg3MWYKcWqREL1nSJQBkHg/pC8A==
-X-Received: by 2002:a50:d743:0:b0:57c:70a6:baf with SMTP id 4fb4d7f45d1cf-57c70a60bcamr2209722a12.40.1718003261044;
-        Mon, 10 Jun 2024 00:07:41 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae13fff4sm7080982a12.53.2024.06.10.00.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 00:07:40 -0700 (PDT)
-Message-ID: <2d7164356496ab910bdbcac471f91d874b9e075d.camel@gmail.com>
-Subject: Re: [PATCH v3 2/4] iio: temperature: ltc2983: convert to
- dev_err_probe()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Nuno Sa <nuno.sa@analog.com>
-Cc: Petr Mladek <pmladek@suse.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, Jyoti Bhayana
- <jbhayana@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Chris Down <chris@chrisdown.name>, John Ogness <john.ogness@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andi Shyti
- <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-iio@vger.kernel.org
-Date: Mon, 10 Jun 2024 09:11:28 +0200
-In-Reply-To: <20240608190600.622dfd7f@jic23-huawei>
-References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
-	 <20240606-dev-add_dev_errp_probe-v3-2-51bb229edd79@analog.com>
-	 <20240608190600.622dfd7f@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718003851; c=relaxed/simple;
+	bh=HL1/PgFcmvtq8Mgs03MygUKUe0HGx+ZKEBK7mpchO1c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SWT2FGVQsAZdaiZkQS4paB7gyuOWqDACfTWuYF6KxmUwKTL6HekPNN2woAc8mQazc/gofRCt+Ch7WKBHAtxAtQXrPVG7a2t1g+WNC45G6T2G592kl2cJhz+kFA3RSo0Ck8BX4VG8iRGhUwOV9KPm19ZXFx+tHgWlOB+rqtUa7Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VeBkoF70; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459Lv4or018093;
+	Mon, 10 Jun 2024 09:16:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=ywgMJ0d2V3+vIlguLKK9it
+	AB89YC4L19ERf/9tF4bzM=; b=VeBkoF70/fwECtDm4mHRr0Zb2ky3B6Yvxu6Rj/
+	BVbEoElFZzv1eAOAYlfs5z6718PeInL+KrTc7o1TOkKScQFd6pH1wNfhg2EuCxFF
+	NzZMR+bUqseslvwu71xf0PJzXpe2qE8zdAWXZAHXyusuMcMX+199nWP/XHN8ZLke
+	Y4JsajJzcWgxvM7a+qCUy67pzhRzWBKJtX2dFRvHg7b0YxgKGeXmJXkpUrpX26OE
+	kD3Uy8xYQADW2zeIFbfGDwm0T7t+/Zx677yd2iLspK2S+Bl0u9PLCpU4YHAI0IMd
+	Rkt8n3NC8nHd04kzVRyMEQ59R5ixRIfP7f9WTLCuhoyoPpDQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yme6d5cb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 09:16:55 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2B42D40047;
+	Mon, 10 Jun 2024 09:16:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 75074210757;
+	Mon, 10 Jun 2024 09:15:07 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 09:15:07 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [net-next,PATCH v6 0/8] Series to deliver Ethernet for STM32MP13
+Date: Mon, 10 Jun 2024 09:14:51 +0200
+Message-ID: <20240610071459.287500-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
-On Sat, 2024-06-08 at 19:06 +0100, Jonathan Cameron wrote:
-> On Thu, 6 Jun 2024 09:22:38 +0200
-> Nuno Sa <nuno.sa@analog.com> wrote:
->=20
-> > Use dev_err_probe() (and variants) in the probe() path. While at it, ma=
-de
-> > some simple improvements:
-> > =C2=A0* Explicitly included the err.h and errno.h headers;
-> > =C2=A0* Removed some unnecessary line breaks;
-> > =C2=A0* Removed a redundant 'else';
-> > =C2=A0* Added some missing \n to prink.
-> >=20
-> > Signed-off-by: Nuno Sa <nuno.sa@analog.com>
-> > ---
->=20
->=20
-> > @@ -1296,8 +1268,8 @@ static int ltc2983_reg_access(struct iio_dev
-> > *indio_dev,
-> > =C2=A0
-> > =C2=A0	if (readval)
-> > =C2=A0		return regmap_read(st->regmap, reg, readval);
-> > -	else
-> > -		return regmap_write(st->regmap, reg, writeval);
-> > +
-> > +	return regmap_write(st->regmap, reg, writeval);
-> > =C2=A0}
->=20
-> Unrelated.
->=20
-> Otherwise updates look correct to me.
+STM32MP13 is STM32 SOC with 2 GMACs instances
+    GMAC IP version is SNPS 4.20.
+    GMAC IP configure with 1 RX and 1 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
+Rework dwmac glue to simplify management for next stm32 (integrate RFC from Marek)
 
-Yeah, I know. It was simple enough that I sneaked it in and did mentioned i=
-t in
-the commit message hoping it would make the change acceptable in here :)
+V2: - Remark from Rob Herring (add Krzysztof's ack in patch 02/11, update in yaml)
+      Remark from Serge Semin (upate commits msg)
+V3: - Remove PHY regulator patch and Ethernet2 DT because need to clarify how to
+      manage PHY regulator (in glue or PHY side)
+    - Integrate RFC from Marek
+    - Remark from Rob Herring in YAML documentation
+V4: - Remark from Marek (remove max-speed, extra space in DT, update commit msg)
+    - Remark from Rasmus (add sign-off, add base-commit)
+    - Remark from Sai Krishna Gajula
+V5: - Fix warning during build CHECK_DTBS
+    - Remark from Marek (glue + DT update)
+    - Remark from Krzysztof about YAML (Make it symmetric)
+V6: - Replace pr_debug by dev_dbg
+    - Split serie driver/DTs separately 
 
-- Nuno S=C3=A1
+Christophe Roullier (3):
+  dt-bindings: net: add STM32MP13 compatible in documentation for stm32
+  net: stmmac: dwmac-stm32: Mask support for PMCR configuration
+  net: stmmac: dwmac-stm32: add management of stm32mp13 for stm32
+
+Marek Vasut (5):
+  net: stmmac: dwmac-stm32: Separate out external clock rate validation
+  net: stmmac: dwmac-stm32: Separate out external clock selector
+  net: stmmac: dwmac-stm32: Extract PMCR configuration
+  net: stmmac: dwmac-stm32: Clean up the debug prints
+  net: stmmac: dwmac-stm32: Fix Mhz to MHz
+
+ .../devicetree/bindings/net/stm32-dwmac.yaml  |  43 ++++-
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 174 +++++++++++++-----
+ 2 files changed, 169 insertions(+), 48 deletions(-)
+
+
+base-commit: 28f961f9d5b7c3d9b9f93cc59e54477ba1278cf9
+-- 
+2.25.1
+
 
