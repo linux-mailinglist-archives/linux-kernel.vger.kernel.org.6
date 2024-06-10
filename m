@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-207955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53E9901E6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 740C4901E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38871C20C0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E9C1C21941
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C429B78286;
-	Mon, 10 Jun 2024 09:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085FA74C14;
+	Mon, 10 Jun 2024 09:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ax/Mf6sL"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PGDpWvDH"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1C174E0A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5D9CA62;
+	Mon, 10 Jun 2024 09:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012037; cv=none; b=cIFmHBtHLy8l0BiugfXGpUMaU+Dmm0x/QUCp4sRnOIWJcfe/T0vBKBSKdm16Y5XAzJWWlkVqzIi/DNb5dJ+V9kZYZEiGIEtxKP4IwfMrt2676ufz5j0R106Y7zEKEMvMQ2fh8DDpmzgszOYEqHYsxnajm1Kpid9oWlK/MmL7no0=
+	t=1718012385; cv=none; b=T+9PQoiNdhIG8KPj/H+t/oGTFB3/5yfxZU0ajQog8QE8cWC4juLJ9p57QJU36zlh0O1xAJ+3Wbt1bchy+GuKIPlvt3LDX87ci06Rwrxev4S3Vc2AHzJF+1BMyaj67RPikrng4GDWuciJ5wtHHwgEZt+sHhHpZ4fI8e2nOXbdvt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012037; c=relaxed/simple;
-	bh=Y4u8UCZ3N7F3nxprunHyg90+5gvVlDurQflxxTdao7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RV0rfDFFqXRwF0pgRrSy4dzp7MBO41Q8BDcgCasTD5jotSKT/yDrXsw1/Q4/5W3RyO40KyrFQAvtVQAnXm3Z2E/9QNW235pgFn4xhROSm9Hj5YEXY83Tplxhsvy21OtPfJG8++0FxcB8oWAv9to9fxL23qEHchPcP68w4Zc4ka4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ax/Mf6sL; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421757d217aso22420805e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718012034; x=1718616834; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfyZWlscKr9Yqn9KGPRWZidB/h/j24q5WeuU1z+bRpQ=;
-        b=Ax/Mf6sLHu5jOpJbfna2GjAKKyTeZlVxGKt9vqDmcPFxgHzmMdUGuRTeOn83du+Jrn
-         NAwsgmrhIjc70Fj1RoJuX9gvm2E3bGDsniWdFEa5ysGYETq7gvLwQ65pT2A+3BOyol3z
-         dB4G+R8TSoBEFeO7AQvoOtGRWHryUBFEKOhDXwy82D/Jo/PyQb34soDNfEe5enHOki3A
-         v0rnokt/IqPZEbaASx9rShbaLZZkLXew5yi12On6MZ9+kocUk2Z4pa9ew48212Ikkl7c
-         EsB8CKDT8aUwcAcevdMJmnu0ed9rlj/idmM3vRse096a538WU4bmfXL0+w1BSWFnG6UQ
-         RFrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718012034; x=1718616834;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JfyZWlscKr9Yqn9KGPRWZidB/h/j24q5WeuU1z+bRpQ=;
-        b=iuRugtR5B0jU6g6eMfuYX1sY7xMORSQWILiP7068tkGSbyY7ka7Z0X8qnJZjW8qV6M
-         RsCyRUrCH9+Wl+8i2j50YQuUWBUPCAT++RxUZVxnlfltjxzbeeTQuGnJb6xuPTv0evMk
-         19YdwQU+nFIoe4IBpfPkjN64R8ggtE8UnEcNlBcsWRGq/CMrIw8V6B+k0ni0/KbjSynp
-         2huMClAE3sLztxDcG6RWu4z68+TGgaBDV355JZDF5ZLHV3TfRiqlt0GNOYdTkNLzfoPf
-         GLP0QFmUGqkY4dXPBrhKuTDiGW12YryVfTfG2egIzInCx9XiyZT4NgN9d6RaQdCJ3GZI
-         aQLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmYFifs1/L7Se+ebBEVeXLe67D3ur6c2YkND465DZRlWHPYb/OpN/jfdcCxJmUh7kyao3wyuOmPJrlGVoI4KTxbsQhJB5bkvnsiGZL
-X-Gm-Message-State: AOJu0YwqjqaDWntUJb805/mSosnVGN+TbchiYSnwgqXpMXy3NIaWY3wa
-	+EO9sR5sO1W7hRyW0sYG/pnn2NpHozvMaVlBWIZTxLP3zytJrySSCHm01Ig9QXA=
-X-Google-Smtp-Source: AGHT+IHV0SNoUbda6LDPv2KbyHC0xdaTqp83BCe78LwJZFcnLMqusq8VSWFXidvAy3Xd8mcDYj3/2w==
-X-Received: by 2002:a05:600c:4748:b0:421:edf4:1e89 with SMTP id 5b1f17b1804b1-421edf42181mr16200015e9.4.1718012033827;
-        Mon, 10 Jun 2024 02:33:53 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c7e8fsm136565045e9.38.2024.06.10.02.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 02:33:53 -0700 (PDT)
-Date: Mon, 10 Jun 2024 12:33:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] PCI: endpoint: Fix epf_ntb_epc_cleanup() a bit
-Message-ID: <aaffbe8d-7094-4083-8146-185f4a84e8a1@moroto.mountain>
+	s=arc-20240116; t=1718012385; c=relaxed/simple;
+	bh=4sDRBYwAnPLox8vS4ELY1A2qb0SwGdJhH/Bm4YEC7Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yg4pOn7H7eGNah4FyhMC+tiqR7oe0Y6kEfSFDCd0kROAh/pGFf9wxs2rPny/Qu0cTnYt16kY/vWvNaAgFMySClH2KZxHw2D/obF/l24x3XM4F35dTQSl2ymeSiSDGaJry4x9oMz+J/pMI8xh3DUq9xPyymUK5VnXytllplDmq8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PGDpWvDH; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 87A2BFF804;
+	Mon, 10 Jun 2024 09:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718012381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DNZzOGuJb6tUoHOZ/zBBQKUASdGttzUiL5NxwXYa0VE=;
+	b=PGDpWvDHoga4WmSbPQsT82tXfFilx9O3w4uXAK1xBc6npFomtrgfPNzQ4+4fd4uwg6q7R3
+	IyH4aEvv3RshRIw/6GCnk4e60Np9bFxvkzllmaxuKcp3sJFWh6OxGrYvZ5ut+BAY746RT2
+	gN0vEtxFUBTj9F1jS1QmcV/d1tEX9QkBBwtSUmSvaXD2hGNANEabKrwSwCChRCuXQigxd7
+	7xDYCrUR5kdJ3il1Y7+Fk9h4I5HY18TbaZHB9oSmTakdehQHrRPWSQyFiLoRCeG+xEQdCb
+	OpI9vGP+ung/GaRdsREjxr6M1Jxwb3EMppd6tZY5PgShCnNiNXPLwNiLdSmgPg==
+Date: Mon, 10 Jun 2024 11:39:39 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de
+Subject: Re: [PATCH net-next v2 3/8] netlink: specs: Expand the PSE netlink
+ command with C33 new features
+Message-ID: <20240610113939.41d86109@kmaincent-XPS-13-7390>
+In-Reply-To: <m2bk4dm5ct.fsf@gmail.com>
+References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
+	<20240607-feature_poe_power_cap-v2-3-c03c2deb83ab@bootlin.com>
+	<m2bk4dm5ct.fsf@gmail.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6eacdf8e-bb07-4e01-8726-c53a9a508945@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-There are two issues related to epf_ntb_epc_cleanup().
-1) It should call epf_ntb_config_sspad_bar_clear().
-2) The epf_ntb_bind() function should call epf_ntb_epc_cleanup()
-   to cleanup.
+On Fri, 07 Jun 2024 11:09:38 +0100
+Donald Hunter <donald.hunter@gmail.com> wrote:
 
-I also changed the ordering a bit.  Unwinding should be done in the
-mirror order from how they are allocated.
+> Kory Maincent <kory.maincent@bootlin.com> writes:
+>=20
+> > From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+> >
+> > Expand the c33 PSE attributes with PSE class, extended state information
+> > and power consumption.
 
-Fixes: e35f56bb0330 ("PCI: endpoint: Support NTB transfer between RC and EP")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pci/endpoint/functions/pci-epf-vntb.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-index 7f05a44e9a9f..874cb097b093 100644
---- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-@@ -799,8 +799,9 @@ static int epf_ntb_epc_init(struct epf_ntb *ntb)
-  */
- static void epf_ntb_epc_cleanup(struct epf_ntb *ntb)
- {
--	epf_ntb_db_bar_clear(ntb);
- 	epf_ntb_mw_bar_clear(ntb, ntb->num_mws);
-+	epf_ntb_db_bar_clear(ntb);
-+	epf_ntb_config_sspad_bar_clear(ntb);
- }
- 
- #define EPF_NTB_R(_name)						\
-@@ -1337,7 +1338,7 @@ static int epf_ntb_bind(struct pci_epf *epf)
- 	ret = pci_register_driver(&vntb_pci_driver);
- 	if (ret) {
- 		dev_err(dev, "failure register vntb pci driver\n");
--		goto err_bar_alloc;
-+		goto err_epc_cleanup;
- 	}
- 
- 	ret = vpci_scan_bus(ntb);
-@@ -1348,6 +1349,8 @@ static int epf_ntb_bind(struct pci_epf *epf)
- 
- err_unregister:
- 	pci_unregister_driver(&vntb_pci_driver);
-+err_epc_cleanup:
-+	epf_ntb_epc_cleanup(ntb);
- err_bar_alloc:
- 	epf_ntb_config_spad_bar_free(ntb);
- 
--- 
-2.43.0
+> >
+> > diff --git a/Documentation/netlink/specs/ethtool.yaml
+> > b/Documentation/netlink/specs/ethtool.yaml index 00dc61358be8..8aa064f2=
+f466
+> > 100644 --- a/Documentation/netlink/specs/ethtool.yaml
+> > +++ b/Documentation/netlink/specs/ethtool.yaml
+> > @@ -922,6 +922,22 @@ attribute-sets:
+> >          name: c33-pse-pw-d-status
+> >          type: u32
+> >          name-prefix: ethtool-a-
+> > +      -
+> > +        name: c33-pse-pw-class
+> > +        type: u32
+> > +        name-prefix: ethtool-a-
+> > +      -
+> > +        name: c33-pse-actual-pw
+> > +        type: u32
+> > +        name-prefix: ethtool-a-
+> > +      -
+> > +        name: c33-pse-ext-state
+> > +        type: u8
+> > +        name-prefix: ethtool-a-
+> > +      -
+> > +        name: c33-pse-ext-substate
+> > +        type: u8
+> > +        name-prefix: ethtool-a- =20
+>=20
+> I see this is consistent with existing pse attributes in the spec, but
+> are there enumerations for the state and status attributes that could be
+> added to the spec?
 
+Indeed, I can add the enum also in the spec.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
