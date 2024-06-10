@@ -1,143 +1,108 @@
-Return-Path: <linux-kernel+bounces-208553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDB69026B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:29:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2D99026C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C251C21DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8072AB234BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A191D145354;
-	Mon, 10 Jun 2024 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B614389B;
+	Mon, 10 Jun 2024 16:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4la2Tf2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTOI5Bra"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89A25B1F8;
-	Mon, 10 Jun 2024 16:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83716839E4;
+	Mon, 10 Jun 2024 16:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036970; cv=none; b=glj6gOtE66zhRH2AA47d+rqoyR2FNDHublL+ej3+2qR+IAp8ujHqPovAlcPcVryDMJ2upG2kCgMy8H6VI3L6PxrTKzRqq8tCsWMHfXJiI/m9eK1rTt7k6rla5784sjvFH/3p9LiK7AbQ4hAxgs6wNfj0EBBfaa4w3OD39pGA7/M=
+	t=1718037111; cv=none; b=I/FEaK3FLINpNiHdBsl9UQC14wg3fyy/nKm/JT+u+W+vJkNf3kQRWHSM2afoOxm6QFrImKpqi6zPfupQffRZKO+6hMf+/dBFOg1/EfeRezmiFBvCdz+WKWm8o5oYdIPGwHcGNO6AodSzzmXNHizzGVx9u+NEi4fYWHGshXGuwSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036970; c=relaxed/simple;
-	bh=Brmahvm4Yc2awdlg8pCbCM4vutFLaNRGWciE5wW/mBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ba/4XU77xGX0L7vAjOISiJ2k3pD5g8/Yiga9DUvuH6rejQScU44RzWFnAk4dHOeRCMttxyAL+Y0o2N62AwN3R3N4Ih6J4v/BuXr8f99tDHFgjE3dZgfUeuZW8zIsgxb2lxNJGCTH+CPMeZFdmhjvEGBx3k9E/EqBP9IUrsa+j+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4la2Tf2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D21C2BBFC;
-	Mon, 10 Jun 2024 16:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718036969;
-	bh=Brmahvm4Yc2awdlg8pCbCM4vutFLaNRGWciE5wW/mBY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J4la2Tf2AWfy3SsQXpKsi5iMpBXuatfTSLmKnfqdaFgTMwr9jky2WaHuum2W9v0A7
-	 tF4oUXkvy9W5N+bRD+uPzWwm2XooXhl2jWm/7ocz+rm/Rdx8NTDOakGrmlmfLoUtxs
-	 3xENG8tF5/Xm46JHQhx8Z2pa95DwnhneFRKZyPYqBWfuOeozmfICy9pN91FYuS53Fj
-	 2R9ynJ8u6SSrDC9T1LNH7nJ5/yhV8MVGfEsTYmN9LfAvuA0brCD1U3UzEkWScUoiAV
-	 2pSVrP551vX3vnyck6QmVrhnFbbD7z36cdvIXJaE/6o4m+Ltom916vbHTcEfZbFich
-	 Qfb9w1ahqwRNA==
-Date: Mon, 10 Jun 2024 17:29:23 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 02/13] dt-bindings: thead: add a vlen register length
- property
-Message-ID: <20240610-unaltered-crazily-5b63e224d633@spud>
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
- <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
+	s=arc-20240116; t=1718037111; c=relaxed/simple;
+	bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gyYyu9vhZGDb9s3UfVJFvYollT/DYyopl5zdl/n0WjaTD2502yJxRwm5IAHxaDYh93frTvaK8gaNTPvaPDbvXwA2UmCPeM/M2gR/UJH8xSt89hvdFcmfbsVhdo+L2KXe5ugCn3AnR8T7g6lDw19Hq2tlURsHv9W4zUPw/qWAPf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTOI5Bra; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c73a3b3d7so2270842a12.1;
+        Mon, 10 Jun 2024 09:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718037108; x=1718641908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
+        b=nTOI5BraqF487tCVNIEAx2D3tsmWo/0R2xbWJtkMFKADKx4CNl+or+JojcMsLIwRFI
+         DBNzHFzYa4CxMBZbbVQBuGBcIHongf32Vvmnh5+p3vQgiZGM1n2u3roFEcJQCzkXWtFb
+         sqBXnXtCPDuqOOX0Ip/zIvdA0KWYfYTaTp8iVkT9ZxwT32rhzfw+NO6l86Uo0xOICn3o
+         rgbmmewI+f2Ea5QEbkmUdCJbHlNC6TQy0DQtVI4m3p06Bo7J8TddGt2st3z9Z2Ymml8j
+         UnmOvryCv1twk7sHsidP9OJanpxwia/AyaPriU8wUKGNVYQsL871yH3w/xgO444lo/rx
+         uqOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718037108; x=1718641908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
+        b=sP1+P7cj5qQldn8nAjBrSJhChEj6bL7tip3wi5KDPqBr/d7RRcTQth2I9dwD4Wj+8x
+         YYdcZXTd5owKPRLd0yRH/xphoPWN10jM0JjNzjrBj9towWq/aJTCvMWPTWEfB1MAKxWh
+         I37qHWiJZrx5gFDGH7q5NgS3uaIu2YOWkQtIuDShimCjsya1GJMZtsSnOdZwTb5m7Rhq
+         ChgzOFvv1loKw2IVCjxd7+fCEarp5H4krtLoF+Og8SSKwJhAyniL24mBzpgFo82FSfXH
+         4li/vCg+jRsTzjDdQx1FGin1yDxvgIYDP5cy4K4dmwGOONrhe88Qcz/bf446VYwXxzSW
+         w+KA==
+X-Forwarded-Encrypted: i=1; AJvYcCW94mZKxoOCRfIz+tZU7YcZ4zdSlJD+QpwGybfwGol8ESlKeEoPn1BrLI0jElOcHK1htONZvMDYuTuMZisyK1SDxxgRixe66DBUlT3+bE+zuUoFYcSstj6wYL+K1baRji+BnLeNoIYFDkkr5GlgzNu3Irrnt2lsU8bkDtsAhQzEAYo=
+X-Gm-Message-State: AOJu0Yx8JLrYIF2A91/HNQ/2WtV6cA7xgog2SqQQtlw0R0qym7ineZ0U
+	IDTKjAJVy6sBhw3U0QF8epOdtP4BHwGROmgxBRs0C9tIjnjKEE6zfuZYh6q/6RuCpfroI+2iUU/
+	cT+vZC0kZDycd7qwrnAhA6Qj3fHA=
+X-Google-Smtp-Source: AGHT+IHQf3MV0Q/UjU07vgHR5NPfetvVAiyS7lJZpzQDbY8N+GF7jT4TpL3zNI4S9k3S8xBNtVxYqKks+HIUG1tPSqI=
+X-Received: by 2002:a17:906:25cb:b0:a6e:fdc8:ae3a with SMTP id
+ a640c23a62f3a-a6efdc8b0a6mr381112766b.6.1718037107672; Mon, 10 Jun 2024
+ 09:31:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7a3nHEEpIFMkcfnt"
-Content-Disposition: inline
-In-Reply-To: <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
-
-
---7a3nHEEpIFMkcfnt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
+ <20240608141633.2562-5-laurent.pinchart@ideasonboard.com> <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
+ <20240610152833.GW18479@pendragon.ideasonboard.com>
+In-Reply-To: <20240610152833.GW18479@pendragon.ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 10 Jun 2024 19:31:11 +0300
+Message-ID: <CAHp75VfcTHty-Vzcc+B4iMk33qS_AafvU10Qn3AQftrfQRBebw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Clark Wang <xiaoning.wang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 09, 2024 at 09:45:07PM -0700, Charlie Jenkins wrote:
-> Add a property analogous to the vlenb CSR so that software can detect
-> the vector length of each CPU prior to it being brought online.
-> Currently software has to assume that the vector length read from the
-> boot CPU applies to all possible CPUs. On T-Head CPUs implementing
-> pre-ratification vector, reading the th.vlenb CSR may produce an illegal
-> instruction trap, so this property is required on such systems.
->=20
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  Documentation/devicetree/bindings/riscv/thead.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/riscv/thead.yaml b/Documen=
-tation/devicetree/bindings/riscv/thead.yaml
-> index 301912dcd290..5e578df36ac5 100644
-> --- a/Documentation/devicetree/bindings/riscv/thead.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/thead.yaml
-> @@ -28,6 +28,13 @@ properties:
->            - const: sipeed,lichee-module-4a
->            - const: thead,th1520
-> =20
-> +thead,vlenb:
+On Mon, Jun 10, 2024 at 6:28=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Jun 10, 2024 at 06:06:51PM +0300, Andy Shevchenko wrote:
+> > Sat, Jun 08, 2024 at 05:16:33PM +0300, Laurent Pinchart kirjoitti:
 
-This needs to move back into cpus.yaml, this file documents root node
-compatibles (boards and socs etc) and is not for CPUs. If you want to
-restrict this to T-Head CPUs only, it must be done in cpus.yaml with
-a conditional `if: not: ... then: properties: thead,vlenb: false`.
+...
 
-Please test your bindings.
+> Andy, we're reaching a level of nitpicking and yakshaving that even I
+> can't deal with. I will have to simply ignore the comments I disagree
+> with.
 
-Thanks,
-Conor.
+Do you think using bulk APIs is nit-picking?
 
-> +  $ref: /schemas/types.yaml#/definitions/uint32
-> +  description:
-> +    VLEN/8, the vector register length in bytes. This property is requir=
-ed in
-> +    systems where the vector register length is not identical on all har=
-ts, or
-> +    the vlenb CSR is not available.
-> +
->  additionalProperties: true
-> =20
->  ...
->=20
-> --=20
-> 2.44.0
->=20
-
---7a3nHEEpIFMkcfnt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmcp4wAKCRB4tDGHoIJi
-0gVEAQDisUaq6cRgwS43d8aFe/cyWmfTzOM3tCUfWvDJ7AnVuwD9EFVnAEjsPyON
-r50kgk8Vr8uPuUh+qeyS+8kydQEtQwI=
-=QXX5
------END PGP SIGNATURE-----
-
---7a3nHEEpIFMkcfnt--
+--=20
+With Best Regards,
+Andy Shevchenko
 
