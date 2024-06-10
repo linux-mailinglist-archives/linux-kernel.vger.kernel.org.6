@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-207832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31C7901CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F95901CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876661F21332
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF421F218BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F66F2E7;
-	Mon, 10 Jun 2024 08:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C816F079;
+	Mon, 10 Jun 2024 08:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WQ1p7ErO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pj7IFzhJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C446F2E8;
-	Mon, 10 Jun 2024 08:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C8B5FBB1;
+	Mon, 10 Jun 2024 08:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007589; cv=none; b=dLRwudk8nnxtTqT5E+rLBLzqk969cUf/UHr0Qfc9VE6L/lFB4OsN8vfxxY7uBAKbyCwxbDlS31Rl4LE4oipuKbDPGpoBqI9aj+MZ0kVFq9KouHUXOCiAAogS//0A4u5F1a/zV+MCe/oEkhHgRSHyJfQIns8dYzAUCnkRJu7YTIk=
+	t=1718007617; cv=none; b=gP9HgN1bgb0b48mqP8pIIWDwejTU1DgK0wf64XEXC9IaHvyansvdKHgUE1wPocFH1QXn9Z6Xd+l5abfjt2cd1RIEaw//sI60tOq71SnfnEuezghIHfwphkQz/6wcHpL7PLUTuHkYqP2T4F/5HAQYvFkr8BZYhp0BvltqqxEFoPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007589; c=relaxed/simple;
-	bh=4bnhfABeL9wMNaLRFs7jfMOSG8cNLfTLCbFckvsvrM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xeof4Z+2eCz1kVdn6tAYsi71irZM2+cMwOda2PmunLrbduVdH45K1sla8EVq6SYYCCNoWGs3Y4RXfcmgV0qj0rJH7UoqKFqq6e1IH5cXa+2y0gteKGOnHOhl+EVfxwVYwlugnegJ1HROnFJ1BpuaP0ouZ3LQbUbW16+ADFiC+h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WQ1p7ErO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631C2C4AF1C;
-	Mon, 10 Jun 2024 08:19:48 +0000 (UTC)
+	s=arc-20240116; t=1718007617; c=relaxed/simple;
+	bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JVXLVyqbafXeH23AI5DRkILi67Tn1m0YTSF/Nvq9zHtzopnXtaouwx1iQFHyUXxh06NGolEsJjt/WabNurHGBogyT7lrdIgmAl2DBXissFxv48ngcALk10Kolye2zxEr0POrVj/YHe7NGrLP6j7cvkfQvoK4VYcCeGFRz4akkYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pj7IFzhJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1DAC2BBFC;
+	Mon, 10 Jun 2024 08:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718007588;
-	bh=4bnhfABeL9wMNaLRFs7jfMOSG8cNLfTLCbFckvsvrM0=;
+	s=korg; t=1718007616;
+	bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=WQ1p7ErOzdBl73QtueAUgSo46u2ijPYial0jcb6VgRtkEISzyHUenvwC7eyqnhLEO
-	 LCLuFqra1fXV4tzOspxnuo6YMmUZVQnNonjEx3EqAHgPHmZvT6R0iXlxnLAfsp7UJR
-	 bwxnOwzVfoUMCv85ky7xeXGVMIQ7QYTiA98P8wSw=
+	b=pj7IFzhJOdf4S5BJSMuPtAAJdqLMuLQ4mVKIBMBOMlsyZwnKzF20RX97zqRiGxWAF
+	 qBNVSCWgN8d+nei52/EI/LCCZJTexkJfSdXphhuhFd0h9EOGYhg5EKa6ekC699urnM
+	 CwOTYFlBZOrVn33Kfap1yd1xJ9H4Cu5CGtSTnnr8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: nvdimm@lists.linux.dev
+To: linux-pci@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] nvdimm: make nd_class constant
-Date: Mon, 10 Jun 2024 10:19:42 +0200
-Message-ID: <2024061041-grandkid-coherence-19b0@gregkh>
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI: endpoint: make pci_epc_class constant
+Date: Mon, 10 Jun 2024 10:20:12 +0200
+Message-ID: <2024061011-citable-herbicide-1095@gregkh>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,8 +55,9 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 85
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2634; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=4bnhfABeL9wMNaLRFs7jfMOSG8cNLfTLCbFckvsvrM0=; b=owGbwMvMwCRo6H6F97bub03G02pJDGlp2+XWaj/ozZMQO/pcs9CCa/38o18cnyXXKCol/Vd6d X51jU9iRywLgyATg6yYIsuXbTxH91ccUvQytD0NM4eVCWQIAxenAEzkVx3DgtaXW6/9E/5d2Lbj bzgfr0mncfHCBoZ5OnNs7oYrnXqUdV3y/7nw2THMfHUHAA==
+Content-Type: text/plain; charset=UTF-8
+Lines: 74
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2396; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=; b=owGbwMvMwCRo6H6F97bub03G02pJDGlp2633nuvS1ktzDV3P/1xjbfihlLY9OqH+cyPLrq2p5 z/66OObjlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZjIN36GBVMM+/O8X/jduvG6 aGEE15IOzbRNDxkWbC6dGXn0oGizK9NmFYVmA8+SusQvAA==
 X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
 
@@ -64,84 +66,73 @@ memory, we should make all 'class' structures declared at build time
 placing them into read-only memory, instead of having to be dynamically
 allocated at runtime.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: nvdimm@lists.linux.dev
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: "Krzysztof Wilczyński" <kw@linux.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvdimm/bus.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/pci/endpoint/pci-epc-core.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 508aed017ddc..101c425f3e8b 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -25,9 +25,12 @@
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 47d27ec7439d..ed038dd77f83 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -14,7 +14,9 @@
+ #include <linux/pci-epf.h>
+ #include <linux/pci-ep-cfs.h>
  
- int nvdimm_major;
- static int nvdimm_bus_major;
--static struct class *nd_class;
- static DEFINE_IDA(nd_ida);
- 
-+static const struct class nd_class = {
-+	.name = "nd",
+-static struct class *pci_epc_class;
++static const struct class pci_epc_class = {
++	.name = "pci_epc",
 +};
-+
- static int to_nd_device_type(const struct device *dev)
+ 
+ static void devm_pci_epc_release(struct device *dev, void *res)
  {
- 	if (is_nvdimm(dev))
-@@ -742,7 +745,7 @@ int nvdimm_bus_create_ndctl(struct nvdimm_bus *nvdimm_bus)
- 	device_initialize(dev);
- 	lockdep_set_class(&dev->mutex, &nvdimm_ndctl_key);
- 	device_set_pm_not_required(dev);
--	dev->class = nd_class;
-+	dev->class = &nd_class;
- 	dev->parent = &nvdimm_bus->dev;
- 	dev->devt = devt;
- 	dev->release = ndctl_release;
-@@ -765,7 +768,7 @@ int nvdimm_bus_create_ndctl(struct nvdimm_bus *nvdimm_bus)
+@@ -60,7 +62,7 @@ struct pci_epc *pci_epc_get(const char *epc_name)
+ 	struct device *dev;
+ 	struct class_dev_iter iter;
  
- void nvdimm_bus_destroy_ndctl(struct nvdimm_bus *nvdimm_bus)
+-	class_dev_iter_init(&iter, pci_epc_class, NULL, NULL);
++	class_dev_iter_init(&iter, &pci_epc_class, NULL, NULL);
+ 	while ((dev = class_dev_iter_next(&iter))) {
+ 		if (strcmp(epc_name, dev_name(dev)))
+ 			continue;
+@@ -867,7 +869,7 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+ 	INIT_LIST_HEAD(&epc->pci_epf);
+ 
+ 	device_initialize(&epc->dev);
+-	epc->dev.class = pci_epc_class;
++	epc->dev.class = &pci_epc_class;
+ 	epc->dev.parent = dev;
+ 	epc->dev.release = pci_epc_release;
+ 	epc->ops = ops;
+@@ -927,20 +929,13 @@ EXPORT_SYMBOL_GPL(__devm_pci_epc_create);
+ 
+ static int __init pci_epc_init(void)
  {
--	device_destroy(nd_class, MKDEV(nvdimm_bus_major, nvdimm_bus->id));
-+	device_destroy(&nd_class, MKDEV(nvdimm_bus_major, nvdimm_bus->id));
- }
- 
- static const struct nd_cmd_desc __nd_cmd_dimm_descs[] = {
-@@ -1320,11 +1323,9 @@ int __init nvdimm_bus_init(void)
- 		goto err_dimm_chrdev;
- 	nvdimm_major = rc;
- 
--	nd_class = class_create("nd");
--	if (IS_ERR(nd_class)) {
--		rc = PTR_ERR(nd_class);
-+	rc = class_register(&nd_class);
-+	if (rc)
- 		goto err_class;
+-	pci_epc_class = class_create("pci_epc");
+-	if (IS_ERR(pci_epc_class)) {
+-		pr_err("failed to create pci epc class --> %ld\n",
+-		       PTR_ERR(pci_epc_class));
+-		return PTR_ERR(pci_epc_class);
 -	}
+-
+-	return 0;
++	return class_register(&pci_epc_class);
+ }
+ module_init(pci_epc_init);
  
- 	rc = driver_register(&nd_bus_driver.drv);
- 	if (rc)
-@@ -1333,7 +1334,7 @@ int __init nvdimm_bus_init(void)
- 	return 0;
- 
-  err_nd_bus:
--	class_destroy(nd_class);
-+	class_unregister(&nd_class);
-  err_class:
- 	unregister_chrdev(nvdimm_major, "dimmctl");
-  err_dimm_chrdev:
-@@ -1347,7 +1348,7 @@ int __init nvdimm_bus_init(void)
- void nvdimm_bus_exit(void)
+ static void __exit pci_epc_exit(void)
  {
- 	driver_unregister(&nd_bus_driver.drv);
--	class_destroy(nd_class);
-+	class_unregister(&nd_class);
- 	unregister_chrdev(nvdimm_bus_major, "ndctl");
- 	unregister_chrdev(nvdimm_major, "dimmctl");
- 	bus_unregister(&nvdimm_bus_type);
+-	class_destroy(pci_epc_class);
++	class_unregister(&pci_epc_class);
+ }
+ module_exit(pci_epc_exit);
+ 
 -- 
 2.45.2
 
