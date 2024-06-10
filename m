@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-207960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B386901E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E457A901E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0802283A5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B95283C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749D4763FD;
-	Mon, 10 Jun 2024 09:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3A47440B;
+	Mon, 10 Jun 2024 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9eYEZah"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ddLht87l"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4837581A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DC837B;
+	Mon, 10 Jun 2024 09:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012634; cv=none; b=oTkgkn+G0IinnvuviHY7ptoy6f1xa5i2OM3utVjuRamy3ojtartS6hM5cZ4JlMsAmUb7T7D0JTG1LCm0DJyZVjqQ3lfvwUBi3nbhY6yROrowPyK1bs7xjZ4/41uvDOHIZmFEackQae5WYqi7oVWl09OK18kYX0KO1YiBgO+JBj0=
+	t=1718012720; cv=none; b=qDo4e1ycS6REDd83bkje4fcqLyEnrl7c1w1nWgPXlldIbYsRXaMJYzkuKmGekavH34OjwcaWLGjuLM+lp1e7pVJY3nv6ZUYgMMM6aj7Ee9tZ9dzlIZxN4M8jz8jI6BzehKNMwf4IVjKMIFO6BpCeJBAzlY0aoRrwfLttVhyNfCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012634; c=relaxed/simple;
-	bh=bS5RlvgxIgcjRqjmYWH6qB32WZu/LwYze/3RpeQ2ypM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6kIGiD9T7hRlKKHbj2O5KUn6n24oQx3Bv4BK1wahsMz29w/Mtw4pvsKB5VJ7su3E//ZaTXjb34PVQ+TKY9So4KilHBlaBnITa7V+yXqR0ejrmUs7r/h8iUDHDHxkOX5gnD5daVUZXQM3uXOXngV+FTgKAzNRcCWyVEf8zE5i40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9eYEZah; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4eb1233862dso1423813e0c.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:43:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718012632; x=1718617432; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjhpNNupYWVZWKcUvHP1lyKNkdexlWuohzaYbXqZdQg=;
-        b=M9eYEZahAt9kIC38bmUjOYlZ/ICqNz40VuR2a0zqZ6UpaeAhxmnhPf7uYFqq3H937L
-         Aaq7NtwUzWext9/ZkqG/tVMeCA1mPejVScqMpzC7p8qDOn+QzlyrHc0MoI3eVX9OFQMD
-         7JNmySegS6Ujl+4rlGGdIwSQoQDpcNwdL2lBjVqZKzVsPlmHXhG2SwYIuPtq1yEMRcck
-         lxnLcKQCQoUxgDFNR6rB/AJT5hzNVzPrTlnpVQS1z7zPycNzmapUi11+ANZt4Z2TWZcX
-         agNQCBw+OZwWJ8CoJ6y9xReT645mM8HkGdmQC0DKtp5om/z9TzUkIjP8vF7+G7J+mPrr
-         I6Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718012632; x=1718617432;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xjhpNNupYWVZWKcUvHP1lyKNkdexlWuohzaYbXqZdQg=;
-        b=hZpqIAQ+3mrePAsRJVw8MJAEJUXpTR4CWE9yTANCmvAStTq+/0xWGN/d+Q8EFUyzfb
-         l3Pl/2bBUbQZ/CGgG/gFrJrOy/L/jPSZcygAN9D0LhnJC5Ql7fUt2An6+msAGTB/ydVT
-         KA7NpqFGYI3hZQ3qG40ZPifGwzq7KMfemEpysrFkgd5Dri75mSx5RmkTAFw/1hnDgPi9
-         6KkmBDk7HFA/qMPl3MWSUqEmkIR44g/vq6WuTj5nzty4VEtfV3Ca84Rr3DmfvLy3e5X5
-         m6r7cdm0jykycZUrwkal5QLURhlk13SXHRahiKNuILbQNPEqDCZoHG+rSsscER+HSBlV
-         q1gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSDUUdH997rCmIkKHrDVVY3Cu8iXSZ/M0JaZIgUG+fMa+bL2ax9BjzsD6XYwSBTtyyn7nN87HlRF5Qw217GvGXeJWykRvWaqYOX/r+
-X-Gm-Message-State: AOJu0YzmDNCjf9N061NQEchsFyv6eD9V/YDqzqgrhbMJG2W4OIfY+dzi
-	qE/oaSqdEd22aHvWEj00T0xON9zzPcwURSVpNN2p2lbk4w3lAS7J2eTV0DN/80JjynJPfKnu+AY
-	hsqJMyPYYax/Q+wRJBm8ihKd4Hl3ewA7q8LadjA==
-X-Google-Smtp-Source: AGHT+IGsldTxg6rRfZyz1ipYFZ2s2KO6v7Z4ILO2JX+E0oYUdd+a45WFPOs1q7SluiHdxBw4X8zaRbxU1Xtk02Z0Mks=
-X-Received: by 2002:a05:6122:1799:b0:4eb:5fb9:1654 with SMTP id
- 71dfb90a1353d-4eb5fb91857mr6829841e0c.8.1718012632207; Mon, 10 Jun 2024
- 02:43:52 -0700 (PDT)
+	s=arc-20240116; t=1718012720; c=relaxed/simple;
+	bh=n/drKCmK2DXtMTUWF/2XRiruDv+7VQ2JpnwDOThF158=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfMSLvoaHg1pDBmaFh0dlFuOjYt+KGd1/gsozvus9SQdQUcd6FhsDzj0MeezGuXzAJ17xu7zmELFvF4jqqIfB7nlm4bA4yHmyP64vgAwls0WpLZti8gv/RIvLzQXPAYn8G0iabY4loSm3Y+LVhXHwpMW5wZAeN7l8kbOhdbdlpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ddLht87l; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718012718; x=1749548718;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n/drKCmK2DXtMTUWF/2XRiruDv+7VQ2JpnwDOThF158=;
+  b=ddLht87lw+lpOp7AAIa/1CMahCjDp67SjgtLlQGzXBI+5efmKwNf25Gt
+   Xwi3cLOvKww9+//NNqWCnuzDeUUdLL9gtO7apaeCvnw+SYFQju4z0/8Q/
+   pvUg6qjji5ksd1SYwS7ekeJflI5OOYMkWa8rinkMZX3YvDM7fatIgBnMu
+   MYR6eYjqc+3JkxOrlDbBrhRWuSZx9ZnLeXYCu+pvvMnYoPFcw3gKc1ZGe
+   MJBXhqLAnENQ4Cxoit4te2A/4l7rvodIk1AK9seCeHBjt8+FwQvNOB/ql
+   FHRPGUJ4ZGcXv097trxfTGgswnu7zX9ap1vZk8gcQ9h4ZCZ7d6runI+S8
+   A==;
+X-CSE-ConnectionGUID: V/g+7YycS5WjtxbM+YcRvQ==
+X-CSE-MsgGUID: YHLKRFNSSTaea7J20APjJQ==
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="asc'?scan'208";a="27194186"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jun 2024 02:45:16 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 10 Jun 2024 02:45:12 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 10 Jun 2024 02:45:11 -0700
+Date: Mon, 10 Jun 2024 10:44:54 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Daire McNamara <daire.mcnamara@microchip.com>
+CC: <linux-pci@vger.kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring
+	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 2/2] PCI: microchip: Fix inbound address translation
+ tables
+Message-ID: <20240610-pointless-hamstring-908149945428@wendy>
+References: <20240531085333.2501399-1-daire.mcnamara@microchip.com>
+ <20240531085333.2501399-3-daire.mcnamara@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609113903.732882729@linuxfoundation.org> <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
-In-Reply-To: <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 10 Jun 2024 15:13:40 +0530
-Message-ID: <CA+G9fYvW+FmBVJO+3928H8_tBKKLQMa9bBdEKnUMd56G0f_itA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
-To: Pavel Machek <pavel@denx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EA8Ls/LOE2pcxK1c"
+Content-Disposition: inline
+In-Reply-To: <20240531085333.2501399-3-daire.mcnamara@microchip.com>
 
-On Mon, 10 Jun 2024 at 01:04, Pavel Machek <pavel@denx.de> wrote:
->
-> Hi!
->
-> > This is the start of the stable review cycle for the 6.6.33 release.
-> > There are 741 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
->
-> 6.6 seems to have build problem on risc-v:
->
->   CC      kernel/locking/qrwlock.o
-> 690
->   CC      lib/bug.o
-> 691
->   CC      block/blk-rq-qos.o
-> 692
-> arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
-> 693
-> arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
-> 694
->    14 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
-> 695
->       |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> 696
->       |                                                                  RISCV_ISA_EXT_ZIFENCEI
-> 697
+--EA8Ls/LOE2pcxK1c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the report I do see these Riscv build failures.
+On Fri, May 31, 2024 at 09:53:33AM +0100, Daire McNamara wrote:
+> On Microchip PolarFire SoC the PCIe Root Port can be behind one of three
+> general purpose Fabric Interface Controller (FIC) buses that encapsulates
+> an AXI-S bus. Depending on which FIC(s) the Root Port is connected
+> through to CPU space, and what address translation is done by that FIC,
+> the Root Port driver's inbound address translation may vary.
+>=20
+> For all current supported designs and all future expected designs,
+> inbound address translation done by a FIC on PolarFire SoC varies
+> depending on whether PolarFire SoC in operating in dma-coherent mode or
+> dma-noncoherent mode.
+>=20
+> The setup of the outbound address translation tables in the root port
+> driver only needs to handle these two cases.
+>=20
+> Setup the inbound address translation tables to one of two address
+> translations, depending on whether the rootport is marked as dma-coherent=
+ or
+> dma-noncoherent.
 
- - Naresh
+Since we're talking about dma-noncoherent here, I think this series
+should contain a patch that adds the property to the binding for PCIe:
+
+-- >8 --
+
+=46rom af066543b8f8b8b0b37e0844979f0c3e28f30513 Mon Sep 17 00:00:00 2001
+=46rom: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 20 Mar 2023 11:02:11 +0000
+Subject: [PATCH] dt-bindings: PCI: microchip,pcie-host: allow dma-noncohere=
+nt
+
+PolarFire SoC may be configured in a way that requires non-coherent DMA
+handling. On RISC-V, buses are coherent by default & the dma-noncoherent
+property is required to denote buses or devices that are non-coherent.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml=
+ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
+index 45c14b6e4aa4..2f21109c3580 100644
+--- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
++++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
+@@ -53,6 +53,8 @@ properties:
+     items:
+       pattern: '^fic[0-3]$'
+=20
++  dma-noncoherent: true
++
+   interrupts:
+     minItems: 1
+     items:
+--=20
+2.43.2
+
+
+
+--EA8Ls/LOE2pcxK1c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmbLFgAKCRB4tDGHoIJi
+0q9RAQCyVWqWGhytWP+kBJ3WzC7JxIAbVulwqmeberwf5qSR8wD+LHH4hf+EDbaf
+t9ZYSsB+xhb1P9hBtrQZ60reOFyN5Ac=
+=cgf5
+-----END PGP SIGNATURE-----
+
+--EA8Ls/LOE2pcxK1c--
 
