@@ -1,221 +1,379 @@
-Return-Path: <linux-kernel+bounces-208858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0299029F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6129029F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5DE286365
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B96285B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0180B481DA;
-	Mon, 10 Jun 2024 20:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1080495E5;
+	Mon, 10 Jun 2024 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U3i7pCwa"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfCICegX"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF82B65E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A504E47F58;
+	Mon, 10 Jun 2024 20:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718051284; cv=none; b=KXyi2Yygzuun7rO97FL/gK1mWiFPIT8GModuoSGL2ILIKkF7ub7aa8I+mjqAND1kamL6pqSACQT7fHSMoijwFFDLrAhDQnEyd9Ni5DEWZw+JWSJTRQsxizsL3eZPf2n7Cwddj6KBlj4uc6JOb55MVMVMj6+smkMDet+dYlBjPZ8=
+	t=1718051321; cv=none; b=nwrutz18X9YtPCw5q1V7IYjklXsbVeh6JodkRuWmTfn6soSa28985Agts3641TF0rgCxfho7rJTqP474Wrz6FoaTJSIpecqj0tKT13iTrDinkH6lOqR0Zs3n11Hd4FIbJYRT8o6Y1826PnZ5IfwOeAn3JhrUUJcQF84OKFzliJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718051284; c=relaxed/simple;
-	bh=QLun0ZmSJonCAnqt5EQS+rf8Lz10qIaVszRa5dv+Xy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WvtaJkGo+418pj94FLtyJHLr0cNnLHFLCIO4w3+YU9phJANFAggERSFMc60KyE8X60pAa8DV6+elRXAxxcuXgoV+ivE1DS3NJHzATy6DWSf2zGt9hVUmNXg1FK6i3BdznsaqBTVK1dzAUFH9Nh/z+juzBYbqzORrMUbHr0qWKzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U3i7pCwa; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f0c3d0792so39314166b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:28:02 -0700 (PDT)
+	s=arc-20240116; t=1718051321; c=relaxed/simple;
+	bh=ZVEG7aPbCP4Ykd+1B5zD6LjxhAlH3yH1Lhrq/MloyuU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=P/TmvUt0Ppt7BNN64Dyc9Wy0Mqf2bMTzi81dRUqmoCtmzOR/EXSqBJAcZQC1vJa9x6Ss5qrjItUmw4OBfZFFLCUaU59D+6tYutVkXUWvEkrIZXrj057yFN1t65NAepavyzfX3NPVRzqH45xooSIkUnLBqZbb9rp78pxsJG1lp00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfCICegX; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f44b441b08so2307175ad.0;
+        Mon, 10 Jun 2024 13:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718051281; x=1718656081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CmaAu+iZsuEjEiEeynNp1R7+/jNy6Qzg+Lrp5NYV5lE=;
-        b=U3i7pCwaO11vdr3llWGTfyNsseYGp70qQSiIFKzj5pGUKTv3PMK8ieH+QEjfklorf4
-         rpnwpBOS62PvvoE4d41pAHsBdXy2DFsrVaZFKOC99WtwxRG3eNn/aoI2V7r4fIDTq/OO
-         S07SiMfRyoH4RCyAFufxbANdGGPlxhUkBNHnfEahyHdBv4F4pIeXW3qv18kffa2dqE1T
-         TlyC5Y2p7MCiKd0EtTWvX9Nw0KV1kS4OZsPTgy7+jHQyQScsvFdLwY4pOeCFPjx0wDgA
-         mC/KByH6wBMIs99mpolRUqNZyPOxMivA1xDlNy2j1+PK2p7cpeto1xg+HYh4kCA5iTU4
-         4e6g==
+        d=gmail.com; s=20230601; t=1718051319; x=1718656119; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1cFpyzLuTuvQcWHbZ/EqwzWic2RD3JLxE8WBA5HLp0w=;
+        b=NfCICegXCVKZyAWWVj/Y/Ph/AzruSYTXuMIP08Kk0WmWchtXbA7DMhYrCXMqf2X/bb
+         FnkOH7rPGlxXUJiOLmaHKld/sV5e3EqlB69XbmiA+eQsrqQfheTwSQfFpezORph9dufL
+         jDHrJr1Y+myJwkhBgVNs9SSGMXWb0rCEpst0/jhPMW7Z9gO7aUyEmvjlUXN9lY+5Og6i
+         4sFiT8ql+s37naJpGwj8FNJQRa2Av0jshi1WhWdwt18dEIxTzWATWAGBaC7ZK/FuA+TF
+         yMvp3jyiYXrQUHbMCyElgIbCLerq0cqqbORxIU0XlxpkYtwQN1vWn4x5z+HzWeUFotcR
+         E1QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718051281; x=1718656081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CmaAu+iZsuEjEiEeynNp1R7+/jNy6Qzg+Lrp5NYV5lE=;
-        b=lx+07EcsIvK8fKGmy+S6yE0pB+Nb6vqODiQMnGIvQovLzYGuzrt2yYsyV23UdMhDu0
-         b+vgssSZh7RK4URNSSAPblSzhe0H/PbkxjS0TPItgrMxH635f8qQUaJOuweSPB0IIL8V
-         /IK1Ut7LHdW0+jHrmfblDmfJBbtuLdNIvnq1MAO2fJb+1dFZVC5tvc4kdyBgJPLNPyM7
-         qxxbqUkrXW3E5bD93O6YQRQSoSu4HFGz9oKkxllmPE3r88rooc0tuM/tOawO74PEZIEb
-         bmRpRKqsokIh4AZsTPVJl4ZGDuaoXCOopYmV6GCwIEYxRewiwXJuYEL5iSFJ11zULmZV
-         Sl8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXnW8A9YEuSS8mPedGsztL36pmDVWYp+zOiHIQFKeuPZplbHd67eQ9py5n2ekNJ/LHmv+M3S8fdPFenV3qVuFIB43vBAuEImZxBjI7e
-X-Gm-Message-State: AOJu0YxpAqX30prBj9Z4ubbSCPFoWkqGvKqdmJJb7qK4YDmgWv8YP4WF
-	ItIF8cDavMZ/aGEs6B01YUZqNer8vbDlx5qh2vRxL9RT4cAspNSOCrlYe5VwxFWghdeJhScup52
-	03PtdDCCoYPginJ02Av0XevY1rJicOjNN0Zbt
-X-Google-Smtp-Source: AGHT+IGXSvDrAADj9Pf8Xu53OIXItT5TQK5ibDqDLkBUNlFNRj/gYFiO9Qxz2XUO3Ze11843IeDDNQqVlc+Qa3ui1pw=
-X-Received: by 2002:a17:906:89a:b0:a6f:1fc0:3fc0 with SMTP id
- a640c23a62f3a-a6f1fc04524mr225232566b.6.1718051280487; Mon, 10 Jun 2024
- 13:28:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718051319; x=1718656119;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1cFpyzLuTuvQcWHbZ/EqwzWic2RD3JLxE8WBA5HLp0w=;
+        b=LpRbfYyhUEgJF9YFNHSPQ5+5yXNaP646YaF/+sslw7YA/BG3LTzJryYP0C82agANp2
+         vOA8qEmbdod5sdzshqWrlaLg9IVN2RMOgJPAvDjQWULat+rWpp2CVUS1nu316/icP+si
+         2XBcXFN7V2YwLuako1yMgigVnMGHfuPFl7mUHwqxEAgYM6e02egz6Byfz25zyupyhYpw
+         aTedRqv2K64xf2tRHDkLIny92gQru+G7OyBor4ZbhFFD7OVCLfyslXwiJWk4++9vkNDG
+         5hJZaNHOXEyxA085803dKk9Jk1rqX27efwIKI2xKP5LM+9R6qg5fOug0kAAyRjUIBd6k
+         8UxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX89vk9hyuWitl5b/XSotxX3OzbFNhgE5rZT6olkv5T06idvQiopF2+gfJqwaWkPUIHQKwzRC+eGKeHOQ3VuYf2dcsFVZMGzrov7tdFq6RZ0J+USpMTiGDsttJZ2P9a+9YUPIjOKG4vGCZeJ1YRDUbdT9SsB4x8vCyLRnZW08or44YXIi4d
+X-Gm-Message-State: AOJu0YzrvdA0QFXGTkvpEr7z0KzdZhlIfxF0iUn+1mJn+1XlxBjy9hSs
+	KqBj3TOfhqjPokq8PScS0RV4kzjYIB+SHgcccgJT2fN0NwqcirWP
+X-Google-Smtp-Source: AGHT+IElmzpivXHDyXu3jXEPEubr7jvK9S82kp8104DULph2G/5/a+VZG+2sViwaVfyX5Vd3nQGxIg==
+X-Received: by 2002:a17:902:ccce:b0:1f4:9ce1:6e78 with SMTP id d9443c01a7336-1f6d02dda70mr133416515ad.19.1718051318482;
+        Mon, 10 Jun 2024 13:28:38 -0700 (PDT)
+Received: from localhost.localdomain (c-67-161-114-176.hsd1.wa.comcast.net. [67.161.114.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd761430sm87526715ad.55.2024.06.10.13.28.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 13:28:38 -0700 (PDT)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: [PATCH 1/1] Documentation: hyperv: Add overview of Confidential Computing VM support
+Date: Mon, 10 Jun 2024 13:28:10 -0700
+Message-Id: <20240610202810.193452-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-3-flintglass@gmail.com>
-In-Reply-To: <20240608155316.451600-3-flintglass@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 10 Jun 2024 13:27:22 -0700
-Message-ID: <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] mm: zswap: fix global shrinker error handling logic
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 8, 2024 at 8:53=E2=80=AFAM Takero Funaki <flintglass@gmail.com>=
- wrote:
->
-> This patch fixes zswap global shrinker that did not shrink zpool as
-> expected.
->
-> The issue it addresses is that `shrink_worker()` did not distinguish
-> between unexpected errors and expected error codes that should be
-> skipped, such as when there is no stored page in a memcg. This led to
-> the shrinking process being aborted on the expected error codes.
->
-> The shrinker should ignore these cases and skip to the next memcg.
-> However,  skipping all memcgs presents another problem. To address this,
-> this patch tracks progress while walking the memcg tree and checks for
-> progress once the tree walk is completed.
->
-> To handle the empty memcg case, the helper function `shrink_memcg()` is
-> modified to check if the memcg is empty and then return -ENOENT.
->
-> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
-> ---
->  mm/zswap.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index d720a42069b6..1a90f434f247 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1393,7 +1393,7 @@ static struct shrinker *zswap_alloc_shrinker(void)
->
->  static int shrink_memcg(struct mem_cgroup *memcg)
->  {
-> -       int nid, shrunk =3D 0;
-> +       int nid, shrunk =3D 0, stored =3D 0;
->
->         if (!mem_cgroup_zswap_writeback_enabled(memcg))
->                 return -EINVAL;
-> @@ -1408,9 +1408,16 @@ static int shrink_memcg(struct mem_cgroup *memcg)
->         for_each_node_state(nid, N_NORMAL_MEMORY) {
->                 unsigned long nr_to_walk =3D 1;
->
-> +               if (!list_lru_count_one(&zswap_list_lru, nid, memcg))
-> +                       continue;
-> +               ++stored;
->                 shrunk +=3D list_lru_walk_one(&zswap_list_lru, nid, memcg=
-,
->                                             &shrink_memcg_cb, NULL, &nr_t=
-o_walk);
->         }
-> +
-> +       if (!stored)
-> +               return -ENOENT;
-> +
+From: Michael Kelley <mhklinux@outlook.com>
 
-Can't we just check nr_to_walk here and return -ENOENT if it remains as 1?
+Add documentation topic for Confidential Computing (CoCo) VM support
+in Linux guests on Hyper-V.
 
-Something like:
+Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+---
+ Documentation/virt/hyperv/coco.rst  | 258 ++++++++++++++++++++++++++++
+ Documentation/virt/hyperv/index.rst |   1 +
+ 2 files changed, 259 insertions(+)
+ create mode 100644 Documentation/virt/hyperv/coco.rst
 
-if (nr_to_walk)
-    return -ENOENT;
-if (!shrunk)
-    return -EAGAIN;
-return 0;
+diff --git a/Documentation/virt/hyperv/coco.rst b/Documentation/virt/hyperv/coco.rst
+new file mode 100644
+index 000000000000..ffd6ba7a1d64
+--- /dev/null
++++ b/Documentation/virt/hyperv/coco.rst
+@@ -0,0 +1,258 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++Confidential Computing VMs
++==========================
++Hyper-V can create and run Linux guests that are Confidential Computing
++(CoCo) VMs. Such VMs cooperate with the physical processor to better protect
++the confidentiality and integrity of data in the VM's memory, even in the
++face of a hypervisor/VMM that has been compromised and may behave maliciously.
++CoCo VMs on Hyper-V share the generic CoCo VM threat model and security
++objectives described in Documentation/security/snp-tdx-threat-model.rst. Note
++that Hyper-V specific code in Linux refers to CoCo VMs as "isolated VMs" or
++"isolation VMs".
++
++A Linux CoCo VM on Hyper-V requires the cooperation and interaction of the
++following:
++
++* Physical hardware with a processor that supports CoCo VMs
++
++* The hardware runs a version of Windows/Hyper-V with support for CoCo VMs
++
++* The VM runs a version of Linux that supports being a CoCo VM
++
++The physical hardware requirements are as follows:
++
++* AMD processor with SEV-SNP. Hyper-V does not run guest VMs with AMD SME,
++  SEV, or SEV-ES encryption, and such encryption is not sufficient for a CoCo
++  VM on Hyper-V.
++
++* Intel processor with TDX
++
++To create a CoCo VM, the "Isolated VM" attribute must be specified to Hyper-V
++when the VM is created. A VM cannot be changed from a CoCo VM to a normal VM,
++or vice versa, after it is created.
++
++Operational Modes
++-----------------
++Hyper-V CoCo VMs can run in two modes. The mode is selected when the VM is
++created and cannot be changed during the life of the VM.
++
++* Fully-enlightened mode. In this mode, the guest operating system is
++  enlightened to understand and manage all aspects of running as a CoCo VM.
++
++* Paravisor mode. In this mode, a paravisor layer between the guest and the
++  host provides some operations needed to run as a CoCo VM. The guest operating
++  system can have fewer CoCo enlightenments than is required in the
++  fully-enlightened case.
++
++Conceptually, fully-enlightened mode and paravisor mode may be treated as
++points on a spectrum spanning the degree of guest enlightenment needed to run
++as a CoCo VM. Fully-enlightened mode is one end of the spectrum. A full
++implementation of paravisor mode is the other end of the spectrum, where all
++aspects of running as a CoCo VM are handled by the paravisor, and a normal
++guest OS with no knowledge of memory encryption or other aspects of CoCo VMs
++can run successfully. However, the Hyper-V implementation of paravisor mode
++does not go this far, and is somewhere in the middle of the spectrum. Some
++aspects of CoCo VMs are handled by the Hyper-V paravisor while the guest OS
++must be enlightened for other aspects. Unfortunately, there is no
++standardized enumeration of feature/functions that might be provided in the
++paravisor, and there is no standardized mechanism for a guest OS to query the
++paravisor for the feature/functions it provides. The understanding of what
++the paravisor provides is hard-coded in the guest OS.
++
++Paravisor mode has similarities to the Coconut project, which aims to provide
++a limited paravisor to provide services to the guest such as a virtual TPM.
++However, the Hyper-V paravisor generally handles more aspects of CoCo VMs
++than is currently envisioned for Coconut, and so is further toward the "no
++guest enlightenments required" end of the spectrum.
++
++In the CoCo VM threat model, the paravisor is in the guest security domain
++and must be trusted by the guest OS. By implication, the hypervisor/VMM must
++protect itself against a potentially malicious paravisor just like it
++protects against a potentially malicious guest.
++
++The hardware architectural approach to fully-enlightened vs. paravisor mode
++varies depending on the underlying processor.
++
++* With AMD SEV-SNP processors, in fully-enlightened mode the guest OS runs in
++  VMPL 0 and has full control of the guest context. In paravisor mode, the
++  guest OS runs in VMPL 2 and the paravisor runs in VMPL 0. The paravisor
++  running in VMPL 0 has privileges that the guest OS in VMPL 2 does not have.
++  Certain operations require the guest to invoke the paravisor. Furthermore, in
++  paravisor mode the guest OS operates in "virtual Top Of Memory" (vTOM) mode
++  as defined by the SEV-SNP architecture. This mode simplifies guest management
++  of memory encryption when a paravisor is used.
++
++* With Intel TDX processor, in fully-enlightened mode the guest OS runs in an
++  L1 VM. In paravisor mode, TD partitioning is used. The paravisor runs in the
++  L1 VM, and the guest OS runs in a nested L2 VM.
++
++Hyper-V exposes a synthetic MSR to guests that describes the CoCo mode. This
++MSR indicates if the underlying processor uses AMD SEV-SNP or Intel TDX, and
++whether a paravisor is being used. It is straightforward to build a single
++kernel image that can boot and run properly on either architecture, and in
++either mode.
++
++Paravisor Effects
++-----------------
++Running in paravisor mode affects the following areas of generic Linux kernel
++CoCo VM functionality:
++
++* Initial guest memory setup. When a new VM is created in paravisor mode, the
++  paravisor runs first and sets up the guest physical memory as encrypted. The
++  guest Linux does normal memory initialization, except for explicitly marking
++  appropriate ranges as decrypted (shared). In paravisor mode, Linux does not
++  perform the early boot memory setup steps that are particularly tricky with
++  AMD SEV-SNP in fully-enlightened mode.
++
++* #VC/#VE exception handling. In paravisor mode, Hyper-V configures the guest
++  CoCo VM to route #VC and #VE exceptions to VMPL 0 and the L1 VM,
++  respectively, and not the guest Linux. Consequently, these exception handlers
++  do not run in the guest Linux and are not a required enlightenment for a
++  Linux guest in paravisor mode.
++
++* CPUID flags. Both AMD SEV-SNP and Intel TDX provide a CPUID flag in the
++  guest indicating that the VM is operating with the respective hardware
++  support. While these CPUID flags are visible in fully-enlightened CoCo VMs,
++  the paravisor filters out these flags and the guest Linux does not see them.
++  Throughout the Linux kernel, explicitly testing these flags has mostly been
++  eliminated in favor of the cc_platform_has() function, with the goal of
++  abstracting the differences between SEV-SNP and TDX. But the
++  cc_platform_has() abstraction also allows the Hyper-V paravisor configuration
++  to selectively enable aspects of CoCo VM functionality even when the CPUID
++  flags are not set. The exception is early boot memory setup on SEV-SNP, which
++  tests the CPUID SEV-SNP flag. But not having the flag in Hyper-V paravisor
++  mode VM achieves the desired effect or not running SEV-SNP specific early
++  boot memory setup.
++
++* Device emulation. In paravisor mode, the Hyper-V paravisor provides
++  emulation of devices such as the IO-APIC and TPM. Because the emulation
++  happens in the paravisor in the guest context (instead of the hypervisor/VMM
++  context), MMIO accesses to these devices must be encrypted references instead
++  of the decrypted references that would be used in a fully-enlightened CoCo
++  VM. The __ioremap_caller() function has been enhanced to make a callback to
++  check whether a particular address range should be treated as encrypted
++  (private). See the "is_private_mmio" callback.
++
++* Encrypt/decrypt memory transitions. In a CoCo VM, transitioning guest
++  memory between encrypted and decrypted requires coordinating with the
++  hypervisor/VMM. This is done via callbacks invoked from
++  __set_memory_enc_pgtable(). In fully-enlightened mode, the normal SEV-SNP and
++  TDX implementations of these callbacks are used. In paravisor mode, a Hyper-V
++  specific set of callbacks is used. These callbacks invoke the paravisor so
++  that the paravisor can coordinate the transitions and inform the hypervisor
++  as necessary. See hv_vtom_init() where these callback are set up.
++
++* Interrupt injection. In fully enlightened mode, a malicious hypervisor
++  could inject interrupts into the guest OS at times that violate x86/x64
++  architectural rules. For full protection, the guest OS should include
++  enlightenments that use the interrupt injection management features provided
++  by CoCo-capable processors. In paravisor mode, the paravisor mediates
++  interrupt injection into the guest OS, and ensures that the guest OS only
++  sees interrupts that are "legal". The paravisor uses the interrupt injection
++  management features provided by the CoCo-capable physical processor, thereby
++  masking these complexities from the guest OS.
++
++Hyper-V Hypercalls
++------------------
++When in fully-enlightened mode, hypercalls made by the Linux guest are routed
++directly to the hypervisor, just as in a non-CoCo VM. But in paravisor mode,
++normal hypercalls trap to the paravisor first, which may in turn invoke the
++hypervisor. But the paravisor is idiosyncratic in this regard, and a few
++hypercalls made by the Linux guest must always be routed directly to the
++hypervisor. These hypercall sites test for a paravisor being present, and use
++a special invocation sequence. See hv_post_message(), for example.
++
++Guest communication with Hyper-V
++--------------------------------
++Separate from the generic Linux kernel handling of memory encryption in Linux
++CoCo VMs, Hyper-V has VMBus and VMBus devices that communicate using memory
++shared between the Linux guest and the host. This shared memory must be
++marked decrypted to enable communication. Furthermore, since the threat model
++includes a compromised and potentially malicious host, the guest must guard
++against leaking any unintended data to the host through this shared memory.
++
++These Hyper-V and VMBus memory pages are marked as decrypted:
++
++* VMBus monitor pages
++
++* Synthetic interrupt controller (synic) related pages (unless supplied by
++  the paravisor)
++
++* Per-cpu hypercall input and output pages (unless running with a paravisor)
++
++* VMBus ring buffers. The direct mapping is marked decrypted in
++  __vmbus_establish_gpadl(). The secondary mapping created in
++  hv_ringbuffer_init() must also include the "decrypted" attribute.
++
++When the guest writes data to memory that is shared with the host, it must
++ensure that only the intended data is written. Padding or unused fields must
++be initialized to zeros before copying into the shared memory so that random
++kernel data is not inadvertently given to the host.
++
++Similarly, when the guest reads memory that is shared with the host, it must
++validate the data before acting on it so that a malicious host cannot induce
++the guest to expose unintended data. Doing such validation can be tricky
++because the host can modify the shared memory areas even while or after
++validation is performed. For messages passed from the host to the guest in a
++VMBus ring buffer, the length of the message is validated, and the message is
++copied into a temporary (encrypted) buffer for further validation and
++processing. The copying adds a small amount of overhead, but is the only way
++to protect against a malicious host. See hv_pkt_iter_first().
++
++Many drivers for VMBus devices have been "hardened" by adding code to fully
++validate messages received over VMBus, instead of assuming that Hyper-V is
++acting cooperatively. Such drivers are marked as "allowed_in_isolated" in the
++vmbus_devs[] table. Other drivers for VMBus devices that are not needed in a
++CoCo VM have not been hardened, and they are not allowed to load in a CoCo
++VM. See vmbus_is_valid_offer() where such devices are excluded.
++
++Two VMBus devices depend on the Hyper-V host to do DMA data transfers:
++storvsc for disk I/O and netvsc for network I/O. storvsc uses the normal
++Linux kernel DMA APIs, and so bounce buffering through decrypted swiotlb
++memory is done implicitly. netvsc has two modes for data transfers. The first
++mode goes through send and receive buffer space that is explicitly allocated
++by the netvsc driver, and is used for most smaller packets. These send and
++receive buffers are marked decrypted by __vmbus_establish_gpadl(). Because
++the netvsc driver explicitly copies packets to/from these buffers, the
++equivalent of bounce buffering between encrypted and decrypted memory is
++already part of the data path. The second mode uses the normal Linux kernel
++DMA APIs, and is bounce buffered through swiotlb memory implicitly like in
++storvsc.
++
++Finally, the VMBus virtual PCI driver needs special handling in a CoCo VM.
++Linux PCI device drivers access PCI config space using standard APIs provided
++by the Linux PCI subsystem. On Hyper-V, these functions directly access MMIO
++space, and the access traps to Hyper-V for emulation. But in CoCo VMs, memory
++encryption prevents Hyper-V from reading the guest instruction stream to
++emulate the access. So in a CoCo VM, these functions must make a hypercall
++with arguments explicitly describing the access. See
++_hv_pcifront_read_config() and _hv_pcifront_write_config() and the
++"use_calls" flag indicating to use hypercalls.
++
++load_unaligned_zeropad()
++------------------------
++When transitioning memory between encrypted and decrypted, the caller of
++set_memory_encrypted() or set_memory_decrypted() is responsible for ensuring
++the memory isn't in use and isn't referenced while the transition is in
++progress. The transition has multiple steps, and includes interaction with
++the Hyper-V host. The memory is in an inconsistent state until all steps are
++complete. A reference while the state is inconsistent could result in an
++exception that can't be cleanly fixed up.
++
++However, the kernel load_unaligned_zeropad() mechanism may make stray
++references that can't be prevented by the caller of set_memory_encrypted() or
++set_memory_decrypted(), so there's specific code in the #VC or #VE exception
++handler to fixup this case. But a CoCo VM running on Hyper-V may be
++configured to run with a paravisor, with the #VC or #VE exception routed to
++the paravisor. There's no architectural way to forward the exceptions back to
++the guest kernel, and in such a case, the load_unaligned_zeropad() fixup code
++in the #VC/#VE handlers doesn't run.
++
++To avoid this problem, the Hyper-V specific functions for notifying the
++hypervisor of the transition mark pages as "not present" while a transition
++is in progress. If load_unaligned_zeropad() causes a stray reference, a
++normal page fault is generated instead of #VC or #VE, and the page-fault-
++based handlers for load_unaligned_zeropad() fixup the reference. When the
++encrypted/decrypted transition is complete, the pages are marked as "present"
++again. See hv_vtom_clear_present() and hv_vtom_set_host_visibility().
+diff --git a/Documentation/virt/hyperv/index.rst b/Documentation/virt/hyperv/index.rst
+index de447e11b4a5..79bc4080329e 100644
+--- a/Documentation/virt/hyperv/index.rst
++++ b/Documentation/virt/hyperv/index.rst
+@@ -11,3 +11,4 @@ Hyper-V Enlightenments
+    vmbus
+    clocks
+    vpci
++   coco
+-- 
+2.25.1
 
->         return shrunk ? 0 : -EAGAIN;
->  }
->
-> @@ -1418,12 +1425,18 @@ static void shrink_worker(struct work_struct *w)
->  {
->         struct mem_cgroup *memcg =3D NULL;
->         struct mem_cgroup *next_memcg;
-> -       int ret, failures =3D 0;
-> +       int ret, failures =3D 0, progress;
->         unsigned long thr;
->
->         /* Reclaim down to the accept threshold */
->         thr =3D zswap_accept_thr_pages();
->
-> +       /*
-> +        * We might start from the last memcg.
-> +        * That is not a failure.
-> +        */
-> +       progress =3D 1;
-> +
->         /* global reclaim will select cgroup in a round-robin fashion.
->          *
->          * We save iteration cursor memcg into zswap_next_shrink,
-> @@ -1461,9 +1474,12 @@ static void shrink_worker(struct work_struct *w)
->                  */
->                 if (!memcg) {
->                         spin_unlock(&zswap_shrink_lock);
-> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
-> +
-> +                       /* tree walk completed but no progress */
-> +                       if (!progress && ++failures =3D=3D MAX_RECLAIM_RE=
-TRIES)
->                                 break;
-
-It seems like we may keep iterating the entire hierarchy a lot of
-times as long as we are making any type of progress. This doesn't seem
-right.
-
->
-> +                       progress =3D 0;
->                         goto resched;
->                 }
->
-> @@ -1493,10 +1509,15 @@ static void shrink_worker(struct work_struct *w)
->                 /* drop the extra reference */
->                 mem_cgroup_put(memcg);
->
-> -               if (ret =3D=3D -EINVAL)
-> -                       break;
-> +               /* not a writeback candidate memcg */
-> +               if (ret =3D=3D -EINVAL || ret =3D=3D -ENOENT)
-> +                       continue;
-> +
-
-We should probably return -ENOENT for memcg with writeback disabled as well=
-.
-
->                 if (ret && ++failures =3D=3D MAX_RECLAIM_RETRIES)
->                         break;
-> +
-> +               ++progress;
-> +               /* reschedule as we performed some IO */
->  resched:
->                 cond_resched();
->         } while (zswap_total_pages() > thr);
-> --
-> 2.43.0
->
 
