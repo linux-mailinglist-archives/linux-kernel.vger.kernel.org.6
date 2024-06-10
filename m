@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-208481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B5B90259A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFBB902598
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0011F260EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22EC41C21376
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697C3142E97;
-	Mon, 10 Jun 2024 15:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="guGRf5sY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9F913F437;
+	Mon, 10 Jun 2024 15:26:16 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142991422CA;
-	Mon, 10 Jun 2024 15:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBD513DB92;
+	Mon, 10 Jun 2024 15:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033178; cv=none; b=ZYeT2n1EuDOFLLOO9wLx1oR/mNZQpJs8Um+EKCX4m6vBJMhcnVEtlK8AsP9RbAo8EgeAFDuUmhs7tOO5nVYalyxDgThOgTeSFCGZVmkUTucxVQJhY6VIEgjztqirCwP/lwhbhnvki4c7xZyspcTpnLGzPWZnBR5vMjwg3+DvC+w=
+	t=1718033175; cv=none; b=u/JlLq45/f3GJBh01XdjLc6S3XyGLhLOyl45jzKV+M4enoZwjmwylFf7PQQ6vQXV6v4fQ0vS8mxSp45IP0vXvIkykbFS52ceheBpctwqZAq1tzw1esEVq3XtTt9jG6VJcZQy1Z52NnzXOr1VHO3dLt+V+B0s/7zOhNPHaB+RU3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033178; c=relaxed/simple;
-	bh=1vFvZ2zJd0CuPcM/ebA1+wFn+pbF96AW6hJNpLAk5Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLkqNN9S1tlZtaGWwm4UuJ4i47jWlkOF9rPKHTtylO8GXNqlh/yIJyjpIGxpByWbhf6RbpDd+HsglXANZb1BEeIxXom7eRX+v0xgtXrbKuGYSPi6IeyTJaaqDsv+m97nt4HowJBtGUGPvO2425CjKpoq1/A1ZtgO9loDB1y8e3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=guGRf5sY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3FB6266F;
-	Mon, 10 Jun 2024 17:26:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718033163;
-	bh=1vFvZ2zJd0CuPcM/ebA1+wFn+pbF96AW6hJNpLAk5Ww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=guGRf5sYrgq1r6A4VgY7eAsmcM1uh5KGYdHpDcvYJ3srl/fSySgs//5bLsL2Kz1oP
-	 6m8fKsRK0qyGVPhfKMozSFcDadniOuWZUnSiEukS2oNT6z6KLDTy4RDRR5jqKuph7Q
-	 YhlIhcdXRs/ADnH4sJeqxfGKVVG+UUCHWM2KAz0g=
-Date: Mon, 10 Jun 2024 18:25:55 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v4 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <20240610152555.GV18479@pendragon.ideasonboard.com>
-References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
- <20240608141633.2562-4-laurent.pinchart@ideasonboard.com>
- <ZmcYnDf0YIWA9A85@surfacebook.localdomain>
+	s=arc-20240116; t=1718033175; c=relaxed/simple;
+	bh=SlQFRSvVdbk5xiE5tYj3MMJfXr3zI7zmkNmvnKGpUzY=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=lJDqo56Zaz3gCRFsuJyksoLE63SD2OHeoHvs/f9delgOJ7zCJmcppPjlbZUzO41ipErgpzS/K+PMUml9BkfPKEu2oCe0751Lv3KQKe3oOS3lrW//EUOjwlPQc2qcN312Frt68kuPQsDU5MCcpnc7WYMMeOw3WmtivK47ELE+M2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 6A24B3781107;
+	Mon, 10 Jun 2024 15:26:10 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240609113903.732882729@linuxfoundation.org>
+Date: Mon, 10 Jun 2024 16:26:10 +0100
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>, "Gustavo Padovan" <gustavo.padovan@collabora.com>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmcYnDf0YIWA9A85@surfacebook.localdomain>
+Message-ID: <2ac6c7-66671b00-9-234d2f00@171268153>
+Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?6=2E6?= 000/741] 
+ =?utf-8?q?6=2E6=2E33-rc2?= review
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 06:15:40PM +0300, Andy Shevchenko wrote:
-> Sat, Jun 08, 2024 at 05:16:32PM +0300, Laurent Pinchart kirjoitti:
-> > From: Haibo Chen <haibo.chen@nxp.com>
-> > 
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > This driver supports the GPIO function using the platform device
-> > registered by the core MFD driver.
-> > 
-> > The driver is derived from an initial implementation from NXP, available
-> > in commit 451f61b46b76 ("MLK-25917-2 gpio: adp5585-gpio: add
-> > adp5585-gpio support") in their BSP kernel tree. It has been extensively
-> > rewritten.
-> 
-> ...
-> 
-> > +static const struct platform_device_id adp5585_gpio_id_table[] = {
-> > +	{ "adp5585-gpio" },
-> 
-> > +	{ /* Sentinel */ },
-> 
-> Drop the comma.
+On Sunday, June 09, 2024 17:11 IST, Greg Kroah-Hartman <gregkh@linuxfou=
+ndation.org> wrote:
 
-I prefer keeping it.
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 741 patches in this series, all will be posted as a respons=
+e
+> to this one.  If anyone has any issues with these being applied, plea=
+se
+> let me know.
+>=20
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6=
+.33-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+.git linux-6.6.y
+> and the diffstat can be found below.
+>=20
 
-> > +};
+KernelCI report for stable-rc/linux-6.6.y for this week :-
 
--- 
-Regards,
+## stable-rc HEAD for linux-6.6.y:
+Date: 2024-06-09
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
+git/log/?h=3D7fa271200aef4ae8f0bed8a8ed81629ecd5ed2ab
 
-Laurent Pinchart
+## Build failures:
+riscv:
+    - defconfig (gcc-10) and rv32=5Fdefconfig (gcc-10)
+    - Build details :- https://linux.kernelci.org/build/stable-rc/branc=
+h/linux-6.6.y/kernel/v6.6.32-742-g7fa271200aef4/
+    - Errors :-
+arch/riscv/kernel/suspend.c:37:59: error: =E2=80=98RISCV=5FISA=5FEXT=5F=
+XLINUXENVCFG=E2=80=99 undeclared (first use in this function); did you =
+mean =E2=80=98RISCV=5FISA=5FEXT=5FZIFENCEI=E2=80=99?
+
+## Boot failures:
+No **new** boot failures seen for the stable-rc/linux-6.6.y commit head=
+ \o/
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+Shreeya Patel
+
 
