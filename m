@@ -1,74 +1,150 @@
-Return-Path: <linux-kernel+bounces-208693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D58902832
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:03:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A148F90284A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD18C1F2257B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA42B22874
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A051422C4;
-	Mon, 10 Jun 2024 18:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962C314EC47;
+	Mon, 10 Jun 2024 18:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F87/OmRO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vA76jLLq"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFD1DFFB;
-	Mon, 10 Jun 2024 18:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F421420DD;
+	Mon, 10 Jun 2024 18:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042599; cv=none; b=AWQzm2Qr9Teau7sNLLZfRZDwX1kC49IisYm84emELy7WOD+h0VbxApZwI01GByPus2Tx3xnPTVJ9rwLDT+k8mk5aiBOMdQM0/3A4XXe4dlTY8J4nb9m3ipqiP7Fp2ZfjOMvtLAKC908YuyZa+b9TNySqxlCq0xMLLTSAYlNaLHc=
+	t=1718042792; cv=none; b=Be5uU/baFMdkjA74sm505rvr47ZneXCMKoVMzL9dET7EGrP1+SiESjP+3CXeFr8Wy+yI1aJkF9yysMhcpcfNPfJWJ8RGmqyhsrna603jgugIRUWvyHf/IXxp3UsYsMOh1wIfaoeOUHRCpWjNPMFioSxJdyQnwwrVxgHPjctiNy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042599; c=relaxed/simple;
-	bh=lgBRGdnoizZmnjSmWakPVrgEZGNpul7avwjxOGtzGes=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PyuHEr0ac5VTv4zDDQbynK6z8G2VEyauIaygUiacptaSdq4y7dkANt6M07aK4aodqA7KCztqMJXZ5Zjdn2QixVdCiLWj7AV8TKWlCh8iKgv1L88qqZ57J9/hAPTnf/kxAI5mWLzZHcllaRh6Nq/gAKgUKGieZgsNd5YlYPf6Jko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F87/OmRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F69C2BBFC;
-	Mon, 10 Jun 2024 18:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718042599;
-	bh=lgBRGdnoizZmnjSmWakPVrgEZGNpul7avwjxOGtzGes=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F87/OmRO/9wJMxBr8lCxSsRHUj+9VS8qmXbLBff+eSpDqEQZMi1p/PmpY/p5d/Br0
-	 v6eFR42VhnPx+efjuqI9RTiwp9dBslGiR0WAZDWcdYeGguvUzl2UlF11CKTK8DApLE
-	 CSzdy0ogz5aX2TngW3Mu2HYP+l9dSSdju7T00EEOaGKvAxxYsISrf/c288zIBr1V6X
-	 D/+PAMQG+Y6eeBaX+pF20UbjJ/4mCDFe2K94eF33UkoLJxfd/nbg5yjobrADxbuhmu
-	 Y9THSkzBaaf31b2C+1dioXaLfmnvleLUcGRVAWWjaLCjoEsc61UfQnz8ehCAcCjKSz
-	 wSiWNG/QeXFHw==
-Date: Mon, 10 Jun 2024 11:03:17 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: conor@kernel.org, ojeda@kernel.org
-Subject: Prebuilt LLVM 18.1.7 uploaded
-Message-ID: <20240610180317.GA810381@thelio-3990X>
+	s=arc-20240116; t=1718042792; c=relaxed/simple;
+	bh=SGlTXlbAHbufnPd6Eo1oHjPC/WB5/kPMxMReDNymQY8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SOLfcB7Ab4VXWokScUAhgNrzJNsKllzfJiRS2g3P3t5nGmfNy6yJEDYmiyZRMHJeQC7kczG6ZD1Q2gwZWKPYctTtkWwiN0K+UWIzTh/qG9wvee38oQRVZ4joE+xa3xjzzaTwoukKpCvoVPfT7rXW7Jc6leZvqiIDqceAa0KOHYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vA76jLLq; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6HdW057292;
+	Mon, 10 Jun 2024 13:06:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718042777;
+	bh=h5VEq1G9dRBm6MKM7VYTq1WEKIHpwg4F8MH0iitI/x0=;
+	h=From:To:CC:Subject:Date;
+	b=vA76jLLqRjRRQ+XjFIFTkUne3Ll1Orh2yVNdhBXfBnjcFkRA3LHd6rpPdMfLbyhsx
+	 qkUp3oStrWXExp8HXxsk7XS+Z5WjwCAUrh7TmWXjye9MbppGXq0pgVS5rQl2JNEZyj
+	 Ns6WSvDZPRROSMmWrniouy1bWI7cGr9n4B7/4Adc=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AI6H96011773
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 13:06:17 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 13:06:16 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 13:06:16 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6Gtf056905;
+	Mon, 10 Jun 2024 13:06:16 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth
+ Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hari Nagalla
+	<hnagalla@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v10 0/8] TI K3 M4F support on AM62 and AM64 SoCs
+Date: Mon, 10 Jun 2024 13:06:07 -0500
+Message-ID: <20240610180615.313622-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi all,
+Hello all,
 
-I have built and uploaded LLVM 18.1.7 to
-https://mirrors.edge.kernel.org/pub/tools/llvm/.
+This is the continuation of the M4F RProc support series from here[0].
+I'm helping out with the upstream task for Hari and so versions (v8+)
+is a little different than the previous(v7-) postings[0]. Most notable
+change I've introduced being the patches factoring out common support
+from the current K3 R5 and DSP drivers have been dropped. I'd like
+to do that re-factor *after* getting this driver in shape, that way
+we have 3 similar drivers to factor out from vs trying to make those
+changes in parallel with the series adding M4 support.
 
-A couple of critical bugs were detected in 18.1.6 (which was supposed to be the
-last 18.x release) but none of them should be relevant for these toolchains:
+Anyway, details on our M4F subsystem can be found the
+the AM62 TRM in the section on the same:
 
-https://discourse.llvm.org/t/18-1-7-released/79433
+AM62x Technical Reference Manual (SPRUIV7A – MAY 2022)
+https://www.ti.com/lit/pdf/SPRUIV7A
 
-So if 18.1.6 works for you, feel free to continue using it. If there are any
-issues found, please let us know via email or
-https://github.com/ClangBuiltLinux/linux/issues/new.
+Thanks,
+Andrew
 
-Cheers,
-Nathan
+[0] https://lore.kernel.org/linux-arm-kernel/20240202175538.1705-5-hnagalla@ti.com/T/
+
+Changes for v10:
+ - Rebased on v6.10-rc3
+ - Added AM64 M4 support in DT
+ - Addressed comments by Mathieu from v9
+
+Changes for v9:
+ - Fixed reserved-memory.yaml text in [1/5]
+ - Split dts patch into one for SoC and one for board enable
+ - Corrected DT property order and formatting [4/5][5/5]
+
+Hari Nagalla (7):
+  dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+  arm64: dts: ti: k3-am62: Add M4F remoteproc node
+  arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
+  arm64: dts: ti: k3-am64: Add M4F remoteproc node
+  arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
+  arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
+  arm64: defconfig: Enable TI K3 M4 remoteproc driver
+
+Martyn Welch (1):
+  remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 +++
+ arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  13 +
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
+ arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  13 +
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  19 +
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  19 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/remoteproc/Kconfig                    |  13 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/ti_k3_m4_remoteproc.c      | 760 ++++++++++++++++++
+ 10 files changed, 983 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+
+-- 
+2.39.2
+
 
