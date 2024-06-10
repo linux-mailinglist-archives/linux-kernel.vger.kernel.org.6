@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-208876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE806902A22
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27060902A2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BC81F203F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FCE5286C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023FA1514D3;
-	Mon, 10 Jun 2024 20:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E7952F7A;
+	Mon, 10 Jun 2024 20:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSbeq8nz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JbjctN5u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09266F2FD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8E4D8B6;
+	Mon, 10 Jun 2024 20:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718052424; cv=none; b=qCBeeu/j0E4P25y4JxDj9/ywgExTbGpbwslqYaPP6J6zP9u03srMfo4na6X9v8iVRqb/eM72epVjbgAFpS3q1NWeIQu6RpQXxsJEyutxNqJqU5EPPduO2toWaGxOo5LlcWx0meiafI0FCmMR27ny+9MorUXm6yiKtuDns35IhrE=
+	t=1718052526; cv=none; b=ZGgV2zVjVIKnmp+MMTo6b89Fv237vz2YT6dNp6hLV2dUJmhc5Ofm3FYH3Os+TU8DG2bWf4Qlao6CfskpUx5j4AGi9ElKKkQkDe0Aye7VTPexEybmc8Jonhucaif9SSPvohmUSFnGlvdmp7NZSdvfI4/YPT9e4K7lTXB9/An5oS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718052424; c=relaxed/simple;
-	bh=hmr/nmEFUE7SPqQJeyyfPQSSwzYNqDpKNtuMcCl1Yo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMNpJU9l47VuIfG6sW9zfIrxK56VjdC5FbCaUQ2TfHZsNLFottMzOSJ0FpGQHXPC1Ik/Fbt2WSB/zVzX6CW5ICQ9+JFG6Pm3xQuoo+Z2pqv5SpUrsczpgRYpytqFVANxodjz7yVgv3yYzLgXJMm/JXlcXoWtHK4JGRWAiEP8V4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSbeq8nz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718052421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LxiNEvx2Od2nkRp3Ia5+BRC8R4WpmCSdFEiRdP/JyGs=;
-	b=MSbeq8nzpcliAto1XM/xhG5A/+w5uO493fmnGuqTIfrOS2HrB1DF9nUDa/E3d+WB7clz/d
-	JGniABajE827HeRWN6Pp1RpuxAc+Rz9pXPjVdkgKmyKlSQGrRFsxfTIEAbXVbgW15dBoEb
-	2eLpbnKCn7x1rJAhlmIf70/tAcx5lf0=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-B2Zls3E5PiiM24Kqw7eJEg-1; Mon, 10 Jun 2024 16:46:59 -0400
-X-MC-Unique: B2Zls3E5PiiM24Kqw7eJEg-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ebd7ad3476so2133031fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:46:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718052418; x=1718657218;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LxiNEvx2Od2nkRp3Ia5+BRC8R4WpmCSdFEiRdP/JyGs=;
-        b=EGmbepDGrxM1zTgxgiJIuZ3ZIvRaca8GXqMlAeDAFe1SxPjWN0re+z9YMayHVy1hny
-         /8TJafqdwYqNqp4W6UAFk4TgnNg5rrf20ruIncCla5TayJUpYjm21G6Hgweg/kfN8nWT
-         Omtb9LCU4tkn0zgQbYTIJ21a0yI2pIlJwoMtRgbtElPcYdWTDXs0zLXaZGwmkzIaYXrE
-         YLPXngA0/kHNCbDQVOrWg7ixaSZgdKPvbPKOa/xcJfxhBt1bktWA3HHjaqZFDXezUSre
-         Ctb01B42Iz7+Bl7WE+4xm24XpzpjpuqNL6rdsBPJbKHwMNha4PbnbWIjzO156PKexGOa
-         M0Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK6Rv2WUVDJ9hnf2Js3YbY10axCztOlaAV+zFYfQOUyJ1f9KlGbjBudZ0jagNbzYRV+oWrcnVM6fNUNj+t8HwbK9VVuc/xy2T5OhNl
-X-Gm-Message-State: AOJu0YxHU6viY/LIoBwHrnBg1DRfgHCDZ81nDFnl5yU3XGsO3xHDbrRU
-	YbFZuGhTy4Woxq3eYicIVU8sGS3DVQVwlDMMq9vOAqwbdkx3wf1ITf8qYyM0GsjefXmeOisBPDS
-	iS0ZOlC684tmDR65RWZc8dZpPEuCXlge+c6cESbXlqyiTs9hdyrfkFhxmhr+iTg==
-X-Received: by 2002:a2e:a7c8:0:b0:2eb:e505:ebd5 with SMTP id 38308e7fff4ca-2ebe505ee5emr34276231fa.3.1718052418258;
-        Mon, 10 Jun 2024 13:46:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLAjsaXc5BdwEtJmjiyy6QV5OH60ABPwmHSupwxu8PY7u/HPHzdfQDvJCtikV8xZ3ymgDwNw==
-X-Received: by 2002:a2e:a7c8:0:b0:2eb:e505:ebd5 with SMTP id 38308e7fff4ca-2ebe505ee5emr34276171fa.3.1718052417814;
-        Mon, 10 Jun 2024 13:46:57 -0700 (PDT)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebdcbff7fasm10900121fa.78.2024.06.10.13.46.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 13:46:57 -0700 (PDT)
-Message-ID: <882a4ba5-b0ef-4c21-8167-e2949424912c@redhat.com>
-Date: Mon, 10 Jun 2024 23:46:55 +0300
+	s=arc-20240116; t=1718052526; c=relaxed/simple;
+	bh=FOi86UUldJ0DWqgv3J6xhcGdiAK6DXsRyDRsaDmLflk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UqEh5NgkDJqJI7T6eg0Lqs40u4O+jES4KJ3eBMS8cLmWpcMEdc377x/uphAZEUotRpBF9EeGxRs5tsovtufzehu8gsrR5nKukiHV6nQ8CsyczjVP9YiuHWQd6ubTB9uV0f9N3RLIZcUjvmi7ovKX+5fCC5lKHc0xGbfFtWh0a1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JbjctN5u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86479C32789;
+	Mon, 10 Jun 2024 20:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718052525;
+	bh=FOi86UUldJ0DWqgv3J6xhcGdiAK6DXsRyDRsaDmLflk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JbjctN5ukgqDo74t/mtIe3qdJp7NLV6bNy0d+r9Tl9X8W2pffb0HzTbX9bcA2WglY
+	 u3t5dDKfR3wnUKv9jy5lrQ7feHQUisP+6OvaVf+J0CmAu+oZQQoF9dp3n+rGQNrnT9
+	 lhBQcb81GuKAGvcYAlquAO2mDYX4s1hUdkY5t/M8=
+From: Linus Torvalds <torvalds@linux-foundation.org>
+To: Peter Anvin <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch <linux-arch@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 0/7] arm64 / x86-64: low-level code generation issues
+Date: Mon, 10 Jun 2024 13:48:14 -0700
+Message-ID: <20240610204821.230388-1-torvalds@linux-foundation.org>
+X-Mailer: git-send-email 2.45.1.209.gc6f12300df
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/4] rust: add abstraction for `struct page`
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
- Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas
- <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>,
- Arnd Bergmann <arnd@arndb.de>, Trevor Gross <tmgross@umich.edu>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Danilo Krummrich <dakr@redhat.com>
-References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
- <20240528-alice-mm-v7-4-78222c31b8f4@google.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel@redhat.com>
-In-Reply-To: <20240528-alice-mm-v7-4-78222c31b8f4@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+So this is the result of me doing some profiling on my 128-core Altra
+box.  I've sent out versions of this before, but they've all been fairly
+ugly partial series.
 
-On 28/05/2024 17:58, Alice Ryhl wrote:
-> Adds a new struct called `Page` that wraps a pointer to `struct page`.
-> This struct is assumed to hold ownership over the page, so that Rust
-> code can allocate and manage pages directly.
-> 
-> +
-> +impl Drop for Page {
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants, we have ownership of the page and can free it.
-> +        unsafe { bindings::__free_pages(self.page.as_ptr(), 0) };
-> +    }
-> +}
-> 
+This is the full cleaned-up series with patches split up to be logical,
+and with fixes from some of the commentary from previous patches.
 
-What about cases where the struct page pointer is not owned or allocated 
-by this wrapper? For example, pages returned vmalloc_to_page()?
-Any thoughts about exposing a provision to avoid freeing those pages 
-during Drop?
+The first four patches are for the 'runtime constant' code, where I did
+the initial implementation on x86-64 just because I was more comfy with
+that, and the arm64 version of it came once I had the x86-64 side
+working.
 
-We've been experimenting in adapting this Page wrapper in advance for 
-page management within the Nova DRM driver.
+The horror that is __d_lookup_rcu() shows up a lot more on my Altra box
+because of the relatively pitiful caches, but it's something that I've
+wanted on x86-64 before.  The arm64 numbers just made me bite the
+bullet on the whole runtime constant thing.
 
-/Abdiel
+The last three patches are purely arm64-specific, and just fix up some
+nasty code generation in the user access functions.  I just noticed that
+I will need to implement 'user_access_save()' for KCSAN now that I do
+the unsafe user access functions. 
+
+Anyway, that 'user_access_save/restore()' issue only shows up with
+KCSAN.  And it would be a no-op thanks to arm64 doing SMAP the right way
+(pet peeve: arm64 did what I told the x86 designers to do originally,
+but they claimed was too hard, so we ended up with that CLAC/STAC
+instead)... 
+
+Sadly that "no-op for KCSAN" would is except for the horrid
+CONFIG_ARM64_SW_TTBR0_PAN case, which is why I'm not touching it.  I'm
+hoping some hapless^Whelpful arm64 person is willing to tackle this (or
+maybe make KCSAN and ARM64_SW_TTBR0_PAN incompatible in the Kconfig). 
+
+Note: the final access_ok() change in 7/7 is a API relaxation and
+cleanup, and as such much more worrisome than the other patches.  It's
+_simpler_ than the other patches, but the others aren't intended to
+really change behavior.  That one does. 
+
+Linus Torvalds (7):
+  vfs: dcache: move hashlen_hash() from callers into d_hash()
+  add default dummy 'runtime constant' infrastructure
+  x86: add 'runtime constant' support
+  arm64: add 'runtime constant' support
+  arm64: start using 'asm goto' for get_user() when available
+  arm64: start using 'asm goto' for put_user() when available
+  arm64: access_ok() optimization
+
+ arch/arm64/include/asm/runtime-const.h |  75 ++++++++++
+ arch/arm64/include/asm/uaccess.h       | 191 +++++++++++++++++--------
+ arch/arm64/kernel/mte.c                |  12 +-
+ arch/arm64/kernel/vmlinux.lds.S        |   3 +
+ arch/x86/include/asm/runtime-const.h   |  61 ++++++++
+ arch/x86/kernel/vmlinux.lds.S          |   3 +
+ fs/dcache.c                            |  17 ++-
+ include/asm-generic/Kbuild             |   1 +
+ include/asm-generic/runtime-const.h    |  15 ++
+ include/asm-generic/vmlinux.lds.h      |   8 ++
+ 10 files changed, 319 insertions(+), 67 deletions(-)
+ create mode 100644 arch/arm64/include/asm/runtime-const.h
+ create mode 100644 arch/x86/include/asm/runtime-const.h
+ create mode 100644 include/asm-generic/runtime-const.h
+
+-- 
+2.45.1.209.gc6f12300df
 
 
