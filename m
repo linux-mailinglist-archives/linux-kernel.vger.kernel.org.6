@@ -1,131 +1,200 @@
-Return-Path: <linux-kernel+bounces-209053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3FE902C65
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:18:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF62902C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF771F2283D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0F91F2224A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA0E152176;
-	Mon, 10 Jun 2024 23:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A38C1527A3;
+	Mon, 10 Jun 2024 23:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7m+kI7V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFomoEhJ"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE29D54FAD;
-	Mon, 10 Jun 2024 23:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C34715219B;
+	Mon, 10 Jun 2024 23:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718061525; cv=none; b=XLjIho1/Y4tQFhGKpGR0axiwKlCdfPi8u08/9UIQLNzmk8pF1hlZvw1zU5NeO0eFOjmDa7h7/cXkPNHdGhMLZoZEmi/uFzk0zN3hOIHgmNLHDxm6iYj81BnHiTziNByhpGtWm4mhPDhuI4/AEhss+86w5b6dcM84/xolV3sMNdU=
+	t=1718061527; cv=none; b=D6P0qNE1NSdczcg+mJqUHPTty2uoB/yyZmFtg8qGLV7Fpw6+Js1hAH/42II4ijYJUQ/weqCdyyBeIP47qE1mTfvHljsY0ecxbfR0kdRHMuCdrwryEyi/wRpQKBfz0BxNhAdVlJS4hUMxe6n7KxKleKGAAt5X+wpfHzgupX1SHEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718061525; c=relaxed/simple;
-	bh=KIyL2/Hl4FaIl2MR/Gi9klRT1Z9ieuVHLhL4igv4HKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5ZMa+qYXsHxw+wjUda0lHfMIPqLEF/aSvseaQQxIDFjrQtshL3l42kuJGeIAufPAi1fc4k8rWsvtj32Zxqb4NK6Sj4BF42VAEAwzZDqkGOra3hRIypO55fRYnKhRaPK6JHCcjzKMkgU+PAp6/ZLbufk7thE+BSCg86EZh9ec1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7m+kI7V; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718061522; x=1749597522;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KIyL2/Hl4FaIl2MR/Gi9klRT1Z9ieuVHLhL4igv4HKw=;
-  b=e7m+kI7VAbj1qz69uuH11lW+LphIRjgygNpKzMBi/2ugUjLSSJADuJG/
-   p/cBpz5rDukLsf8sCJU/Ubn4WqtFgyujNjJBMw5Qkf995SUOYFdYXT7yF
-   8C5HW61TS/9gRJAIUcUEo835I/wYFM25sXj2bYJilQijqzWx+xMHSDKVn
-   iylV0JDxZdjjDPUGB3GLCPIIN5wpGbXYjBKtCDyKf/m1CEzk++rhUqOQm
-   AOkVOCQwTRtuxlUhK2L2gRxzK1kksrm4ijZUuiddq21QcMr8k/BORK84Z
-   Yc1vcoSQR23ZwIgxfYt7vV8kDkcyniTjkj9AIpCSnKTkRnbmvwy6q+fXO
-   w==;
-X-CSE-ConnectionGUID: LfkXujOERxGJFOfRwhNM4w==
-X-CSE-MsgGUID: qLNlt7UdRZuQVbg4VMzngw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12008205"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="12008205"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 16:18:42 -0700
-X-CSE-ConnectionGUID: 26nkzdepRRavkqvQZ6bjbg==
-X-CSE-MsgGUID: 0M+KnpDiQsGcNL9mbEd6OA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="76672525"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 10 Jun 2024 16:18:39 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGoHc-0002Zd-3A;
-	Mon, 10 Jun 2024 23:18:36 +0000
-Date: Tue, 11 Jun 2024 07:18:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: oe-kbuild-all@lists.linux.dev, arulponn@cisco.com, djhawar@cisco.com,
-	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Karan Tilak Kumar <kartilak@cisco.com>
-Subject: Re: [PATCH 06/14] scsi: fnic: Add and integrate support for FDMI
-Message-ID: <202406110734.p2v8dq9v-lkp@intel.com>
-References: <20240610215100.673158-7-kartilak@cisco.com>
+	s=arc-20240116; t=1718061527; c=relaxed/simple;
+	bh=rjTdHKpy4KIpkDow1PB/1VMECY8dd6bPkMlGvGUcKug=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=L0CbTjFdz+x0PtELtER7U56+sE1WYGpb/HCCjfD3+fCnwaBR/j8zvBRsb76GKIEnQ7x6+SxvJPgUsrRS5IxPGAbKHpmWyO8Nlwi0zfhQqLPBYMzOWe5oFfb8QFKMwjQ+UC4lq55ANf6BU16YNqxVG44t4WoQ97vjIYxIwT/DJWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFomoEhJ; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-80b8d45e6b7so684665241.3;
+        Mon, 10 Jun 2024 16:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718061525; x=1718666325; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QpHB6EFgU/Pew3/eTX8AGPUmphuyA4goy7tWBK/JGg8=;
+        b=RFomoEhJ8uzVg88ZK4v097AWM6r02ZkgpBZCtHe+unFh8fImVmgtkz1lHpFc283Lrn
+         CFyg+h07IpNPqGHRbY/q/wt63sUkioBFS1x36mnmxF3jBs94M0LhDHq8Ij5qTwvxgu2/
+         WN6ppNSJ6fQj7th63U/+E/t8fRd+GZGqIb/FNp5nRUo5y3AZasUGN+ew32rU91eArNcQ
+         +GBRBpwwDcgxDla8DS2WW2z6PO3TafH08mTFteytdfcivC43CZWtNEBSXXox6o/W71LP
+         T3dScCCn5X1WSHK21F404y5MZWYDH1wHsrMuiDyNkSU/zthThhyg29uB4Y7iKbWbC5N3
+         dMog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718061525; x=1718666325;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QpHB6EFgU/Pew3/eTX8AGPUmphuyA4goy7tWBK/JGg8=;
+        b=lD9RaeN+pZmBpfxqYuMBeNzdtyo7yXyW5wkIoY2oC5y1EpIUsrp3qSg9qiBAIPpFKP
+         DQ+T0c21RdL8zD5EVG2LHHTr5oVoxBcvC5nENiQRMxwFJKas9Cy2Kru+99ceSeGd3o/f
+         AYrYIlt3/s3UeYf8ZmDZWutEhwUXZTKpc9XWHRe81RLo2MJxGpeB8y0IUN5Kii1YPobf
+         EOJWFDpLlNw5XxwlVh2Hypc5f/MG0MlNJsaRoJ+PMvCD+EZAVu/6s3hAW/9FOoZy46BK
+         qjWk1cHNX9P9n1W40VAqohTeSb+QGmpeh+YImEeC3MlT8geb37ib3DgJ32fhJ6QkhDCz
+         7CPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbt/cw/2f6TkGqfPh9O/92l762I0URectG+LhHDwqBfzLE+NtUFyM65Rq6abdh9tinv5CXVuUswAcy+3HRxRvmo3kRbCHtugZQOP7nx6Qj8jnChbLgNyJMhwoAXxmQUdknifHfIi7B8ERuQcfYXsYlziHdyFURG/3RSV4p
+X-Gm-Message-State: AOJu0YyPr4gFFk/75YGXqdYLURl9K0jKVbAPD9RgAano19yARAo+DZh/
+	RMUUG0T3CdLnW4io0Z1gVZCKCegKQa439ft6xuMAXMz0fuDkM1LA
+X-Google-Smtp-Source: AGHT+IGQUPeKpDgPBnPgIHioUoIKBKuq2BPQe1+Z3hybaayCvOgodUE7MohCPPDFsQNL/qXioD4ggg==
+X-Received: by 2002:a05:6102:9c7:b0:48c:374c:b30c with SMTP id ada2fe7eead31-48c374cb530mr8921118137.9.1718061525013;
+        Mon, 10 Jun 2024 16:18:45 -0700 (PDT)
+Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-795593165e7sm233737685a.65.2024.06.10.16.18.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 16:18:44 -0700 (PDT)
+Date: Mon, 10 Jun 2024 19:18:43 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Chengen Du <chengen.du@canonical.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ kaber@trash.net, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org
+Message-ID: <666789d3d9d2a_bf52c294e9@willemb.c.googlers.com.notmuch>
+In-Reply-To: <CAPza5qfVzV7NFiVY1jcZR-+0ey-uKgUjV6OcjmDFvKG3T-2SXA@mail.gmail.com>
+References: <20240608025347.90680-1-chengen.du@canonical.com>
+ <66660e3cd5636_8dbbb294c@willemb.c.googlers.com.notmuch>
+ <CAPza5qfVzV7NFiVY1jcZR-+0ey-uKgUjV6OcjmDFvKG3T-2SXA@mail.gmail.com>
+Subject: Re: [PATCH v6] af_packet: Handle outgoing VLAN packets without
+ hardware offloading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610215100.673158-7-kartilak@cisco.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Karan,
+Chengen Du wrote:
+> Hi Willem,
+> =
 
-kernel test robot noticed the following build warnings:
+> I'm sorry, but I would like to confirm the issue further.
+> =
 
-[auto build test WARNING on mkp-scsi/for-next]
-[also build test WARNING on jejb-scsi/for-next linus/master v6.10-rc3 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> On Mon, Jun 10, 2024 at 4:19=E2=80=AFAM Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+> >
+> > Chengen Du wrote:
+> > > The issue initially stems from libpcap. The ethertype will be overw=
+ritten
+> > > as the VLAN TPID if the network interface lacks hardware VLAN offlo=
+ading.
+> > > In the outbound packet path, if hardware VLAN offloading is unavail=
+able,
+> > > the VLAN tag is inserted into the payload but then cleared from the=
+ sk_buff
+> > > struct. Consequently, this can lead to a false negative when checki=
+ng for
+> > > the presence of a VLAN tag, causing the packet sniffing outcome to =
+lack
+> > > VLAN tag information (i.e., TCI-TPID). As a result, the packet capt=
+uring
+> > > tool may be unable to parse packets as expected.
+> > >
+> > > The TCI-TPID is missing because the prb_fill_vlan_info() function d=
+oes not
+> > > modify the tp_vlan_tci/tp_vlan_tpid values, as the information is i=
+n the
+> > > payload and not in the sk_buff struct. The skb_vlan_tag_present() f=
+unction
+> > > only checks vlan_all in the sk_buff struct. In cooked mode, the L2 =
+header
+> > > is stripped, preventing the packet capturing tool from determining =
+the
+> > > correct TCI-TPID value. Additionally, the protocol in SLL is incorr=
+ect,
+> > > which means the packet capturing tool cannot parse the L3 header co=
+rrectly.
+> > >
+> > > Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
+> > > Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen=
+.du@canonical.com/T/#u
+> > > Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Chengen Du <chengen.du@canonical.com>
+> >
+> > Overall, solid.
+> >
+> > > ---
+> > >  net/packet/af_packet.c | 57 ++++++++++++++++++++++++++++++++++++++=
+++--
+> > >  1 file changed, 55 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> > > index ea3ebc160e25..8cffbe1f912d 100644
+> > > --- a/net/packet/af_packet.c
+> > > +++ b/net/packet/af_packet.c
+> > > @@ -538,6 +538,43 @@ static void *packet_current_frame(struct packe=
+t_sock *po,
+> > >       return packet_lookup_frame(po, rb, rb->head, status);
+> > >  }
+> > >
+> > > +static u16 vlan_get_tci(struct sk_buff *skb)
+> > > +{
+> > > +     struct vlan_hdr vhdr, *vh;
+> > > +     u8 *skb_orig_data =3D skb->data;
+> > > +     int skb_orig_len =3D skb->len;
+> > > +
+> > > +     skb_push(skb, skb->data - skb_mac_header(skb));
+> > > +     vh =3D skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr)=
+;
+> >
+> > Don't harcode Ethernet.
+> >
+> > According to documentation VLANs are used with other link layers.
+> >
+> > More importantly, in practice PF_PACKET allows inserting this
+> > skb->protocol on any device.
+> >
+> > We don't use link layer specific constants anywhere in the packet
+> > socket code for this reason. But instead dev->hard_header_len.
+> >
+> > One caveat there is variable length link layer headers, where
+> > dev->min_header_len !=3D dev->hard_header_len. Will just have to fail=
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-pr_info-pr_err/20240611-060227
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20240610215100.673158-7-kartilak%40cisco.com
-patch subject: [PATCH 06/14] scsi: fnic: Add and integrate support for FDMI
-reproduce: (https://download.01.org/0day-ci/archive/20240611/202406110734.p2v8dq9v-lkp@intel.com/reproduce)
+> > on those.
+> =
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406110734.p2v8dq9v-lkp@intel.com/
+> Thank you for pointing out this error. I would like to confirm if I
+> need to use dev->hard_header_len to get the correct header length and
+> return zero if dev->min_header_len !=3D dev->hard_header_len to handle
+> variable-length link layer headers. Is there something I
+> misunderstand, or are there other aspects I need to consider further?
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
-   ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
-   ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
->> ./drivers/scsi/fnic/fnic_pci_subsys_devid.c: 11 linux/version.h not needed.
-   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./samples/trace_events/trace_custom_sched.c: 11 linux/version.h not needed.
-   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 423: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
+That's right.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The min_header_len !=3D hard_header_len check is annoying and may seem
+pedantic. But it's the only way to trust that the next header starts
+at hard_header_len.=
 
