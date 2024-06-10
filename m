@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-208358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC09902404
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:26:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2CF9023FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28606B22F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737551C21DA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D88B12F582;
-	Mon, 10 Jun 2024 14:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328DF12F399;
+	Mon, 10 Jun 2024 14:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D0QsAhn6"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UaqHKqtP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8998F824BC;
-	Mon, 10 Jun 2024 14:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E171A824BC;
+	Mon, 10 Jun 2024 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718029561; cv=none; b=sNBL3C3NAYWmfDks54Nyj37EcQzV2wbzlwxNGXvg6qhLwFy/b2IwZyyFP5VtGlTifKklMUp2caWJaXKiPvGne1ZG9Gr3K6wv+8fmQp7I6ID5JjJQ5pKDAMqN00+uBJmAiyDUjQuiBchpiY0yre/nPG9fqjAG6t0GQbeSV4zvbQc=
+	t=1718029388; cv=none; b=o86G9k92tRiXQynaG6Riz/Mom4SpMG+paoL3t5UBCN6xVO1xFmq/z25Ypqv2wp2Kz9CGMsEf+JLbA3VMpnr9qRRBGJVcXCFJlRgWFfjBCpRwC5iALZjWNxQGfnK/fTYzxqVFoamAHGjmzKhThvdhjKvMAIVkJgEWn5dVqd2uCrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718029561; c=relaxed/simple;
-	bh=1MALhVTCXvaaSPsLKS6EA4XQxIwuQjsSEcf83lfWSVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvTDuDoCYVtH2QMA6zVorB+sOaHvf5VcKG02Xy3Ew59vF6zkoniMBnWBzvuRbjeXCm9vSRGslXDNe/EEG11OAg6YCsSAAuRkJhTcv5wWvLrsvwU+eN9/4Z7//Xfx+IhoCasN4r0BEXo8x3ae1P0a7Q61cqPiDXM6YY1SMWJJHGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D0QsAhn6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ADvAEo029547;
-	Mon, 10 Jun 2024 14:25:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=9
-	A1fnRaAIAcs+I/+xS5/n4SQRErLpAGc0NlZwmylIis=; b=D0QsAhn6REYN+fay+
-	+OO1bpl4LVfs9ntfPkLSHqjU+w2hfUnm2vJPx3jONjvfFNjSfrhjmRlkNtvEkcHA
-	AewNK55brvhVho5rNbutXJBuSanRwYC2fGU7XAkrWVQDHKEnmVXZ6xIWkHTFukj9
-	xT2Fcv6waLclTcpqelOUbgE6f0xAzmZeYQyaegje4rz09gos/duySwqOScOKehC1
-	b8UxbekNaoXOf8vdaX5B/L+vxTj71qp0gMpkXfLD3fVtNx11XmrRAfqZCavQwiRg
-	dnirHulAoLU0ok0hvqMKd2O8SydktJLt1QuSXs/mYelPo8CqttPrO7wiY+/WkYcv
-	KAzzg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yp2ddr50e-1
+	s=arc-20240116; t=1718029388; c=relaxed/simple;
+	bh=H+f7kBwQGLRlS9stWvV1R4/huvpLOvxicj9vrY72Mwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ja+wldOxHuwy5m5EJdHx0Rlbooomm9/9KsgNZL+y20pislUPuMFqzzbHqygkgGid7gpMQ2nrCoR5RzLKdnazmcc1PyxSB2LtWkinrfkT8O9WkU9VgMNqLEB2EHx34Jnj3dPNMv8ebdR5DnPil3E9cHrczwWwrEIDq3hkhtDXtyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UaqHKqtP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEDo6D023208;
+	Mon, 10 Jun 2024 14:22:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IT8sPCRCYHphIwu7Jr5FVfrM/uRqAW7zaQPKoTJM2lQ=; b=UaqHKqtPW3jvY39j
+	JndvfGxIJZFmxlLTgjwDalrrLR0gOfjYvfQIabjSSB1QGXfEMWZ+Eon4O0IogWJi
+	Aq+E4Ilg4bOjmZbRC7mWdR353ZFPHrCgPuz2t5fTbQRTM2Na0M4eQxHWp1Ncn+9c
+	KtYE8ek7nNA76ql43QaSlZAijvQkLPYG8PIky1/I59xCDmZ27s+22I7Wvt3JCKPv
+	OtfQXxL1KBbUI9X1JKCcQQuc9Zo4JyU/M9AFDgMvRKXnWPvFrw7acg4lTWVfnG+B
+	tSIMXbWx6KWOEJ0tktImemzq+8W3zjRd6UV0ZaNafco8FVt30iUneyUssk6HipGD
+	f/pH7A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfcv3tbk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:25:51 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45AEPoNb009931;
-	Mon, 10 Jun 2024 14:25:50 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yp2ddr4wq-1
+	Mon, 10 Jun 2024 14:22:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEMqvx032184
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:25:50 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45ABxWOj023597;
-	Mon, 10 Jun 2024 14:22:45 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn3um7pw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:22:45 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45AEMenM31195834
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Jun 2024 14:22:42 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2085120043;
-	Mon, 10 Jun 2024 14:22:40 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC0AB20040;
-	Mon, 10 Jun 2024 14:22:36 +0000 (GMT)
-Received: from [9.43.26.142] (unknown [9.43.26.142])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 10 Jun 2024 14:22:36 +0000 (GMT)
-Message-ID: <92752ed4-0091-4a98-8af7-dd58bc5432bc@linux.ibm.com>
-Date: Mon, 10 Jun 2024 19:52:35 +0530
+	Mon, 10 Jun 2024 14:22:52 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 07:22:51 -0700
+Message-ID: <fdf878a7-a2c9-431e-a5c2-c7ba328c1fb3@quicinc.com>
+Date: Mon, 10 Jun 2024 07:22:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,134 +64,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] tools/perf: Fix the nrcpus in perf bench futex to
- enable the run when all CPU's are not online
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
-        jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
-        namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
-References: <20240607044354.82225-1-atrajeev@linux.vnet.ibm.com>
-Content-Language: en-GB
-From: Disha Goel <disgoel@linux.ibm.com>
-In-Reply-To: <20240607044354.82225-1-atrajeev@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] regulator: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-regulator-v1-1-da338665db7a@quicinc.com>
+ <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: V2sqOEVqikLkB1I9rixbBRJHFTgczB4i
-X-Proofpoint-ORIG-GUID: pLw8LKytb_MEOT5m2C01hvqqU2knd3E_
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: su16xLbBd-LTiqBIk09QJuuGuA-ichmC
+X-Proofpoint-GUID: su16xLbBd-LTiqBIk09QJuuGuA-ichmC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1011 suspectscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 phishscore=0 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405170001 definitions=main-2406100109
 
-On 07/06/24 10:13 am, Athira Rajeev wrote:
+On 6/10/2024 1:43 AM, AngeloGioacchino Del Regno wrote:
+> Il 09/06/24 06:53, Jeff Johnson ha scritto:
+>> On x86, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+>>
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro to all files
+>> which have a MODULE_LICENSE(). This includes mtk-dvfsrc-regulator.c, which
+>> did not produce a warning with the x86 allmodconfig, since it may cause
+>> this warning with other configurations.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>   drivers/regulator/da9121-regulator.c     | 1 +
+>>   drivers/regulator/max20411-regulator.c   | 1 +
+>>   drivers/regulator/mtk-dvfsrc-regulator.c | 1 +
+>>   drivers/regulator/rt4831-regulator.c     | 1 +
+>>   drivers/regulator/tps6286x-regulator.c   | 1 +
+>>   5 files changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/regulator/da9121-regulator.c b/drivers/regulator/da9121-regulator.c
+>> index 96257551bb12..3571b6242e3a 100644
+>> --- a/drivers/regulator/da9121-regulator.c
+>> +++ b/drivers/regulator/da9121-regulator.c
+>> @@ -1192,4 +1192,5 @@ static struct i2c_driver da9121_regulator_driver = {
+>>   
+>>   module_i2c_driver(da9121_regulator_driver);
+>>   
+>> +MODULE_DESCRIPTION("Dialog Semiconductor DA9121/DA9122/DA9220/DA9217/DA9130/DA9131/DA9132 regulator driver");
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/regulator/max20411-regulator.c b/drivers/regulator/max20411-regulator.c
+>> index 8c09dc71b16d..6614e767072f 100644
+>> --- a/drivers/regulator/max20411-regulator.c
+>> +++ b/drivers/regulator/max20411-regulator.c
+>> @@ -161,4 +161,5 @@ static struct i2c_driver max20411_i2c_driver = {
+>>   };
+>>   module_i2c_driver(max20411_i2c_driver);
+>>   
+>> +MODULE_DESCRIPTION("Maxim MAX20411 High-Efficiency Single Step-Down Converter driver");
+>>   MODULE_LICENSE("GPL");
+>> diff --git a/drivers/regulator/mtk-dvfsrc-regulator.c b/drivers/regulator/mtk-dvfsrc-regulator.c
+>> index f1280d45265d..1941aad5e247 100644
+>> --- a/drivers/regulator/mtk-dvfsrc-regulator.c
+>> +++ b/drivers/regulator/mtk-dvfsrc-regulator.c
+>> @@ -211,4 +211,5 @@ static void __exit mtk_dvfsrc_regulator_exit(void)
+>>   module_exit(mtk_dvfsrc_regulator_exit);
+>>   
+>>   MODULE_AUTHOR("Arvin wang <arvin.wang@mediatek.com>");
+>> +MODULE_DESCRIPTION("MediaTek DVFSRC regulator driver");
+> 
+> Can you please drop this one?
+> I have a series floating that is removing this driver entirely and replacing it
+> with a refactored one. Though, it has the same issue, so I'll have to send a v6.
+> 
+> Anyway, v5 is there:
+> 
+> https://lore.kernel.org/r/20240424095416.1105639-1-angelogioacchino.delregno@collabora.com
+> 
+> 
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/regulator/rt4831-regulator.c b/drivers/regulator/rt4831-regulator.c
+>> index 97e6f7e2a0ba..7d1ba0c82271 100644
+>> --- a/drivers/regulator/rt4831-regulator.c
+>> +++ b/drivers/regulator/rt4831-regulator.c
+>> @@ -202,4 +202,5 @@ static struct platform_driver rt4831_regulator_driver = {
+>>   module_platform_driver(rt4831_regulator_driver);
+>>   
+>>   MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
+>> +MODULE_DESCRIPTION("Richtek RT4831 DSV RegulatorsRichtek RT4831 DSV Regulators driver");
+> 
+> Also, there's a typo here :-)
+> 
+> After dropping mtk-dvfsrc-regulator changes and after fixing the typo:
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> Perf bench futex fails as below when attempted to run on
-> on a powerpc system:
->
->   ./perf bench futex all
->   Running futex/hash benchmark...
-> Run summary [PID 626307]: 80 threads, each operating on 1024 [private] futexes for 10 secs.
->
-> perf: pthread_create: No such file or directory
->
-> In the setup where this perf bench was ran, difference was that
-> partition had 640 CPU's, but not all CPUs were online. 80 CPUs
-> were online. While blocking the threads with futex_wait, code
-> sets the affinity using cpumask. The cpumask size used is 80
-> which is picked from "nrcpus = perf_cpu_map__nr(cpu)". Here the
-> benchmark reports fail while setting affinity for cpu number which
-> is greater than 80 or higher, because it attempts to set a bit
-> position which is not allocated on the cpumask. Fix this by changing
-> the size of cpumask to number of possible cpus and not the number
-> of online cpus.
->
-> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Thanks, will address these in v2
 
-Thanks for the fix patches, Athira.
-I have tested all three patches on a power machine (both small and max config),
-and the perf bench futex and epoll tests run fine.
+/jeff
 
-For the series:
-Tested-by: Disha Goel <disgoel@linux.ibm.com>
-
-> ---
->   tools/perf/bench/futex-hash.c          | 2 +-
->   tools/perf/bench/futex-lock-pi.c       | 2 +-
->   tools/perf/bench/futex-requeue.c       | 2 +-
->   tools/perf/bench/futex-wake-parallel.c | 2 +-
->   tools/perf/bench/futex-wake.c          | 2 +-
->   5 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-> index 0c69d20efa32..b472eded521b 100644
-> --- a/tools/perf/bench/futex-hash.c
-> +++ b/tools/perf/bench/futex-hash.c
-> @@ -174,7 +174,7 @@ int bench_futex_hash(int argc, const char **argv)
->   	pthread_attr_init(&thread_attr);
->   	gettimeofday(&bench__start, NULL);
->   
-> -	nrcpus = perf_cpu_map__nr(cpu);
-> +	nrcpus = cpu__max_cpu().cpu;
->   	cpuset = CPU_ALLOC(nrcpus);
->   	BUG_ON(!cpuset);
->   	size = CPU_ALLOC_SIZE(nrcpus);
-> diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-lock-pi.c
-> index 7a4973346180..0416120c091b 100644
-> --- a/tools/perf/bench/futex-lock-pi.c
-> +++ b/tools/perf/bench/futex-lock-pi.c
-> @@ -122,7 +122,7 @@ static void create_threads(struct worker *w, struct perf_cpu_map *cpu)
->   {
->   	cpu_set_t *cpuset;
->   	unsigned int i;
-> -	int nrcpus =  perf_cpu_map__nr(cpu);
-> +	int nrcpus =  cpu__max_cpu().cpu;
->   	size_t size;
->   
->   	threads_starting = params.nthreads;
-> diff --git a/tools/perf/bench/futex-requeue.c b/tools/perf/bench/futex-requeue.c
-> index d9ad736c1a3e..aad5bfc4fe18 100644
-> --- a/tools/perf/bench/futex-requeue.c
-> +++ b/tools/perf/bench/futex-requeue.c
-> @@ -125,7 +125,7 @@ static void block_threads(pthread_t *w, struct perf_cpu_map *cpu)
->   {
->   	cpu_set_t *cpuset;
->   	unsigned int i;
-> -	int nrcpus = perf_cpu_map__nr(cpu);
-> +	int nrcpus = cpu__max_cpu().cpu;
->   	size_t size;
->   
->   	threads_starting = params.nthreads;
-> diff --git a/tools/perf/bench/futex-wake-parallel.c b/tools/perf/bench/futex-wake-parallel.c
-> index b66df553e561..90a5b91bf139 100644
-> --- a/tools/perf/bench/futex-wake-parallel.c
-> +++ b/tools/perf/bench/futex-wake-parallel.c
-> @@ -149,7 +149,7 @@ static void block_threads(pthread_t *w, struct perf_cpu_map *cpu)
->   {
->   	cpu_set_t *cpuset;
->   	unsigned int i;
-> -	int nrcpus = perf_cpu_map__nr(cpu);
-> +	int nrcpus = cpu__max_cpu().cpu;
->   	size_t size;
->   
->   	threads_starting = params.nthreads;
-> diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
-> index 690fd6d3da13..49b3c89b0b35 100644
-> --- a/tools/perf/bench/futex-wake.c
-> +++ b/tools/perf/bench/futex-wake.c
-> @@ -100,7 +100,7 @@ static void block_threads(pthread_t *w, struct perf_cpu_map *cpu)
->   	cpu_set_t *cpuset;
->   	unsigned int i;
->   	size_t size;
-> -	int nrcpus = perf_cpu_map__nr(cpu);
-> +	int nrcpus = cpu__max_cpu().cpu;
->   	threads_starting = params.nthreads;
->   
->   	cpuset = CPU_ALLOC(nrcpus);
 
