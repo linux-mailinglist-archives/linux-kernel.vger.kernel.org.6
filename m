@@ -1,90 +1,142 @@
-Return-Path: <linux-kernel+bounces-208449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C435902548
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:18:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B448902558
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD6E1C234EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7B0288207
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1746B14B084;
-	Mon, 10 Jun 2024 15:16:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5140814F9F2;
+	Mon, 10 Jun 2024 15:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4y9v3/N"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAC882483;
-	Mon, 10 Jun 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CCC142E91
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032579; cv=none; b=B4nFFNh0fhfFR1BUHFPKk4bSFroJWGD1mixVQ3v6G/HTHpV71QM2ptdt7un1oDA2JvDHL8ywwW02Sj2dyDEu0BmiFezkdLfz2rRY31OBLO1Ef6kN+GsXOL6Os/99WoUPbSWAAx4jIl7e6g0cOaSGmQYelzjfxyuKXtyOoC0oO5k=
+	t=1718032609; cv=none; b=ZGM63Z5qvZ0lSNp0prIDjyZQob0ju1LcJbn7zfdrhbmfx9/dopFZCNJSqh0J3WbCM0UHwJtwwuIeUPbIlwetnP8SpIJycjAieShKxWoKDeslHRaLM7iUQxd4LiFT30SZwn4JGpikD5KNVN77dMs6kd1n4gAk4+PlUFfyGA35WrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032579; c=relaxed/simple;
-	bh=7WETetKobdT3s6/DNAZaGWym4aHxPPI1/kHjkxitoXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P4nYVsbhnK1wlq64iPc8zp/5t5qF2F3wf4F3hi5L1BcB8L4Hxli6hx7RwmD+Th2NgcDTHa9TibKMzFdlZ/yQgYU1Fw+/kTzsgp3Z35y1fUemhQKRO5KNWhKqKqxjw+5kMcbiT/XXNriQE5FgIK2/2kKKl9AEDmIXB7FB3hQvx30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C33C2BBFC;
-	Mon, 10 Jun 2024 15:16:15 +0000 (UTC)
-Date: Mon, 10 Jun 2024 11:16:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org,
- bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
- <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "Borislav
- Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, Andy
- Lutomirski <luto@kernel.org>, "Edgecombe, Rick P"
- <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>, Linus
- Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCHv7 bpf-next 0/9] uprobe: uretprobe speed up
-Message-ID: <20240610111614.1448e721@rorschach.local.home>
-In-Reply-To: <CAEf4Bzbc99bwGcmtCa3iekXSvSrxMQzfnTViT5Y-dn8qbvJy7A@mail.gmail.com>
-References: <20240523121149.575616-1-jolsa@kernel.org>
-	<CAEf4Bza-+=04GG7Tg4U4pCQ28Oy_2F_5872EPDsX6X3Y=jhEuw@mail.gmail.com>
-	<CAEf4Bzbc99bwGcmtCa3iekXSvSrxMQzfnTViT5Y-dn8qbvJy7A@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718032609; c=relaxed/simple;
+	bh=+yw+G1cK7msJnEFsszzGBfU6Rf3R11uCYw2YDyUvmeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f8wmtJUGZyjwNOIMyfDGIcWRgzf8CgWfFFj6M24LfXdJEyqKRIjqC9Gs4aiHeo4ZF4gWATUufUjF4mU0DzZMT1VrllHU2Jf5hHtbgxz6UhpfQdMfQw4yZZLFi6+e9NtQ85mgiqUIC1B7QZZjz5/+96iTCl5JsPy4Iru7dzylU1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j4y9v3/N; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-704313fa830so1128255b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718032607; x=1718637407; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dik3EIAdL8x8Xf94kk8jsTPxO3oLRvZX6r2IYoPGz1Y=;
+        b=j4y9v3/NbE7jqrOlYVMMbQFLljUB8pbITvDV8nWTr3odI+H4558hu7FT+FWHDGX0Hq
+         kOg5dKqFwVS6+lGCcBBYMmOLjSyeSY969ibayyetg+oXh4BC8A8KuUjP82ho+jL+sLmL
+         BL4zrcH0b2TeOb/+RHYxbms6/aG3wgBSyc4jg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718032607; x=1718637407;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dik3EIAdL8x8Xf94kk8jsTPxO3oLRvZX6r2IYoPGz1Y=;
+        b=gYFRbH4XuBuKH62DHecNgz+WKdXRH3X3Zn5rJ534dQN9B56gEfKmqYOS5X/qIeCJE6
+         u1vChm2sOENsF7cPpFPfP2mb2bzhyEX4v5HwIO2HtzYsT34xks0XY/XZey4INkNHSLkq
+         IfcWXH0wUrgMbjpkSxZBjNemSvJnJzLVNcy2yEZBtngnd6lWk5TNt5B3FwonfGbCB0dS
+         VgrUBbD0oHpTe0AwWY4BYRP+N2wuhnXammOe5eksFOUIeebE9jtqUK99dwbVBXFGFWAK
+         PdApGkw4LBOTC/9SC9pPJk3HIKYlDue9omBXYS4Vk237gb9W4Ek3Wg93Ao2ucchHdNRu
+         lxyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlcRJt7FYtZ//uT7Ko/NLnQ3d0tZGOFfh+ZGWjhmJnBNSR3tri5D5HSTxPa9+OaX0z8n6w9pH88EacsQA+4guR4HqwejSLXogOQfC7
+X-Gm-Message-State: AOJu0YxZpKPn1C8TfcRl2yjh6sI4EdjYTMxLxwCvhg6MEQ8HFDXEwPpm
+	t7CbzfReeAI4N29/Qju1e8fnFqYwpIWGfYbuifoQk5bKyGAUOBgDZL+w6MzUNgEk4db9AoJYRuu
+	cBPoQj/RberdqAycFFfEKzYi1mRAvWOpJOUhF
+X-Google-Smtp-Source: AGHT+IGEqz2uPEUm9ZazQWGHr75wT8JeslBVWFP0h+6GsPtIVGespsgLdRo07/SkXqM14x2ZwkuYUCMo24PKwfJ7rkY=
+X-Received: by 2002:a17:90a:b383:b0:2bd:f3dc:62d0 with SMTP id
+ 98e67ed59e1d1-2c2bcc6336amr8441829a91.37.1718032607324; Mon, 10 Jun 2024
+ 08:16:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240605094843.4141730-1-wenst@chromium.org>
+In-Reply-To: <20240605094843.4141730-1-wenst@chromium.org>
+From: Simon Glass <sjg@chromium.org>
+Date: Mon, 10 Jun 2024 09:16:36 -0600
+Message-ID: <CAFLszTjX=ixC3pRRGJeaP=ie_yc+KcCRyQ06MBFeSZnBepaXaw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 5 Jun 2024 09:42:45 -0700
-Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+Hi Chen-Yu,
 
-> Another ping. It's been two weeks since Jiri posted the last revision
-> that got no more feedback to be addressed and everyone seems to be
-> happy with it.
+On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
+>
+> The kernel tree builds some "composite" DTBs, where the final DTB is the
+> result of applying one or more DTB overlays on top of a base DTB with
+> fdtoverlay.
+>
+> The FIT image specification already supports configurations having one
+> base DTB and overlays applied on top. It is then up to the bootloader to
+> apply said overlays and either use or pass on the final result. This
+> allows the FIT image builder to reuse the same FDT images for multiple
+> configurations, if such cases exist.
+>
+> The decomposition function depends on the kernel build system, reading
+> back the .cmd files for the to-be-packaged DTB files to check for the
+> fdtoverlay command being called. This will not work outside the kernel
+> tree. The function is off by default to keep compatibility with possible
+> existing users.
+>
+> To facilitate the decomposition and keep the code clean, the model and
+> compatitble string extraction have been moved out of the output_dtb
+> function. The FDT image description is replaced with the base file name
+> of the included image.
+>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> This is a feature I alluded to in my replies to Simon's original
+> submission of the make_fit.py script [1].
+>
+> This is again made a runtime argument as not all firmware out there
+> that boot FIT images support applying overlays. Like my previous
+> submission for disabling compression for included FDT images, the
+> bootloader found in RK3399 and MT8173 Chromebooks do not support
+> applying overlays. Another case of this is U-boot shipped by development
+> board vendors in binary form (without upstream) in an image or in
+> SPI flash on the board that were built with OF_LIBFDT_OVERLAY=n.
+> These would fail to boot FIT images with DT overlays. One such
+> example is my Hummingboard Pulse. In these cases the firmware is
+> either not upgradable or very hard to upgrade.
+>
+> I believe there is value in supporting these cases. A common script
+> shipped with the kernel source that can be shared by distros means
+> the distro people don't have to reimplement this in their downstream
+> repos or meta-packages. For ChromeOS this means reducing the amount
+> of package code we have in shell script.
+>
+> [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@google.com/
+> [2]
+>
+>  scripts/Makefile.lib |  1 +
+>  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++--------------
+>  2 files changed, 49 insertions(+), 22 deletions(-)
 
-Sorry, there's been a lot going on.
+This is a clever way to discover the included files. Does it need to
+rely on the Linux build information, or could this information somehow
+be in the .dtb files? I had expected some sort of overlay scheme in
+the source, but perhaps people have given up on that?
 
-> 
-> This is an important speed up improvement for uprobe infrastructure in
-> general and for BPF ecosystem in particular. "Uprobes are slow" is one
-> of the top complaints from production BPF users, and sys_uretprobe
-> approach is significantly improving the situation for return uprobes
-> (aka uretprobes), potentially enabling new use cases that previously
-> could have been too expensive to trace in practice and reducing the
-> overhead of the existing ones.
-> 
-> I'd appreciate the engagement from linux-trace maintainers on this
-> patch set. Given it's important for BPF and that a big part of the
-> patch set is BPF-based selftests, we'd also be happy to route all this
-> through the bpf-next tree (which would actually make logistics for us
-> much easier, but that's not the main concern). But regardless of the
-> tree, it would be nice to make a decision and go forward with it.
-
-I'll be talking with Masami about this later today.
-
--- Steve
+Regards,
+Simon
 
