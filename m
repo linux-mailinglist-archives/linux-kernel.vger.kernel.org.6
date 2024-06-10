@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-208022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D87901F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A77901F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 519D11C212B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B1F1C20CF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A80D78C7B;
-	Mon, 10 Jun 2024 10:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjrlVTFi"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B247A705;
+	Mon, 10 Jun 2024 10:34:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAB952F6A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6144278289;
+	Mon, 10 Jun 2024 10:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718015594; cv=none; b=JJx09CPlHjwerHsvzB0kYRkW1ivQgt6nemn4JIuzkE/YLKJ3F6yr7XwhZDSBLxyhVatXl4I+LnncP0RDQVFCtl7AidAUvfAyxC6FDGQX9GrdVWcS7uZNYVxVJ9WW9bwPtUJxTPSfV/znieYMpYMspMy1yG02NwqXVnM7XZvPJP8=
+	t=1718015658; cv=none; b=YlDBc7IqFCRIYj7c6H+3ShpY0tH8qMka69a03p7REK89msl8ZWcY9XY8AqnaWB03g2CBLlZzWw7bvN1/1g3+klscoYx13Q0Pxa15OwEKMfRQEvS93MGY0EhEQTf42Pg9aGYySNUo9iY2BmkXxwX3OhV63MP0zSYv8xw/G5XeqYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718015594; c=relaxed/simple;
-	bh=EkPIbkjarwpfgELEUyotr9GR0hLk3jsKg0qKrAx7zHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GkezUFsAaTmncLRViIx8Axm+ZC2rBc9fTww/VV+qrh8Pz5V3GcGLbN+txu97wkO/8HkolDxyP0BQk8Kk69X/Huu8aRS7QE5BOMsPrUB53Ea4dTficAdTrZjWaxwFSTZZD1dtoxmY5OVAfBiI4O2stskhZdfj3Yvv5Ym4P0Iuelk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjrlVTFi; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f1c567ae4so1203579f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 03:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718015591; x=1718620391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TDdtAXRXBuNi1V9L3rXEpKUonTyInwdTZxeIaRFlTPs=;
-        b=qjrlVTFizKQwfJBqnaV2BBKTwS5o0ihKcNf67kDGOePNEp7UGQ2qp84crvQdgUnmDD
-         oahDjRRbwMa12LYjjGYzHklqQVb+MkVlzEGkMvaPHKFpo7nL/pBhFj6qUlKKTUx9ZGpG
-         UzJJLp69+iVA5/Zz8D0S0ne5GfZ60LhiOIklhHHp4CT2Xg0j5J3DAMSrFyfp1FjMLRL3
-         JyH/Gwvxt5oeta14GAHsTYERfTiZr6aaq8ktpLMV1fkHVu64oLVYNPYNv4EyVaSSMSSC
-         jvlNLnuAQNnrBZxlMnBTdRDZ8hqAyLD0zASWIQcGGRspHc9ognt/38FocEkLTR0CQh5g
-         NvEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718015591; x=1718620391;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TDdtAXRXBuNi1V9L3rXEpKUonTyInwdTZxeIaRFlTPs=;
-        b=dkrss68zNAvDqrrvSXB7awx3ZY6Yh+hek0AEotjxa3qIpym+ODMJV3kr3FTWRHv1Gf
-         2rw/Pb5buyrspK+ufm4VLWpmvmrmVMNvhE8WTx/iSUnNrD1sS8dFgH/ML0WBTlC2gXyH
-         MPKv4XP6ho4r1tuaELndYFxDFcr7LqH1k+31tvkdar5UJysnIozzWEUfTRQgNUae0pO6
-         cAvJJIlasF3BQyNfOmvhbYHZ+VloNRWepbGFGjXJOZYMKOPiwDedJ5+XJsM5QLyUr8tO
-         QjkCBViZS6IYSOUThMRbGiGTQ0AZcXuF/4PZI31Ix5GrsovxtZSKZeD5+x2dA1+nWsIx
-         Gi3w==
-X-Gm-Message-State: AOJu0Yz4HwXwJJyb0sFFYDbc3uOP/i7A/QS68MKA8lU0QymrOmMkHWXh
-	SE5OKgJ2Fbx0kcokvnLi3Rp5Vb65qyr6XopkrkKyvqKxUAgx3TxAjIc3zrNjssY=
-X-Google-Smtp-Source: AGHT+IEunBvI1y6Ruwh6t/2MgDUUPlPhj4yUhiC+IYUlaEH4Q/v8giidh9vTQPWqGBGgF1Yvxln4ig==
-X-Received: by 2002:a5d:59a5:0:b0:35f:2947:e30a with SMTP id ffacd0b85a97d-35f2947e34bmr564545f8f.46.1718015591312;
-        Mon, 10 Jun 2024 03:33:11 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35f1f109346sm3913873f8f.27.2024.06.10.03.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 03:33:10 -0700 (PDT)
-Message-ID: <901c5f6e-b873-4540-8238-2eb21b85689c@linaro.org>
-Date: Mon, 10 Jun 2024 12:33:10 +0200
+	s=arc-20240116; t=1718015658; c=relaxed/simple;
+	bh=XtWJks2i9IAdE5AHADeeOUmGvpns41q5F8q5JRssxmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=daGmnfa7lEr2p1A4q6XQjdJvdn+44Oi3hr/dqBys5/9btDGquJZMUTOPa3ChNxJXTqBon+oldyaWcCM/wvqpPZsW5lLj2VY6/JRofsJLJmocN4WYrNY19MN2CiwRA4quvOiE5FGdeVlcm3MC7rV/gevuMTjUVwxz1nI2GF49Ba4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C0DC4AF1A;
+	Mon, 10 Jun 2024 10:34:14 +0000 (UTC)
+Date: Mon, 10 Jun 2024 11:34:12 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Steven Price <steven.price@arm.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v3 00/14] arm64: Support for running as a guest in Arm CCA
+Message-ID: <ZmbWpNOc7MiJEjqL@arm.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <ZmMjam3-L807AFR-@arm.com>
+ <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] thermal/debugfs: Compute maximum temperature for
- mitigation episode as a whole
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
-References: <5794974.DvuYhMxLoT@kreacher> <2279190.iZASKD2KPV@kreacher>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2279190.iZASKD2KPV@kreacher>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On 28/05/2024 16:58, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Jun 07, 2024 at 04:36:18PM +0000, Michael Kelley wrote:
+> From: Catalin Marinas <catalin.marinas@arm.com> Sent: Friday, June 7, 2024 8:13 AM
+> > On Fri, Jun 07, 2024 at 01:38:15AM +0000, Michael Kelley wrote:
+> > > In the case of a vmalloc() address, load_unaligned_zeropad() could still
+> > > make an access to the underlying pages through the linear address. In
+> > > CoCo guests on x86, both the vmalloc PTE and the linear map PTE are
+> > > flipped, so the load_unaligned_zeropad() problem can occur only during
+> > > the transition between decrypted and encrypted. But even then, the
+> > > exception handlers have code to fixup this case and allow everything to
+> > > proceed normally.
+> > >
+> > > I haven't looked at the code in your patches, but do you handle that case,
+> > > or somehow prevent it?
+> > 
+> > If we can guarantee that only full a vm_struct area is changed at a
+> > time, the vmap guard page would prevent this issue (not sure we can
+> > though). Otherwise I think we either change the set_memory_*() code to
+> > deal with the other mappings or we handle the exception.
 > 
-> Notice that the maximum temperature above the trip point must be the
-> same for all of the trip points involved in a given mitigation episode,
-> so it need not be computerd for each of them separately.
+> I don't think the vmap guard pages help. The vmalloc() memory consists
+> of individual pages that are scattered throughout the direct map. The stray
+> reference from load_unaligned_zeropad() will originate in a kmalloc'ed
+> memory page that precedes one of these scattered individual pages, and
+> will use a direct map kernel vaddr.  So the guard page in vmalloc space don't
+> come into play. At least in the Hyper-V use case, an entire vmalloc allocation
+> *is* flipped as a unit, so the guard pages do prevent a stray reference from
+> load_unaligned_zeropad() that originates in vmalloc space. At one
+> point I looked to see if load_unaligned_zeropad() is ever used on vmalloc
+> addresses.  I think the answer was "no",  making the guard page question
+> moot, but I'm not sure. :-(
+
+My point was about load_unaligned_zeropad() originating in the vmalloc
+space. What I had in mind is changing the underlying linear map via
+set_memory_*() while we have live vmalloc() mappings. But I forgot about
+the case you mentioned in a previous thread: set_memory_*() being called
+on vmalloc()'ed memory directly:
+
+https://lore.kernel.org/r/SN6PR02MB41578D7BFEDE33BD2E8246EFD4E92@SN6PR02MB4157.namprd02.prod.outlook.com/
+
+I wonder whether something like __GFP_DECRYPTED could be used to get
+shared memory from the allocation time and avoid having to change the
+vmalloc() ranges. This way functions like netvsc_init_buf() would get
+decrypted memory from the start and vmbus_establish_gpadl() would not
+need to call set_memory_decrypted() on a vmalloc() address.
+
+> Another thought: The use of load_unaligned_zeropad() is conditional on
+> CONFIG_DCACHE_WORD_ACCESS. There are #ifdef'ed alternate
+> implementations that don't use load_unaligned_zeropad() if it is not
+> enabled. I looked at just disabling it in CoCo VMs, but I don't know the
+> performance impact. I speculated that the benefits were more noticeable
+> in processors from a decade or more ago, and perhaps less so now, but
+> never did any measurements. There was also a snag in that x86-only
+> code has a usage of load_unaligned_zeropad() without an alternate
+> implementation, so I never went fully down that path. But arm64 would
+> probably "just work" if it were disabled.
+
+We shouldn't penalise the performance, especially as I expect a single
+image to run both as a guest or a host. However, I think now the linear
+map is handled correctly since we make the PTE invalid before making the
+page shared and this would force the fault path through the one that
+safely handles load_unaligned_zeropad(). Steven's patches also currently
+reject non-linear-map addresses, I guess this would be a separate
+addition.
+
+> > We also have potential user mappings, do we need to do anything about
+> > them?
 > 
-> It is sufficient to compute the maximum temperature for the mitigation
-> episode as a whole and print it accordingly, so do that.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> I'm unclear on the scenario here.  Would memory with a user mapping
+> ever be flipped between decrypted and encrypted while the user mapping
+> existed? 
 
-Indeed... :)
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
+Maybe it doesn't matter. Do we expect it the underlying pages to be
+flipped while live mappings other than the linear map exist? I assume
+not, one would first allocate and configure the memory in the kernel
+before some remap_pfn_range() to user with the appropriate pgprot.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Catalin
 
