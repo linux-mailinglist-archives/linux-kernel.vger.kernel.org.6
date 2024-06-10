@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-207833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F95901CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB84901CD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF421F218BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C2A281F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C816F079;
-	Mon, 10 Jun 2024 08:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pj7IFzhJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB096F2E8;
+	Mon, 10 Jun 2024 08:20:59 +0000 (UTC)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C8B5FBB1;
-	Mon, 10 Jun 2024 08:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84957C8E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007617; cv=none; b=gP9HgN1bgb0b48mqP8pIIWDwejTU1DgK0wf64XEXC9IaHvyansvdKHgUE1wPocFH1QXn9Z6Xd+l5abfjt2cd1RIEaw//sI60tOq71SnfnEuezghIHfwphkQz/6wcHpL7PLUTuHkYqP2T4F/5HAQYvFkr8BZYhp0BvltqqxEFoPI=
+	t=1718007658; cv=none; b=iGM9PGXTdPoC+9E1uhlr/rt5SiQtnqE+kY2TkAkwjwpL0h6RMFxEa8U4Blllc21efr0IGdZQaNNhmLOxkvp/PCa787AnZhskD5D2+AzgkBOBllEvZKeMzNMAM9cJ8Cns8DneMSWU1SaUW+7W1cLYhNkSRHlqifRI0VDmMKvZi5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007617; c=relaxed/simple;
-	bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JVXLVyqbafXeH23AI5DRkILi67Tn1m0YTSF/Nvq9zHtzopnXtaouwx1iQFHyUXxh06NGolEsJjt/WabNurHGBogyT7lrdIgmAl2DBXissFxv48ngcALk10Kolye2zxEr0POrVj/YHe7NGrLP6j7cvkfQvoK4VYcCeGFRz4akkYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pj7IFzhJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1DAC2BBFC;
-	Mon, 10 Jun 2024 08:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718007616;
-	bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pj7IFzhJOdf4S5BJSMuPtAAJdqLMuLQ4mVKIBMBOMlsyZwnKzF20RX97zqRiGxWAF
-	 qBNVSCWgN8d+nei52/EI/LCCZJTexkJfSdXphhuhFd0h9EOGYhg5EKa6ekC699urnM
-	 CwOTYFlBZOrVn33Kfap1yd1xJ9H4Cu5CGtSTnnr8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH] PCI: endpoint: make pci_epc_class constant
-Date: Mon, 10 Jun 2024 10:20:12 +0200
-Message-ID: <2024061011-citable-herbicide-1095@gregkh>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718007658; c=relaxed/simple;
+	bh=7sgjYt9bByk8VPxzdD6D4OYMgJUX6+aYap9e0viUFSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P7KXUr6hlHu7ltIzy8vPQjtROaBrbt+kVeDz/Kn3Nwyvm8187drIL4Cnm54+iA1o2TFa3oPxm1HGslMfVnfGuJnlOTf+52YvM6WvKKRGGwZo1P4Yo1QpiiOu89rDFMzWkA1LO1aTL5vXWIa8ifVXMBbMOj6Cw3IGzdtHgLb7g7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-37588517095so11559735ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:20:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718007656; x=1718612456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yw3XhbiXJGCTPVwL3WdCXnveLeLITAMMgMc7zLy57jQ=;
+        b=i8YyneoTevxk1CB5WcmsZ7RgLJLJPsQBivLJBkkdbgCUV78byxzB1uI1poiSAf2R7b
+         JyPoRkh73zxt4PcpgHHcRnpb2Y8NipgdQw/3hg5Of7nTmBuAdzXrFsrOfKkp1W9DzCN0
+         VI5mTpWWI2lvuChl+z8NtikPt5beDXW8xqbtAs8WfSjfA2uaiSoeTOxr9js59RcEMUS9
+         A9lnsR2bZ8hDESqDfQyDeYECDxp8nN9temv06JB/Wec08ODh+yQVtWFcpX8ULz2WVyJN
+         Fa1AjjOkJR4/fYR8cO9LvgdfOs6hOaPesmuTf7kneq60wW3BTg5GxKrmmUSM54HZZ1JR
+         HNEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuolWDlyBS907iKhKbCN9FLLp79cus2zYqMnZuhKUC74D9Pm72+wlT4gT18SHCANTs4YzSsds/9Li9ckSp635BANBYRbUb76bVKkyn
+X-Gm-Message-State: AOJu0YyL6qAXMWiGHoOg5t2eUpgg97fDByuxhHcfigoWhCMDcq2E/kBs
+	dJy7bZ5JLc5rlPm5qvRnnNC9T8WkGyDVSBwQX9uIzlYNrs+A9eHDDgaBPSSx
+X-Google-Smtp-Source: AGHT+IFsvja4Uwk598RHo6/Eo6FsQkQP6eGNoJ/01OwHDup4v8xPPR2dn1FXT4ufwiMZrNtrg8pNog==
+X-Received: by 2002:a92:ccc9:0:b0:375:844e:bd3e with SMTP id e9e14a558f8ab-375844ebfa6mr66467965ab.32.1718007655667;
+        Mon, 10 Jun 2024 01:20:55 -0700 (PDT)
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com. [209.85.166.182])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3759671868csm11655655ab.47.2024.06.10.01.20.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 01:20:55 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3748ebe7e53so17346595ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:20:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWL1OML3Mjo1+OgK01+nOkmWXndPV8OSK3zc4caioTnKrNJ/TVLU9OvIKGLhaozp+4uXqR0lMe7KnuyLFoY+XG7+kJ/9D7kejvWt7Cg
+X-Received: by 2002:a05:6e02:1c8b:b0:374:9427:6dd3 with SMTP id
+ e9e14a558f8ab-375803a2d0dmr100405805ab.27.1718007655076; Mon, 10 Jun 2024
+ 01:20:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Lines: 74
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2396; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=5VmHzrPdC/CIGGKylU0d9hH6o72bK54XNQDQJIirotE=; b=owGbwMvMwCRo6H6F97bub03G02pJDGlp2633nuvS1ktzDV3P/1xjbfihlLY9OqH+cyPLrq2p5 z/66OObjlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZjIN36GBVMM+/O8X/jduvG6 aGEE15IOzbRNDxkWbC6dGXn0oGizK9NmFYVmA8+SusQvAA==
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+References: <20240608152114.867961-1-lsahn@wewakecorp.com> <20240609140341.14ba3a1c62029771d60059ed@linux-foundation.org>
+ <CANTT7qjthRWX+7m749mU_CmGUO1UEvY6O9yKsStm165Lz=tqAQ@mail.gmail.com> <ZmaX7cnUiWla9FCf@kernel.org>
+In-Reply-To: <ZmaX7cnUiWla9FCf@kernel.org>
+From: Leesoo Ahn <lsahn@ooseel.net>
+Date: Mon, 10 Jun 2024 17:20:44 +0900
+X-Gmail-Original-Message-ID: <CANTT7qizqvwJDTxNQnoHYVs5Lpi4w44LPq2KQmLb1HEtkyCxhA@mail.gmail.com>
+Message-ID: <CANTT7qizqvwJDTxNQnoHYVs5Lpi4w44LPq2KQmLb1HEtkyCxhA@mail.gmail.com>
+Subject: Re: [PATCH] mm: sparse: clarify a variable name and its value
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Leesoo Ahn <lsahn@wewakecorp.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that the driver core allows for struct class to be in read-only
-memory, we should make all 'class' structures declared at build time
-placing them into read-only memory, instead of having to be dynamically
-allocated at runtime.
+2024=EB=85=84 6=EC=9B=94 10=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 3:08, M=
+ike Rapoport <rppt@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Mon, Jun 10, 2024 at 12:39:28PM +0900, Leesoo Ahn wrote:
+> > 2024=EB=85=84 6=EC=9B=94 10=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 6:0=
+3, Andrew Morton <akpm@linux-foundation.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
+> > >
+> > > On Sun,  9 Jun 2024 00:21:14 +0900 Leesoo Ahn <lsahn@ooseel.net> wrot=
+e:
+> > >
+> > > > Setting 'limit' variable to 0 might seem like it means "no limit". =
+But
+> > > > in the memblock API, 0 actually means the 'MEMBLOCK_ALLOC_ACCESSIBL=
+E'
+> > > > enum, which limits the physical address range based on
+> > > > 'memblock.current_limit'. This can be confusing.
+> > >
+> > > Does it?  From my reading, this meaning applies to the range end
+> > > address, in memblock_find_in_range_node()?  If your interpretation is
+> > > correct, this should be documented in the relevant memblock kerneldoc=
+.
+>
+> It is :-P
+>
+> > IMO, regardless of memblock documentation, it better uses
+> > MEMBLOCK_ALLOC_ACCESSIBLE enum instead of 0 as a value for the variable=
+.
+>
+> Using MEMBLOCK_ALLOC_ACCESSIBLE is a slight improvement, but renaming the
+> variable is not, IMO.
 
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: "Krzysztof Wilczyński" <kw@linux.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/endpoint/pci-epc-core.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+I will post v2 as it replaces 0 with MEMBLOCK_ALLOC_ACCESSIBLE without
+modifying the variable.
 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 47d27ec7439d..ed038dd77f83 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -14,7 +14,9 @@
- #include <linux/pci-epf.h>
- #include <linux/pci-ep-cfs.h>
- 
--static struct class *pci_epc_class;
-+static const struct class pci_epc_class = {
-+	.name = "pci_epc",
-+};
- 
- static void devm_pci_epc_release(struct device *dev, void *res)
- {
-@@ -60,7 +62,7 @@ struct pci_epc *pci_epc_get(const char *epc_name)
- 	struct device *dev;
- 	struct class_dev_iter iter;
- 
--	class_dev_iter_init(&iter, pci_epc_class, NULL, NULL);
-+	class_dev_iter_init(&iter, &pci_epc_class, NULL, NULL);
- 	while ((dev = class_dev_iter_next(&iter))) {
- 		if (strcmp(epc_name, dev_name(dev)))
- 			continue;
-@@ -867,7 +869,7 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
- 	INIT_LIST_HEAD(&epc->pci_epf);
- 
- 	device_initialize(&epc->dev);
--	epc->dev.class = pci_epc_class;
-+	epc->dev.class = &pci_epc_class;
- 	epc->dev.parent = dev;
- 	epc->dev.release = pci_epc_release;
- 	epc->ops = ops;
-@@ -927,20 +929,13 @@ EXPORT_SYMBOL_GPL(__devm_pci_epc_create);
- 
- static int __init pci_epc_init(void)
- {
--	pci_epc_class = class_create("pci_epc");
--	if (IS_ERR(pci_epc_class)) {
--		pr_err("failed to create pci epc class --> %ld\n",
--		       PTR_ERR(pci_epc_class));
--		return PTR_ERR(pci_epc_class);
--	}
--
--	return 0;
-+	return class_register(&pci_epc_class);
- }
- module_init(pci_epc_init);
- 
- static void __exit pci_epc_exit(void)
- {
--	class_destroy(pci_epc_class);
-+	class_unregister(&pci_epc_class);
- }
- module_exit(pci_epc_exit);
- 
--- 
-2.45.2
+Thank you, Andrew and Mike for the reviews.
 
+>
+> > Best regards,
+> > Leesoo
+>
+> --
+> Sincerely yours,
+> Mike.
+
+Best regards,
+Leesoo.
 
