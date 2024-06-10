@@ -1,343 +1,145 @@
-Return-Path: <linux-kernel+bounces-208626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C2990274E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE85902750
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141D7286E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 684C32878AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CE41509B6;
-	Mon, 10 Jun 2024 16:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B59214D2A3;
+	Mon, 10 Jun 2024 16:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mlTapbJx"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmDXmJ3Y"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE7F14B96F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC614B970
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038256; cv=none; b=VXOr8XDuvPyoUPoChK5ceGmr+191Ua82mI18srNtQCPDL+Kjuv2qErZwu96Vg1wAkRzGu1Uv1jcT+hn6DkHXe7AMlaCHhfHv5Re2WcJYk/XIOfa5ly+kOd32y5E5cmp7NQuo/eeID0zR/Zm5BqhMMk8lAZXLslJgC36hjkoDPCM=
+	t=1718038402; cv=none; b=eXOQGf7L1iu20MrKkAr2A7OtaLht7DBP3Rxn5Cxc0oFpe4BPiwiIkmSujBJUgLGg2TLhA9mC68+ndrQ2asSVTxxMjbRvPTbCl8im/gtkmQxnRwL4D4X10w9Gfv/WPnGMhZw3OZORT6v9QXPljz8duoMW3RwB+DVU7WJjOJ2uGgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038256; c=relaxed/simple;
-	bh=xH3hKQqms7rJx4v+wnLM1MmS11+7mqDvvvLcx+CHLIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DGTE6ZNSmyT4gldr2bj4qCtPuVS4gdk7NxR/yMCrQeqMTF9x1+2FlJqYxEynrChCLx1/NwULL3WcwnujOor55QjC3EAq7lvO4AgHcL9reBWw+W6jChVYp/H0xeOj62IVxNCuEJDiJMCnR87jGmZqHGbAxjc+ufNgnWR0A/vP4bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mlTapbJx; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6ef46d25efso351688966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:50:54 -0700 (PDT)
+	s=arc-20240116; t=1718038402; c=relaxed/simple;
+	bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0bK1lyoOf31Ngq8/vbjcSOdAUdXs6F4WY8msclIm/BHrbe3qkEFEVjSETIE9vLnCDgygvKBfepARIzvl4zD/M+cIBjETKTsRrEsW9Co0Pf2zFi9pxsl2YJdTe1DlBmdbfdGJrYVe8ugd5IOwdFvm6b3wSbiA2yj84Cs2o5B1a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmDXmJ3Y; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f0e153eddso242820066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718038252; x=1718643052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F3CvU2+4Pp+gJs/m0S3akbCT1HtMsWu1kYlbd4/2dvU=;
-        b=mlTapbJxtYYogMILHAFVEsc2AqRyLoCJV3zCJ9J/cza3YbQ4u7HrLUQkdtClNlb4dD
-         fqZnSRkYfGkSIdx8kB5R/6T7CQ7mz2A+SzSi+f4vOOkDiuMKuUzW0N7RMm/iTEszu4p2
-         4qWGlJXy/4vLnavbFth8nsy4Pcd4bCZkm16geEuVgNm/WB4H2nNfxYCRoXA+U0DpjsVq
-         VO9fMASzmpf2zGpIa1AWtnSwGiv8aAH+ib7flJP79elteQOVK9m61ZLKwDfYJJlaT88/
-         DMN5SOVk25LYnq9hjPQh1DsEQ8cDJNg9tj7CtBxFc+8QKRKKhlUuJEhFoYiD0LtJnx5S
-         VlxA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718038399; x=1718643199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=LmDXmJ3Yzniv81WTRdsZrtyZG1y6KoqY2FzHq6MQ5drqhYzqqrl4x6g+Pq1dUZk11L
+         N5m1aeKPAKW9+sdMceZiP9qUStPbxCZNKAsJOPl4bpq7ecpL7xUSi8empeWWkadyfDGE
+         Lcow7q+hnKY8QXz1ifZnNRqqYBe206OMLOFWnjDDfbM6z+I8U1wQrr7au6g1ASJJl2up
+         dM60+egFWlFm8MCe4C3VRaEfTtxs1CSENpAa2KTR5Rfi5EsbinMdIuWhy7orHbmiYUxA
+         QZkJdzEnW6yBW1PKOnnVYmcjThZa0xIypG5MNpMJ//UsGGY7DJlC10ORrtS/Sppn3qYz
+         eAkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718038252; x=1718643052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F3CvU2+4Pp+gJs/m0S3akbCT1HtMsWu1kYlbd4/2dvU=;
-        b=A6HQdSv0fum6YJqMyosxbeD5uo62uOUhCcwlnUb0Cns/x+hHDUVcKWwsSkkYi4wq+Y
-         rqPvrMcrD0k7zx3w5AZVA97rPaoRuwmuQ1hVUiPDR+UnAzieofAHR/incCDfKSoc+b8+
-         9+0uP1HIRoHSTkrdpNbacRTdHN+VDlIog3iyTUv5szpvSc41R9U3/7fMRwbVpXMyZjJN
-         dYEPt9L706Lqq/IwoP6ezrpeZ/Sq6J75MgdYFvBO+OR5nQlOj0BSk1F098RbHKiS7Vdj
-         AJTR//4k9B0pvgnleQS+UsrefEQ4uepA+Ba9MqR1qVq2U47IYVQEaZPUgdPBjLkyH7SM
-         O6DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdspsLxo4A2x2VUQ1WbInyi9orPajHHil54mnWSShJSQoh3LToq67mehOMftS9P13zlzioSCYz+dupmNxnNoJ0uMOJv/0wEgV1sqRr
-X-Gm-Message-State: AOJu0YwbikvDGG3FVRvCPbcVwPY3Bxve4dcid0Vux/4Vgq4GZ1zkgmLK
-	a57W4z7pXDE06ALtwEWwqQgmRavpPIDe7VppW0O/jOBBAZsgaokyFZzVBGFs2BYGvMryWyzKeGr
-	EF5/BCYTc1DcIgnYE341w4yYxZ62quWv9AC46vw==
-X-Google-Smtp-Source: AGHT+IGXGuIQA06ggIa7WUkyS+qpZAhdyv14xr5Qaj3dvR4PDpZ6pVMzgpmyrwPmfFam1PGSgnbhdyUr2qfE6KexKIM=
-X-Received: by 2002:a17:906:228b:b0:a6e:f62d:bd02 with SMTP id
- a640c23a62f3a-a6ef62dbe00mr436200766b.7.1718038252570; Mon, 10 Jun 2024
- 09:50:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718038399; x=1718643199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=jDFTtw2rAeDoyWAfCqtQiSsj5IXYZuEHbA4hfgcR2hA75zLxH6MAJlQzuot2AdbOaU
+         szUbpDtrAOSxx0MjFVhWh0UwlOf9+nTMIfnROymC8AToE+SfpjLimuIdr/fxq+9MiYZl
+         Eucdyxq5whwj2HO0lbWcCYQTYC7SDLlKhV7cg7R0yEdQzYkC0ZoOG717JgEICx6D8zC7
+         0RY17i+HfabjTdhrRx729d/KNb5MJm0fsXGK3uck35AzpcahaNoGbdE99bAAkJ908EMV
+         UGBV/bMgBz5kEyGMylTtZpahKKXlGSgAIYccOOryXI5J010+EnMg6h1CWLeWsO+YGSZZ
+         OMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBbN1SPcHz2IfVdgYb5qCc+fC+Jba/9mICUkqAvR6Bq4XQklqsaj1a77f0UWf+wqqdM1a45s5CZgsme01CXRC4mED6zxgW0YNvN0s9
+X-Gm-Message-State: AOJu0YwENqVuh5P9v0G5qVVFdWJojjJC0SD5pdFWcfDVtuMVkH0Vp23Y
+	vXHHUWt6Vugf3h2P0FZEwZWxfTNIs2axyf+zZcbG7gPD9BHQWuCIhzFEZc9tswY=
+X-Google-Smtp-Source: AGHT+IFEYSFuraPOa+WYVzdaL+ESVBNKCRmo08LglRUMqvJEaK4g/mE7UxIj5Y6FmBNmUXmvs8sJdQ==
+X-Received: by 2002:a17:906:e20c:b0:a6f:26a5:9f5f with SMTP id a640c23a62f3a-a6f26a5a0a5mr142869266b.42.1718038398698;
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f20563a26sm133567866b.129.2024.06.10.09.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:53:16 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] pwm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <t4xkx7mmokgj3lqmcl222s223obdahpqp6sqxgwaohisbqlbib@vitt25ggsezf>
+References: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com> <20240609-xtheadvector-v1-10-3fe591d7f109@rivosinc.com>
-In-Reply-To: <20240609-xtheadvector-v1-10-3fe591d7f109@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Mon, 10 Jun 2024 09:50:16 -0700
-Message-ID: <CALs-HssK3p7yiOg1P_f+xw_b2kFtMX8wQRkM1-RMOTdsgh9zKQ@mail.gmail.com>
-Subject: Re: [PATCH 10/13] riscv: hwprobe: Add thead vendor extension probing
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lp35xxqvbjr4igp3"
+Content-Disposition: inline
+In-Reply-To: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
+
+
+--lp35xxqvbjr4igp3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 9, 2024 at 9:45=E2=80=AFPM Charlie Jenkins <charlie@rivosinc.co=
-m> wrote:
->
-> Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
-> allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
-> vendor extension.
->
-> This new key will allow userspace code to probe for which thead vendor
-> extensions are supported. This API is modeled to be consistent with
-> RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
-> corresponding to a supported thead vendor extension of the cpumask set.
-> Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
-> to determine all of the supported thead vendor extensions in one call.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Evan Green <evan@rivosinc.com>
+Hello Jeff,
 
-You can continue to keep my tag, but I came up with some nits to pick anywa=
-y.
+On Mon, Jun 10, 2024 at 07:51:15AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
+gm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
+k.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
+=2Eo
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
+i.o
+>=20
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-> ---
->  arch/riscv/include/asm/hwprobe.h                   |  4 +--
->  .../include/asm/vendor_extensions/thead_hwprobe.h  | 18 +++++++++++
->  .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++=
-++++++
->  arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
->  arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
->  arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
->  arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
->  .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
->  8 files changed, 87 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hw=
-probe.h
-> index 630507dff5ea..e68496b4f8de 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->  /*
-> - * Copyright 2023 Rivos, Inc
-> + * Copyright 2023-2024 Rivos, Inc
->   */
->
->  #ifndef _ASM_HWPROBE_H
-> @@ -8,7 +8,7 @@
->
->  #include <uapi/asm/hwprobe.h>
->
-> -#define RISCV_HWPROBE_MAX_KEY 6
-> +#define RISCV_HWPROBE_MAX_KEY 7
->
->  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
->  {
-> diff --git a/arch/riscv/include/asm/vendor_extensions/thead_hwprobe.h b/a=
-rch/riscv/include/asm/vendor_extensions/thead_hwprobe.h
-> new file mode 100644
-> index 000000000000..925fef39a2c0
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/vendor_extensions/thead_hwprobe.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_RISCV_VENDOR_EXTENSIONS_THEAD_HWPROBE_H
-> +#define _ASM_RISCV_VENDOR_EXTENSIONS_THEAD_HWPROBE_H
-> +
-> +#include <linux/cpumask.h>
-> +
-> +#include <uapi/asm/hwprobe.h>
-> +
-> +#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_THEAD
-> +void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *pair, const st=
-ruct cpumask *cpus);
-> +#else
-> +static inline void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *=
-pair, const struct cpumask *cpus)
-> +{
-> +       pair->value =3D 0;
-> +}
-> +#endif
-> +
-> +#endif
-> diff --git a/arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h b/=
-arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h
-> new file mode 100644
-> index 000000000000..b6222e7b519e
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h
-> @@ -0,0 +1,37 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright 2024 Rivos, Inc
-> + */
-> +
-> +#ifndef _ASM_RISCV_SYS_HWPROBE_H
-> +#define _ASM_RISCV_SYS_HWPROBE_H
-> +
-> +#include <asm/cpufeature.h>
-> +
-> +#define EXT_KEY(ext)                                                    =
-               \
+Thanks for the respin. Applied for next to
 
-Nit: Do you think it should be VENDOR_EXT_KEY? I had a slight ping of
-worry that the identifier sounds so generic it might conflict with
-something later, but meh maybe it's fine.
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
 
+Thanks
+Uwe
 
-> +       do {                                                             =
-               \
-> +               if (__riscv_isa_extension_available(isainfo->isa, RISCV_I=
-SA_VENDOR_EXT_##ext)) \
-> +                       pair->value |=3D RISCV_HWPROBE_VENDOR_EXT_##ext; =
-                 \
-> +               else                                                     =
-               \
-> +                       missing |=3D RISCV_HWPROBE_VENDOR_EXT_##ext;     =
-                 \
-> +       } while (false)
-> +
-> +/*
-> + * Loop through and record extensions that 1) anyone has, and 2) anyone
-> + * doesn't have.
-> + *
-> + * _extension_checks is an arbitrary C block to set the values of pair->=
-value
-> + * and missing. It should be filled with EXT_KEY expressions.
-> + */
-> +#define VENDOR_EXTENSION_SUPPORTED(pair, cpus, per_hart_thead_bitmap, _e=
-xtension_checks)       \
+--lp35xxqvbjr4igp3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Nit: This macro was meant to be generic for all vendors, but you've
-named one of the parameters per_hart_thead_bitmap. :)
+-----BEGIN PGP SIGNATURE-----
 
-> +       do {                                                             =
-                       \
-> +               int cpu;                                                 =
-                       \
-> +               u64 missing;                                             =
-                       \
-> +               for_each_cpu(cpu, (cpus)) {                              =
-                       \
-> +                       struct riscv_isavendorinfo *isainfo =3D &(per_har=
-t_thead_bitmap)[cpu];    \
-> +                       _extension_checks                                =
-                       \
-> +               }                                                        =
-                       \
-> +               (pair)->value &=3D ~missing;                             =
-                         \
-> +       } while (false)                                                  =
-                       \
-> +
-> +#endif /* _ASM_RISCV_SYS_HWPROBE_H */
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/u=
-api/asm/hwprobe.h
-> index dda76a05420b..155a83dd1cdf 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->  /*
-> - * Copyright 2023 Rivos, Inc
-> + * Copyright 2023-2024 Rivos, Inc
->   */
->
->  #ifndef _UAPI_ASM_HWPROBE_H
-> @@ -68,6 +68,7 @@ struct riscv_hwprobe {
->  #define                RISCV_HWPROBE_MISALIGNED_UNSUPPORTED    (4 << 0)
->  #define                RISCV_HWPROBE_MISALIGNED_MASK           (7 << 0)
->  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE    6
-> +#define RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0   7
->  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->
->  /* Flags */
-> diff --git a/arch/riscv/include/uapi/asm/vendor/thead.h b/arch/riscv/incl=
-ude/uapi/asm/vendor/thead.h
-> new file mode 100644
-> index 000000000000..43790ebe5faf
-> --- /dev/null
-> +++ b/arch/riscv/include/uapi/asm/vendor/thead.h
-> @@ -0,0 +1,3 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +
-> +#define                RISCV_HWPROBE_VENDOR_EXT_XTHEADVECTOR   (1 << 0)
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwpr=
-obe.c
-> index 969ef3d59dbe..e39fa70083d3 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -13,6 +13,7 @@
->  #include <asm/uaccess.h>
->  #include <asm/unistd.h>
->  #include <asm/vector.h>
-> +#include <asm/vendor_extensions/thead_hwprobe.h>
->  #include <vdso/vsyscall.h>
->
->
-> @@ -217,6 +218,10 @@ static void hwprobe_one_pair(struct riscv_hwprobe *p=
-air,
->                         pair->value =3D riscv_cboz_block_size;
->                 break;
->
-> +       case RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0:
-> +               hwprobe_isa_vendor_ext_thead_0(pair, cpus);
-> +               break;
-> +
->         /*
->          * For forward compatibility, unknown keys don't fail the whole
->          * call, but get their element key set to -1 and value set to 0
-> diff --git a/arch/riscv/kernel/vendor_extensions/Makefile b/arch/riscv/ke=
-rnel/vendor_extensions/Makefile
-> index 353522cb3bf0..866414c81a9f 100644
-> --- a/arch/riscv/kernel/vendor_extensions/Makefile
-> +++ b/arch/riscv/kernel/vendor_extensions/Makefile
-> @@ -2,3 +2,4 @@
->
->  obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_ANDES)       +=3D andes.o
->  obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)       +=3D thead.o
-> +obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)       +=3D thead_hwprobe.o
-> diff --git a/arch/riscv/kernel/vendor_extensions/thead_hwprobe.c b/arch/r=
-iscv/kernel/vendor_extensions/thead_hwprobe.c
-> new file mode 100644
-> index 000000000000..53f65942f7e8
-> --- /dev/null
-> +++ b/arch/riscv/kernel/vendor_extensions/thead_hwprobe.c
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <asm/vendor_extensions/thead.h>
-> +#include <asm/vendor_extensions/thead_hwprobe.h>
-> +#include <asm/vendor_extensions/vendor_hwprobe.h>
-> +
-> +#include <linux/cpumask.h>
-> +#include <linux/types.h>
-> +
-> +#include <uapi/asm/hwprobe.h>
-> +#include <uapi/asm/vendor/thead.h>
-> +
-> +void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *pair, const st=
-ruct cpumask *cpus)
-> +{
-> +       VENDOR_EXTENSION_SUPPORTED(pair, cpus,
-> +                                  riscv_isa_vendor_ext_list_thead.per_ha=
-rt_isa_bitmap, {
-> +               EXT_KEY(XTHEADVECTOR);
-> +       });
-> +}
->
-> --
-> 2.44.0
->
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZnL3kACgkQj4D7WH0S
+/k7Y/gf+Oi0+dsAnW1E2XuJ43To/HG6xmMhALT1XJIHtAS1SRiuCRQ/KVw0Y07Ik
+Nr5ZJapzijm9o/YiKy3vJyMVEjozrO7E3AummZ24ZMBL7Ggz3EroPRAj8+l2v60k
+oz7i+Vs34vCraZGsPucTn52EuCnRMBh53fhz6bsKVKtOzNUD33k6c4V/BN9bIHfd
+MJpqwTO3ejnSMAUdC6ZPJc7ZTeddyiPi6u/I1UIm43Gud/1XGcnVXx7PL34kwB2R
+ng5cjCPGoiBYXfftDskl72+f2upFM5eJfueti5qqlGaT/C+wUxXQG3w5TGadSPmM
+00uycs1SX65h65o8xSssTRGIFQtOuQ==
+=OGvB
+-----END PGP SIGNATURE-----
+
+--lp35xxqvbjr4igp3--
 
