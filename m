@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-207909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A307A901DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:05:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC48C901DB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A061F257BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2DE51C21EC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0853D1369AA;
-	Mon, 10 Jun 2024 08:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4600C7CF16;
+	Mon, 10 Jun 2024 08:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+vJEdC9"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwWZ25QR"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0A67BAFF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B17C09E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718009991; cv=none; b=I7BbvRglkg4GCLdLLRepMEEfFCiKh1vKcXRqhLuQQflmWynvN0/UXJ+FJx6n6e4TAj6rtVhrSEVCUrAiIYW8jk8zQlyb5T+a8NZ1arG1/G/rmbhSmNDimjSl2psznlhWNifJ2B60GKmdU7IuhjO+CQF8ErG4cKGCl9T4/PLWbEY=
+	t=1718009998; cv=none; b=S+ItXFBxR0ALjt76hLOy5jr+ZKKBlnrTAuROEBbeVEf2KBL8HRbD6CoWkNc9+nMIXiIC6cvZx8Xc3sFsmt5IqIMTBnQAVoI8OBTDj9C45cvjuX/ht5vsjdIioCKyXOLt8EF75pK4uQ1RaCQfkNww/SvAnTCZlhGG6QF5a5tO1nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718009991; c=relaxed/simple;
-	bh=2RzKLZKa9aMbeh8zX7gRXSDK8Hv/vXOsjqYlhYXqS5Y=;
+	s=arc-20240116; t=1718009998; c=relaxed/simple;
+	bh=I56l8aUrWEsOdJKWYfI6TJlpnl4t+tX3NQmfYGnyV7M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pf2+1vBBnO7twqWf67J5gk6PKVY5KaZGLfMGgF6hqJXc6OkhzxYFK89ofoIyLlgMq09xV6QOus/1x/RL1F3qvB02tp/+6D+fLLJjeBuIMiayiVlE8N7oGdqqebf0JOZfEqyzzbeHUV3v1H2l6rKIHXGwKE+K/71NMYVp8uSYzLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+vJEdC9; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=BeDWnhf1pujv5Dvy8rjWBUFUWOVxQz+sv7i2j2dCk62jsQIIJq+GCkpXGrhVnjIQl795DKLklBbbK+jAbEj/977+c/V1TH9xyMi/zeIycqdLCAJNDR+x63ODJIcGQ9incBVanUO05q3iUG6n8T0g9UV2sX+M496apoFAhXV+Apo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwWZ25QR; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718009990; x=1749545990;
+  t=1718009997; x=1749545997;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2RzKLZKa9aMbeh8zX7gRXSDK8Hv/vXOsjqYlhYXqS5Y=;
-  b=m+vJEdC9Iej41wk0zA+0I82K8ei1Y5Tf4vxWr3iPw4z3euj86Y/1n8ce
-   W2t1zQ+morYxoWtfqwYtZE6gk6ppJg/E54lGKyM85XK0EPiCePwZ5FwgI
-   CYWen3pRQOnOMtPJbZRQnAxTQXPu6VUsOROpCKHhrpn/iNT45mQqWgUXP
-   d3nMa9c3w6p6Y3d87GYkGymOMtr986h3OvPaHQOuCusDMt8DMIoA8N+MU
-   5xwR8XCSL3cPiz/g3sfqEPpDahEDB2/0Hang9VTGhIxX+pZ1po5HjS8Bq
-   Ga9egzQ4OfC2tfpr01ia6lo2X31N/tQuj9OGEEJDWJ1xZpin8goXUW3A9
-   g==;
-X-CSE-ConnectionGUID: O/z7bgccT9CozMb1okql5Q==
-X-CSE-MsgGUID: nJb3C9WwSp+B993c2u7jmg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="17581971"
+  bh=I56l8aUrWEsOdJKWYfI6TJlpnl4t+tX3NQmfYGnyV7M=;
+  b=GwWZ25QRKt38SZPrBw59wJMufvbOz2Wu90Bh+6iPI/li6jb6f+/K6ZHp
+   lnQwn7dhazxM+ieIkO/TkYEegRvlG4uvGiCIOxUzD8IJuxzxy4skF5flD
+   Ok50pwaSetJvrv3uQApPrFXx3ls5VXL3Ie8I+LyLQjSuEiP5woD+F8SB3
+   LMMhP7hplCN+l65AoAhVdBBZysf57Qu4tbcdVxN28GtQKTi2nyePUr5iV
+   VPoqmKX/vNKp7zceUyuS4PcmM5Xu1wmlmmyV4tYlEF51+U8s9F+LHA6vR
+   vblB5soDUY9KVRhpXUcxUKfLrEuhmDAx5NWRuW4BNPxEV79MynMW91ykB
+   w==;
+X-CSE-ConnectionGUID: bH587zMWQNOziq7gB7Gpiw==
+X-CSE-MsgGUID: NMKR1Ws3TWCa+GVUi+x1YA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="17581990"
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="17581971"
+   d="scan'208";a="17581990"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 01:59:49 -0700
-X-CSE-ConnectionGUID: QxgTd28SQrGRjUA9euRVfg==
-X-CSE-MsgGUID: gs8aoJhZQmubGCpSr1nBLw==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 01:59:56 -0700
+X-CSE-ConnectionGUID: dSiXcWhERE2aZC+rbkMwCw==
+X-CSE-MsgGUID: zTw8PCNRSvSb9YRaNVvOxA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="43433021"
+   d="scan'208";a="43433094"
 Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Jun 2024 01:59:45 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 10 Jun 2024 01:59:50 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -82,9 +82,9 @@ Cc: Yi Liu <yi.l.liu@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v3 18/21] drm/rockchip: Use iommu_paging_domain_alloc()
-Date: Mon, 10 Jun 2024 16:55:52 +0800
-Message-Id: <20240610085555.88197-19-baolu.lu@linux.intel.com>
+Subject: [PATCH v3 19/21] drm/tegra: Remove call to iommu_domain_alloc()
+Date: Mon, 10 Jun 2024 16:55:53 +0800
+Message-Id: <20240610085555.88197-20-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240610085555.88197-1-baolu.lu@linux.intel.com>
 References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
@@ -96,41 +96,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit <421be3ee36a4> ("drm/rockchip: Refactor IOMMU initialisation") has
-refactored rockchip_drm_init_iommu() to pass a device that the domain is
-allocated for. Replace iommu_domain_alloc() with
-iommu_paging_domain_alloc() to retire the former.
+Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
+the bus structure. The iommu subsystem no longer relies on bus for
+operations. So iommu_domain_alloc() interface is no longer relevant.
+
+Normally, iommu_paging_domain_alloc() could be a replacement for
+iommu_domain_alloc() if the caller has the right device for IOMMU API
+use. Unfortunately, this is not the case for this driver.
+
+Iterate the devices on the platform bus and find a suitable device
+whose device DMA is translated by an IOMMU. Then use this device to
+allocate an iommu domain. The iommu subsystem prevents domains
+allocated by one iommu driver from being attached to devices managed
+by any different iommu driver.
 
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/tegra/drm.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index ab55d7132550..52126ffb9280 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -103,13 +103,17 @@ static int rockchip_drm_init_iommu(struct drm_device *drm_dev)
- 	struct rockchip_drm_private *private = drm_dev->dev_private;
- 	struct iommu_domain_geometry *geometry;
- 	u64 start, end;
-+	int ret;
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 03d1c76aec2d..ee391f859992 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1133,6 +1133,17 @@ static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+ 	return domain != NULL;
+ }
  
- 	if (IS_ERR_OR_NULL(private->iommu_dev))
- 		return 0;
++static int iommu_mapped_device(struct device *dev, void *data)
++{
++	struct device **iommu_dev = data;
++
++	if (!device_iommu_mapped(dev))
++		return 0;
++
++	*iommu_dev = dev;
++	return 1;
++}
++
+ static int host1x_drm_probe(struct host1x_device *dev)
+ {
+ 	struct tegra_drm *tegra;
+@@ -1149,16 +1160,21 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 		goto put;
+ 	}
  
--	private->domain = iommu_domain_alloc(private->iommu_dev->bus);
--	if (!private->domain)
--		return -ENOMEM;
-+	private->domain = iommu_paging_domain_alloc(private->iommu_dev);
-+	if (IS_ERR(private->domain)) {
-+		ret = PTR_ERR(private->domain);
-+		private->domain = NULL;
-+		return ret;
-+	}
+-	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
+-		tegra->domain = iommu_domain_alloc(&platform_bus_type);
+-		if (!tegra->domain) {
+-			err = -ENOMEM;
+-			goto free;
++	if (host1x_drm_wants_iommu(dev)) {
++		struct device *iommu_dev = NULL;
++
++		bus_for_each_dev(&platform_bus_type, NULL, &iommu_dev, iommu_mapped_device);
++		if (iommu_dev) {
++			tegra->domain = iommu_paging_domain_alloc(iommu_dev);
++			if (IS_ERR(tegra->domain)) {
++				err = PTR_ERR(tegra->domain);
++				goto free;
++			}
++
++			err = iova_cache_get();
++			if (err < 0)
++				goto domain;
+ 		}
+-
+-		err = iova_cache_get();
+-		if (err < 0)
+-			goto domain;
+ 	}
  
- 	geometry = &private->domain->geometry;
- 	start = geometry->aperture_start;
+ 	mutex_init(&tegra->clients_lock);
 -- 
 2.34.1
 
