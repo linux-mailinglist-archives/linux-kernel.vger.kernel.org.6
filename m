@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-208182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72716902202
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:51:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B277590220E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E782831DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F891F22ED8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69B881729;
-	Mon, 10 Jun 2024 12:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9502481734;
+	Mon, 10 Jun 2024 12:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KwMomoxz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2rIOVClj"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAEF7F48A;
-	Mon, 10 Jun 2024 12:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430ED80C1C;
+	Mon, 10 Jun 2024 12:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718023887; cv=none; b=shHTA1bRljQ1qcpTBYY7KmjSa6ijNAMV+5+TMinnXQdBmdLanI7jsafE53Zt9UyqgqQM2bYU88Pif6pHJMOF3RIDuNQ/HdcLs8qsX/kLKpCNvCqnXZtzVj0PTbMNBXHt9yRQeOuNCWzR14pkzN2zf+HFyIGvjbH3aQkFNV3vJZc=
+	t=1718023989; cv=none; b=ij7HxQo8ZywDLPsQYyHO77V68P0K0ojPwusmt0P6mqyZAHVHCUWpf08JQOSJ9AcRE7Vl4O0q6ZIG4UByhYLmum9uu/aPi0K/FtQVJ8tFHCZY9M2YvW4Gh5I8/1y8NNbS6vPq9Li92aV4iWWMuAdi26RQevXOU2QInKjY2EqRBkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718023887; c=relaxed/simple;
-	bh=2Fc4pFDCgQPKjxooSwTbGF79zLLOa0fePyJi1yAQFx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czXYwqeJ/C4IcGfz8b3FTi9INaFvs+rWQi3nMo7fRTUtMQh1DtPSUMG5TGGNlCQ+3BG2yRcnRENilyPKOzD8XWIYtfzGcTUwke/c40aPSKKQWEwXvxnjFqugApFOpV+6qx7byEvPPhy5MhOGBAaBQCQ5yfP15IjylyVgKjXahJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KwMomoxz; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718023886; x=1749559886;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2Fc4pFDCgQPKjxooSwTbGF79zLLOa0fePyJi1yAQFx0=;
-  b=KwMomoxzARXnnn/t2EqatXc+93hBBM71iEZYvOyn3nfPfl9yfKpjQd+/
-   EORh4jzamwDXSzIhVmSeCGgZFutKwYzSN3t9AMmBkH38PXRrhnDvvCklo
-   COc/Qd91nMXyM+OGclBZtNeGw7nnprNdU3Bs3Wb9gOUfGFiW1wG6H/CYD
-   ll9nAsMwb7QKfxAlKBHThuksbG358KPhf7SHtX9UzVD0zh14d7OY1XS+4
-   iTau2X7Gn783gSunTB79upvg6lBBnKkJPwxEko8fEz+cG0WiAYtO0ONm+
-   usxZOQ8Uh7jrNeOJ77j0fsJEuBIM5fId6/ypkK6Plf41I/AHBsLTWr9WX
-   w==;
-X-CSE-ConnectionGUID: zwrAxEDDRgmvE5pYpqtFBg==
-X-CSE-MsgGUID: Eb7MMUdoTCSO0gzvzgdhpA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14801252"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14801252"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 05:51:24 -0700
-X-CSE-ConnectionGUID: uyedrw4DQOmhZgnVvDx/Vw==
-X-CSE-MsgGUID: H2shQeqQSD2K+InfTIl39g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39501218"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa006.jf.intel.com with SMTP; 10 Jun 2024 05:51:22 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 10 Jun 2024 15:51:20 +0300
-Date: Mon, 10 Jun 2024 15:51:20 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] usb: typec-mux: ptn36502: unregister typec switch
- on probe error and remove
-Message-ID: <Zmb2yHkNe12ivAYY@kuha.fi.intel.com>
-References: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-0-c6f6eae479c3@linaro.org>
- <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
+	s=arc-20240116; t=1718023989; c=relaxed/simple;
+	bh=fNfXwJwCA5qp0u1hAX20H41g7q7fDhKBjQWSYMSdVFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vB8NCNBAhsXopWAjuDlMbhRHi6qmE7ukZIzJ05J3T6VrAMbfPQ4xAX9jZgWZsKgL0Kwpl/ieKSSTbnJk2ir3O4u/ZJi4NC11iAroae75En4oJFMw4ImKr1LsmWjVv34wQ1KtZ++FdmBZoO6e0yACvJzkjUByaVNLpO/TX6vic4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2rIOVClj; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ACQpDx023425;
+	Mon, 10 Jun 2024 14:52:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	4nQIhTEpp8eDIIoRXVmHoi9JKLGBN6G1TMA/hr/mDCI=; b=2rIOVCljVIVe7FZq
+	TbTuMPJwrmb18j6fZCtB6HBNyOEiIUXVCNUV6RrIlf8Nzw/YZmkVa6CawIo9M7Xu
+	nI68AfAeEgqHTjzzJaWhmQL0dIn/e0l83ojmflHjOvxC++Nv6Cu8fiQeoZ2Z/A8c
+	UuLlG5AEFw3DGJoARpQzwTKfZMPTSvitQ3z0l6fX+BMhW4x9+yVyLg02884+oR46
+	tWZH8u4SJX0WlgxlQS7lrfcgWFGg8wKNgipInKT0aUhxLwtFJ9ftvFsCKLjPcnQh
+	4MAlwNAVD1Xln8Vp8dQFwPOdUBbklLt2o3bGgo99WTpirPhhiEQSa6of842ymaJU
+	BIa1qw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yn0v14ufk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:52:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D9B2D40045;
+	Mon, 10 Jun 2024 14:52:37 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D5DD217B76;
+	Mon, 10 Jun 2024 14:52:09 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 14:52:08 +0200
+Message-ID: <ede482e3-58a1-4664-84b1-f80e59841e28@foss.st.com>
+Date: Mon, 10 Jun 2024 14:52:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606-topic-sm8x50-upstream-retimer-broadcast-mode-v2-1-c6f6eae479c3@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240610080604.291102-1-christophe.roullier@foss.st.com>
+ <06703c03-e1ce-4a94-942d-b556c6084728@linaro.org>
+ <ef4d2ebb-dd2a-423d-acd1-43fdb42c1896@foss.st.com>
+ <e7f1ea08-41af-47e0-b478-652e67e5aebb@linaro.org>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <e7f1ea08-41af-47e0-b478-652e67e5aebb@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
 
-On Thu, Jun 06, 2024 at 03:11:13PM +0200, Neil Armstrong wrote:
-> Add the missing call to typec_switch_put() when probe fails and
-> the ptn36502_remove() call is called.
-> 
-> Fixes: 8e99dc783648 ("usb: typec: add support for PTN36502 redriver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  drivers/usb/typec/mux/ptn36502.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/mux/ptn36502.c b/drivers/usb/typec/mux/ptn36502.c
-> index 0ec86ef32a87..88136a6d6f31 100644
-> --- a/drivers/usb/typec/mux/ptn36502.c
-> +++ b/drivers/usb/typec/mux/ptn36502.c
-> @@ -322,8 +322,10 @@ static int ptn36502_probe(struct i2c_client *client)
->  				     "Failed to acquire orientation-switch\n");
->  
->  	ret = regulator_enable(ptn->vdd18_supply);
-> -	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to enable vdd18\n");
-> +	if (ret) {
-> +		ret = dev_err_probe(dev, ret, "Failed to enable vdd18\n");
-> +		goto err_switch_put;
-> +	}
->  
->  	ret = ptn36502_detect(ptn);
->  	if (ret)
-> @@ -363,6 +365,9 @@ static int ptn36502_probe(struct i2c_client *client)
->  err_disable_regulator:
->  	regulator_disable(ptn->vdd18_supply);
->  
-> +err_switch_put:
-> +	typec_switch_put(ptn->typec_switch);
-> +
->  	return ret;
->  }
->  
-> @@ -374,6 +379,8 @@ static void ptn36502_remove(struct i2c_client *client)
->  	typec_switch_unregister(ptn->sw);
->  
->  	regulator_disable(ptn->vdd18_supply);
-> +
-> +	typec_switch_put(ptn->typec_switch);
->  }
->  
->  static const struct i2c_device_id ptn36502_table[] = {
-> 
-> -- 
-> 2.34.1
-
--- 
-heikki
+On 6/10/24 14:27, Krzysztof Kozlowski wrote:
+> On 10/06/2024 10:14, Christophe ROULLIER wrote:
+>>>> @@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
+>>>>    CONFIG_SPI_SPIDEV=y
+>>>>    CONFIG_SPMI=y
+>>>>    CONFIG_PINCTRL_AS3722=y
+>>>> +CONFIG_PINCTRL_MCP23S08=y
+>>> This is not an on-SoC pinctrl, so it should be module (=m).
+>> The stmmac is in built-in, if IO-Expander (MCP23S08) is on module, we
+>> have huge of message during kernel boot
+>>
+>> because stmmac driver is deferred several times. (need to wait that
+>> module are ready)
+> Which is normal and not a reason to change defconfig. It it was a
+> problem, you should solve it not in defconfig but in kernel. That's just
+> defconfig, an example, reference or debugging tool if you wish, so
+> fixing issue here is not a fix at all.
+Ok so it will not be possible to boot in NFS mode
+>
+> Best regards,
+> Krzysztof
+>
 
