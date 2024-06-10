@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-208071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83D790203F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0386A902042
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6731F1F216FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189EE1C21C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5F81B80F;
-	Mon, 10 Jun 2024 11:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E3A7CF1A;
+	Mon, 10 Jun 2024 11:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="OQsKo/rT"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvzWOaXu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C43D7828B;
-	Mon, 10 Jun 2024 11:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D247C081
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718018474; cv=none; b=iyJOPWnIi29dyJWn/qESXGJLE/Sc2ofLXnBdVdnaRoJ380epzzuvfL1mb06XXISZIT5p2dBbpXaedl+wv3o7RqwI8fXsgRq4grQuGoDqAPYKEgqyKNHllVYRAJF90BGzxkMyjkTRU9Z/N9By+/2OPNsiU93m7nT12el/u3Kf2CE=
+	t=1718018561; cv=none; b=d1k85YCiWoV/YsUeDZSRtcYh6QiccPAt6zrxtLW01giKu6mAn2K5XBXk7FiCyR3gF8LrZG1qDuryy33fC8emTGzDhZ+qVTYZfbFg+PtE2E7EU/3onV62EKiqR8NJA97BQbyXDxrmAo8PpKniGCkH+8PfYKE1JM+pyiRfhMTY7O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718018474; c=relaxed/simple;
-	bh=kWUULNz1Xgf34tZRgABSekR4eYplQDSKCgl0s/AEm5A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sn3evCrPua6bBUxzi6tEwjF8JVRnDkqf/lpGmAHfn0gd+GmfQBTpCtV/YnLbuo88P1DiqnAbI7q26RCdMZ5IKLjEWppV8+YtRwha/6/74La3EVjaJXeFZL2/W44q8DAqA1bRY5loHbhCeii4wd3nUQ+sjXW+kuz1fBC5AVM+POQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=OQsKo/rT; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 8DF58100007;
-	Mon, 10 Jun 2024 14:21:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8DF58100007
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718018463;
-	bh=J9OcXtt9zW++X9LHgNZAVJ9fsD37dpJAiH3O1eiJc8Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=OQsKo/rTTXlJq948j48RiBhMmMFyqiO7vMdSx1KZnz6CGgRjqhe+DDluZ1Hkrd7tU
-	 50WXIYjBR9RaDMoncSIM+wTSssCZ1ShhxymLXk/jVxaS1CPKPNR8yRsvWVosSy6Clz
-	 25ETc2zXMlVZ4DFXk7tulcNQYI1TUJn4rNSBKyjYAv6WrWAlzWfKv071awY7pAcOYM
-	 g+NBTk5u6MhsNiDY2Y2sYzYIz3FOks7s8k8GifezEHl9Tf8OapFHZ+/XEtiogCYsd8
-	 dky4cOJCLj12z1dlVZWieWD4Hk0B7PHLJ7y2bffPPqKYoOZ1OD70BB7NGVB8MwxKsI
-	 Zaz49o2bPgnxw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 10 Jun 2024 14:21:03 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
- 2024 14:21:03 +0300
-Date: Mon, 10 Jun 2024 14:21:02 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/7] clk: meson: introduce Amlogic A1 SoC Family CPU
- clock controller driver
-Message-ID: <20240610112102.o6s4ii25jirsegbj@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <1jed95p0kq.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1718018561; c=relaxed/simple;
+	bh=EkV8eFeIlMbRYuFLi5bacADDZkcGFLP/Ep/Wj8zW2yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiIp7kfAZ/Pql5/I0KJRN+qwvTHcj+04JaLobg996u6k9rN4bqy04b8z03aybZwCNN6zYhFFxhh+Lv4sUfo14aBQA9EJE0eBw1i9txHuA9flnsjnxGo8jLePjt1KZ40fJPXDPxBWcy+yEuM0ERwxRIf1Xivsi9Z4oOVQq09ylvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvzWOaXu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD434C4AF1D;
+	Mon, 10 Jun 2024 11:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718018561;
+	bh=EkV8eFeIlMbRYuFLi5bacADDZkcGFLP/Ep/Wj8zW2yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OvzWOaXuhoEJJ3cuyXabQhTXJTGE73mdTgRnf6/ya0baKS8JHV9er7EVFjZhs9BBA
+	 0zOkWdVNlStK2qmSVnHwP4oJcARw+KlYjGgE+Yv/uVRbQJ/EoZNzIJtI9qgoCTBX8o
+	 cyO0kiw6uQJG0mKKPNbEcuv+Z7PyGHdrnVDI3Qk6xrNsRjJ8U56SnCMzAxrFDobO32
+	 5bwlnHM0qZWRm28kseB6Nw3x91246R+KwGOMYujqPUdhk1fsqeBjDHC8Vh7iShgXFE
+	 uI+AdXZ7G//AXJYvs5aiDNCFkKwzUch7oj9IG3JQ9buAjKvDGo1lFBgkvOR3arNllm
+	 xc0DZ3L+IcyBw==
+Date: Mon, 10 Jun 2024 13:22:37 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Amjad Ouled-Ameur <amjad.ouled-ameur@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Smitha T Murthy <smitha.tmurthy@arm.com>, 
+	Deepak Pandey <deepak.pandey@arm.com>
+Subject: Re: [PATCH] drm/komeda: check for error-valued pointer
+Message-ID: <20240610-classy-walrus-of-abundance-e8acff@houat>
+References: <20240610102056.40406-1-amjad.ouled-ameur@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="v2hia7wsvzddoorn"
 Content-Disposition: inline
-In-Reply-To: <1jed95p0kq.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185831 [Jun 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 07:14:00 #25537945
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20240610102056.40406-1-amjad.ouled-ameur@arm.com>
 
-On Mon, Jun 10, 2024 at 12:13:41PM +0200, Jerome Brunet wrote:
-> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
-> 
-> > The CPU clock controller plays a general role in the Amlogic A1 SoC
-> > family by generating CPU clocks. As an APB slave module, it offers the
-> > capability to inherit the CPU clock from two sources: the internal fixed
-> > clock known as 'cpu fixed clock' and the external input provided by the
-> > A1 PLL clock controller, referred to as 'syspll'.
-> >
-> > It is important for the driver to handle the cpu_clk rate switching
-> > effectively by transitioning to the CPU fixed clock to avoid any
-> > potential execution freezes.
-> >
-> 
-> Please group your changes, fixes then bindings then driver.
 
-Sure, thank you for the suggestion! 
+--v2hia7wsvzddoorn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Thank you,
-Dmitry
+On Mon, Jun 10, 2024 at 11:20:56AM GMT, Amjad Ouled-Ameur wrote:
+> komeda_pipeline_get_state() may return an error-valued pointer, thus
+> check the pointer for negative or null value before dereferencing.
+>=20
+> Signed-off-by: Amjad Ouled-Ameur <amjad.ouled-ameur@arm.com>
+
+I've added a Fixes tag and applied to drm-misc-fixes, thanks!
+Maxime
+
+--v2hia7wsvzddoorn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZmbh/AAKCRDj7w1vZxhR
+xahgAQD23Qma6aL0sKtPduWTr7Di9Ar8cyqpLFFSYhO3huhalQEAuesXQa/px8G7
+8pThjlEwd6jsLC0kUTk2AnhtJPcQiws=
+=c3Zi
+-----END PGP SIGNATURE-----
+
+--v2hia7wsvzddoorn--
 
