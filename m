@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-208579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D479026F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 641289026F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD99E1C21E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7991C1C21DD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5D6153501;
-	Mon, 10 Jun 2024 16:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7C7154453;
+	Mon, 10 Jun 2024 16:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="of25osih";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o0/w2V3t"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGjhEL8r";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l6CWizxc"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8830915278D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C415380D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037747; cv=none; b=AzOkA3sEwU5FxJBjQT7Va4M5Ing/SIgByPGQGGZp/xKnG5cEMdvCJCsG6F7RvJf4qy2XlOJuGSm4qTOidiRCievBXfZPvy/XvCadz6HKAQ9y+PJMpr8q8OzOSWA3Z3OSm5ITLHbI8hpq8Zhsu2cC8DhR7jZY+0DpfxqIV/xN/cU=
+	t=1718037750; cv=none; b=kQW5weaEWeVHE+HvsdXrqr/nFPeO2xlvLDvpv/yi2kxBvtib/hKurbaFIm9pUqLiGWNhhdiCI/Ebd1NBnnZUS7VWxWuodlLt+ho4S0H39Z33jxgcrK/Gw34/4VzD0LTCc2o3MPvLpGoGJM9Kn3dKFBQdVj1idDUogiXET3GowSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037747; c=relaxed/simple;
-	bh=jwLW+rNG7bMs4zQGx/O8eL+ZFKFCQ9a+FbpMQ0kFoaQ=;
+	s=arc-20240116; t=1718037750; c=relaxed/simple;
+	bh=M9Q7ax6L6HgZ2sYcMaynew0ayWNP6jxDDhPzY9nkD8E=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=Hcb9fmMhDQPD2wRIVfnULcUcYC7j7JyYvOiHsT1u8WPIhQL6AqOvB3fbGEVbTsAfvIfC3hJOv8X+65oSuLxSS6X5CO7CcYRcfpwmIje7wvc6ZtfmykcqxqFdoqIJYrasW0DhW8rUsvaxVhjSsRIGVJSjzSdRgn4M8XBzkm/s98k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=of25osih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o0/w2V3t; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=ESO8t8iJ9IHBCwTWf5126QI0UQUafluDoeuKtzOEZw4kApcQZWOI0SiHsb/pzwOoxe7CrRBuChvwZqXSOD+usdys1SXh/I9dyN2Xz5S7B/AYHr01AvVhnHeQQbjyIAhC+skoOJ8XnACP5xAviiyVtxLj/44dnhBNgJuJfNTaiBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGjhEL8r; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l6CWizxc; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20240610164026.489279861@linutronix.de>
+Message-ID: <20240610164026.552899255@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718037745;
+	s=2020; t=1718037746;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=prXY1arwiBmGreObgLsf7R5UB66La837yy2ta+3sTC4=;
-	b=of25osihGdxddT12JC/f97xCy1APXnL57lBQ0pXazi9kSOgJa0B1BGntyp1yhhJDdaYaCV
-	o0jiKym9SnhSYnXKa29F9Rpy+rrdVqCcf1kQgGVFeZAzL0k7zf93EDJO8tLdjWpMaw0c3p
-	uEV4wR9wX+2pcAdlPz238uIZdQhkQRpQavozuHLkzhDXp1qzOioQHtdBvmm4fjucDt5VH9
-	uAqSja7cylH7KdAr61wDcI2Dix/2tSJ8PsiTeDKY2BAGnh56IinEsYuUOPL2Wnqivb+yq0
-	gOV4zTc60wm5JCIMIBvhqvAs69LaqYrGncui+rbbKi/i1W5mAA0NvS65p9T5QA==
+	 references:references; bh=a4kBoLxoimUoUZk3ev7GSbKQUyXJ3UwY85qwVJP4oio=;
+	b=QGjhEL8rgUf4LT4XnfB9hwh3Joy0TpJofyy3Zzciwpqy16jIm74JFa2pE9d88WtHtzhcw+
+	YU1uZNVe/NP5Ln74Gl6w2LvLAyxSO5s5lw4ChUDTI3TFDz+91wLG2ZBlSzzaerBojQzRQY
+	fPz9Rw356u4q4P0kfeGJ+7zbwieLSFcTPKj6CAL4PzV7MRyI9tQduMUKgCdhEQYEcIVyH7
+	ey1HHEPNqawr/B0rjYJVk3eZERlTsHFRUFP2XyXj6Wl7kVN6ufn0HcznsI7k6EhkdLm0gB
+	yBiVpomKR/omMT8rnUJfMzqIaCvZUKEqBHeJi2VjoHbXMLsM3dWqpy1yd5TeBw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718037745;
+	s=2020e; t=1718037746;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=prXY1arwiBmGreObgLsf7R5UB66La837yy2ta+3sTC4=;
-	b=o0/w2V3t/SLJK2q5U2ydsRtnW80BSGNlq40hacvkTjFyjkSnjwg93wZ059RztN6gbyWPNa
-	0VhyeBvZVHnyBnAw==
+	 references:references; bh=a4kBoLxoimUoUZk3ev7GSbKQUyXJ3UwY85qwVJP4oio=;
+	b=l6CWizxcP/W4v72SIhiaaF1M463VhiMlQJ2B0UjZXbp0QYE48s2XaSzfSqdPAD8+heHtNZ
+	PLW4LmA9Lz4jgNDw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -59,7 +59,8 @@ Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
  Stephen Boyd <sboyd@kernel.org>,
  Eric Biederman <ebiederm@xmission.com>,
  Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V3 16/51] posix-cpu-timers: Simplify posix_cpu_timer_set()
+Subject: [patch V3 17/51] posix-timers: Retrieve interval in common
+ timer_settime() code
 References: <20240610163452.591699700@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,80 +69,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Jun 2024 18:42:25 +0200 (CEST)
+Date: Mon, 10 Jun 2024 18:42:26 +0200 (CEST)
 
-Avoid the late sighand lock/unlock dance when a timer is not armed to
-enforce reevaluation of the timer base so that the process wide CPU timer
-sampling can be disabled.
-
-Do it right at the point where the arming decision is made which already
-has sighand locked.
+No point in doing this all over the place.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   44 +++++++++++++++--------------------------
- 1 file changed, 17 insertions(+), 27 deletions(-)
+V2: Removed the timer_gettime() part - Frederic
+---
+ kernel/time/posix-cpu-timers.c |   10 ++--------
+ kernel/time/posix-timers.c     |    5 ++++-
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -705,10 +705,16 @@ static int posix_cpu_timer_set(struct k_
- 	/*
- 	 * Arm the timer if it is not disabled, the new expiry value has
- 	 * not yet expired and the timer requires signal delivery.
--	 * SIGEV_NONE timers are never armed.
-+	 * SIGEV_NONE timers are never armed. In case the timer is not
-+	 * armed, enforce the reevaluation of the timer base so that the
-+	 * process wide cputime counter can be disabled eventually.
- 	 */
--	if (!sigev_none && new_expires && now < new_expires)
--		arm_timer(timer, p);
-+	if (likely(!sigev_none)) {
-+		if (new_expires && now < new_expires)
-+			arm_timer(timer, p);
-+		else
-+			trigger_base_recalc_expires(timer, p);
-+	}
+@@ -622,8 +622,8 @@ static int posix_cpu_timer_set(struct k_
+ {
+ 	bool sigev_none = timer->it_sigev_notify == SIGEV_NONE;
+ 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
+-	u64 old_expires, new_expires, old_incr, now;
+ 	struct cpu_timer *ctmr = &timer->it.cpu;
++	u64 old_expires, new_expires, now;
+ 	struct sighand_struct *sighand;
+ 	struct task_struct *p;
+ 	unsigned long flags;
+@@ -660,10 +660,7 @@ static int posix_cpu_timer_set(struct k_
+ 		return -ESRCH;
+ 	}
  
- 	unlock_task_sighand(p, &flags);
- 	/*
-@@ -727,30 +733,14 @@ static int posix_cpu_timer_set(struct k_
- 	timer->it_overrun_last = 0;
- 	timer->it_overrun = -1;
+-	/*
+-	 * Disarm any old timer after extracting its expiry time.
+-	 */
+-	old_incr = timer->it_interval;
++	/* Retrieve the current expiry time before disarming the timer */
+ 	old_expires = cpu_timer_getexpires(ctmr);
  
--	if (!sigev_none && now >= new_expires) {
--		if (new_expires != 0) {
--			/*
--			 * The designated time already passed, so we notify
--			 * immediately, even if the thread never runs to
--			 * accumulate more time on this clock.
--			 */
--			cpu_timer_fire(timer);
--		}
--
--		/*
--		 * Make sure we don't keep around the process wide cputime
--		 * counter or the tick dependency if they are not necessary.
--		 */
--		sighand = lock_task_sighand(p, &flags);
--		if (!sighand)
--			goto out;
--
--		if (!cpu_timer_queued(ctmr))
--			trigger_base_recalc_expires(timer, p);
--
--		unlock_task_sighand(p, &flags);
--	}
-- out:
-+	/*
-+	 * If the new expiry time was already in the past the timer was not
-+	 * queued. Fire it immediately even if the thread never runs to
-+	 * accumulate more time on this clock.
-+	 */
-+	if (!sigev_none && new_expires && now >= new_expires)
-+		cpu_timer_fire(timer);
-+out:
+ 	if (unlikely(timer->it.cpu.firing)) {
+@@ -742,9 +739,6 @@ static int posix_cpu_timer_set(struct k_
+ 		cpu_timer_fire(timer);
+ out:
  	rcu_read_unlock();
- 	if (old)
- 		old->it_interval = ns_to_timespec64(old_incr);
+-	if (old)
+-		old->it_interval = ns_to_timespec64(old_incr);
+-
+ 	return ret;
+ }
+ 
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -904,7 +904,7 @@ static int do_timer_settime(timer_t time
+ 	const struct k_clock *kc;
+ 	struct k_itimer *timr;
+ 	unsigned long flags;
+-	int error = 0;
++	int error;
+ 
+ 	if (!timespec64_valid(&new_spec64->it_interval) ||
+ 	    !timespec64_valid(&new_spec64->it_value))
+@@ -918,6 +918,9 @@ static int do_timer_settime(timer_t time
+ 	if (!timr)
+ 		return -EINVAL;
+ 
++	if (old_spec64)
++		old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
++
+ 	kc = timr->kclock;
+ 	if (WARN_ON_ONCE(!kc || !kc->timer_set))
+ 		error = -EINVAL;
 
 
