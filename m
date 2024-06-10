@@ -1,215 +1,144 @@
-Return-Path: <linux-kernel+bounces-208692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37517902830
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E18902833
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9D2282233
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5A3C1C230C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BA7148827;
-	Mon, 10 Jun 2024 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868A31482F6;
+	Mon, 10 Jun 2024 18:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uoTQSO4Y"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dV4Md0EM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F0F11C92
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4591C1DFFB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042497; cv=none; b=DxZFOnBQ3HTfbxl+J6PH4EgiYb8NXgdEKJW6qzJZgk8byjA1XeiefGBA1o3Wa9gWgFzD2UmVS4mszjkqe6zjm1B1ly2mN4rQ276t+Ekf4X2pMHkEQSxOJyFCmoomun8kwo01esoQiTzqubN+YpRfRc3NjqSgiEtrxxiddc9W8v0=
+	t=1718042609; cv=none; b=kMBdmcBPcJ3XcBcton+to3zDlH/wDGjmWZwYkIbxMdWKejPHJmJTvRbbT2FemI6euEPGBYUot496RtJqmAt631xphDXB4smMgyhZFep249cy6Mx+YZuDYUxWvZyVb7B4HdRHgZ8qebc/Gb97aYePF1unJN30l/9Lf/30Fpb2eDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042497; c=relaxed/simple;
-	bh=g2c7nnmBcEtmWKG2cdatzphUu9nwq1gexVv+zu2DXf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=brFEhqEcTONU3t2aNC1povPHox91XMr5n/jp8J3Rjmbuzree5XEzp2L/2hcIrkWMGElxHrB6/9HLsDMg8rCxGJ4msQtxuiW9MnG/kegyZwIuVcfE6VExrrljphX1u1QLkQzPeR4w2aCpr9eC9w1okiTNnziXGHK5O4DG2DBi98g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uoTQSO4Y; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso254610e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718042493; x=1718647293; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=goT3FiiTHuDDxuZezrmRBAQweENaqO0vsQeYq6d8HbE=;
-        b=uoTQSO4YWzo6jb60hVqRPaIvDykgE6xj3X15sEX5SDM5y7idRfZeGLGMNHjxBtT7CW
-         FYe+gEmq5GxDVqpQ1j6bTVKQow7rJTtiTVA8BtafrxlnqBn4GftOPGU/zqEAOhNWfu7I
-         +NStxP/R/J0rI5lhd0D3AGWKG3JpYBmzyxmKf5VD6my8Xu1R3EpcF04jxdjGAFw6FoMb
-         nwon3kmwnh9bdCVcXI2Cpai6VRkb7WCZsvcc8KW//YK7DCRCD/X7QwDLG1YlGRgtTZoQ
-         DHgJ3skQsel6hVsxpCHy5B+dC+OltY3VH4JQSBN0mAVe9QCgL03Ynrib19C1/5UoIXw5
-         oFuQ==
+	s=arc-20240116; t=1718042609; c=relaxed/simple;
+	bh=BUjM1t3PIXAC6Ytd/MmTqu6Vsv+XYZQHt79/aOU6bkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jChUSaUZGDsvwkFET2aJZp5mZBzjIYR5txnWWmXXksDAiAvnn3szNoDoPSS3qLcWA5nU+Dab5f1OHrtwooC5hBdMXa0jEc/jiba6AbzABpRDEDIVyzhHDL7BFOGpoS5lYNYcOJnUTsoGzeew3rPJPqk11pfzuP95Z0iTsr2zu3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dV4Md0EM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718042607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lBAdoXrWxfngAOXeETgZ/9eMi7EOVwujj0O8BRZDoD0=;
+	b=dV4Md0EMh7UMKPFw1kvJgS2TKQjmyOTk7t5jzI8j+C2l8HSmCzWjbL0uEPBhqfCU07E8Qy
+	/N4vzyySp23Sx0G7vdQ/Q5z/eeOc22W1ZtkcWf5lT334DFSvYvfs0l6POH4y3JoruwJPak
+	wP6cgD3s0lFLzXgEVThw5jsOBZ2YSnM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-O30dpRvnNhyxaEtaTo97TA-1; Mon, 10 Jun 2024 14:03:25 -0400
+X-MC-Unique: O30dpRvnNhyxaEtaTo97TA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f1f958b7dso168260f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:03:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042493; x=1718647293;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=goT3FiiTHuDDxuZezrmRBAQweENaqO0vsQeYq6d8HbE=;
-        b=EPy2LmLNy1oL3VQQmuwaOPsnKLInVw9+s0b3mcez1mvW2KiQ/Xzs/oBSXYuZIr331u
-         6xyxf01v/6o6HG1NUSxuro3fulFQntskOUZkG4w/nD61kCVYZW+mMLXCtSVyynu9FQKq
-         m3heF9kOjL/1QvHk4W7hpqF3DNyOROg5MC4HdoDfdh87Jx9qRp1QNACHJqSCkTdQ4nBs
-         VO7xdrXIegtsj4Pbm14rgWT1FCQiEEAlb/7s/G7FnfDYXkQChXITtfyBBX8/1is/Mx/j
-         bpa/4j+rqBp4ombdtOJawzzDSjescn4dpBGtPNpM3KTBZoaNLsfL8Q4sMwsKii1/W1jq
-         Js8g==
-X-Gm-Message-State: AOJu0Yx3lXm3yC4FcCHuY7k1qCUhIvd5+XhiKvPmpnark+IuW4gorb2K
-	URB+1erbimUh+4pRUjrSVVj+Yx+sWmmvt0CxHCTXY7gsRrQv5Z+j5/5TMw3FfS8=
-X-Google-Smtp-Source: AGHT+IFN2Eti8+gZyxEE3H8cpoOyZdBagWhMLrVC2RrY9w7xOb7/ljIQhtyFuW95vPKWpx4yq3PeQw==
-X-Received: by 2002:a05:6512:282:b0:52c:901f:e4 with SMTP id 2adb3069b0e04-52c901f022amr813795e87.0.1718042493358;
-        Mon, 10 Jun 2024 11:01:33 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm150904605e9.11.2024.06.10.11.01.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 11:01:32 -0700 (PDT)
-Message-ID: <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
-Date: Mon, 10 Jun 2024 20:01:32 +0200
+        d=1e100.net; s=20230601; t=1718042604; x=1718647404;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lBAdoXrWxfngAOXeETgZ/9eMi7EOVwujj0O8BRZDoD0=;
+        b=ALcs8IGXgQnn9+Q2vEKDDwX4p2MInn3OL+2npaLhG+4xkCrJJ6uzd2ADyU+EI1aU0/
+         3afiKorfAPRpOwCnZUAYaH/SPu/EWZBvbOjw+uVM0VCYyJ0pcVHNUMGna+xh2gR2hL9Z
+         DgMpMQ1hYnJ7nKEU+itDol9diXnrr17K91wTQQXvM85Egt7p2cV62pEAbKI9AdC6upUe
+         08NeHKhvjRA56iIgxTSNSp4q2Sbc0YHHju+8q+pf7abjtYZBd0wmR2hNAbzzrqtG4DVd
+         b7ZweP3Qq/siOvprdXdqlIUpsCMf9rvAdVMOajOFBUy6shbtLT2fWUkLYaNyEjq1CAA8
+         GAHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLxZ/21C9xTUoNUYTFRFt8yPn9e1a4MoSQb0O6VZgarvSMhRGBD15XDge4nF1EzLTHh5MAft+s+9/fgudHjlDzK9JceO6a6JCfZ0S6
+X-Gm-Message-State: AOJu0Yw3EvDqoJ2AuESQaaJoGofw/U+492ZN3Nx6rO+KiSnQQc7W4/Hn
+	GxkfusfObS76aUOzNBrkjrnWgDaIsjS9nnULLqZVgYbI5cCatCLNhP+vCUDsQn9oQbnSThCNW5R
+	e9Bo/TAn5/vC3/SXAk/MTKL6Mw/qz0bDJ/JEq6Cp0nH+PpDAMBxbSi+tlkg7Ycg==
+X-Received: by 2002:a5d:6305:0:b0:35f:1c26:b68d with SMTP id ffacd0b85a97d-35f1c26b7d4mr4334326f8f.60.1718042604301;
+        Mon, 10 Jun 2024 11:03:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6fttIySqaLlAtrmoTpFqX0+ZaGQTLMt4MDrm2NDweITHX9K6XyLSqHw5pHedfj/9Hbj+mrA==
+X-Received: by 2002:a5d:6305:0:b0:35f:1c26:b68d with SMTP id ffacd0b85a97d-35f1c26b7d4mr4334305f8f.60.1718042603941;
+        Mon, 10 Jun 2024 11:03:23 -0700 (PDT)
+Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0ccc5f03sm8384464f8f.88.2024.06.10.11.03.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 11:03:22 -0700 (PDT)
+From: Danilo Krummrich <dakr@redhat.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	mcgrof@kernel.org,
+	russell.h.weight@intel.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	airlied@gmail.com,
+	fujita.tomonori@gmail.com,
+	pstanner@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Subject: [PATCH v2 0/2] Rust abstractions for Device & Firmware
+Date: Mon, 10 Jun 2024 20:02:26 +0200
+Message-ID: <20240610180318.72152-1-dakr@redhat.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] thermal: trip: Make thermal_zone_set_trips() use
- trip thresholds
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-References: <12458899.O9o76ZdvQC@kreacher> <2340783.ElGaqSPkdT@kreacher>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2340783.ElGaqSPkdT@kreacher>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 28/05/2024 18:51, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Modify thermal_zone_set_trips() to use trip thresholds instead of
-> computing the low temperature for each trip to avoid deriving both
-> the high and low temperature levels from the same trip (which may
-> happen if the zone temperature falls into the hysteresis range of
-> one trip).
-> 
-> Accordingly, make __thermal_zone_device_update() call
-> thermal_zone_set_trips() later, when threshold values have been
-> updated for all trips.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v1 -> v2: Rebase.
-> 
-> ---
->   drivers/thermal/thermal_core.c |    4 ++--
->   drivers/thermal/thermal_trip.c |   14 ++++----------
->   2 files changed, 6 insertions(+), 12 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -513,13 +513,13 @@ void __thermal_zone_device_update(struct
->   	if (tz->temperature == THERMAL_TEMP_INVALID)
->   		return;
->   
-> -	thermal_zone_set_trips(tz);
-> -
->   	tz->notify_event = event;
->   
->   	for_each_trip_desc(tz, td)
->   		handle_thermal_trip(tz, td, &way_up_list, &way_down_list);
+Hi,
 
-Would it make sense to use the for_each_trip_desc() loop here and update
-low and high on the fly in this loop ?
+as agreed in [1] this is the separate series for the device and firmware
+abstractions to unblock the inclusion of Fujita's PHY driver.
 
-If a trip point is crossed the way up or down, then 
-handle_thermal_trip() returns a value which in turn results in updating 
-low and high. If low and high are changed then the we call 
-thermal_zone_set_trips() after the loop.
+Originally, those patches were part of the patch series [2][3].
 
-The results for the thermal_zone_set_trips() will be the loop, the low, 
-high, prev_low_trip and prev_high_trip variables going away.
+Changes in v2
+=============
+- use the 'srctree/' notation
+- expand the existing documentation and make it more unambiguous
+- use `NonNull` in `Firmware`
+- generalize the `Firmware` request functions
+- add missing safety comments to `Firmware`
 
-The resulting function should be:
+[1] https://lore.kernel.org/rust-for-linux/2024060745-palatable-dragging-32d1@gregkh/
+[2] https://lore.kernel.org/rust-for-linux/20240520172554.182094-1-dakr@redhat.com/
+[3] https://lore.kernel.org/rust-for-linux/20240520172059.181256-1-dakr@redhat.com/
 
-void thermal_zone_set_trips(struct thermal_zone_device *tz, int low, int 
-high)
-{
-         int ret;
+Danilo Krummrich (2):
+  rust: add abstraction for struct device
+  rust: add firmware abstractions
 
-         lockdep_assert_held(&tz->lock);
-
-         if (!tz->ops.set_trips)
-                 return;
-
-         /* 
- 
-
-          * Set a temperature window. When this window is left the 
-driver 
-
-          * must inform the thermal core via thermal_zone_device_update. 
- 
-
-          */
-         ret = tz->ops.set_trips(tz, low, high);
-         if (ret)
-                 dev_err(&tz->device, "Failed to set trips: %d\n", ret);
-}
-
-But if you consider that is an additional change, then:
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers.c                  |   1 +
+ rust/kernel/device.rs           |  97 +++++++++++++++++++++++++++++
+ rust/kernel/firmware.rs         | 107 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   2 +
+ 5 files changed, 208 insertions(+)
+ create mode 100644 rust/kernel/device.rs
+ create mode 100644 rust/kernel/firmware.rs
 
 
-> +	thermal_zone_set_trips(tz);
-> +
->   	list_sort(&way_up_list, &way_up_list, thermal_trip_notify_cmp);
->   	list_for_each_entry(td, &way_up_list, notify_list_node)
->   		thermal_trip_crossed(tz, &td->trip, governor, true);
-> Index: linux-pm/drivers/thermal/thermal_trip.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_trip.c
-> +++ linux-pm/drivers/thermal/thermal_trip.c
-> @@ -88,17 +88,11 @@ void thermal_zone_set_trips(struct therm
->   		return;
->   
->   	for_each_trip_desc(tz, td) {
-> -		const struct thermal_trip *trip = &td->trip;
-> -		int trip_low;
-> +		if (td->threshold < tz->temperature && td->threshold > low)
-> +			low = td->threshold;
->   
-> -		trip_low = trip->temperature - trip->hysteresis;
-> -
-> -		if (trip_low < tz->temperature && trip_low > low)
-> -			low = trip_low;
-> -
-> -		if (trip->temperature > tz->temperature &&
-> -		    trip->temperature < high)
-> -			high = trip->temperature;
-> +		if (td->threshold > tz->temperature && td->threshold < high)
-> +			high = td->threshold;
->   	}
->   
->   	/* No need to change trip points */
-> 
-> 
-> 
-
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.45.1
 
 
