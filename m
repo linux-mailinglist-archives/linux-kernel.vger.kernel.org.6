@@ -1,664 +1,261 @@
-Return-Path: <linux-kernel+bounces-208545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A228890268F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:21:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0231790269F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C50C1F25F7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:21:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C79B2C7C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8DA143C4E;
-	Mon, 10 Jun 2024 16:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946A6142E97;
+	Mon, 10 Jun 2024 16:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNLFCYg0"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="CbMdslNe"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF195142E8D;
-	Mon, 10 Jun 2024 16:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9514372B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036471; cv=none; b=s+SNnai0YZZqIXR3r6nHsaqyDSTI0vsePwsDT25CTThpPzhWMCv8+Hzzf9HyN3W3yXLlPrfz09jDd0wTCAv5LkYxdiBDZJPGpd89hRniA0DwcfciV0wH93Li2lM9bGzt6ZHdwnAfUEMJ/2Lsk85cv4cATDv0hd8fb0qlXHAF6oE=
+	t=1718036536; cv=none; b=j1YKKkHvu8/kztZ+Ej5P8JUNGpJyt4zGlgXo+e4SK17ye7SvwB7PZnAD2BbE6f1SXoVoKqtATsyHkuHPRk3cPljb0V3KDSmafZm5xcCTAVLoCJmZzyu+e4UJQi2mtQtfXFLBoj8k+yUNOYSeNaAI/64zvkzK4u0wCILcwu1ECD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036471; c=relaxed/simple;
-	bh=yyHRulbBJaVZZ4XOx0I26lk8GT8Um4Jq+YMmX7aZpmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kw9Y9mIQeDIBE6jMTRpMxObpELZnxBAOzNwuBLbGrHSpg9zx+Tk4o2otJLedvrbhOj6FVtnpS51xDEREqFjxMCEqKU3hXoUl6TwWOhZDpXfjDgjl0RJdGZfGd+4KFfH6guLRajtkv0cLVt1TyYExMOUFGScVFaIv2gvOjqoeywI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNLFCYg0; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7043102dcc1so1555774b3a.2;
-        Mon, 10 Jun 2024 09:21:09 -0700 (PDT)
+	s=arc-20240116; t=1718036536; c=relaxed/simple;
+	bh=bxsg4DNdFkYFmIgYwjazkLg1QZ0/79fRk9dWu4LWVVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEwQ1OcW8/mboxvUSFsS4aXIoonFXfhBIDDYzBk6WvzZndgsaIzyjAbY+CCKJDWo8/uyhDPC2j9cuEMqeBbQZbsDrRzjfa25VxzyH2MgU4yl4p3NZHClKzi7waHYYtCV2ZVx4yOXPItC/TvxySo5tud4PfOHH8zxV9Kp4VajeSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=CbMdslNe; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52c5083aa1bso212653e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718036469; x=1718641269; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9YBy+4sYTK4ntsC36I0MjqWOPjaLvyrKt7aPLW0U1VI=;
-        b=fNLFCYg0g9OBj2DthbywljYD77kxni/9+AmSUOu6WCH+sHwEAiFXnc6+p5LgwCGv16
-         w/jw8a4s1RZvZHAtI3yBaVISvwClKvmQ9kUPTCKdVcUePxOEbVB653E6xJC2j5CersIz
-         pXAHnEkD96sGydEV2g9ZXDPxkJ1Eq1m1pV0UdrwvFRZg5/bhcIh2usnsr7sirfaXy1Ue
-         cJaO883HPdhrrUNV5Vu5vIzycDRq8a3HWg/XjlExjL2Sg7G1hMSiszrBYXHAQcyC7lGn
-         nCsKtE+wIdHv3YYxYifOi/ccayy+y/eoS/G5QzW1D4V1xR0zsz2WNRfT+jvz5KsTqISx
-         Uiiw==
+        d=ffwll.ch; s=google; t=1718036533; x=1718641333; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4FQOUy6eQVbn2rNLxqez3pRfyzUAVY5hKRfgcqQacv4=;
+        b=CbMdslNexg/lqMGvcz9EOs7GczC7ZsErEpZuX5EE7mc/TvOCgrdEdtuN+shIIBkZfg
+         jE/k9pUF/wE0lzxXJAGbZUFWbgHUZW1CRXIIFvOGWRpYe+4BTrz41dIfimSzQLOkEH6O
+         w42rU8pwt83wT+fwFpjh/p3NbvNiS4JONxgxo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718036469; x=1718641269;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9YBy+4sYTK4ntsC36I0MjqWOPjaLvyrKt7aPLW0U1VI=;
-        b=jTxJjUJD/sUrASQwBB9xLVfIsZ45ABSPwNwD/MunKQ8LZb8hnUOkngLQ3ECz57t0r6
-         Tpn7tftVSrPx4CCgpZCoc43ywcrn42alA6GH3Ht/8oktGf5kCaV64RWB26VGv80oijec
-         DeGhPCt2MTb4YWlqmULEk/45f0hSy6Biyp2O402j4YYE15ds0y6IGejrB7ZbQmy9Jc4L
-         xzf7VvW0d99NWZXmE5+GxsxRfEyUXFQEPd9EvRpSVlKRT529TK+hvVYrSQFk32GttLap
-         XQGdlRkRFKfdB8BavzEflb56QbtjAVOW31aocMaIqwMR8IGOxVMAZFTYAPS3Jh1YYyQU
-         m4+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXrNq8fpZ4d3t3rJ3ARO3agCkIQU0sJKLkpJxFLUNSwH9dt5CUghzOVZp72EN/2dlcAhd/WeUxmZXTz50ERkzaTIWJqwNXvl7zCk1i5rtoR6yqZ0BCEs4UkX8ozuo2KPi/ttVBRhwebcozbcJMk3RASEM0XAdk93szPo7P9Ba/SOmUfTZtrl8T97HqRg6oD5X4rnyRQMMhgMFLpQAiVWfKI8sNTtEbtthAAfqd5N85P6sskz9FRK45f2m1k
-X-Gm-Message-State: AOJu0Yycfh2e9+bZrxoE7HAYgK3kC15YMXqrghVzP6Myb1m4IV3IxGp7
-	m67lpv3oXr0tJZDatHLHdKhlZGkfysEqz49ZFPRjxKaVm9Yebz7O
-X-Google-Smtp-Source: AGHT+IFVFUToJdRftAHuDDEhr/XNrc1E0LRF4/u93yJjM/aIU4aKbxZ1LR0te7UL6bFFFhKJnrDWXw==
-X-Received: by 2002:a05:6a00:228a:b0:6f3:368d:6f64 with SMTP id d2e1a72fcca58-7040c62917cmr12893399b3a.2.1718036469123;
-        Mon, 10 Jun 2024 09:21:09 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de265a2ce3sm5646259a12.61.2024.06.10.09.21.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 09:21:08 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2670a170-e638-4094-b9fe-064adb470b66@roeck-us.net>
-Date: Mon, 10 Jun 2024 09:21:06 -0700
+        d=1e100.net; s=20230601; t=1718036533; x=1718641333;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4FQOUy6eQVbn2rNLxqez3pRfyzUAVY5hKRfgcqQacv4=;
+        b=TUl7DoqOCTV7kRQWVuxXn+a2cnkvfk32bDdNUdm9rK7aq02xml2xJom9DDMrvcBRaC
+         I26/7HcVJ30bgLOB3JzcIuquKVws1U2g5c/FDUDhnO6Rt//MpssjDWL480xxpFUkpdsn
+         u+SUjlrKrqTx/cgHa1WkFD6x+xtiCmunj8F1dA6fSbnSb1E8Ds6Egx5/TqVonpOgCsz+
+         WI8v/uAKdWeedBeAE+s3NZoXaEUjv+r7s5G7afYf1+4iEQOMTnyPqRGWTieGjr+6qPAj
+         YKltOTtzJruiyzNAVsm8av55bkxbDr+nAETB/vqPHD/gWXmJveLEYgWce+bcQTbsZ48C
+         e79A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSZ7y0ZvSTthcygqozFK9rwV7/vcn0ozqFx58Muw0SyLSeJ4cWRndH0olA6rp40jh11hQ2b3+f7B5w5jk0xdBclz2/Lc7AUKfEjfUA
+X-Gm-Message-State: AOJu0YxS/Ndx7n3xacydfNZIA1thXM62UX0M8jpbYQbXzDahI2WYRHi1
+	wLirCGtmGNcVvRgCCIpibkWFh7db6HJWCs57RP/Lb5AsVbcYfMC4lnK3hIw8ZmY=
+X-Google-Smtp-Source: AGHT+IGSIZFW5ug9A4F5elNqmArwptwwiWCm04nlIpH7pIYvmM7NziR+tlCEqa6BBIkNpwvoHu1pmQ==
+X-Received: by 2002:a05:6512:310c:b0:52c:8e13:a830 with SMTP id 2adb3069b0e04-52c8e13a898mr1364204e87.0.1718036532505;
+        Mon, 10 Jun 2024 09:22:12 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4220ce52c32sm21707585e9.48.2024.06.10.09.22.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:22:11 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:22:08 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Pavel Begunkov <asml.silence@gmail.com>,
+	David Wei <dw@davidwei.uk>, David Ahern <dsahern@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	Shailend Chand <shailend@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+Message-ID: <ZmcoMADenEFtuL6c@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+	David Ahern <dsahern@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	Shailend Chand <shailend@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>
+References: <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
+ <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
+ <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
+ <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
+ <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
+ <20240607145247.GG791043@ziepe.ca>
+ <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
+ <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
+ <20240610121625.GI791043@ziepe.ca>
+ <cdbc0d5f-bfbc-4f58-a6dd-c13b0bb5ff1c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] hwmon: add MP2993 driver
-To: Noah Wang <noahwang.wang@outlook.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jdelvare@suse.com
-Cc: corbet@lwn.net, Delphine_CC_Chiu@Wiwynn.com, peteryin.openbmc@gmail.com,
- javier.carrasco.cruz@gmail.com, patrick.rudolph@9elements.com,
- bhelgaas@google.com, lukas@wunner.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20240607090544.466833-1-noahwang.wang@outlook.com>
- <SEYPR04MB6482D8AB26453B7DF4E98441FAFB2@SEYPR04MB6482.apcprd04.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <SEYPR04MB6482D8AB26453B7DF4E98441FAFB2@SEYPR04MB6482.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <cdbc0d5f-bfbc-4f58-a6dd-c13b0bb5ff1c@amd.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On 6/7/24 02:05, Noah Wang wrote:
-> Add support for MPS VR controller mp2993. This driver exposes
-> telemetry and limit value readings and writtings.
+On Mon, Jun 10, 2024 at 02:38:18PM +0200, Christian König wrote:
+> Am 10.06.24 um 14:16 schrieb Jason Gunthorpe:
+> > On Mon, Jun 10, 2024 at 02:07:01AM +0100, Pavel Begunkov wrote:
+> > > On 6/10/24 01:37, David Wei wrote:
+> > > > On 2024-06-07 17:52, Jason Gunthorpe wrote:
+> > > > > IMHO it seems to compose poorly if you can only use the io_uring
+> > > > > lifecycle model with io_uring registered memory, and not with DMABUF
+> > > > > memory registered through Mina's mechanism.
+> > > > By this, do you mean io_uring must be exclusively used to use this
+> > > > feature?
+> > > > 
+> > > > And you'd rather see the two decoupled, so userspace can register w/ say
+> > > > dmabuf then pass it to io_uring?
+> > > Personally, I have no clue what Jason means. You can just as
+> > > well say that it's poorly composable that write(2) to a disk
+> > > cannot post a completion into a XDP ring, or a netlink socket,
+> > > or io_uring's main completion queue, or name any other API.
+> > There is no reason you shouldn't be able to use your fast io_uring
+> > completion and lifecycle flow with DMABUF backed memory. Those are not
+> > widly different things and there is good reason they should work
+> > together.
 > 
-> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
-> ---
->   Documentation/hwmon/index.rst  |   1 +
->   Documentation/hwmon/mp2993.rst | 150 ++++++++++++++++++
->   MAINTAINERS                    |   7 +
->   drivers/hwmon/pmbus/Kconfig    |   9 ++
->   drivers/hwmon/pmbus/Makefile   |   1 +
->   drivers/hwmon/pmbus/mp2993.c   | 269 +++++++++++++++++++++++++++++++++
->   6 files changed, 437 insertions(+)
->   create mode 100644 Documentation/hwmon/mp2993.rst
->   create mode 100644 drivers/hwmon/pmbus/mp2993.c
+> Well there is the fundamental problem that you can't use io_uring to
+> implement the semantics necessary for a dma_fence.
 > 
-> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> index 03d313af469a..9d9d55b889f2 100644
-> --- a/Documentation/hwmon/index.rst
-> +++ b/Documentation/hwmon/index.rst
-> @@ -166,6 +166,7 @@ Hardware Monitoring Kernel Drivers
->      mp2856
->      mp2888
->      mp2975
-> +   mp2993
->      mp5023
->      mp5990
->      mpq8785
-> diff --git a/Documentation/hwmon/mp2993.rst b/Documentation/hwmon/mp2993.rst
-> new file mode 100644
-> index 000000000000..a14bb30969f9
-> --- /dev/null
-> +++ b/Documentation/hwmon/mp2993.rst
-> @@ -0,0 +1,150 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Kernel driver mp2993
-> +====================
-> +
-> +Supported chips:
-> +
-> +  * MPS mp2993
-> +
-> +    Prefix: 'mp2993'
-> +
-> +  * Datasheet
-> +    https://scnbwymvp-my.sharepoint.com/:f:/g/personal/admin_scnbwy_com/Eth4kX1_J1hMsaASHiOYL4QBHU5a75r-tRfLKbHnJFdKLQ?e=vxj3DF
-> +
-> +Author:
-> +
-> +	Noah Wang <noahwang.wang@outlook.com>
-> +
-> +Description
-> +-----------
-> +
-> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
-> +MP2993 Dual Loop Digital Multi-phase Controller.
-> +
-> +Device compliant with:
-> +
-> +- PMBus rev 1.3 interface.
-> +
-> +The driver exports the following attributes via the 'sysfs' files
-> +for input voltage:
-> +
-> +**in1_input**
-> +
-> +**in1_label**
-> +
-> +**in1_crit**
-> +
-> +**in1_crit_alarm**
-> +
-> +**in1_lcrit**
-> +
-> +**in1_lcrit_alarm**
-> +
-> +**in1_max**
-> +
-> +**in1_max_alarm**
-> +
-> +**in1_min**
-> +
-> +**in1_min_alarm**
-> +
-> +The driver provides the following attributes for output voltage:
-> +
-> +**in2_input**
-> +
-> +**in2_label**
-> +
-> +**in2_crit**
-> +
-> +**in2_crit_alarm**
-> +
-> +**in2_lcrit**
-> +
-> +**in2_lcrit_alarm**
-> +
-> +**in3_input**
-> +
-> +**in3_label**
-> +
-> +**in3_crit**
-> +
-> +**in3_crit_alarm**
-> +
-> +**in3_lcrit**
-> +
-> +**in3_lcrit_alarm**
-> +
-> +The driver provides the following attributes for input current:
-> +
-> +**curr1_input**
-> +
-> +**curr1_label**
-> +
-> +**curr1_max**
-> +
-> +**curr1_max_alarm**
-> +
-> +The driver provides the following attributes for output current:
-> +
-> +**curr2_input**
-> +
-> +**curr2_label**
-> +
-> +**curr2_crit**
-> +
-> +**curr2_crit_alarm**
-> +
-> +**curr2_max**
-> +
-> +**curr2_max_alarm**
-> +
-> +**curr3_input**
-> +
-> +**curr3_label**
-> +
-> +**curr3_crit**
-> +
-> +**curr3_crit_alarm**
-> +
-> +**curr3_max**
-> +
-> +**curr3_max_alarm**
-> +
-> +The driver provides the following attributes for input power:
-> +
-> +**power1_input**
-> +
-> +**power1_label**
-> +
-> +The driver provides the following attributes for output power:
-> +
-> +**power2_input**
-> +
-> +**power2_label**
-> +
-> +**power3_input**
-> +
-> +**power3_label**
-> +
-> +The driver provides the following attributes for temperature:
-> +
-> +**temp1_input**
-> +
-> +**temp1_crit**
-> +
-> +**temp1_crit_alarm**
-> +
-> +**temp1_max**
-> +
-> +**temp1_max_alarm**
-> +
-> +**temp2_input**
-> +
-> +**temp2_crit**
-> +
-> +**temp2_crit_alarm**
-> +
-> +**temp2_max**
-> +
-> +**temp2_max_alarm**
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8754ac2c259d..f47f3e13b004 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15258,6 +15258,13 @@ S:	Maintained
->   F:	Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
->   F:	drivers/video/backlight/mp3309c.c
->   
-> ++MPS MP2993 DRIVER
-> ++M:	Noah Wang <noahwang.wang@outlook.com>
-> ++L:	linux-hwmon@vger.kernel.org
-> ++S:	Maintained
-> ++F:	Documentation/hwmon/mp2993.rst
-> ++F:	drivers/hwmon/pmbus/mp2993.c
-> +
->   MR800 AVERMEDIA USB FM RADIO DRIVER
->   M:	Alexey Klimov <klimov.linux@gmail.com>
->   L:	linux-media@vger.kernel.org
-> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-> index 08e82c457356..d875d31ce84c 100644
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -346,6 +346,15 @@ config SENSORS_MP2975
->   	  This driver can also be built as a module. If so, the module will
->   	  be called mp2975.
->   
-> +config SENSORS_MP2993
-> +	tristate "MPS MP2993"
-> +	help
-> +	  If you say yes here you get hardware monitoring support for MPS
-> +	  MP2993 Dual Loop Digital Multi-Phase Controller.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called mp2993.
-> +
->   config SENSORS_MP2975_REGULATOR
->   	depends on SENSORS_MP2975 && REGULATOR
->   	bool "Regulator support for MPS MP2975"
-> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-> index 2279b3327bbf..312d3f0c0540 100644
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
->   obj-$(CONFIG_SENSORS_MP2856)	+= mp2856.o
->   obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
->   obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
-> +obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
->   obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
->   obj-$(CONFIG_SENSORS_MP5990)	+= mp5990.o
->   obj-$(CONFIG_SENSORS_MPQ7932)	+= mpq7932.o
-> diff --git a/drivers/hwmon/pmbus/mp2993.c b/drivers/hwmon/pmbus/mp2993.c
-> new file mode 100644
-> index 000000000000..43432b8d4faf
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/mp2993.c
-> @@ -0,0 +1,269 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Hardware monitoring driver for MPS Multi-phase Digital VR Controllers(MP2993)
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include "pmbus.h"
-> +
-> +#define MP2993_VOUT_OVUV_UINT	125
-> +#define MP2993_VOUT_OVUV_DIV	64
-> +#define MP2993_VIN_LIMIT_UINT	1
-> +#define MP2993_VIN_LIMIT_DIV	8
-> +#define MP2993_READ_VIN_UINT	1
-> +#define MP2993_READ_VIN_DIV	32
-> +
-> +#define MP2993_PAGE_NUM	2
-> +
-> +#define MP2993_RAIL1_FUNC	(PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | \
-> +							PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT | \
-> +							PMBUS_HAVE_TEMP | PMBUS_HAVE_PIN | \
-> +							PMBUS_HAVE_IIN | \
-> +							PMBUS_HAVE_STATUS_VOUT | \
-> +							PMBUS_HAVE_STATUS_IOUT | \
-> +							PMBUS_HAVE_STATUS_TEMP | \
-> +							PMBUS_HAVE_STATUS_INPUT)
-> +
-> +#define MP2993_RAIL2_FUNC	(PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT | \
-> +							 PMBUS_HAVE_POUT | PMBUS_HAVE_TEMP | \
-> +							 PMBUS_HAVE_STATUS_VOUT | \
-> +							 PMBUS_HAVE_STATUS_IOUT | \
-> +							 PMBUS_HAVE_STATUS_TEMP | \
-> +							 PMBUS_HAVE_STATUS_INPUT)
-> +
-> +/* Converts a linear11 data exponent to a specified value */
-> +static u16 mp2993_linear11_exponent_transfer(u16 word, u16 expect_exponent)
-> +{
-> +	s16 exponent, mantissa, target_exponent;
-> +
-> +	exponent = ((s16)word) >> 11;
-> +	mantissa = ((s16)((word & 0x7ff) << 5)) >> 5;
-> +	target_exponent = (s16)((expect_exponent & 0x1f) << 11) >> 11;
-> +
-> +	if (exponent > target_exponent)
-> +		mantissa = mantissa << (exponent - target_exponent);
-> +	else
-> +		mantissa = mantissa >> (target_exponent - exponent);
-> +
-> +	return (mantissa & 0x7ff) | ((expect_exponent << 11) & 0xf800);
-> +}
-> +
-> +static int
-> +mp2993_set_vout_format(struct i2c_client *client, int page, int format)
-> +{
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(client, PMBUS_VOUT_MODE, format);
-> +	if (ret < 0)
-> +		return ret;
+> That's why we had to reject the io_uring work on DMA-buf sharing from Google
+> a few years ago.
+> 
+> But this only affects the dma_fence synchronization part of DMA-buf, but
+> *not* the general buffer sharing.
 
-	return i2c_smbus_write_byte_data(...);
+More precisely, it only impacts the userspace/data access implicit
+synchronization part of dma-buf. For tracking buffer movements like on
+invalidations/refault with a dynamic dma-buf importer/exporter I think the
+dma-fence rules are acceptable. At least they've been for rdma drivers.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int mp2993_identify(struct i2c_client *client, struct pmbus_driver_info *info)
-> +{
-> +	int ret;
-> +
-> +	/* Set vout to direct format for rail1. */
-> +	ret = mp2993_set_vout_format(client, 0, PB_VOUT_MODE_DIRECT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Set vout to direct format for rail2. */
-> +	ret = mp2993_set_vout_format(client, 1, PB_VOUT_MODE_DIRECT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return ret;
+But the escape hatch is to (temporarily) pin the dma-buf, which is exactly
+what direct I/O also does when accessing pages. So aside from the still
+unsolved question on how we should account/track pinned dma-buf, there
+shouldn't be an issue. Or at least I'm failing to see one.
 
+And for synchronization to data access the dma-fence stuff on dma-buf is
+anyway rather deprecated on the gpu side too, exactly because of all these
+limitations. On the gpu side we've been moving to free-standing
+drm_syncobj instead, but those are fairly gpu specific and any other
+subsystem should be able to just reuse what they have already to signal
+transaction completions.
 
-In other words,
-	if (ret < 0)
-		return ret;
-	else
-		return ret;
+Cheers, Sima
 
-Please, don't do that.
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> > Pretending they are totally different just because two different
+> > people wrote them is a very siloed view.
+> > 
+> > > The devmem TCP callback can implement it in a way feasible to
+> > > the project, but it cannot directly post events to an unrelated
+> > > API like io_uring. And devmem attaches buffers to a socket,
+> > > for which a ring for returning buffers might even be a nuisance.
+> > If you can't compose your io_uring completion mechanism with a DMABUF
+> > provided backing store then I think it needs more work.
+> > 
+> > Jason
+> 
 
-	return mp2993_set_vout_format(...);
-
-> +}
-> +
-> +static int mp2993_read_word_data(struct i2c_client *client, int page, int phase,
-> +				 int reg)
-> +{
-> +	int ret;
-> +
-> +	switch (reg) {
-> +	case PMBUS_VOUT_OV_FAULT_LIMIT:
-> +	case PMBUS_VOUT_UV_FAULT_LIMIT:
-> +		ret = pmbus_read_word_data(client, page, phase, reg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = DIV_ROUND_CLOSEST(ret * MP2993_VOUT_OVUV_UINT, MP2993_VOUT_OVUV_DIV);
-> +		break;
-> +	case PMBUS_OT_FAULT_LIMIT:
-> +	case PMBUS_OT_WARN_LIMIT:
-> +		/*
-> +		 * The MP2993 ot fault limit value and ot warn limit value
-> +		 * per rail are always the same, so only PMBUS_OT_FAULT_LIMIT
-> +		 * and PMBUS_OT_WARN_LIMIT register in page 0 are defined to
-> +		 * indicates the limit value.
-> +		 */
-> +		ret = pmbus_read_word_data(client, 0, phase, reg);
-> +		break;
-> +	case PMBUS_READ_VIN:
-> +		/* The MP2993 vin scale is (1/32V)/Lsb */
-> +		ret = pmbus_read_word_data(client, page, phase, reg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = DIV_ROUND_CLOSEST((ret & GENMASK(9, 0)) * MP2993_READ_VIN_UINT,
-> +					MP2993_READ_VIN_DIV);
-> +		break;
-> +	case PMBUS_VIN_OV_FAULT_LIMIT:
-> +	case PMBUS_VIN_OV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_FAULT_LIMIT:
-> +		/* The MP2993 vin limit scale is (1/8V)/Lsb */
-> +		ret = pmbus_read_word_data(client, page, phase, reg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = DIV_ROUND_CLOSEST((ret & GENMASK(7, 0)) * MP2993_VIN_LIMIT_UINT,
-> +					MP2993_VIN_LIMIT_DIV);
-> +		break;
-> +	case PMBUS_READ_IOUT:
-> +	case PMBUS_READ_IIN:
-> +	case PMBUS_IIN_OC_WARN_LIMIT:
-> +	case PMBUS_IOUT_OC_FAULT_LIMIT:
-> +	case PMBUS_IOUT_OC_WARN_LIMIT:
-> +	case PMBUS_READ_VOUT:
-> +	case PMBUS_READ_PIN:
-> +	case PMBUS_READ_POUT:
-> +	case PMBUS_READ_TEMPERATURE_1:
-> +		ret = -ENODATA;
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int mp2993_write_word_data(struct i2c_client *client, int page, int reg,
-> +				  u16 word)
-> +{
-> +	int ret;
-> +
-> +	switch (reg) {
-> +	case PMBUS_VOUT_OV_FAULT_LIMIT:
-> +	case PMBUS_VOUT_UV_FAULT_LIMIT:
-> +		ret = DIV_ROUND_CLOSEST(word * MP2993_VOUT_OVUV_DIV, MP2993_VOUT_OVUV_UINT);
-> +		ret = pmbus_write_word_data(client, 0, reg, ret);
-> +		break;
-> +	case PMBUS_OT_FAULT_LIMIT:
-> +	case PMBUS_OT_WARN_LIMIT:
-> +		/*
-> +		 * The MP2993 ot fault limit value and ot warn limit value
-> +		 * per rail are always the same, so only PMBUS_OT_FAULT_LIMIT
-> +		 * and PMBUS_OT_WARN_LIMIT register in page 0 are defined to
-> +		 * config the ot limit value.
-> +		 */
-> +		ret = pmbus_write_word_data(client, 0, reg, word);
-> +		break;
-> +	case PMBUS_VIN_OV_FAULT_LIMIT:
-> +	case PMBUS_VIN_OV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_FAULT_LIMIT:
-> +		/* The MP2993 vin limit scale is (1/8V)/Lsb */
-> +		ret = pmbus_write_word_data(client, 0, reg,
-> +					    DIV_ROUND_CLOSEST(word * MP2993_VIN_LIMIT_DIV,
-> +							      MP2993_VIN_LIMIT_UINT));
-> +		break;
-> +	case PMBUS_IIN_OC_WARN_LIMIT:
-> +		/*
-> +		 * The PMBUS_IIN_OC_WARN_LIMIT of MP2993 is linear11 format,
-> +		 * and the exponent is a constant value(5'b00000)ï¼Œ so the
-> +		 * exponent of word parameter should be converted to 5'b00000.
-> +		 */
-> +		ret = pmbus_write_word_data(client, page, reg,
-> +					    mp2993_linear11_exponent_transfer(word, 0x00));
-> +		break;
-> +		//
-> +	case PMBUS_IOUT_OC_FAULT_LIMIT:
-> +	case PMBUS_IOUT_OC_WARN_LIMIT:
-> +		/*
-> +		 * The PMBUS_IOUT_OC_FAULT_LIMIT and PMBUS_IOUT_OC_WARN_LIMIT
-> +		 * of MP2993 can be regarded as linear11 format, and the
-> +		 * exponent is a 5'b00001 or 5'b00000. To ensure a larger
-> +		 * range of limit value, so the exponent of word parameter
-> +		 * should be converted to 5'b00001.
-> +		 */
-> +		ret = pmbus_write_word_data(client, page, reg,
-> +					    mp2993_linear11_exponent_transfer(word, 0x01));
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static struct pmbus_driver_info mp2993_info = {
-> +	.pages = MP2993_PAGE_NUM,
-> +	.format[PSC_VOLTAGE_IN] = direct,
-> +	.format[PSC_CURRENT_IN] = linear,
-> +	.format[PSC_CURRENT_OUT] = linear,
-> +	.format[PSC_TEMPERATURE] = direct,
-> +	.format[PSC_POWER] = linear,
-> +	.format[PSC_VOLTAGE_OUT] = direct,
-> +
-> +	.m[PSC_VOLTAGE_OUT] = 1,
-> +	.R[PSC_VOLTAGE_OUT] = 3,
-> +	.b[PSC_VOLTAGE_OUT] = 0,
-> +
-> +	.m[PSC_VOLTAGE_IN] = 1,
-> +	.R[PSC_VOLTAGE_IN] = 0,
-> +	.b[PSC_VOLTAGE_IN] = 0,
-> +
-> +	.m[PSC_TEMPERATURE] = 1,
-> +	.R[PSC_TEMPERATURE] = 0,
-> +	.b[PSC_TEMPERATURE] = 0,
-> +
-> +	.func[0] = MP2993_RAIL1_FUNC,
-> +	.func[1] = MP2993_RAIL2_FUNC,
-> +	.read_word_data = mp2993_read_word_data,
-> +	.write_word_data = mp2993_write_word_data,
-> +	.identify = mp2993_identify,
-> +};
-> +
-> +static int mp2993_probe(struct i2c_client *client)
-> +{
-> +	return pmbus_do_probe(client, &mp2993_info);
-> +}
-> +
-> +static const struct i2c_device_id mp2993_id[] = {
-> +	{"mp2993", 0},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, mp2993_id);
-> +
-> +static const struct of_device_id __maybe_unused mp2993_of_match[] = {
-> +	{.compatible = "mps,mp2993"},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, mp2993_of_match);
-> +
-> +static struct i2c_driver mp2993_driver = {
-> +	.driver = {
-> +		.name = "mp2993",
-> +		.of_match_table = mp2993_of_match,
-> +	},
-> +	.probe = mp2993_probe,
-> +	.id_table = mp2993_id,
-> +};
-> +
-> +module_i2c_driver(mp2993_driver);
-> +
-> +MODULE_AUTHOR("Noah Wang <noahwang.wang@outlook.com>");
-> +MODULE_DESCRIPTION("PMBus driver for MPS MP2993");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS(PMBUS);
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
