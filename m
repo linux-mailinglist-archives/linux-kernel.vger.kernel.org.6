@@ -1,100 +1,221 @@
-Return-Path: <linux-kernel+bounces-208126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C49902125
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:02:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E93D902123
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695632852FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4052F1C23067
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF24777113;
-	Mon, 10 Jun 2024 12:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IkCordgv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66857E57F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707178C9C;
 	Mon, 10 Jun 2024 12:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020947; cv=none; b=IKQgj+p7aOCZN1yTpPCuLt/NFAiMk0Ti6wcG2Hy7f3LqCgU0CiZocyrdFgT3E7Zg1WKkWbuZiG+LaNBoRl0Dj9c5kgwnT+2cqlv1lSDqp4v01cOfGGgJfkvwsrZrzgOnTxLJ7GXGG0JRHgFAYFXqMOXjfLlGVxCMTPWGvGBQtcQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020947; c=relaxed/simple;
-	bh=mSI2GkQiEehtcMLiBemrZZsh3jiufORHwzXS/bc2ccE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWsdPyBj5gKnn/KwH5ljH01I5lT1v/r4AwFhqwgWaJT6t+lw52wYXZeItM73YeMz/E4pbCFM5Xd9FePLjbJVP7x0T00HQr7uda7OboSUxOEN4KuJZup3TBoQQAhDyfJ54FvCWXj2OQ9nPm7j6Dr9nrN1TtUEomk0ApMl9zC/JZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IkCordgv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1C1BC40E0081;
-	Mon, 10 Jun 2024 12:02:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RF8ODJfr34d4; Mon, 10 Jun 2024 12:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718020936; bh=9D2NgyETvv37X/hQRiarv/um1ZsdxfH4XDt4fWkegpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IkCordgvTM7q3C8M+2HF+KQNL+uZUDK6y2hCj+FjFyhEFMjqNa7P4IU4jZHhzMNRb
-	 MipNcb7Z+HlhnYbrhdepdH2S7OxBIl/FQKJkInDxF+7lIGY9gdTkGihaSTTgsUITVt
-	 6VHQLTk1WgTG1rL8i5GedzAY8za0Q9t9baqIuDRrGzmgt4o4D6/0X56SvdwVkXDg0D
-	 W7xdnSuZmLmlARmif6m3BkWvbKRiEQ/WB4tsNO2eVU0tEWOw8Bgh+x30JFm6PcIKgl
-	 4kRwiIisInmsk5ttd1T14whX5XnuXzAbSJDQvH2HmV+QeIufPFuwxFvY/NbVp17prW
-	 u8WYl9D479uXIH+ghSE4R4QawT/FnKPLIfYfl6eaNP9VwGCOId2o8DPCZ+HN3ZrQpq
-	 TcwXLW98PB5mi0DfO9yhne+b9a6K2qs3p1ixaVdqd81PdDtmxIdgzqEAES03fj79T7
-	 c+1VRDJJLEN16TPs8YK+szEysL0hctoc8bVUbomFiEQ7ETxsS2GUj3XApeQrdVlAev
-	 oMibuzFcGIXZ/K3VRzkJ7jzzI3zi1mcIXN42dkWTEOXOMRM+jt4mUO4+yRptdRxWGD
-	 aQfl2qFtabMmnyJ2a6pnZCPN5ZTicGCRx+6EwEPuwpHkWzyhA1GCf+65fm+8e2xSQQ
-	 LjbaHVuEeh6tFF3uz/YCdWys=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gt559jjE"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BB89940E016A;
-	Mon, 10 Jun 2024 12:02:06 +0000 (UTC)
-Date: Mon, 10 Jun 2024 14:02:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-Message-ID: <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0BDBA53
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718020943; cv=none; b=Fw8LYprMotUxyBH/w33tJgyvX3S5eClspzENQrzVHQpw8lqOmDF7YddkUpQJPmBQbRM4BxcqkPrWeUDkRCii9TxNG2+ayLkVj8R/ioW0KoUeXDBlcDTvfHCGgcnxxe+wh/vb9Y3PfKvKkTW0MHsQaKBi0sq1WxJUqQpsA5P33jk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718020943; c=relaxed/simple;
+	bh=aQFP7gNPrNXTh2IHcUhusTtvEa4HHQK5PtH55IE5+CE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kMdEWBEEVjxKYrqQI+Ndn7vo/YNJwWJp3LYXuKukBIim8YSp+q4345h5bDiUBRegm40t0gzHvbmF142XtpWdZVuGz/ydAUDhjNjKk9xrPJHXnOyVHwI2KVs/wD1XbtKpgCKwO9KFi9yGG3WRtJDmoc0L+/wzFCsVNU8WZBYSOpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gt559jjE; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c199e37f4eso3636699a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718020941; x=1718625741; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=26tuUrqnEQfFAp3h3pgs/MAqgYUu2Sg0W6tKE5DaxLQ=;
+        b=Gt559jjEYDTV3H1vTGqtTJWt9aAOwk0l6F/kU2g4jYtTgHqhoc40wLOeUC0w3ha9e7
+         qAGOpCFQuOm5YZCZxhTqKJ48HLUH7NdwKVA61Rp9zPnNX4phO7U/v3rfLI6SrFvNIv7a
+         zhAqZTwFPuo4EPsLTAXE8eEhz0GJ54hzxR00R1L3JQCbXbv2FyNvS3ZL5xDrGkWG5h01
+         euKvz/DHt4vXX8V8CZTrhgoGS82YylXATf7caJjRCalD2YX6hpl3LkBo6GZapzqUrjFT
+         Et8aWYy+aCGXG3ApwNm80+FajfbqLWbpCoI4KQnduc4LIQAcO0DXe2FA5jNa4/vNPHzx
+         QYiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718020941; x=1718625741;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=26tuUrqnEQfFAp3h3pgs/MAqgYUu2Sg0W6tKE5DaxLQ=;
+        b=qrEVM7MRX4gz7eTb0Wq6EZPwVb3Hj+r1MWQDpJERej1HF8mM1+4mlNt7wPJKQT3Scf
+         qR/n05RHPoEGGLBN8ySMJxn9Y5LIPaqmPjSwx3pQyrlqYowYeA7JhKqRUr3IUmIWX4/k
+         B1UfyTTqHT0lIfviYvLZOg+VR5P3WCAxYd+Av3fs87dYxCqvSOBRjhtSfCinxyQr9V5Q
+         Bfha/GDTsQpd+wXdw5JAK9vhEjvg0SIPb+fLN8JDx8VQHy5Xtt+3bbVxUJpKVIxHDsk4
+         0IGbclL6e1OeRI4d2skZbJ8Qrb6KVFui9eGSr5ipzX2yIjFcIMle24NzRoEaW0BBKnCV
+         oqIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZEUvjYX57vk57m0qPE4jiP/expqS9RsBOgY51GDDNXpfcERxLWGQGUq9hmrdc08P6zXme/8RoUKqdbs/3NtKZTvpoA6IaVf1rvYBm
+X-Gm-Message-State: AOJu0Yxc0Q7J8g5bL0XmI96gGnVKf2qnb9K7n9j3x2XfUbu4i6OBtyqd
+	Z8HOtDUwldpKShKNc/JlyYbJyTlOm6fPJ/wFVLQhQ24T3PL8gI8t
+X-Google-Smtp-Source: AGHT+IFBudSl4WgItCCnP5LfGTAa8cr1lbmtKS+NCmJH2FoXqV6FA1FwxGmVoAyBzdfwCVxMYS/NSg==
+X-Received: by 2002:a17:90b:817:b0:2c2:f2d6:60d4 with SMTP id 98e67ed59e1d1-2c2f2d664aamr3884336a91.8.1718020940887;
+        Mon, 10 Jun 2024 05:02:20 -0700 (PDT)
+Received: from LancedeMBP.lan.lan ([2403:2c80:6::304c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c302f0ebdcsm2478478a91.23.2024.06.10.05.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 05:02:20 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	sj@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	maskray@google.com,
+	ziy@nvidia.com,
+	ryan.roberts@arm.com,
+	david@redhat.com,
+	21cnbao@gmail.com,
+	mhocko@suse.com,
+	fengwei.yin@intel.com,
+	zokeefe@google.com,
+	shy828301@gmail.com,
+	xiehuan09@gmail.com,
+	libang.li@antgroup.com,
+	wangkefeng.wang@huawei.com,
+	songmuchun@bytedance.com,
+	peterx@redhat.com,
+	minchan@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Lance Yang <ioworker0@gmail.com>
+Subject: [PATCH v7 0/4] Reclaim lazyfree THP without splitting
+Date: Mon, 10 Jun 2024 20:02:05 +0800
+Message-Id: <20240610120209.66311-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240610104352.GT8774@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 12:43:52PM +0200, Peter Zijlstra wrote:
-> Yes, the approach is super simple and straight forward, but imagine
-> there being like a 100 symbols soon :/
+Hi all,
 
-I think we should accept patches using this only when there really is
-a good, perf reason for doing so. Not "I wanna use this fance shite in
-my new driver just because...".
+This series adds support for reclaiming PMD-mapped THP marked as lazyfree
+without needing to first split the large folio via split_huge_pmd_address().
 
+When the user no longer requires the pages, they would use madvise(MADV_FREE)
+to mark the pages as lazy free. Subsequently, they typically would not re-write
+to that memory again.
+
+During memory reclaim, if we detect that the large folio and its PMD are both
+still marked as clean and there are no unexpected references(such as GUP), so we
+can just discard the memory lazily, improving the efficiency of memory
+reclamation in this case.
+
+Performance Testing
+===================
+
+On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
+mem_cgroup_force_empty() results in the following runtimes in seconds
+(shorter is better):
+
+--------------------------------------------
+|     Old       |      New       |  Change  |
+--------------------------------------------
+|   0.683426    |    0.049197    |  -92.80% |
+--------------------------------------------
+
+---
+
+Changes since v6 [6]
+====================
+ - mm/rmap: remove duplicated exit code in pagewalk loop
+    - Pick RB from David - thanks!
+ - mm/rmap: add helper to restart pgtable walk on changes
+    - Add the page_vma_mapped_walk_restart() helper to handle scenarios
+      where the page table walk needs to be restarted due to changes in
+      the page table (suggested by David)
+ - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+    - Pass 'pvmw.address' to split_huge_pmd_locked() (per David)
+    - Drop the check for PMD-mapped THP that is missing the mlock (per David)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - Rename the function __discard_trans_pmd_locked() to
+      __discard_anon_folio_pmd_locked() (per David)
+
+Changes since v5 [5]
+====================
+ - mm/rmap: remove duplicated exit code in pagewalk loop
+    - Pick RB from Baolin Wang - thanks!
+ - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
+    - Merge this patch into patch 2 (per Baolin Wang)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - Mark a folio as being backed by swap space if the folio or its PMD
+      was redirtied (per Baolin Wang)
+    - Use pmdp_huge_clear_flush() to get and flush a PMD entry
+      (per Baolin Wang)
+
+Changes since v4 [4]
+====================
+ - mm/rmap: remove duplicated exit code in pagewalk loop
+    - Pick RB from Zi Yan - thanks!
+ - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+    - Remove the redundant alignment (per Baolin Wang)
+    - Set pvmw.ptl to NULL after unlocking the PTL (per Baolin Wang)
+ - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
+    - Check whether the mlock of PMD-mapped THP was missed
+      (suggested by Baolin Wang)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - No need to check the TTU_SPLIT_HUGE_PMD flag for unmap_huge_pmd_locked()
+      (per Zi Yan)
+    - Drain the local mlock batch after folio_remove_rmap_pmd()
+      (per Baolin Wang)
+
+Changes since v3 [3]
+====================
+ - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+    - Resolve compilation errors by handling the case where
+      CONFIG_PGTABLE_HAS_HUGE_LEAVES is undefined (thanks to SeongJae Park)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - Remove the unnecessary conditional compilation directives
+      (thanks to Barry Song)
+    - Resolve compilation errors due to undefined references to
+      unmap_huge_pmd_locked and split_huge_pmd_locked (thanks to Barry)
+
+Changes since v2 [2]
+====================
+ - Update the changelog (thanks to David Hildenbrand)
+ - Support try_to_unmap_one() to unmap PMD-mapped folios
+   (thanks a lot to David Hildenbrand and Zi Yan)
+
+Changes since v1 [1]
+====================
+ - Update the changelog
+ - Follow the exact same logic as in try_to_unmap_one() (per David Hildenbrand)
+ - Remove the extra code from rmap.c (per Matthew Wilcox)
+
+[1] https://lore.kernel.org/linux-mm/20240417141111.77855-1-ioworker0@gmail.com
+[2] https://lore.kernel.org/linux-mm/20240422055213.60231-1-ioworker0@gmail.com
+[3] https://lore.kernel.org/linux-mm/20240429132308.38794-1-ioworker0@gmail.com
+[4] https://lore.kernel.org/linux-mm/20240501042700.83974-1-ioworker0@gmail.com
+[5] https://lore.kernel.org/linux-mm/20240513074712.7608-1-ioworker0@gmail.com
+[6] https://lore.kernel.org/linux-mm/20240521040244.48760-1-ioworker0@gmail.com
+
+Lance Yang (4):
+  mm/rmap: remove duplicated exit code in pagewalk loop
+  mm/rmap: add helper to restart pgtable walk on changes
+  mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+
+ include/linux/huge_mm.h |  15 +++++
+ include/linux/rmap.h    |  22 ++++++++
+ mm/huge_memory.c        | 122 +++++++++++++++++++++++++++++++++-------
+ mm/rmap.c               |  77 ++++++++++++++-----------
+ 4 files changed, 184 insertions(+), 52 deletions(-)
+
+
+base-commit: 6b77d01728f219a091f55ca3142bbc4e4057ca50
 -- 
-Regards/Gruss,
-    Boris.
+2.33.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
