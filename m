@@ -1,152 +1,985 @@
-Return-Path: <linux-kernel+bounces-208224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED460902297
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB3902293
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19691F23A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63ED81C2178F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C3284FA5;
-	Mon, 10 Jun 2024 13:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C686824AE;
+	Mon, 10 Jun 2024 13:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RghWsiHj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AQJ+XQHv"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E27C824BC;
-	Mon, 10 Jun 2024 13:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE217E0E8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025775; cv=none; b=WnEKbNgWMoM9uyj/c3m+mDRX47C0dn/o1lzBbJGs+6DOI5h4AeiH5mqvO/L0cqaWyIvRIPuSjJFZX8LzEky0yd1knpmhYJphdrXbMnvUU8YBGsDTobCt0gJ6bEYYwg7Ah+AGu5jgGwJxYmFpGX06VTEakaxdo0YD9/OrM4//nt0=
+	t=1718025769; cv=none; b=pvj2vHLVux+ECCwYIcLTSSdIpLea3Oqvvy0LNcAPwcTQbgI7OE5BETnSarH8z6LFtjkBWABw5leBCF+Ljz13Pz2zPWIQW9b7q5l0K7Z7VziDeyVLE2PaJj7ujEUF3E+m4peaByjlOui9CcqrJs9zg3au6vjXq0+GgNVOPtEYGsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025775; c=relaxed/simple;
-	bh=NepeI8ob9FXfvNHO4LXDjbHQpKCdIwqnMC08bVFhulo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPG9/SWMU/xeBRg2XpyT/l8yFgayPWPH/lyVtuqkPtQVCeZSgEJv/080Ek4BLFhi2CTP/RAd39cvAkqq+B9SrVjHDwt6scJBKIdtvDjQ2/TyhQbIr+IpTpbYI1O9btI06CjA2wZ6Vq6/Oh2kKzN3nRzQeS6ivKCQuOFEHKWswWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RghWsiHj; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718025773; x=1749561773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NepeI8ob9FXfvNHO4LXDjbHQpKCdIwqnMC08bVFhulo=;
-  b=RghWsiHjbKdtUb/UEO9Q7lAJrwav/YbHeFakvLaKBYf6ja3v0mr/gqoQ
-   iiALqBY7fD12/HtVOAOq73HFAQcfBSH16vQxst62T6RyOp7o223Pp7L0/
-   tfcRlhrlX/1Dp1HkroNaziUJA4aUniDs29oXiaEij5V5kfbijAiNvUlBi
-   IM+M2dtQRBf/rWS7iCoCpCvteI9JW9KXsZcPI9lm6yS1hjNN1J/VwG+Lo
-   6Igpz8WFsRDf/XsEYB8h1WPtjUCih+HnEbNtyUXa6m7POzYKOESAhHhmI
-   GzHWKtxHfdeHXXo24uumBMlW2aBO8g5K7ORMRXqFl/KGl4YNNTWcUtBjZ
-   Q==;
-X-CSE-ConnectionGUID: eepkyb5NTYKrgZ2Yo8g2TQ==
-X-CSE-MsgGUID: lb/ezKeLRt++VY1JtZOPfw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14514971"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14514971"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 06:17:44 -0700
-X-CSE-ConnectionGUID: vVswg6JuRhizRL9I0CY4iA==
-X-CSE-MsgGUID: aMrqn/CUTJmFElQblBKmqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39056580"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Jun 2024 06:17:39 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGeu1-0002A7-0g;
-	Mon, 10 Jun 2024 13:17:37 +0000
-Date: Mon, 10 Jun 2024 21:17:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] interconnect: qcom: qcs404: Add regmaps and more bus
- descriptions
-Message-ID: <202406102141.1kH3LXFy-lkp@intel.com>
-References: <20240609182112.13032-7-a39.skl@gmail.com>
+	s=arc-20240116; t=1718025769; c=relaxed/simple;
+	bh=3zxDvZfoCHjIOe7+CivGyqkxzMSwrk36DBZc9O6iUrI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsFtic/g+rev79dveyVFF81+D7mrMi2nXFMIUIkuYtgX9Zr218RwSbXxsJa9z4P2L56vE1s5CLOrVhgGaJmAKcLBz60UaGptdWb/qRSPU41Uc4YRYIA6Tkdhmdtvmrm7lYrZWS/fbKpjIYAgTtTif43S/lblZgH1mzWz1x+iUPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AQJ+XQHv; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52c85a7f834so1519660e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718025764; x=1718630564; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AA+vYg4P0V6sJBcGS394N0Wxfh4PJKIL5HOhR9NkxaQ=;
+        b=AQJ+XQHvQdEFrdSL57PC30TD0x4CEZNVde7JP27BtW2ki9mUfI+g4w/duTO9wm3q6y
+         hDgm1Df9DokGXXkB3l6zjLWCsElmvFW8zt1ptc17c/jO9gX1Ao9XnREnihlUvNFObRIy
+         VYAh9mx4J5ANSBWWypbQ6OIdFXnUC4jcit0/ZoWyoQySVzizu4BicgK8krxyWDXAr+NW
+         IgcJVNKaRWg+lqsI+zOdif5Zwz52/ilGvjj04PuBP8ZQoFXgM1dFX+2VqOqXdr92JXdj
+         qIIKlw7NHfG/ReYmXw/jTgDiTTeeU/OBUYUzr8E7v0glOf0I5JQr58n/rWe5bdXlV3Qh
+         lHgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718025764; x=1718630564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AA+vYg4P0V6sJBcGS394N0Wxfh4PJKIL5HOhR9NkxaQ=;
+        b=JctET1LBodMvYO+yCIgnpVNlvFiTou0nSO6lacZOWOBYeVGLVXUAZDLEp2pKjdz68J
+         SKnUsSZJ04RyLcADbCV11JHcmC8FzvbVPKChEnV4cFFXd3xAwtWWveiaopqex74Vt0US
+         J0uStl6/iAzecCzIpvrNjCuCk1hXOuwdnp/VFftirQcc8/T5GdUvt9W9bsMU885Erf+F
+         rUv9rzmt6wsxAsKzU1qiZgkco5qTIXoMKMhdNRvrPxhAczTN0wSlOKYO0ERVjSUi9+3/
+         X471YGvKJrA7WEdOHyyfNBVsxn7gQUFpmrtmXWFZkU36lftPxegGeXKp9UKXhI7ZS4YU
+         6D6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWrjDBW/h+BEZOhWFT8vOuCiZowYqoTto9NxZutQOA6gH7+H9cnzNPUpKoi7+3e8k2/y2V8Z3ufomTXrIhU7ejJ59GdGHy7yRwq7fxL
+X-Gm-Message-State: AOJu0YyiXu+Qk2gxew/aDr7RAzMMqHkw07cr4RSfJh6Ce1hWxL+jJ+Mm
+	qMiCeuQ4oXTZrJ+8AgzhcpwAzgHaFKTbASJleq07waIUrhNbHD8GwF5AYQRNhqdkfN2JCw4vCMb
+	vYWqtjbZ3ECmn+4+BOxEYXuMpUbYTThPEbF9XlA==
+X-Google-Smtp-Source: AGHT+IGZeTZP/KiFC/N87nT0K52/bW2siphyHnmdxL8WzK6Juv5TfarMNOlRNB9Z4BHXu2xmkOCUvOjN4Vf0dp5DuoM=
+X-Received: by 2002:a05:651c:2126:b0:2eb:d95f:10bc with SMTP id
+ 38308e7fff4ca-2ebd95f1469mr49141991fa.10.1718025763857; Mon, 10 Jun 2024
+ 06:22:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609182112.13032-7-a39.skl@gmail.com>
+References: <20240527144054.155503-1-brgl@bgdev.pl> <ZleXc6tLbiWQ59i-@surfacebook.localdomain>
+In-Reply-To: <ZleXc6tLbiWQ59i-@surfacebook.localdomain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 10 Jun 2024 15:22:32 +0200
+Message-ID: <CAMRc=MftW0y7GicBy4vwABomUYuMndsJBUTdsQzZijDtgX1ohQ@mail.gmail.com>
+Subject: Re: [PATCH v7] gpio: virtuser: new virtual driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Adam,
+On Wed, May 29, 2024 at 11:00=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> Mon, May 27, 2024 at 04:40:54PM +0200, Bartosz Golaszewski kirjoitti:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > The GPIO subsystem used to have a serious problem with undefined behavi=
+or
+> > and use-after-free bugs on hot-unplug of GPIO chips. This can be
+> > considered a corner-case by some as most GPIO controllers are enabled
+> > early in the boot process and live until the system goes down but most
+> > GPIO drivers do allow unbind over sysfs, many are loadable modules that
+> > can be (force) unloaded and there are also GPIO devices that can be
+> > dynamically detached, for instance CP2112 which is a USB GPIO expender.
+> >
+> > Bugs can be triggered both from user-space as well as by in-kernel user=
+s.
+> > We have the means of testing it from user-space via the character devic=
+e
+> > but the issues manifest themselves differently in the kernel.
+> >
+> > This is a proposition of adding a new virtual driver - a configurable
+> > GPIO consumer that can be configured over configfs (similarly to
+> > gpio-sim) or described on the device-tree.
+> >
+> > This driver is aimed as a helper in spotting any regressions in
+> > hot-unplug handling in GPIOLIB.
+>
+> ...
+>
+> > User must pass exactly the number of values that the array contains
+>
+> Can't we assume non-active values for the rest if less than needed were
+> provided? For more than that, why do we care?
+>
 
-kernel test robot noticed the following build errors:
+Honestly, what good would it do? It would just be more confusing IMO.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.10-rc3 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> ...
+>
+> > +#include <linux/atomic.h>
+> > +#include <linux/bitmap.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/completion.h>
+> > +#include <linux/configfs.h>
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/gpio/machine.h>
+>
+> > +#include <linux/idr.h>
+>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq_work.h>
+>
+> > +#include <linux/kernel.h>
+>
+> Do you need this?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adam-Skladowski/dt-bindings-interconnect-Add-Qualcomm-MSM8976-DT-bindings/20240610-022416
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240609182112.13032-7-a39.skl%40gmail.com
-patch subject: [PATCH 6/7] interconnect: qcom: qcs404: Add regmaps and more bus descriptions
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20240610/202406102141.1kH3LXFy-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 4403cdbaf01379de96f8d0d6ea4f51a085e37766)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406102141.1kH3LXFy-lkp@intel.com/reproduce)
+ARRAY_SIZE() used to live here when I first wrote this but it was
+since moved. I'll drop this.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406102141.1kH3LXFy-lkp@intel.com/
+>
+> > +#include <linux/limits.h>
+> > +#include <linux/list.h>
+> > +#include <linux/lockdep.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/notifier.h>
+> > +#include <linux/of.h>
+> > +#include <linux/overflow.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/printk.h>
+> > +#include <linux/property.h>
+> > +#include <linux/slab.h>
+>
+> > +#include <linux/string.h>
+>
+> Implied by string_helpers.h
+>
 
-All errors (new ones prefixed by >>):
+Yeah, but we still use symbols directly from string.h, we shouldn't
+depend on implicit includes.
 
->> drivers/interconnect/qcom/qcs404.c:1070:35: error: variable has incomplete type 'const struct regmap_config'
-    1070 | static const struct regmap_config qcs404_bimc_regmap_config = {
-         |                                   ^
-   drivers/interconnect/qcom/icc-rpm.h:136:15: note: forward declaration of 'struct regmap_config'
-     136 |         const struct regmap_config *regmap_cfg;
-         |                      ^
-   drivers/interconnect/qcom/qcs404.c:1137:35: error: variable has incomplete type 'const struct regmap_config'
-    1137 | static const struct regmap_config qcs404_pcnoc_regmap_config = {
-         |                                   ^
-   drivers/interconnect/qcom/icc-rpm.h:136:15: note: forward declaration of 'struct regmap_config'
-     136 |         const struct regmap_config *regmap_cfg;
-         |                      ^
-   drivers/interconnect/qcom/qcs404.c:1178:35: error: variable has incomplete type 'const struct regmap_config'
-    1178 | static const struct regmap_config qcs404_snoc_regmap_config = {
-         |                                   ^
-   drivers/interconnect/qcom/icc-rpm.h:136:15: note: forward declaration of 'struct regmap_config'
-     136 |         const struct regmap_config *regmap_cfg;
-         |                      ^
-   3 errors generated.
+> > +#include <linux/string_helpers.h>
+> > +#include <linux/sysfs.h>
+> > +#include <linux/types.h>
+>
+> ...
+>
+> > +struct gpio_virtuser_line_array_data {
+> > +     struct gpio_descs *descs;
+> > +     struct kobject *kobj;
+> > +     struct attribute_group *attr_group;
+> > +};
+> > +
+> > +struct gpio_virtuser_line_data {
+> > +     struct gpio_desc *desc;
+> > +     struct kobject *kobj;
+> > +     struct attribute_group *attr_group;
+> > +     char consumer[GPIO_CONSUMER_NAME_MAX_LEN];
+> > +     struct mutex consumer_lock;
+> > +     unsigned int debounce;
+> > +     atomic_t irq;
+> > +     atomic_t irq_count;
+> > +};
+>
+> Maybe
+>
+> struct gpio_virtuser_sysfs_data {
+>         union {
+>                 struct gpio_desc *desc;
+>                 struct gpio_descs *descs;
+>         };
+>         struct kobject *kobj;
+>         struct attribute_group *attr_group;
+> };
+>
+> struct gpio_virtuser_line_array_data {
+>         struct gpio_virtuser_sysfs_data sd;
+> };
+>
+> struct gpio_virtuser_line_data {
+>         struct gpio_virtuser_sysfs_data sd;
+>         char consumer[GPIO_CONSUMER_NAME_MAX_LEN];
+>         struct mutex consumer_lock;
+>         unsigned int debounce;
+>         atomic_t irq;
+>         atomic_t irq_count;
+> };
+>
+> ?
+>
+> ...
+>
+> > +struct gpio_virtuser_attr_ctx {
+> > +     struct device_attribute dev_attr;
+> > +     void *data;
+> > +};
+>
+> struct dev_ext_attribute ?
+>
+
+Sounds good, I'll rework this.
+
+> ...
+>
+> > +struct gpio_virtuser_attr_descr {
+> > +     const char *name;
+> > +     ssize_t (*show)(struct device *, struct device_attribute *, char =
+*);
+> > +     ssize_t (*store)(struct device *, struct device_attribute *,
+> > +                      const char *, size_t);
+> > +};
+>
+> struct device_attribute ? (Yes, I know that that one is a bit bigger but
+> benefit is that we have some code that you may reuse)
+>
+
+Not sure what you mean here, these are callbacks for sysfs.
+
+> ...
+>
+> > +static ssize_t gpio_virtuser_sysfs_emit_value_array(char *buf,
+> > +                                                 unsigned long *values=
+,
+> > +                                                 size_t num_values)
+> > +{
+> > +     ssize_t len =3D 0;
+> > +     size_t i;
+> > +
+> > +     for (i =3D 0; i < num_values; i++)
+> > +             len +=3D sysfs_emit_at(buf, len, "%d",
+> > +                                  test_bit(i, values) ? 1 : 0);
+> > +     return len + sysfs_emit_at(buf, len, "\n");
+>
+> Why not use %pb?
+>
+
+Because it outputs hex? I want to output binary, can I do it?
+
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_sysfs_parse_value_array(const char *buf, size=
+_t len,
+> > +                                              unsigned long *values)
+> > +{
+> > +     size_t i;
+> > +
+> > +     for (i =3D 0; i < len; i++) {
+>
+> Perhaps
+>
+>                 bool val;
+>                 int ret;
+>
+>                 ret =3D kstrtobool(...);
+
+kstrtobool() accepts values we don't want here like [Tt]rue and [Ff]alse.
+
+>                 if (ret)
+>                         return ret;
+>
+>                 assign_bit(...); // btw, why atomic?
+>
+> > +             if (buf[i] =3D=3D '0')
+> > +                     clear_bit(i, values);
+> > +             else if (buf[i] =3D=3D '1')
+> > +                     set_bit(i, values);
+> > +             else
+> > +                     return -EINVAL;
+>
+> > +     }
+>
+> BUT, why not bitmap_parse()?
+>
+
+Because it parses hex, not binary.
+
+> > +     return 0;
+> > +}
+>
+> ...
+>
+> > +     unsigned long *values __free(bitmap) =3D bitmap_alloc(descs->ndes=
+cs,
+> > +                                                         GFP_KERNEL);
+>
+> Perhaps
+>
+>         unsigned long *values __free(bitmap) =3D
+>                  bitmap_alloc(descs->ndescs, GFP_KERNEL);
+>
+> ...
+>
+> > +     unsigned long *values __free(bitmap) =3D bitmap_zalloc(descs->nde=
+scs,
+> > +                                                          GFP_KERNEL);
+>
+> In the similar way?
+>
+> ...
+>
+> > +     unsigned long *values __free(bitmap) =3D bitmap_zalloc(descs->nde=
+scs,
+> > +                                                          GFP_KERNEL);
+>
+> Ditto.
+>
+> ...
+>
+> > +{
+> > +     return sysfs_emit(buf, "%s\n",
+> > +                       dir =3D=3D GPIO_LINE_DIRECTION_IN ? "input" : "=
+output");
+>
+> I think this maybe transformed to something like str_input_output() in
+> string_choices.h (and you don't even need to include that as it's implied=
+ by
+> string_helpers.h)
+>
+
+These helpers take bool as argument. Hard to tell whether input or
+output should correspond to true. I'd leave it as is.
+
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_parse_direction(const char *buf, int *dir, in=
+t *val)
+> > +{
+> > +     if (sysfs_streq(buf, "input")) {
+> > +             *dir =3D GPIO_LINE_DIRECTION_IN;
+> > +             return 0;
+> > +     }
+> > +
+> > +     if (sysfs_streq(buf, "output-high"))
+> > +             *val =3D 1;
+> > +     else if (sysfs_streq(buf, "output-low"))
+> > +             *val =3D 0;
+> > +     else
+> > +             return -EINVAL;
+> > +
+> > +     *dir =3D GPIO_LINE_DIRECTION_OUT;
+>
+> This can be transformed to use sysfs_match_string() with
+>
+> static const char * const dirs[] =3D { "output-low", "output-high", "inpu=
+t" };
+>
+>         int ret;
+>
+>         ret =3D sysfs_match_string(...);
+>         if (ret < 0)
+>                 return ret;
+>
+>         *val =3D ret;
+>         *dir =3D ret =3D=3D 2 ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECT=
+ION_OUT;
+>
+> And with this approach it even not clear why do you need dir and val to b=
+e
+> separated here (esp. if we add a enum like
+>
+
+We do want them to be separated not for better UX but to be able to
+test all kernel APIs (gpiod_direction_input|output() and
+gpiod_set_value()).
+
+>         GPIO_VIRTUSER_OUT_LOW,
+>         GPIO_VIRTUSER_OUT_HIGH,
+>         GPIO_VIRTUSER_IN,
+>
+> (with it the string array can also be indexed).
+>
+> > +     return 0;
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_parse_value(const char *buf)
+> > +{
+> > +     int value, ret;
+> > +
+> > +     value =3D sysfs_match_string(gpio_virtuser_sysfs_value_strings, b=
+uf);
+> > +     if (value < 0) {
+> > +             /* Can be 0 or 1 too. */
+> > +             ret =3D kstrtoint(buf, 0, &value);
+> > +             if (ret)
+> > +                     return ret;
+>
+> > +             if (value !=3D 0 && value !=3D 1)
+> > +                     return -EINVAL;
+>
+> Why not kstrtobool()?
+>
+
+I don't want to accept all the other strings kstrtobool() is fine with.
+
+> > +     }
+> > +
+> > +     return value;
+> > +}
+>
+> ...
+>
+> > +     ret =3D kstrtouint(buf, 10, &debounce);
+>
+> Why restrict to decimal?
+>
+
+Not sure what you gain from passing a period in hex?
 
 
-vim +1070 drivers/interconnect/qcom/qcs404.c
+> > +     if (ret)
+> > +             return ret;
+>
+> ...
+>
+> > +static ssize_t
+> > +gpio_virtuser_sysfs_consumer_store(struct device *dev,
+> > +                                struct device_attribute *attr,
+> > +                                const char *buf, size_t len)
+> > +{
+> > +     struct gpio_virtuser_line_data *data =3D to_gpio_virtuser_data(at=
+tr);
+> > +     int ret;
+>
+> > +     if (strlen(buf) > GPIO_CONSUMER_NAME_MAX_LEN)
+> > +             return -EINVAL;
+>
+> You don't need this if you use strscpy() below and check its returned val=
+ue.
+>
 
-  1069	
-> 1070	static const struct regmap_config qcs404_bimc_regmap_config = {
-  1071		.reg_bits = 32,
-  1072		.reg_stride = 4,
-  1073		.val_bits = 32,
-  1074		.max_register = 0x80000,
-  1075		.fast_io = true,
-  1076	};
-  1077	
+Ok.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > +     guard(mutex)(&data->consumer_lock);
+> > +
+> > +     ret =3D gpiod_set_consumer_name(data->desc, buf);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     sprintf(data->consumer, buf);
+> > +
+> > +     return len;
+> > +}
+>
+> ...
+>
+> > +     data->attr_group->name =3D devm_kasprintf(dev, GFP_KERNEL,
+> > +                                             "gpiod:%s", id);
+>
+> Why two lines?
+>
+
+It's not even longer than previously with the new struct layout so it
+warrants a break.
+
+> > +     if (!data->attr_group->name)
+> > +             return -ENOMEM;
+>
+> ...
+>
+> > +     ret =3D devm_add_action_or_reset(dev, gpio_virtuser_mutex_destroy=
+,
+> > +                                    &data->consumer_lock);
+>
+> Don't we have devm_mutex_init() (`git tag --contains` shows v6.10-rc1 to =
+me)
+>
+
+Ah we do now. This code dates back from early 2023 I think. I'll use it.
+
+> > +             return ret;
+>
+> ...
+>
+> > +static int gpio_virtuser_prop_is_gpio(struct property *prop)
+> > +{
+> > +     char *dash =3D strpbrk(prop->name, "-");
+>
+> Why not strrchr() ?
+>
+
+Ok.
+
+> > +     return dash && strcmp(dash, "-gpios") =3D=3D 0;
+>
+> Can't we reuse the suffix from the array from the gpiolib internal header=
+?
+> Also I don't like the form of '-' in the line. "gpios" is good and chance
+> that linker deduplicates the same string if it occurs somewhere else in t=
+he
+> binary (in case this goes with =3Dy in .config).
+>
+
+I'm not sure I follow what you're saying here. Please rephrase.
+
+> > +}
+>
+> ...
+>
+> > +/*
+> > + * If this is an OF-based system, then we iterate over properties and =
+consider
+> > + * all whose names end in "-gpios". For configfs we expect an addition=
+al string
+> > + * array property - "gpio-virtuser,ids" - containing the list of all G=
+PIO IDs
+> > + * to request.
+>
+> Why not any other system? What's wrong for having this available for ACPI=
+, for
+> example? Okay, I see that this is probably due to absence of API.
+>
+> OTOH the last call in the function assumes non-OF cases. Why can't we hav=
+e the
+> same approach in both?
+>
+
+Again: I have no idea what you mean. We support device-tree and
+configfs as sources of configuration for these virtual consumers. If
+you want to add something more, be my guest once it's upstream.
+
+The reason to use a different approach is to not require the
+"gpio-virtuser,ids" property in device-tree.
+
+> > + */
+> > +static int gpio_virtuser_count_ids(struct device *dev)
+> > +{
+> > +     struct fwnode_handle *fwnode =3D dev_fwnode(dev);
+>
+> Why? This function is mostly OF one, make it simpler.
+>
+>         struct device_node *np =3D dev_of_node(dev);
+>
+> > +     struct property *prop;
+> > +     int ret =3D 0;
+>
+> > +     if (is_of_node(fwnode)) {
+>
+> Instead of this check...
+>
+>         if (np) {
+>
+> ...can be used.
+>
+
+Ok.
+
+>
+> > +             for_each_property_of_node(to_of_node(fwnode), prop) {
+>
+>         for_each_property_of_node(np, prop) {
+>
+> > +                     if (gpio_virtuser_prop_is_gpio(prop))
+> > +                             ++ret;
+>
+> Why pre-increment?
+
+Why not?
+
+>
+> > +             }
+>
+> > +             return ret;
+> > +     }
+>
+> > +     return device_property_string_array_count(dev, "gpio-virtuser,ids=
+");
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_get_ids(struct device *dev, const char **ids,
+> > +                              int num_ids)
+> > +{
+> > +     struct fwnode_handle *fwnode =3D dev_fwnode(dev);
+> > +     struct property *prop;
+> > +     size_t pos =3D 0, diff;
+> > +     char *dash, *tmp;
+> > +
+> > +     if (is_of_node(fwnode)) {
+> > +             for_each_property_of_node(to_of_node(fwnode), prop) {
+>
+> As per above function.
+>
+
+Ok
+
+> > +                     if (!gpio_virtuser_prop_is_gpio(prop))
+> > +                             continue;
+> > +
+> > +                     dash =3D strpbrk(prop->name, "-");
+> > +                     diff =3D dash - prop->name;
+> > +
+> > +                     tmp =3D devm_kmemdup(dev, prop->name, diff + 1,
+> > +                                        GFP_KERNEL);
+>
+> devm_kstrndup() is not okay? Okay, we don't have it (yet?), but at least =
+I
+> would rather expect wrapped kstrndup() than this.
+>
+
+Meh, this logic is fine as we know the range exactly. IMO kstrndup()
+here would be overkill. I'd leave it for now.
+
+> > +                     if (!tmp)
+> > +                             return -ENOMEM;
+> > +
+> > +                     tmp[diff] =3D '\0';
+> > +                     ids[pos++] =3D tmp;
+> > +             }
+> > +
+> > +             return 0;
+> > +     }
+> > +
+> > +     return device_property_read_string_array(dev, "gpio-virtuser,ids"=
+,
+> > +                                              ids, num_ids);
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     struct gpio_descs *descs;
+> > +     int ret, num_ids =3D 0, i;
+> > +     const char **ids;
+> > +     unsigned int j;
+> > +
+> > +     num_ids =3D gpio_virtuser_count_ids(dev);
+> > +     if (num_ids < 0)
+> > +             return dev_err_probe(dev, num_ids,
+> > +                                  "Failed to get the number of GPIOs t=
+o request\n");
+> > +
+> > +     if (num_ids =3D=3D 0) {
+> > +             dev_err(dev, "No GPIO IDs specified\n");
+> > +             return -EINVAL;
+>
+> It's okay to
+>
+>                 return dev_err_probe(...);
+>
+> with know error code.
+>
+
+Ok.
+
+> > +     }
+> > +
+> > +     ids =3D devm_kcalloc(dev, num_ids, sizeof(*ids), GFP_KERNEL);
+> > +     if (!ids)
+> > +             return -ENOMEM;
+> > +
+> > +     ret =3D gpio_virtuser_get_ids(dev, ids, num_ids);
+> > +     if (ret < 0)
+> > +             return dev_err_probe(dev, ret,
+> > +                                  "Failed to get the IDs of GPIOs to r=
+equest\n");
+> > +
+> > +     for (i =3D 0; i < num_ids; i++) {
+> > +             descs =3D devm_gpiod_get_array(dev, ids[i], GPIOD_ASIS);
+> > +             if (IS_ERR(descs))
+> > +                     return dev_err_probe(dev, PTR_ERR(descs),
+> > +                                          "Failed to request the '%s' =
+GPIOs\n",
+> > +                                          ids[i]);
+> > +
+> > +             ret =3D gpio_virtuser_sysfs_init_line_array_attrs(dev, de=
+scs,
+> > +                                                             ids[i]);
+> > +             if (ret)
+> > +                     return dev_err_probe(dev, ret,
+> > +                                          "Failed to setup the sysfs a=
+rray interface for the '%s' GPIOs\n",
+> > +                                          ids[i]);
+> > +
+> > +             for (j =3D 0; j < descs->ndescs; j++) {
+> > +                     ret =3D gpio_virtuser_sysfs_init_line_attrs(dev,
+> > +                                                     descs->desc[j],
+> > +                                                     ids[i], j);
+> > +                     if (ret)
+> > +                             return dev_err_probe(dev, ret,
+> > +                                                  "Failed to setup the=
+ sysfs line interface for the '%s' GPIOs\n",
+> > +                                                  ids[i]);
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+>
+> ...
+>
+> > +static int gpio_virtuser_bus_notifier_call(struct notifier_block *nb,
+> > +                                        unsigned long action, void *da=
+ta)
+> > +{
+> > +     struct gpio_virtuser_device *vdev;
+> > +     struct device *dev =3D data;
+> > +     char devname[32];
+> > +
+> > +     vdev =3D container_of(nb, struct gpio_virtuser_device, bus_notifi=
+er);
+> > +     snprintf(devname, sizeof(devname), "gpio-virtuser.%d", vdev->id);
+> > +
+> > +     if (strcmp(dev_name(dev), devname))
+>
+>         if (!device_match_name(...))
+>
+
+Ok
+
+> > +             return NOTIFY_DONE;
+> > +
+> > +     switch (action) {
+> > +     case BUS_NOTIFY_BOUND_DRIVER:
+> > +             vdev->driver_bound =3D true;
+> > +             break;
+> > +     case BUS_NOTIFY_DRIVER_NOT_BOUND:
+> > +             vdev->driver_bound =3D false;
+> > +             break;
+> > +     default:
+> > +             return NOTIFY_DONE;
+> > +     }
+> > +
+> > +     complete(&vdev->probe_completion);
+> > +     return NOTIFY_OK;
+> > +}
+>
+> ...
+>
+> > +static ssize_t
+> > +gpio_virtuser_lookup_entry_config_key_store(struct config_item *item,
+> > +                                         const char *page, size_t coun=
+t)
+> > +{
+> > +     struct gpio_virtuser_lookup_entry *entry =3D
+> > +                                     to_gpio_virtuser_lookup_entry(ite=
+m);
+> > +     struct gpio_virtuser_device *dev =3D entry->parent->parent;
+> > +
+> > +     char *key =3D kstrndup(skip_spaces(page), count, GFP_KERNEL);
+>
+> Missing __free() ?
+>
+
+Right.
+
+> > +     if (!key)
+> > +             return -ENOMEM;
+>
+> > +     strim(key);
+>
+> > +     guard(mutex)(&dev->lock);
+> > +
+> > +     if (gpio_virtuser_device_is_live(dev))
+> > +             return -EBUSY;
+> > +
+> > +     kfree(entry->key);
+> > +     entry->key =3D no_free_ptr(key);
+> > +
+> > +     return count;
+> > +}
+>
+> ...
+>
+> > +     if (sysfs_streq(page, "pull-up")) {
+> > +             entry->flags &=3D ~(GPIO_PULL_DOWN | GPIO_PULL_DISABLE);
+> > +             entry->flags |=3D GPIO_PULL_UP;
+> > +     } else if (sysfs_streq(page, "pull-down")) {
+> > +             entry->flags &=3D ~(GPIO_PULL_UP | GPIO_PULL_DISABLE);
+> > +             entry->flags |=3D GPIO_PULL_DOWN;
+> > +     } else if (sysfs_streq(page, "pull-disabled")) {
+> > +             entry->flags &=3D ~(GPIO_PULL_UP | GPIO_PULL_DOWN);
+> > +             entry->flags |=3D GPIO_PULL_DISABLE;
+> > +     } else if (sysfs_streq(page, "as-is")) {
+> > +             entry->flags &=3D ~(GPIO_PULL_UP | GPIO_PULL_DOWN |
+> > +                               GPIO_PULL_DISABLE);
+> > +     } else {
+> > +             count =3D -EINVAL;
+>
+>                 return -EINVAL won't (ab)use count semantics.
+> > +     }
+> > +
+> > +     return count;
+>
+> ...
+>
+> > +     return sprintf(page, "%s\n", flags & GPIO_ACTIVE_LOW ? "1" : "0")=
+;
+>
+> Somewhere above you used %d for very similar situation, why %s here?
+> Or why "5d" there?
+>
+
+No reason, I'll unify it.
+
+> ...
+>
+> > +     return sprintf(page, "%s\n", flags & GPIO_TRANSITORY ? "1" : "0")=
+;
+>
+> Ditto.
+>
+> ...
+>
+> > +     return sprintf(page, "%c\n", live ? '1' : '0');
+>
+> Wow! Third type of the same.
+>
+> ...
+>
+> > +     struct gpiod_lookup_table *table __free(kfree) =3D
+> > +             kzalloc(struct_size(table, table, num_entries + 1), GFP_K=
+ERNEL);
+> > +     if (!table)
+> > +             return -ENOMEM;
+>
+> > +     table->dev_id =3D kasprintf(GFP_KERNEL, "gpio-virtuser.%d",
+> > +                               dev->id);
+>
+> Perfectly one line in comparison with the few lines above).
+>
+
+Ok
+
+> > +     if (!table->dev_id)
+> > +             return -ENOMEM;
+>
+> ...
+>
+> > +                     curr->chip_hwnum =3D entry->offset < 0
+> > +                                             ? U16_MAX : entry->offset=
+;
+>
+> Can we leave ? on the previous line?
+>
+> ...
+>
+> > +                     ++i;
+>
+> Why pre-increment?
+>
+> ...
+>
+> > +static struct fwnode_handle *
+> > +gpio_virtuser_make_device_swnode(struct gpio_virtuser_device *dev)
+> > +{
+> > +     struct property_entry properties[2];
+> > +     struct gpio_virtuser_lookup *lookup;
+> > +     size_t num_ids;
+> > +     int i =3D 0;
+>
+> Why signed? And in all this kind of case, I would split assignment...
+>
+> > +     memset(properties, 0, sizeof(properties));
+> > +
+> > +     num_ids =3D list_count_nodes(&dev->lookup_list);
+> > +     char **ids __free(kfree) =3D kcalloc(num_ids + 1, sizeof(*ids),
+> > +                                        GFP_KERNEL);
+> > +     if (!ids)
+> > +             return ERR_PTR(-ENOMEM);
+> > +
+>
+> To be here, that the reader will see immediately (close enough) what is t=
+he
+> initial values. Moreover this code will be robuse against changes in betw=
+een
+> (if i become reusable).
+>
+
+Sorry, I can't parse it.
+
+> > +     list_for_each_entry(lookup, &dev->lookup_list, siblings)
+> > +             ids[i++] =3D lookup->con_id;
+> > +
+> > +     properties[0] =3D PROPERTY_ENTRY_STRING_ARRAY_LEN("gpio-virtuser,=
+ids",
+> > +                                                     ids, num_ids);
+> > +
+> > +     return fwnode_create_software_node(properties, NULL);
+> > +}
+>
+> ...
+>
+> > +     guard(mutex)(&dev->lock);
+> > +
+> > +     if (live =3D=3D gpio_virtuser_device_is_live(dev))
+> > +             ret =3D -EPERM;
+>
+> With guard in place, just return directly, ...
+>
+> > +     else if (live)
+>
+> ...drop 'else'...
+>
+> > +             ret =3D gpio_virtuser_device_activate(dev);
+> > +     else
+>
+> ...ditto...
+>
+> > +             gpio_virtuser_device_deactivate(dev);
+> > +
+> > +     return ret ?: count;
+>
+> ...and simply return count here.
+>
+
+Ok.
+
+>
+> ...
+>
+> > +     struct gpio_virtuser_device *dev __free(kfree) =3D kzalloc(sizeof=
+(*dev),
+> > +                                                              GFP_KERN=
+EL);
+>
+>         struct gpio_virtuser_device *dev __free(kfree) =3D
+>                 kzalloc(sizeof(*dev), GFP_KERNEL);
+>
+> > +     if (!dev)
+> > +             return ERR_PTR(-ENOMEM);
+>
+> ...
+>
+> > +     ret =3D platform_driver_register(&gpio_virtuser_driver);
+> > +     if (ret) {
+>
+> > +             pr_err("Failed to register the platform driver: %d\n",
+> > +                    ret);
+>
+> I would keep one line.
+>
+
+Ok.
+
+> > +             return ret;
+> > +     }
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+Thanks for the review!
+Bart
 
