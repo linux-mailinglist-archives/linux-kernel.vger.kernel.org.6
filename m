@@ -1,122 +1,85 @@
-Return-Path: <linux-kernel+bounces-207768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADD4901BDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718E5901BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55773283018
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B11283002
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E063A22F08;
-	Mon, 10 Jun 2024 07:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtQVAgUl"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EDE44374;
+	Mon, 10 Jun 2024 07:28:29 +0000 (UTC)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F991879;
-	Mon, 10 Jun 2024 07:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE673FB3B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718004256; cv=none; b=MnLZcHVPN4t6QPTj6cQYBgli70b8L62Ps9b/j6eUZAN42An1/Wo3VQEaWVUVx81P202pNK6GiLe+aDFQIkJMIKQ+ovgCPT4wVdRLNQl+IBnLf4xtoizLG8ggc5Xb7Z7bN5PmJ1dR00RYqvn3wkQ40Ib7IL84cVPZ7K8lXNa/lbY=
+	t=1718004509; cv=none; b=Z5d7CeVnRLaNJdmz8tmQp/XUsvDsCb02oKx3b3xYRO54e7s/pukuybG2czZlzIhRCacQvjItRU46SORhnsgKzCclGGRJx+qfjje/EV6lU/MsuKAN2YCjtZ+uWDS4IYtcJslHcvUr12NbJQ0fU7xPKk/nUXwAqMPaZ0HzHjgIkaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718004256; c=relaxed/simple;
-	bh=XtV6J/C3mIYUKJcRToCoRtSjZ3qY6JritvP2gPzIkEA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dmpideH5XDKGPcgujv9lEB+L66EBrjHhdeJOGq2qBcg+JbXXIF4rI0T7Fv5MBQgX6K38PwkqvTaA/4Ddbz1Bqet7u9jHV7xzYwv+pA6ZxQV5ssTwiC31fPJbX1YTyZ1ksSHORaRPdgDkoGgrjps1yaXv1FfMmsiNqR0sKXx89aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtQVAgUl; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so1015200a12.2;
-        Mon, 10 Jun 2024 00:24:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718004253; x=1718609053; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XtV6J/C3mIYUKJcRToCoRtSjZ3qY6JritvP2gPzIkEA=;
-        b=BtQVAgUl1/JjVcmB1/BtxuriFcNXA3qSocEFZfhizybDJuxddxjbdxOeomdPQm6JrB
-         7B+L+0ynqMcA9863ol8a5DW3JzbSNI1jxHlxmas16mrISLrXCZcWoGLYfzBSSNlahm7w
-         mtZq5oIyKMhXBP86YsdsdZg9AFBPJdyr6gQGu+Kpn1agSeNbdZVK8vsGI6SScD7Pbaba
-         mz0OEZ3nty3A9vbKlcOLTNs6AdsUhCcC5a3jZ3SY7N1JVWr1wFsXPzaETLX4LklH7tBb
-         rbQrTXyiFmJiO5oIFChmr31OlBdhag0evlgKIM8o8rXfq1BnvqMiQcbkJM5oSrFl3BOH
-         BH+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718004253; x=1718609053;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XtV6J/C3mIYUKJcRToCoRtSjZ3qY6JritvP2gPzIkEA=;
-        b=rhocM5FWP3qao6mDzI5UNDKOUs2ynu9ALAfrgI5dhp8Csm5u50xPaoCEobBBrtkQsh
-         lTqMxVUYVO9IJbQIIZoa+Qm7vFimg0O65E6Oqet3SFRKGDRLALdGkQXjtqVeAE6kU42V
-         X+1fdicnNH3RhMuiItRC40zBCH0fREZm3D5CdYlmiZ8J3KggTeZbI9VLb7h1ioTylcUx
-         Uj7ckNMq0fjpMb4F+9DfJNgOZ2HjA3JZmSH3xVH2tLNhnBOCviLlMkNMdi+HZiyu4oae
-         FP7CgXXXAPBxveSOUCuyzjN9vEIZQoHqcDQb7Fq1W5vyQgVDTpp5FccdgSS2GUTbiVT5
-         D5Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9JUTwdc+3O9be1yYgX9o8j/aRz22j/503hCf9b42dJ5G/wkwIritpclqf24BcVC5NrZ0AXd37/irnjM+zwjgZ/dinGm17GXci6BDEmcsmB22jVNxBJUfqEb/Iw4g5Ps98eD9v4KWh5rzRiKde940vJQQxuMKX1ZBf+Rjd+3pOcjiujQ==
-X-Gm-Message-State: AOJu0Yzt9vT8FU0n0K15N4pkqhFp2/7yoFUlIdxHWENSFoRULbDGOSeN
-	Ts5bEWCi5Fyddpi+fo+yLZA51l/m0MZpY+T890LjZdVLAh7k4d1f
-X-Google-Smtp-Source: AGHT+IFNULR5iskJcWTenAl84kcjQZ9t99Alkh3XL1fQkK0jffBxjeNagzKGw89BtWcwSVw3S1StFQ==
-X-Received: by 2002:a50:96d2:0:b0:57c:8027:534d with SMTP id 4fb4d7f45d1cf-57c802753e7mr1297420a12.27.1718004251571;
-        Mon, 10 Jun 2024 00:24:11 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae103483sm7024525a12.43.2024.06.10.00.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 00:24:11 -0700 (PDT)
-Message-ID: <59d603b930d5943a89618dff23156fa318252fc4.camel@gmail.com>
-Subject: Re: [PATCH v7 9/9] iio: adc: ad7173: Add support for AD411x devices
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
- <mitrutzceclan@gmail.com>
-Date: Mon, 10 Jun 2024 09:27:59 +0200
-In-Reply-To: <20240607-ad4111-v7-9-97e3855900a0@analog.com>
-References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
-	 <20240607-ad4111-v7-9-97e3855900a0@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718004509; c=relaxed/simple;
+	bh=QgUO4y4lJuyGEjk5BVlmE++YnHVFuvNVEthad6igBBQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ilq4AHw6mGVrbxF9fQvTQUKj1mBV3qPLLkkyxUrtSvUYd6SJu8DqWgn1WgbySRlLP6C1JA1sENDE1eiAyC/ny/YXaECNvZ/H9dC9SJGz5UGuMchRA58WQAKmjSRf7oUVv7kkVSLby/4CSp7BDaG23smU45deXxKKFI7u1FH8/gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:8ab6:b788:f6f3:c7ef])
+	by albert.telenet-ops.be with bizsmtp
+	id ZjUR2C00P0kaPLt06jURME; Mon, 10 Jun 2024 09:28:25 +0200
+Received: from geert (helo=localhost)
+	by ramsan.of.borg with local-esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sGZS5-002zEu-Ki;
+	Mon, 10 Jun 2024 09:28:25 +0200
+Date: Mon, 10 Jun 2024 09:28:25 +0200 (CEST)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+cc: sparclinux@vger.kernel.org
+Subject: Re: Build regressions/improvements in v6.10-rc3
+In-Reply-To: <20240610071049.933142-1-geert@linux-m68k.org>
+Message-ID: <46c5a25-ea8c-4a1-5241-df88a9848a9@linux-m68k.org>
+References: <CAHk-=wiK75SY+r3W5hx+Tt_bjhcSKPLdji-Zf_8HjikRPbn9wg@mail.gmail.com> <20240610071049.933142-1-geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Fri, 2024-06-07 at 17:53 +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
->=20
-> The AD411X family encompasses a series of low power, low noise, 24-bit,
-> sigma-delta analog-to-digital converters that offer a versatile range of
-> specifications.
->=20
-> This family of ADCs integrates an analog front end suitable for processin=
-g
-> both fully differential and single-ended, bipolar voltage inputs
-> addressing a wide array of industrial and instrumentation requirements.
->=20
-> - All ADCs have inputs with a precision voltage divider with a division
-> =C2=A0 ratio of 10.
-> - AD4116 has 5 low level inputs without a voltage divider.
-> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
-> =C2=A0 shunt resistor.
->=20
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> ---
+On Mon, 10 Jun 2024, Geert Uytterhoeven wrote:
+> JFYI, when comparing v6.10-rc3[1] to v6.10-rc2[3], the summaries are:
+>  - build errors: +6/-1
 
-LGTM,
+   + error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x4), (.fixup+0xc)
+   + error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x34), (.fixup+0x10), (.fixup+0x0), (.fixup+0x28), (.fixup+0x4), (.fixup+0x18), (.fixup+0x20), (.fixup+0x1c), (.fixup+0x8)
+   + error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text':  => (.head.text+0x5040), (.head.text+0x5100)
+   + error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o:  => (.init.text+0xa4)
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+sparc64-gcc5/sparc-allmodconfig
+sparc64-gcc13/sparc-allmodconfig
 
+   + {standard input}: Error: pcrel too far: 1095, 1074, 1022, 1020, 1021, 1096, 1126 => 1074, 1021, 1255, 1096, 1095, 1020, 1022, 1126, 1254
+   + {standard input}: Error: unknown pseudo-op: `.al':  => 1270
 
+SH ICE crickets
+
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/83a7eefedc9b56fe7bfeff13b6c7356688ffa670/ (all 138 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/c3f38fa61af77b49866b006939479069cd451173/ (all 138 configs)
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
 
