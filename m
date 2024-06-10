@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-208556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2D99026C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:32:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7690F9026C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8072AB234BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA7C285363
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B614389B;
-	Mon, 10 Jun 2024 16:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D983B1474CA;
+	Mon, 10 Jun 2024 16:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTOI5Bra"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Cmozzbsw";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Xc3cTz4m"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83716839E4;
-	Mon, 10 Jun 2024 16:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D89F839E4;
+	Mon, 10 Jun 2024 16:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037111; cv=none; b=I/FEaK3FLINpNiHdBsl9UQC14wg3fyy/nKm/JT+u+W+vJkNf3kQRWHSM2afoOxm6QFrImKpqi6zPfupQffRZKO+6hMf+/dBFOg1/EfeRezmiFBvCdz+WKWm8o5oYdIPGwHcGNO6AodSzzmXNHizzGVx9u+NEi4fYWHGshXGuwSU=
+	t=1718037116; cv=none; b=Dtlh4L9PRhxNAK8aQ8TONGEgPWnFXHirm2Nd7Z2lGNi1LBppVq026x4t4NJDl/sSAo8w9jYikOK4FvnHJuH7HP6Jai2jVF/T1qNU05AI5OXxJwOQz7Eil3yyGNuSvKg/BEm8Mz2MxaoHPn6/u/0+tAb82T/X0/CNHHAVNfLn2a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037111; c=relaxed/simple;
-	bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gyYyu9vhZGDb9s3UfVJFvYollT/DYyopl5zdl/n0WjaTD2502yJxRwm5IAHxaDYh93frTvaK8gaNTPvaPDbvXwA2UmCPeM/M2gR/UJH8xSt89hvdFcmfbsVhdo+L2KXe5ugCn3AnR8T7g6lDw19Hq2tlURsHv9W4zUPw/qWAPf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTOI5Bra; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c73a3b3d7so2270842a12.1;
-        Mon, 10 Jun 2024 09:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718037108; x=1718641908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
-        b=nTOI5BraqF487tCVNIEAx2D3tsmWo/0R2xbWJtkMFKADKx4CNl+or+JojcMsLIwRFI
-         DBNzHFzYa4CxMBZbbVQBuGBcIHongf32Vvmnh5+p3vQgiZGM1n2u3roFEcJQCzkXWtFb
-         sqBXnXtCPDuqOOX0Ip/zIvdA0KWYfYTaTp8iVkT9ZxwT32rhzfw+NO6l86Uo0xOICn3o
-         rgbmmewI+f2Ea5QEbkmUdCJbHlNC6TQy0DQtVI4m3p06Bo7J8TddGt2st3z9Z2Ymml8j
-         UnmOvryCv1twk7sHsidP9OJanpxwia/AyaPriU8wUKGNVYQsL871yH3w/xgO444lo/rx
-         uqOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718037108; x=1718641908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ju4vPIcuEWGdz0y0evlD7cX8DwQqllGs7fJHjYcWWM=;
-        b=sP1+P7cj5qQldn8nAjBrSJhChEj6bL7tip3wi5KDPqBr/d7RRcTQth2I9dwD4Wj+8x
-         YYdcZXTd5owKPRLd0yRH/xphoPWN10jM0JjNzjrBj9towWq/aJTCvMWPTWEfB1MAKxWh
-         I37qHWiJZrx5gFDGH7q5NgS3uaIu2YOWkQtIuDShimCjsya1GJMZtsSnOdZwTb5m7Rhq
-         ChgzOFvv1loKw2IVCjxd7+fCEarp5H4krtLoF+Og8SSKwJhAyniL24mBzpgFo82FSfXH
-         4li/vCg+jRsTzjDdQx1FGin1yDxvgIYDP5cy4K4dmwGOONrhe88Qcz/bf446VYwXxzSW
-         w+KA==
-X-Forwarded-Encrypted: i=1; AJvYcCW94mZKxoOCRfIz+tZU7YcZ4zdSlJD+QpwGybfwGol8ESlKeEoPn1BrLI0jElOcHK1htONZvMDYuTuMZisyK1SDxxgRixe66DBUlT3+bE+zuUoFYcSstj6wYL+K1baRji+BnLeNoIYFDkkr5GlgzNu3Irrnt2lsU8bkDtsAhQzEAYo=
-X-Gm-Message-State: AOJu0Yx8JLrYIF2A91/HNQ/2WtV6cA7xgog2SqQQtlw0R0qym7ineZ0U
-	IDTKjAJVy6sBhw3U0QF8epOdtP4BHwGROmgxBRs0C9tIjnjKEE6zfuZYh6q/6RuCpfroI+2iUU/
-	cT+vZC0kZDycd7qwrnAhA6Qj3fHA=
-X-Google-Smtp-Source: AGHT+IHQf3MV0Q/UjU07vgHR5NPfetvVAiyS7lJZpzQDbY8N+GF7jT4TpL3zNI4S9k3S8xBNtVxYqKks+HIUG1tPSqI=
-X-Received: by 2002:a17:906:25cb:b0:a6e:fdc8:ae3a with SMTP id
- a640c23a62f3a-a6efdc8b0a6mr381112766b.6.1718037107672; Mon, 10 Jun 2024
- 09:31:47 -0700 (PDT)
+	s=arc-20240116; t=1718037116; c=relaxed/simple;
+	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGyCXurktb9g4PDtnHeHnyHKsApplA+Fd/TfHnT4f7ymZlb9JJYTHhtGDE/qDp8xQdlxKHkMHOF1gj7tntca97VbvV86tAPDTpaNGHOro92PT6hwmS9pjSvO2VNVgJLjhg+Iug/Eap5EbnQxiZ4PIlilYFw8Y0PNrR7i5iwyr9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Cmozzbsw; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Xc3cTz4m; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 18AFE21E75;
+	Mon, 10 Jun 2024 16:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718037112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
+	b=Cmozzbsw8dV1XhI5Ks/8pK8BSluXi+OZg8CcCAE7eORnAlnB7JhWkbTp79fwDr6w3+BLPn
+	oekUCJhU3Hgu3N/YohopicxhsF9XcLGSgjPkYwe666OKoYOz008LUhCvBLAex4n0+i00v3
+	QO10vUIpdXip9VjYnrNhk8rHjHW0kxY=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718037111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
+	b=Xc3cTz4m+/u/dVB+/E49W0F3wsFj/S4HLX2u49jTj887YXt9dInjbC0l/Hjsns4kQZ2IjY
+	nz8u26uZyFDM42ruVw4YPoL2RSp6oCDgIW8wuAtiukqaTeJYkplr5/uC0YW3LLQjb8htVt
+	CQqXRSQnzTQi7icrg/cpYdzTdgYAufQ=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EFFA713A7F;
+	Mon, 10 Jun 2024 16:31:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YDxpOnYqZ2bqaQAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Mon, 10 Jun 2024 16:31:50 +0000
+Date: Mon, 10 Jun 2024 18:31:49 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Fred Griffoul <fgriffo@amazon.co.uk>
+Cc: griffoul@gmail.com, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Joey Gouly <joey.gouly@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Jeremy Linton <jeremy.linton@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, 
+	Kevin Tian <kevin.tian@intel.com>, Eric Auger <eric.auger@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Ankit Agrawal <ankita@nvidia.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ye Bin <yebin10@huawei.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] vfio/pci: add msi interrupt affinity support
+Message-ID: <k4r7ngm7cyctnyjcwbbscvprhj3oid6wv3cqobkwt4p4j4ibfy@pvmb35lmvdlz>
+References: <20240610125713.86750-1-fgriffo@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
- <20240608141633.2562-5-laurent.pinchart@ideasonboard.com> <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
- <20240610152833.GW18479@pendragon.ideasonboard.com>
-In-Reply-To: <20240610152833.GW18479@pendragon.ideasonboard.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Jun 2024 19:31:11 +0300
-Message-ID: <CAHp75VfcTHty-Vzcc+B4iMk33qS_AafvU10Qn3AQftrfQRBebw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Clark Wang <xiaoning.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rbxiec5rtsu2tqmi"
+Content-Disposition: inline
+In-Reply-To: <20240610125713.86750-1-fgriffo@amazon.co.uk>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.87 / 50.00];
+	BAYES_HAM(-2.97)[99.89%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[30];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,arm.com,kernel.org,redhat.com,bytedance.com,cmpxchg.org,linux.dev,ziepe.ca,intel.com,nvidia.com,huawei.com,lists.infradead.org,vger.kernel.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLs4bg81ntywruwbpnkcfhozwy)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amazon.co.uk:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -5.87
+X-Spam-Flag: NO
 
-On Mon, Jun 10, 2024 at 6:28=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Mon, Jun 10, 2024 at 06:06:51PM +0300, Andy Shevchenko wrote:
-> > Sat, Jun 08, 2024 at 05:16:33PM +0300, Laurent Pinchart kirjoitti:
 
-...
+--rbxiec5rtsu2tqmi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Andy, we're reaching a level of nitpicking and yakshaving that even I
-> can't deal with. I will have to simply ignore the comments I disagree
-> with.
+Hello Fred.
 
-Do you think using bulk APIs is nit-picking?
+On Mon, Jun 10, 2024 at 12:57:06PM GMT, Fred Griffoul <fgriffo@amazon.co.uk> wrote:
+> The usual way to configure a device interrupt from userland is to write
+> the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+> vfio to implement a device driver or a virtual machine monitor, this may
+> not be ideal: the process managing the vfio device interrupts may not be
+> granted root privilege, for security reasons. Thus it cannot directly
+> control the interrupt affinity and has to rely on an external command.
 
---=20
-With Best Regards,
-Andy Shevchenko
+External commands something privileged? (I'm curious of an example how
+this is setup.)
+
+> The affinity argument must be a subset of the process cpuset, otherwise
+> an error -EPERM is returned.
+
+I'm not sure you want to look at task's cpuset mask for this purposes.
+
+Consider setups without cpuset or a change of (cpuset) mask anytime
+during lifetime of the task...
+
+Michal
+
+--rbxiec5rtsu2tqmi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZmcqcwAKCRAGvrMr/1gc
+jmkBAQCja3OL36wbZrX33f/BCxgTsGyEe2Buh2DsgnbWTikxCAEAguitmv3gNJZj
+PWDNgoj9nHp+v218OHZhAu8PFmSWXAA=
+=9DxI
+-----END PGP SIGNATURE-----
+
+--rbxiec5rtsu2tqmi--
 
