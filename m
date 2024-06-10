@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-207737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901CE901B3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242F8901B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DDB51C21351
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A75B24461
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97CB1CF9B;
-	Mon, 10 Jun 2024 06:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CD918059;
+	Mon, 10 Jun 2024 06:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzcadobU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xR71rL5T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88291CF8A;
-	Mon, 10 Jun 2024 06:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5EBDDB8;
+	Mon, 10 Jun 2024 06:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718000831; cv=none; b=SLt/Z6OIUvOqleFMM5APuOjH8CRStniW+ZCdNNFjPpyXBUyu+R3M5435Dk9h6mZ9R7ON7z1F/xe+jdj0Ng3YnoaTEmBte6SDozlwhWi4JxhrjgLCVeavCruefSL93ABQtvL7dJQfyoVmC2oLkdPpSQGznlWcTeLjA6PbUX7IxtA=
+	t=1718000913; cv=none; b=RNzcAguw4TkEMJqUHVxDiGUUDF+9oeDnq5Y5+0F1WtXRO8JN1rYM96I8AeoLt219GhvcXotv+nTtHt3w959KtbcIZWLtEz2NHOc8F2uZM4JX/cgJ/Xgf190HRcQgIdR7KRxbpZQvZ/pXsQOkx+Qe7gYQqot7VFCu8JfrRvxj04s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718000831; c=relaxed/simple;
-	bh=46ontKYFYxBeCCy+CgEUCpaMHxEXAnXsVFaJAmuzFd4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ut5it7/ajUhfQlqjUVLNVddZH1OMeREYsWDF4pXxf9O8yAQppYOGPSXoJhdODc0gs9a2NdGSvjJMLH5f+Cfku2tN3mqFqFqFiIpEIFnbK5VOrGijCwQ4lZU0loivQg33H+LxfmU+TL+zHG1CbqFDa7edq11d1k1OvE4kKos0Qrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzcadobU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B88FC2BBFC;
-	Mon, 10 Jun 2024 06:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718000830;
-	bh=46ontKYFYxBeCCy+CgEUCpaMHxEXAnXsVFaJAmuzFd4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=bzcadobUAHWCAsVpT480gaT0KnUkKTEceCmaDDbtm6xomykD5xW9NEl/cU9kwvlo7
-	 d/rM1rTG1tw55LKH1fWQ3/PLw4AD3TfFM4bUvU6VBrrJY1zcdULJKfPPRA5xr33SpV
-	 UKRuQkhSCjxeJtl10wwV2fQd2sEwaufKqPrRcSPDONcWRNfgOUonB3LHRPX2ioT3Fi
-	 G94UasDurkk8+B806ivHWRipGLfjuvYw+GZlnBOLschWwlYMzWVYaTNWAix4TIoljc
-	 TZ1+svjB2kHXJ6rCIqhkWPu7LFLe5pcGnQc1g0OlWvhYJa53wg2jivRsm5AEfdjTXa
-	 Hsnz9lqE3/Ryg==
-Date: Mon, 10 Jun 2024 00:27:09 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718000913; c=relaxed/simple;
+	bh=n+45C+dzb+IYsjD+JRFt0LVF45703pUQPGysWo6ZIKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/IbXXF7Ketd12YhGjpL+L7+pKD20BhYWL6KRcSLtyYU12T/QTMcefBkmjM1PDxyzAijNedQ5TKOEvC5vuDfH7JQok1wiRnO78ZIZPkyCRuh1X3T63k/v5jEySfDiOh3NIOQHQ1YRyvkySRmBDK8qgSmT23IYIfGAhipT/43Sj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xR71rL5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5A4C2BBFC;
+	Mon, 10 Jun 2024 06:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718000912;
+	bh=n+45C+dzb+IYsjD+JRFt0LVF45703pUQPGysWo6ZIKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xR71rL5TAYFEOcCHdz2R5dRyRmyw9NteBPCGPgornxj0gRD68QN2W2Q06R/KalSJs
+	 vQt7j4Yo3yNzYmEseHZahlhp5elSsfmizivcWe/JF8VsfILJx1x30DERMHNX4x8el7
+	 vhAmSpkf+nOJPC/WudNmMtLDrlqthqzQKGeQUl0M=
+Date: Mon, 10 Jun 2024 08:28:29 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ron Economos <re@w6rz.net>
+Cc: Pavel Machek <pavel@denx.de>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+Message-ID: <2024061006-overdress-outburst-36ae@gregkh>
+References: <20240609113903.732882729@linuxfoundation.org>
+ <ZmYDquU9rsJ2HG9g@duo.ucw.cz>
+ <ad13afda-6d20-fa88-ae7f-c1a69b1f5a40@w6rz.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
- Jisheng Zhang <jszhang@kernel.org>, linux-kselftest@vger.kernel.org, 
- Samuel Holland <samuel@sholland.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, 
- linux-kernel@vger.kernel.org, Andy Chiu <andy.chiu@sifive.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Shuah Khan <shuah@kernel.org>, linux-sunxi@lists.linux.dev, 
- devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Evan Green <evan@rivosinc.com>, linux-doc@vger.kernel.org, 
- Guo Ren <guoren@kernel.org>
-In-Reply-To: <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
-References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
- <20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com>
-Message-Id: <171800082930.1000302.5109301877296329341.robh@kernel.org>
-Subject: Re: [PATCH 02/13] dt-bindings: thead: add a vlen register length
- property
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad13afda-6d20-fa88-ae7f-c1a69b1f5a40@w6rz.net>
 
-
-On Sun, 09 Jun 2024 21:45:07 -0700, Charlie Jenkins wrote:
-> Add a property analogous to the vlenb CSR so that software can detect
-> the vector length of each CPU prior to it being brought online.
-> Currently software has to assume that the vector length read from the
-> boot CPU applies to all possible CPUs. On T-Head CPUs implementing
-> pre-ratification vector, reading the th.vlenb CSR may produce an illegal
-> instruction trap, so this property is required on such systems.
+On Sun, Jun 09, 2024 at 11:21:55PM -0700, Ron Economos wrote:
+> On 6/9/24 12:34 PM, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > This is the start of the stable review cycle for the 6.6.33 release.
+> > > There are 741 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > 6.6 seems to have build problem on risc-v:
+> > 
+> >    CC      kernel/locking/qrwlock.o
+> > 690
+> >    CC      lib/bug.o
+> > 691
+> >    CC      block/blk-rq-qos.o
+> > 692
+> > arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
+> > 693
+> > arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
+> > 694
+> >     14 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> > 695
+> >        |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 696
+> >        |                                                                  RISCV_ISA_EXT_ZIFENCEI
+> > 697
+> > arch/riscv/kernel/suspend.c:14:66: note: each undeclared identifier is reported only once for each function it appears in
+> > 698
+> >    CC      io_uring/io-wq.o
+> > 699
+> > arch/riscv/kernel/suspend.c: In function 'suspend_restore_csrs':
+> > 700
+> > arch/riscv/kernel/suspend.c:37:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared (first use in this function); did you mean 'RISCV_ISA_EXT_ZIFENCEI'?
+> > 701
+> >     37 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> > 702
+> >        |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 703
+> >        |                                                                  RISCV_ISA_EXT_ZIFENCEI
+> > 704
+> > make[4]: *** [scripts/Makefile.build:243: arch/riscv/kernel/suspend.o] Error 1
+> > 705
+> > make[3]: *** [scripts/Makefile.build:480: arch/riscv/kernel] Error 2
+> > 706
+> > make[2]: *** [scripts/Makefile.build:480: arch/riscv] Error 2
+> > 707
+> > make[2]: *** Waiting for unfinished jobs....
+> > 708
+> >    CC      lib/buildid.o
+> > 709
+> > 
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/7053222239
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1324369118
+> > 
+> > No problems detected on 6.8-stable and 6.1-stable.
+> > 
+> > Best regards,
+> > 								Pavel
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  Documentation/devicetree/bindings/riscv/thead.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
+> I'm seeing the same thing here. Somehow some extra patches got slipped in
+> between rc1 and rc2. The new patches for RISC-V are:
+> 
+> Samuel Holland <samuel.holland@sifive.com>
+>     riscv: Save/restore envcfg CSR during CPU suspend
+> 
+> commit 88b55a586b87994a33e0285c9e8881485e9b77ea
+> 
+> Samuel Holland <samuel.holland@sifive.com>
+>     riscv: Fix enabling cbo.zero when running in M-mode
+> 
+> commit 8c6e096cf527d65e693bfbf00aa6791149c58552
+> 
+> The first patch "riscv: Save/restore envcfg CSR during CPU suspend" causes
+> the build failure.
+> 
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Yes, these were added because they were marked as fixes for other
+commits in the series.  I'll unwind them all now as something is going
+wrong...
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/riscv/thead.yaml: 'thead,vlenb' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240609-xtheadvector-v1-2-3fe591d7f109@rivosinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+greg k-h
 
