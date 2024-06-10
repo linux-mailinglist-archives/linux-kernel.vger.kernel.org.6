@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-208528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9A90264B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3324A90264E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47822822ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB05282126
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E2A142620;
-	Mon, 10 Jun 2024 16:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EC2142E62;
+	Mon, 10 Jun 2024 16:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5tw7dn3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHb8hHAG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E91DFF7;
-	Mon, 10 Jun 2024 16:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14B71DFF7;
+	Mon, 10 Jun 2024 16:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035690; cv=none; b=IEdQLrXnUgeRFcUzTXmnhuXhazUrAGm/ej5KPbZ1H6CCFsOsAoRRTlfJFVuZsm7P9qdyJ1ZuSk9ONz38Bgr9FvYB+u47sPjYuRQNvdnRCL0scS5yUXHFV887HbfLkGxbRkRL9c+wgC71bkC16/qm1f7aMMYwNVLbY0CmP2P6uKU=
+	t=1718035728; cv=none; b=HKvAXNhqMsdQvZOduljk76+ytdluODBdKNceA+totR2WEyK9JNxPtalVGEYZpBNA358AAeu7gqGOGtC/d8GDOSYGF++rDgYY5TODznhfelomXG8CpsfhlccI3x39UiJbIYdemyO1dOUiEEg8z/07YFR0nm0PnEd642tRWRNanQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035690; c=relaxed/simple;
-	bh=mZTNkAEKgG/q85m1UYU1gPZ6SrEhgB8KcIIymCeQnzA=;
+	s=arc-20240116; t=1718035728; c=relaxed/simple;
+	bh=mqGdprG9KPDdPu0ShjpJar1F9Q1B1UNKhjxL/wL717c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kK9wqHHpHBgRSAv2f/kREwJ4JtMO+Zhdpg4pFYQO0tFtM1tdgpuF7PtKIuxH3ztWo5/r0m7J1aKaRHjJg/Sad9u9G59TuWT01j+DVFLPDy0c/71GQzWncKO267172RE2FMBpakqPQgoMDM9um1B7SbGsJTHTQAwqZDMt6ZzU1bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5tw7dn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC714C2BBFC;
-	Mon, 10 Jun 2024 16:08:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwhJkubjPikSZNcojIfTjxYSnHNuzi/SM8O847PJtFeZDOON9uX+CDZD2nJ92098OW7Menc7bd1205MBWMg3X22gm03MLAfYhYCTq9MDAqgkRFGNSWQ1qSYaj7r9pAaBx/tj4exbGUfMJmML4R2PqBeL+SoBcfp1HvX5kY3Pmp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHb8hHAG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3F3C2BBFC;
+	Mon, 10 Jun 2024 16:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718035690;
-	bh=mZTNkAEKgG/q85m1UYU1gPZ6SrEhgB8KcIIymCeQnzA=;
+	s=k20201202; t=1718035728;
+	bh=mqGdprG9KPDdPu0ShjpJar1F9Q1B1UNKhjxL/wL717c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5tw7dn3YElU45yvBOLhN6f5W0SVV/6xBWUrUwA66/yXflEEBhsBqBXNFnIpigCeo
-	 IjBgVRzYgfynaHQTWvZIl9hYCvRpwjSHGdlxu4Y5oBGP1mBPyq+B7fKn5Jh4dtlBnV
-	 ekgy1SH2jC4KSGljAFkQEiBTGwR1VWot782NbKg060i8coBosZTzJHHy6F3Uq/kcQd
-	 D6nu0g/FAhS48IfxJFqlxwBlroDgHH3cuQDfzIj+TMavRGvAfsAkkMiwuUu09qb4WX
-	 cLzuxJdD74AZCyL8hTagUfUbvXSzYYoU98GPFIr2D6QQudTo6H/G8OzpquimiqHBOi
-	 42v7qLnCSy5eQ==
-Date: Mon, 10 Jun 2024 17:08:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Viacheslav Bocharov <adeep@lexina.in>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
- amlogic,meson-gx-ao-secure: add secure-monitor property
-Message-ID: <20240610-dropout-compress-6d6a9b749524@spud>
-References: <20240610084032.3096614-1-adeep@lexina.in>
- <20240610084032.3096614-4-adeep@lexina.in>
+	b=DHb8hHAGLa4OsvrB3sQOMqvRmBEdfZENU4pgKNlo+bLtgWTNcI7jwBGdXGH4Ukmvo
+	 d73wi1WlCZIkv6wVA+jAAHEILRg2BUghPTcnUWVyedOSYaFUzaSERaAB8PFg2ctolK
+	 3sbRehMYuinAfDb3eEItKrAJiRo+tnAZD8RU/EecaeW26WSOtykutwMEdFb6+2EMq4
+	 KvIkyoCi+1CSMnReFS49Xd8DwV3/Yxl/dWlOEuq3OzIJXtV/2XhW0OY5d6hXcNRrh2
+	 xfovHgZY/o0WysZg/8qmNZeuRwPES3lfI5rVvdfSwSfj89t/RzEUTNQnjI81w+EbSj
+	 YixNhVaxvff1g==
+Date: Mon, 10 Jun 2024 17:08:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	pthombar@cadence.com, Piyush Malgujar <pmalgujar@marvell.com>
+Subject: Re: [PATCH v8 3/4] spi: cadence: Allow to read basic xSPI
+ configuration from ACPI
+Message-ID: <ZmclB2CMhhkasiBw@finisterre.sirena.org.uk>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-4-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4N+yVIGOhUtFEsY0"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tFL2/mw4Qy+8zVf8"
 Content-Disposition: inline
-In-Reply-To: <20240610084032.3096614-4-adeep@lexina.in>
+In-Reply-To: <20240607151831.3858304-4-wsadowski@marvell.com>
+X-Cookie: Your love life will be... interesting.
 
 
---4N+yVIGOhUtFEsY0
+--tFL2/mw4Qy+8zVf8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
-> Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
+On Fri, Jun 07, 2024 at 08:18:30AM -0700, Witold Sadowski wrote:
 
-"bindings are for hardware, not drivers". Why purpose does the "secure
-monitor" serve that the secure firmware needs a reference to it?
+> These changes enable reading the configurations from ACPI tables as
+> required for successful probing in an ACPI UEFI environment. In the
+> case of an ACPI-disabled or DTS-based environment, it will continue
+> to read configurations from DTS as before.
 
-Thanks,
-Conor.
+This doesn't describe what the ACPI tables are supposed to look like or
+anything, it's hard to review this...
 
->=20
-> Signed-off-by: Viacheslav Bocharov <adeep@lexina.in>
-> ---
->  .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml      | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-=
-gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,m=
-eson-gx-ao-secure.yaml
-> index 7dff32f373cb..1128a794ec89 100644
-> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
-ecure.yaml
-> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
-ecure.yaml
-> @@ -32,6 +32,10 @@ properties:
->    reg:
->      maxItems: 1
+> +#ifdef CONFIG_ACPI
+> +static bool cdns_xspi_supports_op(struct spi_mem *mem,
+> +				  const struct spi_mem_op *op)
+> +{
+
+> +	if (!acpi_dev_get_property(adev, "spi-tx-bus-width", ACPI_TYPE_INTEGER,
+> +				   &obj)) {
+
+> +	if (!acpi_dev_get_property(adev, "spi-rx-bus-width", ACPI_TYPE_INTEGER,
+> +				   &obj)) {
+
+Why is this Cadence specific?
+
+>  static int cdns_xspi_of_get_plat_data(struct platform_device *pdev)
+>  {
+> -	struct device_node *node_prop =3D pdev->dev.of_node;
+> +	struct fwnode_handle *fwnode_child;
+>  	unsigned int cs;
 > =20
-> +  secure-monitor:
-
-Missing a vendor prefix.
-
-> +    description: phandle to the secure-monitor node
-> +    $ref: /schemas/types.yaml#/definitions/phandle
+> -	for_each_available_child_of_node_scoped(node_prop, node_child) {
+> -		if (of_property_read_u32(node_child, "reg", &cs)) {
+> +	device_for_each_child_node(&pdev->dev, fwnode_child) {
+> +		if (!fwnode_device_is_available(fwnode_child))
+> +			continue;
 > +
->    amlogic,has-chip-id:
->      description: |
->        A firmware register encodes the SoC type, package and revision
-> --=20
-> 2.45.2
->=20
+> +		if (fwnode_property_read_u32(fwnode_child, "reg", &cs)) {
+>  			dev_err(&pdev->dev, "Couldn't get memory chip select\n");
+> +			fwnode_handle_put(fwnode_child);
+>  			return -ENXIO;
+>  		} else if (cs >=3D CDNS_XSPI_MAX_BANKS) {
+>  			dev_err(&pdev->dev, "reg (cs) parameter value too large\n");
+> +			fwnode_handle_put(fwnode_child);
+>  			return -ENXIO;
+>  		}
+>  	}
 
---4N+yVIGOhUtFEsY0
+This is just a general refactoring to fwnode and could be split out.
+
+> @@ -814,19 +890,19 @@ static int cdns_xspi_probe(struct platform_device *=
+pdev)
+>  	if (ret)
+>  		return -ENODEV;
+> =20
+> -	cdns_xspi->iobase =3D devm_platform_ioremap_resource_byname(pdev, "io");
+> +	cdns_xspi->iobase =3D devm_platform_ioremap_resource(pdev, 0);
+
+> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "sdma");
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
+
+> -	cdns_xspi->auxbase =3D devm_platform_ioremap_resource_byname(pdev, "aux=
+");
+> +	cdns_xspi->auxbase =3D devm_platform_ioremap_resource(pdev, 2);
+
+This causes us to ignore naming on resources, that's an ABI break for
+other systems.
+
+--tFL2/mw4Qy+8zVf8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmck5QAKCRB4tDGHoIJi
-0iydAQD6TLLXFkQ91it+ekcKcRkMfnDbDLyoS4AUCnh1wSh2xQD/RDRupw8OAQo/
-Y2gJUImSqXu3pj/lDI8iyrkwkNT8ygk=
-=wI0y
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnJQcACgkQJNaLcl1U
+h9DONwf+IthK+A65Y0/uzrZy5nJ94Lemxxb+gLFAc5sm2+gPX9IXqpbTvHkEfomj
+ebbt3h2pLrKbQrl7fpIGuCTftEkfprhJ+Y50YRlrGmCH9Z2lT2vlBukGS9aopyJY
+EvOJZoX1XTqKstDW0Al5zaHSHFOAg25iGn+EIaBP/HQdDMAsZ8laV9sLGwazjNML
+fYmixa+7n64ePtb8GvJfPxB+ROqQifAnZWNuHw7FO/HeFOu3029Q06rHPE7ujL4e
+1ylGqMFQ7Fcbc2idtGsdh4aEKsri0rLu3ulSuZ5Tbv9E/SkUIccre0OnEXUGpnYW
+K4hLScVjGgCOlvsS8yG3TLD7InoEeA==
+=6p+r
 -----END PGP SIGNATURE-----
 
---4N+yVIGOhUtFEsY0--
+--tFL2/mw4Qy+8zVf8--
 
