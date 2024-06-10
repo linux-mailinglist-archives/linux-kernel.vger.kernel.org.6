@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-208125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E93D902123
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3814B902126
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4052F1C23067
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:02:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B63286084
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707178C9C;
-	Mon, 10 Jun 2024 12:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969D87FBD1;
+	Mon, 10 Jun 2024 12:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gt559jjE"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knyCcpvA"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0BDBA53
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C7D7F499
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020943; cv=none; b=Fw8LYprMotUxyBH/w33tJgyvX3S5eClspzENQrzVHQpw8lqOmDF7YddkUpQJPmBQbRM4BxcqkPrWeUDkRCii9TxNG2+ayLkVj8R/ioW0KoUeXDBlcDTvfHCGgcnxxe+wh/vb9Y3PfKvKkTW0MHsQaKBi0sq1WxJUqQpsA5P33jk=
+	t=1718020949; cv=none; b=tBYKYuQx3MiwRd55dC+a89JXcGiVHMHEUMg9OxFLN3uappzyH20LD4E/DZqQfK8cpRt2m1d00uxbOHwq62CreEcbiFurV/BzR5outS9hGMlWcLxHck7zGL7E5kF9WHiiBvl1CnBuq/9FNt1xzVt6hNg7QmhG6FQAbn/Rdoj7IqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020943; c=relaxed/simple;
-	bh=aQFP7gNPrNXTh2IHcUhusTtvEa4HHQK5PtH55IE5+CE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kMdEWBEEVjxKYrqQI+Ndn7vo/YNJwWJp3LYXuKukBIim8YSp+q4345h5bDiUBRegm40t0gzHvbmF142XtpWdZVuGz/ydAUDhjNjKk9xrPJHXnOyVHwI2KVs/wD1XbtKpgCKwO9KFi9yGG3WRtJDmoc0L+/wzFCsVNU8WZBYSOpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gt559jjE; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1718020949; c=relaxed/simple;
+	bh=h/qbehpgmUCcOjdGYJT1hLUR76dnOV7H89VeLNo0XKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DN8YNo93cruQC3u9C8l3TebqxJzxtvECdLa9UhsMzzbpjumnkRkFRNCYs3jmGRn2JTwYLZTXP74fTr+LTm8KRevc5ntNdk0l9vX8TZhQIcyMQC8j2BNwSHUD1bPdNhoZpkVi/ujlvL3E6KDlPEdcxKD8pkCRP8aguMKxRVkDrWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knyCcpvA; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c199e37f4eso3636699a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:02:21 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bfff08fc29so3612957a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:02:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718020941; x=1718625741; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=26tuUrqnEQfFAp3h3pgs/MAqgYUu2Sg0W6tKE5DaxLQ=;
-        b=Gt559jjEYDTV3H1vTGqtTJWt9aAOwk0l6F/kU2g4jYtTgHqhoc40wLOeUC0w3ha9e7
-         qAGOpCFQuOm5YZCZxhTqKJ48HLUH7NdwKVA61Rp9zPnNX4phO7U/v3rfLI6SrFvNIv7a
-         zhAqZTwFPuo4EPsLTAXE8eEhz0GJ54hzxR00R1L3JQCbXbv2FyNvS3ZL5xDrGkWG5h01
-         euKvz/DHt4vXX8V8CZTrhgoGS82YylXATf7caJjRCalD2YX6hpl3LkBo6GZapzqUrjFT
-         Et8aWYy+aCGXG3ApwNm80+FajfbqLWbpCoI4KQnduc4LIQAcO0DXe2FA5jNa4/vNPHzx
-         QYiw==
+        d=gmail.com; s=20230601; t=1718020948; x=1718625748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lBEr8X48gppOS9Pq+Sw4WgX0PyIHU3keRQ8aF5ykbn0=;
+        b=knyCcpvAODywqCHbEn5GDvs8/vOlyVXW2a4khQW8voEYBHFpeJrIUzAe7q4fA55g1n
+         cVQRRfNJ7NH0G7beHBAvmSEHnjtJzcGMDhxGd1kPFudwoknnd1yNcSpejkpTncUOQEKG
+         3k72x9391Zk6jcDDVTGGzXMjtVYb3uzoLl7PzOosOdsv+TGN4+0UlWmo/ioBvz9lH6dg
+         XuHAcXa7dtbGy/EZ1VYALgXt5bi9ViUPppf2+F1vffx0LcwwaWXg+Cr1VG1sMr+E3ay1
+         lSjW46wMN2TjNWQVvgW0TC+UkGZ7ppNNWBAxnrc6UQHdYkbBhE7QABJT8Fuqq04ZWkW1
+         o+HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718020941; x=1718625741;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=26tuUrqnEQfFAp3h3pgs/MAqgYUu2Sg0W6tKE5DaxLQ=;
-        b=qrEVM7MRX4gz7eTb0Wq6EZPwVb3Hj+r1MWQDpJERej1HF8mM1+4mlNt7wPJKQT3Scf
-         qR/n05RHPoEGGLBN8ySMJxn9Y5LIPaqmPjSwx3pQyrlqYowYeA7JhKqRUr3IUmIWX4/k
-         B1UfyTTqHT0lIfviYvLZOg+VR5P3WCAxYd+Av3fs87dYxCqvSOBRjhtSfCinxyQr9V5Q
-         Bfha/GDTsQpd+wXdw5JAK9vhEjvg0SIPb+fLN8JDx8VQHy5Xtt+3bbVxUJpKVIxHDsk4
-         0IGbclL6e1OeRI4d2skZbJ8Qrb6KVFui9eGSr5ipzX2yIjFcIMle24NzRoEaW0BBKnCV
-         oqIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZEUvjYX57vk57m0qPE4jiP/expqS9RsBOgY51GDDNXpfcERxLWGQGUq9hmrdc08P6zXme/8RoUKqdbs/3NtKZTvpoA6IaVf1rvYBm
-X-Gm-Message-State: AOJu0Yxc0Q7J8g5bL0XmI96gGnVKf2qnb9K7n9j3x2XfUbu4i6OBtyqd
-	Z8HOtDUwldpKShKNc/JlyYbJyTlOm6fPJ/wFVLQhQ24T3PL8gI8t
-X-Google-Smtp-Source: AGHT+IFBudSl4WgItCCnP5LfGTAa8cr1lbmtKS+NCmJH2FoXqV6FA1FwxGmVoAyBzdfwCVxMYS/NSg==
-X-Received: by 2002:a17:90b:817:b0:2c2:f2d6:60d4 with SMTP id 98e67ed59e1d1-2c2f2d664aamr3884336a91.8.1718020940887;
-        Mon, 10 Jun 2024 05:02:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718020948; x=1718625748;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lBEr8X48gppOS9Pq+Sw4WgX0PyIHU3keRQ8aF5ykbn0=;
+        b=fCHvLurkQEvMpURkmsIcDYFNaJzMEG7ZGt/0iv5JjbC5t9/vMK9zGXpe/sGoCSUgOq
+         mPddk9zkLi6vi8Mwi/XyH9w6Y8aEWbHRXQlRWpwi+wVQ/m07DTsFP49luFF04lsYswXG
+         eMJC+D/HtYO8U85hS4TpFQx297cvnV1QuhsiqsUABhRwLnZ485CTURSWxiBZhKsmWlzx
+         jaJFifVxKCiNegRAClHXpjXnX4OABHYyQDT7sKJ1KDR6Y3a63XZ0CdfLPGevYFvt+/M2
+         Evt45BIMEVvnTrq0AyqB7vhGCKki9DsdqwxRyOobXT/Z05f1tvfEQ0J2N4ouIb3qQOJ/
+         rSvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRf6DiThxvpp4KN+ytDR0ONZEnfcl8mq6LlduSIhflMZcza8Iz7qafHjigHgDX3GzmP3PQ2r0vR6Z8YGevk4wAVYVePXPYSlyTcm8P
+X-Gm-Message-State: AOJu0YznvhBriK56DVa+Zz9pB6jEGu4hkxdHcwlYVCxZAUfDw+IEjPbX
+	WvROXWRX9NS7qfa1NgJHHl3iEIgodFpgGghQp8pPK+1bwWm7GGrN
+X-Google-Smtp-Source: AGHT+IFSTF5zRph+kFCZTrfNYOUKk6N+AfTH+6+XT32Q1zGJQ4AHy88EyqrdIXL9+OQ1MKB+a7QwUQ==
+X-Received: by 2002:a17:90a:5e43:b0:2bf:f248:3506 with SMTP id 98e67ed59e1d1-2c2bcaf984fmr8656864a91.12.1718020947621;
+        Mon, 10 Jun 2024 05:02:27 -0700 (PDT)
 Received: from LancedeMBP.lan.lan ([2403:2c80:6::304c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c302f0ebdcsm2478478a91.23.2024.06.10.05.02.14
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c302f0ebdcsm2478478a91.23.2024.06.10.05.02.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 05:02:20 -0700 (PDT)
+        Mon, 10 Jun 2024 05:02:27 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: willy@infradead.org,
@@ -87,10 +89,12 @@ Cc: willy@infradead.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v7 0/4] Reclaim lazyfree THP without splitting
-Date: Mon, 10 Jun 2024 20:02:05 +0800
-Message-Id: <20240610120209.66311-1-ioworker0@gmail.com>
+Subject: [PATCH v7 1/4] mm/rmap: remove duplicated exit code in pagewalk loop
+Date: Mon, 10 Jun 2024 20:02:06 +0800
+Message-Id: <20240610120209.66311-2-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20240610120209.66311-1-ioworker0@gmail.com>
+References: <20240610120209.66311-1-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,122 +103,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+Introduce the labels walk_done and walk_done_err as exit points to
+eliminate duplicated exit code in the pagewalk loop.
 
-This series adds support for reclaiming PMD-mapped THP marked as lazyfree
-without needing to first split the large folio via split_huge_pmd_address().
-
-When the user no longer requires the pages, they would use madvise(MADV_FREE)
-to mark the pages as lazy free. Subsequently, they typically would not re-write
-to that memory again.
-
-During memory reclaim, if we detect that the large folio and its PMD are both
-still marked as clean and there are no unexpected references(such as GUP), so we
-can just discard the memory lazily, improving the efficiency of memory
-reclamation in this case.
-
-Performance Testing
-===================
-
-On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
-mem_cgroup_force_empty() results in the following runtimes in seconds
-(shorter is better):
-
---------------------------------------------
-|     Old       |      New       |  Change  |
---------------------------------------------
-|   0.683426    |    0.049197    |  -92.80% |
---------------------------------------------
-
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
 ---
+ mm/rmap.c | 40 +++++++++++++++-------------------------
+ 1 file changed, 15 insertions(+), 25 deletions(-)
 
-Changes since v6 [6]
-====================
- - mm/rmap: remove duplicated exit code in pagewalk loop
-    - Pick RB from David - thanks!
- - mm/rmap: add helper to restart pgtable walk on changes
-    - Add the page_vma_mapped_walk_restart() helper to handle scenarios
-      where the page table walk needs to be restarted due to changes in
-      the page table (suggested by David)
- - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-    - Pass 'pvmw.address' to split_huge_pmd_locked() (per David)
-    - Drop the check for PMD-mapped THP that is missing the mlock (per David)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - Rename the function __discard_trans_pmd_locked() to
-      __discard_anon_folio_pmd_locked() (per David)
-
-Changes since v5 [5]
-====================
- - mm/rmap: remove duplicated exit code in pagewalk loop
-    - Pick RB from Baolin Wang - thanks!
- - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
-    - Merge this patch into patch 2 (per Baolin Wang)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - Mark a folio as being backed by swap space if the folio or its PMD
-      was redirtied (per Baolin Wang)
-    - Use pmdp_huge_clear_flush() to get and flush a PMD entry
-      (per Baolin Wang)
-
-Changes since v4 [4]
-====================
- - mm/rmap: remove duplicated exit code in pagewalk loop
-    - Pick RB from Zi Yan - thanks!
- - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-    - Remove the redundant alignment (per Baolin Wang)
-    - Set pvmw.ptl to NULL after unlocking the PTL (per Baolin Wang)
- - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
-    - Check whether the mlock of PMD-mapped THP was missed
-      (suggested by Baolin Wang)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - No need to check the TTU_SPLIT_HUGE_PMD flag for unmap_huge_pmd_locked()
-      (per Zi Yan)
-    - Drain the local mlock batch after folio_remove_rmap_pmd()
-      (per Baolin Wang)
-
-Changes since v3 [3]
-====================
- - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-    - Resolve compilation errors by handling the case where
-      CONFIG_PGTABLE_HAS_HUGE_LEAVES is undefined (thanks to SeongJae Park)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - Remove the unnecessary conditional compilation directives
-      (thanks to Barry Song)
-    - Resolve compilation errors due to undefined references to
-      unmap_huge_pmd_locked and split_huge_pmd_locked (thanks to Barry)
-
-Changes since v2 [2]
-====================
- - Update the changelog (thanks to David Hildenbrand)
- - Support try_to_unmap_one() to unmap PMD-mapped folios
-   (thanks a lot to David Hildenbrand and Zi Yan)
-
-Changes since v1 [1]
-====================
- - Update the changelog
- - Follow the exact same logic as in try_to_unmap_one() (per David Hildenbrand)
- - Remove the extra code from rmap.c (per Matthew Wilcox)
-
-[1] https://lore.kernel.org/linux-mm/20240417141111.77855-1-ioworker0@gmail.com
-[2] https://lore.kernel.org/linux-mm/20240422055213.60231-1-ioworker0@gmail.com
-[3] https://lore.kernel.org/linux-mm/20240429132308.38794-1-ioworker0@gmail.com
-[4] https://lore.kernel.org/linux-mm/20240501042700.83974-1-ioworker0@gmail.com
-[5] https://lore.kernel.org/linux-mm/20240513074712.7608-1-ioworker0@gmail.com
-[6] https://lore.kernel.org/linux-mm/20240521040244.48760-1-ioworker0@gmail.com
-
-Lance Yang (4):
-  mm/rmap: remove duplicated exit code in pagewalk loop
-  mm/rmap: add helper to restart pgtable walk on changes
-  mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-
- include/linux/huge_mm.h |  15 +++++
- include/linux/rmap.h    |  22 ++++++++
- mm/huge_memory.c        | 122 +++++++++++++++++++++++++++++++++-------
- mm/rmap.c               |  77 ++++++++++++++-----------
- 4 files changed, 184 insertions(+), 52 deletions(-)
-
-
-base-commit: 6b77d01728f219a091f55ca3142bbc4e4057ca50
+diff --git a/mm/rmap.c b/mm/rmap.c
+index e8fc5ecb59b2..ddffa30c79fb 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1679,9 +1679,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			/* Restore the mlock which got missed */
+ 			if (!folio_test_large(folio))
+ 				mlock_vma_folio(folio, vma);
+-			page_vma_mapped_walk_done(&pvmw);
+-			ret = false;
+-			break;
++			goto walk_done_err;
+ 		}
+ 
+ 		pfn = pte_pfn(ptep_get(pvmw.pte));
+@@ -1719,11 +1717,8 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			 */
+ 			if (!anon) {
+ 				VM_BUG_ON(!(flags & TTU_RMAP_LOCKED));
+-				if (!hugetlb_vma_trylock_write(vma)) {
+-					page_vma_mapped_walk_done(&pvmw);
+-					ret = false;
+-					break;
+-				}
++				if (!hugetlb_vma_trylock_write(vma))
++					goto walk_done_err;
+ 				if (huge_pmd_unshare(mm, vma, address, pvmw.pte)) {
+ 					hugetlb_vma_unlock_write(vma);
+ 					flush_tlb_range(vma,
+@@ -1738,8 +1733,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 					 * actual page and drop map count
+ 					 * to zero.
+ 					 */
+-					page_vma_mapped_walk_done(&pvmw);
+-					break;
++					goto walk_done;
+ 				}
+ 				hugetlb_vma_unlock_write(vma);
+ 			}
+@@ -1811,9 +1805,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			if (unlikely(folio_test_swapbacked(folio) !=
+ 					folio_test_swapcache(folio))) {
+ 				WARN_ON_ONCE(1);
+-				ret = false;
+-				page_vma_mapped_walk_done(&pvmw);
+-				break;
++				goto walk_done_err;
+ 			}
+ 
+ 			/* MADV_FREE page check */
+@@ -1852,23 +1844,17 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				 */
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+ 				folio_set_swapbacked(folio);
+-				ret = false;
+-				page_vma_mapped_walk_done(&pvmw);
+-				break;
++				goto walk_done_err;
+ 			}
+ 
+ 			if (swap_duplicate(entry) < 0) {
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+-				ret = false;
+-				page_vma_mapped_walk_done(&pvmw);
+-				break;
++				goto walk_done_err;
+ 			}
+ 			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
+ 				swap_free(entry);
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+-				ret = false;
+-				page_vma_mapped_walk_done(&pvmw);
+-				break;
++				goto walk_done_err;
+ 			}
+ 
+ 			/* See folio_try_share_anon_rmap(): clear PTE first. */
+@@ -1876,9 +1862,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			    folio_try_share_anon_rmap_pte(folio, subpage)) {
+ 				swap_free(entry);
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+-				ret = false;
+-				page_vma_mapped_walk_done(&pvmw);
+-				break;
++				goto walk_done_err;
+ 			}
+ 			if (list_empty(&mm->mmlist)) {
+ 				spin_lock(&mmlist_lock);
+@@ -1918,6 +1902,12 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 		if (vma->vm_flags & VM_LOCKED)
+ 			mlock_drain_local();
+ 		folio_put(folio);
++		continue;
++walk_done_err:
++		ret = false;
++walk_done:
++		page_vma_mapped_walk_done(&pvmw);
++		break;
+ 	}
+ 
+ 	mmu_notifier_invalidate_range_end(&range);
 -- 
 2.33.1
 
