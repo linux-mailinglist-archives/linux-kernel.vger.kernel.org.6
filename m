@@ -1,118 +1,191 @@
-Return-Path: <linux-kernel+bounces-207780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F132901BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07441901C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5E91C21947
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4B01C21A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD32C87A;
-	Mon, 10 Jun 2024 07:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E16326286;
+	Mon, 10 Jun 2024 07:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DQmSOd6N"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d29hRgK+"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962BE224F6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA9E28377
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005121; cv=none; b=dFHwLvDE34eDko/KIvVRp8vcZDMG8Jj0mbQjxCfyWMamsGb5d7hM6QgHhBO6ICgOFRlcsBPysYfDedGAmX/ZluP6LyXOnjVwXOUjcIPGD2Mn/WMsNZcs/XDHsG8GO1wnFcOcqT+4RK1Yl5lSXS5vIqlkLDy6VLmMq8P9IKM7eZU=
+	t=1718005200; cv=none; b=dV8RDdgl2b+K6v5I8mMdZRJdITk1Tr2dCpXaA7D7iZx0YT8z73ptxLhy4hyTWhi3gXOorbrcNYUrg/arE+ejPhN+B23rqxvdlqSBwC4T8Aau3pTWEup0WWm78s7qgjHIDIPmt1JhuIWyabU7tjayKIm8ibv2RHxXbIK6kSlyciA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005121; c=relaxed/simple;
-	bh=J3TJUg5+q7YP0MGTuE4DpuCVtIoec/4jlVQ+5HhQKFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EdkUU/9YHtVJWm2dGQ4KR0AD+ouygYHHoSuCubMek5+gV7DzqXwDK/xuKqajL1y5UEPjcv66SNXvaFUCgURuyVs1ZBeA3hhbTISftSw6Aqfq7ONpK5FTZI+9zH3LC7Eyakb+IO2RP+8wczyGhuuAWtM00zexgfmmuAkqmLcUgQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DQmSOd6N; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-421b9068274so5805345e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:38:39 -0700 (PDT)
+	s=arc-20240116; t=1718005200; c=relaxed/simple;
+	bh=Pl77bQGDVfj6d6436tUg9NqhuIW1Q6mVmn4dFwdM2so=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EByAio36gy2rCjzdZZQOVVioQqsTjugK1VcT+Dmb/LY8s0JO0kQoRa05FfoF2ePVeeYdjR+Ue2UXXjH1jNzvEkN5looh+zMUFbMlLbrcC+dMPbnPfxh1djzr7DBQVP4yGkgVDreUcbnHmyCENCaYK+v+1nG9c0uQG1o1x/wcBxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d29hRgK+; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42172ab4b60so18231805e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718005118; x=1718609918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m3sXZnTrFx1FLNku3UarqNq102veh5s5DlicL0ytOPY=;
-        b=DQmSOd6NrsPxmPI9wUvdC34r+48+kXctKUkQSLIt62iTcVnng2BBOajz00JROXCrIK
-         H+UiCAAg3lnkwNCVIOtEbAHd7Fojb1VMTayHugyLaUtJJpUP+tfRVaxTHr5dUJV62B0G
-         eLHT3Zz9S61VLepVcyBSsSR71apioNOFgs+jn9ZVEGn6HciNj4vbAT0un7OZ8Aigpb6t
-         yYceJYG9ZWvaMIFKXfXoMoN9cgg2ZEhzyFupzvwjGQKMID7SVoDlMb1rFeOIF9MGiWS4
-         zj/ZJPCjUDjgjW+ZeOZvqodl8leEvlBEYL9GBkFA02lZZCIcku+JFQ3LNCCMitzLGsw4
-         MSdA==
+        d=linaro.org; s=google; t=1718005197; x=1718609997; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMjwlRoB1zUBrxnoriQTxC4qGPUpj37/BX99GwdlmqQ=;
+        b=d29hRgK+tiCkGKm0DamqIAJl3g4Qh0EMH0smk2muJ/rkyMmVU+e4RUySdOBBAbCeMW
+         9NQqWwwdJXpr5HCeQU93tny2pWki2NiztNXZ0hIO52S6nyyoaJzTcN+cAN87XH4/W/P9
+         whwFG8yDB5leVGfWKjIcLjxO0yfGmfIgOA4zJRUIRhkxBuh0JGdfN6hZ5y79bmIVS+ci
+         MI5hgRHQzUzsk5/AwXVdlxDyT9htJeBfUCw3jS4l4V4Jt9NI/pq3K9StoLr22V+kvJdt
+         g0RP3IbtnipmA/xU7B54ttWWA55HpEHRnx8IGiTsfBW1YxRRgpteiCAYbPQAqiCdM6Re
+         m8NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718005118; x=1718609918;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m3sXZnTrFx1FLNku3UarqNq102veh5s5DlicL0ytOPY=;
-        b=iuyP5XDJh2fCIDmwNuDvVsw/qdex1qwVEJRjwFUlhp8QyGe7lAguVdI+di+u5MXpcH
-         Uarx23cZxSsMRzyGOcGyfCN3+Mna8+zjjxHAjh39DXE6WoWnrbQyg0jSHBwdWStNTMqX
-         g4E0668aTy+Q9+wECuBroqdlbP9HI0qCJePgBGodmPFV4ie/52qD3gsUgpgYSr8Qu9zC
-         AjYhTVcnDdAVIjQEJY0EgYD92Y0SkzwoT/MNF2F+sK/JgULk58KREmH4DGeUlRF2AG6A
-         /OqbN0zm1cssKwHxaIGsiXy5Z188Pkj1XG8i2Fqd7qn2j6WZSFNaE8xVbeuF7wD/fcEu
-         rEHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHDbnewh0YzCiVa52HnYhq6Kl0wzDYctdr9qKJkoX0oB+LsslTV2n4ByGBxb16dL3mnNloXaOYkfvDjPflOGpt4V+K/fSOwy4pgdXT
-X-Gm-Message-State: AOJu0Yy19+bUkmxNSXxfmYwskOSZq/akCs8TxjZmkS5u5lRP0R4qqFTT
-	BxeltpQf21/ZZ4DsVU63SU8+BgFHnrjeYh2I8tbTh4X/pULHMeYNIlJ2kb7/fe0Z2rMYaD0q6YB
-	R
-X-Google-Smtp-Source: AGHT+IGv6yWdP8pzscvWRA8dl/BXTGiMUSwmqHfHi0M+GCIMctO8PARtwXxuupJU4okqHnTCWtagZQ==
-X-Received: by 2002:a05:600c:3c94:b0:41a:b54a:9ad8 with SMTP id 5b1f17b1804b1-4216499c726mr75618785e9.0.1718005117749;
-        Mon, 10 Jun 2024 00:38:37 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:b790:b49b:9038:8e99])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe371sm166778035e9.1.2024.06.10.00.38.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 00:38:37 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: brgl@bgdev.pl,
-	Huichun Feng <foxhoundsk.tw@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	corbet@lwn.net,
-	linus.walleij@linaro.org,
-	linux-doc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	warthog618@gmail.com
-Subject: Re: [PATCH v2] docs: gpio: prefer pread(2) for interrupt reading
-Date: Mon, 10 Jun 2024 09:38:36 +0200
-Message-ID: <171800510952.16671.14245266233040448666.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240609173728.2950808-1-foxhoundsk.tw@gmail.com>
-References: <20240609173728.2950808-1-foxhoundsk.tw@gmail.com>
+        d=1e100.net; s=20230601; t=1718005197; x=1718609997;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMjwlRoB1zUBrxnoriQTxC4qGPUpj37/BX99GwdlmqQ=;
+        b=q0WIniMDpwfNH0cU3R4YI65I0C9aHQnG55A8H5yeXuK7VcO71aUSERNF/F2DjvcvGQ
+         bmcYoUdqBc9A0MzxpSX+OWyFhWUhdBp2fP6mRemhAKWmUHgno4FAO1mfRZdHfWDifbGX
+         OWXwIaI93mlryU4gIZfxobDjWhRNWkjbm3wz5YBOzocJfmgT1Cky3pjl7PewH1sTghiP
+         mtSsmS/diEHCZJKiusCMxI7N6AdmM7Tp4PNcnlryRY2QtbbxlDf8VybdFCnKHpW2OtjJ
+         YL8kGllCd1rLMSapW2NBEkwGCAE0RNQ9BRz9VfD3vclNPkDSDmTGEINj3HF0JjFuirxi
+         Q50w==
+X-Forwarded-Encrypted: i=1; AJvYcCW769f1PXlZ/HKCFZehOQMKZ5ZIPYXrevTanfvEli2VbV4ByU2h1EOmbe/POaJmqftRWoh4St2un2vHI9RyKSvcc1IJyeuIDMTlwpq9
+X-Gm-Message-State: AOJu0YwNgaXhf7l1dPqo2kmi1oXg86DYvxaXxJSJRuQnPwIsXz0CTepb
+	D4zG08xJ2lwntc6NY94Yz16xRq/yz9yN3mbYF/jvldaHExLMv6bWCTNh+/am8Y4=
+X-Google-Smtp-Source: AGHT+IHMiLWtX71Xx57Du6Ke2BkcUOQRP6QZlXWDuZkcsDBndrQKFGzjYwkJnyZxt0sr/S5vnuNI5A==
+X-Received: by 2002:a05:600c:1d88:b0:421:7e76:b85c with SMTP id 5b1f17b1804b1-4217e76b8b1mr33386945e9.23.1718005197169;
+        Mon, 10 Jun 2024 00:39:57 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421dd8c3a9esm21868815e9.27.2024.06.10.00.39.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 00:39:56 -0700 (PDT)
+Message-ID: <68c9bf8d-38c6-4f1b-b73d-a8ea03f8e1cd@linaro.org>
+Date: Mon, 10 Jun 2024 09:39:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
+ interface
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Louis Kuo <louis.kuo@mediatek.com>, Phi-Bang Nguyen
+ <pnguyen@baylibre.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Andy Hsieh <andy.hsieh@mediatek.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Florian Sylvestre <fsylvestre@baylibre.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Paul Elder <paul.elder@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>
+References: <20240110141443.364655-1-jstephan@baylibre.com>
+ <20240110141443.364655-2-jstephan@baylibre.com>
+ <e0bf8667-cbb8-49ba-bb44-3edf93b019b8@linaro.org>
+ <CAEHHSvYt-aqFahi=B_si=duJH8xDgy_9nndgR-P0+U5THX69uw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAEHHSvYt-aqFahi=B_si=duJH8xDgy_9nndgR-P0+U5THX69uw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 10 Jun 2024 01:37:28 +0800, Huichun Feng wrote:
-> In legacy sysfs GPIO, when using poll(2) on the sysfs GPIO value for
-> state change awaiting, a subsequent read(2) is required for consuming
-> the event, which the doc recommends the use of lseek(2) or
-> close-and-reopen to reset the file offset afterwards.
+On 07/06/2024 10:52, Julien Stephan wrote:
+> Le ven. 12 janv. 2024 à 08:32, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> a écrit :
+>>
+>> On 10/01/2024 15:14, Julien Stephan wrote:
+>>> From: Louis Kuo <louis.kuo@mediatek.com>
+>>>
+>>> This adds the bindings, for the mediatek ISP3.0 SENINF module embedded in
+>>> some Mediatek SoC, such as the mt8365
+>>>
+>>
+>> ...
+>>
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: camsys
+>>> +      - const: top_mux
+>>> +
+>>> +  phys:
+>>> +    minItems: 1
+>>> +    maxItems: 4
+>>> +    description:
+>>> +      phandle to the PHYs connected to CSI0/A, CSI1, CSI2 and CSI0B
+>>> +
+>>> +  phy-names:
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - const: csi0
+>>> +      - const: csi1
+>>> +      - const: csi2
+>>> +      - const: csi0b
+>>
+>> Why one hardware has flexible number of phys?
 > 
-> The recommendations however, require at least 2 syscalls to consume
-> the event. Gladly, use of pread(2) require only 1 syscall for the
-> consumption. Let's advertise this usage by prioritizing its placement.
+> Hi Krzysztof,
 > 
-> [...]
+> seninf can have multiple port depending on the soc, each requiring its own phy
 
-Applied, thanks!
-
-[1/1] docs: gpio: prefer pread(2) for interrupt reading
-      commit: 7f1e45f4ae7671550e15354ef87194bccd99ecec
+So it is fixed per soc? Then make it fixed per soc.
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Krzysztof
+
 
