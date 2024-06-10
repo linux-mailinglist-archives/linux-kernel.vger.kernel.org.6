@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-208632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8DD90275D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2787890275F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8820A289477
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4176C1C212BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE93145354;
-	Mon, 10 Jun 2024 17:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802D6143C4E;
+	Mon, 10 Jun 2024 17:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T+g9Q+Cn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ti3YrOvh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1741EA6F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B502D1EA6F;
+	Mon, 10 Jun 2024 17:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038803; cv=none; b=NNE2Vaj6v7SHbR2YsV8jGl0q3RsEMYYKhBo16QOYRA9bSwcF/IJlAgltHOzQIwHeD24k2qscXY7GVNC9xd6dFOmnnx7H+gzF6O+Jw4wFHbvL0zsXDbEMv2Wn8czW8wrQIcx/vn0+LuB77vVwni4pcK6On/ku0c3+rEgwgr4L7zA=
+	t=1718038926; cv=none; b=D13GHqW+hqVBrxmgP87LogMWHuwVKCNrsJOEXpU2q/fpuulY0SZ1D48eXVBapQ2aPSLaEJ1lpbWeEMj/txE+f/zoqwmHZVlU1nhNQvNxWZqhIb9jvXL22PZ9ykYgMtupb84KtawluHjR6s0YXGwvlxUcaLOq+lS5hHrOW/jwt7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038803; c=relaxed/simple;
-	bh=1m7ebKHlpbsUaMBQNISNWxY4VRsCLL4ICYzNJF0nLDg=;
+	s=arc-20240116; t=1718038926; c=relaxed/simple;
+	bh=WFeffItMXMcz+XG1+wQHxMIyeQdKyjz6JLP3Gz+RuNw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltov9BAEb895joQHJiInMEiTCuuCOh2W1YoL+p0p8ANBBpNB9PYDa9Lg1iYYwCR5YJ15I471fcceDwDZZRSJIIEDh/JArHJhDs6Fv3EdntYTFU0Wlt4eCUvY5oIh5+1f5/kr5TBW5YikXhQoRa28wBqav+48vsdLNtc3DoI65aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T+g9Q+Cn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=c9KYJn0jhsla+0w2VJDwqP6iO+OOPgYPwwEWm2grdLM=; b=T+g9Q+CnjlZOL26qygCjVfsS3i
-	0TN7GoOjlQee0qQ5/AxHIanHGBOo4pUpN3oYjMOaGIl3HQGgJlyZX23PlP5Kv1sJiVwuRV+Cx6ZhM
-	hoypDpRGHGMDXXqcS1/ruDm5qEr+rmPVnncwlNH59HzbGbxzMgdDmx6OFpOQDYbWFNsCOcglZTcpi
-	MS6zEGQKBrSYXCz6JbfAgIKKYvgIHbHDlFASq8vKtfrJdNCRqz4OxwWduWC0fSubK5wAl6PbFvVpU
-	O7SCSGADtlhEVQM3Y9PDehpNeUTPaGiQKzCA6Zqnr70DAJT6/CYRRhjwm2axSaNyAteRc8JL56LIl
-	nuJ55v+Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGiMr-00000009W06-03DT;
-	Mon, 10 Jun 2024 16:59:37 +0000
-Date: Mon, 10 Jun 2024 17:59:36 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
-	wangkefeng.wang@huawei.com, chrisl@kernel.org, ying.huang@intel.com,
-	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
-	ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
-	p.raghav@samsung.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] mm: add new 'orders' parameter for
- find_get_entries() and find_lock_entries()
-Message-ID: <Zmcw-DymPwFcOqOY@casper.infradead.org>
-References: <cover.1717673614.git.baolin.wang@linux.alibaba.com>
- <5304c4c54868336985b396d2c46132c2e0cdf803.1717673614.git.baolin.wang@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nWU4H/iXSNHiZmjRBFCh7p7sjVWaoVlANLr07adgarlHfFA/FZGdF9T9i/0l97RGZJFmYNlv6nvLzvPQ4hDAjDoSebjCDFYc3EYEWOBHCuM22OsWbj8DnEbWcjcL8IgJPqCePbU0hu6T3GvRYULyoHFZzZa0VzNHbL4+i5Cc/ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ti3YrOvh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F37C2BBFC;
+	Mon, 10 Jun 2024 17:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718038926;
+	bh=WFeffItMXMcz+XG1+wQHxMIyeQdKyjz6JLP3Gz+RuNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ti3YrOvh6kr5L5/NEmkjAc5sZJGS2uB9eaN9LfnQmvR7CYr1QvL70SPO1fFt+U3b+
+	 doxRofUpDLlm82KDuIFhpGfxLe1vkjZjOSUgNJ0+fLX2LXO7StMGCMkXufzn8drQN0
+	 6OiNHM6Uf/ryvFLlmDbEEHSfOU8ryT/2wjZqzX6aV4iZP3D7Gd78TistJY9yFMMTF4
+	 UEcLNDRf5z0B0KLJWltETSvBp/o3kbaYzMNKlw8C8TXulzA6FAytCGJHVjUX+b1oWu
+	 UeSi5LdyRoEd5kDGRZlhTAcaT5HWBWlYEdD+5IdM7uZStDBCz/CJGdxOi9VuvbLqOD
+	 9AOlEQ2ImzyDw==
+Date: Mon, 10 Jun 2024 10:02:05 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tony Luck <tony.luck@intel.com>, linux-hardening@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ross Zwisler <zwisler@google.com>, wklin@google.com,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v2 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <202406101001.D469C9A@keescook>
+References: <20240606150143.876469296@goodmis.org>
+ <aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,22 +79,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5304c4c54868336985b396d2c46132c2e0cdf803.1717673614.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <aa8c49d5-1a51-9256-6327-d47036b343fe@igalia.com>
 
-On Thu, Jun 06, 2024 at 07:58:55PM +0800, Baolin Wang wrote:
-> In the following patches, shmem will support the swap out of large folios,
-> which means the shmem mappings may contain large order swap entries, so an
-> 'orders' array is added for find_get_entries() and find_lock_entries() to
-> obtain the order size of shmem swap entries, which will help in the release
-> of shmem large folio swap entries.
+On Fri, Jun 07, 2024 at 04:54:41PM -0300, Guilherme G. Piccoli wrote:
+> On 06/06/2024 12:01, Steven Rostedt wrote:
+> > Reserve unspecified location of physical memory from kernel command line
+> > [...]
+> > Solution:
+> > 
+> > The solution I have come up with is to introduce a new "reserve_mem=" kernel
+> > command line. This parameter takes the following format:
+> > 
+> >   reserve_mem=nn:align:label
+> > 
+> > Where nn is the size of memory to reserve, the align is the alignment of
+> > that memory, and label is the way for other sub-systems to find that memory.
+> > This way the kernel command line could have:
+> > 
+> >   reserve_mem=12M:4096:oops   ramoops.mem_name=oops
+> > 
+> > At boot up, the kernel will search for 12 megabytes in usable memory regions
+> > with an alignment of 4096. It will start at the highest regions and work its
+> > way down (for those old devices that want access to lower address DMA). When
+> > it finds a region, it will save it off in a small table and mark it with the
+> > "oops" label. Then the pstore ramoops sub-system could ask for that memory
+> > and location, and it will map itself there.
+> > 
+> > This prototype allows for 8 different mappings (which may be overkill, 4 is
+> > probably plenty) with 16 byte size to store the label.
+> > 
+> > I have tested this and it works for us to solve the above problem. We can
+> > update the kernel and command line and increase the size of pstore without
+> > needing to update the firmware, or knowing every memory layout of each
+> > board. I only tested this locally, it has not been tested in the field.
+> > 
+> 
+> Hi Steve, first of all, thanks for this work! This is much appreciated.
+> The kdumpst tooling (Arch Linux) makes use of pstore when available, and
+> the recommendation so far was to reserve memory somehow, like "mem=" or
+> use kdump instead, if no free RAM area was available.
+> 
+> With your solution, things get way more "elegant". Also, I think we all
+> know pstore is not 100% reliable, specially the RAM backend due to
+> already mentioned reasons (like FW memory retraining, ECC memory, etc),
+> but it's great we have a mechanism to **try it**. If it works, awesome -
+> for statistical analysis, this is very useful; pstore has been used with
+> success in the Steam Deck, for example.
+> 
+> With all that said, I've tested your patches on top of 6.10-rc2 in 2
+> qemu VMs (one running legacy BIOS - seabios - and the other UEFI - using
+> ovmf) and on Steam Deck, and it's working flawlessly. I've tested only
+> using ramoops as module.
+> 
+> Some code review in the patches themselves (like a missing
+> EXPORT_SYMBOL_GPL), but all in all, that's a great addition! Feel free
+> to add my:
+> 
+> Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-I am not a fan.  I was hoping that 'order' would be encoded in the swap
-entry, not passed as a separate parameter.
+Yeah, I think this looks good as long as it's understood to be a "best
+effort", and will radically simplify doing qemu testing, etc. I expect I
+can take v3 into -next with the fixes Guilherme noted.
 
-As I understand it, we currently have a free bit, or
-swp_to_radix_entry() would not work.  We can use that as detailed
-here to encode the order in a single bit.
+-Kees
 
-https://kernelnewbies.org/MatthewWilcox/NaturallyAlignedOrder
-
+-- 
+Kees Cook
 
