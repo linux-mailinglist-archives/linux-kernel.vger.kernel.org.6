@@ -1,159 +1,143 @@
-Return-Path: <linux-kernel+bounces-208298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2F3902340
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:59:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A925902346
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC68C1F27859
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2AF1C2157C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569ED82D75;
-	Mon, 10 Jun 2024 13:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6DC14388F;
+	Mon, 10 Jun 2024 13:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayBMyhoL"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R5dpanIH"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CAE13DDAA;
-	Mon, 10 Jun 2024 13:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7744B85624;
+	Mon, 10 Jun 2024 13:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718027529; cv=none; b=C85Q/riGhPwGUJoxkpBzYA7cjvvtpBron1YXayxKI/vjErs5OXQndUnjDX9VERaieaz+Lp/3XECpKFC5zrfP3C4eo7FJhtSIezibNsnDBQXCP6IZ28lfIhERFMmBHe1XPZQvFMyGKiKNDSBG8HdbAdj2Nu2WyDuxEs53auiVd4E=
+	t=1718027606; cv=none; b=ongnuZp8AvVRRZ0/eVZd5btkHncN0yZ/ZMbY1p5lfjksjA+fKsG1II2a0DcqvRXZBZjpI7lJNXngIdwCXyiy4MhCjugz1HPKPz/tyyk19yw3a3QyhNPWKInyrysHrX70E16ZUFq2vCiav/Cj8MtkJjFLk8LON8Mphvxkhl3XTGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718027529; c=relaxed/simple;
-	bh=SnXjoWMt1ucRcCqDMW6yGEMphMDUkfeEzthXslJiCmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=egbhYrR3yITv21ojkyBkBD4UZeDesIFaWCQVigvlGiw1HpzA2V8u5IoTVNFE0vmVE0ha8U71GUmbWX7MuywoPhgDqbwLvc0o9BOetUHkEvAAuU1mQDEvidDAn9JeOiHTBWBoJIo8O+FZdqvQTynWnU/pOS5InQ96R2rWVNHGoe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayBMyhoL; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f68834bfdfso32701535ad.3;
-        Mon, 10 Jun 2024 06:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718027527; x=1718632327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=vnSXSDt7vIqTORn91FZ/3khdXdilUIJ51HAU9MB+Cnk=;
-        b=ayBMyhoLs/ax3466u5+SO17Ma1XBgIi6cMSTcxaqfI/JBguJs3vvqsnvn4fMGJ11eE
-         9afcBC5sRbpDLqcyLSuk89CtBnqeBi5d1FOxY2QmrfMQaPxI68aZPocF1qyebGl/v8w5
-         gjPqLqvXQFTu/5kFDEWm+BRHgwiI//ttCaDV6kr18nyoGX7Wmj2dJkEZFwCqGwoAHJ4i
-         p6cgq0+CLSWQmNVjrS4g2z70ph2rgFABKfT9A91UTJVAANUlQ+wE282ZbzgvyrCTRPW8
-         iwmJwToBE9IuRwxPGi83l+sd9Gu1j+ZtE0XXUJS3ahrN+lO1DlagvvjRaBscDyeFlxCg
-         bjSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718027527; x=1718632327;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vnSXSDt7vIqTORn91FZ/3khdXdilUIJ51HAU9MB+Cnk=;
-        b=UWy8HgchOlal8bC3xn5z8UtMtHZyAJPSmv9oxHwH9e9eCZIACc2WpZE67uI7un6GI+
-         Jy5p/9l+Odl9IGTAp1xF8eofun0CiZjkS6dWxktfgz8ZzJYzCKMet4eIDyCT0V2ziufs
-         mtggevQ1hWJen1BAibtk0iNZW6YTBdSlsKDY1mgv/1GJWo0drGgiBlPMTKfK+F1Ax9fn
-         s3RAFDbbsyEZ1uiMX5arw+4p6SKXdAEYJ2iLRrAOjZYWsTLPTU2TuUmA+d7Pu4AcE46E
-         RuiRdcvFDsVSoKuM/U/qEq03JkB9lQk5IBl6fPtuzYyzBi5tvTt5MogZ50s6TRYGnf8z
-         60NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH1971nJ1+REMDMMY3obDtkF89EbsFuXoxK+H84cegPnuWcxRymNkoSnTNY7IcynTfJhxu+b8tXQL22lUraYW565WAr4sy7U1SvEsBgbzH4vp6Zn4DFdPcx5qOvaM8YdbdrP4Z/0tHZbDodEbQZpxQbBiAoFlAOcQuMaK6oKP0rYAKagMOtC/YZF2q9SftrAOlGwYulmszzNrf9UmtFskE
-X-Gm-Message-State: AOJu0YzAbsZDJ0lkcmGuLEH5gdZSzUXZrS6Z5uEER2C8tB5qqE5WAp81
-	ToqYVy9QxGflX61p7gmf7aDYv9itH0WkqQMCC9uQHC3w8p0uuUkF
-X-Google-Smtp-Source: AGHT+IEmi88j7/EZWGuGxtExj0JwjPDiZYkqqGFEo75nJsV0d+zmKFSSX3gKdN13JzFANvKv+bGfnw==
-X-Received: by 2002:a17:902:654e:b0:1f7:17e4:b57b with SMTP id d9443c01a7336-1f717e4b6e1mr17910175ad.23.1718027527298;
-        Mon, 10 Jun 2024 06:52:07 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7064c1105sm28606095ad.225.2024.06.10.06.52.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 06:52:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a7e38754-ff1a-4e15-99b2-4785827efc83@roeck-us.net>
-Date: Mon, 10 Jun 2024 06:52:04 -0700
+	s=arc-20240116; t=1718027606; c=relaxed/simple;
+	bh=9hYa8l5lfGSwkKmbgb18J6D8KUzmTZxbQJnlzz7hNZM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ffp44rWIQ5KuwgRp08ATTh40mKIJYu0uMrFsY74yUro/1vSl/UnvyyjbuBxFPK96F/uCWGB+Vd1BlQL1hVdulBw/c0LINizjvpWlDyz5iZoJcdyQ/Iin0RgLo++S786MlYIPYALkDTyW7ISuQ36ZIISI5OEt5avAno0RYPIVU8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R5dpanIH; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ADrEnM106139;
+	Mon, 10 Jun 2024 08:53:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718027595;
+	bh=N1OeRdjzW2BDag8v1tJ9PaBomBTrv4HOdNeEt9jOvL4=;
+	h=From:To:CC:Subject:Date;
+	b=R5dpanIHD8xp+zZ9FCfRboABUCL0j8vAM+IngPcWLc5WWLJi3tWixDRewaPa9XouT
+	 xj6IwZL4zBbtIlCFWCJCGoQijtQWIlU2SCvNC9/GgcEw7XvitmqqNm08rm1I1ml3RF
+	 b1E5MJS1TlMZBC20LTH6zfu3GFmkJ6BRGRvhYa8w=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ADrEWN099130
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 08:53:14 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 08:53:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 08:53:14 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ADrEoG032480;
+	Mon, 10 Jun 2024 08:53:14 -0500
+From: Andrew Davis <afd@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>,
+        Rui Miguel Silva
+	<rmfrfs@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Alex Elder
+	<elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <greybus-dev@lists.linaro.org>,
+        Andrew Davis
+	<afd@ti.com>
+Subject: [PATCH] gpiolib: Remove data-less gpiochip_add() function
+Date: Mon, 10 Jun 2024 08:53:13 -0500
+Message-ID: <20240610135313.142571-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
- <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/7/24 11:00, Wolfram Sang wrote:
-> 
->> the text "Only works for DDR, DDR2, DDR3 and DDR4 for now" should be updated too.
->> With this fixed:
-> 
-> Yes, maybe this could be simplified to "(LP)DDR memory types"
-> 
+GPIO chips should be added with driver-private data associated with the
+chip. If none is needed, NULL can be used. All users already do this
+except one, fix that here. With no more users of the base gpiochip_add()
+we can drop this function so no more users show up later.
 
-I rephrased it to "Only works for (LP)DDR memory types up to DDR5".
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ Documentation/driver-api/gpio/driver.rst | 5 ++---
+ drivers/staging/greybus/gpio.c           | 2 +-
+ include/linux/gpio/driver.h              | 4 ----
+ 3 files changed, 3 insertions(+), 8 deletions(-)
 
-How about "Only works on systems with 1 to 8 memory slots" ?
-That isn't really correct anymore either, unless I misunderstand
-the changes made in commit 8821c8376993 ("i2c: smbus: Prepare
-i2c_register_spd for usage on muxed segments").
-
-Thanks,
-Guenter
+diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
+index e541bd2e898b5..ae433261e11a0 100644
+--- a/Documentation/driver-api/gpio/driver.rst
++++ b/Documentation/driver-api/gpio/driver.rst
+@@ -69,9 +69,8 @@ driver code:
+ 
+ The code implementing a gpio_chip should support multiple instances of the
+ controller, preferably using the driver model. That code will configure each
+-gpio_chip and issue gpiochip_add(), gpiochip_add_data(), or
+-devm_gpiochip_add_data().  Removing a GPIO controller should be rare; use
+-gpiochip_remove() when it is unavoidable.
++gpio_chip and issue gpiochip_add_data() or devm_gpiochip_add_data(). Removing
++a GPIO controller should be rare; use gpiochip_remove() when it is unavoidable.
+ 
+ Often a gpio_chip is part of an instance-specific structure with states not
+ exposed by the GPIO interfaces, such as addressing, power management, and more.
+diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
+index 2a115a8fc263f..5217aacfcf54c 100644
+--- a/drivers/staging/greybus/gpio.c
++++ b/drivers/staging/greybus/gpio.c
+@@ -579,7 +579,7 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
+ 	if (ret)
+ 		goto exit_line_free;
+ 
+-	ret = gpiochip_add(gpio);
++	ret = gpiochip_add_data(gpio, NULL);
+ 	if (ret) {
+ 		dev_err(&gbphy_dev->dev, "failed to add gpio chip: %d\n", ret);
+ 		goto exit_line_free;
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 0032bb6e7d8fe..6d31388dde0ab 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -632,10 +632,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	devm_gpiochip_add_data_with_key(dev, gc, data, NULL, NULL)
+ #endif /* CONFIG_LOCKDEP */
+ 
+-static inline int gpiochip_add(struct gpio_chip *gc)
+-{
+-	return gpiochip_add_data(gc, NULL);
+-}
+ void gpiochip_remove(struct gpio_chip *gc);
+ int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip *gc,
+ 				    void *data, struct lock_class_key *lock_key,
+-- 
+2.39.2
 
 
