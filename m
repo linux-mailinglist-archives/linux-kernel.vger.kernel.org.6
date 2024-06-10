@@ -1,135 +1,133 @@
-Return-Path: <linux-kernel+bounces-208242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327E69022C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEE29022CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB9EA2843CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:39:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6B6285425
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7E1824B2;
-	Mon, 10 Jun 2024 13:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE02A839E2;
+	Mon, 10 Jun 2024 13:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HyZJkLHe"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RAgqE/J7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA6774048
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D07CF18;
+	Mon, 10 Jun 2024 13:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718026771; cv=none; b=jDYwbNiHwVUPWkq/pqVfx+fN//HxNFRv4GUa80CmZ5J5a9hkhy4AxdorLvF7M6QxdRfeB0ELiAhzcwns9ckzKyMu0AmTy4YLChiJy+oxvdQWlMyGv8iD4dJfcC8KXNZ1YyB/NPkMVn8lUIbiCFGN78GxPn4c57rEMpY3551pl/Y=
+	t=1718026861; cv=none; b=aNSKbtiZvuyeUK7gYLB3Nv049WNvqXdfu3uIQajLLXqyfpv5k2TtUTFPnrjAk984wB2uUUBzgr/0wUtpuTLkOT+kZtBAr1/Gl7qZw1a3VGr91fbI7tR5FOFeXqLYoPzdsO28QIOZpkpeevV7jigjCr7zIoT7+19gpahqLfzL/vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718026771; c=relaxed/simple;
-	bh=VNvjgBuWCWK2hEJ77TrUw1MiOTGVq/NEcqmXKBOQ1Rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GDgvOTP7L8MgVFUDLWfrVVTUZMD/dTdEq64BplUTh6PZRII2COj9jOdJ4UjTrHWm7Crt18jTswtNT+n8SQQvizRicyteFHmGLDUuEfsDkie65J7QFvRLSLIa2MGbHjycAwWq/F7Wh2uSbXmekAMguUSwMv5vzpP2IELeDtvjqxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HyZJkLHe; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35dc1d8867eso3455670f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718026768; x=1718631568; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXGo4Ghsn84PBkyTy4nR9hzZ+hfFgUawGb7DBhECELs=;
-        b=HyZJkLHeB7L8Eem0CZySDBBXnJgCVZ6FwSlw/bWEB18/FlIy633eBNofDEfzYXcM7O
-         sakeweXD8WtPwGpdpMOq4UVKNeXr1YRad5cdnPWLwvnBbavye4+4ASDbD6aVkaZEQtw4
-         B5T1rV0MyksdbFIYyOMR1s8HxzzZxFSePtmW/Um0lI1Eam9Ufj6ck5tWZzHuCdoTKEsN
-         YMHnLTtEaRVoob1LqfNFtqCk04xnWAZmzZQHOXBpNwvcLlLfw9xlyM32bi8c4n8i6a9A
-         wFBcGwVWESzBKGThs2JF7e+Tu8DqBnnU9O5SbwofmVEfug78vrMHaxtAfSiPrsOoBWlf
-         3p2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718026768; x=1718631568;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXGo4Ghsn84PBkyTy4nR9hzZ+hfFgUawGb7DBhECELs=;
-        b=Nw37fjmiNigFSn6FtqvABMfhk2G7sxFdh+vSyocW+j51Jkh+b1hCHiv9+95jhHxc8a
-         TC//4sJINkdZ8s8As264bzO3lv2111NdyyqmW13jd2jsBuBd67ovZ7okV1L0/YylApbQ
-         n0+hqL+exn2NYJNyz4tw6GN64LBFnNoREaJCG+VfkSDoyXNV0we6kmBMzhEip42MBXxC
-         0iiQltTxlJtYxjS6xlDEkbP/mG9vYaJ08vehRBTwQQ3jonTxDyE09jZECDjzxIE1LjM2
-         Mmtt9lCgkI5dG3hrxHOt+AgEINSG3WICMaeOeLprfcGdMe0iXbG0Tgc/yqa8LKbFJ0Di
-         V+Og==
-X-Forwarded-Encrypted: i=1; AJvYcCW4HBg8vPNmcp20wO2qFMuGFvyFdP3e7IYqaMtuJLZmblqPDfUKxaAls7yi07G6PAB2EOIp5YMOOtMwe1ldYPGcIRf1m+tbQBOPcbQr
-X-Gm-Message-State: AOJu0YzFLR3s33GjefqGuLzMQUxAd480cq0UPa6eevJhSQLX0Ca26Qa3
-	6+q30GE5M4Dbj5U066U8Tzf3FCLtbo9ZID1/99/JRe/ndpznW9bYYFlPZqOBcS4eAP9j4uR3iBB
-	E
-X-Google-Smtp-Source: AGHT+IH3TGlVAcwfP6ZmHz/3RzbtahP2MF9yhZIh+3WPUd8VKv+Fo0HktmDdeibBHAqvPrJiOiqI9g==
-X-Received: by 2002:a5d:4d4b:0:b0:35f:1d55:622b with SMTP id ffacd0b85a97d-35f1d55626emr3135273f8f.16.1718026767901;
-        Mon, 10 Jun 2024 06:39:27 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35f269f9589sm1818707f8f.105.2024.06.10.06.39.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 06:39:27 -0700 (PDT)
-Message-ID: <1ca6f4db-a7cc-4f47-b626-51daf7175885@linaro.org>
-Date: Mon, 10 Jun 2024 15:39:26 +0200
+	s=arc-20240116; t=1718026861; c=relaxed/simple;
+	bh=JuxtQK8wJ8d18l/WXYXjUxW+m/Hl3f1aDqb0jspQ4Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObQxXIlt/u99lzzediHZLrf+g0H/yf+ASOQo99R7RiSkbq2ftfbzsTk7EkoNWgJlKcxmOyo9OOQIxP2YhKLKHAy2gTe7oxGkBs0KULV3qk0hSKSLJBB4UUPaVCiJ+h9WoRti7xeHIOJgHVR+oBy8JqLhw86NiKF4RYc86m+KN3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RAgqE/J7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9026440E0027;
+	Mon, 10 Jun 2024 13:40:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BUFwCUSrFD-r; Mon, 10 Jun 2024 13:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718026853; bh=TKZL5OH/kDVlLa031KsOxyH44GZqkwpf2xf/NrcUB1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAgqE/J7Ok93ksM7RtpCaB8UMngdFS25e57JRb50u3sKy2aXLEYs7ZIJdXRh7770b
+	 8tJ38vJJfmF+2lks4s0Kk3L/O+E7DpVBgirqSTwXmN3Cg7h7aT+WJYcRwIREzYTXSA
+	 mGbgyz1EAd+LdfCkO2rOre+Yh6CX9BLqgetnFzrQIPY0kIICIb66Q4u09EhKZMSTDG
+	 whB4l+lf1iWiRuB9BudtYv0l0x1J3FTCg7jIOIJJzqT5+NNZFZfYj/vbMf/Hry6HfV
+	 HLWaqUrB6VrKkNKzVnyQ4pBboypnsi9vczV76jjy92uNm+0gNXz9tI1tm8f4Ke5gJB
+	 b1cq0aTjHTOGxqbRJ5L7votIQoLRGdmrLnbyqVRT4NiziZA7kWChfTowkyg1YHQoML
+	 JDUghCIg2Uq3ihZyMHw8FccJb4I5I6GjkK5d9RUkEc96pPkoRqgZZkKiPRAGAlbtBc
+	 q2BzF8SqutNpMl2dbt6IUyNL09xMU+gAOx8Ye8U6g7A9OzNIgh0BYlG/LHBrg8ZXIG
+	 ZKyF/y73C3djtMnu47EvtxsSp+VwqSmHw73qy20s/VpKX2vv85A0fw/gXMJtG9pegE
+	 ex9NTXqzBQRFZyChjWvcJGcOPhpsYz+xR0FfBItTSftmPtuGCU4zCERIzXImhReePM
+	 BIhyBxa03PlP5oHNxuJxtal8=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0E4FB40E0081;
+	Mon, 10 Jun 2024 13:40:26 +0000 (UTC)
+Date: Mon, 10 Jun 2024 15:40:20 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
+ <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+ <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] thermal/debugfs: Do not extend mitigation episodes
- beyond system resume
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>
-References: <5794974.DvuYhMxLoT@kreacher> <2337425.ElGaqSPkdT@kreacher>
- <dd446bf6-05ca-4861-b3b1-f113c3528f13@linaro.org>
- <CAJZ5v0jku1tptD3O=x-rptgUWGQFOQT-U3rsxk9k4XXsyeq3Kw@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAJZ5v0jku1tptD3O=x-rptgUWGQFOQT-U3rsxk9k4XXsyeq3Kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
 
-On 10/06/2024 13:29, Rafael J. Wysocki wrote:
-> On Mon, Jun 10, 2024 at 10:28 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> On 28/05/2024 16:53, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Because thermal zone handling by the thermal core is started from
->>> scratch during resume from system-wide suspend, prevent the debug
->>> code from extending mitigation episodes beyond that point by ending
->>> the mitigation episode currently in progress, if any, for each thermal
->>> zone.
->>
->> Why it is done at resume time and not at suspend time ?
-> 
-> Because it is related to thermal_zone_device_init() which also runs at
-> the resume time, so IMV it's better to keep these two pieces together.
-> 
-> Why would it be better to run this during suspend?
+On Fri, Jun 07, 2024 at 06:14:28PM +0300, Kirill A. Shutemov wrote:
+>   I was able to address this issue by switching cpa_lock to a mutex.
+>   However, this solution will only work if the callers for set_memory
+>   interfaces are not called from an atomic context. I need to verify if
+>   this is the case.
 
- From a logical point of view, it makes more sense to cancel something 
-at suspend time rather than resume. That prevents future readers to be 
-puzzled by an action done in an unexpected place.
+Dunno, I'd be nervous about this. Althouth from looking at
 
-Technically speaking there is no difference if it is done during suspend 
-or resume. Well... we want to prevent actions to be done at resume time 
-in order to not increase the resume duration but I'm not sure this code 
-is doing a big difference.
+   ad5ca55f6bdb ("x86, cpa: srlz cpa(), global flush tlb after splitting big page and before doing cpa")
 
-If you want to keep it as is, feel free to add my:
+I don't see how "So that we don't allow any other cpu" can't be done
+with a mutex. Perhaps the set_memory* interfaces should be usable in as
+many contexts as possible.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Have you run this with lockdep enabled?
 
+> - The function __flush_tlb_all() in kernel_(un)map_pages_in_pgd() must be
+>   called with preemption disabled. Once again, I am unsure why this has
+>   not caused issues in the EFI case.
+
+It could be because EFI does all that setup on the BSP only before the
+others have arrived but I don't remember anymore... It is more than
+a decade ago when I did this...
+
+Thx.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Regards/Gruss,
+    Boris.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
