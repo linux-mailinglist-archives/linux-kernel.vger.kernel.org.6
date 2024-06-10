@@ -1,91 +1,106 @@
-Return-Path: <linux-kernel+bounces-208969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854BB902B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 665DF902B35
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966C81C2195F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727001C214A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2833E14D719;
-	Mon, 10 Jun 2024 21:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C97714EC41;
+	Mon, 10 Jun 2024 22:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lF/qV0tg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="utw4ENKH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64185558A5;
-	Mon, 10 Jun 2024 21:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23B714659A;
+	Mon, 10 Jun 2024 22:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718056739; cv=none; b=ehrws0CovnecZDIgV4TDuN3uVzno2HpJ2+WYKre0wUVKaWs1UtZfgBzdCCYMHlEU87q+3HU7fFGz/NydlnfQF40BleBFTXtfdEEaMBR+QV6xuXnrubds4EUuvdQ2GutCNJdiIb4UdQO9PAMEa41hO0uzL+VdN7mSGv29CXhHEwE=
+	t=1718056816; cv=none; b=KFn+hXpRw2FscwRHTzg9nknSrzbz/Mv8+ODEVVCDxXahQhSHiuJMXu8iEjFtzJvDDu79CsFUHiDOQ9LTKX3QknBuAdc3+zcaRcO6aQDrj0ohj6upMb+KFgR9h6YHziTMgLKQXraO35pDBrsJMQKhwGXh/guhMgb/xJKGPnmC3cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718056739; c=relaxed/simple;
-	bh=3+G51pF9+5TTxrYCW+LOYlmhyGNeooEaJCa+EPjFDwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1iKhBbdk40MvLK7TY2VidhZtH8gGA8FhlwmJcc4vdtSM+OTlbqB1nnPvYNscDcdRyzGlwzdM0MvlZCICdu8h6ShOqdArPAkohBxWzjzwRX3cSG4j/ITcR+BuhLRY6DMowDLcW4J/U+01BSuvbRtKFYusvifCkV3zJvlPpr7K0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lF/qV0tg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ECEDC2BBFC;
-	Mon, 10 Jun 2024 21:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718056738;
-	bh=3+G51pF9+5TTxrYCW+LOYlmhyGNeooEaJCa+EPjFDwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lF/qV0tg9QnCE5AFbg5IKgjBp4KPr+9Jg4wZHRRzb7/c9uiIECEpNNcnvFAh597Jn
-	 dZNo/NdYPFm+1F6FmUqfUb3facW9x8fwkt+fMV10i7tj4zyBpyBF7PUNA+yxp7g48y
-	 pvw5aVY1MmQU4NMgTf/ztN3Ue0iVMlyarM6Wa+bHgA6ttraJByB3kKb5L/kDc51dnr
-	 qdOcBNPQXhMEDX18e6+wBk9OSTBL3Tb2bxedWfK/wQBbluYnX7wCusr2eHoo0qCTE2
-	 M2LHNGXG6wJFwEfRQ/V7TOWrRGpdLa+qK8xawDaj3ZfvjlZ+911arOMjlxNYwoa7Nj
-	 djIm7Pwz2IwFA==
-Date: Mon, 10 Jun 2024 15:58:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: dt-bindings: linux,spdif: Convert
- spdif-reciever.txt to dtschema
-Message-ID: <20240610215857.GA3135318-robh@kernel.org>
-References: <20240606041212.78428-1-animeshagarwal28@gmail.com>
+	s=arc-20240116; t=1718056816; c=relaxed/simple;
+	bh=2R0NwbqEDeIX5iZBZLyYqdcTiQFsjIqaMwU57bVp+9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Kf+le0Ij7GEncCQRtZjxOdV0y+dNaBshQAG+DezHZ7j8TC5c4kiLNABuIIxrqv4P4676+27ODvLJzHO1SfInfnrj0QoXkJlBsURDi6DpLgOtU3hKncj22qrBtBtF51MWElb0BTv3RYsPpdggslCGRg13S27VfA2w2G5MyYApO4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=utw4ENKH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1718056813;
+	bh=2Hv3doo9nIl72RYqk0oaoIQ2eWIQTj/r2hz2Ua9K3Y4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=utw4ENKHAeSHaAY0n5moAyVLySXp3r87K9YvEhqv5t96Nr/qjTR0QeXo54VpmH3Dw
+	 CoCkxxA/HPzou5Jw8P997u7uVIM2FMmVs6i0JCj3yF/M9m6RFj1uGWv2WBiXaug4gg
+	 7fiO+LFNBPl7DZpVY/M/Vk9POzhedMVJuRTyuvTZJLfjOwRjxDLBiuCr7EKcS5BzBl
+	 uQFSbmpoq+fjo9k9VZ8legjLn9LVejtsnvebuLIOrGS8AQ4JFVM3vVmtCCyR+jXWUs
+	 vP+c1TCkffPQ6p566HN49W8r1IW0VoauO3zMFeFACR4KdP+gAc5fO5yRBRzgh762ZV
+	 yXI0DwbDVUSUQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vym25102Zz4wc5;
+	Tue, 11 Jun 2024 08:00:12 +1000 (AEST)
+Date: Tue, 11 Jun 2024 08:00:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the ntfs3 tree
+Message-ID: <20240611080012.79ae200c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606041212.78428-1-animeshagarwal28@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/dU9eNozOS8tIRrPkM9Pm/EN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jun 06, 2024 at 09:42:00AM +0530, Animesh Agarwal wrote:
-> Convert the dummy SPDIF receiver bindings to DT schema.
+--Sig_/dU9eNozOS8tIRrPkM9Pm/EN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Really the subject should be something like "Merge linux,spdif-dir into 
-linux,spdif-dit". Then the commit message should say why (they are the 
-same other than compatible. "sound-name-prefix" wasn't documented for 
-linux,spdif-dir, but is in use already.)
+Hi all,
 
-> 
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> 
-> ---
-> Changes	in v2:
-> - Add linux,spdif-dir compatible in existing linux,spdif-dit.yaml
-> instead of creating new yaml file specifically for dummy SPDIF receiver.
-> - Change file name to support both transmitter and receiver bindings.
-> ---
->  .../sound/{linux,spdif-dit.yaml => linux,spdif.yaml}   |  8 +++++---
->  .../devicetree/bindings/sound/spdif-receiver.txt       | 10 ----------
->  2 files changed, 5 insertions(+), 13 deletions(-)
->  rename Documentation/devicetree/bindings/sound/{linux,spdif-dit.yaml => linux,spdif.yaml} (75%)
->  delete mode 100644 Documentation/devicetree/bindings/sound/spdif-receiver.txt
+In commit
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+  861ed5b28839 ("fs/ntfs3: Replace inode_trylock with inode_lock")
+
+Fixes tag
+
+  Fixes: 4342306f0f0d5i ("fs/ntfs3: Add file operations and implementation")
+
+has these problem(s):
+
+  - missing space between the SHA1 and the subject
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dU9eNozOS8tIRrPkM9Pm/EN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZnd2wACgkQAVBC80lX
+0GxD1Af/Tas9gTJtmRAAIhFfn9bJwRJWVkOgS97IyTLG2aG9lbwX1JKdnqX3IrOj
+f32Gqa6dj6P+Sk/SeRG5m2a7FT4J5wefymrLdl8MMNErxaMgB+wswcCFCxIKd28X
+7fQTOs6L//r3N1Vzgc7fVlpRSG0EqFwMEm0R6lPxbmwB5cfj/h0EPJVpiwjw/rTr
+T/qBS7FHwogwCiWthj99IcSVTybqCjNiBpRFCj0N92xI02s7WcXXmY7+COyG3Fsr
+32ZANMtHm1fzGXH58EdTELYJYcRqJKPG+twOHhV8eWPz9vEjwraW3aYo4TQdvRx6
+ZV7JnUIhTSaQ+fFjNC0tAG5KEWTrQQ==
+=uw1Y
+-----END PGP SIGNATURE-----
+
+--Sig_/dU9eNozOS8tIRrPkM9Pm/EN--
 
