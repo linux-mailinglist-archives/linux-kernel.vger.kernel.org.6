@@ -1,172 +1,169 @@
-Return-Path: <linux-kernel+bounces-208828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8393C9029AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E599029AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21342281B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77341F2226B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878C414F121;
-	Mon, 10 Jun 2024 20:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDCA14F9D5;
+	Mon, 10 Jun 2024 20:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGGUwV6w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BsaCejra"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B64B65E;
-	Mon, 10 Jun 2024 20:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47E61DDD1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718049876; cv=none; b=nRGeci4M4xrtJAF3mxfkDXFBhR67tiRYSoerwrOavHmRHtpCbs35ioDCjjh7KSt3KpkHnPJjfM9vropQmWHf0SSUBaeUWSKk61shsBejigfqXGBmYNypcP+cQdvvHsZtqZWAHGjAdsCbZE/5wXSYgfimM7v46BVFtU9Z4r6xcR8=
+	t=1718049967; cv=none; b=aIFbr6ong1TJiMf0cXupnoD4kMNVP89GHOKOixnbSQjDEO9xGnLP5GxLtwr3SJsGACGdGpxAkkwT+5qmYU+ZHVbBs7tW80mI+I6UDfuWlpSaZ8yTId8hiXQ3m1B1r2hdcZCBagpXlfnbt3GoPjFKhPgnGP5E4bvvQq+USK1F/UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718049876; c=relaxed/simple;
-	bh=AxmMtKgOguwKMibo2q1t63b0ArwV5cabYSTSkrpTae0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=X6+b5XXXv6ol+TMuUugWcbVVy/hAtv0dniF3YOXJEoLgek0DBrOsrW3mbl9AN8aDnRWGlVnbffBJs2DK9F5dfk2BVgW0B3WvDr33aI9D5sO/Dm7yaSf5RtACfZs/+RNwxf0rbXUtSEsubljWhdIoWpZ4KTGufh0Y+YRS8itOq0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGGUwV6w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104A2C2BBFC;
-	Mon, 10 Jun 2024 20:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718049876;
-	bh=AxmMtKgOguwKMibo2q1t63b0ArwV5cabYSTSkrpTae0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=oGGUwV6wlkuuMXhIelwruH+R2JTmUX0ySl17ItKcvME4jvsDYbRhLLPL1CBRUnOBp
-	 vAMvtnQX4E0vE4xkvhRAwCEWeabV/71uwMukQeaXkHJdl3hJihemaHM9B15C6yjTEN
-	 RakU9bvu1yn5EiZAngSPVx7ABsrbQLE7WN3ZUrd6XQ00SUBsISVrcn0lBu23aMExKq
-	 sNMGnLCXM8uHLvhUqHSv1Ugl+hoyfRSBN2+6OiGldRUe5nH++0G4Bl1GkajkImJDZ+
-	 1YFePPaZA6Nwal0sfsZGqafwxe5pnbrlhQ/KSkBvqeGMOMOWMwcNItWUFvhI6sy5vY
-	 UXjkIBL1wsgnA==
-Date: Mon, 10 Jun 2024 15:04:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-	Logan Gunthorpe <logang@deltatee.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev
-Subject: Re: [PATCH] PCI: switchtec: make switchtec_class constant
-Message-ID: <20240610200434.GA958238@bhelgaas>
+	s=arc-20240116; t=1718049967; c=relaxed/simple;
+	bh=f7o4Qays3Bp7G7fRXPGGXUPWmsl2Lhom+FJnP4EDqTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UvDy4Wxl8+visZIpuxvNR1oiUEbTfaA+FnzLiZCqMGi+vhbDZIgJfiWHC0x26A3dtSjJf53mvu6THfJAKz74djKjkRKezGrzgYnNxW/U58vBhiaHAhcr9dPJ9gmX4Arl9qqttpfUDDVzH/Vj7RT55ZxKnZRxRRg5pZDdZpjmFP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BsaCejra; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a62ef52e837so618693666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718049964; x=1718654764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EOwI6DcCCI12dNBNkZD00pCUv7/h5/UDISzx/oKHb3g=;
+        b=BsaCejrapp0GdtUCXhTaZrxVSkYRAOvakruaAuKthx4UQb5WpqOLuxxb+zJ1ITw7Hc
+         lxe/mJX7hr3ewQAg82jx74J7ceWIB8bueQ09GkSTcRxMNSrX3TAJ2y68CL+EisnoFHOs
+         8YxHtqgVwqseQXkr5PK28E/Gxt1Qx9Ztgaq7/HZsFNQPvtH09QvZE4GTHhLNCzvOiOpF
+         c3bnFIm9Y6wriQHyA7+LPaedLQmJoOcCK9/U7i56933qh/v0nSdeL3TY9c1T7X4seqcP
+         T08MxAu3iEePJtvHekghuuIipYVTG+3qeciw4NEDhlMyGmwnAnQ3wJi8Y0UDavJYB+VK
+         dCjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718049964; x=1718654764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EOwI6DcCCI12dNBNkZD00pCUv7/h5/UDISzx/oKHb3g=;
+        b=bJ0hG+pfMkZEoXhrKHFHrxMH9+OlIVDM97BTBq+WZP0MKS4QNHGLIVboPVPRun857I
+         Lmqlw2NMeADXa06RUtcp4iK776hCLAN9Of4ZAUTwYf3zocK/eEmFZTVp0rjNS8H/ls0o
+         NysSQZpznakrNP2ha8D4kkf8/40+IfyMgvw9p/JBzKnzOfrp8LHVVv++GDPJaqzn+MTC
+         07Hh5KXoQDY0DrT9W8SkgEmQH5gk98e6w4cLGG0TVsndVqGT8YP0TUURAfMr9pxMRZ7j
+         l5c8CbJfTuueapJRPFKE7nwsEdug/imXDAtDpeWNl3Q4QFAe1BERcfquQJcGf5K1rFqY
+         D17Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfxgyQ4aEzzuKyFVK6zU+fsT06s2jsSrM/xfFy58U2nuvBMoiIMMXyZ1FCeGZneS/Oj3UhfhIYNA1ZB6Li9X50WFR00Xu9hapKfD5y
+X-Gm-Message-State: AOJu0YzUtpbrxgvy2AmgyQUzX7Mb7wl+ryfWLonjUgjrovnSPNe+ZtzK
+	wmP7Md7sly74pkDutWZMwQtzo+xEs9oG7eTd/RgN5+AV5JnyIuUpFrpsfDkjXEFj5GixbdnZ/Il
+	4ic5BNpzLZ9Z2++tGxCmsheGoDivQmmJGKGrK
+X-Google-Smtp-Source: AGHT+IE03edLaD5o4NEBvXfLFP+kMiyLAjRNIwjqBu9SUSMn4dd8ukKhZoCOUCXo52b4yzosP9Ppa4fhfYlxBrh0Mcs=
+X-Received: by 2002:a17:906:3b1a:b0:a6f:3763:3cbe with SMTP id
+ a640c23a62f3a-a6f37633da7mr6496966b.67.1718049963596; Mon, 10 Jun 2024
+ 13:06:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024061053-online-unwound-b173@gregkh>
+References: <20240610143037.812955-1-usamaarif642@gmail.com>
+ <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com> <y7ourydoftwyfxza3a2vlenh6bzdrhtc25h4msqgq2uyg75ocf@wrfov7zflr3w>
+In-Reply-To: <y7ourydoftwyfxza3a2vlenh6bzdrhtc25h4msqgq2uyg75ocf@wrfov7zflr3w>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 10 Jun 2024 13:05:25 -0700
+Message-ID: <CAJD7tkYcj4Vt9cvJiNTTrjFjwub-W-VAULO9rVnUVqbU7vXn2Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	hannes@cmpxchg.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 10:20:53AM +0200, Greg Kroah-Hartman wrote:
-> Now that the driver core allows for struct class to be in read-only
-> memory, we should make all 'class' structures declared at build time
-> placing them into read-only memory, instead of having to be dynamically
-> allocated at runtime.
-> 
-> Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Jon Mason <jdmason@kudzu.us>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Allen Hubbe <allenbh@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: ntb@lists.linux.dev
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Mon, Jun 10, 2024 at 12:08=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> On Mon, Jun 10, 2024 at 10:31:36AM GMT, Yosry Ahmed wrote:
+> > On Mon, Jun 10, 2024 at 7:31=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> > >
+> > > start/end writeback combination incorrectly increments NR_WRITTEN
+> > > counter, eventhough the pages aren't written to disk. Pages successfu=
+lly
+> > > stored in zswap should just unlock folio and return from writepage.
+> > >
+> > > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> > > ---
+> > >  mm/page_io.c | 2 --
+> > >  1 file changed, 2 deletions(-)
+> > >
+> > > diff --git a/mm/page_io.c b/mm/page_io.c
+> > > index a360857cf75d..501784d79977 100644
+> > > --- a/mm/page_io.c
+> > > +++ b/mm/page_io.c
+> > > @@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writ=
+eback_control *wbc)
+> > >                 return ret;
+> > >         }
+> > >         if (zswap_store(folio)) {
+> > > -               folio_start_writeback(folio);
+> > >                 folio_unlock(folio);
+> > > -               folio_end_writeback(folio);
+> >
+> > Removing these calls will have several effects, I am not really sure it=
+'s safe.
+> >
+> > 1. As you note in the commit log, NR_WRITTEN stats (and apparently
+> > others) will no longer be updated. While this may make sense, it's a
+> > user-visible change. I am not sure if anyone relies on this.
+> >
+>
+> I couldn't imagine how this stat can be useful for the zswap case and I
+> don't see much risk in changing this stat behavior for such cases.
 
-Applied with reviewed-by from Dave and Logan to pci/switchtec for
-v6.11, thanks!
+It seems like NR_WRITTEN is only used in 'global_dirty_state' trace event.
 
-> ---
->  drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  2 +-
->  drivers/pci/switch/switchtec.c         | 16 ++++++++--------
->  include/linux/switchtec.h              |  2 +-
->  3 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> index d6bbcc7b5b90..31946387badf 100644
-> --- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> +++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> @@ -1565,7 +1565,7 @@ static struct class_interface switchtec_interface  = {
->  
->  static int __init switchtec_ntb_init(void)
->  {
-> -	switchtec_interface.class = switchtec_class;
-> +	switchtec_interface.class = &switchtec_class;
->  	return class_interface_register(&switchtec_interface);
->  }
->  module_init(switchtec_ntb_init);
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 5a4adf6c04cf..c7e1089ffdaf 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -37,7 +37,9 @@ MODULE_PARM_DESC(nirqs, "number of interrupts to allocate (more may be useful fo
->  static dev_t switchtec_devt;
->  static DEFINE_IDA(switchtec_minor_ida);
->  
-> -struct class *switchtec_class;
-> +const struct class switchtec_class = {
-> +	.name = "switchtec",
-> +};
->  EXPORT_SYMBOL_GPL(switchtec_class);
->  
->  enum mrpc_state {
-> @@ -1363,7 +1365,7 @@ static struct switchtec_dev *stdev_create(struct pci_dev *pdev)
->  
->  	dev = &stdev->dev;
->  	device_initialize(dev);
-> -	dev->class = switchtec_class;
-> +	dev->class = &switchtec_class;
->  	dev->parent = &pdev->dev;
->  	dev->groups = switchtec_device_groups;
->  	dev->release = stdev_release;
-> @@ -1851,11 +1853,9 @@ static int __init switchtec_init(void)
->  	if (rc)
->  		return rc;
->  
-> -	switchtec_class = class_create("switchtec");
-> -	if (IS_ERR(switchtec_class)) {
-> -		rc = PTR_ERR(switchtec_class);
-> +	rc = class_register(&switchtec_class);
-> +	if (rc)
->  		goto err_create_class;
-> -	}
->  
->  	rc = pci_register_driver(&switchtec_pci_driver);
->  	if (rc)
-> @@ -1866,7 +1866,7 @@ static int __init switchtec_init(void)
->  	return 0;
->  
->  err_pci_register:
-> -	class_destroy(switchtec_class);
-> +	class_unregister(&switchtec_class);
->  
->  err_create_class:
->  	unregister_chrdev_region(switchtec_devt, max_devices);
-> @@ -1878,7 +1878,7 @@ module_init(switchtec_init);
->  static void __exit switchtec_exit(void)
->  {
->  	pci_unregister_driver(&switchtec_pci_driver);
-> -	class_destroy(switchtec_class);
-> +	class_unregister(&switchtec_class);
->  	unregister_chrdev_region(switchtec_devt, max_devices);
->  	ida_destroy(&switchtec_minor_ida);
->  
-> diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
-> index 8d8fac1626bd..cdb58d61c152 100644
-> --- a/include/linux/switchtec.h
-> +++ b/include/linux/switchtec.h
-> @@ -521,6 +521,6 @@ static inline struct switchtec_dev *to_stdev(struct device *dev)
->  	return container_of(dev, struct switchtec_dev, dev);
->  }
->  
-> -extern struct class *switchtec_class;
-> +extern const struct class switchtec_class;
->  
->  #endif
-> -- 
-> 2.45.2
-> 
+NR_WRITEBACK and NR_ZONE_WRITE_PENDING are state counters, not event
+counters. They are incremented in folio_start_writeback() and
+decremented in folio_end_writeback(). They are probably just causing
+noise.
+
+I think for both cases it's probably fine and not really visible to userspa=
+ce.
+
+>
+> > 2. folio_end_writeback() calls folio_rotate_reclaimable() after
+> > writeback completes to put a folio that has been marked with
+> > PG_reclaim at the tail of the LRU, to be reclaimed first next time. Do
+> > we get this call through other paths now?
+> >
+>
+> The folio_rotate_reclaimable() only makes sense for async writeback
+> pages i.e. not for zswap where we synchronously reclaim the page.
+
+Looking at pageout(), it seems like we will clear PG_reclaim if the
+folio is not under writeback, and in shrink_folio_list() if the folio
+is not dirty or under writeback, we will reclaim right away. I thought
+zswap being synchronous was an odd case, but apparently there is wider
+support for synchronous reclaim.
+
+Thanks for pointing this out.
+
+>
+> > 3. If I remember correctly, there was some sort of state machine where
+> > folios go from dirty to writeback to clean. I am not sure what happens
+> > if we take the writeback phase out of the equation.
+> >
+>
+> Is there really such a state machine? We only trigger writeback if the
+> page is dirty and we have cleared it. The only thing I can think of is
+> the behavior of the waiters on PG_locked bit but the window of
+> PG_writeback is so small that it seems like it does not matter.
+
+I remember Matthew talking about it during LSF/MM this year when he
+was discussing page flags, but maybe I am misremembering.
 
