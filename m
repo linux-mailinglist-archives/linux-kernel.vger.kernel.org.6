@@ -1,185 +1,103 @@
-Return-Path: <linux-kernel+bounces-208641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EE290279F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:19:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772099027A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1BD1C21696
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:19:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BE9CB218F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F179145FF7;
-	Mon, 10 Jun 2024 17:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E001474A9;
+	Mon, 10 Jun 2024 17:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Z1M/GYrl";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IiUfXrmY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLEdkmqf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A7077F2F;
-	Mon, 10 Jun 2024 17:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9C6145354;
+	Mon, 10 Jun 2024 17:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718039936; cv=none; b=Q6vk5NQ52PWV4uUPEu6GAvSzWB5hDzMmLKYMzUyR2hYuOJmPvUypPQEOS6aMlw/qyJtXGtf5Jiz3uZkh36aIE5I8/rxpnTzPMg/JZ9wLLvHKEg00/AwZi/Ed2ADZCxxzK4a9TdIFAW6cwRQw/dr8/FlXm3gYR7J8JA6J5Fr5KcE=
+	t=1718040133; cv=none; b=jZfgsZnC72EGYTK9TSXY/C+xCdpdZoksJ0Zg7EQ1wfJVzLgcc47pmEdb333R20XD225T/cSn6X+xfNJ1dyoAVEMUqc5nrXU2C4WQjzJNLjn174H9RNxVFVj0OxmQ23WKA5nrcFFSJD7s8oxT8O0H0SzxolzjdO9r7XD4pXw2Y1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718039936; c=relaxed/simple;
-	bh=YPbe293cXp4wyBnBVn8gJciGNlMCnXOyG2JdGgRfpd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZ1wSts56UjhKaxD9GImwAYYsstqMIAgwuOWDUt+WQQ4WnFhmbQRyqweeLN9NtORz8W/P9MRQV+zaIKDnMOKgzn7v+V+BWb5z54TtV0N9XtIENBAcPpBPdaRQ3Tc+1xdLoKlEBWko8lc0K39XEaAQUo4ZJwmNa3JqqFT5RnSufU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Z1M/GYrl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IiUfXrmY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CAD4B21DCE;
-	Mon, 10 Jun 2024 17:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718039932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kHNTBGmWI5UU4pjcTxxfF0+a8c0HPOaWXn4XHmPpvTk=;
-	b=Z1M/GYrl2RndZumXJTD8bjtRrpy4rAb+dThD/e8tru4g9hPZKVRnOiNavpjzakKVnORHOv
-	mJBs+ENX6Aol2QkPdRxtkVc4713Nzmgor6trMd1Eobd7iOdd2xYYHYmB7kncC6Yp9F7FPp
-	bH2hnov3NeSWXMT7t0SRY5zeZLFUADs=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=IiUfXrmY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718039931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kHNTBGmWI5UU4pjcTxxfF0+a8c0HPOaWXn4XHmPpvTk=;
-	b=IiUfXrmYjAzS90tV1UmbKYkM6puviM0k8GocVwsTmk4jL/ihdGyg62Hespuk3eSt7ZE2gJ
-	DhvY9dLNruiv+eq6ykY4DBaRkOFt5I/YyxFA+s80cMPZBRB0pg/dTKMfc5/kN+M0DA5gAg
-	bL36frFXF7kG0vC8rivfgoofdl/ro5o=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC80413A51;
-	Mon, 10 Jun 2024 17:18:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kOCRLXs1Z2Y/dgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Mon, 10 Jun 2024 17:18:51 +0000
-Date: Mon, 10 Jun 2024 19:18:50 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Xavier <ghostxavier@sina.com>
-Cc: longman@redhat.com, lizefan.x@bytedance.com, tj@kernel.org, 
-	hannes@cmpxchg.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] cpuset: use Union-Find to optimize the merging of
- cpumasks
-Message-ID: <wu4m2m5igc752s5vrmtsnd7ekaq6opeqdtrzegs7oxlwgypdcx@qhcnow5txxiv>
-References: <20240531024837.255293-1-ghostxavier@sina.com>
- <20240603123101.590760-1-ghostxavier@sina.com>
+	s=arc-20240116; t=1718040133; c=relaxed/simple;
+	bh=57ceoUh1lnuArA+V9KSwn1wYEhKAqL2QRV8U4HJi8FM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nXoSx+gnfPnmOrjlxbiR8rDSqrTTz2zgqecnUVTse9sZvvdnnhjV6eu7XAn8L+fTyGJJQvnEo4rybpa/gj+mEGxccWgdo+HwM1xkIm2K9LU/z11y6hIENNMbCI4sp4gVgOFGiu/g5cwK83YqgPIQuQgpcarPXHGpi0YX5w4i2DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLEdkmqf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27896C4AF1C;
+	Mon, 10 Jun 2024 17:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718040133;
+	bh=57ceoUh1lnuArA+V9KSwn1wYEhKAqL2QRV8U4HJi8FM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dLEdkmqf/RWesXBOgyql3gws/IZVT49DJ12PYVp9REDf4n03PLZ1wWjMxXslZQlJ7
+	 XVI/bI4jp5AjHhOBFZJdMm1QeZDMhm2cB1L2rKiH5B3gk5CYEjBWEJMUMxrhYNc/WQ
+	 hM1hz0CcWMedcWGxl4jW2fO6OptdFzcESXjtKeoMWQ4lVQezArLd6O/fhOXirQRLi0
+	 naFWWEpan586FAZyULfsGRfR28hP6kvD8eKmAjZb0WH2tOpsj6mKcbMG3zqYzkwiIo
+	 tYVs76MKzoX0n48+vzGg7TotImwqtNCrUEWzFtay5E+2zfxNvCoK6nguamPBq/ar8E
+	 a5c3K3lujvzSg==
+From: Mark Brown <broonie@kernel.org>
+To: Mighty <bavishimithil@gmail.com>
+Cc: peter.ujfalusi@gmail.com, Liam Girdwood <lgirdwood@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240608095305.2887-1-bavishimithil@gmail.com>
+References: <20240608095305.2887-1-bavishimithil@gmail.com>
+Subject: Re: [PATCH v7] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+Message-Id: <171804012926.149444.13267117462085027164.b4-ty@kernel.org>
+Date: Mon, 10 Jun 2024 18:22:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fekhs4szurscavjp"
-Content-Disposition: inline
-In-Reply-To: <20240603123101.590760-1-ghostxavier@sina.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.42
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: CAD4B21DCE
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.42 / 50.00];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	BAYES_HAM(-0.31)[75.36%];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[sina.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FREEMAIL_TO(0.00)[sina.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-4c370
 
+On Sat, 08 Jun 2024 15:23:02 +0530, Mighty wrote:
+> Convert the OMAP4+ McPDM bindings from txt to yaml (dtschema).
+> Drop ti,hwmods property as it is not needed since the sysc conversion.
+> Add dma, dma-names, reg-names properties to match the DTS so as to not
+> break the already existing ABI.
+> Also update example node to match the existing node in the DTS.
+> 
+> 
+> [...]
 
---fekhs4szurscavjp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-Hello.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-On Mon, Jun 03, 2024 at 08:31:01PM GMT, Xavier <ghostxavier@sina.com> wrote:
-> The process of constructing scheduling domains involves multiple loops
-> and repeated evaluations, leading to numerous redundant and ineffective
-> assessments that impact code efficiency.
->=20
-> Here, we use Union-Find to optimize the merging of cpumasks. By employing
-> path compression and union by rank, we effectively reduce the number of
-> lookups and merge comparisons.
+Thanks!
 
-Nice that you found such an application. (As Waiman wrote, the
-efficiency is not so important here and it may not be dencreased but I
-still think it makes the code more understandable by using standard data
-structures.)
+[1/1] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+      commit: b97e40905580c4585faa491189214e74101ca2ad
 
-Have you looked whether there are other instances of U-F in the kernel?
-(My quick search didn't show any.) Still, I think it'd be a good idea to
-decouple this into two commits -- 1) implementation of the new U-F (into
-lib/), 2) application within cpuset.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> +/*define a union find node struct*/
-> +struct uf_node {
-> +	int parent;
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I think this would be better as `struct uf_node *`.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> +	int rank;
-> +};
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-`unsigned int` if rank cannot be negative?
+Thanks,
+Mark
 
-> +	/* Each node is initially its own parent */
-> +	for (i =3D 0; i < csn; i++) {
-> +		nodes[i].parent =3D i;
-> +		nodes[i].rank =3D 0;
-> +	}
-
-With the suggestion above, nodes could start with parent =3D NULL and
-self-parent be corrected during the first find_root -- thus whole array
-could be simply init'd to zeroes with kzalloc.
-
-
-My 0.02=E2=82=AC,
-Michal
-
---fekhs4szurscavjp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZmc1eAAKCRAGvrMr/1gc
-jvyLAQDIN3U4NIzzpH9PYRDkt6vi5r2Od5Fva82LPD+KYsJk0AD+MVtyOpfg+GiR
-jomUt+u2dcuyjjPN2cfbN3PhSJVFnwk=
-=y5ot
------END PGP SIGNATURE-----
-
---fekhs4szurscavjp--
 
