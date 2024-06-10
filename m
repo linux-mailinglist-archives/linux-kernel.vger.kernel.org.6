@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-207962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B345901E92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D549D901E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7351C218CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66D31C21397
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA94757EF;
-	Mon, 10 Jun 2024 09:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD7745F4;
+	Mon, 10 Jun 2024 09:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M4gvTaGs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cnvu1XqA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Kgyhg8UP"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D5942AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743B3CA62
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012865; cv=none; b=QxpiI3T6HazqSn5syY1NvVptHOmfIY3l1iesEJGPNWGAjaHV2IUolSO/gdXOEcDgKD8j4JMYfOXAW9vWy+1cxVph7+EC5V4oiE2nwMiFJT1IHyPrSh3pvy23oVa1Nl1ak6QmEySboRZV1ZLoopYP68vXZznkffy5IEftatV8ta4=
+	t=1718012901; cv=none; b=WBUbPHblfOoAAN/BPS4ZPIUKKoe6TKS0DCsQVA8twfGnURgRbDHBFUJD+tO/Pri9gzKWapzjQOm18jPYY+vTxyyVJ/H9L5RZFKG+jxSNfBatloiOXoPHNlI/2arZRw7keErTMFCdWTlYlbkl8VEbw701D/cKtpqa/yKYzYuySbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012865; c=relaxed/simple;
-	bh=ARGhxvS/s5Dj2XsNG+1mlK6zCS2uhIKNCt8LkqeooFU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pO1BdDP0eyptWTI2jr46s+KgM1tJm9ptTi2hNMtQlv7PcXXy0zou2+uCLgQc6l79PKlTB6m3sHAylFqLWYXPW73lV2LjHXStz5L1jbprIBRJb2DCMPZZlNwnABN4osFzMRKkF3zz5ndYuz/+Z2CxkW4e0jTbPn/BHNYjD7ZjL0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M4gvTaGs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cnvu1XqA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718012861;
+	s=arc-20240116; t=1718012901; c=relaxed/simple;
+	bh=yz5UXgktrm1OmtnGfF4heciSBKjtRB9npZl4EeMkMOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F1680MTmtkZug23QbR97Xb2J5GoLkSkvlAWYzjsXrMnMjD1vk+4jAtjER7+WThA4ZxV+qG55LcUCB0Sg5+XSIKxUtkVxSQSigtlOQAsZwboGoXvWL/+I3E/Auc1XPD9SqmEhRPhKae6f9AGaRfpLLKkueQp3ScwoC1gvivdU+k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Kgyhg8UP; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DFC691BF20A;
+	Mon, 10 Jun 2024 09:48:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718012892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=niYe53zUpXvYd4fxzEQMt55McnLdwhYGnjG+n4GezzE=;
-	b=M4gvTaGsbM16AqQsriJORCFrrntzmFgB8Is7s6pQ78LdU2HWRJRnFgJxndSudK0nAsmMMA
-	eC3OH0V+NN2ciJDyT15zM0nQ0kG+03ziVyZQd/wORTSL78pHfA6TvqEkMNE+ES1Zi2OPWp
-	6s2ntQmR6fODt9phl6r9h1dL3Mx00bzYuPI2UF6jal0h0/vUt+wDfVtqr0VwoMFXg6MvKF
-	I9QmXH/kQFmD3TrrLJa7Uj80PV3D+MnrPUz9SoITH9cDOIBfgPu5GOXz7ugt6jH5Qn+nMj
-	7vFP2a5m0ducqlIANeVRtoJARItHm1lyABCRE6tjX7uJzJg2nJxowA7nukiI6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718012861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=niYe53zUpXvYd4fxzEQMt55McnLdwhYGnjG+n4GezzE=;
-	b=cnvu1XqAXICWboO3c93v5ayawLJHbfSxDolW8t5qb7iy4hCL0hPGYDFolliObaqLRClvQR
-	xBnTmrTVpPL/VPBA==
-To: Phil Chang <phil.chang@mediatek.com>
-Cc: alix.wu@mediatek.com, angelogioacchino.delregno@collabora.com,
- frederic@kernel.org, jy.ho@mediatek.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- matthias.bgg@gmail.com, phil.chang@mediatek.com, tglx@linutronix.de
-Subject: Re: [PATCH v2] hrtimer: check hrtimer with a NULL function
-In-Reply-To: <20240607022614.22902-1-phil.chang@mediatek.com>
-References: <877cf2i56q.fsf@somnus>
- <20240607022614.22902-1-phil.chang@mediatek.com>
-Date: Mon, 10 Jun 2024 11:47:40 +0200
-Message-ID: <87bk496seb.fsf@somnus>
+	bh=3o0fJjNj4JP0TVjAXgD7eXygR+eJ+q4ORuB5LSyFd+Y=;
+	b=Kgyhg8UPaC0J69nmpfaonXblGn3t/yyfKce2ZAhN892k7F4HjIfAUEuXVH4RnuURdVFgp/
+	j599GCn1AgGPHBvrPd5zRqy8+OSoZA/r7mc93ZDVklbVA4CyHZDkxG/7QF5w1V705JNvJj
+	P0+44nKGzfpjTHK3XlbM41Hlq9NwFMpWG1PYheS6M/Dgk0ASxJU5vVUp8DtoH2Txzu4B97
+	mxzeJC1gyg7JHpR7tYz0rljJDEdqvs4BFF2OZ4LKzZ838DA2iffVSiy0LJBsv/w2SYC2qu
+	9JX9UWG085A2bA/YRdmIoWlhUt1d82Q+fi5hx21uYvClgiuUk6hZVLFAp/1v6w==
+Message-ID: <ad6b8caf-0ad6-42da-9324-e4a33a05f0cc@bootlin.com>
+Date: Mon, 10 Jun 2024 11:48:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: tps6594-regulator: Fix the number of irqs for
+ TPS65224 and TPS6594
+To: Nishanth Menon <nm@ti.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, m.nirmaladevi@ltts.com,
+ bhargav.r@ltts.com, lee@kernel.org, linux-kernel@vger.kernel.org,
+ gregory.clement@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com
+References: <20240603170100.2394402-1-thomas.richard@bootlin.com>
+ <20240604121055.lztvn2wu62qqrla6@maximize>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20240604121055.lztvn2wu62qqrla6@maximize>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-Phil Chang <phil.chang@mediatek.com> writes:
+On 6/4/24 14:10, Nishanth Menon wrote:
+> On 19:01-20240603, Thomas Richard wrote:
+>> The number of irqs is computed to allocate the right amount of memory for
+>> the irq data. An array of struct tps6594_regulator_irq_data is allocated
+>> one time for all the irqs. Each irq uses one cell of the array.
+>>
+>> If the computed number of irqs is not correct, not allocated memory could
+>> be used.
+>>
+>> Fix the	values used in the calculation for TPS6594 and TPS65224.
+>>
+>> Fixes: 00c826525fba (regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators)
+>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+>> ---
+> 
+> 
+> Thanks a ton for fixing this - this solved a bunch of random regressions
+> we were tracking:
+> am62axx_sk, am69_sk, j721e-idk, j721s2-evm in addition to J7200 evm as
+> well.
+> 
+> Tested-by: Nishanth Menon <nm@ti.com>
+> 
+> 
+> This was definitely a 6.10 regression, could we fast track it in?
 
-> Since hrtimers do not allow a NULL function to be passed,
-> to prevent a kernel crash, return before adding the timer to a queue.
+Hi Nishanth,
 
-You could point out in the commit message, where the kernel would crash
-when using a hrtimer with a NULL pointer as function pointer. And it
-shouldn't be a problem to use more than a single sentence for a commit
-message :)
+FYI, I also found an other 6.10 regression for j721s2-evm and j7200-evm:
 
-> Signed-off-by: Phil Chang <phil.chang@mediatek.com>
-> ---
->  kernel/time/hrtimer.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index 492c14aac642..d32c1afe59b3 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -1285,6 +1285,9 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
->  	struct hrtimer_clock_base *base;
->  	unsigned long flags;
->  
-> +	if (WARN_ON(!timer->function))
-> +		return;
-> +
+https://lore.kernel.org/all/20240603082110.2104977-1-thomas.richard@bootlin.com/
 
-Please use a WARN_ON_ONCE() (as documented in
-Documentation/process/coding-style.rst)
+Regards,
 
->  	/*
->  	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
->  	 * match on CONFIG_PREEMPT_RT = n. With PREEMPT_RT check the hard
-
-Thanks,
-
-	Anna-Maria
+Thomas
 
 
