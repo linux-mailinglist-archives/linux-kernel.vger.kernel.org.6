@@ -1,111 +1,212 @@
-Return-Path: <linux-kernel+bounces-208159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CB39021AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:31:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779229021AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FE61F23C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9FD9B210EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24498062A;
-	Mon, 10 Jun 2024 12:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E7380026;
+	Mon, 10 Jun 2024 12:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RI6pwL8M"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pX6Q1Vb5"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFD37FBC3;
-	Mon, 10 Jun 2024 12:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3ED335A7
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718022656; cv=none; b=K42D8K9KLlmo8TPvnkmpOB+Xdsrel30JUPQJ9lbRw8jEHFKPR63QeIQx2OGjVgADGtJ8+uqJmDX/N+UJX6LQwaq61V8eq20j/yt1dh4fPvMvPVMdeqWnban/mVWkj6UgsWPFavU1pxxC5FIzTYlPr35ESylzgxlEnnci6ZNFHz0=
+	t=1718022814; cv=none; b=a6gaifbbfQGVdmGHCtHa8m65PNvzRdZ7fAed17sBHQD7sc2NoQOPJM6av+A0BX/FC0CabIKrXCGMCGi/KgFuPlCnJJ4k2XZH1G5J8UxBST0Ka04W3DVuhjeNXi7SX+esK8t4R0yDcyzFYg+6InRD8GIYmDcMwmOgaIPNzWm9rRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718022656; c=relaxed/simple;
-	bh=veByNKSd2kQ7TiJKiXGkl7HROTIQBu6OtkQPiB073wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onuxdYCpk6N/qjO2/DTxbhTTqujHyVNVS28CjGqu5zIFyc9bg1H4aTK5/NwGPQ9T3rtRgQEemr6eKoDOKqfsFleE1AiLn178N6zkjubwh3aBarepIinnPzQl6jTsBj9lTJ9ny8PwE3VZFqzqCHDVJiLK8HSiDtrpuUPhwyia6Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RI6pwL8M; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZAmsJ52qEwd6M60f4uacAxS1bKk0l5sx1M5ZKU+F02g=; b=RI6pwL8Mkl7wa4Jo79n0XYBrkV
-	ro9kjR65ptgoMiajSMTClkDTnPMHfm0b9oXxDSfIpRRzYWC97ceiJ6shdT3fyBRH1TdcFTEpWpHLK
-	PcxHw8B06RELz2fyisz4uMaNIVSTMtmCeylDOqIYfuOSfftgFcIMawAQmfqj2a/WO4EI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sGeAY-00HIOs-FV; Mon, 10 Jun 2024 14:30:38 +0200
-Date: Mon, 10 Jun 2024 14:30:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Ng, Boon Khai" <boon.khai.ng@intel.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Ang, Tien Sung" <tien.sung.ang@intel.com>,
-	"G Thomas, Rohan" <rohan.g.thomas@intel.com>,
-	"Looi, Hong Aun" <hong.aun.looi@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Tham, Mun Yew" <mun.yew.tham@intel.com>
-Subject: Re: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
- stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
-Message-ID: <3c32c9b9-be77-41c8-97f7-371bd6f8fa16@lunn.ch>
-References: <20240527093339.30883-1-boon.khai.ng@intel.com>
- <20240527093339.30883-2-boon.khai.ng@intel.com>
- <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
- <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
- <48673551-cada-4194-865f-bc04c1e19c29@lunn.ch>
- <DM8PR11MB5751194374C75EC5D5889D6AC1F32@DM8PR11MB5751.namprd11.prod.outlook.com>
- <322d8745-7eae-4a68-4606-d9fdb19b4662@linux.intel.com>
- <BL3PR11MB57488DF9B08EACD88D938E2FC1F82@BL3PR11MB5748.namprd11.prod.outlook.com>
- <734c0d46-63f2-457d-85bf-d97159110583@lunn.ch>
- <DM8PR11MB5751CD3D8EF4DF0B138DEB7FC1FB2@DM8PR11MB5751.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1718022814; c=relaxed/simple;
+	bh=DSWJ46P/7UUx3bZu8iw6iWx6IOyRJj+hlgFqEdJZuys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Da+HThzfvlrlWm8x+bs+WSzP9mZ9sOg/gC9PQP0y0G1/vPDkpeLBjQSsx70LDn2XuCxuO/9KwD1sZMD0kPGWFT3Ag37kiXBSlZrxhJlGlACBwuRh2HLRAJ0wydfBnLztIH2ar/xnErcCzmQJqF5vvX0VN0Pbj2OLYHPXAdGewco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pX6Q1Vb5; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ACWoCR028348;
+	Mon, 10 Jun 2024 07:32:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718022770;
+	bh=CfvAuWxdUhU86zISdqqJU3GNhSiPKLLZfNnPIUxxhK8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=pX6Q1Vb53ct/2PIGyhPoWbUFZ8pcTx2Puk3MLp+u6MqOQM51E1ulb1lq4p53nmv9e
+	 Y91aDdYcSrraHbGWUmTYnYviiH/rvWTw87nKuYDCWdsJ1+TNiYDcHD4NrgrF2lvFBU
+	 UBD1HqhBnkM9ftSQrCcv0F/s0HKODopsu0HyV9MM=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ACWovS008018
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 07:32:50 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 07:32:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 07:32:49 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ACWf7e116795;
+	Mon, 10 Jun 2024 07:32:42 -0500
+Message-ID: <a78d5ddf-38d8-4b54-a9b3-7a8745d3b537@ti.com>
+Date: Mon, 10 Jun 2024 18:02:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM8PR11MB5751CD3D8EF4DF0B138DEB7FC1FB2@DM8PR11MB5751.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] drm/bridge: cdns-dsi: Support atomic bridge APIs
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>, Jyri
+ Sarha <jyri.sarha@iki.fi>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        DRI Development
+ List <dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Thierry
+ Reding <treding@nvidia.com>,
+        Kieran Bingham
+	<kieran.bingham+renesas@ideasonboard.com>,
+        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Jayesh
+ Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240530093621.1925863-1-a-bhatia1@ti.com>
+ <20240530093621.1925863-8-a-bhatia1@ti.com>
+ <4fsu5fa5zbrqgc5bepxscoenrax5c6p5b4eyomavioy3bhwuq3@rjjbur3v52e3>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <4fsu5fa5zbrqgc5bepxscoenrax5c6p5b4eyomavioy3bhwuq3@rjjbur3v52e3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Jun 07, 2024 at 04:09:37AM +0000, Ng, Boon Khai wrote:
-> > 
-> > Do you have access to all the reference documentation for the IP driven in
-> > dwmac4_core.c, dwxgmac2_core.c and stmmac_main.c? Is it just VLAN which
-> > is the same, and everything else is different? Or are other blocks of the
-> > hardware also identical and the code should be shared?
-> > If VLAN is all that is identical, then stammc_vlan.c would make sense.
+Hi Dmitry,
+
+Thank you for reviewing the patches.
+
+On 31/05/24 04:51, Dmitry Baryshkov wrote:
+> On Thu, May 30, 2024 at 03:06:19PM +0530, Aradhya Bhatia wrote:
+>> Change the existing (and deprecated) bridge hooks, to the bridge
+>> atomic APIs.
+>>
+>> Add drm helpers for duplicate_state, destroy_state, and bridge_reset
+>> bridge hooks.
+>>
+>> Further add support for the input format negotiation hook.
+>>
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>  .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 70 ++++++++++++++++---
+>>  1 file changed, 62 insertions(+), 8 deletions(-)
 > 
-> Hi Andrew, I only have access to the document for 
-> dwmac4_core.c and dwxgmac2_core.c
-
-O.K. So please do look at the VLAN code in other places and see if any
-can be shared.
-
-, I notice that in the linux mainline
-> https://github.com/torvalds/linux/tree/master/drivers/net/ethernet/stmicro/
-> stmmac
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
-> it does have stmmac_est.c and stmmac_ptp.c to that support for both
-> dwmac4 and dwxgmac2, with that I think it is suitable for introducing
-> another file called stmmac_vlan?
+> Minor nit below.
+> 
+>>
+>> @@ -915,13 +920,62 @@ static void cdns_dsi_bridge_pre_enable(struct drm_bridge *bridge)
+>>  	cdns_dsi_hs_init(dsi);
+>>  }
+>>  
+>> +static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
+>> +					       struct drm_bridge_state *bridge_state,
+>> +					       struct drm_crtc_state *crtc_state,
+>> +					       struct drm_connector_state *conn_state,
+>> +					       u32 output_fmt,
+>> +					       unsigned int *num_input_fmts)
+>> +{
+> 
+> This code below looks pretty generic. Would be logical to extract it to
+> a helper and allow it to be used by other DSI host bridges?
 
-Yes, stmmac_vlan.c is O.K.
+I agree, it would indeed make sense.
 
-	Andrew
+I just tried to make a helper function that could directly be passed to
+the drm_bridge_funcs list - like we do with
+"drm_atomic_helper_bridge_propagate_bus_fmt". This would have been ideal
+in my opinion.
+
+But, that doesn't seem possible today. The parameter "output_fmt"
+doesn't describe any of the DSI pixel formats from "enum
+mipi_dsi_pixel_format", which is what's required to ascertain the input
+bus format for dsi hosts. Neither do the drm_bridge{_state} help with
+that.
+
+For now, I am thinking to just add a common function that accepts the
+dsi bus output format and returns the corresponding input bus format.
+With this, every dsi host will still need to implement their own
+get_input_fmt hook and call that function.
+
+If you had something else in mind, do let me know! =)
+
+Regards
+Aradhya
+
+> 
+>> +	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+>> +	struct cdns_dsi *dsi = input_to_dsi(input);
+>> +	struct cdns_dsi_output *output = &dsi->output;
+>> +	u32 *input_fmts;
+>> +
+>> +	*num_input_fmts = 0;
+>> +
+>> +	input_fmts = kzalloc(sizeof(*input_fmts), GFP_KERNEL);
+>> +	if (!input_fmts)
+>> +		return NULL;
+>> +
+>> +	switch (output->dev->format) {
+>> +	case MIPI_DSI_FMT_RGB888:
+>> +		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
+>> +		break;
+>> +
+>> +	case MIPI_DSI_FMT_RGB666:
+>> +		input_fmts[0] = MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
+>> +		break;
+>> +
+>> +	case MIPI_DSI_FMT_RGB666_PACKED:
+>> +		input_fmts[0] = MEDIA_BUS_FMT_RGB666_1X18;
+>> +		break;
+>> +
+>> +	case MIPI_DSI_FMT_RGB565:
+>> +		input_fmts[0] = MEDIA_BUS_FMT_RGB565_1X16;
+>> +		break;
+>> +
+>> +	default:
+>> +		/* Unsupported DSI Format */
+>> +		return NULL;
+>> +	}
+>> +
+>> +	*num_input_fmts = 1;
+>> +
+>> +	return input_fmts;
+>> +}
+>> +
+> 
 
