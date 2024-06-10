@@ -1,96 +1,169 @@
-Return-Path: <linux-kernel+bounces-208981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A703B902B58
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:05:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA3C902B5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A79A1F22C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EEA61C21C97
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90B414E2E2;
-	Mon, 10 Jun 2024 22:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F60D14F9C4;
+	Mon, 10 Jun 2024 22:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWOL5lmx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9JaGbSf"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E496D14387E;
-	Mon, 10 Jun 2024 22:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5060639FD9;
+	Mon, 10 Jun 2024 22:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718057134; cv=none; b=A6TSgAwcudyTdmERgptwt9D4rysQ06ZY86IGb5P/2ljVGJkW5KhUHtqhlPZaAKvvXfbZkMQJ5bdRDPDwseYt6Z82r/YJKiO9PQGeDsiPed4CDTP0CpkBfeU2HkySNrrlaVTCtJHvfsHLe6KOpH1POXbUOhMprmxnRWRALJmt8mM=
+	t=1718057188; cv=none; b=pDrNM6K2ii2W1337WclfRb9IjUwancAy3guuVhHN8fqqJ5SIO22/vOWZWoWCUJuNTEaek51598Fds5As19W7epnSxHefJ++M3ICLV1o2cGrfB1U0RmyB8BBpZH2aPVIMz0Aj+PmftzluD3aKLEksNzK27DHQBJiv9mxGwZ/EH9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718057134; c=relaxed/simple;
-	bh=tSuqjTp5FJnedSsZD7bF1qb7Fac29OmHUqEX5tXHTBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSn81VIph1LvFL1fRYQ2vEY9l/sQRqAyES8uzFji2YZcmw25MOWXNK+BVP6OvQ6LbQAldwzAj4d2VE5J8OjMG2ATbr/TBjobwe0So4BKaoISgS+YdXpLmPeU/v7vwTK82q6z82vsTqJxpNjkwQswhISCK81q0Km1DptVZFWsj4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWOL5lmx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C4FC32789;
-	Mon, 10 Jun 2024 22:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718057133;
-	bh=tSuqjTp5FJnedSsZD7bF1qb7Fac29OmHUqEX5tXHTBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWOL5lmxyDn748hP7jrbXeLv865TYQusE8uDDpwwmjZhcS52obbNVz1m0Br+qX06C
-	 W6RilN5tkokyu+HbkhNw2lqp8T7jjXAeUp5CVk0FXpGUppGvExeUd+ANi5yEWedmBv
-	 NhWK1TS4EGodVH8kaWnPhXCNVRvAn7WW1NzzonaEEDaK4xItplyLO6ChuPbprXcaOD
-	 yiwNuhcBi40t/PIzneD7QKQvGyVN0xWo1VtpKSE0uiiPDayZ+Jrlk1/xfrSkkdEXPM
-	 7T3G8692P9tnvgPQiEq+S0SPi94+FXJ13sdCVxTxnOR6cOcTK9m3duRztqgEXROUGF
-	 NY6jvJmjVh5sg==
-Date: Mon, 10 Jun 2024 16:05:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	martin.blumenstingl@googlemail.com, hauke@hauke-m.de,
-	andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 01/13] dt-bindings: net: dsa: lantiq_gswip: Add
- missing phy-mode and fixed-link
-Message-ID: <20240610220531.GA3144440-robh@kernel.org>
-References: <20240606085234.565551-1-ms@dev.tdt.de>
- <20240606085234.565551-2-ms@dev.tdt.de>
- <ae996754-c7b9-4c46-a3dd-438ab35d6c67@kernel.org>
- <c410ac7cce5fe6bf522bac6edb18440d@dev.tdt.de>
+	s=arc-20240116; t=1718057188; c=relaxed/simple;
+	bh=Z2skBdO+Rk+2ZKK68wWpaiysJ+e8RiK0YNwzM6Zc4ys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nvnLESGKaPA3UnoJOIW/2daUYhwMIAoKH7kyk9o8VyaL+0GOqEM2HBPHL1pFN5Tfe6Zw6uP5fihD4nDbFkbhKmQt3HuZog/vGhDnG/pOXj0LmeeDzUCPRWJQYQNoaFRdQadZjg7yS/pQ7qyJMqaERLC4beJ9PgiBUDNUSKQSmtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9JaGbSf; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-627f3265898so52103327b3.3;
+        Mon, 10 Jun 2024 15:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718057186; x=1718661986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SBpmt0UUe0IDdz+uq5+x8bMJuxB4OAyzK/tZ+2sJtqM=;
+        b=f9JaGbSfgEtWgecbgAweSqc1mgXPwQwFI3WCZjEB7O9W847up8X5iMocO9K1tyd6c+
+         qhZmkwCUAEsotUHClGXCGG5IUhxlJwa/SNgYzA7IeA5YT5raBY596sSpZ7NjNoeJVVkG
+         K4e4q+u81c9lM8zRv7TfyvNawl1bYlh5U7irFBIrbUbey2g88cqtyD9YLOYJp4wKqG3I
+         /WbDi99AffjKzzdf1JAKWXfYLDzWVLpM7AH5/xL2dqTJeOmcjxmLolTO1Wvu1w6Tx5jh
+         HJ+pgnI+4+LKZ9Gs8sLAVuH+8DkNL54w38uRfpV2Bi31+Ssm7dm94EHLqlFrGnLTNIB7
+         NdUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718057186; x=1718661986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SBpmt0UUe0IDdz+uq5+x8bMJuxB4OAyzK/tZ+2sJtqM=;
+        b=DDZSk08G+qkNF23x2NVs7uiUhdyxTpIzI6EH73n8x1ugqCDppFKgl1/x62IgAfSP/i
+         7S327kqWNjhXQ0Do6dN8CVUusRGmfImSAZZXE9yX84Cue/Uyt9S1uYLgd/Me+SI0/aXX
+         HhTBSZYJCYSGk/DHel13/+uuhHBwGuhdNVVKUyzt15OZXj5/Gy0BWbFYUwOW5LOojojf
+         EgvNnYnNQjRl7XMSUFDAWBwpUmLy4mrE/XOYmJN5pAj8sAOXuK+4WpNV3Mm/u0NvgXsO
+         Wb7n62ors7c3HSDhMjxoOWFjmNJzbu4b3w4/GfyfwjcULyEXTB+DeDhktYDVwX4XEEcZ
+         1Fzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMk1n0aF0x2/FF7WdK50QdLTO/cS2HgHiJz/wtudUaibobPc6xOQabGZLu+Dt2nC4204M+2dUzhTYxxIyFP/FkXT7xQCGoAotWTPCeAoe/3pem08VjEdhCSrLXy2w28CNoHjyxFrC5FXcx3as5nu+i9OcNUX9IWwjnS+Q4pWM5wUO5aNKfu0/q1rIS5k5iN+gQWQg2ZR3yiWnf75PgsBdm3c7efdyb
+X-Gm-Message-State: AOJu0YwAcMlNvlhwS9rbnyftUCc8g+jE42f8i556hnwJsissk8/vWPvf
+	/RIXSKQBdTXRclkMvKJ6iuczImcm/oWhHb7FB5u5bEi0yUF+KuKCOsbz/EpZel2wiKapNV8Evxn
+	jz3FmXWyqidWvFUuggSpPyz62N4lKRqEC
+X-Google-Smtp-Source: AGHT+IEoGjevIcs0e5raKRY3pcu97412fw9FCoLjA1oIhCy5VuQUI1DALfKHRv76gTrg8wuEordKIwWCQ9dUXVsm6XY=
+X-Received: by 2002:a81:6c82:0:b0:627:7e65:979 with SMTP id
+ 00721157ae682-62cd55f2838mr101338397b3.24.1718057186371; Mon, 10 Jun 2024
+ 15:06:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c410ac7cce5fe6bf522bac6edb18440d@dev.tdt.de>
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXk+u0J9GQrGHa_yMgBtkrhCNtGXdWmfsmVt3UskNMMug@mail.gmail.com>
+In-Reply-To: <CAMuHMdXk+u0J9GQrGHa_yMgBtkrhCNtGXdWmfsmVt3UskNMMug@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 10 Jun 2024 23:05:59 +0100
+Message-ID: <CA+V-a8st5i+P4MyAifvXu2QmH089faAe+r0GaHpWaJ38Xzeciw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: renesas: Add RZ/V2H(P) CPG helper driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 11:07:15AM +0200, Martin Schiller wrote:
-> On 2024-06-10 10:55, Krzysztof Kozlowski wrote:
-> > On 06/06/2024 10:52, Martin Schiller wrote:
-> > > From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > > 
-> > > The CPU port has to specify a phy-mode and either a phy or a
-> > > fixed-link.
-> > > Since GSWIP is connected using a SoC internal protocol there's no PHY
-> > > involved. Add phy-mode = "internal" and a fixed-link to describe the
-> > > communication between the PMAC (Ethernet controller) and GSWIP switch.
-> > 
-> > You did nothing in the binding to describe them. You only extended
-> > example, which does not really matter if there is DTS with it.
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> OK, so I'll update subject and commit message to signal that we only
-> update the example code.
+Hi Geert,
 
-Either convert it or leave it alone. If you are worried about users' DTs 
-being wrong due to copying a bad example, then you should care enough to 
-do the conversion. Given the errors we find in examples, it's likely 
-not the only problem.
+Thank you for the review.
 
-Rob
+On Wed, Jun 5, 2024 at 8:06=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hii Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add RZ/V2H(P) CPG helper driver.
+>
+> Drop "helper"?
+>
+OK.
+
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- /dev/null
+> > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> > @@ -0,0 +1,112 @@
+>
+> > +static int pll_clk1_offset[] =3D { -EINVAL, -EINVAL, -EINVAL, 0x64, -E=
+INVAL,
+> > +                              -EINVAL, 0xC4, -EINVAL, -EINVAL, 0x124, =
+0x144 };
+> > +static int pll_clk2_offset[] =3D { -EINVAL, -EINVAL, -EINVAL, 0x68, -E=
+INVAL,
+> > +                              -EINVAL, 0xC8, -EINVAL, -EINVAL, 0x128, =
+0x148 };
+>
+> const (both)
+>
+> Both arrays are very similar: all valid values differ by an offset of 4.
+> If that is universal, perhaps the second one can be dropped, and
+> the offset can be handled by the user?
+>
+Agreed.
+
+> > +static struct rzv2h_mod_clk r9a09g057_mod_clks[] =3D {
+>
+> const
+>
+Ok (and below)
+
+> > +       DEF_MOD("scif_0_clk_pck",               R9A09G057_SCIF_0_CLK_PC=
+K, CLK_PLLCM33_DIV16,
+> > +                                               0x620, 15, 0x810, 15),
+> > +};
+> > +
+> > +static struct rzv2h_reset r9a09g057_resets[] =3D {
+>
+> const
+>
+> > +       DEF_RST(R9A09G057_SCIF_0_RST_SYSTEM_N,          0x924,  5, 0xA1=
+0, 6),
+> > +};
+>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
