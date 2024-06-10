@@ -1,258 +1,344 @@
-Return-Path: <linux-kernel+bounces-208068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE152902037
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322BF902038
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB88281078
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37D5280DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99067C6EB;
-	Mon, 10 Jun 2024 11:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ABivI1rz"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FC1B80F;
-	Mon, 10 Jun 2024 11:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2387E0E9;
+	Mon, 10 Jun 2024 11:18:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB5E6BFCA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718018320; cv=none; b=ebtW2pE7n+LjW9UHI2xggOyicxFr2RCxtAhsXGRZpqokafWWLHyFicVacSpPon47JrtelGgotye9x/04r+tsMvRJWl0EEJ/A8iEY+pNvT9h141GkFsRB27eM6lWwYoMZA8gPQ0bJ9cmT6nbZaHtmooQPVx3TcRhTzhUlxRKAuC4=
+	t=1718018323; cv=none; b=HhW6cEPcD5nuh1rh76n4bUnBXp0R/94OAwohejq/ro/i8L7bNBqsQFcBhBlt7cpFMQI+dWQCaSN5f0qEfJCyPX6dHLAqyKtzhlxfMDsxvREzPJDTVUg7wPaqKqVQLNoF+RwT+JjaPy89ca8vjbPrC5brn7uqPrZvL3J1uL8ir6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718018320; c=relaxed/simple;
-	bh=BVJRnE1p9c1EyXh04it2m5C3V1BucUBrRwnwjCNsqJw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTuB/fzimBPRG7zWC64sypfaW043d7AEM7paDsFdR6++1vFyIBfrOwjBmZ3OnI94viG20RQZjpWXlB3UhHfW1umM7yD91GI+aK5fVlYQHyu8Mu/vq5qMZlU7afL3ins9M1ys7Vb0Oa81FM6GWTnKEVVKSaBSQfZYQ2SPPBUQwAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ABivI1rz; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 8D299120002;
-	Mon, 10 Jun 2024 14:18:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8D299120002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718018307;
-	bh=ArNoe6t1RcA/TLth3lJ1kMJmZwBKoMGM2K5yPZHNVWU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=ABivI1rzJ9cdnIpC+YYQd3GZFR3Ioef5hZwPTqoEzOIki8LLCScYK3ygJfQKMJUAS
-	 IUR1yIiHZ5ZOfMJOO5hYGv0qjJeDVgtw30MMHlXHrDUzfQtqejSV4/YVQCBJ8rKHJL
-	 v/2h9HqFpe3poHBmMiNNC03aG1G4GMVKN4CPTDr6jiZlgoQEo9QrGg4tekjtdgE7Kg
-	 pmSbGVOKhTiplkB3RjsYpNvtp305Fpb3DINfU1ZSP5ugI/z2m3E6Z3sRBRhzO1tt7i
-	 vflVmoqiwaBt14APoWIohlbT76cJLf59anFFsGYJtIfKBcCiRNqMf84RHEl6nkl/3v
-	 7jDjI21HeMM+g==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 10 Jun 2024 14:18:27 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
- 2024 14:18:27 +0300
-Date: Mon, 10 Jun 2024 14:18:26 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: clock: meson: add A1 CPU clock
- controller bindings
-Message-ID: <20240610111826.im3mz64hjfkxrxhr@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-7-ddrokosov@salutedevices.com>
- <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1718018323; c=relaxed/simple;
+	bh=8sYtVeF8+Q9fdPOVQY12dZqQN5bdnTUzccDMjtcs5ZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJH0Ys2HlVNT8lZN+d9db7E72XANGT24SBdufkcYEHUj8Jz/R8FKIXr6714eiGZP/b6kB9/VWkK1rqBfVXWRhM0yoPX2Pv8Mp5FE5nOyq+e0DoqOjD6tmtVFnwm3afM3J0d4AwsnypD0I7gLZxAJq9RowWI4ObNey1b+yH+HMFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A483F12FC;
+	Mon, 10 Jun 2024 04:19:04 -0700 (PDT)
+Received: from [10.57.70.148] (unknown [10.57.70.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E1BD3F73B;
+	Mon, 10 Jun 2024 04:18:39 -0700 (PDT)
+Message-ID: <64a5020e-72cf-49f4-89d7-833cc7a12827@arm.com>
+Date: Mon, 10 Jun 2024 12:18:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185831 [Jun 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;devicetree.org:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/10 11:00:00
-X-KSMG-LinksScanning: Clean, bases: 2024/06/10 11:00:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 07:14:00 #25537945
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm: swap: mTHP allocate swap entries from nonfull
+ list
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Barry Song <baohua@kernel.org>
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+ <20240524-swap-allocator-v1-2-47861b423b26@kernel.org>
+ <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
+ <CANeU7Q=uT-sZjwvcL4EJUbkZ8dbhnVpQEfNndMXvhBwZOSyr0Q@mail.gmail.com>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CANeU7Q=uT-sZjwvcL4EJUbkZ8dbhnVpQEfNndMXvhBwZOSyr0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Jerome,
-
-Thank you for the review!
-
-On Mon, Jun 10, 2024 at 12:04:09PM +0200, Jerome Brunet wrote:
-> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+On 07/06/2024 21:52, Chris Li wrote:
+> On Fri, Jun 7, 2024 at 3:35 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 24/05/2024 18:17, Chris Li wrote:
+>>> Track the nonfull cluster as well as the empty cluster
+>>> on lists. Each order has one nonfull cluster list.
+>>>
+>>> The cluster will remember which order it was used during
+>>> new cluster allocation.
+>>>
+>>> When the cluster has free entry, add to the nonfull[order]
+>>> list.  When the free cluster list is empty, also allocate
+>>> from the nonempty list of that order.
+>>>
+>>> This improves the mTHP swap allocation success rate.
+>>
+>> If I've understood correctly, the aim here is to link all the current per-cpu
+>> clusters for a given order together so that if a cpu can't allocate a new
+>> cluster for a given order, then it can steal another CPU's current cluster for
+>> that order?
 > 
-> > Add the documentation and dt bindings for Amlogic A1 CPU clock
-> > controller.
-> >
-> > This controller consists of the general 'cpu_clk' and two main parents:
-> > 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
-> > fixed clock, while the 'syspll' serves as an external input from the A1
-> > PLL clock controller.
-> >
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
-> >  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
-> >  2 files changed, 83 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> >  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> > new file mode 100644
-> > index 000000000000..f4958b315ed4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> > @@ -0,0 +1,64 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/amlogic,a1-cpu-clkc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Amlogic A1 CPU Clock Control Unit
-> > +
-> > +maintainers:
-> > +  - Neil Armstrong <neil.armstrong@linaro.org>
-> > +  - Jerome Brunet <jbrunet@baylibre.com>
-> > +  - Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: amlogic,a1-cpu-clkc
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: input fixed pll div2
-> > +      - description: input fixed pll div3
-> > +      - description: input sys pll
-> > +      - description: input oscillator (usually at 24MHz)
+> Stealing other CPU's *current* cluster is not the intent. The intent
+> is after all current per-cpu done with this cluster(full), those full
+> clusters are not tracked by any per-cpu struct. When those full
+> clusters become non-full. Track it in the global nonfull cluster list.
+> The per-cpu allocation can take a cluster from that nonfull cluster
+> list and start allocating from it.
 > 
-> According to the documentation, fdiv5 is also an input of the CPU clock
-> tree.
+> The V1 code does not specifically check for the stealing behavior, the
+> V2 code will prevent that from happening. Basically each cluster has 4
+> states and owners:
+> 1) empty, owned by a global free cluster list.
+> 2) per cpu allocating. owned by per CPU current.
+> 3) nonfull (also non empty). own global nonfull list.
+> 4) full, currently not tracked, we can track it under global full list.
 > 
-> That is typically the kind of things we'd prefer to get right from the
-> beginning to avoid modifying the bindings later.
+> When the per cpu runs out of free cluster, it can take a cluster from
+> 3) and move it to 2).
+
+OK, sorry for my misunderstanding, and thanks for the explanaiton. I've taken a
+proper look at the patch and with this explanation now understand the intent.
+
+I guess in effect, this is a scanning approach, but you are limiting the
+clusters that you scan to those that were originally allocated for the required
+order and which are known to have some free space.
+
+I guess this will work more effectively with Barry's series that swaps in a
+whole large folio in one go, because it is more likely that holes of the
+required size will appear in the non-full clusters. But previous discussions
+concluded that it was not always going to be the right approach to swap-in large
+folios in one go (certainly not for higer orders). So I don't think you can
+(yet) rely on swap slots being freed as order-sized blocks. That said I still
+think that your approach should improve the situation even without Barry's series.
+
+In fact, why don't you put the cluster on the non-full list at cluster
+allocation time? Then you can also allow a cpu to steal from another cpu's
+current cluster (as I initially thought you were doing). I think this should
+work with pretty much the same logic? And improve chances of allocation without
+increasing chances of fragmentation? (more on this below).
+
 > 
-
-Could you please share which documentation you are referencing? I have
-the A113L documentation, and there is no mention of the CPU clock IP.
-I retrieved below register map from the vendor's custom driver:
-
-===
-CPUCTRL_CLK_CTRL0
-
-bits 1:0 - cpu_fsource_sel0
-    0 - xtal
-    1 - fclk_div2
-    2 - fclk_div3
-
-bit 2 - cpu_fsel0
-    0 - cpu_fsource_sel0
-    1 - cpu_fsource_div0
-
-bit 3 - UNKNONWN
-
-bits 9:4 - cpu_fsource_div0
-    Divider value
-
-bit 10 - cpu_fclk
-    0 - cpu_fsel0
-    1 - cpu_fsel1
-
-bit 11 - cpu_clk
-    0 - cpu_fclk
-    1 - sys_pll
-
-bits 15:12 - UNKNONWN
-
-bits 17:16 - cpu_fsource_sel1
-    0 - xtal
-    1 - fclk_div2
-    2 - fclk_div3
-
-bit 18 - cpu_fsel1
-    0 - cpu_fsource_sel1
-    1 - cpu_fsource_div1
-
-bit 19 - UNKNONWN
-
-bits 25:20 - cpu_fsource_div1
-    Divider value
-
-bits 31:26 - UNKNONWN
-===
-
-As you can see it doesn't have any other inputs except fclk_div2,
-fclk_div3, sys_pll and xtal.
-
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: fclk_div2
-> > +      - const: fclk_div3
-> > +      - const: sys_pll
-> > +      - const: xtal
-> > +
-> > +required:
-> > +  - compatible
-> > +  - '#clock-cells'
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-> > +    apb {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        clock-controller@fd000000 {
-> > +            compatible = "amlogic,a1-cpu-clkc";
-> > +            reg = <0 0xfd000080 0 0x8>;
+>>
+>> If that's the intent, couldn't that be done just by iterating over the per-cpu,
+>> per-order cluster pointers? Then you don't need all the linked list churn
 > 
-> If reg is <0 0xfd000080 0 0x8> then node name should be clock-controller@fd000080
+> Again, that is not the intent.
 > 
+>> (althogh I like the linked list changes as a nice cleanup, I'm not sure the
+>> churn is neccessary for this change?). There would likely need to be some
+>> locking considerations, but it would also allow you to get access to the next
+>> entry within the cluster for allocation.
+>>
+>> However, fundamentally, I don't think this change solves the problem; it just
+>> takes a bit longer before the allocation fails. The real problem is
+>> fragmentation due to freeing individual pages from swap entries at different times.
+> 
+> It definitely helps to find nonfull clusters quicker. Please take a
+> look at my above comment and read the patch again.
+> 
+>>
+>> Wouldn't it be better to just extend scanning to support high order allocations?
+>> Then we can steal a high order block from any cluster, even clusters that were
+> 
+> Steal from higher order causes the higher order harder to allocate,
+> that is downside.
+> In my mind, ideally have some high order cluster reservation scheme so
+> the high order one doesn't mix with the low order one.
 
-Okay, I will fix that example in the next version.
+Yes, that would make sense; you could limit the number of clusters allocated for
+each order at any given time.
 
-[...]
+Order-0 stealing will still cause problems. You could probably just remove that
+and limit order-0 scanning/stealing to clusters that were originally allocated
+for order-0 too, using the same logic.
 
--- 
-Thank you,
-Dmitry
+> 
+>> previously full, just like we currently do for order-0. Given we are already
+>> falling back to this path for order-0, I don't think it would be any more
+>> expensive; infact its less expensive because we only scan once for the high
+>> order block, rather than scan for every split order-0 page.
+>>
+>> Of course that still doesn't solve the proplem entirely; if swap is so
+>> fragmented that there is no contiguous block of the required order then you
+>> still have to fall back to splitting. As an extra optimization, you could store
+> 
+> Exactly. That is why I think some high order cluster reservation
+> scheme is needed for a short term solution.
+> The change itself is not too complicated if we can agree on this approach.
+> 
+>> the largest contiguous free space available in each cluster to avoid scanning in
+>> case its too small?
+> 
+> Avoid scanning does just get to the non available high order result quicker.
+> Does not seem to help increase the high order allocation success rate.
+> 
+>>
+>>
+>>>
+>>> There are limitations if the distribution of numbers of
+>>> different orders of mTHP changes a lot. e.g. there are a lot
+>>> of nonfull cluster assign to order A while later time there
+>>> are a lot of order B allocation while very little allocation
+>>> in order A. Currently the cluster used by order A will not
+>>> reused by order B unless the cluster is 100% empty.
+>>>
+>>> This situation is best addressed by the longer term "swap
+>>> buddy allocator", in future patches.
+>>> ---
+>>>  include/linux/swap.h |  4 ++++
+>>>  mm/swapfile.c        | 25 +++++++++++++++++++++++--
+>>>  2 files changed, 27 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+>>> index 0d3906eff3c9..1b7f0794b9bf 100644
+>>> --- a/include/linux/swap.h
+>>> +++ b/include/linux/swap.h
+>>> @@ -255,10 +255,12 @@ struct swap_cluster_info {
+>>>                                * cluster
+>>>                                */
+>>>       unsigned int count:16;
+>>> +     unsigned int order:8;
+>>>       unsigned int flags:8;
+>>>       struct list_head next;
+>>>  };
+>>>  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+>>> +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
+>>>
+>>>
+>>>  /*
+>>> @@ -297,6 +299,8 @@ struct swap_info_struct {
+>>>       unsigned char *swap_map;        /* vmalloc'ed array of usage counts */
+>>>       struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
+>>>       struct list_head free_clusters; /* free clusters list */
+>>> +     struct list_head nonfull_clusters[SWAP_NR_ORDERS];
+>>> +                                     /* list of cluster that contains at least one free slot */
+>>>       unsigned int lowest_bit;        /* index of first free in swap_map */
+>>>       unsigned int highest_bit;       /* index of last free in swap_map */
+>>>       unsigned int pages;             /* total of usable pages of swap */
+>>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>>> index 205a60c5f9cb..51923aba500e 100644
+>>> --- a/mm/swapfile.c
+>>> +++ b/mm/swapfile.c
+>>> @@ -363,8 +363,11 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+>>>
+>>>  static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
+>>>  {
+>>> +     if (ci->flags & CLUSTER_FLAG_NONFULL)
+>>> +             list_move_tail(&ci->next, &si->free_clusters);
+>>> +     else
+>>> +             list_add_tail(&ci->next, &si->free_clusters);
+>>>       ci->flags = CLUSTER_FLAG_FREE;
+>>> -     list_add_tail(&ci->next, &si->free_clusters);
+>>>  }
+>>>
+>>>  /*
+>>> @@ -486,7 +489,12 @@ static void dec_cluster_info_page(struct swap_info_struct *p, struct swap_cluste
+>>>       ci->count--;
+>>>
+>>>       if (!ci->count)
+>>> -             free_cluster(p, ci);
+>>> +             return free_cluster(p, ci);
+>>> +
+>>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
+>>> +             list_add_tail(&ci->next, &p->nonfull_clusters[ci->order]);
+>>> +             ci->flags |= CLUSTER_FLAG_NONFULL;
+>>> +     }
+>>>  }
+>>>
+>>>  /*
+>>> @@ -547,6 +555,14 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>>>                       ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, next);
+>>>                       list_del(&ci->next);
+>>>                       spin_lock(&ci->lock);
+>>> +                     ci->order = order;
+>>> +                     ci->flags = 0;
+>>> +                     spin_unlock(&ci->lock);
+>>> +                     tmp = (ci - si->cluster_info) * SWAPFILE_CLUSTER;
+>>> +             } else if (!list_empty(&si->nonfull_clusters[order])) {
+
+You are preferring to scan the nonfull clusters over doing discard and
+allocating a newly freed cluster; wouldn't it be better to prefer discard over
+nonfull scanning?
+
+>>> +                     ci = list_first_entry(&si->nonfull_clusters[order], struct swap_cluster_info, next);
+>>> +                     list_del(&ci->next);
+
+I'm struggling a bit with what the value of the nonfull_clusters linked list is.
+I wonder if it would be simpler to just track the number of free slots in the
+cluster and iterate over the clusters, scanning the ones with the desired order
+and which have at least (1 << order) free slots? I guess this list is giving you
+an ordering such that the cluster you pull off the list first had its first slot
+freed longest ago so it is most likely to have most space?
+
+>>> +                     spin_lock(&ci->lock);
+>>>                       ci->flags = 0;
+>>>                       spin_unlock(&ci->lock);
+>>>                       tmp = (ci - si->cluster_info) * SWAPFILE_CLUSTER;
+>>
+>> This looks wrong to me; if the cluster is on the nonfull list then it will have
+>> had some entries already allocated (by another cpu). So pointing tmp to the
+>> first block in the cluster will never yield a free block. The cpu from which you
+> 
+> I believe it will scan until it finds a free block with alignment down
+> in the offset < max loop.
+
+Yes agreed, my bad. Sorry about that.
+
+Thanks,
+Ryan
+
+> 
+> while (offset < max) {
+>     if (swap_range_empty(si->swap_map, offset, nr_pages))
+>         break;
+>     offset += nr_pages;
+> }
+> 
+>> are stealing the cluster stores the next free block location in its per-cpu
+>> structure. So perhaps iterating over the other cpu's `struct percpu_cluster`s is
+>> a better approach than the nonfull list?
+> 
+> No, stealing is not the intent. The intent is  quickly finding the non
+> full cluster NOT in other per cpu allocation.
+> 
+>>
+>> Additionally, this cluster will be stored back to this cpu's current cluster at
+>> the bottom of the function. That may or may not be what you intended.
+> 
+> That is what I intended. It remembers the current allocating cluster,
+> in case this cluster has more than one high order swap entries.
+> 
+> Chris
+> 
+>>
+>>> @@ -578,6 +594,7 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>>>                               break;
+>>>                       tmp += nr_pages;
+>>>               }
+>>> +             WARN_ONCE(ci->order != order, "expecting order %d got %d", order, ci->order);
+>>>               unlock_cluster(ci);
+>>>       }
+>>>       if (tmp >= max) {
+>>> @@ -956,6 +973,7 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+>>>       ci = lock_cluster(si, offset);
+>>>       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+>>>       ci->count = 0;
+>>> +     ci->order = 0;
+>>>       ci->flags = 0;
+>>>       free_cluster(si, ci);
+>>>       unlock_cluster(ci);
+>>> @@ -2882,6 +2900,9 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
+>>>       INIT_LIST_HEAD(&p->free_clusters);
+>>>       INIT_LIST_HEAD(&p->discard_clusters);
+>>>
+>>> +     for (i = 0; i < SWAP_NR_ORDERS; i++)
+>>> +             INIT_LIST_HEAD(&p->nonfull_clusters[i]);
+>>> +
+>>>       for (i = 0; i < swap_header->info.nr_badpages; i++) {
+>>>               unsigned int page_nr = swap_header->info.badpages[i];
+>>>               if (page_nr == 0 || page_nr > swap_header->info.last_page)
+>>>
+>>
+
 
