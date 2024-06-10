@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-208480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFBB902598
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A890259C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22EC41C21376
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:28:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A020128934D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9F913F437;
-	Mon, 10 Jun 2024 15:26:16 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D5C147C60;
+	Mon, 10 Jun 2024 15:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMkZiDEd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBD513DB92;
-	Mon, 10 Jun 2024 15:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536BC13DDCE;
+	Mon, 10 Jun 2024 15:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718033175; cv=none; b=u/JlLq45/f3GJBh01XdjLc6S3XyGLhLOyl45jzKV+M4enoZwjmwylFf7PQQ6vQXV6v4fQ0vS8mxSp45IP0vXvIkykbFS52ceheBpctwqZAq1tzw1esEVq3XtTt9jG6VJcZQy1Z52NnzXOr1VHO3dLt+V+B0s/7zOhNPHaB+RU3s=
+	t=1718033196; cv=none; b=Ev9iQ/XO+8wjuUgWVI/FZkeUZyXFWbcj9kaR9kzaX5XYXLZ+QqM/b3sFq9tPTF58vFZdylwI9NjtCq5y8/Mju0B77yj2DhmPRjiZG/vjFWaU7DxR1P28QI8xB1QgyQVlwM/pZvjbSiqS44IYqPWcSKKXx4DwbXX0eZG+Zs/Teuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718033175; c=relaxed/simple;
-	bh=SlQFRSvVdbk5xiE5tYj3MMJfXr3zI7zmkNmvnKGpUzY=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=lJDqo56Zaz3gCRFsuJyksoLE63SD2OHeoHvs/f9delgOJ7zCJmcppPjlbZUzO41ipErgpzS/K+PMUml9BkfPKEu2oCe0751Lv3KQKe3oOS3lrW//EUOjwlPQc2qcN312Frt68kuPQsDU5MCcpnc7WYMMeOw3WmtivK47ELE+M2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 6A24B3781107;
-	Mon, 10 Jun 2024 15:26:10 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240609113903.732882729@linuxfoundation.org>
-Date: Mon, 10 Jun 2024 16:26:10 +0100
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>, "Gustavo Padovan" <gustavo.padovan@collabora.com>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1718033196; c=relaxed/simple;
+	bh=+P//XT9LpP0LIIRJBKW993XarkxuDVFv2zbFBsCkT3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EVQq8Ttlrae6gOyAPO6HDvGgnWV5KrrPcoN+nWcgHyd0JAT8NkxDV7jOUj4rUSBe4IXnRBz8tDYZLcmEE4V4B3IzNvIFj5ArVZrefrKXPmMOixnmyQjJ4Ay8QIQbSBJvneOJRjI75v4Mk9n0yDh6TzlY5sCobi7nma9RKhjWiog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMkZiDEd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7D2C2BBFC;
+	Mon, 10 Jun 2024 15:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718033195;
+	bh=+P//XT9LpP0LIIRJBKW993XarkxuDVFv2zbFBsCkT3Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IMkZiDEd9X+iU0t29dUnCUCFNrscsW0jgsnZumoTV91muoYrYy+pCe20PH8op+qF7
+	 wwd9wLPnuqQcNrqTZiJ8b7Hy08j/nBPXqzHz5tay7KUZ2rSo8mCF/Ai/0eeGysrQV9
+	 p/J2MKg2o4vXLOE9FRSafvwfHV86qRnUV3dZmIj4dlKM3OFVgAnRScqyUhlDNyUsKx
+	 xOWcsFYDgY1SOEBTJTxB0P4fer/6KHp4AGGQNW2eqmpD5cM0SRDVdFHaRStBMk+r8/
+	 aRrZkBoEc8Tk8v+qT1ezE1T5CMUpTjP5PmTqRqq44Vn5skzh0ho1bqVP0XVbV/CJky
+	 6F8yCZ4u86EIg==
+Message-ID: <aa571ef1-80dc-4a20-8726-65193b565728@kernel.org>
+Date: Mon, 10 Jun 2024 09:26:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2ac6c7-66671b00-9-234d2f00@171268153>
-Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?6=2E6?= 000/741] 
- =?utf-8?q?6=2E6=2E33-rc2?= review
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net/ipv6: Fix the RT cache flush via sysctl using
+ a previous delay
+Content-Language: en-US
+To: Petr Pavlu <petr.pavlu@suse.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Kui-Feng Lee <thinker.li@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240607112828.30285-1-petr.pavlu@suse.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20240607112828.30285-1-petr.pavlu@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sunday, June 09, 2024 17:11 IST, Greg Kroah-Hartman <gregkh@linuxfou=
-ndation.org> wrote:
+On 6/7/24 5:28 AM, Petr Pavlu wrote:
+> The net.ipv6.route.flush system parameter takes a value which specifies
+> a delay used during the flush operation for aging exception routes. The
+> written value is however not used in the currently requested flush and
+> instead utilized only in the next one.
+> 
+> A problem is that ipv6_sysctl_rtcache_flush() first reads the old value
+> of net->ipv6.sysctl.flush_delay into a local delay variable and then
+> calls proc_dointvec() which actually updates the sysctl based on the
+> provided input.
+> 
+> Fix the problem by switching the order of the two operations.
+> 
+> Fixes: 4990509f19e8 ("[NETNS][IPV6]: Make sysctls route per namespace.")
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
+> 
+> Changes since v1 [1]:
+> - Minimize the fix, correct only the order of operations in
+>   ipv6_sysctl_rtcache_flush().
+> 
+> [1] https://lore.kernel.org/netdev/20240529135251.4074-1-petr.pavlu@suse.com/
+> 
+>  net/ipv6/route.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+> index f083d9faba6b..952c2bf11709 100644
+> --- a/net/ipv6/route.c
+> +++ b/net/ipv6/route.c
+> @@ -6343,12 +6343,12 @@ static int ipv6_sysctl_rtcache_flush(struct ctl_table *ctl, int write,
+>  	if (!write)
+>  		return -EINVAL;
+>  
+> -	net = (struct net *)ctl->extra1;
+> -	delay = net->ipv6.sysctl.flush_delay;
+>  	ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
+>  	if (ret)
+>  		return ret;
+>  
+> +	net = (struct net *)ctl->extra1;
+> +	delay = net->ipv6.sysctl.flush_delay;
+>  	fib6_run_gc(delay <= 0 ? 0 : (unsigned long)delay, net, delay > 0);
+>  	return 0;
+>  }
+> 
+> base-commit: 8a92980606e3585d72d510a03b59906e96755b8a
 
-> This is the start of the stable review cycle for the 6.6.33 release.
-> There are 741 patches in this series, all will be posted as a respons=
-e
-> to this one.  If anyone has any issues with these being applied, plea=
-se
-> let me know.
->=20
-> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6=
-.33-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-.git linux-6.6.y
-> and the diffstat can be found below.
->=20
 
-KernelCI report for stable-rc/linux-6.6.y for this week :-
-
-## stable-rc HEAD for linux-6.6.y:
-Date: 2024-06-09
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
-git/log/?h=3D7fa271200aef4ae8f0bed8a8ed81629ecd5ed2ab
-
-## Build failures:
-riscv:
-    - defconfig (gcc-10) and rv32=5Fdefconfig (gcc-10)
-    - Build details :- https://linux.kernelci.org/build/stable-rc/branc=
-h/linux-6.6.y/kernel/v6.6.32-742-g7fa271200aef4/
-    - Errors :-
-arch/riscv/kernel/suspend.c:37:59: error: =E2=80=98RISCV=5FISA=5FEXT=5F=
-XLINUXENVCFG=E2=80=99 undeclared (first use in this function); did you =
-mean =E2=80=98RISCV=5FISA=5FEXT=5FZIFENCEI=E2=80=99?
-
-## Boot failures:
-No **new** boot failures seen for the stable-rc/linux-6.6.y commit head=
- \o/
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-Shreeya Patel
+Reviewed-by: David Ahern <dsahern@kernel.org>
 
 
