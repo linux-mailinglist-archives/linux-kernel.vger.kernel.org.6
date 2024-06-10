@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-208747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4229A9028C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95EB9028CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F60B23817
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A791F211F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D4A1514C9;
-	Mon, 10 Jun 2024 18:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11B31534E8;
+	Mon, 10 Jun 2024 18:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gp0yIfuy"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKkNuMA4"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6B14EC73
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC9C15216C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718044545; cv=none; b=JcBqwUByAQDOwZEgBtMPb6pst7ypZ6RDBhvVo0QlFmGYQ1aJtojTXo6p/PT57p2x1/N2Ioie2lrYDjtH28KEq4sBZcSs/+U+g5+bShK37FvwOvqxg6dkJJbwlSlLl5ZvvYMs+F4J/J/4CgX6s8AZs4s1sXOW/Cq9NDwbnbBSHYo=
+	t=1718044549; cv=none; b=YidiMc2YM9zyVKKcTweyqD1UGN9LbKt0AX3/2P9iLwEvdglzB0J77vfaE+Urs+7Qe/jAB5VYY+Dx6OyoKvd8Odf9Cd8DXXWjEAujjYiYCeRFLONFl3D99RHMEWn8v7I2zRZUgfzYvlk6NREmuDWt+vOx70XiDJGwjxRbdLpVUa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718044545; c=relaxed/simple;
-	bh=n/UgyX1U4zOUKAVlm2WMJOCOaWfvqKc/RRK5WzMIgI0=;
+	s=arc-20240116; t=1718044549; c=relaxed/simple;
+	bh=4oqidBc9DHvPZDAc4/HvrQudL3M7ozY8EMl1oGEhk+o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qBU8VW+k3DtjyZ16CfFqJrxDj827o0pr1QvnsoQZDVRypDXf5m6LfhBhXu1qkDtsxIT+W2aXzvnGZHLGYvPlEQy7MdY/ZNeWd9vHZ/tesgI0KeGlXQSp25uBq3n7huI3NZOHvswsef+MGP7keaUC0VgYLv1Ob28xbzaOLWTOSjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gp0yIfuy; arc=none smtp.client-ip=192.198.163.16
+	 MIME-Version; b=qnDd2ifBa342eUwMTmWDtuh9Qh5lKxyx0U4N5eiuBiwHCfRACuIrFuHzsV4ViuoaJLRefH3S0+AzeCEEWp0XHwU5Jt0Jjirs4y/dOrmxxdtOQAs+nUJVYcNlan6+3EBi8HLnRtehhXM9IQ/Z/X2cfLF+oOS9s6rberU5xclEJAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKkNuMA4; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718044544; x=1749580544;
+  t=1718044548; x=1749580548;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=n/UgyX1U4zOUKAVlm2WMJOCOaWfvqKc/RRK5WzMIgI0=;
-  b=gp0yIfuy+F3+UXeqIemJfMJ5AwPTkr8cBCbEnxOXS/cQ7Opwmh8g5wTU
-   t6LObajZmJzQMh1fehsQjZ9tjlrY3WLI2LiLVeQZnl9dJepBFYG5/PzOT
-   c/aMi2+139uU/K+nQbuNmgDfr12qM32XbotcRhC916L4cs7Er9Bfq5+1d
-   JzPMsXJzQ+KgxIpLkTK0fVbT/pslvBErO0l01o/qQ7VJaCyiTeVQE0rzh
-   x8ws1ZKw6gsMp2TPgsIpwguwv/KArBoFmhzECRIAbaxUQ9694KLnJNh6G
-   cBBZLdorhBVG6wf+TWqR9dhh/olkO2TiO4zyP17AyOS+234Ah+ebUvIcD
-   w==;
-X-CSE-ConnectionGUID: JLDMLsFrQECEAU0cobKICQ==
-X-CSE-MsgGUID: AZ/q95EoSR2ERE/JYinCkQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12004834"
+  bh=4oqidBc9DHvPZDAc4/HvrQudL3M7ozY8EMl1oGEhk+o=;
+  b=fKkNuMA4LRGwikDtsJLdv3w9OVi7RzvjejsqetryMfmYb/6sQEP5uQuB
+   3Zjuwrhdc68IBvMGeYganOq/uwZKDXo8MmdSopRmHHB5e6Xkpetua9dP3
+   8Tehb7YhItlcu8/hdbNPPViXUias2OK3Nn95mwsycOg63MF1QGttPWdRO
+   DtwFge58nZBJT4rXdhR//B07WQ6+96/hl6PP5u0hV7JOaxRwFreaJhHsq
+   7dLrlS48LfXdt/fS33yhbNr0hyGCVNM/w62shlKCVANHpMLGZtggIM717
+   qQbjEx5/E4CZh5yCJiQTqTuIxKQS2HxHSdJ89AJUzeQ6jLmU4v2r9hw2W
+   A==;
+X-CSE-ConnectionGUID: qjpX44AmQa+7IxuHwhmuqQ==
+X-CSE-MsgGUID: JIbIzAfBQr63VBCYA6yyCQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12004837"
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="12004834"
+   d="scan'208";a="12004837"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
   by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:35:38 -0700
-X-CSE-ConnectionGUID: zStku52nQu6uU60eIgGNUQ==
-X-CSE-MsgGUID: ZrrWjfSVTKmHoaoioOdLrg==
+X-CSE-ConnectionGUID: AcPYkZgkRiiE39yzdHP7gw==
+X-CSE-MsgGUID: GqajRRP4QKCBjYU+QMFCUg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="43576575"
+   d="scan'208";a="43576578"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:35:38 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v20 09/18] x86/resctrl: Add a new field to struct rmid_read for summation of domains
-Date: Mon, 10 Jun 2024 11:35:19 -0700
-Message-ID: <20240610183528.349198-10-tony.luck@intel.com>
+Subject: [PATCH v20 10/18] x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+Date: Mon, 10 Jun 2024 11:35:20 -0700
+Message-ID: <20240610183528.349198-11-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240610183528.349198-1-tony.luck@intel.com>
 References: <20240610183528.349198-1-tony.luck@intel.com>
@@ -84,59 +84,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When a user reads a monitor file rdtgroup_mondata_show() calls
-mon_event_read() to package up all the required details into an rmid_read
-structure which is passed across the smp_call*() infrastructure to code
-that will read data from hardware and return the value (or error status)
-in the rmid_read structure.
+In Sub-NUMA Cluster (SNC) mode Linux must create the monitor
+files in the original "mon_L3_XX" directories and also in each
+of the "mon_sub_L3_YY" directories.
 
-Sub-NUMA Cluster (SNC) mode adds files with new semantics. These require
-the smp_call-ed code to sum event data from all domains that share an
-L3 cache.
+Refactor mkdir_mondata_subdir() to move the creation of monitoring files
+into a helper function to avoid the need to duplicate code later.
 
-Add a pointer to the L3 "cacheinfo" structure to struct rmid_read
-for the data collection routines to use to pick the domains to be
-summed.
-
-Reinette suggested that the rmid_read structure has become complex
-enough to warrant documentation of each of its fields. Add the kerneldoc
-documentation for struct rmid_read.
+No functional change.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 45 ++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 99f601d05f3b..d29c7b58c151 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -145,12 +145,25 @@ union mon_data_bits {
- 	} u;
- };
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 869dd1973b5d..66acbad1c585 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -3021,14 +3021,37 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+ 	}
+ }
  
-+/**
-+ * struct rmid_read - Data passed across smp_call*() to read event count
-+ * @rgrp:	Resctrl group
-+ * @r:		Resource
-+ * @d:		Domain. If NULL then sum all domains in @r sharing L3 @ci.id
-+ * @evtid:	Which monitor event to read
-+ * @first:	Initializes MBM counter when true
-+ * @ci:		Cacheinfo for L3. Used when summing domains
-+ * @err:	Return error indication
-+ * @val:	Return value of event counter
-+ * @arch_mon_ctx: Hardware monitor allocated for this read request (MPAM only)
-+ */
- struct rmid_read {
- 	struct rdtgroup		*rgrp;
- 	struct rdt_resource	*r;
- 	struct rdt_mon_domain	*d;
- 	enum resctrl_event_id	evtid;
- 	bool			first;
-+	struct cacheinfo	*ci;
- 	int			err;
- 	u64			val;
- 	void			*arch_mon_ctx;
++static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
++			     struct rdt_resource *r, struct rdtgroup *prgrp)
++{
++	union mon_data_bits priv;
++	struct mon_evt *mevt;
++	struct rmid_read rr;
++	int ret;
++
++	if (WARN_ON(list_empty(&r->evt_list)))
++		return -EPERM;
++
++	priv.u.rid = r->rid;
++	priv.u.domid = d->hdr.id;
++	list_for_each_entry(mevt, &r->evt_list, list) {
++		priv.u.evtid = mevt->evtid;
++		ret = mon_addfile(kn, mevt->name, priv.priv);
++		if (ret)
++			return ret;
++
++		if (is_mbm_event(mevt->evtid))
++			mon_event_read(&rr, r, d, prgrp, mevt->evtid, true);
++	}
++
++	return 0;
++}
++
+ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+ 				struct rdt_mon_domain *d,
+ 				struct rdt_resource *r, struct rdtgroup *prgrp)
+ {
+-	union mon_data_bits priv;
+ 	struct kernfs_node *kn;
+-	struct mon_evt *mevt;
+-	struct rmid_read rr;
+ 	char name[32];
+ 	int ret;
+ 
+@@ -3042,22 +3065,10 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+ 	if (ret)
+ 		goto out_destroy;
+ 
+-	if (WARN_ON(list_empty(&r->evt_list))) {
+-		ret = -EPERM;
++	ret = mon_add_all_files(kn, d, r, prgrp);
++	if (ret)
+ 		goto out_destroy;
+-	}
+ 
+-	priv.u.rid = r->rid;
+-	priv.u.domid = d->hdr.id;
+-	list_for_each_entry(mevt, &r->evt_list, list) {
+-		priv.u.evtid = mevt->evtid;
+-		ret = mon_addfile(kn, mevt->name, priv.priv);
+-		if (ret)
+-			goto out_destroy;
+-
+-		if (is_mbm_event(mevt->evtid))
+-			mon_event_read(&rr, r, d, prgrp, mevt->evtid, true);
+-	}
+ 	kernfs_activate(kn);
+ 	return 0;
+ 
 -- 
 2.45.0
 
