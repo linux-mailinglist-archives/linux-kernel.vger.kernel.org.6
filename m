@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-207937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC654901E2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:28:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F83901E31
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711731F23BE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:28:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CD1282B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD617407C;
-	Mon, 10 Jun 2024 09:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r77kvj7W"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEBD335A7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3DA74C04;
+	Mon, 10 Jun 2024 09:30:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689F017BA6;
+	Mon, 10 Jun 2024 09:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718011685; cv=none; b=IYDj6uOfa2v8cUiqN7DuMMevadmSi46UUJOc6CYFholDpi8f29OdqPovcg7jxM4OsznunJTiuQKYAqTvlJXZGFSHjVJdZpAYZPgSe3jRpWNmsL8OKTfsvHe8MpK/j7tmlOZ2FgkUNtIu63FjC+ztImkPCmQB6ziH8PWacwN32VQ=
+	t=1718011826; cv=none; b=HjOI/3zx2KMHgR87qnUxwTgVLl1Jh7KyALb3KI91yO1eDmvl+BrVywBFRB8XeOYrY8ueW+riYwWTWoqDbp3AxNAa8LuiD2dHJsDVYBtGtS9WIWmLGFL1xmz5nS6+8fe2dqwh1MEKdGZYpXIiimAhhhNxmbP+jmEW7p7TYEOd8hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718011685; c=relaxed/simple;
-	bh=P81jxZJDbNIbVJp+B8/qYs3oR2c2jO7ManIxlVtueTM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lCujq1IYGj7qzVSY5taAukWKh9/qtKOvONQO3gJpac6nx+8MR0Dv8oDJSAXxYhCLETLtFAwoCBBJcmIWv/LPobpYSRo8ARBDIdyzt0a0rbfBSTRFY6KWeuzECcW+YNKU/YpUT0kwjfv5NhbbVN20mBJ8Szr2ZMoIMJyevIoydRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r77kvj7W; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A8wYGC018114;
-	Mon, 10 Jun 2024 09:28:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=+z71MF369660wRQJUmSjKs7mzP
-	RmgR7mIvSlb0DU0Yo=; b=r77kvj7Wpn/XEfPqnvwy+1yPEbwXErKHFyCR1dJH0g
-	qGb/JLU516TucrLEdInJsJYiopzVxgIFNwo6BL+Ggbr0DoRpIiksYlrx523zbX0I
-	1z8k2QMfAN77hwqcxi/A07UDWhK+vm1j4Q4g9ysqICj3vKbgvCVKEd7rqs5fVN/i
-	kCRVQSP4gbOQFvygHsur0xkE9TRYhhg5BJqefT8ozrrzWnbdii+VC0THPuxvTwHM
-	qZfEEhXfAAOL98JzsUgKskVRsq+c/mX9dPR9l5EediUqGCnG0oUzhTvNVng9Jb4v
-	5UIm0j6Tnx/byfSCfSEuyg6XuD7pfPccY6Bkpfs7fGNg==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ynxerr2n8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 09:28:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45A9P83j028680;
-	Mon, 10 Jun 2024 09:27:59 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1mtxxsw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 09:27:59 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45A9Rt1v51249526
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Jun 2024 09:27:57 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 97E9820065;
-	Mon, 10 Jun 2024 09:27:55 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 74B4420063;
-	Mon, 10 Jun 2024 09:27:55 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 10 Jun 2024 09:27:55 +0000 (GMT)
-From: Peter Oberparleiter <oberpar@linux.ibm.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, allison.henderson@oracle.com,
-        chuck.lever@oracle.com, oberpar@linux.ibm.com
-Subject: [PATCH] gcov: add support for GCC 14
-Date: Mon, 10 Jun 2024 11:27:43 +0200
-Message-Id: <20240610092743.1609845-1-oberpar@linux.ibm.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718011826; c=relaxed/simple;
+	bh=BzOFp0MDhXXy+iCPicy7Sy9fxkKj25CRtqXNxtQwAjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TMYdpmYwC+Z5LTMnc4g3BdNl30Cydo36BtdZqHWbNjZwuSo3d639tRaeunl4NXGpgY/fnrR/JswXeZRYvKmb2aOCx/ctHGijmRZe1yZDsUXcQM+CO1WJNB/i+DScQLaKS1lyRLMsF9X/Q/UyWPdjH1tXQSs+2gtDvRYOJqzxGlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45A4312FC;
+	Mon, 10 Jun 2024 02:30:47 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 731673F73B;
+	Mon, 10 Jun 2024 02:30:19 -0700 (PDT)
+Date: Mon, 10 Jun 2024 10:30:13 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 2/9] perf: arm_v6/7_pmu: Drop non-DT probe support
+Message-ID: <ZmbHpTXlSP4T0JqI@J2N7QTR9R3>
+References: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
+ <20240607-arm-pmu-3-9-icntr-v1-2-c7bd2dceff3b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aqaj9prAp1gRYoBHNWEQEVlhrCE3Bp-1
-X-Proofpoint-ORIG-GUID: aqaj9prAp1gRYoBHNWEQEVlhrCE3Bp-1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100071
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-2-c7bd2dceff3b@kernel.org>
 
-Using gcov on kernels compiled with GCC 14 results in truncated 16-byte
-long .gcda files with no usable data. To fix this, update GCOV_COUNTERS
-to match the value defined by GCC 14.
+On Fri, Jun 07, 2024 at 02:31:27PM -0600, Rob Herring (Arm) wrote:
+> There are no non-DT based PMU users for v6 or v7, so drop the custom
+> non-DT probe table.
+> 
+> Note that this drops support for arm1156 PMU, but there are no arm1156
+> based systems supported in the kernel.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Tested with GCC versions 14.1.0 and 13.2.0.
+It might be worth adding an explciit note that xscale still has non-DT
+support, and hence we need to retain the infrastructure for that.
 
-Reported-by: Allison Henderson <allison.henderson@oracle.com>
-Reported-by: Chuck Lever III <chuck.lever@oracle.com>
-Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
----
- kernel/gcov/gcc_4_7.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Regardless:
 
-diff --git a/kernel/gcov/gcc_4_7.c b/kernel/gcov/gcc_4_7.c
-index 74a4ef1da9ad..fd75b4a484d7 100644
---- a/kernel/gcov/gcc_4_7.c
-+++ b/kernel/gcov/gcc_4_7.c
-@@ -18,7 +18,9 @@
- #include <linux/mm.h>
- #include "gcov.h"
- 
--#if (__GNUC__ >= 10)
-+#if (__GNUC__ >= 14)
-+#define GCOV_COUNTERS			9
-+#elif (__GNUC__ >= 10)
- #define GCOV_COUNTERS			8
- #elif (__GNUC__ >= 7)
- #define GCOV_COUNTERS			9
--- 
-2.40.1
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
+Mark.
+
+> ---
+>  drivers/perf/arm_v6_pmu.c | 17 +----------------
+>  drivers/perf/arm_v7_pmu.c | 10 +---------
+>  2 files changed, 2 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_v6_pmu.c b/drivers/perf/arm_v6_pmu.c
+> index f7593843bb85..0bb685b4bac5 100644
+> --- a/drivers/perf/arm_v6_pmu.c
+> +++ b/drivers/perf/arm_v6_pmu.c
+> @@ -401,13 +401,6 @@ static int armv6_1136_pmu_init(struct arm_pmu *cpu_pmu)
+>  	return 0;
+>  }
+>  
+> -static int armv6_1156_pmu_init(struct arm_pmu *cpu_pmu)
+> -{
+> -	armv6pmu_init(cpu_pmu);
+> -	cpu_pmu->name		= "armv6_1156";
+> -	return 0;
+> -}
+> -
+>  static int armv6_1176_pmu_init(struct arm_pmu *cpu_pmu)
+>  {
+>  	armv6pmu_init(cpu_pmu);
+> @@ -421,17 +414,9 @@ static const struct of_device_id armv6_pmu_of_device_ids[] = {
+>  	{ /* sentinel value */ }
+>  };
+>  
+> -static const struct pmu_probe_info armv6_pmu_probe_table[] = {
+> -	ARM_PMU_PROBE(ARM_CPU_PART_ARM1136, armv6_1136_pmu_init),
+> -	ARM_PMU_PROBE(ARM_CPU_PART_ARM1156, armv6_1156_pmu_init),
+> -	ARM_PMU_PROBE(ARM_CPU_PART_ARM1176, armv6_1176_pmu_init),
+> -	{ /* sentinel value */ }
+> -};
+> -
+>  static int armv6_pmu_device_probe(struct platform_device *pdev)
+>  {
+> -	return arm_pmu_device_probe(pdev, armv6_pmu_of_device_ids,
+> -				    armv6_pmu_probe_table);
+> +	return arm_pmu_device_probe(pdev, armv6_pmu_of_device_ids, NULL);
+>  }
+>  
+>  static struct platform_driver armv6_pmu_driver = {
+> diff --git a/drivers/perf/arm_v7_pmu.c b/drivers/perf/arm_v7_pmu.c
+> index fdd936fbd188..928ac3d626ed 100644
+> --- a/drivers/perf/arm_v7_pmu.c
+> +++ b/drivers/perf/arm_v7_pmu.c
+> @@ -1977,17 +1977,9 @@ static const struct of_device_id armv7_pmu_of_device_ids[] = {
+>  	{},
+>  };
+>  
+> -static const struct pmu_probe_info armv7_pmu_probe_table[] = {
+> -	ARM_PMU_PROBE(ARM_CPU_PART_CORTEX_A8, armv7_a8_pmu_init),
+> -	ARM_PMU_PROBE(ARM_CPU_PART_CORTEX_A9, armv7_a9_pmu_init),
+> -	{ /* sentinel value */ }
+> -};
+> -
+> -
+>  static int armv7_pmu_device_probe(struct platform_device *pdev)
+>  {
+> -	return arm_pmu_device_probe(pdev, armv7_pmu_of_device_ids,
+> -				    armv7_pmu_probe_table);
+> +	return arm_pmu_device_probe(pdev, armv7_pmu_of_device_ids, NULL);
+>  }
+>  
+>  static struct platform_driver armv7_pmu_driver = {
+> 
+> -- 
+> 2.43.0
+> 
 
