@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-208142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169E590216B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:18:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9805690216C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8955D1F2167F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:18:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5EC9B24130
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A387E799;
-	Mon, 10 Jun 2024 12:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391680035;
+	Mon, 10 Jun 2024 12:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYIZ+rDm"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZpHlgAu"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64BD7E57C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1917F498
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021906; cv=none; b=LnTLFPdATGI5wqMMS6xlXRh7cmtNtzt/W6Y9VQQ4MZujD2p94x3gw2gPtmQ1q6KZkU5S0xrJJnGte7dXDmJfvtx+yXo0DoibuoFiuJjHUGcUNsl5yQ1tE0Qn62CgnqFxCfm+/s4E8ZCSRaPU1QBzKOldhVXNvobY6WMv1rAXI1A=
+	t=1718021909; cv=none; b=ain6KACvMP4LLUxn/wOxc79K9TEys5n7lXXGv/inKxYsh/I1dEfGzalYoz0YApr8pouD5fmX18Vv1B577kOtlsphugCziLIXkUh8HdWWrbidyhagsD/qe/WtgseSb7X8B4yZuPj1fvr7bvzgbZhGiavrdr0j4B1vTRZdeSkrB2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021906; c=relaxed/simple;
-	bh=aQ6jk11K5ysHvETxy4Xlgu0vY/turwVtvB4rc1wailw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1Da4UtsQ+nn1U7/QBa6DAwNqUvrXltnJ5yuKcopSqE+qPwtgYhhv4K8LZYH2g/EnXZQUUajkXg+mONiR2rqK4LwunNSYX6kYCjHoKg9dTfN78hmFgFnoO5qpb7phYUQPQ9CROgL3wA9OegNHa71ndxa6d3tZ7cXcM6qXEui6l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYIZ+rDm; arc=none smtp.client-ip=209.85.161.53
+	s=arc-20240116; t=1718021909; c=relaxed/simple;
+	bh=9+X5chMM78ZCXcGy2haYPPGQLERHdK5PIRCndYkt8Rk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YBbT2G9dWeSnTZAPKwAhwdy/+3ihm0WRjnZOhug+C+aCp70TSFwXxDBf5YAA4ZgkGKYVq+GfDbLjkRKqhxytNIb+wt0oK+GU7OdRfgDOM9DdE+QaKsmCUkt9yAbULLXrZ9zhSsQEofZquQU4kCnYnyE6JzGpcgh4jsjTizU4UQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZpHlgAu; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b970e90ab8so2614505eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:18:24 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b072522bd5so8012836d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718021904; x=1718626704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0+Az1PpLJ4JYTtMedJjbgRRlyQLWkppyc96i5melFic=;
-        b=nYIZ+rDmdHTitQPk69K7ei3+zVFySXuD9h7D2J5zw3L7WPrg/O6X/UgScIqub5BQ9h
-         oOfF1fuA/R5kixjjK38Wkgs+EBNDSjezqjHHFmryy5KVEuAJ7KQ1Dl7b6q/v6BDuMlUq
-         ifMjPCZqGzFo1iRTCZxXlDQvZUdjoeSClan0jp751bAyWxMtfCqmYf8YlqBmedYrzkls
-         dajPV/nXChVuJWHXXPNZ68/FyoMRZB5eGC7K/5X9HJIApxMTETjJQTKKSBkfTdFqwa6i
-         jcdsP1LkYOhUUjed+INi2O1lRLjvcbW6OO7WeBe2NAnZxHl37EUWemz1gNtSjcESwM6i
-         2+Og==
+        d=gmail.com; s=20230601; t=1718021905; x=1718626705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=enp1TRQZwGsuV9i2AxeXdZVfnUfEdxfgu+pXvPIz5hY=;
+        b=KZpHlgAu5lfw0WfGhR0zDkZIBjLgvOo8zIhFjKA7yJqlBEpa8ZBbLsViKHp0k96PtY
+         jXlQ+kvSaScgmXlN2KKlEaJHUlvFE73xDpzScXHkl56dC1sOLg/7oUBz5CK4oeRNY5+O
+         fJQYMS9+dEQYVAAvdCL/slkgvx6I7O8nC2LYUbNSvIT3A6xF2WWHnVTfoxzBtHkf/sPW
+         qtt/K3SHiV+rSwdvIY2CknSAwuI3ltJfTNuc8U7pitR3py4QYI4fATjYM1bHD7D4G1MN
+         nG5BMbNmkJEyiArGSgaUnWprmJsclKCV619UTt8bpArRR/YEHvDWofu5sqwPo+NMia53
+         AA3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718021904; x=1718626704;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0+Az1PpLJ4JYTtMedJjbgRRlyQLWkppyc96i5melFic=;
-        b=Phdd1GN6Me2ki8D9iiipc07QxXxg0NPiCgw3RmRvboAVMn7/TjO37KFfk+m3Vksa9y
-         S2XAhczSqxiEAHiAJ7SkAglIkPp6bMekfNLibDw5tkuoa0dbpvkFR080j7TQtu1D9oMC
-         BM7Pwd9kBKb7gbKUQ10W2qwvBSHPBK1NjO6MdNTW9yrGWBlJhOO9hNcIoB5v1Q14avSm
-         EFVpn1qHoMUp9az8VKDjuk2H7ZqUBUfsSzZFeZrUDldmF2P21h4OEA12KhiRXGBtqEFO
-         VlJzcJhjpDscxei5IRar8Tx4Qyk8AwRSOycvSCfS3XS6gR9hh02qnJbj05bJZctPdk0i
-         d9bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN2OG8Tng+xljWV2UR8dNQtVIDegNgim+Ij610zg0x46qSsP19a5B/R1nupKGc+tSw+K4bw6DrvJeQbn5W1lHKXmMk8Ks+YewSjdR7
-X-Gm-Message-State: AOJu0YwRXa0e/bZ9NbN/jpLZMWyBKm4aI1iMIbO9fKPrRusmADCvNGo5
-	vQmOrNip2HrItVwjoRSq8LiBooMHQ7h7fNKEK/isjV5lA77ZjvUV
-X-Google-Smtp-Source: AGHT+IHlGKS8y91VhGXHAROeBpYgpO4e/NBHK33a/DUHtG9u+8/tE43i3a/RyUN7beMURh6JEM4UUQ==
-X-Received: by 2002:a05:6358:63a3:b0:19f:4d27:fb77 with SMTP id e5c5f4694b2df-19f4d27ff52mr491142255d.5.1718021903745;
-        Mon, 10 Jun 2024 05:18:23 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-007.fbsv.net. [2a03:2880:20ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b063821c95sm32331886d6.96.2024.06.10.05.18.23
+        d=1e100.net; s=20230601; t=1718021905; x=1718626705;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=enp1TRQZwGsuV9i2AxeXdZVfnUfEdxfgu+pXvPIz5hY=;
+        b=LnYkjuACLxvVDO5NbhiMeyo3QKem8at+kjadJvFnEg81TvsTCJHy3a3J9sbYLwXpel
+         AOPYHyNr14VC7p2jXzxCTaERA7BDmMmCYJn/poQqLgWkEafQQ/sOEQeOou5slpCjGhZA
+         u6ihWZoD5Xb4SvqKD5+9dMeWWuIiSU4JBEvPcE+OJzNA/agabs8RtN7roMJvZDgclv0s
+         huTq+o9fiDev7fwGHjSlGZt5yFmW9vr/fyv/9qzIoEyi/sP0olBaLcSxbtPT3cL/6+xw
+         7LZtSOGz3VDoczdgqsc8VZKsTCWscfb7e6NojUcNtHKTfShOY4g/FDsLBg3f9Rn4r16X
+         HB3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWx7OQjegta1LMYcUNpO+ZICKl/tZAsyj/ATBs4I7F6GcGjE31kJi5rs44t2CgJZPYq1XRGJT4xviMEcyUDa3VTSgXznv49LZFkMcsj
+X-Gm-Message-State: AOJu0YzhwJz04JCWcPQflQjmKqdzAbvn0MSBwW+hWCp5jGAkvSnxH6Tc
+	gc/n1ksYNW0qa7E3caMChDQT635gXDjKIlHL182b3fBtqfpVP6HldAEQeuKfTVz8uQ==
+X-Google-Smtp-Source: AGHT+IER/6/Ev/fin7kHekd/wvr1haZ/PJS9r0VJYzapmkP25Xc4EV0tD+B/2Rh4HpReLXXohs1EQQ==
+X-Received: by 2002:a05:6214:5990:b0:6b0:7206:e7a4 with SMTP id 6a1803df08f44-6b07206ebd7mr69801746d6.3.1718021905323;
+        Mon, 10 Jun 2024 05:18:25 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-000.fbsv.net. [2a03:2880:20ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b0683044dbsm27042936d6.75.2024.06.10.05.18.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 05:18:23 -0700 (PDT)
+        Mon, 10 Jun 2024 05:18:24 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: akpm@linux-foundation.org
 Cc: hannes@cmpxchg.org,
@@ -78,10 +80,12 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
-Date: Mon, 10 Jun 2024 13:15:58 +0100
-Message-ID: <20240610121820.328876-1-usamaarif642@gmail.com>
+Subject: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
+Date: Mon, 10 Jun 2024 13:15:59 +0100
+Message-ID: <20240610121820.328876-2-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240610121820.328876-1-usamaarif642@gmail.com>
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,66 +94,226 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Going back to the v1 implementation of the patchseries. The main reason
-is that a correct version of v2 implementation requires another rmap
-walk in shrink_folio_list to change the ptes from swap entry to zero pages to
-work (i.e. more CPU used) [1], is more complex to implement compared to v1
-and is harder to verify correctness compared to v1, where everything is
-handled by swap.
+Approximately 10-20% of pages to be swapped out are zero pages [1].
+Rather than reading/writing these pages to flash resulting
+in increased I/O and flash wear, a bitmap can be used to mark these
+pages as zero at write time, and the pages can be filled at
+read time if the bit corresponding to the page is set.
+With this patch, NVMe writes in Meta server fleet decreased
+by almost 10% with conventional swap setup (zswap disabled).
 
+[1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
-As shown in the patchseries that introduced the zswap same-filled
-optimization [2], 10-20% of the pages stored in zswap are same-filled.
-This is also observed across Meta's server fleet.
-By using VM counters in swap_writepage (not included in this
-patchseries) it was found that less than 1% of the same-filled
-pages to be swapped out are non-zero pages.
-
-For conventional swap setup (without zswap), rather than reading/writing
-these pages to flash resulting in increased I/O and flash wear, a bitmap
-can be used to mark these pages as zero at write time, and the pages can
-be filled at read time if the bit corresponding to the page is set.
-
-When using zswap with swap, this also means that a zswap_entry does not
-need to be allocated for zero filled pages resulting in memory savings
-which would offset the memory used for the bitmap.
-
-A similar attempt was made earlier in [3] where zswap would only track
-zero-filled pages instead of same-filled.
-This patchseries adds zero-filled pages optimization to swap
-(hence it can be used even if zswap is disabled) and removes the
-same-filled code from zswap (as only 1% of the same-filled pages are
-non-zero), simplifying code.
-
-This patchseries is based on mm-unstable.
-
-
-[1] https://lore.kernel.org/all/e4d167fe-cb1e-41d1-a144-00bfa14b7148@gmail.com/
-[2] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
-[3] https://lore.kernel.org/lkml/20240325235018.2028408-1-yosryahmed@google.com/
-
----
-v2->v3:
-- Going back to the v1 version of the implementation (David and Shakeel)
-- convert unatomic bitmap_set/clear to atomic set/clear_bit (Johannes)
-- use clear_highpage instead of folio_page_zero_fill (Yosry)
-
-v1 -> v2:
-- instead of using a bitmap in swap, clear pte for zero pages and let
-  do_pte_missing handle this page at page fault. (Yosry and Matthew)
-- Check end of page first when checking if folio is zero filled as
-  it could lead to better performance. (Yosry)
- 
-Usama Arif (2):
-  mm: store zero pages to be swapped out in a bitmap
-  mm: remove code to handle same filled pages
-
  include/linux/swap.h |  1 +
  mm/page_io.c         | 92 +++++++++++++++++++++++++++++++++++++++++++-
  mm/swapfile.c        | 21 +++++++++-
- mm/zswap.c           | 86 ++++-------------------------------------
- 4 files changed, 119 insertions(+), 81 deletions(-)
+ 3 files changed, 111 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index a11c75e897ec..e88563978441 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -299,6 +299,7 @@ struct swap_info_struct {
+ 	signed char	type;		/* strange name for an index */
+ 	unsigned int	max;		/* extent of the swap_map */
+ 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
++	unsigned long *zeromap;		/* vmalloc'ed bitmap to track zero pages */
+ 	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
+ 	struct swap_cluster_list free_clusters; /* free clusters list */
+ 	unsigned int lowest_bit;	/* index of first free in swap_map */
+diff --git a/mm/page_io.c b/mm/page_io.c
+index a360857cf75d..2cac1e11fb85 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -172,6 +172,82 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
+ 	goto out;
+ }
+ 
++static bool is_folio_page_zero_filled(struct folio *folio, int i)
++{
++	unsigned long *data;
++	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
++	bool ret = false;
++
++	data = kmap_local_folio(folio, i * PAGE_SIZE);
++	if (data[last_pos])
++		goto out;
++	for (pos = 0; pos < PAGE_SIZE / sizeof(*data); pos++) {
++		if (data[pos])
++			goto out;
++	}
++	ret = true;
++out:
++	kunmap_local(data);
++	return ret;
++}
++
++static bool is_folio_zero_filled(struct folio *folio)
++{
++	unsigned int i;
++
++	for (i = 0; i < folio_nr_pages(folio); i++) {
++		if (!is_folio_page_zero_filled(folio, i))
++			return false;
++	}
++	return true;
++}
++
++static void folio_zero_fill(struct folio *folio)
++{
++	unsigned int i;
++
++	for (i = 0; i < folio_nr_pages(folio); i++)
++		clear_highpage(folio_page(folio, i));
++}
++
++static void swap_zeromap_folio_set(struct folio *folio)
++{
++	struct swap_info_struct *sis = swp_swap_info(folio->swap);
++	swp_entry_t entry;
++	unsigned int i;
++
++	for (i = 0; i < folio_nr_pages(folio); i++) {
++		entry = page_swap_entry(folio_page(folio, i));
++		set_bit(swp_offset(entry), sis->zeromap);
++	}
++}
++
++static void swap_zeromap_folio_clear(struct folio *folio)
++{
++	struct swap_info_struct *sis = swp_swap_info(folio->swap);
++	swp_entry_t entry;
++	unsigned int i;
++
++	for (i = 0; i < folio_nr_pages(folio); i++) {
++		entry = page_swap_entry(folio_page(folio, i));
++		clear_bit(swp_offset(entry), sis->zeromap);
++	}
++}
++
++static bool swap_zeromap_folio_test(struct folio *folio)
++{
++	struct swap_info_struct *sis = swp_swap_info(folio->swap);
++	swp_entry_t entry;
++	unsigned int i;
++
++	for (i = 0; i < folio_nr_pages(folio); i++) {
++		entry = page_swap_entry(folio_page(folio, i));
++		if (!test_bit(swp_offset(entry), sis->zeromap))
++			return false;
++	}
++	return true;
++}
++
+ /*
+  * We may have stale swap cache pages in memory: notice
+  * them here and get rid of the unnecessary final write.
+@@ -195,6 +271,15 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 		folio_unlock(folio);
+ 		return ret;
+ 	}
++
++	if (is_folio_zero_filled(folio)) {
++		swap_zeromap_folio_set(folio);
++		folio_start_writeback(folio);
++		folio_unlock(folio);
++		folio_end_writeback(folio);
++		return 0;
++	}
++	swap_zeromap_folio_clear(folio);
+ 	if (zswap_store(folio)) {
+ 		folio_start_writeback(folio);
+ 		folio_unlock(folio);
+@@ -515,8 +600,11 @@ void swap_read_folio(struct folio *folio, bool synchronous,
+ 		psi_memstall_enter(&pflags);
+ 	}
+ 	delayacct_swapin_start();
+-
+-	if (zswap_load(folio)) {
++	if (swap_zeromap_folio_test(folio)) {
++		folio_zero_fill(folio);
++		folio_mark_uptodate(folio);
++		folio_unlock(folio);
++	} else if (zswap_load(folio)) {
+ 		folio_mark_uptodate(folio);
+ 		folio_unlock(folio);
+ 	} else if (data_race(sis->flags & SWP_FS_OPS)) {
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f1e559e216bd..90451174fe34 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -453,6 +453,8 @@ static unsigned int cluster_list_del_first(struct swap_cluster_list *list,
+ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+ 		unsigned int idx)
+ {
++	unsigned int i;
++
+ 	/*
+ 	 * If scan_swap_map_slots() can't find a free cluster, it will check
+ 	 * si->swap_map directly. To make sure the discarding cluster isn't
+@@ -461,6 +463,13 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+ 	 */
+ 	memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+ 			SWAP_MAP_BAD, SWAPFILE_CLUSTER);
++	/*
++	 * zeromap can see updates from concurrent swap_writepage() and swap_read_folio()
++	 * call on other slots, hence use atomic clear_bit for zeromap instead of the
++	 * non-atomic bitmap_clear.
++	 */
++	for (i = 0; i < SWAPFILE_CLUSTER; i++)
++		clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+ 
+ 	cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
+ 
+@@ -482,7 +491,7 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
+ static void swap_do_scheduled_discard(struct swap_info_struct *si)
+ {
+ 	struct swap_cluster_info *info, *ci;
+-	unsigned int idx;
++	unsigned int idx, i;
+ 
+ 	info = si->cluster_info;
+ 
+@@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
+ 		__free_cluster(si, idx);
+ 		memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+ 				0, SWAPFILE_CLUSTER);
++		for (i = 0; i < SWAPFILE_CLUSTER; i++)
++			clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+ 		unlock_cluster(ci);
+ 	}
+ }
+@@ -1336,6 +1347,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+ 	count = p->swap_map[offset];
+ 	VM_BUG_ON(count != SWAP_HAS_CACHE);
+ 	p->swap_map[offset] = 0;
++	clear_bit(offset, p->zeromap);
+ 	dec_cluster_info_page(p, p->cluster_info, offset);
+ 	unlock_cluster(ci);
+ 
+@@ -2597,6 +2609,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
+ 	free_percpu(p->cluster_next_cpu);
+ 	p->cluster_next_cpu = NULL;
+ 	vfree(swap_map);
++	bitmap_free(p->zeromap);
+ 	kvfree(cluster_info);
+ 	/* Destroy swap account information */
+ 	swap_cgroup_swapoff(p->type);
+@@ -3123,6 +3136,12 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap_unlock_inode;
+ 	}
+ 
++	p->zeromap = bitmap_zalloc(maxpages, GFP_KERNEL);
++	if (!p->zeromap) {
++		error = -ENOMEM;
++		goto bad_swap_unlock_inode;
++	}
++
+ 	if (p->bdev && bdev_stable_writes(p->bdev))
+ 		p->flags |= SWP_STABLE_WRITES;
+ 
 -- 
 2.43.0
 
