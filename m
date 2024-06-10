@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-208526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A706790263C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDFF902637
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EFD1F23081
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136FA1C227B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0093A14BF87;
-	Mon, 10 Jun 2024 16:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BE1E86A;
+	Mon, 10 Jun 2024 16:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oGEgdkqd"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ma0r11vv"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3A8148841;
-	Mon, 10 Jun 2024 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035244; cv=fail; b=QzZJVtR6FbPCMmg41GLsNpkZl/7g4j/7123nebjl2nG5uOjAx8q+lrOkBi4uO2us4xrwM46ZP6pFVnVm0vKZA9smeIXuGnHCtbdhOIXJ18hHZyU4tmuZcdN3GcOweJ2j1ub4j5qKPnOx15nIhJXBy2UYn8XKdPwTP32lQk0wGhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035244; c=relaxed/simple;
-	bh=JSCoRXCk0BDtEzYoYNAYIGS6i581no0AfB7/4XV6tMU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jg7C11nOx82WsNluNezObERahOa2BMJeOsyPQ4sCLgWIg46WxTdCPY7Rybw0PThE7pt4nxdeRXaihBMQwfPft8BSvAQfUIbjgVxje6pd5kOg7VYfj6AWpohj6MvJdAg8k5+wV9EWc3MkccER+MY8xG6geLV8Xk5kxTUUCkVaXKY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oGEgdkqd; arc=fail smtp.client-ip=40.107.223.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fUbAX8CYa+DthNjDc3KnJI9fcn3aQ6c1RqZwRuy0xiJ/+rf5bSp9WecHkmTeRYIbnw82PfciPUHIhlspic3HE91kk/H7mM9b1y8ah3M//dKF+BxT37xYMWYqoPo9nxdQlaSqnZFXhzp68ZssdPRMwlVcoQPnmrHZeKTAokWEgZtew3tYTulULcZMQ0VWKz9QH65vMjKwrxeK1g1dL6QcEueZSA70wB65sNeOpL5sFPu549NsrFy0CFL40zQ+y6ZJstDoI2Tx+SqtQ0H7ttgfEmz9ln7Lat/A9fgdSZCsS5yoLjopdIP/OBH5W2IuJxuCrh2TnBEwMOByX7kfOpIltw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bbal+O04jUTyZ/CT6Z/M7q7oMnm43JswcqnO5Xq/0cg=;
- b=LzUIcpl4h/t+R4fqs4ZpEcQlfx4Y0sjqWvbc+Jhioiwan8ti6YuJ5qyE/xN9y27IW9OI32qX6+BSJXVLbBk32Z8lbAzVbNdacVOuC54dlQlryMIUPsoJ6uip1f8fE4ibROrrsDlHWSnr9bVlKv2JGdpTDLT24AvlxiODvSIlvCeDYDhymF+ngB/FUngkyQJPcEMB/KOYkDUry7++Z0ocXYpC4j8PDznZ+W4G9fzb3o7AMrGnNzUHMEI/ir40YFNOQL4ld/Cb2ucvqbXmkWt9d0pEpugfppjIGLdld0oq2wrG/Mw1gAvP6eqCH6sGP8EcTwC7B0QMfHbA1aOSVmLK9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bbal+O04jUTyZ/CT6Z/M7q7oMnm43JswcqnO5Xq/0cg=;
- b=oGEgdkqdUMBtpI7Eb8j/wmtYEk5tBhyJi/2kTaCTY2WlTY7H313dWRWCw8wAAma3kbl8agPz47gisid2Z51IbyiljE85uCoEy6FqD7pq+3I5f/vur/Y62EQz6/MRn6bhJL3FTQy1PIDrookQoa3WW/umr/qFinOsx3hfn87m85c=
-Received: from PH8PR22CA0017.namprd22.prod.outlook.com (2603:10b6:510:2d1::13)
- by IA1PR12MB6139.namprd12.prod.outlook.com (2603:10b6:208:3e9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 16:00:34 +0000
-Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
- (2603:10b6:510:2d1:cafe::ab) by PH8PR22CA0017.outlook.office365.com
- (2603:10b6:510:2d1::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.25 via Frontend
- Transport; Mon, 10 Jun 2024 16:00:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 10 Jun 2024 16:00:34 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Jun
- 2024 11:00:28 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <fenghua.yu@intel.com>, <reinette.chatre@intel.com>, <shuah@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <babu.moger@amd.com>,
-	<maciej.wieczor-retman@intel.com>, <peternewman@google.com>,
-	<eranian@google.com>
-Subject: [PATCH v2] selftests/resctrl: Fix noncont_cat_run_test for AMD
-Date: Mon, 10 Jun 2024 11:00:22 -0500
-Message-ID: <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41C6143736;
+	Mon, 10 Jun 2024 16:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718035239; cv=none; b=bH8haLIKXebEKkdIb7iH621bmKkCdQ9YxJVa/M/pVkUeDEiVJCuQSJaUou3tnlqc4TusWPIV5rItk6sOL8hl++H44T2UX5bAKklUNJXPtQSGKgasUYs0QqakpRDO7Gcfm13jnkSFoIaLplvyUgUgbnrReLtCrToKcSbXaDYaLt0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718035239; c=relaxed/simple;
+	bh=Cqpixi5sxiPnJFGUUJpNAZk5PRn/VBKHKfOdrkdhZWk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MvJfmbxOMPRgzUNYtZp0+1Q0PRHXFHAp/QIiKUYAu8eLYtNWA7kFZCCbJO01X/pefr2PzTf2xWK88l98pVEHKf/A95SakhtjgU6gk4cX6JQ+/4gsoLXMuUjamdCUjKchaDPCptlaAqxQ005izuYe2HXSlwHZNuNg3vnBqiGkQm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ma0r11vv; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7041e39a5beso1958240b3a.3;
+        Mon, 10 Jun 2024 09:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718035237; x=1718640037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WTMYy1REZ05nqGyjoEgjo2hQqlx5VXGzyBXDQH2xccg=;
+        b=Ma0r11vvM4IWu54oL8fAkXoGQuSN85uTcmXeSUg0VRmLH+uEhEaWAvk6gymbl2drMo
+         GyqoZ+wCNigi0v2y4v/pNjkPlJjyoYF88YVb1Ezu6iV5yrcmptGyghoAs7KJ36/ijB+F
+         7GnZQJi4wponwAcvM/ytTWoF8IwXfWl5GRjkX9ma1aEi9esoXUMdTLKlr+NwgppxnhT2
+         KBwVbvte8aOIb2hWKn1GVTOGA/OEhJgx7rANLi7XZf93VrgISECeCcdvStkIQXiidfn4
+         Dmowi6kAOGelBXrpUkD3KpAJuRx3YjVmNnLesueQwPHmTzLuYFEE3L5e4o4i3y2eS8oK
+         bIig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718035237; x=1718640037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTMYy1REZ05nqGyjoEgjo2hQqlx5VXGzyBXDQH2xccg=;
+        b=mI8OaxucV1NrxP0VHO7Rmlv8kSRNkhD/G7ENHDE48HItj8SGWOuJMRluwBpPdcj1WA
+         KFepSu+NLMHe7t1oXnI2Kve1slRBhH4KNPQBTtzm9LwZ/QSd8J51M9R2zN0YfPGs+9rh
+         QzRiu7e1/D8xeAHbMS1jGzwdvooJTWRWEapk3O17OJFj5DSNEasmtwK5zDYCQa1IMjS0
+         HGsf3Jf4JXgo7OMz9RhHxpmQtXs+/yfLsheyxCReOcwWXG8jc/yEW583/2uLvlY81vGQ
+         17kJMlvKgTo4jpE/pXwaX2uD6wA/UcV0sL/x7tbNTVnHTGz2rgMv/cjcXwAMHYR261zT
+         zfcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHN+joKEtNG/hnz+8SpdRq0eSJRhrL1cat6hiOZJqJ7FWj6zv6u7h0uQDFKRGu6y3PwGGhqAZboO6nh8pO2gA9kr1QaO6R7NWz0k897f3pKUSHksZpM/vr9INp+6FSL9Yu1X17xgExHsav6w==
+X-Gm-Message-State: AOJu0YzvRBZFlYTctFWxSbcPBFlLyhVkU0ySBMDhXB38snzz9jPA6kVs
+	Zn3dVuZsU6SAsHYjwXKMeOUhf4y0thphFkas8q3Pr2e0Y8fnO5VvCWRGEw==
+X-Google-Smtp-Source: AGHT+IEuvcNQPfGUOcIJtmuKfCRpaE/EKHFJ5NIkKVX1Rzy/Q5tNETGGddUYJYQHg8Zj6yylEO6J1g==
+X-Received: by 2002:a05:6300:8088:b0:1b1:f19b:4df3 with SMTP id adf61e73a8af0-1b2f9caba1fmr9263685637.39.1718035236893;
+        Mon, 10 Jun 2024 09:00:36 -0700 (PDT)
+Received: from carrot.. (i223-217-185-141.s42.a014.ap.plala.or.jp. [223.217.185.141])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6e4532507casm4872411a12.62.2024.06.10.09.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:00:36 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH -mm 1/2] nilfs2: prepare backing device folios for writing after adding checksums
+Date: Tue, 11 Jun 2024 01:00:28 +0900
+Message-Id: <20240610160029.7673-2-konishi.ryusuke@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
-References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
+In-Reply-To: <20240610160029.7673-1-konishi.ryusuke@gmail.com>
+References: <20240610160029.7673-1-konishi.ryusuke@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,129 +84,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|IA1PR12MB6139:EE_
-X-MS-Office365-Filtering-Correlation-Id: fbb2086b-7471-4481-5230-08dc8966762d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|82310400017|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hueoyezoWxLze2auaQRTuA1FyBtn5MEtVaCIS+byyghb8BCDFL3qpF+wOOle?=
- =?us-ascii?Q?1e0b+f2w1+eNNTJQNM+lL6bLLyM2rR6oIhcRmTyp6xXpNuyjg+Q79iUI1gAm?=
- =?us-ascii?Q?alpWyk3jlrCLUKGQ9P0q3ls4avc8rP9q6MNLYKyMHJS94Xg8sg3czqtHrF50?=
- =?us-ascii?Q?5Fi9Kuchr0InQZ0T48jue6yiMivMDd1mjc3tsD5mdevtR0caYsG4XhWSPEiA?=
- =?us-ascii?Q?aRtJmcfpIwyaUbZ4cB9aF6uQWJoV/S8sfUESk+zBDx6RES9+0jAsLv3j4Mia?=
- =?us-ascii?Q?SJEmDWqyKGsBTnb/IBo+7wPrm3C/8Penn7fUZswXVQfwtDwQqXVt+fzZUHsq?=
- =?us-ascii?Q?jyauTg4/hGfzYHdo+pw+ELcxsMWJJWm1qOXHx1d7ZAPi4F8iXAnOh4gHZPbG?=
- =?us-ascii?Q?AE52YKDot984PQ0pAN2o5D4aO6rZLSo6W9g9895Fglk1idHvB8h4FwbRUyS+?=
- =?us-ascii?Q?CW2QniDUraNTBWZz66nbiU3uX9WAuJErhda7NN7bR4iK9xz2DRD/Wf0ds3B6?=
- =?us-ascii?Q?HhtjcbZdlYmCsq6anmyRhOCC4VgGuWxyFoUT+7VEQOOrnqpeDsTwZdyGnKHd?=
- =?us-ascii?Q?eymP0sBHbmxrvmLVTfW6fhEjXtQ4aCEHGJDSDcXPSk9bTFG/hKsqaKLXuifU?=
- =?us-ascii?Q?tD5PAtq07gw3KdzbN+pGAK+LhYwH4G7z/sI6aogmI0wv4MY0xOc8XCoKc5nH?=
- =?us-ascii?Q?3SDqUWZHiar9raKbw4Mu4H2duFYkDRNlo5z/JB1E/RWbdrQSgga4PWHmG8Kq?=
- =?us-ascii?Q?MPxL1txYo/uyH/Jn0yHGucAIhyuTiUQ1XdQRIsXYDrSbhJnyXymcLun6djDj?=
- =?us-ascii?Q?0KjNfV3RhlvExlS818dmHOnUrs28chcIk9JFrrQdFdDqAmImbYi3xzBkrqsJ?=
- =?us-ascii?Q?djcyvTMdArovVoJRZMXTTIEli9+/KbFAffaM3NphlUvuY5GQPITX80tM5dP9?=
- =?us-ascii?Q?JiQSjPHM1PddL4M4QntuxVZ/knpQYn+w/wpR+8vZ+M+BqoI0iyt7TwZ9i5wd?=
- =?us-ascii?Q?EpUqeBSfBmQQU7XQlQ72lXXgRMp7nRqwbkx2NwasBE3stbH//GJa/zktbZ1j?=
- =?us-ascii?Q?Sag5ud2RdWLZUy9qjkeKMZSuUNLJYO06Xamy8xAjsscTKltSU62C9Zbw5nwe?=
- =?us-ascii?Q?gxGSoakaBdk/WhWtONPYJ+52AyiQlOBSyPanrSvqt4KA+vr9dKlpjMjcPtoA?=
- =?us-ascii?Q?UqkrB/zrJLnCn7C76/wFZoa/J8MGH0edwkTZ4QgHRE43XXUoyP4m2qAP85DG?=
- =?us-ascii?Q?pmqQHuM97h+2DrE/sm2lQ8KjiTtrJnWtO91FrOzFJxge/NX/Yx0mhMtCrqOa?=
- =?us-ascii?Q?VMyhPaQhwwSKx0RHj2OvxMLtxNHpiFA9VmWQRkADq9VhuO7Dan2bU/W3/AFm?=
- =?us-ascii?Q?9mOlDzA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 16:00:34.1181
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbb2086b-7471-4481-5230-08dc8966762d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6139
 
-The selftest noncont_cat_run_test fails on AMD with the warnings. Reason
-is, AMD supports non contiguous CBM masks but does not report it via CPUID.
+In preparation for inode_attach_wb(), which is currently called when
+attaching the log writer, to be done via mark_buffer_dirty(), change
+the order of preparation for log writing.
 
-Update noncont_cat_run_test to check for the vendor when verifying CPUID.
+Specifically, the function call that adds checksums to segment summary
+and super root blocks, which correspond to the log header and trailer,
+is made before starting writeback of folios containing those blocks.
 
-Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
-Signed-off-by: Babu Moger <babu.moger@amd.com>
+The current steps are as follows:
+
+1. Put the folios of segment summary blocks in writeback state.
+2. Put the folios of data blocks, metadata file blocks, and btree node
+   blocks (collectively called payload blocks) into writeback state.
+3. Put the super root block folio in writeback state.
+4. Add checksums.
+
+Change these as follows:
+
+1. Put the folios of payload blocks in writeback state.
+2. Add checksums.
+3. Put the folios of segment summary blocks in writeback state.
+4. Put the super root block folio in writeback state.
+
+In this order, the contents of segment summaries and super root block
+that directly use buffer/folio of the backing device can be determined
+including the addition of checksums, before preparing to write.
+
+Step (1), which puts the payload block folios in writeback state, is
+performed first because if there are memory-mapped data blocks, a valid
+checksum can only be calculated after step (1).
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 ---
-v2: Moved the non contiguous verification to a new function
-    arch_supports_noncont_cat.
+ fs/nilfs2/segment.c | 85 +++++++++++++++++++++++++++------------------
+ 1 file changed, 52 insertions(+), 33 deletions(-)
 
-v1:
-This was part of the series
-https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
-Sending this as a separate fix per review comments.
----
- tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
- 1 file changed, 22 insertions(+), 10 deletions(-)
-
-diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-index d4dffc934bc3..742782438ca3 100644
---- a/tools/testing/selftests/resctrl/cat_test.c
-+++ b/tools/testing/selftests/resctrl/cat_test.c
-@@ -288,11 +288,30 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
- 	return ret;
+diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+index 6ea81f1d5094..a92609816bc9 100644
+--- a/fs/nilfs2/segment.c
++++ b/fs/nilfs2/segment.c
+@@ -1639,41 +1639,30 @@ static void nilfs_begin_folio_io(struct folio *folio)
+ 	folio_unlock(folio);
  }
  
-+static bool arch_supports_noncont_cat(const struct resctrl_test *test)
-+{
-+	unsigned int eax, ebx, ecx, edx;
-+
-+	/* AMD always supports non-contiguous CBM. */
-+	if (get_vendor() == ARCH_AMD)
-+		return true;
-+
-+	/* Intel support for non-contiguous CBM needs to be discovered. */
-+	if (!strcmp(test->resource, "L3"))
-+		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-+	else if (!strcmp(test->resource, "L2"))
-+		__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-+	else
-+		return false;
-+
-+	return ((ecx >> 3) & 1);
-+}
-+
- static int noncont_cat_run_test(const struct resctrl_test *test,
- 				const struct user_params *uparams)
+-static void nilfs_segctor_prepare_write(struct nilfs_sc_info *sci)
++/**
++ * nilfs_prepare_write_logs - prepare to write logs
++ * @logs: logs to prepare for writing
++ * @seed: checksum seed value
++ *
++ * nilfs_prepare_write_logs() adds checksums and prepares the block
++ * buffers/folios for writing logs.  In order to stabilize folios of
++ * memory-mapped file blocks by putting them in writeback state before
++ * calculating the checksums, first prepare to write payload blocks other
++ * than segment summary and super root blocks in which the checksums will
++ * be embedded.
++ */
++static void nilfs_prepare_write_logs(struct list_head *logs, u32 seed)
  {
- 	unsigned long full_cache_mask, cont_mask, noncont_mask;
--	unsigned int eax, ebx, ecx, edx, sparse_masks;
-+	unsigned int sparse_masks;
- 	int bit_center, ret;
- 	char schemata[64];
+ 	struct nilfs_segment_buffer *segbuf;
+ 	struct folio *bd_folio = NULL, *fs_folio = NULL;
++	struct buffer_head *bh;
  
-@@ -301,15 +320,8 @@ static int noncont_cat_run_test(const struct resctrl_test *test,
- 	if (ret)
- 		return ret;
- 
--	if (!strcmp(test->resource, "L3"))
--		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
--	else if (!strcmp(test->resource, "L2"))
--		__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
--	else
--		return -EINVAL;
+-	list_for_each_entry(segbuf, &sci->sc_segbufs, sb_list) {
+-		struct buffer_head *bh;
 -
--	if (sparse_masks != ((ecx >> 3) & 1)) {
--		ksft_print_msg("CPUID output doesn't match 'sparse_masks' file content!\n");
-+	if (arch_supports_noncont_cat(test) != sparse_masks) {
-+		ksft_print_msg("Hardware and kernel differ on non-contiguous CBM support!\n");
- 		return 1;
+-		list_for_each_entry(bh, &segbuf->sb_segsum_buffers,
+-				    b_assoc_buffers) {
+-			if (bh->b_folio != bd_folio) {
+-				if (bd_folio) {
+-					folio_lock(bd_folio);
+-					folio_wait_writeback(bd_folio);
+-					folio_clear_dirty_for_io(bd_folio);
+-					folio_start_writeback(bd_folio);
+-					folio_unlock(bd_folio);
+-				}
+-				bd_folio = bh->b_folio;
+-			}
+-		}
+-
++	/* Prepare to write payload blocks */
++	list_for_each_entry(segbuf, logs, sb_list) {
+ 		list_for_each_entry(bh, &segbuf->sb_payload_buffers,
+ 				    b_assoc_buffers) {
+-			if (bh == segbuf->sb_super_root) {
+-				if (bh->b_folio != bd_folio) {
+-					folio_lock(bd_folio);
+-					folio_wait_writeback(bd_folio);
+-					folio_clear_dirty_for_io(bd_folio);
+-					folio_start_writeback(bd_folio);
+-					folio_unlock(bd_folio);
+-					bd_folio = bh->b_folio;
+-				}
++			if (bh == segbuf->sb_super_root)
+ 				break;
+-			}
+ 			set_buffer_async_write(bh);
+ 			if (bh->b_folio != fs_folio) {
+ 				nilfs_begin_folio_io(fs_folio);
+@@ -1681,6 +1670,40 @@ static void nilfs_segctor_prepare_write(struct nilfs_sc_info *sci)
+ 			}
+ 		}
  	}
++	nilfs_begin_folio_io(fs_folio);
++
++	nilfs_add_checksums_on_logs(logs, seed);
++
++	/* Prepare to write segment summary blocks */
++	list_for_each_entry(segbuf, logs, sb_list) {
++		list_for_each_entry(bh, &segbuf->sb_segsum_buffers,
++				    b_assoc_buffers) {
++			if (bh->b_folio == bd_folio)
++				continue;
++			if (bd_folio) {
++				folio_lock(bd_folio);
++				folio_wait_writeback(bd_folio);
++				folio_clear_dirty_for_io(bd_folio);
++				folio_start_writeback(bd_folio);
++				folio_unlock(bd_folio);
++			}
++			bd_folio = bh->b_folio;
++		}
++	}
++
++	/* Prepare to write super root block */
++	bh = NILFS_LAST_SEGBUF(logs)->sb_super_root;
++	if (bh) {
++		if (bh->b_folio != bd_folio) {
++			folio_lock(bd_folio);
++			folio_wait_writeback(bd_folio);
++			folio_clear_dirty_for_io(bd_folio);
++			folio_start_writeback(bd_folio);
++			folio_unlock(bd_folio);
++			bd_folio = bh->b_folio;
++		}
++	}
++
+ 	if (bd_folio) {
+ 		folio_lock(bd_folio);
+ 		folio_wait_writeback(bd_folio);
+@@ -1688,7 +1711,6 @@ static void nilfs_segctor_prepare_write(struct nilfs_sc_info *sci)
+ 		folio_start_writeback(bd_folio);
+ 		folio_unlock(bd_folio);
+ 	}
+-	nilfs_begin_folio_io(fs_folio);
+ }
  
+ static int nilfs_segctor_write(struct nilfs_sc_info *sci,
+@@ -2070,10 +2092,7 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
+ 		nilfs_segctor_update_segusage(sci, nilfs->ns_sufile);
+ 
+ 		/* Write partial segments */
+-		nilfs_segctor_prepare_write(sci);
+-
+-		nilfs_add_checksums_on_logs(&sci->sc_segbufs,
+-					    nilfs->ns_crc_seed);
++		nilfs_prepare_write_logs(&sci->sc_segbufs, nilfs->ns_crc_seed);
+ 
+ 		err = nilfs_segctor_write(sci, nilfs);
+ 		if (unlikely(err))
 -- 
 2.34.1
 
