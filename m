@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-208411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE399024BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE279024C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0E228AAF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DB928683C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8411013A89A;
-	Mon, 10 Jun 2024 14:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD69213774B;
+	Mon, 10 Jun 2024 14:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VxCsn6ks"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fQKXY5Uf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD1132113
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152613213A;
+	Mon, 10 Jun 2024 14:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031355; cv=none; b=uRhL4n+XlYQ3HCe1gcqLVubsQXyBSJcwT97FvQOYyI2rO7h99+8mqS+pd4Vpq0pXus+1AX3mq0pvHeWEbejbr/JDuTsdHjhZUHWOj8P//T+oXjHYkV/+2ARQeIUZ40CMtsdc/zB07LuonAjJqwAlsg8qn1YwRjKCN+kEM205mWA=
+	t=1718031463; cv=none; b=AWPInjehhbOw4HbXEvqnxRw0zPZunMeZ1X514aJi3rOT/T5dS/8a/9tclRU965YA5l6UONOgKdSlgwhlE9xOiEnMbOJ1uHePhK6ee/PumTuaExbXIAy/U/IX51mnnYmvoCfHwSIizVnpv0Eso5h1MmrJieatoLnzwxfjLS1DQ5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031355; c=relaxed/simple;
-	bh=a4rkfc4GzPGRris6Z1ZP+m4vNqg11DajU8g7jZ/ttxY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eqmYwV/HvX9WQodd5dP8K1gYrjAgeoIeA/jdUohdjGOD0SGvAZqD5IEnY9SZNFiEmNaTzeyUz4QVv2gxRipsDHe5gvBDjY+M54rM4A/x8FgGIPqBJYAgtkQXCRetGw/nC5EuEbDK5mflJ1cri+9WRL7WohoFYLCqVS80hhkMDW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VxCsn6ks; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe3bac6c6so203951fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718031352; x=1718636152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pab8FcNXevJ4REaLQwWHgCYLaa+BjiZObbSjcyCPEP4=;
-        b=VxCsn6ksdmR5u60V+7DKgu3Yf0QI0y0CG/vHv9102vhtnNzTlVZegB7kQOrP3miirK
-         q1tCqbQ3y+jf+8w5kMcFgLSW6I02vhA0+vaGY+J1BLF9+aBS6/gKVm2nMuwjaqi+SDm2
-         JP8ZLiUXPLXh1nDUd0itT01jGTO8e7BdcLZ+9MGRf64mjk103zrFFgNDPqIxhzUK/NDo
-         NZ3sJTysoLQq9UT4xYYAbK91ODYq3dafKnzIgs/MmO2z70vlj0Y1CTfw+RRUz0QA5jPe
-         NIBE+x/6UELyIVTz2HG7zmD76dFj3ruLeBBuahUgasc/nosfI9qc4WjigjNT9BfMBNDi
-         pzVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718031352; x=1718636152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pab8FcNXevJ4REaLQwWHgCYLaa+BjiZObbSjcyCPEP4=;
-        b=puGjmxIQQpKUzXTQyHq9NI8fbiwMl+l3Rysb167564f8WHJBj8T6qfkyOCLHqqtqJx
-         UfaTRr9TpggkLVhbuy7IwW9+0vK89BeDoBFLpQFis2YPlWq3+BsC+PEaV0D8ZLifrMGS
-         zbFsVhaEwa0iz48iE06PbAL5kljqb/V01lOhH/dHLRXcKOhsql2kovq0kUmUanID96MU
-         R5asuPpsyY4W28TXrNkKkcawFHGXagPXLxskI2zdVcpk5Ywiz82IW2dIMVn5wEdS2kax
-         tQYcVwOtAiBtZYhrwSMcnap1ZZaD+M5JDj2UGmB5lhBoxt9bC75mAnMBC9x8+Ze9lvQB
-         Fphg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3KeNav93i35Npc/Vs50QVojx3PErl1Uv8093IxYdTnenv8gV3Mg2FyHGlsaWOZYiILNSzUip3KEaCuaU2EPymekMolwPRYl+WwGKp
-X-Gm-Message-State: AOJu0YwA7YwgjOdSnul0xc37G5EFVEgPGrDSpGZXfOQcW5gHZPpg7icb
-	eC3Z/87tNto99hmAnu2J3wUMlKdvhiyOtNC2AzNHydNbjhPaL73meVQCkfMzT8P74czJIGQLLwf
-	1JJbhzhWUPk+uE1RnjEqKh7FDVS7t//fy5U5Gqw==
-X-Google-Smtp-Source: AGHT+IHQqDdunRflP8brqOuTqf25grUIHylgVkDhDOCw39EO5L8ro6nE5HZbJanReJDrk7FV5UpKKyPc3vxi73s7M2k=
-X-Received: by 2002:a2e:a584:0:b0:2ea:e2d0:dbbd with SMTP id
- 38308e7fff4ca-2eae2d0e036mr82961801fa.51.1718031352486; Mon, 10 Jun 2024
- 07:55:52 -0700 (PDT)
+	s=arc-20240116; t=1718031463; c=relaxed/simple;
+	bh=2rXaxkSAIZotar+nnN9S9D60wlWokv37PQWPyIcOILk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Oym5x8PHouvYM4H/tZKs/HCsttuioWbrp+hqcaUkIzv2ow7AGvjqS4FVldb48gjl+A+o7BsoKbVzMXU0sGrhJnCRKLLGRoxEYkDBpO6IIH4k4P4QPKIoDc0F18T2JuCLDQLXWH2MMnay0Ld35SMuUcdA6RAiYNIawO77H5H3NBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fQKXY5Uf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEEjPT011686;
+	Mon, 10 Jun 2024 14:57:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A4LnwTREdQzipPnKr1IjzxpDtyZ+lNAXOoAtXrqzceY=; b=fQKXY5Uf9KHvhFHu
+	4wup75oeDHsrQqOE6uYnnZ34qPIEZdxWousE+F4Uz3p6hvM/2Y2r0TvQz7dUp+s7
+	d/GcyTRV7DHbxPdyDkjmNk/+V3D3786O+gOuNC9carLLiLrf2Q7mwAwelEAqltn2
+	xc8kW2W9GDfF/kIri+1umYTwYB8YfuMbRm4K5n7jX2zl2LmAn3GP/OW7WIhzYNxC
+	TjRO+A2jVj659MkfFeWAiXZjb8IWvK9N2jLyrli90o2rRPbtDr24zpgWpenKA0SY
+	t4Se+bsR6yvfLoB1i0DZHlJSbEPJSINKERcksATcmqtmq9KivycFhNhgKKv5HcZe
+	uN03dw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmuvw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:57:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEvMcm029467
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 14:57:22 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 07:57:21 -0700
+Message-ID: <1988d782-e9a1-4099-9ca4-4a4d7c560554@quicinc.com>
+Date: Mon, 10 Jun 2024 07:57:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605123850.24857-1-brgl@bgdev.pl> <20240605123850.24857-3-brgl@bgdev.pl>
- <d19e49f9-7f3c-42cd-a0fd-f9cdb07d0e35@linaro.org>
-In-Reply-To: <d19e49f9-7f3c-42cd-a0fd-f9cdb07d0e35@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 10 Jun 2024 16:55:41 +0200
-Message-ID: <CAMRc=Mdma1WJ_VAyNsWVO66m5qo1xf+RP0A+ABXuHmsuOvKWgg@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] power: pwrseq: add a driver for the PMU module on
- the QCom WCN chipsets
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Alex Elder <elder@linaro.org>, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Lukas Wunner <lukas@wunner.de>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Amit Pundir <amit.pundir@linaro.org>, 
-	Xilin Wu <wuxilin123@gmail.com>, linux-bluetooth@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Caleb Connolly <caleb.connolly@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Hannes Reinecke <hare@suse.com>, Khalid Aziz <khalid@gonehiking.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        James Smart <james.smart@broadcom.com>,
+        Ram Vegesna
+	<ram.vegesna@broadcom.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com>
+ <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
+X-Proofpoint-ORIG-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100114
 
-On Mon, Jun 10, 2024 at 4:54=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 05/06/2024 14:38, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > This adds the power sequencing driver for the PMU modules present on th=
-e
-> > Qualcomm WCN Bluetooth and Wifi chipsets. It uses the pwrseq subsystem
-> > and knows how to match the sequencer to the consumer device by verifyin=
-g
-> > the relevant properties and DT layout. Using this driver will allow the
-> > BT and WLAN drivers to respect the required delays between enabling the
-> > two modules.
->
-> ...
->
-> > +
-> > +static const struct of_device_id pwrseq_qcom_wcn_of_match[] =3D {
-> > +     {
-> > +             .compatible =3D "qcom,qca6390-pmu",
-> > +             .data =3D &pwrseq_qca6390_of_data,
->
-> Bindings *must* be part of this patchset. I missed the moment this was
-> split into such chunks.
->
-> Best regards,
-> Krzysztof
->
+On 6/9/2024 11:10 PM, Hannes Reinecke wrote:
+> On 6/8/24 17:33, Jeff Johnson wrote:
+[...]
+>> diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
+>> index 9503996c6325..add10098a569 100644
+>> --- a/drivers/scsi/aha1542.c
+>> +++ b/drivers/scsi/aha1542.c
+>> @@ -1009,6 +1009,7 @@ static int aha1542_biosparam(struct scsi_device *sdev,
+>>   
+>>   	return 0;
+>>   }
+>> +MODULE_DESCRIPTION("Adaptec AHA-1542 SCSI host adapter driver");
+>>   MODULE_LICENSE("GPL");
+> 
+> Please add a newline before the MODULE_DESCRIPTION line.
+> 
+>>   
+>>   static int aha1542_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd *cmd)
+[...]
+>> --- a/drivers/scsi/atp870u.c
+>> +++ b/drivers/scsi/atp870u.c
+>> @@ -1724,6 +1724,7 @@ static void atp870u_remove (struct pci_dev *pdev)
+>>   	atp870u_free_tables(pshost);
+>>   	scsi_host_put(pshost);
+>>   }
+>> +MODULE_DESCRIPTION("ACARD SCSI host adapter driver");
+>>   MODULE_LICENSE("GPL");
+> 
+> Again, missing newline.
 
-The bindings are already in next via Mark Brown's tree.
+I'll update these in v2
 
-Bart
 
