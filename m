@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-207772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D307901BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF7B901BE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBDCF1F2226A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DAF1F2165E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42A23F9ED;
-	Mon, 10 Jun 2024 07:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="An+Uh043"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959EA25569;
+	Mon, 10 Jun 2024 07:28:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B6F3BB23;
-	Mon, 10 Jun 2024 07:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DF620DC4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718004436; cv=none; b=PaYTLvOk+inrwtkgpryEnEe0qE1KuatKcxmdQPZS83CyPEvApBG3mwOSg9F5fRn6ruBAsASnr6LiNxcHmDxB+gE85hVP/CtY+kuz64RGyUGimdhdp3AHfR22XVeJpUSIYZSy1cdqpQ+POVjCELHCUPfvubYKQi1xGui1aS44yxk=
+	t=1718004486; cv=none; b=bFHRNSsxou6N9x1YSRS5d/eJpb7LeZM1Yuz22JswDxlZmfmdkdoxvlR+IbJFejdpqBkT/TFf3ONBVcs0Px9Ve/HIzgqm4miQ5NC588VaOcV9jBqvyiVDWY8TEIKg9kpRfcF74dCIA8xj9bmSwXVaEY2rteQkOSO2RhLrYDkswyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718004436; c=relaxed/simple;
-	bh=LVVbjbdC0h1myF0BjJQa4zSFEF6yQpkGEbeWYWDz0i4=;
+	s=arc-20240116; t=1718004486; c=relaxed/simple;
+	bh=l+cnz2kffqXjhx1RkbyaFT7mcoQvwDH1FC4xqQmmmW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxIdAtN9mUsr4PROmhVzRLQRpbdCWz5ZC/XwNFqYnSVqRQ/MRqdMVCMuo+H/77quLqTUl41La2dH91UmWcXmMWDGf97u4K6TyA66sT1Eaqi5+mFS8YcIbjKzBA9Hk/HPMrpRmirMenJjxo/7h9ws8MjwNEkpLWeScmWiwjjxiNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=An+Uh043; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VyNfc5MG3z9sZ1;
-	Mon, 10 Jun 2024 09:27:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718004424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6iGob73/+SiPz4izhI7kTGZht0v2bPSc+GBGKwV0QDw=;
-	b=An+Uh04344BjAG9Mk2nqabnGvtZ/+hXx1GPI0dI1WE8555DgD9yowev7iNOBrjihzcDVwd
-	zGpq4FEZeEBpGok+5jATEJk0VeV6GOVwR/biqfE8HlOetnD2uKNbcQQLIrvK/h1vDDIOVx
-	k2oIvMSRrHm+VFaMmzXI0sIvSYCL5GI4PgiWUoVsK2ijHTwrByUjV/sbIljXS5Ro6Q6gs9
-	vzHkJ3HBKg3av+1TQUo7cMYppmB8lYKDL1P2VshdRS4VxBlsXChLKCl4IVXAgUDOqOMRTr
-	QWiW4grDV6XL1fiCvfKX3Cp189+GzybvBLGD6dc0rnZHL8waLJoeUrvS32L0RQ==
-Date: Mon, 10 Jun 2024 07:26:57 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: willy@infradead.org, david@fromorbit.com, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, mcgrof@kernel.org, linux-mm@kvack.org,
-	hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: Re: [PATCH v7 05/11] mm: split a folio in minimum folio order chunks
-Message-ID: <20240610072657.erdzkedvbzj3gohu@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-6-kernel@pankajraghav.com>
- <75CCE180-EC90-4BDC-B5D8-0ED1B710BE49@nvidia.com>
- <20240607203026.zj3akxdjeykchnnf@quentin>
- <45567EBA-5856-4BBC-8C02-EAE03A676B94@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SiKjilzRsHCDq+ojg1lgB7mBucY2zDBVmlavTFjU+4o5wvVyBL2NfBoA1klMqgO01Jmm0iX3vJT2hO/tCzg+36W1tUdJSnS38s4vIecLZ6lkihP5QuSlUQAHYgtEUzpx2U1jS6QG3lwyMqIg3MY3Nm7pPMkQClyLUeCI5TMO4HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sGZRc-0002DG-M7; Mon, 10 Jun 2024 09:27:56 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sGZRb-001FSn-Lk; Mon, 10 Jun 2024 09:27:55 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sGZRb-002hvq-1r;
+	Mon, 10 Jun 2024 09:27:55 +0200
+Date: Mon, 10 Jun 2024 09:27:55 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	David Lin <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
+Message-ID: <Zmaq-4whltVgrzCz@pengutronix.de>
+References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+ <171767674666.2401308.2539321240473169281.kvalo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,31 +61,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45567EBA-5856-4BBC-8C02-EAE03A676B94@nvidia.com>
-X-Rspamd-Queue-Id: 4VyNfc5MG3z9sZ1
+In-Reply-To: <171767674666.2401308.2539321240473169281.kvalo@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2024 at 04:51:04PM -0400, Zi Yan wrote:
-> On 7 Jun 2024, at 16:30, Pankaj Raghav (Samsung) wrote:
-> >>> +		if (!folio->mapping) {
-> >>> +			count_vm_event(THP_SPLIT_PAGE_FAILED);
-> >>
-> >> You should only increase this counter when the input folio is a THP, namely
-> >> folio_test_pmd_mappable(folio) is true. For other large folios, we will
-> >> need a separate counter. Something like MTHP_STAT_FILE_SPLIT_FAILED.
-> >> See enum mthp_stat_item in include/linux/huge_mm.h.
-> >>
-> > Hmm, but we don't have mTHP support for non-anonymous memory right? In
-> > that case it won't be applicable for file backed memory?
+On Thu, Jun 06, 2024 at 12:25:48PM +0000, Kalle Valo wrote:
+> Sascha Hauer <s.hauer@pengutronix.de> wrote:
 > 
-> Large folio support in page cache precedes mTHP (large anonymous folio),
-> thanks to willy's work. mTHP is more like a subset of large folio.
-> There is no specific counters for page cache large folio. If you think
-> it is worth tracking folios with orders between 0 and 9 (exclusive),
-> you can add counters. Matthew, what is your take on this?
+> > The maximum number of AKM suites will be set to two if not specified by
+> > the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
+> > specify up to ten AKM suites in the akm_suites array.
+> > 
+> > Without only the first two AKM suites will be used, further ones are
+> > ignored.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> I assume you that you have also tested this on a real device, right?
 
-Got it. I think this is out of scope for this series but something we
-could consider as a future enhancement?
+Sure. It was tested with a MAYA-W161-00B module from u-blox with a IW416
+chipset.
 
-In any case, we need to decide whether we need to count truncation as a 
-VM event or not.
+BTW I haven't mentioned this, but It fixes the same problem as mentioned here:
+
+https://lore.kernel.org/linux-kernel/20240523081428.2852276-1-s.hauer@pengutronix.de/T/
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
