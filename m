@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-208455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B448902558
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:20:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B8F902555
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7B0288207
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2711F25C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5140814F9F2;
-	Mon, 10 Jun 2024 15:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DFC14F132;
+	Mon, 10 Jun 2024 15:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4y9v3/N"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETS5HpY/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CCC142E91
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1758D14372B;
+	Mon, 10 Jun 2024 15:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032609; cv=none; b=ZGM63Z5qvZ0lSNp0prIDjyZQob0ju1LcJbn7zfdrhbmfx9/dopFZCNJSqh0J3WbCM0UHwJtwwuIeUPbIlwetnP8SpIJycjAieShKxWoKDeslHRaLM7iUQxd4LiFT30SZwn4JGpikD5KNVN77dMs6kd1n4gAk4+PlUFfyGA35WrQ=
+	t=1718032608; cv=none; b=ZhYILebKFCMEgzSN4EGBu+fvUU5Pw6mpMCH2wztUqfRDD+DM5kxAl4Stq6eg+jkffrA6eC7VnVoj0e2lqEuV9MPPxurzMfxcXRT7MNQKfkW4sgz348FIFW26ZLlbykX1I5iDcp9wf9THCKVWRl5eRCHgHW0mAwOncAZHrKGjdmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032609; c=relaxed/simple;
-	bh=+yw+G1cK7msJnEFsszzGBfU6Rf3R11uCYw2YDyUvmeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8wmtJUGZyjwNOIMyfDGIcWRgzf8CgWfFFj6M24LfXdJEyqKRIjqC9Gs4aiHeo4ZF4gWATUufUjF4mU0DzZMT1VrllHU2Jf5hHtbgxz6UhpfQdMfQw4yZZLFi6+e9NtQ85mgiqUIC1B7QZZjz5/+96iTCl5JsPy4Iru7dzylU1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j4y9v3/N; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-704313fa830so1128255b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718032607; x=1718637407; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dik3EIAdL8x8Xf94kk8jsTPxO3oLRvZX6r2IYoPGz1Y=;
-        b=j4y9v3/NbE7jqrOlYVMMbQFLljUB8pbITvDV8nWTr3odI+H4558hu7FT+FWHDGX0Hq
-         kOg5dKqFwVS6+lGCcBBYMmOLjSyeSY969ibayyetg+oXh4BC8A8KuUjP82ho+jL+sLmL
-         BL4zrcH0b2TeOb/+RHYxbms6/aG3wgBSyc4jg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718032607; x=1718637407;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dik3EIAdL8x8Xf94kk8jsTPxO3oLRvZX6r2IYoPGz1Y=;
-        b=gYFRbH4XuBuKH62DHecNgz+WKdXRH3X3Zn5rJ534dQN9B56gEfKmqYOS5X/qIeCJE6
-         u1vChm2sOENsF7cPpFPfP2mb2bzhyEX4v5HwIO2HtzYsT34xks0XY/XZey4INkNHSLkq
-         IfcWXH0wUrgMbjpkSxZBjNemSvJnJzLVNcy2yEZBtngnd6lWk5TNt5B3FwonfGbCB0dS
-         VgrUBbD0oHpTe0AwWY4BYRP+N2wuhnXammOe5eksFOUIeebE9jtqUK99dwbVBXFGFWAK
-         PdApGkw4LBOTC/9SC9pPJk3HIKYlDue9omBXYS4Vk237gb9W4Ek3Wg93Ao2ucchHdNRu
-         lxyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlcRJt7FYtZ//uT7Ko/NLnQ3d0tZGOFfh+ZGWjhmJnBNSR3tri5D5HSTxPa9+OaX0z8n6w9pH88EacsQA+4guR4HqwejSLXogOQfC7
-X-Gm-Message-State: AOJu0YxZpKPn1C8TfcRl2yjh6sI4EdjYTMxLxwCvhg6MEQ8HFDXEwPpm
-	t7CbzfReeAI4N29/Qju1e8fnFqYwpIWGfYbuifoQk5bKyGAUOBgDZL+w6MzUNgEk4db9AoJYRuu
-	cBPoQj/RberdqAycFFfEKzYi1mRAvWOpJOUhF
-X-Google-Smtp-Source: AGHT+IGEqz2uPEUm9ZazQWGHr75wT8JeslBVWFP0h+6GsPtIVGespsgLdRo07/SkXqM14x2ZwkuYUCMo24PKwfJ7rkY=
-X-Received: by 2002:a17:90a:b383:b0:2bd:f3dc:62d0 with SMTP id
- 98e67ed59e1d1-2c2bcc6336amr8441829a91.37.1718032607324; Mon, 10 Jun 2024
- 08:16:47 -0700 (PDT)
+	s=arc-20240116; t=1718032608; c=relaxed/simple;
+	bh=O4K2WVyffh0yFu7MqI9zVOz6iOMDjKw5eu0ZI4dIaVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XUvcn3DdELyY03D87REYHx1VY9vm+OUjg+iJsv8rYbaod2/+9Gdqt7xWt/A0+cZiZOOvSKB2wGQbjqc3c8cgdIzBKmFbKcnhjoeAG9Q+swGp7HDTQw7C8J8IME/9ne9nrJW9x6l8JWLAJJIfM96tA9lauerGIrl6OHn4OF1pdJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETS5HpY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17272C32786;
+	Mon, 10 Jun 2024 15:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718032607;
+	bh=O4K2WVyffh0yFu7MqI9zVOz6iOMDjKw5eu0ZI4dIaVk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ETS5HpY/0Kf6xf4RQ1EeQ5ezwwa3Hu3a2SFdCj67odD7KI2UYD7Fs2d1r5g7y6wIf
+	 vTIqROSJQNRXs1n9kJDCdzxcS7+nLskAscR53y6Tg+D3s6zi6S/mSwJ7junGgMfPGz
+	 cFVN88hW7TnVgKXnCw7asGpLrZreR7IS4oFRMy+H9qtpSq3cfrL6cdUOlH8XQCjevL
+	 VdpqhB/9QWwIUedEYRuh4MevTomxzXE6ulQ6FOvNli9X5RdARoFkmIdzyPoMwtaZ2o
+	 jqiLoW+RrYZ9fTS86/FAROafJwR54RozEVCGgmVDPux00UDvaj3N87ZaAfFbOkWXsm
+	 4oYGUGuuH8ZZQ==
+Message-ID: <59443d14-1f1d-42bb-8be3-73e6e4a0b683@kernel.org>
+Date: Mon, 10 Jun 2024 09:16:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605094843.4141730-1-wenst@chromium.org>
-In-Reply-To: <20240605094843.4141730-1-wenst@chromium.org>
-From: Simon Glass <sjg@chromium.org>
-Date: Mon, 10 Jun 2024 09:16:36 -0600
-Message-ID: <CAFLszTjX=ixC3pRRGJeaP=ie_yc+KcCRyQ06MBFeSZnBepaXaw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@ziepe.ca>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>, Mina Almasry <almasrymina@google.com>,
+ Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+References: <20240530201616.1316526-3-almasrymina@google.com>
+ <ZlqzER_ufrhlB28v@infradead.org>
+ <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
+ <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
+ <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
+ <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
+ <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
+ <20240607145247.GG791043@ziepe.ca>
+ <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
+ <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
+ <20240610121625.GI791043@ziepe.ca>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20240610121625.GI791043@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chen-Yu,
+On 6/10/24 6:16 AM, Jason Gunthorpe wrote:
+> On Mon, Jun 10, 2024 at 02:07:01AM +0100, Pavel Begunkov wrote:
+>> On 6/10/24 01:37, David Wei wrote:
+>>> On 2024-06-07 17:52, Jason Gunthorpe wrote:
+>>>> IMHO it seems to compose poorly if you can only use the io_uring
+>>>> lifecycle model with io_uring registered memory, and not with DMABUF
+>>>> memory registered through Mina's mechanism.
+>>>
+>>> By this, do you mean io_uring must be exclusively used to use this
+>>> feature?
+>>>
+>>> And you'd rather see the two decoupled, so userspace can register w/ say
+>>> dmabuf then pass it to io_uring?
+>>
+>> Personally, I have no clue what Jason means. You can just as
+>> well say that it's poorly composable that write(2) to a disk
+>> cannot post a completion into a XDP ring, or a netlink socket,
+>> or io_uring's main completion queue, or name any other API.
+> 
+> There is no reason you shouldn't be able to use your fast io_uring
+> completion and lifecycle flow with DMABUF backed memory. Those are not
+> widly different things and there is good reason they should work
+> together.
+> 
+> Pretending they are totally different just because two different
+> people wrote them is a very siloed view.
+> 
+>> The devmem TCP callback can implement it in a way feasible to
+>> the project, but it cannot directly post events to an unrelated
+>> API like io_uring. And devmem attaches buffers to a socket,
+>> for which a ring for returning buffers might even be a nuisance.
+> 
+> If you can't compose your io_uring completion mechanism with a DMABUF
+> provided backing store then I think it needs more work.
+> 
 
-On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
->
-> The kernel tree builds some "composite" DTBs, where the final DTB is the
-> result of applying one or more DTB overlays on top of a base DTB with
-> fdtoverlay.
->
-> The FIT image specification already supports configurations having one
-> base DTB and overlays applied on top. It is then up to the bootloader to
-> apply said overlays and either use or pass on the final result. This
-> allows the FIT image builder to reuse the same FDT images for multiple
-> configurations, if such cases exist.
->
-> The decomposition function depends on the kernel build system, reading
-> back the .cmd files for the to-be-packaged DTB files to check for the
-> fdtoverlay command being called. This will not work outside the kernel
-> tree. The function is off by default to keep compatibility with possible
-> existing users.
->
-> To facilitate the decomposition and keep the code clean, the model and
-> compatitble string extraction have been moved out of the output_dtb
-> function. The FDT image description is replaced with the base file name
-> of the included image.
->
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> This is a feature I alluded to in my replies to Simon's original
-> submission of the make_fit.py script [1].
->
-> This is again made a runtime argument as not all firmware out there
-> that boot FIT images support applying overlays. Like my previous
-> submission for disabling compression for included FDT images, the
-> bootloader found in RK3399 and MT8173 Chromebooks do not support
-> applying overlays. Another case of this is U-boot shipped by development
-> board vendors in binary form (without upstream) in an image or in
-> SPI flash on the board that were built with OF_LIBFDT_OVERLAY=n.
-> These would fail to boot FIT images with DT overlays. One such
-> example is my Hummingboard Pulse. In these cases the firmware is
-> either not upgradable or very hard to upgrade.
->
-> I believe there is value in supporting these cases. A common script
-> shipped with the kernel source that can be shared by distros means
-> the distro people don't have to reimplement this in their downstream
-> repos or meta-packages. For ChromeOS this means reducing the amount
-> of package code we have in shell script.
->
-> [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@google.com/
-> [2]
->
->  scripts/Makefile.lib |  1 +
->  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++--------------
->  2 files changed, 49 insertions(+), 22 deletions(-)
+exactly. io_uring, page_pool, dmabuf - all kernel building blocks for
+solutions. This why I was pushing for Mina's set not to be using the
+name `devmem` - it is but one type of memory and with dmabuf it should
+not matter if it is gpu or host (or something else later on - cxl?).
 
-This is a clever way to discover the included files. Does it need to
-rely on the Linux build information, or could this information somehow
-be in the .dtb files? I had expected some sort of overlay scheme in
-the source, but perhaps people have given up on that?
-
-Regards,
-Simon
 
