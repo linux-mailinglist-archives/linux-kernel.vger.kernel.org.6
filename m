@@ -1,147 +1,117 @@
-Return-Path: <linux-kernel+bounces-208406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FD09024A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:52:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403AB9024A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05ABC1F20FCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08E6289C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8945E135A7E;
-	Mon, 10 Jun 2024 14:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9F113212C;
+	Mon, 10 Jun 2024 14:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FJASzE0i"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="d4zWkYep"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C486126;
-	Mon, 10 Jun 2024 14:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9005886126
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031119; cv=none; b=e2+aw5lt6YgSl54dexG/THtiJvDPz6a4tDBaI/ITAaU6CwkomymeCW3spOGkbZ7vMFjWs7BoYgTDmiDEhxoYSUBfuE5DbbXr6uRhuthBOVukUB66B6m5Y61HztHOd4C6ukQZCAv6cmOq3QBA3AXdGzvmVhYtkQ7rBH+MYvPk9T4=
+	t=1718031134; cv=none; b=M+7p9e8+yLOvjuRmbaukfB4uQaNwmmSy+qO7bBa6ZlCD9K6I70W0DiFE80BDqR7dO03+kb/3bzF4tRcQbE/CaERKLEjQ800oStH1pdXjwWh940wC4w+4NFP28wcPG8C5UZTRPk0jQwbqtmSkoeAzLz/w0QKE2K3fRLu5t8ly6lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031119; c=relaxed/simple;
-	bh=J7ZWOqXKkyCGzFLryf6VAuDFNJZDiEG9zvqZplCGJVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ucSuWs7X118ug2kgDe8HH1eftrxLSS/gYx7iUr2cG4JaELsQu1OvSlYXIdbeUP6qDPTqWOnUu2kUtJslGAF2ml1/8BLSS3j+2PnA7JHVPvBaVQqSSVRKv/ZRLrOY94nPQ8jCoOxvkB8KLmQH4aZR9ACqaW9HL+vEGOAMMCyyyc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FJASzE0i; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A1k2N1014061;
-	Mon, 10 Jun 2024 14:51:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	773pQf40WEFcUjWibw27sM8RmGgqxd1j76oenfdCpJQ=; b=FJASzE0i3yei5LWQ
-	FhK4tTd6kJFDiPloLmDqUniEEBQ3MJ3HQLgMVGw9slJkTEgNvFSbY0os5SSFyVj0
-	cEPX1IhxR3jitqveKagXYEa2EGR/zHi/4GoozIbIJGAZUqREU9g3sQpTM+TS8//g
-	abE9EtMwtgDDUtF6cCrBaIFsFoTnPmUTSzpqRWLBwafkDviRDAILf0mHO9dbhKOz
-	RZ3iaPgNPUHUFjZ4LPdXArkAJ1a9b4cRqO8sA0ko3rU2pn/lZ74h1/syJPTRCtvc
-	LLYnbhcWCXGA91x6oaG2bJ/zUcIXYv9P65BLzyOOMxFNqb+G+mp6yn+UEVOKEES1
-	Fm4JUg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2ekxv7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:51:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEpfLP006698
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:51:41 GMT
-Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:51:40 -0700
-Message-ID: <e730c786-86b9-4362-986d-cfe37ef33753@quicinc.com>
-Date: Mon, 10 Jun 2024 07:51:39 -0700
+	s=arc-20240116; t=1718031134; c=relaxed/simple;
+	bh=E2HQbsSnQv1NAWLSazPsobYPagl89ZHk8gty30LFT8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jw4xBuAb6xkloHatqhUUJFXTU1GStp9+oyeH6Mlsl+IuU9rprU4lSAvAMRf7CUEHRqKa8rPNUDDC9lbjlN3JWiBz8PkUYXkdtdUUBDQg/mQopyryR54zcVLeXj9027AH2naz4tFD1MFlkoFWr50ZTQZJliZ9INqOeCwJ7mEj3Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=d4zWkYep; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=E2HQ
+	bsSnQv1NAWLSazPsobYPagl89ZHk8gty30LFT8A=; b=d4zWkYepw1L59YjYCclC
+	OGk56VUe/PXDkmld9ElKcGn+OoEGLKgltvjpHt0KslE7l0WkErQSrFvenC0+l/RJ
+	ccxgzTgLc2zDMdd3Bv016N48vtXjZWkwE/VPUKNVhHT33NkM9Y0hvvFoKPZLg+Ig
+	i+G6Y1DVuOBXMOGDC+tbWDdPbOQEb0FOXkOqVzYld2TWkI6Wa02l8avRmz2iA+m4
+	XF078bxpWmg/R7O3FxuEjGYiwVQdnbtoU4WZk5WTodCNWWQa2Q1vZyBKv6d/A4CH
+	ebuuMi29nV0P7Nd6yACeyYyxrK89b5uXhmaW4zIvIx0S4z60y+YZlb84cegdu6ql
+	vA==
+Received: (qmail 114505 invoked from network); 10 Jun 2024 16:52:10 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jun 2024 16:52:10 +0200
+X-UD-Smtp-Session: l3s3148p1@deU7S4oajsdehhrL
+Date: Mon, 10 Jun 2024 16:52:10 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+Message-ID: <ib6p4ivqdn56l3jzzarsoeijjhwak33bmqvj2qiddbhxdqzchk@txl4gdslx4gq>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
+ <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
+ <a7e38754-ff1a-4e15-99b2-4785827efc83@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>,
-        Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        <linux-pwm@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
- <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
- <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _rEb0ZrrPJdfv-EUvA8XxWBacA4VddRP
-X-Proofpoint-GUID: _rEb0ZrrPJdfv-EUvA8XxWBacA4VddRP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 adultscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100113
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rattkjvt6utwtjjr"
+Content-Disposition: inline
+In-Reply-To: <a7e38754-ff1a-4e15-99b2-4785827efc83@roeck-us.net>
 
-On 6/10/2024 2:05 AM, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Mon, Jun 10, 2024 at 10:06:49AM +0200, AngeloGioacchino Del Regno wrote:
->> Il 07/06/24 18:02, Jeff Johnson ha scritto:
->>> [...]
->>> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
->>> index 19a87873ad60..0b5d68a90e83 100644
->>> --- a/drivers/pwm/pwm-mediatek.c
->>> +++ b/drivers/pwm/pwm-mediatek.c
->>> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
->>>   module_platform_driver(pwm_mediatek_driver);
->>>   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
->>> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
->>
->> MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
->> for the Display PWM, and it is located in the DDP block.
->>
->> So, there are two PWM IPs in one SoC:
->>  - A general purpose PWM IP
->>  - A DDP PWM IP
->>
->> This driver is for the general purpose PWM IP.. so, please, can we change this
->> to "MediaTek general purpose Pulse Width Modulator driver"?
->>
->> After which,
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Looks like a reasonable request.
-> 
-> @Jeff: Can you please resend with the suggested change, I dropped the
-> patch from for-next now.
 
-No problem, v2 sent.
+--rattkjvt6utwtjjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-/jeff
 
+> > Yes, maybe this could be simplified to "(LP)DDR memory types"
+> >=20
+>=20
+> I rephrased it to "Only works for (LP)DDR memory types up to DDR5".
+
+Thanks!
+
+> How about "Only works on systems with 1 to 8 memory slots" ?
+
+This is a question for Heiner. I'd think it is is still correct, but I
+don't know exactly.
+
+
+--rattkjvt6utwtjjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZnExoACgkQFA3kzBSg
+KbaxABAAsGxt1eag/HfnW/0hV33xFptPPymUBAT3PapnvXT60J9O8177ST0yWg6F
+Ysh25IjEHuyp0l5ATNYPvUY55hk23roQNp0lZ37UGJvNfD4NdmK+UF40rCV4ZzXf
+vXDvsTQF/gVkCEDHsmLIk3/vmMIXQEjs7G0/gq/EbLW1m8uIxWvl1BztKv5u7UMw
+F2aPk3bAOtyWHgHHghAeOhVMZd5zoTj8N1tO9e+DdpP9UHeraORBGb3wAJXIaH7V
+y94rIK8uRKnTj4A24r8oFDttKOtlUbNq++iDpgFsUrGs1R89WcJtMTfbgbrfWSok
+rBXZ42n1WD4ToDVl/l9St7ztkr58cUV/T17YlHOyL5b+KclAQoj6EE6vYC8viQ9A
+qNYYv6CQZOsAXb/cVBrNDvQQRl+JBgrR62IOVUcdwCb/wF+6zPznKVsRdZil1g+e
+u7zImviJAKg2dj9VDzoIa/dyJS2At1svKfp45RHVMvHRT2R/XRyUM8PoQ8gUVemG
+55N0sBbnI+kzQflCqyg4NfLkFODB2TlQ/6YWcLV7qLgJHvLZt+9N2EPzEnsyGvv7
+JT+q6mxVMvfRvMSlXn4oMOoEcDA/WlXccjlAXhZbHfh8+zdkhiidtD5OU/3LmxJW
+LVhqTZrmp2ZNCL3amiQYy4T/mejyQJ663YRA5QTx8/nt2tt1t6I=
+=IWix
+-----END PGP SIGNATURE-----
+
+--rattkjvt6utwtjjr--
 
