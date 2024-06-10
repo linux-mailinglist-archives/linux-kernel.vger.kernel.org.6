@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-207878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA8E901D64
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:56:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0D7901D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29589B2062B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4569E1F2156C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9761B6F312;
-	Mon, 10 Jun 2024 08:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895516F314;
+	Mon, 10 Jun 2024 08:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Whr+N3or"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VFLXiMq4"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5831A6F2E8
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDCD6F2E8;
+	Mon, 10 Jun 2024 08:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718009789; cv=none; b=r9cuTrU4pc+zDOo9Kae6uIjbmTTauiYO6gBWHoU11Ff60MvvhyiDUVti2O5k7YUA0xbwLZ1SKqqGd+wESoOeW7PeHZLg3q16TFy7Is8ibpkYj6uBZZ/TmRdScttqV+W6ZeXZcZR2rMSqgiw3u9CL3fMAA5GLPOI0eludc0gFqmg=
+	t=1718009810; cv=none; b=Vq0/0zET9SFWv1OMwa1XEYuR4qoSJP3RBk2RAHzpMcT4NLz43JaWJ2Pnp6uVfzUG4ly4WVvUHgopQsRFlzKqgc3xLDKgy3+hPU4+YaB68XwCvfQQ6cMMp+HOEX55CCgjZH6oslMMEwJRx2P4A1BB665q4aE9ZjM+0nz5avbdjh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718009789; c=relaxed/simple;
-	bh=XdPHSSBfm5w8usMR100ncXe5bZyqxqI8EspulDU0vWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=un0f5yssNoz8Y7veao+3rcDZWWrD02xd4zV+F/laz2rEgq1xYvwcvr03JVs8nTCRc1FfIrCeHulyuyUOxI7Z76aepqaTo+FzCihZ6acg/JAsBUabHDFquzamn62KbuUngd69FpnzTUMJIfm/+tEff57n6G8TXiUYIbnJA3CYfh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Whr+N3or; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718009787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QUbORrAp1NZZYf9SPcpO+7DjP/I7StvG/pRCPWB4lqg=;
-	b=Whr+N3orRFlc++0W6Qb9v2nyc2I6HAeeSbzmBTkKL098xeDNaiYcA3fj6UWOhypdEm+NYp
-	sE1AO5tw6Cp1SuY5VMS3ttUM9K8GI8F7Tfidv3G4WGXLkoc9gUBIs7/wzo7mbWI/73z5if
-	OruD7c3T85qYSJAci0/L22DT7yDMfa8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-304-ZqNlSC_AMSicpfwTpETy1g-1; Mon, 10 Jun 2024 04:56:21 -0400
-X-MC-Unique: ZqNlSC_AMSicpfwTpETy1g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4217f941ca8so8380715e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 01:56:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718009780; x=1718614580;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QUbORrAp1NZZYf9SPcpO+7DjP/I7StvG/pRCPWB4lqg=;
-        b=cX6tppCiMjBFoxUPuva8Ll1wwjHpHDKjVlGxIcpE6qw8jgFkxH/QvuKRrQQyB8y6HD
-         knMvzVI+yhlcLbUPJs0+/5BAP/X7GKFw91qO1l//ACZoRCSgENC2/hKssV2ISiAAtIs8
-         9xKXYGfS8daxA4wsUcVCuu9PMPR2Ul4Un/jPt8Wr/6vCIaetxOD7S5cy0lEANAdUEPkL
-         mRCz9uLfpfXMJi84XjyWYmMhPJ4wi7LBClbcx5QKf7V522W3r4WcEXV/wJjE6YEqDmPK
-         3wWZGvXfgOeSXSa/qBlRU+Bhn6xrhsk+3sWN5y49AHVtiBlJqN5xaImH2fVVcttynI+z
-         83DA==
-X-Gm-Message-State: AOJu0YyjsPGGTR97CeDdmXgpxthVrLHH9Ud9Vvm876UN2Ai0FWXsU4zF
-	eVuORQ4n0AH3Ds1FrdbtEGwQyBmS6NdIiR3xdxFDsZlou6jdyCihBbCJgZMTJO82+SmpacxTPyP
-	MSjXlpb6LKkO7FaaQwixqIILqoAv0YphrGFYQT97P1kbiOXe+GSBYE4tiKDJqAA==
-X-Received: by 2002:a05:600c:4f84:b0:421:80d2:9db1 with SMTP id 5b1f17b1804b1-42180d2a37emr34136995e9.25.1718009780264;
-        Mon, 10 Jun 2024 01:56:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCzA4qbOZu38eWA7pCHPb8vQSRCDdVK9WMYWcHk2kUSDfS7dx+PhewtKS0ZxiqzH3kwbKdyQ==
-X-Received: by 2002:a05:600c:4f84:b0:421:80d2:9db1 with SMTP id 5b1f17b1804b1-42180d2a37emr34136735e9.25.1718009779932;
-        Mon, 10 Jun 2024 01:56:19 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa2f7sm133235285e9.14.2024.06.10.01.56.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 01:56:19 -0700 (PDT)
-Message-ID: <aa370847-14a6-4806-8a04-d2da0a591014@redhat.com>
-Date: Mon, 10 Jun 2024 10:56:18 +0200
+	s=arc-20240116; t=1718009810; c=relaxed/simple;
+	bh=6X5u4niWKGCPgbslu73NSK8WhevO5joHCSScvTBKzFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PBreddQOA6InuL3HHCCU5WsDr/PpKBlgpruiZCq8SKyirvSr4cFWujVFEYKtdNg8uVm8tDjf5npLVE+6Nu7SRpHk53DLE4JqgJevyrpEuLJ1sP5xvQgamZ9XqJI/5Zq5Mna+G7BX9l3sGksIEam7qlJI/um5eZupk9IBMBeYN+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VFLXiMq4; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45A8ucTl011341;
+	Mon, 10 Jun 2024 03:56:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718009798;
+	bh=O8v2PxB1K+ZmBgIIu/uWr2jstH6oJ92TLaUNHM4HmLE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VFLXiMq4RCCyfDl/I+ETl9jr03kXMDGi9fpBzk62Ythw0O4YOfVf76hLQbS/c+TvJ
+	 qmFICJphw8t6JIewOsW/uYr5cLWDbStYNOSLpYa+Ms/VugfYPlqTPmDouaU/1tIRVt
+	 L3350g9DTWhdFNbxdUxkrhgi4Sn8dmwPpRwyVbzQ=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45A8uba8104073
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 03:56:37 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 03:56:37 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 03:56:37 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45A8uXxw051246;
+	Mon, 10 Jun 2024 03:56:34 -0500
+Message-ID: <bf928964-2c00-4e4a-a677-ad920cdc9759@ti.com>
+Date: Mon, 10 Jun 2024 14:26:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,96 +64,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] mm/memory_hotplug: skip
- adjust_managed_page_count() for PageOffline() pages when offlining
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
- xen-devel@lists.xenproject.org, kasan-dev@googlegroups.com,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>
-References: <20240607090939.89524-1-david@redhat.com>
- <20240607090939.89524-4-david@redhat.com>
- <ZmaBGSqchtEWnqM1@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: ti: am642-phyboard-electra: Add
+ overlay to enable PCIe
+To: Nathan Morrisson <nmorrisson@phytec.com>, <nm@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>,
+        <w.egorov@phytec.de>
+References: <20240513225646.3603803-1-nmorrisson@phytec.com>
+ <20240513225646.3603803-3-nmorrisson@phytec.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZmaBGSqchtEWnqM1@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240513225646.3603803-3-nmorrisson@phytec.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 10.06.24 06:29, Oscar Salvador wrote:
-> On Fri, Jun 07, 2024 at 11:09:38AM +0200, David Hildenbrand wrote:
->> We currently have a hack for virtio-mem in place to handle memory
->> offlining with PageOffline pages for which we already adjusted the
->> managed page count.
->>
->> Let's enlighten memory offlining code so we can get rid of that hack,
->> and document the situation.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> Acked-by: Oscar Salvador <osalvador@suse.de>
+Hi
+
+On 14/05/24 04:26, Nathan Morrisson wrote:
+> Add an overlay to enable PCIe on the am642-phyboard-electra. This
+> will disable USB3 and restrict us to USB2.
 > 
 
-Thanks for the review!
 
+Commit message still doesn't answer why? Could you explain why the
+overlay is needed
+
+
+I am guessing USB3 and PCIe are exclusive at SoC level and board has
+capabilities for both? So, please add the same to commit message.
+
+
+[...]
 -- 
-Cheers,
-
-David / dhildenb
-
+Regards
+Vignesh
 
