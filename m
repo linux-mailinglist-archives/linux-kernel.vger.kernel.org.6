@@ -1,126 +1,81 @@
-Return-Path: <linux-kernel+bounces-208074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A18902045
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2063B90204B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8775B22F90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1759281C1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE46E7CF18;
-	Mon, 10 Jun 2024 11:24:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F172FC01;
-	Mon, 10 Jun 2024 11:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B947D06B;
+	Mon, 10 Jun 2024 11:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yvv3VKFX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A9EFC01;
+	Mon, 10 Jun 2024 11:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718018688; cv=none; b=F9pHlMkLQ7L8clbjvod5pqQov9wo1GpQ/eJHF0Cxlc6jeptd0TYtzVDAvy+8QpkJq364TcUgnHrLSiirPn3mb36aWcrmgHU1dBn1AxKR73VpOZxk2+Y7uCRWUxar95pjYg6oL8/ekSQ/TKp/YeIoJTwjgEtACj18tik2/N0m2RA=
+	t=1718018824; cv=none; b=enSItMmHsmceH8zRWNkq4FKx+SQGmLA0oLu0dv5UBB5iRPcTbyE4pmn/xN8VVDcRs2S3X/+DJw/FByT6mmO2hvokv20OI72hjtSR68OLtZUxCLuDXjeD39qE2y6V2DucFZEdXBQH39/4uNPFTrC7Bzd5C6ZgmGfV6WNEjtNnYQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718018688; c=relaxed/simple;
-	bh=nPOoARfVywQm1Pm2aleqpSEX9lB7OYntKURSvXUt+/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CtHXclohZEHrHhcDjCFVpaKnUrbekPY4zr6U+4yg74GLrqVpAgsHWauJboGMqWbYPETRS7LcX8YqE4Ob5KarBzeXvknmKVAc0j8NgWtxp4Kwj9OKnMEWqddUVKuEN34HF7z6NwHW/VD7aZ5PInapImyPjr8gDb42/xxBR+yA4EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E07E112FC;
-	Mon, 10 Jun 2024 04:25:09 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 141F23F73B;
-	Mon, 10 Jun 2024 04:24:41 -0700 (PDT)
-Date: Mon, 10 Jun 2024 12:24:39 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH 7/9] arm64: perf/kvm: Use a common PMU cycle counter
- define
-Message-ID: <Zmbid4pN7gz4Y4CH@J2N7QTR9R3>
-References: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
- <20240607-arm-pmu-3-9-icntr-v1-7-c7bd2dceff3b@kernel.org>
+	s=arc-20240116; t=1718018824; c=relaxed/simple;
+	bh=Zj7me7gZBaXpkbOCnvwgreuP5Tx8hWvjy2At9j5lGHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OL7+nWtRlCJjLZf+27EGzA74l8Sl+QhLvBRxoYb7wTw/jSGs/AlkfvnXnIOvjfnZkbLdS/DK+MauV6YEssX2PG6ZXXcRbH1+er3FJF1zPgNAMi8tWuKsO9aamtyYjTaC7wQ8A+8yLrdrGVzO4nFc7O1L4r2fjs3IUeVsskD4wr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yvv3VKFX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2676C2BBFC;
+	Mon, 10 Jun 2024 11:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718018823;
+	bh=Zj7me7gZBaXpkbOCnvwgreuP5Tx8hWvjy2At9j5lGHk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Yvv3VKFXHSY1XZG0ppooSoMDp3H70bNoH74uPMfaQM2cJJ/186kLRBVZCnX0OpVFj
+	 EKujvHGV/RANpBc7lzjdwPXveEtJnaRHH+3BN0ePXcbrnblOWGAUH6DEA/E4SjFNjv
+	 LXIxZ/Gv3iJENigFnFkFkV5OmjLIvLSOP7oDfx99MhSJgU1dXp41jx5P+tQntPZ5sd
+	 yP69TR2JPvOnEqWbcgRWsMDeqtN0WNJ/B2r0RUiSv+UkEuuSECytHUK2DPmz87tEyH
+	 nMk/eog8FkQCbMOnoMAA5SGTEGQrX6xUKazBaROlxgWmssJjhmIJ/XTSi6ZIq86LTJ
+	 UqO6dT+BKzEcw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v3 0/3] kbuild: remove PROVIDE() and refactor vmlinux_link steps
+Date: Mon, 10 Jun 2024 20:25:15 +0900
+Message-ID: <20240610112657.602958-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-7-c7bd2dceff3b@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 07, 2024 at 02:31:32PM -0600, Rob Herring (Arm) wrote:
-> The PMUv3 and KVM code each have a define for the PMU cycle counter
-> index. Move KVM's define to a shared location and use it for PMUv3
-> driver.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  arch/arm/include/asm/arm_pmuv3.h   |  2 ++
->  arch/arm64/include/asm/arm_pmuv3.h |  2 ++
->  arch/arm64/kvm/sys_regs.c          |  1 +
->  drivers/perf/arm_pmuv3.c           | 23 +++++++++--------------
->  include/kvm/arm_pmu.h              |  1 -
->  5 files changed, 14 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/arm_pmuv3.h b/arch/arm/include/asm/arm_pmuv3.h
-> index a41b503b7dcd..ac2cf37b57e3 100644
-> --- a/arch/arm/include/asm/arm_pmuv3.h
-> +++ b/arch/arm/include/asm/arm_pmuv3.h
-> @@ -9,6 +9,8 @@
->  #include <asm/cp15.h>
->  #include <asm/cputype.h>
->  
-> +#define ARMV8_PMU_CYCLE_IDX		31
-> +
->  #define PMCCNTR			__ACCESS_CP15_64(0, c9)
->  
->  #define PMCR			__ACCESS_CP15(c9,  0, c12, 0)
-> diff --git a/arch/arm64/include/asm/arm_pmuv3.h b/arch/arm64/include/asm/arm_pmuv3.h
-> index 1ed91334fede..46930729fb3f 100644
-> --- a/arch/arm64/include/asm/arm_pmuv3.h
-> +++ b/arch/arm64/include/asm/arm_pmuv3.h
-> @@ -11,6 +11,8 @@
->  #include <asm/cpufeature.h>
->  #include <asm/sysreg.h>
->  
-> +#define ARMV8_PMU_CYCLE_IDX		31
 
-I think we can define this in <linux/perf/arm_pmuv3.h>, rather than
-needing separate definitions for arm/arm64. 
+ - Remove PROVIDE() in the linker script
+ - Merge temporary vmlinux link steps for BTF and kallsyms
 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index f8b5db48ea8a..22393ae7ce14 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -18,6 +18,7 @@
->  #include <linux/printk.h>
->  #include <linux/uaccess.h>
->  
-> +#include <asm/arm_pmuv3.h>
->  #include <asm/cacheflush.h>
->  #include <asm/cputype.h>
->  #include <asm/debug-monitors.h>
 
-... so we'd need to change the include here, but the rest of this patch
-looks good as-is.
+Masahiro Yamada (3):
+  kbuild: refactor variables in scripts/link-vmlinux.sh
+  kbuild: remove PROVIDE() for kallsyms symbols
+  kbuild: merge temporary vmlinux for BTF and kallsyms
 
-Mark.
+ include/asm-generic/vmlinux.lds.h |  19 ------
+ kernel/kallsyms_internal.h        |   5 --
+ scripts/kallsyms.c                |   6 --
+ scripts/link-vmlinux.sh           | 101 +++++++++++++++++-------------
+ 4 files changed, 58 insertions(+), 73 deletions(-)
+
+-- 
+2.43.0
+
 
