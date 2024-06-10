@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-208799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E289902948
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A5B90294D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5886B227B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE19282B8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B0A2230F;
-	Mon, 10 Jun 2024 19:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6BF14E2F5;
+	Mon, 10 Jun 2024 19:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HVFUtOwG"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0K4Kui3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E1215A8;
-	Mon, 10 Jun 2024 19:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109B02032B;
+	Mon, 10 Jun 2024 19:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047844; cv=none; b=m+Bz0vPdSHHsixBzalpJtITfpzIwSj6yRKmMqh2ac56N5YGdz/alZmCwiafckQ6CgpJShXMjUYFlGggr49wbMXO69dnNszYtoG+norYc161+B8pXXtad1DEuK+JBgti+l3P/0oA0WXDqfXVqMapwvrqrqXgfDxV0fvELfILwLP8=
+	t=1718047874; cv=none; b=nku7Oel2IOLoXjtfEMBeVIJIaYe1SO7VG7BrVQNtuDwRh7Inu6hxDCIXWgg/QE9uMNtR+3RLlJH+Q5k6zIHcec1y5avlqGLzoDizLtdOLFH3zb4zhXP5sAeNpcs6DQupW33YEQ1OnETu6cTb9kznNUsa4NaLXveutgXRKzlNHQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047844; c=relaxed/simple;
-	bh=QNo/Hi+24ofyIL/ZiJqEl6sZHnzgkMG8cAmo6Kt4Ai4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tG3fkRxQdHYT818dmF7V9BVRHER16e24P6KNSrzyATXoo17fgqLfpcYb1u+BPWRhpGNIBpalfjDax1Qo3PIm84l18+HEe+tZjRYLB1bdj4Qi+80ULgmTrOC3iS9B93Z1v3H8QrjJNFyRCwCoO0hQGQLa1YbV+hKlvtoYd19Mm04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HVFUtOwG; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AJUGhS097546;
-	Mon, 10 Jun 2024 14:30:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718047816;
-	bh=hW6VCMkxCCGg6hLZeTeC/jrZH1rZBd54xaTw67pHzdU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=HVFUtOwGAHHa1OaI7U5McdTKy6kaGY3xz1HHpSA4ED0rpJXxtAHeA7u1algi/tyCu
-	 F+zxPgD2K774huKmrGcTRXS5hjiPwdei2xf2JvHIezdD/acYmiTMMuvHqBKn/Kdfpy
-	 kUAsLXoAwwaztcBKOf7ruBICfEKT/185lyur34wk=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AJUFRf073656
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 14:30:16 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 14:30:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 14:30:15 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AJUFNB021618;
-	Mon, 10 Jun 2024 14:30:15 -0500
-Date: Mon, 10 Jun 2024 14:30:15 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Hari Nagalla <hnagalla@ti.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with
- remote proc nodes
-Message-ID: <20240610193015.flfynlomz6gzwbx6@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20240605124859.3034-1-hnagalla@ti.com>
- <20240605124859.3034-5-hnagalla@ti.com>
- <20240606171620.h3twptxb5mrxbqxh@bryanbrattlof.com>
- <e820d497-9327-8d8b-d1b2-7f6707e593aa@ti.com>
+	s=arc-20240116; t=1718047874; c=relaxed/simple;
+	bh=zjV5oimDRqcVon1tOx2Q6+kkWynGBjVjbUDpys9U2Dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ozblObfr/imBaO95r+fQg129R406MaMeqLW/Zc4nvr4rHb5VOK5LjITU02/NeOmGMEevpEsLhckO8lbcjoaLx3aEa+spzDClrNCrF/ZK7Lg6Q1bAYFd4xF+NCj8KDycNzeua64A6blX8HHTD82aL32qn5sgO1YM3Ko3wvYWHKKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0K4Kui3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73ECBC2BBFC;
+	Mon, 10 Jun 2024 19:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718047873;
+	bh=zjV5oimDRqcVon1tOx2Q6+kkWynGBjVjbUDpys9U2Dw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E0K4Kui3uLSGmW4eyKVIob4E2pks9sNbuolk50G/rA5dyGgGdjiaTjWn5bFf0+46x
+	 /tOAdfqU3zicSLvitI5SOXBtB+LWlVw424aMcmAVlZP4fdWyeZekL0WVlV+Hm7RVyZ
+	 xY1cmiMw0BtIgZkXV7BxiCQtkxXUItRKbaNWUnavRvH+yL7+29uN9U28DLqv7LeYyM
+	 OP9V78PwuOZkHUXXgF8/HZ28BS7W93kYWJzu7yNqzXIP92hvWF3u+Hr1ADxYgRgOsM
+	 eojBGD3/k7iCCvjsjrbWBK3beOwONmBHR1/kKKRZ6wdwJN2r8EsYetzXcI7XHfV5tI
+	 4Ii+oO3z1Btdw==
+Message-ID: <6959494a-98ba-4ccf-973c-14d079b76f27@kernel.org>
+Date: Mon, 10 Jun 2024 22:31:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <e820d497-9327-8d8b-d1b2-7f6707e593aa@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+ am62p-j722s-common-{}.dtsi
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, afd@ti.com, kristo@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
+ srk@ti.com
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-2-s-vadapalli@ti.com>
+ <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
+ <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On June 10, 2024 thus sayeth Hari Nagalla:
-> On 6/6/24 12:16, Bryan Brattlof wrote:
-> > > +
-> > > +		c7x_0_memory_region: c7x-memory@99900000 {
-> > > +			compatible = "shared-dma-pool";
-> > > +			reg = <0x00 0x99900000 0x00 0x01efffff>;
-> > > +			no-map;
-> > > +		};
-> > >   	};
-> > This seems highly specific to the demos we're currently running for our
-> > reference boards. If someone wants to develop their own app say with
-> > Zypher they would instantly need to change this.
-> > 
-> > If these absolutely need to be in here could they go in a TI-demo overly?
-> > 
-> > ~Bryan
-> Hey Bryan,
-> You are correct, these carveouts match the TI provided firmware binaries.
-> Ideally, these could go into an overlay. Just following the carveout model
-> used with the rest of the TI SoCs (AM6x/J72x), to avoid confusion to the
-> users.
+Siddharth,
 
-Ah yeah, I was planning to rip those out too ;) 
+On 07/06/2024 14:28, Siddharth Vadapalli wrote:
+> On Thu, Jun 06, 2024 at 10:51:27AM +0300, Roger Quadros wrote:
+> 
+> [...]
+> 
+>>>  5 files changed, 10 insertions(+), 7 deletions(-)
+>>>  rename arch/arm64/boot/dts/ti/{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} (99%)
+>>>  rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+>>>  rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+>>>  rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
+>>
+>> This is not correct.
+>> If J722 has different CBASS components than AM62p then we should leave k3-am62p.dtsi
+>> as it is and introduce a new k3-j722.dtsi with relevant CBASS components.
+> 
+> Roger,
+> 
+> The existing hierarchy prior to this series is as follows:
+> k3-am62p.dtsi = k3-am62p-main.dtsi + k3-am62p-mcu.dtsi +
+> 		k3-am62p-wakeup.dtsi + k3-am62p-thermal.dtsi + <delta-1>
+> k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
+> k3-j722s.dtsi = k3-am62p5.dtsi + <delta-3>
+> k3-j722s-evm.dts = k3-j722s.dtsi + <detla-4>
+> 
+> Based on your suggestion, you seem to propose the following hierarchy:
+> k3-am62p-{main,mcu,thermal,wakeup}.dtsi = AM62P specific data
+> k3-am62p.dtsi = k3-am62p-j722s-common-main.dtsi +
+> 		k3-am62p-j722s-common-mcu.dtsi +
+> 		k3-am62p-j722s-common-wakeup.dtsi +
+> 		k3-am62p-j722s-common-thermal.dtsi +
+> 		k3-am62p-{main,mcu,thermal,wakeup}.dtsi +
+> 		<delta-5>
+> k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
+> k3-j722s-{main,mcu,thermal,wakeup}.dtsi = J722S specific data
+> k3-j722s.dtsi = k3-am62p-j722s-common-main.dtsi +
+> 		k3-am62p-j722s-common-mcu.dtsi +
+> 		k3-am62p-j722s-common-wakeup.dtsi +
+> 		k3-am62p-j722s-common-thermal.dtsi +
+> 		k3-j722s-{main,mcu,thermal,wakeup}.dtsi +
+> 		<delta-6>
 
-My idea was to throw them into our SDK layers so that other distros 
-don't have to work around them anymore. This also gives the maintainers 
-of those meta- layers the control of the reserved-memory{} node so they 
-can carve it up or move it around as they need along with the firmware 
-they build.
+What is the equivalent of k3-am62p5.dtsi here?
+That should contain k3-j722s.dtsi + CPU and OPP stuff.
 
-~Bryan
+I suppose it should be named specific to the SoC variant part number?
+
+> k3-j722s-evm.dts = k3-j722s.dtsi + <delta-4>
+> 
+> Please let me know whether the above organization of files matches what you
+> expect it to look like. I will post the v6 series based on your feedback.
+> 
+> Regards,
+> Siddharth.
+
+-- 
+cheers,
+-roger
 
