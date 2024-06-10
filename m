@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-208864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83CF902A09
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:38:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AF4902A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F341F23F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 227CEB22DEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68346101E2;
-	Mon, 10 Jun 2024 20:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9374D9E7;
+	Mon, 10 Jun 2024 20:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eUo1fSH9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q+/oRSpq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eUo1fSH9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q+/oRSpq"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yDFRhfrY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/O5jiP+Y";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BcesNXaI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9fTgI0L"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59A3433B9;
-	Mon, 10 Jun 2024 20:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85B0210E7;
+	Mon, 10 Jun 2024 20:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718051892; cv=none; b=JHNwZ9t6Y2W16a2sAdR9b2pUyhylXKEjc52SSOYqjAHgKJ8FN/EwEFZNW2+U3+PnuzZ6fRl9NzACvmb+SQtZyv4S3NMACNOSM6QbTZ5/B37ZxCikleIiJGWnTvHFZdF71PudRaSX7PsBAktYk4vtfxl9CiHieeMlAfTM+BDG7Ao=
+	t=1718052154; cv=none; b=iWJ7OxI7EPq2fQDRjkvBEPnXRph/10fngSb8SA1Qm5miAz3Wsf7ZEjHxMH4LqeRnTMdXNMDRspGCnlwrhvCrByqaTJ8Ooy9pw04FxLgwJu/UeMOsb8k31AZUws/plpn+RrkVCkPVM4R7VkrT1B/Iv29oGyLWXzdzow9Hl4vhwyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718051892; c=relaxed/simple;
-	bh=Bc6grhxxoBIzR+kXYT94BIz0HLhVjnDl+vcaEYDuro4=;
+	s=arc-20240116; t=1718052154; c=relaxed/simple;
+	bh=cDSRUCVBEjAYGxQ/xYORJ64U3JN6qTshWZ+W7hdfAR0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qzhb14u+T0PWN96y2vPR8xKJnD0/kqrctYfKSroSWQPc7QVbI7bI6Xy0/MCFFkDgzKE2gUMOUyHbodz2WQnV844jZBZC+ySp++JDf56XOdAxrvhO2g2yoy1qm+zwAvJe7NS4FPx5OFJa5nzFQw5oqz4Ow2xB/5oPUPvH+5bXhfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eUo1fSH9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q+/oRSpq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eUo1fSH9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q+/oRSpq; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=CkjYshE6IT1DXS30mtmgYZsOj5vItOQ4MUm/QGyZNIfaMi2ZqzjTUJnf/l9VOsmRUhc8sUnRVa6TP3mN2eGEm2ZugzGOU5Ust8yp0/6meVrFOynV1/58iC8e+QP1VyFyNxf50ekvp0kvTk3OL4OIvjB1jcynugDGPhdMPfbxh2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yDFRhfrY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/O5jiP+Y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BcesNXaI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9fTgI0L; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 92E13200C8;
-	Mon, 10 Jun 2024 20:38:08 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D80291F837;
+	Mon, 10 Jun 2024 20:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718051888; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1718052151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XxeQrYK1W1CzQMoStEUsvSWuSb8kH7BgYf+vCDWtHuA=;
-	b=eUo1fSH9gLM/mt2MZ/Xqn0WQP6BqwcDEZ2Tn+n+7ZSpn9bvqBCa3dKM6AToMOjQGR6/qzr
-	Q3vFDrf3E9W2vnQ/jnA25lf3jg/ZnayYYcEG3BnCC99WKFhSmBd1kIJETKLla8+tl6TBF/
-	8Lik5O+rdZsRFhUev+SegfXDDULAXBM=
+	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
+	b=yDFRhfrYJGRl3Y3smKWFduNidqeJ31w2D1TLlKqYx9T+AMvU8qTW5XiZI7Kevaq+jFW1cr
+	KI4mYFUUPH/zhgoUPn5qosZQzEe4KGavkCwCKqOGKvd2mT2uABNtxYDtzbEBlTvJKjpZIT
+	J4sVczW+GsPXdtZ6w8vAkhSDRdji+DY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718051888;
+	s=susede2_ed25519; t=1718052151;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XxeQrYK1W1CzQMoStEUsvSWuSb8kH7BgYf+vCDWtHuA=;
-	b=q+/oRSpqBAlvQ2Bj4clV5NObxPCqLT87ozD/Mo+AY4A2eaZ1mOfQEbXkNaHDWGQ5BEK/bn
-	0lOfYSKCDU1EkfCQ==
+	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
+	b=/O5jiP+YiJ5Y06lpH1HPmhyLBCmfGd25fSADO2CAhkf+RIiRgxUj5JxwURjjCyZXa63bbx
+	v/4h03Kc3jHp8tDQ==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eUo1fSH9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="q+/oRSpq"
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BcesNXaI;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w9fTgI0L
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718051888; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1718052150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XxeQrYK1W1CzQMoStEUsvSWuSb8kH7BgYf+vCDWtHuA=;
-	b=eUo1fSH9gLM/mt2MZ/Xqn0WQP6BqwcDEZ2Tn+n+7ZSpn9bvqBCa3dKM6AToMOjQGR6/qzr
-	Q3vFDrf3E9W2vnQ/jnA25lf3jg/ZnayYYcEG3BnCC99WKFhSmBd1kIJETKLla8+tl6TBF/
-	8Lik5O+rdZsRFhUev+SegfXDDULAXBM=
+	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
+	b=BcesNXaILY41Vt2KPd56+WB+xRmtEcX4HfdKa1fsK4zrruLWhOIyxKMRmyCcEX2m1HADVt
+	Js7wQPwrfy25+UxV0YQ6kAwyedSGhnCpndjohSUZE/67bdd9N8zpSmQylMNXTFxbIo5F2r
+	ZG8K49t7H+A0pD0IwO3OsPJJTDyfH2Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718051888;
+	s=susede2_ed25519; t=1718052150;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XxeQrYK1W1CzQMoStEUsvSWuSb8kH7BgYf+vCDWtHuA=;
-	b=q+/oRSpqBAlvQ2Bj4clV5NObxPCqLT87ozD/Mo+AY4A2eaZ1mOfQEbXkNaHDWGQ5BEK/bn
-	0lOfYSKCDU1EkfCQ==
+	bh=VgxtB78HGjNFkePpct4e22nV8RoDLwUOH6juCSjM86U=;
+	b=w9fTgI0LPneUEjPXHHPRmfkKQVYSsPH7jyvvKy5jXmx2AFfUYK5vm/SsrdE3RexEM0XQvU
+	2NgwMEL2Pq85O+DQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 78F2013A7F;
-	Mon, 10 Jun 2024 20:38:08 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B524113A7F;
+	Mon, 10 Jun 2024 20:42:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LKoVHTBkZ2ZNKQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 10 Jun 2024 20:38:08 +0000
-Message-ID: <3f58c9a6-614f-4188-9a38-72c26fb42c8e@suse.cz>
-Date: Mon, 10 Jun 2024 22:38:08 +0200
+	id mWGMKzZlZ2YyKgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 10 Jun 2024 20:42:30 +0000
+Message-ID: <ce62eb86-8539-4c7f-b929-926cec94e1f0@suse.cz>
+Date: Mon, 10 Jun 2024 22:42:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,19 +97,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/14] wireguard: allowedips: replace call_rcu by
- kfree_rcu for simple kmem_cache_free callback
+Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
 Content-Language: en-US
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, wireguard@lists.zx2c4.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Paul E . McKenney" <paulmck@kernel.org>,
- Matthew Wilcox <willy@infradead.org>
+To: paulmck@kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-2-Julia.Lawall@inria.fr> <ZmW85kuO2Eje6gE9@zx2c4.com>
+ <20240609082726.32742-6-Julia.Lawall@inria.fr>
+ <20240610112223.151faf65@rorschach.local.home>
+ <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -150,64 +149,94 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <ZmW85kuO2Eje6gE9@zx2c4.com>
+In-Reply-To: <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
 X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
 	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
+	XM_UA_NO_VERSION(0.01)[];
 	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 92E13200C8
+X-Rspamd-Queue-Id: D80291F837
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
 X-Spam-Score: -4.50
 
-On 6/9/24 4:32 PM, Jason A. Donenfeld wrote:
-> Hi Julia & Vlastimil,
+On 6/10/24 5:46 PM, Paul E. McKenney wrote:
+> On Mon, Jun 10, 2024 at 11:22:23AM -0400, Steven Rostedt wrote:
+>> On Sun,  9 Jun 2024 10:27:17 +0200
+>> Julia Lawall <Julia.Lawall@inria.fr> wrote:
+>> 
+>> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+>> > index 7c29f4afc23d..338c52168e61 100644
+>> > --- a/fs/tracefs/inode.c
+>> > +++ b/fs/tracefs/inode.c
+>> > @@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
+>> >  	return &ti->vfs_inode;
+>> >  }
+>> >  
+>> > -static void tracefs_free_inode_rcu(struct rcu_head *rcu)
+>> > -{
+>> > -	struct tracefs_inode *ti;
+>> > -
+>> > -	ti = container_of(rcu, struct tracefs_inode, rcu);
+>> > -	kmem_cache_free(tracefs_inode_cachep, ti);
+>> 
+>> Does this work?
+>> 
+>> tracefs needs to be freed via the tracefs_inode_cachep. Does
+>> kfree_rcu() handle specific frees for objects that were not allocated
+>> via kmalloc()?
 > 
-> On Sun, Jun 09, 2024 at 10:27:13AM +0200, Julia Lawall wrote:
->> Since SLOB was removed, it is not necessary to use call_rcu
->> when the callback only performs kmem_cache_free. Use
->> kfree_rcu() directly.
-> 
-> Thanks, I applied this to the wireguard tree, and I'll send this out as
-> a fix for 6.10. Let me know if this is unfavorable to you and if you'd
-> like to take this somewhere yourself, in which case I'll give you my
-> ack.
-> 
-> Just a question, though, for Vlastimil -- I know that with the SLOB
-> removal, kfree() is now allowed on kmemcache'd objects. Do you plan to
-> do a blanket s/kmem_cache_free/kfree/g at some point, and then remove
-> kmem_cache_free all together?
+> A recent change to kfree() allows it to correctly handle memory allocated
+> via kmem_cache_alloc().  News to me as of a few weeks ago.  ;-)
 
-Hmm, not really, but obligatory Cc for willy who'd love to have "one free()
-to rule them all" IIRC.
+Hey, I did try not to keep that a secret :)
+https://lore.kernel.org/all/20230310103210.22372-8-vbabka@suse.cz/
 
-My current thinking is that kmem_cache_free() can save the kmem_cache
-lookup, or serve as a double check if debugging is enabled, and doesn't have
-much downside. If someone wants to not care about the kmem_cache pointer,
-they can use kfree(). Even convert their subsystem at will. But a mass
-conversion of everything would be rather lot of churn for not much of a
-benefit, IMHO.
+> 							Thanx, Paul
+> 
+>> -- Steve
+>> 
+>> 
+>> > -}
+>> > -
+>> >  static void tracefs_free_inode(struct inode *inode)
+>> >  {
+>> >  	struct tracefs_inode *ti = get_tracefs(inode);
+>> > @@ -70,7 +62,7 @@ static void tracefs_free_inode(struct inode *inode)
+>> >  	list_del_rcu(&ti->list);
+>> >  	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+>> >  
+>> > -	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
+>> > +	kfree_rcu(ti, rcu);
+>> >  }
+>> >  
+>> >  static ssize_t default_read_file(struct file *file, char __user *buf,
+>> 
+
 
