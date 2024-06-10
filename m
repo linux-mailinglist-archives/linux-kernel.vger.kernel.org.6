@@ -1,41 +1,80 @@
-Return-Path: <linux-kernel+bounces-208809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB1A902977
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:43:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA83902978
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FAD51C21E24
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:43:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D326FB23481
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DBA14E2EC;
-	Mon, 10 Jun 2024 19:43:02 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E71A01EB5B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8155314E2CC;
+	Mon, 10 Jun 2024 19:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="JV5Eh2bn"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8017545
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718048581; cv=none; b=Vp05bqY0vsFIzcjep/AgzFgDQUkJ73iWDFLgj7AqrKeK4QCMlMkjNxRC/aVT5qGT9jp1c8PiubJPFxRXuxJBx5bYVCmNvT8wJnDubkzzN2MpeHOIO0iKfRzNhw6/Uw3iu3fLAYXFhmrIzl90n5Ov+AnPaVpvBnKW/jx2vHeGw4Y=
+	t=1718048635; cv=none; b=uN99HTlbSISnGMRPnxnkIoNfd+NRxi4zRj3wsly78FWOr/bg32bnntxA6BLj+2+uzEULXLUWtzvRhP8SLWnV6xF4d0sLxb37FG2jv5+LdVB5LLu0IYghxZuIuMLlPL1c6jJHCa/tcMhk384ZEUHDaRVoJoMnQe8jjvScMjah5aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718048581; c=relaxed/simple;
-	bh=SJuoIn+XQDHZEBwCVtB22ZyWhi7TNCMTGd17Ya1myv8=;
+	s=arc-20240116; t=1718048635; c=relaxed/simple;
+	bh=NwQJNx9srCsHR1oXqicEl2zxyVzc0tYR1H1+T/lrpNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4P49Eg0l7U0gZURfgClbLAen2y+6/x55xgxrzI14NXu41epbAUrkS+hp/Pk+K3L10XaNUmRvXT50jYlczm1A1b3u9pf4vB0ReKP1fDmb3fhnE0NC4xs2rox2idV8sBLQ7g6DQdwwxJgfbnegaVj0FGxfoHnPyPUabnlxA16jE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 161143 invoked by uid 1000); 10 Jun 2024 15:42:57 -0400
-Date: Mon, 10 Jun 2024 15:42:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
-Message-ID: <c3073a8c-bdaa-4123-ae27-9143d916a701@rowland.harvard.edu>
-References: <e8b8013b-d8b4-4eee-8643-1d512aa17133@rowland.harvard.edu>
- <000000000000ee54e1061a8ce3f6@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PoGEE/t1iKB2NqD/pFtYlACNm2m7IzHUoiPyz+lHkrxcHrlffi1FCbbbeQwC4Qo5h2kW7VRojv7fmAZtkMmDWH+Lnsz/srEOEFkt2R4rOYoGTCNtJcoiHwylZrWY8IqOReLH7mHpMpsYCflDVlJ1SVpglezaYgxiphgjtyNl1bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=JV5Eh2bn; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfaff6bee06so2888071276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718048633; x=1718653433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qw5+VsdhRywpk2BTwqyAr7RLtJMnVZ6iQGrwmpugQIQ=;
+        b=JV5Eh2bnd97K9r0XUO2eW9cs3WujONVK461rQKSYudpPfs0FYC/ZLoKCGEP85Sh4W+
+         uThk4RT4DFeWFUfiP5IZjrpqzZe5x6AedZqsKmTaF7HfTibkNUaNrxK9gt0iLND3qq1K
+         xAL1eZGkAM3wWJnHNruc2qYMMlL8QDp0Mw/335nigBILGzr6R1zNNg55ghR1WeoyXhud
+         iqQTOWchxqnTF3cE+FgWqRXESEdW6950ITR7uZnje0UINKI/tOYdCIUbkJ6DHSOk9wvb
+         3oHmNQ/33mHgQDGvu/3b+i3UX8o9z9Uh9CRoyV6p1k1yyxmsyQmyic7Ej5QfOlr+olI1
+         vzbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718048633; x=1718653433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qw5+VsdhRywpk2BTwqyAr7RLtJMnVZ6iQGrwmpugQIQ=;
+        b=Q4ogfj23llKo9BYdBYj2dVSzzh06eu2JRprnwe4Gffmi4YWZFvAN9m4qm8CYMcX7WY
+         WBvAOWz5eyaVexULOKFeC75bh5y3XfMknI+xhfSh+22IAF95MvODlF+SRtE72slF8nMh
+         sSoB+RIT4c2eUXQHTtYanCaC1TpDYhebRX08lozSrYff0fBrvLm5PAI8ep/90P0otQcu
+         jf1UFNAR4Hy6/VvyjL70BzR0O+TZoIfF1Pf0WDOV/DSDDv47e8VsGDa+e6hCyU5rA+n8
+         bAsi3vBdsV74vWxUdw9kDXUx9gnP2DgBqSmnC5zSAUmZ48ry7wTiHhgPZlL67DRKVSb7
+         fg0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVPAz0Ai3pCGWiXPJJYLSlJ76pv66ts5eoVaUmdyflhCkdhQDGuV0AvSjtrrZpK8PZN3fQlY+6gLWIS7d0DuUygk9pDDRLeXyuZMlVX
+X-Gm-Message-State: AOJu0YyRSFh8QELExDNbRWMcMhMK+747tEu91OjaKs8NRIbCOqZ2+g6l
+	3k80oIQkBXZB4pggw7j3nARx/13vEJyZNo/Vvvk/j/SADAHynojACfhyh//wWAE=
+X-Google-Smtp-Source: AGHT+IFx1drU/OF9dPe5rnR3QcIKC6kbD7HIcAqjMWyaisYYHIilRo2oIwKwsrToihX3KGS+MCceDg==
+X-Received: by 2002:a25:d347:0:b0:dfa:febf:5a72 with SMTP id 3f1490d57ef6-dfafebf5d04mr8707739276.38.1718048633375;
+        Mon, 10 Jun 2024 12:43:53 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae53027b5sm1735103276.38.2024.06.10.12.43.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 12:43:53 -0700 (PDT)
+Date: Mon, 10 Jun 2024 15:43:52 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH 2/3] btrfs: replace stripe extents
+Message-ID: <20240610194352.GB235772@perftesting>
+References: <20240610-b4-rst-updates-v1-0-179c1eec08f2@kernel.org>
+ <20240610-b4-rst-updates-v1-2-179c1eec08f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,93 +83,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000ee54e1061a8ce3f6@google.com>
+In-Reply-To: <20240610-b4-rst-updates-v1-2-179c1eec08f2@kernel.org>
 
-On Mon, Jun 10, 2024 at 10:58:02AM -0700, syzbot wrote:
-> Hello,
+On Mon, Jun 10, 2024 at 10:40:26AM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> BUG: soft lockup in raw_ioctl
+> If we can't insert a stripe extent in the RAID stripe tree, because
+> the key that points to the specific position in the stripe tree is
+> already existing, we have to remove the item and then replace it by a
+> new item.
 > 
-> dummy_hcd dummy_hcd.0: urbp 000000006bf6c1dd 40409880 next_frame 0000000000000000
-> cdc_wdm 1-1:1.0: nonzero urb status received: -71
-> cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-> dummy_hcd dummy_hcd.0: urbp 000000003f481f40 40409880 next_frame 000000003f481f40
-> watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [syz-executor415:10796]
+> This can happen for example on device replace operations.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/btrfs/ctree.c            |  1 +
+>  fs/btrfs/raid-stripe-tree.c | 34 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 35 insertions(+)
+> 
+> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+> index 1a49b9232990..ad934c5469c4 100644
+> --- a/fs/btrfs/ctree.c
+> +++ b/fs/btrfs/ctree.c
+> @@ -3844,6 +3844,7 @@ static noinline int setup_leaf_for_split(struct btrfs_trans_handle *trans,
+>  	btrfs_item_key_to_cpu(leaf, &key, path->slots[0]);
+>  
+>  	BUG_ON(key.type != BTRFS_EXTENT_DATA_KEY &&
+> +	       key.type != BTRFS_RAID_STRIPE_KEY &&
 
-The full console log shows that the cdc-wm and dummy-hcd loop uses less 
-than 60 microseconds out of every 2400 or so.  That's not enough to 
-cause this.  Something else must be going on.
+This seems unrelated.  Thanks,
 
-> Call trace:
->  __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
->  arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
->  console_emit_next_record kernel/printk/printk.c:2935 [inline]
->  console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
->  console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
->  vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
->  vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
->  vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
->  _printk+0xdc/0x128 kernel/printk/printk.c:2370
->  usb_gadget_register_driver_owner+0x1f0/0x224 drivers/usb/gadget/udc/core.c:1711
-
-Is this a coincidence?  If CPU #0 is getting stuck, why here?  Line 1711 
-is a mutex_unlock() call; it shouldn't take long.  This doesn't seem to 
-make sense.
-
-Let's try to find out what the CPU is really doing when this happens.
-
-Alan Stern
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 8867bbd4a056
-
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -1826,6 +1826,7 @@ static void dummy_timer(struct timer_lis
- 			break;
- 		dum->ep[i].already_seen = 0;
- 	}
-+	dev_info(dummy_dev(dum_hcd), "Timer handler\n");
- 
- restart:
- 	list_for_each_entry_safe(urbp, tmp, &dum_hcd->urbp_list, urbp_list) {
-@@ -1835,6 +1836,9 @@ restart:
- 		struct dummy_ep		*ep = NULL;
- 		int			status = -EINPROGRESS;
- 
-+		dev_info(dummy_dev(dum_hcd), "urbp %p %x next_frame %p\n",
-+				urbp, urbp->urb->pipe, dum_hcd->next_frame_urbp);
-+
- 		/* stop when we reach URBs queued after the timer interrupt */
- 		if (urbp == dum_hcd->next_frame_urbp)
- 			break;
-Index: usb-devel/drivers/usb/class/cdc-wdm.c
-===================================================================
---- usb-devel.orig/drivers/usb/class/cdc-wdm.c
-+++ usb-devel/drivers/usb/class/cdc-wdm.c
-@@ -112,6 +112,7 @@ struct wdm_device {
- 
- 	enum wwan_port_type	wwanp_type;
- 	struct wwan_port	*wwanp;
-+	int			alancount;
- };
- 
- static struct usb_driver wdm_driver;
-@@ -255,6 +256,14 @@ static void wdm_int_callback(struct urb
- 	desc = urb->context;
- 	dr = (struct usb_cdc_notification *)desc->sbuf;
- 
-+	if (status == -EPROTO) {
-+		if (desc->alancount >= 1)
-+			return;
-+		++desc->alancount;
-+		dev_info(&desc->intf->dev, "Alan test\n");
-+		dump_stack();
-+	}
-+
- 	if (status) {
- 		switch (status) {
- 		case -ESHUTDOWN:
+Josef
 
