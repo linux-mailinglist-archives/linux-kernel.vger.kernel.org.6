@@ -1,119 +1,112 @@
-Return-Path: <linux-kernel+bounces-208779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED81E90290E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B69902913
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DD0282556
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D217282556
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B4F14A4FC;
-	Mon, 10 Jun 2024 19:17:47 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FB714EC42;
+	Mon, 10 Jun 2024 19:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k7lecxZx"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BD81B948;
-	Mon, 10 Jun 2024 19:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237FA18643
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047067; cv=none; b=Ujaqk5ZUungj8YezVNi+OkN+4PTDf4KW6FMd/89RMh8YPEvWEqEI2tgVcSNPSesP9mqH/gcds7kT7Nhawi24rYdaOF0bUBuJ3bENdsqFzTE0jfwNS0ni2vwHOZzJ1y1xRfli7BM3eB+LSTKtqtG9ATfj5Gt+nfH++lPne2u7iWs=
+	t=1718047086; cv=none; b=JqSbPTrgs87r0auDqyRmtxF133A7QnwpRCGKD3MavsCd3G4OAZiHD4tAEr1ZN2PoTYRIZMm/sE4tssmK0llW07+zxnEljEz2xVLne1GppmjDrr1JHgtqscpr5dJlzaPVIgbRFZJTS0gGAbkVhzFOPli99uSLpKtOrneLqsTM6m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047067; c=relaxed/simple;
-	bh=CYOT76AfBouQqbVpCUNSBB4l/OiuTBOVCq0qRX+tvHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdAhhwIpc7FJj6UAFnTT/M1eApg2Tod+RlbSSuVD/PMx9L6aRje2dsTRWLB1i95jPBPn/k2dY1rdYLES3vJ/G5sOPvyK6cT8zJCWv7ursLeOkkJdtocR+4mUaImCLHGnVdgpoOBm5lAQres+zIMSZFW3vwlVdZInE+r0CACI0/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421de6e748aso618395e9.2;
-        Mon, 10 Jun 2024 12:17:45 -0700 (PDT)
+	s=arc-20240116; t=1718047086; c=relaxed/simple;
+	bh=ZLDDNoFT0RjZQZE3Qbp0+gYlvPoMfNcLfWYnfekiwsQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ISbCt2VBpfibwc3TSRzsm5e1tjT2TzS5aA95Efyy/ObbM1QylfstYhP648pdmhkYcowBkGW1KWWZp25xmWg63MclJj2wtC65po2E0MEBlM+7J1LUr+k5q2zOUw64rhpOgIwKXYuc9cUqIIUbd+8fI1XvCT45XJilb2QBf8tp8yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k7lecxZx; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b07937b84fso1607416d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718047082; x=1718651882; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKTxfDepAOASvtboGdygz0hOxMNQauCfOA/I6qs8Ids=;
+        b=k7lecxZx91arwFmCAdvH1NKX82YTeXHe1fVLkS2gUirODAciMumBLdMLjn2ljPfPTc
+         HoVXlN7HA+CNrb8KTEPfQdbog9YtfAJJuJshqB+EId4Nnm0oIQbbrD/oBOHL3bghYi1Y
+         FYiRiohW7FUjvZwXqlNSIO1VP5y2gPGGP1qk0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718047064; x=1718651864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1TjxwdtwDBf9dpqHFM5EICaXQ28U0dNmB1rsvDAYAh4=;
-        b=C37YeKsRAbU+Zl38CEG7nW+ZTztWBuOA55x6F54LcNKt1dtbSM+zB+ZXOeJVpcW1Th
-         WVHUUGhlz+tPEeEx+0JMlMXBJp8IzHfX2F15vKC5ZBdNBhkV3g/BdfCePsV3FGMV9ZXn
-         Fi9rYBHsxsgjAP22npMel3mvDvXW2oALJ6SUBuX5Ge1codojPhnitmIFkND9yhlQj5t1
-         Wx+QKidwQbzTRXaePuXlqrpgxv+BRVtYaH0vNHelfE9fYA5nzhinq9qIt5gFkchI46xK
-         5Cd6tBS1QmwRfSDA32PLdpjAPNsKh7uS5oKOAJim8I/Z8Cqd1t3mzsvPQ5oKQFZ56Ct6
-         NT5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXtbsb2BI9KhQSI074rtVeXu+sIpSJuDN3yLHznsfDXDQ23a4xUXzklDBjgBVsorqLq7oXAT671LEsZOpNDmBVENXVuW5FKUW1m/rkyxrx0dCAk61UjyKVxSEZnwUCVP7nywZJen/k9n3k=
-X-Gm-Message-State: AOJu0YxUFuIzOEbY2kfFVpsOVKD0drHnx2+6TMf35NUVEAZXJ4/IapmK
-	TZhbbLQ7N3wIqt16FkGG9W/V5rt439dVS4Pp6eCjrbuhLF1Q+1AseuzTisYl
-X-Google-Smtp-Source: AGHT+IG+Arhc0Ki2O2+3o5JkvJ//dutAV8umCJHhjPj9FFAHbXcosO2mEhVAJGDN3XGI/o1YqR+BZw==
-X-Received: by 2002:a5d:588e:0:b0:34d:b5d6:fe4b with SMTP id ffacd0b85a97d-35efedd2e3emr7494771f8f.4.1718047064037;
-        Mon, 10 Jun 2024 12:17:44 -0700 (PDT)
-Received: from [10.100.102.74] (85.65.205.146.dynamic.barak-online.net. [85.65.205.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e567sm152346085e9.1.2024.06.10.12.17.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 12:17:43 -0700 (PDT)
-Message-ID: <bccf1e1f-bc45-4052-9504-d852f9ae4e6c@grimberg.me>
-Date: Mon, 10 Jun 2024 22:17:42 +0300
+        d=1e100.net; s=20230601; t=1718047082; x=1718651882;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GKTxfDepAOASvtboGdygz0hOxMNQauCfOA/I6qs8Ids=;
+        b=UBeiqdYDWrGr8IplZr6qIM5XiPzfb3FraFoI1CWPYqO+UVRmXQoD97/8nbpMveWNGo
+         Tqra/gkENpJaiYScyvkSw2pBo/Z8uYYuWMP0crAaDgmH4lcNVh+Hla2L76EfDL3FkqDt
+         Syzc9OK3NfqbE1TfRwuFP+JHCUs1GR6cfm9tiMSFi6KDXe+t9S8m0JGgP/hPZMpnkTv9
+         zCx1VcYnOOqL7Rr1JsNZ6fHQUaoNUYGBKsWflP7/nBW5fyqb+eVvSMtSZXVGDz/XSwny
+         dyvNAIdKaOcT/pEgzBtpF58/Jr/Bw5Mxoe8Vkk9epYtB6Ydhlgr1LF6L3E1iczw+xe8B
+         JGJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RM0CuqG73IxJ0g/bdbPL2mk4A0SzVBiYPH/NaRshx5FW7JBqPSf9e7OUMAa9Aa5nH6hxRHNwiDEGHHt6v8JXxbm3tgtK5BjXcNCq
+X-Gm-Message-State: AOJu0YzeaATFjli+iwHQPqt8P6gc1p5U6iDHbfEKCvQ6sWdBF7SlhLcO
+	HKiCrZvwaiOjAxgEmJRte7fhRwHOLUzz/uNjrGiW51F4poWpPQKhlzI3l6qT5Q==
+X-Google-Smtp-Source: AGHT+IGTHC2QWXZRQO4gJ0793VX7ja5aesUujATsRoC5Hlxul/gYz9PU7GfQvoK3IF5jsveTUHrAtg==
+X-Received: by 2002:a05:6214:3282:b0:6b0:7c52:ae4e with SMTP id 6a1803df08f44-6b07c52afd1mr26693336d6.24.1718047081987;
+        Mon, 10 Jun 2024 12:18:01 -0700 (PDT)
+Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06e66ad80sm26224546d6.129.2024.06.10.12.18.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 12:18:01 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/2] media: uvcvideo: Followup hwtimestamp patches
+Date: Mon, 10 Jun 2024 19:17:47 +0000
+Message-Id: <20240610-hwtimestamp-followup-v1-0-f9eaed7be7f0@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-To: Keith Busch <kbusch@kernel.org>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
-References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
- <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
- <e8fa4c36-49e5-40b8-9cea-6b3b61aa3240@grimberg.me>
- <ZmdQuz8vJZMj41Kn@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <ZmdQuz8vJZMj41Kn@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFtRZ2YC/x3MTQqAIBBA4avErBNUSqyrRIuyKQcqRfsD6e5Jy
+ 2/xXoKIgTBCWyQIeFEkt2eIsgBjh31BRlM2SC4rrgRn9j5ow3gMm2ezW1d3n57JSjemVkqPUkB
+ OfcCZnn/b9e/7AfnfBcNmAAAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
+ HungNien Chen <hn.chen@sunplusit.com>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
+X-Mailer: b4 0.12.4
 
+The series 
+https://patchwork.linuxtv.org/project/linux-media/list/?series=12485
+was all merged but one patch that Laurent found a bug in the index used.
 
+When I tried the fixed patch I found an integer overflow in the
+timestamp calculations. This bug can be triggered with slow framerates.
 
-On 10/06/2024 22:15, Keith Busch wrote:
-> On Mon, Jun 10, 2024 at 10:05:00PM +0300, Sagi Grimberg wrote:
->>
->> On 10/06/2024 21:53, Keith Busch wrote:
->>> On Mon, Jun 10, 2024 at 01:21:00PM +0530, Venkat Rao Bagalkote wrote:
->>>> Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
->>> My mistake. The namespace remove list appears to be getting corrupted
->>> because I'm using the wrong APIs to replace a "list_move_tail". This is
->>> fixing the issue on my end:
->>>
->>> ---
->>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
->>> index 7c9f91314d366..c667290de5133 100644
->>> --- a/drivers/nvme/host/core.c
->>> +++ b/drivers/nvme/host/core.c
->>> @@ -3959,9 +3959,10 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
->>>    	mutex_lock(&ctrl->namespaces_lock);
->>>    	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
->>> -		if (ns->head->ns_id > nsid)
->>> -			list_splice_init_rcu(&ns->list, &rm_list,
->>> -					     synchronize_rcu);
->>> +		if (ns->head->ns_id > nsid) {
->>> +			list_del_rcu(&ns->list);
->>> +			list_add_tail_rcu(&ns->list, &rm_list);
->>> +		}
->>>    	}
->>>    	mutex_unlock(&ctrl->namespaces_lock);
->>>    	synchronize_srcu(&ctrl->srcu);
->>> --
->> Can we add a reproducer for this in blktests? I'm assuming that we can
->> easily trigger this
->> with adding/removing nvmet namespaces?
-> I'm testing this with Namespace Manamgent commands, which nvmet doesn't
-> support. You can recreate the issue by detaching the last namespace.
->
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Ricardo Ribalda (2):
+      media: uvcvideo: Fix hw timestamp handling for slow FPS
+      media: uvcvideo: Fix integer overflow calculating timestamp
 
-I think the same will happen in a test that creates two namespaces and 
-then echo 0 > ns/enable.
+ drivers/media/usb/uvc/uvc_video.c | 33 ++++++++++++++++++++++++++++-----
+ drivers/media/usb/uvc/uvcvideo.h  |  1 +
+ 2 files changed, 29 insertions(+), 5 deletions(-)
+---
+base-commit: ef1e48f725d30cb18d3f2d40c48f50f483080cf7
+change-id: 20240610-hwtimestamp-followup-2489c5668b21
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
