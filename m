@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-207740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A79901B45
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8FC901B53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA72E1C210A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:31:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBB76B23A40
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5611946F;
-	Mon, 10 Jun 2024 06:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28A208B0;
+	Mon, 10 Jun 2024 06:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MNNpsrM/"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEamhiTa"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D90E628
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F64E628
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718001094; cv=none; b=mC1hIxfz4eA4Kuu00WyX+KHTznL2QLE/t6TQCqrkYA+nU44imutJLiTb2Zt3eDFywP5DJZJvQ4qykgnrEKZzXwOMlmvaQwtoM6d6cHdwkjb/hzy6aaR1kwu1snx0nn7Jop/byNKFJ2djAEuUXOPsJ/HXKp2lWCme6UMasHzeEsE=
+	t=1718001207; cv=none; b=l1HOoRj4CM32Wm94xatQ9ahOUQNokXScq4jg/mKQR8dSq+nlmd5LlYilXLumm0Q11U3cnrNuyawmJTRuLHXlpP6zYO4RbKzXU6o++QEyEjo+YBpjfkvWgVy2ArK3j1oHHpK4Vz+ACvxFRmnoO6ntcOi8WjI4ETLLGIlrUhnYqZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718001094; c=relaxed/simple;
-	bh=N2noYsSnZJffPMWVBvrKUxmMIE7p3Vrjzwc2uv2QjfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkoQvyndPtCS4LglDh69yNCsDTilWRHAKsffmXSbw3aIBRgiUPFRjr+ntkTPqZCAj5lYX2pFeGxvxVTA3OO6NOJBypaaJP1ebNnkmCEco8k6p6SfbNbvrDgiddO7v9U+xLztVXPs8vtfoyCidCdFzKFtaZ83nFNj1xqNYq7A7mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MNNpsrM/; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so10129521fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:31:32 -0700 (PDT)
+	s=arc-20240116; t=1718001207; c=relaxed/simple;
+	bh=3GEEKaNRr4/oruHtaq3+7nIuJ2iAjEYceDiAt+oneM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cpegnbpr0rZqyZpq0MhjKn+PASbCaSkYxdyLFH+m7ceOpB9SPB01T3NKHBcTb4P0eP9MNTWHmuKLRX84LJWabu8K1/imVtBDmlkInnvx6MllI0EERq2e8SYFCTRA6A3D4hD/jBqZw8WxPthCVue29mDg/BTAN4ItFidIc1480Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEamhiTa; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so35072255e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718001091; x=1718605891; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0foBbzkj/yZAJLvDMQGWe5daB0oiOZ9HEzG6T9Jt6MY=;
-        b=MNNpsrM/OKtH+5O43YIxRKWxKn+hrwPrZu/vHSrXmRQ2rZf/UmhwyYkJVOzOPbew1U
-         V3zRtaip5J0z7Xt5vf59D1fDw4ASrcZ4uwrlt+wa6jEN70Jgf9U5zLG4pXJuEeMsbJFO
-         TxWhax5DqPfUkWejzaLEy+3QK2F1OjUzJ+2up5DKcO7I5GFUFg//zioxk3nC95COoTy+
-         3eECb527ZrTCgyoQIMHLpize4hmQ5HdFqpCNDCRcCoz6pZmDLPNWjWa2Cfoizw/Z9rXu
-         WJePR8t9M0bV6pAt1Iqns8TgM3eM1LFuemG/wOcnx9MdDSaEYovMo8wTOAx+XzY8ZgAJ
-         epsw==
+        d=gmail.com; s=20230601; t=1718001204; x=1718606004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gK6zqTgKpjlACg4h6HavLGiLDLBpp/UYAUaHXrcTgs=;
+        b=EEamhiTagPFDS+1bisWHhNaToQxgVJqFNDomud43LYa/dRBMIw3T527JVtYO0RwUBF
+         G3EyDE2Hspvnn4jvfcYXGWG066WFfM5ADbQ4FvHh7c4A1VbsVpPEcg3vGNeDoc36xu2q
+         4GhwK7Lipco5YUBP3aemcv9fxtsdN9EdLVaFWTbPbvWCreYpU3ZgSEGq+UyBnzVDReK9
+         gfH1biiQXPYZfqfrdjkzoEeY1NVKOphgaQXi7v2bf/9W0P5hJDNqoK4Y5arBonF/uQZp
+         kst9w5No6NZ4ckcBfbPq5sECZyNjPpMSQ5Nedd9t8S1M8SLEKzmZx4ji3DiZ6k0cXD9W
+         vXkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718001091; x=1718605891;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0foBbzkj/yZAJLvDMQGWe5daB0oiOZ9HEzG6T9Jt6MY=;
-        b=rVEgkWgWDXczNDjKjL08d1GyWe1P6AOpJzvf5BK11E8AJIYrf4m9ri+61NMRGMp9j2
-         CjKGTZmESQYoemSkreVLGOp3Kn+UHmVEKsJHyPAcFA81fn1p+SXG0A1aqAiAD/Prx+4D
-         I73xcDUrSDOMdHbZTSkfD70H9mEsnnKUDAr40Sz6QDARw6Wz7CUwrXcUIInnUSQ8DLzT
-         jKK+SxydOR9kkVlmGnOTcUDNCphkSVqpanhHxD3BmIW6UYn07Hu1S/ZEebiVBXUDBRFd
-         fE3tkMnB6wMQq63vEsX4Zl54asug+IiPauRPLHXN7dXAux2rHX3qwEZimLCyKBTXQ7/I
-         EAyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQXQY2NbutM+t2fCD2zez9bNImJ9ppEJQPiD7M+68hLgyMRTsHal5EvkoHLxMAB25Ddx25EkCQ0xf7m1Dkl74MQcEdwYEkayFC4DpW
-X-Gm-Message-State: AOJu0Yx579P/RMnaYbXmYwYhdTZHHxpoieWsD/XleNk1rcIF59TtiqKJ
-	421LlCE2RayA31yWJ7JROIGune6XM1iVT8pqeMTqHIZqNc5lFRdilC5/UUnHnDY=
-X-Google-Smtp-Source: AGHT+IEbjxnLFduuLjONOUTvHtbpIgLNsmw/X8E0xtaG1CKGLDAlODB+2oaqYGwqaaw0WtMBz4VOhA==
-X-Received: by 2002:a05:651c:1042:b0:2eb:d5a9:40fd with SMTP id 38308e7fff4ca-2ebd5a942d2mr39653051fa.53.1718001090636;
-        Sun, 09 Jun 2024 23:31:30 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebe673fe28sm4103891fa.53.2024.06.09.23.31.30
+        d=1e100.net; s=20230601; t=1718001204; x=1718606004;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9gK6zqTgKpjlACg4h6HavLGiLDLBpp/UYAUaHXrcTgs=;
+        b=mxR49CAcx3hMwNs4hDjkwhRWtXGTaQ1zUkpe+8n9/LrEOUKx0cVYYlE1mz+grV5zAw
+         8uaWiIp8qnir+xeKXLuYnPvQdxML5WfHpTQg9RG+aUjY86XbViYwAkTjVk0j7T0kYAfU
+         6cckaqZII/1zxSi834r/1tWnoX7odhtBCyXG6/n1tY+wi1PhtTPxmbF5ErO6Q1ns+moN
+         g7wIfR+Dg9ejOw7WXX59Six20ENX7b8vcr0fuLGyqOWRYc37tjgn1cUXJkpCvAdLhTb3
+         llG8YSrEmw5w2jsiTTICDvSOh5AT1ePmpfJzeFpoZzIszrMjbhU1QQN9QQKQUdRIsY5i
+         lWMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmonBAsLIJpYB1j3BMqxq9LrohoAQ3zwcsHiwBTbIUFgrCrAdDVGpqYxKCUedJJy/yxxF+FOd7RzVYtOOGp7amVzZ/S+weUKDhoBy
+X-Gm-Message-State: AOJu0YzcXe63rmFwXl4Eb3kBxezMMcnl3hOzLx2w49C2uWQTBInCUTS8
+	9pynqiIkJdZ24/xyIsKfKCPc8TcMiSlBC2jCxG4uSzKQ441l+BMN
+X-Google-Smtp-Source: AGHT+IE4PgCLDptw5Ma68CssX1LOhrsjIOV7PZMFDb+09RpgYoNOthdv8HAHnHZSj2IKK550s9peLA==
+X-Received: by 2002:a05:600c:154a:b0:421:7e88:821 with SMTP id 5b1f17b1804b1-4217e883770mr30775375e9.32.1718001203532;
+        Sun, 09 Jun 2024 23:33:23 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421e91c47b4sm15246425e9.35.2024.06.09.23.33.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jun 2024 23:31:30 -0700 (PDT)
-Date: Mon, 10 Jun 2024 09:31:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kiarash Hajian <kiarash8112hajian@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: request memory region
-Message-ID: <oa62wijdvxhcoamynii2szxaxfmutkzup5djstgqzrfe4sjizu@vnz73mhhlgss>
-References: <20240608-adreno-v1-1-2e470480eee7@gmail.com>
+        Sun, 09 Jun 2024 23:33:23 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: [PATCH RESEND -tip] x86/percpu: Fix "multiple identical address spaces specified for type" clang warning
+Date: Mon, 10 Jun 2024 08:32:52 +0200
+Message-ID: <20240610063310.4498-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240608-adreno-v1-1-2e470480eee7@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 08, 2024 at 11:43:47AM -0400, Kiarash Hajian wrote:
-> The driver's memory regions are currently just ioremap()ed, but not
-> reserved through a request. That's not a bug, but having the request is
-> a little more robust.
-> 
-> Implement the region-request through the corresponding managed
-> devres-function.
-> 
-> Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
-> ---
-> Changes in v6:
->     -Fix compile error
->     -Link to v5: https://lore.kernel.org/all/20240607-memory-v1-1-8664f52fc2a1@gmail.com
-> 
-> Changes in v5:
->     - Fix error hanlding problems.
->     - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
->     
-> Changes in v4:
->     - Combine v3 commits into a singel commit
->     - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
->     
-> Changes in v3:
->     - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
->     
-> Changes in v2:
->     - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++----------------------
->  1 file changed, 11 insertions(+), 22 deletions(-)
-> 
+The clang build with named address spaces enabled currently fails with:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+error: multiple identical address spaces specified for type [-Werror,-Wduplicate-decl-specifier]
 
+The warning is emitted when accessing const_pcpu_hot structure,
+which is already declared in __seg_gs named address space.
 
+Use specialized accessor for __raw_cpu_read_const() instead, avoiding
+redeclaring __seg_gs named address space via __raw_cpu_read().
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Acked-by: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+---
+ arch/x86/include/asm/percpu.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index c55a79d5feae..aeea5c8a17de 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -160,7 +160,10 @@ do {									\
+ 	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp)) = (val);	\
+ } while (0)
+ 
+-#define __raw_cpu_read_const(pcp)	__raw_cpu_read(, , pcp)
++#define __raw_cpu_read_const(pcp)					\
++({									\
++	*(typeof(pcp) *)(__force uintptr_t)(&(pcp));			\
++})
+ 
+ #else /* !CONFIG_USE_X86_SEG_SUPPORT: */
+ 
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
