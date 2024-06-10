@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-208935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679FA902AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E7C902AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E081C284A2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:45:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362D81C20EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72DA14F9ED;
-	Mon, 10 Jun 2024 21:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F240150992;
+	Mon, 10 Jun 2024 21:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1iXrHE/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ub3JZLD/"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D517441F;
-	Mon, 10 Jun 2024 21:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE0914F9E0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718055887; cv=none; b=DVWdNVC7qDgexJJ3HwsxdLxsRBu9iP0/S+5xPzup6M9AzhbWKSBM8jvjENFGpp/5fo/0zUNQdhSppgWfaIsrP1vospJaTHwmcFvOxvnnNya4SE3VWejzV4tTcxYnbBgedG+hCB6DKpqffHtuVIhQ1Ij4si96pMTi83Vo2T+V4lU=
+	t=1718055888; cv=none; b=aa0vlyQCryunAzGQS+eMLdH5YxvxUM2m4KtCPH5hre67SikIMY+RYMI+5FlTE8lTfDebTlmxhqTCowhdhZL4qCvDkuKLkggHeZ7wgbbuZAINOik0SjrYywbQR6UK1EyqNWIcQptxgOA1Hr14KHiwAccMODLO/VlYw5p2xzBkz80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718055887; c=relaxed/simple;
-	bh=Yq1fJAM7TJWvAOIEFxNG4hN4+EqR+5pk4rau/PBxoRs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=etZhnTytJIkJnTAOgcsfm3atqhY/ShL/Z4P0xdtaF9LuSxTNYfQPlOivf2GKlnStTGSrhog360ajH6WZQnkPR/GUCUw1fEyt5zP8V+abz0A9bTgfA/k73C8hK0g6HQbHiTghWAOwIqSHGZydr3czmGxcx5vlOV0mFYVwJ+TFTOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1iXrHE/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78913C2BBFC;
-	Mon, 10 Jun 2024 21:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718055887;
-	bh=Yq1fJAM7TJWvAOIEFxNG4hN4+EqR+5pk4rau/PBxoRs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=a1iXrHE/BKuNDrm+Sp1K/Ct8YZb/la8YIZTOAQUJPhe2XXDboTko82d37wJx5vge0
-	 YcTeEz+hGWjzREYDX9/rlL1vtP1jiR/wAw/pBQCWP3hwRgtWepRp4/ACFF5dBOEcZj
-	 QcIjCj1SapkMPKL28OZMu286SnHADhTd3LV3PNhnfy/lUzFMQF22+MTbhy0n6EeC/M
-	 w4+cYa55P0SqKoHxdIdOX7RJpUmCmUQ27ueXM3Shx0XimxWhnvSrqmL4JmZhHSMrCR
-	 2U/CKBn0CJ0OW8foY+F/e7RVFNuCzi6N05OdQnKEcpDR8RW5fjKTZSDEVp1TIcljy6
-	 /B/JUS1XAZsXQ==
-From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240610-md-drivers-regulator-v2-1-cf39106d7e54@quicinc.com>
-References: <20240610-md-drivers-regulator-v2-1-cf39106d7e54@quicinc.com>
-Subject: Re: [PATCH v2] regulator: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171805587951.166318.13582723419199956307.b4-ty@kernel.org>
-Date: Mon, 10 Jun 2024 22:44:39 +0100
+	s=arc-20240116; t=1718055888; c=relaxed/simple;
+	bh=S19qrahCzQmZyusHY/aExVOH1PanLUXW6R4szF3uoGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V3fwSBvlIRl4jFmF7NHWijlGizkmc6/Xq9WWQ87Fvp7JK0u8U4AJlsJ/TNp/YIIolWP0ESTToLnspM+8H9MbixjIbp455ZKy5c3MdG1sVnATEEocYoqh+2yzkMDCPog+VD15Oq5LxyuH9LSK1+atfJ0/IPnvXJJ+92OOmdL388Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ub3JZLD/; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7046211e455so1183462b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718055887; x=1718660687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S19qrahCzQmZyusHY/aExVOH1PanLUXW6R4szF3uoGY=;
+        b=Ub3JZLD/FUOSOoLkPj48KNs7PWIfhVYohujQUMSJHUtarRUbmBOnecSCo7VCRGBced
+         TJPCSrsQSxkPAhn3nveuZPw5Zy4B/grQ3yrOQ8X3Ois3umQ7ZqoLLqvlVJnZ+TCV97yy
+         B9WJBc/xQRTXIBQrCHrtaPxxBQbnNgaf5CTIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718055887; x=1718660687;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S19qrahCzQmZyusHY/aExVOH1PanLUXW6R4szF3uoGY=;
+        b=qq7cIT3WNbGGmWHDCfSzkT34kayZA3y0VjkUCKTN7aNpyEM8QeW0QlJmrA/50WYduX
+         Df29xnhpm/SYYI4xriCkXvOxUpo8Lu4hmFnf/4sGfGiA4MFSF6xR1vCbsbDEaFQSc/Uc
+         9XRwSCuJ+mRA/H9GfsvwZU5wP/Ys3rK+2i2tBr3Soyq14tCuJImlJ1WGkmpJtyPiHTgF
+         2E7TagMRA0Y+CGt8ztdYqDKjb/fysrxb47ZDNmAjso+djGlaGYB6FltASoptC2BUhCas
+         0kWTEOuMtAH6j7M2YoMuzZxpu/JNcdX7ed1GV+orv07f/dJvUO0WeTyWzWRf6TZpB7ob
+         0aiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvlJFiyiV2hhGg2xeXE23XqzF9k4tR4U0rjmE4euUtLBFUqENLnyYj8tz1JRVREfR5z8VasW9ro3ztDaqQAmAZ4feVAz8SwQy67Ilb
+X-Gm-Message-State: AOJu0YyXB230ulB1PDQAufmPzwwWZKYhcek66wQ5UJdlnrrpDi9xUqDk
+	4CEKXsrIKjY8uqg7x03LMugeMrG8YFlkCL8rVtHieiBC8uurN72ODhBjqJdazw==
+X-Google-Smtp-Source: AGHT+IGXhe1WLILOy3HZz0s8IPAxJeb1xdJl5Gm9Cx3EI5jcAi3StB9ke/iJU9ZN9GCmFP6S0zifpg==
+X-Received: by 2002:a05:6a20:734d:b0:1b7:2fa7:4168 with SMTP id adf61e73a8af0-1b72fa74422mr4433334637.18.1718055886987;
+        Mon, 10 Jun 2024 14:44:46 -0700 (PDT)
+Received: from localhost (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7043137e78esm3459427b3a.133.2024.06.10.14.44.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 14:44:46 -0700 (PDT)
+From: jeffxu@chromium.org
+To: aruna.ramakrishna@oracle.com
+Cc: dave.hansen@linux.intel.com,
+	keith.lucas@oracle.com,
+	linux-kernel@vger.kernel.org,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	x86@kernel.org,
+	andrew.brownsword@oracle.com,
+	matthias.neugschwandtner@oracle.com,
+	jeffxu@chromium.org,
+	jeffxu@google.com,
+	jannh@google.com,
+	keescook@chromium.org,
+	sroettger@google.com,
+	jorgelo@chromium.org,
+	rick.p.edgecombe@intel.com
+Subject: Re [PATCH v5 4/5] x86/pkeys: Restore altstack before sigcontext
+Date: Mon, 10 Jun 2024 21:44:46 +0000
+Message-ID: <20240610214446.3380115-1-jeffxu@chromium.org>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+In-Reply-To: <20240606224035.3238985-5-aruna.ramakrishna@oracle.com>
+References: <20240606224035.3238985-5-aruna.ramakrishna@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-4c370
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Jun 2024 07:30:51 -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> [...]
+Can we we move this patch to the first of the series? this can be an
+independent patch, the problem not only affect PKRU, but also other
+scenarios, as Rick pointed out in [1]
 
-Applied to
+[1] https://lore.kernel.org/lkml/d0162c76c25bc8e1c876aebe8e243ff2e6862359.camel@intel.com/
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: add missing MODULE_DESCRIPTION() macro
-      commit: 8a2744f2955a584188a82d631937aa365d4ea966
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-Jeff
 
