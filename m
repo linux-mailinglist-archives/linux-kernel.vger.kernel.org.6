@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-208712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A3A902867
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80A9902869
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB1D2883F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D78128859B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE1014B953;
-	Mon, 10 Jun 2024 18:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B23114F131;
+	Mon, 10 Jun 2024 18:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUtY+BeO"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGObxygp"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E566757E3;
-	Mon, 10 Jun 2024 18:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE0A14AD35;
+	Mon, 10 Jun 2024 18:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718043052; cv=none; b=OhLxgpQ35wUM9vi5EfgrlCuSjpkupSPPVO3+RJp8CcQ+Lvf7q3PEOeZ7112jVduaDnvrruJXi+ACNg2XX6mKnh/v2/8P62dGayZMEhxr3JZbzGEQgVPvfLCsBBYseX53cA8bWzzxt3qYabi8HO+1EL9jo6ql4eNpicHNmV4Za8k=
+	t=1718043054; cv=none; b=WlHfLdCMi6cQ+Fq0j2QR+UbrX7ycunRCY5t2O2cDTyQRLVvXfmn+xFQS/LCxedlaL0m75v1oC93TlX/r+miZwrn4Wd3hNRMLRf0mydO7PDKWDPJx+vpFIsG7laW3e4Bpy8rNFZKZyMmWX4pqKFEqU+ZcvyuAd1oo3tjTvF5nTX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718043052; c=relaxed/simple;
-	bh=0eeEmyGuqeL83TJD2e5vEhbVdH476h+TQmS/Nc07uOY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lyLR5QbF4Bb7gsB4EnK6jadLDkNpj0Kjch3bP4LIM6zaxUi7/M4uO+R36rlRC8F6H0JGWCqru0qXcj+08jiyh4Mb/SRty2lbjlb1K3Dwr129go3c5yDAv+Afalk38CHgH+0g8/PxTzHPx/17WqqCNwqpnkPx+aIS57NJE4h4Gz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUtY+BeO; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1718043054; c=relaxed/simple;
+	bh=nSKjz0KWv20MSmp1Zba7UhZtqkG9QdgLPUj3njHimJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LTOBt3+3bnLxRe2FNG/5D/KMqpDOaFFMFVYXgyaOrMP9CeQW0u/1gXXNy1yWHu87H92P+CVg4GtnIIZyXQxs0qoitc4Zlw5BM8hdOt1WEK3Rd+o4PoTrWPaVXeAkdTjM64oaacVrQfPE3e73nZeNR9EpZNhx4/Cly+mcV0QcHf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGObxygp; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f6f38b1ab0so1139135ad.1;
-        Mon, 10 Jun 2024 11:10:51 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7041f4553ccso2575030b3a.1;
+        Mon, 10 Jun 2024 11:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718043050; x=1718647850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=YeKd4x9T4zcAkJm59oT5TgzREq4OVAwAGCECxqy0L7k=;
-        b=BUtY+BeO4lzwfa/i/S5DNaRGJnxF2aNjiWNYw2cWc/d8nlaaT5Fq2hB2G1P19Lihnn
-         AkfqQLvM2fsEjp1YSVjj+v6E7Ponu6m7mdnGW+2oY1h4EY/46esCZpRb1G4Ajgq6AJ99
-         Ghz2yQyEifpVk+aRg3JdM4MS7BtQXihHb+m/pB/ghZS5Y/ykrRDX703VlzVkEwgHK1gy
-         DiAqodvx8ad9e4PgTQYRVu8YR+zzbizbdbHYVeYClAx3ifuc9f9LB5Sx21W54q1GsRp3
-         hH61cxyLhAjFdDLvHmRbSOZGEY6pTz6qxhv49JskN4b08HdRA+235y552mMbrA/GHTcy
-         YQgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718043050; x=1718647850;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718043052; x=1718647852; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YeKd4x9T4zcAkJm59oT5TgzREq4OVAwAGCECxqy0L7k=;
-        b=BH4Mfdwbq4//SUneyNlIMSy3xHzvvFdvWzJXv5Yszj69HkWbiFbygMzCoON6pLq2pB
-         3afj2twApvOYy79N4Lu9itFAONnECDbxMjvS69VIU74mhjLF8cVX3UFCjHgipjh/3/V3
-         QyXe99fBGm0sjhBKzb06QYORnIWEf31fXCFtpgUEQjAkJOhtQhOiAUCZfheZntSVMEC8
-         o5JdN1rubazxeZOvPdO0BUvw1NjbBhB/k4VI441A8Yn0U2gOtX4mIXQpHzphFjdpB80n
-         FK0UHLWOLDhqBiGMlZK6fyGxbfoafvzxgVvRg9XY9bC7l2J+BG2CD8AQVCgJzc0rWDu2
-         JuTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtJFbWg24BM5SV+8BPli7WzK/K4JQcxe11ihsvsybgy5DEYmU7coAM152GbNvtyU9cyeE6YyFYpvB8JagHJAuRge+ADDzy+QI3fulJ
-X-Gm-Message-State: AOJu0YwtDPmTn+xYJSWVANHvGTWtoxn3GVtWyEVTVs9PBBlhNVmhgFDE
-	q0YuLZoY3BV6NnNenv01sJH+K51oMERxVif1CLZsUqC63eHujCfZIYeCsw==
-X-Google-Smtp-Source: AGHT+IGQuJjDY8lBMCPcL+F3nw9NA+u4DIJa6vEMUA0EfyI2dLyreRyXab9dG7IEmSvJbduPFmULIQ==
-X-Received: by 2002:a17:903:41cd:b0:1f7:2479:a52b with SMTP id d9443c01a7336-1f72479abfcmr13253745ad.65.1718043050147;
-        Mon, 10 Jun 2024 11:10:50 -0700 (PDT)
+        bh=nBodwoDy4NoI0gKU3CfVEoLymIQQPIjGJMUe5cvNy78=;
+        b=KGObxygp2JsmnV4pmbLLNrwLb/UvQDXNDJrLF7YyVrTHx9ZdaHvoh1RsUTlIzaVzRu
+         OYuCnFhYIfHXv3Bs9wSOdvZqq4T7Cyd/uJ3cqUeRGzuEjZkb+3ZtcJHrIo2MRK5XrNx1
+         EsVAXngyqI9+4mRUR7iIX9hfSPWDTKkmDSfpiiOt1WzQA/p6nbC/I3nd2rVRld4I/7SV
+         GVaDUNRA8IuyiZW+wV43dE6RRu/n107XcujigCxRBTj4sPkL9lWtGa5J5GvY2dl3k6jN
+         iLGjiJkQybbsPl+mzEa2Deuu36x3Js2WmBkQEwHvNK0Pa2WckoSNvrsJlt4sIwfXJc9L
+         0TUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718043052; x=1718647852;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nBodwoDy4NoI0gKU3CfVEoLymIQQPIjGJMUe5cvNy78=;
+        b=vBrV+RihUyNqoKYjFPinx9nvxPA4U3mBrxFoktmb8hsqsZbvjA4UE9kYOVRfGbgVAO
+         NRPiTfgIJ5nmecd6/VUWVJYf5zUIe6abO2pzzF4GoNl7VyaVJZpAT7O4RQY144/coDRs
+         t6hfGm7GPwE1a5m9Y5NF9TGI+u2WE0kzlsjGgh0Ei1HCh5IcKGm7xvCrUdkN0BcK2YsR
+         5HWUpANjbQNLOwT3QgCSLuJrA2kblm+MYXzgZ2G5BXEO6LogEmAzpfaOf7TGK4CS+d0q
+         rsUA77+Y4tkUhRYebpw59iHNTCSzzAAfJ3pdcJWiI9Zv+0N4Y/k9HpKJ32NAsYzTmDmC
+         cQug==
+X-Forwarded-Encrypted: i=1; AJvYcCWcj/rIXZiymMjkwIfMpEVqzSBEMbXG2xq1Homx8E+70NjJo62SRP90DLM16+BcuYM/FAiY1+p4hRuEoOpmL4Y+tIbBOsqQG9n0Kztp
+X-Gm-Message-State: AOJu0YyTY6wb8AM1Y1EY/OqpWC9jCMBsF1AyjEgwv0v6DlqVT84/ObUv
+	cKFKJn028UIBZB4ZRVqgi5D4QExkKlBbXFkuhdsgNgulvYX+EKaKI11i1g==
+X-Google-Smtp-Source: AGHT+IE2tFZcUOCIKyL7dElvOves9MyVhE0oBcRixoK4cmeWLfET8JN+rel7uEgGfjpuzQA0DfYwfg==
+X-Received: by 2002:a05:6a00:1996:b0:704:2d99:9ee0 with SMTP id d2e1a72fcca58-7042d99a023mr8198447b3a.33.1718043052084;
+        Mon, 10 Jun 2024 11:10:52 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7695ddsm85604285ad.63.2024.06.10.11.10.48
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-704326f9342sm3104637b3a.103.2024.06.10.11.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 11:10:49 -0700 (PDT)
+        Mon, 10 Jun 2024 11:10:51 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
 From: Guenter Roeck <linux@roeck-us.net>
 To: linux-hwmon@vger.kernel.org
@@ -75,10 +77,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	Andrew Davis <afd@ti.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 0/4] hwmon: Update handling of chip-id enums
-Date: Mon, 10 Jun 2024 11:10:42 -0700
-Message-Id: <20240610181046.1991436-1-linux@roeck-us.net>
+Subject: [PATCH 1/4] hwmon: (pmbus/lm25066) Let enum chips start with index 0
+Date: Mon, 10 Jun 2024 11:10:43 -0700
+Message-Id: <20240610181046.1991436-2-linux@roeck-us.net>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240610181046.1991436-1-linux@roeck-us.net>
+References: <20240610181046.1991436-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,34 +91,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With the transition to use device_get_match_data() or i2c_get_match_data()
-instead of i2c_match_id() and of_match_device(), the assumption was made
-that the data pointer in struct i2c_device_id and struct of_device_id must
-not be NULL (0). Initial patches changed enums used in those data pointers
-to start with 1.
+Commit ac0c26bae662 ("hwmon: (lm25066) Use i2c_get_match_data()") changed
+enum chips to start with 1 instead of 0, under the assumption that
+the data pointer in of_device_id must not start with 0 (NULL) if
+i2c_get_match_data() is used. However, that is perfectly fine as long as
+there is also an i2c_device_id array with the same data which is used
+as fallback in that case.
 
-However, it turns out that this is only necessary if device_get_match_data()
-is used. i2c_get_match_data() calls device_get_match_data() and uses
-i2c_match_id() as fallback if device_get_match_data() returns NULL.
-Therefore, it is perfectly valid to keep using 0 as starting enum value
-as long as struct i2c_device_id is complete and matches the data in struct
-of_device_id.
+Let enum chips start with 0 to avoid confusion against other drivers
+where the enum starts with 0 and i2c_get_match_data() is used as well.
 
-It is confusing to have some drivers start enums with 0 and others starting
-them with 1, even more so if that is done inconsistently and/or if enums
-starting with 1 are used to index arrays. Let enums start with index 0
-where possible, and otherwise explain why the index has to start with 1.
-
-----------------------------------------------------------------
-Guenter Roeck (4):
-      hwmon: (pmbus/lm25066) Let enum chips start with index 0
-      hwmon: (nct6775) Let enum kinds start with index 0
-      hwmon: (pmbus/mp2856) Let enum chips start with index 0
-      hwmon: (pmbus/max31827) Explain why enum chips must not start with 0
-
- drivers/hwmon/max31827.c      | 5 +++++
- drivers/hwmon/nct6775.h       | 2 +-
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
  drivers/hwmon/pmbus/lm25066.c | 2 +-
- drivers/hwmon/pmbus/mp2856.c  | 8 ++++----
- 4 files changed, 11 insertions(+), 6 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/pmbus/lm25066.c b/drivers/hwmon/pmbus/lm25066.c
+index cfffa4cdc0df..c36c124d1a2d 100644
+--- a/drivers/hwmon/pmbus/lm25066.c
++++ b/drivers/hwmon/pmbus/lm25066.c
+@@ -17,7 +17,7 @@
+ #include <linux/of.h>
+ #include "pmbus.h"
+ 
+-enum chips { lm25056 = 1, lm25066, lm5064, lm5066, lm5066i };
++enum chips { lm25056, lm25066, lm5064, lm5066, lm5066i };
+ 
+ #define LM25066_READ_VAUX		0xd0
+ #define LM25066_MFR_READ_IIN		0xd1
+-- 
+2.39.2
+
 
