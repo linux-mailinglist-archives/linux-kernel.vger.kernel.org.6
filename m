@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-208795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5858F90293C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C01590293E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB74B22322
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6938B1C21DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDFB14D70A;
-	Mon, 10 Jun 2024 19:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096C14D70E;
+	Mon, 10 Jun 2024 19:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rkkQy4Dg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDfvkV5c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D4E14A85;
-	Mon, 10 Jun 2024 19:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1709314A85;
+	Mon, 10 Jun 2024 19:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718047660; cv=none; b=ZpwwBStL8K0sc34gXfOEQPxc7hBOiBy9FtL4QtuUtlnkgPJTKNP3XT1xPHbtS0XM7GJSIyX/CMeiyI6ynr3pPYmC/QPZDPh3SjBuXjZqGNiz5gqH6sdkxUf2OorghNegw2JtZ0w2BA7F1B02lpPrQbL6scoPie1U7HIhrAJNXak=
+	t=1718047675; cv=none; b=ltFRtXqiNAGsunryJnEldNT7m+ryRycT5PobBNi7zRdsYzrK92qvHK09fGVCZK3LLaZAgxlBpXlI0y/9H2lgU0PIcJPYCcjVoTY/wX97u+jWTkqpY1f8EmjEL5RuRmkPtFILDfY+AJue5qQTSNUezpnie2HuBYMvDkmea3F6nRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718047660; c=relaxed/simple;
-	bh=yuNOHab/Qh0nJR8QmMywHK9g1cgCBeo/HLsQ/jKVNbc=;
+	s=arc-20240116; t=1718047675; c=relaxed/simple;
+	bh=QBgN9MHCavIxJhBcDljHXETz/zxwk+Ox8dykt2D+cqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJS6OlNokmmycR8k4OMFMPH5TzKuWV5PLD/kBbYSX5PGB1RMy2ApjWp9CBcWlL1vWvDjNbTJ0EhrwpGSnMnnEecBAkUUJkQVi8AuXl0EX613LjJI8pNUDFwOVBIebvlbQlPQhaIoJcY+Ae7hBwqUDC28T4nPV0LRcTbyL4pS0WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rkkQy4Dg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MiZyu8VhPCk0AXuRPnHhqHOvpBJ0fh6/3Mj663IB6kk=; b=rkkQy4DgBiRXuV0GDiC21jNbL+
-	+sKzjfXkmyigg916XMHJle6k/JKxg//GmdgAAHq0vw9sjlLS0X+V9I6mjsJytGeZt4hXaqAaI3IUP
-	hwcrxGVxlZN3G9Aa//f+OkUhuEq5isbDMQ6LSxUM/U387T4lfW0gZ8cj4lexim+NJNgE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sGkfs-00HK4x-Qm; Mon, 10 Jun 2024 21:27:24 +0200
-Date: Mon, 10 Jun 2024 21:27:24 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Richard chien <m8809301@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jesse.brandeburg@intel.com,
-	anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Richard chien <richard.chien@hpe.com>
-Subject: Re: [PATCH] igb: Add support for firmware update
-Message-ID: <ef5029dc-baad-49d8-8c95-03ec41df5858@lunn.ch>
-References: <20240609081526.5621-1-richard.chien@hpe.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XTW1lzskvdYU+0XVtgdQsAjzOA2tRk9eZsngFc48FVqBZh8L7c96+lu10ci59uhMRmHHuov6OmOACIdyjPSWvu8X9MOduBdnJPgHR8jSPRaIJjxMfSP1aFSxWk+LEnKpxQKkC7XMGkCU5BSIyYrum+Jr8hKG7gaN3hlKmEJM0NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDfvkV5c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AE9C2BBFC;
+	Mon, 10 Jun 2024 19:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718047674;
+	bh=QBgN9MHCavIxJhBcDljHXETz/zxwk+Ox8dykt2D+cqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uDfvkV5c5SnDUKilyooY0hegtuPeodzisyqHBP8aDjVVcZ00qz/umpRPJG53uEJM7
+	 RvP9950rmnTzG+cQdlnhFaB1ZhvJ+l8lTFS1/F2iTmaR9wZAkyoCsD3kMioBOEWuPh
+	 jw/bw5XWUzM/q46aw79wagIVQo7TCgjul/RVGVhh/MPeWPR8Bk1zzRGtzMnTIGoZS+
+	 dRi25BZobTeMjbqAqMcozNeQvV/I8EiTPigMJ2nFXnJbOE4YWl2A1P8Jau19igojuf
+	 efwYgck1Rco75IWDugNXbiq6HfrewN+zNdbspXtbxilqL2lhPcu6ZmtQQwIFT5ZN9l
+	 v1fu1GSYm1AWg==
+Date: Mon, 10 Jun 2024 12:27:54 -0700
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Vitor Massaru Iha <vitor@massaru.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] kunit: test: Add vm_mmap() allocation resource
+ manager
+Message-ID: <202406101217.D14DF2F00@keescook>
+References: <20240519190422.work.715-kees@kernel.org>
+ <20240519191254.651865-1-keescook@chromium.org>
+ <CABVgOSmD-v4rXDkcKgA1o2w-Ypzs_rYBKCx=2i2BWjWgd=o2pg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +64,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240609081526.5621-1-richard.chien@hpe.com>
+In-Reply-To: <CABVgOSmD-v4rXDkcKgA1o2w-Ypzs_rYBKCx=2i2BWjWgd=o2pg@mail.gmail.com>
 
-On Sun, Jun 09, 2024 at 04:15:26PM +0800, Richard chien wrote:
-> This patch adds support for firmware update to the in-tree igb driver and it is actually a port from the out-of-tree igb driver.
-> In-band firmware update is one of the essential system maintenance tasks. To simplify this task, the Intel online firmware update
-> utility provides a common interface that works across different Intel NICs running the igb/ixgbe/i40e drivers. Unfortunately, the
-> in-tree igb and ixgbe drivers are unable to support this firmware update utility, causing problems for enterprise users who do not
-> or cannot use out-of-distro drivers due to security and various other reasons (e.g. commercial Linux distros do not provide technical
-> support for out-of-distro drivers). As a result, getting this feature into the in-tree igb driver is highly desirable.
+On Sat, Jun 08, 2024 at 04:44:16PM +0800, David Gow wrote:
+> On Mon, 20 May 2024 at 03:12, Kees Cook <keescook@chromium.org> wrote:
+> >
+> > For tests that need to allocate using vm_mmap() (e.g. usercopy and
+> > execve), provide the interface to have the allocation tracked by KUnit
+> > itself. This requires bringing up a placeholder userspace mm.
+> >
+> > This combines my earlier attempt at this with Mark Rutland's version[1].
+> >
+> > Link: https://lore.kernel.org/lkml/20230321122514.1743889-2-mark.rutland@arm.com/ [1]
+> > Co-developed-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> 
+> Thanks very much for this!
+> 
+> A few high-level thoughts:
+> - Do we want to move this into a separate file? test.{c,h} is already
+> getting pretty big, and this would probably fit more comfortably with
+> some of the resource-management bits, which are in their own files.
+> Not every test will need mm support.
 
-I don't really follow what this code is doing, but it seems to make
-ethtool -e and -E dual purpose? Please could you show examples of how
-this is used.
+I'm happy to do that -- I was just following where kunit_kmalloc() was
+defined. I'll create a new file for it.
 
-Thanks
-	Andrew
+> - It'd be nice for there to be a way to explicitly teardown/reset
+> this: I agree that this is made more awkward by KUnit cleanup normally
+> running on a different thread, but I could definitely see why a test
+> might want to unset/reset this, and it would be more consistent with
+> other resources.
+
+Yeah, it's weird, but it's naturally managed?
+
+> Otherwise, I have a few small questions below, but nothing essential.
+> There are a couple of test failures/hangs for the usercopy test (on
+> i386 and m68k), which may have origins here: I've mentioned them
+> there.
+
+I'll look into this. I must have some 64/32 oversight...
+
+> Reviewed-by: David Gow <davidgow@google.com>
+
+Thanks!
+
+> > +/*
+> > + * Arbitrarily chosen user address for the base allocation.
+> > + */
+> > +#define UBUF_ADDR_BASE SZ_2M
+> 
+> Are there any circumstances where we'd want a _different_ base address
+> here? Could it conflict with something / could tests require something
+> different?
+> 
+> I suspect it's fine to leave it like this until such a case actually shows up.
+
+Yeah, it shouldn't be important, and as Mark has pointed out, it might
+not be needed at all. I'll see what I can do.
+
+> > +       vres = kunit_alloc_resource(test,
+> > +                                   kunit_vm_mmap_init,
+> > +                                   kunit_vm_mmap_free,
+> > +                                   GFP_KERNEL,
+> > +                                   &params);
+> 
+> It could be easier to use kunit_add_action() here, rather than
+> kunit_alloc_resource(), as you wouldn't need the params struct to pass
+> things through.
+> 
+> The advantage to keeping the separate resource is that we can more
+> easily look it up later if we, for example, wanted to be able to make
+> it current on other threads (is that something we'd ever want to do?).
+
+I like having it follow the pattern of the other resource allocators,
+but if there's not a strong reason to switch, I'll leave it as-is.
+
+-- 
+Kees Cook
 
