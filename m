@@ -1,266 +1,416 @@
-Return-Path: <linux-kernel+bounces-209060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F77902C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D7E902C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 554461C21798
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E1B284B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3801450F2;
-	Mon, 10 Jun 2024 23:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEB4152196;
+	Mon, 10 Jun 2024 23:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwIXcRMw"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbBTELiD"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D07152E17;
-	Mon, 10 Jun 2024 23:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF43C0C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718062357; cv=none; b=nZcJOWW+FcQHcFo5yc7XDz+Gedfl4+hb5jQ6h/7mjzWm9dPD3Vjqs7ajjZ7jT+lhN4B51DO5523DmnMQ2j9Ojtd+sGmWr42veOjndGMefgtwdEG/PARB+7clQHhtgZGHydaIVDKIHeuugGrIvgzCb36xf1wPMnlX2+kprSJI/gU=
+	t=1718062495; cv=none; b=VmSjwcvBiHWiA0YLCkEcuCtlmZ/bLW+jrZt/2kg0wQsbYYAwv2mBBv0tBsdqRw8pjXMrKRtsLs/QgrQbqmhg/WMSYZIaHOSieGSLitcgYyTiOhbrgfi85NtXIBp3jX5UUUODkQ8Taa7CKLu4WysKk6kbQAUStheNvK4bycaPd18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718062357; c=relaxed/simple;
-	bh=6/QglN+PpX0GwefFXH5L3Ad08rT5zeJAewTh+Os6rwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BsbnmtX3nFSssPVrMRhTddPScm+I4OVbAMAFF14v7hpOzP77pWB62Gh/uHSLLc7mTo8qmzdoYQ/A2ALCVXVJv5ZxBkj4XGErqd/bvttuO/98YZrfP5A0CIiSesPHrgf4u68lL38yvMVJ3xyJrGJ4QW+RKRLCozV8xPbsZtYHOls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwIXcRMw; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1718062495; c=relaxed/simple;
+	bh=zpxDXt5iwYQiVrXKuyQt6romYrsEr9RpSNPylLrjYE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=haxRy0MSzRi3I/b7Swbs1z35FaVlScSRXZiRHOkuJ5DeYfxmgKX5cPLS+cCA+01IiQ5ijnOGIzQzSp5ZakCTtnd5QmG+SZCSw6jXUgz6fXdMj7sARY+BAChW5vV0pf709yDisr4RbWOAGaweBu7psNddyiGtv42lYgq2Jm/0QTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbBTELiD; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f1c209893so2452031f8f.2;
-        Mon, 10 Jun 2024 16:32:35 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b081c675e7so6610716d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718062354; x=1718667154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718062493; x=1718667293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nkJdZia3seAvpp6RZyYxApnMca2ZfrG8TVH3E3OcF1M=;
-        b=EwIXcRMwpluo+wSAxm55Hsm00adUKoXtL0u+vapEpQ/3+KGCBYsk52Sb29Sv1ixAl0
-         KgaIEks+TamDnVDx65gls5fZZgeWxMlS+dD3ddSLhQz+yUf+77yjbQ3HoZHpZwhK8lsN
-         voTq5g+li+FzpWReFHATZ1LLSHW3BNSkwfyvqrXCLXHRUjMfvMNe3wZ3shspChdayUnF
-         HykgqHQhhvYIRJDtaIJx3LzXVniuK6SK2xjPufBsaDUrfAo+H+4FuLtnL48SBcR09W8c
-         +0z+/kW4TCOCGILHWpu0m78QGbbKUgZqpvyGZyzLeOmp8osNuKbadyNti23bwM+yH5rD
-         pDDQ==
+        bh=oAWl7Ib5EETyb6qKQYzVD1vbK0fWMfxkINjvghmTwZ4=;
+        b=QbBTELiDoe8JovoZQUNgJfc/NJS/L1A5HPwHKAw9Wl/c3bHRE2GzOMC4/2VErNzTyt
+         a0g57ylfMUVkEGoRS+sOnZ56NjAzoLeNNd/2WGKSO2bKFDCgIbLKkYmR4GseciTzS1QQ
+         +IvHGeqLSTg66n6CVThDFDk+bCr6MS9lgRs7NMh1oAF6tioRpO9Tv6/giXIhWmgo3HRC
+         k6f9n5XA6caMZIwEyXYDtE7RkzwQHdxUYGtYCj3TE4K46zNv2Ye4x/A6iTpulNNJxL+l
+         Ffj0nqpnDgCSBjgZ7FTXMfrxBmN2VPiiBeyle1BmwSRp+oIfwxPSn3ENqvYS+l6PKVHk
+         wn9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718062354; x=1718667154;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718062493; x=1718667293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nkJdZia3seAvpp6RZyYxApnMca2ZfrG8TVH3E3OcF1M=;
-        b=MYGX+RdsbaO11OBNmdM3k4zEkIHWI7+OP3gNC7juKZNFIkopQCQnktXbnvKmym6Hsc
-         ppFsU/gJUKTSOin6XDGcqt0CXu4el8yBvQDIxz7qDY0BJQX8D14OtDypTAEddGR0nm/q
-         W+DBqWQeEeU164anai/tENFvYKv51+gMvotYzlLHzANFysQhlWe9z2HSjj41hB4xVYt5
-         9SyHLJeB+Zw/RMWpgNBaphfrDFaN7NfL3NcgDIttYKZfFXDEfdOWd7hWVa3DO5FAPtm2
-         0v7okR/DZIUkvpGTKPPuQ3uxKrmwOmlMTrarqohXSf+QJE6dbqhfkfSuWGLU4c9XzJs5
-         MG+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFmoxIih8D8AxqkVZmxat7gJgM/1tZQ+C0cQRjkMgpW8j7f9pP0QS9aIWCQCAiFN4H8PwY+FKV05P+UTjhX5TFVBs9WVOIAhK7hTL4tyLO++NPhzzbnp9bBNf3+w7ekWkps9YfvtUhH483tkQJgMoMKAmwe1hDZ7AYH4cUwv4j3FKI7w==
-X-Gm-Message-State: AOJu0Yy/mQS9rQlqzjwrmy9FUkc5DJAPCMgeMO3CvSJlHw0knUbgihjW
-	mUBaLYRC2It8f9r083NVx/PGW8jpkMh5MqqnEM3D548MBrwiFYl+dJ2mIYJp
-X-Google-Smtp-Source: AGHT+IEo8zhPKmKZ0sunFuThY1cOsq+xmpiNsQqispZfpHsuk9fF25WH7+fxVx5foSiFkcIqbTHFYg==
-X-Received: by 2002:adf:ec4b:0:b0:35f:1aac:156f with SMTP id ffacd0b85a97d-35f1aac193amr4600157f8f.13.1718062354268;
-        Mon, 10 Jun 2024 16:32:34 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:74ea:e666:238d:5e76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1efe9a74sm5447698f8f.104.2024.06.10.16.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 16:32:33 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH v2 4/4] clk: renesas: Add RZ/V2H(P) CPG driver
-Date: Tue, 11 Jun 2024 00:32:21 +0100
-Message-Id: <20240610233221.242749-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=oAWl7Ib5EETyb6qKQYzVD1vbK0fWMfxkINjvghmTwZ4=;
+        b=dj1ZyDkTP8e0gy5xpIO7fwuHqBdXikWE5TecjhqBRGv9XMj1KmEE/VTqxktCkUW+ug
+         CZn6TeBv2xtM8+2lWCv1YOZroaWKRrzNa1BNq+IOWp6OCTqbO7sUs/cgF3eaXwTSg/7M
+         s3/DDcg++tlwRGPqSA2NHwP+1lEcAF1XA6yoORWO8VmeNxvdciq146b2JDR1bzRzdNCq
+         1bYK2I0+XUKARLVRATZKhPD96pI6UcXQ6XTGoy73DKoI7lH7Ijl3eZGdLB5F9V7weDER
+         fv5R9RWpQlZMqko1NE7adhEhL3Phcz2mJa5q8iVF9u+KIqaoXcQ+mONg4LuLGSiJcU3e
+         YILQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBq6wwNurY6rlYqggzTW1YILiIU9cepSo7a654O11OxlKpYCfCt0VapEeWwgIuSAkT8lSFV+U2RFmiE8QLd5KAh9Z9DOU5x8Ko7VFR
+X-Gm-Message-State: AOJu0YxSQzRr/r4b9y9ssmiDWtazpjBRx7Ml2f3DKDPNI1pSkKf3tEvM
+	1CoMbUPraGWHIZ7rC9DtOYr6XhQnfMS6Gd/o/4275PDjlZaVUSrEYXFni/J+Y3DeI8CL1azx9hM
+	AD6z66idusREmxfvjEKTft5S0LFs=
+X-Google-Smtp-Source: AGHT+IE3oosJo4kcNHuGcr9G0RD1oLhJ87BJKZd85tjQHgfR4fr0b5ZzGYFIIPFIBItYUIkwkHriHcoN+l3mh86XlVk=
+X-Received: by 2002:a05:6214:46a1:b0:6b0:7864:90ac with SMTP id
+ 6a1803df08f44-6b078649246mr85341986d6.11.1718062492825; Mon, 10 Jun 2024
+ 16:34:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240608023654.3513385-1-yosryahmed@google.com>
+ <CAGsJ_4yVmDKtcKKAdjPOkOMWB+=ZT5TrrWz188xJaTV4EpM1Bw@mail.gmail.com>
+ <CAJD7tkaHLVcjUgiUFfBK+ztCqxBTRfyVbSVH9vytK=5JYOw+Sw@mail.gmail.com>
+ <CAGsJ_4w-magFysq4uLBm46AzHLD+r=v6pJphwmQn+OFvECHjrA@mail.gmail.com>
+ <CAJD7tkYdq533Z7nubjFT5jQYuS4oq2u15RAz2oGHGxYSk5Oicg@mail.gmail.com>
+ <CAGsJ_4zNxC5u088RRnKeM18skEJvwTd22mB_FWSA67K3S-CKPw@mail.gmail.com> <CAJD7tkb0Rv4mSPS3DXqF888iVwd++nd99N3WrZYuJhLPDN+dhA@mail.gmail.com>
+In-Reply-To: <CAJD7tkb0Rv4mSPS3DXqF888iVwd++nd99N3WrZYuJhLPDN+dhA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 11 Jun 2024 11:34:41 +1200
+Message-ID: <CAGsJ_4ztBavP+ic15V1F0-KUhoE1zh08xuOZ3jMMfuHu=JHNEw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Jun 11, 2024 at 9:12=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> On Mon, Jun 10, 2024 at 2:00=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Tue, Jun 11, 2024 at 4:12=E2=80=AFAM Yosry Ahmed <yosryahmed@google.=
+com> wrote:
+> > >
+> > > On Mon, Jun 10, 2024 at 1:06=E2=80=AFPM Barry Song <21cnbao@gmail.com=
+> wrote:
+> > > >
+> > > > On Tue, Jun 11, 2024 at 1:42=E2=80=AFAM Yosry Ahmed <yosryahmed@goo=
+gle.com> wrote:
+> > > > >
+> > > > > On Fri, Jun 7, 2024 at 9:13=E2=80=AFPM Barry Song <21cnbao@gmail.=
+com> wrote:
+> > > > > >
+> > > > > > On Sat, Jun 8, 2024 at 10:37=E2=80=AFAM Yosry Ahmed <yosryahmed=
+@google.com> wrote:
+> > > > > > >
+> > > > > > > Zswap does not support storing or loading large folios. Until=
+ proper
+> > > > > > > support is added, attempts to load large folios from zswap ar=
+e a bug.
+> > > > > > >
+> > > > > > > For example, if a swapin fault observes that contiguous PTEs =
+are
+> > > > > > > pointing to contiguous swap entries and tries to swap them in=
+ as a large
+> > > > > > > folio, swap_read_folio() will pass in a large folio to zswap_=
+load(), but
+> > > > > > > zswap_load() will only effectively load the first page in the=
+ folio. If
+> > > > > > > the first page is not in zswap, the folio will be read from d=
+isk, even
+> > > > > > > though other pages may be in zswap.
+> > > > > > >
+> > > > > > > In both cases, this will lead to silent data corruption. Prop=
+er support
+> > > > > > > needs to be added before large folio swapins and zswap can wo=
+rk
+> > > > > > > together.
+> > > > > > >
+> > > > > > > Looking at callers of swap_read_folio(), it seems like they a=
+re either
+> > > > > > > allocated from __read_swap_cache_async() or do_swap_page() in=
+ the
+> > > > > > > SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folio=
+s, so
+> > > > > > > everything is fine for now.
+> > > > > > >
+> > > > > > > However, there is ongoing work to add to support large folio =
+swapins
+> > > > > > > [1]. To make sure new development does not break zswap (or ge=
+t broken by
+> > > > > > > zswap), add minimal handling of incorrect loads of large foli=
+os to
+> > > > > > > zswap.
+> > > > > > >
+> > > > > > > First, move the call folio_mark_uptodate() inside zswap_load(=
+).
+> > > > > > >
+> > > > > > > If a large folio load is attempted, and any page in that foli=
+o is in
+> > > > > > > zswap, return 'true' without calling folio_mark_uptodate(). T=
+his will
+> > > > > > > prevent the folio from being read from disk, and will emit an=
+ IO error
+> > > > > > > because the folio is not uptodate (e.g. do_swap_fault() will =
+return
+> > > > > > > VM_FAULT_SIGBUS). It may not be reliable recovery in all case=
+s, but it
+> > > > > > > is better than nothing.
+> > > > > > >
+> > > > > > > This was tested by hacking the allocation in __read_swap_cach=
+e_async()
+> > > > > > > to use order 2 and __GFP_COMP.
+> > > > > > >
+> > > > > > > In the future, to handle this correctly, the swapin code shou=
+ld:
+> > > > > > > (a) Fallback to order-0 swapins if zswap was ever used on the=
+ machine,
+> > > > > > > because compressed pages remain in zswap after it is disabled=
+.
+> > > > > > > (b) Add proper support to swapin large folios from zswap (ful=
+ly or
+> > > > > > > partially).
+> > > > > > >
+> > > > > > > Probably start with (a) then followup with (b).
+> > > > > > >
+> > > > > > > [1]https://lore.kernel.org/linux-mm/20240304081348.197341-6-2=
+1cnbao@gmail.com/
+> > > > > > >
+> > > > > > > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> > > > > > > ---
+> > > > > > >
+> > > > > > > v1: https://lore.kernel.org/lkml/20240606184818.1566920-1-yos=
+ryahmed@google.com/
+> > > > > > >
+> > > > > > > v1 -> v2:
+> > > > > > > - Instead of using VM_BUG_ON() use WARN_ON_ONCE() and add som=
+e recovery
+> > > > > > >   handling (David Hildenbrand).
+> > > > > > >
+> > > > > > > ---
+> > > > > > >  mm/page_io.c |  1 -
+> > > > > > >  mm/zswap.c   | 22 +++++++++++++++++++++-
+> > > > > > >  2 files changed, 21 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/mm/page_io.c b/mm/page_io.c
+> > > > > > > index f1a9cfab6e748..8f441dd8e109f 100644
+> > > > > > > --- a/mm/page_io.c
+> > > > > > > +++ b/mm/page_io.c
+> > > > > > > @@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio,=
+ struct swap_iocb **plug)
+> > > > > > >         delayacct_swapin_start();
+> > > > > > >
+> > > > > > >         if (zswap_load(folio)) {
+> > > > > > > -               folio_mark_uptodate(folio);
+> > > > > > >                 folio_unlock(folio);
+> > > > > > >         } else if (data_race(sis->flags & SWP_FS_OPS)) {
+> > > > > > >                 swap_read_folio_fs(folio, plug);
+> > > > > > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > > > > > index b9b35ef86d9be..ebb878d3e7865 100644
+> > > > > > > --- a/mm/zswap.c
+> > > > > > > +++ b/mm/zswap.c
+> > > > > > > @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
+> > > > > > >
+> > > > > > >         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > > > > > >
+> > > > > > > +       /*
+> > > > > > > +        * Large folios should not be swapped in while zswap =
+is being used, as
+> > > > > > > +        * they are not properly handled. Zswap does not prop=
+erly load large
+> > > > > > > +        * folios, and a large folio may only be partially in=
+ zswap.
+> > > > > > > +        *
+> > > > > > > +        * If any of the subpages are in zswap, reading from =
+disk would result
+> > > > > > > +        * in data corruption, so return true without marking=
+ the folio uptodate
+> > > > > > > +        * so that an IO error is emitted (e.g. do_swap_page(=
+) will sigfault).
+> > > > > > > +        *
+> > > > > > > +        * Otherwise, return false and read the folio from di=
+sk.
+> > > > > > > +        */
+> > > > > > > +       if (folio_test_large(folio)) {
+> > > > > > > +               if (xa_find(tree, &offset,
+> > > > > > > +                           offset + folio_nr_pages(folio) - =
+1, XA_PRESENT)) {
+> > > > > > > +                       WARN_ON_ONCE(1);
+> > > > > > > +                       return true;
+> > > > > > > +               }
+> > > > > > > +               return false;
+> > > > > >
+> > > > > > IMHO, this appears to be over-designed. Personally, I would opt=
+ to
+> > > > > > use
+> > > > > >
+> > > > > >  if (folio_test_large(folio))
+> > > > > >                return true;
+> > > > >
+> > > > > I am sure you mean "return false" here. Always returning true mea=
+ns we
+> > > > > will never read a large folio from either zswap or disk, whether =
+it's
+> > > > > in zswap or not. Basically guaranteeing corrupting data for large
+> > > > > folio swapin, even if zswap is disabled :)
+> > > > >
+> > > > > >
+> > > > > > Before we address large folio support in zswap, it=E2=80=99s es=
+sential
+> > > > > > not to let them coexist. Expecting valid data by lunchtime is
+> > > > > > not advisable.
+> > > > >
+> > > > > The goal here is to enable development for large folio swapin wit=
+hout
+> > > > > breaking zswap or being blocked on adding support in zswap. If we
+> > > > > always return false for large folios, as you suggest, then even i=
+f the
+> > > > > folio is in zswap (or parts of it), we will go read it from disk.=
+ This
+> > > > > will result in silent data corruption.
+> > > > >
+> > > > > As you mentioned before, you spent a week debugging problems with=
+ your
+> > > > > large folio swapin series because of a zswap problem, and even af=
+ter
+> > > > > then, the zswap_is_enabled() check you had is not enough to preve=
+nt
+> > > > > problems as I mentioned before (if zswap was enabled before). So =
+we
+> > > > > need stronger checks to make sure we don't break things when we
+> > > > > support large folio swapin.
+> > > > >
+> > > > > Since we can't just check if zswap is enabled or not, we need to
+> > > > > rather check if the folio (or any part of it) is in zswap or not.=
+ We
+> > > > > can only WARN in that case, but delivering the error to userspace=
+ is a
+> > > > > couple of extra lines of code (not set uptodate), and will make t=
+he
+> > > > > problem much easier to notice.
+> > > > >
+> > > > > I am not sure I understand what you mean. The alternative is to
+> > > > > introduce a config option (perhaps internal) for large folio swap=
+in,
+> > > > > and make this depend on !CONFIG_ZSWAP, or make zswap refuse to ge=
+t
+> > > > > enabled if large folio swapin is enabled (through config or boot
+> > > > > option). This is until proper handling is added, of course.
+> > > >
+> > > > Hi Yosry,
+> > > > My point is that anybody attempts to do large folios swap-in should
+> > > > either
+> > > > 1. always use small folios if zswap has been once enabled before or=
+ now
+> > > > or
+> > > > 2. address the large folios swapin issues in zswap
+> > > >
+> > > > there is no 3rd way which you are providing.
+> > > >
+> > > > it is over-designed to give users true or false based on if data is=
+ zswap
+> > > > as there is always a chance data could be in zswap. so before appro=
+ach
+> > > > 2 is done, we should always WARN_ON large folios and report data
+> > > > corruption.
+> > >
+> > > We can't always WARN_ON for large folios, as this will fire even if
+> > > zswap was never enabled. The alternative is tracking whether zswap wa=
+s
+> > > ever enabled, and checking that instead of checking if any part of th=
+e
+> > > folio is in zswap.
+> > >
+> > > Basically replacing xa_find(..) with zswap_was_enabled(..) or somethi=
+ng.
+> >
+> > My point is that mm core should always fallback
+> >
+> > if (zswap_was_or_is_enabled())
+> >      goto fallback;
+> >
+> > till zswap fixes the issue. This is the only way to enable large folios=
+ swap-in
+> > development before we fix zswap.
+>
+> I agree with this, I just want an extra fallback in zswap itself in
+> case something was missed during large folio swapin development (which
+> can evidently happen).
 
-Add RZ/V2H(P) CPG driver.
+yes. then i feel we only need to warn_on the case mm-core fails to fallback=
+.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-- Updated commit description
-- Dropped pll_clk1/clk2_offset
-- Made r9a09g057_mod_clks/r9a09g057_resets as static const
-- Now using register indexes
----
- drivers/clk/renesas/Kconfig         |  5 ++
- drivers/clk/renesas/Makefile        |  1 +
- drivers/clk/renesas/r9a09g057-cpg.c | 77 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.c     |  4 ++
- drivers/clk/renesas/rzv2h-cpg.h     |  2 +
- 5 files changed, 89 insertions(+)
- create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+I mean, only WARN_ON  is_zswap_ever_enabled&&large folio. there is no
+need to do more. Before zswap brings up the large folio support, mm-core
+will need is_zswap_ever_enabled() to do fallback.
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 330c8bc03777..3f3f84eb357b 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -40,6 +40,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
-+	select CLK_R9A09G057 if ARCH_R9A09G057
- 	select CLK_SH73A0 if ARCH_SH73A0
- 
- if CLK_RENESAS
-@@ -193,6 +194,10 @@ config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A09G057
-+       bool "RZ/V2H(P) clock support" if COMPILE_TEST
-+       select CLK_RZV2H
-+
- config CLK_SH73A0
- 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index d81a62e78345..23d2e26051c8 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
-+obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
- # Family
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-new file mode 100644
-index 000000000000..d47b4365b2de
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) CPG driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/r9a09g057-cpg.h>
-+
-+#include "rzv2h-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A09G057_IOTOP_0_SHCLK,
-+
-+	/* External Input Clocks */
-+	CLK_QEXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLLCM33,
-+	CLK_PLLCM33_DIV16,
-+	CLK_PLLCA55,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("qextal", CLK_QEXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+
-+	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-+};
-+
-+static const struct rzv2h_mod_clk r9a09g057_mod_clks[] = {
-+	DEF_MOD("scif_0_clk_pck", CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-+};
-+
-+static const struct rzv2h_reset r9a09g057_resets[] = {
-+	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+};
-+
-+static const unsigned int r9a09g057_crit_mod_clks[] __initconst = {
-+	MOD_CLK_BASE + 5,		/* ICU_0_PCLK_I */
-+	MOD_CLK_BASE + 19,		/* GIC_0_GICCLK */
-+};
-+
-+const struct rzv2h_cpg_info r9a09g057_cpg_info = {
-+	/* Core Clocks */
-+	.core_clks = r9a09g057_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a09g057_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r9a09g057_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r9a09g057_crit_mod_clks),
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a09g057_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a09g057_mod_clks),
-+	.num_hw_mod_clks = 25 * 16,
-+
-+	/* Resets */
-+	.resets = r9a09g057_resets,
-+	.num_resets = ARRAY_SIZE(r9a09g057_resets),
-+	.num_hw_resets = 18 * 16,
-+};
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index f3c9f562234b..7882cfb36998 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -652,6 +652,10 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+index 2a85b941db97..035e51ed89c4 100644
+--- a/include/linux/zswap.h
++++ b/include/linux/zswap.h
+@@ -36,6 +36,7 @@ void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg=
+);
+ void zswap_lruvec_state_init(struct lruvec *lruvec);
+ void zswap_folio_swapin(struct folio *folio);
+ bool is_zswap_enabled(void);
++bool is_zswap_ever_enabled(void);
+ #else
+
+ struct zswap_lruvec_state {};
+@@ -65,6 +66,10 @@ static inline bool is_zswap_enabled(void)
+        return false;
  }
- 
- static const struct of_device_id rzv2h_cpg_match[] = {
-+	{
-+		.compatible = "renesas,r9a09g057-cpg",
-+		.data = &r9a09g057_cpg_info,
-+	},
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index d2791a3a23a0..2a4411618b8a 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -159,4 +159,6 @@ struct rzv2h_cpg_info {
- 	unsigned int num_crit_mod_clks;
- };
- 
-+extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
-+
- #endif	/* __RENESAS_RZV2H_CPG_H__ */
--- 
-2.34.1
 
++static inline bool is_zswap_ever_enabled(void)
++{
++       return false;
++}
+ #endif
+
+ #endif /* _LINUX_ZSWAP_H */
+diff --git a/mm/zswap.c b/mm/zswap.c
+index b9b35ef86d9b..bf2da5d37e47 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -86,6 +86,9 @@ static int zswap_setup(void);
+ static bool zswap_enabled =3D IS_ENABLED(CONFIG_ZSWAP_DEFAULT_ON);
+ static int zswap_enabled_param_set(const char *,
+                                   const struct kernel_param *);
++
++static bool zswap_ever_enable;
++
+ static const struct kernel_param_ops zswap_enabled_param_ops =3D {
+        .set =3D          zswap_enabled_param_set,
+        .get =3D          param_get_bool,
+@@ -136,6 +139,11 @@ bool is_zswap_enabled(void)
+        return zswap_enabled;
+ }
+
++bool is_zswap_ever_enabled(void)
++{
++       return zswap_enabled || zswap_ever_enabled;
++}
++
+ /*********************************
+ * data structures
+ **********************************/
+@@ -1734,6 +1742,7 @@ static int zswap_setup(void)
+                pr_info("loaded using pool %s/%s\n", pool->tfm_name,
+                        zpool_get_type(pool->zpools[0]));
+                list_add(&pool->list, &zswap_pools);
++               zswap_ever_enabled =3D true;
+                zswap_has_pool =3D true;
+        } else {
+                pr_err("pool creation failed\n");
+
+Thanks
+Barry
 
