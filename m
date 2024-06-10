@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-207921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB7B901DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E805A901DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C3AB26A01
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871DA2878BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5936F31C;
-	Mon, 10 Jun 2024 09:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ewAN6JCo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0309B6F2F3;
+	Mon, 10 Jun 2024 09:09:25 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EB86BFA5;
-	Mon, 10 Jun 2024 09:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3531C68F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718010522; cv=none; b=nRUAJxZpnF/YavtRYkjW8tnTfMAYzkDiULw5XqdyfX21l5GnY4MEwz3VDJJ19j8gSQfWcCSFykAXY/TkG4P2aoaOyKIpL4EVOmmzWldrdf1uaWo6niqbTHuAkIRSZLTLpfVJOZ02HYWPBiaHhfqj1IBF4PCJC6VtQWiJc3UEUZk=
+	t=1718010564; cv=none; b=j/PLbGdy1T1UKDGOS507De9Js7aprb3W0DFYXB8MMpRKPI8k6YoO0uV/ORG3EzBQCiLLATHcSKwDRXmPlIDHXjr9VTMWqj/IwXo9r2QvvrgYFSywuc6vcKfB6QL+02MA3tABM/6M3RKmz5V05RiSoCLK9OT1bC18P2Imq1N2FJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718010522; c=relaxed/simple;
-	bh=cDKlGRIs/sXe9FCFri+HS2RQNMYG7BiE511QhAbi+ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jfvkgCvkYYuS6JvvEje/3w/WBENN2BbECM0nxWDRRJ1UGNbeKaJlbP+gYpU29KsRdIUs8fmaYTjp+hMGcMotJiDTFQ10AOz9VKxdkF8q71y3HP+nq+gW9UMPJpp1bDRxogfcauwLnMGN2pBgMggnd/RgjFYrf7noEqPAkhgrNg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ewAN6JCo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A0071K005752;
-	Mon, 10 Jun 2024 09:08:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cn6j+FKqekPCfp12nMiwBQZ/qQDhbCkmSjndds8+9cg=; b=ewAN6JCooCQay5fM
-	GuqxkoU+lwNTAYza1VSFUnSvs9+ZI8JAGFXiA+Xqw4fWr9C9oYUXTxZK4XWUtaRT
-	OkveARIoHgVYUvhknxfSTz30wKvQh0xJ/2kMRcrYb60Y+8w++YClJKsg7w2hD8hi
-	I6hx9gE8qvtMIeO1G3sjRpmT93+Iss/qui/40U2RfzIeKhZY0j3oSQU1ezM5ndUN
-	GZ+UrQpW/ksvbXpsWJIVd1ihTbaYi8MYB6UTNYa4cX3RgoOe0/uH+Y7pMGVcrlSk
-	NLOCN3vdgZoolcWQFzDJH1RZst0bJMhN57b2wdboIqvwfOjQL4GBL9CtuANwsfh0
-	ixAiQw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0ebfqf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 09:08:36 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45A98ZWu020927
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 09:08:35 GMT
-Received: from [10.204.67.150] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 02:08:32 -0700
-Message-ID: <2debb668-e649-4e54-a7ce-b1705e8872bc@quicinc.com>
-Date: Mon, 10 Jun 2024 14:38:32 +0530
+	s=arc-20240116; t=1718010564; c=relaxed/simple;
+	bh=nmjSVABe33sGrLBmv+HtH9U6IvumwCRu/N4m5HQ63BU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3B4o5sDkq1PuNnJ5tlQp/Z7SeW8BgVJ+DVCcQBGhAcHa7DPw0QqbNjeKramgYNj2stMdRe0c17FxkiLTi5cxrDkMJi3RLgzJh0zzD94OA+ZOaDX0Pu8r3Y3G5tKUfJQLADmR40CLOkzK6jLBKFCS56+urESLbTvLk7DTKo0Pzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VyQXJ5ryyz9v7Hp
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:51:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 61CCF140626
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:09:13 +0800 (CST)
+Received: from [10.81.205.125] (unknown [10.81.205.125])
+	by APP2 (Coremail) with SMTP id GxC2BwA3vzmqwmZmGIciAA--.47680S2;
+	Mon, 10 Jun 2024 10:09:12 +0100 (CET)
+Message-ID: <cb49624b-ae79-4ba5-b550-f73962317032@huaweicloud.com>
+Date: Mon, 10 Jun 2024 11:08:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,76 +46,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] misc: fastrpc: Fix memory leak in audio daemon
- attach operation
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        stable
-	<stable@kernel.org>
-References: <20240606165939.12950-1-quic_ekangupt@quicinc.com>
- <20240606165939.12950-7-quic_ekangupt@quicinc.com>
- <dkbyszjmah5swomq2b3nlk24mik5epiwfeey7c4khp2p74dxgm@4ccxtjnasyoc>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <dkbyszjmah5swomq2b3nlk24mik5epiwfeey7c4khp2p74dxgm@4ccxtjnasyoc>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
+ tools/memory-model
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
+ <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
+ <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Tax46ygPvzhlQt2Bs_m94pyy-BxlYrsi
-X-Proofpoint-ORIG-GUID: Tax46ygPvzhlQt2Bs_m94pyy-BxlYrsi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100069
+X-CM-TRANSID:GxC2BwA3vzmqwmZmGIciAA--.47680S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF17Cw18Aw4DGw43Gw1DGFg_yoW8Gr13pF
+	yYyFs3KF4DAF4S939rZF97ta4IyrZ7Jr98Xr98K3yrCFyakryFgF1rt3Z8ZFZxurn3ur4x
+	trZ3K397uwsrZrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
 
-On 6/7/2024 4:58 PM, Dmitry Baryshkov wrote:
-> On Thu, Jun 06, 2024 at 10:29:26PM +0530, Ekansh Gupta wrote:
->> Audio PD daemon send the name as part of the init IOCTL call. This
->> mane needs to be copied to kernel for which memory is allocated.
->> This memory is never freed which might result in memory leak. Add
->> changes to free the memory when it is not needed.
+Am 6/8/2024 um 3:00 AM schrieb Alan Stern:
+> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
 >>
->> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> Fixes go before the non-fixes patches.
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
->> ---
->>  drivers/misc/fastrpc.c | 1 +
->>  1 file changed, 1 insertion(+)
 >>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index 13e368279765..7ee8bb3a9a6f 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -1380,6 +1380,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->>  		goto err_invoke;
->>  
-> A comment that the remote_heap persists would be helpful.
-I'll add this information in remote heap redesign patch. Thanks.
+>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
+>>> Just to clarify: Your first step encompasses patches 1 - 3, and the
+>>> second step is patch 4.  The first three patches can be applied now, but
+>>> the last one needs to wait until herd7 has been updated.  Is this all
+>>> correct?
+>>
+>> Exactly.
+> 
+> With regard to patch 4, how much thought have you and Hernan given to
+> backward compatibility?  Once herd7 is changed, old memory model files
+> will no longer work correctly.
 
---ekansh
->
->>  	kfree(args);
->> +	kfree(name);
->>  
->>  	return 0;
->>  err_invoke:
->> -- 
->> 2.43.0
->>
+Yes, Akira pointed this out too.
+
+My thought back then was to update herd now, and wait with the fourth 
+patch for a while until most people who run the LKMM would have 
+upgraded. However...
+
+> To avoid being so disruptive, perhaps the changes to herd7 should be
+> under control of a new command-line or config-file switch.  If the
+> switch is enabled, the new simplified code gets used; otherwise herd7
+> would continue to use its old built-in rules for special tags
+... I like that idea a lot better actually. I think it needs to be 
+placed into the files, or people will get strange, silent results.
+
+But then I think we need to make sure that there's no internal behaviors 
+left. I don't want to introduce more flags in the future to turn off 
+other internal behavior.
+
+jonas
 
 
