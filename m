@@ -1,179 +1,217 @@
-Return-Path: <linux-kernel+bounces-208740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6721C9028C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1539028C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1BE1C215DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F061C21136
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EAA14F121;
-	Mon, 10 Jun 2024 18:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C7314EC4A;
+	Mon, 10 Jun 2024 18:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AgiXegXm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1C0JYxi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E5F14EC6B;
-	Mon, 10 Jun 2024 18:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A622B9D7
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718044497; cv=none; b=cURhOd++I9tNdIZ7XFpWzLocBrJW9qUAU9jOpjXIcq9z8lWf4EW/McIR7HYXgDzu1XiLjChIpjIRjShbiPeRX2SbEynxSolm48V2IjR7JX8JfksK5K35wfkq6t661Iq1HVby3YM9cytdQ7NDHC3d51YqBur/LdXDF9fkllgTf7s=
+	t=1718044542; cv=none; b=eUqh7ARtQYHAVFueTx5f39S1wbFdVKP7uZwY2vKW5Y04aaTcz8Peigp9DrM2OJHWllldoistqM9+2h5lGIPvMjo7mjsUF8PoNqeMhUpIe14b2KQ0aT1Z606NQBqsjaT5qFBFknAepemyLRDFob5aqWa74/p3HczYKizCQatNPjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718044497; c=relaxed/simple;
-	bh=Z3Nw5/tyLSNqaZ7DVijOdre0xPE2VjfLzb4qNvkgbls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gnuxDVKmKWhFfF9NXFGyuX45hlKlkClViXT6G+U+ZNeuf2tuYyMyts6H5H0fHqSnWVcXV4fEM549Y9xZTb01Xuechi3Mhrmmp7hzF6sBM0oMVYaLj2zu2RXxJYSFjBclb1+TIQpY3UvIgD7s8vJ5j/NdGCbyvq1WQ0MK3OiwCco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AgiXegXm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ACaO7j003466;
-	Mon, 10 Jun 2024 18:34:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	88MKYxAVF1tS+dQlIVLJZJLnTYICvWwO37guWgXPbPI=; b=AgiXegXmaxJ2wI2+
-	aR81xPtGfHJTfq1i1v4kKftQZ8av1SdXXOGKqJvyvPxBoGrKJwfxeVqQIppkG5AK
-	qQvWwGSyiawouko3YhxOj1A1qifRpwon+UbCWNTlKIaYKqLPwL3/lVwj+/tk0bIU
-	J4oX1uAUsihG7GIj7usfrQJM+ie2+LaAB6mbhgkKx9QF4kX+Zth+GA1I8P/twI4u
-	IgIPe3g+g/BvTX2Lpq641wHAn19hDNmGFkjvbCFl+eWHZSzzmAU4u9Eflb91zAbX
-	lDPde66T2nMdwCaA4FbhhaSUp89vxFDAnTm+EGkfE5JZEgeURJBBi6+KND3a+ini
-	WaPUiw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfh34xyf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 18:34:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AIYoLo007698
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 18:34:50 GMT
-Received: from [10.110.107.105] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 11:34:49 -0700
-Message-ID: <4b81e0f0-ecc6-44b3-9388-aacf54230788@quicinc.com>
-Date: Mon, 10 Jun 2024 11:34:48 -0700
+	s=arc-20240116; t=1718044542; c=relaxed/simple;
+	bh=dJcTlWDkO2UoALFvL7D4Mxe/atJMB1RpgJHRiyQhQRU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lxI3kC9kmdBXy7cDuZNSEPXbuD2l73ChOMqfvTcPaTss+Y8detMkwmHuW/kHe7TtWxiJ15D2xm7LQtIvmQq98DQGrJ71bz8byMtSINwlut+8INZgu/NUlbi5rzwtcKlq76Qr8PcJjcIm7w/fKszviC76ggIq1RmQZdjokr9ihvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1C0JYxi; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718044541; x=1749580541;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dJcTlWDkO2UoALFvL7D4Mxe/atJMB1RpgJHRiyQhQRU=;
+  b=G1C0JYxi1bx+BKzOLTHLZqDM32UaJmx5VpmqekbyK/IUa3ExKs+k3/39
+   ml8K63BCdkP7JLqacvTtVOOPf59qbqyVKWRFIYqH4hxkw2K6afOu99OgA
+   ZuGksLpIK6/BbSWivpGS6bd++d44udw4vq2WFkjwsNrdHsPpghSwe2d0D
+   1ohfcV7/E0BjzNEZdgLOe2GejMqAGH1tBFLeqHM638VMiIKkgpva8wTKV
+   jqydIe3ESjd53Ujwa5Bghm7kgEK1LBNEYY7SqAWkMlX88Dkb8cjJmK5Ig
+   JRv1bl4JqnUXaagddmP/JPc114PNQvQKiH6f4rPBDC3mTNtwoaKlovJoi
+   g==;
+X-CSE-ConnectionGUID: CNtWEuAtS6Wo7MEhiTzTLQ==
+X-CSE-MsgGUID: X+WHGgVRSMyOS6mokhfAeA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="12004768"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="12004768"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:35:37 -0700
+X-CSE-ConnectionGUID: RsBqaON0QQGV4I6mzTTKFw==
+X-CSE-MsgGUID: JBEkpbGsQceoUHGCOVYobQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="43576544"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 11:35:37 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v20 00/18] Add support for Sub-NUMA cluster (SNC) systems
+Date: Mon, 10 Jun 2024 11:35:10 -0700
+Message-ID: <20240610183528.349198-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: Enable runtime pm of the host bridge
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Bjorn Helgaas
-	<bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_parass@quicinc.com>
-References: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jPRQHcozO5L75rz3lKhCu8sR-YCJ3qyB
-X-Proofpoint-GUID: jPRQHcozO5L75rz3lKhCu8sR-YCJ3qyB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_04,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- suspectscore=0 clxscore=1011 bulkscore=0 phishscore=0 adultscore=0
- mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100139
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This series based on top of tip x86/cache commit f385f0246394
+("x86/resctrl: Replace open coded cacheinfo searches")
+
+The Sub-NUMA cluster feature on some Intel processors partitions the CPUs
+that share an L3 cache into two or more sets. This plays havoc with the
+Resource Director Technology (RDT) monitoring features.  Prior to this
+patch Intel has advised that SNC and RDT are incompatible.
+
+Some of these CPUs support an MSR that can partition the RMID counters
+in the same way. This allows monitoring features to be used. Legacy
+monitoring files provide the sum of counters from each SNC node for
+backwards compatibility. Additional  files per SNC node provide details
+per node.
+
+Memory bandwidth allocation features continue to operate at
+the scope of the L3 cache.
+
+L3 cache occupancy and allocation operate on the portion of
+L3 cache available for each SNC node.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+---
+Changes since v19: https://lore.kernel.org/all/20240528222006.58283-1-tony.luck@intel.com/
+
+1-4:	Refactor on top of <linux/cacheinfo.h> change.
+	Nothing functional.
+
+5:	No change
+
+6:	Updated commit message with note about RMID Sharing mode.
+	Renamed __rmid_read() to __rmid_read_phys() and performed
+	translation from logical RMID to physical RMID at callsites.
+	Updated comment for __rmid_read_phys() with explanation of
+	logical/physical RMIDs. Consistently use "SNC node" avoid
+	SNC domain. Add specifics for non-SNC mode.
+	Joined split line on __rmid_read() definition (even with the
+	added "_phys" to its name still fits on one line.
+
+7:	No change
+
+8:	get_cpu_cacheinfo_level() moved to <linux/cacheinfo.h>
+	currently in tip x86/cache
+	no other changes
+
+9:	Dropped the "sumdomains" field from struct rmid_read (a NULL
+	domain field now indicates that summing is needed).
+	Fix kerneldoc comments for struct rmid_read.
+	Updated commit comments with more "why" than "what".
+
+10:	No change
+
+11:	Fix commit comments per suggestions
+	1) Added some "why it is OK to take a bit from evtid"
+	2) s/The stolen bit is given to/Give the bit to/
+	3) Don't use "l3_cache_id" (which looks like a variable)
+
+12:	Fix commit message.
+	s/kernfs_find_and_get_ns()/kernfs_find_and_get()/
+	Add kernfs_put() to drop hold from kernfs_find_and_get()
+	Drop useless "/* create the directory */" comment.
+
+13:	Add kernfs_put() to drop hold from kernfs_find_and_get() [two places]
+
+14:	Add cpumask parameter to mon_event_read() so SNC decsions are
+	all in rdtgroup_mondata_show() instead of spread between functions.
+	Add comments in rdtgroup_mondata_show() to explain the sum vs. no-sum
+	cases.
+	Moved the mon_event_read() call into both arms of the if-else
+	instead of "d = NULL; goto got_cacheinfo;"
+
+15:	New (replaces 15-17). Make __mon_event_read() do the sum across
+	domains (at filesystem level). Move the CPU/domain sanity check out
+	of resctrl_arch_rmid_read() and into __mon_event_read()
+	with separate scope tests for single domain vs. sum over
+	domains.
+
+16:	[Was 18] Update commit message with details about MSR 0xCA0, what changes
+	when bit 0 is cleared, and why this is necessary.
+	Dropped "Add an architecture specific hook" language from
+	commit message.
+
+17:	[Was 19] Drop "and enabling" from shortlog (enabling done by
+	previous commit).
+	Added checks that cpumask_weight() isn't returning zero (to keep
+	static checkers from warning of possible divide by zero).
+
+18:	[Was 20] Fix some "Sub-NUMA" references to say "Sub-NUMA Cluster"
+	Added document section on effect of SNC mode on MBA and L3 CAT.
+
+Tony Luck (18):
+  x86/resctrl: Prepare for new domain scope
+  x86/resctrl: Prepare to split rdt_domain structure
+  x86/resctrl: Prepare for different scope for control/monitor
+    operations
+  x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+  x86/resctrl: Add node-scope to the options for feature scope
+  x86/resctrl: Introduce snc_nodes_per_l3_cache
+  x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster
+    (SNC) systems
+  x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Add a new field to struct rmid_read for summation of
+    domains
+  x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+  x86/resctrl: Allocate a new field in union mon_data_bits
+  x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC)
+    mode
+  x86/resctrl: Fill out rmid_read structure for smp_call*() to read a
+    counter
+  x86/resctrl: Make __mon_event_count() handle sum domains
+  x86/resctrl: Enable RMID shared RMID mode on Sub-NUMA Cluster (SNC)
+    systems
+  x86/resctrl: Sub-NUMA Cluster (SNC) detection
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes
+
+ Documentation/arch/x86/resctrl.rst        |  27 ++
+ include/linux/resctrl.h                   |  87 ++++--
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |  93 +++++--
+ arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  85 +++---
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 242 ++++++++++++++---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 272 ++++++++++++-------
+ 9 files changed, 835 insertions(+), 311 deletions(-)
 
 
-On 6/8/2024 8:14 PM, Krishna chaitanya chundru wrote:
-> The Controller driver is the parent device of the PCIe host bridge,
-> PCI-PCI bridge and PCIe endpoint as shown below.
-> 
->          PCIe controller(Top level parent & parent of host bridge)
->                          |
->                          v
->          PCIe Host bridge(Parent of PCI-PCI bridge)
->                          |
->                          v
->          PCI-PCI bridge(Parent of endpoint driver)
->                          |
->                          v
->                  PCIe endpoint driver
-> 
-> Now, when the controller device goes to runtime suspend, PM framework
-> will check the runtime PM state of the child device (host bridge) and
-> will find it to be disabled. So it will allow the parent (controller
-> device) to go to runtime suspend. Only if the child device's state was
-> 'active' it will prevent the parent to get suspended.
-> 
-> Since runtime PM is disabled for host bridge, the state of the child
-> devices under the host bridge is not taken into account by PM framework
-> for the top level parent, PCIe controller. So PM framework, allows
-> the controller driver to enter runtime PM irrespective of the state
-> of the devices under the host bridge. And this causes the topology
-> breakage and also possible PM issues like controller driver goes to
-> runtime suspend while endpoint driver is doing some transfers.
-> 
-> So enable runtime PM for the host bridge, so that controller driver
-> goes to suspend only when all child devices goes to runtime suspend.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> Changes in v3:
-> - Moved the runtime API call's from the dwc driver to PCI framework
->    as it is applicable for all (suggested by mani)
-> - Updated the commit message.
-> - Link to v3: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
-> Changes in v2:
-> - Updated commit message as suggested by mani.
-> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
-> ---
-> 
-> ---
->   drivers/pci/probe.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 20475ca30505..b7f9ff75b0b3 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3108,6 +3108,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->   		pcie_bus_configure_settings(child);
->   
->   	pci_bus_add_devices(bus);
-> +
-> +	pm_runtime_set_active(&bridge->dev);
-> +	pm_runtime_enable(&bridge->dev);
-Can you consider using devm_pm_runtime_enable() instead of 
-pm_runtime_enable() ?
-It serves calling pm_runtime_disable() when bridge device is removed as 
-seeing pcie driver is using pci_host_probe() after allocating bridge 
-device, and as part of pcie driver removal calls pci_remove_host_bus(), 
-and bridge device would be freed, but it doesn't call 
-pm_runtime_disable() on it. I don't see any specific functionality issue 
-here as bridge device would be freed anyway, although as we have way to 
-undo what is probe() is doing when bridge device is binding with bridge 
-device. Perhaps we can use available mechanism.
+base-commit: f385f024639431bec3e70c33cdbc9563894b3ee5
+-- 
+2.45.0
 
-Regards,
-Mayank
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(pci_host_probe);
-> 
-> ---
-> base-commit: 30417e6592bfc489a78b3fe564cfe1960e383829
-> change-id: 20240609-runtime_pm-7e6de1190113
-> 
-> Best regards,
 
