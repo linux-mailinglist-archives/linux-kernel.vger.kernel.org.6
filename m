@@ -1,177 +1,197 @@
-Return-Path: <linux-kernel+bounces-207592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B078901963
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:33:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7E9901967
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDDD1C20E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6C11F21BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADADEB641;
-	Mon, 10 Jun 2024 02:33:07 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F527470;
+	Mon, 10 Jun 2024 02:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Pk44npe/"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2046.outbound.protection.outlook.com [40.107.237.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF136A;
-	Mon, 10 Jun 2024 02:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717986787; cv=none; b=owhSqJAQSOgU6vC3jGYJs6RtU2ojNK0iUa88OSYKLm3yWMEeJ4fEOzHJppSMvx8J31PNdhdjkdcpe9+r9/XfPLeC47pRZopT2m9RlzyTv/AqkSF9aJSYJjwVCkLl4u7OLPgjf+5T8uAOvXdyB2z1XtF1S8ogCt8JOd8/QwMco5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717986787; c=relaxed/simple;
-	bh=HbycHs7DADBVRvhki7EX2pSnnSjZWAfNBicUJiliqt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtY4YQLcj1Aj1Ja0JxvG905IMPg0QEv5mTgltCPzPYh8NC0JxKGtAGQo0vCPSerSycGmMe8RliNr1+jE1YbaC8rYdMqqqtcetY6Ki8l+NnsD+0tc8VpX9bmEphsqJKEG9R5UqSAs1cgQ1STDkxOC/kExeAW6vtsEtXx96RY6vSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 63BEA234; Sun,  9 Jun 2024 21:33:01 -0500 (CDT)
-Date: Sun, 9 Jun 2024 21:33:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-Message-ID: <20240610023301.GA2183903@mail.hallyn.com>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-3-jcalmels@3xx0.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C25EDB;
+	Mon, 10 Jun 2024 02:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717987653; cv=fail; b=EMBRRvH9yj1G9daS6E5yetzJcmpYGMCqaaKPk79esJq+XjAnw0Gbw/ZgLIYcr2Vv8ZyqADDTBJqjuHNy2PWVn/vqcstDfar09SBVKbHUKNWKCYqv/Bd4Xqn7k8FoM/8glYUTGFeYGoBDorWqGU11ib4ng2Z4CKBl2i+ukNq8jqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717987653; c=relaxed/simple;
+	bh=nc79wmNq0t8aW1RS4qj4FI7emFYjik9m25S2R2uS3Jw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NBo7S1guLBHpHyrMvp2heN3bdd1jXyQ1y6N8ktkWSevw3m3gdNehpTHtagsRo4H0jl5tMG79DRb3vq/OzxKVqWiyFzoLeJt7vKRPeW5mN0y0UNPzzvafldQq4HCXERqkRJnKP5+rYNC5FIohWEBbfoLStVIVrNT4q/anWmQTERQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Pk44npe/; arc=fail smtp.client-ip=40.107.237.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MKEUO6bonkPdDMCVpi726aIheW+niwe5ccBObi26LyXHVWekjBdwNFiD6KPjqIlbph9FYabsm4KkyRVqTekDFuPQeqnSuozw13tlzGrrmijTI+nlt8JiSwJLhwEEDkrEuBEFKk34nZJG5YaT4WDDw41b5jMA/pdNgawmAPPEjK7m8pmeiXX7uLdsf8jaf6DYUu4a4mQ3sdDFNI5o3bzNy6Nj6qpLsVrdl3ZKKokVOEw01QYIEMcBeaj4CfuOHV0SNxbRN9CDlR4Smw5LUwRFE47FQ4H9O8J3Ywmp703vpTGR4D2SLPBqvq0v5g7ltUmngj7iZA2ttJ8gpj1WvTv0ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nc79wmNq0t8aW1RS4qj4FI7emFYjik9m25S2R2uS3Jw=;
+ b=BGO40LdcnwBEUWhJUwXu5M5SbOqoRs9nioAKCGCdp2Qa1W9iWfgZBVgrrro5eFwtkNmCSAymD0dEc6Ha4nVrgLPM/oIqP9MfOCsR0PmpWXiUCYOePv31Cjfdv0jV50RqsDKEOff2krntIFuUnzUMF3UO54Sn59UDiwzYQKdiT4Q9iplUwQayxqHtjk5GsRkChPGy5pWy2Yq+nXI3LM/bjSgGGWkzrrLm2DFHx/mnU1sCTWIBXnTX97Uzvh6yDtxFoEI+iaylalyQuqXEzRXSK5txBAi4DZdpAKU5GTvfSIA7A41EotmxucHjFSC1ckQkg8JBfW6OrTUD16wHCQ6wig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nc79wmNq0t8aW1RS4qj4FI7emFYjik9m25S2R2uS3Jw=;
+ b=Pk44npe/VJc/poXHNgROL2IG3bpyROXDxQEPw7R/CDDKbyLDjgNr5/bqpheCtqghY7jNClcts6E+E/wrQIv5gAYFMv+Gky294GDnqDVMvPMUHl3U1EANzh7BLcogOp2YgHSwHLYz7WEdPjDS81tJYV2RGnfpUkn63vD9qMJV/jp7iFe0LoP8b9HLv8K2SlxKB2ASoxsubJ5oUEMA6526PX7A27YBFnqlT0NazWsUnbTXKvXhlAI1JLYxSWYCeHNQ0M5W5ZYcn0T/Z8piqFBwVbConavOc9WNCBW4UuqL/CYX4icKWYCBR1EVNfMZIGS00bqzlh7AhDztRRcq90x8TQ==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by DM6PR12MB4356.namprd12.prod.outlook.com (2603:10b6:5:2aa::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
+ 2024 02:47:29 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
+ 02:47:29 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Cyril Hrubis <chrubis@suse.cz>
+CC: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jan Kara
+	<jack@suse.cz>
+Subject: Re: [PATCH] loop: Disable fallocate() zero and discard if not
+ supported
+Thread-Topic: [PATCH] loop: Disable fallocate() zero and discard if not
+ supported
+Thread-Index: AQHauLtqQllFxZ2rQUi2KDjIvdVlkLG9W8QAgALz1oA=
+Date: Mon, 10 Jun 2024 02:47:28 +0000
+Message-ID: <4726b305-0d26-42c6-aa25-820e662f3ea9@nvidia.com>
+References: <20240607091555.2504-1-chrubis@suse.cz>
+ <ZmPvNu-YijbtJkeR@infradead.org>
+In-Reply-To: <ZmPvNu-YijbtJkeR@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|DM6PR12MB4356:EE_
+x-ms-office365-filtering-correlation-id: 21267a68-fde1-4c2c-d7ef-08dc88f7ab31
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?M1lsTXJncW1jUmpuRXRhRThONk45T1dCSzIyNWdzRjRBNEFiUVAvNHNRRHV0?=
+ =?utf-8?B?cXB1WGZDZ0VXMDZvUWpGejBUMmV3N0s5TXhWVVlNNUNWWk9IcWZNZCtzYTQv?=
+ =?utf-8?B?enJYZVhRdlhHMnVJVWZVVnhCYTdyTVp4T082T0tURGRGcXhTU2tPKzJRbGF0?=
+ =?utf-8?B?TU4zd2pvcjMxcCtsL1cyOEw2enVOejR4NXh3ZEVGZ09URWd5R2Y1R0R1VmZH?=
+ =?utf-8?B?Tmpqc2ZrN1Q3c3hDa3JjSmZiQmZZMmM4ckJTeklESWp5UW1IZ2lycllGanN6?=
+ =?utf-8?B?WEVBYnI5eTR5V0Fjdm9DQ1lRRkViN2gzMGUrdGRkWGt2TGtpTFZqa2x2RzE1?=
+ =?utf-8?B?dkpRT2VJOWlGRlFvK1VSMCs5VG5nTzh5c1J5Q3BYQk42cEJRak02cTB0aUJu?=
+ =?utf-8?B?RkNVb1kyK0hhSFFpcmJjR3JsN1lFWUN6UjJuejhPU1hodXl5OERCeE1zMUlW?=
+ =?utf-8?B?VVR2ckplTERaT1ppeFFRNzVhR3MycHpwT0ZybDhPTmRTVCtCMTFPY0RsekJ0?=
+ =?utf-8?B?VGcycHpodW14OE5QR1VvTFF3ZTJrVk4vMTNzOVZTa1lhWml4aXBRTk1OZStR?=
+ =?utf-8?B?OTMwRUcxa2V3L25LZFV4UUFBd05qc3JKaXlXbFlBYTN1ZnRsN0NXUDcyRGxS?=
+ =?utf-8?B?S0FBUmtLYXNNbm1uRjN6dUxuUGU1ZmdheFduTHZRRkxXUFFSTXNNMUc0cG5J?=
+ =?utf-8?B?M01ncE5GaldiWjRKa0RhRmhoc2w1OSt3dXVXQkozWUd6SmF1RVUxL1lJUk04?=
+ =?utf-8?B?ZWt3M0t6REkvampkcUpvbG1HOTM2c2dvNytXakpEeW5NZEphZFVISDZVYS80?=
+ =?utf-8?B?d2lGRWtKQUExcVgwS1hrU256cFExNU9OU1ZvWTdSK2VVM2lQUFFpUTBBYmpI?=
+ =?utf-8?B?YnA1Rlo4THcyMnFyVDFrd2crdmVCcnc5emFUSTltRHcwWDhEOUZ3QSs0eW01?=
+ =?utf-8?B?KzFmeStQNTV1Y1FISWdEWU1MYzVxNmp2bGVndE42UjVxSUYrWmpWMFlMajhx?=
+ =?utf-8?B?K1NhWXZlY2h6dS9qWll0K1d6UnFFS2xJQnVKQ3F5Y0JhODlLU1FLUXJBcTVI?=
+ =?utf-8?B?eU9PR3B1RTlLV3VDOTI0QkViZUhHZWUzNVR2b3hqdEI5bWFndk5CeVZ5NVpT?=
+ =?utf-8?B?dmNjWXpMVnVYaU5LbzQ4cFhiUmVGTC9oMlcvSk1sTzJieG9aV1E2WWVaT3ZY?=
+ =?utf-8?B?RjJ1b1poYWljVldIamVpcjkxL0hzS0puM1FQSFVGM240ejFRM3JDZWFGd2Yx?=
+ =?utf-8?B?NmV3cmJrUlpRRDRUV2ozZXRxN0JyUEhxcms5eXNUOW03UEg3clJ2b3hsZ3JC?=
+ =?utf-8?B?QXRuZEU5dFhJdnhjSlJMK29wMGc4VzZrekxlTmNnRDFLYlMyby9ORWpJbkZ6?=
+ =?utf-8?B?K2d0QXNka09VTDRGcjFwK1RqYW05S0tFbS9Wa0xObUhmcTZaaWcrci9VOFhD?=
+ =?utf-8?B?ZlVyT1J5cXB3ZzU1NjFJVElCUllyL2RRU01LTnNnU1dIU0t6V3hFNFptNGxJ?=
+ =?utf-8?B?SnhlN2N5SEg5RHVzblYvWkNMb3Z1b1dIR2hKM3lkNjRXaDVCOTZIelVERUxP?=
+ =?utf-8?B?cjYrVS9pUEQrdkhsT3d4Z1FDelNuUytzQUIrcHNiRXBHZEJ3U25ZeGNuRzlv?=
+ =?utf-8?B?UDNud0NiUjR3VHRHdTB4Sm5yd0d5NllUS2EzZC9nMnBLWXJtV3ZOSGVrbTRE?=
+ =?utf-8?B?MHhaVnd5L1Q5ZFlLZWdYMklZVjRrclFrUjMwa0FyUVlVNmI3MUJsUWFXSmdh?=
+ =?utf-8?B?dGgvcVBLQWZybkJJMThmR0k1b3pyak9kdytEbDBHaGZVazhwRmJmbjhLYnFV?=
+ =?utf-8?Q?rnfBB4BHy/uGRdNzjsttiYylkee1gjmleuQfQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dnlUdk9ndmZzVUpMbUE2RTV2V1VtbE04ZzlJY0dxY0o0a2FoOXF0UVE4L1NR?=
+ =?utf-8?B?ZG83L2dSRVU5anpqTUkybGVER0R2YnY1R0hncXRET2tRdnFwVEpGSnZOeVIr?=
+ =?utf-8?B?L3hWNFh1RHM3VlJqRW4wZXVXRDFoazlXbGdiUk5FSnVVbU5IaytpRHBsSG0z?=
+ =?utf-8?B?dHBhbWNyVzNBMlBpOFdvS3hjRzQ4T09rTjE0bVpPNWtNL3NCaUFOMnpLR2cz?=
+ =?utf-8?B?bThvNGNQZHlGbUhNRk5WVlV4ZXBZSW96SWwrd0dxanVTOGtlQXQySm10ampa?=
+ =?utf-8?B?MmMxNVFCbWhIYTM0NzJuRVpSaVpOWlUzMDZyV0owMmpjMDBML0Y5TDFFcGwv?=
+ =?utf-8?B?UnlpdU1UYis4Vk1FeE5VeDB1bEdaamg3Q1dtMG5RdGI1MU11aitKSDJRMERq?=
+ =?utf-8?B?YXV6b2ZYV0xaRGZROFN0NklncjkxR1Q3NDNrazZjbmNGdTRCb3ZEdEZNLzcv?=
+ =?utf-8?B?alN5dUtHdGNkVllyVisvRmpyNU8zZXZpSUtIcjNOMHl0Y2JUYUZmUXpibGJP?=
+ =?utf-8?B?bFVWVGpaNGpmRjI3NWNLSythM3Z2dE1ab1ZGejBvNGF2NTNjNU03RjU2Wk5Z?=
+ =?utf-8?B?VWd0MVkxd0Y2TnBSM0ZaRUxaclgycTJJNFBjL3crVW93VEZBYTkyU1QvYlNM?=
+ =?utf-8?B?Mjd0Sk1CMG9QN2U5dTlyUE5QYktHdHZmU1BGUERRcjNpWmJyTHBOWmZrZmZC?=
+ =?utf-8?B?STBNSkptZEFlQk1la2hQWWRoUExkSDJadUVWWGxKa0xMSy9aeW1idktUK3pX?=
+ =?utf-8?B?ZDYycUZYcWI5dlNOa3I4TisvdlF6Y3ZCUUxCcXFHMzk3ckc0ZjhpdUdsSHVi?=
+ =?utf-8?B?aUtRNU04OG5UbDFoa3U3Mk1oNkl4cHN0Qy9mT3JiQXhQSGZBUkZFcVVOT2kz?=
+ =?utf-8?B?ZkEyQVRyTStwT2FrRmVURFJtbGtxTDcwZEY3SFJ1akZVcitYVU53ZHhsNW1H?=
+ =?utf-8?B?YjRxZzRwb29GS1NHNzZacjgzaTlkNFVheHJSTkYrRlFORHBLVUU2L3RRS0ps?=
+ =?utf-8?B?a1k5SXBBK2Z2YUlwTDlTYmI0eVY3R2xhQk1MWWF4a0FOUkh4bjR4bFpUbVBy?=
+ =?utf-8?B?WkdxRTZvTHNzdk14SGFoRTNQYXNzQXZCbkFGZk9zL3FjWjVuNlplMTJOTU9z?=
+ =?utf-8?B?OUhsR2RBM0c3eEpsaHJ3SjBNOUU4MFpoZGovMHF6eHV6SXJ2citLRkkvQllL?=
+ =?utf-8?B?RENUengyQlE4aHlnblVyL29BZFV3V3hnWnh3Qll5d1ZhOU5sNXY3UmRQaTJ5?=
+ =?utf-8?B?V2xsTVREZmZzODJOb1h3eFQ0YjhZWTVZMURib2pJOHhjQUNhTjBtMzBWZnoz?=
+ =?utf-8?B?Zk1nbTFuMG5JUFpUNkhsRjMrRElVSFQ2UjBiZzVtdjZKTkI4aGlON01DcVBR?=
+ =?utf-8?B?VnJuTm81dnNZMnM4ZUV4Q3dhdVh3UjZLaElIYVA4Ni9ZbWdySkRnVzE3YjZT?=
+ =?utf-8?B?NEs0SDJrVEN2QW8vS01wa0xIZ0xLcit3Z1NDRFVHS0hKZm9yVGc0L3EzT3V4?=
+ =?utf-8?B?Q0pGMjJpVWt6Yy85Zk1LYXIrTUNtQ0ZDN3JhaGYrVGtDLzlqVVc2WGlnMXRK?=
+ =?utf-8?B?d243aTZXNDhrdWtnakNqVzN5b21lY0VtaDQ3SDM0YjVZV1M2cFdyZ1dCNitr?=
+ =?utf-8?B?cEpOdHUyOFhqTExPaXMxb1hjbDdTZVd0bW1icVVNc0dyamMxSVFJbkxxV0ZE?=
+ =?utf-8?B?RjdHZk15VXB1aWdEQXpOdnMrejlrcU94WTkrNXFnUHRLKzJGeWhoSkZ2Qk1U?=
+ =?utf-8?B?a2ZscGNCdUhBVEZJMlI4dWM3MStzQWM0MnQ2d28wS0JTVzVZNHJ2WktUK3hL?=
+ =?utf-8?B?cUxkMVFmWGkzekZoQTkyc3FaZDkvTkZSTGh0KzNEcUF4RkVXTG9XNUd2Lysz?=
+ =?utf-8?B?eWJ4NDBoR1cwcUo0Y2UybE83ZFdnN0ROLzFGRjY3RWZCV29ZNi9zYloyc1Zn?=
+ =?utf-8?B?eHEyV2U1b29jVmVDb3RkOFdVaUVuMmNsTy9SRE9yTTFNZE5JRS96dEYwbXI5?=
+ =?utf-8?B?UU9QZmZhVFg2b1pyTENjVGdicThYb3EydmpMQUp5Y1l5MWVGUHlSc1RNMXRH?=
+ =?utf-8?B?SHBGL2tJWEZDa0lXVlJHWU8xaXQrL0VJNzR1V08zMERJdmY1dWRVdk51bWZX?=
+ =?utf-8?B?ZnZ0OG9UMjMzQnhPdUprSVRCVy9CamhBUlAvQnBYNE1JcVJnUnlielVYakpy?=
+ =?utf-8?Q?dAvBFUEXPkBadC5f+pv/zrcHxe5QHKET66QuRb82iQwm?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18539C32669D3C4F9BF49C817D3885C1@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609104355.442002-3-jcalmels@3xx0.net>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21267a68-fde1-4c2c-d7ef-08dc88f7ab31
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2024 02:47:28.9847
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tbcc87eccZU/jXs4XWRFtxwWqK+nP68V3cf7VvbMYTZcReCa86Aun6cKs37HJcXlbXYZvXEZzoy/lWVmWJG9rQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4356
 
-On Sun, Jun 09, 2024 at 03:43:35AM -0700, Jonathan Calmels wrote:
-> This patch adds a new capability security bit designed to constrain a
-> task’s userns capability set to its bounding set. The reason for this is
-> twofold:
-> 
-> - This serves as a quick and easy way to lock down a set of capabilities
->   for a task, thus ensuring that any namespace it creates will never be
->   more privileged than itself is.
-> - This helps userspace transition to more secure defaults by not requiring
->   specific logic for the userns capability set, or libcap support.
-> 
-> Example:
-> 
->     # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
->             -c 'unshare -r grep Cap /proc/self/status'
->     CapInh: 0000000000000000
->     CapPrm: 000001fffffdffff
->     CapEff: 000001fffffdffff
->     CapBnd: 000001fffffdffff
->     CapAmb: 0000000000000000
->     CapUNs: 000001fffffdffff
-
-But you are not (that I can see, in this or the previous patch)
-keeping SECURE_USERNS_STRICT_CAPS in securebits on the next
-level unshare.  Though I think it's ok, because by then both
-cap_userns and cap_bset are reduced and cap_userns can't be
-expanded.  (Sorry, just thinking aloud here)
-
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> ---
->  include/linux/securebits.h      |  1 +
->  include/uapi/linux/securebits.h | 11 ++++++++++-
->  kernel/user_namespace.c         |  5 +++++
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
-> index 656528673983..5f9d85cd69c3 100644
-> --- a/include/linux/securebits.h
-> +++ b/include/linux/securebits.h
-> @@ -5,4 +5,5 @@
->  #include <uapi/linux/securebits.h>
->  
->  #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
-> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
->  #endif /* !_LINUX_SECUREBITS_H */
-> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
-> index d6d98877ff1a..2da3f4be4531 100644
-> --- a/include/uapi/linux/securebits.h
-> +++ b/include/uapi/linux/securebits.h
-> @@ -52,10 +52,19 @@
->  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
->  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
->  
-> +/* When set, user namespace capabilities are restricted to their parent's bounding set. */
-> +#define SECURE_USERNS_STRICT_CAPS			8
-> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
-> +
-> +#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
-> +
->  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
->  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
->  				 issecure_mask(SECURE_KEEP_CAPS) | \
-> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-> +				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
->  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
->  
->  #endif /* _UAPI_LINUX_SECUREBITS_H */
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 7e624607330b..53848e2b68cd 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/cred.h>
->  #include <linux/securebits.h>
->  #include <linux/security.h>
-> +#include <linux/capability.h>
->  #include <linux/keyctl.h>
->  #include <linux/key-type.h>
->  #include <keys/user-type.h>
-> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucounts)
->  
->  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
->  {
-> +	/* Limit userns capabilities to our parent's bounding set. */
-
-In the case of userns_install(), it will be the target user namespace
-creator's bounding set, right?  Not "our parent's"?
-
-> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-> +		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
-> +
->  	/* Start with the capabilities defined in the userns set. */
->  	cred->cap_bset = cred->cap_userns;
->  	cred->cap_permitted = cred->cap_userns;
-> -- 
-> 2.45.2
+T24gNi83LzIwMjQgMTA6NDIgUE0sIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBPbiBGcmks
+IEp1biAwNywgMjAyNCBhdCAxMToxNTo1NUFNICswMjAwLCBDeXJpbCBIcnViaXMgd3JvdGU6DQo+
+PiBJZiBmYWxsY2F0ZSBpcyBpbXBsZW1lbnRlZCBidXQgemVybyBhbmQgZGlzY2FyZCBvcGVyYXRp
+b25zIGFyZSBub3QNCj4+IHN1cHBvcnRlZCBieSB0aGUgZmlsZXN5c3RlbSB0aGUgYmFja2luZyBm
+aWxlIGlzIG9uIHdlIGNvbnRpbnVlIHRvIGZpbGwNCj4+IGRtZXNnIHdpdGggZXJyb3JzIGZyb20g
+dGhlIGJsa19tcV9lbmRfcmVxdWVzdCgpIHNpbmNlIGVhY2ggdGltZSB3ZSBjYWxsDQo+PiBmYWxs
+b2NhdGUoKSBvbiB0aGUgbG9vcCBkZXZpY2UgdGhlIEVPUE5PVFNVUFAgZXJyb3IgZnJvbSBsb19m
+YWxsb2NhdGUoKQ0KPj4gZW5kcyB1cCBwcm9wYWdhdGVkIGludG8gdGhlIGJsb2NrIGxheWVyLiBJ
+biB0aGUgZW5kIHN5c2NhbGwgc3VjY2VlZHMNCj4+IHNpbmNlIHRoZSBibGtkZXZfaXNzdWVfemVy
+b291dCgpIGZhbGxzIGJhY2sgdG8gd3JpdGluZyB6ZXJvZXMgd2hpY2gNCj4+IG1ha2VzIHRoZSBl
+cnJvcnMgZXZlbiBtb3JlIG1pc2xlYWRpbmcgYW5kIGNvbmZ1c2luZy4NCj4+DQo+PiBIb3cgdG8g
+cmVwcm9kdWNlOg0KPj4NCj4+IDEuIG1ha2Ugc3VyZSAvdG1wIGlzIG1vdW50ZWQgYXMgdG1wZnMN
+Cj4+IDIuIGRkIGlmPS9kZXYvemVybyBvZj0vdG1wL2Rpc2suaW1nIGJzPTFNIGNvdW50PTEwMA0K
+Pj4gMy4gbG9zZXR1cCAvZGV2L2xvb3AwIC90bXAvZGlzay5pbWcNCj4+IDQuIG1rZnMuZXh0MiAv
+ZGV2L2xvb3AwDQo+PiA1LiBkbWVzZyB8dGFpbA0KPiBDYW4geW91IHdpcmUgdGhpcyB1cCBmb3Ig
+YmxrdGVzdHM/DQoNClBsZWFzZSBDQyBTaGluJ2ljaGlybyBLYXdhc2FraSA8c2hpbmljaGlyby5r
+YXdhc2FraUB3ZGMuY29tPiBhbmQgbWUgd2hlbg0KeW91IGRvIHRoYXQgLi4NCg0KLWNrDQoNCg0K
 
