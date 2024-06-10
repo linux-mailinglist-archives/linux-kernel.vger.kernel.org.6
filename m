@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-207800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300B3901C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:07:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A0F901C7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B831C21BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:07:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E34A9B229E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8F557323;
-	Mon, 10 Jun 2024 08:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D1E6CDA3;
+	Mon, 10 Jun 2024 08:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fbc2JGTX"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NeBN5ovA"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2F63C7;
-	Mon, 10 Jun 2024 08:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217A1CD15;
+	Mon, 10 Jun 2024 08:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006815; cv=none; b=uI3C+QxYVoaFPODrxh+7O6nkWWQvP1GjOI+qnOISANTAy4QsapuxwGe25ex+bqxPgeC9+ZOLC++IMMNRqQJOGLxFVoRyATyw/ww+XsyXBFBY4fpwfkxUvItv1an5ljPa5NdE7eWfMORiiMBbR75FC+GK0JpM9TbvHdajNMCl+Tc=
+	t=1718006938; cv=none; b=JakRetRv4dU+S2p5I/l2ogj8zdy2piYP4UkQ6uRz3AqI2PsbDZ+w0TV7hYl4/iQPpl6RasFcFZH7fXDQnyKWWxddaDfnvcyTw7DbhkY4yo1scav3OqZFbnQv1a6ZQbbC1NqCu+RDtyoZC5VhByuh2A28MprCZXlVXb4XgsEAi+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006815; c=relaxed/simple;
-	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiIiSnnOxBjTPL8iB+CMLzSMKSaoI4ldkWk2W44h3wuDv9n6B2l4tCnNRfNT7FsQPFN3yeLMSpmuuEhKPYYn0Pg4Uml32ErUjQ35DeDmJ+RvujHbJK4Z/THvwuPPP6Uv7mrGnH9iRykqeaiSsQFjW+3LcPTgYR6aHKdEuOYIqs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fbc2JGTX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718006811;
-	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fbc2JGTXECrFLODOjNn5zPCS+TLlAAFYhQsu2hcMV7wlYO+4bYbR+S8HFQTxnSQVJ
-	 6Lw4UXYbpVRg64axJD5r39bybViwB7dZRlj7x84GupRvj2cbdsQ5+UjO4joFxWbFhQ
-	 hYssLYCiK4OTf/t3g9+LVyhiaJx5dVOusA3Cm3KCXl9wJh6gQ3Vb0vLY0Gr1MPMKpz
-	 mnHV33QC32ZPJinIxRZ+yjf/gyt9Wkzqwg/4amvXJz/uAbjzenkmBekdVnWkxylBMS
-	 ZxGV0Hb/jugOFt00Svd/44yfxnsSyv+M3SA+WB21BMhiEogAj5jYLtDvdyuG9e4S9F
-	 mQrVlBtltHCxA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E36503780575;
-	Mon, 10 Jun 2024 08:06:49 +0000 (UTC)
-Message-ID: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
-Date: Mon, 10 Jun 2024 10:06:49 +0200
+	s=arc-20240116; t=1718006938; c=relaxed/simple;
+	bh=LdFyq5xNJx2y6o35truTeFf/LgknSa47Y4v/6/uQX6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cswY/dgK7yqebttPPk6WHWhoLoFFmSnHlmVkJH3niJhh6J1XRxwx6Eyp77zWN8jjKe0DFdw9mNYFfkR2GxVyosNMGBWQK3py0x0V+kVQChbnhKNrWZwliR7dhU9U0OTGV1DtC2hRCeiouk25OroeOUOXl8Li2UDTlYQExcA88sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NeBN5ovA; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459MPVMf009372;
+	Mon, 10 Jun 2024 10:08:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	dRbbtVz+VqS7/TuWoSy7X/93HAbVqJfuFI4hivhbQiw=; b=NeBN5ovAO8lH5T3I
+	vDTZhPG9Cv3sbaAVx4JG6cmaa7BobZvnr4byyUwXe4l9WCnfAanyQb+SZA/pBCi5
+	JV+Uga8WDL/UARTZIdV2AQfwYwDDKIDVKiaKX/wiqo+nFvSkROeqiq7+2OCfdsbR
+	eBjOpYg+KmnJadXTfDMEhamkhZH1jTi2oXpBVUwzVskH7tEmFeQjt39MqVokTJgd
+	XsJBlhyIbn7nelIOquo/IPDbiTahQUyzrNOHjbCWdWhy638ioRpTE/9mVx2nBC+d
+	l5htt3H+4o7CuGsrNOlQfOznjliG7U4EfEV+QKEmlKwp1uOoZYgkZ/3mEgdA3WD3
+	sQGffA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymce5ntxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 10:08:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C46094004A;
+	Mon, 10 Jun 2024 10:08:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 71F08211940;
+	Mon, 10 Jun 2024 10:07:12 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 10:07:11 +0200
+Message-ID: <036c9f0d-681d-461d-b839-f781fa220e94@foss.st.com>
+Date: Mon, 10 Jun 2024 10:06:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,83 +66,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-pwm@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
- kernel-janitors@vger.kernel.org
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v5 09/12] ARM: dts: stm32: add ethernet1 and ethernet2
+ support on stm32mp13
+To: Marek Vasut <marex@denx.de>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
+ <20240607095754.265105-10-christophe.roullier@foss.st.com>
+ <6d60bbc6-5ed3-4bb1-ad72-18a2be140b81@denx.de>
 Content-Language: en-US
-In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <6d60bbc6-5ed3-4bb1-ad72-18a2be140b81@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
-Il 07/06/24 18:02, Jeff Johnson ha scritto:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
+Hi Marek
+
+On 6/7/24 14:48, Marek Vasut wrote:
+> On 6/7/24 11:57 AM, Christophe Roullier wrote:
 > 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> [...]
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> This addresses all of the issues in driver/pwm
+>> @@ -1505,6 +1511,38 @@ sdmmc2: mmc@58007000 {
+>>                   status = "disabled";
+>>               };
+no space here ?
+>> +            ethernet1: ethernet@5800a000 {
+>> +                compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
+>> +                reg = <0x5800a000 0x2000>;
+>> +                reg-names = "stmmaceth";
+>> +                interrupts-extended = <&intc GIC_SPI 62 
+>> IRQ_TYPE_LEVEL_HIGH>,
+>> +                              <&exti 68 1>;
+>> +                interrupt-names = "macirq", "eth_wake_irq";
+>> +                clock-names = "stmmaceth",
+>> +                          "mac-clk-tx",
+>> +                          "mac-clk-rx",
+>> +                          "ethstp",
+>> +                          "eth-ck";
+>> +                clocks = <&rcc ETH1MAC>,
+>> +                     <&rcc ETH1TX>,
+>> +                     <&rcc ETH1RX>,
+>> +                     <&rcc ETH1STP>,
+>> +                     <&rcc ETH1CK_K>;
+>> +                st,syscon = <&syscfg 0x4 0xff0000>;
+>> +                snps,mixed-burst;
+>> +                snps,pbl = <2>;
+>> +                snps,axi-config = <&stmmac_axi_config_1>;
+>> +                snps,tso;
+>> +                access-controllers = <&etzpc 48>;
 > 
-> Let me know if you want any of the individual module changes
-> segregated into separate patches.
-> ---
->   drivers/pwm/pwm-imx1.c      | 1 +
->   drivers/pwm/pwm-imx27.c     | 1 +
->   drivers/pwm/pwm-intel-lgm.c | 1 +
->   drivers/pwm/pwm-mediatek.c  | 1 +
->   drivers/pwm/pwm-pxa.c       | 1 +
->   drivers/pwm/pwm-samsung.c   | 1 +
->   drivers/pwm/pwm-spear.c     | 1 +
->   drivers/pwm/pwm-visconti.c  | 1 +
->   8 files changed, 8 insertions(+)
-> 
+> Keep the list sorted.
 
-..snip..
+The list is currently not sorted. I agree that it is better to have a 
+common rule to easy the read but it should be applied to all the nodes 
+for the whole STM32 family. Maybe to address by another series. For the 
+time being we can keep it as it is.
 
-> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> index 19a87873ad60..0b5d68a90e83 100644
-> --- a/drivers/pwm/pwm-mediatek.c
-> +++ b/drivers/pwm/pwm-mediatek.c
-> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
->   module_platform_driver(pwm_mediatek_driver);
->   
->   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
-> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
-
-MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
-for the Display PWM, and it is located in the DDP block.
-
-So, there are two PWM IPs in one SoC:
-  - A general purpose PWM IP
-  - A DDP PWM IP
-
-This driver is for the general purpose PWM IP.. so, please, can we change this
-to "MediaTek general purpose Pulse Width Modulator driver"?
-
-After which,
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
->   MODULE_LICENSE("GPL v2");
-
+Alex
 
