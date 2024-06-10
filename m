@@ -1,125 +1,183 @@
-Return-Path: <linux-kernel+bounces-208184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF0D902208
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1BF902211
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C183285DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1C2285EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAB481728;
-	Mon, 10 Jun 2024 12:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E40A81729;
+	Mon, 10 Jun 2024 12:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQeiIwpl"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Leqc6Kvn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB380C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC39E80C04;
+	Mon, 10 Jun 2024 12:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718023965; cv=none; b=VJtb72HeFnxuFTsaWL2NTbmxerT1WjncmiuBs7336VXhclSgyyT3TdYhyDzS7oGjA+IlM0n805gZ83FuQtA6UNQ/sLI1lyFM89rpbFVK77Vv/deD3TaPnIwT/KSxdP+ELdETTEjKv94ycOpb37lenfh53nGf15W1oVZUGdmTV4Q=
+	t=1718024001; cv=none; b=VyAGBfRktcqHgJiylvf0zutn5LU+Re559IOzJU/hu1cMddv9cDbC+g1urF0dODZX3mg4Zh68lMGDxH3YbDQswrlyWCa0SctNqAFpz4LthzxCpTkEFtXo/jKLuuyMP60d0aFqMUmKJIG9Vq895czzD21TWUl2Gz4n+Ty+Hz9aJBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718023965; c=relaxed/simple;
-	bh=Pb4ILEn1rx7BaUK688G74zQ8ueGofBspL2NxeMpyZXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SVhOKU81E31x7ubRID4W+YJji6eaLFBm2jQ+ZJFfLZXY5k0/L0PoF0O4rpnq8byDKsGQp1pY6unkqwWArSaDTiIQ2TAQ3I0dDvnYmHQzqZVss4dq396kqJPgXN95qvNnL41zVW9uCOrdILXK7TxCi/7xBBB8g2UXYq08uU9DgX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQeiIwpl; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b9a5be6668so2249263eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718023963; x=1718628763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNyMG3UNAL6Sc8i1K2Tl8gyCNYCtq54XofHbrxpAG/M=;
-        b=KQeiIwplc6apgOu25MCr8dRl7RR+RWss2dc7rZVLhom5KTEHpcoRyMTw/1eOQRTN+O
-         y7O9BlRJwePfyGQXhAMjQway3wfVCaUeUPnRE15Y/ue3nqcJFeXDceogfcS7EhJTfhKu
-         m363niMfsEUW41I1tm9r8lP3bDpeZxNKSx2RNjbyQy2Rgjs9Dp1VVr2UiOw3Z/ik7sYY
-         3/DWI6s6pd2zwLHxpMcUjw2UeTMbDOFUz4/7/cK8UrG2OIYhphGNCfwSqBGdmq+gju06
-         25/vz74sPN+92ihK5okPPJETNac6hL8NZZ1nw6OXJgWhXzbY8VxEjyXkTQwi+GH+lTNv
-         8GGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718023963; x=1718628763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNyMG3UNAL6Sc8i1K2Tl8gyCNYCtq54XofHbrxpAG/M=;
-        b=Hk+T+cScX7aW9GsHQLOHvVdxMrkwjSwtsSK6vZYmqe74GOXj0RXqpQmcs9yP5Hc/1k
-         Zp5xsAMtkgzfXaC0fPC17Z8hmRyOxxmi0XlyNY+87y+Zh+Xq7nW+lSGUCiAUMmD0hcBw
-         T17YQWafw/ugBIytygWhnhV6MPTKGcN46J/oLQu7dmqOqMnzngHmQlrAHo/w0XGmjOiL
-         +ajcGFTHzPHHECmT8Qm7uk1jwpdQcfVcduqGIx9ruuvWSp3B7dc5hHN3GouWeT9trGBG
-         Wr0oZH2VW4por5qrxapMjhi4JdF82cLKSQzyuhk9GPqOjOLJOZvXByJIktzXcPbZcT/z
-         cScQ==
-X-Gm-Message-State: AOJu0YysPIDjAVbpXmmdfGO5hj1IdOItpKyebhVM6UTtmcfHLdS3XCux
-	WPaUw6B0PJk6mI2Mx2gkURlBuoP92mOPdx09V5Vgxq0kW8D83ewF/9BfPc96q8YrFbyZqiaHDSU
-	Z66oYSF4V+ZVI+yD7viprNhOtwI/UHT0yCrhwPg==
-X-Google-Smtp-Source: AGHT+IFFE/hFRs/En+Bg22yshxU9afylbEt0nscWxB/+DIRAwe3OFfdP/zEyzYCZF/ZLgGKI6XzonkiYq5JT3bsnmVQ=
-X-Received: by 2002:a05:6820:1c90:b0:5ba:e2cb:c853 with SMTP id
- 006d021491bc7-5bae2cbd02cmr4030715eaf.5.1718023962852; Mon, 10 Jun 2024
- 05:52:42 -0700 (PDT)
+	s=arc-20240116; t=1718024001; c=relaxed/simple;
+	bh=wcohEeF4gEM8YyrO9XdyR/1RfQ3aZQdKPRPXDmVl77c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ota77rRnBQlmk8ToqU5lvBiznpR3hpjUai4RmC5laZ82gd5dl/K/Z15jG+gJ8RvkcLltxo1pTICytiNgfyjbGzIjlSe1lfIecIoWlOhY3Amm+46pcwpWWpgZsutie95CnnG1LF6YdWj7yq1uQoJ9sufSdRit5sCZEKjtG6e6Qjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Leqc6Kvn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0F29230;
+	Mon, 10 Jun 2024 14:53:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718023986;
+	bh=wcohEeF4gEM8YyrO9XdyR/1RfQ3aZQdKPRPXDmVl77c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Leqc6KvnGTAnYiXdta0MPbfSJnlA57wK00SXfNhLjRxiRnyOfNwmqBdTiuLxqqvSc
+	 xaVJbOGmKMgXW6ZJc5Q2Kidb/YUCBbimB/Ko0GqAHHq4OUFMPkR6Z84DNwMMjCgfSe
+	 8qJqFfvjw5ap9TJ5Nbj884ALBeImc2LBUpx/bC4E=
+Date: Mon, 10 Jun 2024 15:52:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, "hn.chen" <hn.chen@sunplusit.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v10 6/6] media: uvcvideo: Fix hw timestamp handling for
+ slow FPS
+Message-ID: <20240610125258.GS18479@pendragon.ideasonboard.com>
+References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
+ <20240323-resend-hwtimestamp-v10-6-b08e590d97c7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
- <20240527121340.3931987-5-jens.wiklander@linaro.org> <Zl2Ibey9Qck-VLWE@manut.de>
-In-Reply-To: <Zl2Ibey9Qck-VLWE@manut.de>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 10 Jun 2024 14:52:31 +0200
-Message-ID: <CAHUa44GAiUf9+PxqhXOwGfOuc250YDyJ7uzGe2B1bGmBw2iegg@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
-To: Manuel Traut <manut@mecka.net>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
-	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mikko Rapeli <mikko.rapeli@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240323-resend-hwtimestamp-v10-6-b08e590d97c7@chromium.org>
 
-Hi Manuel,
+Hi Ricardo,
 
-On Mon, Jun 3, 2024 at 11:10=E2=80=AFAM Manuel Traut <manut@mecka.net> wrot=
-e:
->
-> On 14:13 Mon 27 May     , Jens Wiklander wrote:
-> > --- a/drivers/tee/optee/ffa_abi.c
-> > +++ b/drivers/tee/optee/ffa_abi.c
-> > @@ -7,6 +7,7 @@
-> >
-> >  #include <linux/arm_ffa.h>
-> >  #include <linux/errno.h>
-> > +#include <linux/rpmb.h>
-> >  #include <linux/scatterlist.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/slab.h>
-> > @@ -903,6 +904,10 @@ static int optee_ffa_probe(struct ffa_device *ffa_=
-dev)
-> >       optee->ffa.bottom_half_value =3D U32_MAX;
-> >       optee->rpc_param_count =3D rpc_param_count;
-> >
-> > +     if (IS_REACHABLE(CONFIG_RPMB) &&
-> > +         (sec_caps & OPTEE_FFA_SEC_CAP_RPMB_PROBE))
-> > +             optee->in_kernel_rpmb_routing =3D true;
->
-> The SEC_CAP_RPMB_PROBE flag seems to be missing in optee_os at the moment=
-.
-> If I remove this check here, the series works for me.
+Thank you for the patch.
 
-You're right, I missed pushing those flags to optee_os. I've pushed them no=
-w.
+On Sat, Mar 23, 2024 at 10:48:07AM +0000, Ricardo Ribalda wrote:
+> In UVC 1.5 we get a single clock value per frame. With the current
+> buffer size of 32, FPS slowers than 32 might roll-over twice.
+> 
+> The current code cannot handle two roll-over and provide invalid
+> timestamps.
+> 
+> Remove all the samples from the circular buffer that are more than two
+> rollovers old, so the algorithm always provides good timestamps.
+> 
+> Note that we are removing values that are more than one second old,
+> which means that there is enough distance between the two points that
+> we use for the interpolation to provide good values.
+> 
+> Tested-by: HungNien Chen <hn.chen@sunplusit.com>
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 24 ++++++++++++++++++++++++
+>  drivers/media/usb/uvc/uvcvideo.h  |  1 +
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index 5df8f61d39cd1..900b57afac93a 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -471,8 +471,31 @@ static void uvc_video_clock_add_sample(struct uvc_clock *clock,
+>  {
+>  	unsigned long flags;
+>  
+> +	/*
+> +	 * If we write new data on the position where we had the last
+> +	 * overflow, remove the overflow pointer. There is no overflow
 
-Cheers,
-Jens
+s/overflow/SOF overflow/
+
+otherwise it sounds like a circular buffer overflow. Same in the other
+comments below.
+
+> +	 * on the whole circular buffer.
+> +	 */
+> +	if (clock->head == clock->last_sof_overflow)
+> +		clock->last_sof_overflow = -1;
+> +
+>  	spin_lock_irqsave(&clock->lock, flags);
+>  
+> +	/* Handle overflows */
+
+s/overflows/overflows./
+
+> +	if (clock->count > 0 && clock->last_sof > sample->dev_sof) {
+> +		/*
+> +		 * Remove data from the circular buffer that is older than the
+> +		 * last overflow. We only support one overflow per circular
+> +		 * buffer.
+> +		 */
+> +		if (clock->last_sof_overflow != -1) {
+> +			clock->count = (clock->head - clock->last_sof_overflow
+> +					+ clock->count) % clock->count;
+
+If I'm following you correctly here, you want to set count to the
+distance between last_sof_overflow and head. Shouldn't it be
+
+			clock->count = (clock->head - clock->last_sof_overflow
+					+ clock->size) % clock->size;
+
+> +		}
+
+No need for curly braces.
+
+> +		clock->last_sof_overflow = clock->head;
+> +	}
+> +
+> +	/* Add sample */
+
+s/sample/sample./
+
+I still think it would be nicer to handle multiple rollovers correctly,
+but that probably better handled by moving all the clock handling to
+userspace. With the above issues addressed, I think this patch can go
+in.
+
+I could address all these issues when applying, but I'd like the count
+-> size change to be tested first. You can submit a new version of this
+patch only, I've applied the rest of the series to my tree already.
+
+>  	clock->samples[clock->head] = *sample;
+>  	clock->head = (clock->head + 1) % clock->size;
+>  	clock->count = min(clock->count + 1, clock->size);
+> @@ -616,6 +639,7 @@ static void uvc_video_clock_reset(struct uvc_clock *clock)
+>  	clock->head = 0;
+>  	clock->count = 0;
+>  	clock->last_sof = -1;
+> +	clock->last_sof_overflow = -1;
+>  	clock->sof_offset = -1;
+>  }
+>  
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index cb9dd50bba8ac..fb9f9771131ac 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -499,6 +499,7 @@ struct uvc_streaming {
+>  		unsigned int head;
+>  		unsigned int count;
+>  		unsigned int size;
+> +		unsigned int last_sof_overflow;
+>  
+>  		u16 last_sof;
+>  		u16 sof_offset;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
