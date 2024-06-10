@@ -1,227 +1,97 @@
-Return-Path: <linux-kernel+bounces-209045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6857902C4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC67902C4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32BAEB22175
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:11:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63276B21D91
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CE01553B1;
-	Mon, 10 Jun 2024 23:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5158215253B;
+	Mon, 10 Jun 2024 23:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M7dQmIL4"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wK7AYb5s"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09B71552ED
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C34C152176
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718061005; cv=none; b=g9ADe7c5X705z6guvx1z5HATRT1geEmj2G89il4aCYCFy2fzIb2HplcqmeLyeGh5qmIW0WdRTpHHNVBv0vE85TomB+DlsxBhdamBm1eHZaSSQcpf07Vi4COmTnlW+EzsAz2JI3YgG9ga3inhp059yAfhZeA7dsXgrpJijxn4seE=
+	t=1718061033; cv=none; b=RRtx93pl+YVsOLItE2fSFmdI1X9MWPxHvDHf+CfR2bGNw3KSRwGfMt24CgcB0f9vyIy97xg1fiQTOkr0nM35ZpOFe7dWryqhnlxTcVzLTS5rW9v+N/GgyeKaKOUOhJZvEIS8EtGoFm/XKGyCdRd0rO8AEp4O9BGoX9Cbv/hhlwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718061005; c=relaxed/simple;
-	bh=3YQ1MREPZcXZY8Rzdf2ucSaUl0qgCLccvMpvwcUdRxw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=USlT3NjOg2QCN6neKDc9CUXTK62dDtrdI7sz9murW7byG0+sspuL+gr+ixVBVWMN2Uumww11kOel5owxB/YqOav1B9aBQGD70oK4q7uhKn4+yYILhj8LjP2dzAEqfejipk2pZphLp5l3h24FN5QbDAOnUpPhS4/7RzgRyggjpq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M7dQmIL4; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5b9776123a3so2534303eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718061003; x=1718665803; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BOfU1pocYD2Scfhf5kButvETql9ENuAv9ka+WIo4LyM=;
-        b=M7dQmIL40ddmTKpyo9O1PINEm/XLjvqsWwa6sqa437yr1uDbzKH0502VeC1sBoKrrC
-         45soHcL4ZS7jAi+ZYxxejaRiFsHMBAhCPVRTBOdqrlIBOFFpg2X2rsKckfmXNlcsmSHz
-         sUq6qvMSu9DDYg2EIfg+MNmJb1qRV7ciX1Ce0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718061003; x=1718665803;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BOfU1pocYD2Scfhf5kButvETql9ENuAv9ka+WIo4LyM=;
-        b=fh4Tu9/Dn2w24gUdc/b8X6pA7hQNznibWdcZ6/p8Y3L+5RpQLGccTrjsBQPoSTo76P
-         DHUmjKF6GzO9E27JdSYI40KaIwfrT2FkGYkgTuStL6stM44sX86Gyvq8ZaFqd07c4t0x
-         n70cX7wAdi3nt76roLFPUokgWC8BoxWcdmuBpmPcLW1kFcBGwKxI2vuiof5s5VBaVkYG
-         TZdE1ADbQTOmJNJMA03dCm5s6prs6aTz8FYoK/zKhfUjyb839+nly1HMRq7GcZDoAoe6
-         gRiKzwAFWBmhUYPCdsspT/RPbQ7/tl0p5xQNv6aKU6Yym4g+waDP7qnoNUJ3ShmmCn8v
-         Mhlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXO8cv0mOKITlkSU7SNAd+yFU7QcfYKnBijCRkAeTw+ddXdz6voeciWi1JPvihj9Oscgv9O5MRaFTo1Id+WauRtKrgDy33us+IrW0Ct
-X-Gm-Message-State: AOJu0YwyccPwfbyBRIj0PlEq032UB8Gtdnhnh54cmhI0R3MeHxOadatR
-	3d7XT+NK1fkcPSirLMnvxjYsMl0/FgVDlx/ZnCT3674TMbkrGrukfXADrCIy3g==
-X-Google-Smtp-Source: AGHT+IFGj2VK+72l/JFB5SBb2/B+u/t8MIDQowXQChyupB5qIsFTtEzAdZedl985d4NSC3brJeqMYQ==
-X-Received: by 2002:a05:6358:57a3:b0:19f:4553:5514 with SMTP id e5c5f4694b2df-19f45535aadmr801047355d.29.1718061002738;
-        Mon, 10 Jun 2024 16:10:02 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06519d521sm35256946d6.65.2024.06.10.16.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 16:10:01 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 10 Jun 2024 23:09:58 +0000
-Subject: [PATCH v2 7/7] media: uvcvideo: Replace get_mapping with
- filter_mapping
+	s=arc-20240116; t=1718061033; c=relaxed/simple;
+	bh=Hqo2lJ+wvCjfGXotn9bKfuEGO6SE4V/OkBviYTEcT44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZfYmpT4g2QfsfOJllZjU041nM+1dPcnud+9HtTSEfVhoewc8gJMBF7vNFVH04LJGjrllSZb8T02eeronY4CMN+huuci98IBboJUJuNMOlEHqbfVrlqRudNl0WdHJ1F3Pyd5kS7QmC1CgCXGSqQt/ZcNcQGUKVfZo5AFotqzJeTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wK7AYb5s; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: radhey.shyam.pandey@amd.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718061029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FDA59kZrpAKz7084CN5HZMkmVitgKCZsjBBJnQ6cgj8=;
+	b=wK7AYb5srn+BvhVJWYZhr8hTCWe3vVWq74rQqoFySP/cYlCN4f0qC6yBS0J1klT+Hli3uV
+	uJub072MBWc0IZyDo/0Kx24/hxdW6lja6SaaZCTUHGJstbK+UawMY0E44Yx/v/++8Cpnxb
+	mFtfwBDa3f9rL9pQkudw07cPj087Wjk=
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: michal.simek@amd.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: linux@armlinux.org.uk
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: sean.anderson@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	linux-kernel@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net-next 0/3] net: xilinx: axienet: Add statistics support
+Date: Mon, 10 Jun 2024 19:10:19 -0400
+Message-Id: <20240610231022.2460953-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240610-billion-v2-7-38e861475f85@chromium.org>
-References: <20240610-billion-v2-0-38e861475f85@chromium.org>
-In-Reply-To: <20240610-billion-v2-0-38e861475f85@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-If the callback returns a mapping instead of adding it, the codeflow is
-more clean and we do not need a forward declaration of
-__uvc_ctrl_add_mapping_to_list().
+Add support for hardware statistics counters (if they are enabled) in
+the AXI Ethernet driver. Unfortunately, the implementation is
+complicated a bit since the hardware might only support 32-bit counters.
+In the future, we could add a simpler alternate implementation for
+64-bit counters enabled with a device-tree property, but for now I've
+gone with a unified implementation.
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 40 ++++++++++++++++++----------------------
- drivers/media/usb/uvc/uvcvideo.h |  6 +++---
- 2 files changed, 21 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 1c1710e3c486..4a13f2685d9e 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -495,11 +495,8 @@ static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
- 				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
- };
- 
--static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
--	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping);
--
--static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
--	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-+static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping
-+		(struct uvc_video_chain *chain, struct uvc_control *ctrl)
- {
- 	const struct uvc_control_mapping *out_mapping =
- 					&uvc_ctrl_power_line_mapping_uvc11;
-@@ -509,7 +506,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
- 
- 	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
- 	if (!buf)
--		return -ENOMEM;
-+		return NULL;
- 
- 	/* Save the default PLF value, so we can restore it. */
- 	ret = uvc_query_ctrl(chain->dev, UVC_GET_CUR, ctrl->entity->id,
-@@ -517,7 +514,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
- 			     buf, sizeof(*buf));
- 	/* If we cannot read the control skip it. */
- 	if (ret)
--		return ret;
-+		return NULL;
- 	init_val = *buf;
- 
- 	/* If PLF value cannot be set to off, it is limited. */
-@@ -526,8 +523,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
- 			     chain->dev->intfnum, ctrl->info.selector,
- 			     buf, sizeof(*buf));
- 	if (ret)
--		return __uvc_ctrl_add_mapping_to_list(chain, ctrl,
--					&uvc_ctrl_power_line_mapping_limited);
-+		return &uvc_ctrl_power_line_mapping_limited;
- 
- 	/* UVC 1.1 does not define auto, we can exit. */
- 	if (chain->dev->uvc_version < 0x150)
-@@ -548,7 +544,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
- 		       chain->dev->intfnum, ctrl->info.selector,
- 		       buf, sizeof(*buf));
- 
--	return __uvc_ctrl_add_mapping_to_list(chain, ctrl, out_mapping);
-+	return out_mapping;
- }
- 
- static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
-@@ -843,7 +839,7 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
- 	{
- 		.entity		= UVC_GUID_UVC_PROCESSING,
- 		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
--		.add_mapping	= uvc_ctrl_add_plf_mapping,
-+		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
- 	},
- };
- 
-@@ -2411,8 +2407,9 @@ static int uvc_ctrl_add_info(struct uvc_device *dev, struct uvc_control *ctrl,
- /*
-  * Add a control mapping to a given control.
-  */
--static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
--	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-+static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-+				  struct uvc_control *ctrl,
-+				  const struct uvc_control_mapping *mapping)
- {
- 	struct uvc_control_mapping *map;
- 	unsigned int size;
-@@ -2485,14 +2482,6 @@ static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
- 	return -ENOMEM;
- }
- 
--static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
--	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
--{
--	if (mapping && mapping->add_mapping)
--		return mapping->add_mapping(chain, ctrl, mapping);
--	return __uvc_ctrl_add_mapping_to_list(chain, ctrl, mapping);
--}
--
- int uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
- 	const struct uvc_control_mapping *mapping)
- {
-@@ -2681,7 +2670,14 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
- 
- 	/* Process common mappings. */
- 	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
--		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
-+		const struct uvc_control_mapping *mapping = NULL;
-+
-+		/* Try to get a custom mapping from the device. */
-+		if (uvc_ctrl_mappings[i].filter_mapping)
-+			mapping = uvc_ctrl_mappings[i].filter_mapping(chain,
-+								      ctrl);
-+		if (!mapping)
-+			mapping = &uvc_ctrl_mappings[i];
- 
- 		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
- 		    ctrl->info.selector == mapping->selector)
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index ff9545dcf716..a9547795fe22 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -125,9 +125,9 @@ struct uvc_control_mapping {
- 	s32 master_manual;
- 	u32 slave_ids[2];
- 
--	int (*add_mapping)(struct uvc_video_chain *chain,
--			   struct uvc_control *ctrl,
--			   const struct uvc_control_mapping *mapping);
-+	const struct uvc_control_mapping *(*filter_mapping)
-+				(struct uvc_video_chain *chain,
-+				struct uvc_control *ctrl);
- 	s32 (*get)(struct uvc_control_mapping *mapping, u8 query,
- 		   const u8 *data);
- 	void (*set)(struct uvc_control_mapping *mapping, s32 value,
+Sean Anderson (3):
+  net: xilinx: axienet: Use NL_SET_ERR_MSG instead of netdev_err
+  net: xilinx: axienet: Report RxRject as rx_dropped
+  net: xilinx: axienet: Add statistics support
+
+ drivers/net/ethernet/xilinx/xilinx_axienet.h  |  81 ++++++
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 275 +++++++++++++++++-
+ 2 files changed, 349 insertions(+), 7 deletions(-)
 
 -- 
-2.45.2.505.gda0bf45e8d-goog
+2.35.1.1320.gc452695387.dirty
 
 
