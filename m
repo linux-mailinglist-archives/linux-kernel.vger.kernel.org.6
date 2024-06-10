@@ -1,166 +1,79 @@
-Return-Path: <linux-kernel+bounces-207958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5E5901E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BE1901E91
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574F4283830
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377281F24A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC117603A;
-	Mon, 10 Jun 2024 09:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="RabQY3O+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LEIkqa0S"
-Received: from flow1-smtp.messagingengine.com (flow1-smtp.messagingengine.com [103.168.172.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E991DFD0;
-	Mon, 10 Jun 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37FF74E0A;
+	Mon, 10 Jun 2024 09:47:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1F0CA62
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012463; cv=none; b=ZXcq+8u6IJt5XKh9lDmPCzr+QcIM0TFxEaiXTaO3/rDZOC8eP/bVRugA5cWlRaP2j3zMY2UpqPmPu1WoT9sEUnlfiaxGkp5qxqJ/7kNg4ngtdsgtf2BZyiswt1f7mm26Rp8Zza67mTem+wbB7T/e5SOx98nyZRSUMI60nt0oDRU=
+	t=1718012865; cv=none; b=Pf1asYI0ByAR5CTwBfAO9rIHHxRwH8o/ghD5byN0xSblMVuW5KAHHfLLVToMAU4ioehCZU4B+EymHKusdr+j0ioZIxMEnldteVkMKIpYlPqOr9AA+AvpHA7TE2cTZfF4LMAaTj6EDvGJbLoOWAkTt6fGlhPjvhhY7Mjgt1tFlFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012463; c=relaxed/simple;
-	bh=KNKCKklTuYVMpCezbUE7O/dEuK5srQjktU+JvcvNVFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ray4flBOg0A/9wGOjrVmFWjz2jI2hvpmFvY7YtQblUaTiWuvP/Cy9hNbDzk13ariUrL6gwx8JG9HtItIv95tzIMvwXUHeg+oYcrRdTZ0r9jToDgXVl0SyhhMrsyOuBzR6siQkq/Q1hxTR7tZUJK/HJLZJnw9vs4hnSdCCs1TrIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=RabQY3O+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LEIkqa0S; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 963B22005E8;
-	Mon, 10 Jun 2024 05:41:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 10 Jun 2024 05:41:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718012460;
-	 x=1718016060; bh=+ir2CVbBvWnglzlujH/fXHt0aYyVxse9Z8DINg2urHY=; b=
-	RabQY3O+4UNdZ0WFareLb30ij2ij24ABk6Lbynu1oSJqzBNhkIQQWgVpYAt6nxZs
-	xtCHgP0hZbwR5BCOd3+A6byK5nCv8/C39etwGTzwROaBpProdCKhOoilOPHqfX4G
-	9BPEw8rqUJ2b4bKJGD097P+GyZmNRYnlE9r5l/3qfgNTjwSIOS5iRdJ2/lcaKWol
-	Ags4NKBIAEP4oDf6E5eP9xySuXZbbf3Rf+ZjrT1E/LFJ3zILwD3bPZl1TONdqocr
-	gWE553KoKC/NxwfzjGl7vRY02Hm/52TNnjdQsoEmz4LyEbSX88ictmd9TYed7QO8
-	Vi4saa1D9ANVTGK3GtTJ1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718012460; x=
-	1718016060; bh=+ir2CVbBvWnglzlujH/fXHt0aYyVxse9Z8DINg2urHY=; b=L
-	EIkqa0ScrIZM+LbM+UQmyBMYTjnw/MyuAVysR6rU8V05ivy3cj/G/xnKynMg4RwD
-	eolvhub/c6EaaAHYadJ+LHXze9kE8kbNYL8xHi+ro2PkwCbmS7v5nIj546/lDQk9
-	yJwzxlK8VjIJ/0IDp2oqBanZ0aNkMNYqHjbhqleFLcoB499khNfsSlT1yTzGh7v9
-	EmPyHRchH8a+BvKi2JzSqd9BNH9HaOU+crMxGt5PAY7FNdjtc9zGlv90XwpX/kNt
-	z61R4Y3DicCu3qYARJku45VG37c3eRLbXkqD58xvt5HnwEavfIXbEfD+lINrb+ee
-	2mSP7VhAJ0kfxhctfS5Hw==
-X-ME-Sender: <xms:LMpmZkGE-eflvtIEwsg6gkccJ5iKsFDRlanTQlH5RisFANCJdKJnyA>
-    <xme:LMpmZtXR8YOXh-iU4niksBMDtYtw-CmQPn8lCGVt2gaM45IzD-8NGWoyXDI4nWDoL
-    kkOeYccTP4-FZd7dtM>
-X-ME-Received: <xmr:LMpmZuINOI586a9DVmBFpEqsB_OfZXOtQGQ0GqS9akWHKky-9_zNVRIlXhBtNkRDHXLyNKqvefaOW-1i3zckVOU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedutddgudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
-    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:LMpmZmFhkvdeqlm-6M4BTtRkSBGnJu2kqG8SVUIoAI2XSG7pv1KIXQ>
-    <xmx:LMpmZqVggAwTWlvn6rCYXTiNLWrcaJIw9cfxq4zj3Pn-ofQbzZexnQ>
-    <xmx:LMpmZpMAgFgbzUj73s7QZU5vvEe0Q_iTEiktwCD-tvDzkRrejVc9lg>
-    <xmx:LMpmZh3iJSOiy9Hq-l1xA5WL35QxoPplcGdH5uexvRTvlDPFSPP6Sw>
-    <xmx:LMpmZjUhtKFQlMDDlAkcUK3LjflnnZDUVoqCSrR42egFwU8ZMoeN9jzO>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Jun 2024 05:40:56 -0400 (EDT)
-Date: Mon, 10 Jun 2024 02:46:06 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- 	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
- 	James Morris <jmorris@namei.org>, KP Singh <kpsingh@kernel.org>,
- 	Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>,
- 	Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- 	Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-Message-ID: <svpbmv37f5n537seb3cfsylnlzi6ftuad4dqi5unoycylmcf7r@6knq7sibdw7w>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-3-jcalmels@3xx0.net>
- <20240610023301.GA2183903@mail.hallyn.com>
+	s=arc-20240116; t=1718012865; c=relaxed/simple;
+	bh=VQ/3JhnLna7rWk78B1WLCHGyauw1n1qafP09tVEkGcc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AbJK7DHEJ6j9d80ddklfshdGyZQBPsXA/nUWYAPfu9bdmp6kn8MSllplLMZyjt2UelUXFhJAGAPqMfCQAoCdYxMWlmLkQjpzwn4lk4TJz1FW03/4xwQ3+xllGhJHOCpHYh6NpTPC0z5N9txMS2Ddj6NqcLho4jB+uJfY5ZoBFvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCB0212FC;
+	Mon, 10 Jun 2024 02:48:06 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 180E93F73B;
+	Mon, 10 Jun 2024 02:47:40 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: coresight@lists.linaro.org,
+	James Clark <james.clark@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	laurent.pinchart@ideasonboard.com,
+	linux-kernel@vger.kernel.org,
+	Mike Leach <mike.leach@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] coresight: Fix ref leak when of_coresight_parse_endpoint() fails
+Date: Mon, 10 Jun 2024 10:47:31 +0100
+Message-Id: <171801275290.708723.11055477791978848818.b4-ty@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240529133626.90080-1-james.clark@arm.com>
+References: <20240529133626.90080-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610023301.GA2183903@mail.hallyn.com>
 
-On Sun, Jun 09, 2024 at 09:33:01PM GMT, Serge E. Hallyn wrote:
-> On Sun, Jun 09, 2024 at 03:43:35AM -0700, Jonathan Calmels wrote:
-> > This patch adds a new capability security bit designed to constrain a
-> > task’s userns capability set to its bounding set. The reason for this is
-> > twofold:
-> > 
-> > - This serves as a quick and easy way to lock down a set of capabilities
-> >   for a task, thus ensuring that any namespace it creates will never be
-> >   more privileged than itself is.
-> > - This helps userspace transition to more secure defaults by not requiring
-> >   specific logic for the userns capability set, or libcap support.
-> > 
-> > Example:
-> > 
-> >     # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
-> >             -c 'unshare -r grep Cap /proc/self/status'
-> >     CapInh: 0000000000000000
-> >     CapPrm: 000001fffffdffff
-> >     CapEff: 000001fffffdffff
-> >     CapBnd: 000001fffffdffff
-> >     CapAmb: 0000000000000000
-> >     CapUNs: 000001fffffdffff
+On Wed, 29 May 2024 14:36:26 +0100, James Clark wrote:
+> of_graph_get_next_endpoint() releases the reference to the previous
+> endpoint on each iteration, but when parsing fails the loop exits
+> early meaning the last reference is never dropped.
 > 
-> But you are not (that I can see, in this or the previous patch)
-> keeping SECURE_USERNS_STRICT_CAPS in securebits on the next
-> level unshare.  Though I think it's ok, because by then both
-> cap_userns and cap_bset are reduced and cap_userns can't be
-> expanded.  (Sorry, just thinking aloud here)
-
-Right this is safe to reset, but maybe we do keep it if the secbit is
-locked? This is kind of a special case compared to the other bits.
-
-> > +	/* Limit userns capabilities to our parent's bounding set. */
+> Fix it by dropping the refcount in the exit condition.
 > 
-> In the case of userns_install(), it will be the target user namespace
-> creator's bounding set, right?  Not "our parent's"?
+> 
+> [...]
 
-Good point, I should reword this comment.
+Applied, thanks!
+
+[1/1] coresight: Fix ref leak when of_coresight_parse_endpoint() fails
+      https://git.kernel.org/coresight/c/7fcb9cb2fe47294e16067c3cfd25332c8662a115
+
+Best regards,
+-- 
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
