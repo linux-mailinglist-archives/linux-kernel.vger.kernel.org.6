@@ -1,166 +1,92 @@
-Return-Path: <linux-kernel+bounces-208433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB665902520
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369C4902525
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A211F24E86
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E04E91F25108
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC22C13DB9B;
-	Mon, 10 Jun 2024 15:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2690E13D89D;
+	Mon, 10 Jun 2024 15:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="po5IksS3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="JLlg+p4V"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EFC13D2A2;
-	Mon, 10 Jun 2024 15:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038471E4A0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032379; cv=none; b=Glze2DhD7m60e16bHb2g3J656FYXoehoGXzuTzmiAWo7qVEn3tVNHJN4nrZhWeRQkts8BgnsQAveSQKJWygj35mrNOabABcus1hymWRzA8HpoEoPR7AzRtqreN4igQo340j5DxhavdHjP98AnePbAavRpk7hEWbQo8PkLr/plOA=
+	t=1718032429; cv=none; b=gRUBXf3WkLg+viTIVi//1+lZBptNTOk00bUa6f6Yyh5OvBl4VWK+ImpMEZl3vLxz7I+HlA6Pa/LTZD/Bbq9glxYt+dqF55etxzG3wNY8Xnp07PCiQEyLE5wcTm29MEYLbrCXh4UyUdIJvPWrjzsKV99QvLMqtL2q6/1jWtmbXA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032379; c=relaxed/simple;
-	bh=V7GYawRo5XZ8bJwwWXYg1kOKgGFBMi/WhHM5W4k7Zvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbdM+YXUbytVh74PzE09XNNaXRz0oqXfenelqJTmsbzgRe84bSGj9HZz2dx+rdPQiGwdAUBQY03qNP0J0lLqbKam6BsagN/ufdc9AfReknh0TnswRHfotCuhKyOAczEV7pAgl7NcHLsId36/mWe6t8IT7i34l+rHoUiqsaSWPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=po5IksS3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8ADC2BBFC;
-	Mon, 10 Jun 2024 15:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718032378;
-	bh=V7GYawRo5XZ8bJwwWXYg1kOKgGFBMi/WhHM5W4k7Zvk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=po5IksS3tIroV4rnfdyyEU2pW0qGmO2jOqRXsCWOi6kHQqhpQEy6bUyq9ZXNzW5mL
-	 w7y3Bc9F/1OyD6Lr0rJ/LrSLjsykpNXkZAE8VMTQkdVskF+CDfVSuy41VQUKa1wkTS
-	 p0KoPex2eUkJSERqg2OykwqhJuZbCLJ9GzxiWzPZf/g66W42xrk96SULynfS+hINt8
-	 HARm1YIWwoivlrAyiZt2e4ZaEnNLNK3BsehmxSCb+J8ygE2V5SktZuYa+nkEVRtfoU
-	 S+1AjTAq/U87A/PDXkOrlNz5QWUBQQTXbPt38OjDF1uLPStWzQXwtxToOgK+l+2iHY
-	 sN1XtvRhSB8jg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2BA4FCE2373; Mon, 10 Jun 2024 08:12:58 -0700 (PDT)
-Date: Mon, 10 Jun 2024 08:12:58 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH rcu 3/9] rcu/tree: Reduce wake up for synchronize_rcu()
- common case
-Message-ID: <3900dfd9-f2e7-4206-930b-2247186a37db@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-3-paulmck@kernel.org>
- <ZmCTvMVlOMFv0-zd@localhost.localdomain>
- <CAFwiDX8yGCEiZE-VC0i=VoGByQArQkwG7beVvQO5wRGsK8rdPQ@mail.gmail.com>
- <beb31a51-253e-4bc4-a73c-456f2bf2fd06@paulmck-laptop>
- <CAFwiDX-x4=_N2szD2QZhAEkU+kx_eTscz2bcyHqikHq7m=rkpQ@mail.gmail.com>
+	s=arc-20240116; t=1718032429; c=relaxed/simple;
+	bh=CmL2clMiceh98ITdDb3nHytGm31ml3VGWT8md7qDVwo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VIE3lWTZM4eXIXLz+zKxCo4wV8UZdU+W7zMJrvt6HEeCv3Pw7mzA0wqfdIPmvmqUB+3cu9m3/vRVrezCh+/HAIvrOHp3qG5K7dXDmtpIcruOZVaRN01CO9vP1GzZoVK9sML8f/otXYKLmWLyCyoqtDh0nvHzFFOOUB17gSRMTEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=JLlg+p4V; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEODuh023922;
+	Mon, 10 Jun 2024 10:13:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=oPwV6DNi2iZ8a+TnR3
+	efBN2gwSgK39HaMgBTQJnht74=; b=JLlg+p4VYPz8ilvfWSFJTE0HSrJQ4frDxh
+	p2hLGcgK8M2GR2/naflIlT+9bXewM+By3kece5B6+DdnIPUCtTx400GDFS4gKOhG
+	s+tjhwrg4l7I/O7a0dDYRDeskV0p+2KLt/u5l1xRiy4IHOnvMYtzqgKlVcjgH5m5
+	1LpMb0/z+IUP3q8VQoYWtizbH4XxiTe4ucuzywjyv8NDJQ/5umuYy02kCJ2yIOds
+	B2fXX0E0zGAbb+tlScmcmmaONuNhcEqGLeslKrl3r86s9XQLOgSButeTF/ufzqN8
+	gbkFCNbHlXeA7dUlFCo3fKLY/+diVsQG01haB8WShDHUd/0lFeNQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ymkqhstmp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 10:13:28 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 16:13:27 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 10 Jun 2024 16:13:27 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 16B69820249;
+	Mon, 10 Jun 2024 15:13:27 +0000 (UTC)
+Date: Mon, 10 Jun 2024 15:13:26 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Lee Jones <lee@kernel.org>, Richard Fitzgerald <rf@opensource.cirrus.com>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 1/2] mfd: arizona: Simplify with
+ spi_get_device_match_data()
+Message-ID: <ZmcYFgEKgg0plA7k@opensource.cirrus.com>
+References: <20240606142457.130553-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFwiDX-x4=_N2szD2QZhAEkU+kx_eTscz2bcyHqikHq7m=rkpQ@mail.gmail.com>
+In-Reply-To: <20240606142457.130553-1-krzysztof.kozlowski@linaro.org>
+X-Proofpoint-GUID: ohGpH9_75i7nI5hbz6N2WSEP-b4nldDS
+X-Proofpoint-ORIG-GUID: ohGpH9_75i7nI5hbz6N2WSEP-b4nldDS
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, Jun 07, 2024 at 07:21:55AM +0530, Neeraj upadhyay wrote:
-> On Thu, Jun 6, 2024 at 11:42 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Thu, Jun 06, 2024 at 11:28:07AM +0530, Neeraj upadhyay wrote:
-> > > On Wed, Jun 5, 2024 at 10:05 PM Frederic Weisbecker <frederic@kernel.org> wrote:
-> > > >
-> > > > Le Tue, Jun 04, 2024 at 03:23:49PM -0700, Paul E. McKenney a écrit :
-> > > > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > > > >
-> > > > > In the synchronize_rcu() common case, we will have less than
-> > > > > SR_MAX_USERS_WAKE_FROM_GP number of users per GP. Waking up the kworker
-> > > > > is pointless just to free the last injected wait head since at that point,
-> > > > > all the users have already been awakened.
-> > > > >
-> > > > > Introduce a new counter to track this and prevent the wakeup in the
-> > > > > common case.
-> > > > >
-> > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > > > Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > > ---
-> > > > >  kernel/rcu/tree.c | 35 ++++++++++++++++++++++++++++++-----
-> > > > >  kernel/rcu/tree.h |  1 +
-> > > > >  2 files changed, 31 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > > > index 6ba36d9c09bde..2fe08e6186b4d 100644
-> > > > > --- a/kernel/rcu/tree.c
-> > > > > +++ b/kernel/rcu/tree.c
-> > > > > @@ -96,6 +96,7 @@ static struct rcu_state rcu_state = {
-> > > > >       .ofl_lock = __ARCH_SPIN_LOCK_UNLOCKED,
-> > > > >       .srs_cleanup_work = __WORK_INITIALIZER(rcu_state.srs_cleanup_work,
-> > > > >               rcu_sr_normal_gp_cleanup_work),
-> > > > > +     .srs_cleanups_pending = ATOMIC_INIT(0),
-> > > > >  };
-> > > > >
-> > > > >  /* Dump rcu_node combining tree at boot to verify correct setup. */
-> > > > > @@ -1633,8 +1634,11 @@ static void rcu_sr_normal_gp_cleanup_work(struct work_struct *work)
-> > > > >        * the done tail list manipulations are protected here.
-> > > > >        */
-> > > > >       done = smp_load_acquire(&rcu_state.srs_done_tail);
-> > > > > -     if (!done)
-> > > > > +     if (!done) {
-> > > > > +             /* See comments below. */
-> > > > > +             atomic_dec_return_release(&rcu_state.srs_cleanups_pending);
-> > > >
-> > > > This condition is not supposed to happen. If the work is scheduled,
-> > > > there has to be a wait_queue in rcu_state.srs_done_tail. And decrementing
-> > > > may make things worse.
-> > > >
-> > >
-> > > I also don't see a scenario where this can happen. However, if we are
-> > > returning from here, given that for every queued work we do an
-> > > increment of rcu_state.srs_cleanups_pending, I think it's safer to
-> > > decrement in this
-> > > case, as that counter tracks only the work queuing and execution counts.
-> > >
-> > >     atomic_inc(&rcu_state.srs_cleanups_pending);
-> > >     if (!queue_work(sync_wq, &rcu_state.srs_cleanup_work))
-> > >         atomic_dec(&rcu_state.srs_cleanups_pending);
-> >
-> > Linus Torvald's general rule is that if you cannot imagine how a bug
-> > can happen, don't attempt to clean up after it.  His rationale (which
-> > is *almost* always a good one) is that not knowing how the bug happens
-> > means that attempts to clean up will usually just make matters worse.
-> > And all too often, the clean-up code makes debugging more difficult.
-> >
+On Thu, Jun 06, 2024 at 04:24:56PM +0200, Krzysztof Kozlowski wrote:
+> Use spi_get_device_match_data() helper to simplify a bit the driver.
 > 
-> Ok. Thanks for sharing this info!
-> 
-> > One example exception to this rule is when debug-objects detects a
-> > duplicate call_rcu().  In that case, we ignore that second call_rcu().
-> > But the reason is that experience has shown that the usual cause really
-> > is someone doing a duplicate call_rcu(), and also that ignoring the
-> > second call_rcu() makes debugging easier.
-> >
-> > So what is it that Frederic and I are missing here?
-> 
-> Maybe nothing. As kworker context does not modify srs_done_tail and
-> invalid values
-> of srs_done_tail  can only be caused by the GP kthread manipulations
-> of  srs_done_tail , my thought here was, we can keep the pending
-> rcu_sr_normal_gp_cleanup_work count consistent with the number of
-> queue_work() and kworker executions, even when we see unexpected
-> srs_done_tail values like these. However, as you described the general rule
-> is to not attempt any clean up for such scenarios.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-So "if (WARN_ON_ONCE(!done) return;"?
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Or is there a better way?
-
-							Thanx, Paul
+Thanks,
+Charles
 
