@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-208834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029C79029B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:08:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DA69029BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3E2285ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DFD1C22093
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFF914F9D5;
-	Mon, 10 Jun 2024 20:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC65414F9CA;
+	Mon, 10 Jun 2024 20:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ond31ySz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVRm4k/G"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CC71B812;
-	Mon, 10 Jun 2024 20:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18771B812;
+	Mon, 10 Jun 2024 20:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050123; cv=none; b=qgf6edIWa5nSEIfZa3PtviQV9MTvbo5s5tY92ZQbhdzYyruF+u4LFC5QC7mf7jnL0/ylnke3EqP1Re9vkQfIfw5278HiawiG/DjO0jVClv2KzC+ShM0uaIyjaJgwOsmdHYFGLnSBiA6WDPGfnfS3AFg5vPBVlmfZtp8J6oLpaU4=
+	t=1718050163; cv=none; b=VbYsJH8VQ5FyhWVsCc3lTxvJiE2TTEDMMgcSoyXSKNdjSDDW0RTlldOT2jvSU+QMUjuztKSkifjp+ImMZwG1yrKuek6Wzr4GfKb5RiT7txs1vp0+K/wPvTaj9lC4VzYwvvbHHQimFqouPdSHCN/MOK/nQ774/vdJA7jA2pIjn5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050123; c=relaxed/simple;
-	bh=1gswl6hf4KHobVmATfrT2dR7m2dVBSRQN13oHELIETA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YgwoAV7aHCLtqSLQqodcNzMottpH/2H9LRIdRSFBh+ToSmvvOAoe1Tzq5sYKKto0oYojy4jFriznuipSEro8TkXIQ6li0zrUoeWb4qn9hsr3vJSvMBRp3sDhePTV8cosqSQwBIQ3Ik7bLLzYX3+CJpgVbSkfqrRW8b8dKXvS/jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ond31ySz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AFA5dr002816;
-	Mon, 10 Jun 2024 20:08:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=buLfj6Ltji1S/aYhBziLxu
-	GbOEFEO5iPEML74KGy2gc=; b=ond31ySz1HuKj+g4aQrtaMlziTBcV14tiHLn15
-	ydupiJYKsU3JQsbdXTaQvAy3YUkagsDhB51dfnuMQzc3cD8KOwKJwihXBAx5En+I
-	udh9gw8qCaM6sWFVjgCAgsqzu3M9jDHuYmO50dCyKyKQuxphHyy+bIXRe8I2DD0J
-	mR9x0WMtTVRW5HKLYBi2qktvPqsSYPmnw8QssgiMVOdl5q/xDiZ/yL+6fAnWJmun
-	22xSOvZUQU1TeR2I1iB5Jb37ab+urI6xgwD19F//Ts4ehuvHPpalC+TPT7cy97dK
-	9fl3KUeSNmDi2zUqJwU7tcfuqE1BG1jeszQynDsBPeLkgBgw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8vn8w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 20:08:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AK8bXZ031737
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 20:08:37 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 13:08:37 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 13:08:36 -0700
-Subject: [PATCH] media: go7007: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718050163; c=relaxed/simple;
+	bh=c1BneUUhSn4t+cH+YqJuyxjKUHmeZACdZHTDo5SeE1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lF+C6TILoxmtYc/xyNSB5B2AaKLxKsujQmGbO+Va/Rw4pF9luZerPFrnWbKr98kGzsk/tMOeC/wO/E40JEKtVWDP+Lsu6voQlqI7JLB7B7AKjcQnDQLq3WJNnBGlBhGenmKTFpOx9Oe1ry0kY/ZkMWLGgpC5IBSuhHJ8FUaZGN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVRm4k/G; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c315b569c8so323597a91.0;
+        Mon, 10 Jun 2024 13:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718050161; x=1718654961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0C8Qu+cw7poJliJ7fKZVJslfoPcxeWgTVGFWkb83UUc=;
+        b=LVRm4k/GvJgcB/VxjAEFCBHe2KkUbwHAlXmmqvYM7hL3hlhXm9+8ZDUqo7L9VybkKF
+         1Z7rpagl9dVrDmHSWh4DsQSYd8AO6aSHBTuv5pIyk/6E/HHmwFd9z6slX/FIYgJPSLeT
+         hhx9+3yQPaLPQPSWWpspdwm1dUGHwDSEJe93sLCaj/UOX3rJHHJeArm+CMOqSCk96c5L
+         MF2Sh0Gez7pkmrhTErlp9v1EHZmFqZFqBeyP/FlXgn9dToSuykOokS12BMJmrvaMrhRh
+         2I9MBujT6Ry2oC0aN4qGsYCoVksQU7mmX5EyhwjMJoTnTqHIfmiz0vOrAMUvHi02Vi5G
+         1fmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718050161; x=1718654961;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0C8Qu+cw7poJliJ7fKZVJslfoPcxeWgTVGFWkb83UUc=;
+        b=cDgbuzUljIaYAFoepgUY+6U2iOksrMDIRnQUWpzF6if6WYwq59SuEJJ34Sn/Aj3qL2
+         uYFXAUTpkfTfGo4JGH0l/t+O998GuikS0yr2fLs8T8HUbGWPVZi1WHbS5twp39ZpY52/
+         g05c8Stam3llzd6uVTNaQvRvCFFCvza6Fz/64Z6miCs5cjiU5NgRWh4Fi7HaERUUBrzc
+         CNpNlGHCofJ99RzzW7T2iUUKlXWC20DF7KFBJXXI4ejBDwNicLcTwXWV70EYvSHFQ0cx
+         UhIGH+1vqlzh6FM/okpj4UPWvsofYT0fAM4TkgFvC7LHHRMmgfqrRso2T2gM4Eszqrv7
+         8A8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmsGPShw4mimaUIloGTaj+Q0SF3if/+6aNKTCSqgAnq3jBHYpZgbYKooRJ16IdOZV2k5Kj7gp2SyevTVnM0gftj7M0vKcJOdzf5Yvdbrd8qbbnHeZfD1xCd3rm2ACEtV2TLnIgIE324g4C7Sqf
+X-Gm-Message-State: AOJu0Yw/rqD+FjU0oklJFhAoaQEyDo+Gg6+lNM016XYQMo564MlMggZ7
+	x9+maZ7q1JC2Xtutwqdg/GvDrwJ4ejpSdg3B29+mYpYmNI+8r0gN
+X-Google-Smtp-Source: AGHT+IG5RJTxDye8IWs6NAUfz0dC5ivrbZ8nUVy7iBZ2iO4vXvb4o3ZYxtEy61V0ReP9FwXy5od/4Q==
+X-Received: by 2002:a17:90a:5d18:b0:2c3:1e2a:b5f3 with SMTP id 98e67ed59e1d1-2c31e2ab6b2mr1868898a91.15.1718050160921;
+        Mon, 10 Jun 2024 13:09:20 -0700 (PDT)
+Received: from dev0.. ([47.31.175.114])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c31ed7133esm1176606a91.8.2024.06.10.13.09.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 13:09:20 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: shuah@kernel.org,
+	brauner@kernel.org,
+	mszeredi@redhat.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	jain.abhinav177@gmail.com
+Subject: [PATCH] selftests: filesystems: add return value checks
+Date: Mon, 10 Jun 2024 20:09:09 +0000
+Message-Id: <20240610200909.55819-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-media-usb-go7007-v1-1-89f1087750af@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAENdZ2YC/x3MwQqDMAwA0F+RnBdodUy2Xxk7pG3UwFpHoiKI/
- 75ux3d5BxirsMGjOUB5E5O5VPhLA3GiMjJKqobWtVd38w5zwqSysRpmTkK4WsBx7p3rsfMx0nA
- PXaAAdfgoD7L/9+erOpAxBqUSp9/5lrLumMkWVjjPL+rxnBGMAAAA
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yAodk-ZHKSt6IhEavRCceAi9tMa18nog
-X-Proofpoint-ORIG-GUID: yAodk-ZHKSt6IhEavRCceAi9tMa18nog
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_06,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=939 mlxscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1011
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100152
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/go7007/go7007.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/go7007/go7007-usb.o
+Add ksft_exit_fail_msg() return value checks for fchdir() & chroot()
+to address the selftests statmount test compile warnings
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+statmount_test.c:127:2: warning: ignoring return value of ‘fchdir’,
+declared with attribute warn_unused_result [-Wunused-result]
+  127 |  fchdir(orig_root);
+      |  ^~~~~~~~~~~~~~~~~
+statmount_test.c:128:2: warning: ignoring return value of ‘chroot’,
+declared with attribute warn_unused_result [-Wunused-result]
+  128 |  chroot(".");
+      |  ^~~~~~~~~~~
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 ---
- drivers/media/usb/go7007/go7007-driver.c | 1 +
- drivers/media/usb/go7007/go7007-usb.c    | 1 +
- 2 files changed, 2 insertions(+)
+ .../filesystems/statmount/statmount_test.c          | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/go7007/go7007-driver.c b/drivers/media/usb/go7007/go7007-driver.c
-index eb03f98b2ef1..468406302cd5 100644
---- a/drivers/media/usb/go7007/go7007-driver.c
-+++ b/drivers/media/usb/go7007/go7007-driver.c
-@@ -736,4 +736,5 @@ void go7007_update_board(struct go7007 *go)
+diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test.c b/tools/testing/selftests/filesystems/statmount/statmount_test.c
+index e6d7c4f1c85b..b5e1247233b6 100644
+--- a/tools/testing/selftests/filesystems/statmount/statmount_test.c
++++ b/tools/testing/selftests/filesystems/statmount/statmount_test.c
+@@ -125,8 +125,17 @@ static uint32_t old_root_id, old_parent_id;
+ 
+ static void cleanup_namespace(void)
+ {
+-	fchdir(orig_root);
+-	chroot(".");
++	int ret;
++
++	ret = fchdir(orig_root);
++	if (ret == -1)
++		ksft_exit_fail_msg("changing current directory: %s\n",
++				strerror(errno));
++
++	ret = chroot(".");
++	if (ret == -1)
++		ksft_exit_fail_msg("chroot: %s\n", strerror(errno));
++
+ 	umount2(root_mntpoint, MNT_DETACH);
+ 	rmdir(root_mntpoint);
  }
- EXPORT_SYMBOL(go7007_update_board);
- 
-+MODULE_DESCRIPTION("WIS GO7007 MPEG encoder support");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/usb/go7007/go7007-usb.c b/drivers/media/usb/go7007/go7007-usb.c
-index 762c13e49bfa..334cdde81a5c 100644
---- a/drivers/media/usb/go7007/go7007-usb.c
-+++ b/drivers/media/usb/go7007/go7007-usb.c
-@@ -1352,4 +1352,5 @@ static struct usb_driver go7007_usb_driver = {
- };
- 
- module_usb_driver(go7007_usb_driver);
-+MODULE_DESCRIPTION("WIS GO7007 USB support");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-media-usb-go7007-31ccaf9b3bab
+-- 
+2.34.1
 
 
