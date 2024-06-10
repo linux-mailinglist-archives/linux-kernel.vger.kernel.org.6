@@ -1,315 +1,160 @@
-Return-Path: <linux-kernel+bounces-209002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4291902BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46416902BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9481C21C8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12AA1F21D72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4C31509A2;
-	Mon, 10 Jun 2024 22:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FE6152175;
+	Mon, 10 Jun 2024 22:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvvlgX52"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qOsuBHUx"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F42152166
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C231514E4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718058409; cv=none; b=osqfmxjvGpxpGKzRy/yLP2wANCVLlCYEXgd67+kY9O24hJbJCeiieQD1I5d3nxgG97aWdh8pyM9+0AlHylCdUOYaEB17mahgZfbKGG325NEcNy251Ils94TOtR6NtUpM1qkNaHXpbqw4Fpus6ZxDpS8s/s9whLSb+op/6zWvOco=
+	t=1718058520; cv=none; b=bpkrq7kQSKB194IMfvV234fxcM0hatqOmpSw9ty4UYrCuSeJw3KEAuz74OyUu+scdj76DDkpznJWmAm4pwPZJhErphHgxEyqsvPlmA14X+bkM/pDi7gBzYltwrXV/Z89/y3nRvWM4Ab4mS6KU09hD9gFUl7ZrwW1RHblK/WHQ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718058409; c=relaxed/simple;
-	bh=Ttt2S1GLUXZEd0ttG8HJqv5c1GCofEnDliwLMN8ASi0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OJGctC4/KSQFP9mp6xOqSmM4MugzR1ZB9SeWh1VMxyCl01Zft8zV4FQE19jWYHwGajTA/K6JaY0pWVjkWAzwG1hLbb57WsXlr6MbhfIvuEpbMcf0NOCLmZOlFaGRjZ7veA2RcsaEScs2IarTlebr08Yc8ujwPdJMDRtWmPSn0Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvvlgX52; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718058405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9kL6Zc7WYoNhZHgv+dGyL7hASvgvBIXKuIjHy044BLg=;
-	b=DvvlgX529psJfOpowihSx7kDQfOzxZyehYaXbaTxjkArkSjxIXw3mnBm4JA6LPrGl5cFPO
-	fSFDHFzUQJ/XoJoYZe2BLxwH74RXjvm6vgKHOpc+kQeoQ/XdLmxZ/8cFFKfQe4ycY1w5Eg
-	FUS9YnuRARYo5PtqATBZxnocoYK3iBQ=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-410-5oNF3kogOvmmmom7Xz2VYA-1; Mon, 10 Jun 2024 18:26:44 -0400
-X-MC-Unique: 5oNF3kogOvmmmom7Xz2VYA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6efe58a1aeso149841766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:26:43 -0700 (PDT)
+	s=arc-20240116; t=1718058520; c=relaxed/simple;
+	bh=//h+SQzpQEpDtNpeBuStauUMjF/1FnjkWddWusmEJoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XDWm1DXfE3f7gOA7hnYxNleg8OTf1C3UnWxzfrhEZ5dbf4oueDVZFXu/goqWI9audldaQSir54+jTkOOD7FrcEmrOlxGDds46bkwYlby7ltpI2bPFjGOhM7UD63jm4zBOrgNwKdVTzL0AyvS8hGjYKAFeimp2sAER4JMytVORAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qOsuBHUx; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f61742a024so66495ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718058518; x=1718663318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CltNPHp24X0YdbNxXIq1nZmVRV43NqFIhiiPqMk86LI=;
+        b=qOsuBHUxVv7JdC0fC1XPGmTCR1Gr/Yb2Fmt1DMNtBp7B299EnwZ0ABmihyCpphO9Di
+         5gs5C71Jok9EIQb3+NZ4XXSit4ZHgvUgKeInWrr8BthF4wqhHzGWsC+oGH6YjQrWqO9J
+         yjNehOoyoSZ3FdX80UnKtZ4TGx1CFX33e4I+9UOPSTNofxFAYieRE6ihQYOChBriInAX
+         imNZECoYSUB/0d8U9WTu7Jaf/jXfiQ3pqzf7nuRdNh8YIhXvB37Ulf/+bP3abRRBVtBn
+         L2jx7uRYMycBsMX1IfCBpU0ETM58P3Kqitx2/vlDPMyfz/RxDavOp9+iDB4OnnstaFMo
+         /zSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718058403; x=1718663203;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9kL6Zc7WYoNhZHgv+dGyL7hASvgvBIXKuIjHy044BLg=;
-        b=EJ2wHmWE353YYwFBm1vXeLbl2GcDRyqevw4m+ClUD+j1mM2hC5bxyXWNdbWGFWul6W
-         AhfPl7mFGzhbxQZY8XVG/Caee2A7boRrrx/ZJEIdWJ/Ftnafl1ljH5n9XaLlwff5zwHX
-         M+pKo/EfSJzpGfzMj5X4rONAZ6nqToItks7ODTomjXQcHnI0teLk7INELkRYJS9Bf6vR
-         siCLCeSDrYLVIeApbFs8Tn2QISFx5gQnuyjtxsyLREgMFsJTjcKHsIeOL1he4WiGyJ1n
-         4nRtpGvlyEIzAsc08F4IaHAwssQv31e+ZxDhkhFGQrLM6+ry4ofbT8R047PksiPguIav
-         e0Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUnp04BzoRpcZ+IY1y/LGvo40GTSvx6L3p24zRk7OQIdibAkvcCmhgG8g0V6u5vZJ6WFXj22iM9+HEroR9BOGg9FFpc6/mPaRTmag+N
-X-Gm-Message-State: AOJu0YzMY593gvrLvk5uBSuGlaIR9EdAGYHUNNBLZceVHy2vPBRzOIrC
-	K1Q66jHGruLEwT2FSJjF335Qjg+tpzCf918y13qrw6qk6czdseZBKjp2gG2kZjj/ZeleXhHWaya
-	lSOzXWhqMrRveV42+xv/i5skASJqWXWDW33Pqf66Ao9bievrF+pix096qudopaA==
-X-Received: by 2002:a17:906:3285:b0:a68:2f99:a3da with SMTP id a640c23a62f3a-a6cd5612575mr653621066b.16.1718058402868;
-        Mon, 10 Jun 2024 15:26:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmXQHqvyBx+7NC1VAXwfuIUTxIM+AmkXBpGAsw7bOayrc/OkpNyFl+BFyJ5/1VTlcoxQcVcQ==
-X-Received: by 2002:a17:906:3285:b0:a68:2f99:a3da with SMTP id a640c23a62f3a-a6cd5612575mr653620566b.16.1718058402410;
-        Mon, 10 Jun 2024 15:26:42 -0700 (PDT)
-Received: from [192.168.10.3] ([151.62.196.71])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6f0e47b8f7sm341865766b.31.2024.06.10.15.26.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 15:26:41 -0700 (PDT)
-Message-ID: <de1b0bbc-b781-4372-88ad-81f26c9152c2@redhat.com>
-Date: Tue, 11 Jun 2024 00:26:40 +0200
+        d=1e100.net; s=20230601; t=1718058518; x=1718663318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CltNPHp24X0YdbNxXIq1nZmVRV43NqFIhiiPqMk86LI=;
+        b=lVsPVRH0l+Woygz02tyn32eWVvrAQF4Rnr3LeM5966PLVbdi3U5Q9iGA66d/tkyqQX
+         KZR5XhLEaZKp5Gv5H2QkEBbMxZZfPPYS+ZV/C/olJYKesxK8NJH21EFsim6rnMNDE3Ni
+         3ZH4nrf4kyw99/AiMz4pq062M+HUwUukXk2DSSM+NAPGSVzjUTIHq6sy9NdUxfiGq3Je
+         IUlKotZpICoHN3MzzXrDE0qKtRqkmm3YgJExOgb0VaIvh+dhNyCQ89wI97IaSXEHch5t
+         Mbh7/zcq3yRvW2XEJlY3lb9COFF0TMv0qkHI90FBP5H5BNU7B8y851hOps7QaNhrDk07
+         lEDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqilu+ECK7Te0Ch0/7zDFmohBxgHfez6EQDNzhq7WQVXpUjjA+X9/Ue8HwfXC9XmQhOEUWTtl9CrLfFY2gT7KegbeFFyYTx/OYcxH2
+X-Gm-Message-State: AOJu0YxKTlH+E8j4e7kX9MGMPp/SfdIofq8Dtem9eH3RhYPBI+m34OlU
+	MLtNIN8wuUk2eOfNOfhW/w9xaRckouC+dQJSDefZxTPWsJbVEspDM024aw564fmHzK+dlg6KKYf
+	9bXBKDVORtHNTCL/BztBRLedhCoxLYGdza7Nk
+X-Google-Smtp-Source: AGHT+IG5DxgTD1WhUH3nJ9EmVhkKot+5sCCwTEAuekdiSfrw+FdsqlljtFn9AaT3xI8iDYGmH91HNrjaFh3g24AwBas=
+X-Received: by 2002:a17:902:6acc:b0:1f6:7fce:5684 with SMTP id
+ d9443c01a7336-1f72f726f4amr440435ad.3.1718058517742; Mon, 10 Jun 2024
+ 15:28:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
- pages with user data
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
-References: <20240404185034.3184582-1-pbonzini@redhat.com>
- <20240404185034.3184582-10-pbonzini@redhat.com>
- <20240423235013.GO3596705@ls.amr.corp.intel.com>
- <ZimGulY6qyxt6ylO@google.com>
- <20240425011248.GP3596705@ls.amr.corp.intel.com>
- <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
- <Zip-JsAB5TIRDJVl@google.com>
- <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
- <ZivFbu0WI4qx8zre@google.com> <ZmORqYFhE73AdQB6@google.com>
- <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+In-Reply-To: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 11 Jun 2024 00:27:58 +0200
+Message-ID: <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/10/24 23:48, Paolo Bonzini wrote:
-> On Sat, Jun 8, 2024 at 1:03 AM Sean Christopherson <seanjc@google.com> wrote:
->> SNP folks and/or Paolo, what's the plan for this?  I don't see how what's sitting
->> in kvm/next can possibly be correct without conditioning population on the folio
->> being !uptodate.
-> 
-> I don't think I have time to look at it closely until Friday; but
-> thanks for reminding me.
+Hi!
 
-Ok, I'm officially confused.  I think I understand what you did in your
-suggested code.  Limiting it to the bare minimum (keeping the callback
-instead of CONFIG_HAVE_KVM_GMEM_INITIALIZE) it would be something
-like what I include at the end of the message.
+Thanks for helping with making Landlock more comprehensive!
 
-But the discussion upthread was about whether to do the check for
-RMP state in sev.c, or do it in common code using folio_mark_uptodate().
-I am not sure what you mean by "cannot possibly be correct", and
-whether it's referring to kvm_gmem_populate() in general or the
-callback in sev_gmem_post_populate().
+On Fri, Jun 7, 2024 at 1:44=E2=80=AFAM Tahera Fahimi <fahimitahera@gmail.co=
+m> wrote:
+> Abstract unix sockets are used for local inter-process communications
+> without on a filesystem. Currently a sandboxed process can connect to a
+> socket outside of the sandboxed environment, since landlock has no
+> restriction for connecting to a unix socket in the abstract namespace.
+> Access to such sockets for a sandboxed process should be scoped the same
+> way ptrace is limited.
 
-The change below looks like just an optimization to me, which
-suggests that I'm missing something glaring.
+This reminds me - from what I remember, Landlock also doesn't restrict
+access to filesystem-based unix sockets yet... I'm I'm right about
+that, we should probably at some point add code at some point to
+restrict that as part of the path-based filesystem access rules? (But
+to be clear, I'm not saying I expect you to do that as part of your
+patch, just commenting for context.)
 
-Paolo
+> Because of compatibility reasons and since landlock should be flexible,
+> we extend the user space interface by adding a new "scoped" field. This
+> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> specify that the ruleset will deny any connection from within the
+> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index d4206e53a9c81..a0417ef5b86eb 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -52,37 +52,39 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
-  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool prepare)
-  {
-  	struct folio *folio;
-+	int r;
-  
-  	/* TODO: Support huge pages. */
-  	folio = filemap_grab_folio(inode->i_mapping, index);
-  	if (IS_ERR(folio))
-  		return folio;
-  
--	/*
--	 * Use the up-to-date flag to track whether or not the memory has been
--	 * zeroed before being handed off to the guest.  There is no backing
--	 * storage for the memory, so the folio will remain up-to-date until
--	 * it's removed.
--	 *
--	 * TODO: Skip clearing pages when trusted firmware will do it when
--	 * assigning memory to the guest.
--	 */
--	if (!folio_test_uptodate(folio)) {
--		unsigned long nr_pages = folio_nr_pages(folio);
--		unsigned long i;
-+	if (prepare) {
-+		/*
-+		 * Use the up-to-date flag to track whether or not the memory has
-+		 * been handed off to the guest.  There is no backing storage for
-+		 * the memory, so the folio will remain up-to-date until it's
-+		 * removed.
-+		 *
-+		 * Take the occasion of the first prepare operation to clear it.
-+		 */
-+		if (!folio_test_uptodate(folio)) {
-+			unsigned long nr_pages = folio_nr_pages(folio);
-+			unsigned long i;
-  
--		for (i = 0; i < nr_pages; i++)
--			clear_highpage(folio_page(folio, i));
-+			for (i = 0; i < nr_pages; i++)
-+				clear_highpage(folio_page(folio, i));
-+		}
-+
-+		r = kvm_gmem_prepare_folio(inode, index, folio);
-+		if (r < 0)
-+			goto err_unlock_put;
-  
-  		folio_mark_uptodate(folio);
--	}
--
--	if (prepare) {
--		int r =	kvm_gmem_prepare_folio(inode, index, folio);
--		if (r < 0) {
--			folio_unlock(folio);
--			folio_put(folio);
--			return ERR_PTR(r);
-+	} else {
-+		if (folio_test_uptodate(folio)) {
-+			r = -EEXIST;
-+			goto err_unlock_put;
-  		}
-  	}
-  
-@@ -91,6 +93,11 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
-  	 * unevictable and there is no storage to write back to.
-  	 */
-  	return folio;
-+
-+err_unlock_put:
-+	folio_unlock(folio);
-+	folio_put(folio);
-+	return ERR_PTR(r);
-  }
-  
-  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-@@ -545,8 +552,15 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
-  	fput(file);
-  }
-  
-+/* If p_folio is NULL, the folio is cleared, prepared and marked up-to-date
-+ * before returning.
-+ *
-+ * If p_folio is not NULL, this is left to the caller, who must call
-+ * folio_mark_uptodate() once the page is ready for use by the guest.
-+ */
-  static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
--		       gfn_t gfn, kvm_pfn_t *pfn, int *max_order, bool prepare)
-+		       gfn_t gfn, kvm_pfn_t *pfn, int *max_order,
-+		       struct folio **p_folio)
-  {
-  	pgoff_t index = gfn - slot->base_gfn + slot->gmem.pgoff;
-  	struct kvm_gmem *gmem = file->private_data;
-@@ -565,7 +579,7 @@ static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
-  		return -EIO;
-  	}
-  
--	folio = kvm_gmem_get_folio(file_inode(file), index, prepare);
-+	folio = kvm_gmem_get_folio(file_inode(file), index, !p_folio);
-  	if (IS_ERR(folio))
-  		return PTR_ERR(folio);
-  
-@@ -577,6 +591,8 @@ static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
-  	page = folio_file_page(folio, index);
-  
-  	*pfn = page_to_pfn(page);
-+	if (p_folio)
-+		*p_folio = folio;
-  	if (max_order)
-  		*max_order = 0;
-  
-@@ -597,7 +613,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-  	if (!file)
-  		return -EFAULT;
-  
--	r = __kvm_gmem_get_pfn(file, slot, gfn, pfn, max_order, true);
-+	r = __kvm_gmem_get_pfn(file, slot, gfn, pfn, max_order, NULL);
-  	fput(file);
-  	return r;
-  }
-@@ -629,10 +645,11 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
-  
-  	npages = min_t(ulong, slot->npages - (start_gfn - slot->base_gfn), npages);
-  	for (i = 0; i < npages; i += (1 << max_order)) {
-+		struct folio *folio;
-  		gfn_t gfn = start_gfn + i;
-  		kvm_pfn_t pfn;
-  
--		ret = __kvm_gmem_get_pfn(file, slot, gfn, &pfn, &max_order, false);
-+		ret = __kvm_gmem_get_pfn(file, slot, gfn, &pfn, &max_order, &folio);
-  		if (ret)
-  			break;
-  
-@@ -642,8 +659,10 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
-  
-  		p = src ? src + i * PAGE_SIZE : NULL;
-  		ret = post_populate(kvm, gfn, pfn, p, max_order, opaque);
-+		if (!ret)
-+			folio_mark_uptodate(folio);
-  
--		put_page(pfn_to_page(pfn));
-+		folio_put(folio);
-  		if (ret)
-  			break;
-  	}
+You call the feature "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET", but I
+don't see anything in this code that actually restricts it to abstract
+unix sockets (as opposed to path-based ones and unnamed ones, see the
+"Three types of address are distinguished" paragraph of
+https://man7.org/linux/man-pages/man7/unix.7.html). If the feature is
+supposed to be limited to abstract unix sockets, I guess you'd maybe
+have to inspect the unix_sk(other)->addr, check that it's non-NULL,
+and then check that `unix_sk(other)->addr->name->sun_path[0] =3D=3D 0`,
+similar to what unix_seq_show() does? (unix_seq_show() shows abstract
+sockets with an "@".)
 
+Separately, I wonder if it would be useful to have another mode for
+forbidding access to abstract unix sockets entirely; or alternatively
+to change the semantics of LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET so
+that it also forbids access from outside the landlocked domain as was
+discussed elsewhere in the thread. If a landlocked process starts
+listening on something like "@/tmp/.X11-unix/X0", maybe X11 clients
+elsewhere on my system shouldn't be confused into connecting to that
+landlocked socket...
 
+[...]
+> +static bool sock_is_scoped(struct sock *const other)
+> +{
+> +       bool is_scoped =3D true;
+> +       const struct landlock_ruleset *dom_other;
+> +       const struct cred *cred_other;
+> +
+> +       const struct landlock_ruleset *const dom =3D
+> +               landlock_get_current_domain();
+> +       if (!dom)
+> +               return true;
+> +
+> +       lockdep_assert_held(&unix_sk(other)->lock);
+> +       /* the credentials will not change */
+> +       cred_other =3D get_cred(other->sk_peer_cred);
+> +       dom_other =3D landlock_cred(cred_other)->domain;
+> +       is_scoped =3D domain_scope_le(dom, dom_other);
+> +       put_cred(cred_other);
+
+You don't have to use get_cred()/put_cred() here; as the comment says,
+the credentials will not change, so we don't need to take another
+reference to them.
+
+> +       return is_scoped;
+> +}
 
