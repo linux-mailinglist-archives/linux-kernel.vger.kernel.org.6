@@ -1,166 +1,124 @@
-Return-Path: <linux-kernel+bounces-208400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7E9902488
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E378D90248E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92ACB1C20FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A1E1F23FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7E413213A;
-	Mon, 10 Jun 2024 14:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F36D13D8BB;
+	Mon, 10 Jun 2024 14:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ifX7rIUS"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NGa9YuF1"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA91114AD25;
-	Mon, 10 Jun 2024 14:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D805D13A89A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718030878; cv=none; b=NnrrgX/IE+Vl7KAiHhAnb+nRmTDpCcCxZmDq8jV4hoQN0u2uOImCp0Z1BTUQJ/XHKUDGuYqw2Wy5goAz9Tl3JMwMA6d6RR4/7tDBEejPlyHNLLYmFC0hL6ppM6bEZZXPj42RE+u3DB9w4tkxPTKp/kxQg1INhuPd1ouPiHe5E2o=
+	t=1718030901; cv=none; b=DsWweezHLpwix0wN+fg20o4bCpB1paRl9d60tdGwiPCn4ibESAfm7J8+LmR/2HiyqZZLH7PTJDuEeacu14erSquCzYalOKqWtg3YgKIXEZlRnFmUuJFiWDRgC5qyXtXU5X3NP7OFTEZj7lA5h5w01SaC0K7xhhoNedp4ctFKA3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718030878; c=relaxed/simple;
-	bh=TsLWppSPyTvO/wBPl+NGtsl/yO1/CzgHsa3MtV4F7no=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VTT13C04wfiRoR9aEtKNklLpY1BCD0YMjsLIvT3i+6OoZqn0tRH3mCajruQCOu3/fYWREBPS5TrcdcWunISQeup0wRWJifJwxuqYNHV/QLFGf2vCy70BoqSXXOMvCoUwmK9aU183oXnUO07xXa9dLlgo9NlBETpKyaHwgXRn6Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ifX7rIUS; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 870D7240006;
-	Mon, 10 Jun 2024 14:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718030868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vvn/MhvQ3J4B43BBQxlzVkw4aP0ekyeFTkzrVKHeCps=;
-	b=ifX7rIUS9OInjeonbpesN5x3CYcBcvGq4JhrOV974+mteff293TVyRTgIOqUm6AG1s0Mbj
-	TjwdqC1UaiC3opP40tDomlj0C6J9MmkpH5rBImgMfretXoOGdlAT5wJR7Z7qzNdweVvLe9
-	VtvA+wNzFPcSvDU/OA8EztOKB75vgxCBKDXj5UFbGR+gTMBKLnjUYKbMVhzViQCzm2OvnH
-	JSxAzSb8y1ClaPX+Fnbw7uTsNM8cMDAMue+q9kUNZPv+fjyY/j5Im8/l3tvx7JeFt2qCng
-	mslbvF2zDpq8VmdrbdxW+GwwdZM5SGkOjXkW9S9nuC854M/U2oSoqyU9gcbf8w==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To:  Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th?=
- =?utf-8?Q?=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org> ,
- linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Conor Dooley
- <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v2 0/3] Add support for the Mobileye EyeQ6H SoC
-In-Reply-To: <20240513-eyeq6h-v2-0-ae8c1974b52b@bootlin.com>
-References: <20240513-eyeq6h-v2-0-ae8c1974b52b@bootlin.com>
-Date: Mon, 10 Jun 2024 16:47:47 +0200
-Message-ID: <87zfrsetws.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1718030901; c=relaxed/simple;
+	bh=x5DrS7FQZMXT49cldFh+kXWFHLyDBEI8B/KA9evGjOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhjXSqc6HnzXcScelh2P1wxU0Y3Pe228Dkm3i3xuMIZthdbHMHHUYVRWawk+QrQT2fxnG4G6VEzfeB6ahL7Cez+Wp6B4rgPRTmzAKdSZHWBEUPgRHm9t1TJEcraBzQlCGBgKlHaeyjXCYnBw8RBulVZs6uh0S77TLet/tu4jMwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NGa9YuF1; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=x5Dr
+	S7FQZMXT49cldFh+kXWFHLyDBEI8B/KA9evGjOY=; b=NGa9YuF11u2hrn/bd/t+
+	Tm7OfHnd6oCpAjYC/WNxX1qknVGXQ6AZvZ24O5Y5xnfF7eyivlmvhHHAMvNyogj8
+	j9FgIAwfltcec/YLi/zMidFWLQ6jo5FNekS+A9vnMkiBIX9qB9vUK4Hp0M4xX/fB
+	wqldMmCbjIePedIZJ3+NaSV70n6z55mCNj7rudDkWwQREbfnhW35vDIScCTi+zW3
+	HKI7w4yBjqX3RCI6M1bKo448vMW1zjHJsuxYUIj56t+peyh5BAg2DdwtaGFv1x06
+	AbaAt7MCjrb+E2WeMlEuPHJ1UPNQldwn8dHZGiZeE3I+3/uZ9pndx/3wmcEFHn+I
+	iw==
+Received: (qmail 113496 invoked from network); 10 Jun 2024 16:48:12 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jun 2024 16:48:12 +0200
+X-UD-Smtp-Session: l3s3148p1@bZkDPYoaPJ1ehhrL
+Date: Mon, 10 Jun 2024 16:48:11 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
+Message-ID: <6ldatdtijc2jbzkasbzvze2m3vche5wmcogjfh2h2k4jsbtry4@oj7efn32ucoz>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+References: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rl6f7hqoje2ggj43"
+Content-Disposition: inline
+In-Reply-To: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
+
+
+--rl6f7hqoje2ggj43
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
 
-Hello Thomas,
+On Mon, Jun 10, 2024 at 07:17:18AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc=
+_spi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_m=
+mc_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/renesa=
+s_sdhi_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_co=
+re.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
+_simple.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
+_sd8787.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq=
+_emmc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_u=
+art.o
+>=20
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-> Hello,
->
-> Following the support of the EyeQ5 SoC, this series adds the initial
-> support for a newer SoC, the EyeQ6H.
->
-> The EyeQ6H (or "High") from Mobileye is still based on the MIPS I6500
-> architecture as the EyeQ5. The 2 clusters of this SoC contain 4 cores
-> each, which are capable of running 4 threads per core. Besides this,
-> it features multiple controllers such as the classic UART, high-speed
-> I2C, SPI, as well as CAN-FD, PCIe Gen4, Octal/Quad SPI Flash
-> interface, Gigabit Ethernet, MIPI CSI-2, MIPI DSI, and eMMC 5.1. It
-> also includes a Hardware Security Module, Functional Safety Hardware,
-> and video encoders, among other features.
->
-> For now, this series just adds initial support with UART and Pinctrl
-> support. Another current limitation pointed out in patch 3 is that
-> only one CPU is actually running. This limitation will be solved with
-> upcoming series.
->
-> The main change in this new version is the use of the new way to name
-> the clock nodes.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for TMIO and=
+ SDHI
 
-I sent this second version a month ago and the first version even before
-that, and I still haven't received any feedback from your side. Does it
-mean that you will merge it?
 
-If you think there are some changes to be made, please let me know now
-so I will have time to implement them.
+--rl6f7hqoje2ggj43
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Gregpry
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZnEicACgkQFA3kzBSg
+KbbOoBAAgJ9UCaAhB+6Ip3/eQ9lYimnwlKzdejrL6uWwiqmX6v9VR/O/9Q6phaz2
+4txU9LHS2K3f7rnQUGS6kuDZF5v2BagNg1HTdVXTGvKgIp7SJeC8BsaZVczlKB9Y
+JddntTCF60+teenVaVmb5CBOQyRFymJE/xNdRejYLJwtYoU4aaG1WbQiYE5nbiub
+OMigd5HMAg3hj076VF7ocCyBoJbLn18vSb3tOWHCze4AIJ1yQtIdbSfA9kUf8H75
+b+cKpHXNpZrg1ZnuO4VxS7uUQPT22rH4HS8mU4sQId0g+K3yJOey7/Q2rqdbKL0W
+cTaKDO/c5QQEXoUcqoSIUW5Z42Lc5vG/M8Cw7602jx5DCZYkOWq0Ii8y1YzP+J6Q
+c2XaVUzfzZDbi/9cIOw4z2SZu1/Og/C9ZbC5pejiw9OXqAnk866h4cHqB0f4kSZW
+ZxLICmsQycLU2guIPCEsCkyehVGe4YOASBTap302FWhb8NWyMzaW6iYeD+jFvoLF
+/G92HIBeZqzh4b6iCk8xutpc3AbORw/YsaTmvbU9nbm2RFGlxuYnB1RKzCqdywCM
+P0o9ACagy9M4wi/mb2eTLF3flGY/EAQjd41y5/iRT+MpgOnIZqMAAf3cgxXUMfdq
+wbMbOWqjAiUxGts7XGD26FYScY+JTKn5iow3rzPMWsruJu/Rgdw=
+=/mFQ
+-----END PGP SIGNATURE-----
 
->
-> Regards,
->
-> Gregory
->
-> To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-> To: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> Cc: linux-mips@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> cc: Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-> CC: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-> cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> ---
-> Changes in v2:
->
-> - Renamed clock node names based on
->   https://lore.kernel.org/all/20240430180415.657067-1-robh@kernel.org/>
-> - Use "eyeq6h" instead of "eyeq6" for the compatible string
-> - Move compatible string as the first property
-> - Link to v1: https://lore.kernel.org/r/20240506-eyeq6h-v1-0-f29b5269cc43=
-@bootlin.com
->
-> ---
-> Gregory CLEMENT (3):
->       dt-bindings: mips: Add bindings for a new Mobileye SoC EyeQ6H
->       MIPS: mobileye: Add EyeQ6H device tree
->       MIPS: mobileye: Add EyeQ6H support
->
->  .../devicetree/bindings/mips/mobileye.yaml         |   5 +
->  arch/mips/Kbuild.platforms                         |   2 +-
->  arch/mips/Kconfig                                  |   7 +-
->  arch/mips/boot/dts/Makefile                        |   2 +-
->  arch/mips/boot/dts/mobileye/Makefile               |   1 +
->  arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts        |  22 ++++
->  .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 ++++++++++
->  arch/mips/boot/dts/mobileye/eyeq6h-pins.dtsi       |  88 ++++++++++++++++
->  arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  98 +++++++++++++++=
-+++
->  arch/mips/configs/eyeq5_defconfig                  |   1 +
->  arch/mips/configs/eyeq6_defconfig                  | 111 +++++++++++++++=
-++++++
->  arch/mips/mobileye/Kconfig                         |  26 +++++
->  arch/mips/mobileye/Platform                        |   1 +
->  13 files changed, 411 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 07e6a6d7f1d9fa4685003a195032698ba99577bb
-> change-id: 20240506-eyeq6h-f4c5a95b0909
->
-> Best regards,
-> --=20
-> Gregory CLEMENT <gregory.clement@bootlin.com>
+--rl6f7hqoje2ggj43--
 
