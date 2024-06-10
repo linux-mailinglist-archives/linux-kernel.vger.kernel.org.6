@@ -1,118 +1,191 @@
-Return-Path: <linux-kernel+bounces-208119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9479B9020FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:59:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA609020E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A82F1F21956
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:59:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCE6B241B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F77782871;
-	Mon, 10 Jun 2024 11:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z2gvYhOR"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42B77E78E;
-	Mon, 10 Jun 2024 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CB17E57F;
+	Mon, 10 Jun 2024 11:55:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35DB7F7F5;
+	Mon, 10 Jun 2024 11:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020596; cv=none; b=lAwH5Y2C7tusT3JoiZcAfFaTtiGhXDK6JgZ39oS6gvwljOlm4G0QS0yfdfVxbUj969637AaDOICkeD8+pCVzZe8rRtBPCDOUxE1g7OTGXWd88aAaqsHaN99sKqKeXzzpGElbl9bHAZPHcAmFh+i9S1P8SVcc/Y/pNC31RjcnbRo=
+	t=1718020516; cv=none; b=MZW/LyMIpt5GrBIqcBM/z8MIhNjxSgVj27Ezhw/kT9lZvlPeQxiAxGYzAg4zpW8o32kfTgdQRFRCQiUoOg716BKPuSioVVyh4/duAWADxQOBWkU5tm2JLMgRBt4bpZOSC5QiFgmJ+AZUBB2fEfPd7i0KYWKDb5W8T3kbBRoUWZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020596; c=relaxed/simple;
-	bh=aIZpj99P0sU05RD8b9KavtNB/mKvvZDjucVlsvQeQ18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rmEK9jHFukGbJngiLFskrfyQj/+UXJkGPALtLJToHf5q32yw4Lug3qXT84anUCg8uGs4Av24lEYXXExevHfRKRVNSXnEiRnKlEfsUVwYy6py/BfNn6YUwLXK4u7muf/4jVKt1DroxGYjlK5fyyJ+KYr7v537n1DCQ0JJgNCI3WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Z2gvYhOR; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A8Xick019005;
-	Mon, 10 Jun 2024 13:56:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ljxA0CMixUpfWg1txgwTXMZ7NWYzNR9MGl6rj1rR4Us=; b=Z2gvYhORT3qNBZUJ
-	4aIzn/P4fL5XmmKy0Zc2CWu0f3Yev282KotP0hkcZhn+84tHa4l9qWcoav4oQTef
-	oAq2sFzNQ+X1LoTBJsqRK2AjojTRJtr/ssRFjsJTIQiZQcOxdEPzb1+J2KgWscdC
-	/n+k86q6vCdP8A9VmWJNAJALKk90xEGiAFMZ20nnGn4oU6u57FFQqJ45Id6DYh1C
-	zMkUqBzt/nxxp4/Gi0QW7cRAduIIZmgSDiU5w9Qi+j8QaDUrWDRKoSTGKwsMAaxl
-	fDi8WE/NMTHoQ1cxvGfiJYBoniJSa+sD/UGWD47B+9oWPzg8/j+k51XkrUmH1AUf
-	m0SG0A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yn0v14m1r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 13:56:02 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A670B4002D;
-	Mon, 10 Jun 2024 13:55:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9E0F921685E;
-	Mon, 10 Jun 2024 13:54:39 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
- 2024 13:54:38 +0200
-Message-ID: <e4614975-a7a8-4bfa-a1e2-bf9c31547be9@foss.st.com>
-Date: Mon, 10 Jun 2024 13:54:37 +0200
+	s=arc-20240116; t=1718020516; c=relaxed/simple;
+	bh=lHU2JJLgCKo26fwvGAKkI/5vfcLyhRaN2Ta0zIemFAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=peFYEI6abi5dFe8ytIMj0UfEDVVsfNZvywAvbiPGlwv6up9Zxjesvxh8qeT+DQAOZpDZ29/sMowxKU44ZtqlPRNPVshcP1wDvVcemJ4RrTYzRlOEuPLCOWK7ruLJmJu8WHJr6QYKc9Zi2PYp6U5tZpPE59s1k6xbDLzDiBRs8do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3BD112FC;
+	Mon, 10 Jun 2024 04:55:38 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8F903F58B;
+	Mon, 10 Jun 2024 04:55:10 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:55:08 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 9/9] perf: arm_pmuv3: Add support for Armv9.4 PMU
+ instruction counter
+Message-ID: <ZmbpnHU3YM0q6YeA@J2N7QTR9R3>
+References: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
+ <20240607-arm-pmu-3-9-icntr-v1-9-c7bd2dceff3b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/12] net: stmmac: dwmac-stm32: Separate out external
- clock rate validation
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-CC: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
- <20240607095754.265105-3-christophe.roullier@foss.st.com>
- <20240610114607.GA3818685@maili.marvell.com>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <20240610114607.GA3818685@maili.marvell.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-9-c7bd2dceff3b@kernel.org>
 
-Hi Ratheesh,
+On Fri, Jun 07, 2024 at 02:31:34PM -0600, Rob Herring (Arm) wrote:
+> Armv9.4/8.9 PMU adds optional support for a fixed instruction counter
+> similar to the fixed cycle counter. Support for the feature is indicated
+> in the ID_AA64DFR1_EL1 register PMICNTR field. The counter is not
+> accessible in AArch32.
+> 
+> Existing userspace using direct counter access won't know how to handle
+> the fixed instruction counter, so we have to avoid using the counter
+> when user access is requested.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  arch/arm/include/asm/arm_pmuv3.h   | 21 +++++++++++++++++++++
+>  arch/arm64/include/asm/arm_pmuv3.h | 29 +++++++++++++++++++++++++++++
+>  arch/arm64/kvm/pmu.c               |  8 ++++++--
+>  arch/arm64/tools/sysreg            | 25 +++++++++++++++++++++++++
+>  drivers/perf/arm_pmuv3.c           | 28 ++++++++++++++++++++++++++--
+>  include/linux/perf/arm_pmu.h       |  8 ++++++--
+>  include/linux/perf/arm_pmuv3.h     |  4 +++-
+>  7 files changed, 116 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/arm_pmuv3.h b/arch/arm/include/asm/arm_pmuv3.h
+> index ac2cf37b57e3..b836537ddfbf 100644
+> --- a/arch/arm/include/asm/arm_pmuv3.h
+> +++ b/arch/arm/include/asm/arm_pmuv3.h
+> @@ -10,6 +10,7 @@
+>  #include <asm/cputype.h>
+>  
+>  #define ARMV8_PMU_CYCLE_IDX		31
+> +#define ARMV8_PMU_INSTR_IDX		32 /* Not accessible from AArch32 */
 
-On 6/10/24 13:46, Ratheesh Kannoth wrote:
-> On 2024-06-07 at 15:27:44, Christophe Roullier (christophe.roullier@foss.st.com) wrote:
->> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
->> +{
->> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
->> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
-> nit: reverse xmas tree, split definitions and assignment.
+As with ARMV8_PMU_CYCLE_IDX, I reckon this should live in
+<linux/perf/arm_pmuv3.h> (with the comment above) so that we don't need
+separate definitions for arm & arm64.
 
-It is not possible ;-)
+[...]
 
-second declaration need first one.
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index 231817a379b5..8ab6e09871de 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -2029,6 +2029,31 @@ Sysreg	FAR_EL1	3	0	6	0	0
+>  Field	63:0	ADDR
+>  EndSysreg
+>  
+> +Sysreg	PMICNTR_EL0	3	3	9	4	0
+> +Field	63:0	ICNT
+> +EndSysreg
 
+LGTM per ARM DDI 0487K.a, section D23.5.15, pages 8989 to 8992.
+
+> +
+> +Sysreg	PMICFILTR_EL0	3	3	9	6	0
+> +Res0	63:59
+> +Field	58	SYNC
+> +Field	57:56	VS
+
+The 'VS' field doesn't seem to be in the ARM ARM (ARM DDI 0487K.a); is
+that defined in a supplement?
+
+> +Res0	55:32
+> +Field	31	P
+> +Field	30	U
+> +Field	29	NSK
+> +Field	28	NSU
+> +Field	27	NSH
+> +Field	26	M
+> +Res0	25
+> +Field	24	SH
+> +Field	23	T
+> +Field	22	RLK
+> +Field	21	RLU
+> +Field	20	RLH
+> +Res0	19:16
+> +Field	15:0	evtCount
+> +EndSysreg
+
+Aside from 'VS', this LGTM per ARM DDI 0487K.a, section D23.5.14, pages
+8981 to 8988.
+
+One important thing to note is that this doesn't have the threshold
+controls (TC, TE, TH); so if threshold events make sense for instruction
+events, we cannot place those in the dedicated isntruction counter.
+
+[...]
+
+> @@ -931,6 +939,18 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  				return -EAGAIN;
+>  	}
+>  
+> +	/*
+> +	 * Always prefer to place a instruction counter into the instruction counter,
+> +	 * but don't expose the instruction counter to userspace access as userspace
+> +	 * may not know how to handle it.
+> +	 */
+> +	if (test_bit(ARMV8_PMU_INSTR_IDX, cpu_pmu->cntr_mask) &&
+> +	    (evtype == ARMV8_PMUV3_PERFCTR_INST_RETIRED) &&
+> +	    !armv8pmu_event_want_user_access(event)) {
+> +		if (!test_and_set_bit(ARMV8_PMU_INSTR_IDX, cpuc->used_mask))
+> +			return ARMV8_PMU_INSTR_IDX;
+> +	}
+
+
+I reckon this'd be a bit clearer if we check the evtype first, as with
+cycles, e.g.
+
+	/*
+	 * Always prefer to place a instruction counter into the instruction counter,
+	 * but don't expose the instruction counter to userspace access as userspace
+	 * may not know how to handle it.
+	 */
+	if (evtype == ARMV8_PMUV3_PERFCTR_INST_RETIRED) {
+		if (test_bit(ARMV8_PMU_INSTR_IDX, cpu_pmu->cntr_mask) &&
+		    !armv8pmu_event_want_user_access(event) &&
+		    !test_and_set_bit(ARMV8_PMU_INSTR_IDX, cpuc->used_mask))
+			return ARMV8_PMU_INSTR_IDX;
+	}
+
+As above, we might need to check for threshold controls, but I'll need
+to go page that in.
+
+Mark.
 
