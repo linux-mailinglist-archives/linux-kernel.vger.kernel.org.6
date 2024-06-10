@@ -1,369 +1,440 @@
-Return-Path: <linux-kernel+bounces-208151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47384902184
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9542F90218A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA021F214A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104C41F2205E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7D97FBBD;
-	Mon, 10 Jun 2024 12:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642067F7C2;
+	Mon, 10 Jun 2024 12:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C3N8isd5"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S6Nm3ea2"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC2A3C30;
-	Mon, 10 Jun 2024 12:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AF577113
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718022086; cv=none; b=a37MefOJzyFH+6pKjPBrr2dSaO4NjPnRnQ0Y4KqWkdOegqvNUy7T5G81grEfKkJPMwVJ/LYpddGPKw9zPFlhaQIYZFDA6YHtNXShGfswkvdQzS8kzyY2DSUL92IjHY167w3imqd14qaD9b1z1LY+dUvVNS3B5zJqoby+WJAgDlk=
+	t=1718022191; cv=none; b=f715PPkXcK7BTSUo0QjLujMGkY+KI9qW84mq5gnX45xW/GPv1tbIoj4jgpSGkgPjNmDmWAiyioYcmryWTJaRFzvWv7aRgoGzwTeDtbHdaRkPcnimhKrGGEsX0ss//yV933BCK9F47gt4FU6FrDbuPtKTL+Vf7BbgOJPQrKMj8YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718022086; c=relaxed/simple;
-	bh=UeYcawfFgU82qeIVHYvgY7T+CqZAGA2E6VBgb0Y7Yuc=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=UeB4nxWDcrp0hMmbHKh6KbgB/pP5E2YPuSnUSb4QHcESyyJzFdQ5xEZ5U4rpHfHwSwKmUxt1T5pLJMWo4eEau4lEUekFU9MlZU4lOcPNiwSgl3AY7HqAYQpgqQ9dwJrXaGX9bb5Hoebol+y604DZL3rl1/GhqA4FlqoPnLcLzdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C3N8isd5; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AARpbM025838;
-	Mon, 10 Jun 2024 12:21:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:subject:from:in-reply-to:date:cc:message-id
-	:references:to:content-transfer-encoding:mime-version; s=pp1;
-	 bh=1FPNSqkZ3jNtmraPgUbOXw7UJahn6qcwJXgKR4TOWOM=; b=C3N8isd52HjG
-	ovPcynQk5jHHOSXmG/ohunSkTtyKMDCTUth2gNxIUllJTksWngkga9F2HkxGbY5J
-	a3SARdLzCH4I2oop4TbMHmQzsBPsUeM40uotsEjTfxrcraSWEeNliL4z4n8E+BhN
-	ww4pJPFpIvcynWhaUj4Pc6nv/nvmWTYmBVfEOC6S11JOszVOcBvoxCcwvRUcGBHb
-	+cObyww0nahykqrREtVQW9QXFGHztK6HZ7cE1H65HUNGB/GtF27HvsNb1Zq5uLNT
-	5Rvd6ZTF7jHF0XIY2C0Mon3qA8Jd5eWjOcD/U0zOQ4mmyii3mjAwDh96h4OoBwQ5
-	E+FjoipBuQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ynyr7r932-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 12:21:01 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45ACL13Q001156;
-	Mon, 10 Jun 2024 12:21:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ynyr7r92y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 12:21:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45AAlesC003881;
-	Mon, 10 Jun 2024 12:21:00 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn2mpfesu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 12:21:00 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45ACKsiX32702856
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Jun 2024 12:20:56 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 72ACC2004D;
-	Mon, 10 Jun 2024 12:20:54 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9F5F20043;
-	Mon, 10 Jun 2024 12:20:51 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.90.99])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 10 Jun 2024 12:20:51 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH V3 11/14] tools/perf: Add support to use libcapstone in
- powerpc
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <c383b404-727c-4564-a66e-0906348891b3@intel.com>
-Date: Mon, 10 Jun 2024 17:50:39 +0530
-Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>, disgoel@linux.vnet.ibm.com
-Message-Id: <81ED04E0-23B5-44AE-B84D-5766346F1D32@linux.vnet.ibm.com>
-References: <20240601060941.13692-1-atrajeev@linux.vnet.ibm.com>
- <20240601060941.13692-12-atrajeev@linux.vnet.ibm.com>
- <CAP-5=fXGPHMF+5cUu42ns0=qm9QCPg0LNUveLLnjdGHPCnVg3w@mail.gmail.com>
- <c383b404-727c-4564-a66e-0906348891b3@intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jGhmPXuBwGKYyj4Pj4WkyqWj4PrkJcqL
-X-Proofpoint-GUID: 1Kdu1aH1j3OFuOv9nsX_mu8SamwhxEnk
+	s=arc-20240116; t=1718022191; c=relaxed/simple;
+	bh=7d9i+58e6dBb36/sG8fYBpYkG7bSXUpkicJTqR4VD+c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=q0zQFH3h90uRk9mbXSX6/vsVvaN2zM1RXXYC4/TbU3xypJAR4ob3Eek2JxAUzP6R7er5f7D2G7nnHH+a2nO+A3ihhtRkqcgRN7EnKFcJBkI+DReRuQ93TcM5vj1mVqowOYNDbt6UeXq/uKg2OK96cO3WCPK+IrEGvECDKSpruNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=S6Nm3ea2; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240610122306euoutp01c47954fdffccf9c9f6c4fad44d333d1f~XpBN5sRNW3033030330euoutp01P
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:23:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240610122306euoutp01c47954fdffccf9c9f6c4fad44d333d1f~XpBN5sRNW3033030330euoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718022186;
+	bh=CnCZsV5T/yRx7EJUWazsH/UdvMjfCnEdsLuy6KtMCQY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=S6Nm3ea21u/g5O3Fwfu5cKfKtqygnuiR3ZiAIPCoN1YBr1+mPzfM7MyUAY6HCiQKW
+	 INQ8w1sHfSyZO6bGUtoUJuSr0UI7V6uG5AtJxAa7ZT5/PFEbSwK59JKKUXzrIb4BCh
+	 3jQwuJpaJj8/6dr9yfDSaTru0ehvNTi1A9CHzKv4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240610122305eucas1p1eec65f06d63065d0fd54cac8346403ec~XpBNf9_se1780817808eucas1p1S;
+	Mon, 10 Jun 2024 12:23:05 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id B3.3F.09624.920F6666; Mon, 10
+	Jun 2024 13:23:05 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7~XpBM9vXo02945629456eucas1p2U;
+	Mon, 10 Jun 2024 12:23:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240610122305eusmtrp1b91027164b551ccff02e20fdfeeacd0d~XpBM86_6q0452304523eusmtrp1T;
+	Mon, 10 Jun 2024 12:23:05 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-07-6666f029f713
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 63.7F.09010.920F6666; Mon, 10
+	Jun 2024 13:23:05 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240610122305eusmtip157b12ffc46f2f23b4bc088546aec8df2~XpBMtRb1P0220802208eusmtip1_;
+	Mon, 10 Jun 2024 12:23:05 +0000 (GMT)
+Received: from CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Mon, 10 Jun 2024 13:23:04 +0100
+Received: from CAMSVWEXC01.scsc.local ([::1]) by CAMSVWEXC01.scsc.local
+	([fe80::7d73:5123:34e0:4f73%13]) with mapi id 15.00.1497.012; Mon, 10 Jun
+	2024 13:23:04 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"hughd@google.com" <hughd@google.com>, "willy@infradead.org"
+	<willy@infradead.org>, "david@redhat.com" <david@redhat.com>,
+	"wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+	"ying.huang@intel.com" <ying.huang@intel.com>, "21cnbao@gmail.com"
+	<21cnbao@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
+	<ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>, Pankaj Raghav
+	<p.raghav@samsung.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/6] mm: shmem: add multi-size THP sysfs interface
+ for anonymous shmem
+Thread-Topic: [PATCH v4 3/6] mm: shmem: add multi-size THP sysfs interface
+	for anonymous shmem
+Thread-Index: AQHatmiqHXo76DMAnkOAbuMz3VqPKLHA5EyA
+Date: Mon, 10 Jun 2024 12:23:03 +0000
+Message-ID: <denilwdvfb772l432ezexwmy46rzv7disxhryf2ktqmtfk5khe@ghq3sohl5z3w>
+In-Reply-To: <119966ae28bf2e2d362ae3d369ac1a1cd27ba866.1717495894.git.baolin.wang@linux.alibaba.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9AB363482B0A1E419D5905675E523BEF@scsc.local>
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100090
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLKsWRmVeSWpSXmKPExsWy7djPc7qaH9LSDH6uMLX4fFfIYs76NWwW
+	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaLDixmNGi8fN9RovfP4ASJ2dN
+	ZrGYffQeuwOfx5p5axg9ds66y+6xYFOpR8uRt6wem1doeSze85LJY9OnSeweJ2b8ZvHY+dDS
+	o7f5HZvH+31X2Tw+b5IL4InisklJzcksSy3St0vgynj+7SxzwdfgimdvNBsYG127GDk5JARM
+	JDYdfsXWxcjFISSwglFi9t0OZgjnC6PE5DPLWCGcz4wSk67uZoJpObDxJjtEYjmjxNKL+xhB
+	EmBVV9p8IRJnGCX27DnKCOGsZJTY2rCABaSKTUBTYt/JTUDtHBwiAvoSvXPBGpgFprNKLL7c
+	wwZSIywQL9F9cRMriC0ikCDR1baaDaLeSGJPjz5ImEVAVeLD40Z2EJtXwFdi2uzFYOWcAikS
+	H1tOgq1iFJCVeLTyF1gNs4C4xK0n86E+EJRYNHsPM4QtJvFv10M2CFtH4uz1J4wQtoHE1qX7
+	WCBsRYmOYzfZIOboSCzY/QnKtpTY9OU3E4StLbFs4WtmiHsEJU7OfMIC8peEwFYuiYdNXVCL
+	XSR6+n+yQ9jCEq+Ob2GfwKgzC8l9s5DsmIVkxywkO2Yh2bGAkXUVo3hqaXFuemqxYV5quV5x
+	Ym5xaV66XnJ+7iZGYIo8/e/4px2Mc1991DvEyMTBeIhRgoNZSYRXKCM5TYg3JbGyKrUoP76o
+	NCe1+BCjNAeLkjivaop8qpBAemJJanZqakFqEUyWiYNTqoEpZmOndcGR895qZx1kkrY99N50
+	8qrYw/likcumMqWKeqycm+bPYPVaJE3T6PM9wZbt5g53D0h2PjqssaDK9MuUS7IT3bY1HFA+
+	aLlNQ8WTy+Je1flNsjG+v7rPCYi2cF6xk1w8f0I8R4lA52sNOa/E/0+jBX4sZmmc/dCrOMt2
+	xiz7vXePaEvKc0xpOd08Uc2tq9+/y8bNRGD+d3tnOeFJK+StjyVP993Qumajk07UFg/Gec3P
+	Dx+5FZb2MOnCn3LF3KvNn1ZdeJC6klvm72uDB2bXixQ7k+x29pjI7mtcoS1uIpMcynH3gvHc
+	1K0zpp7a4Nb4WHZeDDszz/nUcMfbs29c/myVzjZ75QFNXi0lluKMREMt5qLiRAD6apE/AAQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsVy+t/xu7qaH9LSDPbcFrD4fFfIYs76NWwW
+	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaLDixmNGi8fN9RovfP4ASJ2dN
+	ZrGYffQeuwOfx5p5axg9ds66y+6xYFOpR8uRt6wem1doeSze85LJY9OnSeweJ2b8ZvHY+dDS
+	o7f5HZvH+31X2Tw+b5IL4InSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
+	s0lJzcksSy3St0vQy3j+7SxzwdfgimdvNBsYG127GDk5JARMJA5svMnexcjFISSwlFHizoKl
+	zBAJGYmNX66yQtjCEn+udbFBFH1klDh07C1UxxlGiRmXdkJlVjJKHNk5iQWkhU1AU2LfyU1A
+	VRwcIgL6Er1zfUFqmAWms0osvtzDBlIjLBAvcfr3OrB1IgIJEjNvXGKBqDeS2NOjDxJmEVCV
+	+PC4kR3E5hXwlZg2ezErxK5ZjBLzrkCcxymQIvGx5STYXkYBWYlHK3+BNTALiEvcejKfCeIF
+	AYkle85DvSYq8fLxP6jXdCTOXn/CCGEbSGxduo8FwlaU6Dh2kw1ijo7Egt2foGxLiU1ffjNB
+	2NoSyxa+ZoY4TlDi5MwnLBMYZWYhWT0LSfssJO2zkLTPQtK+gJF1FaNIamlxbnpusZFecWJu
+	cWleul5yfu4mRmAC3Hbs55YdjCtffdQ7xMjEwXiIUYKDWUmEVygjOU2INyWxsiq1KD++qDQn
+	tfgQoykw8CYyS4km5wNTcF5JvKGZgamhiZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8T
+	B6dUA1Ooz97fp3Qr2td6RkR//SfFdaTVS+BdWclat8IVc4NE903knhR5ybZZtSbFlXX2tVt3
+	bG79LGW/qjlbOnHNjOeFcZerp8pyTP8+eb3ZzSNimavDlS2zsicabk79Uijec71QtFjrxew3
+	Uw9cvPnZ7NbxC8Z3BXNUE5UlTdwap293NP0c0TXdgt9YnLXg0Iklzz0+xdozMB+f8ezv9Jaj
+	b2f+MkqTuHnW7BtbP2e/+Qx+vdaXJVs3dT3L+8nxbs3sa18+T8uOsP/grMQZ/vlV3dFixXb3
+	E28DJswPjtE9nauSUhTCGvrqp9nBP2p/r259wvX2wbSFLwSZpi5oX3/2gdPafw0uK3f/nfTe
+	gNvy+tI8JZbijERDLeai4kQA3GmlnwkEAAA=
+X-CMS-MailID: 20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7
+X-Msg-Generator: CA
+X-RootMTR: 20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7
+References: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
+	<119966ae28bf2e2d362ae3d369ac1a1cd27ba866.1717495894.git.baolin.wang@linux.alibaba.com>
+	<CGME20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7@eucas1p2.samsung.com>
 
-
-
-> On 3 Jun 2024, at 10:28=E2=80=AFPM, Adrian Hunter <adrian.hunter@intel.co=
-m> wrote:
+Hi Baolin,
+On Tue, Jun 04, 2024 at 06:17:47PM +0800, Baolin Wang wrote:
+> To support the use of mTHP with anonymous shmem, add a new sysfs interfac=
+e
+> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/=
+'
+> directory for each mTHP to control whether shmem is enabled for that mTHP=
+,
+> with a value similar to the top level 'shmem_enabled', which can be set t=
+o:
+> "always", "inherit (to inherit the top level setting)", "within_size", "a=
+dvise",
+> "never". An 'inherit' option is added to ensure compatibility with these
+> global settings, and the options 'force' and 'deny' are dropped, which ar=
+e
+> rather testing artifacts from the old ages.
 >=20
-> On 3/06/24 19:30, Ian Rogers wrote:
->> On Fri, May 31, 2024 at 11:10=E2=80=AFPM Athira Rajeev
->> <atrajeev@linux.vnet.ibm.com> wrote:
->>>=20
->>> Now perf uses the capstone library to disassemble the instructions in
->>> x86. capstone is used (if available) for perf annotate to speed up.
->>> Currently it only supports x86 architecture. Patch includes changes to
->>> enable this in powerpc. For now, only for data type sort keys, this
->>> method is used and only binary code (raw instruction) is read. This is
->>> because powerpc approach to understand instructions and reg fields uses
->>> raw instruction. The "cs_disasm" is currently not enabled. While
->>> attempting to do cs_disasm, observation is that some of the instructions
->>> were not identified (ex: extswsli, maddld) and it had to fallback to use
->>> objdump. Hence enabling "cs_disasm" is added in comment section as a
->>> TODO for powerpc.
->>>=20
->>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>> ---
->>> tools/perf/util/disasm.c | 148 ++++++++++++++++++++++++++++++++++++++-
->>> 1 file changed, 146 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
->>> index d8b357055302..915508d2e197 100644
->>> --- a/tools/perf/util/disasm.c
->>> +++ b/tools/perf/util/disasm.c
->>> @@ -1540,12 +1540,18 @@ static int open_capstone_handle(struct annotate=
-_args *args, bool is_64bit,
->>> {
->>>        struct annotation_options *opt =3D args->options;
->>>        cs_mode mode =3D is_64bit ? CS_MODE_64 : CS_MODE_32;
->>> +       int ret;
->>>=20
->>>        /* TODO: support more architectures */
->>> -       if (!arch__is(args->arch, "x86"))
->>> +       if ((!arch__is(args->arch, "x86")) && (!arch__is(args->arch, "p=
-owerpc")))
->>>                return -1;
->>>=20
->>> -       if (cs_open(CS_ARCH_X86, mode, handle) !=3D CS_ERR_OK)
->>> +       if (arch__is(args->arch, "x86"))
->>> +               ret =3D cs_open(CS_ARCH_X86, mode, handle);
->>> +       else
->>> +               ret =3D cs_open(CS_ARCH_PPC, mode, handle);
->>> +
->>> +       if (ret !=3D CS_ERR_OK)
->>>                return -1;
->>=20
->> There looks to be a pretty/more robust capstone_init function in
->> print_insn.c, should we factor this code out and recycle:
->> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git=
-/tree/tools/perf/util/print_insn.c?h=3Dperf-tools-next#n40
+> By default, PMD-sized hugepages have enabled=3D"inherit" and all other hu=
+gepage
+> sizes have enabled=3D"never" for '/sys/kernel/mm/transparent_hugepage/hug=
+epages-xxkB/shmem_enabled'.
 >=20
-> On a slightly related note, there is a compile error
-> been around for a while in util/disasm.c on Ubuntu 22.04
+> In addition, if top level value is 'force', then only PMD-sized hugepages
+> have enabled=3D"inherit", otherwise configuration will be failed and vice=
+ versa.
+> That means now we will avoid using non-PMD sized THP to override the glob=
+al
+> huge allocation.
 >=20
-> In file included from /usr/include/capstone/capstone.h:279,
->                 from util/disasm.c:1354:
-> /usr/include/capstone/bpf.h:94:14: error: =E2=80=98bpf_insn=E2=80=99 defi=
-ned as wrong
-> kind of tag
->   94 | typedef enum bpf_insn {
->      |              ^~~~~~~~
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>  Documentation/admin-guide/mm/transhuge.rst | 23 ++++++
+>  include/linux/huge_mm.h                    | 10 +++
+>  mm/huge_memory.c                           | 11 +--
+>  mm/shmem.c                                 | 96 ++++++++++++++++++++++
+>  4 files changed, 132 insertions(+), 8 deletions(-)
 >=20
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index d414d3f5592a..b76d15e408b3 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -332,6 +332,29 @@ deny
+>  force
+>      Force the huge option on for all - very useful for testing;
+> =20
+> +Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to=
+ control
+> +mTHP allocation: '/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB=
+/shmem_enabled',
+> +and its value for each mTHP is essentially consistent with the global se=
+tting.
+> +An 'inherit' option is added to ensure compatibility with these global s=
+ettings.
+> +Conversely, the options 'force' and 'deny' are dropped, which are rather=
+ testing
+> +artifacts from the old ages.
+> +always
+> +    Attempt to allocate <size> huge pages every time we need a new page;
+> +
+> +inherit
+> +    Inherit the top-level "shmem_enabled" value. By default, PMD-sized h=
+ugepages
+> +    have enabled=3D"inherit" and all other hugepage sizes have enabled=
+=3D"never";
+> +
+> +never
+> +    Do not allocate <size> huge pages;
+> +
+> +within_size
+> +    Only allocate <size> huge page if it will be fully within i_size.
+> +    Also respect fadvise()/madvise() hints;
+> +
+> +advise
+> +    Only allocate <size> huge pages if requested with fadvise()/madvise(=
+);
+> +
+>  Need of application restart
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> =20
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 020e2344eb86..fac21548c5de 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -6,6 +6,7 @@
+>  #include <linux/mm_types.h>
+> =20
+>  #include <linux/fs.h> /* only for vma_is_dax() */
+> +#include <linux/kobject.h>
+> =20
+>  vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
+>  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> @@ -63,6 +64,7 @@ ssize_t single_hugepage_flag_show(struct kobject *kobj,
+>  				  struct kobj_attribute *attr, char *buf,
+>  				  enum transparent_hugepage_flag flag);
+>  extern struct kobj_attribute shmem_enabled_attr;
+> +extern struct kobj_attribute thpsize_shmem_enabled_attr;
+> =20
+>  /*
+>   * Mask of all large folio orders supported for anonymous THP; all order=
+s up to
+> @@ -265,6 +267,14 @@ unsigned long thp_vma_allowable_orders(struct vm_are=
+a_struct *vma,
+>  	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+>  }
+> =20
+> +struct thpsize {
+> +	struct kobject kobj;
+> +	struct list_head node;
+> +	int order;
+> +};
+> +
+> +#define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
+> +
+>  enum mthp_stat_item {
+>  	MTHP_STAT_ANON_FAULT_ALLOC,
+>  	MTHP_STAT_ANON_FAULT_FALLBACK,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 8e49f402d7c7..1360a1903b66 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -449,14 +449,6 @@ static void thpsize_release(struct kobject *kobj);
+>  static DEFINE_SPINLOCK(huge_anon_orders_lock);
+>  static LIST_HEAD(thpsize_list);
+> =20
+> -struct thpsize {
+> -	struct kobject kobj;
+> -	struct list_head node;
+> -	int order;
+> -};
+> -
+> -#define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
+> -
+>  static ssize_t thpsize_enabled_show(struct kobject *kobj,
+>  				    struct kobj_attribute *attr, char *buf)
+>  {
+> @@ -517,6 +509,9 @@ static struct kobj_attribute thpsize_enabled_attr =3D
+> =20
+>  static struct attribute *thpsize_attrs[] =3D {
+>  	&thpsize_enabled_attr.attr,
+> +#ifdef CONFIG_SHMEM
+> +	&thpsize_shmem_enabled_attr.attr,
+> +#endif
+>  	NULL,
+>  };
+> =20
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index ae358efc397a..643ff7516b4d 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -131,6 +131,14 @@ struct shmem_options {
+>  #define SHMEM_SEEN_QUOTA 32
+>  };
+> =20
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +static unsigned long huge_anon_shmem_orders_always __read_mostly;
+> +static unsigned long huge_anon_shmem_orders_madvise __read_mostly;
+> +static unsigned long huge_anon_shmem_orders_inherit __read_mostly;
+> +static unsigned long huge_anon_shmem_orders_within_size __read_mostly;
+> +static DEFINE_SPINLOCK(huge_anon_shmem_orders_lock);
+> +#endif
 
-Hi Adrian
+Since we are also applying the new sysfs knob controls to tmpfs and anon mm=
+,
+should we rename this to get rid of the anon prefix?
 
-I tried compilation on Ubuntu 22.04, but didn=E2=80=99t face this issue.
-The libcapstone version I have is libcapstone4 which doesn=E2=80=99t have t=
-he include for =E2=80=9Cbpf.h=E2=80=9D
-What is the version of libcapstone in the setup where you are seeing this i=
-ssue ?
-
-Thanks
-Athira
->>=20
->> Thanks,
->> Ian
->>=20
->>>        if (!opt->disassembler_style ||
->>> @@ -1635,6 +1641,139 @@ static void print_capstone_detail(cs_insn *insn=
-, char *buf, size_t len,
->>>        }
->>> }
->>>=20
->>> +static int symbol__disassemble_capstone_powerpc(char *filename, struct=
- symbol *sym,
->>> +                                       struct annotate_args *args)
->>> +{
->>> +       struct annotation *notes =3D symbol__annotation(sym);
->>> +       struct map *map =3D args->ms.map;
->>> +       struct dso *dso =3D map__dso(map);
->>> +       struct nscookie nsc;
->>> +       u64 start =3D map__rip_2objdump(map, sym->start);
->>> +       u64 end =3D map__rip_2objdump(map, sym->end);
->>> +       u64 len =3D end - start;
->>> +       u64 offset;
->>> +       int i, fd, count;
->>> +       bool is_64bit =3D false;
->>> +       bool needs_cs_close =3D false;
->>> +       u8 *buf =3D NULL;
->>> +       struct find_file_offset_data data =3D {
->>> +               .ip =3D start,
->>> +       };
->>> +       csh handle;
->>> +       char disasm_buf[512];
->>> +       struct disasm_line *dl;
->>> +       u32 *line;
->>> +
->>> +       if (args->options->objdump_path)
->>> +               return -1;
->>> +
->>> +       nsinfo__mountns_enter(dso->nsinfo, &nsc);
->>> +       fd =3D open(filename, O_RDONLY);
->>> +       nsinfo__mountns_exit(&nsc);
->>> +       if (fd < 0)
->>> +               return -1;
->>> +
->>> +       if (file__read_maps(fd, /*exe=3D*/true, find_file_offset, &data,
->>> +                           &is_64bit) =3D=3D 0)
->>> +               goto err;
->>> +
->>> +       if (open_capstone_handle(args, is_64bit, &handle) < 0)
->>> +               goto err;
->>> +
->>> +       needs_cs_close =3D true;
->>> +
->>> +       buf =3D malloc(len);
->>> +       if (buf =3D=3D NULL)
->>> +               goto err;
->>> +
->>> +       count =3D pread(fd, buf, len, data.offset);
->>> +       close(fd);
->>> +       fd =3D -1;
->>> +
->>> +       if ((u64)count !=3D len)
->>> +               goto err;
->>> +
->>> +       line =3D (u32 *)buf;
->>> +
->>> +       /* add the function address and name */
->>> +       scnprintf(disasm_buf, sizeof(disasm_buf), "%#"PRIx64" <%s>:",
->>> +                 start, sym->name);
->>> +
->>> +       args->offset =3D -1;
->>> +       args->line =3D disasm_buf;
->>> +       args->line_nr =3D 0;
->>> +       args->fileloc =3D NULL;
->>> +       args->ms.sym =3D sym;
->>> +
->>> +       dl =3D disasm_line__new(args);
->>> +       if (dl =3D=3D NULL)
->>> +               goto err;
->>> +
->>> +       annotation_line__add(&dl->al, &notes->src->source);
->>> +
->>> +       /*
->>> +        * TODO: enable disassm for powerpc
->>> +        * count =3D cs_disasm(handle, buf, len, start, len, &insn);
->>> +        *
->>> +        * For now, only binary code is saved in disassembled line
->>> +        * to be used in "type" and "typeoff" sort keys. Each raw code
->>> +        * is 32 bit instruction. So use "len/4" to get the number of
->>> +        * entries.
->>> +        */
->>> +       count =3D len/4;
->>> +
->>> +       for (i =3D 0, offset =3D 0; i < count; i++) {
->>> +               args->offset =3D offset;
->>> +               sprintf(args->line, "%x", line[i]);
->>> +
->>> +               dl =3D disasm_line__new(args);
->>> +               if (dl =3D=3D NULL)
->>> +                       goto err;
->>> +
->>> +               annotation_line__add(&dl->al, &notes->src->source);
->>> +
->>> +               offset +=3D 4;
->>> +       }
->>> +
->>> +       /* It failed in the middle */
->>> +       if (offset !=3D len) {
->>> +               struct list_head *list =3D &notes->src->source;
->>> +
->>> +               /* Discard all lines and fallback to objdump */
->>> +               while (!list_empty(list)) {
->>> +                       dl =3D list_first_entry(list, struct disasm_lin=
-e, al.node);
->>> +
->>> +                       list_del_init(&dl->al.node);
->>> +                       disasm_line__free(dl);
->>> +               }
->>> +               count =3D -1;
->>> +       }
->>> +
->>> +out:
->>> +       if (needs_cs_close)
->>> +               cs_close(&handle);
->>> +       free(buf);
->>> +       return count < 0 ? count : 0;
->>> +
->>> +err:
->>> +       if (fd >=3D 0)
->>> +               close(fd);
->>> +       if (needs_cs_close) {
->>> +               struct disasm_line *tmp;
->>> +
->>> +               /*
->>> +                * It probably failed in the middle of the above loop.
->>> +                * Release any resources it might add.
->>> +                */
->>> +               list_for_each_entry_safe(dl, tmp, &notes->src->source, =
-al.node) {
->>> +                       list_del(&dl->al.node);
->>> +                       free(dl);
->>> +               }
->>> +       }
->>> +       count =3D -1;
->>> +       goto out;
->>> +}
->>> +
->>> static int symbol__disassemble_capstone(char *filename, struct symbol *=
-sym,
->>>                                        struct annotate_args *args)
->>> {
->>> @@ -1987,6 +2126,11 @@ int symbol__disassemble(struct symbol *sym, stru=
-ct annotate_args *args)
->>>                        err =3D symbol__disassemble_dso(symfs_filename, =
-sym, args);
->>>                        if (err =3D=3D 0)
->>>                                goto out_remove_tmp;
->>> +#ifdef HAVE_LIBCAPSTONE_SUPPORT
->>> +                       err =3D symbol__disassemble_capstone_powerpc(sy=
-mfs_filename, sym, args);
->>> +                       if (err =3D=3D 0)
->>> +                               goto out_remove_tmp;
->>> +#endif
->>>                }
->>>        }
->>>=20
->>> --
->>> 2.43.0
-
-
+> +
+>  #ifdef CONFIG_TMPFS
+>  static unsigned long shmem_default_max_blocks(void)
+>  {
+> @@ -4672,6 +4680,12 @@ void __init shmem_init(void)
+>  		SHMEM_SB(shm_mnt->mnt_sb)->huge =3D shmem_huge;
+>  	else
+>  		shmem_huge =3D SHMEM_HUGE_NEVER; /* just in case it was patched */
+> +
+> +	/*
+> +	 * Default to setting PMD-sized THP to inherit the global setting and
+> +	 * disable all other multi-size THPs, when anonymous shmem uses mTHP.
+> +	 */
+> +	huge_anon_shmem_orders_inherit =3D BIT(HPAGE_PMD_ORDER);
+>  #endif
+>  	return;
+> =20
+> @@ -4731,6 +4745,11 @@ static ssize_t shmem_enabled_store(struct kobject =
+*kobj,
+>  			huge !=3D SHMEM_HUGE_NEVER && huge !=3D SHMEM_HUGE_DENY)
+>  		return -EINVAL;
+> =20
+> +	/* Do not override huge allocation policy with non-PMD sized mTHP */
+> +	if (huge =3D=3D SHMEM_HUGE_FORCE &&
+> +	    huge_anon_shmem_orders_inherit !=3D BIT(HPAGE_PMD_ORDER))
+> +		return -EINVAL;
+> +
+>  	shmem_huge =3D huge;
+>  	if (shmem_huge > SHMEM_HUGE_DENY)
+>  		SHMEM_SB(shm_mnt->mnt_sb)->huge =3D shmem_huge;
+> @@ -4738,6 +4757,83 @@ static ssize_t shmem_enabled_store(struct kobject =
+*kobj,
+>  }
+> =20
+>  struct kobj_attribute shmem_enabled_attr =3D __ATTR_RW(shmem_enabled);
+> +
+> +static ssize_t thpsize_shmem_enabled_show(struct kobject *kobj,
+> +					  struct kobj_attribute *attr, char *buf)
+> +{
+> +	int order =3D to_thpsize(kobj)->order;
+> +	const char *output;
+> +
+> +	if (test_bit(order, &huge_anon_shmem_orders_always))
+> +		output =3D "[always] inherit within_size advise never";
+> +	else if (test_bit(order, &huge_anon_shmem_orders_inherit))
+> +		output =3D "always [inherit] within_size advise never";
+> +	else if (test_bit(order, &huge_anon_shmem_orders_within_size))
+> +		output =3D "always inherit [within_size] advise never";
+> +	else if (test_bit(order, &huge_anon_shmem_orders_madvise))
+> +		output =3D "always inherit within_size [advise] never";
+> +	else
+> +		output =3D "always inherit within_size advise [never]";
+> +
+> +	return sysfs_emit(buf, "%s\n", output);
+> +}
+> +
+> +static ssize_t thpsize_shmem_enabled_store(struct kobject *kobj,
+> +					   struct kobj_attribute *attr,
+> +					   const char *buf, size_t count)
+> +{
+> +	int order =3D to_thpsize(kobj)->order;
+> +	ssize_t ret =3D count;
+> +
+> +	if (sysfs_streq(buf, "always")) {
+> +		spin_lock(&huge_anon_shmem_orders_lock);
+> +		clear_bit(order, &huge_anon_shmem_orders_inherit);
+> +		clear_bit(order, &huge_anon_shmem_orders_madvise);
+> +		clear_bit(order, &huge_anon_shmem_orders_within_size);
+> +		set_bit(order, &huge_anon_shmem_orders_always);
+> +		spin_unlock(&huge_anon_shmem_orders_lock);
+> +	} else if (sysfs_streq(buf, "inherit")) {
+> +		/* Do not override huge allocation policy with non-PMD sized mTHP */
+> +		if (shmem_huge =3D=3D SHMEM_HUGE_FORCE &&
+> +		    order !=3D HPAGE_PMD_ORDER)
+> +			return -EINVAL;
+> +
+> +		spin_lock(&huge_anon_shmem_orders_lock);
+> +		clear_bit(order, &huge_anon_shmem_orders_always);
+> +		clear_bit(order, &huge_anon_shmem_orders_madvise);
+> +		clear_bit(order, &huge_anon_shmem_orders_within_size);
+> +		set_bit(order, &huge_anon_shmem_orders_inherit);
+> +		spin_unlock(&huge_anon_shmem_orders_lock);
+> +	} else if (sysfs_streq(buf, "within_size")) {
+> +		spin_lock(&huge_anon_shmem_orders_lock);
+> +		clear_bit(order, &huge_anon_shmem_orders_always);
+> +		clear_bit(order, &huge_anon_shmem_orders_inherit);
+> +		clear_bit(order, &huge_anon_shmem_orders_madvise);
+> +		set_bit(order, &huge_anon_shmem_orders_within_size);
+> +		spin_unlock(&huge_anon_shmem_orders_lock);
+> +	} else if (sysfs_streq(buf, "madvise")) {
+> +		spin_lock(&huge_anon_shmem_orders_lock);
+> +		clear_bit(order, &huge_anon_shmem_orders_always);
+> +		clear_bit(order, &huge_anon_shmem_orders_inherit);
+> +		clear_bit(order, &huge_anon_shmem_orders_within_size);
+> +		set_bit(order, &huge_anon_shmem_orders_madvise);
+> +		spin_unlock(&huge_anon_shmem_orders_lock);
+> +	} else if (sysfs_streq(buf, "never")) {
+> +		spin_lock(&huge_anon_shmem_orders_lock);
+> +		clear_bit(order, &huge_anon_shmem_orders_always);
+> +		clear_bit(order, &huge_anon_shmem_orders_inherit);
+> +		clear_bit(order, &huge_anon_shmem_orders_within_size);
+> +		clear_bit(order, &huge_anon_shmem_orders_madvise);
+> +		spin_unlock(&huge_anon_shmem_orders_lock);
+> +	} else {
+> +		ret =3D -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +struct kobj_attribute thpsize_shmem_enabled_attr =3D
+> +	__ATTR(shmem_enabled, 0644, thpsize_shmem_enabled_show, thpsize_shmem_e=
+nabled_store);
+>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_SYSFS */
+> =20
+>  #else /* !CONFIG_SHMEM */
+> --=20
+> 2.39.3
+> =
 
