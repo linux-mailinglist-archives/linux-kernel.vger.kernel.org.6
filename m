@@ -1,173 +1,143 @@
-Return-Path: <linux-kernel+bounces-208228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2800F90229F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFEA9022A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ADF91F23826
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10251F23791
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5583912FB01;
-	Mon, 10 Jun 2024 13:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794FB824AE;
+	Mon, 10 Jun 2024 13:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ZPP+8ktl";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ZPP+8ktl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAxkOFAF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC4812F399
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD574048;
+	Mon, 10 Jun 2024 13:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025838; cv=none; b=hrTboVGUswQ5uh4ef/hir6Z8eYN4KLHOT/0d9K9KB319xCLhK5iT2wppTMMyesXfbaXZ5Wy+9sHJ4gh24ISw+s6NNMyQfU5YO/FXjYY0Dx1O+tBx6K91z0ELaJYqvGshcidanHq+p40QPgsLnasqRkLw0Dsov0czTo3x384fy2w=
+	t=1718025913; cv=none; b=N3jE+zAN5FB69qhliLTzjhWYD8HZn0e2NhL325Xnh9cWRuJqhfRlLOyryifrMsLwwMtj4hfKRSMHRTTNw2ousI1a7OmxBNFtkqBG4VLRpRI5fRxlz+00lOiIEkXn/0Ka0IYaqvbXLXA569DfuH/297r8AELjAhLSE7ZyRj2nZLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025838; c=relaxed/simple;
-	bh=6E117J5q2zQN+cGgmJCbKYOL9GHDd3RjdgUx+nvSanc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRM9nfPcJa12qYFTp7L5ryjWpxwfUMGJn/wgHAwnscFgSjViZ+PinfZM7JSpyIjD+qZHnPGjdBRM7+xuKQV80zR+JtRf3dYRuB8EtdIKebqdyoE5YNdtxxZMoFUjj7KE4PbbipqSKYj08doWKYmMuzecrnoWVBTUP2AYrOVNBXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ZPP+8ktl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ZPP+8ktl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B394F1F7F3;
-	Mon, 10 Jun 2024 13:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718025834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zhwIXuLk75mx3LVCWaJczOVutWJ7oqAn3s5/sjvFOAQ=;
-	b=ZPP+8ktlXgU1i1nQ85U7YBTWOxphkzTDHferEufkD5zGTMpLQUoKciODWszBmDdOtfN9ew
-	4F/zOSj2bBV92seg1cqgSXgql4QksW6TUtFvYu8q3clCIDvO3P3zjPKg+Avkn/GGm9E9RK
-	DftIQM1ebBLpqGMrs8T5ZoXdefMiWa4=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=ZPP+8ktl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718025834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zhwIXuLk75mx3LVCWaJczOVutWJ7oqAn3s5/sjvFOAQ=;
-	b=ZPP+8ktlXgU1i1nQ85U7YBTWOxphkzTDHferEufkD5zGTMpLQUoKciODWszBmDdOtfN9ew
-	4F/zOSj2bBV92seg1cqgSXgql4QksW6TUtFvYu8q3clCIDvO3P3zjPKg+Avkn/GGm9E9RK
-	DftIQM1ebBLpqGMrs8T5ZoXdefMiWa4=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9401413A51;
-	Mon, 10 Jun 2024 13:23:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id peg5IWr+ZmYbMwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Mon, 10 Jun 2024 13:23:54 +0000
-Date: Mon, 10 Jun 2024 15:23:49 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Byungchul Park <lkml.byungchul.park@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <Zmb-ZZHbeNNjcs68@tiehlicka>
-References: <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
- <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
- <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
- <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
- <20240603093505.GA12549@system.software.com>
- <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
- <35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
- <196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
- <Zl320dWODSYw-PgV@casper.infradead.org>
- <20240604003448.GA26609@system.software.com>
+	s=arc-20240116; t=1718025913; c=relaxed/simple;
+	bh=liwsA1y2JkmJUr/DFB7s2hY7AppE4hxpOVGmtP0EbV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rNNhQOBVXDWW69ztB3KmVz7j+F1QLqhshPE94sE3Rrx+K/DtAN2XsQiqa/17TzC3aocqCTmEzkdI9iaZ1SmIlBRvnkQMpzKoiRZ1NrLKr43/lPsGWaKzj6XSAr35X+wKPmDCe5ssr3b8f6UDmtheqdZNwLqU45VB5Fs1NO6Vchc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAxkOFAF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B391FC2BBFC;
+	Mon, 10 Jun 2024 13:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718025913;
+	bh=liwsA1y2JkmJUr/DFB7s2hY7AppE4hxpOVGmtP0EbV0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IAxkOFAFzGelvEUtHIUUpQCLfq617N/F/YErTcoWdXcc7FeGP0DCUJO669XCIE9HW
+	 gQTAIkRc5Q5n0UNOasVxY/zUo58fQep/vcNNsBtqZd3UIQx9j21EbeDPAmemPg0CJP
+	 gHR/n57+/rQ6bo2F1V+uuDeJqzQM+51WcBSaEVMn3LR8pAH9JvnJyTA2HyWmLOhwC6
+	 mij8Dl55CcT9QObz2F0euQR9flGo4VPGnDif3iRdL+EgQVjEWguyfL51NfG2UP4ZE2
+	 ZQt8Awu3/7GYUohaSpd2PDggsXkDQi1puhE3/UEE2A6mzHxeblYibygnsFjxwbXfUp
+	 WIfFp6iLy/N4w==
+Message-ID: <bdea4e6c-eee5-4f4a-85b9-738d61b19800@kernel.org>
+Date: Mon, 10 Jun 2024 15:25:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604003448.GA26609@system.software.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[infradead.org,intel.com,redhat.com,gmail.com,vger.kernel.org,kvack.org,skhynix.com,linux-foundation.org,tencent.com,techsingularity.net,google.com,kernel.org,linutronix.de,alien8.de,linux.intel.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: B394F1F7F3
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] dt-bindings: PCI: microchip,pcie-host: allow
+ dma-noncoherent
+To: daire.mcnamara@microchip.com, linux-pci@vger.kernel.org
+Cc: conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com,
+ robh@kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240610121822.2636971-1-daire.mcnamara@microchip.com>
+ <20240610121822.2636971-4-daire.mcnamara@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240610121822.2636971-4-daire.mcnamara@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 04-06-24 09:34:48, Byungchul Park wrote:
-> On Mon, Jun 03, 2024 at 06:01:05PM +0100, Matthew Wilcox wrote:
-> > On Mon, Jun 03, 2024 at 09:37:46AM -0700, Dave Hansen wrote:
-> > > Yeah, we'd need some equivalent of a PTE marker, but for the page cache.
-> > >  Presumably some xa_value() that means a reader has to go do a
-> > > luf_flush() before going any farther.
-> > 
-> > I can allocate one for that.  We've got something like 1000 currently
-> > unused values which can't be mistaken for anything else.
-> > 
-> > > That would actually have a chance at fixing two issues:  One where a new
-> > > page cache insertion is attempted.  The other where someone goes to look
-> > > in the page cache and takes some action _because_ it is empty (I think
-> > > NFS is doing some of this for file locks).
-> > > 
-> > > LUF is also pretty fundamentally built on the idea that files can't
-> > > change without LUF being aware.  That model seems to work decently for
-> > > normal old filesystems on normal old local block devices.  I'm worried
-> > > about NFS, and I don't know how seriously folks take FUSE, but it
-> > > obviously can't work well for FUSE.
-> > 
-> > I'm more concerned with:
-> > 
-> >  - page goes back to buddy
-> >  - page is allocated to slab
+On 10/06/2024 14:18, daire.mcnamara@microchip.com wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> At this point, tlb flush needed will be performed in prep_new_page().
+> PolarFire SoC may be configured in a way that requires non-coherent DMA
+> handling. On RISC-V, buses are coherent by default & the dma-noncoherent
+> property is required to denote buses or devices that are non-coherent.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-But that does mean that an unaware caller would get an additional
-overhead of the flushing, right? I think it would be just a matter of
-time before somebody can turn that into a side channel attack, not to
-mention unexpected latencies introduced.
--- 
-Michal Hocko
-SUSE Labs
+Missing SoB
+
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+
+
+
+Best regards,
+Krzysztof
+
 
