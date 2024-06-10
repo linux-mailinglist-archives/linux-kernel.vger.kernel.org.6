@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-208771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025F69028FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00609028FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1C1B21CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8BA2850C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4703414BF8D;
-	Mon, 10 Jun 2024 19:05:06 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC5114C584;
+	Mon, 10 Jun 2024 19:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdpTivhf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B421B5A4;
-	Mon, 10 Jun 2024 19:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DF1B5A4;
+	Mon, 10 Jun 2024 19:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718046305; cv=none; b=sTV5QnvsuW/It3EzX2ttk5FnN5XkCtzkergYH0syAB7u8uCxhal2yODriqOxuy3Ftm4EtyXqKtDdCjJVrUiwLH6B8poOUdHFlXnS8/qtMJaNtoZ5Zx32+8YyKHzwmv4hgjK7rWQNeuva3PCq24RimIZYIRrvyxAt0N7yQcBHOKg=
+	t=1718046355; cv=none; b=ImcocjbFPYt0b8uz/z3sgakCa3E9x3qsDPnJMC6YJeKDGMfXKX0TaJ9KLUIeVEzov02Go2+hYXuqypnFSVg+lz6xR/kaANF8CxXCkeOkJvHeahaYHIs1/Giond4U5E4/mt2t54DbEP+E1yZGk4uXb3crd/rLRncqzH7ZHjnrOXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718046305; c=relaxed/simple;
-	bh=DYw5X4U5HLsZyrnq7FpFUJMkaKGQJYDLUdfj4fuMRHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tmUa+Ikq0UMKs8X6FAGcl08wTJn+VRkykEZ53rLnBuuyB9egzc+maUbbd3jndk5dxFv9XDPpm7U6nJS7W/zEt9K/KqAUevu2VDn86YeWUkCUPAah6y22EHCzy7S7QADdY7wqQ8rnX98uEiAXUhLPBHTAeU1GO12DgN3jQIQQ3+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f223c99a3so194840f8f.2;
-        Mon, 10 Jun 2024 12:05:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718046302; x=1718651102;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RzcwVjd3wuF7qA5HimwlYDFzQ23qzUuT3/7uHPghCl4=;
-        b=N/ubT16tvDEjiT7yngOASYbvLe/IWGMQzox2Ir16q98InmbvHvJll2CCPpq35sjNAo
-         eL9a7E1/8uhl2ZPybJ0z7qjO4BJYJs34oBCNP07FAF5J3UtoXYHf8bKzCYGMCKPB/r4Y
-         p7BFTlPI5ihf1ugmSIuA+Fag36iTq/hCLGgU8wBIoMSQxPbgDbK/tgQE2xKux36/0R6c
-         UxzTXhspx6bjxIfZB/u/k1yd1WaiPir9LxgrqOVy9abK0yGVtcIQbvDX81WBOqsbZcid
-         Y7+7jlRzqHEovXJO0jXw7S3c6DMIUUJOZVjDghu47SdrNOCUaM2+sZLTohipHtrdXa9L
-         cv/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqSU0klp6g5Y9HIKrwcP07z4gEN19KcojrvT4xgvekXPbG0E0hM9B+QoXZoJyW4ZGYkMR0zkMQx/suTjscgnfti0uh1jhma2ahTEzs
-X-Gm-Message-State: AOJu0YzTmM36sDKPngMpf7pzmvGU4PFw5dxdUckYzedGSjeGbWlOpx+2
-	faVG1Cjm7BfHRSOGSkuARZjrUdTPHBlagFOzV5mKMYG9wKfOHWTy
-X-Google-Smtp-Source: AGHT+IEvwv08TmpZPro//md103k727X8OXUPGA54WdjDUCV07StJHAMkwZJmFcCstU1jB4eMBih7gA==
-X-Received: by 2002:a5d:526a:0:b0:35f:1412:fa8a with SMTP id ffacd0b85a97d-35f1412fcddmr4011456f8f.1.1718046302401;
-        Mon, 10 Jun 2024 12:05:02 -0700 (PDT)
-Received: from [10.100.102.74] (85.65.205.146.dynamic.barak-online.net. [85.65.205.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0f2b0d85sm7800267f8f.42.2024.06.10.12.05.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 12:05:02 -0700 (PDT)
-Message-ID: <e8fa4c36-49e5-40b8-9cea-6b3b61aa3240@grimberg.me>
-Date: Mon, 10 Jun 2024 22:05:00 +0300
+	s=arc-20240116; t=1718046355; c=relaxed/simple;
+	bh=ZQmVAWnF8v7SoLum4h6QPX+CI7BadFQV9FnQJOXaDio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPc10ymUNrgJl7PSLRptk4k2XjDC7WsS4u01DCEDiNkiKsbfDPjETQtCWTWB/4pTUtXks2Xo4nCbxyQhPimrY5O++dJht6WU8CvthjlZomXiahcoPasEjlnXzc7dYAQRdr/lGvXdXe0yOi33JfHk8xlmwcIERqHpI4EJzy8UUus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdpTivhf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84EDFC2BBFC;
+	Mon, 10 Jun 2024 19:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718046354;
+	bh=ZQmVAWnF8v7SoLum4h6QPX+CI7BadFQV9FnQJOXaDio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PdpTivhfm4Myls0526XPowHUnRMG2EUiXYz51iLCtjh1PSP9XY2ALOcgt0TOy9mVd
+	 IWn8hUH6wRvswqGFwlgX9BXoO/Bm1BZOTFSP9/bepbRZRHEHYLP1WWXMl2JoAcR7Ue
+	 L+zee8qYk31KSb50Y37AuimPGwF1EjeKFIskbFTOKzkI2+PLmlLx/qDFW74wmlRRrO
+	 W3FhutcZ/aCQUjrtJgAo2tF84Q/BiHmlMRQPHGVBlyFnX4JT+mZzJ4V4hsAqxDLuVI
+	 419Rr/EzZ5+fszNp3FXDW0atHgW3YdjeNHx6tD2whp6iht11HeMamNj0+9mlFsEgoC
+	 rIEf3/1ZrXlBA==
+Date: Mon, 10 Jun 2024 12:05:54 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Vitor Massaru Iha <vitor@massaru.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] kunit: test: Add vm_mmap() allocation resource
+ manager
+Message-ID: <202406101202.3D887825@keescook>
+References: <20240519190422.work.715-kees@kernel.org>
+ <20240519191254.651865-1-keescook@chromium.org>
+ <ZksX4r0a1EGE_VPl@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-To: Keith Busch <kbusch@kernel.org>,
- Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
-References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
- <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZksX4r0a1EGE_VPl@J2N7QTR9R3>
 
+On Mon, May 20, 2024 at 10:29:06AM +0100, Mark Rutland wrote:
+> On Sun, May 19, 2024 at 12:12:52PM -0700, Kees Cook wrote:
+> > +/* Create and attach a new mm if it doesn't already exist. */
+> > +static int kunit_attach_mm(void)
+> > +{
+> > +	struct vm_area_struct *vma;
+> > +	struct mm_struct *mm;
+> > +
+> > +	if (current->mm)
+> > +		return 0;
+> 
+> My tests deliberately created/destroyed the mm for each test; surely we
+> don't want to inherit an MM in some arbitrary state? ... or is this just
+> so the mm can be allocated lazily upon the first mmap() within a test?
 
+It's for lazily creation and for supporting running the KUnit test as a
+module (where a userspace would exist). The old usercopy test worked
+against the existing userspace, so I'd want to continue to support that.
 
-On 10/06/2024 21:53, Keith Busch wrote:
-> On Mon, Jun 10, 2024 at 01:21:00PM +0530, Venkat Rao Bagalkote wrote:
->> Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
-> My mistake. The namespace remove list appears to be getting corrupted
-> because I'm using the wrong APIs to replace a "list_move_tail". This is
-> fixing the issue on my end:
->
-> ---
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 7c9f91314d366..c667290de5133 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -3959,9 +3959,10 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
->   
->   	mutex_lock(&ctrl->namespaces_lock);
->   	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
-> -		if (ns->head->ns_id > nsid)
-> -			list_splice_init_rcu(&ns->list, &rm_list,
-> -					     synchronize_rcu);
-> +		if (ns->head->ns_id > nsid) {
-> +			list_del_rcu(&ns->list);
-> +			list_add_tail_rcu(&ns->list, &rm_list);
-> +		}
->   	}
->   	mutex_unlock(&ctrl->namespaces_lock);
->   	synchronize_srcu(&ctrl->srcu);
-> --
+> 
+> > +
+> > +	mm = mm_alloc();
+> > +	if (!mm)
+> > +		return -ENOMEM;
+> > +
+> > +	if (mmap_write_lock_killable(mm))
+> > +		goto out_free;
+> > +
+> > +	/* Define the task size. */
+> > +	mm->task_size = TASK_SIZE;
+> > +
+> > +	/* Prepare the base VMA. */
+> > +	vma = vm_area_alloc(mm);
+> > +	if (!vma)
+> > +		goto out_unlock;
+> > +
+> > +	vma_set_anonymous(vma);
+> > +	vma->vm_start = UBUF_ADDR_BASE;
+> > +	vma->vm_end = UBUF_ADDR_BASE + PAGE_SIZE;
+> > +	vm_flags_init(vma, VM_READ | VM_MAYREAD | VM_WRITE | VM_MAYWRITE);
+> > +	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+> > +
+> > +	if (insert_vm_struct(mm, vma))
+> > +		goto out_free_vma;
+> > +
+> > +	mmap_write_unlock(mm);
+> 
+> Why do we need this VMA given you have kunit_vm_mmap()?
 
-Can we add a reproducer for this in blktests? I'm assuming that we can 
-easily trigger this
-with adding/removing nvmet namespaces?
+When I was originally testing this, it seemed like I couldn't perform a
+vm_mmap() without an existing VMA.
+
+> This existed in my uaccess tests because I didn't use vm_mmap(), and I
+> wanted complete control over the addresses used.
+> 
+> Given you add kunit_vm_mmap(), I don't think we want this VMA -- it
+> doesn't serve any real purpose to tests, and accesses can erroneously
+> hit it, which is problematic.
+> 
+> UBUF_ADDR_BASE shouldn't be necessary either with kunit_vm_mmap(),
+> unless you want to use fixed addresses. That was just arbitrarily chosen
+> to be above NULL and the usual minimum mmap limit.
+
+I'll recheck whether this is needed. I think I had to make some other
+changes as well, so maybe something here ended up being redundant
+without my noticing it the first time.
+
+Thanks for looking this over!
+
+-- 
+Kees Cook
 
