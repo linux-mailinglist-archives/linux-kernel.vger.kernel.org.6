@@ -1,103 +1,139 @@
-Return-Path: <linux-kernel+bounces-208328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6510E9023A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:09:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB0990239A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF168B25BA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E8B1C22489
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B66D135A4A;
-	Mon, 10 Jun 2024 14:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o1mVvMLF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F194St29"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8F58527D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560912F5B6;
+	Mon, 10 Jun 2024 14:05:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC2915A8;
+	Mon, 10 Jun 2024 14:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028246; cv=none; b=Ok24as1riqLFmrz1T0pilxw+AD1gKbWgUinUcKWByG8qTQ3aNxtJC7YBd+nwnFq8uuqcpTSk+KgGUoTzzvGQJAvZJrTu22YT2ek4SejZ30nzeHM3iGgjpSOTV5vaS3rMnhfglUsX3MyTAbm2jL+fh2vatxrnorQ5eZqwCMZqVs0=
+	t=1718028314; cv=none; b=EY1PG1iSqqiRfdsG4etkuiNYS3O7CYw2RKsCEEdG0+6kmDEhO347bgn4pPBg0/Ai6NW7bwa96zxPBdaJkSDI+fjGTqi5j3VjSXn9w1eNMWl4YpHDUiTfnqDKDT89nEuvlrr8onXfcaUJICodCJ7fFNY3/IBsHPISbF2HOjlMrfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028246; c=relaxed/simple;
-	bh=ZrqKQLvRm7mDxthHCvl12TNzBKe2zN8dQWa+nPd+8E0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IZ/oYlxCmWmEOujay4XOJlPMEesFW+MLlYR3EK+93yZf9IoOIgGzUizpghaqYiPlpx0jv9iq7r9W2nh+7epyGiQM8RR9a447+Qtd7jxJ6MuhPXYuQ3+hWn9MIZVVuegTtaW0ZmHfHcqT7kT2r7wtpHR6474sYbDYrAPc4mMDuZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o1mVvMLF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F194St29; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718028239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DUxSHg5fKffszCYYNK+5yxGvTT+l7ZVvoo60IT9JNjw=;
-	b=o1mVvMLF1umJ5sr/CQoy5qPCuL8Y2dhkd8iX+WnXHnFp633Gykk2MnPETUpAoxAr7Ek6FG
-	euMeaA45INlkIUK0L5eIF0DMuDyfMmiRFL0KaYGw02HF970pemPhl5bB1OzODP1IGOx6sx
-	0gSU1EchLHlCL3KbqGbGoNEegmbyXb4v2/Lyb+qFiUdrdpZrnEwmxsLd9+zF1cTwxVHG1J
-	8AciTjLlxSFFlOHBmyWD7h7fi7DWHd9akK3F9RPs0rZDArU3UgJbDFsKPKAKUbo1c+Rg1y
-	3XKC5QktNsi3XucasM+mOygRI4GZ4qRC4azFd52gbMWy9fxWbxg1E3D18/kLyg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718028239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DUxSHg5fKffszCYYNK+5yxGvTT+l7ZVvoo60IT9JNjw=;
-	b=F194St29QZDEkx/oe8qmwuXvjrXpmv1L/SzGUv/mKr7pfc3QyOSOECYILPBKc9gXRb3//h
-	a6+Ax2LdhOy4PFAQ==
-To: Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Nikolay Borisov <nik.borisov@suse.com>
-Subject: Re: [PATCH] x86/cpu: Move identify_cpu_without_cpuid() into main
- branch
-In-Reply-To: <20240521124823.486372-1-nik.borisov@suse.com>
-References: <20240521124823.486372-1-nik.borisov@suse.com>
-Date: Mon, 10 Jun 2024 16:03:59 +0200
-Message-ID: <87wmmwx5bk.ffs@tglx>
+	s=arc-20240116; t=1718028314; c=relaxed/simple;
+	bh=cMr0Z4iLJPU4OKj2F6FbEhLlNCxwYw1FCX8zFi2Jo1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j37UzrZMRxpQ6whENu8YcXPnMDKEOfA+hXb/KoUrhJ1Y3tYZflFBLTfPME3mvM4ne5IBfT76SfZ0VPLmiwW2JQ/8j+EoeAAy7z5IaA5TlccvPT968QjlVxYal0R+yJS+zjmbV7UGsn3Mc8i+vOLZgs98uRWo3Yi2QqLIR3C+yLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5686106F;
+	Mon, 10 Jun 2024 07:05:34 -0700 (PDT)
+Received: from [10.57.42.97] (unknown [10.57.42.97])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FEED3F73B;
+	Mon, 10 Jun 2024 07:05:06 -0700 (PDT)
+Message-ID: <56a60219-1440-425f-8680-8eaae2bb42c1@arm.com>
+Date: Mon, 10 Jun 2024 15:05:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/16] coresight: Re-emit trace IDs when the sink
+ changes in per-thread mode
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
+ coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
+ mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
+References: <20240604143030.519906-1-james.clark@arm.com>
+ <20240604143030.519906-16-james.clark@arm.com>
+ <a697111a-ec64-451a-aee1-3709bd08e73e@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <a697111a-ec64-451a-aee1-3709bd08e73e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21 2024 at 15:48, Nikolay Borisov wrote:
-> No point in duplicating if (!have_cpuid_p()) check. Simply move
-> identify_cpu_without_cpuid() into the else branch. No functional
-> changes.
 
-You wish :)
 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
-> ---
->  arch/x86/kernel/cpu/common.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 2b170da84f97..69265c0acaea 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -1578,9 +1578,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
->  	memset(&c->x86_capability, 0, sizeof(c->x86_capability));
->  	c->extended_cpuid_level = 0;
->  
-> -	if (!have_cpuid_p())
-> -		identify_cpu_without_cpuid(c);
-> -
+On 10/06/2024 11:29, Suzuki K Poulose wrote:
+> On 04/06/2024 15:30, James Clark wrote:
+>> In per-cpu mode there are multiple aux buffers and each one has a
+>> fixed sink, so the hw ID mappings which only need to be emitted once
+>> for each buffer, even with the new per-sink trace ID pools.
+>>
+>> But in per-thread mode there is only a single buffer which can be
+>> written to from any sink with now potentially overlapping trace IDs, so
+>> hw ID mappings need to be re-emitted every time the sink changes.
+>>
+>> This will require a change in Perf to track this so it knows which
+>> decode tree to use for each segment of the buffer. In theory it's also
+>> possible to look at the CPU ID on the AUX records, but this is more
+>> consistent with the existing system, and allows for correct decode using
+>> either mechanism.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-etm-perf.c | 14 ++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-etm-perf.h |  2 ++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index 17cafa1a7f18..b6f505b50e67 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -499,6 +499,20 @@ static void etm_event_start(struct perf_event
+>> *event, int flags)
+>>                         &sink->perf_sink_id_map))
+>>           goto fail_disable_path;
+>>   +    /*
+>> +     * In per-cpu mode there are multiple aux buffers and each one has a
+>> +     * fixed sink, so the hw ID mappings which only need to be
+>> emitted once
+>> +     * for each buffer.
+>> +     *
+>> +     * But in per-thread mode there is only a single buffer which can be
+>> +     * written to from any sink with potentially overlapping trace
+>> IDs, so
+>> +     * hw ID mappings need to be re-emitted every time the sink changes.
+>> +     */
+>> +    if (event->cpu == -1 && event_data->last_sink_hwid != sink) {
+>> +        cpumask_clear(&event_data->aux_hwid_done);
+>> +        event_data->last_sink_hwid = sink;
+>> +    }
+> 
+> I am wondering if we really need this patch, as we have the sinkid in
+> the HWID already ? We would emit the packet for each CPU only once and
+> that wouldn't change the HWID ?
+> 
+> Suzuki
+> 
+> 
 
-You might look what identify_cpu_without_cpuid() does and how the
-comment right here might be related:
+It would be needed for per-thread mode if we didn't have the CPU sample
+bit set on AUX records. Because otherwise you wouldn't know when the
+process had moved to a new sink with new mappings. But I suppose this is
+redundant information now that the CPU bit is set on AUX records so I
+can remove this.
 
->  	/* cyrix could have cpuid enabled via c_identify()*/
->  	if (have_cpuid_p()) {
+I was thinking it might be nice if a tool _only_ wanted to look at HWIDs
+then it could do the decode correctly with just that. If we remove this
+then tools will always have to set the CPU sample bit, but it's pretty
+much required anyway and Perf was already doing it.
 
-Thanks,
+James
 
-        tglx
 
