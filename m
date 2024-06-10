@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-208723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C589902883
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27B890288B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E51C1C22CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:20:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3AE31C22CB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC0C14A0A0;
-	Mon, 10 Jun 2024 18:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F4814AD3F;
+	Mon, 10 Jun 2024 18:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AbOR1fBL"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azEAP7kE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11DA15A8
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCD915A8;
+	Mon, 10 Jun 2024 18:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718043643; cv=none; b=O5Xt6Pj/WZsjZ+PoP1ir/legdsLyEcE1iRA5ni4O09P9FBRxykWwblWuf1NznL4RVWoK5WZCzVi2OLb0RcpT4QoHJI2zopwBE17FLYOZxDp7ITK/Yd0G99YTh50jMgKqV7qwcirxvL+n9KrMKHREyDAwcS5oQuY6f3ltBwLpnhQ=
+	t=1718043787; cv=none; b=KPQLgAnnu/QSE7wHxyEM7KUVenEabnxaFeQAq07V47bUUPemeay4jj77DceQTP9B6IrNkGzxjiXwLzxFl3rTqZg0I3XfFC2zZe1YJdar7WKYP0rtb9RjcLVF671vOlOmLQGRnkjMGdTUgjGK+nYdXPEuaQ4sryFZe/zOUSKe4VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718043643; c=relaxed/simple;
-	bh=YdPpztgDQSSz/ui84/o+Jq7wpxjYCYfXyvlmA14OBXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FkcbK/BNdDbIeMZBrF1+zfqdwBeWj7VwaCh2vmMPI+k48GCtWJYMfqIhQj7RflKds7R0T1KLt+3+8ty9VvmCvaEByMJwX5XprZYZVZ2nL1xE5vT6dnRV8QjRAj88wYi1i6yaXz8s5n7PQWTkEFhGna1G7io9+EplXcEpB0rEiZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AbOR1fBL; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c6994e2f1so1626171a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:20:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718043640; x=1718648440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aYJqDCT/kt+Lupsq+l10eN+h11oxsZOu7xdU28kZFKE=;
-        b=AbOR1fBLkcltJ8xXLPJvh/K4pdJWAy+W0eqvPVnXe/CFhRnpDQxpg/i0oX8XuxPIQS
-         0029h2RTYILDjqAgfp140YevEmouo+3K+vRlVM/D2u5bK0C227j5mjQwETFp3aX4E7mE
-         9+QWP2Xiklc7Z9ICYFBej0Y2L/vManj4owiPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718043640; x=1718648440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aYJqDCT/kt+Lupsq+l10eN+h11oxsZOu7xdU28kZFKE=;
-        b=q/xkpFO7JVOkUdr4q5IKFw2Uy8SMt5yGszA+zVt9PwROcrrgjrqXMPdCplG7MfyeEx
-         QxI89cGGFlBDsLuftvFEkwlKEWnetL6oMOruRQ8OITXOUroZBP2Cvx9FEGaSljZ6VyAU
-         Q6N4W1e1cUGbmklTRIDfgywjHERvaegi3r/TiwV7QFBH3saKyGR6mOi2DewvhEXLXiJs
-         Y5TSqBExaF7S7d8a+YGl8weBMDOCoaexrreuKBJkXUq63r77W/EV0viDU3f584hYqKEm
-         JenEzFlNon6JQTzFHfLo9fzhEhRWdAmW89KTs11bJjPStVrOdJKq2arFnctQJXY6CFNz
-         Pi4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPx1ryGQ4rVWnwS/6ekn1HZOAD3C6NsetrorD+hl4U9/ggG0CUyhLKfmAw4uo2oFoP+LW60haSd3/AGY/lJxzU/xvZvgihjhOaSXqk
-X-Gm-Message-State: AOJu0YzYnNkAfupISBAEPPM3hu2l/WxPy/46gCKplZcFQlrGoweA985O
-	qMdC/MrPA+BbBDkg8gI4sWwmQFA40EKTDwgzCCpnMfgG8wiacvZ7Ek1GDF27p635J9Q77gCpMk3
-	Cu7E=
-X-Google-Smtp-Source: AGHT+IEEeeLKlcR1yFz2slwic8MUdLRMqw8VSMr7sKsZmeTYOdzpSKzXv4XvOg/c/BV+JhmP/Y7U7A==
-X-Received: by 2002:a50:c2da:0:b0:57c:7c44:74df with SMTP id 4fb4d7f45d1cf-57c7c447531mr3404673a12.29.1718043639624;
-        Mon, 10 Jun 2024 11:20:39 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c866a3d50sm1498613a12.77.2024.06.10.11.20.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 11:20:39 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a5bcfb2d3so3366475a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:20:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7DI6mNkQ/S3uaIEb2SlmM8iphoUC/zOTpDWCN+PDO27xVP70Yo6XhZV9EIrbPs0fbXCnP//L+qSpwEJ29+Y28RgDyta6EmU7f915r
-X-Received: by 2002:a50:ab59:0:b0:57c:5f77:1136 with SMTP id
- 4fb4d7f45d1cf-57c5f7711f5mr6877211a12.24.1718043638768; Mon, 10 Jun 2024
- 11:20:38 -0700 (PDT)
+	s=arc-20240116; t=1718043787; c=relaxed/simple;
+	bh=ZmGORh3YH31z44Y7L0WKiR5FiqY0Z4/CwtRge2E5Y5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C+Ho4E+hApsGkrT2N6qLlqU3mRIdU7mEg0B2LH6H2mmd98t5yDr205eJ6od8KMcnhXzSbMB/4CsfFeYZ8sPnxDJLKItF3MPHV/fsJBpsA8ZO7xfRzjGg7WNuWtsikLUdVoCnEoy7xW5dMOKeIf3P0dD9Bpugv4u9ch4IC6CitpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azEAP7kE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18C8C2BBFC;
+	Mon, 10 Jun 2024 18:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718043786;
+	bh=ZmGORh3YH31z44Y7L0WKiR5FiqY0Z4/CwtRge2E5Y5o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=azEAP7kEdV4EPjyM1Eb8MR34ixof/jQRnrDQIQDdmxAqDUbRF4lrnS0rfVYhQAPSH
+	 BShHEb1DpKYa9+95/AqjShBRp1GBRHsjbR+KKsMxN/kzbWCiU0Uqp9F9IauGaRgW2H
+	 nM8SWpqtZcZ+94dVzY/DwrghI5IyX4brkXFCsJMaCVLxGrzU1pAKZVNtamHHl7hzXy
+	 zXKhsfuQNWWeajhN4nhPhVfHWBTUMTnem5Xj7tPHbR9+qYiE8oSeH1dq2J/aKUEIBS
+	 WYnlW1hl4xc/SbB1aFqsmUO81cFoswrk5M2sW6gNmjcr1+5jrKKlt4C/Ms2M+ccizx
+	 EYN1npZXYD2bQ==
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kunit/overflow: Adjust for __counted_by with DEFINE_RAW_FLEX()
+Date: Mon, 10 Jun 2024 11:23:05 -0700
+Message-Id: <20240610182301.work.272-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net> <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
-In-Reply-To: <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Jun 2024 11:20:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
-Message-ID: <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Borislav Petkov <bp@alien8.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2061; i=kees@kernel.org; h=from:subject:message-id; bh=ZmGORh3YH31z44Y7L0WKiR5FiqY0Z4/CwtRge2E5Y5o=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmZ0SJEXNzrxzUXK3rna8OKkjX4K7UeFX67/tkt CTizk4cny+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZmdEiQAKCRCJcvTf3G3A Jk17D/9s1yvB8gdhwo2E/7nscHd1UBnI2uulNIIb5cllLJ+K65OSG2ePvmUn4zNDIVLH+++1OUD Q+7QQ3GZ6FaPoyckTN3FeWTNVotYdY/lfA3LOe3ENwXFxEE2EeXJoEvb2y5Uy8izUHdSFAeNdsq LH26kQZ4yC8xI3sAAlskRRJFi79QnFtgcoAuZYDm4zAUs1v/5VEXga0K+Y9ZuPkPuLi5XL3UNsE R9Zx0JLy7Q+XHKGo4D0oqrlMkO1PdHG110KPJFMmnvFyTuG7m2QSTkcgfZKWFfDiyXhwnXsULtx jMjoEeniqO+x8EEJn/k/oFRfhcnipkDQnXKPGJmhe/HwssMR9iJAftp3WxBUCMtkaykBaSHnrDD QWhXB9VOFUntstNXXOqG8/FdagXzkQqd/J9SxdFRyxuqYaKvWxAB6uARTitZM8ze4+O4uQ6jQk3 u/Cmwu69JlRjQ41Ii+LnG3Q3nu/H3b4suD7U7ihNIjOlVFr8xURY+gBQGyn+FfHdjzZYys7NXkp PKx6YWRPgU21Iqfc+1tHaw9codgFQkuQ+EDOe3uNoZHiz+bRWEBSSh61VP0nSxhZX0HzsoYX9NM ldigMk+Htv2wqxnCPXeNFlMFYZvdqMN0A9L3kaD5TCCuy4hwRbgwcflRlQLRB8Ukb620hQ4W9zd C4nBNzouEhpkg
+ /g==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Jun 2024 at 05:02, Borislav Petkov <bp@alien8.de> wrote:
->
-> I think we should accept patches using this only when there really is
-> a good, perf reason for doing so. Not "I wanna use this fance shite in
-> my new driver just because...".
+When a flexible array structure has a __counted_by annotation, its use
+with DEFINE_RAW_FLEX() will result in the count being zero-initialized.
+This is expected since one doesn't want to use RAW with a counted_by
+struct. Adjust the tests to check for the condition and for compiler
+support.
 
-Absolutely.
+Reported-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+Closes: https://lore.kernel.org/all/0bfc6b38-8bc5-4971-b6fb-dc642a73fbfe@gmail.com/
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-hardening@vger.kernel.org
+---
+ lib/overflow_kunit.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-So for example, if the code could possibly be a module, it's never
-going to be able to use runtime constants.
+diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
+index 4ef31b0bb74d..d305b0c054bb 100644
+--- a/lib/overflow_kunit.c
++++ b/lib/overflow_kunit.c
+@@ -1178,14 +1178,28 @@ struct foo {
+ 	s16 array[] __counted_by(counter);
+ };
+ 
++struct bar {
++	int a;
++	u32 counter;
++	s16 array[];
++};
++
+ static void DEFINE_FLEX_test(struct kunit *test)
+ {
+-	DEFINE_RAW_FLEX(struct foo, two, array, 2);
++	/* Using _RAW_ on a __counted_by struct will initialize "counter" to zero */
++	DEFINE_RAW_FLEX(struct foo, two_but_zero, array, 2);
++#if __has_attribute(__counted_by__)
++	int expected_raw_size = sizeof(struct foo);
++#else
++	int expected_raw_size = sizeof(struct foo) + 2 * sizeof(s16);
++#endif
++	/* Without annotation, it will always be on-stack size. */
++	DEFINE_RAW_FLEX(struct bar, two, array, 2);
+ 	DEFINE_FLEX(struct foo, eight, array, counter, 8);
+ 	DEFINE_FLEX(struct foo, empty, array, counter, 0);
+ 
+-	KUNIT_EXPECT_EQ(test, __struct_size(two),
+-			sizeof(struct foo) + sizeof(s16) + sizeof(s16));
++	KUNIT_EXPECT_EQ(test, __struct_size(two_but_zero), expected_raw_size);
++	KUNIT_EXPECT_EQ(test, __struct_size(two), sizeof(struct bar) + 2 * sizeof(s16));
+ 	KUNIT_EXPECT_EQ(test, __struct_size(eight), 24);
+ 	KUNIT_EXPECT_EQ(test, __struct_size(empty), sizeof(struct foo));
+ }
+-- 
+2.34.1
 
-If the code doesn't show up as "noticeable percentage of kernel time
-on real loads", it will not be a valid use for runtime constants.
-
-The reason I did __d_lookup_rcu() is that I have optimized that
-function to hell and back before, and it *still* showed up at 14% of
-kernel time on my "empty kernel build" benchmark. And the constant
-load was a noticeable - but not dominant - part of that.
-
-And yes, it shows up that high because it's all D$ misses, and the
-machine I tested on has more CPU cores than cache, so it's all kinds
-of broken. But the point ends up being that __d_lookup_rcu() is just
-very very hot on loads that just do a lot of 'stat()' calls (and such
-loads exist and aren't just microbenchmarks).
-
-I have other functions I see in the 5%+ range of kernel overhead on
-real machines, but they tend to be things like clear_page(), which is
-another kind of issue entirely.
-
-And yes, the benchmarks I run are odd ("why would anybody care about
-an empty kernel build?") but somewhat real to me (since I do builds
-between every pull even when they just change a couple of files).
-
-And yes, to actually even see anything else than the CPU security
-issues on x86, you need to build without debug support, and without
-retpolines etc. So my profiles are "fake" in that sense, because they
-are the best case profiles without a lot of the horror that people
-enable.
-
-Others will have other real benchmarks, which is why I do think we'd
-end up with more uses of this. But I would expect a handful, not
-"hundreds".
-
-I could imagine some runtime constant in the core networking socket
-code, for example. Or in some scheduler thing. Or kernel entry code.
-
-But not ever in a driver or a filesystem, for example. Once you've
-gotten that far off the core code path, the "load a variable" overhead
-just isn't relevant any more.
-
-                Linus
 
