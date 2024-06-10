@@ -1,96 +1,113 @@
-Return-Path: <linux-kernel+bounces-208506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166279025F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:47:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B3590262C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B042C1F233EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27D39B26FB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77D84D13;
-	Mon, 10 Jun 2024 15:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DCF140364;
+	Mon, 10 Jun 2024 15:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPXxitam"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FkEKWHqy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CF912F5B3
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9EA1E52F;
+	Mon, 10 Jun 2024 15:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718034446; cv=none; b=D24BdDzfz000R9+OEdfNfWPJP6kKIeFDmLysn3TUhDYAsuS+oGTYAxlvzkgC9To7S824+b/ZDHfGRTXYyKII8c02o6bsdiTVnK+erZop+Z0rrtBI7izq4AgpE+AjJXgOdYqXM0peBj9SeOGLi/iyLfnZl+EvlTvYNJFA44edEqM=
+	t=1718034472; cv=none; b=a9lnv/lckiZSux1VNmQtaEh2MgziNXMrkGg0m/Bln8r7R1NpAC3z2l12M7T/BsjrbE7bGCjPqtzU3lAcqzzYevuohgw1HlZzjkOhwjdfOuoLn3GofKS/VMRK/U2bPOrkQJnIVoi7YrfzdFAaIlpKEYIpPox/vqsql1kE9lc/Igk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718034446; c=relaxed/simple;
-	bh=38t/JExcQpwmA9V33/BHVXcGuwHyn8JHlJSnIUEBdLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrxILJp3oLQoS4tihp1gleCHoJ6+g6EN2INju3yMLKSDjwlclz0H9aL6rDDKVhvN+YLQcfrQyLE4Axd/x7Ot3upQwqVIueNWCqyg98tPH8770fqSrvihRLVso8BrEFC/14xq6C3m4z6thumRxCgYSNTfeN55/77EO9NuxZprPhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPXxitam; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694B3C2BBFC;
-	Mon, 10 Jun 2024 15:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718034446;
-	bh=38t/JExcQpwmA9V33/BHVXcGuwHyn8JHlJSnIUEBdLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPXxitam7LTKlI1ll/Q9BA9FjLPW0XLN9HIsnJ9yF6BOxmLMWgGp9e3C2QwBaQmEF
-	 NKLcO1C+/A1U8zP1P32m3ENNpB6dXWBUloo0THF525QA+F8zDIm3NtT0hVtGLTQvYE
-	 7m/8uXRLqnpZ/deX1CLRjGsyh44S/VopN2Upff7xenLiqXoFWgUQX97IXmwdNA+0YT
-	 YlEswTMihS3/eIbbkum7MKBA9Ot7DnvBExmA6JE1coCogt/X91YylOUzgTL7F9nNnk
-	 JQFZt99WL+G25fQE0qp82giA5jB7yvOHeK2iDBd+/yu5n6277cqnFXqX1AhOjSrny4
-	 Cj6ooLJZ5w7TQ==
-Date: Mon, 10 Jun 2024 16:47:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: George Stark <gnstark@salutedevices.com>
-Cc: lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH 1/1] regulator: core: add warning for not-recoverable
- state
-Message-ID: <ZmcgCmqDXAMtz6MI@finisterre.sirena.org.uk>
-References: <20240610120025.405062-1-gnstark@salutedevices.com>
- <20240610120025.405062-2-gnstark@salutedevices.com>
+	s=arc-20240116; t=1718034472; c=relaxed/simple;
+	bh=6rTfujD1woPMOWzNzRUyk8OfduEpNUC3GdWLs22kUoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PVGlkTr3L9nIpBafZGWpcZQngz2oV7UHpIwClF1bdCwbgo6sxn63qCmF8cC/l2TW7Qf0HDwrN2ZqCLRGHkJWR3bzLuX4XPUjigM2kzMS0iwXYxLTySfrJvKq9Rso5czGa60W5olxp6XYiZr7GXBMAPufRa93A3KbgpeMrzyoO9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FkEKWHqy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AF0FOx028937;
+	Mon, 10 Jun 2024 15:47:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6rTfujD1woPMOWzNzRUyk8OfduEpNUC3GdWLs22kUoc=; b=FkEKWHqyUMp61Y+N
+	MRTKNb6aXfHQTiEKCqvDt6Md4gs6U4XWYVhtB7W5CiCxVz9lBujisS/2YIyqRb+M
+	3PUqyiu+3oORP8oSScmXU/gZm082fIlSv3QvRwmQth64Ka7nNBUaASk5xjS0RhFd
+	LR4uUGeQWSjCnPphUZ+Y/Mi5a3Mn1HjmH9aiQ8n4Pb/0sCTxr+I4dHZaGJXRnuHX
+	osVpwefgxJ0z5AZt4nuWSpe8sVJmmzqC3eSlMjEvYQS4dWDm5pDoGbdsJUkZ/Kg5
+	qJy3LVQJjBJz+ucPPHzXTaFESnCUB7tjvqc1yE/9cBo0tWDq8AzsaxkZcclGJCuF
+	y0ebZw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfp7bsra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 15:47:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AFlXQ2021339
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 15:47:33 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 08:47:32 -0700
+Message-ID: <fc62a3bb-4079-4bc6-ac57-2ae2eed68ae2@quicinc.com>
+Date: Mon, 10 Jun 2024 08:47:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iidhu6ORF0fIzF/J"
-Content-Disposition: inline
-In-Reply-To: <20240610120025.405062-2-gnstark@salutedevices.com>
-X-Cookie: Your love life will be... interesting.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/5] clk: meson: c3: add support for the C3 SoC PLL
+ clock
+Content-Language: en-US
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet
+	<jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>
+References: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
+ <20240522082727.3029656-5-xianwei.zhao@amlogic.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240522082727.3029656-5-xianwei.zhao@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3LAG-p6qLkHcjpWLgpMCATE3coLhT7cH
+X-Proofpoint-ORIG-GUID: 3LAG-p6qLkHcjpWLgpMCATE3coLhT7cH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=986 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100119
 
+On 5/22/2024 1:27 AM, Xianwei Zhao wrote:
+...
+> +module_platform_driver(c3_pll_driver);
+> +MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
+> +MODULE_LICENSE("GPL");
 
---iidhu6ORF0fIzF/J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 10, 2024 at 03:00:25PM +0300, George Stark wrote:
-> If regulator is always-on or boot-on then it's expected to be on while
-> being probed so add warning if such a regulator is in not-recoverable
-> state during initialization.
-
-I don't see that these regulators are especially magical, and IIRC we
-have several cases where we simply lack the ability to read back the
-configuration at any time so expect to write out what we need during
-normal operation.
-
---iidhu6ORF0fIzF/J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnIAkACgkQJNaLcl1U
-h9AIDQf7BA+yQBOoO5J91E4VKrU3HYSmE3MJrth7vuSVUXHjbG2HLRNt0aTzvjUV
-dBAMAabfB3DG6ELBbduuA5hmfrOHCdI1/bbao7pAxXn1SxKVmGr+FVsUKrx0ZSAX
-CwNwyJiqUuV9kMb0JYgmyh8q9okQBH06BQZwqNc6/FGmLyhqoEz9cU0s4qeMGXrC
-J3IFHucGOPYWVw3aez5Lai1ZlogJp8aHW7p5DnQloEYyoUQ/2mxNxn54tna3fGqK
-rG10J+gD8LxEWF0fb/NehMCLSQzz3nMS3tIFbt+2oGJZ7BLDqByjBlXxaT6u0Ptm
-DWVxDI+ATGfoOOekkBSYniiQEI8Bjg==
-=PCcP
------END PGP SIGNATURE-----
-
---iidhu6ORF0fIzF/J--
+missing MODULE_DESCRIPTION()
+make W=1 will produce a warning with this file
 
