@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-208527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E93902641
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9A90264B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6136F1F21F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47822822ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366E81422D5;
-	Mon, 10 Jun 2024 16:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E2A142620;
+	Mon, 10 Jun 2024 16:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWlBJeyW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5tw7dn3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7031DFF7;
-	Mon, 10 Jun 2024 16:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E91DFF7;
+	Mon, 10 Jun 2024 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718035425; cv=none; b=W++EGgAWXfsDcRm23wcksP9dbDELlyIgr1ejGojgbRoRXNRdqvLGwjdCb1buDx2kLPSodWp76pg0Eb44MtFZJ+9AKrXuGMTqEPLZP7VDDu6yFdQbF4MJwSBYQjxVFl0VwIvAyjwWitlrb0H3lnor6lcrGcihilb+2IR14jHm3z0=
+	t=1718035690; cv=none; b=IEdQLrXnUgeRFcUzTXmnhuXhazUrAGm/ej5KPbZ1H6CCFsOsAoRRTlfJFVuZsm7P9qdyJ1ZuSk9ONz38Bgr9FvYB+u47sPjYuRQNvdnRCL0scS5yUXHFV887HbfLkGxbRkRL9c+wgC71bkC16/qm1f7aMMYwNVLbY0CmP2P6uKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718035425; c=relaxed/simple;
-	bh=V9fIEFBlHACQSU+XdBBetn3CjXbSlvURx9sdZBrEgxM=;
+	s=arc-20240116; t=1718035690; c=relaxed/simple;
+	bh=mZTNkAEKgG/q85m1UYU1gPZ6SrEhgB8KcIIymCeQnzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFpmCbqjgRsivc2/aAtHz9NpiHpehpd2gCzgP01ezEd0DuLGpHrul5H9FaoTYxfmxIwDWN60/opZ/jSI5TmzNMmjTYABhXPCOFD8ixVeA1CJhQLdDNbQn+IMsK3Hhypuvr1RoLJ+cYMJ/1gWXz1fvRkIznl4OaA/9dpccQGB76c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWlBJeyW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66198C32786;
-	Mon, 10 Jun 2024 16:03:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK9wqHHpHBgRSAv2f/kREwJ4JtMO+Zhdpg4pFYQO0tFtM1tdgpuF7PtKIuxH3ztWo5/r0m7J1aKaRHjJg/Sad9u9G59TuWT01j+DVFLPDy0c/71GQzWncKO267172RE2FMBpakqPQgoMDM9um1B7SbGsJTHTQAwqZDMt6ZzU1bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5tw7dn3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC714C2BBFC;
+	Mon, 10 Jun 2024 16:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718035425;
-	bh=V9fIEFBlHACQSU+XdBBetn3CjXbSlvURx9sdZBrEgxM=;
+	s=k20201202; t=1718035690;
+	bh=mZTNkAEKgG/q85m1UYU1gPZ6SrEhgB8KcIIymCeQnzA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EWlBJeyWsdb0rLnTNGJssv0sPX4kkqjZxnewEOeCxpnhWsrsfvAurWHJ4KLS9Vm+g
-	 RGwpBFGvBzK3SUC8hriMi/z+oQaPC8q/5mQcbFqvmAB6kOkfKQg7U09I5oIRbM6w42
-	 KrxWGrfcd6ap4DgwsHByzzKud6jBaEkAgKMfS8U2qGa3hGiKBkNpr3IuS8zhv2I8sg
-	 hUF11Uh/tDhcvksy4HZqBTj6dzX246cXCp7A4is5W9qIUYfaU9FioF1NfncjPNwVrs
-	 WD735ntYQWf1ChdFdLjrdhvm+OY8TedswiqezpcktPQq8AStHtwvvvmzbzNgpRRwQH
-	 /IAl87viVttYA==
-Date: Mon, 10 Jun 2024 17:03:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	pthombar@cadence.com
-Subject: Re: [PATCH v8 2/4] spi: cadence: Add Marvell xSPI IP overlay changes
-Message-ID: <Zmcj3fZ4DF8r_qf0@finisterre.sirena.org.uk>
-References: <20240607151831.3858304-1-wsadowski@marvell.com>
- <20240607151831.3858304-3-wsadowski@marvell.com>
+	b=f5tw7dn3YElU45yvBOLhN6f5W0SVV/6xBWUrUwA66/yXflEEBhsBqBXNFnIpigCeo
+	 IjBgVRzYgfynaHQTWvZIl9hYCvRpwjSHGdlxu4Y5oBGP1mBPyq+B7fKn5Jh4dtlBnV
+	 ekgy1SH2jC4KSGljAFkQEiBTGwR1VWot782NbKg060i8coBosZTzJHHy6F3Uq/kcQd
+	 D6nu0g/FAhS48IfxJFqlxwBlroDgHH3cuQDfzIj+TMavRGvAfsAkkMiwuUu09qb4WX
+	 cLzuxJdD74AZCyL8hTagUfUbvXSzYYoU98GPFIr2D6QQudTo6H/G8OzpquimiqHBOi
+	 42v7qLnCSy5eQ==
+Date: Mon, 10 Jun 2024 17:08:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Viacheslav Bocharov <adeep@lexina.in>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
+ amlogic,meson-gx-ao-secure: add secure-monitor property
+Message-ID: <20240610-dropout-compress-6d6a9b749524@spud>
+References: <20240610084032.3096614-1-adeep@lexina.in>
+ <20240610084032.3096614-4-adeep@lexina.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RkdGdrXXm7o+ukvS"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4N+yVIGOhUtFEsY0"
 Content-Disposition: inline
-In-Reply-To: <20240607151831.3858304-3-wsadowski@marvell.com>
-X-Cookie: Your love life will be... interesting.
+In-Reply-To: <20240610084032.3096614-4-adeep@lexina.in>
 
 
---RkdGdrXXm7o+ukvS
+--4N+yVIGOhUtFEsY0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 07, 2024 at 08:18:29AM -0700, Witold Sadowski wrote:
-> This commit adds support for the basic v2 Marvell overlay block. Key
-> features included are:
->     - Clock configuration
->     - PHY configuration
->     - Interrupt configuration (enabling)
+On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
+> Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
 
-This feels like it could usefully be split up so these three bits are
-separate, and there appear to be other changes buried in here as well.
-I can't tell what changes either the PHY or interrupt configuration
-might be referencing.
+"bindings are for hardware, not drivers". Why purpose does the "secure
+monitor" serve that the secure firmware needs a reference to it?
 
-> @@ -295,6 +450,10 @@ static void cdns_xspi_set_interrupts(struct cdns_xsp=
-i_dev *cdns_xspi,
->  				     bool enabled)
->  {
->  	u32 intr_enable;
-> +	u32 irq_status;
+Thanks,
+Conor.
+
+>=20
+> Signed-off-by: Viacheslav Bocharov <adeep@lexina.in>
+> ---
+>  .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml      | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-=
+gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,m=
+eson-gx-ao-secure.yaml
+> index 7dff32f373cb..1128a794ec89 100644
+> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
+ecure.yaml
+> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
+ecure.yaml
+> @@ -32,6 +32,10 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> +  secure-monitor:
+
+Missing a vendor prefix.
+
+> +    description: phandle to the secure-monitor node
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 > +
-> +	irq_status =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
-> +	writel(irq_status, cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
-> =20
->  	intr_enable =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_ENABLE_REG);
->  	if (enabled)
+>    amlogic,has-chip-id:
+>      description: |
+>        A firmware register encodes the SoC type, package and revision
+> --=20
+> 2.45.2
+>=20
 
-This seems like a separate change which applies to everything, not just
-Marvell versions of the IP, and should be split out and explained.
-
-> @@ -319,6 +478,9 @@ static int cdns_xspi_controller_init(struct cdns_xspi=
-_dev *cdns_xspi)
->  		return -EIO;
->  	}
-> =20
-> +	writel(FIELD_PREP(CDNS_XSPI_CTRL_WORK_MODE, CDNS_XSPI_WORK_MODE_STIG),
-> +	       cdns_xspi->iobase + CDNS_XSPI_CTRL_CONFIG_REG);
-> +
-
-This wasn't clearly mentioned in the changelog and is again being done
-unconditionally for all instances of the IP, probably best to split out
-and explain.
-
-> +static void mrvl_ioreadq(void __iomem  *addr, void *buf, int len)
-> +{
-> +	int i =3D 0;
-> +	int rcount =3D len / 8;
-> +	int rcount_nf =3D len % 8;
-> +	uint64_t tmp;
-> +	uint64_t *buf64 =3D (uint64_t *)buf;
-
-Any need to cast away from void * indicates a problem.
-
-> @@ -337,13 +563,11 @@ static void cdns_xspi_sdma_handle(struct cdns_xspi_=
-dev *cdns_xspi)
-> =20
->  	switch (sdma_dir) {
->  	case CDNS_XSPI_SDMA_DIR_READ:
-> -		ioread8_rep(cdns_xspi->sdmabase,
-> -			    cdns_xspi->in_buffer, sdma_size);
-> +		cdns_xspi_sdma_memread(cdns_xspi, sdma_size);
->  		break;
-
-It's feeling like it might make sense to have an ops structure rather
-than sprinkling checks for the Marvell overlay everywhere.
-
---RkdGdrXXm7o+ukvS
+--4N+yVIGOhUtFEsY0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZnI9wACgkQJNaLcl1U
-h9CzPgf+JyAR7k5ZPBd12HbSQXaHdbPWE/6SchRs/BN0GDlC5Csl6a5+ZQ6BCE5h
-1JHRAs1RKu57n2zZCs+xR9+tuj9jWg3kfMMHBpH6azUIcYhkw7P16YShyHhckFo+
-M1fbuFMAg9z3r8QuwXiMWM5vqlU2YgL1CscbdJXbT74DIfugc8OwIlcqo9qiPgFp
-6UsO1/Tsdcqj//0DDldViIDt3pyPNRZYAO8DbJ2PHOaADiM1wyDC1TYto00yJfwV
-QTV1CPRsd8qWZtICX39LkHoNj4WSye8GsaSocu8ncgNS4rL4ik4GxBohG+fViMMz
-pbRU8JPrCzezMdbFkluhWugrV66aIw==
-=MVb7
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmck5QAKCRB4tDGHoIJi
+0iydAQD6TLLXFkQ91it+ekcKcRkMfnDbDLyoS4AUCnh1wSh2xQD/RDRupw8OAQo/
+Y2gJUImSqXu3pj/lDI8iyrkwkNT8ygk=
+=wI0y
 -----END PGP SIGNATURE-----
 
---RkdGdrXXm7o+ukvS--
+--4N+yVIGOhUtFEsY0--
 
