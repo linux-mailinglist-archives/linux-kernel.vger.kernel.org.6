@@ -1,120 +1,234 @@
-Return-Path: <linux-kernel+bounces-209064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B293E902C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDDD902C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E55284B5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF841C218C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5CB15278A;
-	Mon, 10 Jun 2024 23:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6700F152536;
+	Mon, 10 Jun 2024 23:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MWnef0DN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nLCZN5Ju"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133343C0C;
-	Mon, 10 Jun 2024 23:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169BA3C0C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718062633; cv=none; b=eFvqX22qiSHjK1hU8Rb1aIhU0NL8i33dG9Sm2XrDF1qchVa6KK2cYGuWQlRbAKhC1hxA9sqedn+qlsTrGM7PtjdXSWM3U3kfmMEI+z8cQhdqUabLUofOiHusdVDDReeQmQQ/bQbEHKGIq8LGk7CNpxe0GCiHEoFLxggYNXTsZog=
+	t=1718062856; cv=none; b=RtkSPsFaw/3oXigl059ScSV7GMJp+U1TBbTRPvUDFPAIh1ExZ7hndh4MgF2BuTytatTA5KvhhtzAODtsqMJM22BOPa+MkVQBwPfyGh5pP+6F08K1aKe8ecpY0P7U+iNKcyBpYEzIGZ8pGq6eccMVKfyEj3YOfjw0z14F880x5EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718062633; c=relaxed/simple;
-	bh=9cEJOPE2RpbqEAENzqQsuPtohaf5MRTGcoYQvOo+FjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ojrby8pyKEYOdhWs4wLFZ6gM6nrqI3jyq1HCgCDuCqIQnkUuaz+7SkvFsbxCaHTJ9hT0HCue0pYMzvgLh8g0odD8tgqBd51z99PxCAef+Cepu91j2SCr1QqF0rJfZZFXBPKoLq8YEBfZHjMjr3aP6oniUcNg/B4ViMEAfRbyEw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MWnef0DN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AECaKx021412;
-	Mon, 10 Jun 2024 23:36:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EO1UzCQ1xrz9eOEjnbCgqr2cmZlDFwe8lIz5c9cEIyc=; b=MWnef0DNKfKuZ1fK
-	ZN7ZGdRFVpslCF4wZONOZE2y/ZkEUFZJ/uqpTd5LldQbE9h/A5piYfoDpMmCk6RI
-	FoQrmMwM58/i7bmBmO0qYrxYtifVE5pOoZsL20CHGW8MQLNF4Ijh7MZfiKZJ2A83
-	3QEhUR4klMRN6HPtVPOsAWTfKh5HORUoQ9JTWeCUatBVtagx1SbuGPYFeKdhW4R3
-	KOkW/hKI0ZxJKk5X+98E5K5O+wwMoEful11F8bc5I+qTkm8WWc3uG57/wq8+/Vuh
-	L0TFbPGUv/ZLPfb1m8fm1q4UGUyW8Nl+0DvvFwHGFM0YoJxngT33fJYdk8LEIx2s
-	UoTrQQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8vyd8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 23:36:52 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ANapJU028562
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 23:36:51 GMT
-Received: from [10.110.56.180] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 16:36:50 -0700
-Message-ID: <de13199e-1c3f-df75-6357-d3c2333fc43b@quicinc.com>
-Date: Mon, 10 Jun 2024 16:36:46 -0700
+	s=arc-20240116; t=1718062856; c=relaxed/simple;
+	bh=az8iAxY1+IX8BluLFMbVS7wpU2m8WrFvmMATqq5V84E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nA+9YeZr23YmKPup0quNO9tbZ0T9vrJqWPbsdQgq9Sxc45wlbXKxc7Aa5KKbv5350/jJ/YtDsxdH0sz9jfxC1dCvPxwzzUPS5gH07I6bPiffDzk+voFQpwST6uIScOZCcCPbDTfXqLaedDATTlHaaz8sNm5JaQ/R/pM4kJOiGRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nLCZN5Ju; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6f18acad837so1085079a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718062854; x=1718667654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w0zaitEACw+zYcor2/0Rz63A8WWn/XjClt8MhVkc46Y=;
+        b=nLCZN5Ju+6AUxoZytuEEQXuKGR8RQKZT7MZ/agBSpjTVDm90ya1fvy8QzdfWQFBH1r
+         0NbM3TtEBvq2xy46SZPng+LSWMB/Eha7NQms6fUgudiK07nlQ+5ndyWi+Jerz9pwZk++
+         TMXGOHyvx2hLXydbm1KcbcPH3YgMuFUeYfUSHUCr+5W7tqtt+s0IdqPiKy4rpeLaRMih
+         cFYzQwsDyHw2bGIrsm2zYZ9XRo0IAXjD2LulOtuhfDjPmn2BryLZ6sZUhoyTMUWtCUtM
+         lQbTwuiYEZ0HyHP8YbzDcW1FkO/pkBus0F8riVm0eYakzMSRRe6KJJ9jVRKko3e7Wbts
+         DywA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718062854; x=1718667654;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=w0zaitEACw+zYcor2/0Rz63A8WWn/XjClt8MhVkc46Y=;
+        b=NROzJo34GwAjBDpZduwVeQyV2rWZTmoGMOdTIhSGqTJDS3A0b9ZFceSC82hcNHByWy
+         ynHkXKMzmx3LMvpxzgQgQcLgyHcNDQWvAoquKPwQF+2avm4LMsciEk/LsKeSoO71dXvH
+         Gc6W+rZ4/OMOqsQXG+JfuHmWlPpHmmPjeGPwejw0C53JXCz2CAE12nYaiRzsm77pvt6i
+         xPgo79ajAAfX81OPzwq0N77Tysk/gRUgrfi8wTBm/yKaZfXlY4MkGdwsaIOZw5JnB2S4
+         R+UBYxGPTVZ/zV7RbF1ER35Usu7mW1oEtY1YmVoTbdEpbe213KsJR5jAUQoyuuNan3Hu
+         6EkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs3F1vapjE730MMBFbqqaMBm1gMessK3Tp6OwXd+jpvcVpBvNIrhR72MngIefDoCYr2ymd50c4Jqf2F+NzlJsXoWWdBRQ1NKEac0GV
+X-Gm-Message-State: AOJu0YwizEdMOfKXZ5ORqipWkQLlNsIK9/Hw4F3OwtB7ZipBLVWp6hap
+	LNycg29ITj47VVx+BIOeuV+zobZdzBIan2r4+d5YY4kw4AOJq/f9het/rXXRP1KdXleU1LEJzA7
+	bxw==
+X-Google-Smtp-Source: AGHT+IHn3PVo41lnRCr7yJNb++zw7O+lmmijXcsB4djuICc4as6iKySBrYpuSDDjxEXLbtREqHnQRFzq5ug=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:482:b0:6e5:ef07:5922 with SMTP id
+ 41be03b00d2f7-6e5ef075a4cmr24462a12.1.1718062854162; Mon, 10 Jun 2024
+ 16:40:54 -0700 (PDT)
+Date: Mon, 10 Jun 2024 16:40:52 -0700
+In-Reply-To: <de1b0bbc-b781-4372-88ad-81f26c9152c2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v22 03/38] xhci: sideband: add initial api to register a
- sideband entity
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-References: <20240524001043.10141-1-quic_wcheng@quicinc.com>
- <20240524001043.10141-4-quic_wcheng@quicinc.com>
- <40e65895-fc87-4754-ab5c-29d7c95b6d17@quicinc.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <40e65895-fc87-4754-ab5c-29d7c95b6d17@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _L7t0l-o42xEQg3DEh7wPU1rsmp4SbO1
-X-Proofpoint-ORIG-GUID: _L7t0l-o42xEQg3DEh7wPU1rsmp4SbO1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_06,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1011
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100175
+Mime-Version: 1.0
+References: <20240423235013.GO3596705@ls.amr.corp.intel.com>
+ <ZimGulY6qyxt6ylO@google.com> <20240425011248.GP3596705@ls.amr.corp.intel.com>
+ <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
+ <Zip-JsAB5TIRDJVl@google.com> <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
+ <ZivFbu0WI4qx8zre@google.com> <ZmORqYFhE73AdQB6@google.com>
+ <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com> <de1b0bbc-b781-4372-88ad-81f26c9152c2@redhat.com>
+Message-ID: <ZmeOxAtwfTsDCi1x@google.com>
+Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
+ pages with user data
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 11, 2024, Paolo Bonzini wrote:
+> On 6/10/24 23:48, Paolo Bonzini wrote:
+> > On Sat, Jun 8, 2024 at 1:03=E2=80=AFAM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > > SNP folks and/or Paolo, what's the plan for this?  I don't see how wh=
+at's sitting
+> > > in kvm/next can possibly be correct without conditioning population o=
+n the folio
+> > > being !uptodate.
+> >=20
+> > I don't think I have time to look at it closely until Friday; but
+> > thanks for reminding me.
+>=20
+> Ok, I'm officially confused.  I think I understand what you did in your
+> suggested code.  Limiting it to the bare minimum (keeping the callback
+> instead of CONFIG_HAVE_KVM_GMEM_INITIALIZE) it would be something
+> like what I include at the end of the message.
+>=20
+> But the discussion upthread was about whether to do the check for
+> RMP state in sev.c, or do it in common code using folio_mark_uptodate().
+> I am not sure what you mean by "cannot possibly be correct", and
+> whether it's referring to kvm_gmem_populate() in general or the
+> callback in sev_gmem_post_populate().
 
+Doing fallocate() before KVM_SEV_SNP_LAUNCH_UPDATE will cause the latter to=
+ fail.
+That likely works for QEMU, at least for now, but it's unnecessarily restri=
+ctive
+and IMO incorrect/wrong.
 
-On 6/4/2024 4:13 PM, Jeff Johnson wrote:
-> On 5/23/2024 5:10 PM, Wesley Cheng wrote:
->> From: Mathias Nyman <mathias.nyman@linux.intel.com>
-> [...]
->> +EXPORT_SYMBOL_GPL(xhci_sideband_unregister);
->> +MODULE_LICENSE("GPL");
-> 
-> Please add missing MODULE_DESCRIPTION()
-> 
+E.g. a more convoluted, fallocate() + PUNCH_HOLE + KVM_SEV_SNP_LAUNCH_UPDAT=
+E will
+work (I think?  AFAICT adding and removing pages directly to/from the RMP d=
+oesn't
+affect SNP's measurement, only pages that are added via SNP_LAUNCH_UPDATE a=
+ffect
+the measurement).
 
-Thanks, Jeff, will add this to the drivers that need it.
+Punting the sanity check to vendor code is also gross and will make it hard=
+er to
+provide a consistent, unified ABI for all architectures.  E.g. SNP returns =
+-EINVAL
+if the page is already assigned, which is quite misleading.
 
-Thanks
-Wesley Cheng
+> The change below looks like just an optimization to me, which
+> suggests that I'm missing something glaring.
+
+I really dislike @prepare.  There are two paths that should actually initia=
+lize
+the contents of the folio, and they are mutually exclusive and have meaning=
+fully
+different behavior.  Faulting in memory via kvm_gmem_get_pfn() explicitly z=
+eros
+the folio _if necessary_, whereas kvm_gmem_populate() initializes the folio=
+ with
+user-provided data _and_ requires that the folio be !uptodate.
+
+If we fix the above oddity where fallocate() initializes memory, then there=
+'s
+no need to try and handle the initialization in a common chokepoint as the =
+two
+relevant paths will naturally have unique code.
+
+The below is also still suboptimal for TDX, as KVM will zero the memory and=
+ then
+TDX-module will also zero memory on PAGE.AUGA.
+
+And I find SNP to be the odd one.  IIUC, the ASP (the artist formerly known=
+ as
+the PSP) doesn't provide any guarantees about the contents of a page that i=
+s
+assigned to a guest without bouncing through SNP_LAUNCH_UPDATE.  It'd be ni=
+ce to
+explicitly document that somewhere in the SNP code. E.g. if guest_memfd inv=
+okes
+a common kvm_gmem_initialize_folio() or whatever, then SNP's implementation=
+ can
+clearly capture that KVM zeros the page to protect the _host_ data.
+
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index d4206e53a9c81..a0417ef5b86eb 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -52,37 +52,39 @@ static int kvm_gmem_prepare_folio(struct inode *inode=
+, pgoff_t index, struct fol
+>  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t ind=
+ex, bool prepare)
+>  {
+>  	struct folio *folio;
+> +	int r;
+>  	/* TODO: Support huge pages. */
+>  	folio =3D filemap_grab_folio(inode->i_mapping, index);
+>  	if (IS_ERR(folio))
+>  		return folio;
+> -	/*
+> -	 * Use the up-to-date flag to track whether or not the memory has been
+> -	 * zeroed before being handed off to the guest.  There is no backing
+> -	 * storage for the memory, so the folio will remain up-to-date until
+> -	 * it's removed.
+> -	 *
+> -	 * TODO: Skip clearing pages when trusted firmware will do it when
+> -	 * assigning memory to the guest.
+> -	 */
+> -	if (!folio_test_uptodate(folio)) {
+> -		unsigned long nr_pages =3D folio_nr_pages(folio);
+> -		unsigned long i;
+> +	if (prepare) {
+> +		/*
+> +		 * Use the up-to-date flag to track whether or not the memory has
+> +		 * been handed off to the guest.  There is no backing storage for
+> +		 * the memory, so the folio will remain up-to-date until it's
+> +		 * removed.
+> +		 *
+> +		 * Take the occasion of the first prepare operation to clear it.
+> +		 */
+> +		if (!folio_test_uptodate(folio)) {
+> +			unsigned long nr_pages =3D folio_nr_pages(folio);
+> +			unsigned long i;
+> -		for (i =3D 0; i < nr_pages; i++)
+> -			clear_highpage(folio_page(folio, i));
+> +			for (i =3D 0; i < nr_pages; i++)
+> +				clear_highpage(folio_page(folio, i));
+> +		}
+> +
+> +		r =3D kvm_gmem_prepare_folio(inode, index, folio);
+> +		if (r < 0)
+> +			goto err_unlock_put;
+>  		folio_mark_uptodate(folio);
+> -	}
+> -
+> -	if (prepare) {
+> -		int r =3D	kvm_gmem_prepare_folio(inode, index, folio);
+> -		if (r < 0) {
+> -			folio_unlock(folio);
+> -			folio_put(folio);
+> -			return ERR_PTR(r);
+> +	} else {
+> +		if (folio_test_uptodate(folio)) {
+> +			r =3D -EEXIST;
+> +			goto err_unlock_put;
+>  		}
+>  	}
 
