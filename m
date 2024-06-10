@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-208656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D59027CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:33:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F189027D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7B8282586
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AED6B241B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003DC1474DA;
-	Mon, 10 Jun 2024 17:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE7D14900C;
+	Mon, 10 Jun 2024 17:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yGaVnFKy"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dkdhCZvD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZDhO8Q6S"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0F184E04
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352ED13C3CA;
+	Mon, 10 Jun 2024 17:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040813; cv=none; b=gt3P8sbztEHktlww5az6giSOH6RY5xUMskNzLgFbvauZfut5Wtipcvb7ZsJrpzHus5n/DIdUc6xG1tq1TaXUrZhaSMORvp/MfNlvNw9ZivnJDUpuW+HAz6Ojdyk6XVNjj9tdgsU72lSz/ZTUNxldoZF2zbOY1EGBj91LO4lvqw4=
+	t=1718040950; cv=none; b=BRPI1ZFnHVUZ184dDJMu36QOMDJhtIhiNLzJEbKUzVf44Q5yr8Zm/AjQrP0CjYTl6X771x/xaAC0Qx+vk94+lRV2XTmXkCpROrkAg0plhiqgge9DR+p8j5hvo5xfwyHkRuXWoFoy2HW0MYKWPYc7UkgDRbEaNR3611NrmiEAbfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040813; c=relaxed/simple;
-	bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZV0exYR+xJ+44hMq0Bh0LCe27PeBSuU4KseRo4jfME77qsX0ifWYNkoUFPCrUf+ioj4R2Xndz3EDDPu9Dsmy15YaYShUZ3+14uhX52V8lvZEsuN+MAF6bhfzJhZi6AL6kSC4CmogeH8haUsi0db/cQHjErk07GDZHrfB8/YIeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yGaVnFKy; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375acf90c58so10205ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718040810; x=1718645610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
-        b=yGaVnFKyg9Rb3zjy0fAVI3x3N5HLyp6OASgZ7cUwUpLkbDNUz8OekH1qdUnh2C+WZg
-         KLmVN05dSsp6ufDulXhbGh7+fhfMxFOuCN0vPHZXwdvU32MLqLUkZzaQIOnygQ06FUat
-         vrhK37pMCb5BAN7G790lwJXNspVSzRyNyMfzWLI7F4d+EJRIvxUYkqJCWYg/f0DQl5/J
-         SzCnACmXpk5+lhv6qdsSyazulC+fQgRyhcUhM4Ab5beORt/Qm2Ar11i9mPY49cYv82WF
-         gtsFALksAAjsEzB4Si6bvRPY8N2OnC0UVOZsCrnl3+FHT+7tJ5GREW79MdYGdxuhZz5c
-         cdKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718040810; x=1718645610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdOYNNG233qRhz3XI+MlkfvaCLqk3IYfd5AUcptTRTM=;
-        b=sCe7CrzkR3s61DF9xSi1HBNEG8pq91mnXfoOmQlc4OaE4XWrort0aXIsVYyFnrJY4Q
-         v26exIQd0ndKGNz8n8G4uGjcNb3xRAsgztim1ZaS32Zvnq3ZZ5r/Ixjk9P9x4zEtGvTG
-         +9u91aPBDWjGt53N345TCxvONjMCGJhC9+59wM/+z2HWzU1x6riFBvcmWCgaQ3GX2ePK
-         kbzTK9egOR1jppXW2tYM2N9FfdFsIrF9OBgDHuXIsZ0+iAY1Y7GNcbzwQ+klYOVc+T8q
-         kvuJ2PiRhhLreLPT2XIguFQkzqnVUyJCKiEzU66YNDTR0ErbUn2yBHcaJhn893fROk23
-         GiNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbgvrM7z20XjjZn54IiKsx9RyFB783adFWJWyZSU3FL7u2/uMLLD7hpG7a67cXJUxRoCmFaRHyqdA3C24Obu2ICM/MEMTzJPB0SxXa
-X-Gm-Message-State: AOJu0YwAYj5Tf3EeZTQUzjv5/54HLaGz6M+85Cxz7SMqkRayZpZvt/Uw
-	fgdkANEpRY6WbdT+1E0FSFhhbNw866RXb8GoQnvXoWe1liWWgnwsR+2nVlSdkOOUiE8EJW7Pa9Z
-	Fg7CWeC3MpxffYqrZu/43UzrOKoeqNJaD4B8Y
-X-Google-Smtp-Source: AGHT+IF4RQZ/xzq/w+dPDVh0tFYJbnw/GaaZTMKotm7PBgdv0bYpxjayBecUgCGMMMYygei/AwTVauljApyCg9dziQQ=
-X-Received: by 2002:a05:6e02:3701:b0:374:8a2a:6557 with SMTP id
- e9e14a558f8ab-37594fc8d02mr5745345ab.25.1718040810130; Mon, 10 Jun 2024
- 10:33:30 -0700 (PDT)
+	s=arc-20240116; t=1718040950; c=relaxed/simple;
+	bh=j7EkDPs2uA59IlORwfy3tAkiJ8Q8G4Tt2JutwnSNVb8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cmD59TJ3MUOO7A9wOMgHc7ukRipkb9jkZd6f2yEWuttSlFxo1tki1fT9i9FHZOtSJ0QoBcqNCaKWazKeejh/u+IzsqUCRMe4fNOXVxGKsZnUa7BO/eWfKEDrzdQCqsTDlZ94toKuDkXqcJPEXWoJGpii6rdBDDqTTRSoDjS98bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dkdhCZvD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZDhO8Q6S; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 10 Jun 2024 17:35:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718040946;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZeQc6APKp3F8+1RlWJ+IKxyE2V4GfC5Yyn6Tqq97g0=;
+	b=dkdhCZvDE+doAOHZkPW6iJAmB8/SsgYkpVou1/8RgTw1oe2poElPMGmgUTs+Y++TvEpCtI
+	LWEzWOiHy8a5TIUwWHPc21iriNB0bgen789klcpGzt6uBtGjqujgEBgj08VAX1R59+qpvi
+	0fJdXGKdfLBkDCSc5aUn/6nQ5eQ5t6KstnaFewtBBHQQCPcx753akT7206TTXJ+4a3dwTm
+	PXzfDT9ua3JkMwC7wgTuuzn7ZcrmMqKxToRHr1mlS523Ff+2KZ66ne8+BR6D1Tp+3Jip02
+	y2i/dYGwQAFZsbYLIMvb0oKrp2lEXfIt7dqW03MaxpKNOa9Ssd8NgSea5xaAVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718040946;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZeQc6APKp3F8+1RlWJ+IKxyE2V4GfC5Yyn6Tqq97g0=;
+	b=ZDhO8Q6Skmdl3d3tKtGyDyPurnWD/r6i9kuyTyEjqVWgnyQvdyXSHk7xSLoGyGBlvioAei
+	cZDY2uR4LulVdLAg==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cache] x86/resctrl: Replace open coded cacheinfo searches
+Cc: Tony Luck <tony.luck@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240610003927.341707-5-tony.luck@intel.com>
+References: <20240610003927.341707-5-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607065343.695369-1-irogers@google.com> <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
-In-Reply-To: <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 10 Jun 2024 10:33:18 -0700
-Message-ID: <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@arm.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yicong Yang <yangyicong@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <171804094606.10875.14582463014769482343.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 6:30=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
-[snip]
-> I did a test for this patch, it works well for me.
->
-> Tested-by: Leo Yan <leo.yan@arm.com>
->
-> Just a nitpick and I think it is not an issue caused by this patch.
-> After hotplug off one CPU and then if specify the CPU with option '-C',
-> the 'perf stat' command still continues to run. This is inconsistent
-> with the 'perf record' which exits with failures immediately.
->
-> Maybe consider to send an extra patch to address this issue?
+The following commit has been merged into the x86/cache branch of tip:
 
-As you say, this doesn't relate to the problem fixed here. I don't
-have a problem with the command line behavior change but I think my
-getting shouted at budget is fairly well exhausted. How about we trade
-issues, if the following get fixed:
+Commit-ID:     f385f024639431bec3e70c33cdbc9563894b3ee5
+Gitweb:        https://git.kernel.org/tip/f385f024639431bec3e70c33cdbc9563894b3ee5
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Sun, 09 Jun 2024 17:39:27 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 10 Jun 2024 08:50:12 +02:00
 
-Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
-priority issue right now.
-Fixing ARM hybrid default perf stat (it is crazy we can accept this
-being broken), opening events on both BIG.little PMUs as done here:
-https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
+x86/resctrl: Replace open coded cacheinfo searches
 
-I'll address this.
+pseudo_lock_region_init() and rdtgroup_cbm_to_size() open code a search for
+details of a particular cache level.
 
-Thanks,
-Ian
+Replace with get_cpu_cacheinfo_level().
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Link: https://lore.kernel.org/r/20240610003927.341707-5-tony.luck@intel.com
+---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 17 ++++++-----------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 14 +++++---------
+ 2 files changed, 11 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index aacf236..1bbfd3c 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -292,9 +292,8 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+  */
+ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ {
+-	struct cpu_cacheinfo *ci;
++	struct cacheinfo *ci;
+ 	int ret;
+-	int i;
+ 
+ 	/* Pick the first cpu we find that is associated with the cache. */
+ 	plr->cpu = cpumask_first(&plr->d->cpu_mask);
+@@ -306,15 +305,11 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 		goto out_region;
+ 	}
+ 
+-	ci = get_cpu_cacheinfo(plr->cpu);
+-
+-	plr->size = rdtgroup_cbm_to_size(plr->s->res, plr->d, plr->cbm);
+-
+-	for (i = 0; i < ci->num_leaves; i++) {
+-		if (ci->info_list[i].level == plr->s->res->cache_level) {
+-			plr->line_size = ci->info_list[i].coherency_line_size;
+-			return 0;
+-		}
++	ci = get_cpu_cacheinfo_level(plr->cpu, plr->s->res->cache_level);
++	if (ci) {
++		plr->line_size = ci->coherency_line_size;
++		plr->size = rdtgroup_cbm_to_size(plr->s->res, plr->d, plr->cbm);
++		return 0;
+ 	}
+ 
+ 	ret = -1;
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 02f213f..cb68a12 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1450,18 +1450,14 @@ out:
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
+ 				  struct rdt_domain *d, unsigned long cbm)
+ {
+-	struct cpu_cacheinfo *ci;
+ 	unsigned int size = 0;
+-	int num_b, i;
++	struct cacheinfo *ci;
++	int num_b;
+ 
+ 	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
+-	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
+-	for (i = 0; i < ci->num_leaves; i++) {
+-		if (ci->info_list[i].level == r->cache_level) {
+-			size = ci->info_list[i].size / r->cache.cbm_len * num_b;
+-			break;
+-		}
+-	}
++	ci = get_cpu_cacheinfo_level(cpumask_any(&d->cpu_mask), r->cache_level);
++	if (ci)
++		size = ci->size / r->cache.cbm_len * num_b;
+ 
+ 	return size;
+ }
 
