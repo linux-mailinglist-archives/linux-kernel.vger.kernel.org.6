@@ -1,52 +1,77 @@
-Return-Path: <linux-kernel+bounces-208650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C489027C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:27:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B189027C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73811C21CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:27:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168951F22B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FC7147C86;
-	Mon, 10 Jun 2024 17:27:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3491474DA;
+	Mon, 10 Jun 2024 17:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZzQrSY57"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2A714532C;
-	Mon, 10 Jun 2024 17:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400EF145FEF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040448; cv=none; b=YLx63nASStJKPVcJViCOegmaPVF4pAwT2u2TFhbMhes0WSbDHSpHgdfbu3JA5aNhwpCRLH8/gts7y0+LtunVipgSEiEUYhZN5Qt7zTWplqG3M8TvgzLoSwe0oa92uTU82r4gxTL11XEFuDQb7lawpAFQcthb7g29HuY4Dxr8BKg=
+	t=1718040520; cv=none; b=rjjIhd78zQc75zPUiDeWQMWHsBg8yPBJyO4dpWmeBoaxyDq96HaAqN6+nLDGJrw/1eJgsy8ExtCxslDn7DMJkyadskTQfcEMPU0/xXBfdLMInB+ulsysQuV1pzQkRJhR/UuquQfEgjgH10LqR7uhv533lBAx/x5vI8rIN7Dd77M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040448; c=relaxed/simple;
-	bh=wJYRldg3T8FDmjjLK/CGxgQ4cydiTmDEgBrsTZOAVPA=;
+	s=arc-20240116; t=1718040520; c=relaxed/simple;
+	bh=E9w89+B2B7+pHEOspQLd1KCD1iOqsKdjTUWoD8G4oyY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKl2WC3imrOGQG/+VEJFOgUNF9GO/zU93mXDN8n7MhMsCcWX4aS0UBLxnuyQIb4tkqiMgunLzsgv7DX6q3T+81hpXzHbFjSUnA3knIWTsUhwHObrjVNjE49VLZMiF6iqTiwS+CqWL1eA2/iAdbLxB1ovgnrBWO6hcUK6yuPQV3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E42C4AF1C;
-	Mon, 10 Jun 2024 17:27:24 +0000 (UTC)
-Date: Mon, 10 Jun 2024 18:27:22 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 09/14] arm64: Enable memory encrypt for Realms
-Message-ID: <Zmc3euO2YGh-g9Th@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <20240605093006.145492-10-steven.price@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSz9mZRrB8uHVXi1zFA8INp+7Lo2WLt3cjZUolwiHzUTm8tG0IP7239/qAx4w90JoveHeEJsZ0J26GmK37EJEOf15ljjxEs8EwvbjT+uS1Jv4gTdwj8k1+pYj5greWNtzmLDdNRb5HVjCq5crCXcoIhfVDVWpG/GeY1ZTzlrFsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZzQrSY57; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718040517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Ss+jn32vMkFORsgEtb9NzBOj1J/8gbZRcW5oNqfgF8=;
+	b=ZzQrSY57HY3GQNdVyWz4DWwmQ2I/DDkfj9FWudGSciMNR2OYvXCzecxSCOX0yUWKNq1uNa
+	QW07dqp9e/ZjUru2fmwKCStbP3/1yzsKmv7Jy22jyyaeN7OW5aa7Ha8QkXNkjki6/dzGV/
+	IEfQvXqPN53FsZU7jACig6c9M/cyfZY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-274-Z9pgwgGBNoeVKBMxF7Atag-1; Mon,
+ 10 Jun 2024 13:28:34 -0400
+X-MC-Unique: Z9pgwgGBNoeVKBMxF7Atag-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43AC219560B4;
+	Mon, 10 Jun 2024 17:28:33 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F6F619560AB;
+	Mon, 10 Jun 2024 17:28:32 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 45AHSVBf801304
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 13:28:31 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 45AHSUBI801303;
+	Mon, 10 Jun 2024 13:28:30 -0400
+Date: Mon, 10 Jun 2024 13:28:30 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
+        dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH] dm: Add support for escaped characters in
+ str_field_delimit()
+Message-ID: <Zmc3vrfFglYISw1P@redhat.com>
+References: <20240609141721.52344-1-jain.abhinav177@gmail.com>
+ <Zmczy8EijOK-D7ZE@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,61 +80,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605093006.145492-10-steven.price@arm.com>
+In-Reply-To: <Zmczy8EijOK-D7ZE@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Jun 05, 2024 at 10:30:01AM +0100, Steven Price wrote:
-> +static int __set_memory_encrypted(unsigned long addr,
-> +				  int numpages,
-> +				  bool encrypt)
-> +{
-> +	unsigned long set_prot = 0, clear_prot = 0;
-> +	phys_addr_t start, end;
-> +	int ret;
-> +
-> +	if (!is_realm_world())
-> +		return 0;
-> +
-> +	if (!__is_lm_address(addr))
-> +		return -EINVAL;
-> +
-> +	start = __virt_to_phys(addr);
-> +	end = start + numpages * PAGE_SIZE;
-> +
-> +	/*
-> +	 * Break the mapping before we make any changes to avoid stale TLB
-> +	 * entries or Synchronous External Aborts caused by RIPAS_EMPTY
-> +	 */
-> +	ret = __change_memory_common(addr, PAGE_SIZE * numpages,
-> +				     __pgprot(0),
-> +				     __pgprot(PTE_VALID));
-> +
-> +	if (encrypt) {
-> +		clear_prot = PROT_NS_SHARED;
-> +		ret = rsi_set_memory_range_protected(start, end);
-> +	} else {
-> +		set_prot = PROT_NS_SHARED;
-> +		ret = rsi_set_memory_range_shared(start, end);
-> +	}
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	set_prot |= PTE_VALID;
-> +
-> +	return __change_memory_common(addr, PAGE_SIZE * numpages,
-> +				      __pgprot(set_prot),
-> +				      __pgprot(clear_prot));
-> +}
+On Mon, Jun 10, 2024 at 01:11:40PM -0400, Benjamin Marzinski wrote:
+> On Sun, Jun 09, 2024 at 02:17:21PM +0000, Abhinav Jain wrote:
+> > Add a new variable for escaped characters.
+> > 
+> > If an escaped character (\) is found before the separator, and if the 
+> > separator is not found or if the escaped character is located before the
+> > separator, then move the separator ahead and continue searching for the
+> > next separator.
+> > 
+> > Return the pointer to remainder string after the delimiter. If the
+> > separator was found, return a pointer to the character immediately after
+> > the delimiter (s + 1). If the separator was not found, return NULL.
+> 
+> This doesn't do anything to the escape character. Presumably you want to
+> pass the field containing a separator down to dm_eary_create(). But you
+> don't want to pass the escape character itself.
+> 
+> To work correctly, this code needs to remove all those escape characters
+> that come before separators. It probably needs to do something like:
+> 
+> 1. Find a next non-escaped separator and change it to NULL, so you have
+> your field string.
 
-This works, does break-before-make and also rejects vmalloc() ranges
-(for the time being).
+And by NULL, I mean '\0'.
 
-One particular aspect I don't like is doing the TLBI twice. It's
-sufficient to do it when you first make the pte invalid. We could guess
-this in __change_memory_common() if set_mask has PTE_VALID. The call
-sites are restricted to this file, just add a comment. An alternative
-would be to add a bool flush argument to this function.
+-Ben
 
--- 
-Catalin
+> 
+> 2. Find all the escaped separators in the field string, and shift the
+> rest of the string over to overwrite the escape character with the rest
+> of the string.
+> 
+> -Ben
+> 
+> > 
+> > Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> > ---
+> >  drivers/md/dm-init.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
+> > index 2a71bcdba92d..bef6a582a4ae 100644
+> > --- a/drivers/md/dm-init.c
+> > +++ b/drivers/md/dm-init.c
+> > @@ -87,11 +87,21 @@ static void __init dm_setup_cleanup(struct list_head *devices)
+> >   */
+> >  static char __init *str_field_delimit(char **str, char separator)
+> >  {
+> > -	char *s;
+> > +	char *s, *escaped;
+> >  
+> > -	/* TODO: add support for escaped characters */
+> >  	*str = skip_spaces(*str);
+> >  	s = strchr(*str, separator);
+> > +
+> > +	/* Check for escaped character */
+> > +	escaped = strchr(*str, '\\');
+> > +	if (escaped && (s == NULL || escaped < s)) {
+> > +		/*
+> > +		 * If escaped character comes before the separator, move
+> > +		 * the separator ahead & continue searching for next one.
+> > +		 */
+> > +		s = strchr(escaped + 1, separator);
+> > +	}
+> > +
+> >  	/* Delimit the field and remove trailing spaces */
+> >  	if (s)
+> >  		*s = '\0';
+> > -- 
+> > 2.34.1
+> > 
+
 
