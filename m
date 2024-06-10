@@ -1,153 +1,169 @@
-Return-Path: <linux-kernel+bounces-208343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F209023BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:12:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83AC9023EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704D21F255B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:12:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDD8DB29852
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB138132113;
-	Mon, 10 Jun 2024 14:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19EC824B5;
+	Mon, 10 Jun 2024 14:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UdLzdP7x"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BoYbLXII"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E956452;
-	Mon, 10 Jun 2024 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBD084D2A;
+	Mon, 10 Jun 2024 14:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028721; cv=none; b=YW30TPSYvcydNR2m/nShhmWpyHzhrjWtyuKMr3qIAniEMYrC7382FYyAI0D2FyG4i5+1+YjL0M088nw9jD7X2/Zx8jBtBV31xsGGUPZfj3E+WyPNTolBiVoks3N+eoZO48URc+FFgwjhXwvYTQiSoE9y9TyDVK1Od8LpcvmeL40=
+	t=1718028740; cv=none; b=EOGTeN6zp3UTQ9apjUbL0WPostvRS+ORIqEzXJlAHK/upL2t7NunPCwgs7Rhzlmweytzr/jiKyzML0bH0qQ6yvlTXbUbdzpKWgskq2m+zOb+tOPhtu5OLPLa9yarWphqpRT4FsNN3N0msCJZjkRZU2bGkc21HoqWDgVljWj/iEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028721; c=relaxed/simple;
-	bh=HR+lksdyc5JYfCfjZIT+yqIKvZpO1Qoxls2Zl7YzbDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HTvQ4wHEeUdbFRZ+U8DLh0AYHf06MTo7XFnrv/94CfyGgJQ0Lytyebw7yf6kYLNBDqZIkTQ7XUjvj6gSSEH7GrQavh4VX9El5hdq1HupOOlqZcfyswcsGDI79XEnjJSNbgcgzQoHIG+oMJBqPjb3mE+s5BazVrM3t+AlQ0fNGZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UdLzdP7x; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AEBsI6127506;
-	Mon, 10 Jun 2024 09:11:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718028714;
-	bh=V/x3U3X0mcaP5gaC2fbscMMkAEeKf/QY7Cd2x5DBz6k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=UdLzdP7xMufku7MfzPk0J556NgUtQpPk/tD6ZJF+PaaCXsFwa2DY7PrWQlgLo6jH2
-	 NbM8yJVtNj9T/m07/oljuI7V5uIe6X8NY5xvVq03CIR8cH8Zoia1efShGrriz00oOM
-	 6u3eoQrQDDuEv/0SiigEqKUnQDO3o/PG5VsVFR7M=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AEBsbc095560
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 09:11:54 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 09:11:53 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 09:11:54 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AEBsKl065670;
-	Mon, 10 Jun 2024 09:11:54 -0500
-Message-ID: <573a01e0-0954-4238-b5d6-3bb2b30ecace@ti.com>
-Date: Mon, 10 Jun 2024 09:11:54 -0500
+	s=arc-20240116; t=1718028740; c=relaxed/simple;
+	bh=xAFr7ozPpI8DuqOfWnDR2BQJvB3UgfxfbtowfoYvgBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXLYGMAALBMLF96R8MZ6lOfsDN0zRLoL5H2yowSzOljO62hOE8pzomZpc7HH5E7Szk/F+d/lj61225SCcebma1kthq402DCEPuG54C+H3LDJ6RqZKMNxf6i6FwgSgoiVSt7DeaaJs+q32u49zWAfhtmX0T2FZ43OsXPczgdDVxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BoYbLXII; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B0F2240E0081;
+	Mon, 10 Jun 2024 14:12:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F7bdWQwRfOpn; Mon, 10 Jun 2024 14:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718028731; bh=Q2BNtRklMm/oGfJO8WR6592/uoN7Ou98TXBAEZPJFRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BoYbLXIII6dSl9aiajG6s2LxJqHKd/s7l4nNyqmMDOP2bRiVZ0iTtpm6TKADwME4N
+	 wArWddpsjvrLPgPDWLgD1WHJ+hzrc8JNf+qAycwhzoJS8foAdSe2txy9OMDGZUcHm9
+	 VXMGVV67YV5l67JlWTz62j0f/j/X48QkcM2SOce1Lx5SabCRmUbdDCwM4TaYVj+DsB
+	 IyfimZsImk0SsPaX9wEmy7t8qdjzm6tD1sgGqjHbkikddhG2VzVxp9Z7byN8fNUX/z
+	 o2ZTeGehghmYIQE0Mpe14EtT3SrvVDKJPMo7B9fmwG31EQg61TzF8Y6yUvAdOmnuwz
+	 3gkp6l9QSlCdVOtI1Z65UiJA2asaXPZnY77IctA5Pr4afwKZk1izoi0D2cRHEK8boW
+	 ssZWIP10I9eH5WW+SbVJwmVco+PtwCM77zrHbEod9tNWhxVROMjVQL6EmGdjPEDNsh
+	 PbBJMvFMyqSk0UqG4c7mgYL1rk2r96tfNdV1XZdBLlVRtEuBZDrsEUG3WFY1jrF86U
+	 AKg6f2sj+j5CmTPIdbnqquMg3c0ZhpqqGrOMI2CoylYSNwGfcBoDNfydhjQt0t2W8a
+	 2GtecUwBf76J8YRte/zVR1Ah4b57Mno+EMfqNFUAxBWMEL+fwTulfTqdUkTXyWbfdT
+	 8a+0+f0deAtdXSa06zIOjUxw=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 537B840E0027;
+	Mon, 10 Jun 2024 14:12:02 +0000 (UTC)
+Date: Mon, 10 Jun 2024 16:11:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH] x86/efi: Free EFI memory map only when installing a new
+ one.
+Message-ID: <20240610141156.GDZmcJrEi11xESpy3a@fat_crate.local>
+References: <20240610140932.2489527-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] counter: ti-eqep: enable clock at probe
-To: David Lechner <dlechner@baylibre.com>,
-        William Breathitt Gray
-	<wbg@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240609-ti-eqep-enable-clock-v1-1-1e9e7626467e@baylibre.com>
- <c08d2d51-e2e1-4b68-a4fb-ebf3a919c1b8@ti.com>
- <e1c7bc9f-3ecd-446f-a6a2-f97d6a8aa78d@baylibre.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <e1c7bc9f-3ecd-446f-a6a2-f97d6a8aa78d@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240610140932.2489527-2-ardb+git@google.com>
 
-Hi David,
++ Dan because of
 
-On 6/10/24 8:53 AM, David Lechner wrote:
-> On 6/10/24 8:44 AM, Judith Mendez wrote:
->> Hi David,
->>
->> On 6/9/24 3:27 PM, David Lechner wrote:
->>> The TI eQEP clock is both a functional and interface clock. Since it is
->>> required for the device to function, we should be enabling it at probe.
->>>
->>> Up to now, we've just been lucky that the clock was enabled by something
->>> else on the system already.
->>>
->>> Signed-off-by: David Lechner <dlechner@baylibre.com>
->>> ---
->>>    drivers/counter/ti-eqep.c | 6 ++++++
->>>    1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
->>> index 072b11fd6b32..825ae22c3ebc 100644
->>> --- a/drivers/counter/ti-eqep.c
->>> +++ b/drivers/counter/ti-eqep.c
->>> @@ -6,6 +6,7 @@
->>>     */
->>>      #include <linux/bitops.h>
->>> +#include <linux/clk.h>
->>>    #include <linux/counter.h>
->>>    #include <linux/kernel.h>
->>>    #include <linux/mod_devicetable.h>
->>> @@ -376,6 +377,7 @@ static int ti_eqep_probe(struct platform_device *pdev)
->>>        struct counter_device *counter;
->>>        struct ti_eqep_cnt *priv;
->>>        void __iomem *base;
->>> +    struct clk *clk;
->>>        int err;
->>>          counter = devm_counter_alloc(dev, sizeof(*priv));
->>> @@ -415,6 +417,10 @@ static int ti_eqep_probe(struct platform_device *pdev)
->>>        pm_runtime_enable(dev);
->>>        pm_runtime_get_sync(dev);
->>>    +    clk = devm_clk_get_enabled(dev, NULL);
->>> +    if (IS_ERR(clk))
->>
->> I think it would be nice to have print here in case the we fail to get
->> the clock.
+f0ef6523475f ("efi: Fix efi_memmap_alloc() leaks")
+
+Thanks Ard.
+
+On Mon, Jun 10, 2024 at 04:09:33PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> Do you mean that we should call devm_clk_get() and clk_prepare_enable()
-> separately so that we get two different error messages?
+> The logic in __efi_memmap_init() is shared between two different
+> execution flows:
+> - mapping the EFI memory map early or late into the kernel VA space, so
+>   that its entries can be accessed;
+> - cloning the EFI memory map in order to insert new entries that are
+>   created as a result of creating a memory reservation
+>   (efi_arch_mem_reserve())
 > 
-> The dev_err_probe() below will already print a message on any error
-> (other that EPROBE_DEFER).
-
-Apologies, I misread. The way you have it is good, thanks.
-
-Reviewed-by: Judith Mendez <jm@ti.com>
-
+> In the former case, the underlying memory containing the kernel's view
+> of the EFI memory map (which may be heavily modified by the kernel
+> itself on x86) is not modified at all, and the only thing that changes
+> is the virtual mapping of this memory, which is different between early
+> and late boot.
 > 
->>
->> ~ Judith
->>
->>> +        return dev_err_probe(dev, PTR_ERR(clk), "failed to enable clock\n");
->>> +
->>>        err = counter_add(counter);
->>>        if (err < 0) {
->>>            pm_runtime_put_sync(dev);
->>>
->>> ---
->>> base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
->>> change-id: 20240609-ti-eqep-enable-clock-91697095ca81
->>
+> In the latter case, an entirely new allocation is created that carries a
+> new, updated version of the kernel's view of the EFI memory map. When
+> installing this new version, the old version will no longer be
+> referenced, and if the memory was allocated by the kernel, it will leak
+> unless it gets freed.
+> 
+> The logic that implements this freeing currently lives on the code path
+> that is shared between these two use cases, but it should only apply to
+> the latter. So move it to the correct spot.
+> 
+> Cc: Ashish Kalra <Ashish.Kalra@amd.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/platform/efi/memmap.c | 5 +++++
+>  drivers/firmware/efi/memmap.c  | 5 -----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
+> index 4ef20b49eb5e..4990244e5168 100644
+> --- a/arch/x86/platform/efi/memmap.c
+> +++ b/arch/x86/platform/efi/memmap.c
+> @@ -97,6 +97,11 @@ int __init efi_memmap_install(struct efi_memory_map_data *data)
+>  	if (efi_enabled(EFI_PARAVIRT))
+>  		return 0;
+>  
+> +	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
+> +		__efi_memmap_free(efi.memmap.phys_map,
+> +				  efi.memmap.desc_size * efi.memmap.nr_map,
+> +				  efi.memmap.flags);
+> +
+>  	return __efi_memmap_init(data);
+>  }
+>  
+> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+> index 3365944f7965..3759e95a7407 100644
+> --- a/drivers/firmware/efi/memmap.c
+> +++ b/drivers/firmware/efi/memmap.c
+> @@ -51,11 +51,6 @@ int __init __efi_memmap_init(struct efi_memory_map_data *data)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
+> -		__efi_memmap_free(efi.memmap.phys_map,
+> -				  efi.memmap.desc_size * efi.memmap.nr_map,
+> -				  efi.memmap.flags);
+> -
+>  	map.phys_map = data->phys_map;
+>  	map.nr_map = data->size / data->desc_size;
+>  	map.map_end = map.map + data->size;
+> -- 
+> 2.45.2.505.gda0bf45e8d-goog
 > 
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
