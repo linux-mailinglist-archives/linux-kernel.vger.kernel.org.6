@@ -1,215 +1,159 @@
-Return-Path: <linux-kernel+bounces-207793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA42901C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:01:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10981901C3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC651C21BCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:01:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0111F2286E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8069555898;
-	Mon, 10 Jun 2024 08:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46C1558B9;
+	Mon, 10 Jun 2024 08:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EgbNaYdu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E0dNFPWF"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A24E57323;
-	Mon, 10 Jun 2024 08:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F562B9D4;
+	Mon, 10 Jun 2024 08:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006466; cv=none; b=d3lewerNsYtzO47hORweDsiugJQRBsYd7k9hMfNRowLWuxcagvZzBV1wQKe3oQM9Lv8tXCcSsOFdQZzf6l2DBCfuVIHKrAglPdD8M2DoFEhwWnik0+RJZmi8jTe5gxsubmqNj1bgrlWhcUNelEutEBpfiPS/yHcbk+tmVzvPGtc=
+	t=1718006461; cv=none; b=aijPMY/0k06MG319ByyVD247kcx05rQWL3iUTWnPM/Cioi9ei0mZmd2Rp7ssg4ewE8pE2YEcTjncpvbeLd38lDldwa8bb18rUXMfHSXRYSoZ+7zpRXl8ELmocgIBSt66AqTYRI2lwyaTqJoO713N3z1Pu6vRkglzPrqH+PCjS6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006466; c=relaxed/simple;
-	bh=8erf/E88jwuSkoF3P1BATcMvkdoOOMxwgKrtKmlQg3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MI5HFOeHrFatXdAkObLlQlVViS7xY9v+rCMAm+hhfY3sAi8HKdAL7jKMAJV4af3yqKpnEBVUvYISGHSClLyDKncv0AChe1FCBjeeTEH4q+l3TaIpP6gJQNSUdrxA+qEsnCoC/15IwP/ghk6XUjlebI3JAwGZi6x09CBgNIVqs5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EgbNaYdu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D1D9140E0081;
-	Mon, 10 Jun 2024 08:01:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id AXbXrPxKx3qC; Mon, 10 Jun 2024 08:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718006457; bh=LRJeHZ/E89jdwSKNTG+Gp6Yyqq4ajsR0sFmA+sxsrj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EgbNaYdu5+GP8omIVudKSU/PK+yJhLjHBRyw0LbRsHcZNZHXsAd+ymCRxNIlUlXA7
-	 xtm4CkPOb846bBX5NjDpUOqocQIcK+Jxpag2I/lekJnlb1MVRTjXF52SRfuJzTT+Qb
-	 bqrOXtyz+Ca8lSFmc1qaPGgxW34xchv6lbqUvG6aaXdxakKQCslxQUAlg3U885o09g
-	 83U3EJhhS0DRMXas3JRn0Q6HUP6NFiqP1E7JBUhRZMQRNhz4OXfaV9CMeYGOKv++P9
-	 br1eipIQlY2OT2VaA3C+KfbiGcX78DDx237BCeFF68P2e6UCNojjTR+BY/y0pb6vIf
-	 JtvfRisUU51N3REx84oWzBMpjfzYWpg40vnBx+uM2Xg5KSod0st9i5oTciSfdGNx4j
-	 UphH85KcIjVOHiZ9mBs6bo+Xw3ifmdlFHe2h0lWGLaOpw0PFcC9ny2voa529GUADJh
-	 9J2wyN/pK5s+5NCH5qmNZJNOePK2oW5iFcsnpURS7W063szA3N3GdJyUEvkodZcP9F
-	 JcjUcIm+3pS3rqqz7ru8yQmhDasbPzBGb5tafoYuuE6LC4L9Bkevzrrw5kPq9GbjEv
-	 Yl7r5+gcojUvuFYc5EtpHF+btffj+deP0Q2BYQWQSOAHuU9cx2D6wRaGnrknEnfuCx
-	 TvcVsZcZmMullex2FC1AtgtE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	s=arc-20240116; t=1718006461; c=relaxed/simple;
+	bh=1qc8sEPJXgX5QVHao+W1jv64OvLM7kYZ9yU+Gf0Z1dI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GCYD8uCflWRNlj71PV9OHQuG3ZY2ZxdyLbgsMcNlDYyvzilpWoM7pzfgD6jpteiK90wf6pdA84F5GAiNLevkaTz044D949+eL6Ms6szn1Pncx2916gjj+5bIblPOttFxXfrOH5OWT067dQFJcDLGFKTJvJ6TN+at9xe09Dl+usY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E0dNFPWF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718006457;
+	bh=1qc8sEPJXgX5QVHao+W1jv64OvLM7kYZ9yU+Gf0Z1dI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E0dNFPWFdu9QwVQ4mckqkzCeoKk+njabiRFivBjbv15atGBo7I9qaQPBmaW7/n6Uc
+	 3X3nXznhVVgzRjDCKXiBHSrwf8uH9+5XcjX7PneBkrSZonZZ0bholbelAR5GMynrKP
+	 M1zLUkSI4x65uIz3V3SlFVXoGCfXab9tc3iZbFaIfwtSEhOCfsRL8D6EvAIiw577VJ
+	 NJsd6JIp7RTwYZNluGNt+1Z9n+ex0jMkaE7lYtqDIPp0/jlF1Qu1eEJTyPR6vM3MLs
+	 04o9wsTQ2sRbMYpQFf0QjwrMnspMkN2pVwlhjDRiofbx3NigwoeW9PLdWONe53j33Q
+	 Z8ATGX7jzsuIw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4376D40E016A;
-	Mon, 10 Jun 2024 08:00:42 +0000 (UTC)
-Date: Mon, 10 Jun 2024 10:00:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Manish Narani <manish.narani@xilinx.com>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/20] EDAC/synopsys: Fix generic device type
- detection procedure
-Message-ID: <20240610080037.GFZmaypaCbTsXdGeKw@fat_crate.local>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-3-fancer.lancer@gmail.com>
- <20240604183803.GJZl9fC9R5M2NSQ01O@fat_crate.local>
- <5h32gfwdk6uztiv7kbsjbvbghu4yuox6h7b6pqughftztyk2yf@cmzsanqvwcmq>
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E996B3780575;
+	Mon, 10 Jun 2024 08:00:55 +0000 (UTC)
+Message-ID: <e71a38a9-7a92-4156-a7f0-52f71d461d61@collabora.com>
+Date: Mon, 10 Jun 2024 10:00:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5h32gfwdk6uztiv7kbsjbvbghu4yuox6h7b6pqughftztyk2yf@cmzsanqvwcmq>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
+ AUXADC
+To: Rob Herring <robh@kernel.org>
+Cc: jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
+ andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, marius.cristea@microchip.com,
+ marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
+ mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
+ kernel@collabora.com
+References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
+ <20240604123008.327424-2-angelogioacchino.delregno@collabora.com>
+ <20240605235239.GA3455504-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240605235239.GA3455504-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 01:11:27AM +0300, Serge Semin wrote:
-> As I said because dev_type is the memory DRAM chips type (individual
-> DRAM chip data bus width), and not the entire DQ-bus width or its
-> currently active part. Even from that perspective the function name
-> and the subsequent return value utilization is incorrect.
-
-Well, maybe the author misunderstood it but the result of this goes to
-sysfs:
-
-	dimm->dtype     = p_data->get_dtype(priv->baseaddr);
-
-which is in Documentation/ABI/testing/sysfs-devices-edac:
-
-What:		/sys/devices/system/edac/mc/mc*/(dimm|rank)*/dimm_dev_type
-Date:		April 2012
-Contact:	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-		linux-edac@vger.kernel.org
-Description:	This attribute file will display what type of DRAM device is
-		being utilized on this DIMM (x1, x2, x4, x8, ...).
-
-So you'd need to fix the comment above zynqmp_get_dtype() or I can do so
-too while applying.
-
-> First of all, not that much of the kinds.
-
-What does that mean: "not that much of the kinds"?
-
-> Just Xilinx ZynqMP DDRC (based on the DW uMCTL 2.40a IP-core) and some
-> version of DW uMCTL 3.80a being possessed by Dinh Nguyen and, by
-> a lucky coincident, turned to be mainly compatibly with the Xilinx
-> ZynqMP DDR controller.
-
-Then Dinh better holler here what the story is.
-
-> > > 32 or 64.  At the same time the bus width mode (MSTR.data_bus_width)
-> > > doesn't change the ECC feature availability. Thus it was wrong to
-> > > determine the ECC state with respect to the DQ-bus width mode.
+Il 06/06/24 01:52, Rob Herring ha scritto:
+> On Tue, Jun 04, 2024 at 02:30:04PM +0200, AngeloGioacchino Del Regno wrote:
+>> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
+>> providing various ADC channels for both internal temperatures and
+>> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
+>> usually on a 3.5mm jack) other than some basic battery statistics
+>> on boards where the battery is managed by this PMIC.
+>>
+>> Also add the necessary dt-binding headers for devicetree consumers.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../iio/adc/mediatek,mt6359-auxadc.yaml       | 33 +++++++++++++++++++
+>>   .../iio/adc/mediatek,mt6357-auxadc.h          | 21 ++++++++++++
+>>   .../iio/adc/mediatek,mt6358-auxadc.h          | 22 +++++++++++++
+>>   .../iio/adc/mediatek,mt6359-auxadc.h          | 22 +++++++++++++
+>>   4 files changed, 98 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+>>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
+>>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
+>>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+>> new file mode 100644
+>> index 000000000000..6497c416094d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+>> @@ -0,0 +1,33 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek MT6350 series PMIC AUXADC
+>> +
+>> +maintainers:
+>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> +
+>> +description:
+>> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
+>> +  in some MediaTek PMICs, performing various PMIC related measurements
+>> +  such as battery and PMIC internal voltage regulators temperatures,
+>> +  accessory detection resistance (usually, for a 3.5mm audio jack)
+>> +  other than voltages for various PMIC internal components.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - mediatek,mt6357-auxadc
+>> +      - mediatek,mt6358-auxadc
+>> +      - mediatek,mt6359-auxadc
+>> +
+>> +  "#io-channel-cells":
+>> +    const: 1
 > 
-> Sorry, but this part doesn't miss anything.
-
-Gramatically:
-
-"The IP-core reference manual says in [1,2] that the ECC support can't
-be enabled during the IP-core synthesizes for the DRAM data bus widths
-other than 16,..."
-
-"synthesizes" looks wrong.
-
-It either needs to be
-
-"... be enabled *while* the IP-core synthesizes for the DRAM..." which
-still doesn't make too much sense.
-
-Or
-
-"... be enabled during the IP-core *synthesis* for the DRAM..."
-
-I don't know what you mean with that "synthesizes" thing.
-
-> First of all, MSTR.data_bus_width field can have only one of the next
-> three values: 0x1, 0x2 and 0x3. All of them are handled in
-> zynqmp_get_dtype(). So in the current (incorrect) implementation it
-> will never return DEV_UNKNOWN.
+> Why do you need a node here? Just add #io-channel-cells to the parent
+> node.
 > 
-> Secondly, dimm->dtype isn't utilized for something significant in the
-> EDAC subsystem, but is just exposed to the user-space via the dev_type
-> sysfs node.
 
-See above.
+Because some boards will want to avoid probing the related driver, as that will
+trigger a reset and this may not play well with ECs (namely, some Chromebooks),
+which are reading the same AUXADC block.
 
-> So based on that my bet is that since the incorrect code didn't affect
-> the main driver functionality and since the dimm->dtype is just
-> exposed to user-space, the bug has been living just fine unnoticed up
-> until I started digging into the original DW uMCTL2 HW-manuals,
-> started studying the driver code, and decided to convert the driver to
-> supporting generic version of the DW uMCTL2 controller (not only the
-> Xilinx version of it). That's what this series and the next two ones
-> are about - about converting the driver to supporting truly generic DW
-> uMCTL controllers.
+If I avoid using a new node, instead of just using `status`, I'll have to add a
+"mediatek,disable-auxadc" property to the parent node, which isn't pretty...
 
-I absolutely don't have a problem with that - good idea!
+Cheers,
+Angelo
 
-However, we don't break machines and don't introduce regressions.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#io-channel-cells"
+>> +
+>> +additionalProperties: false
 
-> > Can those be freely accessed?
-> > 
-> > If not, you should say so.
-> 
-> No, they can't be.
 
-Then you don't need to mention them.
-
-> 
-> > 
-> > > Fixes: b500b4a029d5 ("EDAC, synopsys: Add ECC support for ZynqMP DDR controller")
-> > 
-> > So this commit is in 4.20.
-> > 
-> > Does that mean that this fix needs to get backported to all stable
-> > kernels?
-> 
-> It's up to the stable maintainers to decide.
-
-Haha, you're funny. How can the stable maintainers know whether each
-patch that has Fixes: tags is stable material?
-
-Nope, that's up to the maintainer to decide.
-
-> I've tested it on the devices with DW uMCTL 2.51a + DDR3 memory and DW
-> uMCTL 3.10a + DDR4 memory. I am sure this will work for Xilinx ZynqMP
-> too, especially seeing we've already got the Shubhrajyoti Datta Rb
-> tag:
-
-Yes, I've asked him to review that driver because this is not something
-I have or use and so on...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
