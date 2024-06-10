@@ -1,174 +1,171 @@
-Return-Path: <linux-kernel+bounces-207616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573C19019C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A059019C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42AFB1C20DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E4C1F21C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63127BA53;
-	Mon, 10 Jun 2024 04:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z77PfkTK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h9nOCcky";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z77PfkTK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h9nOCcky"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03994BA2F;
+	Mon, 10 Jun 2024 04:33:28 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2689D6FB6;
-	Mon, 10 Jun 2024 04:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156B79E0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 04:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717993939; cv=none; b=DgJvFxdTiYSQpmjn+XCnvDJHfNmwfM787zugqSMgax0UjN4PzXXaGE6PPItqFx/7Tv0cxGu0g4+KDijnMM3v3g8HqNMi/sKVCdEP2YRXbYjUa3hJcc+rGInWd3n9++XOkb/k5m6Zc53lFD7dZTiuAqcQ1MpXsPN/c5lpxUnwlmo=
+	t=1717994007; cv=none; b=QWmcEx0RizMyGI81l6Slhdea/xtkeUnP4KsSIpHiWZfopkyzG38FNiWf9OzWBe4PwQysEXqWt9Kxt3spD0ZiJws/gb2rBTWt+a1pz6F695xTFbD8DMkOCMizVVvZV460GtS7ufzNOpMt2os4wQln+pWVrgpvcXkfryANUtjzO+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717993939; c=relaxed/simple;
-	bh=sq2DGq4Des/nb/60pZroDK3wA2sOgpclexWHL4QKEl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgLRphUSgPBqEgT5EeldDwj3P7FpJ2864MmFE7BSAXn7S82Uf5fdlGTjIINh4azcwmtzHZq/Pjp0/9NCjZctdut/MDFs4uI+hNvrSu7xySvr0YVMBtOPgzuWWgUo4AmZa4B7ATNQYevnHtJvSNGN6hg/louCzuPA2fQSrBNX+VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z77PfkTK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h9nOCcky; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z77PfkTK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h9nOCcky; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3F89321A28;
-	Mon, 10 Jun 2024 04:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717993935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IND2MoD5+fzd4/enaZpt+uNExFlFrO8ngLetTeSMsF8=;
-	b=z77PfkTKm4EluD1EW77pRW/2jHupe+DZKwP4g5DBI1lB7Ns2vZ4yZHHlG7dry/MDNboApa
-	pbxd6gUDocDxl2/9vbwgRMcOdkcnGcE3uaC2lS4rN13Prx5i3+6l8J6mKg7rlulexG+fb/
-	KbTvi/KM7nmIjJbybulnIj3luewEv7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717993935;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IND2MoD5+fzd4/enaZpt+uNExFlFrO8ngLetTeSMsF8=;
-	b=h9nOCckyVqEiOGqdbdzc+P0c2skzkfoHu3XOh2WdwQ47UJJekByPQZaQ7W8Yv6T8w33Iju
-	8OzDSb6XQJA3koDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=z77PfkTK;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=h9nOCcky
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717993935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IND2MoD5+fzd4/enaZpt+uNExFlFrO8ngLetTeSMsF8=;
-	b=z77PfkTKm4EluD1EW77pRW/2jHupe+DZKwP4g5DBI1lB7Ns2vZ4yZHHlG7dry/MDNboApa
-	pbxd6gUDocDxl2/9vbwgRMcOdkcnGcE3uaC2lS4rN13Prx5i3+6l8J6mKg7rlulexG+fb/
-	KbTvi/KM7nmIjJbybulnIj3luewEv7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717993935;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IND2MoD5+fzd4/enaZpt+uNExFlFrO8ngLetTeSMsF8=;
-	b=h9nOCckyVqEiOGqdbdzc+P0c2skzkfoHu3XOh2WdwQ47UJJekByPQZaQ7W8Yv6T8w33Iju
-	8OzDSb6XQJA3koDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD19413A7F;
-	Mon, 10 Jun 2024 04:32:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XjxOK86BZmbfGAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 10 Jun 2024 04:32:14 +0000
-Date: Mon, 10 Jun 2024 06:32:09 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 1/6] fs/proc/task_mmu: indicate PM_FILE for PMD-mapped
- file THP
-Message-ID: <ZmaBycvnd0pQswET@localhost.localdomain>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-2-david@redhat.com>
+	s=arc-20240116; t=1717994007; c=relaxed/simple;
+	bh=ydLD1RkOwCZsbhlGLNEeTBvUpzcZYu5noepJpwCPjIA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lOjIMD1nQUh7M9yV9VDYU2yMavB0X2AOx1SwrPOvOZyzwZvgr8hc5LLQ67qUn8d6zLThV1L4pfVU3hc+zqcgU4lthXGNdeK0LOmEBAdbdhHXAkmGblMLZC6iRIHiN0eo6LHOuTx+3AXmbuD/AviARCIrhto4h6zUp+uDwjtvKkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e8e2ea7b4bso516035139f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 21:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717994005; x=1718598805;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ORD44ilzook8vUdEHyndML1wyFlOK8tGkaPhI+ZRn60=;
+        b=qfesrVjdK0B16dsmGQKV2pCz7DA3RNNTTM4bgUEMHub8JocQFWl0jUr50t2juUVQUJ
+         pwIwBv/Er9VotqvcCikatRwgBomz0fM2PnleFLP42TGMEGxRV6NCn8tjEj4Tqo0yKkN/
+         Gd+Ut2a6X9IFtLZIJ4S2XxDMYVno0EqQ4vIt3G2UZb/2JXR/qmov/+Xh1MmBK5rnRUS5
+         ZX5NLi+go5VJCPzsViSHN4IM6f6AGB8Xy7pmC2WlJBjXsNpWu9JjNM7ItPWUZAH9y5G5
+         qV9w+5Paa92HIU07EabfjwL6aMlhEBTptMWSdUu0nd7jmKo29CO2dnAmTrFx23ZaPZME
+         fsJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi8RnjIV66FMq1tTGewyKViEE8drBRTqmobH0DIZZReTudDOAuYtBHcO8YSCmefDMuvnjAS9TVkreJ1OeBWnFhmmMK9mTiYfdH7BVu
+X-Gm-Message-State: AOJu0Yz+WmcZlOvhZSAdhhv/rjYwlnO3rq+R6wmO1VHaBH6rQkIko6S0
+	59O1VWfwKpA9acjoFa50MG9ab3QUNhvEeOCc9zbcY0c0u2xikNw4aiEPWgLsI5Yp75k90EWUw7D
+	jIrEIM+Qfy7JLu/tX0RML/f2wFMkjgfC0AgaDINL0ulHcYQZG88huPwY=
+X-Google-Smtp-Source: AGHT+IHiwvUPMlpn+db2P4VFXW9vT8YPMtjrIpq8Ael5vJuZlWQCjzgq9F30pCYy6vaKjUPVhEMcoN3ksjYUbkAiTdlS7pjJZKXT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607122357.115423-2-david@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3F89321A28
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email];
-	DKIM_TRACE(0.00)[suse.de:+]
+X-Received: by 2002:a05:6602:1585:b0:7da:5250:5bf8 with SMTP id
+ ca18e2360f4ac-7eb57270623mr22029139f.4.1717994005201; Sun, 09 Jun 2024
+ 21:33:25 -0700 (PDT)
+Date: Sun, 09 Jun 2024 21:33:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000681a20061a81a6c3@google.com>
+Subject: [syzbot] [bpf?] KMSAN: uninit-value in strnchr (2)
+From: syzbot <syzbot+33bce7b14333572224b2@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@google.com, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 07, 2024 at 02:23:52PM +0200, David Hildenbrand wrote:
-> Looks like we never taught pagemap_pmd_range() about the existence of
-> PMD-mapped file THPs. Seems to date back to the times when we first added
-> support for non-anon THPs in the form of shmem THP.
-> 
-> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hello,
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+syzbot found the following issue on:
 
-> ---
->  fs/proc/task_mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 5aceb3db7565e..08465b904ced5 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1522,6 +1522,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->  		}
->  #endif
->  
-> +		if (page && !PageAnon(page))
-> +			flags |= PM_FILE;
->  		if (page && !migration && page_mapcount(page) == 1)
->  			flags |= PM_MMAP_EXCLUSIVE;
->  
-> -- 
-> 2.45.2
-> 
-> 
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1106eaba980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=33bce7b14333572224b2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11604222980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14adcdba980000
 
--- 
-Oscar Salvador
-SUSE Labs
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+33bce7b14333572224b2@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in strnchr+0x90/0xd0 lib/string.c:387
+ strnchr+0x90/0xd0 lib/string.c:387
+ bpf_bprintf_prepare+0x1c2/0x23c0 kernel/bpf/helpers.c:829
+ ____bpf_trace_printk kernel/trace/bpf_trace.c:385 [inline]
+ bpf_trace_printk+0xec/0x3e0 kernel/trace/bpf_trace.c:375
+ ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:1997
+ __bpf_prog_run32+0xb2/0xe0 kernel/bpf/core.c:2236
+ bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
+ __bpf_prog_run include/linux/filter.h:657 [inline]
+ bpf_prog_run include/linux/filter.h:664 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
+ bpf_trace_run2+0x116/0x300 kernel/trace/bpf_trace.c:2420
+ __bpf_trace_tlb_flush+0x2c/0x40 include/trace/events/tlb.h:38
+ trace_tlb_flush include/trace/events/tlb.h:38 [inline]
+ switch_mm_irqs_off+0x9d2/0x1010 arch/x86/mm/tlb.c:642
+ unuse_temporary_mm arch/x86/kernel/alternative.c:1815 [inline]
+ __text_poke+0xb4e/0xfb0 arch/x86/kernel/alternative.c:1925
+ text_poke arch/x86/kernel/alternative.c:1968 [inline]
+ text_poke_bp_batch+0x17f/0x960 arch/x86/kernel/alternative.c:2276
+ text_poke_flush arch/x86/kernel/alternative.c:2470 [inline]
+ text_poke_finish+0x7d/0xd0 arch/x86/kernel/alternative.c:2477
+ arch_jump_label_transform_apply+0x23/0x40 arch/x86/kernel/jump_label.c:146
+ __jump_label_update+0x6af/0x6d0 kernel/jump_label.c:483
+ jump_label_update+0x6a0/0x7a0 kernel/jump_label.c:882
+ static_key_enable_cpuslocked+0x229/0x260 kernel/jump_label.c:205
+ static_key_enable+0x23/0x30 kernel/jump_label.c:218
+ tracepoint_add_func+0x1084/0x1280 kernel/tracepoint.c:361
+ tracepoint_probe_register_prio_may_exist+0xa8/0xf0 kernel/tracepoint.c:482
+ tracepoint_probe_register_may_exist include/linux/tracepoint.h:52 [inline]
+ __bpf_probe_register kernel/trace/bpf_trace.c:2446 [inline]
+ bpf_probe_register+0x201/0x250 kernel/trace/bpf_trace.c:2452
+ bpf_raw_tp_link_attach+0x627/0x8a0 kernel/bpf/syscall.c:3865
+ bpf_raw_tracepoint_open+0x485/0x8a0 kernel/bpf/syscall.c:3892
+ __sys_bpf+0x5a6/0xd90 kernel/bpf/syscall.c:5702
+ __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5765
+ x64_sys_call+0x96b/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:322
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable stack created at:
+ __bpf_prog_run32+0x43/0xe0 kernel/bpf/core.c:2236
+ bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
+ __bpf_prog_run include/linux/filter.h:657 [inline]
+ bpf_prog_run include/linux/filter.h:664 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
+ bpf_trace_run2+0x116/0x300 kernel/trace/bpf_trace.c:2420
+
+CPU: 1 PID: 5048 Comm: syz-executor406 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
