@@ -1,100 +1,214 @@
-Return-Path: <linux-kernel+bounces-207784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1204B901C13
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 827AF901C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1037F1C21C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 734C31C21506
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FAD4436A;
-	Mon, 10 Jun 2024 07:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB73611E;
+	Mon, 10 Jun 2024 07:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj89g7jA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n3fY6x2o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0393F9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E97626286
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005703; cv=none; b=Rf71tdTR0jTO1wxtPDeTmfU4mUYhMcNev/1gWTVGlX/uhynq2Xyz5jXd9LdaYzNgLFy+5XkJT3fHM4zoPY+qmqmc5Kbar27ry6dPdaJq35XeBRySX2WG4h13hXPV2UbdFJdGs7dW0+56JpSWxuvQMtsA85dhvKTMSmIY9nhBr2Y=
+	t=1718005750; cv=none; b=j9Yn5PcLR6X5O4BF4QVs/84tZM9SO45+orzI4Tz84V5KQ7Ks5gJcfM5yf2NAzGSr9C6h7Bk5Rkm1a5cJpcjFboBuNBGpyacjModJOJSznCgEF8Le1dG1g4vhsDM5t/5DX8gTY/8F5mcN4u+lPliVJrvAqzH8iRrtuFs/pnFjc2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005703; c=relaxed/simple;
-	bh=2qRE8JlGLZ2v3Gb/BpOQHXVYxdux+LqVifqY0jGju70=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W/8CxYLpLKeIhaVJxRhVuXoz3bMoxcOtjMDVexUHRw50QqL1kZYGhQwfBQectCyExpdPYsWCAEoyEJVMAlGuay2HdL0lEqcXivj3BMoYpxJKYJf2LiSe8BParK75tIlc1f9aMT1TzC3al245QLJyeFRVXM7L+EFiW3cDMa0uCE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mj89g7jA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397D1C2BBFC;
-	Mon, 10 Jun 2024 07:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718005702;
-	bh=2qRE8JlGLZ2v3Gb/BpOQHXVYxdux+LqVifqY0jGju70=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mj89g7jA6W9wPM/LUrs7z1lITBOBj9JdkJyn5HmVzF7a0YuXsYtYjSF3WsiyerHUw
-	 R7hkyoVeRAjW9EDb9x22cAXRab275h2U8ZXVgTzu5Mid8+ZOauy6NnHQedcCcMroiW
-	 uG+TofcmkVzClfUkFZorMnVk5Apig6fT4ZUxrYCUimC5dhQJYPomMgc3TJvZZDNFpN
-	 QV/hQpBDdSS2P4xRlfb6ydgRwi1NYOuFEc2wmhIbCp1EQRV3fggutfYAWA0JONyBpZ
-	 WNqg+jpckVETcv9IGdBlIbM73kWAqMG7DVXxuf8bc4pExIkfn53w7hjHTGV7R/TbU+
-	 7Ee8JLVxzvhQw==
-From: Michael Walle <mwalle@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	e9hack <e9hack@gmail.com>
-Subject: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
-Date: Mon, 10 Jun 2024 09:48:09 +0200
-Message-Id: <20240610074809.2180535-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718005750; c=relaxed/simple;
+	bh=6jhS++X/kRSNxPfeeQz/r6FMf/hMVlZK/ESRq3wR3fE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PT+5N1vsYP6p0twXmXjKouiqMaIlMTGjCAgxZUmC9jMPoLvGR2hK05RPebmFFa9zR6Dwn5FjqaTnwuiNtc5Uf7ygPzhLksCqwtS7Q3K9dnAUb/cSz8sta/V0FgvGg13B7TVcFf8Uyn8ZtIrK+ZEyTP9BF+Ui9UufSbnGXg+0qUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n3fY6x2o; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718005748; x=1749541748;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6jhS++X/kRSNxPfeeQz/r6FMf/hMVlZK/ESRq3wR3fE=;
+  b=n3fY6x2ocIJ09jiSizN3OqBr8lxgZWGt6w1HISuw77HZopM6GLJveivk
+   xpAya0aJKD8T8FWE/oOg/ITaUVcGVFKiOh9cH2ZzsWdVn7kAWVlxKzJEg
+   ULWR/rJMQYzof4+sBygFZjcF3prHCB3Eyd31MwTGMuG0FqvDjWl7kLT/z
+   BGrmbK1+P4BEszKtu3Geh7wTThZc4e6UKkWFDG+dvkhiytwc9nxlCj9ei
+   BtLf+PNR8V46RaaYhbQcYZNa+aEoMQOxsWKWzCIVmCmKu56UjZcldS8hn
+   YLTINfbmfQ6ymxFhFI8Umh3lXp96Lj9Obzyf3fmVIY+Q5lXyXE6RhYjuB
+   Q==;
+X-CSE-ConnectionGUID: 8+ixgc8WSXyu/pP80FflbQ==
+X-CSE-MsgGUID: 4oierZFuQyiopayMfY/UAw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="40052294"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="40052294"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 00:49:07 -0700
+X-CSE-ConnectionGUID: XI7aUyUVQ42Vnk1WEk1W2w==
+X-CSE-MsgGUID: SoXCdszSRi+NL0hiSVaKjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="39060747"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Jun 2024 00:49:04 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGZm2-0001x1-0B;
+	Mon, 10 Jun 2024 07:49:02 +0000
+Date: Mon, 10 Jun 2024 15:48:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhinav Jain <jain.abhinav177@gmail.com>, jgross@suse.com,
+	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com, jain.abhinav177@gmail.com
+Subject: Re: [PATCH] xen: xen-pciback: Export a bridge and all its children
+ as per TODO
+Message-ID: <202406101511.hTO5m855-lkp@intel.com>
+References: <20240609184410.53500-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609184410.53500-1-jain.abhinav177@gmail.com>
 
-Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
-removed the flags for non-SFDP devices. It was assumed that it wasn't in
-use anymore. This turned out to be wrong. Add the no_sfdp_flags as
-well as the size again.
+Hi Abhinav,
 
-Reported-by: e9hack <e9hack@gmail.com>
-Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-Hartmut, Linus, could you please test it on your boards? Also, do
-you have a real name we should put in the Reported-by tag?
+kernel test robot noticed the following build errors:
 
-This will also need a manual backport to the stable kernels due to
-the new syntax. But that should be straight forward.
----
- drivers/mtd/spi-nor/winbond.c | 2 ++
- 1 file changed, 2 insertions(+)
+[auto build test ERROR on xen-tip/linux-next]
+[also build test ERROR on linus/master v6.10-rc3 next-20240607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index ca67bf2c46c3..6b6dec6f8faf 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
- 	}, {
- 		.id = SNOR_ID(0xef, 0x40, 0x18),
- 		.name = "w25q128",
-+		.size = SZ_16M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
- 	}, {
- 		.id = SNOR_ID(0xef, 0x40, 0x19),
- 		.name = "w25q256",
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhinav-Jain/xen-xen-pciback-Export-a-bridge-and-all-its-children-as-per-TODO/20240610-024623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git linux-next
+patch link:    https://lore.kernel.org/r/20240609184410.53500-1-jain.abhinav177%40gmail.com
+patch subject: [PATCH] xen: xen-pciback: Export a bridge and all its children as per TODO
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240610/202406101511.hTO5m855-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406101511.hTO5m855-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406101511.hTO5m855-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from include/xen/xenbus.h:37,
+                    from drivers/xen/xen-pciback/xenbus.c:15:
+   drivers/xen/xen-pciback/xenbus.c: In function 'xen_pcibk_export_device':
+>> drivers/xen/xen-pciback/xenbus.c:270:38: error: 'struct pci_dev' has no member named 'domain'
+     270 |                                 child->domain, child->bus->number,
+         |                                      ^~
+   include/linux/dev_printk.h:129:48: note: in definition of macro 'dev_printk'
+     129 |                 _dev_printk(level, dev, fmt, ##__VA_ARGS__);            \
+         |                                                ^~~~~~~~~~~
+   drivers/xen/xen-pciback/xenbus.c:268:25: note: in expansion of macro 'dev_dbg'
+     268 |                         dev_dbg(&pdev->xdev->dev,
+         |                         ^~~~~~~
+   drivers/xen/xen-pciback/xenbus.c:275:60: error: 'struct pci_dev' has no member named 'domain'
+     275 |                                                       child->domain,
+         |                                                            ^~
+   drivers/xen/xen-pciback/xenbus.c:284:46: error: 'struct pci_dev' has no member named 'domain'
+     284 |                                         child->domain,
+         |                                              ^~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/xen/xen-pciback/xenbus.c:281:33: note: in expansion of macro 'dev_err'
+     281 |                                 dev_err(&pdev->xdev->dev,
+         |                                 ^~~~~~~
+
+
+vim +270 drivers/xen/xen-pciback/xenbus.c
+
+   225	
+   226	static int xen_pcibk_export_device(struct xen_pcibk_device *pdev,
+   227					 int domain, int bus, int slot, int func,
+   228					 int devid)
+   229	{
+   230		struct pci_dev *dev;
+   231		int err = 0;
+   232	
+   233		dev_dbg(&pdev->xdev->dev, "exporting dom %x bus %x slot %x func %x\n",
+   234			domain, bus, slot, func);
+   235	
+   236		dev = pcistub_get_pci_dev_by_slot(pdev, domain, bus, slot, func);
+   237		if (!dev) {
+   238			err = -EINVAL;
+   239			xenbus_dev_fatal(pdev->xdev, err,
+   240					 "Couldn't locate PCI device "
+   241					 "(%04x:%02x:%02x.%d)! "
+   242					 "perhaps already in-use?",
+   243					 domain, bus, slot, func);
+   244			goto out;
+   245		}
+   246	
+   247		err = xen_pcibk_add_pci_dev(pdev, dev, devid,
+   248					    xen_pcibk_publish_pci_dev);
+   249		if (err)
+   250			goto out;
+   251	
+   252		dev_info(&dev->dev, "registering for %d\n", pdev->xdev->otherend_id);
+   253		if (xen_register_device_domain_owner(dev,
+   254						     pdev->xdev->otherend_id) != 0) {
+   255			dev_err(&dev->dev, "Stealing ownership from dom%d.\n",
+   256				xen_find_device_domain_owner(dev));
+   257			xen_unregister_device_domain_owner(dev);
+   258			xen_register_device_domain_owner(dev, pdev->xdev->otherend_id);
+   259		}
+   260	
+   261		/* Check if the device is a bridge and export all its children */
+   262		if ((dev->hdr_type && PCI_HEADER_TYPE_MASK) == PCI_HEADER_TYPE_BRIDGE) {
+   263			struct pci_dev *child = NULL;
+   264	
+   265			/* Iterate over all the devices in this bridge */
+   266			list_for_each_entry(child, &dev->subordinate->devices,
+   267					bus_list) {
+   268				dev_dbg(&pdev->xdev->dev,
+   269					"exporting child device %04x:%02x:%02x.%d\n",
+ > 270					child->domain, child->bus->number,
+   271					PCI_SLOT(child->devfn),
+   272					PCI_FUNC(child->devfn));
+   273	
+   274				err = xen_pcibk_export_device(pdev,
+   275							      child->domain,
+   276							      child->bus->number,
+   277							      PCI_SLOT(child->devfn),
+   278							      PCI_FUNC(child->devfn),
+   279							      devid);
+   280				if (err) {
+   281					dev_err(&pdev->xdev->dev,
+   282						"failed to export child device : "
+   283						"%04x:%02x:%02x.%d\n",
+   284						child->domain,
+   285						child->bus->number,
+   286						PCI_SLOT(child->devfn),
+   287						PCI_FUNC(child->devfn));
+   288					goto out;
+   289				}
+   290			}
+   291		}
+   292	out:
+   293		return err;
+   294	}
+   295	
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
