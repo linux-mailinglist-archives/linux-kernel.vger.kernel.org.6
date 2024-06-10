@@ -1,228 +1,151 @@
-Return-Path: <linux-kernel+bounces-207863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EAF901D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32186901D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99EC71F21E5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95B8284F7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B71A74C1B;
-	Mon, 10 Jun 2024 08:40:38 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA826F314;
+	Mon, 10 Jun 2024 08:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JjcWTaLH"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492356F318;
-	Mon, 10 Jun 2024 08:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AA64D8A0;
+	Mon, 10 Jun 2024 08:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718008837; cv=none; b=Ub6jxvVQysZtnLDaB+DxXyoN63A75nVvaUUeX9JU6zriYAjd0M0PFNBySd//GaTQ+h6UBwaLrJDvM4A3Py6sCIw+/A4GGweX489Ijw8g2Z4h+vvMG9xKivNDgIhCCCCQqufaBoXi1DyIGPBF/88E8plZhk1NMjFODTZOxpqroPI=
+	t=1718009003; cv=none; b=PkmLMFCC0ctwY2XwLnGrtmn8v0y/D8vnX3d8TRQnvOLAA1SG+NOoKDZG6tK6jqpBlQTJaHE9fK+krilUjgYOoZL3PFzg3Hl87BFsAXH3DKOppzGB6IFvIMd77Nxzoh+KvINbZKCf36KsYVkD7hmBggHzeFZQj6BC/qdkI0ismms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718008837; c=relaxed/simple;
-	bh=9koIKek7qPhDHbcj/DeFDreV6Tr/KG7823SHacH9DrQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nrqf6oylXHPbdLhtESRGUOTzxzaKSMovdCYvaz0FJHcFRvLOR2qzMkhdPwMQ3UNGrDwFRNHvsLSlCyOUfWqWr/0skVc+xxOX7tzmvaxpJ3zCS9Wndm68dtK0aH2jzisQO3IQYaK6A4iKwwKPJLGgR74XU/eWmWAeiAYHaxwJsvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so1117145a12.2;
-        Mon, 10 Jun 2024 01:40:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718008834; x=1718613634;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TYQOXrTi4xC9EJqXLJeGLPx4jx3qC+GA+AGgjQf+XgM=;
-        b=RG0luP4JWDeifdo84tlIVpaLYMb6B5b7erwLXVrwaBvTBYK8WzTTgztoBej9Ztu1PD
-         vTGBIRe9gKg698PLPuS/W7zc9AbRS9o7zQIaw6B0kh8Qu91IwsrejQ6TPc1JtDKA0YR9
-         /Wpk1OBAlpsNyLXld+sZInMlAXYyqlZgcXrSP2GoLDGv9HWTYzgvno70xG/I3qByBT0J
-         fR3Z1+ozPo5T27K/1aNc7f8vofIf3NmRf+b7JBhIHvCc7eIhnT8L+VDop5x/Pp8y07pq
-         o5K/jgZxPwiEw/lEOaAr+eZv0ihJ8flEW0WdWhKl8/C206Cd1hv1wzR22yH7RxAq6ZVo
-         refw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSGB028f5qhgavkxj3znSU2pwaPCBo+BUFyMYDIf4EpWeN0bZoxS8Ld2SBpqTmPdmDI7kzcKPA8RFPKNAtsVlUqRi27b/YxSqIe/HA
-X-Gm-Message-State: AOJu0YzJU3MtJc2QMo7l+g2nvLHwNIg/iMK/ymZNmaGFU0Nhl3ZVqqMu
-	SCbLazD3lveu1Bgfj7/8D/0o7i5dKLqCjRIvSiwZeVCimGrrXPAa
-X-Google-Smtp-Source: AGHT+IEUssRf7aMIr7nHIHOQxBa4liSgGwzzqhTOMa9jN4/atsscpDFfJBN2AD426jikYbbe2pGgFA==
-X-Received: by 2002:a50:f60d:0:b0:57a:1fef:619e with SMTP id 4fb4d7f45d1cf-57c508a12dfmr5204888a12.18.1718008834380;
-        Mon, 10 Jun 2024 01:40:34 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f7253800fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f725:3800:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c72efe054sm3259581a12.66.2024.06.10.01.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 01:40:34 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Mon, 10 Jun 2024 10:40:27 +0200
-Subject: [PATCH 3/3] btrfs: split RAID stripes on deletion
+	s=arc-20240116; t=1718009003; c=relaxed/simple;
+	bh=LNIdzzsyqhCcgncvNLcOHzzyUBy2LZ72RSb393VPJD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VIAHcphScg6itD4zxR6V2VrR4j1gktzUyoY3em8ZR8BL/1k+Q/ifZDIOYjOzNfDbADL898PapljONyD/Wzi7N7gaC8C2Af8xzNt4QWEk4ARGhbIdD/8U4dLtuajuvjlo169Ixyummkf7zJanhuvPYCm+7xxSdhDwWerOEH0AK+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JjcWTaLH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718009000;
+	bh=LNIdzzsyqhCcgncvNLcOHzzyUBy2LZ72RSb393VPJD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JjcWTaLH9RJQ8OsGhSaTMWLC5Fv/zpn5Gv1aSyQk78fF2Yx+4NKYt0+IVLJCbPibb
+	 5B6368IDCGBDKI2/MMnHFxYrXRPEXDdkEUN0739oxncZij4l7SgxsKJ23Mn0VTk4PJ
+	 XL0jKEPhjfmmF7kw1dPmRFmRYRfPYXlswCBbuyl+A/9bDww9tazb2H2WI66CU53R9c
+	 QnPEpd1S2BoYDlN9bP/nmNZ86U7SCMz/5xHTdjooR1S4aV9cq008K15l8q3VV6dhLb
+	 6uWN5CJXSJiHv2javX5Y9u5T2LLdtOZjD/d3LnzTBP5TzB1RvSn6K2NxdX+Uqaj5XS
+	 vXsSNPQWxW6gg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E2EDC378148F;
+	Mon, 10 Jun 2024 08:43:19 +0000 (UTC)
+Message-ID: <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+Date: Mon, 10 Jun 2024 10:43:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+References: <20240608-md-drivers-regulator-v1-1-da338665db7a@quicinc.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240608-md-drivers-regulator-v1-1-da338665db7a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240610-b4-rst-updates-v1-3-179c1eec08f2@kernel.org>
-References: <20240610-b4-rst-updates-v1-0-179c1eec08f2@kernel.org>
-In-Reply-To: <20240610-b4-rst-updates-v1-0-179c1eec08f2@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- JohnnesThumshirn <johannes.thumshirn@wdc.com>, 
- Johnnes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3809; i=jth@kernel.org;
- h=from:subject:message-id; bh=xt1gqPtO3ScxjD8qUPejfcJ4eDxc3zKA784+waQ49mI=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaSl7f53OYHJt+TKzowdGx5+vhXkfvzEgdMPJ09aw/jw3
- CLzswxCbR2lLAxiXAyyYoosx0Nt90uYHmGfcui1GcwcViaQIQxcnAIwkUPxDP8dVf/+2Je3/97R
- 9fvDFk33c5ycOPHLJrPKS/EbHXSnObm1MPwvKjpay326xq6T0Zn3yc97V27phqvfz0xsvHLk+H1
- lv098AA==
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-From: JohnnesThumshirn <johannes.thumshirn@wdc.com>
+Il 09/06/24 06:53, Jeff Johnson ha scritto:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all files
+> which have a MODULE_LICENSE(). This includes mtk-dvfsrc-regulator.c, which
+> did not produce a warning with the x86 allmodconfig, since it may cause
+> this warning with other configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/regulator/da9121-regulator.c     | 1 +
+>   drivers/regulator/max20411-regulator.c   | 1 +
+>   drivers/regulator/mtk-dvfsrc-regulator.c | 1 +
+>   drivers/regulator/rt4831-regulator.c     | 1 +
+>   drivers/regulator/tps6286x-regulator.c   | 1 +
+>   5 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/regulator/da9121-regulator.c b/drivers/regulator/da9121-regulator.c
+> index 96257551bb12..3571b6242e3a 100644
+> --- a/drivers/regulator/da9121-regulator.c
+> +++ b/drivers/regulator/da9121-regulator.c
+> @@ -1192,4 +1192,5 @@ static struct i2c_driver da9121_regulator_driver = {
+>   
+>   module_i2c_driver(da9121_regulator_driver);
+>   
+> +MODULE_DESCRIPTION("Dialog Semiconductor DA9121/DA9122/DA9220/DA9217/DA9130/DA9131/DA9132 regulator driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/regulator/max20411-regulator.c b/drivers/regulator/max20411-regulator.c
+> index 8c09dc71b16d..6614e767072f 100644
+> --- a/drivers/regulator/max20411-regulator.c
+> +++ b/drivers/regulator/max20411-regulator.c
+> @@ -161,4 +161,5 @@ static struct i2c_driver max20411_i2c_driver = {
+>   };
+>   module_i2c_driver(max20411_i2c_driver);
+>   
+> +MODULE_DESCRIPTION("Maxim MAX20411 High-Efficiency Single Step-Down Converter driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/regulator/mtk-dvfsrc-regulator.c b/drivers/regulator/mtk-dvfsrc-regulator.c
+> index f1280d45265d..1941aad5e247 100644
+> --- a/drivers/regulator/mtk-dvfsrc-regulator.c
+> +++ b/drivers/regulator/mtk-dvfsrc-regulator.c
+> @@ -211,4 +211,5 @@ static void __exit mtk_dvfsrc_regulator_exit(void)
+>   module_exit(mtk_dvfsrc_regulator_exit);
+>   
+>   MODULE_AUTHOR("Arvin wang <arvin.wang@mediatek.com>");
+> +MODULE_DESCRIPTION("MediaTek DVFSRC regulator driver");
 
-The current RAID stripe code assumes, that we will always remove a
-whole stripe entry.
+Can you please drop this one?
+I have a series floating that is removing this driver entirely and replacing it
+with a refactored one. Though, it has the same issue, so I'll have to send a v6.
 
-But ff we're only removing a part of a RAID stripe we're hitting the
-ASSERT()ion checking for this condition.
+Anyway, v5 is there:
 
-Instead of assuming the complete deletion of a RAID stripe, split the
-stripe if we need to.
+https://lore.kernel.org/r/20240424095416.1105639-1-angelogioacchino.delregno@collabora.com
 
-Signed-off-by: Johnnes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/raid-stripe-tree.c | 101 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 77 insertions(+), 24 deletions(-)
 
-diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-index 3020820dd6e2..41403217c3e6 100644
---- a/fs/btrfs/raid-stripe-tree.c
-+++ b/fs/btrfs/raid-stripe-tree.c
-@@ -33,42 +33,95 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
- 	if (!path)
- 		return -ENOMEM;
- 
--	while (1) {
--		key.objectid = start;
--		key.type = BTRFS_RAID_STRIPE_KEY;
--		key.offset = length;
-+again:
-+	key.objectid = start;
-+	key.type = BTRFS_RAID_STRIPE_KEY;
-+	key.offset = length;
- 
--		ret = btrfs_search_slot(trans, stripe_root, &key, path, -1, 1);
--		if (ret < 0)
--			break;
--		if (ret > 0) {
--			ret = 0;
--			if (path->slots[0] == 0)
--				break;
--			path->slots[0]--;
--		}
-+	ret = btrfs_search_slot(trans, stripe_root, &key, path, -1, 1);
-+	if (ret < 0)
-+		goto out;
-+	if (ret > 0) {
-+		ret = 0;
-+		if (path->slots[0] == 0)
-+			goto out;
-+		path->slots[0]--;
-+	}
-+
-+	leaf = path->nodes[0];
-+	slot = path->slots[0];
-+	btrfs_item_key_to_cpu(leaf, &key, slot);
-+	found_start = key.objectid;
-+	found_end = found_start + key.offset;
-+
-+	/* That stripe ends before we start, we're done. */
-+	if (found_end <= start)
-+		goto out;
-+
-+	trace_btrfs_raid_extent_delete(fs_info, start, end,
-+				       found_start, found_end);
-+
-+	if (found_start < start) {
-+		u64 diff = start - found_start;
-+		struct btrfs_key new_key;
-+		int num_stripes;
-+		struct btrfs_stripe_extent *stripe_extent;
-+
-+		new_key.objectid = start;
-+		new_key.type = BTRFS_RAID_STRIPE_KEY;
-+		new_key.offset = length - diff;
-+
-+		ret = btrfs_duplicate_item(trans, stripe_root, path,
-+					   &new_key);
-+		if (ret)
-+			goto out;
- 
- 		leaf = path->nodes[0];
- 		slot = path->slots[0];
--		btrfs_item_key_to_cpu(leaf, &key, slot);
--		found_start = key.objectid;
--		found_end = found_start + key.offset;
- 
--		/* That stripe ends before we start, we're done. */
--		if (found_end <= start)
--			break;
-+		num_stripes =
-+			btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
-+		stripe_extent =
-+			btrfs_item_ptr(leaf, slot, struct btrfs_stripe_extent);
- 
--		trace_btrfs_raid_extent_delete(fs_info, start, end,
--					       found_start, found_end);
-+		for (int i = 0; i < num_stripes; i++) {
-+			struct btrfs_raid_stride *raid_stride =
-+				&stripe_extent->strides[i];
-+			u64 physical =
-+				btrfs_raid_stride_physical(leaf, raid_stride);
- 
--		ASSERT(found_start >= start && found_end <= end);
--		ret = btrfs_del_item(trans, stripe_root, path);
-+			btrfs_set_stack_raid_stride_physical(raid_stride,
-+							     physical + diff);
-+		}
-+
-+		btrfs_mark_buffer_dirty(trans, leaf);
-+		btrfs_release_path(path);
-+		goto again;
-+	}
-+
-+	if (found_end > end) {
-+		u64 diff = found_end - end;
-+		struct btrfs_key new_key;
-+
-+		new_key.objectid = found_start;
-+		new_key.type = BTRFS_RAID_STRIPE_KEY;
-+		new_key.offset = length - diff;
-+
-+		ret = btrfs_duplicate_item(trans, stripe_root, path,
-+					   &new_key);
- 		if (ret)
--			break;
-+			goto out;
- 
-+		btrfs_mark_buffer_dirty(trans, leaf);
- 		btrfs_release_path(path);
-+		goto again;
-+
- 	}
- 
-+	if (found_start == start && found_end == end)
-+		ret = btrfs_del_item(trans, stripe_root, path);
-+
-+ out:
- 	btrfs_free_path(path);
- 	return ret;
- }
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/regulator/rt4831-regulator.c b/drivers/regulator/rt4831-regulator.c
+> index 97e6f7e2a0ba..7d1ba0c82271 100644
+> --- a/drivers/regulator/rt4831-regulator.c
+> +++ b/drivers/regulator/rt4831-regulator.c
+> @@ -202,4 +202,5 @@ static struct platform_driver rt4831_regulator_driver = {
+>   module_platform_driver(rt4831_regulator_driver);
+>   
+>   MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
+> +MODULE_DESCRIPTION("Richtek RT4831 DSV RegulatorsRichtek RT4831 DSV Regulators driver");
 
--- 
-2.43.0
+Also, there's a typo here :-)
+
+After dropping mtk-dvfsrc-regulator changes and after fixing the typo:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
