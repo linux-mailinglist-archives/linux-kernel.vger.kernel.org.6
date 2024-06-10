@@ -1,136 +1,439 @@
-Return-Path: <linux-kernel+bounces-208412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE279024C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541329024C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DB928683C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE5881F24B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD69213774B;
-	Mon, 10 Jun 2024 14:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fQKXY5Uf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649641384A9;
+	Mon, 10 Jun 2024 14:58:01 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152613213A;
-	Mon, 10 Jun 2024 14:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4296135A67
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031463; cv=none; b=AWPInjehhbOw4HbXEvqnxRw0zPZunMeZ1X514aJi3rOT/T5dS/8a/9tclRU965YA5l6UONOgKdSlgwhlE9xOiEnMbOJ1uHePhK6ee/PumTuaExbXIAy/U/IX51mnnYmvoCfHwSIizVnpv0Eso5h1MmrJieatoLnzwxfjLS1DQ5c=
+	t=1718031480; cv=none; b=XjVAVfjyxEaOPBUsxGxDkxGwXiDOgWToCNAqe+6y6Sw23CIxE5f3vucWAoJHv3VUykMtUoR/mo1V6TkgWPQsm1u7nEmveLGt/OMl6xJRhdM/jGhxLI73Z+ERvaT6Uja7xcPzOezrCmMfcdqiGuJRHlK2FsRHJg/+L2ytJ+wCTiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031463; c=relaxed/simple;
-	bh=2rXaxkSAIZotar+nnN9S9D60wlWokv37PQWPyIcOILk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oym5x8PHouvYM4H/tZKs/HCsttuioWbrp+hqcaUkIzv2ow7AGvjqS4FVldb48gjl+A+o7BsoKbVzMXU0sGrhJnCRKLLGRoxEYkDBpO6IIH4k4P4QPKIoDc0F18T2JuCLDQLXWH2MMnay0Ld35SMuUcdA6RAiYNIawO77H5H3NBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fQKXY5Uf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEEjPT011686;
-	Mon, 10 Jun 2024 14:57:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A4LnwTREdQzipPnKr1IjzxpDtyZ+lNAXOoAtXrqzceY=; b=fQKXY5Uf9KHvhFHu
-	4wup75oeDHsrQqOE6uYnnZ34qPIEZdxWousE+F4Uz3p6hvM/2Y2r0TvQz7dUp+s7
-	d/GcyTRV7DHbxPdyDkjmNk/+V3D3786O+gOuNC9carLLiLrf2Q7mwAwelEAqltn2
-	xc8kW2W9GDfF/kIri+1umYTwYB8YfuMbRm4K5n7jX2zl2LmAn3GP/OW7WIhzYNxC
-	TjRO+A2jVj659MkfFeWAiXZjb8IWvK9N2jLyrli90o2rRPbtDr24zpgWpenKA0SY
-	t4Se+bsR6yvfLoB1i0DZHlJSbEPJSINKERcksATcmqtmq9KivycFhNhgKKv5HcZe
-	uN03dw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmuvw8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:57:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEvMcm029467
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:57:22 GMT
-Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:57:21 -0700
-Message-ID: <1988d782-e9a1-4099-9ca4-4a4d7c560554@quicinc.com>
-Date: Mon, 10 Jun 2024 07:57:20 -0700
+	s=arc-20240116; t=1718031480; c=relaxed/simple;
+	bh=rzJk6/CeDwWDTWDhgd/wsu6G/agmVzr+Qll0J50HCrA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z30ndlYBdwLSL2bkf0wREcyn9VKrNC1xxGYdCLan6JGcl41ToXZlG+70FOpF3n+wZERdivcq82SEZGwKgqdZhO8IpgJQ2L8ih6qk2D7f/+JiQz2/RLQtxGPURlRYydNAb+9EycVmD/9tg1EYekN2ZaHu4z3Wd2Q2gaXmqTs5U8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id ce702670-2739-11ef-ab0e-005056bdd08f;
+	Mon, 10 Jun 2024 17:57:50 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 10 Jun 2024 17:57:49 +0300
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7] gpio: virtuser: new virtual driver
+Message-ID: <ZmcUbe1aQfezZy5B@surfacebook.localdomain>
+References: <20240527144054.155503-1-brgl@bgdev.pl>
+ <ZleXc6tLbiWQ59i-@surfacebook.localdomain>
+ <CAMRc=MftW0y7GicBy4vwABomUYuMndsJBUTdsQzZijDtgX1ohQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Hannes Reinecke <hare@suse.com>, Khalid Aziz <khalid@gonehiking.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K.
- Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Finn Thain <fthain@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        James Smart <james.smart@broadcom.com>,
-        Ram Vegesna
-	<ram.vegesna@broadcom.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "Juergen E. Fischer" <fischer@norbit.de>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com>
- <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
-X-Proofpoint-ORIG-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100114
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MftW0y7GicBy4vwABomUYuMndsJBUTdsQzZijDtgX1ohQ@mail.gmail.com>
 
-On 6/9/2024 11:10 PM, Hannes Reinecke wrote:
-> On 6/8/24 17:33, Jeff Johnson wrote:
-[...]
->> diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
->> index 9503996c6325..add10098a569 100644
->> --- a/drivers/scsi/aha1542.c
->> +++ b/drivers/scsi/aha1542.c
->> @@ -1009,6 +1009,7 @@ static int aha1542_biosparam(struct scsi_device *sdev,
->>   
->>   	return 0;
->>   }
->> +MODULE_DESCRIPTION("Adaptec AHA-1542 SCSI host adapter driver");
->>   MODULE_LICENSE("GPL");
-> 
-> Please add a newline before the MODULE_DESCRIPTION line.
-> 
->>   
->>   static int aha1542_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd *cmd)
-[...]
->> --- a/drivers/scsi/atp870u.c
->> +++ b/drivers/scsi/atp870u.c
->> @@ -1724,6 +1724,7 @@ static void atp870u_remove (struct pci_dev *pdev)
->>   	atp870u_free_tables(pshost);
->>   	scsi_host_put(pshost);
->>   }
->> +MODULE_DESCRIPTION("ACARD SCSI host adapter driver");
->>   MODULE_LICENSE("GPL");
-> 
-> Again, missing newline.
+Mon, Jun 10, 2024 at 03:22:32PM +0200, Bartosz Golaszewski kirjoitti:
+> On Wed, May 29, 2024 at 11:00 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > Mon, May 27, 2024 at 04:40:54PM +0200, Bartosz Golaszewski kirjoitti:
 
-I'll update these in v2
+...
+
+> > > User must pass exactly the number of values that the array contains
+> >
+> > Can't we assume non-active values for the rest if less than needed were
+> > provided? For more than that, why do we care?
+> 
+> Honestly, what good would it do? It would just be more confusing IMO.
+
+Let's say you can leave documentation as is, but relax the code. That's the
+benefit, less complex checks in the code.
+
+...
+
+> > > +#include <linux/atomic.h>
+> > > +#include <linux/bitmap.h>
+> > > +#include <linux/cleanup.h>
+> > > +#include <linux/completion.h>
+> > > +#include <linux/configfs.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/gpio/consumer.h>
+> > > +#include <linux/gpio/driver.h>
+> > > +#include <linux/gpio/machine.h>
+> >
+> > > +#include <linux/idr.h>
+> >
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/irq_work.h>
+> >
+> > > +#include <linux/kernel.h>
+> >
+> > Do you need this?
+> 
+> ARRAY_SIZE() used to live here when I first wrote this but it was
+> since moved. I'll drop this.
+
+Rather replace with array_size.h.
+
+> > > +#include <linux/limits.h>
+> > > +#include <linux/list.h>
+> > > +#include <linux/lockdep.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mutex.h>
+> > > +#include <linux/notifier.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/overflow.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/printk.h>
+> > > +#include <linux/property.h>
+> > > +#include <linux/slab.h>
+> >
+> > > +#include <linux/string.h>
+> >
+> > Implied by string_helpers.h
+> 
+> Yeah, but we still use symbols directly from string.h, we shouldn't
+> depend on implicit includes.
+
+string_helpers.h is and will continue guranteening inclusion of string.h.
+It's the same as we drop bits.h when we include, for instance, bitmap.h.
+
+> > > +#include <linux/string_helpers.h>
+> > > +#include <linux/sysfs.h>
+> > > +#include <linux/types.h>
+
+...
+
+> > > +struct gpio_virtuser_attr_descr {
+> > > +     const char *name;
+> > > +     ssize_t (*show)(struct device *, struct device_attribute *, char *);
+> > > +     ssize_t (*store)(struct device *, struct device_attribute *,
+> > > +                      const char *, size_t);
+> > > +};
+> >
+> > struct device_attribute ? (Yes, I know that that one is a bit bigger but
+> > benefit is that we have some code that you may reuse)
+> 
+> Not sure what you mean here, these are callbacks for sysfs.
+
+I mean to replace your custom data type with the existing device_attribute.
+
+...
+
+> > > +static ssize_t gpio_virtuser_sysfs_emit_value_array(char *buf,
+> > > +                                                 unsigned long *values,
+> > > +                                                 size_t num_values)
+> > > +{
+> > > +     ssize_t len = 0;
+> > > +     size_t i;
+> > > +
+> > > +     for (i = 0; i < num_values; i++)
+> > > +             len += sysfs_emit_at(buf, len, "%d",
+> > > +                                  test_bit(i, values) ? 1 : 0);
+> > > +     return len + sysfs_emit_at(buf, len, "\n");
+> >
+> > Why not use %pb?
+> 
+> Because it outputs hex? I want to output binary, can I do it?
+
+But why do you need that? You can also print a list of numbers of bits that
+set (%pbl).
+
+We have a few ABIs in the kernel that works nice and people are familiar with
+(CPU sets, IRQ affinity masks, etc). Why to reinvent the wheel?
+
+> > > +}
+
+...
+
+> > > +static int gpio_virtuser_sysfs_parse_value_array(const char *buf, size_t len,
+> > > +                                              unsigned long *values)
+> > > +{
+> > > +     size_t i;
+> > > +
+> > > +     for (i = 0; i < len; i++) {
+> >
+> > Perhaps
+> >
+> >                 bool val;
+> >                 int ret;
+> >
+> >                 ret = kstrtobool(...);
+> 
+> kstrtobool() accepts values we don't want here like [Tt]rue and [Ff]alse.
+
+Yes, see below.
+
+> >                 if (ret)
+> >                         return ret;
+> >
+> >                 assign_bit(...); // btw, why atomic?
+> >
+> > > +             if (buf[i] == '0')
+> > > +                     clear_bit(i, values);
+> > > +             else if (buf[i] == '1')
+> > > +                     set_bit(i, values);
+> > > +             else
+> > > +                     return -EINVAL;
+> >
+> > > +     }
+> >
+> > BUT, why not bitmap_parse()?
+> 
+> Because it parses hex, not binary.
+
+So, why do we reinvent a wheel? Wouldn't be better that users may apply the
+knowledge they familiar with (and I believe the group of the users who know
+about bitmaps is much bigger than those who will use this driver).
+
+> > > +     return 0;
+> > > +}
+
+...
+
+> > > +     return sysfs_emit(buf, "%s\n",
+> > > +                       dir == GPIO_LINE_DIRECTION_IN ? "input" : "output");
+> >
+> > I think this maybe transformed to something like str_input_output() in
+> > string_choices.h (and you don't even need to include that as it's implied by
+> > string_helpers.h)
+> 
+> These helpers take bool as argument. Hard to tell whether input or
+> output should correspond to true. I'd leave it as is.
+
+There is a convention: str_TRUE_FALSE().
+
+...
+
+> > > +static int gpio_virtuser_parse_direction(const char *buf, int *dir, int *val)
+> > > +{
+> > > +     if (sysfs_streq(buf, "input")) {
+> > > +             *dir = GPIO_LINE_DIRECTION_IN;
+> > > +             return 0;
+> > > +     }
+> > > +
+> > > +     if (sysfs_streq(buf, "output-high"))
+> > > +             *val = 1;
+> > > +     else if (sysfs_streq(buf, "output-low"))
+> > > +             *val = 0;
+> > > +     else
+> > > +             return -EINVAL;
+> > > +
+> > > +     *dir = GPIO_LINE_DIRECTION_OUT;
+> >
+> > This can be transformed to use sysfs_match_string() with
+> >
+> > static const char * const dirs[] = { "output-low", "output-high", "input" };
+> >
+> >         int ret;
+> >
+> >         ret = sysfs_match_string(...);
+> >         if (ret < 0)
+> >                 return ret;
+> >
+> >         *val = ret;
+> >         *dir = ret == 2 ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
+> >
+> > And with this approach it even not clear why do you need dir and val to be
+> > separated here (esp. if we add a enum like
+> 
+> We do want them to be separated not for better UX but to be able to
+> test all kernel APIs (gpiod_direction_input|output() and
+> gpiod_set_value()).
+
+Still you can do some optimisations I proposed above.
+
+> >         GPIO_VIRTUSER_OUT_LOW,
+> >         GPIO_VIRTUSER_OUT_HIGH,
+> >         GPIO_VIRTUSER_IN,
+> >
+> > (with it the string array can also be indexed).
+> >
+> > > +     return 0;
+> > > +}
+
+...
+
+> > > +static int gpio_virtuser_parse_value(const char *buf)
+> > > +{
+> > > +     int value, ret;
+> > > +
+> > > +     value = sysfs_match_string(gpio_virtuser_sysfs_value_strings, buf);
+> > > +     if (value < 0) {
+> > > +             /* Can be 0 or 1 too. */
+> > > +             ret = kstrtoint(buf, 0, &value);
+> > > +             if (ret)
+> > > +                     return ret;
+> >
+> > > +             if (value != 0 && value != 1)
+> > > +                     return -EINVAL;
+> >
+> > Why not kstrtobool()?
+> 
+> I don't want to accept all the other strings kstrtobool() is fine with.
+
+What's wrong with other strings?
+
+At bare minumum you can reduce the range by using kstrtou8().
+
+> > > +     }
+> > > +
+> > > +     return value;
+> > > +}
+
+...
+
+> > > +     ret = kstrtouint(buf, 10, &debounce);
+> >
+> > Why restrict to decimal?
+> 
+> Not sure what you gain from passing a period in hex?
+
+For example, if I compare this to the real HW, I might be able to do something
+like 0x1234 (let's say it's debounce step) and shifting it by 4 bits will give
+me something I want. But despite that quite unlikely case the restriction here
+doesn't bring us much.
+
+> > > +     if (ret)
+> > > +             return ret;
+
+...
+
+> > > +     return dash && strcmp(dash, "-gpios") == 0;
+> >
+> > Can't we reuse the suffix from the array from the gpiolib internal header?
+> > Also I don't like the form of '-' in the line. "gpios" is good and chance
+> > that linker deduplicates the same string if it occurs somewhere else in the
+> > binary (in case this goes with =y in .config).
+> 
+> I'm not sure I follow what you're saying here. Please rephrase.
+
+Do strcmp() against one from the gpio_suffixes array.
+
+...
+
+> > > +/*
+> > > + * If this is an OF-based system, then we iterate over properties and consider
+> > > + * all whose names end in "-gpios". For configfs we expect an additional string
+> > > + * array property - "gpio-virtuser,ids" - containing the list of all GPIO IDs
+> > > + * to request.
+> >
+> > Why not any other system? What's wrong for having this available for ACPI, for
+> > example? Okay, I see that this is probably due to absence of API.
+> >
+> > OTOH the last call in the function assumes non-OF cases. Why can't we have the
+> > same approach in both?
+> 
+> Again: I have no idea what you mean. We support device-tree and
+> configfs as sources of configuration for these virtual consumers. If
+> you want to add something more, be my guest once it's upstream.
+> 
+> The reason to use a different approach is to not require the
+> "gpio-virtuser,ids" property in device-tree.
+
+Yes, and I'm asking why can't we unify and require it there as well?
+But okay, I might give up on the trying of the DT/ACPI property unification.
+
+> > > + */
+
+...
+
+> > > +                     if (gpio_virtuser_prop_is_gpio(prop))
+> > > +                             ++ret;
+> >
+> > Why pre-increment?
+> 
+> Why not?
+
+Because we have a pattern. Pre-increment adds into additional questioning
+"why?". I.e. What does make this case special? When I read such a code I need
+more brain power to parse it.
+
+...
+
+> > > +                     dash = strpbrk(prop->name, "-");
+
+Btw, don't you want strrchr() here? (Note 'r' variant).
+
+> > > +                     diff = dash - prop->name;
+> > > +
+> > > +                     tmp = devm_kmemdup(dev, prop->name, diff + 1,
+> > > +                                        GFP_KERNEL);
+> >
+> > devm_kstrndup() is not okay? Okay, we don't have it (yet?), but at least I
+> > would rather expect wrapped kstrndup() than this.
+> 
+> Meh, this logic is fine as we know the range exactly. IMO kstrndup()
+> here would be overkill. I'd leave it for now.
+> 
+> > > +                     if (!tmp)
+> > > +                             return -ENOMEM;
+
+> > > +                     tmp[diff] = '\0';
+
+This line will gone with kstrndup(). I think we will benefit from it.
+
+...
+
+> > > +     int i = 0;
+> >
+> > Why signed? And in all this kind of case, I would split assignment...
+
+(1)
+
+> > > +     memset(properties, 0, sizeof(properties));
+> > > +
+> > > +     num_ids = list_count_nodes(&dev->lookup_list);
+> > > +     char **ids __free(kfree) = kcalloc(num_ids + 1, sizeof(*ids),
+> > > +                                        GFP_KERNEL);
+> > > +     if (!ids)
+> > > +             return ERR_PTR(-ENOMEM);
+> > > +
+> >
+> > To be here, that the reader will see immediately (close enough) what is the
+> > initial values. Moreover this code will be robuse against changes in between
+> > (if i become reusable).
+> 
+> Sorry, I can't parse it.
+
+I meant to see here
+
+	i = 0;
+
+instead of the above (1).
+
+> > > +     list_for_each_entry(lookup, &dev->lookup_list, siblings)
+> > > +             ids[i++] = lookup->con_id;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
