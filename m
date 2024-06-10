@@ -1,179 +1,152 @@
-Return-Path: <linux-kernel+bounces-208141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8DB902169
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E933890216F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0EA1C214CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A30A280CCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98407F7E3;
-	Mon, 10 Jun 2024 12:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F367F7C6;
+	Mon, 10 Jun 2024 12:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="fqDNmK54"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g1irS06u"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672637F499
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9343C30;
+	Mon, 10 Jun 2024 12:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021792; cv=none; b=YTtMwl78PrUAF3pD1DOLOzTYCWbE1Jlt6238z59nsqiXEstZiaxj2z6TL3EdDck3yZyOoC8/3KHBgIFxwYVjWLKT0fRRlF1vht1DCySTAGrurKxJuQ67XAyBZegrnhhyv3RtdaVTPogC1iPu7L++1+AJtNUCNJCsXze+vyFAZqU=
+	t=1718021941; cv=none; b=Wf33JoJ3DNcEK+dQGI7u6xOuCtS+LRX3+t5H0QbKrafVUUtuFpZEV2ZHfM0knsLncUdpp1lkJXfXjU1Po8VhKMExegIdo+RE1NliwNOp9V156sMpDT9DFcwwvtw4IMrQcD05tdc356mYZZaefr7TDHcvGJF+5Sx5k8Q8uzmYEv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021792; c=relaxed/simple;
-	bh=wqKQas949IIXrsipBtEwY28UkuazUZ16a21oKmwHiv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gdv5uLUoVSvbuS1s3otV9TvccTmDzKLftmARLxNXpRvs3QGm6J3p81kVIwYM/m7SwbzEEF4VfXou7lga4SVM8s61quujuhRqslvXrtA9S+JVLFqMWvbbWrVoTKS5eD6g6+vbzVSNFOrIPXKbSpVcJ1oezdPfUFIhCiKWzAI1OIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=fqDNmK54; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-627f3265898so44560097b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718021788; x=1718626588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLBhiGTWQPkGSzXF44ZdseZQqm/Ay7CrbOb4xYeFmxw=;
-        b=fqDNmK54kqBa6EQtJoGnldfHFauQ6kcsHN8jJRtx3a3rll3Um/eyPaj3jVHFB+tyw7
-         oWllKFUvqeIWDHF887kAzWvvU2KdZlizeuujfZw56cW3rHyG0oOcnpydIhz7FnSl+hXL
-         U1KjenD06DybeKg4nnOats3t12CBNccFG6N8XmD8XbhnL0U0M5o2hd2PsPLpd5/9lTX1
-         NjMsJx1Nc/2JFedHyuBzS1TuVPQ0pno023UGN7oqWLiAo0tvFSQm4VVsGEzDH5kI2kIh
-         JYXjXf1y56GIE8lsAofXPKrSTQcUoBAoqT3pE/mAb6WpQ96S6WM6PKQTPTnkDqCnPnsn
-         7TJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718021788; x=1718626588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sLBhiGTWQPkGSzXF44ZdseZQqm/Ay7CrbOb4xYeFmxw=;
-        b=HM6m6A4gB7cJRMObP1lPDP7Mx4MQ/Qucola8x4LXj23QtmojMFT7rbs0WrCsL2VMT9
-         rkAWCeKLmegkNGBfoIA+vZY9tDM9wNM2QqZzOxW6y71gRSptsvcEep/TAYr0xbR6HMUe
-         hUcf6rif88EhyTihI1KHKi+mww0ficqda0GEb/WJa0w1v2lRYWSUtOmbe1s92GwzTxbj
-         ZOGSBq9QP8GmSH74OLpgRSIHBntaV8OiEz8dJBIdfd18bgPo+GmaL7cdjNLr+17VKZeu
-         ZqJgKw6vU1uVEXhAzL7PQVoq+b5GEIjQOPlIAoNKbMD8GwU7EgiwnSjKiu8n0Gi5Xgza
-         pAIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdF6G9ImXVYSHpBJz4JnhcHj9dgMm/xqi5+jehUo1tDLR1oGjE0oH7TtpF/fC60DnlR67Ma2Yef2e2s5iQtBP+Xf2H4mOHCIHgEoC
-X-Gm-Message-State: AOJu0YzjyGpXQra60a2GtbIwZF6WWqrqyYa6/mrX18uOPH9vKRE7sDsC
-	15hbfclwbLJurVTXac7GsJH4uvGv9Y92RO1jvV7VkDijhgHp6U8dAIa4itcS9EM=
-X-Google-Smtp-Source: AGHT+IHKUHpBEHdEL4hUatHn2U1DbF50V0YQ7tp+HSd+jRZUj7MSdsNfIMBQ/mHVI5dhq2ZCcmRiZw==
-X-Received: by 2002:a81:6fd5:0:b0:627:dca5:407b with SMTP id 00721157ae682-62cd55c0a56mr87073917b3.13.1718021786857;
-        Mon, 10 Jun 2024 05:16:26 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f6213dfsm45360126d6.23.2024.06.10.05.16.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 05:16:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sGdwn-00Di9E-NN;
-	Mon, 10 Jun 2024 09:16:25 -0300
-Date: Mon, 10 Jun 2024 09:16:25 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-Message-ID: <20240610121625.GI791043@ziepe.ca>
-References: <20240530201616.1316526-3-almasrymina@google.com>
- <ZlqzER_ufrhlB28v@infradead.org>
- <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
- <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
- <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
- <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
- <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
- <20240607145247.GG791043@ziepe.ca>
- <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
- <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
+	s=arc-20240116; t=1718021941; c=relaxed/simple;
+	bh=8QGfO1kpileAbWe+k5ZoqBC+il685KZRmiU82v1PFcc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m8rL/3iZFU21qWvBuyF7Oh7pPbTBlaM8dyLMPmpV9iZYKfVIC2pVdlmgvhu+Vhmi36p8Cj3C6ccfwG8Cp+enSkjELEHwR1M3riJzhaQ3hYUTqpQBVHIViGYKGUX26WNe7cykJk6gmFz9OoJeoxPv2l1GXWCuy6+7/pLh7JlyDWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=g1irS06u; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718021938; x=1749557938;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8QGfO1kpileAbWe+k5ZoqBC+il685KZRmiU82v1PFcc=;
+  b=g1irS06udcN/lFgNksXVrlmOOLmCPeHKectL+yOt2Oa/hsbrKRKLGYGK
+   kAjzv9k7xYO9BVsw89GFNY/8zWsrDD9rMSqtIPxwGOkRnDm8KjORIGcRq
+   2U80a1NWJb0EvhCR6LtCFlqM0Esh3ltSf3Xot/qiIMnC+4rXqMsnmZN/z
+   8c79cb3EYXXKW1si1tsubkiKclV827AZKJtU5Gsr1KxzPC3iMyfN8Beod
+   9u/w4IwOWKlmLtnWtndKDaMBrk8UzBgA90PAYxfjZsqEHKSDAJ1J8aq2V
+   D81ZOsUO1C6XcYyJakhQFvP93KGcs/crBSy6ox/JmIHMvYziigvKoW1Sz
+   A==;
+X-CSE-ConnectionGUID: u7u6WKyJQDeU5N8FYDOsMw==
+X-CSE-MsgGUID: hs5RZVbqRMGHXn4v/hTSUA==
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="194605096"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jun 2024 05:18:57 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 10 Jun 2024 05:18:26 -0700
+Received: from daire-X570.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 10 Jun 2024 05:18:24 -0700
+From: <daire.mcnamara@microchip.com>
+To: <linux-pci@vger.kernel.org>
+CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <daire.mcnamara@microchip.com>
+Subject: [PATCH v2 0/3] Fix address translations on MPFS PCIe controller
+Date: Mon, 10 Jun 2024 13:18:19 +0100
+Message-ID: <20240610121822.2636971-1-daire.mcnamara@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Jun 10, 2024 at 02:07:01AM +0100, Pavel Begunkov wrote:
-> On 6/10/24 01:37, David Wei wrote:
-> > On 2024-06-07 17:52, Jason Gunthorpe wrote:
-> > > IMHO it seems to compose poorly if you can only use the io_uring
-> > > lifecycle model with io_uring registered memory, and not with DMABUF
-> > > memory registered through Mina's mechanism.
-> > 
-> > By this, do you mean io_uring must be exclusively used to use this
-> > feature?
-> > 
-> > And you'd rather see the two decoupled, so userspace can register w/ say
-> > dmabuf then pass it to io_uring?
-> 
-> Personally, I have no clue what Jason means. You can just as
-> well say that it's poorly composable that write(2) to a disk
-> cannot post a completion into a XDP ring, or a netlink socket,
-> or io_uring's main completion queue, or name any other API.
+From: Daire McNamara <daire.mcnamara@microchip.com>
 
-There is no reason you shouldn't be able to use your fast io_uring
-completion and lifecycle flow with DMABUF backed memory. Those are not
-widly different things and there is good reason they should work
-together.
+Hi all,
 
-Pretending they are totally different just because two different
-people wrote them is a very siloed view.
+On Microchip PolarFire SoC (MPFS), the PCIe controller is connected to the
+CPU via one of three Fabric Interface Connectors (FICs).  Each FIC present
+to the CPU complex as 64-bit AXI-M and 64-bit AXI-S.  To preserve
+compatibility with other PolarFire family members, the PCIe controller is
+connected to its encapsulating FIC via a 32-bit AXI-M and 32-bit AXI-S
+interface.
 
-> The devmem TCP callback can implement it in a way feasible to
-> the project, but it cannot directly post events to an unrelated
-> API like io_uring. And devmem attaches buffers to a socket,
-> for which a ring for returning buffers might even be a nuisance.
+Each FIC is implemented in FPGA logic and can incorporate logic along its 64-bit
+AXI-M to 32-bit AXI-M chain (including address translation) and, likewise, along
+its 32-bit AXI-S to 64-bit AXI-S chain (again including address translation).
 
-If you can't compose your io_uring completion mechanism with a DMABUF
-provided backing store then I think it needs more work.
+In order to reduce the potential support space for the PCIe controller in
+this environment, MPFS supports certain reference designs for these address
+translations: reference designs for cache-coherent memory accesses
+and reference designs for non-cache-coherent memory accesses. The precise
+details of these reference designs and associated customer guidelines
+recommending that customers adhere to the addressing schemes used in those
+reference designs are available from Microchip, but the implication for the
+PCIe controller address translation between CPU-space and PCIe-space are:
 
-Jason
+For outbound address translation, the PCIe controller address translation tables
+are treated as if they are 32-bit only.  Any further address translation must
+be done in FPGA fabric.
+
+For inbound address translation, the PCIe controller is configurable for two
+cases:
+* In the case of cache-coherent designs, the base of the AXI-S side of the
+  address translation must be set to 0 and the size should be 4 GiB wide. The
+  FPGA fabric must complete any address translations based on that 0-based
+  address translation.
+* In the case of non-cache coherent designs, the base of AXI-S side of the
+  address translation must be set to 0x8000'0000 and the size shall be 2 GiB
+  wide.  The FPGA fabric must complete any address translation based on that
+  0x80000000 base.
+
+So, for example, in the non-cache-coherent case, with a device tree property
+that maps an inbound range from 0x10'0000'0000 in PCIe space to 0x10'0000'0000
+in CPU space, the PCIe rootport will translate a PCIe address of 0x10'0000'0000
+to an intermediate 32-bit AXI-S address of 0x8000'0000 and the FIC is
+responsible for translating that intermediate 32-bit AXI-S address of
+0x8000'0000 to a 64-bit AXI-S address of 0x10'0000'0000.
+
+And similarly, for example, in the cache-coherent case, with a device tree
+property that maps an inbound range from 0x10'0000'0000 in PCIe space to
+0x10'0000'0000 in CPU space, the PCIe rootport will translate a PCIe address
+of 0x10'0000'0000 to an intermediate 32-bit AXI-S address of 0x0000'0000 and
+the FIC is responsible for translating that intermediate 32-bit AXI-S address
+of 0x0000'0000 to a 64-bit AXI-S address of 0x10'0000'0000.
+
+See https://lore.kernel.org/all/20220902142202.2437658-1-daire.mcnamara@microchip.com/T/
+for backstory.
+
+Changes since v1:
+- added bindings patch to allow dma-noncoherent
+- changed a size_t to u64 to pass 32-bit compile tests
+- allowed 64-bit outbound pcie translations
+- tied PCIe side of eCAM translation table to 0
+
+Daire McNamara (2):
+  PCI: microchip: Fix outbound address translation tables
+  PCI: microchip: Fix inbound address translation tables
+
+ .../bindings/pci/microchip,pcie-host.yaml     |   2 +
+ drivers/pci/controller/pcie-microchip-host.c  | 107 ++++++++++++++++--
+ 2 files changed, 99 insertions(+), 10 deletions(-)
+
+
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+-- 
+2.34.1
+
 
