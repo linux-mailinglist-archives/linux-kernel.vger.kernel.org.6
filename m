@@ -1,92 +1,114 @@
-Return-Path: <linux-kernel+bounces-207742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68255901B5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DA9901B60
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CEF281542
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A2C3B21E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321B1C6AF;
-	Mon, 10 Jun 2024 06:41:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584DB1865B;
+	Mon, 10 Jun 2024 06:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cvT1k5JL"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BAB11725
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129F42582
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718001665; cv=none; b=eGcJDaLt9vZ+eM7yWMKdOXemOTozMyx56UrCUa9JZmSkmSgCHwr1iSV24ff1B73czTI/+VKG3WjXKlo8uZQ/nJGKHyrjthrlT8KIs7EqiSqVN6hI/oeWp/AbZfkrUysi1c0H7KDOX+JomLZEdeqpzJ1P/KkybEtr5FGVGJZgOhc=
+	t=1718002033; cv=none; b=VFwazb8/Ia9q/wjC8XXiTVRuPxelKzrSaWHaBHeu7L6KP9fhM5GZjsGtMqDBdWNrGX4GUX9Ls71CrzQYIA7rkb3JQdbp0nqnb+D9h2+mSo/Xq5ywWQyjlekoNxi8QstcZQGAVbudsMlB4+bCsz7uhF7GzGQTSSxKkDOuW6JVJts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718001665; c=relaxed/simple;
-	bh=98ieg/cde//OTWMmliLOuelMNzAd4GX0SgVonSrQHeQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cunbFiG8lF77qA5A3q9TyYM/QJHSvprOZfCv+WBcId2f2Nszohqvx+XftbIkqXVdD6Qa/fZxC1x7XyXIuu+SY1toqlLvTknrwD6pThEZO5qJ+sBTajlprbTDjWHisPeyrk5NElhVTjl0wihG0hpbqs7Q3kkJHuPM1ps45XmGON4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso122291239f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2024 23:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718001663; x=1718606463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQsBqkk32ikBJNFCWFdQbHJ972MB7cWh+PL5hVVVQwo=;
-        b=MfWnbqITYHPyu+pO+XeQChruJ4PFRBrWVmRYv3r1cihifaTitmzItp5thiMlvXLcXn
-         K0CfHl52l5YP6UXEdqEsxqS54tk162SmcmAXznlBva/zg4k8f9v8OjEQavUFnF/fh1g1
-         x6088tOPoWv3GW35hJkSfddUr3ciCkx4JI1uZMhbIUxIrxLold4JOxLU3IG9hyFh1iJZ
-         pf/TbrI4IVI4AUFX1be+LIlCRGXZASrJWytvNO3CkY9rU0l1TeQ4fTJyC3E9lO7LMvm1
-         Ansjc2CCNYwy76sQjm0O3OvCizZ5/A+W2hlJhZymOBzT+3wCWCh8SlxWiMgGrGzkSGrr
-         vg3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWrLzuurWn02bwLdW2fL2M9r8VPEgbwPL3mGPvuud2fJdGOqyfKE8mNjXCYrJabXgm9cGDphH/rBoT1BiXLHb+0DkEChMMSh3uv4Ony
-X-Gm-Message-State: AOJu0YxplQhO1s7RhRjIaPwdhgPtPe/D+vWB/8iWEIstV8ClXXmyNc9o
-	ufDJoD/lBBSWbn9PBQZ1Ae6n1W6/dhn2maUdTzVmVZXJ6AtzEFAaFbFOwiaKz8ub1pPXigQRVTe
-	L8PJr9XkNjESbqRS66ZVlEYYoFzvulz1IJT7JBMj5ZwVxhnFxjfSHYc8=
-X-Google-Smtp-Source: AGHT+IFkNdIwSPeERkP6c3etIHOS/lMPBlpCPwSSt9/oGMTtFUpU5IGfqAqpJUspbuH+/XwJ41jkOcor7hXs3bJkm5Krjk3AGG/E
+	s=arc-20240116; t=1718002033; c=relaxed/simple;
+	bh=bkTdS5UF9BBXXB3SvVtm1jZQ0RuPc/f1jwO5uRomwNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1EzME/MtDc5CXC0Cc1w70A95srZutDZ2ejjWHhbrlr+bog8JDKLwVKO/ejRWQ87wXlOAK+53kX5PbmrKVx9NxE9WstOEWUA5gjjmWjUrqpq8XtS8/8PO67OHVRD7e+MCV0XbP3V/1NSHVdwHL9+P5ejSPD+IFv5oX2AYznhGWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cvT1k5JL; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Y8mq8NFiBXisZKfoul6E8pG6esRWXllJmw5nWndqT/4=; b=cvT1k5JLmiMm2dcf78WNc4v1Fz
+	CkBaFdMHmYat4rVhES8RaQOjpshx3n5PqWFT5LUmYKuGSHUzQlNe/NcEf+TgOhzDIF2vi89/tD6mf
+	74OA4udNwUf9jUPR4md5nQJwWdPvkJE0xIKvaS1o6/ERourIuJHE6c6SPmavZOgHNhTnVSp/SSof8
+	oM4Ga2tQP0roKeuXlpDvZDXzY2w4jy2fi3Tv+47J0h5XSB3uINnAYPTXdzF3+E+0XDDGGMcf+2OTO
+	b4BAbbrMg+qcwvE1h0lGUrPfVvZLzAOtR9enDp3Draz+aHAooiM27g5GKRY600JEbp0zZL465fi8T
+	0PE5iO2g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGYno-00000001Fc8-301b;
+	Mon, 10 Jun 2024 06:46:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4902E300362; Mon, 10 Jun 2024 08:46:51 +0200 (CEST)
+Date: Mon, 10 Jun 2024 08:46:51 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Sam Sun <samsun1006219@gmail.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	syzkaller-bugs@googlegroups.com, jpoimboe@kernel.org,
+	jbaron@akamai.com, ardb@kernel.org, mingo@redhat.com,
+	Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
+	hpa@zytor.com, xrivendell7@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [Linux kernel bug] WARNING in static_key_slow_inc_cpuslocked
+Message-ID: <20240610064651.GS8774@noisy.programming.kicks-ass.net>
+References: <20240609090431.3af238bc@gandalf.local.home>
+ <87o78axlbm.ffs@tglx>
+ <20240609102530.0a292b07@rorschach.local.home>
+ <87le3exfx2.ffs@tglx>
+ <87h6e2xdg1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b23:b0:374:9c67:1dea with SMTP id
- e9e14a558f8ab-375804362c3mr4249895ab.5.1718001663484; Sun, 09 Jun 2024
- 23:41:03 -0700 (PDT)
-Date: Sun, 09 Jun 2024 23:41:03 -0700
-In-Reply-To: <000000000000e5738d05f0f46309@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e034e7061a836eb4@google.com>
-Subject: Re: [syzbot] [mm?] INFO: task hung in __unmap_and_move (4)
-From: syzbot <syzbot+b7ad168b779385f8cd58@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, liushixin2@huawei.com, syzkaller-bugs@googlegroups.com, 
-	tujinjiang@huawei.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6e2xdg1.ffs@tglx>
 
-syzbot suspects this issue was fixed by commit:
+On Sun, Jun 09, 2024 at 06:56:14PM +0200, Thomas Gleixner wrote:
 
-commit 0fd44ab213bcfb26c47eedaa0985e4b5dbf0a494
-Author: Liu Shixin <liushixin2@huawei.com>
-Date:   Fri Mar 22 09:35:54 2024 +0000
+> Ok. Now I found if for real. It's in the jump label core:
+> 
+> CPU0                            CPU1
+> 
+> static_key_slow_dec()
+>  static_key_slow_try_dec()
+> 
+>    key->enabled == 1
+>    val = atomic_fetch_add_unless(&key->enabled, -1, 1);
+>    if (val == 1)
+>    	return false;
+> 
+>    jump_label_lock();
+>    if (atomic_dec_and_test(&key->enabled)) {
+>       --> key->enabled == 0
+>       __jump_label_update()
+> 
+>                                 static_key_slow_dec()
+>                                  static_key_slow_try_dec()
+> 
+>                                     key->enabled == 0
+>                                     val = atomic_fetch_add_unless(&key->enabled, -1, 1);
+> 
+>                                     --> key->enabled == -1 <- FAIL
+> 
+> static_key_slow_try_dec() is buggy. It needs similar logic as
+> static_key_slow_try_inc() to work correctly.
+> 
+> It's not only the 0, key->enabled can be -1 when the other CPU is in the
+> slow path of enabling it.
 
-    mm/readahead: break read-ahead loop if filemap_add_folio return -ENOMEM
+Well, the -1 thing is in the 0->1 path, that is, the very first enabler.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fabe96980000
-start commit:   72a85e2b0a1e Merge tag 'spi-fix-v6.2-rc1' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4db06888b17328d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=b7ad168b779385f8cd58
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143d0688480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154e3cac480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: mm/readahead: break read-ahead loop if filemap_add_folio return -ENOMEM
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That *should* not race with a disabler. If it does, there is external
+confusion. (As I think the follow up email shows..)
 
