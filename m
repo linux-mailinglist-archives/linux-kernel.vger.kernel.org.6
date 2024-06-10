@@ -1,185 +1,179 @@
-Return-Path: <linux-kernel+bounces-208409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0040F9024B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:54:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ED29024B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10C51C21385
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8411F1C21537
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C188013A26B;
-	Mon, 10 Jun 2024 14:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F435135A63;
+	Mon, 10 Jun 2024 14:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t1FlNIFE"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZYiMRrg6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B1D134402
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1E5132113;
+	Mon, 10 Jun 2024 14:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031258; cv=none; b=YauEjV/bnxgSaY8MjfvOzSzksiZOLtf8oZfBoWIof4abRCHn60SF+MzWaLme445xD5VAGl7gQSjM8yQOpcfEsG/roUKN4hU7dIAEOiSkCWXaZl9l8hZJxxJ0w5+xa7za1a9+z92kyLj+YOGF3jLQryYdaYaB02B7Nh74moEjCmg=
+	t=1718031331; cv=none; b=SwQEcY2QggXmle+mG/oqVKp3qaLrT+26Swa/UE5rvNW9cQV+JrRZUjl8Yi5RMwQkRLOCcOmW3n6cd7iRUHU2TM+QGaaAYu9KkLQOMt3nrJ4SnxZLQRNw6tA6UPTPD7VP126QsgC7An2jYI7dVzH5nI72ezbh1HNnZeZKG0jg2M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031258; c=relaxed/simple;
-	bh=/CJBbZ93+ULeV0grICv5xaosJ8KEFvbZsJFRSPK3Kw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYhyg5k6HNDKBykCryim0ixvhyWRBFc21bK/nIc+1wWzeFdA+KU5rdBX9msSbOQAxZbYIoivrGXHmrmpeBn1ysqrgHJ+G19x8fjr2iv8jHuIZcMUdaQISF73U87KzWZWamZ1//wzNqe0BcvubG5njCdCez1mjD8pSPAkptQcZpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t1FlNIFE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f188e09a8so1501903f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718031255; x=1718636055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=MkDX0R0j3qfdal1D6ful4J2wCsKYeF1j2mobL0O91t0=;
-        b=t1FlNIFEYfWKkuwgOooHlsnLL0i65hNmg/kaPxNEjv/ytw6FM6tHwk+rvFU7EnW0qc
-         jdrl2uA7wm1MOpWBSpcZNTjWU02Kk75c5oVm2RL+J3IBWiaukYW+5G0L5Y9GUyxwoRq6
-         Bfsbtdw3s2yrxsg3uak+lhwc6NwQBVu1lkldSNfoGC05B1sWKPj9NwkCI+YKRT+pLcCZ
-         h0FzGopLURd2Ii4tT7dDrx/9wlavRb2i8e70gBYBKaj70jWfEnikW+e4yp3+iBuaugxP
-         fzXE4j0SbcegyXV7TwWygFH0CbFQsoSJZ1Vqg2brkxUG1qYNCKgRIrbAFwZgE+taY7hG
-         fOPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718031255; x=1718636055;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MkDX0R0j3qfdal1D6ful4J2wCsKYeF1j2mobL0O91t0=;
-        b=Cj7qMwCUHdLFvRDcIiQTaW2ewYvKfRWzIIpxPr1qR7V7CRsRp7oD2jVwDhO5pGw9M7
-         3FAgU0lrCIs3ZC9KyJZFFhVeM/IdHUvGWTTOiaQOW3hET2fVz/4LSzRqMxcMY+Jfu0Zb
-         pZIivHupTuMCEUKUgyq6fJc+V+KLd2h5TGfGMwJej1EG1fTAv1EqD2foBvavPa+Je8a7
-         5EKFo/MjusGyFXfXspVEXJYWjhUVf2zbJeGjFeYKCyvZjZQSVTCVDCuK1zJnQ+DIQ3S5
-         Oq/hW3fMjwJloPh0rEyFvFJ4gcvBjaj80+Zujk0WRHgihGVHfq6UetU49cDBBBsad9jL
-         7SOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQY7ID6EUhC7Td3+kU9qV+3XCVOti0LxM95mqizlfUq5NCwiBRrO4S7gWAWSthveuOPo3ufyuwoS7oDn4tT9nyOuE6kvnZ5I0Ev3kq
-X-Gm-Message-State: AOJu0YzKOM4czRbmDfCB7WjmfcrppaLunbKPDPkM2djP/whhNWwDuNdg
-	hDsBaqXxe0bA18UAWA+hryXH6OOW12+ojAv5SD1qm9h36Qe3SBL1ii3PqLyoHTc=
-X-Google-Smtp-Source: AGHT+IFZtZsd4sxfWdt8H53isfXw5pZZON1iEjmsJsRH04YIfxNpnJGJkn1TLiKnqrp4Y+Mpo3iP+g==
-X-Received: by 2002:a5d:6608:0:b0:354:f7a4:7862 with SMTP id ffacd0b85a97d-35efed2baacmr6566775f8f.19.1718031255473;
-        Mon, 10 Jun 2024 07:54:15 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1d5f484csm5026519f8f.63.2024.06.10.07.54.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 07:54:15 -0700 (PDT)
-Message-ID: <d19e49f9-7f3c-42cd-a0fd-f9cdb07d0e35@linaro.org>
-Date: Mon, 10 Jun 2024 16:54:11 +0200
+	s=arc-20240116; t=1718031331; c=relaxed/simple;
+	bh=l7rTorRM3FlZX0jt1oFeor2hKThshx65IHAktXp4IiA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rSGzJKxLZw2v3D3NqUoGclVPBYyrOW8wi5inmvoTWP1emvxLgwVXhlgh6xqbvHfDOC6DyiP00+Q4H6+KY4BZneRjV00o9/LrmEHLCtrAdSCnA7XCZbRy7rx/g+5jNAqdOW/jSz69N2G8B4hqnhSCZrfVeiHYo2szBHWIcw2qWeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZYiMRrg6; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718031330; x=1749567330;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=l7rTorRM3FlZX0jt1oFeor2hKThshx65IHAktXp4IiA=;
+  b=ZYiMRrg625Ogq5JsZDfyAubDKFLxlBMGYeyqWWJO3siGoKHmY9qex5rz
+   Dt41+GZ5qgmb3wwuW+QyaOO4CuGLzPljWXiI4M7V9Ya0vwayl/iBuwxCs
+   WPW+ZjXutG8vkjZzDvadYVlk5GiJgmlwopUal8jM17EXzC6z4ZU9pY7/U
+   KXBRA9qKC5CZGRz6tEIi7ZbTz0OugNCV1mfLALiDGpXtwEo4ZayHIcZk1
+   1IBp1x1cCdB+/dfp3A2USnU+SNMs20mVnL2bjeqI/G6ycMQXJyrkXVKIb
+   PKrA0WvzGSslsDxxKieol0tDxdU/G02DG5ZocVunwX5Lf2rnzC+VSjhwW
+   Q==;
+X-CSE-ConnectionGUID: D7Yil0RpSWqTR3D/JNDyUw==
+X-CSE-MsgGUID: y2p3h0E0RqyZ0m/B4fPeLg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="40094346"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="40094346"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 07:55:29 -0700
+X-CSE-ConnectionGUID: vZ1rOx9ZThGeuoAV5ArZrw==
+X-CSE-MsgGUID: NfBre3OUQCySuanRHp2kfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="44228522"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.194])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 07:55:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Jun 2024 17:55:23 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    Babu Moger <babu.moger@amd.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v6 02/16] selftests/resctrl: Calculate resctrl FS derived
+ mem bw over sleep(1) only
+In-Reply-To: <3d6587a4-3e39-449b-a108-9f6893d4a405@intel.com>
+Message-ID: <aac572c5-b130-9c3a-d991-7477ba552cfa@linux.intel.com>
+References: <20240607125316.7089-1-ilpo.jarvinen@linux.intel.com> <20240607125316.7089-3-ilpo.jarvinen@linux.intel.com> <3d6587a4-3e39-449b-a108-9f6893d4a405@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] power: pwrseq: add a driver for the PMU module on
- the QCom WCN chipsets
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann
- <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Saravana Kannan <saravanak@google.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Alex Elder <elder@linaro.org>,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Abel Vesa <abel.vesa@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Lukas Wunner <lukas@wunner.de>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Amit Pundir <amit.pundir@linaro.org>, Xilin Wu <wuxilin123@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Caleb Connolly <caleb.connolly@linaro.org>
-References: <20240605123850.24857-1-brgl@bgdev.pl>
- <20240605123850.24857-3-brgl@bgdev.pl>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240605123850.24857-3-brgl@bgdev.pl>
+Content-Type: multipart/mixed; boundary="8323328-1374148641-1718031323=:1540"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1374148641-1718031323=:1540
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 05/06/2024 14:38, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> This adds the power sequencing driver for the PMU modules present on the
-> Qualcomm WCN Bluetooth and Wifi chipsets. It uses the pwrseq subsystem
-> and knows how to match the sequencer to the consumer device by verifying
-> the relevant properties and DT layout. Using this driver will allow the
-> BT and WLAN drivers to respect the required delays between enabling the
-> two modules.
+On Fri, 7 Jun 2024, Reinette Chatre wrote:
+> On 6/7/24 5:53 AM, Ilpo J=C3=A4rvinen wrote:
+> > For MBM/MBA tests, measure_vals() calls get_mem_bw_imc() that performs
+> > the measurement over a duration of sleep(1) call. The memory bandwidth
+> > numbers from IMC are derived over this duration. The resctrl FS derived
+> > memory bandwidth, however, is calculated inside measure_vals() and only
+> > takes delta between the previous value and the current one which
+> > besides the actual test, also samples inter-test noise.
+> >=20
+> > Rework the logic in measure_vals() and get_mem_bw_imc() such that the
+> > resctrl FS memory bandwidth section covers much shorter duration
+> > closely matching that of the IMC perf counters to improve measurement
+> > accuracy.
+> >=20
+> > For the second read after rewind() to return a fresh value, also
+> > newline has to be consumed by the fscanf().
+> >=20
+> > Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Tested-by: Babu Moger <babu.moger@amd.com>
+> > ---
+> >=20
+> > v6:
+> > - Adjust closing/rollback of the IMC perf
+> > - Move the comment in measure_vals() to function level
+> > - Capitalize MBM
+> > - binded to -> bound to
+>=20
+> This change does not match the patch.
+>=20
+> > v5:
+> > - Open mem bw file once and use rewind()
+> > - Read \n from the mem bw file to allow rewind to return a new value.
+> > v4:
+> > - Open resctrl mem bw file (twice) beforehand to avoid opening it durin=
+g
+> >    the test
+> > v3:
+> > - Don't drop Return: entry from perf_open_imc_mem_bw() func comment
+> > ---
+> >   tools/testing/selftests/resctrl/resctrl_val.c | 141 +++++++++++------=
+-
+> >   1 file changed, 91 insertions(+), 50 deletions(-)
+> >=20
+> > diff --git a/tools/testing/selftests/resctrl/resctrl_val.c
+> > b/tools/testing/selftests/resctrl/resctrl_val.c
+> > index f55f5989de72..1575c5c09ac7 100644
+> > --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> > +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> > @@ -306,18 +306,13 @@ static void perf_close_imc_mem_bw(void)
+> >   }
+> >     /*
+> > - * get_mem_bw_imc:=09Memory band width as reported by iMC counters
+> > - * @cpu_no:=09=09CPU number that the benchmark PID is binded to
+> > - * @bw_report:=09=09Bandwidth report type (reads, writes)
+> > - *
+> > - * Memory B/W utilized by a process on a socket can be calculated usin=
+g
+> > - * iMC counters. Perf events are used to read these counters.
+> > + * perf_open_imc_mem_bw - Open perf fds for IMCs
+> > + * @cpu_no: CPU number that the benchmark PID is bounded to
+>=20
+> "is bounded to" -> "is bound to"?
+>=20
+> Just the one nitpick from me. The patch looks good to me. Thank you
+> very much.
+>=20
+> | Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-...
+I'll correct this in v7. I guess it's because I now make these corrections=
+=20
+"twice", once for the per patch changelog bullet and then the actual=20
+change which unfortunately means my brains switch to repeated actions mode=
+=20
+=3D> autotype without thinking.
 
-> +
-> +static const struct of_device_id pwrseq_qcom_wcn_of_match[] = {
-> +	{
-> +		.compatible = "qcom,qca6390-pmu",
-> +		.data = &pwrseq_qca6390_of_data,
+Earlier when I made the version changelogs only into 00/xx, I actually=20
+read through the diff of diffs against the previous version in order to=20
+find out what to write into the changelog. I ended up catching many error=
+=20
+like this in that stage. Now it's just mostly copying the pre-existing=20
+entries from per patch changelogs (and less attention is obviously paid on=
+=20
+looking the diff of diffs because I no longer need to derive information
+out of them).
 
-Bindings *must* be part of this patchset. I missed the moment this was
-split into such chunks.
 
-Best regards,
-Krzysztof
+--=20
+ i.
 
+--8323328-1374148641-1718031323=:1540--
 
