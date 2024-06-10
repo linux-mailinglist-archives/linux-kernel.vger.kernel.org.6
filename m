@@ -1,174 +1,130 @@
-Return-Path: <linux-kernel+bounces-208541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D67E90267C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:19:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FAC902680
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01A01C212B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C143F1F244A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86889143720;
-	Mon, 10 Jun 2024 16:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E068143885;
+	Mon, 10 Jun 2024 16:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3rQAy0Go"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcUCHTx2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67271140369
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1F043146;
+	Mon, 10 Jun 2024 16:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036376; cv=none; b=Oh44GfJKYLXsVXvK3gLlAIEy6fJjkJ5+0/3hXPsvgZFbSAT24xzjJ1NdRYVqrbh9RngWUMatlNAKIPemFck+HtjML+ZHm3psTNIjIAurBNPL3kw/uMmEA2ZTfIOzAXaz+ybT/UPpqlxlQ+YuPW+BixCVxqIykX8K8m7YbGcPL8Q=
+	t=1718036390; cv=none; b=NquIehsDORvGBBgPKFjc9o87ZTp0+pMyViL+We8/V0mwgYUYlM2avI0T6srY2rfpfXt3AH0eKUifwaAEcd/YXHsnmkgGvzghdn3Io/XnHpWhXd0gC4nuP3us9mX09SjNgEo0ZSZGIC3EXhLJiL8em+gXe1vaz2Vka5PY9BnHgZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036376; c=relaxed/simple;
-	bh=nuxTR3CH9P7Y4RDrtApmBEaW6Xc1c9ZyqxUg5eKbxSo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jNMLVxVfa6msHV2kTsDjhkSM/OPwTgtjLR5cVLGNzfGWKe5y95MHDGu5nMa1HYKn8OUovXEyWScO0K7736ayJviMtauHhQR2UKRASAscr0kbkce/twGMaTQcsRhSvDJvECcz7YcMCnIp7ZLRpmxCmW5CP2/POiM12KY4Ggti/ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3rQAy0Go; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70258e95605so77309b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718036375; x=1718641175; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ikH/R8MZ/k5w4tUSKc7WaDfELjNmgc1A9Z/tdHObMgk=;
-        b=3rQAy0Go4r8NvsFrNWKIRg0fw4Vw5CNNf9PtYSd0VXh9+h4hVyP6jYDGQiDelnGSQQ
-         Cu5Q2HvDzgnfyqO2nd35q0evKHKR0eWvVXmEe+25HH+tfETGpbQ6Pq/l6AX4yCbhFt+u
-         kkxnwB55kk9lh7U8inpbzEt+9oKjARBggp1Wy6GY6dVJhovfB8rofEPwTDBm7xc887nI
-         fqU2oyKbuAsYQMj3/BXbWQx7ynVEePp4hWORwAL5cW8hYDOnL/vInr5LH8xp+eh3SKJV
-         lsTSVJxz+YCqB5i5OOEc0pT4GxxqexPlI5F9QW3fVOregwMv6dbahXIg+yC4E4xkTcT/
-         Okcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718036375; x=1718641175;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ikH/R8MZ/k5w4tUSKc7WaDfELjNmgc1A9Z/tdHObMgk=;
-        b=MD2oCymXNHMM5aI/lV1k1P+2uKu7Ecg1ZXZSuur2VmjVm65m3cHVWdeDbrb/IFq06U
-         j198RzTGx0GlwuSnGooT3bZO7roR0BKY4xppEbyx7/q+BSzMxHa3jD2ab38LLeFqj2u4
-         pTkUvdJMrzGPl/1jlAktywWUcO6o6OsAvZ1VefeSIsITKEOuc2pvc0QgSM8x66D/aulU
-         rjjOqFX6crKQovG+dAn1UVZaIxqAjFWR0XHQUu1BU5A6jP+ptED60Pn+mVse1fyhmV6v
-         FdbMi9ozvpaFaBGGchSbNg2pFtTFnN+rVAx9xSPabf02Mv6iML4r3R7axt0FROIrQn7b
-         iCiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkpQpgb54zl31aXN/uKc0zmh3fRAX1BE4eQo9ziAYGaNL78g/tlDSWb/vkUUIQfd/vIAgV/iOt6EEARleKOuzdF/Ra3JpBpnIoBpM9
-X-Gm-Message-State: AOJu0YwWKfjV+p2wDPzq+o3l+Dg03vdpJP/k9dkfdFov4lbrBMUeFUh9
-	1T9VqyFhKwXOrVOuHPGyyHFmxIW/7hyy58yWdA+m5ykefklCXoUgJU3gBb0RcjoTFELj+cq9MsW
-	O9Q==
-X-Google-Smtp-Source: AGHT+IELGegd6g36C/J8R9TwAA8ahdxIA5hWoH24f8z3rOR38vK9vW62qn43Fg3GcplWtlU1VBnrOsku5GY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:98b:b0:704:3415:7c5b with SMTP id
- d2e1a72fcca58-70434158199mr66452b3a.3.1718036374323; Mon, 10 Jun 2024
- 09:19:34 -0700 (PDT)
-Date: Mon, 10 Jun 2024 09:19:32 -0700
-In-Reply-To: <20240506101751.3145407-4-foxywang@tencent.com>
+	s=arc-20240116; t=1718036390; c=relaxed/simple;
+	bh=R6WzIULq9+fnQYcQS1bKOAdon3jwK1WH/CKRPxb9Dg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qj/hwgUyvSoonkv3miGfcWmZ4Zg7y1Q8mH5UcqcS+ZdCWveXrELnVEmuq7JFr0wCZ6ux3m+6lOOQAF05D7pxRId2E2VOkEDpaMRoxbroIF2uufUazXyLEKjO2ezZbrJ7fQPStSmhI8+M78LsJg4gITC63HmRWjSKuETizNNfHF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcUCHTx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7CBC2BBFC;
+	Mon, 10 Jun 2024 16:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718036389;
+	bh=R6WzIULq9+fnQYcQS1bKOAdon3jwK1WH/CKRPxb9Dg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WcUCHTx2EYJ/GmvexbgWlXn/OfbnPQSqd7Ez4p3BHSxY17Zysbn59If0ApIbKoL8X
+	 dfuMWERYIYCSIfs9Y+5D9NXh8Sa+ovgFSVd9ZWe4w/HdTpVWeyQoVkGuQvskYmi03w
+	 jRS1wiQ9jpbd+YasQZ7/8IzhTbbgL7ycFng863AT5ChQnNdvVgh2USaFXEwAStnpQi
+	 pEErYLW8kKB8/VnkteCKuf9zsk4OVBNTXYvcRLZV91t52Tf9jUbpww3YL4ojm82zD7
+	 N7RLatbkOjGPMs/W4md3UjI8PPNu4xVmmMB4fOXqzamMy7L8+CTP029x76g2W8c2I2
+	 ubSRFZdU3vO6A==
+Date: Mon, 10 Jun 2024 17:19:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Julien Stephan <jstephan@baylibre.com>,
+	Louis Kuo <louis.kuo@mediatek.com>,
+	Phi-Bang Nguyen <pnguyen@baylibre.com>,
+	Andy Hsieh <andy.hsieh@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Florian Sylvestre <fsylvestre@baylibre.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
+ interface
+Message-ID: <20240610-eligibly-gainfully-7b1caad07aaa@spud>
+References: <20240110141443.364655-1-jstephan@baylibre.com>
+ <20240110141443.364655-2-jstephan@baylibre.com>
+ <e0bf8667-cbb8-49ba-bb44-3edf93b019b8@linaro.org>
+ <CAEHHSvYt-aqFahi=B_si=duJH8xDgy_9nndgR-P0+U5THX69uw@mail.gmail.com>
+ <20240607144154.GD18479@pendragon.ideasonboard.com>
+ <cf49fbb3-9de6-4e57-bc38-d720f76118a7@linaro.org>
+ <20240610085424.GH26663@pendragon.ideasonboard.com>
+ <e9a44b0b-1930-42fa-ab5e-a7eac1470041@linaro.org>
+ <20240610-roping-ninja-56074ad61f77@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240506101751.3145407-1-foxywang@tencent.com> <20240506101751.3145407-4-foxywang@tencent.com>
-Message-ID: <ZmcnlPcplno-toU4@google.com>
-Subject: Re: [v5 3/3] KVM: s390: don't setup dummy routing when KVM_CREATE_IRQCHIP
-From: Sean Christopherson <seanjc@google.com>
-To: Yi Wang <up2wing@gmail.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, wanpengli@tencent.com, 
-	foxywang@tencent.com, oliver.upton@linux.dev, maz@kernel.org, 
-	anup@brainfault.org, atishp@atishpatra.org, borntraeger@linux.ibm.com, 
-	frankja@linux.ibm.com, imbrenda@linux.ibm.com, weijiang.yang@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="krd0kZavuSZAemTC"
+Content-Disposition: inline
+In-Reply-To: <20240610-roping-ninja-56074ad61f77@spud>
 
-On Mon, May 06, 2024, Yi Wang wrote:
-> From: Yi Wang <foxywang@tencent.com>
-> 
-> As we have setup empty irq routing in kvm_create_vm(), there's
-> no need to setup dummy routing when KVM_CREATE_IRQCHIP.
-> 
-> Signed-off-by: Yi Wang <foxywang@tencent.com>
-> ---
->  arch/s390/kvm/kvm-s390.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 5147b943a864..ba7fd39bcbf4 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -2998,14 +2998,7 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->  		break;
->  	}
->  	case KVM_CREATE_IRQCHIP: {
-> -		struct kvm_irq_routing_entry routing;
-> -
-> -		r = -EINVAL;
-> -		if (kvm->arch.use_irqchip) {
-> -			/* Set up dummy routing. */
-> -			memset(&routing, 0, sizeof(routing));
-> -			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
-> -		}
-> +		r = 0;
 
-This is wrong, KVM_CREATE_IRQCHIP should fail with -EINVAL if kvm->arch.use_irqchip
-is false.
+--krd0kZavuSZAemTC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There's also a functional change here, though I highly doubt it negatively affects
-userspace.  Nothing in s390 prevents invoking KVM_CREATE_IRQCHIP after
-KVM_SET_GSI_ROUTING, so userspace could very theoretically use KVM_CREATE_IRQCHIP
-to reset to empty IRQ routing.
+On Mon, Jun 10, 2024 at 05:10:51PM +0100, Conor Dooley wrote:
+> On Mon, Jun 10, 2024 at 12:18:12PM +0200, Krzysztof Kozlowski wrote:
+> > On 10/06/2024 10:54, Laurent Pinchart wrote:
+> > >>
+> > >>> There's also the camsv IP in the same series that needs a generic n=
+ame.
+> > >>> I really don't know what to propose for it. Could you recommend
+> > >>> something that would make you happy ?
+> > >>
+> > >> Sorry,that's almost half year old thread. Not present in my inbox.
+> > >=20
+> > > I remember someone presenting a talk titled "Beginner Linux kernel
+> > > maintainer's toolbox" in Prague last year. The talk mentioned a tool
+> > > call b4. I highly recommend it ;-)
+> >=20
+> > Wouldn't solve it. I would need to download the thread and import to
+> > mailbox (several clicks needed) or open in some other tool just to see
+> > the email. Or find it on lore.kernel.org - anyway just not convenient.
+>=20
+> Apparently you can use b4 from within mutt to populate threads, but I am
+> yet to figure out if it works with non-local maildirs:
+> https://b4.docs.kernel.org/en/latest/maintainer/mbox.html#using-with-mutt
 
-Christian, if it works for you, I'll massage it to this when applying.
+That should read "how to make it work", I know it doesn't work like
+documented there with non-local mailboxes.
 
---
-From: Yi Wang <foxywang@tencent.com>
-Date: Mon, 6 May 2024 18:17:51 +0800
-Subject: [PATCH] KVM: s390: Don't re-setup dummy routing when
- KVM_CREATE_IRQCHIP
 
-Now that KVM sets up empty irq routing in kvm_create_vm(), there's
-no need to setup dummy routing when KVM_CREATE_IRQCHIP.
 
-Note, userspace could very theoretically use KVM_CREATE_IRQCHIP after
-KVM_SET_GSI_ROUTING to reset to empty IRQ routing, but it's extremely
-unlikely any VMM does that, e.g. the main reason s390 does anything for
-KVM_CREATE_IRQCHIP is to that s390 doesn't need to be special cased by the
-VMM.
+--krd0kZavuSZAemTC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Yi Wang <foxywang@tencent.com>
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-Link: https://lore.kernel.org/r/20240506101751.3145407-4-foxywang@tencent.com
-[sean: keep use_irqchip check, call out KVM_SET_GSI_ROUTING impact]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/s390/kvm/kvm-s390.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 82e9631cd9ef..4641083ee100 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2996,14 +2996,9 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
- 		break;
- 	}
- 	case KVM_CREATE_IRQCHIP: {
--		struct kvm_irq_routing_entry routing;
--
- 		r = -EINVAL;
--		if (kvm->arch.use_irqchip) {
--			/* Set up dummy routing. */
--			memset(&routing, 0, sizeof(routing));
--			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
--		}
-+		if (kvm->arch.use_irqchip)
-+			r = 0;
- 		break;
- 	}
- 	case KVM_SET_DEVICE_ATTR: {
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmcnoAAKCRB4tDGHoIJi
+0qtrAP9YPh0+sV/kjtNmXMwP7T5usLhhX5vZzAjPc0mwr5965wD/Wx7GB6CXgeXI
+q3vmSBs2jnhda3KzpGbgmbxGrNjp0Qw=
+=HyAB
+-----END PGP SIGNATURE-----
 
-base-commit: 9a859becf1b7f6879466e8c0ebee492b236f2080
--- 
+--krd0kZavuSZAemTC--
 
