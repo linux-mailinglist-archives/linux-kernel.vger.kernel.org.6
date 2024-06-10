@@ -1,160 +1,219 @@
-Return-Path: <linux-kernel+bounces-208056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6184E902004
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C32902013
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B74E1F20EC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D66E4B2126A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD5979DDB;
-	Mon, 10 Jun 2024 10:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="glvYyz/W"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CAC38DEC;
-	Mon, 10 Jun 2024 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC0679B84;
+	Mon, 10 Jun 2024 11:02:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D492271743;
+	Mon, 10 Jun 2024 11:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718017017; cv=none; b=qzNx8HbnzXz3NLsTXvi60XgiMUfcnD3ec0ij/xsGkua/MPAsQhrk/mURNCm14a5N7HjPy8piAQzB6IFfxons9hVzJ9hdiyz8mc79QL5ucRQXKGs/GfSiRCnf74G/EMwNAcJhcOUGvuzN7N91kcrqvZDLtBHvLgo+J87EjzX8BP8=
+	t=1718017350; cv=none; b=VQ2E4wV1fmmeYSpI576nKE0nuKxnJzLwHm91myC9W/BpvFddA9vbqGYgGcKlV2xmT4kWoc8AgtqsB6jqifb3n4FFf8ZD+8Zbw0KrFFW6gZ+5S7UIUE+cfYp+NcQEENh7NNq17plCNJjRy+a/NUKHdG9YT67G62axES9oqX12lg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718017017; c=relaxed/simple;
-	bh=WPF2iC1SV8AsqNd6SPxTttV/JMzPbLAHKzCU/mAhLq0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=hYaVfoDLCZIQDZjhJcxAVuVpftnPK3ktuK+dXi24PxoazoHO01v48+Dvw4C7U4bmsi+W4Vh9fumo498WAc/OOuxB1kUFGR6PUjx4X2lrGDoDbCbP5ggVJKVHUrJxNXcSGDMfm3xEYX1SlQefTyLa7drT2ACKb8YDDCT6lRsSgGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=glvYyz/W; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AAuTbW009009;
-	Mon, 10 Jun 2024 05:56:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718016989;
-	bh=m28Tjms8EG/D+LF08iHzhc9HsItx6aYa/0oUcN3SEgw=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=glvYyz/WsEiU2YwVpFf87uAP78t6GUf9L2Se+jmkDNr4kQo/ZCFeOrJxsKFI89JUV
-	 DxtbIKX0l8c5qpbDycH5aBWq/mjFRGNQjewNkvy7hagW8zzHZvcc7Gj418jJREIRT7
-	 rteukvMIe6O5cRAT6kKlTBAtSamQwF6C2J/LFlqc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AAuTil004949
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 05:56:29 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 05:56:29 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 05:56:29 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AAuSlc110545;
-	Mon, 10 Jun 2024 05:56:28 -0500
-From: Jai Luthra <j-luthra@ti.com>
-Date: Mon, 10 Jun 2024 16:26:01 +0530
-Subject: [PATCH v2 2/2] ASoC: ti: davinci-mcasp: Set min period size using
- FIFO config
+	s=arc-20240116; t=1718017350; c=relaxed/simple;
+	bh=MjM3cb17jNlp/QJiDI3GbGiFDNREJWjq+dacs+GnmvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgLbky80VRO4s9cN6XLjvSPIM59ktelQX6XkYVRSSVc3gezzeDlag1WwKhPKhJTqTC9GBTPwwqt4l/WjWqqHx+oqHK6PFuULwDi//VALF413V6CWyo9oj6RF4r6mBfpMxXZcrd3PRMIUzjgshxmle7dAePW2+uAvE5Xip3NoHuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C935812FC;
+	Mon, 10 Jun 2024 04:02:51 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 040AA3F73B;
+	Mon, 10 Jun 2024 04:02:23 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:02:21 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 5/9] KVM: arm64: pmu: Use arm_pmuv3.h register accessors
+Message-ID: <ZmbdPYndL2_We387@J2N7QTR9R3>
+References: <20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org>
+ <20240607-arm-pmu-3-9-icntr-v1-5-c7bd2dceff3b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-asoc_next-v2-2-b52aaf5d67c4@ti.com>
-References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
-In-Reply-To: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, Devarsh Thakkar <devarsht@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>, Jai
- Luthra <j-luthra@ti.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1960; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=WPF2iC1SV8AsqNd6SPxTttV/JMzPbLAHKzCU/mAhLq0=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmZtvYRZUS1YnZ7wXULBNwFYahVxcCh5M0cRfMj
- OW3gz+xT/mJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZmbb2AAKCRBD3pH5JJpx
- RSYnD/9/UHlozo/st4AN88B7W06HOUrbfDOElMmFCyGwQhRUERSoD1E2xe2iv2HlZERyxH6qOZx
- qc0y3ynQllWf22HxB/v0xGVUk0IVEcDKpx+jHP8/cjeOHdB3gCd/Qbpu3LCFZxGb7P4AFE1qgWW
- y/7RDNYKXnSTb6fhMNLPEeweIGu7T9kxY5Awp6bXAyzoV3KxAtZ4dp4YzfZUOxnUbHgaIxjmb6I
- Sc7sIayOVVg32WbWPElFNlN3ZWPK0dhfXWWVem1Vs+iy9plJ5CW9R9VW/3+lfFS0L7Tvv+Rdegx
- 0VQYg05UCkEt38uAgJpSiJV7+x758nQmnI21Th6eGaWS8QN5aiK5fNdpjCbtuc0Opuy+QBQyfqE
- BpoUsTCZK6uK9heI4BU+rrHHa7+TXYeoz9b4EUGJs4sX882Z3ViB4gx+VFIdBkX5WFpY8owP/L/
- Vu8nSk8vnp2BN8djvj5Gwp6AHqIf3b3Ninue++dyi06rNK9xp/oSHnEFYztNU7OVFBF+nbuDhut
- f+vcCRT2nTB9eQowOLFAMUPMoMKNOjx2ePNGyZpixgTuQdgaswm1KPaPzA7K+eV+Jnro3fNb6Z6
- KP6hz9b2I8UXOsAMfRstRUSkxt44is9Vv/DeydzFataw14QLjiXCoxWfn1FHuUnR+91Tw81Vgn+
- CNDOd3qHWIqvCSA==
-X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-arm-pmu-3-9-icntr-v1-5-c7bd2dceff3b@kernel.org>
 
-The minimum period size was enforced to 64 as older devices integrating
-McASP with EDMA used an internal FIFO of 64 samples.
+On Fri, Jun 07, 2024 at 02:31:30PM -0600, Rob Herring (Arm) wrote:
+> Commit df29ddf4f04b ("arm64: perf: Abstract system register accesses
+> away") split off PMU register accessor functions to a standalone header.
+> Let's use it for KVM PMU code and get rid one copy of the ugly switch
+> macro.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  arch/arm64/include/asm/arm_pmuv3.h | 13 ++++++++
+>  arch/arm64/kvm/pmu.c               | 67 +++++---------------------------------
+>  2 files changed, 22 insertions(+), 58 deletions(-)
 
-With UDMA based platforms this internal McASP FIFO is optional, as the
-DMA engine internally does some buffering which is already accounted for
-when registering the platform. So we should read the actual FIFO
-configuration (txnumevt/rxnumevt) instead of hardcoding frames.min to
-64.
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
----
- sound/soc/ti/davinci-mcasp.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Mark.
 
-diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index 1e760c315521..2b1ed91a736c 100644
---- a/sound/soc/ti/davinci-mcasp.c
-+++ b/sound/soc/ti/davinci-mcasp.c
-@@ -1472,10 +1472,11 @@ static int davinci_mcasp_hw_rule_min_periodsize(
- {
- 	struct snd_interval *period_size = hw_param_interval(params,
- 						SNDRV_PCM_HW_PARAM_PERIOD_SIZE);
-+	u8 numevt = *((u8 *)rule->private);
- 	struct snd_interval frames;
- 
- 	snd_interval_any(&frames);
--	frames.min = 64;
-+	frames.min = numevt;
- 	frames.integer = 1;
- 
- 	return snd_interval_refine(period_size, &frames);
-@@ -1490,6 +1491,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 	u32 max_channels = 0;
- 	int i, dir, ret;
- 	int tdm_slots = mcasp->tdm_slots;
-+	u8 *numevt;
- 
- 	/* Do not allow more then one stream per direction */
- 	if (mcasp->substreams[substream->stream])
-@@ -1589,9 +1591,12 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 			return ret;
- 	}
- 
-+	numevt = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-+			 &mcasp->txnumevt :
-+			 &mcasp->rxnumevt;
- 	snd_pcm_hw_rule_add(substream->runtime, 0,
- 			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
--			    davinci_mcasp_hw_rule_min_periodsize, NULL,
-+			    davinci_mcasp_hw_rule_min_periodsize, numevt,
- 			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE, -1);
- 
- 	return 0;
-
--- 
-2.43.0
-
+> 
+> diff --git a/arch/arm64/include/asm/arm_pmuv3.h b/arch/arm64/include/asm/arm_pmuv3.h
+> index e96ce7900fc7..1ed91334fede 100644
+> --- a/arch/arm64/include/asm/arm_pmuv3.h
+> +++ b/arch/arm64/include/asm/arm_pmuv3.h
+> @@ -33,6 +33,14 @@ static inline void write_pmevtypern(int n, unsigned long val)
+>  	PMEVN_SWITCH(n, WRITE_PMEVTYPERN);
+>  }
+>  
+> +#define RETURN_READ_PMEVTYPERN(n) \
+> +	return read_sysreg(pmevtyper##n##_el0)
+> +static inline unsigned long read_pmevtypern(int n)
+> +{
+> +	PMEVN_SWITCH(n, RETURN_READ_PMEVTYPERN);
+> +	return 0;
+> +}
+> +
+>  static inline unsigned long read_pmmir(void)
+>  {
+>  	return read_cpuid(PMMIR_EL1);
+> @@ -96,6 +104,11 @@ static inline void write_pmccfiltr(u64 val)
+>  	write_sysreg(val, pmccfiltr_el0);
+>  }
+>  
+> +static inline u64 read_pmccfiltr(void)
+> +{
+> +	return read_sysreg(pmccfiltr_el0);
+> +}
+> +
+>  static inline void write_pmovsclr(u64 val)
+>  {
+>  	write_sysreg(val, pmovsclr_el0);
+> diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c
+> index e633b4434c6a..01c9a9efdd1c 100644
+> --- a/arch/arm64/kvm/pmu.c
+> +++ b/arch/arm64/kvm/pmu.c
+> @@ -6,6 +6,8 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/perf_event.h>
+>  
+> +#include <asm/arm_pmuv3.h>
+> +
+>  static DEFINE_PER_CPU(struct kvm_pmu_events, kvm_pmu_events);
+>  
+>  /*
+> @@ -62,63 +64,16 @@ void kvm_clr_pmu_events(u64 clr)
+>  	pmu->events_guest &= ~clr;
+>  }
+>  
+> -#define PMEVTYPER_READ_CASE(idx)				\
+> -	case idx:						\
+> -		return read_sysreg(pmevtyper##idx##_el0)
+> -
+> -#define PMEVTYPER_WRITE_CASE(idx)				\
+> -	case idx:						\
+> -		write_sysreg(val, pmevtyper##idx##_el0);	\
+> -		break
+> -
+> -#define PMEVTYPER_CASES(readwrite)				\
+> -	PMEVTYPER_##readwrite##_CASE(0);			\
+> -	PMEVTYPER_##readwrite##_CASE(1);			\
+> -	PMEVTYPER_##readwrite##_CASE(2);			\
+> -	PMEVTYPER_##readwrite##_CASE(3);			\
+> -	PMEVTYPER_##readwrite##_CASE(4);			\
+> -	PMEVTYPER_##readwrite##_CASE(5);			\
+> -	PMEVTYPER_##readwrite##_CASE(6);			\
+> -	PMEVTYPER_##readwrite##_CASE(7);			\
+> -	PMEVTYPER_##readwrite##_CASE(8);			\
+> -	PMEVTYPER_##readwrite##_CASE(9);			\
+> -	PMEVTYPER_##readwrite##_CASE(10);			\
+> -	PMEVTYPER_##readwrite##_CASE(11);			\
+> -	PMEVTYPER_##readwrite##_CASE(12);			\
+> -	PMEVTYPER_##readwrite##_CASE(13);			\
+> -	PMEVTYPER_##readwrite##_CASE(14);			\
+> -	PMEVTYPER_##readwrite##_CASE(15);			\
+> -	PMEVTYPER_##readwrite##_CASE(16);			\
+> -	PMEVTYPER_##readwrite##_CASE(17);			\
+> -	PMEVTYPER_##readwrite##_CASE(18);			\
+> -	PMEVTYPER_##readwrite##_CASE(19);			\
+> -	PMEVTYPER_##readwrite##_CASE(20);			\
+> -	PMEVTYPER_##readwrite##_CASE(21);			\
+> -	PMEVTYPER_##readwrite##_CASE(22);			\
+> -	PMEVTYPER_##readwrite##_CASE(23);			\
+> -	PMEVTYPER_##readwrite##_CASE(24);			\
+> -	PMEVTYPER_##readwrite##_CASE(25);			\
+> -	PMEVTYPER_##readwrite##_CASE(26);			\
+> -	PMEVTYPER_##readwrite##_CASE(27);			\
+> -	PMEVTYPER_##readwrite##_CASE(28);			\
+> -	PMEVTYPER_##readwrite##_CASE(29);			\
+> -	PMEVTYPER_##readwrite##_CASE(30)
+> -
+>  /*
+>   * Read a value direct from PMEVTYPER<idx> where idx is 0-30
+>   * or PMCCFILTR_EL0 where idx is ARMV8_PMU_CYCLE_IDX (31).
+>   */
+>  static u64 kvm_vcpu_pmu_read_evtype_direct(int idx)
+>  {
+> -	switch (idx) {
+> -	PMEVTYPER_CASES(READ);
+> -	case ARMV8_PMU_CYCLE_IDX:
+> -		return read_sysreg(pmccfiltr_el0);
+> -	default:
+> -		WARN_ON(1);
+> -	}
+> +	if (idx == ARMV8_PMU_CYCLE_IDX)
+> +		return read_pmccfiltr();
+>  
+> -	return 0;
+> +	return read_pmevtypern(idx);
+>  }
+>  
+>  /*
+> @@ -127,14 +82,10 @@ static u64 kvm_vcpu_pmu_read_evtype_direct(int idx)
+>   */
+>  static void kvm_vcpu_pmu_write_evtype_direct(int idx, u32 val)
+>  {
+> -	switch (idx) {
+> -	PMEVTYPER_CASES(WRITE);
+> -	case ARMV8_PMU_CYCLE_IDX:
+> -		write_sysreg(val, pmccfiltr_el0);
+> -		break;
+> -	default:
+> -		WARN_ON(1);
+> -	}
+> +	if (idx == ARMV8_PMU_CYCLE_IDX)
+> +		write_pmccfiltr(val);
+> +	else
+> +		write_pmevtypern(idx, val);
+>  }
+>  
+>  /*
+> 
+> -- 
+> 2.43.0
+> 
 
