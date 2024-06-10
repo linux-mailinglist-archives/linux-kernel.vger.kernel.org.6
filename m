@@ -1,74 +1,72 @@
-Return-Path: <linux-kernel+bounces-207786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2375E901C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:50:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FE6901C1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2601C212F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:49:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7904B20B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794DB315BA;
-	Mon, 10 Jun 2024 07:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629FF3BB23;
+	Mon, 10 Jun 2024 07:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TkrFNBHt"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VsR/uuLt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C49F26286
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3AE1CD15;
+	Mon, 10 Jun 2024 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005793; cv=none; b=nMNjFcw3cguE9n5iy9R5mPX0huu8shuRLJLC3uA9P2Zm7o1jFxRTNJcr06yVYlV5O6G9RUOJurpI4UrooCVY6PnOu4ivjdl/XMhimWAxVWP4kKD32Wy/xD62PrqwLqwOZ/kbU9W6UVc90W6xgBYPWjAWeaO/RubLZiIsKE779X8=
+	t=1718005889; cv=none; b=Pe/aIJdHjFO3rfJRGrDuA8biaz0zNnMyckyd5GKjym75DiUClx6i5v9SGVGbU2T4iAxndwO3MFv51rDjPCxGn3h25qsGOavl1rgoXhr7Ybsc5KARU0g8cAWiRIM+SVhajZLyM/dyDNpc+FDOFNNf3YIlJ/UsNssFM4SWnbOKymo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005793; c=relaxed/simple;
-	bh=ONacOLP/ztTRR3gIVVvVXcnxvcbkIhM+Whwr7wSUrcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HeYdU5uqNQNL+1bpAjl1VBkz4JPk61Xv43sjH4ddhB/FSd/jaVZpUK/6UbEHiI6Y+0HdTxVi8YAYvxJXlEfzgaZxk1GjK6qK+KIszFxxyx4/C+gkA2P00HCM7Bx1ZMxCxC8Bxb1qc9D5L8WZ5F8bA0mXaJwQrCFVLBqV1J9nNvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TkrFNBHt; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso5955143a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718005790; x=1718610590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KwiEJNVRVOeG3gLM45b2+/KiKZQYIw3B7SIhM/nKLRs=;
-        b=TkrFNBHtXh4iidBIIxZoJGanCdcC/TVnuGehAV6cuWAyEYEb/6vGGt08hJrdlFVYSb
-         R/GHrMOl9RCzgwNJY1YNohQGLt9hTlgRy1vKksQz88APbV9Q5peRYbi9zrHKfuDkHEl7
-         HrD7vHTqs1+YhDJFxNXwSP0TSNBqfNbL4vPhixr8x7AaaMeaaAJ8jVfl0WEUqMysaTSs
-         7h8QFnxYWKiTEumHdO2PJkuPuQagbBZvSTuJj9Ces8SsL3fA2dHYlVcWhxM+23wz/y4M
-         6Y9R1Vb7Sis2Q2yXHgelutNg+qkxPUbrVVbOqEW5G4gJujPYFHpX7cjsIIBDefb4MhuJ
-         sy3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718005790; x=1718610590;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KwiEJNVRVOeG3gLM45b2+/KiKZQYIw3B7SIhM/nKLRs=;
-        b=DH8qlTd/aw9pxyeJceqZkQrGRkSm88im4Dz4D0bEKofCySiKVAo+k1i6bnNEWl5tdx
-         ux+8V3lDLMg/AZ+11uA28TV/l7rNOJzBlTMVWFXKeczjGVIXLl5USF4PwO9MKKpLj7F6
-         RImtlvL6wCv7FAZP1zu88DaQUEg7vNXkNqLL4FDl9cYH1EUU6FzE37GbqTe8adFqEoZK
-         cgmWTETwCASAJX03O9h38WZZhmAe8kc9/Effcu7yxwnsjroJLsHTz6cuW+44Q40aEzHj
-         quDiCnl0E10RVMwuU6q/FSvtRhzsHX42c4NKjwYGmEfrKz9x93QmNCf0RUy6EhtvB4jG
-         /jAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW610GT+d+B3VtgxvMa23mBZwMsdjDFL8tcmWswcZyMb5DLixk8FV2E942Jz+Rc4YvYkYd0a+JmzuCAkN1iEL7uNv1txSH4stqTA4WG
-X-Gm-Message-State: AOJu0YyUF8PiBbT22pDZ8+vksCGmHqyUCiErH5R1xMPSYHLyrZV6PzHj
-	yIprSqRkbBv2fLHYx0SpsBqshKfChtywS/E3b5AO9lCIzd0ZEg5Se/QvZo/0CA==
-X-Google-Smtp-Source: AGHT+IHwC/Vukz1JeyzipUsg056gd0k4WnZOoz8F/+UkhcQ0n2rmEUO9tEIwvIH7PM7xzw4G844e+g==
-X-Received: by 2002:a17:906:68c5:b0:a6f:2d5c:5c8d with SMTP id a640c23a62f3a-a6f2d5c6342mr17558766b.30.1718005789617;
-        Mon, 10 Jun 2024 00:49:49 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efed85dc3sm315910266b.124.2024.06.10.00.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 00:49:49 -0700 (PDT)
-Message-ID: <a5b5b0f4-0fe3-451b-b2d5-c9d2bcc91bc4@suse.com>
-Date: Mon, 10 Jun 2024 09:49:48 +0200
+	s=arc-20240116; t=1718005889; c=relaxed/simple;
+	bh=zrT0EGilxBVte1bvO9FEt6EF04OYcW+aYrqqeGdpO8w=;
+	h=Message-ID:Date:MIME-Version:Cc:From:To:Subject:Content-Type; b=eQeiNbIpR5aD2fjqnLZjN+WV627O5WOIvLWhqYAOubCvgp9dR9p+GIR/fODMiCZYWLutPT0SOA68Kal1MKKER8rHDYa55cW2hiR+r94UMD3WiUG1dv57y/anF4ZArHBNHSXUyAuWzxDF7J1Fd6zr5VF9eOPNHekIoy48KRiKDJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VsR/uuLt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A7SLlw006146;
+	Mon, 10 Jun 2024 07:51:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:cc:from:to:subject:content-type
+	:content-transfer-encoding; s=pp1; bh=nsTUAhGPInye92bi+dTdyUmg2Q
+	/RLoZC+TRIvK7quo8=; b=VsR/uuLtLuwUM4lsfsjEXfs9GADEfsP0kkWzeBG5vX
+	vWS7//ezrWFJ1O2MKNp8OpxLbR0eaiZlbKKsboS2JJbadZnWahqrjblvqgOmpkWm
+	08h6bAEzG2IOIrVjiHouAGSruIeWVkQjICDuJh313A2w/Gx0AkWK7OAl383C/F4b
+	yKlzSEBUdgsP7zGa/wMDw7Sxrq3jOyr4oeT9pMS9A5OKfKsuJn7MF7WVtm8boQym
+	spRqIhST2KWTen688tKH/CYPIZDixtxEbnbQDj6OLv/Wx4BZP1qsR5EK1MWKkA0E
+	ADpr1zyifYXLoUzn/ZiqhuYVZLPoEb33J0I6bKHsl7Rg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ynw4fr29j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 07:51:09 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45A6ajau027267;
+	Mon, 10 Jun 2024 07:51:07 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn210ef3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 07:51:07 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45A7p5pM28508714
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Jun 2024 07:51:07 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0D71658052;
+	Mon, 10 Jun 2024 07:51:05 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4025558069;
+	Mon, 10 Jun 2024 07:51:02 +0000 (GMT)
+Received: from [9.43.109.30] (unknown [9.43.109.30])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 10 Jun 2024 07:51:01 +0000 (GMT)
+Message-ID: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
+Date: Mon, 10 Jun 2024 13:21:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,115 +74,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen: xen-pciback: Export a bridge and all its children as
- per TODO
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
- jgross@suse.com, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20240609184410.53500-1-jain.abhinav177@gmail.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20240609184410.53500-1-jain.abhinav177@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
+From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+To: kbusch@kernel.org, sagi@grimberg.me
+Subject: Kernel OOPS while creating a NVMe Namespace
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GbUrgM5lRbY41DSQ2LJiM9DYhgGllun8
+X-Proofpoint-ORIG-GUID: GbUrgM5lRbY41DSQ2LJiM9DYhgGllun8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 adultscore=0 phishscore=0 clxscore=1011 suspectscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=972 lowpriorityscore=0
+ impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406100056
 
-On 09.06.2024 20:44, Abhinav Jain wrote:
-> Check if the device is a bridge.
-> If it is a bridge, iterate over all its child devices and export them.
-> Log error if the export fails for any particular device logging details.
-> Export error string is split across lines as I could see several
-> other such occurrences in the file.
-> Please let me know if I should change it in some way.
-> 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> ---
->  drivers/xen/xen-pciback/xenbus.c | 39 +++++++++++++++++++++++++-------
->  1 file changed, 31 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
-> index b11e401f1b1e..d15271d33ad6 100644
-> --- a/drivers/xen/xen-pciback/xenbus.c
-> +++ b/drivers/xen/xen-pciback/xenbus.c
-> @@ -258,14 +258,37 @@ static int xen_pcibk_export_device(struct xen_pcibk_device *pdev,
->  		xen_register_device_domain_owner(dev, pdev->xdev->otherend_id);
->  	}
->  
-> -	/* TODO: It'd be nice to export a bridge and have all of its children
-> -	 * get exported with it. This may be best done in xend (which will
-> -	 * have to calculate resource usage anyway) but we probably want to
-> -	 * put something in here to ensure that if a bridge gets given to a
-> -	 * driver domain, that all devices under that bridge are not given
-> -	 * to other driver domains (as he who controls the bridge can disable
-> -	 * it and stop the other devices from working).
-> -	 */
-> +	/* Check if the device is a bridge and export all its children */
-> +	if ((dev->hdr_type && PCI_HEADER_TYPE_MASK) == PCI_HEADER_TYPE_BRIDGE) {
+Greetings!!!
 
-Besides it wanting to be & here, it feels as if such a change can't be done
-standalone in pciback. It likely needs adjustments in the tool stack (even
-if that's not send anymore) and possibly also arrangements in the hypervisor
-(to correctly deal with bridges when handed to other than Dom0).
+Observing Kernel OOPS, while creating namespace on a NVMe device.
 
-> +		struct pci_dev *child = NULL;
-> +
-> +		/* Iterate over all the devices in this bridge */
-> +		list_for_each_entry(child, &dev->subordinate->devices,
-> +				bus_list) {
-> +			dev_dbg(&pdev->xdev->dev,
-> +				"exporting child device %04x:%02x:%02x.%d\n",
-> +				child->domain, child->bus->number,
-> +				PCI_SLOT(child->devfn),
-> +				PCI_FUNC(child->devfn));
-> +
-> +			err = xen_pcibk_export_device(pdev,
-> +						      child->domain,
-> +						      child->bus->number,
-> +						      PCI_SLOT(child->devfn),
-> +						      PCI_FUNC(child->devfn),
-> +						      devid);
-> +			if (err) {
-> +				dev_err(&pdev->xdev->dev,
-> +					"failed to export child device : "
-> +					"%04x:%02x:%02x.%d\n",
-> +					child->domain,
-> +					child->bus->number,
-> +					PCI_SLOT(child->devfn),
-> +					PCI_FUNC(child->devfn));
-> +				goto out;
+[  140.209777] BUG: Unable to handle kernel data access at 
+0x18d7003065646fee
+[  140.209792] Faulting instruction address: 0xc00000000023b45c
+[  140.209798] Oops: Kernel access of bad area, sig: 11 [#1]
+[  140.209802] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=8192 NUMA pSeries
+[  140.209809] Modules linked in: rpadlpar_io rpaphp xsk_diag 
+nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet 
+nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat 
+bonding nf_conntrack tls nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set 
+nf_tables nfnetlink vmx_crypto pseries_rng binfmt_misc fuse xfs 
+libcrc32c sd_mod sg ibmvscsi scsi_transport_srp ibmveth nvme nvme_core 
+t10_pi crc64_rocksoft_generic crc64_rocksoft crc64
+[  140.209864] CPU: 2 PID: 129 Comm: kworker/u65:3 Kdump: loaded Not 
+tainted 6.10.0-rc3 #2
+[  140.209870] Hardware name: IBM,9009-42A POWER9 (raw) 0x4e0202 
+0xf000005 of:IBM,FW950.A0 (VL950_141) hv:phyp pSeries
+[  140.209876] Workqueue: nvme-wq nvme_scan_work [nvme_core]
+[  140.209889] NIP:  c00000000023b45c LR: c008000006a96b20 CTR: 
+c00000000023b42c
+[  140.209894] REGS: c0000000506078a0 TRAP: 0380   Not tainted (6.10.0-rc3)
+[  140.209899] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
+CR: 24000244  XER: 00000000
+[  140.209915] CFAR: c008000006aa80ac IRQMASK: 0
+[  140.209915] GPR00: c008000006a96b20 c000000050607b40 c000000001573700 
+c000000004291ee0
+[  140.209915] GPR04: 0000000000000000 c000000006150080 00000000c0080005 
+fffffffffffe0000
+[  140.209915] GPR08: 0000000000000000 18d7003065646f6e 0000000000000000 
+c008000006aa8098
+[  140.209915] GPR12: c00000000023b42c c00000000f7cdf00 c0000000001a151c 
+c000000004f2be80
+[  140.209915] GPR16: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000000
+[  140.209915] GPR20: c000000004dbcc00 0000000000000006 0000000000000002 
+c000000004911270
+[  140.209915] GPR24: 0000000000000000 0000000000000000 c0000000ee254ffc 
+c0000000049111f0
+[  140.209915] GPR28: 0000000000000000 c000000004911260 c000000004291ee0 
+c000000004911260
+[  140.209975] NIP [c00000000023b45c] synchronize_srcu+0x30/0x1c0
+[  140.209984] LR [c008000006a96b20] nvme_ns_remove+0x80/0x2d8 [nvme_core]
+[  140.209994] Call Trace:
+[  140.209997] [c000000050607b90] [c008000006a96b20] 
+nvme_ns_remove+0x80/0x2d8 [nvme_core]
+[  140.210008] [c000000050607bd0] [c008000006a972b4] 
+nvme_remove_invalid_namespaces+0x144/0x1ac [nvme_core]
+[  140.210020] [c000000050607c60] [c008000006a9dbd4] 
+nvme_scan_ns_list+0x19c/0x370 [nvme_core]
+[  140.210032] [c000000050607d70] [c008000006a9dfc8] 
+nvme_scan_work+0xc8/0x278 [nvme_core]
+[  140.210043] [c000000050607e40] [c00000000019414c] 
+process_one_work+0x20c/0x4f4
+[  140.210051] [c000000050607ef0] [c0000000001950cc] 
+worker_thread+0x378/0x544
+[  140.210058] [c000000050607f90] [c0000000001a164c] kthread+0x138/0x140
+[  140.210065] [c000000050607fe0] [c00000000000df98] 
+start_kernel_thread+0x14/0x18
+[  140.210072] Code: 3c4c0134 384282d4 7c0802a6 60000000 7c0802a6 
+fbc1fff0 fba1ffe8 fbe1fff8 7c7e1b78 f8010010 f821ffb1 e9230010 
+<e9290080> 7c2004ac 71290003 41820008
+[  140.210093] ---[ end trace 0000000000000000 ]---
 
-Hmm, and leaving things in partially-exported state?
 
-Jan
+Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
 
-> +			}
-> +		}
-> +	}
->  out:
->  	return err;
->  }
+
+Reverting it, issue is not seen.
+
+
+Regards,
+
+Venkat.
+
 
 
