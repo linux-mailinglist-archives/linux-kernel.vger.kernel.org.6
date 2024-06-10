@@ -1,197 +1,225 @@
-Return-Path: <linux-kernel+bounces-208360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E0D902409
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3E090242C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABF61C21C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDFA1F23A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CDE12F38B;
-	Mon, 10 Jun 2024 14:27:22 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96BB12FF65;
+	Mon, 10 Jun 2024 14:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="a6VOxOiS"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1C8824BC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC679823DF;
+	Mon, 10 Jun 2024 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718029641; cv=none; b=B6il3GuwIf9P8UBorseA2RAu2PPtDRt9G6oCSfyvFUDmlhGmTYuiqWuQ08K7NVxqGaMgfqRlh6sCjaDTobuqPWm5UBIfNJP+zuXSpaB8QiXCgNlASUjBk3Nsu4HHQsXhYOgBm4L+y4KJ5SEve7hQSZFlV4o4KgLSZfqPywLmsNE=
+	t=1718030124; cv=none; b=gWzH+qkHW+m4zR8WN2vn53W71wUzFeYezgdLlCUEYBLq52dQJvCjOe9LiOYOKPeRZyEnkjuLyyGNJXizUCOa2EjnCjKdjezs6Ev8Wo/kdEftP+oAnT9gOxpUjTNrhKDfjD6zi39NaV6SRHUHGucPHfGcDD89D9uQfludgZKoCMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718029641; c=relaxed/simple;
-	bh=qNyY3gPYF2qmEpoo1n4bQF2sh3Dbd56uCGQJ6riwbT8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OILF0gjVMGpqIpdu1MeyisfD3xkejfL6KuZ9xYhvz9FW53lU5kTl1XSkTx9H3IP0m/Ttr/IKkJ0YBUWEerEiStp36Phd2gKnJA1u78dJ85BAPZttXopjQWQT01h/9Fo8g2VVcsaQapULsHPOZqnWdfUESMBcXs5e1tpMuHGFdjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb21854dcdso358701239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:27:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718029639; x=1718634439;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7NHf6HxjWuV028m4aYYZAXBcqrsXypChDYMmJJL0QpA=;
-        b=a51poqdVxOJGqtPP+OI2dPr4lGlBNhjRG0LdopRyK6oPn1Dg+vTYjmovAtd44VPG5U
-         wr1j+jL3y8hQvr1Cdc3hRYCKY9/NY5OR2goopfTfb+fH0lAqoy+b9XVWc7jSNqvZv/KQ
-         RMi8gLomdp9RCNXzHUytXtds9ge7N8/ljHtDmcpspzgyoHzZJ0R0SP/x4SdZgkeTT+MK
-         1xNYWvN3Qgvug0ON8S12JBXT0r9NKPe5+RnFJRFfMDpxWE7SRREQgZnoQQCbuCDWqBqc
-         x+gyU2CKnOeweQ0ThoZdlnYI/ppdmAIHh8uDhVa0aGgc7YtxKUU+e7S1lVsmjDovUwe4
-         oyjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGUc8pEVPUPvW9WOZ76hNjmSONitbWAZ04eQ0HulXk70pclqXQwiphKnH8mAstftElJE6vumFHpf22nJxxyux9MFAwx/tJL3zlHJry
-X-Gm-Message-State: AOJu0Ywk6eiL+h2zxOiQ2icfy9ekO/CfUg0I81l5JQ1QPvJBkMGa2v7p
-	VHYM2Bd58nZhjFyoYOKHjXUf+XxQPFWC/hMn3LpDay/IamiPR9qZ6E6fE2rNc4NkhZgF/FFt8g5
-	mA57Z/mj6xMIrhLEh4k1Cm4l9xKrD2WX2zfzzJW5U1sexZxS80OzfTCs=
-X-Google-Smtp-Source: AGHT+IFXPybU/GeR2HByUYofJubKK0OBNNFVNX/PukOjGLzUR8cYHOn6Dzd10MgGaFXAJCIm26RvEaBcdgialvHtRp39clK3/q52
+	s=arc-20240116; t=1718030124; c=relaxed/simple;
+	bh=91sBIoOFuPu9SFY+tLlcUuwCHDWSFm5niB4kvRVeoCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GpiAJOyxhqINB9K9dCxlYUdqmUgWsAG8csDWS8qlu4YLiQkAxwXkXmCfOJy5QCIQvo1O4ZT+xP5kWe1A/GfsuF5t0BQXPEe9lV4ePuYQSyZF1tH22/Oay5Cb1WUgYNyQGJJnkDL5mQFZV+0ZJopmohJRzN6JNN6uVjzgL8ztur0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=a6VOxOiS; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 4D1B9635B043;
+	Mon, 10 Jun 2024 16:28:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1718029705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l0SMNTkYAuc5O8ZdDG31qtzlnMEbWZ7EjPgqLUUlf1k=;
+	b=a6VOxOiS62O9xhjfaIQGv9ESrXEmBAqJ2SObD/XeVfvJa62ZDU/hYV+pxYdW40hd4pH/sS
+	TV1n8s1AmmRBPAdZ5gC7qGR3L/9uKSSh/ss3Ot8H9G3f8XubQ+5kkEkgUsd4c4ZgtCbOvB
+	GmfwSOLHwdGH1NIN7hyNUy0F941/dto=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, kees@kernel.org,
+ gustavoars@kernel.org, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, ravi.bangoria@amd.com,
+ sandipan.das@amd.com, linux-pm@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH 0/6] Add per-core RAPL energy counter support for AMD CPUs
+Date: Mon, 10 Jun 2024 16:28:11 +0200
+Message-ID: <2733323.mvXUDI8C0e@natalenko.name>
+In-Reply-To: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
+References: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1511:b0:7eb:801f:8645 with SMTP id
- ca18e2360f4ac-7eb801f8ab5mr20939639f.2.1718029639184; Mon, 10 Jun 2024
- 07:27:19 -0700 (PDT)
-Date: Mon, 10 Jun 2024 07:27:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005bad63061a89f2a1@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_journal_replay
-From: syzbot <syzbot+2c4fcb257ce2b6a29d0e@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="nextPart12451447.O9o76ZdvQC";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-Hello,
+--nextPart12451447.O9o76ZdvQC
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Mon, 10 Jun 2024 16:28:11 +0200
+Message-ID: <2733323.mvXUDI8C0e@natalenko.name>
+In-Reply-To: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
+References: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
+MIME-Version: 1.0
 
-syzbot found the following issue on:
+Hello.
 
-HEAD commit:    2df0193e62cf Merge tag 'thermal-6.10-rc3' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10cd4aba980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a6ac4277fffe3ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=2c4fcb257ce2b6a29d0e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12750c26980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10697422980000
+On pond=C4=9Bl=C3=AD 10. =C4=8Dervna 2024 12:07:45, SEL=C4=8C Dhananjay Ugw=
+ekar wrote:
+> Currently the energy-cores event in the power PMU aggregates energy
+> consumption data at a package level. On the other hand the core energy
+> RAPL counter in AMD CPUs has a core scope (which means the energy=20
+> consumption is recorded separately for each core). Earlier efforts to add
+> the core event in the power PMU had failed [1], due to the difference in=
+=20
+> the scope of these two events. Hence, there is a need for a new core scope
+> PMU.
+>=20
+> This patchset adds a new "power_per_core" PMU alongside the existing
+> "power" PMU, which will be responsible for collecting the new
+> "energy-per-core" event.
+>=20
+> Tested the package level and core level PMU counters with workloads
+> pinned to different CPUs.
+>=20
+> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa=20
+> machine:
+>=20
+> $ perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
+>=20
+>  Performance counter stats for 'system wide':
+>=20
+> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
+> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
+>=20
+> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@li=
+nux.intel.com/
+>=20
+> This patchset applies cleanly on top of v6.10-rc3 as well as latest=20
+> tip/master.
+>=20
+> Dhananjay Ugwekar (6):
+>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+>   perf/x86/rapl: Rename rapl_pmu variables
+>   perf/x86/rapl: Make rapl_model struct global
+>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
+>   perf/x86/rapl: Add wrapper for online/offline functions
+>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
+>=20
+>  arch/x86/events/rapl.c | 311 ++++++++++++++++++++++++++++++-----------
+>  1 file changed, 233 insertions(+), 78 deletions(-)
+>=20
+>=20
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d73510b726a1/disk-2df0193e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8d9331f8840c/vmlinux-2df0193e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67ff0539bc3c/bzImage-2df0193e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/013d86d02bf3/mount_0.gz
+With my CPU:
 
-The issue was bisected to:
+  Model name:             AMD Ryzen 9 5950X 16-Core Processor
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+and this workload:
 
-    bcachefs: Ignore unknown mount options
+$ taskset -c 1 dd if=3D/dev/zero of=3D/dev/null
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1246820a980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1146820a980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1646820a980000
+the following result is got:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2c4fcb257ce2b6a29d0e@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+$ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
 
-bcachefs (loop0): recovering from clean shutdown, journal seq 4755801206503243784
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay...
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/recovery.c:129!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5080 Comm: syz-executor177 Not tainted 6.10.0-rc2-syzkaller-00097-g2df0193e62cf #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:replay_now_at fs/bcachefs/recovery.c:129 [inline]
-RIP: 0010:bch2_journal_replay+0x133d/0x1360 fs/bcachefs/recovery.c:268
-Code: 89 e6 e8 96 86 d6 ff e8 31 8c 45 07 e8 1c 0b 5e fd 90 0f 0b e8 14 0b 5e fd 90 0f 0b e8 0c 0b 5e fd 90 0f 0b e8 04 0b 5e fd 90 <0f> 0b e8 fc 0a 5e fd 90 0f 0b e8 f4 0a 5e fd 90 0f 0b e8 ec 0a 5e
-RSP: 0018:ffffc90002d6efe0 EFLAGS: 00010293
-RAX: ffffffff84381a8c RBX: 4200000000000009 RCX: ffff888017fa0000
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 4200000000000009
-RBP: ffffc90002d6f128 R08: ffffffff84381098 R09: ffffffff84a313ec
-R10: 0000000000000004 R11: ffff888017fa0000 R12: dffffc0000000000
-R13: 1ffff1100e65958f R14: 00000000ffffffff R15: ffff8880732cac78
-FS:  000055555ba40380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000559cbf898ff0 CR3: 00000000200f8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
- bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
- bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1031
- bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2123
- bch2_mount+0x6c0/0x1320 fs/bcachefs/fs.c:1917
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0a5e7c693a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe9296c7c8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe9296c7e0 RCX: 00007f0a5e7c693a
-RDX: 0000000020005b00 RSI: 0000000020000000 RDI: 00007ffe9296c7e0
-RBP: 0000000000000004 R08: 00007ffe9296c820 R09: 0000000000005b72
-R10: 0000000003000002 R11: 0000000000000282 R12: 0000000003000002
-R13: 00007ffe9296c820 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:replay_now_at fs/bcachefs/recovery.c:129 [inline]
-RIP: 0010:bch2_journal_replay+0x133d/0x1360 fs/bcachefs/recovery.c:268
-Code: 89 e6 e8 96 86 d6 ff e8 31 8c 45 07 e8 1c 0b 5e fd 90 0f 0b e8 14 0b 5e fd 90 0f 0b e8 0c 0b 5e fd 90 0f 0b e8 04 0b 5e fd 90 <0f> 0b e8 fc 0a 5e fd 90 0f 0b e8 f4 0a 5e fd 90 0f 0b e8 ec 0a 5e
-RSP: 0018:ffffc90002d6efe0 EFLAGS: 00010293
-RAX: ffffffff84381a8c RBX: 4200000000000009 RCX: ffff888017fa0000
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 4200000000000009
-RBP: ffffc90002d6f128 R08: ffffffff84381098 R09: ffffffff84a313ec
-R10: 0000000000000004 R11: ffff888017fa0000 R12: dffffc0000000000
-R13: 1ffff1100e65958f R14: 00000000ffffffff R15: ffff8880732cac78
-FS:  000055555ba40380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000559cbf898ff0 CR3: 00000000200f8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Performance counter stats for 'system wide':
+
+S0-D0-C0              1               1,70 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C1              1               8,83 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C2              1               0,17 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C3              1               0,33 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C4              1               0,14 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C5              1               0,33 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C6              1               0,25 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C7              1               0,19 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C8              1               0,66 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C9              1               1,71 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C10             1               0,38 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C11             1               1,69 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C12             1               0,22 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C13             1               0,11 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C14             1               0,49 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C15             1               0,37 Joules power_per_core/energy-per=
+=2Dcore/
+
+       1,002409590 seconds time elapsed
+
+If it is as expected, please add my:
+
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+
+Thank you.
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart12451447.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmZnDXsACgkQil/iNcg8
+M0t6fQ/9Fdruv7/wOgfWfxsmq12Z1F7j5jUZ3jwi5SWc8eM7xrP9k0xHc9MUuiAz
+Wa6Q+GHzOASCcjGfyHbfJMwUj9fjjbDClvtVM+IV+F3jM+HDqYJs3xfHLxZYi5Yq
+aZb6R8fmXv+O43R3N/T/fRuAjWod/+1KYnvP0ktPD7GCw/5bSWelLdmYAeEOyF8+
+wbOZY4Vpa4mMIB6aywrmtDLWBfb3b1x3bKTCZiIxxgnjf/Kn6JZUKm/cqdJ7j12d
+ZBmgC8MQEtbd1gGX3yF53kCUOnMJ5Pl/oKNC8upLlej+ktwGzIEqWrV3MDAFChmK
+q8OukQvozY3VZinqRDJ5xsB1o1sSyGmnaNiWUTXV3TXr8Is+urKeGG9Vrcr81KTe
+QPDGesLe09hh/DH051o34XbOj1fA680DP21gVlC7jMyfanxPCvyCnnQ9O6pL81MK
+H7aueueox41UXHoIFRIZ5znWwewei8ny+4gAPam5/XVVX4E2rnBjl88OHWgMUXvU
+biSFXskJU58wakoFWQd9iaCriGy1Ke+vKadeO8DpM89hLQSA+y08J2YXbBmQa7dT
+pg4aNkKOeWwsMgzzJ0SbBJdPy66mhMLshln45oqTFYFyLTEKF1rfsFWZrKKn7wsg
+uhjXr+TwTTA8dqewzCYxFq9drb/6bO1Dmn8UJDjMFAGWcBlRgaI=
+=SsIp
+-----END PGP SIGNATURE-----
+
+--nextPart12451447.O9o76ZdvQC--
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
