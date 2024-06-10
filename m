@@ -1,168 +1,82 @@
-Return-Path: <linux-kernel+bounces-208718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D24902870
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:12:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774B5902871
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4EE288E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:12:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD33DB21B9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FA51494B9;
-	Mon, 10 Jun 2024 18:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35E014D6E4;
+	Mon, 10 Jun 2024 18:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KD0iSwBx"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uCf5d+Qt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FE27E761
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447D814B978
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718043097; cv=none; b=Ax9KqLeHsDEsboqzYH2Nuy9Tt2z6nHlaMVAKE2UJrywj7D1NWtzNzuSEKpE0Yc+1FiKTBuwMapT0aMcnm1MjGx3HOS4Kr6lj5WJa3vfU9BGN043r1Shb53EK/6mYoRgh0SYSdmNxMszd8LVd9JOT67OVptkQ9gu9nPw3B3/uiow=
+	t=1718043101; cv=none; b=mHzD1GvBUUStjBsV7rQNAxaGYVlMiLDVws8/I+89KQiUMOaYAY78OkT78aOZ3tsV1NHNhMOYKQlRXa5FA4xR5l9fKmLGvEW0XbSUoCHHlKjU1rRdvltYT2Ku2Z/t44CnKd/mcWv/FbHHCtchIeIGr0IXL/IAFi1Eg1g1dBVKHNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718043097; c=relaxed/simple;
-	bh=hhIn4dPqyPsPULGsZbxagOtKdHsglWZaz5bDRr5/1Go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pAegwdgamnJuHMi3vBUW2A6m/PLUxs5QhpbZiZz3uxIFV215qcucqFuFF8CW+UJ/5DnJoouJpoiY4JgUBghcdG6N1oCikg7rdLxNpUtzCSHF/ouPHO4JhvlhgaQA+/Cm1D1PUoHMwHZ9QV6yi3zGFt69HHeKFSWyP1D+vAsWXmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KD0iSwBx; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6efae34c83so280277166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718043094; x=1718647894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uBitgYqhRpDDEUtVM72CLTY5WJYHc8q6oeiiPInU5GI=;
-        b=KD0iSwBx+jmoIorH8yx7b1g9yOkLWpKC65k0yujf0MVt7Y3UE+JYC0py+O8A0LHC7n
-         UgoppnSQy+c5NkqX67+JliVa5bBsTZTRWbU2y+myy0nFcnkR7BOEwuvRZ1uCtCsFvwzI
-         vklmkZYbk9lOHuuqYtXyMnMda1snBwe1yH2uAGXglS5lU7Fd5ETPHmzh8JIm7UGhotyp
-         tkQp1czyarbv0XiM68wavFnAYEE/x5nAFyz4yh40zCmH8/iAVQkQoNg8iQnHg/n9gS3G
-         eM6GjfGecaxF+0j62pAmQ75w4ST2yd4gkh4SmR445cLQrywBm6Jea5aPyAwZC6Srhgzc
-         KkUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718043094; x=1718647894;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uBitgYqhRpDDEUtVM72CLTY5WJYHc8q6oeiiPInU5GI=;
-        b=dTHSS5Kv6dODRNiElKd5wWG+14pD8B309nVBB1IyCdCRTqf4VUhfFqefwxUDXVdDYx
-         pgU/If0fkzTnwuP8ywhCc6vsefCvLT5H0dZfRj/tzVliNpI56JfnHXW2b0ukJvjimYIT
-         Rmy4ZsDyMCdf5l4aYArff0D5b4PuGEH9ZV+iKGJVemg4iRVFY6UulIezOO3dAr9u19Rw
-         v/JtC1R4/HrX57eqSOIEwklCwU86iD24zEm2ymAzrrUPgc1E5iMeZqbVGYMal95WqtTG
-         w2TWAsVIXJ87NJ3tY1GdepS5FdmjSRoj/V21zXY6cDq6VynazlcGzEM7J21gvwyLJtOr
-         TVrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQc3PIikEYM1m4+RqXAWJiMACDjKtv+OiAz3x2JfYDEaKuaNR3KITtZ1Ye1tFlPqpKG1Ywkk19bdnvEWFQm/Pj4o1EZtyvg3nXgSna
-X-Gm-Message-State: AOJu0YyGr8eIsFgewROFJ5oJ3bu2Z2GH30w7GxWJmgmrxfAOYA2cadMs
-	ap3vDfneRiFZDP44AhEBLvTp96UTn+GmAgpOTbQrAE2MIXmn7BM6
-X-Google-Smtp-Source: AGHT+IF0Mv0XUMU02EjNpOe4jzo3/oQog3zMX8x5oxhQnWrjVqr23TsNAWgjjb/P7RTBR1dMgNbzTg==
-X-Received: by 2002:a17:907:720c:b0:a59:c367:560c with SMTP id a640c23a62f3a-a6cdb0f540fmr829869466b.60.1718043093459;
-        Mon, 10 Jun 2024 11:11:33 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:493])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f27837769sm93827866b.34.2024.06.10.11.11.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 11:11:32 -0700 (PDT)
-Message-ID: <ed4cff58-93ff-4658-bade-13a3e66cba4b@gmail.com>
-Date: Mon, 10 Jun 2024 19:11:31 +0100
+	s=arc-20240116; t=1718043101; c=relaxed/simple;
+	bh=Zyt0Q07VE/fjAXBZsWUk0sLyvaGo1lHLtKHoWXrBxrE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oAU0+CYIxBQQZPZeWWA3mB29qRUorNXRtNcZ6RDug/rML0zbEwiVquRIZwkRayW7VcDAEjh9rdAcMBSIt8RvCP8o4TdOKz1+r9xkjgKUn5ohFuaknXxiGQDU8fMd88bzhEkplOIvj9F6bY1jQN7bVeIC0XX1S08oUA2MmFQoo30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uCf5d+Qt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE2CC2BBFC;
+	Mon, 10 Jun 2024 18:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718043100;
+	bh=Zyt0Q07VE/fjAXBZsWUk0sLyvaGo1lHLtKHoWXrBxrE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uCf5d+QtExZpXuCpWZUvOrXZvwBkkat207Tiwy2JRip+dPloyEhnTbJe6JWJELXX3
+	 YqdbM0HeJLKjjNJcPtjrg1x87nWu0+5UqczOTTR1UnC9E19XnYGG4K+ZDOrqftXpyO
+	 mO1WkE1UlMwskW68N+85JxIMS1/f1wwblEigZZBU=
+Date: Mon, 10 Jun 2024 11:11:39 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Rafael Aquini <aquini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Heiko
+ Carstens <hca@linux.ibm.com>, Petr Mladek <pmladek@suse.com>, Mike Rapoport
+ <rppt@kernel.org>, Paul McKenney <paulmck@kernel.org>, Samuel Holland
+ <samuel.holland@sifive.com>
+Subject: Re: [PATCH v2] mm: mmap: allow for the maximum number of bits for
+ randomizing mmap_base by default
+Message-Id: <20240610111139.1e392360ffe847ea48ffebab@linux-foundation.org>
+In-Reply-To: <20240606180622.102099-1-aquini@redhat.com>
+References: <20240606170026.101839-1-aquini@redhat.com>
+	<20240606180622.102099-1-aquini@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
-To: Yosry Ahmed <yosryahmed@google.com>, willy@infradead.org
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, nphamcs@gmail.com,
- chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-References: <20240610143037.812955-1-usamaarif642@gmail.com>
- <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAJD7tkYdTvfO8P+aZNmr7bF7vEetxiqQQ4ML8BcLdmKohT-+Cg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Thu,  6 Jun 2024 14:06:22 -0400 Rafael Aquini <aquini@redhat.com> wrote:
+
+> An ASLR regression was noticed [1] and tracked down to file-mapped areas
+> being backed by THP in recent kernels. The 21-bit alignment constraint
+> for such mappings reduces the entropy for randomizing the placement of
+> 64-bit library mappings and breaks ASLR completely for 32-bit libraries.
+> 
+> The reported issue is easily addressed by increasing vm.mmap_rnd_bits
+> and vm.mmap_rnd_compat_bits. This patch just provides a simple way to
+> set ARCH_MMAP_RND_BITS and ARCH_MMAP_RND_COMPAT_BITS to their maximum
+> values allowed by the architecture at build time.
+> 
+> [1] https://zolutal.github.io/aslrnt/
+
+Are we able to identify a Fixes: target for this?
+
+I assume a cc:stable is appropriate?
 
 
-On 10/06/2024 18:31, Yosry Ahmed wrote:
-> On Mon, Jun 10, 2024 at 7:31 AM Usama Arif <usamaarif642@gmail.com> wrote:
->> start/end writeback combination incorrectly increments NR_WRITTEN
->> counter, eventhough the pages aren't written to disk. Pages successfully
->> stored in zswap should just unlock folio and return from writepage.
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>   mm/page_io.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/mm/page_io.c b/mm/page_io.c
->> index a360857cf75d..501784d79977 100644
->> --- a/mm/page_io.c
->> +++ b/mm/page_io.c
->> @@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
->>                  return ret;
->>          }
->>          if (zswap_store(folio)) {
->> -               folio_start_writeback(folio);
->>                  folio_unlock(folio);
->> -               folio_end_writeback(folio);
-> Removing these calls will have several effects, I am not really sure it's safe.
->
-> 1. As you note in the commit log, NR_WRITTEN stats (and apparently
-> others) will no longer be updated. While this may make sense, it's a
-> user-visible change. I am not sure if anyone relies on this.
-
-Thanks for the review.
-
-This patch would correct NR_WRITTEN stat, so I think its a good thing? 
-But yeah as you said for people relying on that stat, suddenly this 
-number would be lowered if they pick up a kernel with this patch, not 
-sure how such changes would be dealt with in the kernel.
-
-> 2. folio_end_writeback() calls folio_rotate_reclaimable() after
-> writeback completes to put a folio that has been marked with
-> PG_reclaim at the tail of the LRU, to be reclaimed first next time. Do
-> we get this call through other paths now?
-
-We could add
-
-if (folio_test_reclaim(folio)) {
-         folio_clear_reclaim(folio);
-         folio_rotate_reclaimable(folio);
-     }
-
-to if zswap_store is successful to fix this?
-
-> 3. If I remember correctly, there was some sort of state machine where
-> folios go from dirty to writeback to clean. I am not sure what happens
-> if we take the writeback phase out of the equation.
->
-> Overall, the change seems like it will special case the folios written
-> to zswap vs. to disk further, and we may end up missing important
-> things (like folio_rotate_reclaimable()). I would like to see a much
-> stronger argument for why it is safe and justified tbh :)
->
-The patch came about from zero page swap optimization series 
-(https://lore.kernel.org/all/ZmcITDhdBzUGEHuY@casper.infradead.org/), 
-where Matthew pointed out that NR_WRITTEN would be wrong with the way I 
-was doing it.
-
-Overall, I thought it would be good to have consistency with how 
-zeropages and zswap pages would be dealt with, and have a more correct 
-NR_WRITTEN stat.
-
-In the next revision of the zero page patch, I will just add 
-folio_rotate_reclaimable after folio_unlock if folio is zero filled.
-
->>                  return 0;
->>          }
->>          if (!mem_cgroup_zswap_writeback_enabled(folio_memcg(folio))) {
->> --
->> 2.43.0
->>
 
