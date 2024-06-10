@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-208943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F5D902AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:48:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1A6902ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83CFB1C22E7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73781F22CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8318012F397;
-	Mon, 10 Jun 2024 21:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44E36BB33;
+	Mon, 10 Jun 2024 21:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ke1eUZk1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="m4q9ABAV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFE06BB33
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5C24D8C4;
+	Mon, 10 Jun 2024 21:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718056111; cv=none; b=p9ViFAjAUVI+rVRdd8vN+0k89GxhlJ2C8n+MOCUJeEK2JO3dulVwCUob5TJ5M6Rsd5d92Cq1GAkG/GRNFJV/eePA6T80V6HKJ51i6qjgWMnOjO7x/2u0DBb92bPh93pZNTCHT5t0xTKQ4xjtgiX9rfaG7gaNL1sDlbM38wTCGQs=
+	t=1718056147; cv=none; b=ieSrnBAMczqP/4O9rzZlHce0Hs6hhx1MzZkvI+GiNrZ6sA/V7q/+VZjc7r/VQzlWbfHco+b/v8Wa6X2hyCa608GHQM4VZwuD4Nv/lbGIRBTOTu+ysvJ49e23Z+JZb6d20R0HDmu3ngpNkY9n3JcfAJHWYhvrg9JSsQTsVrf5+rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718056111; c=relaxed/simple;
-	bh=4DNhk0tBbhRDsReREFDU18jwJpkA17AW9GL7HzjSt/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l9BVlnWH8mCKdzXPAyHFQiy8WueV1yF+uem3T4nwO5g1qtW6/8/dc7x7fKz4RYanZaORJV5JhXd9wrj8ZkHJIwWc8p4IJq+gzl4vzpi4AqpaJbR3xYMt2KjePgV6YcQV/kqhPxx8zapLyCZ+OmrapGteqnQ6vGmf/TF6muNGh58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ke1eUZk1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718056109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dff2CxPF2YjERdeED1HYWtqzTOJbvY8otFDm3MW5gbY=;
-	b=Ke1eUZk1BOKdFD+Rr+RdN5bTOsa7oXogOADJoKBrG+pKXRATokJJj4bkYYutCB0xy1I0Ud
-	mhXbZJZwcj3+ZaFcuFJP8CmRUrUnQw3YHFrY9a4TSVvUhLvqcDAT1WH0alo6nTVlbRt1lF
-	x7sG6qCOj4gPwCRQK3tiuHT1MkwtVeQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-315-oTbgFLptNf2HDhP4NofZSQ-1; Mon, 10 Jun 2024 17:48:27 -0400
-X-MC-Unique: oTbgFLptNf2HDhP4NofZSQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f09eab759so2616721f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:48:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718056106; x=1718660906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dff2CxPF2YjERdeED1HYWtqzTOJbvY8otFDm3MW5gbY=;
-        b=o9HTObtu0+EfmNvlfbC8Yn1MGU9CycAY/gUGZ0FcQIj/VqvO8lT26tFk/B426wJ412
-         dnGsi62cllYmALawBTueeo8FUgeIulLtFvSjAIvykeUrF6D1NWArsGaWAxdrXdM/8Fcl
-         a9VwmBvCWxWXoMCRgLqTPmiAi0lJwVYR6+V+pPMLx0NZvumCiYv8Gyb80WpygLhddZOt
-         wtbRv2aWTpvupoWSwAF1og1ZqgVYFX2bUEjSWtTzN87010w4TVYs9Luj5K3g3q2mAGNm
-         pA9pIZGw/WevWmKqHkPbv1XDHoqFKsv1TfnYtPQlhf7sV9gtCdWgptt8w6S8+VBLiQi5
-         cNTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0ph0hiVcb+6eeqBtmTHzjcwlccPKweLOP7MY6bRz7yJiuyG2Ct4TxBUgfYLDnXgjqiGHLSERlXKhNWqxApF9UxY93f2nc+c+I53JL
-X-Gm-Message-State: AOJu0YyiMKOG+TT7aqkpFD1s+67+7BccwXffIbdnS6uxbo4lj1uWBe7L
-	5/ttyBsTDLcxGkgU4HeVIMF28YZos5DeyAvIPzzPjyW8ENjthRwImHlm+LMZsbWDl7SWb1ZpXsm
-	fE+T36jdev46fuse4cubAe3BntZK4JEb7LCNPooA7N5jayhbItPKmnrNTsDkPa+P+l+jYBwBzi3
-	SBbPNoYIdwNZT2QEr5GY+t+/E4na2sR6fD9F2I
-X-Received: by 2002:a05:6000:1e81:b0:35f:650:e8ff with SMTP id ffacd0b85a97d-35f0650ebb8mr7288499f8f.28.1718056106565;
-        Mon, 10 Jun 2024 14:48:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4+dWVR40t7y9KNU5SdSVMucVyRUgfScrkFSHU1CNZNGuIOpNcZAVG3XxWKDye8L/uW1VpphBzrVra4HZAC18=
-X-Received: by 2002:a05:6000:1e81:b0:35f:650:e8ff with SMTP id
- ffacd0b85a97d-35f0650ebb8mr7288495f8f.28.1718056106189; Mon, 10 Jun 2024
- 14:48:26 -0700 (PDT)
+	s=arc-20240116; t=1718056147; c=relaxed/simple;
+	bh=ykFBQCi1dh1P+VqakbdOODcKqkyWfqJasyFdBjTnQi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=W3xIdQ0ciczBiT7QKVfcEIHgUH0Enr3FAFPwcvP8bVfvG5haaZCHEedtilfA+y9mem/wudOAO6KJ08AVv3lmyTdhnRPacQ2bQeBLpNPAi3PXK2J8o8iNmD7BtpztFwWfMYFuX+fg9zFXDTJfJbXE3jtVAJpSZ00YA8T33PU501o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=m4q9ABAV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1718056133;
+	bh=kohiDelzqZSp+L1kHkWNDcmHcrarcNb/zE18QNFtoE4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=m4q9ABAVhN1IGrXjZ1uTLpGGHrh2yotagV1pkt1Ssjx6EputCWZmBdFJJnBXdmWeE
+	 ZuZsh9ATnCGLCiofT81EnGowdfCql5tTHS7OMXqEDM9xbSX5KrQqTrtZKn1SshpVSg
+	 Tt3LZ8KUejDH6xIwCVaqlh6q/5wSx7c9JcJLNFzkFOUpFzIPrq0FnVdRKEEInpwpGN
+	 4vkD4qjz1l+4pdRuup/MkD0WLKw3EBj5dw7OAGSwjoXt4AFYEEC2GX+x6gBoZnD5Uy
+	 S05gxTSbr+08rd+fYJmdtb71D0uzkKiaCuAGkp1C0mAVxxs0hB8y1S2VSMMSJUToH5
+	 7jGWfxISj36ng==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vyln10wMhz4wc3;
+	Tue, 11 Jun 2024 07:48:52 +1000 (AEST)
+Date: Tue, 11 Jun 2024 07:48:50 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the mm-hotfixes tree
+Message-ID: <20240611074850.48ab8cab@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404185034.3184582-1-pbonzini@redhat.com> <20240404185034.3184582-10-pbonzini@redhat.com>
- <20240423235013.GO3596705@ls.amr.corp.intel.com> <ZimGulY6qyxt6ylO@google.com>
- <20240425011248.GP3596705@ls.amr.corp.intel.com> <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
- <Zip-JsAB5TIRDJVl@google.com> <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
- <ZivFbu0WI4qx8zre@google.com> <ZmORqYFhE73AdQB6@google.com>
-In-Reply-To: <ZmORqYFhE73AdQB6@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 10 Jun 2024 23:48:14 +0200
-Message-ID: <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com>
-Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
- pages with user data
-To: Sean Christopherson <seanjc@google.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/U3=e9Y7jEVx/Q0w0vobTQQB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/U3=e9Y7jEVx/Q0w0vobTQQB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 8, 2024 at 1:03=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> SNP folks and/or Paolo, what's the plan for this?  I don't see how what's=
- sitting
-> in kvm/next can possibly be correct without conditioning population on th=
-e folio
-> being !uptodate.
+Hi all,
 
-I don't think I have time to look at it closely until Friday; but
-thanks for reminding me.
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-Paolo
+  1a2ffe941767 ("mm/hugetlb: do not call vma_add_reservation upon ENOMEM")
+  39778a292a45 ("memcg: remove the lockdep assert from __mod_objcg_mlstate(=
+)")
+  40bdd66a7b77 ("kmsan: do not wipe out origin when doing partial unpoisoni=
+ng")
+  412b78b1f29c ("codetag: avoid race at alloc_slab_obj_exts")
+  7284034f1a52 ("mm: arm64: Fix the out-of-bounds issue in contpte_clear_yo=
+ung_dirty_ptes")
+  7e6f87243a04 ("mm/ksm: fix ksm_pages_scanned accounting")
+  882bdc954a25 ("mm/ksm: fix ksm_zero_pages accounting")
+  930167c7f314 ("nilfs2: fix potential kernel bug due to lack of writeback =
+flag waiting")
+  9d72b28b9211 ("nilfs2: fix nilfs_empty_dir() misjudgment and long loop on=
+ I/O errors")
+  ac8e505e6693 ("mm: huge_mm: fix undefined reference to `mthp_stats' for C=
+ONFIG_SYSFS=3Dn")
+  bab08beb5b33 ("mm: fix xyz_noprof functions calling profiled functions")
+  ce974305742a ("vmalloc: check CONFIG_EXECMEM in is_vmalloc_or_module_addr=
+()")
+  ebdb8f407552 ("mm: page_alloc: fix highatomic typing in multi-block buddi=
+es")
+  ec0649d7d6ce ("mm: drop the 'anon_' prefix for swap-out mTHP counters")
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/U3=e9Y7jEVx/Q0w0vobTQQB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZndMIACgkQAVBC80lX
+0GzKhgf+Nvgg5sirgHfZ+i3gU2GJKkRmKDng3FJbiDItRB9xTTdSxYe+zHh+QXsT
+NmHG/HXQoiX23IKbJfnVWUGV/IQQimtB6YsSe9a3LkMUC5Y3qZldT14yvIWuQIrw
+BPRGAn9mgTiDthCRLS7/JpERishCblgj6VerZvpEYkE4TEN0r5LHTMt5PgBlTMpM
+9yKidTtWTu03+3234+3iWlQbg+JbdHpVCQu8O6+Z0UkyHinyLFBLQAZdNG7b6cyS
+Y7SPQJtr9/j4E3uR4HLW61hKSTu3WNI7VxpxQmdykT6pYHr6QYlJ3+AaBUzeSKZw
+ketwUiKj5nZzse2vCe+VU5T2soZpgQ==
+=V7AJ
+-----END PGP SIGNATURE-----
+
+--Sig_/U3=e9Y7jEVx/Q0w0vobTQQB--
 
