@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-208661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2314C9027D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:36:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D4C9027DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E853A1C215AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA041F22F35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB541482F6;
-	Mon, 10 Jun 2024 17:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6075914F132;
+	Mon, 10 Jun 2024 17:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlR55hcP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="McdIVopN"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BF8146A85;
-	Mon, 10 Jun 2024 17:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D16414D6FF;
+	Mon, 10 Jun 2024 17:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040971; cv=none; b=O7e7Ml2B/ag+dM3AtiefuSyAclm8xGgPPW8MabwE48/RUNN8dvabHRf9FAmt5MeJ/p8URJATSjsaocYQNnJV3753xn1TsQKJfwezCKeWvqONAO3fhwMPkvs3Y7tL2FwTzS7sRjx6aq7JU4nt1x7p58bdlu3wpleq6bd91VdUYNA=
+	t=1718041000; cv=none; b=Uae6FUHeRTsoraA9uZN0PgAipnSTR99B6Juw6CbNi7ZphG8GfZKQC6SZmVfr/h087QrJdTYwuB8XK4b6qjdwKOFblPY+2cyoDXnsuMnM8s+B2jPbaPtBDfEgIApXK0PMArLmTfJhAVljKZzp07bFRESx+3Ea7TyiNfgjxqOgf6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040971; c=relaxed/simple;
-	bh=RpbmXndHJoXl3SlguVLnsaEn/mZZ/EfBgJrAofv9UJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XrVBojAaU2MpIZWGDm36lEUA2GHj8/vCOq+IBS9TXzvLmwmkCn5UOViznCaiDYoADdqwQ5nTyUjvkU0t3TS6yUbrGKHnZH9+h5ll6R5bt1jdgTd6TVxbh63mJfZ+aLT825t1MdViaxCGYiGfQ+iigBkC1ihYWnEbbbtjAyWoz7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlR55hcP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87A3C4AF1A;
-	Mon, 10 Jun 2024 17:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718040970;
-	bh=RpbmXndHJoXl3SlguVLnsaEn/mZZ/EfBgJrAofv9UJg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SlR55hcP8LrDzbTWKjBbz+lXT4DRX+LBTHKynKlVM35BsnmEpZ5tAEBQSQmuhoqXd
-	 R0o7LIKbqEa5dy9MBMZWmoupp7jrwV+99ysyRqnEXEcJ6wVxNviL6u8QrkCLLl4FEA
-	 vwOETgouukNUwgq0JOuq4fkTQUd4wsM/Jltk5ppnC0IF6hoBLMySrzu/63c5nuda+s
-	 FgdjzoZ9IgdaIrOOzmZvNGKqGx4myrMM0bQCPMRKrIBfToV5iSJFJ76tBxfQuvuLT/
-	 1s1QxXlWxuTall47DrW/BhSPzUQuKSicF6b4XXqVBxMGSLA6GDjnt+FCFnQWjhOz1U
-	 14iXLNyuIuyQw==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso67213421fa.3;
-        Mon, 10 Jun 2024 10:36:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWbLY3yq1is8kKNKQD6lDtTVn61O2H3Ik84Qe/Y4CFGjo7hEeOOwQUbPchQPA/uKx5s8POfN6syw9MK+x6N/7fojxp9xQ8nn0cyneHa
-X-Gm-Message-State: AOJu0Ywa0wtutvdY+HAPP71cHnq18MwuwCg8fVluamRfcPBfSUHZZL6C
-	sxcBl7zEB9zmo8f/PmaXDjDRGuQClJudozGseGvA9tp7gW13TPJXtJfLMhiY7sGcFRwmedLjFc0
-	DBtMKMTbx0EKznQpwf3o/WhOi8oM=
-X-Google-Smtp-Source: AGHT+IHKImW/r87B7AguekV84AH/VQm9GeY3xw5nAWreXqk6nEvsypEgOSR3wcoLjO/JvlBu8Tfr8iQJsfPcxNBcrwE=
-X-Received: by 2002:a2e:b0f6:0:b0:2eb:d4b0:6ed8 with SMTP id
- 38308e7fff4ca-2ebd4b073d2mr39323531fa.36.1718040969068; Mon, 10 Jun 2024
- 10:36:09 -0700 (PDT)
+	s=arc-20240116; t=1718041000; c=relaxed/simple;
+	bh=5peT9yE4nDGFeJtvaJ7NLGE1KQp2YckJYIwOYXJbbGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lP9zAeeV7jiRw00+qLVrlo+KI/TsqyNjMxFLOvLWGrpGzKo5l5pd2jDdM35l7GJ3UwbEBEg4MXfbaZiKzJZI/u44J0qfgdRp4iDoPAqgzcPbql5QVkuMAmhtEVkysPugZHx2QZ9tq1gDSD6EYXHtAQqdixbe2K35BcI99fwuG4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=McdIVopN; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedor-21d0 (unknown [5.228.116.47])
+	by mail.ispras.ru (Postfix) with ESMTPSA id DF359407853A;
+	Mon, 10 Jun 2024 17:36:26 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru DF359407853A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1718040987;
+	bh=3mx7J795/y8Yz1JHM3D8D7/9NeMSSgSBgbIlVoPD2Nw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=McdIVopNHE9BRDrwTqPcWXIO+30y9qCb6noHwAH4dDKfyUbq9GDBLoR6aKWr8io2I
+	 BT2j8PVErELdSAd8Q0EivkajK22MF3Znv3dvy255z1Ge/lhT4EBPLvC3z3qzikrNI4
+	 pGMDUX6mSsXL8Nfjm3WqLyyI5oB0K/q8lOoZvA8c=
+Date: Mon, 10 Jun 2024 20:36:19 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Aleksandr Mishin <amishin@t-argos.ru>, imx@lists.linux.dev, 
+	lvc-project@linuxtesting.org, Shawn Guo <shawnguo@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oleksij Rempel <o.rempel@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [lvc-project] [PATCH] remoteproc: imx_rproc: Adjust phandle
+ parsing issue while remapping optional addresses in imx_rproc_addr_init()
+Message-ID: <20240610-4fb504648421659114538a50-pchelkin@ispras.ru>
+References: <20240606075204.12354-1-amishin@t-argos.ru>
+ <ZmcuFRfjKRQG9OXI@p14s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508092053.1447930-1-linan666@huaweicloud.com>
-In-Reply-To: <20240508092053.1447930-1-linan666@huaweicloud.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 10 Jun 2024 10:35:57 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7Q9=wu1EM2DAQS4Xw6Ja5YcJppCwe2=+RnXEO7wSVf4w@mail.gmail.com>
-Message-ID: <CAPhsuW7Q9=wu1EM2DAQS4Xw6Ja5YcJppCwe2=+RnXEO7wSVf4w@mail.gmail.com>
-Subject: Re: [PATCH] md: do not delete safemode_timer in mddev_suspend
-To: linan666@huaweicloud.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yukuai3@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com, 
-	yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmcuFRfjKRQG9OXI@p14s>
 
-On Wed, May 8, 2024 at 2:31=E2=80=AFAM <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> The deletion of safemode_timer in mddev_suspend() is redundant and
-> potentially harmful now. If timer is about to be woken up but gets
-> deleted, 'in_sync' will remain 0 until the next write, causing array
-> to stay in the 'active' state instead of transitioning to 'clean'.
->
-> Commit 0d9f4f135eb6 ("MD: Add del_timer_sync to mddev_suspend (fix
-> nasty panic))" introduced this deletion for dm, because if timer fired
-> after dm is destroyed, the resource which the timer depends on might
-> have been freed.
->
-> However, commit 0dd84b319352 ("md: call __md_stop_writes in md_stop")
-> added __md_stop_writes() to md_stop(), which is called before freeing
-> resource. Timer is deleted in __md_stop_writes(), and the origin issue
-> is resolved. Therefore, delete safemode_timer can be removed safely now.
->
-> Signed-off-by: Li Nan <linan122@huawei.com>
+On Mon, 10. Jun 10:47, Mathieu Poirier wrote:
+> On Thu, Jun 06, 2024 at 10:52:04AM +0300, Aleksandr Mishin wrote:
+> > In imx_rproc_addr_init() "nph = of_count_phandle_with_args()" just counts
+> > number of phandles. But phandles may be empty. So of_parse_phandle() in
+> > the parsing loop (0 < a < nph) may return NULL which is later dereferenced.
+> > Adjust this issue by adding NULL-return check.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+> > Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > index 5a3fb902acc9..39eacd90af14 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -726,6 +726,8 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+> >  		struct resource res;
+> >  
+> >  		node = of_parse_phandle(np, "memory-region", a);
+> > +		if (!node)
+> 
+> You're missing an "of_node_put()" before continuing.
+> 
 
-Applied to md-6.11. Thanks!
+The node is NULL in this case so of_node_put() is not needed..?
 
-Song
+Btw, there is a "rsc-table" node->name check in the the end of the loop
+body. It was added recently with commit 5e4c1243071d ("remoteproc:
+imx_rproc: support remote cores booted before Linux Kernel"). Seems to me
+it forgot that of_node_put() is called way before that.
+
+Also commit 61afafe8b938 ("remoteproc: imx_rproc: Fix refcount leak in
+imx_rproc_addr_init") was dealing with the last of_node_put() call here
+but it's still not in the right place I'd say.
+
+> > +			continue;
+> >  		/* Not map vdevbuffer, vdevring region */
+> >  		if (!strncmp(node->name, "vdev", strlen("vdev"))) {
+> >  			of_node_put(node);
+> > -- 
+> > 2.30.2
+> > 
+> > 
 
