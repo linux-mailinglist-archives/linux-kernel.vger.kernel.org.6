@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-208137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB81902150
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C554B902153
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24BB1F219C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5009E1F21A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFAF7E772;
-	Mon, 10 Jun 2024 12:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FABE7E782;
+	Mon, 10 Jun 2024 12:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9nUgaSM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EDCSJR5K"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC94B54650;
-	Mon, 10 Jun 2024 12:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9207FBA2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021472; cv=none; b=AuNbKm/v5pXU+Wm2SovoQP2arpMd1XQOcO8B2LM3OFHU/qsCCAOcbm540JPn3RupwX9ZGeFZNjEDzTUl61NtDERns+f1/37w43/sDf1IWWM1W3XUf6kIRVRMlD6+/2nj+hHTH7w8YOqjcd/x9wpHfdjBdQDF0h5MgArr2lDiLog=
+	t=1718021519; cv=none; b=cd01koh/I0a9L7ViIXi3JW8BJx4w4gN1TN5c9E1vfEyc44nMi/DTQbqZEVetk1d73vw+v6IAvRHmUICNerKSVlEdI/FufkLrw9+o5Iu9ppUQbzc2WlTPq7bPsZJ3eDADpFOirNuBdDB6BlPk5fQEpex3bQMIVX6ruIIz0qc5gvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021472; c=relaxed/simple;
-	bh=SsrJaSs+AW9uiyMtvLrmtA6q/qpj4vGmg7poeLERGao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iv8fB/LxKnXqVTGNt6xbXzX6EOeSO9CZPaXs9jk4tcBitO/tCPvbhkWJ9w4iiofqFaoehrrduTfmzboZTPf9qhP48V7ME/vIt/bHBfWdhRLm67PKdqDNTnd/9zbfK7VQ+qXnhv27czslsekEHQ9ZiIg8SDVemUm0aaGefgD3urI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9nUgaSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD27C2BBFC;
-	Mon, 10 Jun 2024 12:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718021472;
-	bh=SsrJaSs+AW9uiyMtvLrmtA6q/qpj4vGmg7poeLERGao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l9nUgaSMc7ngDvAYxn0iXULpqduj+siCdU/vnWF4BNEb+GDqzBZeQ7zIK+rPBeOQ4
-	 voIN6MFXYfbdZBEbFFC54AdSAI4MdogSYAvq7QeOh4iNFAeHJ/k7L7kyUXuWa92z0V
-	 6PitmwDcvzF2OUihD78GY+U/vU0Avt1U3wWiF4ltw/i7ltpYdsUT+Mb/h1lndu04PI
-	 6ZoIxJiwyMbY03c6lu88ceGJIym/36N1C7c1oR93FvugyO4ExyhKmcxO4tNxlTaBsr
-	 0ELsWFxcCJCvLGCO+XcyhrfTu+5/cTWZ1U/tUUAX/BGr8R61iJHk0zhlD67UAHdMxD
-	 4NPzgFRhT88PA==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so5072181fa.2;
-        Mon, 10 Jun 2024 05:11:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWuAZmJyvQXK6S4tydY61Wi4cLRRqvd/45K6HFj4/qJum8G1mhs5SDVh+f39UPBirbiJGBEpTXK1FXhj6CR/hUe19TLE5vWRAjYr4AYAimIEJU0PSqtB7UcHPd4OI+DVpPcJDBpOzrqGg==
-X-Gm-Message-State: AOJu0YxZEjIETl11Dd84+Y61bgwMmm2pJnWRGV+sqG9qODD1q19oOX/y
-	4CI88R2g5wL+FyUP+FR9eEMZmYm9y7p31d/IYy2ZpHGXKFGnnrSticxsiwNIENBddhycf7iKSlk
-	jsK9M0PN7XvLeC0cbNXVHd1YEEqg=
-X-Google-Smtp-Source: AGHT+IHCJiixEuKZSjV2co47Y1/kzLQQDyIHYol2+BB/8nf3XYGpLkB0+VDrmw3tzRLVbmgNA719EUUVbdE/zdAcAho=
-X-Received: by 2002:a05:651c:507:b0:2eb:df6d:6c36 with SMTP id
- 38308e7fff4ca-2ebdf6d6df8mr27958071fa.4.1718021470721; Mon, 10 Jun 2024
- 05:11:10 -0700 (PDT)
+	s=arc-20240116; t=1718021519; c=relaxed/simple;
+	bh=caB1DgE6lNAzXW+g/NLwFuuEdV7bcFUoheISR77RlXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzTOYbttGGg68PaDSekGQrJlXo1E6bJXAK5UHsZ8vLeOwuYwjRAp26ttQ/FWpdJipXUM10UzqoOeqmktKAx1HsX1qDXPVemQm2ikvislFWKQNdxlLv8LFERQ3EnJUL7jgGHLMp3S+e/Jl5As23aB7C9JLK1CKlms32p58u0U6ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=EDCSJR5K; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25488f4e55aso1063690fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:11:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1718021516; x=1718626316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c3VfLy+0xn7yNaS/SyVEB4+sm+cKduyI1+wlQtfEH7Y=;
+        b=EDCSJR5KdGemonIxsoQTseyTzM9BH8o/yMSGP/6PnbY8TGN+EguAGMUX22oxZZex9w
+         u35HlIDUokYeQDPy9jwIjfn14cDRSBFPXNdD+Lxcpb2Whthx7urTa/onA6Q5YSdci0Cf
+         NATW9ys5OZlcbpJ+PhaCWlAaVMPhi1gIu6Hxyj5i6J6iRYXbdijVHPGOOrlmci+SNTW8
+         OJd20HLo9d9+SeLmm9inNpf0s0Q05QxtO3yFSOHzlUxsk0rVg+FiC8ytisLAeZqImfqy
+         Qcu+/nH2/BCQsq0F7wpnO4n9iHltVJn4+6h/y0tKxrAUsDdGOUiAAsDZVVY7iAJ6dFxo
+         +vuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718021516; x=1718626316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c3VfLy+0xn7yNaS/SyVEB4+sm+cKduyI1+wlQtfEH7Y=;
+        b=afPKjNPgQT++U2z73/qCxDRB+h1w4Kfqjb4K/jLQKrwmm/brxaIQYb7IoeahYtGyTm
+         +jI/w45yjwbMXo8krIcFvg7A7M3ha6K6Vv3BIY8WgAxnDG7E8w0CRg47dorK9dAFFfaa
+         ySH21PLSh/tyl5SsZqxtyWf1r+5uxhDKHGNogFxHdZJovJfbfBfmRm8RIfCDD7bi1dDy
+         cbytKKkz5gfXssQ/O/NTH7RE/p0Cl7qoOT0wXMEMgqltQ6VJmFVIKg2AeO0e+zAn9il9
+         yM3nfgwnoAeZFycERtuwQWrvQlxC8MIb5SP5b0G4D6EfRiHllhbCW/AU7Zzr9ZcMDebI
+         HooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9xIyVKMyLz4c2us1GpRDESeJAsOt7yn2XIazFgjeZIHim/GAt7v+BTZIAkS6jYujp2eQ7KvT0ckcJK9iqBxf9ou8mDflxWf4zo5bY
+X-Gm-Message-State: AOJu0YxLbNqSEshG+KY5wbYjf2nfmtu+dq0cKoACyr20i5AN3aZJ8k6M
+	fm8p1+/4v1lsqLcEaBwKp0WWr66QWf/6ZHVWs60x6rxYnuBES44hdDzu9XqABmA=
+X-Google-Smtp-Source: AGHT+IHMlLqmreNq9NtSDVCvKZpZzp9aWfGxwYiAaNNsZlWsytpstVnNHWnxI5w1Z35ApPSZX6ZS9A==
+X-Received: by 2002:a05:6870:d0c3:b0:254:b7d9:2dcb with SMTP id 586e51a60fabf-254b7d94b5fmr3834664fac.8.1718021516266;
+        Mon, 10 Jun 2024 05:11:56 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7954d46bb31sm268776685a.14.2024.06.10.05.11.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 05:11:55 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sGdsQ-00DhCf-S1;
+	Mon, 10 Jun 2024 09:11:54 -0300
+Date: Mon, 10 Jun 2024 09:11:54 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-mm@kvack.org,
+	Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Valentine Sinitsyn <valesini@yandex-team.ru>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 6/6] RDMA/umem: add support for P2P RDMA
+Message-ID: <20240610121154.GH791043@ziepe.ca>
+References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
+ <20240605192934.742369-7-martin.oliveira@eideticom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <CAHk-=wjiJvGW70_A93oN_f48J0pn4MeVbWVmBPBiTh2XiSpwpg@mail.gmail.com> <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiPSnaCczHp3Jy=kFjfqJa7MTQg6jht_FwZCxOnpsi4Vw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 10 Jun 2024 14:10:59 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHyhv=J0v9eZKOgLd0xySrZmvnzmD=Oz398C5KS2=48Kw@mail.gmail.com>
-Message-ID: <CAMj1kXHyhv=J0v9eZKOgLd0xySrZmvnzmD=Oz398C5KS2=48Kw@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605192934.742369-7-martin.oliveira@eideticom.com>
 
-On Sun, 9 Jun 2024 at 05:11, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, 8 Jun 2024 at 13:55, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Think of this patch mostly as a "look, adding another architecture
-> > isn't *that* hard - even if the constant value is spread out in the
-> > instructions".
->
-> .. and here's a version that actually works. It wasn't that bad.
->
-> Or rather, it wouldn't have been that bad had I not spent *ages*
-> debugging a stupid cut-and-paste error where I instead of writing
-> words 0..3 of the 64-bit large constant generation, wrote words 0..2
-> and then overwrote word 2 (again) with the data that should have gone
-> into word 3. Causing the top 32 bits to be all wonky. Oops. Literally.
->
-> That stupid typo caused like two hours of wasted time.
->
-> But anyway, this patch actually works for me. It still doesn't do any
-> I$/D$ flushing, because it's not needed in practice, but it *should*
-> probably do that.
->
+On Wed, Jun 05, 2024 at 01:29:34PM -0600, Martin Oliveira wrote:
+> If the device supports P2PDMA, add the FOLL_PCI_P2PDMA flag
+> 
+> This allows ibv_reg_mr() and friends to use P2PDMA memory that has been
+> mmaped into userspace for MRs in IB and RDMA transactions.
+> 
+> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
+> ---
+>  drivers/infiniband/core/umem.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-arm64 already has so-called 'callback' alternatives that allow the
-patching logic for a particular alternative sequence to be implemented
-by the user of the API.
+Acked-by: Jason Gunthorpe <jgg@nvidia.com>
 
-A callback implementation to patch a movz/movk sequence already
-exists, in arch/arm64/kvm/va_layout.c, used by
-kvm_get_kimage_voffset() and kvm_compute_final_ctr_el0().
-
-From inline asm, it gets called like this
-
-static inline size_t __invalidate_icache_max_range(void)
-{
-  u8 iminline;
-  u64 ctr;
-
-  asm(ALTERNATIVE_CB("movz %0, #0\n"
-                     "movk %0, #0, lsl #16\n"
-                     "movk %0, #0, lsl #32\n"
-                     "movk %0, #0, lsl #48\n",
-                     ARM64_ALWAYS_SYSTEM,
-                     kvm_compute_final_ctr_el0)
-      : "=r" (ctr));
-
-  iminline = SYS_FIELD_GET(CTR_EL0, IminLine, ctr) + 2;
-  return MAX_DVM_OPS << iminline;
-}
-
-This one gets patched after SMP bringup, but they can be updated
-earlier if needed.
-
-Doing the same for the immediate field in a single ALU instruction
-should be straight-forward, although this particular example doesn't
-even bother, and just masks and shifts the result of the movz/movk
-sequence.
+Jason
 
