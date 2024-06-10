@@ -1,285 +1,184 @@
-Return-Path: <linux-kernel+bounces-208818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A9290298C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15818902990
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923541C22CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FB5CB23907
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DE914E2CC;
-	Mon, 10 Jun 2024 19:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5E114F9C4;
+	Mon, 10 Jun 2024 19:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="c+FV2S6a"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2065.outbound.protection.outlook.com [40.107.220.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="daC0VF6D"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908481BC39
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718049490; cv=fail; b=fWMXa4a4t16tGy+OWFucHlfE0iCCgn1I00w+tOoWL5qzZxkYqH6t1zMlQzSAgnvWwFZ9Od66ilLxRnWkWFgAha6qbGXCA6k0Ra4BZpV+YdScjKdMf8YdU+VS41eWSxuEuQZ7gQbxcaunnz5zWKiuvDq++psJE9AsVxUAbqzuXXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718049490; c=relaxed/simple;
-	bh=3KA729ZarYr21U2M81Ye+KqmllfqdReCn9P8ZrG6mII=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CXL0gFtjcIYPCt37z5ryIlbvsGugfD9OJn4/aiWU2N9C8TXIcdDKjqbMlEZUqrbZkUMn6kpJfQ1xUbRR/OPUv5vUcDPG5kGcaiblcWXN/lCMuGaswBRwME3FgEQ4rqN72EPz/Jd8cU6KmDa87TMWH3Jl8PyVvWUS1J136EYh8aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=c+FV2S6a; arc=fail smtp.client-ip=40.107.220.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BNUI3596TVihJeyrkPvoaWz5p62LOrQgFbmjnN3aI6cXo9up8gRXXrpnuz99yUXk4v2S+eQxrSWRJkWe+El5dHCZ/bqzC0qMwYzO2m3Mt2fGGITRIsI/PNEYXPwMyn76IcoeHJEk+9CcLK1UstZPSifdAwN+cJArPrq1EwytgZq208CKg0wySUKpebTfmbKCQzhRTML/NW6r6+U5n8qAO3DShKjxgJALUAndq2VVOrxtroS3rJRLQ9Mrgle6zEKHvbkLd8jlfn6ts9YjtAlYUWMCw+jRem1isNl9snD2WsJbQSiIfXf/dws8cJEAWJjKVXABrkKDaU0jTCx5lDJs/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8oeLM/pQxx2ZFAAGgjwhneblncVK8a+S9uzTm5ZzbXs=;
- b=FYbVCfz6Z7UEt/yU/WqX5os9suar0z9ICqygI3gHDdb9/1E/1Jhbsd4gHI2RP9D621PzYypvn58nbI2+6/96nwPar4zqtqQnUniO3X2uveW1Nn7h49/F7qOyjwyV43Od/PtHXaOqq+WI01q6kPtYJjU9qCCzkrR5Xmd9x3nSWluTSF6X+FYhrjNTs6jk48dcgFbIZKeqXHF7Gmn+fR/YbHfRNSi4RssTLXGBLWt75gPIQBtWfVJuJ2RoetamKBcOfXHKNttGI42tU2a7a5RTFYqjC32h9IYwAiMLz2sG2FMoNgxX6r7kt3a6Cj1Tg42T0opNCxGzZYjMzODPC8vukA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8oeLM/pQxx2ZFAAGgjwhneblncVK8a+S9uzTm5ZzbXs=;
- b=c+FV2S6a9ZZuqgVM2HQf3E0kao3jjxyWbIky3ZBlrigyKY5SR4y1UHOKVsNoGhqI8X1/1gswRLSFO9GRCK3BdALQEqfVXgGCYX516Qjxxy/GGLcdMv0zfBq6BfCsSx2zJyjTfM5QGdIjPsHRh97LYKrnzq/gg9x1/w1eNxfNttw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DS0PR12MB6560.namprd12.prod.outlook.com (2603:10b6:8:d0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 19:58:05 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 19:58:05 +0000
-Message-ID: <74f3c189-f3d3-4dca-9357-d4bc8f98da08@amd.com>
-Date: Mon, 10 Jun 2024 14:58:02 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd: force min_input_signal to 0 on Framework AMD
- 13/16
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Kieran Levin <ktl@framework.net>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
- Matt Hartley <matt.hartley@gmail.com>
-References: <20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR12CA0007.namprd12.prod.outlook.com
- (2603:10b6:806:6f::12) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730391BC39;
+	Mon, 10 Jun 2024 19:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718049524; cv=none; b=E8TsLW//IDE+JktfbXILPEOkgaxc33yQYTR37u8rRj1C+s/i9IpS5473QDNRCPPr6eNw8psv128kDP0Ki6YRDtGSHqyDiSy1Ym4zbFkIWFCsZ5i8u70J3xrJHoIWqTiHjd2qATMUb84xCXdnlGcClaP+yOkO8O2P3TSmSY2AjeQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718049524; c=relaxed/simple;
+	bh=+B21abGdFzSs/U82u5DKAz6F+vtQVndVQTzhHpvThvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n8O3P/WJ/ZADzCryD21WfvY34BAAh9k4sjcLiwRV+B9ZsZRuzD1QWh2dznjg6iwRu2EDAPzsH/mcNpIw2vABgnKIpasEJ1qOAXaetlXS5UFVhrrpupWkT7h3u8h85IJgCaVUucI1ReZKm13gh/qyN7+vCtn2icFUy3KpQ/7hVUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=daC0VF6D; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so41403535e9.1;
+        Mon, 10 Jun 2024 12:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718049521; x=1718654321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A38DVCmzrKozIgkHgFm5rejhEeJaVKj9XujqtvV7pkw=;
+        b=daC0VF6DBEsK8WpqDM6HQC3w22VhsgtsOzOc1eoZdTTexoX5gW00uvMXO//Xr3Ia6F
+         JLqUtPtw92SKeXHerOxXlhAd1jMmfPfQgPy7BVodt4V1pYdpWuShYVz7yVSRRRfplLiK
+         ss2ziTWM+bj0e70MVf6S2L6GYWaoAK063UutMDhZ7vZt/NuYdDEwFTRSDz6RUmzfhCEt
+         xCIxan6k7JRxXR2ss9eekAJIthC/ubRwv/RUjdY8JgnJbGdjGD1e5t8j2FHRUPecgS8U
+         eXWLblGp9BKZI2v6Zo1c/QBR3lJx1a2kA/y8g2D3ZvJSjaFk3b9eM1+Hjmblik1bGKEE
+         WSkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718049521; x=1718654321;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A38DVCmzrKozIgkHgFm5rejhEeJaVKj9XujqtvV7pkw=;
+        b=UlmwSDbFNn0fmPbNJxoay/WGjgL9E4lgfFkjs1JUYjZBd19AIzVQMQFlA7RFjEYCPE
+         cNvEdepQTELtes2Y/NlncQ7Td/li10XcCbLL0aq+ewn9nu5WHy0eeeL4Bdewe0T+0uLr
+         VwJI3v/D30RAQN3e5+ILg9hVcAwh1VioUqYkI/8dYuH5JmjAjdBcoHMSL36KKDgxR7oz
+         8IaGcqgUx/VzictPDPG/NaJKWEofoReBQGxDFXOjt/cO4cPmYK7EPhm8YRUKUedZzhYg
+         RZrhpSAgsxV7p/+1ps4EpU6r8rh2yHvOguMH78mTaa7bjXxiVrTgjlG7H8/r2yRk/vqU
+         VOyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/RpbLIxtXqXw4jjcBwgWWTxJipmtSMO/5gqKn9bMt3bLqwBmrFCm8ptITvreJKMsGS8HleQANI/s/gbZvQmY62/Hf5SndORFELQtUvk+K1IbaF2grWvqeaEhOe0SktGB+CPE7+9HPEIlH+ahyAA8J6U/yktJsz2yyShgmO19Is9VpLgaIcbEu
+X-Gm-Message-State: AOJu0YzRYpbdPqTZ+kc3wphbVOy2PcpkXwSYSUkuksqOB6qPiHLlBLjC
+	kP7GY6XfBECAxqhwkz/fKj2HIrnqF6i2myq8+conAprhvp0PWq0L
+X-Google-Smtp-Source: AGHT+IEVw3U8sYRK/C7wfqLU+ku2U7WsTYzdIzvHy9pLENP/iSFSYiZal+HNCVKScNi5GocYPIEwDw==
+X-Received: by 2002:a05:600c:35c6:b0:421:7f4d:5240 with SMTP id 5b1f17b1804b1-4217f4d56bemr47540665e9.24.1718049520492;
+        Mon, 10 Jun 2024 12:58:40 -0700 (PDT)
+Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e97dsm151766105e9.5.2024.06.10.12.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 12:58:39 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	josef@toxicpanda.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2 0/2] rcu-based inode lookup for iget*
+Date: Mon, 10 Jun 2024 21:58:26 +0200
+Message-ID: <20240610195828.474370-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB6560:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4e5263e-b5d5-4129-7831-08dc8987a474
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SjhTeFd4aGpua25vc3JyejFKVFpaZ0w3ZFB6a05kM01TVEhDTWFtUmJRQk1i?=
- =?utf-8?B?Z1Q2cUlZa1ZSb0hmeUdGNVR6dWZUeG5DMmZiMGxlbXdSendwUitubk9tT2V4?=
- =?utf-8?B?NHhGL1pCVmxKb2w1d3Zzc0hyNVdrMHBUTXkralQxQjYrQ0NVQ3Bmcm5iRmJj?=
- =?utf-8?B?NXlGOFZOMDZIYTZmNEJ4T1o2TVZiZkdjSDVXekU4WTNsK0tCVVd0K0I1czJw?=
- =?utf-8?B?OE1pRSt6bzBhY0R3aG84TzlSV2pXdzEyQklGZjdxdHF6YXVKaUR6cVpxN2oy?=
- =?utf-8?B?dk0yeU5Ta1FTMWg0MTRQQWZmYnBRZFdPRzdtL0tvV1dRdlo4UkU4MjBhT2Jv?=
- =?utf-8?B?UHVaVzN5bmQ0Tko5TnRhSEFXcFF3QzV4ZzVRejFEOE1XOEdnS3dFeWZGbHFx?=
- =?utf-8?B?d1F5Q2xYK3NnVktURUN3OSt4ODVmRVJGdER3bzdTckVsNGpMRjB1b3ZRdUda?=
- =?utf-8?B?VVY2MnlvNmJlQ00ydnFnWGp6MnBxZ3plRTNhZGdwbC9EWGFvRVcxdEdqOTFO?=
- =?utf-8?B?MkRGTWJLaDZIK1hXSHFsOHM5NE5sRzIrNHpvWENlVmpienNDQXVtYnFMV1FQ?=
- =?utf-8?B?bDEvRkt6S1FBb1pvUDFLSEFIV1FJMWNWWXZtMUtPK0YyeTJEZHJpNnFPWWxp?=
- =?utf-8?B?SnR0dUhwYUJIdnN3SlZsT0c4QWVFTmRFVHU1aUF4c2RZeFF5RnBud1BUa05x?=
- =?utf-8?B?bU1UcG16ZngybGFPeWdCOE5LNFFqakF3UGlyRExYSkFGWHVxMnJMM3Q0Q2FF?=
- =?utf-8?B?ZVE3enk3WStNMHRObWJlRzE0OVZkVEFOZ2FSNmtOakFvaTNRL082TEc2OG5S?=
- =?utf-8?B?SDRnK3hLNGUzUWE5bURDQnZMMXYxNHpISlNsVmZLakZVYkFSdG5VVEt6RVMx?=
- =?utf-8?B?ZitaS08zbkNZTFB0SGFnRklrckFTa2lPR0ZJSjBDcXhNbTM5T1NKeHk4Tjk5?=
- =?utf-8?B?TmpTQktRSU1LS1BTUEQrc0FERW1pZU5UeTR4YW41RGkvTW15cXhvOTJHemx3?=
- =?utf-8?B?T29YdjNkWWszRCtUNDlsZnh2Nk5BTHJRQ3NhaTBmZlNzL2RWMTd3aXVtRmN5?=
- =?utf-8?B?cm92QlBBOFdFa1REb0pQZnhIdHVJMGFGaXNnbE5ReVlmelM4SnRBVU9pN3pW?=
- =?utf-8?B?V1pHN05GeHZvMUlUR1lPNWhSdXZ1U2ViM1dEQU1xRWZxdzZvTU5HcjUybW5i?=
- =?utf-8?B?Q0FoUTJ4ck5TZk13djRsakV4aEtqa0RHSnhNZDNUTXRMSGNOQnB2cjVQWDhV?=
- =?utf-8?B?QnFIMWJVdlovSlVReFJEVllYdWZSTDlrNXJrMjVnOCtWdHpaRjJiYmROTUdx?=
- =?utf-8?B?SmVmZmxKTm9UeE16bHJidCtFS2JGVFZVNmFPYmt1WFVySDN1RWU5TVo3WmVt?=
- =?utf-8?B?K0F6VDJUN3VpVW1TdmpQVmlxTURaaHJ0SjdJejF2c1ZmUFpidFNSbVBzc3Zn?=
- =?utf-8?B?eU1lZWhYaEpMbUt2aEdid0J1Qmo2SElxY1VZS2xjenRwRGtWY2cvT2lsUlhn?=
- =?utf-8?B?c1dvdFZ2UHU2YmxCUm04RFZUaHBRbDhUTk9pTUJGcXdkWWJFN1JTTFIrOHJI?=
- =?utf-8?B?cjBjdTRoMDVPdk0yOXZlV0xqaGltRGYwd1BBZU55V09TdndDdWJXd2dESHVr?=
- =?utf-8?B?OTFKSVJXNlM3Sm9VcjRGRFZONXpvZmpETHprRk9DTTdvMGVPNHN4TEdGcDFU?=
- =?utf-8?Q?VPGSEKz6tl160qOZXDJB?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFFRTjZlUWVwQmd5dFBQczU4bTVZRU9aa2Rwc1ZWRlE1dG4wbWhLWVZlQm9X?=
- =?utf-8?B?d094c2VBZk5GVVVncEw1eFJlQWI1ZnJSb1hocmxmZWx0L1ZxWjBhVkpSdmtv?=
- =?utf-8?B?UHhCaitodVc5TzBqSUlRUC95WlliNEY1SS9IRjNpd1U3TjRwV3NmOUNpUXFu?=
- =?utf-8?B?ZHBnR08vVm9tL0x6bzhjM2xsWW9TR0ZSaHVKYXRqditnR0M1eGErWjdPcUNp?=
- =?utf-8?B?SCtrejFGcFF4b2JrcXRtaWJRR3NKTS9uczJNdjU2UXRoMUw3UDZqSjJ6SVg3?=
- =?utf-8?B?ajY3bVdWZlM2N0JKWHBJSTN1N3k0WWVEU2Z6aTZhL3piUGFYWkF2dGRWbytu?=
- =?utf-8?B?NHFvb1BEUmJ0SWplYlNGT2I2OVNIOHNVR1dCZll3OVFnM0F5a1pyUk1KcnY1?=
- =?utf-8?B?Rlh5ZlE0aGU1aURtNERCZVM4S056ZlBwRzB3WnRHY01GTldvQ2tsdlZ3MjdD?=
- =?utf-8?B?MnBtaTVaQnJXcytpRDFPeC9lQ01pd0tpbGVEM3d1Vi9WUDJkbFNpUld1TXps?=
- =?utf-8?B?M01IMmFJQnIxem1vRit1T25ZRTZTclZjenhRdURyVmhFOU50ZkNEcldPdGVN?=
- =?utf-8?B?c1FmYlZiSHd5RjFQTWpnMjVNbzVQbURhZVVEN29lTSt6VXJ0YXFWUGV6YnRt?=
- =?utf-8?B?U2EzVjJPZXhxUmkxVHprM0dWc2NXYThpaFMwOXlrRFJMZEIxL09OcXVQKzhv?=
- =?utf-8?B?MjgzTjYxR29BMEVkZEUyKzQzQWl5UDRYU2V2Q0JSU05KM09nenUySVdTU1RW?=
- =?utf-8?B?eHVJRXJYemtmcnF6UlZxdEpvT1VidGxNS2ZQNElHTjlXejJrck5WU0hIMlpw?=
- =?utf-8?B?TjFSVnhCTWR5YnRHaUVHbzVzQWFYc2ZpSCs0UU5wK1VReWJPTi9uNGJJcGhr?=
- =?utf-8?B?SUtpQVgyNnpUOUtaRWR6VDU3MzV5bWRHZDFIT3UwaVgrdDJOdS9kMG4zQVp3?=
- =?utf-8?B?cEtOaXYzMEJZMXpNYUUwQjhOZXZpR3E5WWM5OXFYSHplREk0V1p6WFdnWDRI?=
- =?utf-8?B?YnUwbWJtVjl6dGkvd3d0bjBKRDlMNDUxYkFBVW91dlM1RlgyeEtOSXVCNlo4?=
- =?utf-8?B?Rlgrc05hbGtBMFRaSGZSQzVaM0d0VTBuVFlTcDh3dDZjbmZsZzJoNWJ3cVBZ?=
- =?utf-8?B?VjFHd3Y0dmE4RURyUWMyaVF2cjhuNTUxcGRCOThSUWc2Rk9RS25Db3VSUHly?=
- =?utf-8?B?Z01UM0VpM1pOcnVuWTdkSUhaRHRmUm5hL3VXU3FtUFBOOG5HRVZialMvTEZQ?=
- =?utf-8?B?YkxRZ2xhRCtFMkhHOHRuTDZWcEVKZWdaK3VHbXNRbFVYZ3RVS2hoWldobFNm?=
- =?utf-8?B?WHBFL0xyMkdXK0xTSFgyaXBEcmhWdGMyOXYrei82YTVhcGFvRjRsd2E0Y3dq?=
- =?utf-8?B?aVJyT0dvbmRIbkN0S3c2ZkVYeUNnYksvU0VKWmp4b3RlY1hPOGNQcVRJeVdH?=
- =?utf-8?B?R2paaGtkRVlFQnhyNElOYUg4VmFHcXJIWXZOOTR3SDBSd1hVa0FFWmlPbEpH?=
- =?utf-8?B?ZHQvTUQ5aW0xbnc1M1ZmcjN3RW1uc1g0UXRVT0xrK2ErV09HdkdZMkY0bUVX?=
- =?utf-8?B?OWt4S3h1bmcrV2lidWVOZDQ4L0JDbUE5VTZmY1RibW5aQjJ1WU5Wb1FiS0Ro?=
- =?utf-8?B?RGtWMUhiZytxZzJ4Q05kODhieWl2QWNaV09JNXNRbjR2cG5lZVFFaytrZStU?=
- =?utf-8?B?Yllyd1k0MnNvVUVDclNkKzN1QjltYkowK3RzcVVpdGJGSitVWGZxOWh1TUxR?=
- =?utf-8?B?M3cwQjJvM2dUbjlaaWVWeTBSVUYxbjlKcDY4NlorUW1CajJzby9vMkV6TWUy?=
- =?utf-8?B?VGc4UVNJL3g2OXlpYUpnc0NGZWZjQUw5c05iQnBCZHVsNncyQ0t2N2JtN0tR?=
- =?utf-8?B?TWx5dmREUlFZSU1QNjNPcW8wcWNBK2NNMjBEOXkvb0Q4ZXFlbGtpSUQvMmp4?=
- =?utf-8?B?TlhHTHhwaEtLbFJYK0hTaXZrblowUU9EdHlUMHZtU0JtQ0dOVkhsMUpRMHVo?=
- =?utf-8?B?b25HL3BLTUxielhOOEFjSWl3YXJ4MDRaWk8ydUI0NXI1R3l0WVp5OFViKzBs?=
- =?utf-8?B?cFBrSUtLQnFpNjY3Q0ZGVGNzYndmN3ZTT1hwUkdVR1Fac1VBZUdTN2VWck55?=
- =?utf-8?Q?u7mTo6jw4m3vbur2ilpFvxCo5?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4e5263e-b5d5-4129-7831-08dc8987a474
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 19:58:05.4221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QaPd+PqsEnMmAzAGKd/ig13kO/NZJFN6KUgU/bLYXULXClLFt5zFEt4l42ryYQODJHZoUKgqTMTGedM/3BMlmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6560
+Content-Transfer-Encoding: 8bit
 
-+Kieran
+I think the appropriate blurb which needs to land here also needs to be
+in the commit message for the first patch, so here it is copy pasted
+with some modifications at the end:
 
-On 6/10/2024 14:26, Thomas Weißschuh wrote:
-> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-> is "12". This leads to a fairly bright minimum display backlight.
-> 
-> Introduce a quirk to override "min_input_signal" to "0" which leads to a
-> much lower minimum brightness, which is still readable even in daylight.
-> 
-> Tested on a Framework AMD 13 BIOS 3.05 and Framework AMD 16.
-> 
-> Link: https://community.frame.work/t/25711/9
-> Link: https://community.frame.work/t/47036
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 35 ++++++++++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> index 7099ff9cf8c5..b481889f7491 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> @@ -25,6 +25,7 @@
->   #include <linux/pci.h>
->   #include <linux/acpi.h>
->   #include <linux/backlight.h>
-> +#include <linux/dmi.h>
->   #include <linux/slab.h>
->   #include <linux/xarray.h>
->   #include <linux/power_supply.h>
-> @@ -130,6 +131,35 @@ static struct amdgpu_acpi_priv {
->   	struct amdgpu_atcs atcs;
->   } amdgpu_acpi_priv;
->   
-> +struct amdgpu_acpi_quirks {
-> +	bool ignore_min_input_signal;
-> +};
-> +
-> +static const struct dmi_system_id amdgpu_acpi_quirk_table[] = {
-> +	{
-> +		/* the Framework Laptop 13 (AMD Ryzen) and 16 (AMD Ryzen) */
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "AMD Ryzen"),
-> +			DMI_MATCH(DMI_PRODUCT_FAMILY, "Laptop"),
-> +		},
+[quote]
+Instantiating a new inode normally takes the global inode hash lock
+twice:
+1. once to check if it happens to already be present
+2. once to add it to the hash
 
-Two problems I see:
+The back-to-back lock/unlock pattern is known to degrade performance
+significantly, which is further exacerbated if the hash is heavily
+populated (long chains to walk, extending hold time). Arguably hash
+sizing and hashing algo need to be revisited, but that's beyond the
+scope of this patch.
 
-1) This really "should" be fixed in the BIOS. I added Kieran to the 
-thread for comments if that's viable.
+A long term fix would introduce finer-grained locking. An attempt was
+made several times, most recently in [1], but the effort appears
+stalled.
 
-2) IMO this is going to match too liberally across all potential 
-Framework models.  If they introduce a refreshed motherboard for either 
-product then the quirk would apply to both products when we don't know 
-that such a deficiency would exist.
+A simpler idea which solves majority of the problem and which may be
+good enough for the time being is to use RCU for the initial lookup.
+Basic RCU support is already present in the hash. This being a temporary
+measure I tried to keep the change as small as possible.
 
-You can reference drivers/platform/x86/amd/pmc/pmc-quirks.c for what we 
-used for a quirk that was matching against a single product and single 
-BIOS.
+iget_locked consumers (notably ext4) get away without any changes
+because inode comparison method is built-in.
 
-But FWIW if that issue isn't fixed in the next BIOS I think we'll end up 
-needing to tear out the BIOS string match and match just the platform.
+iget5_locked and ilookup5_nowait consumers pass a custom callback. Since
+removal of locking adds more problems (inode can be changing) it's not
+safe to assume all filesystems happen to cope.  Thus iget5_locked_rcu
+and ilookup5_nowait_rcu get added, requiring manual conversion.
 
+In order to reduce code duplication find_inode and find_inode_fast grow
+an argument indicating whether inode hash lock is held, which is passed
+down should sleeping be necessary. They always rcu_read_lock, which is
+redundant but harmless. Doing it conditionally reduces readability for
+no real gain that I can see. RCU-alike restrictions were already put on
+callbacks due to the hash spinlock being held.
 
-> +		.driver_data = &(struct amdgpu_acpi_quirks) {
-> +			.ignore_min_input_signal = true,
-> +		},
-> +	},
-> +	{}
-> +};
-> +
-> +static const struct amdgpu_acpi_quirks *amdgpu_acpi_get_quirks(void)
-> +{
-> +	const struct dmi_system_id *dmi_id;
-> +
-> +	dmi_id = dmi_first_match(amdgpu_acpi_quirk_table);
-> +	if (!dmi_id)
-> +		return NULL;
-> +	return dmi_id->driver_data;
-> +}
-> +
->   /* Call the ATIF method
->    */
->   /**
-> @@ -1388,6 +1418,7 @@ bool amdgpu_acpi_should_gpu_reset(struct amdgpu_device *adev)
->    */
->   void amdgpu_acpi_detect(void)
->   {
-> +	const struct amdgpu_acpi_quirks *quirks = amdgpu_acpi_get_quirks();
->   	struct amdgpu_atif *atif = &amdgpu_acpi_priv.atif;
->   	struct amdgpu_atcs *atcs = &amdgpu_acpi_priv.atcs;
->   	struct pci_dev *pdev = NULL;
-> @@ -1429,6 +1460,10 @@ void amdgpu_acpi_detect(void)
->   					ret);
->   			atif->backlight_caps.caps_valid = false;
->   		}
-> +		if (quirks && quirks->ignore_min_input_signal) {
-> +			DRM_INFO("amdgpu_acpi quirk: min_input_signal=0\n");
-> +			atif->backlight_caps.min_input_signal = 0;
-> +		}
->   	} else {
->   		atif->backlight_caps.caps_valid = false;
->   	}
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
-> 
-> Best regards,
+There is a real cache-busting workload scanning millions of files in
+parallel (it's a backup server thing), where the initial lookup is
+guaranteed to fail resulting in the 2 lock acquires.
+
+Implemented below is a synthehic benchmark which provides the same
+behavior. [I shall note the workload is not running on Linux, instead it
+was causing trouble elsewhere. Benchmark below was used while addressing
+said problems and was found to adequately represent the real workload.]
+
+Total real time fluctuates by 1-2s.
+
+With 20 threads each walking a dedicated 1000 dirs * 1000 files
+directory tree to stat(2) on a 32 core + 24GB RAM vm:
+[/quote]
+
+Specific results:
+
+ext4 (needed mkfs.ext4 -N 24000000):
+before:	3.77s user 890.90s system 1939% cpu 46.118 total
+after:  3.24s user 397.73s system 1858% cpu 21.581 total (-53%)
+
+btrfs (s/iget5_locked/iget5_locked_rcu in fs/btrfs/inode.c):
+before: 3.54s user 892.30s system 1966% cpu 45.549 total
+after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
+
+btrfs bottlenecks itself on its own locks here.
+
+Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
+
+Previously I indicated I wanted to patch bcachefs, but I ran into bugs
+with memory reclaim. To my understanding addressing them is a WIP. More
+importantly though I brought up the patch with Kent, we had a little
+back and forth. We both agree the entire inode hash situation needs
+significant changes, but neither is signing up. :] Bottom line though is
+that his fs is probably going to get a local rhashtable, so that fs is
+out of the picture as far as this patch goes.
+
+[1] https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbit.com/
+
+v2:
+- add argument lists to new routines
+- assert the inode hash lock is not held as applicable
+- real btrfs patch included
+
+Mateusz Guzik (2):
+  vfs: add rcu-based find_inode variants for iget ops
+  btrfs: use iget5_locked_rcu
+
+ fs/btrfs/inode.c   |   2 +-
+ fs/inode.c         | 119 ++++++++++++++++++++++++++++++++++++++-------
+ include/linux/fs.h |  10 +++-
+ 3 files changed, 112 insertions(+), 19 deletions(-)
+
+-- 
+2.43.0
 
 
