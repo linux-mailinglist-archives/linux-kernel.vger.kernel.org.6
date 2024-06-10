@@ -1,165 +1,135 @@
-Return-Path: <linux-kernel+bounces-208557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7690F9026C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:32:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7869026CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA7C285363
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6641A281577
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D983B1474CA;
-	Mon, 10 Jun 2024 16:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E7714389B;
+	Mon, 10 Jun 2024 16:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Cmozzbsw";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Xc3cTz4m"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mGzbU5cN"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D89F839E4;
-	Mon, 10 Jun 2024 16:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2141514387E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037116; cv=none; b=Dtlh4L9PRhxNAK8aQ8TONGEgPWnFXHirm2Nd7Z2lGNi1LBppVq026x4t4NJDl/sSAo8w9jYikOK4FvnHJuH7HP6Jai2jVF/T1qNU05AI5OXxJwOQz7Eil3yyGNuSvKg/BEm8Mz2MxaoHPn6/u/0+tAb82T/X0/CNHHAVNfLn2a0=
+	t=1718037261; cv=none; b=Rp9pC3INC3cW1Qvpq1ekZ+QKJQwaPloCFgY/6BArMbNLyf0Z2KNbusBuV/JSYt3GEKqYllATV2nKoUjRWUvqGXNkj62cZFqaWclPnX2cI7Q53syJ9uV5w11eG0+EEcx8ok7MT23iF1RsQ37/ckgW2M/arW7iCAR5vnHZsUyUD+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037116; c=relaxed/simple;
-	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
+	s=arc-20240116; t=1718037261; c=relaxed/simple;
+	bh=piTSS9jjVGMaUmkjcHVWQ3lRn0ub4PfPACxHNXWXx5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGyCXurktb9g4PDtnHeHnyHKsApplA+Fd/TfHnT4f7ymZlb9JJYTHhtGDE/qDp8xQdlxKHkMHOF1gj7tntca97VbvV86tAPDTpaNGHOro92PT6hwmS9pjSvO2VNVgJLjhg+Iug/Eap5EbnQxiZ4PIlilYFw8Y0PNrR7i5iwyr9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Cmozzbsw; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Xc3cTz4m; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 18AFE21E75;
-	Mon, 10 Jun 2024 16:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718037112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
-	b=Cmozzbsw8dV1XhI5Ks/8pK8BSluXi+OZg8CcCAE7eORnAlnB7JhWkbTp79fwDr6w3+BLPn
-	oekUCJhU3Hgu3N/YohopicxhsF9XcLGSgjPkYwe666OKoYOz008LUhCvBLAex4n0+i00v3
-	QO10vUIpdXip9VjYnrNhk8rHjHW0kxY=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718037111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N3di2r23JypfAl5MTEhPDveOqgwx+6z3BLi27InIyAA=;
-	b=Xc3cTz4m+/u/dVB+/E49W0F3wsFj/S4HLX2u49jTj887YXt9dInjbC0l/Hjsns4kQZ2IjY
-	nz8u26uZyFDM42ruVw4YPoL2RSp6oCDgIW8wuAtiukqaTeJYkplr5/uC0YW3LLQjb8htVt
-	CQqXRSQnzTQi7icrg/cpYdzTdgYAufQ=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EFFA713A7F;
-	Mon, 10 Jun 2024 16:31:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YDxpOnYqZ2bqaQAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Mon, 10 Jun 2024 16:31:50 +0000
-Date: Mon, 10 Jun 2024 18:31:49 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Fred Griffoul <fgriffo@amazon.co.uk>
-Cc: griffoul@gmail.com, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Joey Gouly <joey.gouly@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Jeremy Linton <jeremy.linton@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, 
-	Kevin Tian <kevin.tian@intel.com>, Eric Auger <eric.auger@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Ankit Agrawal <ankita@nvidia.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ye Bin <yebin10@huawei.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] vfio/pci: add msi interrupt affinity support
-Message-ID: <k4r7ngm7cyctnyjcwbbscvprhj3oid6wv3cqobkwt4p4j4ibfy@pvmb35lmvdlz>
-References: <20240610125713.86750-1-fgriffo@amazon.co.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4q9uCdNJkZsoNi9TLn6L/x28os0LnjGIajJKxyVwZuw8GaYmIXGRbkRd0iteBXKCzdE2R5pmdu3dChRjD5CvjDncC4deFnbLBbR8uB2nyyHlT74PjYpUSKkQHpxL6kTEKiiXeYmrwONSX9AuCvkJ4K+ZEEaey8v+YSqnvwPyXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mGzbU5cN; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6e620302b01so1738606a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:34:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718037259; x=1718642059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5ZVwjIOaq5V5ku6UjCPO2SyGYT7pllWaiMtecMSfuM=;
+        b=mGzbU5cN9lw39SBQbZdW06hKPmf1PLfH+VOTGybIzcFqW4EV/wxYfVB/LqnHJjLIne
+         hWW1DrQO27VT40Yvc9O8FzbOtn+iLsb631AihPHwcVtl4l06J8Qqfkn3FrlxhH+4VU9e
+         EXeq2mmo9AZdxio4NmZ/F32azI07evhqRa+e1rlrZcabNDgihk6UqJX3pb4JK4dbZlXC
+         hlbBffrAggv1hn2qgRL1Qx1Ttdx3gwy37TUkokIDnt4ILjS0sBq+AYqVJxzlvcOOBUSY
+         fu/2es4+7ovJHVYvDxXW9cnab3WPJ5vFYn7VE+ORN+3Nwr0vF+WRvvj/mzBcXreFT92P
+         GIyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718037259; x=1718642059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5ZVwjIOaq5V5ku6UjCPO2SyGYT7pllWaiMtecMSfuM=;
+        b=vnrO/0BnEdF7RtNSZo47RmhTSvuLeegQ2YrdZn41eq9bx68NS1dDUJvSKV/plihmFm
+         2Pj3oVmc0LBJ+iPY+cGHBwnqOWYnpoU4H86QxYE+FbFwKLYjBRJvYbkwOxjUFvojdIO6
+         EIN78fgGQf/VareXIawvJheN0Wev9vIR34ayVp3IS305Olh/tgsYKHU9qmqEkrwpZRcn
+         A2CZb+ZvK3Pegt+ycbi4yzXZForGi/yd9ZXrLsRrhiNQgYCif+6fEcZNKDQjhMLvGcIY
+         I8KNXLL9yKOVI1kpd+7d9y1wZs9ZXcaUo+x45ctOK1E05BTWacpQGmyR/0istX8cHuZ4
+         UwcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRvLEA0z+kHcvnpIVVQMZ91jY6wzR2eaFRskqeQlPtcZEnHuOq2Q+ymCq6H80Ws+IW8ld5fUgj6EFgtoTlKSBPX08IZD3mZPji245p
+X-Gm-Message-State: AOJu0YwS4vo959GuP1dqIiyrqAoCGUAUM2EGlS5SWJ1LePDU3fYYJHDj
+	eKSh8RWfgtsPVuF1mo6mwMFI/dmdj/zLQ5TSGaWddrVPqTGZiYbDd3hFHGS/zwA=
+X-Google-Smtp-Source: AGHT+IFiC+4Uq+TF9IRTc1VdS1ljR22BVVSd4bbzZX2VtGNhB8sV09mNvEyNr5N0F8tE3bUBY+/nLQ==
+X-Received: by 2002:a17:90b:33d0:b0:2c2:fdc5:2619 with SMTP id 98e67ed59e1d1-2c2fdc52e9bmr3594071a91.31.1718037259439;
+        Mon, 10 Jun 2024 09:34:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9b34:fecc:a6c:e2bc])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2f8fbc87asm3495711a91.47.2024.06.10.09.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:34:18 -0700 (PDT)
+Date: Mon, 10 Jun 2024 10:34:16 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: jason-ch chen <jason-ch.chen@mediatek.corp-partner.google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Jason Chen <Jason-ch.Chen@mediatek.com>
+Subject: Re: [PATCH] remoteproc: mediatek: Increase MT8188 SCP core0 DRAM size
+Message-ID: <ZmcrCLOCo0Q0W6AU@p14s>
+References: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
+ <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rbxiec5rtsu2tqmi"
-Content-Disposition: inline
-In-Reply-To: <20240610125713.86750-1-fgriffo@amazon.co.uk>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.87 / 50.00];
-	BAYES_HAM(-2.97)[99.89%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[30];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,arm.com,kernel.org,redhat.com,bytedance.com,cmpxchg.org,linux.dev,ziepe.ca,intel.com,nvidia.com,huawei.com,lists.infradead.org,vger.kernel.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLs4bg81ntywruwbpnkcfhozwy)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amazon.co.uk:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -5.87
-X-Spam-Flag: NO
-
-
---rbxiec5rtsu2tqmi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
 
-Hello Fred.
+On Thu, Jun 06, 2024 at 01:00:11PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 06/06/24 11:06, jason-ch chen ha scritto:
+> > From: Jason Chen <Jason-ch.Chen@mediatek.com>
+> > 
+> > Increase MT8188 SCP core0 DRAM size for HEVC driver.
 
-On Mon, Jun 10, 2024 at 12:57:06PM GMT, Fred Griffoul <fgriffo@amazon.co.uk> wrote:
-> The usual way to configure a device interrupt from userland is to write
-> the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
-> vfio to implement a device driver or a virtual machine monitor, this may
-> not be ideal: the process managing the vfio device interrupts may not be
-> granted root privilege, for security reasons. Thus it cannot directly
-> control the interrupt affinity and has to rely on an external command.
+This is telling me _what_ gets done rather than _why_ it gets done.
 
-External commands something privileged? (I'm curious of an example how
-this is setup.)
+> > 
+> 
+> ....so the second core only gets a maximum of 0x200000 of SRAM?
+> I'm not sure how useful is the secondary SCP core, at this point, with so little
+> available SRAM but... okay, as you wish.
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> 
+> > Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
+> > ---
+> >   drivers/remoteproc/mtk_scp.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > index b885a9a041e4..2119fc62c3f2 100644
+> > --- a/drivers/remoteproc/mtk_scp.c
+> > +++ b/drivers/remoteproc/mtk_scp.c
+> > @@ -1390,7 +1390,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
+> >   };
+> >   static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
+> > -	.max_dram_size = 0x500000,
+> > +	.max_dram_size = 0x800000,
 
-> The affinity argument must be a subset of the process cpuset, otherwise
-> an error -EPERM is returned.
+Do you require to fix a "reserved-memory" node in a device tree file to account
+for this?
 
-I'm not sure you want to look at task's cpuset mask for this purposes.
+Thanks,
+Mathieu
 
-Consider setups without cpuset or a change of (cpuset) mask anytime
-during lifetime of the task...
-
-Michal
-
---rbxiec5rtsu2tqmi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZmcqcwAKCRAGvrMr/1gc
-jmkBAQCja3OL36wbZrX33f/BCxgTsGyEe2Buh2DsgnbWTikxCAEAguitmv3gNJZj
-PWDNgoj9nHp+v218OHZhAu8PFmSWXAA=
-=9DxI
------END PGP SIGNATURE-----
-
---rbxiec5rtsu2tqmi--
+> >   	.ipi_share_buffer_size = 600,
+> >   };
+> 
+> 
 
