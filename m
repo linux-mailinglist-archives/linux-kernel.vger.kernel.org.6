@@ -1,225 +1,430 @@
-Return-Path: <linux-kernel+bounces-208904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0015902A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AAB902A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDB81C220CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5607C1C22E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6456F2EE;
-	Mon, 10 Jun 2024 21:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63E850289;
+	Mon, 10 Jun 2024 21:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FSbpHbeJ"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hi6Qgmzc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8051879;
-	Mon, 10 Jun 2024 21:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0EB1879
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718053939; cv=none; b=LVVKsgTj+b6XItx7Wd1nUlx34Jeg3dTNRt4FYGO7gyEdGAMzcOu7Tmp3NJoRyAAEfEMUYROkGCL6wIIRz0JlQYcXz/1vtyCGPTID3yiikEyaugazNOmC2WVYZoQBwpqpMR8ZmW2Yie2rpe9rxKUoKOqqPePyqy/orMFlLUE0E7Q=
+	t=1718054033; cv=none; b=JnN1VxoCw3OL7zSlzfmelau9rhgxvZRBVqM1N0bgbA53wAbZDnPziXhMnnm9AjAMtkzMu/0kkHm9JQWrGSBzIKVamaSlYdJbZvBcB8WO2JzYZ8aPhPrBB/Y39a+jh9k5qrwwWrkB6ijqjzUiyJ4XGF8QBOuT1ClZlSvY8CyoL/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718053939; c=relaxed/simple;
-	bh=L6idWEylvQppgYHhQF7YKp4UwnmESQ6eDx18yypSxo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OwCqnCpuQPyrxRaWQGHoELnMYYYqLm1Q8f7Ow9FtaLusrnBhzYihjDw0pxhCeXYZ7cMslXask/l+uSIwqApr/pTD9rZVRBeH4TU7d8M3p483SYh1XpYgAMPyOF320BeIxN/4uCjh79pDhhXdQD2vQDgLsuAP2huJEDoZtfhF8Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FSbpHbeJ; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EA0BE40FC9;
-	Mon, 10 Jun 2024 21:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718053927;
-	bh=0+CsIHZM4SguLeaiX+nC4gxIoEzogxF06SwIBnAaJt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=FSbpHbeJ0qs8ahd0/RIZF8ZdBAdo315IAdFQ9tI7YpABFM9GR8ENuv/wcQaY5ALTy
-	 4O/iscNJCO9tCrEPM2U+Smpe0vkPzg2buaPqVAY7XIwhb+pZ/cSd+rLmysOdEreLNB
-	 tlVCs88sRtTcqCBA654FwfvPgsU4csCpEKSjUwFz0JNx6m4B2HMn2ZKHXxkYnj3Tbn
-	 Yl4FBS+yDxThTxFsiU0mnSWBYBNkS731+cmrGfN1/HQTY2Br1SKtR9bsm0j5XEiFgk
-	 1UJEVB91SFy9PbHey6QQiLkSQISQ9wTOVHt/r4tK38CMpGHxQSu3TxK2hzOhYcx+/o
-	 yrBNYQC0MnuUQ==
-Message-ID: <4cfca86d-ceb7-4abe-8b6b-35194fc55565@canonical.com>
-Date: Mon, 10 Jun 2024 14:12:01 -0700
+	s=arc-20240116; t=1718054033; c=relaxed/simple;
+	bh=uLLOWbGzkYJa/5ueKKs2Rflht3VwAfI/HmVMCbLohSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Th165A+6eHoxf39mnATv0D3TFWbzRF38DV4ET1EfPSv9Ol4TGynkEVkk152iD0KfhhIiJE6zzkFN3l031jRxTykfy7DCdv/Hpp2N4grT5B/YjHK4VadzdFnchpyu/5fXLKn16823KudYbNdn75c0tSdLsHSeoDfniWB2jCIjjuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hi6Qgmzc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438CCC2BBFC;
+	Mon, 10 Jun 2024 21:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718054033;
+	bh=uLLOWbGzkYJa/5ueKKs2Rflht3VwAfI/HmVMCbLohSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hi6Qgmzceo7QwVsu2iTcigbMjLujwb6T0IqzpgCEgFv+pVLBUY4h8SRpDlqoIqEEH
+	 +C1RLz+noGt4rTKimAVkfAEcYx0KRabFujlVvKMbNds7rX0WfT4I+4sa2zeSzFKfz6
+	 u95V3aJ+WOFlJNPRVnZQHuOrbqO+yx3v2AYKd7V37yZqc9jXcw4k6JsetSazRrCCHc
+	 9MOj1x8+8ZV9A/1ohV9AD3IUy22ih+lKuIT5nsL1X8SEjjCziVvqc7bHa6Qe1HVuMm
+	 pH5Jgcoav2hsBkutl7Wpeao6BBLomClMva3RRwB1SDqztvdsKf5cRLaltH8iCG4ZNR
+	 v2nnVwWRbPQpA==
+Date: Mon, 10 Jun 2024 14:13:50 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH 3/9] x86/fpu: Make task_struct::thread constant size
+Message-ID: <20240610211350.GA1613053@thelio-3990X>
+References: <20240608073134.264210-1-mingo@kernel.org>
+ <20240608073134.264210-4-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] capability: introduce new capable flag
- CAP_OPT_NOAUDIT_ONDENY
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- linux-security-module@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Christian Brauner <brauner@kernel.org>,
- Roberto Sassu <roberto.sassu@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
- apparmor@lists.ubuntu.com, selinux@vger.kernel.org, bpf@vger.kernel.org
-References: <20240315113828.258005-1-cgzones@googlemail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240608073134.264210-4-mingo@kernel.org>
 
-On 3/15/24 04:37, Christian Göttsche wrote:
-> Introduce a new capable flag, CAP_OPT_NOAUDIT_ONDENY, to not generate
-> an audit event if the requested capability is not granted.  This will be
-> used in a new capable_any() functionality to reduce the number of
-> necessary capable calls.
-> 
-> Handle the flag accordingly in AppArmor and SELinux.
-> 
-> CC: linux-block@vger.kernel.org
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+Hi Ingo,
 
+On Sat, Jun 08, 2024 at 09:31:28AM +0200, Ingo Molnar wrote:
+> Turn thread.fpu into a pointer. Since most FPU code internals work by passing
+> around the FPU pointer already, the code generation impact is small.
+> 
+> This allows us to remove the old kludge of task_struct being variable size:
+> 
+>   struct task_struct {
+> 
+>        ...
+>        /*
+>         * New fields for task_struct should be added above here, so that
+>         * they are included in the randomized portion of task_struct.
+>         */
+>        randomized_struct_fields_end
+> 
+>        /* CPU-specific state of this task: */
+>        struct thread_struct            thread;
+> 
+>        /*
+>         * WARNING: on x86, 'thread_struct' contains a variable-sized
+>         * structure.  It *MUST* be at the end of 'task_struct'.
+>         *
+>         * Do not put anything below here!
+>         */
+>   };
+> 
+> ... which creates a number of problems, such as requiring thread_struct to be
+> the last member of the struct - not allowing it to be struct-randomized, etc.
+> 
+> But the primary motivation is to allow the decoupling of task_struct from
+> hardware details (<asm/processor.h> in particular), and to eventually allow
+> the per-task infrastructure:
+> 
+>    DECLARE_PER_TASK(type, name);
+>    ...
+>    per_task(current, name) = val;
+> 
+> ... which requires task_struct to be a constant size struct.
+> 
+> The fpu_thread_struct_whitelist() quirk to hardened usercopy can be removed,
+> now that the FPU structure is not embedded in the task struct anymore, which
+> reduces text footprint a bit.
+> 
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Uros Bizjak <ubizjak@gmail.com>
+> Link: https://lore.kernel.org/r/20240605083557.2051480-2-mingo@kernel.org
 > ---
-> v5:
->     rename flag to CAP_OPT_NOAUDIT_ONDENY, suggested by Serge:
->       https://lore.kernel.org/all/20230606190013.GA640488@mail.hallyn.com/
-> ---
->   include/linux/security.h       |  2 ++
->   security/apparmor/capability.c |  8 +++++---
->   security/selinux/hooks.c       | 14 ++++++++------
->   3 files changed, 15 insertions(+), 9 deletions(-)
+>  arch/x86/include/asm/processor.h | 20 +++++++++-----------
+>  arch/x86/kernel/fpu/core.c       | 23 ++++++++++++-----------
+>  arch/x86/kernel/fpu/init.c       | 19 ++++++++++++-------
+>  arch/x86/kernel/process.c        |  2 +-
+>  include/linux/sched.h            | 13 +++----------
+>  5 files changed, 37 insertions(+), 40 deletions(-)
 > 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 41a8f667bdfa..c60cae78ff8b 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -70,6 +70,8 @@ struct lsm_ctx;
->   #define CAP_OPT_NOAUDIT BIT(1)
->   /* If capable is being called by a setid function */
->   #define CAP_OPT_INSETID BIT(2)
-> +/* If capable should audit the security request for authorized requests only */
-> +#define CAP_OPT_NOAUDIT_ONDENY BIT(3)
->   
->   /* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
->   #define SECURITY_LSM_NATIVE_LABELS	1
-> diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
-> index 9934df16c843..08c9c9a0fc19 100644
-> --- a/security/apparmor/capability.c
-> +++ b/security/apparmor/capability.c
-> @@ -108,7 +108,8 @@ static int audit_caps(struct apparmor_audit_data *ad, struct aa_profile *profile
->    * profile_capable - test if profile allows use of capability @cap
->    * @profile: profile being enforced    (NOT NULL, NOT unconfined)
->    * @cap: capability to test if allowed
-> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
-> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
-> + *	record is generated
->    * @ad: audit data (MAY BE NULL indicating no auditing)
->    *
->    * Returns: 0 if allowed else -EPERM
-> @@ -126,7 +127,7 @@ static int profile_capable(struct aa_profile *profile, int cap,
->   	else
->   		error = -EPERM;
->   
-> -	if (opts & CAP_OPT_NOAUDIT) {
-> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && error)) {
->   		if (!COMPLAIN_MODE(profile))
->   			return error;
->   		/* audit the cap request in complain mode but note that it
-> @@ -143,7 +144,8 @@ static int profile_capable(struct aa_profile *profile, int cap,
->    * @subj_cred: cred we are testing capability against
->    * @label: label being tested for capability (NOT NULL)
->    * @cap: capability to be tested
-> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
-> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
-> + *	record is generated
->    *
->    * Look up capability in profile capability set.
->    *
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 3448454c82d0..1a2c7c1a89be 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1624,7 +1624,7 @@ static int cred_has_capability(const struct cred *cred,
->   	u16 sclass;
->   	u32 sid = cred_sid(cred);
->   	u32 av = CAP_TO_MASK(cap);
-> -	int rc;
-> +	int rc, rc2;
->   
->   	ad.type = LSM_AUDIT_DATA_CAP;
->   	ad.u.cap = cap;
-> @@ -1643,11 +1643,13 @@ static int cred_has_capability(const struct cred *cred,
->   	}
->   
->   	rc = avc_has_perm_noaudit(sid, sid, sclass, av, 0, &avd);
-> -	if (!(opts & CAP_OPT_NOAUDIT)) {
-> -		int rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
-> -		if (rc2)
-> -			return rc2;
-> -	}
-> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && rc))
-> +		return rc;
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index 35aa8f652964..64509c7f26c8 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -504,21 +504,19 @@ struct thread_struct {
+>  #endif
+>  
+>  	/* Floating point and extended processor state */
+> -	struct fpu		fpu;
+> -	/*
+> -	 * WARNING: 'fpu' is dynamically-sized.  It *MUST* be at
+> -	 * the end.
+> -	 */
+> +	struct fpu		*fpu;
+>  };
+>  
+> -#define x86_task_fpu(task) (&(task)->thread.fpu)
+> +#define x86_task_fpu(task) ((task)->thread.fpu)
+>  
+> -extern void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size);
+> -
+> -static inline void arch_thread_struct_whitelist(unsigned long *offset,
+> -						unsigned long *size)
+> +/*
+> + * X86 doesn't need any embedded-FPU-struct quirks:
+> + */
+> +static inline void
+> +arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
+>  {
+> -	fpu_thread_struct_whitelist(offset, size);
+> +	*offset = 0;
+> +	*size = 0;
+>  }
+>  
+>  static inline void
+> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+> index ca6745f8ac2a..f0c4367804b3 100644
+> --- a/arch/x86/kernel/fpu/core.c
+> +++ b/arch/x86/kernel/fpu/core.c
+> @@ -584,8 +584,19 @@ static int update_fpu_shstk(struct task_struct *dst, unsigned long ssp)
+>  int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+>  	      unsigned long ssp)
+>  {
+> +	/*
+> +	 * We allocate the new FPU structure right after the end of the task struct.
+> +	 * task allocation size already took this into account.
+> +	 *
+> +	 * This is safe because task_struct size is a multiple of cacheline size.
+> +	 */
+>  	struct fpu *src_fpu = x86_task_fpu(current);
+> -	struct fpu *dst_fpu = x86_task_fpu(dst);
+> +	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
 > +
-> +	rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
-> +	if (rc2)
-> +		return rc2;
+> +	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+> +	BUG_ON(!src_fpu);
 > +
->   	return rc;
->   }
->   
+> +	dst->thread.fpu = dst_fpu;
+>  
+>  	/* The new task's FPU state cannot be valid in the hardware. */
+>  	dst_fpu->last_cpu = -1;
+> @@ -654,16 +665,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+>  	return 0;
+>  }
+>  
+> -/*
+> - * Whitelist the FPU register state embedded into task_struct for hardened
+> - * usercopy.
+> - */
+> -void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
+> -{
+> -	*offset = offsetof(struct thread_struct, fpu.__fpstate.regs);
+> -	*size = fpu_kernel_cfg.default_size;
+> -}
+> -
+>  /*
+>   * Drops current FPU state: deactivates the fpregs and
+>   * the fpstate. NOTE: it still leaves previous contents
+> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+> index ad5cb2943d37..4e8d37b5a90b 100644
+> --- a/arch/x86/kernel/fpu/init.c
+> +++ b/arch/x86/kernel/fpu/init.c
+> @@ -71,8 +71,17 @@ static bool __init fpu__probe_without_cpuid(void)
+>  	return fsw == 0 && (fcw & 0x103f) == 0x003f;
+>  }
+>  
+> +static struct fpu x86_init_fpu __read_mostly;
+> +
+>  static void __init fpu__init_system_early_generic(void)
+>  {
+> +	int this_cpu = smp_processor_id();
+> +
+> +	fpstate_reset(&x86_init_fpu);
+> +	current->thread.fpu = &x86_init_fpu;
+> +	per_cpu(fpu_fpregs_owner_ctx, this_cpu) = &x86_init_fpu;
+> +	x86_init_fpu.last_cpu = this_cpu;
+> +
+>  	if (!boot_cpu_has(X86_FEATURE_CPUID) &&
+>  	    !test_bit(X86_FEATURE_FPU, (unsigned long *)cpu_caps_cleared)) {
+>  		if (fpu__probe_without_cpuid())
+> @@ -150,6 +159,8 @@ static void __init fpu__init_task_struct_size(void)
+>  {
+>  	int task_size = sizeof(struct task_struct);
+>  
+> +	task_size += sizeof(struct fpu);
+> +
+>  	/*
+>  	 * Subtract off the static size of the register state.
+>  	 * It potentially has a bunch of padding.
+> @@ -164,14 +175,9 @@ static void __init fpu__init_task_struct_size(void)
+>  
+>  	/*
+>  	 * We dynamically size 'struct fpu', so we require that
+> -	 * it be at the end of 'thread_struct' and that
+> -	 * 'thread_struct' be at the end of 'task_struct'.  If
+> -	 * you hit a compile error here, check the structure to
+> -	 * see if something got added to the end.
+> +	 * 'state' be at the end of 'it:
+>  	 */
+>  	CHECK_MEMBER_AT_END_OF(struct fpu, __fpstate);
+> -	CHECK_MEMBER_AT_END_OF(struct thread_struct, fpu);
+> -	CHECK_MEMBER_AT_END_OF(struct task_struct, thread);
+>  
+>  	arch_task_struct_size = task_size;
+>  }
+> @@ -213,7 +219,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
+>   */
+>  void __init fpu__init_system(void)
+>  {
+> -	fpstate_reset(x86_task_fpu(current));
+>  	fpu__init_system_early_generic();
+>  
+>  	/*
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index adfeefd6375a..5bb73bc0e31a 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -97,7 +97,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+>  	dst->thread.vm86 = NULL;
+>  #endif
+>  	/* Drop the copied pointer to current's fpstate */
+> -	x86_task_fpu(dst)->fpstate = NULL;
+> +	dst->thread.fpu = NULL;
+>  
+>  	return 0;
+>  }
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 61591ac6eab6..215a7380e41c 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1554,21 +1554,14 @@ struct task_struct {
+>  	struct user_event_mm		*user_event_mm;
+>  #endif
+>  
+> +	/* CPU-specific state of this task: */
+> +	struct thread_struct		thread;
+> +
+>  	/*
+>  	 * New fields for task_struct should be added above here, so that
+>  	 * they are included in the randomized portion of task_struct.
+>  	 */
+>  	randomized_struct_fields_end
+> -
+> -	/* CPU-specific state of this task: */
+> -	struct thread_struct		thread;
+> -
+> -	/*
+> -	 * WARNING: on x86, 'thread_struct' contains a variable-sized
+> -	 * structure.  It *MUST* be at the end of 'task_struct'.
+> -	 *
+> -	 * Do not put anything below here!
+> -	 */
+>  };
+>  
+>  #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
+> -- 
+> 2.43.0
+> 
 
+I am seeing a crash with this change in -next as
+commit 018d456409d6 ("x86/fpu: Make task_struct::thread constant size")
+and I still see it in WIP.x86/fpu from commit 4f4a9b399357 ("x86/fpu:
+Make task_struct::thread constant size").
+
+$ make -skj"$(nproc)" ARCH=i386 CROSS_COMPILE=i386-linux- defconfig bzImage
+
+$ qemu-system-i386 \
+    -display none \
+    -nodefaults \
+    -M q35 \
+    -d unimp,guest_errors \
+    -append 'console=ttyS0 earlycon=uart8250,io,0x3f8' \
+    -kernel arch/x86/boot/bzImage \
+    -initrd rootfs.cpio \
+    -cpu host \
+    -enable-kvm \
+    -m 512m \
+    -smp 8 \
+    -serial mon:stdio
+[    0.000000] Linux version 6.10.0-rc2-00003-g4f4a9b399357 (nathan@thelio-3990X) (i386-linux-gcc (GCC) 13.2.0, GNU ld (GNU Binutils) 2.41) #1 SMP PREEMPT_DYNAMIC Mon Jun 10 13:58:20 MST 2024
+...
+[    0.337514] ------------[ cut here ]------------
+[    0.338184] Bad FPU state detected at restore_fpregs_from_fpstate+0x38/0x6c, reinitializing FPU registers.
+[    0.338195] WARNING: CPU: 2 PID: 100 at arch/x86/mm/extable.c:127 fixup_exception+0x41e/0x45c
+[    0.340506] Modules linked in:
+[    0.340905] CPU: 2 PID: 100 Comm: modprobe Not tainted 6.10.0-rc2-00003-g4f4a9b399357 #1
+[    0.341939] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[    0.343363] EIP: fixup_exception+0x41e/0x45c
+[    0.343916] Code: e8 cb c0 00 00 0f 0b eb cb 0f 0b ba 4c e9 7f da eb b6 b2 01 88 15 16 bf 6c da 89 44 24 04 c7 04 24 18 39 3b da e8 a6 c0 00 00 <0f> 0b e9 ee fd ff ff 8d b4 26 00 00 00 00 0f 0b ba 4c e9 7f da e9
+[    0.346288] EAX: 0000005e EBX: da4e53f0 ECX: 00000000 EDX: da5d606c
+[    0.347082] ESI: c1ba5ef0 EDI: 0000000d EBP: c1ba5e58 ESP: c1ba5dd8
+[    0.347882] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010086
+[    0.348744] CR0: 80050033 CR2: bfe4afcb CR3: 012f5000 CR4: 00350ed0
+[    0.349540] Call Trace:
+[    0.349855]  ? show_regs+0x4d/0x54
+[    0.350300]  ? fixup_exception+0x41e/0x45c
+[    0.350828]  ? __warn+0x84/0x150
+[    0.351242]  ? fixup_exception+0x41e/0x45c
+[    0.351765]  ? fixup_exception+0x41e/0x45c
+[    0.352289]  ? report_bug+0x186/0x1b0
+[    0.352756]  ? exc_overflow+0x50/0x50
+[    0.353230]  ? handle_bug+0x2d/0x50
+[    0.353675]  ? exc_invalid_op+0x1b/0x70
+[    0.354171]  ? console_unlock+0x53/0xc4
+[    0.354658]  ? handle_exception+0x14b/0x14b
+[    0.355196]  ? exc_overflow+0x50/0x50
+[    0.355663]  ? fixup_exception+0x41e/0x45c
+[    0.356184]  ? exc_overflow+0x50/0x50
+[    0.356651]  ? fixup_exception+0x41e/0x45c
+[    0.357172]  ? restore_fpregs_from_fpstate+0x38/0x6c
+[    0.357809]  ? _get_random_bytes+0x65/0x190
+[    0.358341]  ? mt_find+0xd1/0x458
+[    0.358766]  ? exc_bounds+0xac/0xac
+[    0.359213]  exc_general_protection+0x97/0x358
+[    0.359775]  ? randomize_page+0x37/0x54
+[    0.360271]  ? exc_bounds+0xac/0xac
+[    0.360722]  handle_exception+0x14b/0x14b
+[    0.361232] EIP: restore_fpregs_from_fpstate+0x38/0x6c
+[    0.361885] Code: 7d fc 89 ca eb 09 cc cc cc db e2 0f 77 db 03 3e 8d 74 26 00 8b 3d ec 31 46 da 8b 0d e8 31 46 da 21 fa 8d 7b 40 21 c8 0f c7 1f <8b> 5d f8 8b 7d fc 89 ec 5d c3 66 90 3e 8d 74 26 00 0f ae 4b 40 8b
+[    0.364284] EAX: 00000007 EBX: c1a73860 ECX: 00000007 EDX: 00000000
+[    0.365077] ESI: c1a73820 EDI: c1a738a0 EBP: c1ba5f54 ESP: c1ba5f4c
+[    0.365870] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010002
+[    0.366728]  ? exc_bounds+0xac/0xac
+[    0.367171]  ? exc_bounds+0xac/0xac
+[    0.367621]  ? restore_fpregs_from_fpstate+0x35/0x6c
+[    0.368255]  switch_fpu_return+0x49/0xd0
+[    0.368756]  syscall_exit_to_user_mode+0x181/0x1a8
+[    0.369364]  ? call_usermodehelper_exec_async+0xbe/0x1ac
+[    0.370040]  ? call_usermodehelper+0x8c/0x8c
+[    0.370586]  ret_from_fork+0x23/0x44
+[    0.371048]  ? call_usermodehelper+0x8c/0x8c
+[    0.371592]  ret_from_fork_asm+0x12/0x18
+[    0.372092]  entry_INT80_32+0x108/0x108
+[    0.372581] EIP: 0xb7f77087
+[    0.372941] Code: Unable to access opcode bytes at 0xb7f7705d.
+[    0.373679] EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+[    0.374477] ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: bfe4aed0
+[    0.375271] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 007b EFLAGS: 00000200
+[    0.376134] ---[ end trace 0000000000000000 ]---
+...
+
+The rootfs is from [1] if you should need it (x86-rootfs.cpio.zst,
+decompress with zstd first). I am more than happy to provide any
+additional information or test patches as necessary.
+
+[1]: https://github.com/ClangBuiltLinux/boot-utils/releases
+
+Cheers,
+Nathan
+
+# bad: [d35b2284e966c0bef3e2182a5c5ea02177dd32e4] Add linux-next specific files for 20240607
+# good: [8a92980606e3585d72d510a03b59906e96755b8a] Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+git bisect start 'd35b2284e966c0bef3e2182a5c5ea02177dd32e4' '8a92980606e3585d72d510a03b59906e96755b8a'
+# good: [faef37a085e57f29479f853624948cdc7df6e366] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
+git bisect good faef37a085e57f29479f853624948cdc7df6e366
+# good: [822946749b5f02d9f49dde4b4cb8f2535c247ce5] Merge branch 'drm-xe-next' of https://gitlab.freedesktop.org/drm/xe/kernel
+git bisect good 822946749b5f02d9f49dde4b4cb8f2535c247ce5
+# bad: [9ffebdc86bc23fdf0622eb0c38d395c2b99b7f32] Merge branch 'next' of git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+git bisect bad 9ffebdc86bc23fdf0622eb0c38d395c2b99b7f32
+# good: [9a85e49be89a9150fd2ec9964f48013a00c261d1] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+git bisect good 9a85e49be89a9150fd2ec9964f48013a00c261d1
+# bad: [0435675ef6ba0b3e14859bd4c6edb0d81093d28e] Merge branch 'edac-for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
+git bisect bad 0435675ef6ba0b3e14859bd4c6edb0d81093d28e
+# bad: [8f4652aac08030f2d5110be87229ad0f15c33496] Merge branch into tip/master: 'timers/core'
+git bisect bad 8f4652aac08030f2d5110be87229ad0f15c33496
+# bad: [0724c2b228bef4ea71cf5be0ab64de1065e32299] Merge branch into tip/master: 'irq/core'
+git bisect bad 0724c2b228bef4ea71cf5be0ab64de1065e32299
+# good: [51d8bfbcae9aeedee48cddefe6776c96acb2d83e] Merge branch into tip/master: 'x86/urgent'
+git bisect good 51d8bfbcae9aeedee48cddefe6776c96acb2d83e
+# bad: [80b691d02d005beafcd120a3b92c951155db543a] x86/fpu: Use 'fpstate' variable names consistently
+git bisect bad 80b691d02d005beafcd120a3b92c951155db543a
+# bad: [eb6428fd2eb4f72c735ba6fddd62147ac8d544c2] x86/fpu: Remove the thread::fpu pointer
+git bisect bad eb6428fd2eb4f72c735ba6fddd62147ac8d544c2
+# bad: [7329f3c69f07a502eb2ab5a6b4d27cd6a067579b] x86/fpu: Introduce the x86_task_fpu() helper method
+git bisect bad 7329f3c69f07a502eb2ab5a6b4d27cd6a067579b
+# bad: [018d456409d6c9ef4046eb5db95ce357acfeba23] x86/fpu: Make task_struct::thread constant size
+git bisect bad 018d456409d6c9ef4046eb5db95ce357acfeba23
+# first bad commit: [018d456409d6c9ef4046eb5db95ce357acfeba23] x86/fpu: Make task_struct::thread constant size
 
