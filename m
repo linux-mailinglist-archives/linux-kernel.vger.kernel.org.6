@@ -1,158 +1,116 @@
-Return-Path: <linux-kernel+bounces-207829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A88901CC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:19:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BAB901CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D60E281B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95A4B23A33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38445FBB1;
-	Mon, 10 Jun 2024 08:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C76C5FBB1;
+	Mon, 10 Jun 2024 08:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0gVItKzW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="W4WM/4bP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="m8aqM+6A"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434F8558B6;
-	Mon, 10 Jun 2024 08:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6453242056;
+	Mon, 10 Jun 2024 08:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007542; cv=none; b=u2TYudjW7bnEX1DFzBvWRG/pdaN6xJwqGHjyqpVNmn3ACOhPKmHKI0OnAfo1p3c+jYb38wbq+jfvhu+5vUAyOzFJoEhoQk068p1VG17oU9QP04q5jpIMuUMM7y5Ck23U4NX5Ri2yZEPjb85DKSi+T745lN+LLv2/iWnX3FU6104=
+	t=1718007573; cv=none; b=DvTbuHt14Ho8WUfzul5lb6YaAnPb0kaeLtXsXCuYQGI4c8/5ci8FLCXbyTh6ib+Q6Xt02uyFwm9wKouxX1ZZcnP9KvNu/4nM3OrajhIhcQ2BpwVfaPLkMfy02v7MR2C3VXyY1CVkgZDGYwhvtGp6W1pTUYIDkWCy7qPNKj6VL78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007542; c=relaxed/simple;
-	bh=kgqY93lTGjd/rFRkPgpwnmsYm+8zkWQeLQ6sBmfQibM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXyu6aPyRS3zKBrs5DWsWNw79P270ZbHQpEIurfxdO+TgntRpMh/aMf0XiW3AwSh7QbHiTpHO4o8MZ5z0yVWDbRbe0aTtLvYeUUcTB6SF7xoUXrt22vTnsMGGXqSXth8/rUnee+G7sWOdeABJvECYQxq6vZVdKWg6QmQgeQ6BTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0gVItKzW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D005C2BBFC;
-	Mon, 10 Jun 2024 08:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718007542;
-	bh=kgqY93lTGjd/rFRkPgpwnmsYm+8zkWQeLQ6sBmfQibM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=0gVItKzWG86UPiA6HNFgzbSPOaGcN4S123TKGVomBgxpjUOwmwV/lVDDlhpwtbu/b
-	 ViCq5Mk13W141I01Sp/9J8OCFWX8mxazWkXnN1DIxGpNW4zBCRLRdxMwPOKxE5TqwI
-	 asGxfomliADhEdmAzBC5DOT9BbYpu041nufpU+WQ=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: herbert@gondor.apana.org.au
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Adam Guerin <adam.guerin@intel.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Shashank Gupta <shashank.gupta@intel.com>,
-	qat-linux@intel.com,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH] crypto: qat: make adf_ctl_class constant
-Date: Mon, 10 Jun 2024 10:18:51 +0200
-Message-ID: <2024061050-scale-presume-f311@gregkh>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718007573; c=relaxed/simple;
+	bh=LB1uCJgoLfTPxUw5p3900BEwW8PP2FYKrGJVvybz9U8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mLx4Lj4evwdtXqaTJBuFf/D5rOo7Z73NsXLEx4bR57sZaBtshkjYbvCGKDnXzggKmsR6sa0lva50oanx8M9cN0GeyqG+StQGZ9MBH2Te79+DJdT2x/UyAMiU1zBr5x08ZNftt+F8QnVnn2Q9n3FaxXd3EtsORYRG3JGxnKtRkh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=W4WM/4bP; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=m8aqM+6A reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718007570; x=1749543570;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TFbicy+mwtStkQReucKb9kND+lMZA6N/BgT+KQQPvkY=;
+  b=W4WM/4bP5XTBSBpu0TdGVPnYFptiTtNLmItCtn7vicUSF49jueFHa2sQ
+   Igy0nT43rqaryo8w5pmHbWoU+rEez9lB/aPccZpPhbmvu0L6fM9ayQBtN
+   Cd+Z28cZ/5QUxCycQqYJtuyj4GHaThqC2vXZGHJoGyvsi/NY/j6dMHwE4
+   NkCGvKdtVzloKI/sZy8c8wJkcW9rXAJia2Y+e/fXHMQFr+U+pF4wH6r+x
+   +cM7vy74ArBLDWGiGN9Bw98j7wRYE6tD1/s3w9R8eJBmsd6Z57YcrBBhJ
+   e9B8eCgazPSy0cs8YBOFPurSV5PZFfknBkJaxl/gOHb87ACMtWXMFWiXD
+   g==;
+X-CSE-ConnectionGUID: qw+0R3kbRdeal3fn5U2vsQ==
+X-CSE-MsgGUID: oWrJ6gO9QX6XOCXfT+wDTg==
+X-IronPort-AV: E=Sophos;i="6.08,227,1712613600"; 
+   d="scan'208";a="37303535"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 10 Jun 2024 10:19:21 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F350D160AC6;
+	Mon, 10 Jun 2024 10:19:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718007557; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=TFbicy+mwtStkQReucKb9kND+lMZA6N/BgT+KQQPvkY=;
+	b=m8aqM+6AMMtaRlm2cEfyY/dCKIAwl3Tz5u9ATlDGroa3SpItJ2Ptm98O1IsRBbgrckYKLB
+	wf6k5vktPdgStDNffuo1nXnhxO7aut0vlTTVU8ga5Bn2cY70BX/OF8aIyVMDAlyecJe3UJ
+	zGnAm8Oz4O55WCyyPaNC0RkQ/O6tJBBMiv9Zcb4phFvwu007HU5+L4HtW1T5ZIFUI09YW+
+	r97yaMAFcE0irVb9aMmnCMxig3vZtHYHXs5XyA85mXkgZkZp4VsjGtm1PwHKXBDVShIRXf
+	zTn8+7nCtgHiCnCq5Am14oEyd+BjMDM4aJ+Arb7pjwCuoixW0/ow3aJ7KMwfjw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Li Yang <leoyang.li@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: arm: add MBa8MP-RAS314 SBC
+Date: Mon, 10 Jun 2024 10:19:12 +0200
+Message-Id: <20240610081913.46790-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3047; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=kgqY93lTGjd/rFRkPgpwnmsYm+8zkWQeLQ6sBmfQibM=; b=owGbwMvMwCRo6H6F97bub03G02pJDGlp2165Tz9wg9niwryvpo+D5TrfP/WdozPjbVzV88kvf BacOvSmtiOWhUGQiUFWTJHlyzaeo/srDil6GdqehpnDygQyhIGLUwAmknuMYUGHk3Sgq88L1YOT TuswaIc/klOZZsWw4Ah7Y/a/R1dUW7r31h/X+vhRIzTzIAA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Now that the driver core allows for struct class to be in read-only
-memory, we should make all 'class' structures declared at build time
-placing them into read-only memory, instead of having to be dynamically
-allocated at runtime.
+MBa8MP-RAS314 is an SBC based on the embedded module TQMa8MPxL.
+All relevant interfaces integrated in the CPU have been implemented on
+the MBa8MP-RAS314 for (an) industrial usage. Due to the numerous interfaces
+and the small size of this SBC the use in different applications
+is possible without the need of a [special,custom] design.
 
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Adam Guerin <adam.guerin@intel.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Shashank Gupta <shashank.gupta@intel.com>
-Cc: qat-linux@intel.com
-Cc: linux-crypto@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../crypto/intel/qat/qat_common/adf_ctl_drv.c | 21 +++++++++++--------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_common/adf_ctl_drv.c b/drivers/crypto/intel/qat/qat_common/adf_ctl_drv.c
-index 29c4422f243c..26a1662fafbb 100644
---- a/drivers/crypto/intel/qat/qat_common/adf_ctl_drv.c
-+++ b/drivers/crypto/intel/qat/qat_common/adf_ctl_drv.c
-@@ -31,19 +31,22 @@ static const struct file_operations adf_ctl_ops = {
- 	.compat_ioctl = compat_ptr_ioctl,
- };
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 6d185d09cb6ae..f168400d29950 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1145,8 +1145,9 @@ properties:
+           version as an industrial computing device.
+         items:
+           - enum:
+-              - tq,imx8mp-tqma8mpql-mba8mpxl # TQ-Systems GmbH i.MX8MP TQMa8MPQL SOM on MBa8MPxL
+-          - const: tq,imx8mp-tqma8mpql       # TQ-Systems GmbH i.MX8MP TQMa8MPQL SOM
++              - tq,imx8mp-tqma8mpql-mba8mpxl      # TQ-Systems GmbH i.MX8MP TQMa8MPQL SOM on MBa8MPxL
++              - tq,imx8mp-tqma8mpql-mba8mp-ras314 # TQ-Systems GmbH i.MX8MP TQMa8MPQL SOM on MBa8MP-RAS314
++          - const: tq,imx8mp-tqma8mpql            # TQ-Systems GmbH i.MX8MP TQMa8MPQL SOM
+           - const: fsl,imx8mp
  
-+static const struct class adf_ctl_class = {
-+	.name = DEVICE_NAME,
-+};
-+
- struct adf_ctl_drv_info {
- 	unsigned int major;
- 	struct cdev drv_cdev;
--	struct class *drv_class;
- };
- 
- static struct adf_ctl_drv_info adf_ctl_drv;
- 
- static void adf_chr_drv_destroy(void)
- {
--	device_destroy(adf_ctl_drv.drv_class, MKDEV(adf_ctl_drv.major, 0));
-+	device_destroy(&adf_ctl_class, MKDEV(adf_ctl_drv.major, 0));
- 	cdev_del(&adf_ctl_drv.drv_cdev);
--	class_destroy(adf_ctl_drv.drv_class);
-+	class_unregister(&adf_ctl_class);
- 	unregister_chrdev_region(MKDEV(adf_ctl_drv.major, 0), 1);
- }
- 
-@@ -51,17 +54,17 @@ static int adf_chr_drv_create(void)
- {
- 	dev_t dev_id;
- 	struct device *drv_device;
-+	int ret;
- 
- 	if (alloc_chrdev_region(&dev_id, 0, 1, DEVICE_NAME)) {
- 		pr_err("QAT: unable to allocate chrdev region\n");
- 		return -EFAULT;
- 	}
- 
--	adf_ctl_drv.drv_class = class_create(DEVICE_NAME);
--	if (IS_ERR(adf_ctl_drv.drv_class)) {
--		pr_err("QAT: class_create failed for adf_ctl\n");
-+	ret = class_register(&adf_ctl_class);
-+	if (ret)
- 		goto err_chrdev_unreg;
--	}
-+
- 	adf_ctl_drv.major = MAJOR(dev_id);
- 	cdev_init(&adf_ctl_drv.drv_cdev, &adf_ctl_ops);
- 	if (cdev_add(&adf_ctl_drv.drv_cdev, dev_id, 1)) {
-@@ -69,7 +72,7 @@ static int adf_chr_drv_create(void)
- 		goto err_class_destr;
- 	}
- 
--	drv_device = device_create(adf_ctl_drv.drv_class, NULL,
-+	drv_device = device_create(&adf_ctl_class, NULL,
- 				   MKDEV(adf_ctl_drv.major, 0),
- 				   NULL, DEVICE_NAME);
- 	if (IS_ERR(drv_device)) {
-@@ -80,7 +83,7 @@ static int adf_chr_drv_create(void)
- err_cdev_del:
- 	cdev_del(&adf_ctl_drv.drv_cdev);
- err_class_destr:
--	class_destroy(adf_ctl_drv.drv_class);
-+	class_unregister(&adf_ctl_class);
- err_chrdev_unreg:
- 	unregister_chrdev_region(dev_id, 1);
- 	return -EFAULT;
+       - description: i.MX8MQ based Boards
 -- 
-2.45.2
+2.34.1
 
 
