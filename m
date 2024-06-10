@@ -1,163 +1,110 @@
-Return-Path: <linux-kernel+bounces-207640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90772901A16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DEA901A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 06:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F53A1C2109B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70006281D75
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 04:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C331E546;
-	Mon, 10 Jun 2024 04:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6F3CA62;
+	Mon, 10 Jun 2024 04:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MneOOx+1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpbhr+aJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MneOOx+1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpbhr+aJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="lfvMrCyv"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7E01876;
-	Mon, 10 Jun 2024 04:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE5C1876;
+	Mon, 10 Jun 2024 04:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717995082; cv=none; b=WyXODHIn0qGvezVwC9I5tCN/PFjeK01vR7aqD6btmeHH+j6QjbaSTmhoYwxvRdhDlvOo8YC3w2ySfcqEMrfk0Ob5dECXpnoQhhvGn9ILv5QM+1tPESJfotH1c0+Y/lrYgtKGd9idVtF47lSC91+gYK4znDSotnmWx/+7kocUymY=
+	t=1717995438; cv=none; b=jaJpBzF9PadsdRmRIfe4AfV3P/A01wRFH3CugCa4cNMVe9PH+prJLA5AxyTUQ+JcLLqzIEqrJ5IGXzsiQ5390feVO6Li4fjqrIYniXKOV5dW3ZYl1rBG6W94vHitPBMlRDVHbrlWuj+Aq781DalyP25b7+TTZQKt+ugKB8/rY2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717995082; c=relaxed/simple;
-	bh=7qKPtaal4QnVDHVSx+pi8mWVmic8iCOzD3fxUS1BCcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMlJ+GvveqH3td6iBXefEEud0ATgSSLo984V6rMykVrYYbKerk5iBDk9DvHEZ7+wAFiN14kxo6A0nEa5codf/w4Xi0TJHePUSidSy5dUX5tAmqABqsKwzSmcj63Y5guA0HYXyKQ3r9LB8ZM0V8HYvBhuLS8yq0Rr7W4XVJfv0xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MneOOx+1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpbhr+aJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MneOOx+1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpbhr+aJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38A28219BD;
-	Mon, 10 Jun 2024 04:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717995079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=MneOOx+1gNcO52wjHjbtfvSOIFd2eLO7f0JeCEkn1WWeCMuHu97X5WFutxD1M7GMvOHS/9
-	xyURXfjcjF4O/mvjDZLul8gh64AOhEI28Tg3mXu1XRpC5xnFo8Zn1J4UYpILXq8qVk8Pek
-	+5NVhqSi6QGN449xlVKByUM90ju7NcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717995079;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=Dpbhr+aJgsRfAZ0eTMD/fBth3eN8Oab5culOdlnVfX4aZrhAvBbfqxmyksY6dBKf7CJKCD
-	MamWDYGzf1wknrDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MneOOx+1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Dpbhr+aJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717995079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=MneOOx+1gNcO52wjHjbtfvSOIFd2eLO7f0JeCEkn1WWeCMuHu97X5WFutxD1M7GMvOHS/9
-	xyURXfjcjF4O/mvjDZLul8gh64AOhEI28Tg3mXu1XRpC5xnFo8Zn1J4UYpILXq8qVk8Pek
-	+5NVhqSi6QGN449xlVKByUM90ju7NcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717995079;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vn3iqBiy78yK0GTRpos/+icWPZatVJQ3vhkUe1A4EWM=;
-	b=Dpbhr+aJgsRfAZ0eTMD/fBth3eN8Oab5culOdlnVfX4aZrhAvBbfqxmyksY6dBKf7CJKCD
-	MamWDYGzf1wknrDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD45913A7F;
-	Mon, 10 Jun 2024 04:51:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id miCHK0aGZmbIHAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 10 Jun 2024 04:51:18 +0000
-Date: Mon, 10 Jun 2024 06:51:09 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 3/6] fs/proc/task_mmu: properly detect
- PM_MMAP_EXCLUSIVE per page of PMD-mapped THPs
-Message-ID: <ZmaGPfSsJ1tguUry@localhost.localdomain>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-4-david@redhat.com>
+	s=arc-20240116; t=1717995438; c=relaxed/simple;
+	bh=wxbsFRAyMPxGwLJXkgt4cKJcpKNji7+5eJtx13k7bqg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=BCCmhw6s2NeyM2o5yt0jdrE2LAfznYZ4V1w69NkKYJF+kiQSCmYNdpnAETgHrfgtab+IpMEP58Y0GsIzl2ysqYq6iqdZmCVdg0nBQny/oltjM4lSjUf715Z926QB9ckDyFB36Y3Z0YiJ0Iecj30njS+e74sLzaZ9BuvGksgcRsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=lfvMrCyv; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607122357.115423-4-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 38A28219BD
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717995431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kwNy3d3Jg8/1FZKgpltuZABE30M9Y26J8cmhqW/3dP8=;
+	b=lfvMrCyvKdI95zE4xxfMvH2LwRMiC4U827eLfkLsv4dNMcUYLK1oJXyXgbz37ljfHJcxXV
+	cLNkpU4nz4UF5RjqLSpAQPvIb6op7SM3sexmAegtKMsErYtjiphC0Rgbso+Qn6z0X4PWFu
+	05igy7HFO4LOSMhfZl/O+2ecJVF3lpY/W6q6EkXNsOtPfq9ixub77QPaBZMdwdbn/NlNxI
+	DF6V5ZumYkJhsrXQ/qDiBcKcHhCn+7KmhoPDz9YPYlGgvly+HbO2uxFH0aucHVkslg2tm2
+	3Pxi35454ri6S2TXnyN51DtDyWEotkwjqh49/XB7vGDVgpH/IismzBNqHTycwQ==
+Date: Mon, 10 Jun 2024 06:57:11 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kbuild@vger.kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+ nicolas@fjasle.eu, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ didi.debian@cknow.org
+Subject: Re: [PATCH] kbuild: Install dtb files as 0644 in Makefile.dtbinst
+In-Reply-To: <2024061006-ladylike-paving-a36b@gregkh>
+References: <ae087ef1715142f606ba6477ace3e4111972cf8b.1717961381.git.dsimic@manjaro.org>
+ <10bef38ea944a42d591435e024f70326@manjaro.org>
+ <2024061006-ladylike-paving-a36b@gregkh>
+Message-ID: <241d73701043d642dbabfe1c7219009a@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, Jun 07, 2024 at 02:23:54PM +0200, David Hildenbrand wrote:
-> We added PM_MMAP_EXCLUSIVE in 2015 via commit 77bb499bb60f ("pagemap: add
-> mmap-exclusive bit for marking pages mapped only here"), when THPs could
-> not be partially mapped and page_mapcount() returned something
-> that was true for all pages of the THP.
-> 
-> In 2016, we added support for partially mapping THPs via
-> commit 53f9263baba6 ("mm: rework mapcount accounting to enable 4k mapping
-> of THPs") but missed to determine PM_MMAP_EXCLUSIVE as well per page.
-> 
-> Checking page_mapcount() on the head page does not tell the whole story.
-> 
-> We should check each individual page. In a future without per-page
-> mapcounts it will be different, but we'll change that to be consistent
-> with PTE-mapped THPs once we deal with that.
-> 
-> Fixes: 53f9263baba6 ("mm: rework mapcount accounting to enable 4k mapping of THPs")
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hello Greg K-H,
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+On 2024-06-10 06:19, Greg KH wrote:
+> On Mon, Jun 10, 2024 at 12:41:54AM +0200, Dragan Simic wrote:
+>> +Cc: stable@vger.kernel.org
+>> +Cc: didi.debian@cknow.org
+>> 
+>> On 2024-06-09 21:32, Dragan Simic wrote:
+>> > The compiled dtb files aren't executable, so install them with 0644 as
+>> > their
+>> > permission mode, instead of defaulting to 0755 as the mode.
+>> >
+>> > Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> 
+>> Actually, some Linux distributions, including Debian, [1][2] already 
+>> include
+>> fixes in their kernel package builds to change the file permissions to 
+>> 0644.
+>> Thus, let's have this fix propagated into the stable kernels, to allow 
+>> such
+>> distributions to remove their downstream fixes.
+>> 
+>> Fixes: aefd80307a05 ("kbuild: refactor Makefile.dtbinst more")
+>> 
+>> [1] https://salsa.debian.org/kernel-team/linux/-/merge_requests/642
+>> [2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/749
+> 
+> 
+> <formletter>
+> 
+> This is not the correct way to submit patches for inclusion in the
+> stable kernel tree.  Please read:
+>     
+> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> for how to do this properly.
+> 
+> </formletter>
 
--- 
-Oscar Salvador
-SUSE Labs
+Thanks for your response.  I'll send the v2 with, hopefully, all patch
+submission issues addressed.
 
