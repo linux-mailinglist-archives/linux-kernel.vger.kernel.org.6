@@ -1,175 +1,215 @@
-Return-Path: <linux-kernel+bounces-208691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A079290282E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:01:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37517902830
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68691C21C8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9D2282233
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 18:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95C51D54A;
-	Mon, 10 Jun 2024 18:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BA7148827;
+	Mon, 10 Jun 2024 18:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mjz+bm43"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uoTQSO4Y"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E9911C92
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F0F11C92
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042478; cv=none; b=P5Cm32HHGQeQ9+N8VLicN1RhTRFb+RPIQhtsRHl3mbKOIgjoXABYOpq2Zyvn8Qi0x5qiDZ9+rDqn6WLpA45Fp2xN/MkzcwgFd+krBG/N1EsTMnQ6YhxVWuFzLWHyE0hbW2jRnXh+p7TrVVTqS1LYX1tP0EDjCM/e9u5dcPALJMU=
+	t=1718042497; cv=none; b=DxZFOnBQ3HTfbxl+J6PH4EgiYb8NXgdEKJW6qzJZgk8byjA1XeiefGBA1o3Wa9gWgFzD2UmVS4mszjkqe6zjm1B1ly2mN4rQ276t+Ekf4X2pMHkEQSxOJyFCmoomun8kwo01esoQiTzqubN+YpRfRc3NjqSgiEtrxxiddc9W8v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042478; c=relaxed/simple;
-	bh=Fa1MW02xtYNxpyq3hVxOyrhFI0x0nuzPDJiQWvaIXOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TGpWMdUT5SF+wKGNOSX2+pObwIaGwSg7DMghQdn1i1DwJPx7vq9jSTfDtKwfEEKmbKl67flCU0Gsm+Y+gGEBhnxUhle8S+XiOW6GCYu8ldzN0dOTfxFymE0Rvqv3WtzyIK7bXMVfjwTneSmMfB2qOJ8Hvv3uzMulRooHfF7H4kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mjz+bm43; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1718042497; c=relaxed/simple;
+	bh=g2c7nnmBcEtmWKG2cdatzphUu9nwq1gexVv+zu2DXf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=brFEhqEcTONU3t2aNC1povPHox91XMr5n/jp8J3Rjmbuzree5XEzp2L/2hcIrkWMGElxHrB6/9HLsDMg8rCxGJ4msQtxuiW9MnG/kegyZwIuVcfE6VExrrljphX1u1QLkQzPeR4w2aCpr9eC9w1okiTNnziXGHK5O4DG2DBi98g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uoTQSO4Y; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a0849f5a8so46650617b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:01:16 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso254610e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 11:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718042475; x=1718647275; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/0KaDHM8PScqCd7K0oCuZ7GctWWLIl5bTkF49b4ZqfE=;
-        b=Mjz+bm4399H/o7GTDQwMlmLF0NrnQIBBtqvjeDjtwB5x6zYrDe1NYVg1iltV5yfzoe
-         9GUVxsLSckL6vEKNMXsYcGcjWV5zn+7eDxEnuPFj2KbNuZzmEZdO6EHveItpAvYLxfJk
-         lHp7cG4+Z3TSV4mqW0Ki17qraf/L97EstQMSYd4czvIaHp+k2IJg/PYUxslkLr372YXO
-         N8Pm+3of736obHzLK4gxip08leS732QY5TT5CzlS39fqSUpUApfSbJgvr+ttT/aHl7W8
-         s/I1GEFqGPaYOkVh3qRkEzPbn1E1RstZKpl6m+NzhrU8xUjVQRdlqGfS3HuTpMksSP+f
-         Qd8g==
+        d=linaro.org; s=google; t=1718042493; x=1718647293; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=goT3FiiTHuDDxuZezrmRBAQweENaqO0vsQeYq6d8HbE=;
+        b=uoTQSO4YWzo6jb60hVqRPaIvDykgE6xj3X15sEX5SDM5y7idRfZeGLGMNHjxBtT7CW
+         FYe+gEmq5GxDVqpQ1j6bTVKQow7rJTtiTVA8BtafrxlnqBn4GftOPGU/zqEAOhNWfu7I
+         +NStxP/R/J0rI5lhd0D3AGWKG3JpYBmzyxmKf5VD6my8Xu1R3EpcF04jxdjGAFw6FoMb
+         nwon3kmwnh9bdCVcXI2Cpai6VRkb7WCZsvcc8KW//YK7DCRCD/X7QwDLG1YlGRgtTZoQ
+         DHgJ3skQsel6hVsxpCHy5B+dC+OltY3VH4JQSBN0mAVe9QCgL03Ynrib19C1/5UoIXw5
+         oFuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718042475; x=1718647275;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/0KaDHM8PScqCd7K0oCuZ7GctWWLIl5bTkF49b4ZqfE=;
-        b=u1aw9sJ0MAjmYcRsj0kDibM828V0V9yyBHt/1Gq76jX0ptnwNNrFHzPkhfEUYBkqZg
-         N84DRARIKOOJfIDgbxfxKme77nSD7zrB992pCAUbHD22ex29G0UwITigakEXWlSismTy
-         CdZuRQOLi0AmlCpzSN6l9Sof3VJhrglBy7UvEdnJeirwcGDBljjXjUvnplQIgTu3x2ON
-         3iH5f5TdNhHiZNRiXlHAg4FVVuXTcGjYQGABFcA/zgEJWcMgwGkCBOE00Iq8F9AQMeCN
-         1cA4cFfSZcb7D4+q0HKu6xgkGZYrbNLj6bGRWTGkJ96KMIfhAEgehAJ34ncLbCPtwJA7
-         Mkmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtxgv50TCI8GLmEaKkyyvpi+clH8yGiT5iKUvQAZdGjvfyOV1u4d4wkaDWpnAn1IXckQHrLezTY0a35VJwA/0u/CHA9K4XL9GtHbnF
-X-Gm-Message-State: AOJu0YzI3s3mDgz3/N7FFYoS1xlKTtWMba8mSGS1xQQ6Fan9exbWtBn0
-	BHOrYbHMIiMlBgMTW2hKXwhOkjnVua+CZuYlWpuF2Ldw8XNtBojSOYqLtdm/XAJBIHVrjVRmIQ4
-	6vZoeclmly1YporitR6ArXjkKGtsAMcOcKOqRMBuoTAfTayZH
-X-Google-Smtp-Source: AGHT+IGViW9iwGdwl2ZOTouNSxtXASXUQ9Auy/K59++s+dLeYurbqnkMaU1cmD3YrwP3c4bfis5CyRo+xKEEFbsSK1k=
-X-Received: by 2002:a81:e50e:0:b0:607:d285:4d7a with SMTP id
- 00721157ae682-62cd5667e5fmr87990297b3.52.1718042473872; Mon, 10 Jun 2024
- 11:01:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718042493; x=1718647293;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=goT3FiiTHuDDxuZezrmRBAQweENaqO0vsQeYq6d8HbE=;
+        b=EPy2LmLNy1oL3VQQmuwaOPsnKLInVw9+s0b3mcez1mvW2KiQ/Xzs/oBSXYuZIr331u
+         6xyxf01v/6o6HG1NUSxuro3fulFQntskOUZkG4w/nD61kCVYZW+mMLXCtSVyynu9FQKq
+         m3heF9kOjL/1QvHk4W7hpqF3DNyOROg5MC4HdoDfdh87Jx9qRp1QNACHJqSCkTdQ4nBs
+         VO7xdrXIegtsj4Pbm14rgWT1FCQiEEAlb/7s/G7FnfDYXkQChXITtfyBBX8/1is/Mx/j
+         bpa/4j+rqBp4ombdtOJawzzDSjescn4dpBGtPNpM3KTBZoaNLsfL8Q4sMwsKii1/W1jq
+         Js8g==
+X-Gm-Message-State: AOJu0Yx3lXm3yC4FcCHuY7k1qCUhIvd5+XhiKvPmpnark+IuW4gorb2K
+	URB+1erbimUh+4pRUjrSVVj+Yx+sWmmvt0CxHCTXY7gsRrQv5Z+j5/5TMw3FfS8=
+X-Google-Smtp-Source: AGHT+IFN2Eti8+gZyxEE3H8cpoOyZdBagWhMLrVC2RrY9w7xOb7/ljIQhtyFuW95vPKWpx4yq3PeQw==
+X-Received: by 2002:a05:6512:282:b0:52c:901f:e4 with SMTP id 2adb3069b0e04-52c901f022amr813795e87.0.1718042493358;
+        Mon, 10 Jun 2024 11:01:33 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3? ([2a05:6e02:1041:c10:bb3:9a3a:605f:c4c3])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm150904605e9.11.2024.06.10.11.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 11:01:32 -0700 (PDT)
+Message-ID: <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
+Date: Mon, 10 Jun 2024 20:01:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
- <i6jwqycgywrq42u4km6pjppgvvhsbvuh7m6mzyqy2qcge32ihy@n3lrowkyouv2>
- <3ea05a12-27a8-46df-9fb3-28501404a399@linaro.org> <CAA8EJpqMk9vujHAmF+xSKBDzR1LM9w-M7a8vxcCkXey9VpHBhA@mail.gmail.com>
- <ab5c2a6d-6819-48eb-a3c5-178fa37204bb@linaro.org>
-In-Reply-To: <ab5c2a6d-6819-48eb-a3c5-178fa37204bb@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 10 Jun 2024 21:01:01 +0300
-Message-ID: <CAA8EJpq6tqO6chKASKWUtfq_9vt2tQp7eH1XJY3OaVnAahkwwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] ASoC: qcom: display port changes
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: broonie@kernel.org, perex@perex.cz, lgirdwood@gmail.com, 
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, krzk+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] thermal: trip: Make thermal_zone_set_trips() use
+ trip thresholds
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <12458899.O9o76ZdvQC@kreacher> <2340783.ElGaqSPkdT@kreacher>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <2340783.ElGaqSPkdT@kreacher>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Jun 2024 at 18:36, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
->
->
-> On 08/06/2024 15:56, Dmitry Baryshkov wrote:
-> > On Sat, 8 Jun 2024 at 12:12, Srinivas Kandagatla
-> > <srinivas.kandagatla@linaro.org> wrote:
-> >>
-> >> Thanks Dmitry for testing this out.
-> >>
-> >> On 08/06/2024 03:23, Dmitry Baryshkov wrote:
-> >>> On Thu, Jun 06, 2024 at 11:49:18AM +0100, srinivas.kandagatla@linaro.org wrote:
-> >>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >>>>
-> >>>> This patchset adds support for.
-> >>>>       1. parse Display Port module tokens from ASoC topology
-> >>>>       2. add support to DP/HDMI Jack events.
-> >>>>       3. fixes a typo in function name in sm8250
-> >>>>
-> >>>> Verified these patches on X13s along with changes to tplg in
-> >>>> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> >>>> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> >>>>
-> >>>> x1e80100 is verified by Krzysztof with his changes in tplg
-> >>>>
-> >>>> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/merge_requests/7/commits
-> >>>>
-> >>>> Thanks,
-> >>>> Srini
-> >>>>
-> >>>
-> >>> I have been testing this patchset on X13s, switching between speakers,
-> >>> connected and disconnected DP output.
-> >>>
-> >>
-> >> This series changed the Jack event names by removing HDMI string from it
-> >> as suggested, did you update the UCM to reflect this?
-> >
-> > Yes, I did. The pipewire properly reports 'unconnected' state, but
-> > nothing stops user from selecting the unconnected device / verb.
->
-> No, the jack events should prevent that from happening. You should not
-> see them in output devices in settings->Sound.
+On 28/05/2024 18:51, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Modify thermal_zone_set_trips() to use trip thresholds instead of
+> computing the low temperature for each trip to avoid deriving both
+> the high and low temperature levels from the same trip (which may
+> happen if the zone temperature falls into the hysteresis range of
+> one trip).
+> 
+> Accordingly, make __thermal_zone_device_update() call
+> thermal_zone_set_trips() later, when threshold values have been
+> updated for all trips.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v2: Rebase.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |    4 ++--
+>   drivers/thermal/thermal_trip.c |   14 ++++----------
+>   2 files changed, 6 insertions(+), 12 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -513,13 +513,13 @@ void __thermal_zone_device_update(struct
+>   	if (tz->temperature == THERMAL_TEMP_INVALID)
+>   		return;
+>   
+> -	thermal_zone_set_trips(tz);
+> -
+>   	tz->notify_event = event;
+>   
+>   	for_each_trip_desc(tz, td)
+>   		handle_thermal_trip(tz, td, &way_up_list, &way_down_list);
 
-No. With PulseAudio and with PipeWire unconnected devices are still
-visible. They are annotated as (unconnected), but it's still possible
-to select them.
+Would it make sense to use the for_each_trip_desc() loop here and update
+low and high on the fly in this loop ?
 
-Anyway, even if the sound daemon were to forbid that (or to hide these
-devices), it would be perfectly possible to select them via alsaucm,
-not to mention the amixer.
+If a trip point is crossed the way up or down, then 
+handle_thermal_trip() returns a value which in turn results in updating 
+low and high. If low and high are changed then the we call 
+thermal_zone_set_trips() after the loop.
 
->
->
-> >
-> >> I have pushed changes required to
-> >> https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> >>
-> ...
->
-> >> kernel:
-> >> https://git.codelinaro.org/srinivas.kandagatla/linux/-/tree/dp/sc8280xp-6.10-rc1?ref_type=heads
-> >> ucm: https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> >> tplg:
-> >> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> >>
-> >>
-> >> with the above on my x13s, I can properly do switching between dp0,dp1
-> >> and speakers with no issues.
-> >
-> > Have you tried switching to the unconnected sink? Starting the
-> > pipewire when the previously selected sink is now disconnected?
-> >
-> >>
-> >> Can you try them?
-> >
-> > Is the changing of the JACK names the only change in the UCM? compared
-> > to your previous version?
->
-> Yes.
->
+The results for the thermal_zone_set_trips() will be the loop, the low, 
+high, prev_low_trip and prev_high_trip variables going away.
 
-Then consider it tested with your patches (I did fix the jack names).
+The resulting function should be:
+
+void thermal_zone_set_trips(struct thermal_zone_device *tz, int low, int 
+high)
+{
+         int ret;
+
+         lockdep_assert_held(&tz->lock);
+
+         if (!tz->ops.set_trips)
+                 return;
+
+         /* 
+ 
+
+          * Set a temperature window. When this window is left the 
+driver 
+
+          * must inform the thermal core via thermal_zone_device_update. 
+ 
+
+          */
+         ret = tz->ops.set_trips(tz, low, high);
+         if (ret)
+                 dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+}
+
+But if you consider that is an additional change, then:
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+> +	thermal_zone_set_trips(tz);
+> +
+>   	list_sort(&way_up_list, &way_up_list, thermal_trip_notify_cmp);
+>   	list_for_each_entry(td, &way_up_list, notify_list_node)
+>   		thermal_trip_crossed(tz, &td->trip, governor, true);
+> Index: linux-pm/drivers/thermal/thermal_trip.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_trip.c
+> +++ linux-pm/drivers/thermal/thermal_trip.c
+> @@ -88,17 +88,11 @@ void thermal_zone_set_trips(struct therm
+>   		return;
+>   
+>   	for_each_trip_desc(tz, td) {
+> -		const struct thermal_trip *trip = &td->trip;
+> -		int trip_low;
+> +		if (td->threshold < tz->temperature && td->threshold > low)
+> +			low = td->threshold;
+>   
+> -		trip_low = trip->temperature - trip->hysteresis;
+> -
+> -		if (trip_low < tz->temperature && trip_low > low)
+> -			low = trip_low;
+> -
+> -		if (trip->temperature > tz->temperature &&
+> -		    trip->temperature < high)
+> -			high = trip->temperature;
+> +		if (td->threshold > tz->temperature && td->threshold < high)
+> +			high = td->threshold;
+>   	}
+>   
+>   	/* No need to change trip points */
+> 
+> 
+> 
 
 -- 
-With best wishes
-Dmitry
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
