@@ -1,160 +1,149 @@
-Return-Path: <linux-kernel+bounces-207996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA589901EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D37901F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6C91C22005
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1871C21EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6575778C9D;
-	Mon, 10 Jun 2024 10:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E4C7711E;
+	Mon, 10 Jun 2024 10:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F5cUaPdD"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pk0DguIi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C8E78C65
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDA575813
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718014260; cv=none; b=N3w6eI1fAns15wUVhDg+iRmgsP5EcARW2zLBLqM4XBqbj3QQahMffw5rYege2A9Ds2nguzZxR5Yxnpd9rdrECYbCOcwDZVFYMixZFmXBUG4iE8qJ2nssUQMsTFslMwz0ovdTFocRYSBMu7RHpdPyv9c8WD2ZiRXK9ttb6fqHco8=
+	t=1718014320; cv=none; b=T+qePcejS34+uTGKTcOuwQ2kXOLBFjBjZJj2WdsJz5ey9PNaa6aNp+uBz/prCR+Sat+4NIaCeoev87NM7Ji0PLu4pFziN84rxxgsu+YXvfR3yN0oCpDtBS8rLH6970zLddH8ITos//yT/G4I1Xmf6WTXsIL3W88PLD6h6IYaxz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718014260; c=relaxed/simple;
-	bh=fJRy5/Wt6DoVxNkQSDMWytau/StkznaoGvSk7X31Wnc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SrTln6zaDCS0nJJHWqyIb0+M8F5fMFk2EfCQ2fi/a0Jqfke1/l+WD2MEPdQfERnMA88mivfbVdMLvoRjpn7OwQeYXHgb8z+uMr3Jlr8fV+v6/SlS+vJNFIhHG0o9HabwNzoYTlLIqTWeGhZpPQvvrTIUPp+6e97RWik1ARS/sH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F5cUaPdD; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42136faf3aeso25125175e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 03:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718014257; x=1718619057; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0TNoSBUeFW5avGknbPcWPlD4Jgcp9UNaKcJpQf4Aho=;
-        b=F5cUaPdDuNCEqXHH0F/nyFh9ohoA33LL0xn+kdby0xnUD0LViRKMVJIA7G0JkmvtBq
-         GXI/ok6YKPcWzlW063n4KAAMLh4JBmXServJIfUDtBE9iOCoLBmBIvuoUIdpYefpwPko
-         lvqSNYmqhDiwAENakxtIgWRXSxxA5FjqTlE1OUbZ7IWjLe7PzNrP2zqcDjRvtx24qZt4
-         s73FlcVzEd5jKbMNXFX5znSjoz++YECc+C3CHSdAm/g1QmM3rsFwyMPVtIJZY9J+PlHK
-         bZL6A6hH5BU719LQwKppN70HkhNBVC3J4K8taWja4290mv/xEkhjZH0m2k0g5x0l8+bS
-         EGJQ==
+	s=arc-20240116; t=1718014320; c=relaxed/simple;
+	bh=+3Ih8ZCrJxJUEGH7OtUb1hJnKJMhrf1kinREkdEDb28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q8jfKnoPPRVT1+9Gj+Zvj7Kh/loXB3NOiVVr2dJQybC3+Fw7OuJbqAnqWgJsMwkrwcYM9+vqyGHJf1RgeNDl44Mxv7rDv+xCbTB4HWRRiHJVyiI8lgGb+MuUNfGAqL6uYIGp8rvGdpbGJj8vZ0ElxbVhjvdCC7qa0x1PmwsOTYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pk0DguIi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718014317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HAGfg58Q9+5VbZsXPAiErocuXPUKP6IBatfDvKZopjM=;
+	b=Pk0DguIisfzPahpbOfIuplX3nB+GhOJgzgBNJvol9VE34SUzLRfGAThnrZ2cyDdyUjaPoR
+	bxJJR0bjosBaHoSo6J6d2ajkXSncAbIwxaXWKikfk7U4B09edQ/AgNh1xQVEPryk8UQmdq
+	iRSaOB/GWn2LB2vfkbVA9vW6fLJtbUg=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-aH5crhnAPmGJu2PPmwdJFQ-1; Mon, 10 Jun 2024 06:11:56 -0400
+X-MC-Unique: aH5crhnAPmGJu2PPmwdJFQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6ef7afd90aso113797566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 03:11:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718014257; x=1718619057;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0TNoSBUeFW5avGknbPcWPlD4Jgcp9UNaKcJpQf4Aho=;
-        b=ZE3YG/1Phumyh1HXqfvLuaMpUSlF7yO8Aj5uJt6L9EUoqGeRfwov8oteh131EAOFV4
-         O0qJIMpcAvN3uD7FtNH29UTCYldqONqMDfju/GsEAfMsgkLNsg0cZZREcTNL183DXjgx
-         pCr+MUVL0xgTd+ZCU2zTE6M6ntQ0BURyKkl+HcIi3e98kdu81nXp6Zn5yBv7sffx6xq2
-         PQX0dq/LKm+lfB9AH2WT9DvazWwrSwpnbxatOEUzCbAwS6ih0rtTdVOzxm2ujJFOb1cZ
-         XVMURVVdjvgHMOm2bHZXR+ky7gHjZeT+jRUbO8+KiLOBs1FepF6HPGW+1pBffwoBCrq1
-         iN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPmtKDeVQABhVsSr5lLZxJRTOmx9k0T0+c3b7xkrwwxEENPjwVomX5koxWsR2GmpokN2D40UPIWj/bh+BkfBHpqoWz1rCAdx0dyPBc
-X-Gm-Message-State: AOJu0YzYLHvNGCk/UzcsHHcm1rQIiQDu3zH9TAIeIHJvFWh8b3q7SEAM
-	rE5x0Uxzm5BKfldN6x2ILXdWdLUxE9mth6yKX+xLTbv9EH9W6shNH15jfM2HQQI=
-X-Google-Smtp-Source: AGHT+IEFqoldHAoJVVZTLvQOuYPmYg/HOq/+LtIbLhEkV/XKorR5ubj6rEmGhJ0i5CLz0niduiRRvw==
-X-Received: by 2002:adf:fc8b:0:b0:347:3037:188d with SMTP id ffacd0b85a97d-35efed5351fmr7533025f8f.34.1718014256882;
-        Mon, 10 Jun 2024 03:10:56 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:afd3:66ee:5486:4249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1aa8d4f3sm5283383f8f.99.2024.06.10.03.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 03:10:56 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
- <p.zabel@pengutronix.de>,  Jan Dakinevich
- <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 8/9] clk: meson: add auxiliary reset helper driver
-In-Reply-To: <68518f93af68cbc0153c8bd765dc885f.sboyd@kernel.org> (Stephen
-	Boyd's message of "Wed, 29 May 2024 18:01:47 -0700")
-References: <20240516150842.705844-1-jbrunet@baylibre.com>
-	<20240516150842.705844-9-jbrunet@baylibre.com>
-	<68518f93af68cbc0153c8bd765dc885f.sboyd@kernel.org>
-Date: Mon, 10 Jun 2024 12:10:55 +0200
-Message-ID: <1jikyhp0pc.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1718014315; x=1718619115;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HAGfg58Q9+5VbZsXPAiErocuXPUKP6IBatfDvKZopjM=;
+        b=qqCzmUtOHFT/z5l4wNrSYOM3NgFoN1CzCyELwS5lGgZi/Vxj+g8KsE3VAzzKNtVe/H
+         y5rowidReVGx8RNUlI74r3gLaRWBk46u6MHD5KBuCkIbN0k10o/kePBrxWIm4Ag9raLc
+         a/vJvOKhVkuJp214COYnYOUufeGiYTZ1/9rNBL/Qi8ouj4y4dhHONarvr8fD/1WIUh+J
+         U1mFq1ifv1Z0sBm1BIDUkZl1U5kY2nsyzKFJ++owcVsjHfGy6v6Lq6YBApJk7Y0chnPz
+         RdfMcp0FqWaxNql0Te1jIsW1LNav346VGfrHwvhw0oUA5OFKhQataCIlIg2SEDbtV58K
+         le/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUraEZDom790qEaipKX+4Pa2GIFEEnpG8BUIIJwU47l5FGCEg1KPJc3XzHeIUOrx6K0Q7U+8+wt5bv7//h7TbTCI4VqNttak2ieJVIp
+X-Gm-Message-State: AOJu0Ywh1yKXwETpSYxD1ijpyZVsCVbRbAk+L4ulPmcYXgD7GK6gbxqx
+	kGKJ7nA5iIoZPR7PItxN2NiLeAVp6AM6FV27PwYt7Bo1mS5eqGcxYgZKNi1wLtOJ6AHGXDaABvO
+	q72WUJIkfmMB8mooUld6XL9RGRo5T9CMXm3sJGnQ5Q77f/A6B63OD6zowSwQSEA==
+X-Received: by 2002:a50:cd8a:0:b0:57c:5996:cfc7 with SMTP id 4fb4d7f45d1cf-57c5996d14fmr5167532a12.30.1718014315091;
+        Mon, 10 Jun 2024 03:11:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqF9FyN44n+ZfeTQ80xQpEd5VG379Y/6+PGq7u5HQg3UFxxA2nbTtUQGPuhUsZ6CmsJ5PNNg==
+X-Received: by 2002:a50:cd8a:0:b0:57c:5996:cfc7 with SMTP id 4fb4d7f45d1cf-57c5996d14fmr5167524a12.30.1718014314700;
+        Mon, 10 Jun 2024 03:11:54 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0cc1a2sm7155270a12.23.2024.06.10.03.11.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 03:11:54 -0700 (PDT)
+Message-ID: <0b21129a-3cde-4b0f-a588-9069da4c14c6@redhat.com>
+Date: Mon, 10 Jun 2024 12:11:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] drm: panel-orientation-quirks: Add quirk for Aya
+ Neo KUN
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240310220401.895591-1-tjakobi@math.uni-bielefeld.de>
+ <a4069a85-b990-42b4-8cde-8906a740ec27@math.uni-bielefeld.de>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <a4069a85-b990-42b4-8cde-8906a740ec27@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed 29 May 2024 at 18:01, Stephen Boyd <sboyd@kernel.org> wrote:
+Hi Tobias,
 
-> Quoting Jerome Brunet (2024-05-16 08:08:38)
->> Add an helper module to register auxiliary reset drivers from
->> Amlogic clock controller.
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On 5/31/24 9:04 PM, Tobias Jakobi wrote:
+> On 3/10/24 23:04, tjakobi@math.uni-bielefeld.de wrote:
+> 
+>> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>
+>> Similar to the other Aya Neo devices this one features
+>> again a portrait screen, here with a native resolution
+>> of 1600x2560.
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 >> ---
->>  drivers/clk/meson/Kconfig             |  5 ++
->>  drivers/clk/meson/Makefile            |  1 +
->>  drivers/clk/meson/meson-clk-rst-aux.c | 84 +++++++++++++++++++++++++++
->>  drivers/clk/meson/meson-clk-rst-aux.h | 14 +++++
->>  4 files changed, 104 insertions(+)
->>  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
->>  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
->> 
->> diff --git a/drivers/clk/meson/meson-clk-rst-aux.h b/drivers/clk/meson/meson-clk-rst-aux.h
->> new file mode 100644
->> index 000000000000..386a55a36cd9
->> --- /dev/null
->> +++ b/drivers/clk/meson/meson-clk-rst-aux.h
->> @@ -0,0 +1,14 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2024 BayLibre, SAS.
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->> + */
->> +
->> +#ifndef __MESON_CLK_RST_AUX_H
->> +#define __MESON_CLK_RST_AUX_H
->> +
->> +int devm_meson_clk_rst_aux_register(struct device *dev,
->> +                                   struct regmap *map,
->> +                                   const char *adev_name);
->
-> I'd prefer we move the device creation and registration logic to
-> drivers/reset as well. See commit 098c290a490d ("clock, reset:
-> microchip: move all mpfs reset code to the reset subsystem") for some
-> inspiration.
+>>   drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> index 3d92f66e550c..5d3fb11fd45f 100644
+>> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> @@ -196,6 +196,12 @@ static const struct dmi_system_id orientation_data[] = {
+>>             DMI_MATCH(DMI_BOARD_NAME, "NEXT"),
+>>           },
+>>           .driver_data = (void *)&lcd800x1280_rightside_up,
+>> +    }, {    /* AYA NEO KUN */
+>> +        .matches = {
+>> +          DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+>> +          DMI_MATCH(DMI_BOARD_NAME, "KUN"),
+>> +        },
+>> +        .driver_data = (void *)&lcd1600x2560_rightside_up,
+>>       }, {    /* Chuwi HiBook (CWI514) */
+>>           .matches = {
+>>               DMI_MATCH(DMI_BOARD_VENDOR, "Hampoo"),
+> 
+> Trying yet another ping! Also adding Hans to the list of recipients, as he committed the last quirk for an Ayaneo device. Someone pick this up, pretty please! :-)
 
-Ok but if it lives in reset I don't really get the purpose served by the
-auxiliary devices in that case. Why not export a function that directly
-calls reset_controller_register() in that case ? 
+Thank you for Cc-ing me and thank you for your patch.
 
-I thought the point was to properly decouple both sides.
+This looks good to me:
 
-I don't have strong opinion about it, TBH. It is just how it made sense
-to me. If you are sure about this, I don't mind changing
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
->
-> One thing I haven't really thought about too much is if they're two
-> different modules. One for clk and one for reset. If the device
-> registration API is a symbol the clk module depends on then maybe that
-> is better because it means both modules are loaded, avoiding a
-> round-trip through modprobe. It also makes sure that the drivers are
-> either both builtin or both modular.
+I'll go and merge this into drm-misc-fixes now. Note I've not done a build
+for drm-misc-fixes in a while and I'm on a laptop atm, so it will be a while
+before this shows up as I'll do a (slow) test-build before pusing out the changes.
 
-I have checked with the current implementation, if the reset driver is
-missing, the clock part does not fail. Registering the aux device
-succeeds in clock but the device never comes up (duh). So it does
-not crash, the consumers of the aux reset device will just defer.
+Regards,
 
-Said differently, the '#if IS_ENABLED(CONFIG_RESET_CONTROLLER)' in
-clk-mpfs.c was not necessary ... it was removed in the changed you
-linked anyway.
+Hans
 
-(Sorry Stephen, you got it twice ... missed the Reply-all the first time
-around)
-
--- 
-Jerome
 
