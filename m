@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-208296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB87902338
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 016DB90233C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF181C22A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF341C20F39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A4137C35;
-	Mon, 10 Jun 2024 13:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6613D297;
+	Mon, 10 Jun 2024 13:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YSmgYmTB"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="z9bRYthr"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8413913665D;
-	Mon, 10 Jun 2024 13:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE3682D75;
+	Mon, 10 Jun 2024 13:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718027336; cv=none; b=GBgb0ME08AXCNGlIbKsaL5W76k9FUtYbflsT4agbXp7nRVQXxSk6y5lc9iPXb/OFfShuULCZhpgGYV9N5gSmzJ7yubc+cX63b0n3crayJ9cV8CbpCQZkDMXzs1Z/AEFdnChmIO+HfmTsgZ5Y7Qoc39Ek4NCoepND7tSBBGVT6Y0=
+	t=1718027507; cv=none; b=lPfEUQ7Im/haHT2LjRX/rO+Abp/SghM25WDF6YxYJASnfFfmqB9efyNHypDdaahsAfO7/MMpaVHZUocV5i9g69kei0qddi2T8Kl+Qj5BkucpEXdOfb6wU69omNYV5lqOJ0nRX+DdBuHWwbs9cJHGsQhyrDl9G1Qd+8uDwUnQ6QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718027336; c=relaxed/simple;
-	bh=KTQkgrXpi/1zgiku4hivPYmh8Wc6c0/1YXp/AJCp07A=;
+	s=arc-20240116; t=1718027507; c=relaxed/simple;
+	bh=z6q7jyPj/z6RQLVJZxM1J27Mm3BoSUPWnn1OKfGRNgQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iuCAb8DLTg1dG2XgIoCt76qID74jG7wZPvx+EJNN7JtLMRfByK3zoeXblqLyAirFPQfdZoIf1lGtQOW12ArHNRlFJ5jH3MT4XI843hP09QTYeQyENm8CA3R/9vd1MU6IqK/UJxdQPe7wgaDn+qjwCaEAQP3MB7AHtQdqOQZqUPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YSmgYmTB; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ADmoQH098603;
-	Mon, 10 Jun 2024 08:48:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718027330;
-	bh=Xue21UwJd2F4D2IeLJvZH7TejT/wvd4BX+L9O9bmpz8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=YSmgYmTBX16bvq5e3PawXLWcYZcY+3otgKl+1zOkIhltLRz3vKkyXEIqQCtIp7IIG
-	 6B7VCkw/wf7HVnp9/7bg81mUl4lu0CfTk1ktGl0H/B24q+HDbL5p6W+bIYLnD5T2pP
-	 pocEnj/oZI1y8Sa6kxXAufyfpY+PpmwxQFU3Mebs=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ADmoBO088478
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 08:48:50 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 08:48:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 08:48:49 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ADmnKp025806;
-	Mon, 10 Jun 2024 08:48:49 -0500
-Message-ID: <3f4638ae-1b1b-470e-980b-86695978c5f2@ti.com>
-Date: Mon, 10 Jun 2024 08:48:49 -0500
+	 In-Reply-To:Content-Type; b=vDjLb3nDg0NomI3dlsG/Dar+kF/VDDjdB0iAnvVEKv5r3hq1xSavfS6dwSasATw6dRPQjDne/DGI7iv3uLF6ZxVnLlvIU9D0Cp2iaFU1SOnBrtnDyRfoIJTK5kDwdOzDyiGot21jD6XpQcXU2DAD07l3v+acnFFr0+9TNRJgHoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=z9bRYthr; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ACUjOe011470;
+	Mon, 10 Jun 2024 15:51:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	i7o7N5B7+jfcvWuYAHwVeh2JCgEO5HfdPITsk4LeZr0=; b=z9bRYthrmDiTXApj
+	hZJp31j8pmkI58wkwiYMwvJ6dh6cN3rCynpQ9QTFAvjM3MCCBgq8aFc+mfFihPdK
+	EsUWEtdN5Q2ROL7KIJniKD6CHTXu6jH2oLfcgVTpLUrnvqKl/KB1x8n4z1nQlf2a
+	kXCQAtY5+9PITZj1vmpy/9DBsZMHKC9h7aM7yk3zCpeo0OIUvrj3zw1b77hQ1+ED
+	LyLHae/7asxFwA2ViqgzBQjVYJtuomxbYIjoUXROe+rYDVYn+0EAUSrOi+sNmK9e
+	wJCEUcF+/upWIvYu446W/1gZCJGY5FcOHDumDCEIREoOTl2hPEA85kooQ4ICTkYp
+	fXXc+A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yme6d74q3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 15:51:19 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DA57940046;
+	Mon, 10 Jun 2024 15:51:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D0ECB2194EE;
+	Mon, 10 Jun 2024 15:49:59 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 15:49:58 +0200
+Message-ID: <91af5c61-f23f-4f72-a8c8-f32b2c368768@foss.st.com>
+Date: Mon, 10 Jun 2024 15:49:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,30 +66,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] counter: ti-eqep: remove unused struct member
-To: David Lechner <dlechner@baylibre.com>,
-        William Breathitt Gray
-	<wbg@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240609-ti-eqep-cleanup-v1-0-9d67939c763a@baylibre.com>
- <20240609-ti-eqep-cleanup-v1-1-9d67939c763a@baylibre.com>
+Subject: Re: [net-next,PATCH v6 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240610071459.287500-1-christophe.roullier@foss.st.com>
+ <20240610071459.287500-8-christophe.roullier@foss.st.com>
+ <20139233-4e95-4fe5-84ca-734ee866afca@denx.de>
+ <c5ea12e7-5ee6-4960-9141-e774ccd9977b@foss.st.com>
+ <09105afe-1123-407a-96c3-2ea88602aad0@denx.de>
 Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20240609-ti-eqep-cleanup-v1-1-9d67939c763a@baylibre.com>
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <09105afe-1123-407a-96c3-2ea88602aad0@denx.de>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
 
-Hi David,
 
-On 6/9/24 3:06 PM, David Lechner wrote:
-> Since commit 8817c2d03a85 ("counter: ti-eqep: Convert to counter_priv()
-> wrapper") the counter field in struct ti_eqep_cnt is not used anymore.
-> Remove it.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-
-Reviewed-by: Judith Mendez <jm@ti.com>
-
+On 6/10/24 15:43, Marek Vasut wrote:
+> On 6/10/24 1:45 PM, Christophe ROULLIER wrote:
+>>
+>> On 6/10/24 12:39, Marek Vasut wrote:
+>>> On 6/10/24 9:14 AM, Christophe Roullier wrote:
+>>>
+>>> [...]
+>>>
+>>>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>>>> @@ -303,7 +307,7 @@ static int stm32mcu_set_mode(struct 
+>>>> plat_stmmacenet_data *plat_dat)
+>>>>       dev_dbg(dwmac->dev, "Mode %s", 
+>>>> phy_modes(plat_dat->mac_interface));
+>>>>         return regmap_update_bits(dwmac->regmap, reg,
+>>>> -                 dwmac->ops->syscfg_eth_mask, val << 23);
+>>>> +                 SYSCFG_MCU_ETH_MASK, val << 23);
+>>>>   }
+>>>>     static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, 
+>>>> bool suspend)
+>>>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
+>>>> stm32_dwmac *dwmac,
+>>>>           return PTR_ERR(dwmac->regmap);
+>>>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>>>> &dwmac->mode_reg);
+>>>> -    if (err)
+>>>> +    if (err) {
+>>>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>>>> +        return err;
+>>>> +    }
+>>>> +
+>>>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>>>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>>>> &dwmac->mode_mask);
+>>>> +    if (err)
+>>>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>>>
+>>> Isn't this an error , so dev_err() ?
+>> No, it is only "warning" information, for MP1 the mask is not needed 
+>> (and for backward compatibility is not planned to put mask parameter 
+>> mandatory)
+>
+> Should this be an error for anything newer than MP15 then ?
+For MP25, no need of mask, so for moment it is specific to MP13.
 
