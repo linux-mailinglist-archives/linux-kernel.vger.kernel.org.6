@@ -1,172 +1,159 @@
-Return-Path: <linux-kernel+bounces-207977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFF6901EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:57:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2E2901EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CD4DB2763B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD11F2401F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1A1770E9;
-	Mon, 10 Jun 2024 09:57:08 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3821757FD;
+	Mon, 10 Jun 2024 09:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uHQXAN7f"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F87440B;
-	Mon, 10 Jun 2024 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1BB42AA1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718013428; cv=none; b=QdKKmcb/jyG4EgEkKastnLoaKD4fEep+ykaL6zfdLUh63R9Pd2rv5ipVEwhVoYV6HlIn47kG+vKyi/+v+i0WlBIzs13S2M9MOREM+tSJ4bINyUxIOywjE7u3lhuFShs/BaxW0aqp33BByMqG3b6aERimpsFkU2DBRm/KyfPJtcg=
+	t=1718013514; cv=none; b=OK/OGDV6QTxgiL1YGJNjrkF1yfSkmJh74+60J0p6iCuZOL3wwhn68lRYaYOqHjnYkvzyIFzQQq1eT6NL8+CWhXgLgImd2TnUORDaCbTTChS9OcIkvlfBMplykHMrmat8+5WUoZmwTfBknWpRwgxMV1kAfC4iCMSwFy/9rie331A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718013428; c=relaxed/simple;
-	bh=9tVEb5R7YbrGdVLX+zZpnyFenA6Yr+XRXdQHGotGNL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LL1qoGd2gYeCB3ZX4B9cfSDACPUVhu1Q9KuC//k9g8+0dli5eQLTLNLK3OtRP0RNwpQfzYx50N0WiHdWvc5gy2TYNw9xAAfpvj0CirzRr4bE+Ofw7Z5srGwAJSVemuX+G4Hy4/tl9M98UnArGbDc+N8cPD4pxLsve0zV/Dbn6TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42179a2c755so2151675e9.2;
-        Mon, 10 Jun 2024 02:57:06 -0700 (PDT)
+	s=arc-20240116; t=1718013514; c=relaxed/simple;
+	bh=vL+e4B6rQelOhW3SQ+8ffC0Kvp6DIcq6ImI5X4iou8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iwL4WCXRAhH1tECen3m+64c5bGezsQCWo1N7x9RjjTQ36x65ivX6Z1bvAYYD74wUcJ0D4MEPUAY9AnT1ntd7S7uV2sMaqemk7r++TG30Y3kyMwDMDLpP9Gi8EOwyGjVYi8wRzyDWI5/9DcLXSrgqhFQkQ3Ep/ZRXYDFhOPem5DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uHQXAN7f; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso4696902276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 02:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718013511; x=1718618311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=grzyUJy9kcHXf/MxmuiGPzY3cLbCYDEM6U0m2F2h4IM=;
+        b=uHQXAN7frRdgbA3LlVD4JO+xtPX4TVGBteiuvpX41wfXEM/1JfD8qCtAhOFjGRuJM+
+         MeMoRift4GlGyYTyACHPeDGUYgfouH6Hh7XA9jtYmmmjGwNjmDx1RFet+bCg95KlrUtv
+         llfZ7pIChiycwQI4lF0ksBiJQyCzUE7nrRYLuJVKEW2qMhBOLDc1zZO/qMUyDU+usZ2f
+         SYlEXJKvYYEWKjsGqncB7/qD8zK4+mbbtL0CLpYNmsFccV5MBHXi6W2m+kxww3E9f36Y
+         +YeF8snxBSshmOkf7aJOyWhTVsSpsOmCJWHh3ylYpqShHEtSqZy6GhjtUufWk5vxgTe4
+         jpcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718013425; x=1718618225;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z2PRbPq0v5iNyBG2l9Ad/rt64rAs/3M+tj7FpuQssKg=;
-        b=k85USarPUe3B/qEYqtvak+ok8XJxKmVMkSFT7kJ59Ac/0mb6+/ZS7yFz/R+UoGbLsJ
-         mTmh8by7SZabKyPxYKi4YkXV/qRSw82ywP92+yM1vfqM1NMOLh90lz3++NKUQpOReWHr
-         bptLpUyySJbV6OslYzoee+2A0JJ/5uyi37VVrKrmJGWR++K4w8me7CT9LFZ7qwnJyLPL
-         mjf8lk3ssvr7IJtQb3uK0Dy7rvvMf+txInVpLXg1gPpTcsq+yK8O69AnAaTe8teiMx5O
-         wactUGNYW2dvbjOMwc8UUBvwD5Q3pvZb3vTC+JFcF2/zUyTuZk6dSkWu14I7MyTT6qjQ
-         wBLw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6PTwHkHGNWjnksnbAX5K1DbjKHM12mpC1KxTlY4VPySryUaBUt//PRnTFRMBihjPAP8YtgMbI2rgs49H6u1ZEaERFFD1XYRfozaEF
-X-Gm-Message-State: AOJu0Ywjj9LRqlkRKp+gvToeloByEAHOIFyh6xXJIEDAeiuCMJ0ULjLv
-	ntILbfwydxkFMAfhdxpOyaFD2z9HBAb2271j21J7yin198+ag8KB
-X-Google-Smtp-Source: AGHT+IHFvslAofQ4YjFdR2WQdHXGC9CdeW9RPC5k4AW9d5SiotWWb4CqW4HYjqrXstB4syw8pJyhzw==
-X-Received: by 2002:a05:600c:3514:b0:421:2df7:beb4 with SMTP id 5b1f17b1804b1-42164a2e9acmr69065335e9.2.1718013424675;
-        Mon, 10 Jun 2024 02:57:04 -0700 (PDT)
-Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f19db5decsm5404090f8f.55.2024.06.10.02.57.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 02:57:04 -0700 (PDT)
-Message-ID: <2285ff6e-533f-41dc-90d0-e8ca538da152@grimberg.me>
-Date: Mon, 10 Jun 2024 12:57:02 +0300
+        d=1e100.net; s=20230601; t=1718013511; x=1718618311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=grzyUJy9kcHXf/MxmuiGPzY3cLbCYDEM6U0m2F2h4IM=;
+        b=tNT5myLIwcJUpcTxWdN6TfriO6bsaJMZwEnMRT+tN3Q/ai+Xcxcr10c7ZIF+mFhsS1
+         yea4LNlXHwbMjvT/89CPIL3lYJU2m8H/+yMfvYHF9PKhSqdxZ+BO3m5oPv6LRhol2Awe
+         fLgbnhAx3dxB8yh2QUXoj4N7yaNiOMSOa1kHoRC+QG5ny2GMT5PZ0/hccZGRwfz8EDQD
+         3c5KEWzEgTLB/MlHUapzqxCK4OTWwS5a+8mXOj/0hCExOvqiqHVdLXwgTh9tltRDOXn4
+         Tkc/4b+vZQfh6/FbEvJJuqHJ+JGoDI+bhbViBGXt+6c1gFT9SX08fojifmHPFYLl6eyf
+         z0gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOE9KUieugyDb1p19tUIZsJGgwJ+iGGMo8E67PUx05l4F/yv5/cO2R/Ix2tOQTiG+uw6nC/OsKUv0FTI0VeSoHx8E+eWcDWCB273+u
+X-Gm-Message-State: AOJu0Ywnzdw2DquM+u8GVTrDw4Qjki8TayuNKW7XRHSORAWteQHJpdtS
+	gOjN2MdS145YOxaAX6fkCQp1hAN7RMxY7I2c6AL7fRyvtQgWpSR7PAb6RoorZ2SRuv4wgBAiGYx
+	PavQC/WX3vVLk9GbpX6NqRKR/JVqNkduvVyfiLg==
+X-Google-Smtp-Source: AGHT+IHqz16v0hYO4hjfMD0/cvunbHpItzUfiQ27fnJaZcbUsv3C/XWXRPkEAzG04WgB5BXS7pQOGEiiSV3LWnxQGVs=
+X-Received: by 2002:a25:7453:0:b0:df7:40de:5b72 with SMTP id
+ 3f1490d57ef6-dfaf66d0c5bmr7521213276.47.1718013511292; Mon, 10 Jun 2024
+ 02:58:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>, kbusch@kernel.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
-References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240606090050.327614-1-christian.loehle@arm.com>
+ <20240606090050.327614-2-christian.loehle@arm.com> <20240609224701.pc6om2o5ep6btywe@airbuntu>
+In-Reply-To: <20240609224701.pc6om2o5ep6btywe@airbuntu>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 10 Jun 2024 11:57:55 +0200
+Message-ID: <CAPDyKFoHc6Zcg8i-y3HxUp0=S_N2GhmKcT0w2e-NkzR498mp2Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] cpuidle: teo: Increase util-threshold
+To: Qais Yousef <qyousef@layalina.io>, Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
+	vincent.guittot@linaro.org, peterz@infradead.org, daniel.lezcano@linaro.org, 
+	anna-maria@linutronix.de, kajetan.puchalski@arm.com, lukasz.luba@arm.com, 
+	dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 10/06/2024 10:51, Venkat Rao Bagalkote wrote:
-> Greetings!!!
+On Mon, 10 Jun 2024 at 00:47, Qais Yousef <qyousef@layalina.io> wrote:
 >
-> Observing Kernel OOPS, while creating namespace on a NVMe device.
+> On 06/06/24 10:00, Christian Loehle wrote:
+> > Increase the util-threshold by a lot as it was low enough for some
+> > minor load to always be active, especially on smaller CPUs.
+> >
+> > For small cap CPUs (Pixel6) the util threshold is as low as 1.
+> > For CPUs of capacity <64 it is 0. So ensure it is at a minimum, too.
+> >
+> > Fixes: 9ce0f7c4bc64 ("cpuidle: teo: Introduce util-awareness")
+> > Reported-by: Qais Yousef <qyousef@layalina.io>
+> > Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Suggested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
+> > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > ---
+> >  drivers/cpuidle/governors/teo.c | 11 +++++------
+> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+> > index 7244f71c59c5..45f43e2ee02d 100644
+> > --- a/drivers/cpuidle/governors/teo.c
+> > +++ b/drivers/cpuidle/governors/teo.c
+> > @@ -146,13 +146,11 @@
+> >   * The number of bits to shift the CPU's capacity by in order to determine
+> >   * the utilized threshold.
+> >   *
+> > - * 6 was chosen based on testing as the number that achieved the best balance
+> > - * of power and performance on average.
+> > - *
+> >   * The resulting threshold is high enough to not be triggered by background
+> > - * noise and low enough to react quickly when activity starts to ramp up.
+> > + * noise.
+> >   */
+> > -#define UTIL_THRESHOLD_SHIFT 6
+> > +#define UTIL_THRESHOLD_SHIFT 2
+> > +#define UTIL_THRESHOLD_MIN 50
+> >
+> >  /*
+> >   * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
+> > @@ -671,7 +669,8 @@ static int teo_enable_device(struct cpuidle_driver *drv,
+> >       int i;
+> >
+> >       memset(cpu_data, 0, sizeof(*cpu_data));
+> > -     cpu_data->util_threshold = max_capacity >> UTIL_THRESHOLD_SHIFT;
+> > +     cpu_data->util_threshold = max(UTIL_THRESHOLD_MIN,
+> > +                             max_capacity >> UTIL_THRESHOLD_SHIFT);
 >
-> [  140.209777] BUG: Unable to handle kernel data access at 
-> 0x18d7003065646fee
-> [  140.209792] Faulting instruction address: 0xc00000000023b45c
-> [  140.209798] Oops: Kernel access of bad area, sig: 11 [#1]
-> [  140.209802] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=8192 NUMA pSeries
-> [  140.209809] Modules linked in: rpadlpar_io rpaphp xsk_diag 
-> nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet 
-> nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat 
-> bonding nf_conntrack tls nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set 
-> nf_tables nfnetlink vmx_crypto pseries_rng binfmt_misc fuse xfs 
-> libcrc32c sd_mod sg ibmvscsi scsi_transport_srp ibmveth nvme nvme_core 
-> t10_pi crc64_rocksoft_generic crc64_rocksoft crc64
-> [  140.209864] CPU: 2 PID: 129 Comm: kworker/u65:3 Kdump: loaded Not 
-> tainted 6.10.0-rc3 #2
-> [  140.209870] Hardware name: IBM,9009-42A POWER9 (raw) 0x4e0202 
-> 0xf000005 of:IBM,FW950.A0 (VL950_141) hv:phyp pSeries
-> [  140.209876] Workqueue: nvme-wq nvme_scan_work [nvme_core]
-> [  140.209889] NIP:  c00000000023b45c LR: c008000006a96b20 CTR: 
-> c00000000023b42c
-> [  140.209894] REGS: c0000000506078a0 TRAP: 0380   Not tainted 
-> (6.10.0-rc3)
-> [  140.209899] MSR:  800000000280b033 
-> <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24000244  XER: 00000000
-> [  140.209915] CFAR: c008000006aa80ac IRQMASK: 0
-> [  140.209915] GPR00: c008000006a96b20 c000000050607b40 
-> c000000001573700 c000000004291ee0
-> [  140.209915] GPR04: 0000000000000000 c000000006150080 
-> 00000000c0080005 fffffffffffe0000
-> [  140.209915] GPR08: 0000000000000000 18d7003065646f6e 
-> 0000000000000000 c008000006aa8098
-> [  140.209915] GPR12: c00000000023b42c c00000000f7cdf00 
-> c0000000001a151c c000000004f2be80
-> [  140.209915] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  140.209915] GPR20: c000000004dbcc00 0000000000000006 
-> 0000000000000002 c000000004911270
-> [  140.209915] GPR24: 0000000000000000 0000000000000000 
-> c0000000ee254ffc c0000000049111f0
-> [  140.209915] GPR28: 0000000000000000 c000000004911260 
-> c000000004291ee0 c000000004911260
-> [  140.209975] NIP [c00000000023b45c] synchronize_srcu+0x30/0x1c0
-> [  140.209984] LR [c008000006a96b20] nvme_ns_remove+0x80/0x2d8 
-> [nvme_core]
-> [  140.209994] Call Trace:
-> [  140.209997] [c000000050607b90] [c008000006a96b20] 
-> nvme_ns_remove+0x80/0x2d8 [nvme_core]
-> [  140.210008] [c000000050607bd0] [c008000006a972b4] 
-> nvme_remove_invalid_namespaces+0x144/0x1ac [nvme_core]
-> [  140.210020] [c000000050607c60] [c008000006a9dbd4] 
-> nvme_scan_ns_list+0x19c/0x370 [nvme_core]
-> [  140.210032] [c000000050607d70] [c008000006a9dfc8] 
-> nvme_scan_work+0xc8/0x278 [nvme_core]
-> [  140.210043] [c000000050607e40] [c00000000019414c] 
-> process_one_work+0x20c/0x4f4
-> [  140.210051] [c000000050607ef0] [c0000000001950cc] 
-> worker_thread+0x378/0x544
-> [  140.210058] [c000000050607f90] [c0000000001a164c] kthread+0x138/0x140
-> [  140.210065] [c000000050607fe0] [c00000000000df98] 
-> start_kernel_thread+0x14/0x18
-> [  140.210072] Code: 3c4c0134 384282d4 7c0802a6 60000000 7c0802a6 
-> fbc1fff0 fba1ffe8 fbe1fff8 7c7e1b78 f8010010 f821ffb1 e9230010 
-> <e9290080> 7c2004ac 71290003 41820008
-> [  140.210093] ---[ end trace 0000000000000000 ]---
+> Thanks for trying to fix this. But I am afraid this is not a solution. There's
+> no magic number that can truly work here - we tried. As I tried to explain
+> before, a higher util value doesn't mean long idle time is unlikely. And
+> blocked load can cause problems where a decay can take too long.
 >
+> We are following up with the suggestions I have thrown back then and we'll
+> share results if anything actually works.
 >
-> Issue is introduced by the patch: 
-> be647e2c76b27f409cdd520f66c95be888b553a3.
-
-Exactly this was the concern when introducing a behavior change in a 
-sensitive area of the code
-to silence lockdep...
-
-I'm assuming that the bad dereference is:
-         synchronize_srcu(&ns->ctrl->srcu);
-
-btw, looking at the code again, I'm assuming that synchronizing srcu in 
-every ns remove
-slows down batch removal of many namespaces greatly...
-
->
->
-> Reverting it, issue is not seen.
->
->
-> Regards,
->
-> Venkat.
->
+> For now, I think a revert is more appropriate. There was some perf benefit, but
+> the power regressions were bad and there's no threshold value that actually
+> works. The thresholding concept itself is incorrect and flawed - it seemed the
+> correct thing back then, yes. But in a hindsight now it doesn't work.
 >
 
+For the record, I fully agree with the above. A revert seems to be the
+best option in my opinion too.
+
+Besides for the above reasons; when using cpuidle-psci with PSCI OSI
+mode, the approach leads to disabling *all* of cluster's idle-states
+too, as those aren't even visible for the teo governor. I am sure,
+that was not the intent with commit 9ce0f7c4bc64.
+
+[...]
+
+Kind regards
+Uffe
 
