@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-208668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA0A9027EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:43:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1779027C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D249E1C21FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AAC01F22CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9F414885B;
-	Mon, 10 Jun 2024 17:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37D4145B09;
+	Mon, 10 Jun 2024 17:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="WQBUSD37"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ej3yi98M"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89B1142E79;
-	Mon, 10 Jun 2024 17:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2EA8F6D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718041385; cv=none; b=a6J+4d+aDI+/wFeCm6CITIFUrBUdu19Wuk0hr0gM08rqxXwX7PCpTqnO1gRZyxeHQiuDpLuS38Mm5ExSpEadEWSbiIBkxK8e+zzVQdFfPgCWAW/Scb1Lp+FverM1p60QegVb9nU9dycCsCCEUecF7iaHrIHvxJD0/v2ZjOZpJI4=
+	t=1718040689; cv=none; b=uD0fymWmvqnwFihZyVZ/8EIVMML6dGucg5NQaEH77wGEoE24ttvpSjVaoq401il8isv+Jqwz5HROqSJZIqme+5mupP+/GRm3YKHuYr7cnp5qDD5RZ7+hPG9muKBw7UB8szpYOr8/nphfkoCKijGpBjtGEXoEqWxLOKz76TQKWMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718041385; c=relaxed/simple;
-	bh=pukq89EYTWZWICSg4WGUTWv7xVz+jUHs/C8/2F8z0KM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HuwxqlTmhe2Mq2e40yNTk9LXPVw3NxflUJeHF8xt4GYrZzsJmJ1Q6Tu3y47nmYJLtm8cDKqlDiPWCZuEsEUlBK7XJDlB0+nDH3Au46qLrT5zMI62Qif/M2eOVDeqoYCGm7JskBwDSAPBbd3bVKvqwGIt2OAYLTPY9mWurKmHx/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=WQBUSD37; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 684A2885A5;
-	Mon, 10 Jun 2024 19:42:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718041381;
-	bh=oaOQDVrDft+8XHfut53lIpAIfzu9c8ayaQ0+Eg7Nxow=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WQBUSD3704u5IksQ+4ToSk+UzpJxx5XDQUX1YPYUz2ydq/y8quhOFWlrcza8nueUx
-	 YjyxaYOzD3WEXXa6xqFxLJrdCr6zaNB9WgGZY/cwqTySfG2ktmoLSn+IAAWJ39aYaz
-	 lPQro+4RKDvhuztSWyu8q/z3j1tMDLNlwddixzQkrqjyXL2HnaTqIiulZaLTRSXTEv
-	 f8smfN95RqhPw7Oe0wrkOqrAfmJtowy0aeaOUH9SM+MfZjRXqzbNp6lgRvVKq1y57y
-	 RJ6FKOabNXnR1VORrukqhc/kzNhX7sErSjR5iOTp5aBK2NyQwk34IH9z00pYbnV5NW
-	 O/HppF4vFXwGA==
-Message-ID: <bf3238fb-4fad-49b2-975c-e35d93cafe7c@denx.de>
-Date: Mon, 10 Jun 2024 19:29:31 +0200
+	s=arc-20240116; t=1718040689; c=relaxed/simple;
+	bh=n9rffRvvZDo46Wm4EmkIP9rTg/Dg4fSh/n65t+tFCaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zohlf/f6/egYbsxc+nmw4fq/Jq4S905gnZAnSgBMmCQDGcUWxptqPg2iZEeOR53erPgcNZCCUBJ02qu/N8wvRjSP0Z3MUOijkcrTvX9M8fcZNVM5b+G8LUel0xr9PehAizeYMFJXmZUAOTNAif93BavOIszPGTp+TwN+asldA0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ej3yi98M; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2506fc3a6cfso2297497fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1718040687; x=1718645487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLPNuDrUNKDp5u92gqFlS+I5przmPvAZoMgl2TmV6Gw=;
+        b=ej3yi98MUBQOprm9CDvAr6Skn3VwYbw46Y5ZHRwl9iFzGWfWTgAf4Qfz2mvMkYwWpA
+         qfY0+nUqCv5Nuz7kiwblVFQLbXjKfwlN9n9LlL44iEsHn0zEbp5XoPkhz8x+UM5Kd9yq
+         iMhbHxXilxbFuzlBal80MGMb0RHHqRh1fL2hW0KEaS9sS2H4h48/Q030XUIyuDCvjxdk
+         rOn8hu7eTcHBMdwNVEMYuVE4UeRuF5IrOvLvxTg0/PkhufMeLRmctvZTJoRMZg4bDxeH
+         6mIvf4B8580auN7EnGCCCX3UsXhGyNAF8KdYD0bd6u1ovV+MrQqY7NknTZrP4fUcg6t6
+         Ie9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718040687; x=1718645487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mLPNuDrUNKDp5u92gqFlS+I5przmPvAZoMgl2TmV6Gw=;
+        b=STH03KO1MppbW7t+ho4uxD+63qTLp3Jcme9WMe4sy9Aj9yY3z51Yw0LjJwM1R9tb+n
+         veVs3mJ3RCrgknhTIUeN22wkCeEFuAyX8Mlm0PaOcGQkh6H/y2FB8QntB89aT/PAh40m
+         JIaOiFyUFnkK88QmeP3QEi0ynHp97hXOslCjnWxIAXmXh9Mz+7s4Z3830Na/n/7PcUWf
+         LaCePjS+k2/1B7pJUugiBSo/TS70Fel80km9rMmdb2Cux0iBiI8WjAuJtB7zGXNKaQVg
+         Wdy9stYm2sDApk9mIcQCkcDGi3lLCXm2+KEu97JipGmDCm8dOJgTE/Pr98HBEJfO1qK0
+         OW7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWmh90WS2VW0NpFjB2pcwW5A3cr8sK9NEP+U7FJxKb9iXWLDZ87W+IuFHD2jX+XBEw2aeYHeJbpOo3I6od2zE8XsBwGJTfSfGzI1eCX
+X-Gm-Message-State: AOJu0YxD2zhWlb2OdsQ+aR020N5PqsebFZk43elCiXm26JVn90HeHeJo
+	p2tLvSyr9dHr0alAquit5tnoEBTTrLSVdbROaaGsEZb5AQAVdHDia7A8VYpVoqE=
+X-Google-Smtp-Source: AGHT+IFXpbUysE/xAsd86TbRqWbmmSWkpKf5x4NJLkNSutmjNPooTKdkJFVMwrKZ0jmXH4RSO4kJuw==
+X-Received: by 2002:a05:6870:ae81:b0:24c:ad9d:417f with SMTP id 586e51a60fabf-25464475e26mr11011556fac.7.1718040686697;
+        Mon, 10 Jun 2024 10:31:26 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.89])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79550c14b4bsm266991585a.29.2024.06.10.10.31.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 10:31:26 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sGirc-00Eq4E-Gf;
+	Mon, 10 Jun 2024 14:31:24 -0300
+Date: Mon, 10 Jun 2024 14:31:24 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu: Make iommu_sva_domain_alloc() static
+Message-ID: <20240610173124.GK791043@ziepe.ca>
+References: <20240528045458.81458-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH v6 7/8] net: stmmac: dwmac-stm32: Mask support
- for PMCR configuration
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240610071459.287500-1-christophe.roullier@foss.st.com>
- <20240610071459.287500-8-christophe.roullier@foss.st.com>
- <20139233-4e95-4fe5-84ca-734ee866afca@denx.de>
- <c5ea12e7-5ee6-4960-9141-e774ccd9977b@foss.st.com>
- <09105afe-1123-407a-96c3-2ea88602aad0@denx.de>
- <91af5c61-f23f-4f72-a8c8-f32b2c368768@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <91af5c61-f23f-4f72-a8c8-f32b2c368768@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528045458.81458-1-baolu.lu@linux.intel.com>
 
-On 6/10/24 3:49 PM, Christophe ROULLIER wrote:
+On Tue, May 28, 2024 at 12:54:58PM +0800, Lu Baolu wrote:
+> iommu_sva_domain_alloc() is only called in iommu-sva.c, hence make it
+> static.
 > 
-> On 6/10/24 15:43, Marek Vasut wrote:
->> On 6/10/24 1:45 PM, Christophe ROULLIER wrote:
->>>
->>> On 6/10/24 12:39, Marek Vasut wrote:
->>>> On 6/10/24 9:14 AM, Christophe Roullier wrote:
->>>>
->>>> [...]
->>>>
->>>>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
->>>>> @@ -303,7 +307,7 @@ static int stm32mcu_set_mode(struct 
->>>>> plat_stmmacenet_data *plat_dat)
->>>>>       dev_dbg(dwmac->dev, "Mode %s", 
->>>>> phy_modes(plat_dat->mac_interface));
->>>>>         return regmap_update_bits(dwmac->regmap, reg,
->>>>> -                 dwmac->ops->syscfg_eth_mask, val << 23);
->>>>> +                 SYSCFG_MCU_ETH_MASK, val << 23);
->>>>>   }
->>>>>     static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, 
->>>>> bool suspend)
->>>>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
->>>>> stm32_dwmac *dwmac,
->>>>>           return PTR_ERR(dwmac->regmap);
->>>>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
->>>>> &dwmac->mode_reg);
->>>>> -    if (err)
->>>>> +    if (err) {
->>>>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
->>>>> +        return err;
->>>>> +    }
->>>>> +
->>>>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
->>>>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
->>>>> &dwmac->mode_mask);
->>>>> +    if (err)
->>>>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
->>>>
->>>> Isn't this an error , so dev_err() ?
->>> No, it is only "warning" information, for MP1 the mask is not needed 
->>> (and for backward compatibility is not planned to put mask parameter 
->>> mandatory)
->>
->> Should this be an error for anything newer than MP15 then ?
-> For MP25, no need of mask, so for moment it is specific to MP13.
+> On the other hand, iommu_sva_domain_alloc() should not return NULL anymore
+> after commit <80af5a452024> ("iommu: Add ops->domain_alloc_sva()"), the
+> removal of inline code avoids potential confusion.
+> 
+> Fixes: 80af5a452024 ("iommu: Add ops->domain_alloc_sva()")
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  include/linux/iommu.h     | 8 --------
+>  drivers/iommu/iommu-sva.c | 6 ++++--
+>  2 files changed, 4 insertions(+), 10 deletions(-)
 
-Make this a warning for MP15, error for MP13, do not check st,syscon 
-presence for MP2 at all. Would that work ?
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
