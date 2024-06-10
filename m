@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-207783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D9D901C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:48:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1204B901C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03C0281DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1037F1C21C00
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7804A2EAF9;
-	Mon, 10 Jun 2024 07:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FAD4436A;
+	Mon, 10 Jun 2024 07:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fF5w3FRB"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj89g7jA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E1B1CD15
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0393F9FB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005697; cv=none; b=PwqCsh0efs1hEn2m0BTkgOnQsg9t7g9UxPOsr+OTF59MPD92rolGQFTrGgy5yWHp7xIP51tsOl/n/By3SLSZM1z3rLycGJyiGV0jKQ00Ac23K4pQgOkOa1JxjVvoUWRgiXVvoZhjMxp+5P+4g+WptKH4iRQqjHAqj/8VmsFbOrY=
+	t=1718005703; cv=none; b=Rf71tdTR0jTO1wxtPDeTmfU4mUYhMcNev/1gWTVGlX/uhynq2Xyz5jXd9LdaYzNgLFy+5XkJT3fHM4zoPY+qmqmc5Kbar27ry6dPdaJq35XeBRySX2WG4h13hXPV2UbdFJdGs7dW0+56JpSWxuvQMtsA85dhvKTMSmIY9nhBr2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005697; c=relaxed/simple;
-	bh=yIFJhJlqUEmhDJ796KYs+GXtVDOefUkAE15z5R9Yo5Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=KyLtTv86o7GUU3lnf8woM/o0IWW1oLcGbPgbUkMqIcFr2xMRa61sai54MAK0Xec9NTYaeCTNMyYZEIhrXRjQl9jk6lNX0GYWFPDC31limqGqBC9jKsTEwNKMrl+J0lkCi2aGtV9CNLJNE/SzcFYw3fSBfND6oj+htKb0bBajVxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fF5w3FRB; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718005691; x=1718610491; i=markus.elfring@web.de;
-	bh=9dz+LpUwqzpAR1PcrgVqI/vrt3YGcppl4SfjD+L/sbQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fF5w3FRBdUeCTc/MyZk9lQbjdSu33hPAQgWsWIk6QaT9vZd2/1SSxFna1b/1bd/n
-	 OXNaMwFlpSutwLnlA9k2RKsxvwobgJPP+gIgsyY0sJPGth4ZlAMgZtzGUcYPlkGOy
-	 04Nx8tBkm6b2IFPlmLZdtbf6pCS9ikl3jHoWe48Xdb4PDvafHLsJREk+TF7QBDLfa
-	 GqpxYsRb0UIM91h8IFYFrc+XZIuKPpcxVO0BxUthQ4VH0qwyC4oN8PWByYFF6s+lp
-	 R6OcJBIdF2TO728OpE2CwrBpdmaxLAK1HOmNh/lhvj9TxLVMSMjNwEQCEMsHdLrl/
-	 QI2Y1fVdY5DZxY9H0w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8Vop-1sTxjW20fJ-00xUce; Mon, 10
- Jun 2024 09:48:11 +0200
-Message-ID: <0485dd2d-488a-40e9-b0f7-24236b9c00ab@web.de>
+	s=arc-20240116; t=1718005703; c=relaxed/simple;
+	bh=2qRE8JlGLZ2v3Gb/BpOQHXVYxdux+LqVifqY0jGju70=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W/8CxYLpLKeIhaVJxRhVuXoz3bMoxcOtjMDVexUHRw50QqL1kZYGhQwfBQectCyExpdPYsWCAEoyEJVMAlGuay2HdL0lEqcXivj3BMoYpxJKYJf2LiSe8BParK75tIlc1f9aMT1TzC3al245QLJyeFRVXM7L+EFiW3cDMa0uCE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mj89g7jA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397D1C2BBFC;
+	Mon, 10 Jun 2024 07:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718005702;
+	bh=2qRE8JlGLZ2v3Gb/BpOQHXVYxdux+LqVifqY0jGju70=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mj89g7jA6W9wPM/LUrs7z1lITBOBj9JdkJyn5HmVzF7a0YuXsYtYjSF3WsiyerHUw
+	 R7hkyoVeRAjW9EDb9x22cAXRab275h2U8ZXVgTzu5Mid8+ZOauy6NnHQedcCcMroiW
+	 uG+TofcmkVzClfUkFZorMnVk5Apig6fT4ZUxrYCUimC5dhQJYPomMgc3TJvZZDNFpN
+	 QV/hQpBDdSS2P4xRlfb6ydgRwi1NYOuFEc2wmhIbCp1EQRV3fggutfYAWA0JONyBpZ
+	 WNqg+jpckVETcv9IGdBlIbM73kWAqMG7DVXxuf8bc4pExIkfn53w7hjHTGV7R/TbU+
+	 7Ee8JLVxzvhQw==
+From: Michael Walle <mwalle@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	e9hack <e9hack@gmail.com>
+Subject: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
 Date: Mon, 10 Jun 2024 09:48:09 +0200
+Message-Id: <20240610074809.2180535-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
- linux-kernel-mentees@lists.linuxfoundation.org,
- Evgeniy Dushistov <dushistov@mail.ru>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240610034219.14711-1-luis.hernandez093@gmail.com>
-Subject: Re: [PATCH] fs/ufs: Use LUT for dir entry types
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240610034219.14711-1-luis.hernandez093@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9EpwbBoA8M65Cv2LAnjdv99MJe5RQMoHiyf5Cqk6SK1M0h53dTL
- kcz45yHLWYfYKEm9ANT+hiM2WAgSse68YAJ2iHvAR/GFB8SOQRkGcmDk3D0xrhF5O+qQXeU
- 7QfJ2MloBtVDrzUt+vhifRWk8PQbpdVyGaPXipgCloKBlPgozRB6R0IAdeLDrnrRSPIrsBl
- 2u1ExIp/WpLDZD/wgADyw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gC+qJnmT3NE=;ll/oDAQ/T5aRm8uQIdaUKQ4+4P2
- y+UYtArfCJumn/pmr+295KNbK1yhk8hl3ZgGC+bWtMzhp2zmm6+rLua6o3jhuqMX+T3CIoAX+
- m7nN7SEOZbPRNORrJKvpkOToF9mbqwnxIVX6BWh34Vqxp4BX7dne4L9JKCD1qklPZwPTAXJAv
- j6C7EqJzl6pEPQiV2/dc17LYA1NsnnZu9fmzwUPYi/FRTmOwTb8tj00X2v6m183VuUN/2tYOr
- YNTalgWKai3KwHbT8RYsLwmGtSMry1BupubGTWp6NSFIcF9N62SEWqJ/m2rT2j0XhnhaDwSpD
- jHKV+KrpXzqtSCYk1x0PpLlEX9U0S1o+Xk+x/teZxel6/h0vEbCFXMY53lE6cIiT4WfwYt5nY
- XcZVWhOrgBPtWuKk+AWZbT7Q1lo73lOU1w0nvKKacqp6kcgqM1s1m0ZwuNn9MCNd4hFjWAFqa
- tmjclvISFfWbumTppkab2KzRp/W03fI0rLZx5ToAK0qvPMcbUS9SpOMWgBnEzc7floM+7dooP
- OXjLinSZM2C64Q5SxhpTxbnOkZq9nilOXawSQVWfC+fDrCoVQ2tx4jsx4Oh25m/XpgX6oSCpx
- gsDE/xJRKj2Tbhc7zwZEuFPAQnaY3tJj3jIMVpvwXD31kayJy5Wp3a7YI5RJje6O9iw50nhq7
- ecBrwUP7b/yabmFA8UfQ9HjPm6rGGxJkvyUsUbcWHUPF2oJke18DTKSlOzRC5Kvr6ahG0vCUw
- 9V5IK6i4GCdqmuLaUFhlpzOzvZn5WeCyMa3d/Y6vnLmef+/Jkcgdqz6DYpTtZZV3o9mnROfgr
- rS2c7PMcPgcdYPQyquofasCRbVZYyp1GonUA48dkRuPSw=
+Content-Transfer-Encoding: 8bit
 
-> As per the original TODO, replacing the switch statement with a lookup
-> table results in more concise mapping logic and improved performance.
-=E2=80=A6
+Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+removed the flags for non-SFDP devices. It was assumed that it wasn't in
+use anymore. This turned out to be wrong. Add the no_sfdp_flags as
+well as the size again.
 
-Can imperative wordings be relevant for another improved change descriptio=
-n?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
+Reported-by: e9hack <e9hack@gmail.com>
+Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+Hartmut, Linus, could you please test it on your boards? Also, do
+you have a real name we should put in the Reported-by tag?
 
+This will also need a manual backport to the stable kernels due to
+the new syntax. But that should be straight forward.
+---
+ drivers/mtd/spi-nor/winbond.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-=E2=80=A6
-> +++ b/fs/ufs/util.h
-=E2=80=A6
->  static inline void
->  ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int m=
-ode)
-=E2=80=A6
-> +	if (mode_index < ARRAY_SIZE(ufs_mode_to_dt))
-> +		de->d_u.d_44.d_type =3D ufs_mode_to_dt[mode_index];
-> +	else
->  		de->d_u.d_44.d_type =3D DT_UNKNOWN;
-=E2=80=A6
+diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+index ca67bf2c46c3..6b6dec6f8faf 100644
+--- a/drivers/mtd/spi-nor/winbond.c
++++ b/drivers/mtd/spi-nor/winbond.c
+@@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
+ 	}, {
+ 		.id = SNOR_ID(0xef, 0x40, 0x18),
+ 		.name = "w25q128",
++		.size = SZ_16M,
+ 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	}, {
+ 		.id = SNOR_ID(0xef, 0x40, 0x19),
+ 		.name = "w25q256",
+-- 
+2.39.2
 
-May a conditional operator expression be applied at this source code place=
-?
-
-Regards,
-Markus
 
