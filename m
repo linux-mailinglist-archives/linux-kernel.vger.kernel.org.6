@@ -1,148 +1,155 @@
-Return-Path: <linux-kernel+bounces-208121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACEB90210C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:00:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F22690210F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD30B2716E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:00:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B097B27211
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2D17F7C2;
-	Mon, 10 Jun 2024 11:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEB77E766;
+	Mon, 10 Jun 2024 12:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="WJJso2M2"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wnz26ipn";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wnz26ipn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0285770FF;
-	Mon, 10 Jun 2024 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9961F171;
+	Mon, 10 Jun 2024 12:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020766; cv=none; b=MbhW1EAEBMzphYtF+71YYZq6KNyvxd2TKrGC9WBtfIQGQOS+0kFIS/K0jVaqV7YdHAcHx03ZvULAlq72+iTl/43rrVwm2aJNWm7hCYuXSywfGZcTQapm8ysxyIu9qTzfB/BA11VXLsmW7ynGplQntRqv7yd+LocVRqEAzYQLeEY=
+	t=1718020829; cv=none; b=lf72g5Azr7ED5tKEYfRuK3/6jj6DTuLuMQIW+BL76CFnTtx7a6uZTrr2SisYCYjEy++vjRmbrW+DM6Zeqnxa90l2s6Lz5aPAVn6lQe74Xu8uYoe8IrC0+g6EwWb5sjFpJW0eT52WrbnzTMCw6t8YGMIH0FvUuBCFTgyPHxIGdto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020766; c=relaxed/simple;
-	bh=AQW3KRBl3PqmimCKD4Is8cPSYUyDWKvNDQSE5lbUNX0=;
+	s=arc-20240116; t=1718020829; c=relaxed/simple;
+	bh=acUR3zUJwolkHUEToKVKtJFNeC9oRwyTpo2IsGwK7Hw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efNULUkFUXbDlVGY/94lh3N7VwaicOZ5ewohFsuQHZooTCldHfUzkcQW2ZrDSaKpvD/vTadEueNrZx/Khu1Li36N01BUKi/1s5DQrx7SWaYVVzmJQm0jIaeenhP4DRWj73pLxOEVuMlWbrwTr3ymAmRFcQbpTWXa+U3rxWxE12I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=WJJso2M2; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 546AF1FB6C;
-	Mon, 10 Jun 2024 13:59:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1718020753;
-	bh=/q4vYPFqxBCRHYZkSp6vEtxYFhA1GVHtEgKxwdr8R3w=; h=From:To:Subject;
-	b=WJJso2M2zwVpu1htsxWWK7DbUfEaHQNtxGfSDiAyfXhsVBAuvNvC08u27I+mCVTjX
-	 mw0lnayu6JcRsK3W+hfBx9ld2ClCCTDlPVXcptX7H0NcPgTxPKGUSaTUPXxNaRHKCO
-	 I93CMRcL6maNOv/9TanGNXsiZrmkT553j5FZI74YZITfOhD0Rg8Pbs2XRxFiVaHcIK
-	 UIlgcsfunswz2T0ws7qD0xSVo6Z9+141Psd8tYpal6rfNO1Ck+P0PtDCrHdoJikPYs
-	 o09gzMxF3iVVRD1pc9XpdgnW65FKg+ko1XBMtHVfcGeuvV8AkEhLcYvuWbqdxrVyOR
-	 tyq9BllrV2VIw==
-Date: Mon, 10 Jun 2024 13:59:09 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads1119: Add driver
-Message-ID: <20240610115909.GA27057@francesco-nb>
-References: <20240606163529.87528-1-francesco@dolcini.it>
- <20240606163529.87528-3-francesco@dolcini.it>
- <20240609115234.20e08840@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYlUgTSfGLRIzqG8vZGBGAQ2FYKuVmG2XEY046+MvIKke505FxO0Np/WuqTGGIN4DZ8wAVdH/qt5bu97dcHw6WfwnELb9+uuH4t+sWcqeoe+Uk2k7ogHzQ+7nQdjqR3XzmNMyQ1ADuHDgK9HbHphz2Kh1rqKVb3VMuFOouFZSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wnz26ipn; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wnz26ipn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 51A411F7F0;
+	Mon, 10 Jun 2024 12:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718020826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8a0YO74G5ZN6eUsTagdB66KLLDnxZNwj4Mba32IuxoE=;
+	b=Wnz26ipn69xTzQFmPeEPoPPT/LMjAAyDQB0T1j6WPf4TE5WsHZmWjg13mUi4LMriSZGOWF
+	ej+OP9Van/MA3afU3UV0ZL+32iv+dE6eV9FAl/zouKoafQNMM3Y28gyC3feWC5wiGh9wQX
+	8DvTmh5Wbo/GaJ0/Tl/D3qzljrlX0bQ=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=Wnz26ipn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718020826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8a0YO74G5ZN6eUsTagdB66KLLDnxZNwj4Mba32IuxoE=;
+	b=Wnz26ipn69xTzQFmPeEPoPPT/LMjAAyDQB0T1j6WPf4TE5WsHZmWjg13mUi4LMriSZGOWF
+	ej+OP9Van/MA3afU3UV0ZL+32iv+dE6eV9FAl/zouKoafQNMM3Y28gyC3feWC5wiGh9wQX
+	8DvTmh5Wbo/GaJ0/Tl/D3qzljrlX0bQ=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 325AB13A7F;
+	Mon, 10 Jun 2024 12:00:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3cJMCdrqZmYEGgAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Mon, 10 Jun 2024 12:00:26 +0000
+Date: Mon, 10 Jun 2024 14:00:21 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Jann Horn <jannh@google.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, tglx@linutronix.de,
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v16 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <Zmbq1dGPIYdRLw5_@tiehlicka>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-2-Jason@zx2c4.com>
+ <CAG48ez0P3EDXC0uLLPjSjx3i6qB3fcdZbL2kYyuK6fZ_nJeN5w@mail.gmail.com>
+ <Zlm-26QuqOSpXQg7@zx2c4.com>
+ <CAG48ez3VhWpJnzHHn4NAJdrsd1Ts9hs0zvHa6Pqwatu4wV63Kw@mail.gmail.com>
+ <ZmMamtll1Yq1yfxc@zx2c4.com>
+ <CAG48ez0pan8aLGjHtoDdrpiP+e5YrGeuD_RzDXgzUwkUvWYLjA@mail.gmail.com>
+ <CAG48ez1k0J013tYLfmnT8NXRpG_5BR10xnH8r-yRvTLpJe-nLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609115234.20e08840@jic23-huawei>
+In-Reply-To: <CAG48ez1k0J013tYLfmnT8NXRpG_5BR10xnH8r-yRvTLpJe-nLA@mail.gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 51A411F7F0
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.com:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
 
-Hello Jonathan,
-thanks for the review.
+On Fri 07-06-24 17:50:34, Jann Horn wrote:
+[...]
+> Or, from a different angle: You're trying to allocate memory, and you
+> can't make forward progress until that memory has been allocated
+> (unless the process is killed). That's what GFP_KERNEL is for. Stuff
+> like "__GFP_NOWARN | __GFP_NORETRY" is for when you have a backup plan
+> that lets you make progress (perhaps in a slightly less efficient way,
+> or by dropping some incoming data, or something like that), and it
+> hints to the page allocator that it doesn't have to try hard to
+> reclaim memory if it can't find free memory quickly.
 
-On Sun, Jun 09, 2024 at 11:52:34AM +0100, Jonathan Cameron wrote:
-> On Thu,  6 Jun 2024 18:35:29 +0200
-> Francesco Dolcini <francesco@dolcini.it> wrote:
-> 
-> > From: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> > 
-> > The ADS1119 is a precision, 16-bit, analog-to-digital converter (ADC)
-> > that features two differential or four single-ended inputs through a
-> > flexible input multiplexer (MUX), rail-to-rail input
-> > buffers, a programmable gain stage, a voltage reference, and an
-> > oscillator.
-> > 
-> > Apart from normal single conversion, the driver also supports
-> > continuous conversion mode using a triggered buffer. However, in this
-> > mode only one channel can be scanned at a time, and it only uses the data
-> > ready interrupt as a trigger. This is because the device channels are
-> > multiplexed, and using its own data ready interrupt as a trigger guarantees
-> > the signal sampling frequency.
-> > 
-> > Datasheet: https://www.ti.com/lit/gpn/ads1119
-> > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> 
-> A few more comments inline. Some of these I missed in the first
-> versions - sorry about that.  Takes a few passes to pick up
-> on everything unfortunately.
-> 
-> > diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads1119.c
-> > new file mode 100644
-> > index 000000000000..ea0573f07279
-> > --- /dev/null
-> > +++ b/drivers/iio/adc/ti-ads1119.c
-> > @@ -0,0 +1,850 @@
+Correct. A psedu-busy wait for allocation to succeed sounds like a very
+bad idea to imprint into ABI. Is there really any design requirement to
+make these mappings to never cause the OOM killer?
 
-...
+Making the content dropable under memory pressure because it is
+inherently recoverable is something else (this is essentially an
+implicit MADV_FREE semantic) but putting a requirement on the memory
+allocation on the fault sounds just wrong to me.
 
-> > +
-> > +static int ads1119_cmd(struct ads1119_state *st, unsigned int cmd)
-> > +{
-> > +	dev_dbg(&st->client->dev, "cmd: %#x\n", cmd);
-> > +
-> > +	return i2c_smbus_write_byte(st->client, cmd);
-> I'm not a fan of tiny wrappers to add debug info.
-> The i2c core has trace points that let you get to the relevant data. Better
-> to use those for debug and flatten this code so we
-> see the actual bus accesses inline.
-
-Fine on removing the debug prints, we'll do.
-
-However ads1119_cmd_rdata() and ads1119_update_config_reg() wrappers are
-making the error handling in the caller easier.
-
-Either we remove only ads1119_cmd/ads1119_cmd_wreg or we keep them all
-for orthogonality. Both works for me, just let me know if you agree and
-which option do you prefer. Personally I would keep them all without
-debug prints.
-
-> > +
-> > +	return read_poll_timeout(ads1119_data_ready,
-> > +				 data_ready,
-> > +				 (data_ready == true),
-> > +				 wait_time,
-> > +				 ADS1119_MAX_DRDY_TIMEOUT,
-> > +				 false,
-> > +				 st);
-> Over wrapped. Aim for closer to 80 chars.
-
-I'll do.
-Do you have any rules on the IIO subsystem driver? IOW is it fine to
-have line slightly longer than 80chars if this improves readability ?
-
-Francesco
-
+-- 
+Michal Hocko
+SUSE Labs
 
