@@ -1,74 +1,64 @@
-Return-Path: <linux-kernel+bounces-207789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D082E901C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4E2901C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510F52830CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397F12811FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FFA3F8FB;
-	Mon, 10 Jun 2024 07:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53783F8FB;
+	Mon, 10 Jun 2024 07:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Au2wHBkd"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="4b+FObhI"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629F42CCB7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2972CCB7;
+	Mon, 10 Jun 2024 07:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006049; cv=none; b=Q185NYvsYI6bp1pFzrjio6oM32hwPK03LWE7ETbqZOQ8qriae0xDYKOAncf3eBe7ZBJjrsTkabm7ywUp+HGj0MvesQeTVYJTifUVHjC15I0SKyceMuTT93QlTk6CscPVEU71XoXu5AoLAWrbhBr0uUIdHmCANKbad4z78JeRSxw=
+	t=1718006215; cv=none; b=VbpCyv3B6abXYdic8q4xAyIhnS1nyhriSpM24ZD1QReyJZFoHgURInh0o3yZUQLMBz1druGho5J7VqWqBPyNpXi6oQEUYiQTqUxbPZFRLYF0KQdqK+v9KTS6dFRTelwp9rrwzRSh5Ztwu2JeCOeeoB/I0KrgmMM8CxzEed9tRMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006049; c=relaxed/simple;
-	bh=zqamPiF739sol86TOJ8tkxxMTNunwcjcMwV8NwVkf+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/oDqHGy5JnKT5qQemSM/2oUcQerWq3jfKJDzKAO+h9n4Z1llx8AQr5wPfAVRIrRXkPP4pRdnv1zRKdbbiCLFx+e9Cu1fYeGhiJuGNOWDiOGoMggaEwpJ8NocMg4yifOwUcp2WyF0Rcb6hq7LZCW2DXJVtEerAR3iR+SPNTUetQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Au2wHBkd; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6cb130027aso176443866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718006046; x=1718610846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ynBzD6IDnomBAQa1qUjkFMCs1faPI4vdoJ0aRWuOqhM=;
-        b=Au2wHBkdHsBVF7F9w5rMzcj4Lax6MbTXov5vqhEs6GDvGX1YvUK9VrZ2p+KG0rx82D
-         ELRCW7aCoOZY5UU8x20XE/e0zezxw2TnbQ4fhJdcVLbMq/G9KDTv3Mxz7PSlI5eXvWt8
-         X4KO9DHOZUY1n9gJvdggp1EWpmbVBGk3cB53BdVim3mbVx/hYhLCxtOrVrFcIjXQcZ3T
-         O/wpQfkoDnzlB9mkNEKzkZs/S8Uzdw63x8QZ4/q59uhCldDkQ9N0kHdYF5wKqqcRrNG3
-         AnYMxn8UX+5bXUF2Pg5x+xOv/jlMgd2IAjSc3M3kjGT4ezuZCn/csJVCepf91YzGA4MH
-         o1Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718006046; x=1718610846;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ynBzD6IDnomBAQa1qUjkFMCs1faPI4vdoJ0aRWuOqhM=;
-        b=hZB3VmOHlyh3bhQTl40opUM+NlwvJo/T9GdX+Yr9z6YojTYuW0sCtKIxRXdK4SSUa2
-         WpWUyqecMpAgfT5M39AolTMWnM7cI8kexfBoGWR4QerDsnh1meNz7NRhl2nV0//Q7qmM
-         UF5cukpT5+6hOcQ0mz+qaqpsTxXs4hWmFE3LSqiL2CylAUASHDViPMN6M8voG0XOQ4HV
-         9awghsTTzEzZqLiNLQ98YdYb9NhaSVVlwB+nSEdmJTEzNVuLsdKenbjB3aFa60qiLV+N
-         KbDvoeZGFjaih6o9XIsMbmGiEHo3v8h7/Ltkuvz2WsO7kXryc+I3dQCRay30D7KmsvSq
-         sFnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN9YJZsH8mV2XjRk0UsrTiIVgHq8tK4h8Q6g3wXz3+96juwRAA3KaQgzExTNrekcSc14gX07MlFeLBjq1g4elXhXiL45b3U8QOC796
-X-Gm-Message-State: AOJu0Ywv4UbF+jhz0eW/z8+BqZksT3va/j1Ks3mWJRBlCIFn6u4F9m7Z
-	tV5ofwCDBrzYxqMtNo46h0HOjBw2p4JPdtfc43pCBJp0HJUQDQ6dYhYLB1fkg+Y=
-X-Google-Smtp-Source: AGHT+IHdRdyLJ6WsyrheYFHxIeRPB0oABICESCj9zuJtPpg8iBOyfbB7pnW2O0rRtS8oYHhFAWfpQA==
-X-Received: by 2002:a50:f60b:0:b0:57c:5874:4f5c with SMTP id 4fb4d7f45d1cf-57c5874587emr6584352a12.32.1718006045617;
-        Mon, 10 Jun 2024 00:54:05 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c71885170sm3350965a12.2.2024.06.10.00.54.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 00:54:05 -0700 (PDT)
-Message-ID: <cf49fbb3-9de6-4e57-bc38-d720f76118a7@linaro.org>
-Date: Mon, 10 Jun 2024 09:54:03 +0200
+	s=arc-20240116; t=1718006215; c=relaxed/simple;
+	bh=dh3H2sVa5FYN8i0we4x3+R7a9sJ1pfHXhQg9MzCf3is=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XUPV0JWt7JcviFp2oRXtIjBG4AAswv1z+nfmtatYVt8PpbaSJSZDiS7w4wDlXEaO1w9k9CxL1EGlVpMoNsd9N0khq9cKiLbXULsr/0Q5wO5UZLi4Gka064NYZHI6vwjezaQ4qmXJY9anC38MpjqlYghIlo0+qBZ8doMTwvnIxd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=4b+FObhI; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459KxQcm013767;
+	Mon, 10 Jun 2024 09:56:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yUKOFPOQwgaRW01h/tUPDgk5dTLq6HjrNeJuxMsBV3w=; b=4b+FObhIu7awR+Oj
+	axyQMwNtyspUjkysg4sAb4ZMzRR9eaHY+fccYwXqQQNk83L5UA7vGr12lHrxqjxY
+	Kxnelk55DtgzfmIt5fD0Cu/S/nFt+dmOsNcCndDwN20CvzgGHOLmKEoYqJ+X2+RN
+	Rcne6hOqisd/rwg/0bfweDNrhpYi/YpflY6mUTni5FYSOnyC5w6QdUHd/1hUnDAC
+	tstW9dpmalPvNhkgld9C9jHjbL1cD+YKdVGCgLEnuV+yI9empFO8RAUjzPXmppIh
+	UiPoo4GE23wFSDePOQCHPwaPj9rJdL5+hpfBG9Y9xztRQGHDX+4kLBe4IaNNOe8C
+	MdabPg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ymemxnmtd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 09:56:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2D57540044;
+	Mon, 10 Jun 2024 09:56:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 60AF7211940;
+	Mon, 10 Jun 2024 09:55:07 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 10 Jun
+ 2024 09:55:06 +0200
+Message-ID: <908c2e86-8255-4e76-8665-0b7d02853681@foss.st.com>
+Date: Mon, 10 Jun 2024 09:55:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,118 +66,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
- interface
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Louis Kuo
- <louis.kuo@mediatek.com>, Phi-Bang Nguyen <pnguyen@baylibre.com>,
- Andy Hsieh <andy.hsieh@mediatek.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Florian Sylvestre <fsylvestre@baylibre.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Paul Elder <paul.elder@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>
-References: <20240110141443.364655-1-jstephan@baylibre.com>
- <20240110141443.364655-2-jstephan@baylibre.com>
- <e0bf8667-cbb8-49ba-bb44-3edf93b019b8@linaro.org>
- <CAEHHSvYt-aqFahi=B_si=duJH8xDgy_9nndgR-P0+U5THX69uw@mail.gmail.com>
- <20240607144154.GD18479@pendragon.ideasonboard.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 09/12] ARM: dts: stm32: add ethernet1 and ethernet2
+ support on stm32mp13
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240607095754.265105-1-christophe.roullier@foss.st.com>
+ <20240607095754.265105-10-christophe.roullier@foss.st.com>
+ <6d60bbc6-5ed3-4bb1-ad72-18a2be140b81@denx.de>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240607144154.GD18479@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <6d60bbc6-5ed3-4bb1-ad72-18a2be140b81@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_02,2024-06-06_02,2024-05-17_01
 
-On 07/06/2024 16:41, Laurent Pinchart wrote:
-> Hi Krzysztof,
-> 
-> On Fri, Jun 07, 2024 at 10:52:33AM +0200, Julien Stephan wrote:
->> Le ven. 12 janv. 2024 à 08:32, Krzysztof Kozlowski a écrit :
->>> On 10/01/2024 15:14, Julien Stephan wrote:
+On 6/7/24 14:48, Marek Vasut wrote:
+> On 6/7/24 11:57 AM, Christophe Roullier wrote:
+>
+> [...]
+>
+>> @@ -1505,6 +1511,38 @@ sdmmc2: mmc@58007000 {
+>>                   status = "disabled";
+>>               };
+>>   +            ethernet1: ethernet@5800a000 {
+>> +                compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
+>> +                reg = <0x5800a000 0x2000>;
+>> +                reg-names = "stmmaceth";
+>> +                interrupts-extended = <&intc GIC_SPI 62 
+>> IRQ_TYPE_LEVEL_HIGH>,
+>> +                              <&exti 68 1>;
+>> +                interrupt-names = "macirq", "eth_wake_irq";
+>> +                clock-names = "stmmaceth",
+>> +                          "mac-clk-tx",
+>> +                          "mac-clk-rx",
+>> +                          "ethstp",
+>> +                          "eth-ck";
+>> +                clocks = <&rcc ETH1MAC>,
+>> +                     <&rcc ETH1TX>,
+>> +                     <&rcc ETH1RX>,
+>> +                     <&rcc ETH1STP>,
+>> +                     <&rcc ETH1CK_K>;
+>> +                st,syscon = <&syscfg 0x4 0xff0000>;
+>> +                snps,mixed-burst;
+>> +                snps,pbl = <2>;
+>> +                snps,axi-config = <&stmmac_axi_config_1>;
+>> +                snps,tso;
+>> +                access-controllers = <&etzpc 48>;
+>
+> Keep the list sorted.
 
-Eeeh? January?
+Hi Marek,
 
-...
+As already explained, all MP13 IPs have this property before "status". 
+If we must move this property, we will do it later and do it for all IPs.
 
->>>
->>>> +
->>>> +          seninf: seninf@15040000 {
->>>
->>> Node names should be generic. See also an explanation and list of
->>> examples (not exhaustive) in DT specification:
->>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> The seninf is (mostly) a set of MIPI CSI-2 receivers. Would you prefer
-> 'csi', 'mipi-csi', 'csi-2' or any other name ?
+Thanks
 
-csi@ works for me
-
-> 
-> There's also the camsv IP in the same series that needs a generic name.
-> I really don't know what to propose for it. Could you recommend
-> something that would make you happy ?
-
-Sorry,that's almost half year old thread. Not present in my inbox.
-
-> 
-> On a side note, that document lacks appropriate generic names for lots
-> of building blocks found in recent SoCs, it would be nice to get it
-> updated. You will eventually get better quality DT patches then :-)
-
-
-The list grew recently, so just add something there. But it is okay if
-some name is not really generic, it's just recommendation.
-
-
-Best regards,
-Krzysztof
 
 
