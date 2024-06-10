@@ -1,234 +1,189 @@
-Return-Path: <linux-kernel+bounces-209065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDDD902C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:41:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C307902C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF841C218C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1F5282C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6700F152536;
-	Mon, 10 Jun 2024 23:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C306C152503;
+	Mon, 10 Jun 2024 23:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nLCZN5Ju"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d8UGfc7m"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169BA3C0C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EB82110F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718062856; cv=none; b=RtkSPsFaw/3oXigl059ScSV7GMJp+U1TBbTRPvUDFPAIh1ExZ7hndh4MgF2BuTytatTA5KvhhtzAODtsqMJM22BOPa+MkVQBwPfyGh5pP+6F08K1aKe8ecpY0P7U+iNKcyBpYEzIGZ8pGq6eccMVKfyEj3YOfjw0z14F880x5EE=
+	t=1718062916; cv=none; b=Dw8/1hGhZQcODA4+73HKRm4ByAIeoufdOEAsZaF56nrBuv0nAevnRNFAnT7f26Rod3bENSCpqqInrpP0RVUgX0Wq/Q0T2lkv2S3YA6EW/HMgdfjw0mNK0N1I0XdmdxBpVApjj6ae7RAgALroj5CdpD5F6PRi2G37defUNZVJOaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718062856; c=relaxed/simple;
-	bh=az8iAxY1+IX8BluLFMbVS7wpU2m8WrFvmMATqq5V84E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nA+9YeZr23YmKPup0quNO9tbZ0T9vrJqWPbsdQgq9Sxc45wlbXKxc7Aa5KKbv5350/jJ/YtDsxdH0sz9jfxC1dCvPxwzzUPS5gH07I6bPiffDzk+voFQpwST6uIScOZCcCPbDTfXqLaedDATTlHaaz8sNm5JaQ/R/pM4kJOiGRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nLCZN5Ju; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1718062916; c=relaxed/simple;
+	bh=abF3cAOdvE/GajhbEj/nLCZX49MHrxy2usW6AxPF+Js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IxXpjHhhL6fwTn0clkpZoQQatKnEvedgGVriZc16YRnptAFh4OK2goA/I5ZM5QHZRuS+cPFdtjNnL+CTmvfgbeolAjA5RqKOV3sXaDr0AScFk8GC0MgmmJAbNlyE2z2gN31t7P6O8OYtjWdtD3t+YmzDf0ymdj0JqqoceDlddJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d8UGfc7m; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6f18acad837so1085079a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:40:54 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217f2e3450so21105635e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718062854; x=1718667654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w0zaitEACw+zYcor2/0Rz63A8WWn/XjClt8MhVkc46Y=;
-        b=nLCZN5Ju+6AUxoZytuEEQXuKGR8RQKZT7MZ/agBSpjTVDm90ya1fvy8QzdfWQFBH1r
-         0NbM3TtEBvq2xy46SZPng+LSWMB/Eha7NQms6fUgudiK07nlQ+5ndyWi+Jerz9pwZk++
-         TMXGOHyvx2hLXydbm1KcbcPH3YgMuFUeYfUSHUCr+5W7tqtt+s0IdqPiKy4rpeLaRMih
-         cFYzQwsDyHw2bGIrsm2zYZ9XRo0IAXjD2LulOtuhfDjPmn2BryLZ6sZUhoyTMUWtCUtM
-         lQbTwuiYEZ0HyHP8YbzDcW1FkO/pkBus0F8riVm0eYakzMSRRe6KJJ9jVRKko3e7Wbts
-         DywA==
+        d=google.com; s=20230601; t=1718062912; x=1718667712; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N+xf+4Khhvj0iiqw7ZQoHFoAsSE9YYEcKJ2hjHteuYs=;
+        b=d8UGfc7mqExhRQnGFOiBJNFW1wwm5eRewGBPwU/aoGj3YbbGxn2PBoZDjcmOHkWdzb
+         RkYrtqcOF93IjOdF0veuSZxCm5iO4VFfyPRtR/F/VBE2+/JX6cuwOjE5t56MKvZf522s
+         lvf7uOD6ySeAX4oYs6aDcKeOokc+/V2G65Q+nKTIKFlKdA8yQ+5PB11TDcJEJB5Yo9Xz
+         xuqSJCGFMj9NrgWkkuTcRdRWznBWsIiERTb8Xr+poBPrtCvHVCqGzGil8tmaGw8odKVe
+         zy+GCvKsUfO4IjbfRLaZuWDvow3NR+crAmwh06Yt7qOH8l90BTfVlmyBlhYSl717kbCt
+         ZMcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718062854; x=1718667654;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w0zaitEACw+zYcor2/0Rz63A8WWn/XjClt8MhVkc46Y=;
-        b=NROzJo34GwAjBDpZduwVeQyV2rWZTmoGMOdTIhSGqTJDS3A0b9ZFceSC82hcNHByWy
-         ynHkXKMzmx3LMvpxzgQgQcLgyHcNDQWvAoquKPwQF+2avm4LMsciEk/LsKeSoO71dXvH
-         Gc6W+rZ4/OMOqsQXG+JfuHmWlPpHmmPjeGPwejw0C53JXCz2CAE12nYaiRzsm77pvt6i
-         xPgo79ajAAfX81OPzwq0N77Tysk/gRUgrfi8wTBm/yKaZfXlY4MkGdwsaIOZw5JnB2S4
-         R+UBYxGPTVZ/zV7RbF1ER35Usu7mW1oEtY1YmVoTbdEpbe213KsJR5jAUQoyuuNan3Hu
-         6EkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVs3F1vapjE730MMBFbqqaMBm1gMessK3Tp6OwXd+jpvcVpBvNIrhR72MngIefDoCYr2ymd50c4Jqf2F+NzlJsXoWWdBRQ1NKEac0GV
-X-Gm-Message-State: AOJu0YwizEdMOfKXZ5ORqipWkQLlNsIK9/Hw4F3OwtB7ZipBLVWp6hap
-	LNycg29ITj47VVx+BIOeuV+zobZdzBIan2r4+d5YY4kw4AOJq/f9het/rXXRP1KdXleU1LEJzA7
-	bxw==
-X-Google-Smtp-Source: AGHT+IHn3PVo41lnRCr7yJNb++zw7O+lmmijXcsB4djuICc4as6iKySBrYpuSDDjxEXLbtREqHnQRFzq5ug=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:482:b0:6e5:ef07:5922 with SMTP id
- 41be03b00d2f7-6e5ef075a4cmr24462a12.1.1718062854162; Mon, 10 Jun 2024
- 16:40:54 -0700 (PDT)
-Date: Mon, 10 Jun 2024 16:40:52 -0700
-In-Reply-To: <de1b0bbc-b781-4372-88ad-81f26c9152c2@redhat.com>
+        d=1e100.net; s=20230601; t=1718062912; x=1718667712;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N+xf+4Khhvj0iiqw7ZQoHFoAsSE9YYEcKJ2hjHteuYs=;
+        b=YZOBXvGy17B1C19TpLvcjwmTHc9QI9SFAehI4aeBUHTXK0P0bXoMXQuIjIiXRCov4U
+         VEGJJLVOVnSQrI+wy9zuaJfNgGnGvmPF9a8S+G8ckPYmJlHZ8LDALVFLdENheLMSVW6f
+         jcJQHR6MxjPWgAS0C5ydvvkRnQV0MbBL7DDrdNczWihbTjpglRlJ5WhPb7Metk/+xxUY
+         Rlm60SuyPYq2XUHk4mzklvTeZxmZpI4yxjrj12hE9oQCw1N3xmkFwEp0ywfM8LNFx1a5
+         I4PW5TY3JLckXZ+2zdMPTp67JfCx5kpHzmlSXYNJwzhCuXJD4JN0kSwcx530xqqp98hn
+         2KCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnqdksKmOjS4/VOzaMOwhxuO7p6z0+sWG4F8R2lDWNjUUhv7ATp0+kgryS6vUVIlrnEkTJso9+tIufMuUk9W68kdKoqj30u/jb/u6A
+X-Gm-Message-State: AOJu0Yz/KLh0bvdyUk1tifoVAplo9jYBJipZvgSlGvMZWJ98rVFOsAPm
+	/WbinBBlY/yQQrwhxYRvRWuxcl4MoMsMLeKYYpTbuWFdO5fNWjGgp40EkeoetpYyotqb4QCnKXB
+	tDkSNQ/DcXE3c8VP5BuQfGpsZuBxPlMrMyElA
+X-Google-Smtp-Source: AGHT+IGuQ2C1AkI2NSp2wA2voG3exUpdcpEnl+lgNqHk58wly44D2kvuQj0BFwg41Kqp5d9FWtxk7pJMCVXCilt7PvE=
+X-Received: by 2002:a05:600c:154d:b0:421:54d0:5123 with SMTP id
+ 5b1f17b1804b1-42164a44574mr118161115e9.34.1718062912299; Mon, 10 Jun 2024
+ 16:41:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240423235013.GO3596705@ls.amr.corp.intel.com>
- <ZimGulY6qyxt6ylO@google.com> <20240425011248.GP3596705@ls.amr.corp.intel.com>
- <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
- <Zip-JsAB5TIRDJVl@google.com> <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
- <ZivFbu0WI4qx8zre@google.com> <ZmORqYFhE73AdQB6@google.com>
- <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com> <de1b0bbc-b781-4372-88ad-81f26c9152c2@redhat.com>
-Message-ID: <ZmeOxAtwfTsDCi1x@google.com>
-Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
- pages with user data
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+References: <20240608023654.3513385-1-yosryahmed@google.com>
+ <CAGsJ_4yVmDKtcKKAdjPOkOMWB+=ZT5TrrWz188xJaTV4EpM1Bw@mail.gmail.com>
+ <CAJD7tkaHLVcjUgiUFfBK+ztCqxBTRfyVbSVH9vytK=5JYOw+Sw@mail.gmail.com>
+ <CAGsJ_4w-magFysq4uLBm46AzHLD+r=v6pJphwmQn+OFvECHjrA@mail.gmail.com>
+ <CAJD7tkYdq533Z7nubjFT5jQYuS4oq2u15RAz2oGHGxYSk5Oicg@mail.gmail.com>
+ <CAGsJ_4zNxC5u088RRnKeM18skEJvwTd22mB_FWSA67K3S-CKPw@mail.gmail.com>
+ <CAJD7tkb0Rv4mSPS3DXqF888iVwd++nd99N3WrZYuJhLPDN+dhA@mail.gmail.com> <CAGsJ_4ztBavP+ic15V1F0-KUhoE1zh08xuOZ3jMMfuHu=JHNEw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4ztBavP+ic15V1F0-KUhoE1zh08xuOZ3jMMfuHu=JHNEw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 10 Jun 2024 16:41:14 -0700
+Message-ID: <CAJD7tka2e1tG6vxU2XXKrzZBUBAc1EfcvaLU+yhQbzZO2gh0=g@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
+To: Barry Song <21cnbao@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 11, 2024, Paolo Bonzini wrote:
-> On 6/10/24 23:48, Paolo Bonzini wrote:
-> > On Sat, Jun 8, 2024 at 1:03=E2=80=AFAM Sean Christopherson <seanjc@goog=
-le.com> wrote:
-> > > SNP folks and/or Paolo, what's the plan for this?  I don't see how wh=
-at's sitting
-> > > in kvm/next can possibly be correct without conditioning population o=
-n the folio
-> > > being !uptodate.
-> >=20
-> > I don't think I have time to look at it closely until Friday; but
-> > thanks for reminding me.
->=20
-> Ok, I'm officially confused.  I think I understand what you did in your
-> suggested code.  Limiting it to the bare minimum (keeping the callback
-> instead of CONFIG_HAVE_KVM_GMEM_INITIALIZE) it would be something
-> like what I include at the end of the message.
->=20
-> But the discussion upthread was about whether to do the check for
-> RMP state in sev.c, or do it in common code using folio_mark_uptodate().
-> I am not sure what you mean by "cannot possibly be correct", and
-> whether it's referring to kvm_gmem_populate() in general or the
-> callback in sev_gmem_post_populate().
+[..]
+> > > > We can't always WARN_ON for large folios, as this will fire even if
+> > > > zswap was never enabled. The alternative is tracking whether zswap was
+> > > > ever enabled, and checking that instead of checking if any part of the
+> > > > folio is in zswap.
+> > > >
+> > > > Basically replacing xa_find(..) with zswap_was_enabled(..) or something.
+> > >
+> > > My point is that mm core should always fallback
+> > >
+> > > if (zswap_was_or_is_enabled())
+> > >      goto fallback;
+> > >
+> > > till zswap fixes the issue. This is the only way to enable large folios swap-in
+> > > development before we fix zswap.
+> >
+> > I agree with this, I just want an extra fallback in zswap itself in
+> > case something was missed during large folio swapin development (which
+> > can evidently happen).
+>
+> yes. then i feel we only need to warn_on the case mm-core fails to fallback.
+>
+> I mean, only WARN_ON  is_zswap_ever_enabled&&large folio. there is no
+> need to do more. Before zswap brings up the large folio support, mm-core
+> will need is_zswap_ever_enabled() to do fallback.
 
-Doing fallocate() before KVM_SEV_SNP_LAUNCH_UPDATE will cause the latter to=
- fail.
-That likely works for QEMU, at least for now, but it's unnecessarily restri=
-ctive
-and IMO incorrect/wrong.
+I don't have a problem with doing it this way instead of checking if
+any part of the folio is in zswap. Such a check may be needed for core
+MM to fallback to order-0 anyway, as we discussed. But I'd rather have
+this as a static key since it will never be changed.
 
-E.g. a more convoluted, fallocate() + PUNCH_HOLE + KVM_SEV_SNP_LAUNCH_UPDAT=
-E will
-work (I think?  AFAICT adding and removing pages directly to/from the RMP d=
-oesn't
-affect SNP's measurement, only pages that are added via SNP_LAUNCH_UPDATE a=
-ffect
-the measurement).
+Also, I still prefer we do not mark the folio as uptodate in this
+case. It is one extra line of code to propagate the kernel warning to
+userspace as well and make it much more noticeable.
 
-Punting the sanity check to vendor code is also gross and will make it hard=
-er to
-provide a consistent, unified ABI for all architectures.  E.g. SNP returns =
--EINVAL
-if the page is already assigned, which is quite misleading.
 
-> The change below looks like just an optimization to me, which
-> suggests that I'm missing something glaring.
-
-I really dislike @prepare.  There are two paths that should actually initia=
-lize
-the contents of the folio, and they are mutually exclusive and have meaning=
-fully
-different behavior.  Faulting in memory via kvm_gmem_get_pfn() explicitly z=
-eros
-the folio _if necessary_, whereas kvm_gmem_populate() initializes the folio=
- with
-user-provided data _and_ requires that the folio be !uptodate.
-
-If we fix the above oddity where fallocate() initializes memory, then there=
-'s
-no need to try and handle the initialization in a common chokepoint as the =
-two
-relevant paths will naturally have unique code.
-
-The below is also still suboptimal for TDX, as KVM will zero the memory and=
- then
-TDX-module will also zero memory on PAGE.AUGA.
-
-And I find SNP to be the odd one.  IIUC, the ASP (the artist formerly known=
- as
-the PSP) doesn't provide any guarantees about the contents of a page that i=
-s
-assigned to a guest without bouncing through SNP_LAUNCH_UPDATE.  It'd be ni=
-ce to
-explicitly document that somewhere in the SNP code. E.g. if guest_memfd inv=
-okes
-a common kvm_gmem_initialize_folio() or whatever, then SNP's implementation=
- can
-clearly capture that KVM zeros the page to protect the _host_ data.
-
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index d4206e53a9c81..a0417ef5b86eb 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -52,37 +52,39 @@ static int kvm_gmem_prepare_folio(struct inode *inode=
-, pgoff_t index, struct fol
->  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t ind=
-ex, bool prepare)
->  {
->  	struct folio *folio;
-> +	int r;
->  	/* TODO: Support huge pages. */
->  	folio =3D filemap_grab_folio(inode->i_mapping, index);
->  	if (IS_ERR(folio))
->  		return folio;
-> -	/*
-> -	 * Use the up-to-date flag to track whether or not the memory has been
-> -	 * zeroed before being handed off to the guest.  There is no backing
-> -	 * storage for the memory, so the folio will remain up-to-date until
-> -	 * it's removed.
-> -	 *
-> -	 * TODO: Skip clearing pages when trusted firmware will do it when
-> -	 * assigning memory to the guest.
-> -	 */
-> -	if (!folio_test_uptodate(folio)) {
-> -		unsigned long nr_pages =3D folio_nr_pages(folio);
-> -		unsigned long i;
-> +	if (prepare) {
-> +		/*
-> +		 * Use the up-to-date flag to track whether or not the memory has
-> +		 * been handed off to the guest.  There is no backing storage for
-> +		 * the memory, so the folio will remain up-to-date until it's
-> +		 * removed.
-> +		 *
-> +		 * Take the occasion of the first prepare operation to clear it.
-> +		 */
-> +		if (!folio_test_uptodate(folio)) {
-> +			unsigned long nr_pages =3D folio_nr_pages(folio);
-> +			unsigned long i;
-> -		for (i =3D 0; i < nr_pages; i++)
-> -			clear_highpage(folio_page(folio, i));
-> +			for (i =3D 0; i < nr_pages; i++)
-> +				clear_highpage(folio_page(folio, i));
-> +		}
+>
+> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> index 2a85b941db97..035e51ed89c4 100644
+> --- a/include/linux/zswap.h
+> +++ b/include/linux/zswap.h
+> @@ -36,6 +36,7 @@ void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg);
+>  void zswap_lruvec_state_init(struct lruvec *lruvec);
+>  void zswap_folio_swapin(struct folio *folio);
+>  bool is_zswap_enabled(void);
+> +bool is_zswap_ever_enabled(void);
+>  #else
+>
+>  struct zswap_lruvec_state {};
+> @@ -65,6 +66,10 @@ static inline bool is_zswap_enabled(void)
+>         return false;
+>  }
+>
+> +static inline bool is_zswap_ever_enabled(void)
+> +{
+> +       return false;
+> +}
+>  #endif
+>
+>  #endif /* _LINUX_ZSWAP_H */
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index b9b35ef86d9b..bf2da5d37e47 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -86,6 +86,9 @@ static int zswap_setup(void);
+>  static bool zswap_enabled = IS_ENABLED(CONFIG_ZSWAP_DEFAULT_ON);
+>  static int zswap_enabled_param_set(const char *,
+>                                    const struct kernel_param *);
 > +
-> +		r =3D kvm_gmem_prepare_folio(inode, index, folio);
-> +		if (r < 0)
-> +			goto err_unlock_put;
->  		folio_mark_uptodate(folio);
-> -	}
-> -
-> -	if (prepare) {
-> -		int r =3D	kvm_gmem_prepare_folio(inode, index, folio);
-> -		if (r < 0) {
-> -			folio_unlock(folio);
-> -			folio_put(folio);
-> -			return ERR_PTR(r);
-> +	} else {
-> +		if (folio_test_uptodate(folio)) {
-> +			r =3D -EEXIST;
-> +			goto err_unlock_put;
->  		}
->  	}
+> +static bool zswap_ever_enable;
+> +
+>  static const struct kernel_param_ops zswap_enabled_param_ops = {
+>         .set =          zswap_enabled_param_set,
+>         .get =          param_get_bool,
+> @@ -136,6 +139,11 @@ bool is_zswap_enabled(void)
+>         return zswap_enabled;
+>  }
+>
+> +bool is_zswap_ever_enabled(void)
+> +{
+> +       return zswap_enabled || zswap_ever_enabled;
+> +}
+> +
+>  /*********************************
+>  * data structures
+>  **********************************/
+> @@ -1734,6 +1742,7 @@ static int zswap_setup(void)
+>                 pr_info("loaded using pool %s/%s\n", pool->tfm_name,
+>                         zpool_get_type(pool->zpools[0]));
+>                 list_add(&pool->list, &zswap_pools);
+> +               zswap_ever_enabled = true;
+>                 zswap_has_pool = true;
+>         } else {
+>                 pr_err("pool creation failed\n");
+>
+> Thanks
+> Barry
 
