@@ -1,88 +1,153 @@
-Return-Path: <linux-kernel+bounces-208890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664A0902A44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD05E902A48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7B01F2310E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2DBB1C21CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215D052F7A;
-	Mon, 10 Jun 2024 20:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9038373464;
+	Mon, 10 Jun 2024 20:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbYPqZ+G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4QetuE9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CD717545;
-	Mon, 10 Jun 2024 20:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E396F30A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718052828; cv=none; b=cOVg/dszP2+nB4OO4o5XsIjjZFDBLZYMMKiG9ydsyfnws/L+w8y4UAhzGf7NpEiM0QdiakwTZwFOgN75NOZ1mgztLIih0gxY2ljho6V38LDmQPc2Qjtz6Kyqn+h8mjzZhIlj/DChHVrqm3OhiHZ3DfbY4alRcqJv1EZWIPnw0vI=
+	t=1718052869; cv=none; b=YKvcZlfR+oJeeL5/2d6KAzlc0/U0DWBDHlpj5YkA5rEOkF4WEJHk+SK6Qc6CAJBTYtRSQW67eLtvZBGuV3hYAR22ncdOhKSm+kCXUhw4z+lO34uRDFQi33AtDrLU6pB4G8t2ZMn6UnkUd6/7hCHy+MurwoPsse9tyCqun8DNHLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718052828; c=relaxed/simple;
-	bh=K8KGJ3qdaNDs2fnn3De4uIqWVGSMjgQOHseds840ChE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R596c6tHpVEtNSOKn9LSka95GtKBRlcx/MCTPyhJTFQTnVMMOe8qimJm3UP9Po715TBLzR4g8qLJn1ChLTjMvEnLuN1VnIP23sqei8lJ20zUx5F0tQg143+EMBeSlW5dy2GWMUl2qEi5XDup+vd/Gjdk4XyDSR43AKDBr9IzrGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbYPqZ+G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D47BFC4AF1C;
-	Mon, 10 Jun 2024 20:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718052827;
-	bh=K8KGJ3qdaNDs2fnn3De4uIqWVGSMjgQOHseds840ChE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rbYPqZ+GPmT0pYgY/RMKW/RyxTDHR2Me8Eh8qJLo3NXZ5G0ORniTcJQeS88xBahsA
-	 uDNmACWTle4eh/dEkMpZv4h6hq8T1yPW7nhkmGTFiS6q/PV8mRCA3jdkqWBkiC5P1h
-	 ibjAlxrfTlPvp9IK/e7n3sjUw4PTX4GUo0aIW8AakLityf4VzGxMx7p2OXuyUDoj35
-	 kiDgTr8eSmpfotR3uZmFT1LvffrKg60Pcb1XhNKnIGlCaWq24Sim5RJNTTlt5qHvzf
-	 81YLqMcvd0L+hJbZa5y+5xObP/hOiD1ySIWzKkvGL3WoahlW9/oxLnx1VTAO0V3rKo
-	 Hh2oJg23IuQcQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so43435221fa.3;
-        Mon, 10 Jun 2024 13:53:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMOTRXtzHneLaJmFy7qdwkaT1Kpa5K0IJxvbqe0y57vRI0tjElp3zPDj/h466rJ4wq0eLyQdDgjaKqxoiGyjzL+Jy+dc/yPuvmhhTd
-X-Gm-Message-State: AOJu0YwBRES+UoWsz0V7CYVExHjzKc77g1qtP/9ZK2EDFyuqe8MBienS
-	0Jtpb+lqa7V8gfRNioaFegIjl12YrB9GIvhkBX1/PG3jP1G78waYSqWB2gZ15dVqR1HSC5P54sU
-	q1FLih6GnjRId/zkotnP1PmuIlFE=
-X-Google-Smtp-Source: AGHT+IE/8QiJUA6k89dwRrtwwT6/nPbc/qc52gPny1mrpiQoMoNr5v8YAibBYY5SUwWjtp33/DL2XkvvN/++nuQjTL8=
-X-Received: by 2002:a2e:8746:0:b0:2eb:d8d2:f909 with SMTP id
- 38308e7fff4ca-2ebd8d342c5mr35955871fa.16.1718052826217; Mon, 10 Jun 2024
- 13:53:46 -0700 (PDT)
+	s=arc-20240116; t=1718052869; c=relaxed/simple;
+	bh=3IJ170TfkXxgGvDgJ3RTbvUYPnXkd2ZZUF0wrDSkLBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDXL+R/t9LsPm9gwl6NpDjFPtgUoPoI1VHEceHxmxtkQvyNiqcnW3cQKUjpj+ACska7F5xmGV8Tigd5GBz2CYlft5DxC/AylhmpX+NNC+NcHupEmt1N/JKUG/PcuVGBpwMTjOFzqsXJRUO89FrzW0IjUxWmkduUPe5ONP0uU7h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4QetuE9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VS6xSyzjS3Rv5GrMxcihCiEJx2R82kJuQhsJU9W0eQI=; b=h4QetuE99k/oK0fB+yhlDQMS7E
+	ASpUJ7PkP1CZkbUAihiNHKnnyYnp0GCutTdDF+rvdWDDb0o9zZh1VQU92ehwOZh+L2RcBfjKL6ICC
+	NeSyV9F7yJoO04n9EtF1CkLfaHuFKnLTMsOQ8AB73DEFfLfaSS7XCJ5V8Bgs+IJVgW2X63DXsVNLW
+	yuDPLVkmEro+0o0d1xeGmtIRXVWhdwEtfwCpVOhJgTTSKvNVZQ7BoeDxst93PhAE/cR0sNMG3HlRy
+	NOZm0ApS/UeFTd7wsbM2Oz6q/oKgYFURlQ11uiIV6JE2aqgaweOmBAh1f3TuCxIn5/BH5KCWK9CAV
+	RE+Cm0uw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGm1i-00000001fHm-3JMy;
+	Mon, 10 Jun 2024 20:54:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5BE00300439; Mon, 10 Jun 2024 22:54:05 +0200 (CEST)
+Date: Mon, 10 Jun 2024 22:54:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephane Eranian <eranian@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@intel.com>, Andi Kleen <ak@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"Narayan, Ananth" <ananth.narayan@amd.com>,
+	"Bangoria, Ravikumar" <ravi.bangoria@amd.com>,
+	Namhyung Kim <namhyung@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Zhang Xiong <xiong.y.zhang@intel.com>
+Subject: Re: [RFC] perf_events: exclude_guest impact on
+ time_enabled/time_running
+Message-ID: <20240610205405.GA8774@noisy.programming.kicks-ass.net>
+References: <CABPqkBQ3LQ_dXQSQVSrriinvSSXm2fHx4yOms=jRsa2WaXSsog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528203149.2383260-1-linan666@huaweicloud.com>
-In-Reply-To: <20240528203149.2383260-1-linan666@huaweicloud.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 10 Jun 2024 13:53:34 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6Ob23G4hOrwTMEKz26A3VCXPMdrgxxWXBKrXJJQAWW2w@mail.gmail.com>
-Message-ID: <CAPhsuW6Ob23G4hOrwTMEKz26A3VCXPMdrgxxWXBKrXJJQAWW2w@mail.gmail.com>
-Subject: Re: [PATCH v2] md: make md_flush_request() more readable
-To: linan666@huaweicloud.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yukuai3@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com, 
-	yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBQ3LQ_dXQSQVSrriinvSSXm2fHx4yOms=jRsa2WaXSsog@mail.gmail.com>
 
-On Tue, May 28, 2024 at 5:39=E2=80=AFAM <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> Setting bio to NULL and checking 'if(!bio)' is redundant and looks strang=
-e,
-> just consolidate them into one condition. There are no functional changes=
-.
->
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Li Nan <linan122@huawei.com>
+On Thu, Jun 06, 2024 at 12:57:35AM -0700, Stephane Eranian wrote:
+> Hi Peter,
+> 
+> In the context of the new vPMU passthru patch series, we have to look
+> closer at the definition and implementation of the exclude_guest
+> filter in the perf_event_attr structure. This filter has been in the
+> kernel for many years. See patch:
+> https://lore.kernel.org/all/20240506053020.3911940-8-mizhang@google.com/
+> 
+> The presumed  definition of the filter is that the user does not want
+> the event to count while the processor is running in guest mode (i.e.,
+> inside the virtual machine guest OS or guest user code).
+> 
+> The perf tool sets is by default on all core PMU events:
+> $ perf stat -vv -e cycles sleep 0
+> ------------------------------------------------------------
+> perf_event_attr:
+>   size                             112
+>   sample_type                      IDENTIFIER
+>   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+>   disabled                         1
+>   inherit                          1
+>   enable_on_exec                   1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> 
+> In the kernel, the way this is treated differs between AMD and Intel
+> because AMD does provide a hardware filter for guest vs. host in the
+> PMU counters whereas Intel does not. For the latter, the  kernel
+> simply disables the event in the hardware counters, i.e., the event is
+> not descheduled.  Both approaches produce pretty much the same desired
+> effect, the event is not counted while in guest mode.
+> 
+> The issue I would like to raise has to do with the effects on
+> time_enabled and time_running for exclude_guest=1 events.
+> 
+> Given the event is not scheduled out while in guest mode, even though
+> it is stopped, both time_enabled and time_running continue ticking
+> while in guest mode.  If a measurement is 10s long but only 5s are in
+> non-guest mode, then time_enabled=10s, time_running=10s. The count
+> represents 10s worth of non guest mode, of which only 5s were really
+> actively monitoring, but the user has no way of determining this.
+> 
+> If we look at vPMU passthru, the host event must have exclude_guest=1
+> to avoid going into an error state on context switch to the vCPU
+> thread (with vPMU enabled). But this time, the event is scheduled out,
+> that means that time_enabled keeps counting, but time_running stops.
+> On context switch back in, the host event is scheduled again and
+> time_running restarts ticking. For a 10s measurement, where 5s here in
+> the guest, the event will come out with time_enabled=10s,
+> time_running=5s, and the tool will scale it up because it thinks the
+> event was multiplexed, when in fact it was not. This is not the
+> intended outcome here. The tool should not scale the count, it was not
+> multiplexed, it was descheduled because the filter forced it out.
+> Note that if the event had been multiplexed while running on the host,
+> then the scaling would be appropriate.
+> 
+> In that case, I argue, time_running should be updated to cover the
+> time the event was not running. That would bring us back to the case I
+> was describing earlier.
+> 
+> It boils down to the exact definition of exclude_guest and expected
+> impact on time_enabled and time_running. Then, with or without vPMU
+> passthru, we can fix the kernel to ensure a uniform behavior.
+> 
+> What are your thoughts on this problem?
 
-Applied v2 to md-6.11. Thanks!
+So with those patches having explicit scheduling points, we can actually
+do this time accounting accurately, so I don't see a reason to not do
+the right thing here.
 
-Song
+Hysterically this was left vague in order to be able to avoid the
+scheduling for these scenarios -- performance raisins etc.
+
+The thing is, if you push this to its limits, we should start time
+accounting for the ring selectors too, and that's going to be painful.
+
+
 
