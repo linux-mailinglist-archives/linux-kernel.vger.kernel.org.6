@@ -1,139 +1,100 @@
-Return-Path: <linux-kernel+bounces-208329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB0990239A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059A890239B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 16:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E8B1C22489
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D6E28CE16
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560912F5B6;
-	Mon, 10 Jun 2024 14:05:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC2915A8;
-	Mon, 10 Jun 2024 14:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606D2139CE2;
+	Mon, 10 Jun 2024 14:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="csi4S4rP"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31FE12E1F1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718028314; cv=none; b=EY1PG1iSqqiRfdsG4etkuiNYS3O7CYw2RKsCEEdG0+6kmDEhO347bgn4pPBg0/Ai6NW7bwa96zxPBdaJkSDI+fjGTqi5j3VjSXn9w1eNMWl4YpHDUiTfnqDKDT89nEuvlrr8onXfcaUJICodCJ7fFNY3/IBsHPISbF2HOjlMrfs=
+	t=1718028359; cv=none; b=O98GGwk6gSzD3sxQ0RQAVoUhCCRk4djOEZIxLBHo+J+wDN5EdWwecOgr817oS/CGuVqZgSzT/7tO1/VpZM6yZdZd1QijELD2qeGSWH0ZpFsbKfONNgF9T483CBAZEg9+6iE5g7ZO8E0Gc8Xy9Acgqaj7yhB6+w0Ua4T14k3qfVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718028314; c=relaxed/simple;
-	bh=cMr0Z4iLJPU4OKj2F6FbEhLlNCxwYw1FCX8zFi2Jo1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j37UzrZMRxpQ6whENu8YcXPnMDKEOfA+hXb/KoUrhJ1Y3tYZflFBLTfPME3mvM4ne5IBfT76SfZ0VPLmiwW2JQ/8j+EoeAAy7z5IaA5TlccvPT968QjlVxYal0R+yJS+zjmbV7UGsn3Mc8i+vOLZgs98uRWo3Yi2QqLIR3C+yLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5686106F;
-	Mon, 10 Jun 2024 07:05:34 -0700 (PDT)
-Received: from [10.57.42.97] (unknown [10.57.42.97])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FEED3F73B;
-	Mon, 10 Jun 2024 07:05:06 -0700 (PDT)
-Message-ID: <56a60219-1440-425f-8680-8eaae2bb42c1@arm.com>
-Date: Mon, 10 Jun 2024 15:05:04 +0100
+	s=arc-20240116; t=1718028359; c=relaxed/simple;
+	bh=yr3jIRicmchwz3anKNej8jnzLR/OgSff3SwQWvHQmQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g9+WZJeuP0dNZS6UBe2i/NH2bpJJOCTx8ubZlBIGMK0vljZN47M1S33ww7btKVTsuwwfNKOrYU87x57TZUEtSld+cRNpreZjA1eqXK6o+N1nmKOTdDXV384LZNX4YZYm+Gs9oA+Fgq/YkvJP4eSPWVRTWEinsQsNZRmmygynjyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=csi4S4rP; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c819f6146so2411310e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718028356; x=1718633156; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVxvwUJERs3T0J4gSW6t9kiiGJorZXzW48W5+k3rC2E=;
+        b=csi4S4rPqK/PVbh1mL+SYyY3vrXOJLXJyUAko5Q40ZE/q797Fzw3qkpCWs45rXPIEa
+         yFN+hY8LJl+2f+39MzeAA6mLFXA43/i7Ixy43q61b1knAaZLf+jbRu3QgmnSzytZC75U
+         N3rMxRNGBUJZzQoOyCCChcLgkfibp2YFlcjDWQbaVk4OOuUz9Zsx0PRJo31AlXW0Al6h
+         /rQL/cJP+EeeN3FMRIQaTG5N/GnK+I+D59lcVu3yoKTqTyp0X6rNx/BEbcaTrVQvRKpw
+         13er4GKDzowmxJW90HKxzZVKdUllFwgowlqGnw17i56kbYn04AdJhCvSL9lIwKVavaV0
+         S3wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718028356; x=1718633156;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VVxvwUJERs3T0J4gSW6t9kiiGJorZXzW48W5+k3rC2E=;
+        b=U32U3vzUo+RfVvyUXVyTFoqNr548r7E2afJZjkquMLJYxLHxvSlcOI2KeXGUWbsne0
+         NaTrZ8Wsy+WnmjdRwr9s0k2byiH638dESi1qATrCuu7lwQHS5nwuA3RJknS6L/jUmNw8
+         R1kiJOA3V4o5k3bXFpBcDt3vaQDFbKnzIV3K9vg10d1LLS6U3NXdq4Uz5DRHihhNCIgw
+         AUyBDnuaQPiIt/0LYd3f0+tgep3fGmup2ZOEfMOHoNXIrqxGWca9cQvW02xZeC3TCVV1
+         kupVOv/e4ObMOtIZc9QkstcQ2bDJhKGxzbG1NgRinR0vs3JwS5o22Z+uEnYXCLlgjE9C
+         m2UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNJiMNAfp4DPirYBHw9++9ijttcom5vo8I32CEu5NwXbUcZ7wHKQQx5zEfOTZiRpXEi/oyvXiCxIg3ZjPA7NmQlZdDNR6CLIGFPJXr
+X-Gm-Message-State: AOJu0YxBy6AlPEO6uyqknmdE45tS2VXFfAFiWoDLiER+PUPhEi+DzcOP
+	p7noQhdtCwKL0uPVwDChTV+9rO4iN3/e+/xpUY5oc1wMtj1tVFkW9dbKfYqt7T8=
+X-Google-Smtp-Source: AGHT+IGVo21ZRRBzKH4LlG9aONaYeAa+lIIRzKsOCoWCppugjCXj9j36EmeUQnmpOThnit21MSrWQA==
+X-Received: by 2002:ac2:5148:0:b0:52c:5f12:5313 with SMTP id 2adb3069b0e04-52c5f1255d3mr3906233e87.18.1718028356003;
+        Mon, 10 Jun 2024 07:05:56 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:b790:b49b:9038:8e99])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42217ff4302sm11113845e9.31.2024.06.10.07.05.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 07:05:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 0/3] gpio: sim: driver improvements
+Date: Mon, 10 Jun 2024 16:05:45 +0200
+Message-ID: <20240610140548.35358-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/16] coresight: Re-emit trace IDs when the sink
- changes in per-thread mode
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
- coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
- mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
-References: <20240604143030.519906-1-james.clark@arm.com>
- <20240604143030.519906-16-james.clark@arm.com>
- <a697111a-ec64-451a-aee1-3709bd08e73e@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <a697111a-ec64-451a-aee1-3709bd08e73e@arm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Andy had some suggestions in his review of the gpio-virtuser that also
+apply to gpio-sim so let's use them.
 
-On 10/06/2024 11:29, Suzuki K Poulose wrote:
-> On 04/06/2024 15:30, James Clark wrote:
->> In per-cpu mode there are multiple aux buffers and each one has a
->> fixed sink, so the hw ID mappings which only need to be emitted once
->> for each buffer, even with the new per-sink trace ID pools.
->>
->> But in per-thread mode there is only a single buffer which can be
->> written to from any sink with now potentially overlapping trace IDs, so
->> hw ID mappings need to be re-emitted every time the sink changes.
->>
->> This will require a change in Perf to track this so it knows which
->> decode tree to use for each segment of the buffer. In theory it's also
->> possible to look at the CPU ID on the AUX records, but this is more
->> consistent with the existing system, and allows for correct decode using
->> either mechanism.
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-etm-perf.c | 14 ++++++++++++++
->>   drivers/hwtracing/coresight/coresight-etm-perf.h |  2 ++
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 17cafa1a7f18..b6f505b50e67 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -499,6 +499,20 @@ static void etm_event_start(struct perf_event
->> *event, int flags)
->>                         &sink->perf_sink_id_map))
->>           goto fail_disable_path;
->>   +    /*
->> +     * In per-cpu mode there are multiple aux buffers and each one has a
->> +     * fixed sink, so the hw ID mappings which only need to be
->> emitted once
->> +     * for each buffer.
->> +     *
->> +     * But in per-thread mode there is only a single buffer which can be
->> +     * written to from any sink with potentially overlapping trace
->> IDs, so
->> +     * hw ID mappings need to be re-emitted every time the sink changes.
->> +     */
->> +    if (event->cpu == -1 && event_data->last_sink_hwid != sink) {
->> +        cpumask_clear(&event_data->aux_hwid_done);
->> +        event_data->last_sink_hwid = sink;
->> +    }
-> 
-> I am wondering if we really need this patch, as we have the sinkid in
-> the HWID already ? We would emit the packet for each CPU only once and
-> that wouldn't change the HWID ?
-> 
-> Suzuki
-> 
-> 
+Bartosz Golaszewski (3):
+  gpio: sim: use device_match_name() instead of strcmp(dev_name(...
+  gpio: sim: drop kernel.h include
+  gpio: sim: use devm_mutex_init()
 
-It would be needed for per-thread mode if we didn't have the CPU sample
-bit set on AUX records. Because otherwise you wouldn't know when the
-process had moved to a new sink with new mappings. But I suppose this is
-redundant information now that the CPU bit is set on AUX records so I
-can remove this.
+ drivers/gpio/gpio-sim.c | 35 +++++++++++++----------------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
 
-I was thinking it might be nice if a tool _only_ wanted to look at HWIDs
-then it could do the decode correctly with just that. If we remove this
-then tools will always have to set the CPU sample bit, but it's pretty
-much required anyway and Perf was already doing it.
-
-James
+-- 
+2.40.1
 
 
