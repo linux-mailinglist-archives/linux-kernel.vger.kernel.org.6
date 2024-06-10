@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-207572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874A5901906
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:38:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC37901908
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF9D1C21130
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:38:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F524B217B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAA51869;
-	Mon, 10 Jun 2024 00:38:16 +0000 (UTC)
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C987917C2;
-	Mon, 10 Jun 2024 00:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4003E3D8E;
+	Mon, 10 Jun 2024 00:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XSz7qihF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA11B15A8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717979896; cv=none; b=T2erOU74uQBvPONne1ancbN2x5tDjlIUzpUJ4uhxUq4fJ03K3LneNuKoYCQPdMUQbkWvFYH2G2e4ewgtZ5T+HoeXA1JywFfem5icH4n5Jj5wAKPBHnXThcz8h2wGt6OIiym+43TsLTtzM17GhTjmkkWDPpz/72a5PgsTrP9/qo0=
+	t=1717979978; cv=none; b=BM7r6lazpA4STV95PhYlUtsDlOOsTHinzTTyp8fVJzLx/VCDSANbCYHZoh67aayXdvSxlMP8ufUKO9NcH/senvevThfJCBnxjgjnWJnxVkDefvXh0P0ZMqpS4tg+FwTjAz4KKF80ueoV7tmL6OZ9UEiqw6XoZJNUUdXPvWmiCeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717979896; c=relaxed/simple;
-	bh=twC7u+cnCs40QAYIo4dxWxJGIYDno4mxjFJPtF2cimw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wjn72MmnLM8ikCcPvdkUaGcHITHsbMEWzDF3Xo6Hbaq6bjsFUWdYU5aQHCS3KP8oBclLUjHSPxCoJQQmqgUDSKwbP8sAPCNx52FVKkUMlMdezU1llExTUn+jJCOai/i/bRa2+8oXb3TeVDn6OARGU82m56Mm8EXptizTfRCKjyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrABXr8fVSmZmUbBpAQ--.63384S2;
-	Mon, 10 Jun 2024 08:37:41 +0800 (CST)
-Received: from [192.168.1.10] (unknown [117.152.240.122])
-	by gateway (Coremail) with SMTP id _____wCH9C3RSmZmlMr6AA--.45419S2;
-	Mon, 10 Jun 2024 08:37:39 +0800 (CST)
-Message-ID: <c477a8d2-c71e-43f9-a796-4ddc4abe85de@hust.edu.cn>
-Date: Mon, 10 Jun 2024 08:37:37 +0800
+	s=arc-20240116; t=1717979978; c=relaxed/simple;
+	bh=waD4N4XEB7SeuiB+bDbo3csSeAsfiUzOoJfHZThocuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X1iKGDzEEnIjsLSMw52hSMpoQDG6NSwFiuVPg8RqxcRPZcmjizpDcIY9fFePl1WbMqAH2uk7JIL7HZdDpgkm98YRAtEtnfKvpRlwrlM8Lt1GjYsDnDJZjKW9lx4TfwxBnIhojdF1T/eRyn6vqogPwYK0HdozUBno9Q+o1A4zwQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XSz7qihF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717979976; x=1749515976;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=waD4N4XEB7SeuiB+bDbo3csSeAsfiUzOoJfHZThocuo=;
+  b=XSz7qihFb9Ux2l+XTHbGmp1tEB5VTWrOVOVK9d7j5HsM9VqEGH/qKwwo
+   LusDq8SIxFVSZpNusu6+CE3ynfOS/6kqly/AV9CxQJgDPuNga+gUWbslF
+   PM3Ua4Ev7Y5vJXW31dsqnbwais3BedjrQCzZo66Iyz7EghfSoeQaehhxC
+   G4Q9ImGsAdojwoyDdgMIOnkDIvIulubuNDz0HqR88z7UOo2Q75H/Dhf0A
+   PnD+jg37y+0A7LZumS0SCQ6OThDHjAFqqWi2L17EUMU9T3DKF1zRD+hGe
+   MA4PLsaZBnpZ8GdZ1i9ImuCXt+6SKJjksNLqtgPDjDxvwxnNc+pJz/fTu
+   Q==;
+X-CSE-ConnectionGUID: SbXBkiSJRn+8xUbFjJYwMw==
+X-CSE-MsgGUID: NZ8kvDEwSlGhr+aO4w5gIg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11098"; a="37154956"
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="37154956"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 17:39:35 -0700
+X-CSE-ConnectionGUID: EaSIL/wER2a+RZJ90UDvAA==
+X-CSE-MsgGUID: RII/kgt4QsyOrjGd56fy/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,226,1712646000"; 
+   d="scan'208";a="38829874"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2024 17:39:35 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v4 0/4] Add and use get_cpu_cacheinfo_level()
+Date: Sun,  9 Jun 2024 17:39:23 -0700
+Message-ID: <20240610003927.341707-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: update the translation of security-bugs
-To: Zenghui Yu <zenghui.yu@linux.dev>
-Cc: Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240607025842.24321-1-dzm91@hust.edu.cn>
- <fdbbe5d0-65ea-49ef-9a4c-26fe7a691c64@linux.dev>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <fdbbe5d0-65ea-49ef-9a4c-26fe7a691c64@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrABXr8fVSmZmUbBpAQ--.63384S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1fJFykKFy3Kr4xCF1DGFg_yoW8Kr4fpa
-	4kKFyxK3ZxAF15GrWxGr12gF1IyFWxG398GFs0qw18tFn5ArsYqrsIq3s0gFZ5XrWrJay8
-	Xr4rKrW5uryYyrDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2
-	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
-	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
-	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
-	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
-	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUnb4S5UUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+
+This helper function came up in discussion of the resctrl patches
+for Sub-NUMA Cluster (SNC) support. Reinette pointed out[1] that there
+are already two places where it would clean things up by avoiding
+open coding. The SNC patches will add two additional call sites.
+
+So rather than have this jammed up as part of the SNC series, I'm
+posting it as a simple standalone cleanup.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+[1] https://lore.kernel.org/all/050c64b3-20b3-4db6-b782-f5124ebaab31@intel.com/
+
+---
+Changes since v3:
+Link: https://lore.kernel.org/all/20240606164047.318378-1-tony.luck@intel.com/
+
+Addition of lockdep_assert_cpus_held() in v3 led to #include hell
+because <linux/cacheinfo.h> needed <linux/cpu.h>
+
+Patch 1 resolves this hell by cut-and-pasting all the CPU hotplug
+defintions out of cpu.h and into a new file cpuhplock.h.
+
+Patch 2 brings the pasted code up to current coding standards
+
+Patch 3 is the previous patch 1, but adds <linux/cpuhplock.h> instead
+of <linux/cpu.h> to <linux/cacheinfo.h>
+
+Patch 4 is the previous patch 2, unchanged.
+
+Tony Luck (4):
+  cpu: Move CPU hotplug function declarations into their own header
+  cpu: Drop "extern" from function declarations in cpuhplock.h
+  cacheinfo: Add function to get cacheinfo for a given (cpu, cachelevel)
+  x86/resctrl: Replace open code cacheinfo searches
+
+ include/linux/cacheinfo.h                 | 25 +++++++++---
+ include/linux/cpu.h                       | 33 +---------------
+ include/linux/cpuhplock.h                 | 47 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 17 +++-----
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 14 +++----
+ 5 files changed, 79 insertions(+), 57 deletions(-)
+ create mode 100644 include/linux/cpuhplock.h
 
 
-On 2024/6/9 16:20, Zenghui Yu wrote:
->
-> On 2024/6/7 10:58, Dongliang Mu wrote:
->> Update to commit 5928d411557e ("Documentation: Document the Linux Kernel
->> CVE process")
->>
->> commit 0217f3944aeb ("Documentation: security-bugs.rst: linux-distros
->> relaxed their rules")
->> commit 3c1897ae4b6b ("Documentation: security-bugs.rst: clarify CVE
->> handling")
->> commit 4fee0915e649 ("Documentation: security-bugs.rst: update
->> preferences when dealing with the linux-distros group")
->> commit 44ac5abac86b ("Documentation/security-bugs: move from 
->> admin-guide/
->> to process/")
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> ---
->>  .../translations/zh_CN/admin-guide/index.rst  |  1 -
->>  .../translations/zh_CN/process/index.rst      |  3 +-
->>  .../zh_CN/process/security-bugs.rst           | 84 +++++++++++++++++++
->>  3 files changed, 86 insertions(+), 2 deletions(-)
->>  create mode 100644 
->> Documentation/translations/zh_CN/process/security-bugs.rst
->>
->> diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst 
->> b/Documentation/translations/zh_CN/admin-guide/index.rst
->> index ac2960da33e6..773c53956000 100644
->> --- a/Documentation/translations/zh_CN/admin-guide/index.rst
->> +++ b/Documentation/translations/zh_CN/admin-guide/index.rst
->> @@ -37,7 +37,6 @@ Todolist:
->>
->>     reporting-issues
->>     reporting-regressions
->> -   security-bugs
->
-> It's be good to remove the old zh_CN/admin-guide/security-bugs.rst file
-
-
-Yeah, thanks. I've sent a v2 patch.
-
-
-> as well and update all references to it:
->
-> % git grep "admin-guide/security-bugs.rst" 
-> Documentation/translations/zh_CN/
-> Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:Documentation/translations/zh_CN/admin-guide/security-bugs.rst 
-> ，
-> Documentation/translations/zh_CN/admin-guide/reporting-issues.rst:更多信息请参见 
-> Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
-> Documentation/translations/zh_CN/process/submitting-patches.rst:参见 
-> Documentation/translations/zh_CN/admin-guide/security-bugs.rst 。
->
-> Thanks,
-> Zenghui
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+-- 
+2.45.0
 
 
