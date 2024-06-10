@@ -1,95 +1,61 @@
-Return-Path: <linux-kernel+bounces-208138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C554B902153
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:12:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF35A902155
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 14:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5009E1F21A50
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61037B21389
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 12:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FABE7E782;
-	Mon, 10 Jun 2024 12:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D7B7F483;
+	Mon, 10 Jun 2024 12:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EDCSJR5K"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YHTFNpZ6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9207FBA2
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1654650;
+	Mon, 10 Jun 2024 12:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718021519; cv=none; b=cd01koh/I0a9L7ViIXi3JW8BJx4w4gN1TN5c9E1vfEyc44nMi/DTQbqZEVetk1d73vw+v6IAvRHmUICNerKSVlEdI/FufkLrw9+o5Iu9ppUQbzc2WlTPq7bPsZJ3eDADpFOirNuBdDB6BlPk5fQEpex3bQMIVX6ruIIz0qc5gvI=
+	t=1718021549; cv=none; b=IzqRfq9ZIrxKe2GWdvK6PHtX9QoOQsov5X5aYhwooAOQTg0e/+sz/oeNCJqAO7WfFbwUuIfK3sqBYq3lMrjdCf+GzxiezxwxeSgK0pntB40I4LPl4r+s1RK3ZV3vCcJsSvjR0qI5lrSnMOuqtv7GMLp0ymL50LA1MZFoM2yFDH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718021519; c=relaxed/simple;
-	bh=caB1DgE6lNAzXW+g/NLwFuuEdV7bcFUoheISR77RlXM=;
+	s=arc-20240116; t=1718021549; c=relaxed/simple;
+	bh=CoWMTLN3xVMCKujiQ62WewBUqmIwUhZeSl46qqqThsw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzTOYbttGGg68PaDSekGQrJlXo1E6bJXAK5UHsZ8vLeOwuYwjRAp26ttQ/FWpdJipXUM10UzqoOeqmktKAx1HsX1qDXPVemQm2ikvislFWKQNdxlLv8LFERQ3EnJUL7jgGHLMp3S+e/Jl5As23aB7C9JLK1CKlms32p58u0U6ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=EDCSJR5K; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25488f4e55aso1063690fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 05:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718021516; x=1718626316; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c3VfLy+0xn7yNaS/SyVEB4+sm+cKduyI1+wlQtfEH7Y=;
-        b=EDCSJR5KdGemonIxsoQTseyTzM9BH8o/yMSGP/6PnbY8TGN+EguAGMUX22oxZZex9w
-         u35HlIDUokYeQDPy9jwIjfn14cDRSBFPXNdD+Lxcpb2Whthx7urTa/onA6Q5YSdci0Cf
-         NATW9ys5OZlcbpJ+PhaCWlAaVMPhi1gIu6Hxyj5i6J6iRYXbdijVHPGOOrlmci+SNTW8
-         OJd20HLo9d9+SeLmm9inNpf0s0Q05QxtO3yFSOHzlUxsk0rVg+FiC8ytisLAeZqImfqy
-         Qcu+/nH2/BCQsq0F7wpnO4n9iHltVJn4+6h/y0tKxrAUsDdGOUiAAsDZVVY7iAJ6dFxo
-         +vuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718021516; x=1718626316;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c3VfLy+0xn7yNaS/SyVEB4+sm+cKduyI1+wlQtfEH7Y=;
-        b=afPKjNPgQT++U2z73/qCxDRB+h1w4Kfqjb4K/jLQKrwmm/brxaIQYb7IoeahYtGyTm
-         +jI/w45yjwbMXo8krIcFvg7A7M3ha6K6Vv3BIY8WgAxnDG7E8w0CRg47dorK9dAFFfaa
-         ySH21PLSh/tyl5SsZqxtyWf1r+5uxhDKHGNogFxHdZJovJfbfBfmRm8RIfCDD7bi1dDy
-         cbytKKkz5gfXssQ/O/NTH7RE/p0Cl7qoOT0wXMEMgqltQ6VJmFVIKg2AeO0e+zAn9il9
-         yM3nfgwnoAeZFycERtuwQWrvQlxC8MIb5SP5b0G4D6EfRiHllhbCW/AU7Zzr9ZcMDebI
-         HooQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9xIyVKMyLz4c2us1GpRDESeJAsOt7yn2XIazFgjeZIHim/GAt7v+BTZIAkS6jYujp2eQ7KvT0ckcJK9iqBxf9ou8mDflxWf4zo5bY
-X-Gm-Message-State: AOJu0YxLbNqSEshG+KY5wbYjf2nfmtu+dq0cKoACyr20i5AN3aZJ8k6M
-	fm8p1+/4v1lsqLcEaBwKp0WWr66QWf/6ZHVWs60x6rxYnuBES44hdDzu9XqABmA=
-X-Google-Smtp-Source: AGHT+IHMlLqmreNq9NtSDVCvKZpZzp9aWfGxwYiAaNNsZlWsytpstVnNHWnxI5w1Z35ApPSZX6ZS9A==
-X-Received: by 2002:a05:6870:d0c3:b0:254:b7d9:2dcb with SMTP id 586e51a60fabf-254b7d94b5fmr3834664fac.8.1718021516266;
-        Mon, 10 Jun 2024 05:11:56 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7954d46bb31sm268776685a.14.2024.06.10.05.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 05:11:55 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sGdsQ-00DhCf-S1;
-	Mon, 10 Jun 2024 09:11:54 -0300
-Date: Mon, 10 Jun 2024 09:11:54 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-mm@kvack.org,
-	Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Valentine Sinitsyn <valesini@yandex-team.ru>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 6/6] RDMA/umem: add support for P2P RDMA
-Message-ID: <20240610121154.GH791043@ziepe.ca>
-References: <20240605192934.742369-1-martin.oliveira@eideticom.com>
- <20240605192934.742369-7-martin.oliveira@eideticom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jskYjNP5QuCHPSCmrWM+VycrpBsAu+WFuICtPKjlpk7hqEeVrLV0MkhKEp5fIfktbix9M++Tw6jkjIysOQnWAlq9kcxjmFlnmQDVHwQWmZkZViPDc4JjEmM8LGGEVZ8wTl4JlYyZOcKlmpd+IL2WvnO/8lPrHa70kPcp3cmFE5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YHTFNpZ6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=X7eB5tOr4Wtz0yyAy8Xe6lpdiamgY9NpFstiAYK532I=; b=YHTFNpZ6MEWDOBw6od4XW+32LY
+	/g5YT6FOwEEanmRB1F8hkWFhzc7UxoWAaWNUjN22xwQCaA7WeDM6BY9MrT77az3W6eRR0DmyNNX5v
+	wMvuOHuKyQFDMV4SlH2iHySeYPtyedn7HRUD8Z+PSsQfiVzq4QAJC2hKd3H/ncFauJ84=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGdsd-00HII0-5t; Mon, 10 Jun 2024 14:12:07 +0200
+Date: Mon, 10 Jun 2024 14:12:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] irqchip: add missing MODULE_DESCRIPTION() macros
+Message-ID: <91eae7c8-ecb5-4076-9d74-e0f073218875@lunn.ch>
+References: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,22 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605192934.742369-7-martin.oliveira@eideticom.com>
+In-Reply-To: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
 
-On Wed, Jun 05, 2024 at 01:29:34PM -0600, Martin Oliveira wrote:
-> If the device supports P2PDMA, add the FOLL_PCI_P2PDMA flag
+On Sat, Jun 08, 2024 at 09:14:37AM -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
 > 
-> This allows ibv_reg_mr() and friends to use P2PDMA memory that has been
-> mmaped into userspace for MRs in IB and RDMA transactions.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().  This includes a 3rd file,
+> irq-mvebu-pic.c, which did not produce a warning with the x86
+> allmodconfig, but which may cause this warning with other kernel
+> configurations.
 > 
-> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  drivers/infiniband/core/umem.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/irqchip/irq-meson-gpio.c | 1 +
+>  drivers/irqchip/irq-mvebu-pic.c  | 1 +
 
-Acked-by: Jason Gunthorpe <jgg@nvidia.com>
+For the Marvell change, but the rest looks sensible as well:
 
-Jason
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
