@@ -1,186 +1,117 @@
-Return-Path: <linux-kernel+bounces-209072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD81902CA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E50902CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2717DB22A6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D8B2827BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5DF152782;
-	Mon, 10 Jun 2024 23:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8017153581;
+	Mon, 10 Jun 2024 23:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RHeTcGX2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VYGXzjmt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C23BB48;
-	Mon, 10 Jun 2024 23:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87E2152516;
+	Mon, 10 Jun 2024 23:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718063691; cv=none; b=KVqOUt9mkVBCVKp3e3Hf4JtoqYMMp7W9WbMwec1iVZalk5LfR9mg0gcX47RkRCsiEmEH48O1WjcG+LU8BCgCP2aMjHkodpuG3JsX/kepTSv8lyDrkCm6ep1VKl9iO5cRfKjFM66C0qS3aNmW/fxI/CODdMKKmkplEOl6XNtvzmQ=
+	t=1718063923; cv=none; b=TUgZfM77CZAESACIv3ABCCNwdHEfZx7VWaUmG9a2vv4V42qUlrchk+By1ycwz0VNVCInOyw1pPy9H4qeoPvL+ze836sPgT2vfZD/jhf1Qu81f1yMBy2d0oc+9b0CrV4Hlf1H2cl4RO92kk/0tTrPaUP9hosZfTtIPj88dK8pDrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718063691; c=relaxed/simple;
-	bh=7108FfqKDS2AoueEaQoE2SvY/tEoGg1AWLOfJWgP2o8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTZtKbkT1RPzV6is+jWjw6rIn+/osXYErrb7rhhQAdIqZPLlSwSqI2Qu0y+jm3gTZMyOaJQTiZooMsz0gly8WmOpWhd1YnRsYrycfC+yit9TCB1ACptzXSfSly0DBCV5juw6Cf9iydrM4pArHnMt6h4264HMIPkNm1Gd620wDKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RHeTcGX2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1C91329A;
-	Tue, 11 Jun 2024 01:54:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718063675;
-	bh=7108FfqKDS2AoueEaQoE2SvY/tEoGg1AWLOfJWgP2o8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RHeTcGX2fWDOd8ZPvYpR+Eiskko+q00VB/BYDyvThkE31xfchmhOWkJwbTLhFCCIt
-	 U28eGIlDGwyyNWpkw41Msz4aSluDcoJnh6Qmz1XIxIu2RHiTguyKC4zjxpbrz14D+A
-	 O2dbpO67j2iatUq2K/eUwRDw3dVV4565RsFBvNQc=
-Date: Tue, 11 Jun 2024 02:54:27 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Christopher Obbard <chris.obbard@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: imx8mp-debix-model-a: Enable HDMI
- output
-Message-ID: <20240610235427.GD31989@pendragon.ideasonboard.com>
-References: <20240610234307.96766-1-chris.obbard@collabora.com>
- <20240610234307.96766-2-chris.obbard@collabora.com>
+	s=arc-20240116; t=1718063923; c=relaxed/simple;
+	bh=2TQXo2YMYhg/mBJxKuqafaOEZef1g+SCKODQN1pqdkU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxZ5IFKfxhG99PK3USVjk+VkgrG603OlcBit26b6QUELw7aQeWBhPxtDRHbWYQLUww+i6tCKipj9wcWpCBqQPGntfuinIfcAakT1L1d/4s520oK3SM98vi8p9i4fSYc9MlkBCTljigZweO/gmhRXWysBrcfZDCCRkbooUu6pUp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VYGXzjmt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEuJP6020164;
+	Mon, 10 Jun 2024 23:58:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/ZM8SPXr7udKkYr/SDUmnoP1
+	IOgbHf5SfkdSPWJ27XA=; b=VYGXzjmtBWp726E2xGI5xKneKSQa2z3ysjBzYYg+
+	pYkq4KWmIrlIi9rA86YY3sfA2ff9C10iX3jB0+0gS/y7a9hweR0wkRwNdcc2RVea
+	7pEopI820vSb5scCthIBBLJh8i7WnmXh4jNpwmnllaYv1xXWhSuqWcwGaFPMv39w
+	NTILeC+z3e0sSazRK4hQZme0oZ10jZws1qF0pFGqipTxkBTSl/h7k7ckjFjL/UJQ
+	Mzwr9Yb2R9/cp0Xpi8Q2NwDeJ+xMNc9Hi0WzygXVAeDekAtLqUJR4CqFqVEA29YI
+	qupy4wx3gAcLz1u9oSa2rKnLJKkIaNhFNK/SbR3ADNN5ag==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfp7cm8j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 23:58:21 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ANwJAq016522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Jun 2024 23:58:19 GMT
+Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 10 Jun 2024 16:58:19 -0700
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <robh@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, Wesley Cheng <quic_wcheng@quicinc.com>
+Subject: [PATCH v23 02/32] ASoC: dt-bindings: qcom,q6dsp-lpass-ports: Add USB_RX port
+Date: Mon, 10 Jun 2024 16:57:38 -0700
+Message-ID: <20240610235808.22173-3-quic_wcheng@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240610234307.96766-2-chris.obbard@collabora.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MNRpAY0FpGfi2JYHFQJ1G2EFX-oCYUAL
+X-Proofpoint-ORIG-GUID: MNRpAY0FpGfi2JYHFQJ1G2EFX-oCYUAL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_07,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=983 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100177
 
-Hi Chris,
+Q6DSP supports handling of USB playback audio data if USB audio offloading
+is enabled.  Add a new definition for the USB_RX AFE port, which is
+referenced when the AFE port is started.
 
-Thank you for the patch.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+---
+ include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Tue, Jun 11, 2024 at 12:42:38AM +0100, Christopher Obbard wrote:
-> Enable the HDMI output on the Debix Model A SBC, using the HDMI encoder
-> present in the i.MX8MP SoC.
-> 
-> This has been tested with a generic 1080p HDMI display, along with a
-> smaller 1280x800 HDMI display.
-> 
-> Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
-
-I've been running with this patch in my tree for a while,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Shawn, could you merge this for v6.11 ?
-
-> ---
-> 
-> Changes in v2:
-> - Do not set SION (Software Input ON) bit in pinmux pin config register.
-> - Small changes to commit log/cover letter.
-> - v1: https://lore.kernel.org/linux-arm-kernel/20240415114135.25473-1-chris.obbard@collabora.com/
-> 
->  .../dts/freescale/imx8mp-debix-model-a.dts    | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts b/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
-> index 9b8f97a84e61..af02af9e5334 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dts
-> @@ -20,6 +20,18 @@ chosen {
->  		stdout-path = &uart2;
->  	};
->  
-> +	hdmi-connector {
-> +		compatible = "hdmi-connector";
-> +		label = "hdmi";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_connector_in: endpoint {
-> +				remote-endpoint = <&hdmi_tx_out>;
-> +			};
-> +		};
-> +	};
-> +
->  	leds {
->  		compatible = "gpio-leds";
->  		pinctrl-names = "default";
-> @@ -94,6 +106,28 @@ ethphy0: ethernet-phy@0 { /* RTL8211E */
->  	};
->  };
->  
-> +&hdmi_pvi {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_tx {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hdmi>;
-> +	status = "okay";
-> +
-> +	ports {
-> +		port@1 {
-> +			hdmi_tx_out: endpoint {
-> +				remote-endpoint = <&hdmi_connector_in>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&hdmi_tx_phy {
-> +	status = "okay";
-> +};
-> +
->  &i2c1 {
->  	clock-frequency = <400000>;
->  	pinctrl-names = "default";
-> @@ -239,6 +273,10 @@ &i2c6 {
->  	status = "okay";
->  };
->  
-> +&lcdif3 {
-> +	status = "okay";
-> +};
-> +
->  &snvs_pwrkey {
->  	status = "okay";
->  };
-> @@ -356,6 +394,15 @@ MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16				0x19
->  		>;
->  	};
->  
-> +	pinctrl_hdmi: hdmigrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL			0x1c3
-> +			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA			0x1c3
-> +			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD				0x19
-> +			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC				0x19
-> +		>;
-> +	};
-> +
->  	pinctrl_i2c1: i2c1grp {
->  		fsl,pins = <
->  			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL					0x400001c2
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h b/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
+index 39f203256c4f..6d1ce7f5da51 100644
+--- a/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
++++ b/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
+@@ -139,6 +139,7 @@
+ #define DISPLAY_PORT_RX_5	133
+ #define DISPLAY_PORT_RX_6	134
+ #define DISPLAY_PORT_RX_7	135
++#define USB_RX			136
+ 
+ #define LPASS_CLK_ID_PRI_MI2S_IBIT	1
+ #define LPASS_CLK_ID_PRI_MI2S_EBIT	2
 
