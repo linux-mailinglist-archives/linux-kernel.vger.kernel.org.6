@@ -1,146 +1,97 @@
-Return-Path: <linux-kernel+bounces-208662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D869027D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:37:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2314C9027D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673381C2157C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:37:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E853A1C215AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 17:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E000014D2A3;
-	Mon, 10 Jun 2024 17:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB541482F6;
+	Mon, 10 Jun 2024 17:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="smQ+bCra"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlR55hcP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AD914BF89
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BF8146A85;
+	Mon, 10 Jun 2024 17:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718040994; cv=none; b=Lssg8jL2k/jOS9i5Um2p8aWeaRu4xH3yVA0BrefTMpySih7FVRiBeMx705/tgLTa+4QJyWiSb8Zs+viCFshHkZ6wDHybcbakJrHAwUQJ6Eki0Y9J0ajZfnEJnLJlz2TOnviwZmAwi/et/81ngQyed4oV7xmnIyVoVlsK0P22tz4=
+	t=1718040971; cv=none; b=O7e7Ml2B/ag+dM3AtiefuSyAclm8xGgPPW8MabwE48/RUNN8dvabHRf9FAmt5MeJ/p8URJATSjsaocYQNnJV3753xn1TsQKJfwezCKeWvqONAO3fhwMPkvs3Y7tL2FwTzS7sRjx6aq7JU4nt1x7p58bdlu3wpleq6bd91VdUYNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718040994; c=relaxed/simple;
-	bh=y+uDpOxTiI90Z0rYst7WMhozs021EoRaJXDZTXBdl4Q=;
+	s=arc-20240116; t=1718040971; c=relaxed/simple;
+	bh=RpbmXndHJoXl3SlguVLnsaEn/mZZ/EfBgJrAofv9UJg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/oAI6CczEug/4B6BToBQGxxpecidbql3fWcIKMcYPCk16WD9iE7NBAJNxPZsPdtCgmW4ICo1gHWjqcLTx/gdcMAZqw/ZoVXv4Gq0KGwibI2Bg0PFSXVgnTsJZecun1QC2oWNip6ds1KYxeojmcliY1CpQTXEZ/0i01xwOUQKmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=smQ+bCra; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6f1c4800easo165200266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 10:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718040991; x=1718645791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dU1wp/8ID9GZkzO9MN6hzBQi84cW9f85LsgOI6MzdBM=;
-        b=smQ+bCrax6f2Z50WCDNYyedoxZKyOWqR/CYQ7hJ691CRiXFuslzL4yQ3qW/D+Tvbz3
-         XtcmIzAvmCygxmOy5/yOEJh5spMHIHLTdmcRrdW4us8FxFOw1V/1EnyuNkQ9qRkIwZMs
-         I5mGJ4AxF34961opHBEvBGBqoDWSFfuazQTyuchEf9D+rv7RE34xKjRrg4+JFSL2HWR+
-         28AvUqYNt+EWQOk014ZBILHN3Z1j7puA6Cbu/MkfLr+zoPbB+cHLArZ0g85z4JuJVE52
-         gTX0Qghy9GbovsBgcU+tG5VT2qriC+M/iGLefRZYm5EH6g7RYwpXM8Y5jKGuJGPt8UAR
-         CrgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718040991; x=1718645791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dU1wp/8ID9GZkzO9MN6hzBQi84cW9f85LsgOI6MzdBM=;
-        b=opwmJj4uepJ6kBNq2P4fIoY6UjLtZC+DhZqPmZdBfsY5eIqBBRk4tRBsjxH5s3Tolb
-         hVAqf6bRbpHDIF116mvtbLumlDlwRh4Uw6r1ns76BJU6OwZvjsn0zgNPvtEtchPmt723
-         wZxGoRKQy1P8rKf42OOc55O4gvEAwd/ZbDw0MJMoUDKxCvAC2j0205Cv5cSg7kuzrAsm
-         0JtuZxA4fbJmabLq0fArUzo50Li4guKtHG/rJy8JlmkCRmdcOHLbLfcj9HWrlQTTnCo4
-         tv6rxDgY3U3DBypytzeXRV9nNyUfcLbkkfv30M6JwBl6wDsgI2DZN1njUcDjEAu2iSpB
-         7ivw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEtd9oAbIbnkqoZvct+AthRaFNnAU/qmTTHv+2RNTE8Ry8cZtskTFyKXyoU2g4Bff/wVIh1NkU6LOMnDIQQh5JaqmK1Uc1Z2FQTxbP
-X-Gm-Message-State: AOJu0YyZPVTNsKjOJe4M0NazeCB6Q2BDPK0ns4oxhDn8W6SXnIkolHD/
-	9lbYIh4BCkmXaFvfwnuwSOoO5jJ6tA5a9flnAIHzAV2qKD7isqcbJbeO2jnxc6y8MWTg/aQlvtj
-	+LmPUeCb3n/2UWYG+voksGJzz/WXqyTTZTXow
-X-Google-Smtp-Source: AGHT+IGFJqcSp8XShUaYALJ4Wx844rcf/dAaD5tsaciA5uNA6+bXzdDsjJKkkmvkFTaD/iDvHjV/GNRzuOlKzPKT1+g=
-X-Received: by 2002:a17:906:52d8:b0:a6e:f7b5:3189 with SMTP id
- a640c23a62f3a-a6ef7b539c6mr508030966b.76.1718040990435; Mon, 10 Jun 2024
- 10:36:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=XrVBojAaU2MpIZWGDm36lEUA2GHj8/vCOq+IBS9TXzvLmwmkCn5UOViznCaiDYoADdqwQ5nTyUjvkU0t3TS6yUbrGKHnZH9+h5ll6R5bt1jdgTd6TVxbh63mJfZ+aLT825t1MdViaxCGYiGfQ+iigBkC1ihYWnEbbbtjAyWoz7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlR55hcP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87A3C4AF1A;
+	Mon, 10 Jun 2024 17:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718040970;
+	bh=RpbmXndHJoXl3SlguVLnsaEn/mZZ/EfBgJrAofv9UJg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SlR55hcP8LrDzbTWKjBbz+lXT4DRX+LBTHKynKlVM35BsnmEpZ5tAEBQSQmuhoqXd
+	 R0o7LIKbqEa5dy9MBMZWmoupp7jrwV+99ysyRqnEXEcJ6wVxNviL6u8QrkCLLl4FEA
+	 vwOETgouukNUwgq0JOuq4fkTQUd4wsM/Jltk5ppnC0IF6hoBLMySrzu/63c5nuda+s
+	 FgdjzoZ9IgdaIrOOzmZvNGKqGx4myrMM0bQCPMRKrIBfToV5iSJFJ76tBxfQuvuLT/
+	 1s1QxXlWxuTall47DrW/BhSPzUQuKSicF6b4XXqVBxMGSLA6GDjnt+FCFnQWjhOz1U
+	 14iXLNyuIuyQw==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso67213421fa.3;
+        Mon, 10 Jun 2024 10:36:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWbLY3yq1is8kKNKQD6lDtTVn61O2H3Ik84Qe/Y4CFGjo7hEeOOwQUbPchQPA/uKx5s8POfN6syw9MK+x6N/7fojxp9xQ8nn0cyneHa
+X-Gm-Message-State: AOJu0Ywa0wtutvdY+HAPP71cHnq18MwuwCg8fVluamRfcPBfSUHZZL6C
+	sxcBl7zEB9zmo8f/PmaXDjDRGuQClJudozGseGvA9tp7gW13TPJXtJfLMhiY7sGcFRwmedLjFc0
+	DBtMKMTbx0EKznQpwf3o/WhOi8oM=
+X-Google-Smtp-Source: AGHT+IHKImW/r87B7AguekV84AH/VQm9GeY3xw5nAWreXqk6nEvsypEgOSR3wcoLjO/JvlBu8Tfr8iQJsfPcxNBcrwE=
+X-Received: by 2002:a2e:b0f6:0:b0:2eb:d4b0:6ed8 with SMTP id
+ 38308e7fff4ca-2ebd4b073d2mr39323531fa.36.1718040969068; Mon, 10 Jun 2024
+ 10:36:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608023654.3513385-1-yosryahmed@google.com> <2821278f-bc94-c147-d0fe-8cc52dbdccb1@redhat.com>
-In-Reply-To: <2821278f-bc94-c147-d0fe-8cc52dbdccb1@redhat.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 10 Jun 2024 10:35:54 -0700
-Message-ID: <CAJD7tkYepf6z1Q7HiSRAc7-S9OwYCphx=9NcyHxtW0YrkFv0sQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <20240508092053.1447930-1-linan666@huaweicloud.com>
+In-Reply-To: <20240508092053.1447930-1-linan666@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 10 Jun 2024 10:35:57 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7Q9=wu1EM2DAQS4Xw6Ja5YcJppCwe2=+RnXEO7wSVf4w@mail.gmail.com>
+Message-ID: <CAPhsuW7Q9=wu1EM2DAQS4Xw6Ja5YcJppCwe2=+RnXEO7wSVf4w@mail.gmail.com>
+Subject: Re: [PATCH] md: do not delete safemode_timer in mddev_suspend
+To: linan666@huaweicloud.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yukuai3@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com, 
+	yangerkun@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 7, 2024 at 9:08=E2=80=AFPM Mika Penttil=C3=A4 <mpenttil@redhat.=
-com> wrote:
+On Wed, May 8, 2024 at 2:31=E2=80=AFAM <linan666@huaweicloud.com> wrote:
 >
-> On 6/8/24 05:36, Yosry Ahmed wrote:
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index b9b35ef86d9be..ebb878d3e7865 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
-> >
-> >       VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> >
-> > +     /*
-> > +      * Large folios should not be swapped in while zswap is being use=
-d, as
-> > +      * they are not properly handled. Zswap does not properly load la=
-rge
-> > +      * folios, and a large folio may only be partially in zswap.
-> > +      *
-> > +      * If any of the subpages are in zswap, reading from disk would r=
-esult
-> > +      * in data corruption, so return true without marking the folio u=
-ptodate
-> > +      * so that an IO error is emitted (e.g. do_swap_page() will sigfa=
-ult).
-> > +      *
-> > +      * Otherwise, return false and read the folio from disk.
-> > +      */
-> > +     if (folio_test_large(folio)) {
-> > +             if (xa_find(tree, &offset,
-> > +                         offset + folio_nr_pages(folio) - 1, XA_PRESEN=
-T)) {
-> > +                     WARN_ON_ONCE(1);
-> > +                     return true;
-> > +             }
+> From: Li Nan <linan122@huawei.com>
 >
-> How does that work? Should it be xa_find_after() to not always find
-> current entry?
+> The deletion of safemode_timer in mddev_suspend() is redundant and
+> potentially harmful now. If timer is about to be woken up but gets
+> deleted, 'in_sync' will remain 0 until the next write, causing array
+> to stay in the 'active' state instead of transitioning to 'clean'.
+>
+> Commit 0d9f4f135eb6 ("MD: Add del_timer_sync to mddev_suspend (fix
+> nasty panic))" introduced this deletion for dm, because if timer fired
+> after dm is destroyed, the resource which the timer depends on might
+> have been freed.
+>
+> However, commit 0dd84b319352 ("md: call __md_stop_writes in md_stop")
+> added __md_stop_writes() to md_stop(), which is called before freeing
+> resource. Timer is deleted in __md_stop_writes(), and the origin issue
+> is resolved. Therefore, delete safemode_timer can be removed safely now.
+>
+> Signed-off-by: Li Nan <linan122@huawei.com>
 
-By "current entry" I believe you mean the entry corresponding to
-"offset" (i.e. the first subpage of the folio). At this point, we
-haven't checked if that offset has a corresponding entry in zswap or
-not. It may be on disk, or zwap may be disabled.
+Applied to md-6.11. Thanks!
 
->
-> And does it still mean those subsequent entries map to same folio?
-
-If I understand correctly, a folio in the swapcache has contiguous
-swap offsets for its subpages. So I am assuming that the large folio
-swapin case will adhere to that (i.e. we only swapin a large folio if
-the swap offsets are contiguous). Did I misunderstand something here?
-
->
->
-> --Mika
->
->
+Song
 
