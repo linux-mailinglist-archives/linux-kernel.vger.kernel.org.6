@@ -1,226 +1,554 @@
-Return-Path: <linux-kernel+bounces-208918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC284902A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:32:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CB8902AA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDACF1C210BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA70F282F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A596F303;
-	Mon, 10 Jun 2024 21:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66892558A5;
+	Mon, 10 Jun 2024 21:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oJoqGTCf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YJGsVmyn"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE471CF8D;
-	Mon, 10 Jun 2024 21:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718055131; cv=fail; b=tV1nngZG0maVqMHer7/Hakrc72DSlcjvxlXMu6GaO3srm3TVz9n0gRckYrbsjF+z9mx8brHDJUkTj1COHQ+N8wi+AEeGJUshtCkEo/BiQ0BeHO/MkrAOwD2ax/2Y9TkrCtyBU0NkvGQp81v58rmO4Lv0uGhvI35o1U7X8MXrcAw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718055131; c=relaxed/simple;
-	bh=AFF2Vh46kMW3LtrCxWMkcTGvR1KPTy7Eb4spiMVbH48=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gI9qvCQ1XhzmHW0Zrr3zpW/+zcdwlFPrbcy46oqcT2bnLsvLkpsYeZf1N+74BvVfIdxU2L5j21bbA3yxcAadhUfOKdpzdbglIcWp+V11dI6Ok2wVFMkv4uBzgIo1BAHMngAv4BBl2u9XY3t2B8MpjhCBTKCRqAQcTUS5kTmK3gU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oJoqGTCf; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718055130; x=1749591130;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=AFF2Vh46kMW3LtrCxWMkcTGvR1KPTy7Eb4spiMVbH48=;
-  b=oJoqGTCfLK0PT6ebVWa59eCaBoHyq61+Bhwr6Ucw+7n8luOG1uMu2fIi
-   kFoSxsrpEMyhmYzk6Arj26tJ0yp72RyvFEws1M4BW1YL8KglebZ+hG0bC
-   WBoReTislytCviXfj1W9O7oVY/n/h4g1Lgi7KTYoECREn9CtF+pEej9dr
-   +EQE/xvbvdmi/KHUoajUqO7zpZW1EL0EVyfzqmQsCVKkJgtKR0MRdDZq7
-   FmXiYGtX6g9c6AN4MnAyypldGCG4IRU3H3BZfufv9n6+g9rtw7uiwqxWx
-   c6Fpb7VmJ4lPcXBbNt8fTHrpYiN9X4EW0XGv1YBXdBLLN1boaDxx6mbRa
-   w==;
-X-CSE-ConnectionGUID: hI4/koycT/iTkPEgpNGwAA==
-X-CSE-MsgGUID: hDZI3pfvTA+dfi67ajr9Wg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14908128"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14908128"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 14:32:09 -0700
-X-CSE-ConnectionGUID: z9UjxCHuROyuEmHyyZOnNg==
-X-CSE-MsgGUID: VtEzrw8JRJ6knt19copVDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39188632"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Jun 2024 14:32:09 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 10 Jun 2024 14:32:08 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 10 Jun 2024 14:32:08 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 10 Jun 2024 14:32:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XHVD+ByS4LJDjzXqe2QQDMjjBU4EOFRxuFerK1nEtssx10/aZiZdJn1uXqT9JvKSwIxt2IN3jbbmqloZEa5oPqbLN6cDSN92yedTFpWsoX+ZlYsGj7uCrS+pYXJRq/rxGDqgT42RKhXbAxoU6rEKmVirnNs4RHByqEnMUNU9NJrHOXsIoC4tXLFT/H49vhatzPPoxWLu7m+y/EvQX6oGhV7FgphK8nfWqZUZsRgSGOGCEsxyCDJRk44hgK+Cfz3U52AWJJZ8DYSpx9hRh7ftVenAitW8IiEnJOoQwfBjnyKxxu6BFq9rT7bD7jUfM56KRIcShQ6Y+FboWImUhBv+WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I1b/pb7wgub1bXTXHQllUyq/y3/LoHSD8qrbx/WrT8E=;
- b=QZ+KLK5RCXIFJB70tGpE6FWnTl8LmiYYgrOK8hX+UzM7MNapJ1pwv6Et2muXLnAPA4K+28cL75yn6B18XMNzsEPEMw2noye3yQJdboozegdpzb9d4vFg6h8yqwVe04O2g+DfIoFGrRCAweYRjJmevyTgzIffIXC4kbYRlJQztGBKpWxAcqvq1mblBS2UbwBxSDZKPll6JJNg5VVoDxO+jxbULbfDWE3PCgQ946vTHlSHxVlIy7qhlOAAJ/6gl85Pzg3y8/deMqWQdsrw/FeBV21nzGMClsZePWIiRqJfbHxYafXxSwFZEkRRrt0Pu2bwbprbnq9q9+v2Icoxe9GIrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB7593.namprd11.prod.outlook.com (2603:10b6:510:27f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Mon, 10 Jun
- 2024 21:32:06 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7633.036; Mon, 10 Jun 2024
- 21:32:05 +0000
-Message-ID: <6a78de4e-8d36-400c-9eb5-d3d6aa9e1e23@intel.com>
-Date: Mon, 10 Jun 2024 14:32:03 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/resctrl: Fix noncont_cat_run_test for AMD
-To: Babu Moger <babu.moger@amd.com>, <fenghua.yu@intel.com>,
-	<shuah@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <maciej.wieczor-retman@intel.com>,
-	<peternewman@google.com>, <eranian@google.com>
-References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
- <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <7679d70a0ea939db13ae9dac20de56644460d6df.1718035091.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0361.namprd04.prod.outlook.com
- (2603:10b6:303:81::6) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0046A5588B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718055209; cv=none; b=h52J5YVe9/wWZk6BzQTKVrGc5FDjsiEDOCnXI/xd+slx5l6TMeFO6gVR+uVZ1+JoJrqrDYbHsBqWQPUk8IYn1uAczKbWi5IR5oIZ4oKxu5nhIRn83E+H0JvrESHm0wQ55ImWYQnAwBg4XCb+uxaQhDfDSMHskGLk4qkNCEk/hRQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718055209; c=relaxed/simple;
+	bh=0yBu0GixRXi4Ppeqwbh5M4bwKPiAv3KfPRnL1nr9SJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsjWmZyqeegLBeGdce7E0TorXZIATcBAuH8ZR5nQj0NEkunrJWqV2XGyJVQKoA/vuSMIMH8n+AFOzGL6RzN+uEzHZ8n6+nXaLE6zTsMrWfwXFDnxPyGExJ9HX+tzjmoXxtgTEk0xk3CkZ4QY3oYbqlm2i6bWkkygj4zwNQ4a6s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YJGsVmyn; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4405cf01a7fso44791cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718055206; x=1718660006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k/1MZYkvJqGzXwxdxyKaiV/jOC5GN5vlXbEcMG/wWjo=;
+        b=YJGsVmynJJtxmsp/Q1yx7d5kh7BZSBu5xnF1kpogxfrEgbfmLbtFY8E1FZkWqtjH1V
+         8CCvJVIMcq0HjtrbA+7YnB7fQywT6Seto0CRAaNRgXHDGgNiH2KzeVXLQHpHUZhudpVY
+         Seifi8i9VvYw6RbBc4j5oxKBk4gMuK4fdGUhnyt9m/x+7/5CXpRn2E7Fzp5q8Xjf5lUN
+         NMqOjup3IVfBJ5tcnKCNp6LwYCDZyt/EayQ/bE+OBEIw9FL9K6KDduD9IHjE9P1Hi1Z8
+         6XVghQYJeZUHTu4NTWjTJ3m1uucDujfbyeQEvFLzaEL7+jgXW6EI2LjcZexecwd2AhM+
+         rkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718055206; x=1718660006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k/1MZYkvJqGzXwxdxyKaiV/jOC5GN5vlXbEcMG/wWjo=;
+        b=TGk9pCFmT61pn8VUBlJKyqQG/5V3E/qTzRsqGBIkUWIz63W5gfOpaVwEkeZiBY27jN
+         FG6QiF+/DxFaJwo8PErkvkwaQuhHGBElxHxFHxWZV/PXS5Xzl3kZx/dK/RXy5YWECQL/
+         dRVd1PpljpPZKs9Kt96cwXv50dGYgpD5DpN5CrAvcpwk45n2XaBBTEuuqYIQn4IL96Y3
+         C1DbCjesdv5f8dts3Of1D9VgTNdpSzlRePJ8BBOEH5ey3b+7hHiR5bRQieExtdKqWDug
+         9JFtVMCvFY/LbGhOtVE6E+Yo9Ub2nfLz9l6MXhXMdwMnM+doLy2e8q53Ic7Q0v+fpztS
+         3gSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXElWSRPXso5VsEE9SOffs9VfFlKGRnWtqRg8RcJ5GKa5dJ9cdpjwPcfS7G1LxBTC83ntlLJjUah2AU2axyiwhhuCJ2b3VLOFdpDB91
+X-Gm-Message-State: AOJu0YxchGPCVzrSEgREgPZFw7+I0ACLbgTaS07hoTbRG1xvbyZUHhjH
+	cOnjGN7ZdFpyZIGpIsY5jaWfgcC1Q2py47v0EVh4zY/C2VVPAhqAmBPr0SLehFcnLJqqymf1gPx
+	ZWzK+1T87W90/Gu9pRkZ1bJ7V1S8sbdQNjAV/
+X-Google-Smtp-Source: AGHT+IE2oVD7QAe0nD/gru3sJCBjYJQssg/NRVaZrMCqHZ96jYj3WmoKmOINKGmHa8llrdJDzXC5Q+nKjyn8PK92kgE=
+X-Received: by 2002:a05:622a:4114:b0:440:5441:56bf with SMTP id
+ d75a77b69052e-4413ec32cd5mr1245251cf.0.1718055205534; Mon, 10 Jun 2024
+ 14:33:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB7593:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2215d49b-35f4-40b1-d814-08dc8994c668
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WWxoSktUV29leG9NcjZuOHFpcWlhSDBYZDdYRUM2NWM5Z1lvWFB2NGpqZDBL?=
- =?utf-8?B?R2NHeWU4aGxuajg2VVlCZnc2RHhDYXdKT0VkZmx2WmdRQzN5TmtZS2Zwc0xm?=
- =?utf-8?B?NWFqOTJzWFFIT1IzQWgrM29qSUFGZk05L0xWUXJlVG9taVhlMXVlNFE3dTFV?=
- =?utf-8?B?UTgvRjJYeXY2blBZZ1RvOWZCMGVlRzlETEljUUVHRDV4dTlMUS85QmpFY0E0?=
- =?utf-8?B?dzNHRFd2QUlPWU5mN3RZeVdPU1JWMXZrOWJkV21YV0dWUGJvSmJnaWJ2QlNK?=
- =?utf-8?B?cHFPSmJ2Y0daU1YwSjFrcDFEc1AxMEFrRk4yUHVVQWorSkx0dkFQSkFidHRJ?=
- =?utf-8?B?UnRhUUxPckcwTVlmaWsyUFNUVnNiUXBCNGdhMDZrY1o0YUpiY0dGL3Y4MTVX?=
- =?utf-8?B?OGt3dzdkcmFkOEtrcEViQzZuaWN2c2ZBMUUxbFZoSGNmVVF3TXJTQkgxSzR1?=
- =?utf-8?B?UTdlQTNNWWpKa1piMDREWThPSTlpS2NxTWcrNWgwYy9HTkUwdmxncEF1blBn?=
- =?utf-8?B?d3M2SGlBRXdmNjRSdW16Qzlaa0FGY1E2NllrbG9TQnoxRk40ck96bXBZczla?=
- =?utf-8?B?YmFZajlkeDlRZU9ZOXRrZmN1MVBCTlJESTJpeUVSSmcvcHpzeVRLeEF1ZFF3?=
- =?utf-8?B?WWFaOGRsNElTM1g2bVF1WmtMeHdjQmoydGcvKzJzNlJoMFV3Mmk4Z1BkQytF?=
- =?utf-8?B?T1ZkMVB4ajBieXFzdERTdjU0WXlYZW1aTHYzMUZiZHpIYmFNYjg2TW5pS2Fo?=
- =?utf-8?B?UjFnZ0FjNkNSOGNEdmxaUi9NcU53OTNyT0xwOVd1clRaT2pDTG1nQ2crZGpi?=
- =?utf-8?B?V2RvNzdwaHJkL2syRGJBZmJ2R0lKWk43MFF1UUdPa2E4b2k2am8yaWlPRDI2?=
- =?utf-8?B?T0cxOEdUY1JaWExJVEZsUEJySmdWOFFCNEk2VW5VamJ3VkhvbnROMzMrd0Fs?=
- =?utf-8?B?WUlGT2M4dm9Mb0hsb3dEUmRPOWNHOWJhcXNTVjVReEQyb3lQcXlUZVhHd2JM?=
- =?utf-8?B?bm5Hc3Zkc1NIdmt1eFRGY3ArMFJ2TVlhREdJaEFhTGRodnQ0QTBQcUNsMlgw?=
- =?utf-8?B?MG5FOFIwaWcxZ2dFL2Z4QlRJSFYzNjVDMWFWdjJ4SEtWditOdENJYndVOFJZ?=
- =?utf-8?B?ZDVXRmVGOTdPRUVOVGlrT1lac29YSVprWVdKQWkyMFlJTXowVlJ4ZmczclVZ?=
- =?utf-8?B?MGMwNXBmcUk1UG9rZ3ZHWVRRellmZ0QzZ2grZXE2eDZIUjBwTFk4cmxRUXN1?=
- =?utf-8?B?TCtGVFlkWkZtOEhJTjRiUWVRd3FvcWxEVlVtTlM1YWQxaVdGdmJVOVNYNnQ3?=
- =?utf-8?B?dUFVZ3FxT0VQajFMMHpWYmlJaERIYUVDeVN5eDBKZi9MaTNJUUR4UmM4RUZi?=
- =?utf-8?B?dFdpb1V4UFBnd2JYdWFON2pRQXRNc053Z1B0TmMyREZGYjAwS04zbzJnQUtv?=
- =?utf-8?B?c0gycEdkdFVSOUhueGcybjcyMHVOc0xUNDdsU1V5YlcwZGtlcVQ3OVBHbFFI?=
- =?utf-8?B?Mnh3RWxpL1VkUVd6bi83ZFh3Nkt4clo3b0duaVRITWxJWWYxeDV6NldCVTBI?=
- =?utf-8?B?bVpVd1dJZzEwVmhaQTM5cjRRQ25ZUWtVS2hFNktkTjYrSy9KNVBJY1hoN2p2?=
- =?utf-8?B?L0NtNHdyMjZQZ0YwVWs2L1orQXBjSmZNMCtlVzk3L2hmdDBwOHVQT3lhVUhS?=
- =?utf-8?B?K29KR2V1Y05aeTJQbk5pT2V3dnRRM2txb2QybE1SZnZsVUErUEJzRFduSjcr?=
- =?utf-8?Q?dxRdJi6C4iY0yU2rnXd5b9+tO6PymKeglYOmJD+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YTM3Z3hEbDVNZWtxOExQaDJGdHQ4dzd5SUY1UGVTYVdRVTVuTXJNeE5lZ3Ux?=
- =?utf-8?B?WnAySllBdVdYRHNFeGM4TmlJd0FXSzVFZ1FJRXBLd2VrcTZsY2l6SFZ6Rkl0?=
- =?utf-8?B?YkdDMUtCOFhDWFlMdHZEdHp6aE9jc2V0NmtMT1dQR0lkMUxMbXAyZDZ5VTBG?=
- =?utf-8?B?U01vUTd3WmpCeVJmUFJtbkN3VkxnQmd3VjkydDFsR21yYVp6elh0UUt3RDdM?=
- =?utf-8?B?YUFneUdoNlV2NnBIOWFWeXBIU2xwRklVUWhoTTJFR2pFbjNvMjcrcHFxblBD?=
- =?utf-8?B?S1dRMllreURnZ2tMN1hrMFJVdXhQTzZSL2ZtajJRN2YzZW5SelNQM3lWV1RK?=
- =?utf-8?B?eGsrZythSnRDaVlNbThSQ3NZb2xORHVJYlhuQ09rY0Y4UEJHb29qUjVVNmNC?=
- =?utf-8?B?N2VrWHVKeWNEK3RiMGRCZ3paR2toMG1HamhRV0N3T2pDek9PcDFtRlY3NXpm?=
- =?utf-8?B?R0Z6dlVqZ1RNRERlNDRKOXRoM2QwakJBLzd2RVBwa0g2Q2xkNVRsanlVdjR5?=
- =?utf-8?B?RXl5Vlo3TC82aEg4TlBjcmxxTDhpTXBKUXp4OWNPOUEya050ZkgvSlRFd1NN?=
- =?utf-8?B?QnFZS2VQbzBFczV3ald3TGF6MURMQmtOaGhkVEdCUWliN1lGcHZicDF3L3BY?=
- =?utf-8?B?Q1JsanFUYnV1MW5xKzNQZy96VjN2eG9XdGhTUy80aGc2WXY4dUxzRmJnS0Zl?=
- =?utf-8?B?bkc1eVRxQTdIUlN5NndoV2MvNzhBNUhobkQwZURWMWxtOUFlSlFjSHRJSXFj?=
- =?utf-8?B?NmxGNm5qOGZteUlyZ1pFK1ZiUjVZbDdGZ2llUmRZQVlBWmF3c2FhdXpnbzVY?=
- =?utf-8?B?aFExL2xHdm1DRVhYSlJQMUlXU204VFJpNVA0OVBFZEViWDJjdmZrV3Y1SkpJ?=
- =?utf-8?B?QjY0QW54Z004Mk0rSlE4WXpYb29vb01tUkVlNSsvZ2NBeUh5NFhZc2k5alB5?=
- =?utf-8?B?MTcxMDk1MTdPZmxhMHkreDYzM1VTeHJWRm44aHB4eTYrRlhWejhJZXQ1MFRM?=
- =?utf-8?B?OG9wUzNBK24rTVlLWGJER2lqNGNTZVVKcEpleUJ6YUxpQXkzNXJRSWtxZFh2?=
- =?utf-8?B?T1NPRjNYRHJJN3lQeXVUbzF1Slk5dVBrWEMrb3RLUSsyd0lFU3Y1YUFLamJ1?=
- =?utf-8?B?Y2FabDYvazhLRTBUMzNxdmN4S0xVS0VtbVdJc3c5MG53V0xiMFkrNGswUURo?=
- =?utf-8?B?S2lzLzc1dG1teTBoVWlPU29WS0ZNeEJvZ0VkalhjT0pjUFprS1dtWndNSms2?=
- =?utf-8?B?cXdKQklLTFNRK21xVS9MMHdEeEovcUJOU1MyQ0Jwb3lYcUFGZGszaE5SR3Na?=
- =?utf-8?B?QW5KNCtVaEwxN3B1VHpCVGVhL1ZBcmxWN29EZnlXSWFkVU9YWXIxTjgzdXVa?=
- =?utf-8?B?dk5UQUxsUWFaOGpLcWFLVFV4dmJCQk1xczBQQnVIK05DTUMzeTBTWjRTazNm?=
- =?utf-8?B?UEkrQXJxQ0laQk1CeHl4bHA3ZGphUmRWYjduaFlrcjlETVN5QXdsM2pISTBq?=
- =?utf-8?B?TlEyS1A3c0ZqM2wrWE1Ha2tTdC8zdVZNcE9NVFBsVTdqNDFWbVM1NWdHOE51?=
- =?utf-8?B?aEJ0bm4zR2MwR21ha09NOVQ4a09uWHQ3ZHkyWWkxSkZtUXJiZ04yVzd5dUIw?=
- =?utf-8?B?MzVQblI3OHVGQkZ5c1Z0Mkx0UU85Sm1wTTRjd2QyZkg5UEY2RFZSVUUwaWR1?=
- =?utf-8?B?YWJnZkU4N00wUThNYlFYNWhJbFk3Ky9qRWwrTEt5R0xyMG5ERlhEVFpzK2tT?=
- =?utf-8?B?eXovN3lpMlc3ZFBuVXpJa3F6Q3hmMExiei9hK1VEdjdxNmUwclVPTFlPZmg1?=
- =?utf-8?B?d0REV1NFcEd3d3FuYTAzcjQ4ZXFKUGp5VmFhcEZ6a2h3ZkxIeHowSDgwRCt3?=
- =?utf-8?B?cUMxaWMwbzh3S1g1eXN3TURQWnZjekxXSkd6OXJzclVvL0NJQ2hXTCt3RzVk?=
- =?utf-8?B?anlWY29LTE1nejZxbU5DeTdqZXhSU1I0RTJjTzZOdXUrRktka3ZnUU1Md3Zl?=
- =?utf-8?B?Znd4ak9zelBBcUR6VmlCMzBVWmt4NFhERkFLTkFXL21kSFJYSUF1ZnhGU05q?=
- =?utf-8?B?aHN1MjdVM0Q2YzJ6NThnaXlqelpOeERnRXBwek5XUksydlg0dDV3KzFwMXNy?=
- =?utf-8?B?OUJ6WVphdEF1ZmlJR3c0VVFnV3hmdVoxelZCZ1cranlXeWhrWTlUM2ZUNTVW?=
- =?utf-8?B?NGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2215d49b-35f4-40b1-d814-08dc8994c668
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 21:32:05.8852
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hn+YuQsoaxg8pUUvsTposBTIXtZT3ftPfb+pPaawAR6Pz7ulRN1/b4TwcP5ie5nscECfS2bWdixFq3PPHRhvXuMEOBrct7QrwM2IbyOCluc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7593
-X-OriginatorOrg: intel.com
+References: <20240608172147.2779890-1-howardchu95@gmail.com>
+In-Reply-To: <20240608172147.2779890-1-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Jun 2024 14:33:10 -0700
+Message-ID: <CAP-5=fVW0coox1KFpoVTq5wf54yyppM0JgXNT5mLfLOCX_Jugg@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	mic@digikod.net, gnoack@google.com, brauner@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Babu,
+On Sat, Jun 8, 2024 at 10:21=E2=80=AFAM Howard Chu <howardchu95@gmail.com> =
+wrote:
+>
+> This is a bug found when implementing pretty-printing for the
+> landlock_add_rule system call, I decided to send this patch separately
+> because this is a serious bug that should be fixed fast.
+>
+> I wrote a test program to do landlock_add_rule syscall in a loop,
+> yet perf trace -e landlock_add_rule freezes, giving no output.
+>
+> This bug is introduced by the false understanding of the variable "key"
+> below:
+> ```
+> for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+>         struct syscall *sc =3D trace__syscall_info(trace, NULL, key);
+>         ...
+> }
+> ```
+> The code above seems right at the beginning, but when looking at
+> syscalltbl.c, I found these lines:
+>
+> ```
+> for (i =3D 0; i <=3D syscalltbl_native_max_id; ++i)
+>         if (syscalltbl_native[i])
+>                 ++nr_entries;
+>
+> entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct syscall) * nr_=
+entries);
+> ...
+>
+> for (i =3D 0, j =3D 0; i <=3D syscalltbl_native_max_id; ++i) {
+>         if (syscalltbl_native[i]) {
+>                 entries[j].name =3D syscalltbl_native[i];
+>                 entries[j].id =3D i;
+>                 ++j;
+>         }
+> }
+> ```
+>
+> meaning the key is merely an index to traverse the syscall table,
+> instead of the actual syscall id for this particular syscall.
 
-(please do not send new version of patch in response to previous version)
 
-On 6/10/24 9:00 AM, Babu Moger wrote:
-> The selftest noncont_cat_run_test fails on AMD with the warnings. Reason
-> is, AMD supports non contiguous CBM masks but does not report it via CPUID.
-> 
-> Update noncont_cat_run_test to check for the vendor when verifying CPUID.
-> 
-> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
+Thanks Howard, I'm not following this. Doesn't it make sense to use
+the syscall number as its id?
+
+>
+>
+> So if one uses key to do trace__syscall_info(trace, NULL, key), because
+> key only goes up to trace->sctbl->syscalls.nr_entries, for example, on
+> my X86_64 machine, this number is 373, it will end up neglecting all
+> the rest of the syscall, in my case, everything after `rseq`, because
+> the traversal will stop at 373, and `rseq` is the last syscall whose id
+> is lower than 373
+>
+> in tools/perf/arch/x86/include/generated/asm/syscalls_64.c:
+> ```
+>         ...
+>         [334] =3D "rseq",
+>         [424] =3D "pidfd_send_signal",
+>         ...
+> ```
+>
+> The reason why the key is scrambled but perf trace works well is that
+> key is used in trace__syscall_info(trace, NULL, key) to do
+> trace->syscalls.table[id], this makes sure that the struct syscall return=
+ed
+> actually has an id the same value as key, making the later bpf_prog
+> matching all correct.
+
+
+Could we create a test for this? We have tests that list all perf
+events and then running a perf command on them. It wouldn't be
+possible to guarantee output.
+
+>
+> After fixing this bug, I can do perf trace on 38 more syscalls, and
+> because more syscalls are visible, we get 8 more syscalls that can be
+> augmented.
+>
+> before:
+>
+> perf $ perf trace -vv --max-events=3D1 |& grep Reusing
+> Reusing "open" BPF sys_enter augmenter for "stat"
+> Reusing "open" BPF sys_enter augmenter for "lstat"
+> Reusing "open" BPF sys_enter augmenter for "access"
+> Reusing "connect" BPF sys_enter augmenter for "accept"
+> Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+> Reusing "connect" BPF sys_enter augmenter for "bind"
+> Reusing "connect" BPF sys_enter augmenter for "getsockname"
+> Reusing "connect" BPF sys_enter augmenter for "getpeername"
+> Reusing "open" BPF sys_enter augmenter for "execve"
+> Reusing "open" BPF sys_enter augmenter for "truncate"
+> Reusing "open" BPF sys_enter augmenter for "chdir"
+> Reusing "open" BPF sys_enter augmenter for "mkdir"
+> Reusing "open" BPF sys_enter augmenter for "rmdir"
+> Reusing "open" BPF sys_enter augmenter for "creat"
+> Reusing "open" BPF sys_enter augmenter for "link"
+> Reusing "open" BPF sys_enter augmenter for "unlink"
+> Reusing "open" BPF sys_enter augmenter for "symlink"
+> Reusing "open" BPF sys_enter augmenter for "readlink"
+> Reusing "open" BPF sys_enter augmenter for "chmod"
+> Reusing "open" BPF sys_enter augmenter for "chown"
+> Reusing "open" BPF sys_enter augmenter for "lchown"
+> Reusing "open" BPF sys_enter augmenter for "mknod"
+> Reusing "open" BPF sys_enter augmenter for "statfs"
+> Reusing "open" BPF sys_enter augmenter for "pivot_root"
+> Reusing "open" BPF sys_enter augmenter for "chroot"
+> Reusing "open" BPF sys_enter augmenter for "acct"
+> Reusing "open" BPF sys_enter augmenter for "swapon"
+> Reusing "open" BPF sys_enter augmenter for "swapoff"
+> Reusing "open" BPF sys_enter augmenter for "delete_module"
+> Reusing "open" BPF sys_enter augmenter for "setxattr"
+> Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+> Reusing "open" BPF sys_enter augmenter for "getxattr"
+> Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+> Reusing "open" BPF sys_enter augmenter for "listxattr"
+> Reusing "open" BPF sys_enter augmenter for "llistxattr"
+> Reusing "open" BPF sys_enter augmenter for "removexattr"
+> Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+> Reusing "open" BPF sys_enter augmenter for "mq_open"
+> Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+> Reusing "open" BPF sys_enter augmenter for "symlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+> Reusing "connect" BPF sys_enter augmenter for "accept4"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+> Reusing "open" BPF sys_enter augmenter for "memfd_create"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+>
+> after
+>
+> perf $ perf trace -vv --max-events=3D1 |& grep Reusing
+> Reusing "open" BPF sys_enter augmenter for "stat"
+> Reusing "open" BPF sys_enter augmenter for "lstat"
+> Reusing "open" BPF sys_enter augmenter for "access"
+> Reusing "connect" BPF sys_enter augmenter for "accept"
+> Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+> Reusing "connect" BPF sys_enter augmenter for "bind"
+> Reusing "connect" BPF sys_enter augmenter for "getsockname"
+> Reusing "connect" BPF sys_enter augmenter for "getpeername"
+> Reusing "open" BPF sys_enter augmenter for "execve"
+> Reusing "open" BPF sys_enter augmenter for "truncate"
+> Reusing "open" BPF sys_enter augmenter for "chdir"
+> Reusing "open" BPF sys_enter augmenter for "mkdir"
+> Reusing "open" BPF sys_enter augmenter for "rmdir"
+> Reusing "open" BPF sys_enter augmenter for "creat"
+> Reusing "open" BPF sys_enter augmenter for "link"
+> Reusing "open" BPF sys_enter augmenter for "unlink"
+> Reusing "open" BPF sys_enter augmenter for "symlink"
+> Reusing "open" BPF sys_enter augmenter for "readlink"
+> Reusing "open" BPF sys_enter augmenter for "chmod"
+> Reusing "open" BPF sys_enter augmenter for "chown"
+> Reusing "open" BPF sys_enter augmenter for "lchown"
+> Reusing "open" BPF sys_enter augmenter for "mknod"
+> Reusing "open" BPF sys_enter augmenter for "statfs"
+> Reusing "open" BPF sys_enter augmenter for "pivot_root"
+> Reusing "open" BPF sys_enter augmenter for "chroot"
+> Reusing "open" BPF sys_enter augmenter for "acct"
+> Reusing "open" BPF sys_enter augmenter for "swapon"
+> Reusing "open" BPF sys_enter augmenter for "swapoff"
+> Reusing "open" BPF sys_enter augmenter for "delete_module"
+> Reusing "open" BPF sys_enter augmenter for "setxattr"
+> Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+> Reusing "open" BPF sys_enter augmenter for "getxattr"
+> Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+> Reusing "open" BPF sys_enter augmenter for "listxattr"
+> Reusing "open" BPF sys_enter augmenter for "llistxattr"
+> Reusing "open" BPF sys_enter augmenter for "removexattr"
+> Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+> Reusing "open" BPF sys_enter augmenter for "mq_open"
+> Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+> Reusing "open" BPF sys_enter augmenter for "symlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+> Reusing "connect" BPF sys_enter augmenter for "accept4"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+> Reusing "open" BPF sys_enter augmenter for "memfd_create"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+>
+> TL;DR:
+>
+> These are the new syscalls that can be augmented
+> Reusing "openat" BPF sys_enter augmenter for "open_tree"
+> Reusing "openat" BPF sys_enter augmenter for "openat2"
+> Reusing "openat" BPF sys_enter augmenter for "mount_setattr"
+> Reusing "openat" BPF sys_enter augmenter for "move_mount"
+> Reusing "open" BPF sys_enter augmenter for "fsopen"
+> Reusing "openat" BPF sys_enter augmenter for "fspick"
+> Reusing "openat" BPF sys_enter augmenter for "faccessat2"
+> Reusing "openat" BPF sys_enter augmenter for "fchmodat2"
+>
+> as for the perf trace output:
+>
+> before
+>
+> perf $ perf trace -e faccessat2 --max-events=3D1
+> [no output]
+>
+> after
+>
+> perf $ ./perf trace -e faccessat2 --max-events=3D1
+>      0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "uevent"=
+)                               =3D 0
+>
+> P.S. The reason why this bug was not found in the past five years is
+> probably because it only happens to the newer syscalls whose id is
+> greater, for instance, faccessat2 of id 439, which not a lot of people
+> care about when using perf trace.
+>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
 > ---
+>  tools/perf/builtin-trace.c   | 32 +++++++++++++++++++++-----------
+>  tools/perf/util/syscalltbl.c | 21 +++++++++------------
+>  tools/perf/util/syscalltbl.h |  5 +++++
+>  3 files changed, 35 insertions(+), 23 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index c42bc608954e..5cbe1748911d 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3354,7 +3354,8 @@ static int trace__bpf_prog_sys_exit_fd(struct trace=
+ *trace, int id)
+>  static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trac=
+e *trace, struct syscall *sc)
+>  {
+>         struct tep_format_field *field, *candidate_field;
+> -       int id;
+> +       struct __syscall *scs =3D trace->sctbl->syscalls.entries;
+> +       int id, _id;
+>
+>         /*
+>          * We're only interested in syscalls that have a pointer:
+> @@ -3368,10 +3369,13 @@ static struct bpf_program *trace__find_usable_bpf=
+_prog_entry(struct trace *trace
+>
+>  try_to_find_pair:
+>         for (id =3D 0; id < trace->sctbl->syscalls.nr_entries; ++id) {
+> -               struct syscall *pair =3D trace__syscall_info(trace, NULL,=
+ id);
+> +               struct syscall *pair;
+>                 struct bpf_program *pair_prog;
+>                 bool is_candidate =3D false;
+>
+> +               _id =3D scs[id].id;
+> +               pair =3D trace__syscall_info(trace, NULL, _id);
+> +
+>                 if (pair =3D=3D NULL || pair =3D=3D sc ||
+>                     pair->bpf_prog.sys_enter =3D=3D trace->skel->progs.sy=
+scall_unaugmented)
+>                         continue;
+> @@ -3456,23 +3460,26 @@ static int trace__init_syscalls_bpf_prog_array_ma=
+ps(struct trace *trace)
+>  {
+>         int map_enter_fd =3D bpf_map__fd(trace->skel->maps.syscalls_sys_e=
+nter);
+>         int map_exit_fd  =3D bpf_map__fd(trace->skel->maps.syscalls_sys_e=
+xit);
+> -       int err =3D 0, key;
+> +       int err =3D 0, key, id;
+> +       struct __syscall *scs =3D trace->sctbl->syscalls.entries;
+>
+>         for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+>                 int prog_fd;
+>
+> -               if (!trace__syscall_enabled(trace, key))
+> +               id =3D scs[key].id;
+> +
+> +               if (!trace__syscall_enabled(trace, id))
+>                         continue;
+>
+> -               trace__init_syscall_bpf_progs(trace, key);
+> +               trace__init_syscall_bpf_progs(trace, id);
+>
+>                 // It'll get at least the "!raw_syscalls:unaugmented"
+> -               prog_fd =3D trace__bpf_prog_sys_enter_fd(trace, key);
+> -               err =3D bpf_map_update_elem(map_enter_fd, &key, &prog_fd,=
+ BPF_ANY);
+> +               prog_fd =3D trace__bpf_prog_sys_enter_fd(trace, id);
+> +               err =3D bpf_map_update_elem(map_enter_fd, &id, &prog_fd, =
+BPF_ANY);
+>                 if (err)
+>                         break;
+> -               prog_fd =3D trace__bpf_prog_sys_exit_fd(trace, key);
+> -               err =3D bpf_map_update_elem(map_exit_fd, &key, &prog_fd, =
+BPF_ANY);
+> +               prog_fd =3D trace__bpf_prog_sys_exit_fd(trace, id);
+> +               err =3D bpf_map_update_elem(map_exit_fd, &id, &prog_fd, B=
+PF_ANY);
+>                 if (err)
+>                         break;
+>         }
+> @@ -3506,10 +3513,13 @@ static int trace__init_syscalls_bpf_prog_array_ma=
+ps(struct trace *trace)
+>          * array tail call, then that one will be used.
+>          */
+>         for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+> -               struct syscall *sc =3D trace__syscall_info(trace, NULL, k=
+ey);
+> +               struct syscall *sc;
+>                 struct bpf_program *pair_prog;
+>                 int prog_fd;
+>
+> +               id =3D scs[key].id;
+> +               sc =3D trace__syscall_info(trace, NULL, id);
+> +
+>                 if (sc =3D=3D NULL || sc->bpf_prog.sys_enter =3D=3D NULL)
+>                         continue;
+>
+> @@ -3535,7 +3545,7 @@ static int trace__init_syscalls_bpf_prog_array_maps=
+(struct trace *trace)
+>                  * with the fd for the program we're reusing:
+>                  */
+>                 prog_fd =3D bpf_program__fd(sc->bpf_prog.sys_enter);
+> -               err =3D bpf_map_update_elem(map_enter_fd, &key, &prog_fd,=
+ BPF_ANY);
+> +               err =3D bpf_map_update_elem(map_enter_fd, &id, &prog_fd, =
+BPF_ANY);
+>                 if (err)
+>                         break;
+>         }
+> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> index 63be7b58761d..16aa886c40f0 100644
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -44,22 +44,17 @@ const int syscalltbl_native_max_id =3D SYSCALLTBL_LOO=
+NGARCH_MAX_ID;
+>  static const char *const *syscalltbl_native =3D syscalltbl_loongarch;
+>  #endif
+>
+> -struct syscall {
+> -       int id;
+> -       const char *name;
+> -};
+> -
+>  static int syscallcmpname(const void *vkey, const void *ventry)
+>  {
+>         const char *key =3D vkey;
+> -       const struct syscall *entry =3D ventry;
+> +       const struct __syscall *entry =3D ventry;
+>
+>         return strcmp(key, entry->name);
+>  }
+>
+>  static int syscallcmp(const void *va, const void *vb)
+>  {
+> -       const struct syscall *a =3D va, *b =3D vb;
+> +       const struct __syscall *a =3D va, *b =3D vb;
+>
+>         return strcmp(a->name, b->name);
+>  }
+> @@ -67,13 +62,14 @@ static int syscallcmp(const void *va, const void *vb)
+>  static int syscalltbl__init_native(struct syscalltbl *tbl)
+>  {
+>         int nr_entries =3D 0, i, j;
+> -       struct syscall *entries;
+> +       struct __syscall *entries;
+>
+>         for (i =3D 0; i <=3D syscalltbl_native_max_id; ++i)
+>                 if (syscalltbl_native[i])
+>                         ++nr_entries;
+>
+> -       entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct syscal=
+l) * nr_entries);
+> +       entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct __sysc=
+all) *
+> +                                                nr_entries);
+>         if (tbl->syscalls.entries =3D=3D NULL)
+>                 return -1;
+>
+> @@ -85,7 +81,8 @@ static int syscalltbl__init_native(struct syscalltbl *t=
+bl)
+>                 }
+>         }
+>
+> -       qsort(tbl->syscalls.entries, nr_entries, sizeof(struct syscall), =
+syscallcmp);
+> +       qsort(tbl->syscalls.entries, nr_entries, sizeof(struct __syscall)=
+,
+> +             syscallcmp);
+>         tbl->syscalls.nr_entries =3D nr_entries;
+>         tbl->syscalls.max_id     =3D syscalltbl_native_max_id;
+>         return 0;
+> @@ -116,7 +113,7 @@ const char *syscalltbl__name(const struct syscalltbl =
+*tbl __maybe_unused, int id
+>
+>  int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+>  {
+> -       struct syscall *sc =3D bsearch(name, tbl->syscalls.entries,
+> +       struct __syscall *sc =3D bsearch(name, tbl->syscalls.entries,
+>                                      tbl->syscalls.nr_entries, sizeof(*sc=
+),
+>                                      syscallcmpname);
+>
+> @@ -126,7 +123,7 @@ int syscalltbl__id(struct syscalltbl *tbl, const char=
+ *name)
+>  int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *sy=
+scall_glob, int *idx)
+>  {
+>         int i;
+> -       struct syscall *syscalls =3D tbl->syscalls.entries;
+> +       struct __syscall *syscalls =3D tbl->syscalls.entries;
+>
+>         for (i =3D *idx + 1; i < tbl->syscalls.nr_entries; ++i) {
+>                 if (strglobmatch(syscalls[i].name, syscall_glob)) {
+> diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
+> index a41d2ca9e4ae..6e93a0874c40 100644
+> --- a/tools/perf/util/syscalltbl.h
+> +++ b/tools/perf/util/syscalltbl.h
+> @@ -2,6 +2,11 @@
+>  #ifndef __PERF_SYSCALLTBL_H
+>  #define __PERF_SYSCALLTBL_H
+>
 
-The changelog needs to be reworked based on discussion in other thread.
-With that complete, for this patch you can add:
-| Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+It'd be  nice to document the struct with examples that explain the
+confusion that's happened and is fixed here.
 
-Reinette
+Thanks,
+Ian
 
+> +struct __syscall {
+> +       int id;
+> +       const char *name;
+> +};
+> +
+>  struct syscalltbl {
+>         int audit_machine;
+>         struct {
+> --
+> 2.45.2
+>
 
