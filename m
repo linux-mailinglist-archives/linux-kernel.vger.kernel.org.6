@@ -1,210 +1,89 @@
-Return-Path: <linux-kernel+bounces-208083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36B9902062
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:29:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8237C902071
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D222815EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:29:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08CC2B23508
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 11:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40A87CF25;
-	Mon, 10 Jun 2024 11:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DDB7D3E0;
+	Mon, 10 Jun 2024 11:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZEhh/4X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAihqqsn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28FFC01;
-	Mon, 10 Jun 2024 11:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3664F2594;
+	Mon, 10 Jun 2024 11:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718018979; cv=none; b=Cmi6iZSKdvLF3x5h1QNnW3bSnJ/rd29JcFboZc3vSTQpyTDjXl23X6LJBU/w4C11M4x4emzfLyLvsbutWN44PVWAHLv6oqNdP+4MpHErCSXtaDU7TgPxUNQjoCQOVc576Cw1Uvc53smvKxlLOx5kBPK2QCESc9NiFbMeckLSyRY=
+	t=1718019453; cv=none; b=RKuZ/8use610S4Amfu92a2yS7LfIsmwEZCQmwisQVuztgXdZJORCX56iVPGgJNtB6VpP7D2pD/+lESxa6Foh9dqLuq0sDtQJgLkTqRn2I2cgdAhCTGdUAYu9XOYKDJbTDvlhrBUKE9LVQwAaTd+Mv1yoHTFKeJC5JvVxye1OJI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718018979; c=relaxed/simple;
-	bh=jk8n/cQIyOtPlDlv0It//nz2b1lfoB7isGVlvjgPBQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQdZhhTe0RcvmjjyIlK2iY4YGOT17Gz78KnMamqiR08jL10LPtuNHR6sEfZ9fE/zCSfHkNAx/PMaSIjYKlvX3AgtzBEd5L2ZcC5qvkcz/aZ+cQ2pJ4xb48qItvL8tdueLb5wQ02JKfIM/g/bhiF9K1onwamFZZNTRe8KwIqkRUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZEhh/4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A587CC2BBFC;
-	Mon, 10 Jun 2024 11:29:39 +0000 (UTC)
+	s=arc-20240116; t=1718019453; c=relaxed/simple;
+	bh=W5QzFncy0sUTy2B+uXEQTMtsMrR22hJS0osVxJ7jZF8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GMsNmxpON5dyGJU8nhR8HEBiXVlD9RCJ4YDwfmxu7A5RaQPwMir4GG9uoHy8qoOFG1X1xbHdVwsezwYErqxeGJxaEPbFSP2kZedkNEMyh8rD1oSy745vqKLy+u8CwAH4WRqfwhG8QJ/XIhlKA19WmYhNc4YEOFezOsBwCa9zIiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAihqqsn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA96C4AF1C;
+	Mon, 10 Jun 2024 11:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718018979;
-	bh=jk8n/cQIyOtPlDlv0It//nz2b1lfoB7isGVlvjgPBQc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mZEhh/4XtnFBVFQ+oCfOitN6iUToxytSUyLnvo4esaZcNIIUJ6I+RZAZINgWnP3VC
-	 DTF8VTzBszwrY96qvSc1Hl8qrMRsqbZiykPkHLXBkUUSMHWux9bpJcgvsJazlclDka
-	 O20JdMbK6w3xfHmwugI+Ub+k43TJy7AvRun0Cs4VPGOh91snypGWVL3niUKlC7p9BU
-	 9iJq9lEs7QhW9obK+QAXlVwfLYtSxcZ/+dEbcHR/u7BcCmN4wF4De38dq10LiamcgL
-	 Qh04fxO+5nij/q8MFE9tW5ihuXJ4jvqoWgtjYrnR7a+FT8OE7AII37M0JE/bJl444E
-	 GpW57aaixxVRg==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5bad97708efso85687eaf.1;
-        Mon, 10 Jun 2024 04:29:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2owVxxHv4rXo6Uqz5MTZFg1bS0Bq3Kdb63ymDCImNNBULFEVh4SLhA2ErY1Q7B1xcqV9a5UAyyykEjGORvxgcyAI5y/ZMX+OkW/ZHGzgUG70KmpjR78Mcm0p+SFF2qvC3kz03WYA=
-X-Gm-Message-State: AOJu0Ywx/GXZQlnaBlzbG4l9T4vN1YzjILkZL5kJmfZvqewRTMaKeUuT
-	lzRjHZquZE00MZYw+VFsLqY6MSU2TY0si3tXqQbJ1ZFd6loxDUA0b4Oiml+kpQWqMw+PC8YxYWU
-	sjqVRSGVFSHqWKspfKd/x5HJ5ShQ=
-X-Google-Smtp-Source: AGHT+IFulN2unXwc1L7agr2DsGYMhygNQU3qwwquX/cTjQrJdCFtBWg0onO2jdkYVE83IVb5MArYJMaQ4hcIXwtGoHg=
-X-Received: by 2002:a4a:a788:0:b0:5ba:ca8a:6598 with SMTP id
- 006d021491bc7-5baca8a70b5mr7692336eaf.0.1718018978887; Mon, 10 Jun 2024
- 04:29:38 -0700 (PDT)
+	s=k20201202; t=1718019452;
+	bh=W5QzFncy0sUTy2B+uXEQTMtsMrR22hJS0osVxJ7jZF8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UAihqqsn0XnGRCucJWFCNxmRvk8TZlo++RhoqeW6SiLXJW3f/EIFyyKSJUNWNC9ak
+	 /Iq6ALFJZhvYeOIa9kh24gOnK3/HCqMMyFldZQSrSjjhYpYCB7XOYzr/wUC8PuQ/8w
+	 c99nxitWMQCtKSJj2K/FXdI+hbKiNYCWIs76EfqAzhFX/DA+mFBzbF687jJARrHRD5
+	 +fsOLl43LeJCWZPGEy95l7d5s6xLw0/ibmN2a2lOEiMRD36izWJo1qx7ic5KQg6dMz
+	 EbCW8a0Wmke49XVE3Iots7qdCl71BlQ+QPqg+pC5YD8Ary1mROmWlBgjHJhvU2k0FK
+	 MyGxsWuojx2wg==
+From: Robert Foss <rfoss@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+ linux-kernel@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, kernel-janitors@vger.kernel.org
+In-Reply-To: <6c8c6746-34e2-4a97-9dff-622ed29071e9@kili.mountain>
+References: <6c8c6746-34e2-4a97-9dff-622ed29071e9@kili.mountain>
+Subject: Re: [PATCH v2] drm/bridge: it6505: remove unnecessary NULL checks
+Message-Id: <171801944880.382402.4293639602145071155.b4-ty@kernel.org>
+Date: Mon, 10 Jun 2024 13:37:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5794974.DvuYhMxLoT@kreacher> <2337425.ElGaqSPkdT@kreacher> <dd446bf6-05ca-4861-b3b1-f113c3528f13@linaro.org>
-In-Reply-To: <dd446bf6-05ca-4861-b3b1-f113c3528f13@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 10 Jun 2024 13:29:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jku1tptD3O=x-rptgUWGQFOQT-U3rsxk9k4XXsyeq3Kw@mail.gmail.com>
-Message-ID: <CAJZ5v0jku1tptD3O=x-rptgUWGQFOQT-U3rsxk9k4XXsyeq3Kw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] thermal/debugfs: Do not extend mitigation episodes
- beyond system resume
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.1
 
-On Mon, Jun 10, 2024 at 10:28=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 28/05/2024 16:53, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Because thermal zone handling by the thermal core is started from
-> > scratch during resume from system-wide suspend, prevent the debug
-> > code from extending mitigation episodes beyond that point by ending
-> > the mitigation episode currently in progress, if any, for each thermal
-> > zone.
->
-> Why it is done at resume time and not at suspend time ?
+On Mon, 10 Jun 2024 13:50:26 +0300, Dan Carpenter wrote:
+> Smatch complains correctly that the NULL checking isn't consistent:
+> 
+>     drivers/gpu/drm/bridge/ite-it6505.c:2583 it6505_poweron()
+>     error: we previously assumed 'pdata->pwr18' could be null
+>     (see line 2569)
+> 
+> These the ->pwr18 pointer is allocated during probe using the
+> devm_regulator_get() function.  If CONFIG_REGULATOR is disabled then,
+> yes, it can return NULL but in that case regulator_enable() and
+> disable() functions are no-ops so passing a NULL pointer is okay.
+> 
+> [...]
 
-Because it is related to thermal_zone_device_init() which also runs at
-the resume time, so IMV it's better to keep these two pieces together.
+Applied, thanks!
 
-Why would it be better to run this during suspend?
+[1/1] drm/bridge: it6505: remove unnecessary NULL checks
+      (no commit info)
 
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v1 -> v2: Rebase.
-> >
-> > ---
-> >   drivers/thermal/thermal_core.c    |    1 +
-> >   drivers/thermal/thermal_debugfs.c |   36 ++++++++++++++++++++++++++++=
-++++++++
-> >   drivers/thermal/thermal_debugfs.h |    2 ++
-> >   3 files changed, 39 insertions(+)
-> >
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -1641,6 +1641,7 @@ static void thermal_zone_device_resume(s
-> >
-> >       tz->suspended =3D false;
-> >
-> > +     thermal_debug_tz_resume(tz);
-> >       thermal_zone_device_init(tz);
-> >       __thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-> >
-> > Index: linux-pm/drivers/thermal/thermal_debugfs.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-> > +++ linux-pm/drivers/thermal/thermal_debugfs.c
-> > @@ -926,3 +926,39 @@ void thermal_debug_tz_remove(struct ther
-> >       thermal_debugfs_remove_id(thermal_dbg);
-> >       kfree(trips_crossed);
-> >   }
-> > +
-> > +void thermal_debug_tz_resume(struct thermal_zone_device *tz)
-> > +{
-> > +     struct thermal_debugfs *thermal_dbg =3D tz->debugfs;
-> > +     ktime_t now =3D ktime_get();
-> > +     struct tz_debugfs *tz_dbg;
-> > +     struct tz_episode *tze;
-> > +     int i;
-> > +
-> > +     if (!thermal_dbg)
-> > +             return;
-> > +
-> > +     mutex_lock(&thermal_dbg->lock);
-> > +
-> > +     tz_dbg =3D &thermal_dbg->tz_dbg;
-> > +
-> > +     if (!tz_dbg->nr_trips)
-> > +             goto out;
-> > +
-> > +     /*
-> > +      * A mitigation episode was in progress before the preceding syst=
-em
-> > +      * suspend transition, so close it because the zone handling is s=
-tarting
-> > +      * over from scratch.
-> > +      */
-> > +     tze =3D list_first_entry(&tz_dbg->tz_episodes, struct tz_episode,=
- node);
-> > +
-> > +     for (i =3D 0; i < tz_dbg->nr_trips; i++)
-> > +             tz_episode_close_trip(tze, tz_dbg->trips_crossed[i], now)=
-;
-> > +
-> > +     tze->duration =3D ktime_sub(now, tze->timestamp);
-> > +
-> > +     tz_dbg->nr_trips =3D 0;
-> > +
-> > +out:
-> > +     mutex_unlock(&thermal_dbg->lock);
-> > +}
-> > Index: linux-pm/drivers/thermal/thermal_debugfs.h
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_debugfs.h
-> > +++ linux-pm/drivers/thermal/thermal_debugfs.h
-> > @@ -7,6 +7,7 @@ void thermal_debug_cdev_remove(struct th
-> >   void thermal_debug_cdev_state_update(const struct thermal_cooling_dev=
-ice *cdev, int state);
-> >   void thermal_debug_tz_add(struct thermal_zone_device *tz);
-> >   void thermal_debug_tz_remove(struct thermal_zone_device *tz);
-> > +void thermal_debug_tz_resume(struct thermal_zone_device *tz);
-> >   void thermal_debug_tz_trip_up(struct thermal_zone_device *tz,
-> >                             const struct thermal_trip *trip);
-> >   void thermal_debug_tz_trip_down(struct thermal_zone_device *tz,
-> > @@ -20,6 +21,7 @@ static inline void thermal_debug_cdev_st
-> >                                                  int state) {}
-> >   static inline void thermal_debug_tz_add(struct thermal_zone_device *t=
-z) {}
-> >   static inline void thermal_debug_tz_remove(struct thermal_zone_device=
- *tz) {}
-> > +static inline void thermal_debug_tz_resume(struct thermal_zone_device =
-*tz) {}
-> >   static inline void thermal_debug_tz_trip_up(struct thermal_zone_devic=
-e *tz,
-> >                                           const struct thermal_trip *tr=
-ip) {};
-> >   static inline void thermal_debug_tz_trip_down(struct thermal_zone_dev=
-ice *tz,
-> >
-> >
-> >
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+
+
+Rob
+
 
