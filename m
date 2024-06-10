@@ -1,230 +1,154 @@
-Return-Path: <linux-kernel+bounces-207751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51CD901B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B68DE901B8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 09:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D091C21565
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:05:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758D61C2118C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB641CF8D;
-	Mon, 10 Jun 2024 07:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CdRZ5nnK"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE920319;
+	Mon, 10 Jun 2024 07:07:34 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089881BF2A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC31C20
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 07:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718003123; cv=none; b=I6/O6WAOXZTpJGybTpybR3X31QEiljYz39Of9E0MB01DyIZJXu1wkyQTv2qv7uMd/I8wBBGh8WUlNZKhsNQKcELDR10wiyYta1BbqYmMEf2TCtumm6hY5Qixktwji3PFxbSSa0wFMKOngG1Ue7qNEs6ES0vPJmcKJLJm3KaBhhc=
+	t=1718003254; cv=none; b=rBAew/pFbbU9NOXDg9X/M4j3fh5Bt6Fc+7SJmsh4GIWBv1VsOFesIMqKtENcdAgdxcZf37aR9W1hd6IRmkWQgaq4g4kSV/52Eys1CPwmV/1YywlSI+C6ugIM9iqRz9kov7o/m5OguYek7kuDSAH/ApmS3+yuaf2p5FmnpBG+KS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718003123; c=relaxed/simple;
-	bh=/AvsbsUJd/zTGNO42rFXKAiiuS8ZEWlCyClzMR+cMBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIk2JWlJCZmErfnWBH1Puvl9ok8ElBMQsPvUyTlMkYSwJFjGsR/cAESbLcaCbPysSvIpDatIaEzZVKXuXka6XqczyKoSlQ1+KpilRvaFqlUfnQTcF6QJFf4LV57P7PHQss0AWvOdaewXUZX5i1LiJuRq+gEffvjvVUWWafvzX80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CdRZ5nnK; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c68c3f8adso2048820a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718003120; x=1718607920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cPZSLa5VJ9ZJ5ThCXQZcFW6Ti5Z+EHbBJU7SLERjk6Q=;
-        b=CdRZ5nnK12/P3OrRhY2mW8r9y79KJ8tDxDEsbc+1YCHKhg6Mpk/48GN5tnd1dXIBz3
-         f+7bw+eRHk6TCMGV3BY91p+720Bo/sQF9LXS+Prg4ejkS/34nIDygXbYywF5yqoIuptA
-         NmVbIa9yaCctoUQW8tllBDO27ljO0DLtADcfWxRzf7zRWfU1mTkEIukoMXMACzLKGt2W
-         zlqAM2HUeJETWMMJQGdSn2ah/RlsEoWz6dgPbqaoTOZyCBvV+Tx22dOMv+iDfMnO4Kr4
-         PeB5olWdW3SM8Z4QTgOlMZKdCbceeuiSmJ6EVrEByjfkYQ6mXGbcaKJOlZGpB79Jqr3Y
-         pohw==
+	s=arc-20240116; t=1718003254; c=relaxed/simple;
+	bh=RaHyHSxriqBbzMxLUty0EheUNUvcvMTdWobKqxk4+xE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=J0EvK3ajNd0r5ukRcRsDdwyLSl8p7mIRVxspJvlHoVPRGadDJ1hFdDaZbqwqHc1Tv/qngYetqm1ITJdd+LNcseTucF3Fg5dFG3I8XlFe7EfH8TmzQ9E0QpNkTT6kQbqOl2v9DxEiVrhQI2+avwf+6UWkS0EAl+smSsX21Kkivf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3745fb76682so44607335ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:07:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718003120; x=1718607920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPZSLa5VJ9ZJ5ThCXQZcFW6Ti5Z+EHbBJU7SLERjk6Q=;
-        b=Du+5cx+t5zRcklBuWrU1tRG5euBLL5eBuQtJ+sYW0OgeIk937Y/ukoTEiAyCuDWp1U
-         PPiqSB0IPtueS2UBYJBkXuMidcsOpBXiIWY7BacugTaF9SbLQDkk3OvwUWl60l6sOrC2
-         cBbXDZMXI3KOXNHlZ4mgj9vkQt8aihZfZUpGsxQVFUzFChBjMdzHoDUY3bshHWaogxGm
-         d8cfRFtRiZHQNjjtkkabAWU4pWoyU0oAEx0KHyu8V5Cvlyk0vntinyeTNL43Sv9MSMRK
-         72CeMqIPQ59gi6Kx3mWPLCiDXt+uqBByLUqcHv0MLABTio1tfiK9D4xisLg51DujV5Xy
-         DOXg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6d1nkI/ABNiZSqzCT7hg50oMmnkosG0UjVyf5rSLLdp6jdvrAKt1x72RK0W9KFre4smPWYv5Y/IFSawV7JCI6vgMsWOQd5Wwgs+w7
-X-Gm-Message-State: AOJu0YykK1T+XeIWrU+Q8lblcisEkQJL1ySRfWI9fcgTv5Nbnca71nyN
-	zl+9kWROW4r7EKFAfIR8POFlfXmqkvtA8b79RwR+m3qbsllNhBKn15uxY016eDE=
-X-Google-Smtp-Source: AGHT+IEgv3JegFvQ+6vLGmNwNKNTfnIzW5enFDnscw96CRYsquxgRG1RrvcEtuTnAeCT9o3J9KN8iQ==
-X-Received: by 2002:a17:906:4ecd:b0:a6f:7cb:6e76 with SMTP id a640c23a62f3a-a6f07cb723emr358812166b.51.1718003120208;
-        Mon, 10 Jun 2024 00:05:20 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6f2d4138ccsm7698766b.220.2024.06.10.00.05.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 00:05:19 -0700 (PDT)
-Message-ID: <ba911ebd-aef5-46af-ace1-84d13bee6876@linaro.org>
-Date: Mon, 10 Jun 2024 08:05:18 +0100
+        d=1e100.net; s=20230601; t=1718003252; x=1718608052;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOWDa8s7scwwzepO7HM8stjaYWxEuHOf7DjzQ2t/x20=;
+        b=boY5VHR1uc/PFFwvKnK/NwzVLNkl4i1A8Vm84YpAbRRfpDFBGlkR4BNxlYRp9H549i
+         1XBt2YixC2LkbFrPdBk/qyL+bcWEpsGD72vg/X6y8rQDvOHc19Rj5+cJAo4hS/EcjGSE
+         lfEWhJuI86ojZ8hvWZZLS7CS4Tqn633aOK6caam+z7iwhgY7iyIn5n9yQx8HG9HfZl/G
+         F/mC0S/3sK2SnZqBF4duQulFMtH/jZLYjhkUAGslvPnirppNTn5id1UyFlGQtbalcpsA
+         ZRedm1vXmKK3ta7H8TKBCdra4BWijRAyewXyoYGg86VFprby0Sp60D9X2ZNtWxVTi5MM
+         6Ctg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjRi/gWkY1Vmna47vM2kbHS+17MWYC/fhDg4Q/WiuZ+1coRo1ypdB8of+ymilGubShPfWna65r57c+kwQexHxZejBDaVXPvhnfK4Wc
+X-Gm-Message-State: AOJu0YyFtVv/TPUeg+Fgs21BlHcEvtPZR8/AgMEg5QkSDsigiafLxIcg
+	klnWxDK1WyFkujWQiGAhuNKCITklkjrWZShBo2Y8yv7C8GOvTo5HyFsSxMEoQRTsj/BJdQy4B1U
+	UzcRBsCpIhcAemKL9QUSjzaWFEzlUsZo2D+z3IioBbYbnaOdos3sVTOI=
+X-Google-Smtp-Source: AGHT+IE2s84k+Qu3XNTICX1W0U0I076P1nY/KKjv8VFmf3d/qG9B0njUo8HMbxxfLpWDKLhXtSEGe0SLsTxUzC+wpEV7bO4IC+Ox
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v5 6/7] ASoC: codecs: wcd937x: add capture dapm widgets
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
- quic_pkumpatl@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20240527111956.444425-1-quic_mohs@quicinc.com>
- <20240527111956.444425-7-quic_mohs@quicinc.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20240527111956.444425-7-quic_mohs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1561:b0:375:a50d:7f2d with SMTP id
+ e9e14a558f8ab-375a50d8283mr2045565ab.1.1718003252146; Mon, 10 Jun 2024
+ 00:07:32 -0700 (PDT)
+Date: Mon, 10 Jun 2024 00:07:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009140e4061a83cda3@google.com>
+Subject: [syzbot] [net?] WARNING in bond_xdp_get_xmit_slave (2)
+From: syzbot <syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com>
+To: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com, 
+	j.vosburgh@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f8f0de9d58d9 Merge branch 'mlx5-fixes'
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1638d2ce980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f3fd9f91ee48/disk-f8f0de9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4f0153e67f84/vmlinux-f8f0de9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6abab02f18cf/bzImage-f8f0de9d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+
+bond9: Unknown bonding mode 6 for xdp xmit
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 14901 at drivers/net/bonding/bond_main.c:5502 bond_xdp_get_xmit_slave+0x519/0x690 drivers/net/bonding/bond_main.c:5502
+Modules linked in:
+CPU: 1 PID: 14901 Comm: syz-executor.1 Not tainted 6.10.0-rc1-syzkaller-00179-gf8f0de9d58d9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:bond_xdp_get_xmit_slave+0x519/0x690 drivers/net/bonding/bond_main.c:5502
+Code: be 69 13 00 00 48 c7 c2 a0 73 54 8c e8 d0 35 1e fb eb 98 e8 69 96 41 fb 4c 89 e7 48 c7 c6 80 94 54 8c 89 da e8 48 50 31 05 90 <0f> 0b 90 eb a6 e8 4d 96 41 fb 48 85 db 74 0a e8 43 96 41 fb e9 72
+RSP: 0018:ffffc9000da6f6c8 EFLAGS: 00010246
+RAX: 2059da9abcd8c700 RBX: 0000000000000006 RCX: 2059da9abcd8c700
+RDX: ffffc9001616c000 RSI: 0000000000002218 RDI: 0000000000002219
+RBP: ffff888056026038 R08: ffffffff8176812c R09: fffffbfff1c3998c
+R10: dffffc0000000000 R11: fffffbfff1c3998c R12: ffff888057b5c000
+R13: ffff888057b5c000 R14: ffff888057b5cca0 R15: dffffc0000000000
+FS:  00007f8b32a0a6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b30d22000 CR3: 00000000629b4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ xdp_master_redirect+0x104/0x250 net/core/filter.c:4317
+ bpf_prog_run_xdp include/net/xdp.h:518 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:313 [inline]
+ bpf_test_run_xdp_live+0x15eb/0x1e60 net/bpf/test_run.c:384
+ bpf_prog_test_run_xdp+0x80e/0x11b0 net/bpf/test_run.c:1275
+ bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4291
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
+ __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b31c7cf69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8b32a0a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007f8b31db4050 RCX: 00007f8b31c7cf69
+RDX: 0000000000000050 RSI: 0000000020000040 RDI: 000000000000000a
+RBP: 00007f8b31cda6fe R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f8b31db4050 R15: 00007fff9cacb078
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 27/05/2024 12:19, Mohammad Rafi Shaik wrote:
-> +static int __wcd937x_codec_enable_micbias(struct snd_soc_dapm_widget *w,
-> +					  int event)
-> +{
-> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-> +	int micb_num;
-> +
-> +	if (strnstr(w->name, "MIC BIAS1", sizeof("MIC BIAS1")))
-> +		micb_num = MIC_BIAS_1;
-> +	else if (strnstr(w->name, "MIC BIAS2", sizeof("MIC BIAS2")))
-> +		micb_num = MIC_BIAS_2;
-> +	else if (strnstr(w->name, "MIC BIAS3", sizeof("MIC BIAS3")))
-> +		micb_num = MIC_BIAS_3;
-> +	else
-> +		return -EINVAL;
-> +
-See last comment..
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		wcd937x_micbias_control(component, micb_num,
-> +					MICB_ENABLE, true);
-> +		break;
-> +	case SND_SOC_DAPM_POST_PMU:
-> +		usleep_range(1000, 1100);
-> +		break;
-> +	case SND_SOC_DAPM_POST_PMD:
-> +		wcd937x_micbias_control(component, micb_num,
-> +					MICB_DISABLE, true);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int wcd937x_codec_enable_micbias(struct snd_soc_dapm_widget *w,
-> +					struct snd_kcontrol *kcontrol,
-> +					int event)
-> +{
-> +	return __wcd937x_codec_enable_micbias(w, event);
-> +}
-> +
-> +static int __wcd937x_codec_enable_micbias_pullup(struct snd_soc_dapm_widget *w,
-> +						 int event)
-> +{
-> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-> +	int micb_num;
-> +
-> +	if (strnstr(w->name, "VA MIC BIAS1", sizeof("VA MIC BIAS1")))
-> +		micb_num = MIC_BIAS_1;
-> +	else if (strnstr(w->name, "VA MIC BIAS2", sizeof("VA MIC BIAS2")))
-> +		micb_num = MIC_BIAS_2;
-> +	else if (strnstr(w->name, "VA MIC BIAS3", sizeof("VA MIC BIAS3")))
-> +		micb_num = MIC_BIAS_3;
-> +	else
-> +		return -EINVAL;
-> +
-same..
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		wcd937x_micbias_control(component, micb_num, MICB_PULLUP_ENABLE, true);
-> +		break;
-> +	case SND_SOC_DAPM_POST_PMU:
-> +		usleep_range(1000, 1100);
-> +		break;
-> +	case SND_SOC_DAPM_POST_PMD:
-> +		wcd937x_micbias_control(component, micb_num, MICB_PULLUP_DISABLE, true);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-...
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->   static const struct snd_soc_dapm_widget wcd937x_dapm_widgets[] = {
-...> +	/* MIC_BIAS widgets */
-> +	SND_SOC_DAPM_SUPPLY("MIC BIAS1", SND_SOC_NOPM, 0, 0,
-Please use shift here like
-         SND_SOC_DAPM_SUPPLY("MIC BIAS1", SND_SOC_NOPM, MIC_BIAS_1, 0,
-         SND_SOC_DAPM_SUPPLY("MIC BIAS2", SND_SOC_NOPM, MIC_BIAS_2, 0,
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-to avoid doing a string compares on wideget name.
-
---srini
-
-> +			    wcd937x_codec_enable_micbias,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
-> +	SND_SOC_DAPM_SUPPLY("MIC BIAS2", SND_SOC_NOPM, 0, 0,
-> +			    wcd937x_codec_enable_micbias,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
-> +	SND_SOC_DAPM_SUPPLY("MIC BIAS3", SND_SOC_NOPM, 0, 0,
-> +			    wcd937x_codec_enable_micbias,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
-> +
->   	SND_SOC_DAPM_SUPPLY("VDD_BUCK", SND_SOC_NOPM, 0, 0,
->   			    wcd937x_codec_enable_vdd_buck,
->   			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
-> @@ -2007,11 +2312,101 @@ static const struct snd_soc_dapm_widget wcd937x_dapm_widgets[] = {
->   	SND_SOC_DAPM_MIXER("HPHR_RDAC", SND_SOC_NOPM, 0, 0,
->   			   hphr_rdac_switch, ARRAY_SIZE(hphr_rdac_switch)),
->   
-> +	/* TX output widgets */
-> +	SND_SOC_DAPM_OUTPUT("ADC1_OUTPUT"),
-> +	SND_SOC_DAPM_OUTPUT("ADC2_OUTPUT"),
-> +	SND_SOC_DAPM_OUTPUT("ADC3_OUTPUT"),
-> +	SND_SOC_DAPM_OUTPUT("WCD_TX_OUTPUT"),
-> +
->   	/* RX output widgets */
->   	SND_SOC_DAPM_OUTPUT("EAR"),
->   	SND_SOC_DAPM_OUTPUT("AUX"),
->   	SND_SOC_DAPM_OUTPUT("HPHL"),
->   	SND_SOC_DAPM_OUTPUT("HPHR"),
-> +
-> +	/* MIC_BIAS pull up widgets */
-> +	SND_SOC_DAPM_SUPPLY("VA MIC BIAS1", SND_SOC_NOPM, 0, 0,
-> +			    wcd937x_codec_enable_micbias_pullup,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
-> +	SND_SOC_DAPM_SUPPLY("VA MIC BIAS2", SND_SOC_NOPM, 0, 0,
-> +			    wcd937x_codec_enable_micbias_pullup,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
-> +	SND_SOC_DAPM_SUPPLY("VA MIC BIAS3", SND_SOC_NOPM, 0, 0,
-> +			    wcd937x_codec_enable_micbias_pullup,
-> +			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-> +			    SND_SOC_DAPM_POST_PMD),
+If you want to undo deduplication, reply with:
+#syz undup
 
