@@ -1,80 +1,60 @@
-Return-Path: <linux-kernel+bounces-208811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871C890297A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9763490297E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4CAEB21BBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:45:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F25C1B23825
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA5714D714;
-	Mon, 10 Jun 2024 19:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8052014E2EA;
+	Mon, 10 Jun 2024 19:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="bQmTiaT+"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFtiEEE1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7580B249F5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3DB1BC39;
+	Mon, 10 Jun 2024 19:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718048719; cv=none; b=g0tyI9PbLI61pU8l9buddyWNaSBRPIwrWJYEo5DW1aKsKPO50kCS4EDk2PfSGpJdgT+A9yTbFnHITZuII4MIuKDZhbqC0vdjIKp8GTDbvL6DYsqD8/Pc9Pi1WhOUZhsCbFSdWOI5KajNI4pqSTEb0xRu77YFBsY4T2IJLPpfo14=
+	t=1718048903; cv=none; b=g+5dsVNVQ/lviQFuZ5agDpc4ba2OE6eXwpy2XaICtSUHP6UYWVTj64eowUs9XdvJ7hLdYcXUd7VP+XYk5zoSJuWTKGV02DBoIzGm+PP4EbYMLdhQC7Rv9ZIK/R5OeAJUAu3KwlBWiXt+yhmjNYLXbrUBryKRT8B0f4k9INyU2lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718048719; c=relaxed/simple;
-	bh=Z/ZEvaF3KFgjd5MHXYaihpPfsdEuF6zzQDTgLvT2DVg=;
+	s=arc-20240116; t=1718048903; c=relaxed/simple;
+	bh=y4yr6XQlhvTeATPlaR4oANDTI7XUzBVLj7I//aVWdn4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGukj9JLaEkWvkcfTXlKRAfLS6HLRKappF5EjN9rzxFuCC+8u3m1fTbKn/nGuv3TRC6A16ieiUJTEo741T3bUagsX1TRMtryioYbbsDhG6cCRsaZA/4sIE+QOtYTgeF8JbpXmYKDfjY4oQo52NJaQLjW5c7pDF+j+Rp1TWHWB7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=bQmTiaT+; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-62a0849f5a8so47800217b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 12:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718048717; x=1718653517; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3QccgVaZ6eaw5+73TGONP2Yr3cHHuW9AgdrXa1DTFCc=;
-        b=bQmTiaT+Fy303zsMjIfnl2BXHTS1Yt8n2+jWmrQkhIpT6AUKnr4VE4/xPz3XeuBBQ+
-         e9Q/moU0OA3Hcvb9YOi7p5KALsg71U3C2VTDw7L3DUuk+DMBkLAt3Kgf22hADwl3hyoA
-         TrV6D7hw4xRXSAGGRBxAXMM/wmYTjDeSADnHgd+UFtPH3fVhbnO+BwojjFfWg9LtuIjF
-         b20z2sa0Huy0EztsmQRp+JwmMP9FMwGnov9hMzxZtxyFLpF9kQQoqSei7JPxA1stXTow
-         4/xVlpV2Td6ls3SLBo06xk8zxayHv76ktIAeKDo4jpKn7oMHvmfMavRMYZ5tDgAsCPr2
-         RJKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718048717; x=1718653517;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3QccgVaZ6eaw5+73TGONP2Yr3cHHuW9AgdrXa1DTFCc=;
-        b=paoEsv0CVYuUCt8kFgcpDXMGbbrwfMjGhGkwxMkDKd6vhlr+cqeYp3b9lTPu/67cl8
-         kGQAfCUdH3f9GY+STsz03wCWqonJjsvXOyC/Q1MhfU9SztT8a93O6rSbiYEHkZYpp+bj
-         1Qo2vurnhJ4zLtrVV7qtZIiUA/SqSMEZ6HlbfXrZhyNbuaq3KvaM6EtcA9C4vRlG2Wox
-         EpUE5r0EuicJ0MuoLsxCmQ+PWmWgsthoPherIpysXbs7YDtcASsUFzIoajsQj/xi129C
-         043dvxnMivyz05ESOlmvVBRaiCaNw/nB/ii1zg3v8mI9zyeaA1QmoGZewdFYkSBhNp+U
-         KGnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkoAaZkiMAQxFD83qzpF9vmG/E4UyGwM7f5YaQ07LeO31yBpYYprtAkHhDlMUhqQ8OV+N8YDmPM4OaDOFqp3N1gKuG14zaDc78Md8z
-X-Gm-Message-State: AOJu0YzSrsRROMXsxs7A4kA7HfoC996cK8lNm/ZHs/hlMVGNd0M0yDqF
-	xCX+4rBvIz+vOAmfJNFwpD8HmYrAOO6m8wSgG8aj6pL1wfJylSD0AP0IHebxbOE=
-X-Google-Smtp-Source: AGHT+IHdp71TBZDkU6MHnXPxQlf8tNmpMUWnxXvxRu0kVYRFV4YLnmqGJ7tZkX9hEXfE7phQHJR/pg==
-X-Received: by 2002:a81:9244:0:b0:61b:3304:b724 with SMTP id 00721157ae682-62cd556db06mr101317927b3.10.1718048717521;
-        Mon, 10 Jun 2024 12:45:17 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccace6dbbsm17292397b3.39.2024.06.10.12.45.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 12:45:17 -0700 (PDT)
-Date: Mon, 10 Jun 2024 15:45:15 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	JohnnesThumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH 3/3] btrfs: split RAID stripes on deletion
-Message-ID: <20240610194515.GC235772@perftesting>
-References: <20240610-b4-rst-updates-v1-0-179c1eec08f2@kernel.org>
- <20240610-b4-rst-updates-v1-3-179c1eec08f2@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HeDeK5CDJb+dKzKFtUhR1TvGDnu4eDCttK4oM/PWGyo3ua1oxBbV4b+Wixq92YgCAudU6CM4Ov29I4D9Gtn6THTwja+fDcCfxSGk3MaDtm9S7xi6rA7FQhzOvI9IGbwFDG8wRapWOuP4ldZTkJDj5Yir27qSEwhgYFVbc3r6D1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFtiEEE1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54BF7C32789;
+	Mon, 10 Jun 2024 19:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718048903;
+	bh=y4yr6XQlhvTeATPlaR4oANDTI7XUzBVLj7I//aVWdn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oFtiEEE1zUJXk3fX31cc3rHmSr28aVw4I/cB2DTrltE5wkAUhQecNFnRr60qiJ/6Y
+	 SydztAwniQvMUZzK3/rV7bh09ehTEOV+sXA4txhM3EFYvUkTEvZuqM7ecwNR8hHksB
+	 76Es7DjlnYIfxED6BxS1uwg/sQ6JUC9ns6ZPutfZxcRZ1CFKN3RH4sFoU3oeN9LvGV
+	 Xt3hJSnF/bLqNJj11S6uJ9nrQpKXRW7zS2eHpqnOS8R5IoV95myRSbStvOvt2Y8vy3
+	 jgSzBjLqj2Or2Hs3l37JJm9H2eSXZNoBS2tdrSOc0cpM+3eiYHbSwsIe1OwOySJ9X0
+	 hk6EkUpxJNqmw==
+Date: Mon, 10 Jun 2024 12:48:22 -0700
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Vitor Massaru Iha <vitor@massaru.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2] usercopy: Convert test_user_copy to KUnit test
+Message-ID: <202406101241.C1BE6791@keescook>
+References: <20240519190422.work.715-kees@kernel.org>
+ <20240519191254.651865-2-keescook@chromium.org>
+ <CABVgOSn=tb=Lj9SxHuT4_9MTjjKVxsq-ikdXC4kGHO4CfKVmGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,24 +63,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610-b4-rst-updates-v1-3-179c1eec08f2@kernel.org>
+In-Reply-To: <CABVgOSn=tb=Lj9SxHuT4_9MTjjKVxsq-ikdXC4kGHO4CfKVmGQ@mail.gmail.com>
 
-On Mon, Jun 10, 2024 at 10:40:27AM +0200, Johannes Thumshirn wrote:
-> From: JohnnesThumshirn <johannes.thumshirn@wdc.com>
+On Sat, Jun 08, 2024 at 04:44:10PM +0800, David Gow wrote:
+> On Mon, 20 May 2024 at 03:12, Kees Cook <keescook@chromium.org> wrote:
+> >
+> > Convert the runtime tests of hardened usercopy to standard KUnit tests.
+> >
+> > Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
+> > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
+> > Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
 > 
-> The current RAID stripe code assumes, that we will always remove a
-> whole stripe entry.
-> 
-> But ff we're only removing a part of a RAID stripe we're hitting the
-> ASSERT()ion checking for this condition.
-> 
-> Instead of assuming the complete deletion of a RAID stripe, split the
-> stripe if we need to.
-> 
-> Signed-off-by: Johnnes Thumshirn <johannes.thumshirn@wdc.com>
+> This fails here on i386:
+> >      # usercopy_test_invalid: EXPECTATION FAILED at lib/usercopy_kunit.c:278
+> >      Expected val_u64 == 0, but
+> >          val_u64 == -60129542144 (0xfffffff200000000)
 
-I'd like a selftest for this helper, should be relatively straightforward to do,
-just to test edgecases and such.  Thanks,
+Hunh. I can reproduce this with "--arch=i386" but not under UML with
+SUBARCH=i386. But perhaps it's a difference in the get_user()
+implementations between the two.
 
-Josef
+And this looks like a bug in the get_user() failure path on i386. I will
+investigate...
+
+> It also seems to be hanging somewhere in usercopy_test_invalid on my
+> m68k/qemu setup:
+> ./tools/testing/kunit/kunit.py run --build_dir=.kunit-m68k --arch m68k usercopy
+
+Oh, that's weird. I'll need to get an m68k environment set up...
+
+> Otherwise, it looks fine. Maybe it'd make sense to split some of the
+> tests up a bit more, but it's a matter of taste (and only really an
+> advantage for debugging hangs where more detailed progress is nice).
+
+Yeah. I can do this in follow-up patches, perhaps.
+
+> With those architecture-specific hangs either fixed, or documented (if
+> they're actual problems, not issues with the test), this is:
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
+
+Thanks!
+
+-- 
+Kees Cook
 
