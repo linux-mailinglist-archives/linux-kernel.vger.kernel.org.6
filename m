@@ -1,57 +1,66 @@
-Return-Path: <linux-kernel+bounces-207647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2DE9901A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6E5901A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 07:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151041C20DDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1CF1C20E21
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 05:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F669F9EB;
-	Mon, 10 Jun 2024 05:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40654F9F5;
+	Mon, 10 Jun 2024 05:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vhff1sVB"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PpmVAcZQ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CECA935;
-	Mon, 10 Jun 2024 05:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35941A935;
+	Mon, 10 Jun 2024 05:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717996891; cv=none; b=YP4BA/A+p8oRgOz2mXfUQC+CHSI7ObuR/xMPw4GEAWKD2TlSezQ7HO/aqvqMF6aznZD+bztQY5i7Oq8wxCB0hgYS0Np5zG0KlOvdMgC1PD0RsYobPH03UybHUTWsqnmOwRG75hVT1ipCk7EtxFaarEfJUch+l8FLAE8vQBZLkZ8=
+	t=1717997270; cv=none; b=skGPEdpxYYg71XPVlcgqO0yUFKIgclKu9AQW0WrlYRmkE3Xrls6cmC5WMEVHCT66eEEkH8i/yhV2Vw7nlPJokX7rSqvbp8G0fXHHAUaQSQKSO/8SF3XJKIdeWH2VknfDYCkaC5V1YcaRMFLYsBb5wzoEJjRDNPOB9c+lJqxplmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717996891; c=relaxed/simple;
-	bh=nLzdTiP3EARNEnbPxQYRy79wXc10LD+pYFR32/b0o/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qaeewWr4YQATUWvJ7cpFs3hotog8k2dSzE3/Z+ktf8WQzm7SEaT1J7MeeV0lR5kkq+FigIFEbpIvKskKaqRPOWKN8fjwhlELFsxgvfbz3Iz/pQrlFPoJPR+qNqav+1O9boOpgAT3LKBSckb0g3hOgFaVPvG9qbA2vxkgr1QrkT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vhff1sVB; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1717996887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=h/XUnRjyn1afFwbgacDGxBOr6+wZiVfhFNcVw8jYbcU=;
-	b=vhff1sVBl+bNStIFEgmLQkD/jxOe3xFvX+VnLvYZadWxDFU7XOBeNX5R3JoP1GTlMY/jgC
-	QNdNo1HOWATkXDx/K+86Fj1BShZU07XrzZz1yXTGX14Ji4N3e9N1lfK0bfKOqlEKIsKVaJ
-	LlxpHjbAscwzlnc9Kf4l89IG+0X5ehgJfyocQp6t7Xo6FEdii7xPuOr2J5MIeGnGRvYECk
-	qx/aQiPTAnQZXCJSN2CRCDwVZRtBbrM6N1TZYR0GMzH2am5DHpnDlN6RpITvyBoUaQ657X
-	RMfVLQsNXHOze3m2UYiJ6vSIcPfByuAyKIwjaSfH7ADH6IgBXxAJrohFlPEcWQ==
-To: linux-kbuild@vger.kernel.org
-Cc: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu,
+	s=arc-20240116; t=1717997270; c=relaxed/simple;
+	bh=Q5CPkw7W5Qs1+jCVle///FndTMVAPqB2MwLBM/VCMgA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rRVHmWb5o6z2TXKssgkJJMdGg7CdpX2Qqyps6TONhDoudyC5Y3dCmcrjEdkjN0wsPL8NKRUbmyeNdh1aAwmdJsn6W6a83R5SIVo1fAyEAffQt9FXU/c5gJ1OWyKYaRrtOAFQLEgXS1A0iGl/jQqb0sQhRS64K3DXotutxxJK7iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PpmVAcZQ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717997267;
+	bh=Q5CPkw7W5Qs1+jCVle///FndTMVAPqB2MwLBM/VCMgA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PpmVAcZQe5LjjEdKjqwh4bVflJNL3csSYsBxjMTOI9VVQOGdSC5IWQsVVp0tspWPh
+	 bu3h8nN0pdw5aYuO2Ruvff5xf0k996kCy0DMwzG0zY51EQ3tO2AX6MJ1TbYiSuiqJ/
+	 +MgfCa8AXvgNbiE1wGxSUOs+AEC7ipp3Ul0sj8js0PO156cskeJ9dRRPZs5cdlRx9L
+	 aAtyOCVQEiw333lAPS26iHiL7q7BL0JdukcmRqsWN1DErgnhkJjEPSIsybdyhNHNuv
+	 vh0KDsWJR6eJ6RAFKVfM2dLLZ515oOMkNK0W0K/lszuUdM1qwC8WOsBidjQSZ3jxPp
+	 MKTFV5xdg9vsQ==
+Received: from deb.www.tendawifi.com (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ED2303782009;
+	Mon, 10 Jun 2024 05:27:44 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: skhan@linuxfoundation.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Diederik de Haas <didi.debian@cknow.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] kbuild: Install dtb files as 0644 in Makefile.dtbinst
-Date: Mon, 10 Jun 2024 07:21:12 +0200
-Message-Id: <e1fd1b659711f59c61ec48dc43912dddccbb4d92.1717996742.git.dsimic@manjaro.org>
+	linux-kselftest@vger.kernel.org
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH] MAINTAINERS: Add selftests/x86 entry
+Date: Mon, 10 Jun 2024 10:28:10 +0500
+Message-Id: <20240610052810.1488793-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +68,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-The compiled dtb files aren't executable, so install them with 0644 as their
-permission mode, instead of defaulting to 0755 for the permission mode and
-installing them with the executable bits set.
+There are no maintainers specified for tools/testing/selftests/x86.
+Shuah has mentioned [1] that the patches should go through x86 tree or
+in special cases directly to Shuah's tree after getting ack-ed from x86
+maintainers. Different people have been confused when sending patches as
+correct maintainers aren't found by get_maintainer.pl script. Fix
+this by adding entry to MAINTAINERS file.
 
-Some Linux distributions, including Debian, [1][2][3] already include fixes
-in their kernel package build recipes to change the dtb file permissions to
-0644 in their kernel packages.  These changes, when additionally propagated
-into the long-term kernel versions, will allow such distributions to remove
-their downstream fixes.
+[1] https://lore.kernel.org/all/90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org
 
-[1] https://salsa.debian.org/kernel-team/linux/-/merge_requests/642
-[2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/749
-[3] https://salsa.debian.org/kernel-team/linux/-/blob/master/debian/rules.real?ref_type=heads#L193
-
-Cc: Diederik de Haas <didi.debian@cknow.org>
-Cc: stable@vger.kernel.org
-Fixes: aefd80307a05 ("kbuild: refactor Makefile.dtbinst more")
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Notes:
-    Changes in v2:
-      - Improved the patch description, to include additional details and
-        to address the patch submission issues pointed out by Greg K-H [4]
-      - No changes were made to the patch itself
-    
-    Link to v1: https://lore.kernel.org/linux-kbuild/ae087ef1715142f606ba6477ace3e4111972cf8b.1717961381.git.dsimic@manjaro.org/T/#u
-    
-    [4] https://lore.kernel.org/linux-kbuild/2024061006-ladylike-paving-a36b@gregkh/
-
- scripts/Makefile.dtbinst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.dtbinst b/scripts/Makefile.dtbinst
-index 67956f6496a5..9d920419a62c 100644
---- a/scripts/Makefile.dtbinst
-+++ b/scripts/Makefile.dtbinst
-@@ -17,7 +17,7 @@ include $(srctree)/scripts/Kbuild.include
- dst := $(INSTALL_DTBS_PATH)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 523d84b2d6139..f3a17e5d954a3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24378,6 +24378,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
+ F:	Documentation/arch/x86/
+ F:	Documentation/devicetree/bindings/x86/
+ F:	arch/x86/
++F:	tools/testing/selftests/x86
  
- quiet_cmd_dtb_install = INSTALL $@
--      cmd_dtb_install = install -D $< $@
-+      cmd_dtb_install = install -D -m 0644 $< $@
- 
- $(dst)/%: $(obj)/%
- 	$(call cmd,dtb_install)
+ X86 ENTRY CODE
+ M:	Andy Lutomirski <luto@kernel.org>
+-- 
+2.39.2
+
 
