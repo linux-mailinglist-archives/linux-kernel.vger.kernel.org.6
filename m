@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-208235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD3D9022B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:28:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5AF9022B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1223F1F243D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123A71F25068
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C7E82D75;
-	Mon, 10 Jun 2024 13:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA8386255;
+	Mon, 10 Jun 2024 13:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIaUSAet"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhG/k61N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4E882495;
-	Mon, 10 Jun 2024 13:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6013883CDE;
+	Mon, 10 Jun 2024 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718026123; cv=none; b=HXlEDrG2fODc69nK5/CbWzLFvDbHfN4vY7DmKCA8gtIP4g9nRao0EKhHud6QhNFCOHSwngP4gY1ftuObVANrnhsFOq8RE+C6y/SVN4PvL0mpIUCddZyq+XyhzohHkHnc9cQ6R/SPiXavzPdmGJCPZlkbvRruLJYSI9Xordhagkk=
+	t=1718026188; cv=none; b=dRfkdBJub/ouxSx3AFgjPSgwVR8oEwnPMRmzdVRpibMSwtum5q0YUd6jc0gShBvM2+Co0o7UGgXImrR4WRkCTSW5AnJC9TH2OCS/oayzLoE22CDW3QLBjy9cAGEJoXWE582LJMAeM8Tv2wJGQG5jt64upr4DNGiflEoE+DbuRrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718026123; c=relaxed/simple;
-	bh=8iNBFiAFk2x18bz/Cm2pkU+ucUprAO5UFuzBsXiZHOw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCNejAxR/BWYLYThokH9++DkT9IEtvfy1i6biou65XDUSSaa8/eTmJd4RAJuKwRW1cb0rAHt3kEbuQinU5TXL31ujUHIt7y4YH9/K2O7Aoi0ragDyd8uNSAzP2gAPq+ccRFth6j5OZoMxNdsDr3e6fAfss0gsGFovmFbD8m1BEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIaUSAet; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f09b457fdso169117966b.2;
-        Mon, 10 Jun 2024 06:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718026119; x=1718630919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oe1uG12OwFGfm/fXehU9KIf5CFABE6TR3kzu0gjzfKk=;
-        b=kIaUSAetLepxRgNOaAK1Hsf9MqMFn6OmtVd9V58Xy26++GBaeDmhHHc7M34ASmKZoG
-         pgIwhSiP884wi0U+o2ozWJLd+vjWcQ10i5diZXEciq0IlHPG3KIZYs6IkFGzjgVHfnh8
-         kaEiRHQrzeFGBTOr1hdcr13b48+3nOZkCaYxgD1ocbAVj/nlP3m+Qj/wlwjIkTPDnDeZ
-         KW1KqlM2YmjYurbZNIfKaCYh7z0OSYJWZWwnLys0tWCWJ3bkzE+RO4rwX5pEHu2u6ef9
-         h7qyhhcgCkZ3cYzcVe4rhK5Qn/IE7BVbJWfvgG3wBg6+M7yT8EicloL5fwQui0PArEdD
-         /vlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718026119; x=1718630919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oe1uG12OwFGfm/fXehU9KIf5CFABE6TR3kzu0gjzfKk=;
-        b=hRa4KkDDu0XE0tU9oab6IrpX+ttfLdQtbIIRZ0lEpRxL7XQUCve49E7TSjXim5OfCX
-         iKxqKFlUzDVBVdS7TCEOqdBl9WGsAdJJ7YLYB4gfw6ho26GdTSrqeWOvwlYS9m3+2rOo
-         NBg9/hig04pHDKpDCQ5jBVMBnEv3AozoYldBrzf5N4GsXXxIhItQ4UWUP45YkajLxS+H
-         prfQEtG0wlBT9D+xq6yoGVz+JxRZ8EY/HAvcr3M9+ToTiBohiy0wZ+DRMpo78M2mYCBK
-         t8ieIyySvLWunKiHLzA7f+2D1SdtdSLPTHGcAg8k87MS6+G9+eNjYVD2DRvg4vHkT2fH
-         k38w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyS+tXJM05+JzyElgOtGC/yj99DsW8Y1ZBU+vmR60DF1KZSDvgRQIXNcodl5Zlex3H6fDGCkwkYVLaoepop6OKaroudYIfkqzZRdV0QSsQ8fApWKtvHu21lt3SJn0Qs6IVhJrFE9GxK3MawuZHOvpfFmC4U098bRWUoYcMiiXmIVZ6
-X-Gm-Message-State: AOJu0YzaIOO9iRiUEcitIr4fC2Pdr6dL+Wz7PBvc/RokSTK4jVHhqCOZ
-	IelRQlCwSmYahs/ilc944gvBRlsMGrXC9C+89EkqHh/My9c75gLW
-X-Google-Smtp-Source: AGHT+IHmjqOo8ZKym0tRlCWoq8GHs1+hiC4mi31qnNwyUYWu0BX7iKhT5iYN1mYN7y2V8y90CAMUxA==
-X-Received: by 2002:a17:906:b85a:b0:a6f:1036:98cf with SMTP id a640c23a62f3a-a6f10369abcmr322649766b.54.1718026119082;
-        Mon, 10 Jun 2024 06:28:39 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072b010sm643480766b.214.2024.06.10.06.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 06:28:38 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 10 Jun 2024 15:28:36 +0200
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: shuah@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	eddyz87@gmail.com, ast@kernel.org, olsajiri@gmail.com,
-	quentin@isovalent.com, alan.maguire@oracle.com, acme@kernel.org,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, mykolal@fb.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v4 03/12] bpf: selftests: Fix fentry test kfunc
- prototypes
-Message-ID: <Zmb_hJQqxi44Nj5B@krava>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <1f493cb7a7e5349f99e2badf0880b75dd6681898.1717881178.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1718026188; c=relaxed/simple;
+	bh=PcgO3/CLX7JMznu36bb05DGuLfKp26palcGfsljMnik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rY0ZXgs9AyuiRtwKEQAY8cDXqhMA58AeSFQ6S/tdJBGwDLRgfEm6WWCm1VNJVyR4Eatgkv3CXREFsZFMYYzlesGfSWujEHaw4v8B0x79Cp+oM9ZnDQgksWFjbV5k5qSrge02HmRKovMrmg5gh4ELqK3D1MSpar8mDC+u93p5Cv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhG/k61N; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718026188; x=1749562188;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PcgO3/CLX7JMznu36bb05DGuLfKp26palcGfsljMnik=;
+  b=WhG/k61N3tPOycCFyZ8uiMCzwuBjETmPjw7ju20noo/ulb3LG0GPr4AS
+   FOwZ4ttFr060IVCUbLMcVXK5oYV4163zPYCq1/kXsaK0h0a95eV6kk/w2
+   s5yEIxzzA8/MAGH0LQrE7biT0HLlMsiIJtsWCUKQExvtdDK7HbK8KsA8S
+   ZBrN+uBJ1RR3jooEInblPmVF9M+vHjZmI6cU5ApUFx6DejJsOJazYVQkC
+   LBTIPhkVLseJ9doONsNQmL0adbzW57T4wTUS2+4Bzp/mCbEnjG/lYtJIf
+   H5d50QqpgnlM5C3i/cPdha/Kkg2VmFTeQTbq7qdknVgU+CfhsHN4ZcsBs
+   Q==;
+X-CSE-ConnectionGUID: oXbxT8UXS5a2qJoyxEnN2A==
+X-CSE-MsgGUID: jnx+79XrT8SgJIgMFxWWog==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="26086709"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="26086709"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 06:29:46 -0700
+X-CSE-ConnectionGUID: jKjsSu80QcKYwy8s0zgt5g==
+X-CSE-MsgGUID: uWAI+xcGS0WT2wud6btUtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="39151398"
+Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 10 Jun 2024 06:29:39 -0700
+Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGf5d-0002AX-1V;
+	Mon, 10 Jun 2024 13:29:37 +0000
+Date: Mon, 10 Jun 2024 21:28:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: bu27034: Add a read only HWARDWAREGAIN
+Message-ID: <202406102113.7w2Td20S-lkp@intel.com>
+References: <5e88c7b7b0389c6c011f15e05e065791f7561cf5.1718013518.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,54 +80,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1f493cb7a7e5349f99e2badf0880b75dd6681898.1717881178.git.dxu@dxuuu.xyz>
+In-Reply-To: <5e88c7b7b0389c6c011f15e05e065791f7561cf5.1718013518.git.mazziesaccount@gmail.com>
 
-On Sat, Jun 08, 2024 at 03:15:59PM -0600, Daniel Xu wrote:
-> The prototypes in progs/get_func_ip_test.c were not in line with how the
-> actual kfuncs are defined in net/bpf/test_run.c. This causes compilation
-> errors when kfunc prototypes are generated from BTF.
-> 
-> Fix by aligning with actual kfunc definitions.
-> 
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  .../testing/selftests/bpf/progs/get_func_ip_test.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> index 8956eb78a226..a89596f7585d 100644
-> --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> @@ -5,13 +5,13 @@
->  
->  char _license[] SEC("license") = "GPL";
->  
-> -extern const void bpf_fentry_test1 __ksym;
-> -extern const void bpf_fentry_test2 __ksym;
-> -extern const void bpf_fentry_test3 __ksym;
-> -extern const void bpf_fentry_test4 __ksym;
-> -extern const void bpf_modify_return_test __ksym;
-> -extern const void bpf_fentry_test6 __ksym;
-> -extern const void bpf_fentry_test7 __ksym;
-> +extern int bpf_fentry_test1(int a) __ksym;
+Hi Matti,
 
-hum, the only registered one as kfunc is bpf_fentry_test1, to allow fmodret
-also there's bpf_fentry_test9 as kfunc, which AFAICS is not really needed
+kernel test robot noticed the following build warnings:
 
-jirka
+[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
 
-[1] 5b481acab4ce bpf: do not rely on ALLOW_ERROR_INJECTION for fmod_ret
+url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/bu27034-ROHM-BU27034NUC-to-BU27034ANUC/20240610-180426
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/5e88c7b7b0389c6c011f15e05e065791f7561cf5.1718013518.git.mazziesaccount%40gmail.com
+patch subject: [PATCH 2/2] iio: bu27034: Add a read only HWARDWAREGAIN
+config: i386-buildonly-randconfig-004-20240610 (https://download.01.org/0day-ci/archive/20240610/202406102113.7w2Td20S-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240610/202406102113.7w2Td20S-lkp@intel.com/reproduce)
 
-> +extern int bpf_fentry_test2(int a, __u64 b) __ksym;
-> +extern int bpf_fentry_test3(char a, int b, __u64 c) __ksym;
-> +extern int bpf_fentry_test4(void *a, char b, int c, __u64 d) __ksym;
-> +extern int bpf_modify_return_test(int a, int *b) __ksym;
-> +extern int bpf_fentry_test6(__u64 a, void *b, short c, int d, void *e, __u64 f) __ksym;
-> +extern int bpf_fentry_test7(struct bpf_fentry_test_t *arg) __ksym;
->  
->  extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
->  
-> -- 
-> 2.44.0
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406102113.7w2Td20S-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/light/rohm-bu27034.c:1057:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    1057 |         default:
+         |         ^
+   drivers/iio/light/rohm-bu27034.c:1057:2: note: insert '__attribute__((fallthrough));' to silence this warning
+    1057 |         default:
+         |         ^
+         |         __attribute__((fallthrough)); 
+   drivers/iio/light/rohm-bu27034.c:1057:2: note: insert 'break;' to avoid fall-through
+    1057 |         default:
+         |         ^
+         |         break; 
+   1 warning generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for REGMAP_SPI
+   Depends on [n]: SPI [=n]
+   Selected by [y]:
+   - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
+
+
+vim +1057 drivers/iio/light/rohm-bu27034.c
+
+e52afbd61039e2 Matti Vaittinen 2023-03-31  1042  
+d47b9b84292706 Matti Vaittinen 2023-06-13  1043  static int bu27034_write_raw_get_fmt(struct iio_dev *indio_dev,
+d47b9b84292706 Matti Vaittinen 2023-06-13  1044  				     struct iio_chan_spec const *chan,
+d47b9b84292706 Matti Vaittinen 2023-06-13  1045  				     long mask)
+d47b9b84292706 Matti Vaittinen 2023-06-13  1046  {
+6196c88810e86d Matti Vaittinen 2024-06-10  1047  	struct bu27034_data *data = iio_priv(indio_dev);
+d47b9b84292706 Matti Vaittinen 2023-06-13  1048  
+d47b9b84292706 Matti Vaittinen 2023-06-13  1049  	switch (mask) {
+d47b9b84292706 Matti Vaittinen 2023-06-13  1050  	case IIO_CHAN_INFO_SCALE:
+d47b9b84292706 Matti Vaittinen 2023-06-13  1051  		return IIO_VAL_INT_PLUS_NANO;
+d47b9b84292706 Matti Vaittinen 2023-06-13  1052  	case IIO_CHAN_INFO_INT_TIME:
+d47b9b84292706 Matti Vaittinen 2023-06-13  1053  		return IIO_VAL_INT_PLUS_MICRO;
+6196c88810e86d Matti Vaittinen 2024-06-10  1054  	case IIO_CHAN_INFO_HARDWAREGAIN:
+6196c88810e86d Matti Vaittinen 2024-06-10  1055  		dev_dbg(data->dev,
+6196c88810e86d Matti Vaittinen 2024-06-10  1056  			"HARDWAREGAIN is read-only, use scale to set\n");
+d47b9b84292706 Matti Vaittinen 2023-06-13 @1057  	default:
+d47b9b84292706 Matti Vaittinen 2023-06-13  1058  		return -EINVAL;
+d47b9b84292706 Matti Vaittinen 2023-06-13  1059  	}
+d47b9b84292706 Matti Vaittinen 2023-06-13  1060  }
+d47b9b84292706 Matti Vaittinen 2023-06-13  1061  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
