@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-208804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E3902964
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:34:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9892F90296A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1933C1C21C1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:34:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34CA6B20DCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 19:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BAC14D70E;
-	Mon, 10 Jun 2024 19:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF29914D719;
+	Mon, 10 Jun 2024 19:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRkBnj3q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CeU/QKAf"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140B72230F;
-	Mon, 10 Jun 2024 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77B2230F;
+	Mon, 10 Jun 2024 19:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718048036; cv=none; b=idC6r3zJdekcf7SNZbp5qhAiP/KfIcUUMRAtSPmMkVvWQU05+Fjl6XDJx4EnYMMQcr2lWQkRj4v3/mdkSb9Grh1abibmbajMLPlA+Sq/Npj0TMA+glsgloljslXMu3XQWUdExuXg7ykCC+kbTqpccybRpVjVkCGw7OUKcu09B+M=
+	t=1718048181; cv=none; b=Ce8BZhBnWkb5lSRWXQWC9IFpXpMsFeS9jZvStmI6/GF3rYH0BPDtz6sVCGg1HG4nTQ+LBcCHBD8MBaV561FEzdRcxQXSZ7FnCr/auLGZ2g7urtwK3e4Sm7uTS7PK3mZMppM3FWC/Ny3ibECK9ZhrD3ZBb6TYg+44ngPupDTZpNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718048036; c=relaxed/simple;
-	bh=Qk5Vp5/sI/Gldp06bVN/w//AsSVkw1JHkdQm2GlWS3o=;
+	s=arc-20240116; t=1718048181; c=relaxed/simple;
+	bh=tMS6tBLh/D5dVlFWpkRUR8GjedWgB0bTz59xkhYVqWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BaAOAV7FyirTcKvqlJvu3ms57Fq4yNZOTLz+tcTQxYISH2UMrVbE8qbyKx3Fik0E3QXedKjZhu8BDS7NuqKvkEjiPXgc97j5II7bRH5g97n7mdZghYql8rjY/Hl30WNwhH8woqBHZhKYFvtmOuU3wxSlsDpCYwZaB1FCDMosOUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRkBnj3q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A64C2BBFC;
-	Mon, 10 Jun 2024 19:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718048035;
-	bh=Qk5Vp5/sI/Gldp06bVN/w//AsSVkw1JHkdQm2GlWS3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LRkBnj3qKLzKtc+3T5Oij/zRoN3CPoJC7GS5nVXb/86MZithcRd6sMyUvqmLiuTQq
-	 pfdjVpplwIOj0hgPBKTLQwNVOUhWufQo/Nz3EGhkIw2Ap9qq7/2KJiSQtwlmrZav/R
-	 Y4Fjx471dGhT/sWZ1ydiRA/gIiheH19aiatm3VQ7oCBB0M1L2INCSzXPTB6ja5tGj1
-	 /vpAeA0tVtZw+i9nFLeqRhVi/DxX43c6938Ok5M3vcZPiMG8cGI3+PxKTyXelp9dry
-	 MTyJEFng7Av4ucas1DQkJXLVpsQchgXgwgVtzS9X1c5qBRcisVuz5DZ6Lrs75vPqhd
-	 TI7lq1JrELaNA==
-Date: Mon, 10 Jun 2024 13:33:53 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, sachinp@linux.vnet.com
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-Message-ID: <ZmdVIfnqtweVt9ZN@kbusch-mbp.dhcp.thefacebook.com>
-References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
- <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
- <e8fa4c36-49e5-40b8-9cea-6b3b61aa3240@grimberg.me>
- <ZmdQuz8vJZMj41Kn@kbusch-mbp.dhcp.thefacebook.com>
- <bccf1e1f-bc45-4052-9504-d852f9ae4e6c@grimberg.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTYIw/aI/ANPekgx7tnRmPwvDc5r1Yyhz6hLZRGyS5Fmx3r+ZnG56uuaZJoaaW237XNGDhghM+PHOVMo6BHEkQZv3sRsQTtSKBh8oRwae+bqNTfZXDt5h4e5YLPoPUhHqttnhcp7RbBAJA0dxF34EoKVvm/jAjlrVgBHv9LBb3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CeU/QKAf; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=jYzuoLcn+paF8D6hwBRNWpyNSs/pBEMZxZI5thdD4JQ=; b=CeU/QKAfY8l0/tShQA7/RW8iAi
+	P8z6WQPAnlL5zdyFAvbme/u2okBddIQLYPCZxGpylS38HYN3FgcpYYE8elpC88906sa5drmszmDvJ
+	1K5xkKm7pfk8O6Ih3yMTBhRnGHQCL4YbFnSsU43lLy2sx06AejdsDEbKD75HCapgR0dc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGkoK-00HK7b-71; Mon, 10 Jun 2024 21:36:08 +0200
+Date: Mon, 10 Jun 2024 21:36:08 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Richard chien <m8809301@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jesse.brandeburg@intel.com,
+	anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Richard chien <richard.chien@hpe.com>
+Subject: Re: [PATCH] ixgbe: Add support for firmware update
+Message-ID: <e9b5eef7-8325-4d71-bbb6-ba063733484c@lunn.ch>
+References: <20240609085735.6253-1-richard.chien@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,49 +60,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bccf1e1f-bc45-4052-9504-d852f9ae4e6c@grimberg.me>
+In-Reply-To: <20240609085735.6253-1-richard.chien@hpe.com>
 
-On Mon, Jun 10, 2024 at 10:17:42PM +0300, Sagi Grimberg wrote:
-> On 10/06/2024 22:15, Keith Busch wrote:
-> > On Mon, Jun 10, 2024 at 10:05:00PM +0300, Sagi Grimberg wrote:
-> > > 
-> > > On 10/06/2024 21:53, Keith Busch wrote:
-> > > > On Mon, Jun 10, 2024 at 01:21:00PM +0530, Venkat Rao Bagalkote wrote:
-> > > > > Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
-> > > > My mistake. The namespace remove list appears to be getting corrupted
-> > > > because I'm using the wrong APIs to replace a "list_move_tail". This is
-> > > > fixing the issue on my end:
-> > > > 
-> > > > ---
-> > > > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> > > > index 7c9f91314d366..c667290de5133 100644
-> > > > --- a/drivers/nvme/host/core.c
-> > > > +++ b/drivers/nvme/host/core.c
-> > > > @@ -3959,9 +3959,10 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
-> > > >    	mutex_lock(&ctrl->namespaces_lock);
-> > > >    	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
-> > > > -		if (ns->head->ns_id > nsid)
-> > > > -			list_splice_init_rcu(&ns->list, &rm_list,
-> > > > -					     synchronize_rcu);
-> > > > +		if (ns->head->ns_id > nsid) {
-> > > > +			list_del_rcu(&ns->list);
-> > > > +			list_add_tail_rcu(&ns->list, &rm_list);
-> > > > +		}
-> > > >    	}
-> > > >    	mutex_unlock(&ctrl->namespaces_lock);
-> > > >    	synchronize_srcu(&ctrl->srcu);
-> > > > --
-> > > Can we add a reproducer for this in blktests? I'm assuming that we can
-> > > easily trigger this
-> > > with adding/removing nvmet namespaces?
-> > I'm testing this with Namespace Manamgent commands, which nvmet doesn't
-> > support. You can recreate the issue by detaching the last namespace.
-> > 
+On Sun, Jun 09, 2024 at 04:57:35PM +0800, Richard chien wrote:
+> This patch adds support for firmware update to the in-tree ixgbe driver and it is actually a port
+> from the out-of-tree ixgbe driver. In-band firmware update is one of the essential system maintenance
+> tasks. To simplify this task, the Intel online firmware update utility provides a common interface
+> that works across different Intel NICs running the igb/ixgbe/i40e drivers. Unfortunately, the in-tree
+> igb and ixgbe drivers are unable to support this firmware update utility, causing problems for
+> enterprise users who do not or cannot use out-of-distro drivers due to security and various other
+> reasons (e.g. commercial Linux distros do not provide technical support for out-of-distro drivers).
+> As a result, getting this feature into the in-tree ixgbe driver is highly desirable.
 > 
-> I think the same will happen in a test that creates two namespaces and then
-> echo 0 > ns/enable.
+> Signed-off-by: Richard chien <richard.chien@hpe.com>
 
-Looks like nvme/016 tess this. It's reporting as "passed" on my end, but
-I don't think it's actually testing the driver as intended. Still
-messing with it.
+How about you work on one driver at a time, to learn about the
+processes for submitting to the Linux kernel.
+
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#netdev-faq
+
+https://docs.kernel.org/process/submitting-patches.html
+
+https://www.kernel.org/doc/html/latest/process/coding-style.html
+
+I would also think about why Intel has not submitted this code before?
+Maybe because it does things the wrong way? Please look at how other
+Ethernet drivers support firmware. Is it the same? It might be you
+need to throw away this code and reimplement it to mainline standards,
+maybe using devlink flash, or ethtool -f.
+
+One additional question. Is the firmware part of linux-firmware? Given
+this is Intel, i expect the firmware is distributeable, but have they
+distributed it?
+
+	Andrew
 
