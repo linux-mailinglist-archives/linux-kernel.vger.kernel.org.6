@@ -1,118 +1,272 @@
-Return-Path: <linux-kernel+bounces-207856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25647901D10
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F0B9901D13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD54E282254
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA361F21746
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4D06F2F6;
-	Mon, 10 Jun 2024 08:38:42 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160686F2FA;
+	Mon, 10 Jun 2024 08:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="xWpdOjmH"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E235E6F2E0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 08:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452FC55887;
+	Mon, 10 Jun 2024 08:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718008722; cv=none; b=F1aQZFHqZb6XakDQ0fvmC3F5te/2XNNhEzjfLOZhyqSLep9wfSag7ngxkyoGIhAS2M1L3IstCRBXe43W5szuF2qbJon+m0DSmd3IU+sMP1aLTCMZx8pofjUHqYBSfEUgouU9Szf7JO3gRVWR9PEZvpwEsKghin4jMdskbZ2JW/A=
+	t=1718008749; cv=none; b=b6tq1fNbzNZBchsOadMSFBJP1My4KcCWS8HWTZK7QD+M2Hcw4+1ePJup828arWH8sJDy5vmhAfOM7t7Kv7XhRi840fGx/+VDVGEERlBmPwBn0el/3rxSrqS3u8rP3d1wrCMXj9yzTYDAyJfzrAXdRUGXuUpbwYkFwwrAeZ9dkyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718008722; c=relaxed/simple;
-	bh=FOaGqIwiJI46AUumONpnKSu7F7k1EDJI+q2pYqQGcUk=;
+	s=arc-20240116; t=1718008749; c=relaxed/simple;
+	bh=JfuTg9AWx/6iM2XhkYJvz5goUYOT/V3jlMgafxaU03A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7vL2pJ4GpnmtBMZtkXlzDWDNBdjvr/2AsMQQcxf3jh2DuCb+eQgmH0unwY8Nks2Dc/a7pVfVJHljJXOS9sOKYd9vbjMzSSusI4NO2+0mBhjEMzN49toZhztwhm5FB4+xTUqYfe6AEc9XlAtCTfmP7oY3SMF6NutCQeASmLOIDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VyPrn2zQpz9v7JB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:20:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 9112C140CA5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 16:38:27 +0800 (CST)
-Received: from [10.221.98.131] (unknown [10.221.98.131])
-	by APP2 (Coremail) with SMTP id GxC2BwA3vjh2u2Zm8ysiAA--.46214S2;
-	Mon, 10 Jun 2024 09:38:26 +0100 (CET)
-Message-ID: <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
-Date: Mon, 10 Jun 2024 10:38:11 +0200
+	 In-Reply-To:Content-Type; b=G8abgsi6N8y+u0P7LqBSF1HD+jBAkLurhVKv7gl9PJPJAIMPtWuvRSKfXPG8NSSClJmADOcbEYy7Oqk72eL09m8OMFX6LAf7d44+7S16naslY3+F7lotW2RTPV1GIKGv5C8x2Vnz4+CZavMuNhPaeRAIn/oVSeLuDVRdevYPj20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=xWpdOjmH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718008745;
+	bh=JfuTg9AWx/6iM2XhkYJvz5goUYOT/V3jlMgafxaU03A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=xWpdOjmHA4qZzIZRZOvV6HK8X1qfG2n059NYDH3XsYJCm7uDJty2y7t45UmgzC23d
+	 4LC6fl3C9fc+t0CVjI1giDBiJKPsZvN9IcjQ+7jZTPH1tG0EmCI7954dHo3GELpsVN
+	 YBxrON/8NKYyzL66K8KHeFwaPMLRJbbaKRnHQoOCKROGPNZdghoncmsgiJVAKHHtvQ
+	 X1ITKJgrr+kCFGB64fO+33SgP+6+Bap4IhUmrXNGDng4J+u7EzaSDQU6EuYm62Z39O
+	 Iut8k1LmHFywPsuKY/YociPBMslENS/4LSwQxgQGR6hyNVb9PtMjlcPLEcTXrWP8nv
+	 JxsTylKNUPumg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D8F33378148F;
+	Mon, 10 Jun 2024 08:39:03 +0000 (UTC)
+Message-ID: <c5a0223c-574e-481e-b64e-26353243ae08@collabora.com>
+Date: Mon, 10 Jun 2024 10:39:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-To: Alan Stern <stern@rowland.harvard.edu>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
- <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
- <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
- <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] drm/mediatek: Add support for OF graphs
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: chunkuang.hu@kernel.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ wenst@chromium.org, kernel@collabora.com
+References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
+ <1b23531d-0365-4163-a443-4ebece2c445e@notapiano>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+In-Reply-To: <1b23531d-0365-4163-a443-4ebece2c445e@notapiano>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwA3vjh2u2Zm8ysiAA--.46214S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jr15Jr43Kr18KF1xGF17Wrg_yoWkGwc_u3
-	4DC3ykGwn5CF98WF47uFZ0vFnrKF1UJrZ8X34kGFnrZr18ZFWkGrZFkws3Zw4rXay2kanx
-	Was0qa12q3ZxZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 6/8/2024 3:00 AM, Alan Stern wrote:
-> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
+Il 07/06/24 01:25, Nícolas F. R. A. Prado ha scritto:
+> On Thu, May 16, 2024 at 10:11:01AM +0200, AngeloGioacchino Del Regno wrote:
+>> Changes in v4:
+>>   - Fixed a typo that caused pure OF graphs pipelines multiple
+>>     concurrent outputs to not get correctly parsed (port->id);
+>>   - Added OVL_ADAPTOR support for OF graph specified pipelines;
+>>   - Now tested with fully OF Graph specified pipelines on MT8195
+>>     Chromebooks and MT8395 boards;
+>>   - Rebased on next-20240516
+>>
+>> Changes in v3:
+>>   - Rebased on next-20240502 because of renames in mediatek-drm
+>>
+>> Changes in v2:
+>>   - Fixed wrong `required` block indentation in commit [2/3]
 >>
 >>
->> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
->>> Just to clarify: Your first step encompasses patches 1 - 3, and the
->>> second step is patch 4.  The first three patches can be applied now, but
->>> the last one needs to wait until herd7 has been updated.  Is this all
->>> correct?
+>> The display IPs in MediaTek SoCs are *VERY* flexible and those support
+>> being interconnected with different instances of DDP IPs (for example,
+>> merge0 or merge1) and/or with different DDP IPs (for example, rdma can
+>> be connected with either color, dpi, dsi, merge, etc), forming a full
+>> Display Data Path that ends with an actual display.
 >>
->> Exactly.
+>> This series was born because of an issue that I've found while enabling
+>> support for MT8195/MT8395 boards with DSI output as main display: the
+>> current mtk_drm_route variations would not work as currently, the driver
+>> hardcodes a display path for Chromebooks, which have a DisplayPort panel
+>> with DSC support, instead of a DSI panel without DSC support.
+>>
+>> There are other reasons for which I wrote this series, and I find that
+>> hardcoding those paths - when a HW path is clearly board-specific - is
+>> highly suboptimal. Also, let's not forget about keeping this driver from
+>> becoming a huge list of paths for each combination of SoC->board->disp
+>> and... this and that.
+>>
+>> For more information, please look at the commit description for each of
+>> the commits included in this series.
+>>
+>> This series is essential to enable support for the MT8195/MT8395 EVK,
+>> Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
+>> and Chromebooks to co-exist without conflicts.
+>>
+>> Besides, this is also a valid option for MT8188 Chromebooks which might
+>> have different DSI-or-eDP displays depending on the model (as far as I
+>> can see from the mtk_drm_route attempt for this SoC that is already
+>> present in this driver).
+>>
+>> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+>> NIO-12L with both hardcoded paths, OF graph support and partially
+>> hardcoded paths, and pure OF graph support including pipelines that
+>> require OVL_ADAPTOR support.
+>>
+>> AngeloGioacchino Del Regno (3):
+>>    dt-bindings: display: mediatek: Add OF graph support for board path
+>>    dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
+>>    drm/mediatek: Implement OF graphs support for display paths
+>>
+>>   .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
+>>   .../display/mediatek/mediatek,aal.yaml        |  40 +++
+>>   .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
+>>   .../display/mediatek/mediatek,color.yaml      |  22 ++
+>>   .../display/mediatek/mediatek,dither.yaml     |  22 ++
+>>   .../display/mediatek/mediatek,dpi.yaml        |  25 +-
+>>   .../display/mediatek/mediatek,dsc.yaml        |  24 ++
+>>   .../display/mediatek/mediatek,dsi.yaml        |  27 +-
+>>   .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
+>>   .../display/mediatek/mediatek,gamma.yaml      |  19 ++
+>>   .../display/mediatek/mediatek,merge.yaml      |  23 ++
+>>   .../display/mediatek/mediatek,od.yaml         |  22 ++
+>>   .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
+>>   .../display/mediatek/mediatek,ovl.yaml        |  22 ++
+>>   .../display/mediatek/mediatek,postmask.yaml   |  21 ++
+>>   .../display/mediatek/mediatek,rdma.yaml       |  22 ++
+>>   .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
+>>   drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
+>>   .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  40 ++-
+>>   drivers/gpu/drm/mediatek/mtk_dpi.c            |  16 +-
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 282 ++++++++++++++++--
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+>>   drivers/gpu/drm/mediatek/mtk_dsi.c            |  10 +-
+>>   23 files changed, 713 insertions(+), 41 deletions(-)
+>>
+>> -- 
+>> 2.45.0
+>>
 > 
-> With regard to patch 4, how much thought have you and Hernan given to
-> backward compatibility?  Once herd7 is changed, old memory model files
-> will no longer work correctly.
+> Hi Angelo,
 > 
+> I'm seeing issues with this series on MT8195-Tomato running on next-20240606:
 
-Honestly, I did not think much about this (at least until Akira 
-mentioned in my PR). My hope was that changes to the model could be 
-back-ported to previous kernel versions. However that would not work for 
-existing out-of-tree files.
+Thanks Nicolas - yes I've recently seen that too, I also had feedback for that
+something like 3 weeks ago.
 
-My question is: is compatibility with out-of-tree files really a 
-requirement? I would argue that if people are using outdated models, 
-they may get wrong results anyway. This is because some of the changes 
-done to lkmm during the last few years change the expected result for 
-some litmus tests.
+I wanted to fix that but had no time to do the job as I had to care about some
+other stuff....
 
-Hernan
+Anyway, I should be able to send a v5 with a fix for that issue tomorrow.
+
+Thanks again!
+Angelo
+
+> 
+> [    4.770965] refcount_t: addition on 0; use-after-free.
+> [    4.770975] WARNING: CPU: 5 PID: 171 at lib/refcount.c:25 refcount_warn_saturate+0xa0/0x144
+> [    4.770983] Modules linked in: videobuf2_common rfkill(+) kfifo_buf onboard_usb_dev(+) mc hid_multitouch(+) cros_ec_chardev cros_kbd_led_backlight snd_sof_mt8195 elan_i2c mtk_adsp_common sbs_battery snd_soc_mt8195_afe snd_sof_xtensa_dsp pwm_bl lvts_thermal(+) mt6577_auxadc pcie_mediatek_gen3(+) snd_sof_of coreboot_table backlight mtk_scp mtk_rpmsg snd_sof mtk_svs snd_sof_utils mtk_scp_ipi mt8195_mt6359 ramoops reed_solomon
+> [    4.771000] CPU: 5 PID: 171 Comm: (udev-worker) Not tainted 6.10.0-rc2-next-20240606-00005-gf8e90366fe4b #472
+> [    4.771002] Hardware name: Acer Tomato (rev2) board (DT)
+> [    4.771003] pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    4.771005] pc : refcount_warn_saturate+0xa0/0x144
+> [    4.771007] lr : refcount_warn_saturate+0xa0/0x144
+> [    4.771008] sp : ffff800080ce3950
+> [    4.771009] x29: ffff800080ce3950 x28: ffff800080ce3c70 x27: ffff800080ce3c70
+> [    4.771011] x26: 0000000000000000 x25: ffffaec95d6b53f0 x24: ffff5054d9468368
+> [    4.771012] x23: ffff5054c0a81968 x22: 0000000000000000 x21: 0000000000000000
+> [    4.771014] x20: ffff800080ce39d8 x19: ffff5054c0a81c68 x18: 0000000000000038
+> [    4.771015] x17: ffffa18b9ed32000 x16: ffff800080028000 x15: fffffffffffeab58
+> [    4.771017] x14: ffffaec95d181f48 x13: 00000000000006c6 x12: 0000000000000242
+> [    4.771018] x11: fffffffffffeab58 x10: ffffaec95d1d9f48 x9 : 00000000fffff000
+> [    4.771020] x8 : ffffaec95d181f48 x7 : ffffaec95d1d9f48 x6 : 0000000000000000
+> [    4.771021] x5 : 80000000fffff000 x4 : 000000000000aff5 x3 : 00000000ffffffff
+> [    4.771023] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff5054d8af33c0
+> [    4.771024] Call trace:
+> [    4.771025]  refcount_warn_saturate+0xa0/0x144
+> [    4.771027]  klist_next+0x184/0x1a8
+> [    4.771030]  bus_for_each_dev+0x60/0xd4
+> [    4.771033]  driver_attach+0x24/0x30
+> [    4.771035]  bus_add_driver+0xe4/0x208
+> [    4.771037]  driver_register+0x60/0x128
+> [    4.771039]  __platform_driver_register+0x28/0x34
+> [    4.771041]  lvts_driver_init+0x20/0x1000 [lvts_thermal]
+> [    4.771046]  do_one_initcall+0x6c/0x1b0
+> [    4.771048]  do_init_module+0x60/0x1f0
+> [    4.771050]  load_module+0x191c/0x1b04
+> [    4.771052]  init_module_from_file+0x84/0xc0
+> [    4.771054]  __arm64_sys_finit_module+0x1b8/0x27c
+> [    4.771056]  invoke_syscall+0x48/0x118
+> [    4.771059]  el0_svc_common.constprop.0+0x40/0xe0
+> [    4.771061]  do_el0_svc+0x1c/0x28
+> [    4.771063]  el0_svc+0x34/0xdc
+> [    4.771065]  el0t_64_sync_handler+0xc0/0xc4
+> [    4.771067]  el0t_64_sync+0x190/0x194
+> 
+> 
+> [    4.837189] refcount_t: saturated; leaking memory.
+> [    4.837197] WARNING: CPU: 7 PID: 170 at lib/refcount.c:22 refcount_warn_saturate+0x74/0x144
+> [    4.837205] Modules linked in: phy_mtk_dp(+) videodev videobuf2_common rfkill kfifo_buf onboard_usb_dev(+) mc hid_multitouch(+) cros_ec_chardev cros_kbd_led_backlight snd_sof_mt8195 elan_i2c mtk_adsp_common sbs_battery snd_soc_mt8195_afe snd_sof_xtensa_dsp pwm_bl lvts_thermal mt6577_auxadc pcie_mediatek_gen3(+) snd_sof_of coreboot_table backlight mtk_scp mtk_rpmsg snd_sof mtk_svs snd_sof_utils mtk_scp_ipi mt8195_mt6359 ramoops reed_solomon
+> [    4.837221] CPU: 7 PID: 170 Comm: (udev-worker) Tainted: G        W          6.10.0-rc2-next-20240606-00005-gf8e90366fe4b #472
+> [    4.837224] Tainted: [W]=WARN
+> [    4.837224] Hardware name: Acer Tomato (rev2) board (DT)
+> [    4.837225] pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    4.837227] pc : refcount_warn_saturate+0x74/0x144
+> [    4.837229] lr : refcount_warn_saturate+0x74/0x144
+> [    4.837230] sp : ffff800080cdb950
+> [    4.837231] x29: ffff800080cdb950 x28: ffff800080cdbc70 x27: ffff800080cdbc70
+> [    4.837232] x26: 0000000000000000 x25: ffffaec95d6b53f0 x24: ffff5054d66544e8
+> [    4.837234] x23: ffff5054c0a81968 x22: 0000000000000000 x21: 0000000000000000
+> [    4.837235] x20: ffff800080cdb9d8 x19: ffff5054c0a81c68 x18: 0000000000000030
+> [    4.837236] x17: 0000000000000000 x16: ffffaec95b03d998 x15: fffffffffffecb70
+> [    4.837238] x14: ffffaec95d181f48 x13: 0000000000000825 x12: 00000000000002b7
+> [    4.837239] x11: fffffffffffecb70 x10: ffffaec95d1d9f48 x9 : 00000000fffff000
+> [    4.837240] x8 : ffffaec95d181f48 x7 : ffffaec95d1d9f48 x6 : 0000000000000000
+> [    4.837242] x5 : 80000000fffff000 x4 : 000000000000aff5 x3 : 00000000ffffffff
+> [    4.837243] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff5054d8af4500
+> [    4.837245] Call trace:
+> [    4.837246]  refcount_warn_saturate+0x74/0x144
+> [    4.837247]  klist_next+0x178/0x1a8
+> [    4.837250]  bus_for_each_dev+0x60/0xd4
+> [    4.837253]  driver_attach+0x24/0x30
+> [    4.837255]  bus_add_driver+0xe4/0x208
+> [    4.837257]  driver_register+0x60/0x128
+> [    4.837259]  __platform_driver_register+0x28/0x34
+> [    4.837260]  mtk_dp_phy_driver_init+0x20/0x1000 [phy_mtk_dp]
+> [    4.837263]  do_one_initcall+0x6c/0x1b0
+> [    4.837265]  do_init_module+0x60/0x1f0
+> [    4.837268]  load_module+0x191c/0x1b04
+> [    4.837269]  init_module_from_file+0x84/0xc0
+> [    4.837271]  __arm64_sys_finit_module+0x1b8/0x27c
+> [    4.837273]  invoke_syscall+0x48/0x118
+> [    4.837276]  el0_svc_common.constprop.0+0x40/0xe0
+> [    4.837277]  do_el0_svc+0x1c/0x28
+> [    4.837279]  el0_svc+0x34/0xdc
+> [    4.837282]  el0t_64_sync_handler+0xc0/0xc4
+> [    4.837284]  el0t_64_sync+0x190/0x194
+> 
+> 
+> and many more occurrences.
+> 
+> Config: http://0x0.st/XbqI.txt
+> Full kernel logs: http://0x0.st/Xbq6.txt
+> 
+> Thanks,
+> Nícolas
+
 
 
