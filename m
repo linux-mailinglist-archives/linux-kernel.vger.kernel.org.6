@@ -1,169 +1,260 @@
-Return-Path: <linux-kernel+bounces-208245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32649022CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C5F9022D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 15:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8C41F216AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8790528297F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 13:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893A484FAE;
-	Mon, 10 Jun 2024 13:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XNFnJczH"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D6278B4C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B2182D9F;
+	Mon, 10 Jun 2024 13:42:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBD326AF6;
+	Mon, 10 Jun 2024 13:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718026861; cv=none; b=UYg90tfW/ZWmjO3+uf8Shu4FzZprsZWnkCR2gMgRZ/zLQxPCoX4mCseV4FkL2FvaFc+CUB7jhMwnqbU3kQSolpAe9Ev/ChVy6B4jt/npc4czwA2uvN3df7i6PRT4GhZVqvOAnm7jy2u3uusOIgNfx4OTsBwiwplGNiRQS3tEpDk=
+	t=1718026941; cv=none; b=Goi7RLiQlsywrFjb2K0oZRenrzoE/R2hkZYt0KupISU1JKhN1lWUsSwIQJ3Q23d+akPGj98hT8rdp60VQYhAYyfIPCPds0LwnN92mNV6Jt8WvwATacyz+ELkiUJ3/o9mW+T1wKuw2w+Cr3Hrl2xerS90JH+sN5jTX4izrRurMA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718026861; c=relaxed/simple;
-	bh=IHIUW+O5SruheAsKXKeG18KB+xoYjtu8WU6lClaG8FQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gBirEb0Wm6wBNVpHmg4qEZSyorj8MPW2LOda5snBp5Zc85Hi7+u7fO5Gd+OHbA0MAyigH9uOla+toh6kJURMQN0eriZuAxSe1YlEcQqGbStTDhDgOwqG2OoEWpgfF/xJBXWOmL4bCc+RLA1WelOZOsj8spY5ulud94TRKmEmWLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XNFnJczH; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f98178ceb3so940257a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 06:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718026858; x=1718631658; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xDG2nxV8ZPl1b2CwR6DrsnQRSq1ctUVW1/oMRxru1WE=;
-        b=XNFnJczH39p79SDaOOFwm5ejocyi2jZsJZHWPJ2Mo1cilAEhCuZ+GfPda5/45O5cxL
-         +vVBNzZ3tUCKIASqrdowmJ9LhAYlHDzvLfuDC7oYtK1Z7cLEILHXCagZ2rQhUER264+N
-         P0rEHsYiLGUETZUVFTfUVDpTCOQBoCp4YeZTGY25PpOUm/klNyA9+yMnr2+kfR6yB7QT
-         Yken7LjsqxjamG6N1FhsAQJ0KsfAgolaKee6YlOOAVuNUIS3iG2qtFCN/v7zkR3P791m
-         7sNHhGBSacJw1X2xbGQbMV8cgdomKwRbiATnFtqxB0BlM2d7vjIBBw0e6nPBqxSqs9mq
-         AWSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718026858; x=1718631658;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDG2nxV8ZPl1b2CwR6DrsnQRSq1ctUVW1/oMRxru1WE=;
-        b=FA3fjqhMQbRuDaoSFfrJnRSMh1bPoRF+NybikZkSQaq4LPoDkMxNKQ3Rf5I4GemPAp
-         2mvA4pKXKMHuYVygOotydXohBN5JACiHajqfBvXpN1Kh/WBE1fXxXiBU8b+5SWka3hJ7
-         aTk4pTDPv5hOI1rOe0R4NHCgl7OdsaIaFynlMFvNk4pOyYc92Cax+ZdCSMg4awTYKgqB
-         CCjp56YjzaKjlr+yGkAD3jMJ4eQnCR1yjzHR2NuIr6bR/bUVhd8ZOhOvRv6bi5ztRzHV
-         Y4nSS3mO1AVNokADBk96t3rr9xjCsPanFid/W6xhTmp4DArUvq4ZuTiptNyQbcinHeJd
-         cckA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF/ewsMOQtSljZCWLUyOaD9BeAGJJgKQ55tVPUdFk8z7xew/QQN08JyxrOKlOXwAaQQKQeQgmiOmUgdYz9DTrM8QqvQvssYwQeVsI3
-X-Gm-Message-State: AOJu0YwX8lISYebNzoQKPWfMqFET2nn4jMRpWxnUSQdhNG/Wjj0ir2iy
-	20mnrejVZqjMl8e3sHuqxNKznPuGWJnG4iIpxJ1wjKFk5JBNqO1EIOSmQxnhPaY=
-X-Google-Smtp-Source: AGHT+IFYTklYQEGqN5Rpab7SF59DyTOKjZknIHz49GqfApCvhPO/U+G5aBhz8l4Aqt4IgLOznMG/Kg==
-X-Received: by 2002:a05:6871:608:b0:254:ca65:1ed3 with SMTP id 586e51a60fabf-254ca6536efmr2782598fac.2.1718026857755;
-        Mon, 10 Jun 2024 06:40:57 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-254d7f33351sm259822fac.46.2024.06.10.06.40.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 06:40:57 -0700 (PDT)
-Message-ID: <adc6cba9-2e79-475f-9c24-039fe9d3345d@baylibre.com>
-Date: Mon, 10 Jun 2024 08:40:56 -0500
+	s=arc-20240116; t=1718026941; c=relaxed/simple;
+	bh=CEUlyeHbL/OFV0uTnSbSzGQH4b6WsppEET6oTsS5oiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Tmy5Rb6FdjenBLQbaIDm0sfrR2sDe+gOU9Gq6b2Ui43xN7WE2Hx7TO4AqNvbOn5pj+nCZ4Wga9OYdNk1s9BtlKKdhIaH0PxykOVRJN19Flcc+EAWuUWEkK9cTlJPfaQ3++/3rXev737MEVdWBO7/wUmSrtDUKBXf5f+QDkGw9tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79F79106F;
+	Mon, 10 Jun 2024 06:42:42 -0700 (PDT)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.35.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32EA93F58B;
+	Mon, 10 Jun 2024 06:42:14 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: [PATCH v3 00/43] arm64: Support for Arm CCA in KVM
+Date: Mon, 10 Jun 2024 14:41:19 +0100
+Message-Id: <20240610134202.54893-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/9] Add support for AD411x
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Conor Dooley <conor.dooley@microchip.com>, Nuno Sa <nuno.sa@analog.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/7/24 9:53 AM, Dumitru Ceclan via B4 Relay wrote:
-> This patch series adds support for the Analog Devices AD4111, AD4112,
->  AD4114, AD4115, AD4116 within the existing AD7173 driver.
-> 
->   The AD411X family encompasses a series of low power, low noise, 24-bit,
-> sigma-delta analog-to-digital converters that offer a versatile range of
-> specifications. They integrate an analog front end suitable for processing
-> fully differential/single-ended and bipolar voltage inputs.
-> 
-> Particularities of the models:
-> - All ADCs have inputs with a precision voltage divider with a division
-> ratio of 10.
-> - AD4116 has 5 low level inputs without a voltage divider.
-> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
-> shunt resistor.
-> 
-> Discussions from this patch series have concluded with:
-> -Datasheets mention single-ended and pseudo differential capabilities by
->  the means of connecting the negative input of a differential pair (IN-)
->  to a constant voltage supply and letting the positive input fluctuate.
->  This is not a special operating mode, it is a capability of the
->  differential channels to also measure such signals.
-> 
-> -Single-ended and pseudo differential do not need any specific
->  configuration and cannot be differentiated from differential usage by
->  the driver side =>
-> 	offer adi,channel-type attribute to flag the usage of the channel
-> 
-> -VINCOM is described as a dedicated pin for single-ended channels but as
->  seen in AD4116, it is a normal input connected to the cross-point
->  multiplexer (VIN10, VINCOM (single-ended or differential pair)).
->  This does not mean full functionality in any configuration:
->  AD4111:"If any two voltage inputs are paired in a configuration other
->  than what is described in this data sheet, the accuracy of the device
->  cannot be guaranteed".
-> 
-> -ADCIN15 input pin from AD4116 is specified as the dedicated pin for
->  pseudo-differential but from the datasheet it results that this pin is
->  also able to measure single-ended and fully differential channels
->  ("ADCIN11, ADCIN15. (pseudo differential or differential pair)";
->   "An example is to connect the ADCIN15 pin externally to the AVSS
->    pin in a single-ended configuration")
-> 
->  As such, detecting the type of usage of a channel is not possible and
-> will be the responsibility of the user to specify.
->  If the user has connected a non 0V (in regards to AVSS) supply to
-> the negative input pin of a channel in a pseudo differential
-> configuration, the offset of the measurement from AVSS will not be known
-> from the driver and will need to be measured by other means.
-> 
-> Datasheets:
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD4111.pdf
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD4112.pdf
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD4114.pdf
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD4115.pdf
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD4116.pdf
-> 
-> This series depends on patches:
-> (iio: adc: ad7173: Use device_for_each_child_node_scoped() to simplify error paths.)
-> https://lore.kernel.org/all/20240330190849.1321065-6-jic23@kernel.org
-> (dt-bindings: iio: adc: Add single-channel property)
-> https://lore.kernel.org/linux-iio/20240514120222.56488-5-alisa.roman@analog.com/
-> 
-> And patch series:
-> (AD7173 fixes)
-> https://lore.kernel.org/all/20240521-ad7173-fixes-v1-0-8161cc7f3ad1@analog.com/
-> 
-> Signed-off-by: Dumitru Ceclan <mitrutzceclan@gmail.com>
-> ---
+This series adds support for running protected VMs using KVM under the
+Arm Confidential Compute Architecture (CCA).
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+The related guest support was posted[1] last week but the two series are
+separate (i.e. you can mix-and-match v2/v3 between the two series).
+Unlike the guest series this one is a bit more "work in progress" and
+there are some rough edges (see below). The aim is to focus on merging
+the guest support first before moving onto the host side patches for
+KVM. Review comments are very welcome though!
 
+Individual patches have their own changelog, but the bulk of the changes
+(from v2) are updating to match more closely with the spec and making
+the code more readable. There's also the 'minor' fix to prevent leaking
+all the guest's pages which v2 suffered from! ;) Thanks for all the
+review comments on v2 - I've attempted to address everything that was
+raised.
+
+Major limitations:
+ * Only supports 4k host PAGE_SIZE (if PAGE_SIZE != 4k then the realm
+   extensions are disabled).
+ * No support for huge pages when mapping the guest's pages. There is
+   some 'dead' code left over from before guest_mem was supported. This
+   is partly a current limitation of guest_memfd.
+
+The ABI to the RMM (the RMI) is based on the final RMM v1.0 (EAC 5)
+specification[2].
+
+This series is based on v6.10-rc1. It is also available as a git
+repository:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-host/v3
+
+Work in progress changes for kvmtool are available from the git
+repository below, these changes are based on Fuad Tabba's repository for
+pKVM to provide some alignment with the ongoing pKVM work:
+
+https://gitlab.arm.com/linux-arm/kvmtool-cca cca/v2
+
+Introduction (unchanged from v2)
+============
+A more general introduction to Arm CCA is available on the Arm
+website[3], and links to the other components involved are available in
+the overall cover letter.
+
+Arm Confidential Compute Architecture adds two new 'worlds' to the
+architecture: Root and Realm. A new software component known as the RMM
+(Realm Management Monitor) runs in Realm EL2 and is trusted by both the
+Normal World and VMs running within Realms. This enables mutual
+distrust between the Realm VMs and the Normal World.
+
+Virtual machines running within a Realm can decide on a (4k)
+page-by-page granularity whether to share a page with the (Normal World)
+host or to keep it private (protected). This protection is provided by
+the hardware and attempts to access a page which isn't shared by the
+Normal World will trigger a Granule Protection Fault. The series starts
+by adding handling for these; faults within user space can be handled by
+killing the process, faults within kernel space are considered fatal.
+
+The Normal World host can communicate with the RMM via an SMC interface
+known as RMI (Realm Management Interface), and Realm VMs can communicate
+with the RMM via another SMC interface known as RSI (Realm Services
+Interface). This series adds wrappers for the full set of RMI commands
+and uses them to manage the realm guests.
+
+The Normal World can use RMI commands to delegate pages to the Realm
+world and to create, manage and run Realm VMs. Once delegated the pages
+are inaccessible to the Normal World (unless explicitly shared by the
+guest). However the Normal World may destroy the Realm VM at any time to
+be able to reclaim (undelegate) the pages.
+
+Realm VMs are identified by the KVM_CREATE_VM command, where the 'type'
+argument has a new field to describe whether the guest is 'normal' or a
+'realm'.
+
+Entry/exit of a Realm VM attempts to reuse the KVM infrastructure, but
+ultimately the final mechanism is different. So this series has a bunch
+of commits handling the differences. As much as possible is placed in a
+two new files: rme.c and rme-exit.c.
+
+KVM also handles some of the PSCI requests for a realm and helps the RMM
+complete the PSCI service requests.
+
+Interrupts are managed by KVM, and are injected into the Realm with the
+help of the RMM.
+
+The RMM specification provides a new mechanism for a guest to
+communicate with host which goes by the name "Host Call". This is simply
+hooked up to the existing support for HVC calls from a normal
+guest.
+
+[1] https://lore.kernel.org/r/20240605093006.145492-1-steven.price%40arm.com
+[2] https://developer.arm.com/documentation/den0137/1-0eac5/
+[3] https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture
+
+Jean-Philippe Brucker (7):
+  arm64: RME: Propagate number of breakpoints and watchpoints to
+    userspace
+  arm64: RME: Set breakpoint parameters through SET_ONE_REG
+  arm64: RME: Initialize PMCR.N with number counter supported by RMM
+  arm64: RME: Propagate max SVE vector length from RMM
+  arm64: RME: Configure max SVE vector length for a Realm
+  arm64: RME: Provide register list for unfinalized RME RECs
+  arm64: RME: Provide accurate register list
+
+Joey Gouly (2):
+  arm64: rme: allow userspace to inject aborts
+  arm64: rme: support RSI_HOST_CALL
+
+Sean Christopherson (1):
+  KVM: Prepare for handling only shared mappings in mmu_notifier events
+
+Steven Price (29):
+  arm64: RME: Handle Granule Protection Faults (GPFs)
+  arm64: RME: Add SMC definitions for calling the RMM
+  arm64: RME: Add wrappers for RMI calls
+  arm64: RME: Check for RME support at KVM init
+  arm64: RME: Define the user ABI
+  arm64: RME: ioctls to create and configure realms
+  arm64: kvm: Allow passing machine type in KVM creation
+  arm64: RME: Keep a spare page delegated to the RMM
+  arm64: RME: RTT tear down
+  arm64: RME: Allocate/free RECs to match vCPUs
+  arm64: RME: Support for the VGIC in realms
+  KVM: arm64: Support timers in realm RECs
+  arm64: RME: Allow VMM to set RIPAS
+  arm64: RME: Handle realm enter/exit
+  KVM: arm64: Handle realm MMIO emulation
+  arm64: RME: Allow populating initial contents
+  arm64: RME: Runtime faulting of memory
+  KVM: arm64: Handle realm VCPU load
+  KVM: arm64: Validate register access for a Realm VM
+  KVM: arm64: Handle Realm PSCI requests
+  KVM: arm64: WARN on injected undef exceptions
+  arm64: Don't expose stolen time for realm guests
+  arm64: RME: Always use 4k pages for realms
+  arm64: rme: Prevent Device mappings for Realms
+  arm_pmu: Provide a mechanism for disabling the physical IRQ
+  arm64: rme: Enable PMU support with a realm guest
+  kvm: rme: Hide KVM_CAP_READONLY_MEM for realm guests
+  arm64: kvm: Expose support for private memory
+  KVM: arm64: Allow activating realms
+
+Suzuki K Poulose (4):
+  kvm: arm64: pgtable: Track the number of pages in the entry level
+  kvm: arm64: Include kvm_emulate.h in kvm/arm_psci.h
+  kvm: arm64: Expose debug HW register numbers for Realm
+  arm64: rme: Allow checking SVE on VM instance
+
+ Documentation/virt/kvm/api.rst       |    3 +
+ arch/arm64/include/asm/kvm_emulate.h |   35 +
+ arch/arm64/include/asm/kvm_host.h    |   15 +-
+ arch/arm64/include/asm/kvm_pgtable.h |    2 +
+ arch/arm64/include/asm/kvm_rme.h     |  155 +++
+ arch/arm64/include/asm/rmi_cmds.h    |  508 ++++++++
+ arch/arm64/include/asm/rmi_smc.h     |  251 ++++
+ arch/arm64/include/asm/virt.h        |    1 +
+ arch/arm64/include/uapi/asm/kvm.h    |   49 +
+ arch/arm64/kvm/Kconfig               |    1 +
+ arch/arm64/kvm/Makefile              |    3 +-
+ arch/arm64/kvm/arch_timer.c          |   45 +-
+ arch/arm64/kvm/arm.c                 |  166 ++-
+ arch/arm64/kvm/guest.c               |   99 +-
+ arch/arm64/kvm/hyp/pgtable.c         |    5 +-
+ arch/arm64/kvm/hypercalls.c          |    4 +-
+ arch/arm64/kvm/inject_fault.c        |    2 +
+ arch/arm64/kvm/mmio.c                |   10 +-
+ arch/arm64/kvm/mmu.c                 |  177 ++-
+ arch/arm64/kvm/pmu-emul.c            |    7 +-
+ arch/arm64/kvm/psci.c                |   29 +
+ arch/arm64/kvm/reset.c               |   23 +-
+ arch/arm64/kvm/rme-exit.c            |  212 ++++
+ arch/arm64/kvm/rme.c                 | 1620 ++++++++++++++++++++++++++
+ arch/arm64/kvm/sys_regs.c            |   83 +-
+ arch/arm64/kvm/vgic/vgic-v3.c        |    8 +-
+ arch/arm64/kvm/vgic/vgic.c           |   37 +-
+ arch/arm64/mm/fault.c                |   31 +-
+ drivers/perf/arm_pmu.c               |   15 +
+ include/kvm/arm_arch_timer.h         |    2 +
+ include/kvm/arm_pmu.h                |    4 +
+ include/kvm/arm_psci.h               |    2 +
+ include/linux/kvm_host.h             |    2 +
+ include/linux/perf/arm_pmu.h         |    5 +
+ include/uapi/linux/kvm.h             |   30 +-
+ virt/kvm/kvm_main.c                  |    7 +
+ 36 files changed, 3550 insertions(+), 98 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kvm_rme.h
+ create mode 100644 arch/arm64/include/asm/rmi_cmds.h
+ create mode 100644 arch/arm64/include/asm/rmi_smc.h
+ create mode 100644 arch/arm64/kvm/rme-exit.c
+ create mode 100644 arch/arm64/kvm/rme.c
+
+-- 
+2.34.1
 
 
