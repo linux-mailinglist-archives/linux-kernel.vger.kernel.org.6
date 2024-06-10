@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-207578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AE790190D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE60090190E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 02:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A557BB21DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145C71C21488
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 00:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACE71879;
-	Mon, 10 Jun 2024 00:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oYZSO66C"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D517F7;
+	Mon, 10 Jun 2024 00:46:56 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB6C15A8;
-	Mon, 10 Jun 2024 00:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D324D193
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 00:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717980025; cv=none; b=N2zkFj5VBL4z1jymDx8RNAYVxp37Mie4+NYKzeEpDoRnad/JHO+HdotFZS7YNaEaSsKh/dqiDdPrrMGliYI1R6XgJ0VG9qOptBj6YIZ/H9lO9XPHXWYrUDuTKhEJ1srBm0bAB30h+BZMRHMMm5rNgNcrUGifdhpuysQzy6LrDpM=
+	t=1717980415; cv=none; b=d64eZ87knuUJ7Sy6OUAW0eMI/+F4Hh/jK5DD5G4DKwsse53QKP2wUQvmMQleDsRwU8smqkHdEvJc2LQznJiWlJr2x8zxrYCkZOq242xZ6Ist46G7hoPJusOMzhxyyGmsuCj9Qrqt5kSu3vcIQ03ZYA+n1lwuZAyxY5wtjd9XYwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717980025; c=relaxed/simple;
-	bh=9LJE33I5juA5koYN0L+tufMCyKJP9NsUR9IoSfddvUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=OHAN0XpUm+fgGZr90f437oPzih0SxrueWUVN7xZTfTPtEAkekmLAX9DQLFspvsOGbJ9wFTSD/CnKTDZmikIj7uHqbCZ9XOTcvl+q9r0XaysIHvGWpSjZy7rY/GAY1b8UPayU7DVe0Ohfp+pD55h1uewQXm0TXjzrndHAglX4Zgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oYZSO66C; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459Mb2Gq009439;
-	Mon, 10 Jun 2024 00:40:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=maKTFxxbQAZZJo15rJe6h9
-	yOwq9aW+cO8mUo+GdSkEo=; b=oYZSO66C8vpt/7joAmySjgyzDbL7SVWEbIMCxl
-	SgYkXLd/oqJ5pMZyhB57GGx379rRTkl4LucfhTfI7Oeuim9wqfg7mZ3JvIzt3Cj2
-	O5f+U3rbjcujv2Q5NGF6cp7z8oIkNv6c6YLHr++fYy4H7KHb7sJgnaUV1bolNbWx
-	3bmCfWSnlhNbXzHn1QaxhA38Uz55FM3J+N5NkzpePvxBfrvMbPpdrS34jS4QFyND
-	jaZ3zX6a4Y34lwXhn5a5gsAFutpahN+b5gC4TJM7UGaf/KDChzT09mLnNirnw6yT
-	V1+w07LWgfzj4y/5dy5iJWZFHQ1FFYusLD4hFNQzP0ZyYleA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemgjbtc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 00:40:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45A0eHnV002168
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 00:40:17 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 17:40:17 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 17:40:17 -0700
-Subject: [PATCH] spmi: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717980415; c=relaxed/simple;
+	bh=NpwO0u4kgbIw0YHoRJSAFkTvUC9/Z0Uusx6P4p/6mhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qSfUT0lUjZniwWwnjgwvPXSEliHzPq8BMuRJ+UMThdq/6sYT8pL3r8Yo6hUyHm/wV5nk8qTeWfCWUqYjqCV4uMQdGmBJ+DxDcASuNqr/th9jUe224I7ABWf2stES0Vx30frGPCkHdnUfDMeYRd1DwHeW0kKC7ZTeJCrOklFfYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45A0kjjL008317;
+	Mon, 10 Jun 2024 09:46:45 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
+ Mon, 10 Jun 2024 09:46:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45A0kiuS008314
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 10 Jun 2024 09:46:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d9c11abd-03a6-466f-bfdc-ee9a57ad881c@I-love.SAKURA.ne.jp>
+Date: Mon, 10 Jun 2024 09:46:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [serial?] possible deadlock in
+ console_lock_spinning_enable (4)
+To: Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+0f558b549182d2711c75@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <20240610001914.2081-1-hdanton@sina.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240610001914.2081-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHBLZmYC/x3MwQqDMAyA4VeRnBdo6ya4Vxk7pDbTgO0kcSKI7
- 75ux+/w/wcYq7DBvTlAeROTd6nwlwaGicrIKKkaggtX17kec8KksrEa2pIFb558G4lC6zzUalF
- +yf4/Pp7VkYwxKpVh+n1mKZ8dM9nKCuf5BfF8N0aAAAAA
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Stephen Boyd
-	<sboyd@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: j775rbG1PHprvhqWiHGkOVT3D4F-aCmn
-X-Proofpoint-ORIG-GUID: j775rbG1PHprvhqWiHGkOVT3D4F-aCmn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_18,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406100002
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
+On 2024/06/10 9:19, Hillf Danton wrote:
+> On Sun, 09 Jun 2024 08:24:24 -0700
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
+>> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=14d199ce980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=0f558b549182d2711c75
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> userspace arch: arm64
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11493bc2980000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146cff16980000
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+#syz dup: possible deadlock in console_flush_all (2)
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/spmi/hisi-spmi-controller.c | 1 +
- drivers/spmi/spmi-pmic-arb.c        | 1 +
- 2 files changed, 2 insertions(+)
+>> -> #0 (console_owner){....}-{0:0}:
+>>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>>        validate_chain kernel/locking/lockdep.c:3869 [inline]
+>>        __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+>>        lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
+>>        console_lock_spinning_enable+0xb4/0xec kernel/printk/printk.c:1870
+>>        console_emit_next_record kernel/printk/printk.c:2922 [inline]
+>>        console_flush_all+0x58c/0xb74 kernel/printk/printk.c:2994
+>>        console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
+>>        vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
+>>        vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
+>>        vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
+>>        _printk+0xdc/0x128 kernel/printk/printk.c:2370
+>>        __report_bug lib/bug.c:195 [inline]
+>>        report_bug+0x3b8/0x5b0 lib/bug.c:219
+>>        bug_handler+0x50/0x1fc arch/arm64/kernel/traps.c:978
+>>        call_break_hook arch/arm64/kernel/debug-monitors.c:321 [inline]
+>>        brk_handler+0x17c/0x2e0 arch/arm64/kernel/debug-monitors.c:328
+>>        do_debug_exception+0x1e4/0x398 arch/arm64/mm/fault.c:909
+>>        el1_dbg+0x64/0x80 arch/arm64/kernel/entry-common.c:472
+>>        el1h_64_sync_handler+0x40/0xac arch/arm64/kernel/entry-common.c:512
+>>        el1h_64_sync+0x64/0x68 arch/arm64/kernel/entry.S:593
+>>        spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+>>        uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
+> 
+> in include/linux/spinlock_api_smp.h
+> static inline void __raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
+> {
+> 	spin_release(&lock->dep_map, _RET_IP_);
+> 	do_raw_spin_unlock(lock);
+> 	local_irq_restore(flags);
+> 	preempt_enable();
+> }
+> 
+> Because spin_release() goes before restoring local irq, the port_lock
+> should have been ruled out of lockdep that triggered this report. But
+> it was delivered to lore.
 
-diff --git a/drivers/spmi/hisi-spmi-controller.c b/drivers/spmi/hisi-spmi-controller.c
-index fa068b34b040..3cafdf22c909 100644
---- a/drivers/spmi/hisi-spmi-controller.c
-+++ b/drivers/spmi/hisi-spmi-controller.c
-@@ -344,6 +344,7 @@ static void __exit spmi_controller_exit(void)
- }
- module_exit(spmi_controller_exit);
- 
-+MODULE_DESCRIPTION("Hisilicon 3670 SPMI Controller driver");
- MODULE_LICENSE("GPL v2");
- MODULE_VERSION("1.0");
- MODULE_ALIAS("platform:spmi_controller");
-diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 791cdc160c51..f240fcc5a4e1 100644
---- a/drivers/spmi/spmi-pmic-arb.c
-+++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -1891,5 +1891,6 @@ static struct platform_driver spmi_pmic_arb_driver = {
- };
- module_platform_driver(spmi_pmic_arb_driver);
- 
-+MODULE_DESCRIPTION("Qualcomm MSM SPMI Controller (PMIC Arbiter) driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:spmi_pmic_arb");
+This report is just an yet another instance of trying to printk()
+while holding port_lock. Like I mentioned at
+https://lkml.kernel.org/r/acfef6bc-08eb-4ab6-b6d4-9ad03c714517@kernel.org ,
+we might want to guard uart_port_lock'ed section using
+printk_deferred_enter()/printk_deferred_exit().
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240609-md-drivers-spmi-51a13baa2301
 
 
