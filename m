@@ -1,192 +1,99 @@
-Return-Path: <linux-kernel+bounces-208840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBED9029CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:13:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237E99029CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221F31F2369B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334E51C23259
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 20:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC7614F13D;
-	Mon, 10 Jun 2024 20:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089BF3E47E;
+	Mon, 10 Jun 2024 20:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="EjkK7y3U"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="DDL16ZNN"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BADE14F9E0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195D618C36
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050366; cv=none; b=TVMVqFS1CUb2Xv904n34LbKIF/IjTD5di3cXxwk6IgEt3yL5qxZ17PdA5Oz5v/pRWMxf2uEKsboK6ljMVNRIKS8LHe3i8EsNtI0PRdjpjfPsdgGkbCWx8QTiY7pN4CiHNuWEcPiW4RT1SZsrtpfddjYxFcJm0zvLA97AJucs9DY=
+	t=1718050532; cv=none; b=acrqpnrdISyJNdnRxwHaCAicSWwdIoB+sVova7sYcao0IhHosBKI4uGanS89e+fLRIcezEe5HB0xn9Brr+HEwYLDolhq/uCXd81rH+1YbdcpAsyMdV4MEK2F4qT+97SvvobcqcmmvSr4bxjQFg3BfQqfeumVMaQEPtFW5nzbw4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050366; c=relaxed/simple;
-	bh=I1Hh+qcmMRJfWvLmvO7pofMH2jbsnSVY2A5MKQ0zG1I=;
+	s=arc-20240116; t=1718050532; c=relaxed/simple;
+	bh=QDYrkpfeNlyOq46PG3yc/lo72JX0InleOziDpaF787A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9gSFKhRWOA62uCbr75I2Vo6Uy43EySiX2InLU3b/NOPiXfVPDHAuJk1/a3H9d7Y+P0CfAHxoH7lTq30IDnpYiUuVpyORBP9/6q0GJpGORFWx7C14mw3qVs/ryn+FG/evbTcRI2+kzNV5GbdsL5gCfGNQtzT3EhMCYq7Utbp0X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=EjkK7y3U; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718050361;
-	bh=I1Hh+qcmMRJfWvLmvO7pofMH2jbsnSVY2A5MKQ0zG1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjkK7y3Ucn6Lpi55NnrvHM8MdR0uWWIlbro80NYBZk5JxC9SvzqzlBbkF9M+2uQt2
-	 HMRAs3jULLMxi/pHiyO9VVP+fZoblbIxPDf+d9yD1EHTtKdJztAXoikLznzRI07trF
-	 vwryK5coz1arzS1vWzarler8/rPYUb7OIVw1SsYM=
-Date: Mon, 10 Jun 2024 22:12:40 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Kieran Levin <ktl@framework.net>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
-	Matt Hartley <matt.hartley@gmail.com>
-Subject: Re: [PATCH] drm/amd: force min_input_signal to 0 on Framework AMD
- 13/16
-Message-ID: <0759ed40-efef-4230-86fc-cdf6702843e6@t-8ch.de>
-References: <20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net>
- <74f3c189-f3d3-4dca-9357-d4bc8f98da08@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jz1ffOeYT8eqUYzb4pOxJmxFgfs0+mtUpAif3j54g5Sumonq4bNlBO7lJrIhXsuryu5i23DaHgEsS5w2a7AeqJYxhEqhoBiousQGdK+5OXzYybV+UzFE4CQVtq6JfQfGgKDNGy6IPBeQqnA0Hj1FcEZpXw5+8dD3+Ah4o9LAqls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=DDL16ZNN; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7955841fddaso166836185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 13:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1718050528; x=1718655328; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f846KB3AW4c2nFZH9X4EH/MCA/jm3hltyAr3O7+b0XI=;
+        b=DDL16ZNN5Iaa91f7Ve3pautIdPFsXC5qQbninvjsUrozF+noEERSYPAL2AgnBFpuZR
+         x1w/yqnEeybjEqJu41Ve8uxeC4WVyvKeToDLMT2B0S5pFAzGCJ8ZGsSKHf3+o5nkyuPp
+         ASe+JBTP2Cw/oXhh8k6M1U8H9ltRJwzu3K64HT4XKOOLVEhyR6IY9X0Kz/ZE2VGbbT28
+         opNH4OG6gFWw+1X+AizVAtBEX3xMz9vi4PUJeDye3P8TIpOwrx7T9yT2va07WYTbW3Ne
+         7wUEyXCapGH7pqP67rjXjnuCi4eQoJrIB0BsfrPcKGpxQ6l61CzPsjj+85Q8TMJ2/Icq
+         D88Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718050528; x=1718655328;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f846KB3AW4c2nFZH9X4EH/MCA/jm3hltyAr3O7+b0XI=;
+        b=MOjYgvL26K5Ssjh+v7IHm2WuYLw0tLlgBAx82YL+8aCSUd8FgU2EhRTFXm/FmtziCy
+         BXuvT3wIFWdq33M6Qui+EJgdX/XsHY1GFCkgcD/smrzQQ7PiNJeee5h3ZkBYyEqllG1D
+         dpmX5QhM07pzdtvvy0C4aFiDA42Pc9pC9FuTVUZ0oxt9xJoT67ME/+2IzwCOGFJp3U1b
+         koRbuRvZeTKzzo0jesIRhr4shI7w79J60lizWD2DkPt7n43gn2oIE2NW6ry0MpIIoqSd
+         cRX3KP6BYn5FpKUgF8/UX7fa8yK7R7fucvbLajpWjwFLc9waUlfmnrFaG5jkRCvjeZXv
+         bI7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWyMwvIytXoyIk4awEkPjKe8FCpO9xUX+VfEYCjl8K9ksgGlCZxI+nkPhWcLfWnKSxt9fDhRm2islEwmiDAHyoH/xb7WLiKM/1bX5T
+X-Gm-Message-State: AOJu0YywZZBuAwOS6cvpLREXnIEAykCKG1hrgGjqPOPFJVLCsNfffGu1
+	KWO9qVkxJ5y+2DnVzOU2Ixz5Kav7k1TdSW6xJqPkX1rNLxu1NWM4Q4APtpdrzHardLvit6VoFk8
+	2
+X-Google-Smtp-Source: AGHT+IEAxxhl9X6MeL09eAr6w5axAZ6/2hC70TjPpot+ne0b5eqMoN833OwVY4njvMPTbqSJ6S8YyQ==
+X-Received: by 2002:a05:620a:294a:b0:795:498b:5fda with SMTP id af79cd13be357-797c2da0038mr127591585a.22.1718050527911;
+        Mon, 10 Jun 2024 13:15:27 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79689c09e28sm111635985a.121.2024.06.10.13.15.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 13:15:27 -0700 (PDT)
+Date: Mon, 10 Jun 2024 16:15:26 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
+Message-ID: <20240610201526.GA2407021@cmpxchg.org>
+References: <20240610143037.812955-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <74f3c189-f3d3-4dca-9357-d4bc8f98da08@amd.com>
+In-Reply-To: <20240610143037.812955-1-usamaarif642@gmail.com>
 
-On 2024-06-10 14:58:02+0000, Mario Limonciello wrote:
-> +Kieran
+On Mon, Jun 10, 2024 at 03:30:37PM +0100, Usama Arif wrote:
+> start/end writeback combination incorrectly increments NR_WRITTEN
+> counter, eventhough the pages aren't written to disk. Pages successfully
+> stored in zswap should just unlock folio and return from writepage.
 > 
-> On 6/10/2024 14:26, Thomas Weißschuh wrote:
-> > The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-> > is "12". This leads to a fairly bright minimum display backlight.
-> > 
-> > Introduce a quirk to override "min_input_signal" to "0" which leads to a
-> > much lower minimum brightness, which is still readable even in daylight.
-> > 
-> > Tested on a Framework AMD 13 BIOS 3.05 and Framework AMD 16.
-> > 
-> > Link: https://community.frame.work/t/25711/9
-> > Link: https://community.frame.work/t/47036
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 35 ++++++++++++++++++++++++++++++++
-> >   1 file changed, 35 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> > index 7099ff9cf8c5..b481889f7491 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> > @@ -25,6 +25,7 @@
-> >   #include <linux/pci.h>
-> >   #include <linux/acpi.h>
-> >   #include <linux/backlight.h>
-> > +#include <linux/dmi.h>
-> >   #include <linux/slab.h>
-> >   #include <linux/xarray.h>
-> >   #include <linux/power_supply.h>
-> > @@ -130,6 +131,35 @@ static struct amdgpu_acpi_priv {
-> >   	struct amdgpu_atcs atcs;
-> >   } amdgpu_acpi_priv;
-> > +struct amdgpu_acpi_quirks {
-> > +	bool ignore_min_input_signal;
-> > +};
-> > +
-> > +static const struct dmi_system_id amdgpu_acpi_quirk_table[] = {
-> > +	{
-> > +		/* the Framework Laptop 13 (AMD Ryzen) and 16 (AMD Ryzen) */
-> > +		.matches = {
-> > +			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
-> > +			DMI_MATCH(DMI_PRODUCT_NAME, "AMD Ryzen"),
-> > +			DMI_MATCH(DMI_PRODUCT_FAMILY, "Laptop"),
-> > +		},
-> 
-> Two problems I see:
-> 
-> 1) This really "should" be fixed in the BIOS. I added Kieran to the thread
-> for comments if that's viable.
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 
-Agreed!
+I also don't see anything in those start and end calls that wouldn't
+be pointless churn for these pages.
 
-> 2) IMO this is going to match too liberally across all potential Framework
-> models.  If they introduce a refreshed motherboard for either product then
-> the quirk would apply to both products when we don't know that such a
-> deficiency would exist.
-
-Also agreed.
-In addition to be really specific this should also match by display type
-(via EDID?).
-
-So far this was only tested with the matte panel.
-(I forgot to mention that, sorry)
-
-> You can reference drivers/platform/x86/amd/pmc/pmc-quirks.c for what we used
-> for a quirk that was matching against a single product and single BIOS.
-
-Will do for the next revision, but let's gather some feedback first.
-
-> But FWIW if that issue isn't fixed in the next BIOS I think we'll end up
-> needing to tear out the BIOS string match and match just the platform.
-
-I'm wondering what the longterm strategy will have to be.
-Given that there are different kinds of displays, and new ones will be
-released, each new display type will require an update to the firmware.
-
-When there are no firmware updates for a device anymore, but new,
-compatible displays are released, then the kernel will need the quirks
-again.
-
-> > +		.driver_data = &(struct amdgpu_acpi_quirks) {
-> > +			.ignore_min_input_signal = true,
-> > +		},
-> > +	},
-> > +	{}
-> > +};
-> > +
-> > +static const struct amdgpu_acpi_quirks *amdgpu_acpi_get_quirks(void)
-> > +{
-> > +	const struct dmi_system_id *dmi_id;
-> > +
-> > +	dmi_id = dmi_first_match(amdgpu_acpi_quirk_table);
-> > +	if (!dmi_id)
-> > +		return NULL;
-> > +	return dmi_id->driver_data;
-> > +}
-> > +
-> >   /* Call the ATIF method
-> >    */
-> >   /**
-> > @@ -1388,6 +1418,7 @@ bool amdgpu_acpi_should_gpu_reset(struct amdgpu_device *adev)
-> >    */
-> >   void amdgpu_acpi_detect(void)
-> >   {
-> > +	const struct amdgpu_acpi_quirks *quirks = amdgpu_acpi_get_quirks();
-> >   	struct amdgpu_atif *atif = &amdgpu_acpi_priv.atif;
-> >   	struct amdgpu_atcs *atcs = &amdgpu_acpi_priv.atcs;
-> >   	struct pci_dev *pdev = NULL;
-> > @@ -1429,6 +1460,10 @@ void amdgpu_acpi_detect(void)
-> >   					ret);
-> >   			atif->backlight_caps.caps_valid = false;
-> >   		}
-> > +		if (quirks && quirks->ignore_min_input_signal) {
-> > +			DRM_INFO("amdgpu_acpi quirk: min_input_signal=0\n");
-> > +			atif->backlight_caps.min_input_signal = 0;
-> > +		}
-> >   	} else {
-> >   		atif->backlight_caps.caps_valid = false;
-> >   	}
-> > 
-> > ---
-> > base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> > change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
-> > 
-> > Best regards,
-> 
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
