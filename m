@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-208942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3C7902AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:47:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F5D902AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 23:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829ED1C214B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83CFB1C22E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 21:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE03823A3;
-	Mon, 10 Jun 2024 21:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8318012F397;
+	Mon, 10 Jun 2024 21:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPlh3BRH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ke1eUZk1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687576F2E3;
-	Mon, 10 Jun 2024 21:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFE06BB33
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718056046; cv=none; b=rBr2dpmSTEJV//cC3HlJQTH+St911Yhv0XeyFkr19xKs4O+wvTPH+Km4ZbrPzNg3qWNg6jGeLwHzQU0SqW4T8NXB4kyQ2K+rcUSQydg37o02Ef9I0X0Ck127yBlNhd9Cchih4vyrt1V9jX6m63dC+N1/PtwphRntSJK3yWXuCY8=
+	t=1718056111; cv=none; b=p9ViFAjAUVI+rVRdd8vN+0k89GxhlJ2C8n+MOCUJeEK2JO3dulVwCUob5TJ5M6Rsd5d92Cq1GAkG/GRNFJV/eePA6T80V6HKJ51i6qjgWMnOjO7x/2u0DBb92bPh93pZNTCHT5t0xTKQ4xjtgiX9rfaG7gaNL1sDlbM38wTCGQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718056046; c=relaxed/simple;
-	bh=xgtUSwDjUxIYYDdC3p0JfMHqIpyYYhHGJmplPva9txU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2aaMKFyC14HCNplKtzp7dg9l6n6NVWuL0Uda0/GPli39RbrAfL7cz7M+qDmPzTrR9y36n6dHMabcO9YUqBIGNcAzvxMSZtwXXEi8P6g4tD5JxxOZQjj/SzenvXAUKtmO51hG5PFgUOtHAdN2BaJlylv/J1WHE88HoSFsx4R6Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPlh3BRH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6C9C2BBFC;
-	Mon, 10 Jun 2024 21:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718056046;
-	bh=xgtUSwDjUxIYYDdC3p0JfMHqIpyYYhHGJmplPva9txU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPlh3BRHAaDLi9gpGKVr45OX3UkkEr2eG1nm+n62yujRbd5pVNCnPP9oL6LUSJZmT
-	 J+jSOzO3fCuzlqW0EGJkpfFCcyuY+cpTu4degRsO1Y1ebGVcPrVW5MVb4EzW9071gu
-	 R4/wnkZBJDQ28nDPMpp1z7V9hBNKL2RaIJWwuECak90hqE+X5p66mw38U3c3btUjaa
-	 vsekLamj1Qktxn+htGUWBL3Vq31berkPvOybt5vK1fXqDOP5FaZjBl6ffJdm7ffo30
-	 6WtRbd7dU25zShuEvk5q90Ld7PCMjma+37Knbj5G66mlqfKn9l5YdfYY/isOerRN67
-	 TuRogmuoZTVww==
-Date: Mon, 10 Jun 2024 22:47:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, robh@kernel.org,
-	saravanak@google.com, hch@lst.de, m.szyprowski@samsung.com,
-	robin.murphy@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, kernel@quicinc.com
-Subject: Re: [PATCH v6 1/4] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-Message-ID: <Zmd0Zg7oMneJLyHd@finisterre.sirena.org.uk>
-References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
- <20240528223650.619532-2-quic_obabatun@quicinc.com>
- <20240610213403.GA1697364@thelio-3990X>
+	s=arc-20240116; t=1718056111; c=relaxed/simple;
+	bh=4DNhk0tBbhRDsReREFDU18jwJpkA17AW9GL7HzjSt/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l9BVlnWH8mCKdzXPAyHFQiy8WueV1yF+uem3T4nwO5g1qtW6/8/dc7x7fKz4RYanZaORJV5JhXd9wrj8ZkHJIwWc8p4IJq+gzl4vzpi4AqpaJbR3xYMt2KjePgV6YcQV/kqhPxx8zapLyCZ+OmrapGteqnQ6vGmf/TF6muNGh58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ke1eUZk1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718056109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dff2CxPF2YjERdeED1HYWtqzTOJbvY8otFDm3MW5gbY=;
+	b=Ke1eUZk1BOKdFD+Rr+RdN5bTOsa7oXogOADJoKBrG+pKXRATokJJj4bkYYutCB0xy1I0Ud
+	mhXbZJZwcj3+ZaFcuFJP8CmRUrUnQw3YHFrY9a4TSVvUhLvqcDAT1WH0alo6nTVlbRt1lF
+	x7sG6qCOj4gPwCRQK3tiuHT1MkwtVeQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-315-oTbgFLptNf2HDhP4NofZSQ-1; Mon, 10 Jun 2024 17:48:27 -0400
+X-MC-Unique: oTbgFLptNf2HDhP4NofZSQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f09eab759so2616721f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 14:48:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718056106; x=1718660906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dff2CxPF2YjERdeED1HYWtqzTOJbvY8otFDm3MW5gbY=;
+        b=o9HTObtu0+EfmNvlfbC8Yn1MGU9CycAY/gUGZ0FcQIj/VqvO8lT26tFk/B426wJ412
+         dnGsi62cllYmALawBTueeo8FUgeIulLtFvSjAIvykeUrF6D1NWArsGaWAxdrXdM/8Fcl
+         a9VwmBvCWxWXoMCRgLqTPmiAi0lJwVYR6+V+pPMLx0NZvumCiYv8Gyb80WpygLhddZOt
+         wtbRv2aWTpvupoWSwAF1og1ZqgVYFX2bUEjSWtTzN87010w4TVYs9Luj5K3g3q2mAGNm
+         pA9pIZGw/WevWmKqHkPbv1XDHoqFKsv1TfnYtPQlhf7sV9gtCdWgptt8w6S8+VBLiQi5
+         cNTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0ph0hiVcb+6eeqBtmTHzjcwlccPKweLOP7MY6bRz7yJiuyG2Ct4TxBUgfYLDnXgjqiGHLSERlXKhNWqxApF9UxY93f2nc+c+I53JL
+X-Gm-Message-State: AOJu0YyiMKOG+TT7aqkpFD1s+67+7BccwXffIbdnS6uxbo4lj1uWBe7L
+	5/ttyBsTDLcxGkgU4HeVIMF28YZos5DeyAvIPzzPjyW8ENjthRwImHlm+LMZsbWDl7SWb1ZpXsm
+	fE+T36jdev46fuse4cubAe3BntZK4JEb7LCNPooA7N5jayhbItPKmnrNTsDkPa+P+l+jYBwBzi3
+	SBbPNoYIdwNZT2QEr5GY+t+/E4na2sR6fD9F2I
+X-Received: by 2002:a05:6000:1e81:b0:35f:650:e8ff with SMTP id ffacd0b85a97d-35f0650ebb8mr7288499f8f.28.1718056106565;
+        Mon, 10 Jun 2024 14:48:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4+dWVR40t7y9KNU5SdSVMucVyRUgfScrkFSHU1CNZNGuIOpNcZAVG3XxWKDye8L/uW1VpphBzrVra4HZAC18=
+X-Received: by 2002:a05:6000:1e81:b0:35f:650:e8ff with SMTP id
+ ffacd0b85a97d-35f0650ebb8mr7288495f8f.28.1718056106189; Mon, 10 Jun 2024
+ 14:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="G208VLb5fQhhrLND"
-Content-Disposition: inline
-In-Reply-To: <20240610213403.GA1697364@thelio-3990X>
-X-Cookie: Now I am depressed ...
-
-
---G208VLb5fQhhrLND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240404185034.3184582-1-pbonzini@redhat.com> <20240404185034.3184582-10-pbonzini@redhat.com>
+ <20240423235013.GO3596705@ls.amr.corp.intel.com> <ZimGulY6qyxt6ylO@google.com>
+ <20240425011248.GP3596705@ls.amr.corp.intel.com> <CABgObfY2TOb6cJnFkpxWjkAmbYSRGkXGx=+-241tRx=OG-yAZQ@mail.gmail.com>
+ <Zip-JsAB5TIRDJVl@google.com> <CABgObfaxAd_J5ufr+rOcND=-NWrOzVsvavoaXuFw_cwDd+e9aA@mail.gmail.com>
+ <ZivFbu0WI4qx8zre@google.com> <ZmORqYFhE73AdQB6@google.com>
+In-Reply-To: <ZmORqYFhE73AdQB6@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 10 Jun 2024 23:48:14 +0200
+Message-ID: <CABgObfYD+RaLwGgC_nhkP81OMy3-NvLVqu9MKFM3LcNzc7MCow@mail.gmail.com>
+Subject: Re: [PATCH 09/11] KVM: guest_memfd: Add interface for populating gmem
+ pages with user data
+To: Sean Christopherson <seanjc@google.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, michael.roth@amd.com, isaku.yamahata@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 02:34:03PM -0700, Nathan Chancellor wrote:
-> On Tue, May 28, 2024 at 03:36:47PM -0700, Oreoluwa Babatunde wrote:
+On Sat, Jun 8, 2024 at 1:03=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> SNP folks and/or Paolo, what's the plan for this?  I don't see how what's=
+ sitting
+> in kvm/next can possibly be correct without conditioning population on th=
+e folio
+> being !uptodate.
 
-> > fdt_init_reserved_mem() is also now called from within the
-> > unflatten_device_tree() function so that this step happens after the
-> > page tables have been setup.
+I don't think I have time to look at it closely until Friday; but
+thanks for reminding me.
 
-> > Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Paolo
 
-> I am seeing a warning when booting aspeed_g5_defconfig in QEMU that I
-> bisected to this change in -next as commit a46cccb0ee2d ("of:
-> reserved_mem: Restruture how the reserved memory regions are
-> processed").
-
-I'm also seeing issues in -next which I bisected to this commit, on the
-original Raspberry Pi the cpufreq driver fails to come up and I see
-(potentially separate?) backtraces:
-
-[    0.100390] ------------[ cut here ]------------
-[    0.100476] WARNING: CPU: 0 PID: 1 at mm/memory.c:2835 __apply_to_page_r=
-ange+0xd4/0x2c8
-[    0.100637] Modules linked in:
-[    0.100665] CPU: 0 PID: 1 Comm: swapper Not tainted 6.10.0-rc2-next-2024=
-0607 #1
-[    0.100692] Hardware name: BCM2835
-[    0.100705] Call trace:=20
-[    0.100727]  unwind_backtrace from show_stack+0x18/0x1c
-[    0.100790]  show_stack from dump_stack_lvl+0x38/0x48
-[    0.100833]  dump_stack_lvl from __warn+0x8c/0xf4
-[    0.100888]  __warn from warn_slowpath_fmt+0x80/0xbc
-[    0.100933]  warn_slowpath_fmt from __apply_to_page_range+0xd4/0x2c8
-[    0.100983]  __apply_to_page_range from apply_to_page_range+0x20/0x28
-[    0.101027]  apply_to_page_range from __dma_remap+0x58/0x88
-[    0.101071]  __dma_remap from __alloc_from_contiguous+0x6c/0xa8
-[    0.101106]  __alloc_from_contiguous from atomic_pool_init+0x9c/0x1c4
-[    0.101169]  atomic_pool_init from do_one_initcall+0x68/0x158
-[    0.101223]  do_one_initcall from kernel_init_freeable+0x1ac/0x1f0
-[    0.101267]  kernel_init_freeable from kernel_init+0x1c/0x140
-[    0.101309]  kernel_init from ret_from_fork+0x14/0x28
-[    0.101344] Exception stack(0xdc80dfb0 to 0xdc80dff8)
-[    0.101369] dfa0:                                     00000000 00000000 =
-00000000 00000000
-[    0.101393] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
-00000000 00000000
-[    0.101414] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    0.101428] ---[ end trace 0000000000000000 ]---
-
-Full boot log at:
-
-   https://lava.sirena.org.uk/scheduler/job/374962
-
-You can see the report of cpufreq not being loaded in the log.
-
-NFS boots also fail, apparently due to slowness bringing up a Debian
-userspace which may well be due to cpufreq isues:
-
---G208VLb5fQhhrLND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZndGUACgkQJNaLcl1U
-h9AFAAf/YD1Zh8xIqDOrwgjmWkCcvhuDzFUFhR+fPM4VmlBp1j2FaUPX2J0jJan0
-Ig3FawO94C4q/nzhuURenqBEV3V5vqy+KcwbEf5UryWGxnsFbtRT5HGFWi7oAeS/
-fNljEGoBEbCt/UuA+7vmKxzq30NaR13eJZJIteJSehVKZVKfjjoc0QPOolG7Vp16
-CePWtRIZrqR2eImeiE8KNE4ahURu7uOrtsBobPd2EFTwTPZyE8eaFFNy9H7Rlqjd
-wSAPEQvehiy9PmI3IrfJBrIf7nmeXVdmNsAOJeJv7xvvROExu+6t2WxiY2tZ1RSJ
-llH5YznN3vLaY33Y33COzXIXuStUFg==
-=E6p1
------END PGP SIGNATURE-----
-
---G208VLb5fQhhrLND--
 
