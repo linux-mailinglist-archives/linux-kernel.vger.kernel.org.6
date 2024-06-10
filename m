@@ -1,133 +1,78 @@
-Return-Path: <linux-kernel+bounces-207868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-207859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1B3901D30
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:42:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FB4901D19
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 10:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373B328306F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FAA1C20EC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 08:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D5C7710F;
-	Mon, 10 Jun 2024 08:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BBC6F309;
+	Mon, 10 Jun 2024 08:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b="cv1kCaah"
-Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0r+3mVR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAF27407D;
-	Mon, 10 Jun 2024 08:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0E84D8A0;
+	Mon, 10 Jun 2024 08:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718008880; cv=none; b=A5fI4xPx1ZB9lWm548dGdBEvH7wx9+BmmNsBqEmo4hOChkeWXC1G9lgP5NA7C4++ZNXni0sXEcZwELD1S778WEeMbdYx3wSX0NWMpW9Ih53ZojfMOjqPrwBd2nHYD4KIEuZPTPM7gngzUjuNdOESyAJ4SONqclWQKWQy238kEBQ=
+	t=1718008795; cv=none; b=pNTZa5md7XPr2FDfpl+Uov6ttNLrnYqIjoNynOLYjlGbUiumciGmuVIDWsRjmnW7jc4OZxyXVqTkAwcVY1VEPaiyMcT+fJK+Lq4/MQsrHeQQw0B/eq8FDXtGf+2OF0z69tuEmJhjGFJ7M/yENR/Wt49xrG0E65X2ag+3bvOOWN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718008880; c=relaxed/simple;
-	bh=UoNYO+YBUa4Y/s6xxZhqEt51ywLq6RcjISy3r1lKmeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nm5gKypjtV/Zb+ywv0cKEJ6kmYgkXEVtzZ59y2U1egIXOlUljhuwnqH/lGIwwSkq/9ghqgN6hKZMySI8U5J/zZYYq6VNtlZVD5gHNSRw5oztpQCz0hlH+sO85lKTksN06zpZgpdhVFdAPeX7j6S6kSErsUKefbWrhCU45atr/gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in; spf=pass smtp.mailfrom=lexina.in; dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b=cv1kCaah; arc=none smtp.client-ip=185.250.0.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lexina.in
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7EB15FB01A;
-	Mon, 10 Jun 2024 11:41:16 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lexina.in; s=dkim;
-	t=1718008876; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nrT9Mv5nhx7yJK+tAbs1JLdncnlFoxlReCq1D8Bae3E=;
-	b=cv1kCaahpe6gnVkHI9SOjnmxfMQ+VoRDS/FioNBPlKBsr+PzPhaIqdBYFEoRfzY3+TOAPs
-	oZ+g8h+mW4bp52FYP05/hNl0YnaFvHQtcyImt5VOw09mMGeMAFv5wZqLbQfZCnW0+Cfux4
-	rZKzVeDhyTKeVrUtiomABQ8plzUNInb4d9v+ZCD9AfvSpRyOzye8WtYYZ17nmwB4SOY2gy
-	c4vaOYgdUF7S3ZsLIT5ZIJZz7LGaf+3+18C3RiuP4SRonO6nIiP3oO/ZVsletXFxYbgjla
-	znWt5FANvF3JzJ3KopquW69vfFJ4MGpUb2mBXhNGO7pRORl8Sv9WMsEMMxlEYg==
-From: Viacheslav Bocharov <adeep@lexina.in>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 4/4] arm64: dts: meson: add dts links to secure-monitor for soc driver in a1, axg, gx, g12
-Date: Mon, 10 Jun 2024 11:39:50 +0300
-Message-ID: <20240610084032.3096614-5-adeep@lexina.in>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240610084032.3096614-1-adeep@lexina.in>
-References: <20240610084032.3096614-1-adeep@lexina.in>
+	s=arc-20240116; t=1718008795; c=relaxed/simple;
+	bh=IVgr4Lg50VrbVkuyXy975ptx5KVagoNyzgIsSR4Gwcc=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=C6ArNue8uIgbSsygZXCIw+XpuhkFk8ondVFr3Ha8Ehn3QGos1kz8AbXPBH3dZQyCDNzsuexWfRmaGDElQeD/LF5E3khxCNx7rR77caDtIJFgBAhl5qIyZdc1N4t29AWXhXP422XOLtzzXBEQ8773n3+JJG0tT4gJzrCcch3+i4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0r+3mVR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E335C2BBFC;
+	Mon, 10 Jun 2024 08:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718008794;
+	bh=IVgr4Lg50VrbVkuyXy975ptx5KVagoNyzgIsSR4Gwcc=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=C0r+3mVR9h65sNZw2h/PtmQvmfCv0OL3koJTZfCen/Pv8HNmOnHwoSdRX2Q455Sje
+	 PtEb5D8ZUFHobDYBBVYzPzbuWWT0Fhs9MCDtnFrLpj0mEAnJkioJ+AfvEyDNxzc/9A
+	 E2UG3R1PsbLebPwlsmYmai01CycCRbrQy1h6A0IFh+wmCmguf8qTCgI/nhw0w7oKoO
+	 rRDRitS3ldmUQUMS5uzsSNlBayjLYO3gZLsQak7PBA/VAmkituavAThbVBCUBVLavA
+	 d5clubbVLcN9XnWBFBH6cHoMGTEraiI7tYU7+FjyrYA7eCX8D8W9Q4M1ry6v3GkxLs
+	 XHbqAWAwJibiA==
+Message-ID: <da82bfcfce841103980500b0960d2da1@kernel.org>
+Date: Mon, 10 Jun 2024 08:39:52 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v5 9/9] drm/msm/hdmi: also send the SPD and HDMI Vendor
+ Specific InfoFrames
+In-Reply-To: <20240607-bridge-hdmi-connector-v5-9-ab384e6021af@linaro.org>
+References: <20240607-bridge-hdmi-connector-v5-9-ab384e6021af@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marijn
+ Suijten" <marijn.suijten@somainline.org>, "Maxime Ripard" <mripard@kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Rob Clark" <robdclark@gmail.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Sean Paul" <sean@poorly.run>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Add links to secure-monitor in soc driver section for A1, AXG, GX, G12
-Amlogic family for use with meson-socinfo-sm driver.
+On Fri, 7 Jun 2024 16:23:06 +0300, Dmitry Baryshkov wrote:
+> Extend the driver to send SPD and HDMI Vendor Specific InfoFrames.
+> 
+> While the HDMI block has special block to send HVS InfoFrame, use
+> GENERIC0 block instead. VENSPEC_INFO registers pack frame data in a way
+> that requires manual repacking in the driver, while GENERIC0 doesn't
+> 
+> [ ... ]
 
-Signed-off-by: Viacheslav Bocharov <adeep@lexina.in>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi         | 1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi        | 1 +
- arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi         | 1 +
- 4 files changed, 4 insertions(+)
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index c03e207ea6c5..d47f056117fc 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -407,6 +407,7 @@ hwrng: rng@5118 {
- 			sec_AO: ao-secure@5a20 {
- 				compatible = "amlogic,meson-gx-ao-secure", "syscon";
- 				reg = <0x0 0x5a20 0x0 0x140>;
-+				secure-monitor = <&sm>;
- 				amlogic,has-chip-id;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 6d12b760b90f..45791ec6694a 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1689,6 +1689,7 @@ mux {
- 			sec_AO: ao-secure@140 {
- 				compatible = "amlogic,meson-gx-ao-secure", "syscon";
- 				reg = <0x0 0x140 0x0 0x140>;
-+				secure-monitor = <&sm>;
- 				amlogic,has-chip-id;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index b058ed78faf0..11422d0be22b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -2045,6 +2045,7 @@ cec_AO: cec@100 {
- 			sec_AO: ao-secure@140 {
- 				compatible = "amlogic,meson-gx-ao-secure", "syscon";
- 				reg = <0x0 0x140 0x0 0x140>;
-+				secure-monitor = <&sm>;
- 				amlogic,has-chip-id;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 2673f0dbafe7..656e08b3d872 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -471,6 +471,7 @@ cec_AO: cec@100 {
- 			sec_AO: ao-secure@140 {
- 				compatible = "amlogic,meson-gx-ao-secure", "syscon";
- 				reg = <0x0 0x140 0x0 0x140>;
-+				secure-monitor = <&sm>;
- 				amlogic,has-chip-id;
- 			};
- 
--- 
-2.45.2
-
+Thanks!
+Maxime
 
