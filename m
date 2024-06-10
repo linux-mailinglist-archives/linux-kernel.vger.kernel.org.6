@@ -1,108 +1,158 @@
-Return-Path: <linux-kernel+bounces-208979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-208980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F236A902B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45733902B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A7D281E0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB4A2823FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2024 22:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834F714C584;
-	Mon, 10 Jun 2024 22:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABAB14F9E0;
+	Mon, 10 Jun 2024 22:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyLkKC78"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2AXnLZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7585337143
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4834339FD9;
+	Mon, 10 Jun 2024 22:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718057116; cv=none; b=Na3LDSGd7Nvd1hv8/Zs/9sgNe0Qfbc/9ByOJb5Gkzwu+KV3an5kZpn3WzZcgUje3AZDroTrSESnfOPCvt/2Cu26xjTbwqkIAuH7XR5ODhOWSVXjfuDUVuLXGGfMCG/u8jTRUFzLWoJW4jWxCKj5lGXaplQGup9A6Rk48KkN3R3Q=
+	t=1718057129; cv=none; b=n2fcAI21fHT3wmGaOR9doK4EdLXBdyqAWsTGFx+er5FDP+VBtC50z/+S+ogUnHSuSpmpC+eOChRAwlwwqmlLSbJTXIBZQ9x4lOowt7kH0l/WiuNn5f/EJjWDjP8wmKp3t/0MpA/hZUC8DCwOeUifPEW+QkHJGg+Gznn+B7nl5Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718057116; c=relaxed/simple;
-	bh=rP+ricIK5YBlNx+/fEIyVLa5KkTZrxTMhtE1WPEqf4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTgniLXxXPmaPEFHqdSUKG/tl7eipjdUMyYsiY8YTHQXcjrZt489jXlaOMIobivy+PfK7nARA8ZK28AlYW9wr7REZL08zuaDSALlrclwIEc0128Nvgy3rGZqB9P3Wv1PM3u8BXjQOaZxwJVB1+3gL6V2dk8MxEKWgkNN44zTHiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kyLkKC78; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6b089f3d201so499886d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 15:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718057114; x=1718661914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rP+ricIK5YBlNx+/fEIyVLa5KkTZrxTMhtE1WPEqf4M=;
-        b=kyLkKC78F4pdTPYounu0eXLxDzHXrZpOQFPqy8uV5bLluOihTIB3+MNajjNrgBq5MJ
-         vnURfx51x9NiYtEU/n5QgK9WYw0Ex911jCRG/tBhtFA7AHUKqIKCMxyXGPYEJ+Ypev3D
-         LdPBQEcobfeBJfHMlvqwC1CNnVVbbMuvdbdqYMucokjZOmzBXt+crfibfkyUTyjU0HBG
-         muxK9AnfGSX2WXmxRYoV2kfKsZB8v8xdfaghTxy2xL5QOo0o0comD8KvuRakQJwv0fiv
-         dNd2Wmeg1qkZCvX68fzZrQDkoljmiDnjrOwKsw58Alo6wukL4wn9zIzSHoLI8A/u/Alm
-         k4Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718057114; x=1718661914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rP+ricIK5YBlNx+/fEIyVLa5KkTZrxTMhtE1WPEqf4M=;
-        b=nQXAbisG6z/wCYtlhNmQhor+RBzsuf9jm8H7zZDddTZLpxxsz5bx0l2DH46GzvglRL
-         maY3jl4bDJmT7oSkl4vOj2QRmMVY8wnAesaTOo6VGegJ7I46w5gNdo/GyPMRhXDWVbFo
-         ggTZ2/YnqLy5Z7k1BeXuylFFggdMWHHsNQNs2kPjrLKwmyBpxgeAfQKfVwvn0w9cvhWe
-         WDhLTTMEB4dznnEQivu4+OCUbxo67HckBSpgMGQR944rqQdKVGnfovGTVbWO+YaRt2kq
-         KCn+VxDCXsFTMjl0HAT8gq2fAefk4ZgW6q/QE327+WVC9Vq9n3rjysRuFeJjyoHg4AHE
-         P6zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdosTxmdZoKn7Yr34yYaSNUHFCfWihmEV9NF7V2iQR8+KTwRUdY3gh2jcODLf8ePSK+yDkqvM74de6YRE/l80ksWtUXbKzA++XqKOK
-X-Gm-Message-State: AOJu0YzA7Oszy8voooHVAmiTTRiJwuy0rj9N6AfAgN5lsEyGcW2nKBs5
-	b6yv6y34hPl3LNH+J1Rn1lh4uFMk29Etm/BKR9G6myGS32oaxDH8D2bubtJAZDLEt+UcQ5cQi5y
-	//UQjGksGcUVkxm1imkTg2jErt7k=
-X-Google-Smtp-Source: AGHT+IGQ20EsaNML79UmilV2KhIHb9TaWTviOWcBxEXXPuuWWdBV50/ZYy5/0HVkaRbg9Sl0MYe/UbHQP7ro8jTYxgU=
-X-Received: by 2002:ad4:4b30:0:b0:6b0:6370:28d4 with SMTP id
- 6a1803df08f44-6b063702b48mr99825636d6.6.1718057114072; Mon, 10 Jun 2024
- 15:05:14 -0700 (PDT)
+	s=arc-20240116; t=1718057129; c=relaxed/simple;
+	bh=Dd+yBPaESTKQx9vEdcOxtFwciiZjEqNGYLDlRuD6KxQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NQpQ6JWtWUVEBMj+fGtTDNE6Ui3atH2nviZnNdpJogz3VfxxXSE43IltH7M5n0vNsmjmgOaSLI+ZEbgvgdGqd4+p2DGfjMxE9/8h2Dylh5yxtOpo8iIx1Z9mxtQj+U21CVYj5rYL9eYpAsln6MhRIG9qSTOtojDu2AjMTwAZJRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2AXnLZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2498C32789;
+	Mon, 10 Jun 2024 22:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718057128;
+	bh=Dd+yBPaESTKQx9vEdcOxtFwciiZjEqNGYLDlRuD6KxQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=P2AXnLZXOC5I2okLMJo1JIIFgI5VKbiGE1fFfaYlRtPtwd+nbLx07lh/QU1pruKH0
+	 2SGZyzgTR52o6BOHLZQexSvj+i5B9BETcjYdXRMhR2B6YwRx78aYraqB7WrDe/rUE/
+	 L64gvK3qRsfRzAtRjfLas5eYOJWFAvIYtmZ123lyrIJjwF/CVOwfr4Pkq7vpbLsz36
+	 CZAOkonMoxiEeXvgkqKva38Dqx/ol9yyIj5B6tIiEKopxhGrgw2WRx6m6TqqIFxt3w
+	 EMRG+nv6kpNRavLY6wr+hEtnp9pyhcaEnhEUlFGb9OWiWX926T6rWF7EJoDQ5oYM/9
+	 Nx+yPILj3l3Eg==
+Date: Tue, 11 Jun 2024 07:05:21 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org,
+ bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P"
+ <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv7 bpf-next 2/9] uprobe: Wire up uretprobe system call
+Message-Id: <20240611070521.82da62690e8865ff498327f7@kernel.org>
+In-Reply-To: <20240523121149.575616-3-jolsa@kernel.org>
+References: <20240523121149.575616-1-jolsa@kernel.org>
+	<20240523121149.575616-3-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
- <CABXGCsN=9UFvGgKztzkkAM1c8cVN-h=TKLLxWhKgTm11h+H-eg@mail.gmail.com> <907df295-61b2-4cb4-9bcc-608d1ff2cf18@leemhuis.info>
-In-Reply-To: <907df295-61b2-4cb4-9bcc-608d1ff2cf18@leemhuis.info>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Tue, 11 Jun 2024 03:05:02 +0500
-Message-ID: <CABXGCsMRb3Lx=twRyi75MqgTEfMwxsEwTQg-MR0GNconhDt0pA@mail.gmail.com>
-Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
- cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: "Deucher, Alexander" <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>, Rodrigo.Siqueira@amd.com, 
-	amd-gfx list <amd-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 7, 2024 at 5:29=E2=80=AFPM Linux regression tracking (Thorsten
-Leemhuis) <regressions@leemhuis.info> wrote:
->
-> [CCing the other amd drm maintainers]
->
-> Mikhail: are those details in any way relevant? Then in the future best
-> leave them out (or make things easier to follow), they make the bug
-> report confusing and sounds like this is just a bug, when it fact from
-> your bisection is sounds like this is a regression.
+On Thu, 23 May 2024 14:11:42 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-Apologies if my pre-story is confused. I just wanna say I completely
-moved to the 7900XTX more than a year ago and I was surprised to see
-this regression on the old 6900XT. An accident helped me find this
-issue because I didn't plan to use old hardware.
+> Wiring up uretprobe system call, which comes in following changes.
+> We need to do the wiring before, because the uretprobe implementation
+> needs the syscall number.
+> 
+> Note at the moment uretprobe syscall is supported only for native
+> 64-bit process.
+> 
 
---=20
-Best Regards,
-Mike Gavrilov.
+BTW, this does not cleanly applied to probes/for-next, based on
+6.10-rc1. Which version did you use?
+
+Thank you,
+
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+>  include/linux/syscalls.h               | 2 ++
+>  include/uapi/asm-generic/unistd.h      | 5 ++++-
+>  kernel/sys_ni.c                        | 2 ++
+>  4 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index cc78226ffc35..47dfea0a827c 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -383,6 +383,7 @@
+>  459	common	lsm_get_self_attr	sys_lsm_get_self_attr
+>  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
+>  461	common	lsm_list_modules	sys_lsm_list_modules
+> +462	64	uretprobe		sys_uretprobe
+>  
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differently
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index e619ac10cd23..5318e0e76799 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -972,6 +972,8 @@ asmlinkage long sys_lsm_list_modules(u64 *ids, u32 *size, u32 flags);
+>  /* x86 */
+>  asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int on);
+>  
+> +asmlinkage long sys_uretprobe(void);
+> +
+>  /* pciconfig: alpha, arm, arm64, ia64, sparc */
+>  asmlinkage long sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+>  				unsigned long off, unsigned long len,
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index 75f00965ab15..8a747cd1d735 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -842,8 +842,11 @@ __SYSCALL(__NR_lsm_set_self_attr, sys_lsm_set_self_attr)
+>  #define __NR_lsm_list_modules 461
+>  __SYSCALL(__NR_lsm_list_modules, sys_lsm_list_modules)
+>  
+> +#define __NR_uretprobe 462
+> +__SYSCALL(__NR_uretprobe, sys_uretprobe)
+> +
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 462
+> +#define __NR_syscalls 463
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index faad00cce269..be6195e0d078 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -391,3 +391,5 @@ COND_SYSCALL(setuid16);
+>  
+>  /* restartable sequence */
+>  COND_SYSCALL(rseq);
+> +
+> +COND_SYSCALL(uretprobe);
+> -- 
+> 2.45.1
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
