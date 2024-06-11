@@ -1,78 +1,106 @@
-Return-Path: <linux-kernel+bounces-210708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456FB9047C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:42:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182179047C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50BE11C21BF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87FB1C22705
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A73156227;
-	Tue, 11 Jun 2024 23:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD984156249;
+	Tue, 11 Jun 2024 23:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f78v4c+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D06B5B5B6;
-	Tue, 11 Jun 2024 23:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="3P70Gy2S"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254C3BB23;
+	Tue, 11 Jun 2024 23:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718149352; cv=none; b=EnpmXxKKXIavpMQfrK7c+JBQGyA14utYxBdfuz6CIhUTizIFX5Q5gvsalG2eNCdeTHrqWqAKXAInDC6iLb8mmHpagwPfmONK9kH5Jfw7v+ECYf8CpwocViSi7Iu3/e2tAeRI1scjU7fQNkNIlJPQYUqaUQ/IwkCyUbHW0PJrrbA=
+	t=1718149622; cv=none; b=e0aVGlhsKDkG54M1ubn01hbYWigKqgt4bNiDqXYIh3GJWKMZC9Oq8lZF359XWefD/67L8Aa9k6mS5raplwFAYuIKQzXaIq8GmmWs/Xw5GxYJNnYGun1KPWmBCSu8Yudl0WR0VdEXvh0Vx6toyyddIsQZmG09Dvff09x97rQRydY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718149352; c=relaxed/simple;
-	bh=BdsqP4hRlq4wHQ5MVvxWPIDWPoTsMNYWiF5//TjJ9Yg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YWgbXbbQeiElNC7JpeIz4rx/klpH6Vq9YQavIfJkfl4VLQxKAPcUaO4uGINW5eudKvWvSPMx76A5GOZ/PSN5vd49UdCVDz6UfjUObUi/Tu2WhQGNWRu7xrFT/5aLoTmcZbMM0ByWxsplEw/IDilwMjko6Mb++NdqSrBTjT9MWNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f78v4c+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EDECC2BD10;
-	Tue, 11 Jun 2024 23:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718149352;
-	bh=BdsqP4hRlq4wHQ5MVvxWPIDWPoTsMNYWiF5//TjJ9Yg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=f78v4c+4mFWbygiSeNUzvhvF+HLvTHaHpCvsCbdT2rAMiyAvc3Nn/5PoqiZSK1V6s
-	 m3z6h+nKVnxkBZQcxhw8hSRgCxavzEYrUdPtSgv8NzY8/y/MN/FZQXjhQq2SXIYbr8
-	 MecvxJ1BlywyEfilfJgVq1vC5jgf7ngos9kPS+71TQAMb8hxcNwu2vL0uFe0+2t7No
-	 GQyumVadCKbEfgaujQg1qCHZLOstzJBw7Tmq6PGf6Byo4NPluu8NhJ5vOIN2wtXB7o
-	 MCObVM/8Yw/QEiV9iQuW7CKVPiXFeQaIrAsqQnrIUOuRPEd4DC4zdXlak1fiUbs3iN
-	 JmnXrXt8h+49w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4546DC4332D;
-	Tue, 11 Jun 2024 23:42:32 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240610-vfs-fixes-a84527e50cdb@brauner>
-References: <20240610-vfs-fixes-a84527e50cdb@brauner>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240610-vfs-fixes-a84527e50cdb@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc4.fixes
-X-PR-Tracked-Commit-Id: f5ceb1bbc98c69536d4673a97315e8427e67de1b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2ef5971ff345d3c000873725db555085e0131961
-Message-Id: <171814935227.9933.7533365838358490163.pr-tracker-bot@kernel.org>
-Date: Tue, 11 Jun 2024 23:42:32 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1718149622; c=relaxed/simple;
+	bh=aUwkgEHOy951h6OL8kXUngxLiEvTLbmvkD1a/Aad0Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7Nj4Z3vMDq7O1/seOc/BY6h2IEeK6Wgzf3Kr+pODQaOM7hNgWMq350GZk0rsOjTDG0nDYWcZ8q0B1rT7RxrYmEJxlEUOQIGtID2MRklnkmK680Lfp9IyEog8lBMGxHUlJ9m2EIAjPJMJDak/jty8a3NeJUjrcFMIjqLXzR5J4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=3P70Gy2S; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 4B9D914C1E1;
+	Wed, 12 Jun 2024 01:46:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1718149616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E6gNsA/8fiPpd6nvUGnUpv1xGX9xlafW0dSbHI3zDI0=;
+	b=3P70Gy2Sl2X6HhyjJYOZWl6BJm2hir0fH9jruyOHppQC8noAiraVU1ujofjQpuycTmrhtr
+	TXsW430S/kxRaPCmiAGXHRaWz+xK9v7Fgh431jMU7soyXcwu2be7fIwr2GgtIEjm3NsORF
+	Jee4hOqsdMkmmsB8rLeJn40FpPIk67EX9ySai89RCkcSxMCF+x89wYRo/PPP1dURthQt0Y
+	1E0ibyrFVyU6qNFqOMwy12oxsrLTxA5eAXM738AspBeoc4qDpTJx6/1NIzdh/NekhTRiq5
+	BAvf269yJ5V1ma+zj+3b8o6Kq82v/C/KYKYeXJPqG46biU1tk6M+US6PL4mwJQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id de3dff79;
+	Tue, 11 Jun 2024 23:46:47 +0000 (UTC)
+Date: Wed, 12 Jun 2024 08:46:32 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: dwarves@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
+	Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
+	Matthias Schwarzott <zzam@gentoo.org>,
+	Viktor Malik <vmalik@redhat.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Jan Alexander Steffens <heftig@archlinux.org>,
+	Domenico Andreoli <cavok@debian.org>,
+	Dominique Leuenberger <dimstar@opensuse.org>,
+	Daniel Xu <dxu@dxuuu.xyz>, Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: ANNOUNCE: pahole v1.27 (reproducible builds, BTF kfuncs)
+Message-ID: <Zmjh2GER_MBB_dgT@codewreck.org>
+References: <ZmjBHWw-Q5hKBiwA@x1>
+ <ZmjDuv_zuhA3Xp2m@codewreck.org>
+ <ZmjVHKLTP4_hnzug@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmjVHKLTP4_hnzug@x1>
 
-The pull request you sent on Mon, 10 Jun 2024 16:09:10 +0200:
-
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc4.fixes
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2ef5971ff345d3c000873725db555085e0131961
+Arnaldo Carvalho de Melo wrote on Tue, Jun 11, 2024 at 07:52:12PM -0300:
+> On Wed, Jun 12, 2024 at 06:38:02AM +0900, Dominique Martinet wrote:
+> > It looks like the v1.27 tag has not been pushed to the git repos (either
+> > this or github), we're using git snapshots for nixpkgs, so it'd be great
+> > if a tag could be pushed out.
+> 
+> Done.
+> 
+> https://git.kernel.org/pub/scm/devel/pahole/pahole.git/tag/?h=v1.27
+> https://github.com/acmel/dwarves/releases/tag/v1.27
 
 Thank you!
 
+> > (I think some release monitoring tools left and right also use tags,
+> > even if that's less important if you Cc other distro maintainers... I
+> > just happened to see the mail on bpf@vger.)
+> 
+> May I add your e-mail here:
+> 
+> acme@x1:~/git/pahole$ cat PKG-MAINTAINERS 
+[..]
+> 
+> So that on the next release I CC you?
+
+Sure; in practice this shouldn't change much as package update is
+semi-automated within a few days, but getting a heads up cannot hurt.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Dominique Martinet | Asmadeus
 
