@@ -1,199 +1,142 @@
-Return-Path: <linux-kernel+bounces-209345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894D290330E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA83903314
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0D01C23F97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545B31F27CB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD559171E5A;
-	Tue, 11 Jun 2024 06:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68F4171E7C;
+	Tue, 11 Jun 2024 06:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CRDA086L"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kdrag0n.dev header.i=@kdrag0n.dev header.b="UMuL3E/t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K9pUalFU"
+Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E0317167D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E1F171E74;
+	Tue, 11 Jun 2024 06:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718088712; cv=none; b=PgjXG85FJlmiBfPs1qNM82eTArfMz5vif1qT16qnSbEXH6p25koAC2P0nCb+dyQkTycypw/NjFxMqCEM1S8M8DIWe/AlJIGP/+MGSnCULIdFxc9oXq285mvgMM8Li3GDd3+KDytOTU8Vh3y1dCo4+CV9P3MVIABzGs0ZbBu6Hkc=
+	t=1718088850; cv=none; b=TQQag1sAuu70p5g4tacyfSwXtFpZzrwOPPBiNb76HpKjSpHJm51GysS5gKMS2Z/DxH9zU9SVl1FeVC8ZOjbu7Opgj++HuorclEdAWl9PUTEPZvKrV7pJVk7K2fyKLJciF+ncoK+0rl9c9GpS4NEKRz66iWmPOOk+oBL5IDeNp98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718088712; c=relaxed/simple;
-	bh=xPaKqZXY8+rZSzCNEHIXxp0fXCO0Yb0gtSM3Yp6G/P0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YjSfSOhYh4wiQwwyST75Uqz3TOGNZWpbHoQY25Sxb1i+z50FUHGzxcGVA6ZkGUy32S3EFcbUcjsFhqJrkJ0zSulKlTHDQ16T44CDBmXpEd3VF948zQG9XY7pX7t/M6vNlmEN0MiZewJE53zWc01M/TgoCiMJWd7VivonGK1CwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CRDA086L; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52962423ed8so6093291e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718088709; x=1718693509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=z38MPwFQKXdREohYh3s3TC8Pf+UGMYC2uW4CqnuIGJA=;
-        b=CRDA086Lk2Wscye+62Mbe4JIpQ1ZJ8QQGs7s+DnOzuf0Z/wGjvlebB78pvbxwZ9OIo
-         KM2O1cKBMidNx+76/mwx96C4RIa6EiZ4LLNPBBVpfDHbHx7C5PE7lkcfSjKFpGzSnLP7
-         U52CdnqFTwNHlMgAJM2gcSJXEEBXuBGtEtJku67C/W35cqG1KO2y9kQa0gFuFoUmN2uF
-         AV1rpgVnE5pfe5ySFPcV8JaXVeuJiSIGuL9G9ARbWx/4lpdzXW+Mr54aBTjpRvBOoN/a
-         Y76ALIBypekDrChWvasMFPTZpS+NR2+WclXR+0Z96/F2HBNlPJpcqxNACVudPUnQybah
-         rvGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718088709; x=1718693509;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z38MPwFQKXdREohYh3s3TC8Pf+UGMYC2uW4CqnuIGJA=;
-        b=Whtwym7Y7JlZwu1w4NZvLpk4qAWcLVKTP+RH+dRu/l5yXjtDgucXRAC9HNli98VaHX
-         5gEorS9gcKKros5TGIWHD/GC++yWjtX6/cV2rCVn3pO0VcMMrioKpnjxH7uWhPgPOV4u
-         BJBpmu8kNztOjKiqZPBO9pkCD61pkmM68hadc7HtNK6M2LFJ+CfFDE1f2bWlZ4amFOfD
-         HcDT5YulcViHfcn+T7tsu/b5KIdu2oxyXoDyjCSdlwX55O5IBwvLtZzUJ1soMFHJIi9v
-         R+cZOJ3Bkw5VJ8KTA9BxXkafnJsCUUp77+56p2w0sb0nJKUjg/VaPvjyxZze8/yNhrZx
-         Qfpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8RsVLFPyvFYN97XXoY8HUJM/gHNlK2FPUcGuNi7wu3dV7DzmOSor7HUpJXYdxUwr+4xP4V6HOQRO3u1cu6nR/J6fc3TApRoGZexNq
-X-Gm-Message-State: AOJu0YxrRMGoeJka1jyBUUINhTvJ9v/mhnmOIotJaeq2ZBngD4w+bOVb
-	DHWWwIWoBvhacZtQhGWUNunBjffJtcXjqE7kb9hunyx3FiI9R7r3rxLjcZoQZUI=
-X-Google-Smtp-Source: AGHT+IFUXACqMPP5rYDfAaS7Ux21IP0rI+n3GTObz8SP/rhmlr6cYYe6cmvZgVJc+4n+xDE0bDIzog==
-X-Received: by 2002:a05:6512:158e:b0:52c:8df9:2e6f with SMTP id 2adb3069b0e04-52c8df92eeemr2792169e87.42.1718088709319;
-        Mon, 10 Jun 2024 23:51:49 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4221defede0sm31072695e9.7.2024.06.10.23.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 23:51:48 -0700 (PDT)
-Message-ID: <b72164f9-1b1b-4329-8d4a-66fc626c45fe@linaro.org>
-Date: Tue, 11 Jun 2024 08:51:47 +0200
+	s=arc-20240116; t=1718088850; c=relaxed/simple;
+	bh=/4Ld/EHeInmgDF21XSfDl2NsuMw7Ruxj36buTwtcEio=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=GydEx+ZSjG/D2QV8sCuqmsb7UMC4hod7EXyGDPMv9GgMeFVTSzmsJOLzuyrckVsanO4iAwjypagwinDQlEVv/FeFe8OSlD/MHWJjKM8BoWntA5o4TnfHH542IjC3AEbcQiV9hOVr4OyydZiXEUu4E8QjhrFKgZ2wBMvaqdSrPz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kdrag0n.dev; spf=pass smtp.mailfrom=kdrag0n.dev; dkim=pass (2048-bit key) header.d=kdrag0n.dev header.i=@kdrag0n.dev header.b=UMuL3E/t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K9pUalFU; arc=none smtp.client-ip=64.147.123.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kdrag0n.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kdrag0n.dev
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfout.west.internal (Postfix) with ESMTP id 70A351C000F7;
+	Tue, 11 Jun 2024 02:54:07 -0400 (EDT)
+Received: from imap50 ([10.202.2.100])
+  by compute7.internal (MEProxy); Tue, 11 Jun 2024 02:54:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdrag0n.dev; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718088847;
+	 x=1718175247; bh=I8Cs+PKmoyx6Obnltn4u18ENg+YH1Z3/eoOHhpjV9GM=; b=
+	UMuL3E/tZkxieb5q+rqXq7AHIXFyA3OdWrUCnqyUbylX2ZwI9rPkPBwapWIunl+Z
+	b1uk3UGqO1OkIrx31fm3LcHRoBzDD73CCoYtrNItpEugSInOBgFBC0qMFGliyAL3
+	ZIrWwEbTC1OFypJNbr6DK+bO/PZqG83j5kcqBvh/+XDH2DDl0QzWITPdVZ/2pmZf
+	a6JRSD3TS65r/H6DUHmaCjYwvEWaxN3zIf9bDHnm/kC+DumURyLHwrfU2T9NYyAz
+	vS01TsC6f/1xwvq5sCnMLKTCKqM74yTEm6hdV6bOuCKGZqYOg3ffi1EBmDjnz/rM
+	+u4nAIU3kr2y++H1ScHPjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718088847; x=
+	1718175247; bh=I8Cs+PKmoyx6Obnltn4u18ENg+YH1Z3/eoOHhpjV9GM=; b=K
+	9pUalFUaBJYlCJZ/R4LobyJ5gpIxz2Z5GddGz11DDlPkSOge4L3Dl0/CVosYGc4j
+	srBWbFbrQfGMTprauCr3Z26nBOtd7fE1Mn2d/a6eHrIhU2a39cRoRboMsv/cRmhl
+	d+lupYrw69QePzlqhTdNPiIseoedGbW2HjNojX//VVwfvHaLP1ZA/SKjYcM8bSO0
+	d4nBcdAm9zMduIBjCv+1CKkhkoXQCDHc/jelxGEV+/jgctQBMmQa/nayIHgl46cl
+	n/gjphk5M92ISmGkw1CVHO1L+i1VqX1emdolUG1OKY8MJ45xQ/xlAP27nfFXLB/H
+	kXJXCTZ321yR4Hf9S9MRA==
+X-ME-Sender: <xms:jvRnZry1gY1D-TtrW_ncTpM_Mg_r0G6Nq3I758kAvAfhxgBv-pXipg>
+    <xme:jvRnZjRlx6JMEDFbPZDw0PXlszVw9MZAnK6KncLKir3sqVlf_ZA2LWvRFPxnI2Jrc
+    r09VkAImZwJrSljU_Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduuddguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    ffgrnhhnhicunfhinhdfuceouggrnhhnhieskhgurhgrghdtnhdruggvvheqnecuggftrf
+    grthhtvghrnhepjeeiuddtheelueetleehgeefhfeluddugeeliefggeetgefggfekudei
+    hfdvheevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epuggrnhhnhieskhgurhgrghdtnhdruggvvh
+X-ME-Proxy: <xmx:jvRnZlUnI8--qxwVAiETu0u9kBbqPVZByc6ze9AT0sMpa38p_PONuw>
+    <xmx:jvRnZliJjQQXD3ddVPxeJz4xCFBjvRZjp9sNx0PA1m86_hcHmhhvqQ>
+    <xmx:jvRnZtBODEPWszeaIY06kcy2j2ADTYrfKJRFESwe3mhWzXPRUkVC5A>
+    <xmx:jvRnZuIKsyPlQFv5VkzrvyhywLxl_UUfGU7QipXREDF4w_LNWxpMXA>
+    <xmx:j_RnZv0B-HXFfSRCzSBikg4PLNwC7RI_fc_v2GFK_LIYjrSMjoj6dnyn>
+Feedback-ID: i2ee147e6:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A24BD1700093; Tue, 11 Jun 2024 02:54:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] dt-bindings: counter: Add new ti,am62-eqep
- compatible
-To: Judith Mendez <jm@ti.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org,
- David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>,
- William Breathitt Gray <wbg@kernel.org>
-References: <20240610144637.477954-1-jm@ti.com>
- <20240610144637.477954-2-jm@ti.com>
- <5ad5cf7a-c5c6-449e-9ed9-3d9f74959a19@linaro.org>
- <01433df1-aa19-4abb-9d87-c54e4c0dff17@ti.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <01433df1-aa19-4abb-9d87-c54e4c0dff17@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <dc9a785c-f8f1-474d-ba49-31de63dc5e8d@app.fastmail.com>
+In-Reply-To: <2024061112-kilogram-poker-bacf@gregkh>
+References: <2024061112-kilogram-poker-bacf@gregkh>
+Date: Mon, 10 Jun 2024 23:53:46 -0700
+From: "Danny Lin" <danny@kdrag0n.dev>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, masahiroy@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ =?UTF-8?Q?=C3=8D=C3=B1igo_Huguet?= <ihuguet@redhat.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>
+Subject: Re: [PATCH] .editorconfig: move to Documentation/ directory
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11/06/2024 00:13, Judith Mendez wrote:
-> 
-> Hi Krzysztof,
-> 
-> On 6/10/24 9:58 AM, Krzysztof Kozlowski wrote:
->> On 10/06/2024 16:46, Judith Mendez wrote:
->>> Add new compatible ti,am62-eqep for TI K3 devices. If a device
->>> uses this compatible, require power-domains property.
->>>
->>> Since there is only one functional and interface clock for eqep,
->>> clock-names is not really required, so removed from required
->>> section, make it optional for ti,am3352-eqep compatible, and
->>> update the example.
->>>
->>
->> ...
->>
->>
->>>           interrupts = <79>;
->>>       };
->>>   
->>> +  - |
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
->>> +
->>> +    bus {
->>> +        #address-cells = <2>;
->>> +        #size-cells = <2>;
->>> +        eqep1: counter@23210000 {
->>
->> No need for label
->>
->>> +          compatible = "ti,am62-eqep";
->>> +          reg = <0x00 0x23210000 0x00 0x100>;
->>> +          power-domains = <&k3_pds 60 TI_SCI_PD_EXCLUSIVE>;
->>> +          clocks = <&k3_clks 60 0>;
->>> +          interrupts = <GIC_SPI 117 IRQ_TYPE_EDGE_RISING>;
->>> +          status = "disabled";
->>
->> Drop... which also points to another comment - since this was no-op and
->> example is basically the same, then just don't add it. No point.
-> 
-> Ok, then I will drop the new example, thanks.
-> 
-> BTW..
-> In the existing example for ti,am3352-eqep compatible,
-> do you know if it is appropriate to drop clock-names
-> from the example if it is no longer required?
-> 
+On Mon, Jun 10, 2024 at 11:49 PM, Greg Kroah-Hartman wrote:
+> Some editors (like the vim variants), when seeing "trim_whitespace"
+> decide to do just that for all of the whitespace in the file you are
+> saving, even if it is not on a line that you have modified.  This plays
+> havoc with diffs and is NOT something that should be intended.
 
-It does not really matter.
+If trim_trailing_whitespace is the only rule that has actually been a pr=
+oblem,
+how about removing it and leaving the rest of .editorconfig intact?
+The other rules are still useful to have as defaults.
 
-Best regards,
-Krzysztof
+Thanks,
+Danny
 
+>
+> As the "only trim whitespace on modified files" is not part of the
+> editorconfig standard, just move the whole thing off to the
+> Documentation/ directory so that those that wish to use such a thing c=
+an
+> pick it up from there.
+>
+> Cc: Danny Lin <danny@kdrag0n.dev>
+> Cc: =C3=8D=C3=B1igo Huguet <ihuguet@redhat.com>
+> Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  .editorconfig =3D> Documentation/.editorconfig | 0
+>  1 file changed, 0 insertions(+), 0 deletions(-)
+>  rename .editorconfig =3D> Documentation/.editorconfig (100%)
+>
+> diff --git a/.editorconfig b/Documentation/.editorconfig
+> similarity index 100%
+> rename from .editorconfig
+> rename to Documentation/.editorconfig
+> --=20
+> 2.45.2
 
