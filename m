@@ -1,303 +1,286 @@
-Return-Path: <linux-kernel+bounces-209721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D75B9039E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16313903A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58AE281AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:23:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A111C22BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251A17BB2C;
-	Tue, 11 Jun 2024 11:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8D917BB12;
+	Tue, 11 Jun 2024 11:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYjy51ls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nmLMv5z+"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6165817B403;
-	Tue, 11 Jun 2024 11:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6A517A93A;
+	Tue, 11 Jun 2024 11:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718104987; cv=none; b=EQcYl7rw9bSEOAmQOxNYHn0227mYPZ9+EhAeJia/qfUpZsdApirmN5DcQtHf+cgB7vD5EVvFs1DSs5P8/orRQUFkARM8cEh29WqVC2dZx5gc5QyN5DlSWGeDaHYtWf+KujDXr6SaSiI3nVDg7jGa/tuR1vG4N/+xnnr2JRlxWvQ=
+	t=1718105226; cv=none; b=KT8qWdIDA9MQEnK4hu8Q6oJLWYMJHTRWdkAxKD1Gn61JuGMbMvC0jhnGaN7ktx2zj47LD99Inos0n/RxhgwRlK9oXp2V3OHzTc0P/cX1DxtOxdwE4laVrBry4MQitxEHCyz1wpRM1ImIfl90YE98JxsriSVDPXSZjvfi70xikQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718104987; c=relaxed/simple;
-	bh=BpIC4CY6jG2Qh7cRyNfjpwXNpkOKGT8Ien2/8kajnC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j5StTqbH5wi6LmmhpkQ4BNGcnRCBnAIAskTccYJgj4FxkNmaieTx93xPcQkquUdvnixBy8QIs3yNzEpa+rS2UmTOrsjyp5ZWgePdZgif21mmlvfdVLEUHiOJVLgPzodIT+EKlvAneuF5E/IhC9VaB9CTgOpGieEwIGD2wWgZ0io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYjy51ls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F62C2BD10;
-	Tue, 11 Jun 2024 11:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718104987;
-	bh=BpIC4CY6jG2Qh7cRyNfjpwXNpkOKGT8Ien2/8kajnC8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XYjy51lse6g7pKbxc0MnsUb30BSLctC31JCN2EYi3p4hWSWBriDtmtfTiTUZ1PRUz
-	 oIvLjX13Y+AHso8G08O6QNpUdrvfZYMz7+LxIc/ew2+u1wdgTxVwtmfmzubmE5nb4I
-	 DyAXlZ9XM/+q3HSyF5in8kP2xkzEIBhPArx7kXoSj6QaVT/mu+NOu7rC3RQzJafDmx
-	 5SdFJCJXyL/TvkKlBt9g1iJmXz99TpCUUceAWKDS4scMsMa5/nGvOezCpJImXlgfT/
-	 7s+fkxoksVBxruRzx6P2SEVQ9M/lxvwzSLkTW+PutyiKyMpKE94qAy57lcC+u529cQ
-	 ygFxhHm8DTWhw==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	x86@kernel.org,
-	bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCHv8 bpf-next 5/9] selftests/bpf: Add uretprobe syscall test for regs integrity
+	s=arc-20240116; t=1718105226; c=relaxed/simple;
+	bh=ob35OAEhSADXQ0lJD2bfB1BKP0H6UR60OvW6mqZ9Sik=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eea+djXCqsyIyNbUz3LEyYgy09q/K22hPfpE7f5dXOOhKbHmNFPIJ1sZ5DKRfX9nKSlQr6j2ilxdJ2Z85Y7UJ2oGTDxK7Y2iYZIt/xRkyc/w7hP5zGg9/c7FdBVuD/WyIlg1VdUqhaJFbQICYSgwsb2UkrQe/CdLIMlkJXC/aqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nmLMv5z+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B8SCCX005845;
+	Tue, 11 Jun 2024 11:27:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	WLZB5U9ggdlP3mMnZRTh9SKkqc4LZtwu0b0b2pMqgvA=; b=nmLMv5z+u46cMceg
+	7mxTQLy1MY28RN7Iefh/mNjJaTy8tDB9FgYxrC95BaNKje5HaS1pf/pDibYsrqnf
+	BPhpx0tqM50a2HfCdPlmK2gObh4a50TW6M73jv9L2ysPh/+6gQ1SdslVnjwKE/EC
+	eeBxrpUHAeagpyO8/51ZyVkp3rYEzQaHuomylRaDXWi5cNv1dmxUp9fe7F5nNeIb
+	n1lnAxcCGfEZlGpsCFUhtehDFO7x/ET9mZaQbcEiCIXH6siX2j9oyiwDvF6SEqwu
+	dn51wI2iv9UkBgJhFnVC1O710Sw2kdUO9akOa024+rFhOAExELqEDhuVxpgNtyHW
+	YFoZWw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3b0f65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 11:27:02 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45BBR1Dw028403;
+	Tue, 11 Jun 2024 11:27:01 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3b0f61-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 11:27:01 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45BAha1R003886;
+	Tue, 11 Jun 2024 11:22:00 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn2mpng0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 11:22:00 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45BBLvif8061684
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Jun 2024 11:21:59 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6DC0458043;
+	Tue, 11 Jun 2024 11:21:57 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 40B8E58063;
+	Tue, 11 Jun 2024 11:21:55 +0000 (GMT)
+Received: from [9.179.8.185] (unknown [9.179.8.185])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Jun 2024 11:21:55 +0000 (GMT)
+Message-ID: <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 1/3] s390/pci: Fix s390_mmio_read/write syscall page
+ fault handling
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alex
+ Williamson <alex.williamson@redhat.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
 Date: Tue, 11 Jun 2024 13:21:54 +0200
-Message-ID: <20240611112158.40795-6-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240611112158.40795-1-jolsa@kernel.org>
-References: <20240611112158.40795-1-jolsa@kernel.org>
+In-Reply-To: <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+	 <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=mQINBGHm3M8BEAC+MIQkfoPIAKdjjk84OSQ8erd2OICj98+GdhMQpIjHXn/RJdCZLa58k
+ /ay5x0xIHkWzx1JJOm4Lki7WEzRbYDexQEJP0xUia0U+4Yg7PJL4Dg/W4Ho28dRBROoJjgJSLSHwc
+ 3/1pjpNlSaX/qg3ZM8+/EiSGc7uEPklLYu3gRGxcWV/944HdUyLcnjrZwCn2+gg9ncVJjsimS0ro/
+ 2wU2RPE4ju6NMBn5Go26sAj1owdYQQv9t0d71CmZS9Bh+2+cLjC7HvyTHKFxVGOznUL+j1a45VrVS
+ XQ+nhTVjvgvXR84z10bOvLiwxJZ/00pwNi7uCdSYnZFLQ4S/JGMs4lhOiCGJhJ/9FR7JVw/1t1G9a
+ UlqVp23AXwzbcoV2fxyE/CsVpHcyOWGDahGLcH7QeitN6cjltf9ymw2spBzpRnfFn80nVxgSYVG1d
+ w75ksBAuQ/3e+oTQk4GAa2ShoNVsvR9GYn7rnsDN5pVILDhdPO3J2PGIXa5ipQnvwb3EHvPXyzakY
+ tK50fBUPKk3XnkRwRYEbbPEB7YT+ccF/HioCryqDPWUivXF8qf6Jw5T1mhwukUV1i+QyJzJxGPh19
+ /N2/GK7/yS5wrt0Lwxzevc5g+jX8RyjzywOZGHTVu9KIQiG8Pqx33UxZvykjaqTMjo7kaAdGEkrHZ
+ dVHqoPZwhCsgQARAQABtChOaWtsYXMgU2NobmVsbGUgPHNjaG5lbGxlQGxpbnV4LmlibS5jb20+iQ
+ JXBBMBCABBAhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAhkBFiEEnbAAstJ1IDCl9y3cr+Q/Fej
+ CYJAFAmWVooIFCQWP+TMACgkQr+Q/FejCYJCmLg/+OgZD6wTjooE77/ZHmW6Egb5nUH6DU+2nMHMH
+ UupkE3dKuLcuzI4aEf/6wGG2xF/LigMRrbb1iKRVk/VG/swyLh/OBOTh8cJnhdmURnj3jhaefzslA
+ 1wTHcxeH4wMGJWVRAhOfDUpMMYV2J5XoroiA1+acSuppelmKAK5voVn9/fNtrVr6mgBXT5RUnmW60
+ UUq5z6a1zTMOe8lofwHLVvyG9zMgv6Z9IQJc/oVnjR9PWYDUX4jqFL3yO6DDt5iIQCN8WKaodlNP6
+ 1lFKAYujV8JY4Ln+IbMIV2h34cGpIJ7f76OYt2XR4RANbOd41+qvlYgpYSvIBDml/fT2vWEjmncm7
+ zzpVyPtCZlijV3npsTVerGbh0Ts/xC6ERQrB+rkUqN/fx+dGnTT9I7FLUQFBhK2pIuD+U1K+A+Egw
+ UiTyiGtyRMqz12RdWzerRmWFo5Mmi8N1jhZRTs0yAUn3MSCdRHP1Nu3SMk/0oE+pVeni3ysdJ69Sl
+ kCAZoaf1TMRdSlF71oT/fNgSnd90wkCHUK9pUJGRTUxgV9NjafZy7sx1Gz11s4QzJE6JBelClBUiF
+ 6QD4a+MzFh9TkUcpG0cPNsFfEGyxtGzuoeE86sL1tk3yO6ThJSLZyqFFLrZBIJvYK2UiD+6E7VWRW
+ 9y1OmPyyFBPBosOvmrkLlDtAtyfYInO0KU5pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNjaG5lbGxlQ
+ GlibS5jb20+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAAstJ1IDCl9y
+ 3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJB7oxAAksHYU+myhSZD0YSuYZl3oLDUEFP
+ 3fm9m6N9zgtiOg/GGI0jHc+Tt8qiQaLEtVeP/waWKgQnje/emHJOEDZTb0AdeXZk+T5/ydrKRLmYC
+ 6rPge3ue1yQUCiA+T72O3WfjZILI2yOstNwd1f0epQ32YaAvM+QbKDloJSmKhGWZlvdVUDXWkS6/m
+ aUtUwZpddFY8InXBxsYCbJsqiKF3kPVD515/6keIZmZh1cTIFQ+Kc+UZaz0MxkhiCyWC4cH6HZGKR
+ fiXLhPlmmAyW9FiZK9pwDocTLemfgMR6QXOiB0uisdoFnjhXNfp6OHSy7w7LTIHzCsJoHk+vsyvSp
+ +fxkjCXgFzGRQaJkoX33QZwQj1mxeWl594QUfR4DIZ2KERRNI0OMYjJVEtB5jQjnD/04qcTrSCpJ5
+ ZPtiQ6Umsb1c9tBRIJnL7gIslo/OXBe/4q5yBCtCZOoD6d683XaMPGhi/F6+fnGvzsi6a9qDBgVvt
+ arI8ybayhXDuS6/StR8qZKCyzZ/1CUofxGVIdgkseDhts0dZ4AYwRVCUFQULeRtyoT4dKfEot7hPE
+ /4wjm9qZf2mDPRvJOqss6jObTNuw1YzGlpe9OvDYtGeEfHgcZqEmHbiMirwfGLaTG2xKDx4g2jd2z
+ Ocf83TCERFKJEhvZxB3tRiUQTd3dZ1TIaisv/o+y0K05pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNj
+ aG5lbGxlQGdtYWlsLmNvbT6JAlQEEwEIAD4CGwEFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSds
+ ACy0nUgMKX3Ldyv5D8V6MJgkAUCZZWiiwUJBY/5MwAKCRCv5D8V6MJgkNVuEACo12niyoKhnXLQFt
+ NaqxNZ+8p/MGA7g2XcVJ1bYMPoZ2Wh8zwX0sKX/dLlXVHIAeqelL5hIv6GoTykNqQGUN2Kqf0h/z7
+ b85o3tHiqMAQV0dAB0y6qdIwdiB69SjpPNK5KKS1+AodLzosdIVKb+LiOyqUFKhLnablni1hiKlqY
+ yDeD4k5hePeQdpFixf1YZclGZLFbKlF/A/0Q13USOHuAMYoA/iSgJQDMSUWkuC0mNxdhfVt/gVJnu
+ Kq+uKUghcHflhK+yodqezlxmmRxg6HrPVqRG4pZ6YNYO7YXuEWy9JiEH7MmFYcjNdgjn+kxx4IoYU
+ O0MJ+DjLpVCV1QP1ZvMy8qQxScyEn7pMpQ0aW6zfJBsvoV3EHCR1emwKYO6rJOfvtu1rElGCTe3sn
+ sScV9Z1oXlvo8pVNH5a2SlnsuEBQe0RXNXNJ4RAls8VraGdNSHi4MxcsYEgAVHVaAdTLfJcXZNCIU
+ cZejkOE+U2talW2n5sMvx+yURAEVsT/50whYcvomt0y81ImvCgUz4xN1axZ3PCjkgyhNiqLe+vzge
+ xq7B2Kx2++hxIBDCKLUTn8JUAtQ1iGBZL9RuDrBy2rR7xbHcU2424iSbP0zmnpav5KUg4F1JVYG12
+ vDCi5tq5lORCL28rjOQqE0aLHU1M1D2v51kjkmNuc2pgLDFzpvgLQhTmlrbGFzIFNjaG5lbGxlIDx
+ uaWtzQGtlcm5lbC5vcmc+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAA
+ stJ1IDCl9y3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJAglRAAihbDxiGLOWhJed5cF
+ kOwdTZz6MyYgazbr+2sFrfAhX3hxPFoG4ogY/BzsjkN0cevWpSigb2I8Y1sQD7BFWJ2OjpEpVQd0D
+ sk5VbJBXEWIVDBQ4VMoACLUKgfrb0xiwMRg9C2h6KlwrPBlfgctfvrWWLBq7+oqx73CgxqTcGpfFy
+ tD87R4ovR9W1doZbh7pjsH5Ae9xX5PnQFHruib3y35zC8+tvSgvYWv3Eg/8H4QWlrjLHHy2AfZDVl
+ 9F5t5RfGL8NRsiTdVg9VFYg/GDdck9WPEgdO3L/qoq3Iuk0SZccGl+Nj8vtWYPKNlu2UvgYEbB8cl
+ UoWhg+SjjYQka7/p6tc+CCPZ8JUpkgkAdt7yXt6370wP1gct2VztS6SEGcmAE1qxtGhi5Kuln4ZJ/
+ UO2yxhPHgoW99OuZw3IRHe0+mNR67JbIpSuFWDFNjZ0nckQcU1taSEUi0euWs7i4MEkm0NsOsVhbs
+ 4D2vMiC6kO/FqWOPmWZeAjyJw/KRUG4PaJAr5zJUx57nhKWgeTniW712n4DwCUh77D/PHY0nqBTG/
+ B+QQCR/FYGpTFkO4DRVfapT8njDrsWyVpP9o64VNZP42S+DuRGWfUKCMAXsM/wPzRiDEVfnZMcUR9
+ vwLSHeoV7MiIFC0xIrp5ES9R00t4UFgqtGc36DV71qjR+66Im0=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rFpPOc49hEXk-cGTAqlJrQnnEEgWaflw
+X-Proofpoint-GUID: bHGfM3ytO-JN3ReKamL7n8MNYSyB5U_V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=978 spamscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406110082
 
-Add uretprobe syscall test that compares register values before
-and after the uretprobe is hit. It also compares the register
-values seen from attached bpf program.
+On Wed, 2024-05-29 at 13:36 +0200, Niklas Schnelle wrote:
+> The s390 MMIO syscalls when using the classic PCI instructions do not
+> cause a page fault when follow_pte() fails due to the page not being
+> present. Besides being a general deficiency this breaks vfio-pci's mmap()
+> handling once VFIO_PCI_MMAP gets enabled as this lazily maps on first
+> access. Fix this by following a failed follow_pte() with
+> fixup_user_page() and retrying the follow_pte().
+>=20
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>  arch/s390/pci/pci_mmio.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+> index 5398729bfe1b..80c21b1a101c 100644
+> --- a/arch/s390/pci/pci_mmio.c
+> +++ b/arch/s390/pci/pci_mmio.c
+> @@ -170,8 +170,12 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, =
+mmio_addr,
+>  		goto out_unlock_mmap;
+> =20
+>  	ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
+> -	if (ret)
+> -		goto out_unlock_mmap;
+> +	if (ret) {
+> +		fixup_user_fault(current->mm, mmio_addr, FAULT_FLAG_WRITE, NULL);
+> +		ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
+> +		if (ret)
+> +			goto out_unlock_mmap;
+> +	}
+> =20
+>  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
+>  			(mmio_addr & ~PAGE_MASK));
+> @@ -305,12 +309,16 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, =
+mmio_addr,
+>  	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+>  		goto out_unlock_mmap;
+>  	ret =3D -EACCES;
+> -	if (!(vma->vm_flags & VM_WRITE))
+> +	if (!(vma->vm_flags & VM_READ))
+>  		goto out_unlock_mmap;
+> =20
+>  	ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
+> -	if (ret)
+> -		goto out_unlock_mmap;
+> +	if (ret) {
+> +		fixup_user_fault(current->mm, mmio_addr, 0, NULL);
+> +		ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
+> +		if (ret)
+> +			goto out_unlock_mmap;
+> +	}
+> =20
+>  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
+>  			(mmio_addr & ~PAGE_MASK));
+>=20
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/include/linux/compiler.h                |   4 +
- .../selftests/bpf/prog_tests/uprobe_syscall.c | 163 ++++++++++++++++++
- .../selftests/bpf/progs/uprobe_syscall.c      |  15 ++
- 3 files changed, 182 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
- create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall.c
+Ughh, I think I just stumbled over a problem with this. This is a
+failing lock held assertion via __is_vma_write_locked() in
+remap_pfn_range_notrack() but I'm not sure yet what exactly causes this
 
-diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
-index 8a63a9913495..6f7f22ac9da5 100644
---- a/tools/include/linux/compiler.h
-+++ b/tools/include/linux/compiler.h
-@@ -62,6 +62,10 @@
- #define __nocf_check __attribute__((nocf_check))
- #endif
- 
-+#ifndef __naked
-+#define __naked __attribute__((__naked__))
-+#endif
-+
- /* Are two types/vars the same type (ignoring qualifiers)? */
- #ifndef __same_type
- # define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-new file mode 100644
-index 000000000000..311ac19d8992
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+
-+#ifdef __x86_64__
-+
-+#include <unistd.h>
-+#include <asm/ptrace.h>
-+#include <linux/compiler.h>
-+#include "uprobe_syscall.skel.h"
-+
-+__naked unsigned long uretprobe_regs_trigger(void)
-+{
-+	asm volatile (
-+		"movq $0xdeadbeef, %rax\n"
-+		"ret\n"
-+	);
-+}
-+
-+__naked void uretprobe_regs(struct pt_regs *before, struct pt_regs *after)
-+{
-+	asm volatile (
-+		"movq %r15,   0(%rdi)\n"
-+		"movq %r14,   8(%rdi)\n"
-+		"movq %r13,  16(%rdi)\n"
-+		"movq %r12,  24(%rdi)\n"
-+		"movq %rbp,  32(%rdi)\n"
-+		"movq %rbx,  40(%rdi)\n"
-+		"movq %r11,  48(%rdi)\n"
-+		"movq %r10,  56(%rdi)\n"
-+		"movq  %r9,  64(%rdi)\n"
-+		"movq  %r8,  72(%rdi)\n"
-+		"movq %rax,  80(%rdi)\n"
-+		"movq %rcx,  88(%rdi)\n"
-+		"movq %rdx,  96(%rdi)\n"
-+		"movq %rsi, 104(%rdi)\n"
-+		"movq %rdi, 112(%rdi)\n"
-+		"movq   $0, 120(%rdi)\n" /* orig_rax */
-+		"movq   $0, 128(%rdi)\n" /* rip      */
-+		"movq   $0, 136(%rdi)\n" /* cs       */
-+		"pushf\n"
-+		"pop %rax\n"
-+		"movq %rax, 144(%rdi)\n" /* eflags   */
-+		"movq %rsp, 152(%rdi)\n" /* rsp      */
-+		"movq   $0, 160(%rdi)\n" /* ss       */
-+
-+		/* save 2nd argument */
-+		"pushq %rsi\n"
-+		"call uretprobe_regs_trigger\n"
-+
-+		/* save  return value and load 2nd argument pointer to rax */
-+		"pushq %rax\n"
-+		"movq 8(%rsp), %rax\n"
-+
-+		"movq %r15,   0(%rax)\n"
-+		"movq %r14,   8(%rax)\n"
-+		"movq %r13,  16(%rax)\n"
-+		"movq %r12,  24(%rax)\n"
-+		"movq %rbp,  32(%rax)\n"
-+		"movq %rbx,  40(%rax)\n"
-+		"movq %r11,  48(%rax)\n"
-+		"movq %r10,  56(%rax)\n"
-+		"movq  %r9,  64(%rax)\n"
-+		"movq  %r8,  72(%rax)\n"
-+		"movq %rcx,  88(%rax)\n"
-+		"movq %rdx,  96(%rax)\n"
-+		"movq %rsi, 104(%rax)\n"
-+		"movq %rdi, 112(%rax)\n"
-+		"movq   $0, 120(%rax)\n" /* orig_rax */
-+		"movq   $0, 128(%rax)\n" /* rip      */
-+		"movq   $0, 136(%rax)\n" /* cs       */
-+
-+		/* restore return value and 2nd argument */
-+		"pop %rax\n"
-+		"pop %rsi\n"
-+
-+		"movq %rax,  80(%rsi)\n"
-+
-+		"pushf\n"
-+		"pop %rax\n"
-+
-+		"movq %rax, 144(%rsi)\n" /* eflags   */
-+		"movq %rsp, 152(%rsi)\n" /* rsp      */
-+		"movq   $0, 160(%rsi)\n" /* ss       */
-+		"ret\n"
-+);
-+}
-+
-+static void test_uretprobe_regs_equal(void)
-+{
-+	struct uprobe_syscall *skel = NULL;
-+	struct pt_regs before = {}, after = {};
-+	unsigned long *pb = (unsigned long *) &before;
-+	unsigned long *pa = (unsigned long *) &after;
-+	unsigned long *pp;
-+	unsigned int i, cnt;
-+	int err;
-+
-+	skel = uprobe_syscall__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "uprobe_syscall__open_and_load"))
-+		goto cleanup;
-+
-+	err = uprobe_syscall__attach(skel);
-+	if (!ASSERT_OK(err, "uprobe_syscall__attach"))
-+		goto cleanup;
-+
-+	uretprobe_regs(&before, &after);
-+
-+	pp = (unsigned long *) &skel->bss->regs;
-+	cnt = sizeof(before)/sizeof(*pb);
-+
-+	for (i = 0; i < cnt; i++) {
-+		unsigned int offset = i * sizeof(unsigned long);
-+
-+		/*
-+		 * Check register before and after uretprobe_regs_trigger call
-+		 * that triggers the uretprobe.
-+		 */
-+		switch (offset) {
-+		case offsetof(struct pt_regs, rax):
-+			ASSERT_EQ(pa[i], 0xdeadbeef, "return value");
-+			break;
-+		default:
-+			if (!ASSERT_EQ(pb[i], pa[i], "register before-after value check"))
-+				fprintf(stdout, "failed register offset %u\n", offset);
-+		}
-+
-+		/*
-+		 * Check register seen from bpf program and register after
-+		 * uretprobe_regs_trigger call
-+		 */
-+		switch (offset) {
-+		/*
-+		 * These values will be different (not set in uretprobe_regs),
-+		 * we don't care.
-+		 */
-+		case offsetof(struct pt_regs, orig_rax):
-+		case offsetof(struct pt_regs, rip):
-+		case offsetof(struct pt_regs, cs):
-+		case offsetof(struct pt_regs, rsp):
-+		case offsetof(struct pt_regs, ss):
-+			break;
-+		default:
-+			if (!ASSERT_EQ(pp[i], pa[i], "register prog-after value check"))
-+				fprintf(stdout, "failed register offset %u\n", offset);
-+		}
-+	}
-+
-+cleanup:
-+	uprobe_syscall__destroy(skel);
-+}
-+#else
-+static void test_uretprobe_regs_equal(void)
-+{
-+	test__skip();
-+}
-+#endif
-+
-+void test_uprobe_syscall(void)
-+{
-+	if (test__start_subtest("uretprobe_regs_equal"))
-+		test_uretprobe_regs_equal();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/uprobe_syscall.c b/tools/testing/selftests/bpf/progs/uprobe_syscall.c
-new file mode 100644
-index 000000000000..8a4fa6c7ef59
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/uprobe_syscall.c
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <string.h>
-+
-+struct pt_regs regs;
-+
-+char _license[] SEC("license") = "GPL";
-+
-+SEC("uretprobe//proc/self/exe:uretprobe_regs_trigger")
-+int uretprobe(struct pt_regs *ctx)
-+{
-+	__builtin_memcpy(&regs, ctx, sizeof(regs));
-+	return 0;
-+}
--- 
-2.45.1
+[   67.338855] ------------[ cut here ]------------
+[   67.338865] WARNING: CPU: 15 PID: 2056 at include/linux/rwsem.h:85 remap=
+_pfn_range_notrack+0x596/0x5b0
+[   67.338874] Modules linked in: <--- 8< --->
+[   67.338931] CPU: 15 PID: 2056 Comm: vfio-test Not tainted 6.10.0-rc1-pci=
+-pfault-00004-g193e3a513cee #5
+[   67.338934] Hardware name: IBM 3931 A01 701 (LPAR)
+[   67.338935] Krnl PSW : 0704c00180000000 000003e54c9730ea (remap_pfn_rang=
+e_notrack+0x59a/0x5b0)
+[   67.338940]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:=
+0 RI:0 EA:3
+[   67.338944] Krnl GPRS: 0000000000000100 000003655915fb78 000002d80b9a592=
+8 000003ff7fa00000
+[   67.338946]            0004008000000000 0000000000004000 000000000000071=
+1 000003ff7fa04000
+[   67.338948]            000002d80c533f00 000002d800000100 000002d81bbe6c2=
+8 000002d80b9a5928
+[   67.338950]            000003ff7fa00000 000002d80c533f00 000003e54c97312=
+0 000003655915fab0
+[   67.338956] Krnl Code: 000003e54c9730de: a708ffea            lhi     %r0=
+,-22
+                          000003e54c9730e2: a7f4fff6            brc     15,=
+000003e54c9730ce
+                         #000003e54c9730e6: af000000            mc      0,0
+                         >000003e54c9730ea: a7f4fd6e            brc     15,=
+000003e54c972bc6
+                          000003e54c9730ee: af000000            mc      0,0
+                          000003e54c9730f2: af000000            mc      0,0
+                          000003e54c9730f6: 0707                bcr     0,%=
+r7
+                          000003e54c9730f8: 0707                bcr     0,%=
+r7
+[   67.339025] Call Trace:
+[   67.339027]  [<000003e54c9730ea>] remap_pfn_range_notrack+0x59a/0x5b0
+[   67.339032]  [<000003e54c973120>] remap_pfn_range+0x20/0x30
+[   67.339035]  [<000003e4cce5396c>] vfio_pci_mmap_fault+0xec/0x1d0 [vfio_p=
+ci_core]
+[   67.339043]  [<000003e54c977240>] handle_mm_fault+0x6b0/0x25a0
+[   67.339046]  [<000003e54c966328>] fixup_user_fault+0x138/0x310
+[   67.339048]  [<000003e54c63a91c>] __s390x_sys_s390_pci_mmio_read+0x28c/0=
+x3a0
+[   67.339051]  [<000003e54c5e200a>] do_syscall+0xea/0x120
+[   67.339055]  [<000003e54d5f9954>] __do_syscall+0x94/0x140
+[   67.339059]  [<000003e54d611020>] system_call+0x70/0xa0
+[   67.339063] Last Breaking-Event-Address:
+[   67.339065]  [<000003e54c972bc2>] remap_pfn_range_notrack+0x72/0x5b0
+[   67.339067] ---[ end trace 0000000000000000 ]---
 
 
