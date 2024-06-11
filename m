@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-210515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310669044D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:34:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11939044D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B114E288C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:34:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CA6F28A085
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF5614F6C;
-	Tue, 11 Jun 2024 19:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF32080605;
+	Tue, 11 Jun 2024 19:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8bCdtln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="myDBTikr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2BA3839C;
-	Tue, 11 Jun 2024 19:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D608E14F6C;
+	Tue, 11 Jun 2024 19:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718134434; cv=none; b=h8XwiUqmzJpPgCsZSoers4K1vosnquPI+W84e+pZpeK+Q8Gri9HMuCc4XZ64e9JjGdACXtvH8+mOM1fnLAPbQ6fDILq8vgyp/CxkABxfWcMM1Cw+bKHYl9Pu1V0jDjqMjLGzEPN2RqhBgVKI8k7iwl6rwc2wstq4gTjh1J3voFc=
+	t=1718134512; cv=none; b=JKdnVFIiGRBY0w8T3VzB/KBLoXh/b6hKb/td8oZ7sqYxNJObpffhhPbn0/XvLI+AfNU2jfrifCxQJZk1FRa0V6WACZuYwreAKslcjqmUp5Jy3kg2brOte5G8L7JSt9Rv6ZPbXcG873wB5IL9ryIrFuD/XxGRldBWTV8Meq0uln8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718134434; c=relaxed/simple;
-	bh=+EFgFUSyU77OeDo23wZTQQSJd8WsSmFqgJx2eI4etnc=;
+	s=arc-20240116; t=1718134512; c=relaxed/simple;
+	bh=susaUDi/yz7Enip+SPo9XpTzH+CVEJDN9NuS79DVHfM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDp5Wvo9UWlABr25f2Hg+8f+uIqPjgirR4Wk2yOD2Bd1AJNi4s13xOt+fj4reRt5SMNj9XD9WOybwlfWyLmSjlb+vG8HayFGfRJZ/qCYscHTyoH838askvz0v3vWDfnn27/qk6O+tp5XzAPoDGIJ6ecwI0SE+PlzHoGPyMhhBlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8bCdtln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2463C2BD10;
-	Tue, 11 Jun 2024 19:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718134433;
-	bh=+EFgFUSyU77OeDo23wZTQQSJd8WsSmFqgJx2eI4etnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H8bCdtlnV1PKPoYsXCinarlBu4cxYs9DVegPRf+75RuZClFXsTjCljzkiqEnS+wdE
-	 3oDTJspMhj0GR3klaRjrKzNfknmP9Dg7qcrptayhAs96i7sF3+2YrmD4Aqz2GLRnpo
-	 Jk2Rrfzg6tTeOGm4It/JuxPD5rEKxmo0krCTzbdtrhZeBEVkHyQiDSR25fAEAm0eN0
-	 42wgUt1fO6G/dAPpngnPvNb5ZPBiyqnnLVLReciefnJ6jIdiG8gtSYxFrnSGOsHNB2
-	 G/NFqeJXuf0PZuayfuxlVqZdJbjcsw2ST5503buhYWQ7ShEfWmijBjhJK3766oFe3j
-	 vIh3owb9VJ/5w==
-Date: Tue, 11 Jun 2024 13:33:51 -0600
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 00/19] Add support for the LAN966x PCI device using a
- DT overlay
-Message-ID: <20240611193351.GA2953067-robh@kernel.org>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZNEYHn0916x6y7yYx/JVcAgXrNcVtuUP3Y6dyLgpv/pvbZkN2YPuYeEvXnBOBsEOkS+A9ej0KNtEkbeKQz+Qr00y/AAD/PRQhOutPB+QysLUYvXB3wjkC2I+eC9fBQCg8U6wfkrAyRn8CVLOdwieMQ0bmw02gquWTgJ9bDz+m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=myDBTikr; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718134510; x=1749670510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=susaUDi/yz7Enip+SPo9XpTzH+CVEJDN9NuS79DVHfM=;
+  b=myDBTikrTeVAHuIqfKoUx2MkzHhNvvQEvmP2yChJcnDTEzsXzRYQXVPJ
+   e2xK4g6TBpiJ0icYF6NrBcN0PqQAwMXUaBlvBOXgjhc6TxYAv/tbLebjE
+   TbBXpESJSuI7ekWgqjIVYK6VfsokZwR8HyTJgd1G5lQSLlbfl1UihrAH3
+   JJoew1864vtSfR80XhpfVjFtecmBtLtd6osnswxtRqD1efv3pXJEIP/uZ
+   +GS5vFZA/2HKuGbJ/2zIl9Ivgd8TjTdNMuw//7m7fBT0tiPQw9lAdQolN
+   YUSCFzYRMUBvySi9s9MiTjVvLOjVdmc9nJaevgW/DmB7lKCm7HCzo+znc
+   w==;
+X-CSE-ConnectionGUID: L2AxbT+UQBurYs0cjqDdFg==
+X-CSE-MsgGUID: x9T+EWoCSBG3idYa4sKDxw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14997325"
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="14997325"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 12:35:09 -0700
+X-CSE-ConnectionGUID: XSryMGTlSDq3RqP+GGoarw==
+X-CSE-MsgGUID: hKbXWze/Q4GB6LbrnaPW3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="40007035"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 11 Jun 2024 12:35:03 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sH7Gm-0000qE-1S;
+	Tue, 11 Jun 2024 19:35:00 +0000
+Date: Wed, 12 Jun 2024 03:34:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	chunkuang.hu@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, shawn.sung@mediatek.com,
+	yu-chang.lee@mediatek.com, ck.hu@mediatek.com,
+	jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, wenst@chromium.org,
+	kernel@collabora.com, sui.jinfeng@linux.dev, michael@walle.cc,
+	Alexandre Mergnat <amergnat@baylibre.com>
+Subject: Re: [PATCH v6 3/3] drm/mediatek: Implement OF graphs support for
+ display paths
+Message-ID: <202406120316.VAGmVBWN-lkp@intel.com>
+References: <20240611082831.477566-4-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,85 +90,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527161450.326615-1-herve.codina@bootlin.com>
+In-Reply-To: <20240611082831.477566-4-angelogioacchino.delregno@collabora.com>
 
-On Mon, May 27, 2024 at 06:14:27PM +0200, Herve Codina wrote:
-> Hi,
-> 
-> This series adds support for the LAN966x chip when used as a PCI
-> device.
-> 
-> For reference, the LAN996x chip is a System-on-chip that integrates an
-> Ethernet switch and a number of other traditional hardware blocks such
-> as a GPIO controller, I2C controllers, SPI controllers, etc. The
-> LAN996x can be used in two different modes:
-> 
-> - With Linux running on its Linux built-in ARM cores.
->   This mode is already supported by the upstream Linux kernel, with the
->   LAN996x described as a standard ARM Device Tree in
->   arch/arm/boot/dts/microchip/lan966x.dtsi. Thanks to this support,
->   all hardware blocks in the LAN996x already have drivers in the
->   upstream Linux kernel.
-> 
-> - As a PCI device, thanks to its built-in PCI endpoint controller.
->   In this case, the LAN996x ARM cores are not used, but all peripherals
->   of the LAN996x can be accessed by the PCI host using memory-mapped
->   I/O through the PCI BARs.
-> 
-> This series aims at supporting this second use-case. As all peripherals
-> of the LAN996x already have drivers in the Linux kernel, our goal is to
-> re-use them as-is to support this second use-case.
-> 
-> Therefore, this patch series introduces a PCI driver that binds on the
-> LAN996x PCI VID/PID, and when probed, instantiates all devices that are
-> accessible through the PCI BAR. As the list and characteristics of such
-> devices are non-discoverable, this PCI driver loads a Device Tree
-> overlay that allows to teach the kernel about which devices are
-> available, and allows to probe the relevant drivers in kernel, re-using
-> all existing drivers with no change.
-> 
-> This patch series for now adds a Device Tree overlay that describes an
-> initial subset of the devices available over PCI in the LAN996x, and
-> follow-up patch series will add support for more once this initial
-> support has landed.
-> 
-> In order to add this PCI driver, a number of preparation changes are
-> needed:
-> 
->  - Patches 1 to 5 allow the reset driver used for the LAN996x to be
->    built as a module. Indeed, in the case where Linux runs on the ARM
->    cores, it is common to have the reset driver built-in. However, when
->    the LAN996x is used as a PCI device, it makes sense that all its
->    drivers can be loaded as modules.
-> 
->  - Patches 6 and 7 improve the MDIO controller driver to properly
->    handle its reset signal.
-> 
->  - Patches 8 to 12 introduce the internal interrupt controller used in
->    the LAN996x. It is one of the few peripherals in the LAN996x that
->    are only relevant when the LAN996x is used as a PCI device, which is
->    why this interrupt controller did not have a driver so far.
-> 
->  - Patches 13 to 16 make some small additions to the OF core and
->    PCI/OF core to consider the PCI device as an interrupt controller.
->    This topic was previously mentioned in [1] to avoid the need of
->    phandle interrupt parents which are not available at some points.
-> 
->  - Patches 17 and 18 introduce the LAN996x PCI driver itself, together
->    with its DT bindings.
-> 
-> We believe all items from the above list can be merged separately, with
-> no build dependencies. We expect:
-> 
->  - Patches 1 to 5 to be taken by reset maintainers
-> 
->  - Patches 6 and 7 to be taken by network driver maintainers
-> 
->  - Patches 8 to 12 to be taken by irqchip maintainers
-> 
->  - Patch 13 to 17 to be taken by DT/PCI maintainers
+Hi AngeloGioacchino,
 
-I've applied patches 13-17.
+kernel test robot noticed the following build errors:
 
-Rob
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.10-rc3 next-20240611]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-display-mediatek-Add-OF-graph-support-for-board-path/20240611-163327
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240611082831.477566-4-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v6 3/3] drm/mediatek: Implement OF graphs support for display paths
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240612/202406120316.VAGmVBWN-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406120316.VAGmVBWN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406120316.VAGmVBWN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpu/drm/mediatek/mtk_dpi.c: In function 'mtk_dpi_bridge_attach':
+>> drivers/gpu/drm/mediatek/mtk_dpi.c:711:31: error: 'dsi' undeclared (first use in this function); did you mean 'dpi'?
+     711 |                 ret = PTR_ERR(dsi->next_bridge);
+         |                               ^~~
+         |                               dpi
+   drivers/gpu/drm/mediatek/mtk_dpi.c:711:31: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +711 drivers/gpu/drm/mediatek/mtk_dpi.c
+
+   702	
+   703	static int mtk_dpi_bridge_attach(struct drm_bridge *bridge,
+   704					 enum drm_bridge_attach_flags flags)
+   705	{
+   706		struct mtk_dpi *dpi = bridge_to_dpi(bridge);
+   707		int ret;
+   708	
+   709		dpi->next_bridge = devm_drm_of_get_bridge(dpi->dev, dpi->dev->of_node, 1, -1);
+   710		if (IS_ERR(dpi->next_bridge)) {
+ > 711			ret = PTR_ERR(dsi->next_bridge);
+   712			if (ret == -EPROBE_DEFER)
+   713				return ret;
+   714	
+   715			/* Old devicetree has only one endpoint */
+   716			dpi->next_bridge = devm_drm_of_get_bridge(dpi->dev, dpi->dev->of_node, 0, 0);
+   717			if (IS_ERR(dpi->next_bridge))
+   718				return dev_err_probe(dpi->dev, PTR_ERR(dpi->next_bridge),
+   719						     "Failed to get bridge\n");
+   720		}
+   721	
+   722		return drm_bridge_attach(bridge->encoder, dpi->next_bridge,
+   723					 &dpi->bridge, flags);
+   724	}
+   725	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
