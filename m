@@ -1,160 +1,91 @@
-Return-Path: <linux-kernel+bounces-209927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1A5903D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:21:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECD6903D04
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40F61F243FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:21:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E121F23F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFEE17CA1C;
-	Tue, 11 Jun 2024 13:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD21F17CA06;
+	Tue, 11 Jun 2024 13:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DxvdD84i"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hX++gOoL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123C11E49E;
-	Tue, 11 Jun 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D55417C7D7;
+	Tue, 11 Jun 2024 13:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112083; cv=none; b=RYN1FUhQAMG2/S2vTbxfEgyrw4kqUFf3U/vsIreIvolJ2tfWFU4i/imCq5aP7+n11ZGAqIat5DdCXLdSrcLBRMKG5HxqBvgzpnyyg71GfDmIy/LRWxftQLbl/vBZNXWwt1TtMyvijD6uz2P6jhhM1fDfhkAHIODP8WuviSOo9Fk=
+	t=1718112083; cv=none; b=jWTGmawK4pfzR+DdT9l/o9kvyJUgpY8SN9sc1BJ7Vdd8hDuxUHXtaXXR4UZJukHWQyOrknuWGvmG8x6wwMYXyAucF7yduid1IR/5E06d191D5/99ECm4gIhnbQTBAY9CzA5OdiB2cfN88ZbFrTsUoYroKdN+JQPVNbwBvEHS46M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718112083; c=relaxed/simple;
-	bh=X1hSkvk6h7lhP8sMpTcZZ7DbBkJ7/im+J+Og9GUrz9g=;
+	bh=yBk1izK7yPb+2BLQn/5bpktLFQpC0tjKDfxcjcrOTNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9bFYjaA7buVFWnsQ5CsIgzgxIPZ0EO2eMJNTD/vv3orkNUENsOYQn88Y+e8pYWBOKinp9GmmCmUXt/aKW3EBBLN/oTITsPIgtOrRsOj1FOChAlDygDMkcrI3eZAPp0ve64OY/NTSdvV4XXB5V6zueskLEAOOOc1ZF9+pfprUU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DxvdD84i; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8AC4A40E0176;
-	Tue, 11 Jun 2024 13:21:18 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NZ1hmuE9M5Y4; Tue, 11 Jun 2024 13:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718112075; bh=zQ+BxX3PrQzzODbCatHqH6d2NIV0kiBDQVnXJqq7btA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DxvdD84iZ7vkwy/GvG5iLU+PF24hOVegUPStZg5nj4tulE2nolmF/5l+Jg23Mzrb5
-	 pKSKtGl5mNzmXW1VQxPq15vrql+olUD1H1M8KhNjltUoUp093Y51ig1IBgtN1lfQQE
-	 xLNjFs9Ayl547gAgAmk3p4p3ULlBgfCy/PL7V6laE062RfDkQUVAUh7atsd1BU9eIM
-	 730R8GrY2PFFPqH7xxlFzcYqyg9un7lXmf2Gg9De99JYcLejzt4X3csmYu0PVv5Ut1
-	 A+av9GKUlgUvANRvbIXCvc6XsByLhpEzigdXdK2Xzr79YOROzgrddx2Fm/M77dmn5V
-	 y4TulMB4/iPnm6hleHLUjlCBWVyF22p0OLnqEndmuOCuNo0lUeonGK5q6opIl3pw7A
-	 JojicZc0dVrVqCqlUzVfaHkwqeGbKoziUkrayZYt1KvJgfX/iu+SiYqlaCVtgBspM+
-	 cnncKbWju/zrnotRrZeTlL7NSFiIe12cNXefqF2X7x9abige97bg82tL5ButTOPnVW
-	 icFgxAZ2/thJHuzTCeE4wQc56T6eiP0f0zzK2bLMsXfs1LB5YeWcxzcSPUhpiMW+1O
-	 D1jGWI6Tsi5Mxx3JtspmXlpKIPNGE9C87SeRbd43WLotmSDQ+x7LD9nn+F5jSWVEn/
-	 4lt9FT9kKutm2+i6Gv+afIsc=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4E66540E0031;
-	Tue, 11 Jun 2024 13:21:05 +0000 (UTC)
-Date: Tue, 11 Jun 2024 15:21:04 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Peter Anvin <hpa@zytor.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-Message-ID: <20240611132104.GDZmhPQNZm3vOBRA32@fat_crate.local>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net>
- <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
- <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ughbzw0zUjtimTbGN6wbWwoeshgNk11vcEyGQVTqNuyXRBNvXgykzNGaF+3ytzDAp2iCJ5JoalT1vJlfoe0lqF/q43gmYrGGKJP0lTig11jXnL5OkfMTCbSnxmxfIhEdC1Smmk0zaqiz/yVjbgiMwSQ6f8ZyBETEVNF9DTlYMlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hX++gOoL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=+V9OrxfREx1kEorG7byrGojydV3IAsYO8seACV3xijQ=; b=hX
+	++gOoLYyBwkJbyP4qyqh6HbF3FaCGVTobhWZB2jsGS5h8TeWiDY4fZI8C8jDMdYmgyDSj8UtlIwPN
+	GPf9JZ+5CY1GbvzRw1MPj9sTYPsgAu2UHLidh79Q8enULgT44fs1Emr0coU6HRJzypmnVNNKYJEk+
+	IBETdPzE+xCgvvI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sH1Qv-00HODM-Gr; Tue, 11 Jun 2024 15:21:05 +0200
+Date: Tue, 11 Jun 2024 15:21:05 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Message-ID: <243d5e27-522d-408d-a551-d11073cf330b@lunn.ch>
+References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
 
-/me saves a pointer to that mail to show to eager submitters who will
-want to jump on this new thing.
-
-On Mon, Jun 10, 2024 at 11:20:21AM -0700, Linus Torvalds wrote:
-> So for example, if the code could possibly be a module, it's never
-> going to be able to use runtime constants.
-
-Perfectly fine with that.
-
-> If the code doesn't show up as "noticeable percentage of kernel time
-> on real loads", it will not be a valid use for runtime constants.
+On Tue, Jun 11, 2024 at 05:34:14PM +1200, Chris Packham wrote:
+> The Realtek RTL8224 PHY is a 2.5Gbps capable PHY. It only uses the
+> clause 45 MDIO interface and can leverage the support that has already
+> been added for the other 822x PHYs.
 > 
-> The reason I did __d_lookup_rcu() is that I have optimized that
-> function to hell and back before, and it *still* showed up at 14% of
-> kernel time on my "empty kernel build" benchmark. And the constant
-> load was a noticeable - but not dominant - part of that.
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-I have seen mails from you, off and on, about __d_lookup_rcu() :-P
+You probably should Cc: Eric Woudstra and Marek Behún who have both
+worked on 2.5G variants of this PHY.
 
-> And yes, it shows up that high because it's all D$ misses, and the
-> machine I tested on has more CPU cores than cache, so it's all kinds
-> of broken. But the point ends up being that __d_lookup_rcu() is just
-> very very hot on loads that just do a lot of 'stat()' calls (and such
-> loads exist and aren't just microbenchmarks).
+> Notes:
+>     I'm currently testing this on an older kernel because the board I'm
+>     using has a SOC/DSA switch that has a driver in openwrt for Linux 5.15.
+>     I have tried to selectively back port the bits I need from the other
+>     rtl822x work so this should be all that is required for the rtl8224.
+>     
+>     There's quite a lot that would need forward porting get a working system
+>     against a current kernel so hopefully this is small enough that it can
+>     land while I'm trying to figure out how to untangle all the other bits.
+     
+I don't see this as being a problem. It should not be possible to
+cause regressions by adding a new device like this. If it turns out to
+be broken, you can fix it up later.
 
-Yap.
-
-> And yes, the benchmarks I run are odd ("why would anybody care about
-> an empty kernel build?") but somewhat real to me (since I do builds
-> between every pull even when they just change a couple of files).
-
-You're not the only one - I'm building every patch too so yeah, got
-a nice Threadripper for exactly that purpose too.
-
-:-)
- 
-> And yes, to actually even see anything else than the CPU security
-> issues on x86, you need to build without debug support, and without
-> retpolines etc. So my profiles are "fake" in that sense, because they
-> are the best case profiles without a lot of the horror that people
-> enable.
-
-Right, I run with the default settings because, well, we must eat our
-own dogfood but yeah, all that zoo of config options to disable the
-mitigations wasn't added just for fun so others will run similar
-situtaions too, if they don't do that already.
-
-> Others will have other real benchmarks, which is why I do think we'd
-> end up with more uses of this. But I would expect a handful, not
-> "hundreds".
-
-That's a good rule. In talking to Peter I also didn't like the thing of
-having a single ELF section per variable but if we're doing handful,
-meh, ok, I guess.
-
-> I could imagine some runtime constant in the core networking socket
-> code, for example. Or in some scheduler thing. Or kernel entry code.
-> 
-> But not ever in a driver or a filesystem, for example. Once you've
-> gotten that far off the core code path, the "load a variable" overhead
-> just isn't relevant any more.
-
-Yeah, that makes sense.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+	Andrew
 
