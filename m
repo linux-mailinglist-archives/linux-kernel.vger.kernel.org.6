@@ -1,297 +1,277 @@
-Return-Path: <linux-kernel+bounces-209833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC21903B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:09:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB727903B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BE71F220E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16981C21022
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EB817B513;
-	Tue, 11 Jun 2024 12:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F917B43A;
+	Tue, 11 Jun 2024 12:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KxzrBYb+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="daVGzh2X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289601514FA;
-	Tue, 11 Jun 2024 12:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8C1514FA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107744; cv=none; b=MLPE4q2wq1hclfk3/DmfJfIcQAm4o6W+NN2DkSgGE9VyLW+QxatBp+iNWanFyMhq4YFJKCBLTfFXwZawxA560mmv0d8+wt1bVfGLYs/6O+j1HBXKCYDgUg6xUOmC26fdpKnGt6b98R8d/dEU2rR11lrpSg5uZG69UjXJvULa4o0=
+	t=1718107790; cv=none; b=WqjYNwHrj2j+ByWarWxL71ZIbd9JhRjfaS269ScLVwLDqkxJjaEdlgqEGpDM5yloeCPoCgsIc0mtB2jjYQRPAhPphmLw2YVV86+DJpCwDy+vD7037VxNRQGkliN67FBzCbmYH3oSsqp6sktISOITosycQnMThX3Ofcsy6JqNItY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107744; c=relaxed/simple;
-	bh=aqK6Fi295dHCGyuBaNjPGpuf7wIvc21g+dvbBTz0jfM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iNXAphFqPVFijuG77R1ZODGEOYvfnmRaXl9BIm7xD0sLLM/jbsgL//KN3LHpwRtb8uG7O6EswezpiXJ7CWGwmPngM5CGTnlCTsEor8SP9UYCotpr12SlCbVE4CJakW7kuBxKmWoQ8GMb76Dzq0v1i2vhDP4Z39+7lUFVmioHXmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KxzrBYb+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9LBWm025014;
-	Tue, 11 Jun 2024 12:09:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	5BnPLicy5/fJrEdpbUTwJx1r8VHrffPcyWPfBtU5DlA=; b=KxzrBYb+97KI5fNq
-	MvGLpYV3/jwhoM2Y+rNftInCAQ071zd4LzLoHLOzNGU6Fmt/stzKgUUYYB50zKZf
-	+vGEUStIP9NrjAuA47tH/a2CkBUyrmIjaxMKKH3woWAdjymIw4g49iSp49LQz1fT
-	P35uNXMcE1TPc9gFMTDbGO044zrNk5OG/BPfgXDyR+W4jb6NqETKkeypVU/jRoO9
-	Mm0TqKDcGL1vakV92ckJ1oML/njCwX/+RVeZRh6l42FWsbqgUTy5PtLe8qHD/VKT
-	8wVIF0gNYTuWJi8vuNBdUv4ByKNbfVPMEP8OJR9VMqLLDIEnkUtanDXT+NERlxYm
-	IVf+Dw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3b0jwr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 12:09:00 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45BC90GD031796;
-	Tue, 11 Jun 2024 12:09:00 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3b0jwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 12:09:00 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45BAPY6F027234;
-	Tue, 11 Jun 2024 12:08:59 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn210nsuy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 12:08:59 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45BC8uFo50004308
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Jun 2024 12:08:58 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 262CF58053;
-	Tue, 11 Jun 2024 12:08:56 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 70F2258043;
-	Tue, 11 Jun 2024 12:08:53 +0000 (GMT)
-Received: from [9.179.8.185] (unknown [9.179.8.185])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Jun 2024 12:08:53 +0000 (GMT)
-Message-ID: <30ecb17b7a3414aeb605c51f003582c7f2cf6444.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 1/3] s390/pci: Fix s390_mmio_read/write syscall page
- fault handling
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alex
- Williamson <alex.williamson@redhat.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Date: Tue, 11 Jun 2024 14:08:52 +0200
-In-Reply-To: <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
-References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
-	 <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
-	 <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718107790; c=relaxed/simple;
+	bh=Fmj/YOWTSMFHwU7j24IKGucONI4pINEytIPbR8Ec6+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bAsMEt/1f7nAoiS7S1GKJJL48bGHwYElqVciqL0CSBcl2ZOuF0NCuypM045hi5Xz1vt5sXvHtOiJNYHoeoBjV0LwqiU/EfA9F+iv56wHOu4fJz38hbEuv80+79ZeHL2exUxEJbvgZnnOXcdTMQIQN1d7dBD0tCgeY4nfm7xVXuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=daVGzh2X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718107788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vu6fB9nQxA+WK1S3cTisMgEgS5rTartqGvhGL5jyBiU=;
+	b=daVGzh2XiPgdL+Vya83twpnKazaLJ3zANQWb/4YhJg2H3eVrrhZCTWEHw6w6DogkN5y7sh
+	nTv0ByYNhQv8F9+8o3ieckP4fzHR5HfsMDvd8VhLhjY3FW4etm9TzhyqKPuNRkGLgZGQOW
+	DJkp8ytHbRAPkvqo7TVEk15nDQW0exg=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-YkTUV_EpNZmReFdJ10pKvw-1; Tue, 11 Jun 2024 08:09:46 -0400
+X-MC-Unique: YkTUV_EpNZmReFdJ10pKvw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a6f1db7e425so55409966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 05:09:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718107785; x=1718712585;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Vu6fB9nQxA+WK1S3cTisMgEgS5rTartqGvhGL5jyBiU=;
+        b=pOQLI0SbaINqO1G6ETvMw/5EUC0jxT+Xq6JqS0iQ1W54t97MI/bk9dCELXiuDCr5YW
+         9PbjzJOBFCMmAhahAylGIr9E5Us8eeMQk3Zr93lc54ktgmGyUjhY47XUmxa45HRqCWcW
+         9dWu0IKYlCndomTrNnw4kWTGmvCaRyUUuM74jUJfS964Iyi0Y0R+6DWEa18Ckg66ip05
+         yROXrZOVXnlheEmx6ZrRejYuuGntDafIKf426dLzP4E6Mk5iBxILzgNBeMTpI8EivXZC
+         jYsMn3QHaLi155SOERTQ60yIW4IEae/p4/Co+EbfvPfTJGDmlWVv3Lni8PAcIpc47uvP
+         ezCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlJYMOu+Ln4pUE9iV5jbG9Q8ibsuNYQJQG2gWIPh7dUeZR0CU1FUUFFK5xL50x+mK+mV/m0dS9li4LE+c+SL7A5QwxJ8Wc/H2Xbzjk
+X-Gm-Message-State: AOJu0Yx3jUHvczu5u2IFSrHP8e9wEjoskms04A40kqQvVmdq7MgmBwaV
+	5lSTTzNdO1ql+gajwuViuLIvJeenGv8CLYIqUyCqkdtxDY+ky42Mgd8111Ysr+DISB+Pm3owppY
+	aqjQePNaEZ8jgzObokQ8oTLiOBWgv8lgfITo62DMou3lZEn7/M7y2NkNdpyvo9w==
+X-Received: by 2002:a17:906:6553:b0:a68:ccbd:bcf0 with SMTP id a640c23a62f3a-a6cd637e1cfmr880823666b.28.1718107785645;
+        Tue, 11 Jun 2024 05:09:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiwWYnrEQez7Mtk5n8dax5YTOgHEdu609qCHFIE5G0+ddnXj8V2UhqfAb+NpGdXl4fTThcvw==
+X-Received: by 2002:a17:906:6553:b0:a68:ccbd:bcf0 with SMTP id a640c23a62f3a-a6cd637e1cfmr880821966b.28.1718107785120;
+        Tue, 11 Jun 2024 05:09:45 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1bcbc31bsm8021967f8f.44.2024.06.11.05.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 05:09:44 -0700 (PDT)
+Message-ID: <3ce90ee2-f51b-49fc-b010-f97e61e617f4@redhat.com>
+Date: Tue, 11 Jun 2024 14:09:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bOUCD0TBTE44-5gEaTVDd7I0XH2cmHoB
-X-Proofpoint-GUID: ny3ZuMfMfSDNMZTHWFfE6TyWDUCsMfPE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 mlxlogscore=975 spamscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406110089
+User-Agent: Mozilla Thunderbird
+Subject: Re: LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline
+ 6.10.rc3
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <baohua@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
+ <e8c10a52-61f9-4b46-bc50-e2c267b1aa56@redhat.com>
+ <80a05784-21dd-4f20-b441-1e2a2be0e0ff@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <80a05784-21dd-4f20-b441-1e2a2be0e0ff@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-06-11 at 13:21 +0200, Niklas Schnelle wrote:
-> On Wed, 2024-05-29 at 13:36 +0200, Niklas Schnelle wrote:
-> > The s390 MMIO syscalls when using the classic PCI instructions do not
-> > cause a page fault when follow_pte() fails due to the page not being
-> > present. Besides being a general deficiency this breaks vfio-pci's mmap=
-()
-> > handling once VFIO_PCI_MMAP gets enabled as this lazily maps on first
-> > access. Fix this by following a failed follow_pte() with
-> > fixup_user_page() and retrying the follow_pte().
-> >=20
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > ---
-> >  arch/s390/pci/pci_mmio.c | 18 +++++++++++++-----
-> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
-> > index 5398729bfe1b..80c21b1a101c 100644
-> > --- a/arch/s390/pci/pci_mmio.c
-> > +++ b/arch/s390/pci/pci_mmio.c
-> > @@ -170,8 +170,12 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long=
-, mmio_addr,
-> >  		goto out_unlock_mmap;
-> > =20
-> >  	ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
-> > -	if (ret)
-> > -		goto out_unlock_mmap;
-> > +	if (ret) {
-> > +		fixup_user_fault(current->mm, mmio_addr, FAULT_FLAG_WRITE, NULL);
-> > +		ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
-> > +		if (ret)
-> > +			goto out_unlock_mmap;
-> > +	}
-> > =20
-> >  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
-> >  			(mmio_addr & ~PAGE_MASK));
-> > @@ -305,12 +309,16 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long=
-, mmio_addr,
-> >  	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> >  		goto out_unlock_mmap;
-> >  	ret =3D -EACCES;
-> > -	if (!(vma->vm_flags & VM_WRITE))
-> > +	if (!(vma->vm_flags & VM_READ))
-> >  		goto out_unlock_mmap;
-> > =20
-> >  	ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
-> > -	if (ret)
-> > -		goto out_unlock_mmap;
-> > +	if (ret) {
-> > +		fixup_user_fault(current->mm, mmio_addr, 0, NULL);
-> > +		ret =3D follow_pte(vma, mmio_addr, &ptep, &ptl);
-> > +		if (ret)
-> > +			goto out_unlock_mmap;
-> > +	}
-> > =20
-> >  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
-> >  			(mmio_addr & ~PAGE_MASK));
-> >=20
->=20
-> Ughh, I think I just stumbled over a problem with this. This is a
-> failing lock held assertion via __is_vma_write_locked() in
-> remap_pfn_range_notrack() but I'm not sure yet what exactly causes this
->=20
-> [   67.338855] ------------[ cut here ]------------
-> [   67.338865] WARNING: CPU: 15 PID: 2056 at include/linux/rwsem.h:85 rem=
-ap_pfn_range_notrack+0x596/0x5b0
-> [   67.338874] Modules linked in: <--- 8< --->
-> [   67.338931] CPU: 15 PID: 2056 Comm: vfio-test Not tainted 6.10.0-rc1-p=
-ci-pfault-00004-g193e3a513cee #5
-> [   67.338934] Hardware name: IBM 3931 A01 701 (LPAR)
-> [   67.338935] Krnl PSW : 0704c00180000000 000003e54c9730ea (remap_pfn_ra=
-nge_notrack+0x59a/0x5b0)
-> [   67.338940]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 P=
-M:0 RI:0 EA:3
-> [   67.338944] Krnl GPRS: 0000000000000100 000003655915fb78 000002d80b9a5=
-928 000003ff7fa00000
-> [   67.338946]            0004008000000000 0000000000004000 0000000000000=
-711 000003ff7fa04000
-> [   67.338948]            000002d80c533f00 000002d800000100 000002d81bbe6=
-c28 000002d80b9a5928
-> [   67.338950]            000003ff7fa00000 000002d80c533f00 000003e54c973=
-120 000003655915fab0
-> [   67.338956] Krnl Code: 000003e54c9730de: a708ffea            lhi     %=
-r0,-22
->                           000003e54c9730e2: a7f4fff6            brc     1=
-5,000003e54c9730ce
->                          #000003e54c9730e6: af000000            mc      0=
-,0
->                          >000003e54c9730ea: a7f4fd6e            brc     1=
-5,000003e54c972bc6
->                           000003e54c9730ee: af000000            mc      0=
-,0
->                           000003e54c9730f2: af000000            mc      0=
-,0
->                           000003e54c9730f6: 0707                bcr     0=
-,%r7
->                           000003e54c9730f8: 0707                bcr     0=
-,%r7
-> [   67.339025] Call Trace:
-> [   67.339027]  [<000003e54c9730ea>] remap_pfn_range_notrack+0x59a/0x5b0
-> [   67.339032]  [<000003e54c973120>] remap_pfn_range+0x20/0x30
-> [   67.339035]  [<000003e4cce5396c>] vfio_pci_mmap_fault+0xec/0x1d0 [vfio=
-_pci_core]
-> [   67.339043]  [<000003e54c977240>] handle_mm_fault+0x6b0/0x25a0
-> [   67.339046]  [<000003e54c966328>] fixup_user_fault+0x138/0x310
-> [   67.339048]  [<000003e54c63a91c>] __s390x_sys_s390_pci_mmio_read+0x28c=
-/0x3a0
-> [   67.339051]  [<000003e54c5e200a>] do_syscall+0xea/0x120
-> [   67.339055]  [<000003e54d5f9954>] __do_syscall+0x94/0x140
-> [   67.339059]  [<000003e54d611020>] system_call+0x70/0xa0
-> [   67.339063] Last Breaking-Event-Address:
-> [   67.339065]  [<000003e54c972bc2>] remap_pfn_range_notrack+0x72/0x5b0
-> [   67.339067] ---[ end trace 0000000000000000 ]---
->=20
+On 11.06.24 13:39, Baolin Wang wrote:
+> 
+> 
+> On 2024/6/11 18:32, David Hildenbrand wrote:
+>> On 11.06.24 12:14, Naresh Kamboju wrote:
+>>> The kernel panic was noticed while running LTP syscalls fork13 (long
+>>> running) on
+>>> the mainline master 6.10.rc3 kernel on arm64 rk3399-rock-pi-4 device.
+>>>
+>>> Please find detailed logs in the links,
+>>>
+>>> As you know fork13 is a stress test case trying to generate a maximum
+>>> number
+>>> of PID's in a 100,000 loop.
+>>>
+>>> This device is running via NFS mounted filesystem.
+>>>
+>>> I have tried to reproduce this problem in a loop but failed to
+>>> reproduce the
+>>> crash.
+>>>
+>>>
+>>> Crash flow:
+>>> ------
+>>> fork13 run started
+>>> BUG: Bad page map in process fork13
+>>> BUG: Bad rss-counter state mm:
+>>> Unable to handle kernel paging request at virtual address
+>>> Internal error: Oops: 0000000096000046
+>>> run for 800 secs ( 13 minutes) and more.
+>>> fork14 run started and completed
+>>>
+>>> fpathconf01 run started and completed
+>>> sugov:
+>>>
+>>> Unable to handle kernel NULL pointer dereference at virtual address
+>>>
+>>> Insufficient stack space to handle exception!
+>>> end Kernel panic - not syncing: kernel stack overflow
+>>>
+>>> I have tried to decode stack dump by not being useful [1].
+>>> [1] https://people.linaro.org/~naresh.kamboju/output-rk3399.txt
+>>>
+>>> Test log :
+>>> --------
+>>> tst_test.c:1733: TINFO: LTP version: 20240524
+>>> tst_test.c:1617: TINFO: Timeout per run is 0h 15m 00s
+>>> [  904.280569] BUG: Bad page map in process fork13  pte:2000000019ffc3
+>>> pmd:80000000df55003
+>>> [  904.281397] page: refcount:1 mapcount:-1 mapping:0000000000000000
+>>> index:0x0 pfn:0x19f
+>>
+>> Mapcount underflow on a small folio (head: not printed).
+>>
+>> [...]
+>>
+>>> [  904.294564] BUG: Bad page map in process fork13  pte:200000002e4fc3
+>>> pmd:80000000df55003
+>>> [  904.295275] page: refcount:2 mapcount:-1 mapping:000000007885152f
+>>> index:0x6 pfn:0x2e4
+>>
+>> Another mapcount underflow on a small folio (head: not printed).
+>>
+>>
+>>> [  904.309309] BUG: Bad page map in process fork13  pte:20000000cc6fc3
+>>> pmd:80000000df55003
+>>> [  904.310031] page: refcount:1 mapcount:-1 mapping:0000000000000000
+>>> index:0x6 pfn:0xcc6
+>>> [  904.310728] head: order:3 mapcount:-1 entire_mapcount:0
+>>> nr_pages_mapped:8388607 pincount:0
+>>
+>> Mapcount underflow on a large folio.
+>>
+>> ...
+>>
+>>> [  904.326666] BUG: Bad page map in process fork13  pte:20000000268fc3
+>>> pmd:80000000df55003
+>>> [  904.327390] page: refcount:1 mapcount:-1 mapping:00000000f0624181
+>>> index:0x1b pfn:0x268
+>>
+>> Another mapcount underflow on a small folio (head: not printed).
+>>
+>>> [  904.328094] memcg:ffff0000016b4000
+>>> [  904.328401] aops:nfs_file_aops ino:8526e6 dentry
+>>> name:"libgpg-error.so.0.36.0"
+>>> [  904.329051] flags:
+>>> 0x3fffe000000002c(referenced|uptodate|lru|node=0|zone=0|lastcpupid=0x1ffff)
+>>> [  904.329878] raw: 03fffe000000002c fffffdffc0009a48 fffffdffc022f3c8
+>>> ffff00000688bd60
+>>> [  904.330561] raw: 000000000000001b 0000000000000000 00000001fffffffe
+>>> ffff0000016b4000
+>>> [  904.331240] page dumped because: bad pte
+>>> [  904.331590] addr:0000aaaad9afe000 vm_flags:00000075
+>>> anon_vma:0000000000000000 mapping:ffff0000300d4188 index:2e
+>>> [  904.332476] file:fork13 fault:filemap_fault mmap:nfs_file_mmap
+>>> read_folio:nfs_read_folio
+>>> [  904.333245] CPU: 5 PID: 22685 Comm: fork13 Tainted: G    B
+>>
+>>
+>> Are these maybe side-effects due to
+>>
+>> https://lkml.kernel.org/r/20240607103241.1298388-1-wangkefeng.wang@huawei.com
+> 
+> IIUC, the rk3399-rock-pi-4b device has no NUMA nodes (6 arm64 cores), so
+> I don't think the numa balancing will cause this issue.
+> 
+> Anyway, I will run fork13 test case on my arm64 server to try.
 
-This has me a bit confused so far as __is_vma_write_locked() checks
-mmap_assert_write_locked(vma->vm_mm) but most other users of
-fixup_user_fault() hold mmap_read_lock() just like this code and
-clearly in the non page fault case we only need the read lock.
+I have the faint recollection that we can (or at least could in the 
+past) end up in do_numa_page() also without NUMA hinting.
+
+I documented in 51d3d5eb74ff53b92dcff48b30ae2ed8edd85a32:
+
+"
+Note that do_numa_page() / do_huge_pmd_numa_page() can be reached even
+without NUMA hinting (which currently doesn't seem to be applicable to
+shmem), for example, by using uffd-wp with a PROT_WRITE shmem VMA.
+"
+
+But I don't remember all of the details, though.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
