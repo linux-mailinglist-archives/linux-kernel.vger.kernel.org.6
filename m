@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-209880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFE2903C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:52:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16899903C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A93C282D14
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B8B1F23BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA8E17C23A;
-	Tue, 11 Jun 2024 12:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5649A17C236;
+	Tue, 11 Jun 2024 12:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sF/FWSJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="dCoHoGKq"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1F21E86F;
-	Tue, 11 Jun 2024 12:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2431E86F;
+	Tue, 11 Jun 2024 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718110320; cv=none; b=opsmv9KuxOrM/oS15E9pnOZgCK+79CvOqtngFDnBIt15uRlnT9hAofUddA8W/9KcxD+M5CSyFb3lwufuBW7GqAZ91kgI2uYuzgPeg6XuV6L8+1vdouj7HanQxn4rvyBs9zA7iBRJxmcmC2IumsOd/clkvGI7fWjw7vOk4BL9Vds=
+	t=1718110382; cv=none; b=aCzMoJr3O8K4lhCNNVVSpJLQWg9ozr2+TJerXGgoCiU0Tzv7huTBERk1SC7iXcpb+/VnSX32aCaSNOj4av09JWgLaRBalK++cgC2DgrjD6iiATPUgD4L3i+Z1Ex0F8Hd47ii54idHJWsT39RX93nlB8vUArRo4sTWON0GUe6mY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718110320; c=relaxed/simple;
-	bh=XHrBjFoYko9UAaT8tZQIEHqbp8GqsjyvWzgXJ7PXR9A=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=NbSh2rUwOvmTkAgm2TjwfD398G/hqkTauvhqAcDZ58LuXRt9uJNf3P/jqRLx2ZRFHDPY3oURdtOgdTepcyl5A3GR0zhMIXBbUhHP+GiQaepJ4Vu6VT4HVfbVfMS1cLnqFQSG7PE1Rx3nC/vBdw2POGMylXE4AnHc87d3HxQNZNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sF/FWSJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF92C2BD10;
-	Tue, 11 Jun 2024 12:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718110320;
-	bh=XHrBjFoYko9UAaT8tZQIEHqbp8GqsjyvWzgXJ7PXR9A=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=sF/FWSJt7xAsi3jeJ/VE2Ukk92VC6RullSODoTuBbUkl1C+s2zfTxNu7Q/dScW71T
-	 NJSCBEI4AGTfnyghHf4GbIcJbosHjf2DITOoptwqYu5/1ZRxlXOitjezy8i3XO9r8H
-	 MWjFaDsX9lMIYpLneCjK2cigaF+gMv9UPZLWFxz7lcjQkutWCkey81ohHTWtTsO1zQ
-	 z72ND1wmpJjbMxMq7PVA1qSlQ7FPGXyvqXVfSQymWowEHgDkpyGNLaYMbINwzQ7FMh
-	 SMWkOP9J1F6MwmK9speF2EaONVch8oOWOBTBGmBoh03Q4LHOUzuYk3NgR5qukr1feo
-	 8T6F4wZCW0itw==
-Date: Tue, 11 Jun 2024 06:51:58 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1718110382; c=relaxed/simple;
+	bh=8k4aFEn9epFLsv4dAaMi9hR0KShNd2EEmHko2bR3L6M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ti534gIlFaASTenXkR0YXxS5cw3HjbMaqfHLcrdI3s/2twIt910C87J7ZoyEdpeQzs9/AZ3smGdmMOXv8rKF9EymryKI8GpmrlZB9dzSuWGbnJ4j5zHN5MxFDcql1NyKsc+nFIRWFlDsL5vgnUB1JJad8RObZaooz7+q3cfZacU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=dCoHoGKq; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=5H77y2Cip2lYrbGUhjSBMLsUT+K5goNmlMChYCYRyG4=;
+	t=1718110380; x=1719319980; b=dCoHoGKqyZ/o6poBfcAQEwbMULV8cHclXvW2uJwQ2ngfUe+
+	aUR0WmizEnlPudv3+YdnvaPsz5BdJh/R+uJxVly7InyXHT0myiKcM5I4Uw+IAhwHbCMYO0z/LDWTa
+	FPBlREhRwpfYZL4Wy+lafzEq0mOIyZeWXsDQrRj0bL8qBfxR3nLpqqwcCs82z7JvDbKXPwaR+Yqxq
+	4YMfd7nWI0d+/54kaQjo6FuWYS6sh3hYpX/hDVxhQIM52yAYff+KepcTpDMYrCEUhnUgm50MGvKjh
+	VfpNWcn9fnlYm8r89ttyZEiCLJwe6MWSyastVuNNhGMvX+5Fl+MQl38PfGt2EU+g==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sH0zh-00000008cuV-2mpS;
+	Tue, 11 Jun 2024 14:52:57 +0200
+Message-ID: <3fbb5317d9ff33ef1b60ca8297537335ce86a79d.camel@sipsolutions.net>
+Subject: Re: iwlwifi: Regression after migrating to 6.6.32
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Fabio Estevam <festevam@gmail.com>, miriam.rachel.korenblit@intel.com, 
+	kvalo@kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>, linux-wireless
+ <linux-wireless@vger.kernel.org>, linux-kernel
+ <linux-kernel@vger.kernel.org>
+Date: Tue, 11 Jun 2024 14:52:56 +0200
+In-Reply-To: <CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
+References: 
+	<CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: hauke@hauke-m.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
- linux-kernel@vger.kernel.org, edumazet@google.com, andrew@lunn.ch, 
- davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
- netdev@vger.kernel.org, f.fainelli@gmail.com, devicetree@vger.kernel.org, 
- olteanv@gmail.com, martin.blumenstingl@googlemail.com
-In-Reply-To: <20240611114027.3136405-2-ms@dev.tdt.de>
-References: <20240611114027.3136405-1-ms@dev.tdt.de>
- <20240611114027.3136405-2-ms@dev.tdt.de>
-Message-Id: <171811031870.1486987.3222041734647742398.robh@kernel.org>
-Subject: Re: [PATCH net-next v4 01/13] dt-bindings: net: dsa: lantiq,gswip:
- convert to YAML schema
+X-malware-bazaar: not-scanned
 
+On Tue, 2024-06-11 at 08:46 -0300, Fabio Estevam wrote:
+>=20
+> [    6.995391] ------------[ cut here ]------------
+> [    7.373564] WARNING: CPU: 3 PID: 136 at
+> /drivers/net/wireless/intel/iwlwifi/pcie/rx.c:269
+> iwl_pcie_rxmq_restock+0x158/0x178 [iwlwifi]
+>=20
 
-On Tue, 11 Jun 2024 13:40:15 +0200, Martin Schiller wrote:
-> Convert the lantiq,gswip bindings to YAML format.
-> 
-> Also add this new file to the MAINTAINERS file.
-> 
-> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-> ---
->  .../bindings/net/dsa/lantiq,gswip.yaml        | 195 ++++++++++++++++++
->  .../bindings/net/dsa/lantiq-gswip.txt         | 146 -------------
->  MAINTAINERS                                   |   1 +
->  3 files changed, 196 insertions(+), 146 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
->  delete mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq-gswip.txt
-> 
+This warning happens if DMA mapping/allocation returns a page that's not
+page-aligned??
 
-My bot found errors running 'make dt_binding_check' on your patch:
+                rxb->page_dma =3D
+                        dma_map_page(trans->dev, page, rxb->offset,
+                                     trans_pcie->rx_buf_bytes,
+                                     DMA_FROM_DEVICE);
 
-yamllint warnings/errors:
+(or similar places), where rxb->offset will always be 0 unless
+rx_buf_bytes is set to 2048, but that can only happen if the amsdu_size
+module parameter is set to 4 (=3D2k) but that's not even supported any
+more?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: ports:port@6: 'phy-mode' is a required property
-	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: ports:port@6: 'oneOf' conditional failed, one must be fixed:
-	'fixed-link' is a required property
-	'phy-handle' is a required property
-	'managed' is a required property
-	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: Unevaluated properties are not allowed ('dsa,member', 'ports' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
+Maybe make this WARN_ONCE(...) with a string that has more info on the
+addresses.
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240611114027.3136405-2-ms@dev.tdt.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+johannes
 
