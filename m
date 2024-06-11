@@ -1,103 +1,189 @@
-Return-Path: <linux-kernel+bounces-210328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4824B90425F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:26:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3211B904262
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39941F24A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:26:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D029B21DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202C94D131;
-	Tue, 11 Jun 2024 17:26:18 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 808BE376E9
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0241C4CDF9;
+	Tue, 11 Jun 2024 17:27:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FEA14A96;
+	Tue, 11 Jun 2024 17:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126777; cv=none; b=rhvEyNJlb4LrIm3b34Ypcgy9lpWzYGSgmuinTDfuWLELjn6A7VM63cZbYOcjySGLFHlnSil+mslVozga0srCGoDo/Dxo5ymxnzPn4wPswRbktEjVpV8i3/wxs4sn6/oKNh/lUaI/em235NcNVL2vqt5Fh6esE7ZpMKB69AdU5zk=
+	t=1718126819; cv=none; b=Mm11oOuZIk4ivHcsc4G6iGvzdeKtHxAOo+IARCtG37cRpQMhuWfRbirJ0YkZIx1PP/k7LbV5LpMDMwT8YgYg7i870ZLrIFFzjYkVj+uXngw/A/IAfi7BbnM2En0a3pb19GZ0+O2v5mPEHzUQG1RCEbl8DxOqzg+wShKhCE0uWCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126777; c=relaxed/simple;
-	bh=Bm1Z5h2HDtU+JljYzebjngJn8fDNKlnAEInmNdApScw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ly1VK4MNWH0BXimnIZNKY8z2pozmoCYGEdVPEM/ADo3qjq2kz5NpuiA8TFEPRcxF6n6NQqt5nq7Fe3u22WuB+ra1t2uEfVMY8HYgTMtUrhQO1rYKx+uJGS+5BLYnZ8xREJr+tcLnRZBiiq89WDCGt7DSKgRmhM6yblmRUPsjGLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 194347 invoked by uid 1000); 11 Jun 2024 13:26:09 -0400
-Date: Tue, 11 Jun 2024 13:26:09 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
-Message-ID: <684687e4-8be4-42ee-a125-8ef9acc3fec9@rowland.harvard.edu>
-References: <23b1962c-044d-4dbd-a705-58754f0914cb@rowland.harvard.edu>
- <000000000000c7e169061a9f42e8@google.com>
+	s=arc-20240116; t=1718126819; c=relaxed/simple;
+	bh=PQLwwDGRqqF55xd7XeWM0poiiX+qWfO3D3NvJaY17s4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8H1Ik2SGQrbBgZTaIf+s53Z6sN8yKvHiFF2tOEycfS8O54GNrgtDFTh9O1pFZOBaTPhwpHYCy9PBHDOGu+/OJ8LEFekvpeB6pdh/PXCM9sC3M1GGsjiEo+Lmv01VD5qZWk0vZfgpeGypVXsjQVnTt7wXwspv6EQ5EdZId2Ct50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFpZ4Fryz67lCJ;
+	Wed, 12 Jun 2024 01:21:58 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9BD291404FC;
+	Wed, 12 Jun 2024 01:26:53 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
+ 2024 18:26:53 +0100
+Date: Tue, 11 Jun 2024 18:26:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	=?ISO-8859-1?Q?Jo=E3o?= Paulo =?ISO-8859-1?Q?Gon=E7alv?= =?ISO-8859-1?Q?es?=
+	<jpaulo.silvagoncalves@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, =?ISO-8859-1?Q?Jo=E3o?= Paulo
+ =?ISO-8859-1?Q?Gon=E7alves?= <joao.goncalves@toradex.com>,
+	<linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>, Francesco
+ Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads1119: Add driver
+Message-ID: <20240611182652.00005816@Huawei.com>
+In-Reply-To: <20240610115909.GA27057@francesco-nb>
+References: <20240606163529.87528-1-francesco@dolcini.it>
+	<20240606163529.87528-3-francesco@dolcini.it>
+	<20240609115234.20e08840@jic23-huawei>
+	<20240610115909.GA27057@francesco-nb>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000c7e169061a9f42e8@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, Jun 11, 2024 at 08:53:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         8867bbd4 mm: arm64: Fix the out-of-bounds issue in con..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11bcfa36980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17790922980000
-> 
-> Note: testing is done by a robot and is best-effort only.
+On Mon, 10 Jun 2024 13:59:09 +0200
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-The interval between adjacent timer interrupts is consistently 20 ms.  
-Longer than expected, but it shouldn't be deadly.  Perhaps it would have 
-been smaller if I hadn't pinned all the interrupts to the same CPU.
+> Hello Jonathan,
+> thanks for the review.
+>=20
+> On Sun, Jun 09, 2024 at 11:52:34AM +0100, Jonathan Cameron wrote:
+> > On Thu,  6 Jun 2024 18:35:29 +0200
+> > Francesco Dolcini <francesco@dolcini.it> wrote:
+> >  =20
+> > > From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+> > >=20
+> > > The ADS1119 is a precision, 16-bit, analog-to-digital converter (ADC)
+> > > that features two differential or four single-ended inputs through a
+> > > flexible input multiplexer (MUX), rail-to-rail input
+> > > buffers, a programmable gain stage, a voltage reference, and an
+> > > oscillator.
+> > >=20
+> > > Apart from normal single conversion, the driver also supports
+> > > continuous conversion mode using a triggered buffer. However, in this
+> > > mode only one channel can be scanned at a time, and it only uses the =
+data
+> > > ready interrupt as a trigger. This is because the device channels are
+> > > multiplexed, and using its own data ready interrupt as a trigger guar=
+antees
+> > > the signal sampling frequency.
+> > >=20
+> > > Datasheet: https://www.ti.com/lit/gpn/ads1119
+> > > Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+> > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com> =20
+> >=20
+> > A few more comments inline. Some of these I missed in the first
+> > versions - sorry about that.  Takes a few passes to pick up
+> > on everything unfortunately.
+> >  =20
+> > > diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads111=
+9.c
+> > > new file mode 100644
+> > > index 000000000000..ea0573f07279
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/ti-ads1119.c
+> > > @@ -0,0 +1,850 @@ =20
+>=20
+> ...
+>=20
+> > > +
+> > > +static int ads1119_cmd(struct ads1119_state *st, unsigned int cmd)
+> > > +{
+> > > +	dev_dbg(&st->client->dev, "cmd: %#x\n", cmd);
+> > > +
+> > > +	return i2c_smbus_write_byte(st->client, cmd); =20
+> > I'm not a fan of tiny wrappers to add debug info.
+> > The i2c core has trace points that let you get to the relevant data. Be=
+tter
+> > to use those for debug and flatten this code so we
+> > see the actual bus accesses inline. =20
+>=20
+> Fine on removing the debug prints, we'll do.
+>=20
+> However ads1119_cmd_rdata() and ads1119_update_config_reg() wrappers are
+> making the error handling in the caller easier.
 
-Anyway, let's see what happens with the dev_err() calls in the interrupt 
-handler changed to dev_dbg().  That ought to reduce the overhead 
-considerably.
+for rdata() only 2 calls so not bad to add the error handling in those
+locations.
 
-Alan Stern
+The update one is more justifiable given the read modify write and that
+it is reasonably common.  So perhaps just keep that one, but it is
+odd that your cmd_wreg() hard codes the address and cmd_rreg() doesn't.
+If keeping the update function I would pass in the register address.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 8867bbd4a056
+Maybe better would be to just cache the contents of the cmd register.
+Then you can avoid a bunch or RMW and make them simply a write.
 
-Index: usb-devel/drivers/usb/class/cdc-wdm.c
-===================================================================
---- usb-devel.orig/drivers/usb/class/cdc-wdm.c
-+++ usb-devel/drivers/usb/class/cdc-wdm.c
-@@ -266,14 +266,14 @@ static void wdm_int_callback(struct urb
- 			dev_err(&desc->intf->dev, "Stall on int endpoint\n");
- 			goto sw; /* halt is cleared in work */
- 		default:
--			dev_err(&desc->intf->dev,
-+			dev_dbg(&desc->intf->dev,
- 				"nonzero urb status received: %d\n", status);
- 			break;
- 		}
- 	}
- 
- 	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
--		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
-+		dev_dbg(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
- 			urb->actual_length);
- 		goto exit;
- 	}
+Wrapping that up makes sense as both a register write and on success
+update of a cached value.
+
+Pity this isn't quite all register based as if it was I'd say just
+use regmap which gives you all the accessors for free.
+
+
+>=20
+> Either we remove only ads1119_cmd/ads1119_cmd_wreg or we keep them all
+> for orthogonality. Both works for me, just let me know if you agree and
+> which option do you prefer. Personally I would keep them all without
+> debug prints.
+
+I'd drop them, but have a update_config_reg() that uses a cached
+value to avoid the reads and updates that cached value on the write
+succeeding.  That one is non trivial.
+
+>=20
+> > > +
+> > > +	return read_poll_timeout(ads1119_data_ready,
+> > > +				 data_ready,
+> > > +				 (data_ready =3D=3D true),
+> > > +				 wait_time,
+> > > +				 ADS1119_MAX_DRDY_TIMEOUT,
+> > > +				 false,
+> > > +				 st); =20
+> > Over wrapped. Aim for closer to 80 chars. =20
+>=20
+> I'll do.
+> Do you have any rules on the IIO subsystem driver? IOW is it fine to
+> have line slightly longer than 80chars if this improves readability ?
+
+Absolutely.  Good to keep to 80 chars except:
+1) String involved - don't break it up as can't grep - those can go way
+   over 80 chars
+2) Non trivial readability improvement.  Then stay under 100 chars.
+   If you need to go over that, normally can use a local variable
+   or similar to avoid it.
+
+
+>=20
+> Francesco
+>=20
+>=20
 
 
