@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-210079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD57903F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAE1903F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C961C231C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9142D1C23128
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E285B10A3D;
-	Tue, 11 Jun 2024 14:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BC8125A9;
+	Tue, 11 Jun 2024 14:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juGmJXBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmixNAO3"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD5BBA34;
-	Tue, 11 Jun 2024 14:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A421CD2B;
+	Tue, 11 Jun 2024 14:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117152; cv=none; b=Ks7u8N7Sa/lK1KpEpgYqpOXx4o3o2Zfsd4VXTyv1OtcxNyhZeW5za5Jp6l/DxzHYVExRFsLgqM4jCUQ1+EcXlWZ2ZOkQ71mEnUWRda3eUBkNV87PNaaDh3j5SFUidMhZpSxi+dXlY9+kjnh5HsYJp+6k3UW5P6+iKTEm0wSaoXE=
+	t=1718117138; cv=none; b=j38oZzz8v+2iIbZQ7peXsllSYQtK6gh4Gg4k8M1bZ+Kw42UAR9Z6C1vDzSv3uj9KFyf4bvN4jfBFcG01pWnD7HRfMtO6BQH2eJXjH+aHQgLqWZYZVs12RPqUvu2+c00nO3U2XU1/yhu3rhy0FL2tHEbOSyv+RYRLptdryvxZWj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117152; c=relaxed/simple;
-	bh=V3zghL8937UdbAnh4MFjMK3vjv6PMWnvoOCbMkWbe1s=;
+	s=arc-20240116; t=1718117138; c=relaxed/simple;
+	bh=/H9XWnYs0Gk9ZeqHTnYujfKVyliogBQwwJWeAfHwh98=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ft1JKVL6Fw7lmRCC1NtnsdVw9gTAbvFPr/fY7tqYznwe4s2jYoBwSvxuBxSwEkSwJmjorXqds4UEXa0kJojE7+3biDyMx7objJeDbiszCZ134AHil5IA88qnGociHSQB5zX16D7VmTvQam0ekV/uXHRhYHuZetFjoYAxSSTe4tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juGmJXBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A28F2C32789;
-	Tue, 11 Jun 2024 14:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718117151;
-	bh=V3zghL8937UdbAnh4MFjMK3vjv6PMWnvoOCbMkWbe1s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=juGmJXBMyGZXQ/0x55ti+I4UYFcXSeLviZnT+ww10SZAgbmT19fchqxVRSvE7FWls
-	 aP3sH6FxjPUK+4byqsD5/Q0AVxPyNh4iwOq5XEaaJvXxzQuDvaJD0j85gWZR3zs5TS
-	 8nJ9pQ3fclffSl7Fs1/bnQVtU+Qo+YaQysEF/buMn0y1xmPwhJ4mTnhKB9bBPhphq+
-	 36P2a7T6Z5qWl+jSnowHFjXd7ArbsfW+oxc6WG/iNzzCGfixmEnTUZlBAbzRdVvy1V
-	 8rPKvQPoH9DoHRbwwfTp4LppIXFJtkr+A2vQDEfoBrT30HFa5PF0b6zslg53StQT/C
-	 OHmkDNMHh2JuA==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so1506948e87.1;
-        Tue, 11 Jun 2024 07:45:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXITQpUVLrF7Ln2FebfLlYIfaYX2ggv4pavUPGQOtBXmJ/GzLAWqX4fuxBSd9s54al/yePPQMWCCpsisimTNwWxgm399tT3NHJdrseVoWrItWy3kAw/4m4xF1/z+4liyoW37h4Wkt6ptFTgwVW2iNyMJQmB5iIo708VjW/6exJwa1MwpSYk9Q==
-X-Gm-Message-State: AOJu0Yw6ixV/mxozBrVH64jKT+2ZF9TtKEPyUW+5FdVVZe94tuTKCygE
-	R2Ir/CdfE0HQzcVs66OYgM4Bsv6gwulQtM5Etj8aLWf//dSZt37hNMIj56hAlCTwRYT7v4giQov
-	xPNPNOzMQW7rdAfrlJgIzYII3O7A=
-X-Google-Smtp-Source: AGHT+IEp/gao3GqGPVG3agUDrZC/bx+9rcwsP/3NVeoATZzgw4jCanRBgPt4F03bVMSDqekKU4mOSqOkrmL+rgGhI9k=
-X-Received: by 2002:a19:5e44:0:b0:52b:796e:66a5 with SMTP id
- 2adb3069b0e04-52bb9fd281cmr6792120e87.66.1718117150327; Tue, 11 Jun 2024
- 07:45:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=Q6wxpCU4nASVbcUmKFDtR01Lv3LyB2zIRcs0FmEis+uS0ZurjgiU1fWzjN9ZTCewLSig3waHa37Kmi8xskO8ErkLGKd7v4L8cs9g6LCc0qfG7RfdRRiFz/fqsnvskacdirlN1OCOHtdIlwgaINHChzZykQQtYxuODI/zM5dmexw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmixNAO3; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c83100bd6so3012020a12.3;
+        Tue, 11 Jun 2024 07:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718117135; x=1718721935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZDmcQfJiJg3AhnNDskLBlCw1R+pPrp3kDPPVyHiSs34=;
+        b=FmixNAO3O1YHsSEWlGUa8WiSiUhz4+org9mTv2BvJHGls82Ie0d1QH15vBw83RWO+q
+         gQxuH1tMJ6VWhohRIu7DFM772BfkMTcpPT8FLJPjy1EhcGSreL1Xi1soghw7p7EEB5je
+         rq7Y7gYFDF3ikhRzMZc72q2JqBF6M0ceAfPRqR+wpzW5Ba4ciG6bWMz+r6TzeD6bDE2J
+         wFMAdU4UzNMiwBMs/qV7Oro8+RoATZ4d9+XqNJKREpaOfSE42YRCyqP5i7U5ccFyjyPn
+         L8OdkbWzxz0wQTdfy5sG3XYFOHRozf3d0iUkPyvsRWuUAlixhPHs6ufjBxcarGT64HI3
+         AZcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718117135; x=1718721935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZDmcQfJiJg3AhnNDskLBlCw1R+pPrp3kDPPVyHiSs34=;
+        b=n5hY09PCY7I2Kn+G6G33ejnKq9y7rGW9EDPgR9gGOZuGgvJdOLvzdvQWU2cMdUBrTw
+         v2cgJ93C62dbPVbLCZ5yHtY8HWRWzb1b2NLV3oZLLSLBLahHZxGSUfPFCSIMMh90MSC+
+         8BgYnRDZl4PKlpavr0a5kBi1WSpxdcswewah97KkX+j1TPnLCeZqccLu4EaRIEFOyE5S
+         flD1QESbp6zD6a3vYDTBVfp5CeDOAO+VTEZIZ3yWr72G4rywZOmyyKdrxXNAbxbuInnq
+         3MDz6kCM7Jmp/k7c7EAvANysfbVnapecIzLucw6san1FRloMvi/tygd7ozMRkFJDN7g2
+         ryYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5EJLYIRci5+SOconfn80861dm0w1OMljKLRUE3vmuY9dvsQrdUY7rHMXNYhBWCcfyHovEDtT1Du7ocK3EdIeMmKwSBYvKFFvxBV6VsXD2n8t9vr3ZMStzGwNHGE/gR4rkOADVDndb
+X-Gm-Message-State: AOJu0YxTsQjLUAmkzscFjUqAhXA8Djp7d3S/XhKkRUMXPANevG9r/L8G
+	Lhkc9pdKMV5lB8GH4AxQvu+n0BFCaS3+5P/904AzrreaqjCHMOmEiWgrpSWiTp0pejZZ7E6taUg
+	tZXIAVM/QzCs4xb9PtYo5om2i6z0=
+X-Google-Smtp-Source: AGHT+IG7CIRLR+hJ7GJps0P7xxR9z8sOBVvX+i3dYJEQm0KFaH57K3LlfTaYAM4fsZpZAwb91tP+V4bjqE7cM6tk0YY=
+X-Received: by 2002:a50:8d5c:0:b0:578:3335:6e88 with SMTP id
+ 4fb4d7f45d1cf-57c506bf7a9mr8912411a12.0.1718117133955; Tue, 11 Jun 2024
+ 07:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605094843.4141730-1-wenst@chromium.org> <CAFLszTjX=ixC3pRRGJeaP=ie_yc+KcCRyQ06MBFeSZnBepaXaw@mail.gmail.com>
- <CAGXv+5EcEYGqXq2C1OCK4J4t1NusV7nWp16zb74P6_tCeLnSGw@mail.gmail.com>
-In-Reply-To: <CAGXv+5EcEYGqXq2C1OCK4J4t1NusV7nWp16zb74P6_tCeLnSGw@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Jun 2024 23:45:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ7XAGgzhBXQWPFVgqJwdBcO3mF5pmQ3mSsmdrZ0EBL9Q@mail.gmail.com>
-Message-ID: <CAK7LNAQ7XAGgzhBXQWPFVgqJwdBcO3mF5pmQ3mSsmdrZ0EBL9Q@mail.gmail.com>
-Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Simon Glass <sjg@chromium.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Elliot Berman <quic_eberman@quicinc.com>, Devicetree List <devicetree@vger.kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240601120640.73556-1-joswang1221@gmail.com> <1662c9c9-7330-4794-843a-940f05802021@linux.intel.com>
+ <CAMtoTm1u+8ynBRaWgCMVgaR+dBoZfNGhzGqmvooBSDxZm5Qx+g@mail.gmail.com>
+ <c9430561-ecfe-5b36-9574-73a946410eea@linux.intel.com> <CAMtoTm1xYUuaV1rO3dZexS=q_5Xf61+QAZ1++VvzK10VtGHexA@mail.gmail.com>
+ <2521588d-30a6-0224-c7c9-3015e9cc65a3@linux.intel.com>
+In-Reply-To: <2521588d-30a6-0224-c7c9-3015e9cc65a3@linux.intel.com>
+From: joswang <joswang1221@gmail.com>
+Date: Tue, 11 Jun 2024 22:45:26 +0800
+Message-ID: <CAMtoTm2G-w+yRjechji7scJO-JZo6N==VK6Wun3ATRc7do9rEg@mail.gmail.com>
+Subject: Re: [RFC 1/1] usb: host: xhci-plat: add enable XHCI-AVOID-BEI quirk
+ by dts
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	joswang <joswang@lenovo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 5:52=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
+On Tue, Jun 11, 2024 at 6:01=E2=80=AFPM Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
 >
-> On Mon, Jun 10, 2024 at 11:16=E2=80=AFPM Simon Glass <sjg@chromium.org> w=
-rote:
+> On 6.6.2024 17.08, joswang wrote:
+> > On Wed, Jun 5, 2024 at 6:31=E2=80=AFPM Mathias Nyman
+> > <mathias.nyman@linux.intel.com> wrote:
+> ...
+> >>
+> >> I was thinking of turning XHCI_AVOID_BEI behavior into the new default=
+, so no
+> >> quirk flag would be needed:
+> >>
+> >> Currently without the quirk flag:
+> >>
+> >> - ISOC TRBs trigger interrupt if TRB is the last in the TD
+> >>
+> >> Currently with XHCI_AVOID_BEI quirk flag:
+> >>
+> >> - ISOC TRBs trigger interrupt if TRB is the last in the TD
+> >> - Interrupt is additionally triggered every 32 isoc TRB (initially).
+> >> - if more than 128 events are processed in one interrupt then the
+> >>     32 is halved, and we trigger an interrupts every 16th isoc TRB, an=
+d so
+> >>     on, 16 -> 8...
+> >>
+> >> I would remove the quirk flag, and make all controllers interrupt
+> >> behave as if it was set. i.e. interrupt at least every 32 isoc TRB
 > >
-> > Hi Chen-Yu,
+> > Thank you for your detailed analysis.
+> > Excuse me, I have a question, do you mean to set "Currently with
+> > XHCI_AVOID_BEI quirk flag" as the default behavior?
+>
+> Yes, unless it causes some issues or there are strong objections
+>
+> >>
+> >> Is there an actual real world case where interrupting every 32nd ISOC =
+TRB is
+> >> too often?
 > >
-> > On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
-> > >
-> > > The kernel tree builds some "composite" DTBs, where the final DTB is =
-the
-> > > result of applying one or more DTB overlays on top of a base DTB with
-> > > fdtoverlay.
-> > >
-> > > The FIT image specification already supports configurations having on=
-e
-> > > base DTB and overlays applied on top. It is then up to the bootloader=
- to
-> > > apply said overlays and either use or pass on the final result. This
-> > > allows the FIT image builder to reuse the same FDT images for multipl=
-e
-> > > configurations, if such cases exist.
-> > >
-> > > The decomposition function depends on the kernel build system, readin=
-g
-> > > back the .cmd files for the to-be-packaged DTB files to check for the
-> > > fdtoverlay command being called. This will not work outside the kerne=
-l
-> > > tree. The function is off by default to keep compatibility with possi=
-ble
-> > > existing users.
-> > >
-> > > To facilitate the decomposition and keep the code clean, the model an=
-d
-> > > compatitble string extraction have been moved out of the output_dtb
-> > > function. The FDT image description is replaced with the base file na=
-me
-> > > of the included image.
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > > This is a feature I alluded to in my replies to Simon's original
-> > > submission of the make_fit.py script [1].
-> > >
-> > > This is again made a runtime argument as not all firmware out there
-> > > that boot FIT images support applying overlays. Like my previous
-> > > submission for disabling compression for included FDT images, the
-> > > bootloader found in RK3399 and MT8173 Chromebooks do not support
-> > > applying overlays. Another case of this is U-boot shipped by developm=
-ent
-> > > board vendors in binary form (without upstream) in an image or in
-> > > SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
-> > > These would fail to boot FIT images with DT overlays. One such
-> > > example is my Hummingboard Pulse. In these cases the firmware is
-> > > either not upgradable or very hard to upgrade.
-> > >
-> > > I believe there is value in supporting these cases. A common script
-> > > shipped with the kernel source that can be shared by distros means
-> > > the distro people don't have to reimplement this in their downstream
-> > > repos or meta-packages. For ChromeOS this means reducing the amount
-> > > of package code we have in shell script.
-> > >
-> > > [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@goo=
-gle.com/
-> > > [2]
-> > >
-> > >  scripts/Makefile.lib |  1 +
-> > >  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++------------=
---
-> > >  2 files changed, 49 insertions(+), 22 deletions(-)
+> > I mean that if the XHCI_AVOID_BEI quirk flag is set, an interrupt will
+> > be triggered every 8 TRBs, which makes the interrupts seem to be quite
+> > frequent.
+> > Thanks
+> > Jos
 > >
-> > This is a clever way to discover the included files. Does it need to
-> > rely on the Linux build information, or could this information somehow
-> > be in the .dtb files? I had expected some sort of overlay scheme in
 >
-> (+CC DT folks and mailing list)
+> It should start with interrupting every 32nd isoc TD, not 8th
 >
-> I suppose we could make the `fdtoverlay` program embed this data during
-> the kernel build. That would keep the information together, while also
-> having one source of truth (the kernel Makefiles). Whether it belongs
-> in the DTB or not is a separate matter.
-
-
-Some time ago, I asked a similar question
-with a similar motivation.
-
-https://lore.kernel.org/devicetree-compiler/CAK7LNARV8Bo-tBXMdOu55Wg9uZRXvN=
-iRdkDJ4LH8PwVMnMp4cA@mail.gmail.com/
-
-
-
-
-
-
-
+> #define AVOID_BEI_INTERVAL_MAX   32
 >
-> > the source, but perhaps people have given up on that?
+> ir->isoc_bei_interval =3D AVOID_BEI_INTERVAL_MAX;
 >
-> I wouldn't say given up, since we haven't agreed on anything either.
-> Elliot had some concerns when I brought this up earlier [1] though.
->
-> ChenYu
->
-> [1] https://lore.kernel.org/linux-mediatek/20240314113908471-0700.eberman=
-@hu-eberman-lv.qualcomm.com/
->
+> Thanks
+> Mathias
 
---
-Best Regards
-Masahiro Yamada
+As you mentioned=EF=BC=8Cif more than 128 events are processed in one
+interrupt then the 32 is halved, and we trigger an interrupts every
+16th isoc TRB, and so on, 16 -> 8...
+xhci_handle_events()
+    ......
+    if (event_loop++ > TRBS_PER_SEGMENT / 2) {
+         if (ir->isoc_bei_interval > AVOID_BEI_INTERVAL_MIN)
+              ir->isoc_bei_interval =3D ir->isoc_bei_interval / 2;
+    }
+    .......
+
+Thanks
+Jos Wang
 
