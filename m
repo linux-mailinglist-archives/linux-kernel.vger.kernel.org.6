@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-210253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5205904161
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:33:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AFA904163
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36F81B268BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671E82875E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955FB3F9F9;
-	Tue, 11 Jun 2024 16:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D153D971;
+	Tue, 11 Jun 2024 16:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qLd0phHN"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcPSHsYf"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C81338FA0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D9E481B7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718123576; cv=none; b=NbQcTcmDihoG8EYFvstEJw2MD/WemNhzPmpdMyvDDxVmvgbYDxSs5mjwPIhNmmnQS0YC8fcIjnR9WLeke4afWuTGwC58rAkMkAweYNm/mik1efRNFJJmaX8CbqtO5DTHsrCitAhp782USlQ+W/7MGn/PBS3eMGs5bg0jmiR//YI=
+	t=1718123589; cv=none; b=KiJMf+yinAm7Rwy0kdjo+xLcRboIyrxY7eqn3+Wjd3vsZSGU0maFt7IfPkiAhZ5FtzYs9w9Yx7kxZAfUnj35+vFmXuqbHXIiu+kkG55BRqCyZc0GMYsigA1vxnwZ1tBvylhF0OiEB2oHQ+zmokKH/3LKjgIZBCJ+iPwhNDpmdl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718123576; c=relaxed/simple;
-	bh=PfL/6AgJasVkbCS8dVXqo5yRf1/3Wobmr0iuiQOC/Dg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IbIqyjiLKqWbTTYGecWM1AuB0Ittb2Te0CF6qf//fZP510L4wsFJ+0ZSPde4qXdLW46P9sygzq6b3P+rMD3oxsk8UxDZ0w8KKs9zsLdSHsZiQASYpQ0EmuT1nxzqWihKb+hA7al/lyn28gnUNA9xz8EoOVQ83LezOTc2J++hr3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qLd0phHN; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6c380e03048so868784a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:32:55 -0700 (PDT)
+	s=arc-20240116; t=1718123589; c=relaxed/simple;
+	bh=THmJ90m9cYRnkYlDMu4a/cd1GwGNBcBPB6kbdS5FHTQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vBtzaLkgM9QSJFWnB0mVNYg0VeGUIS5hTjgGEMTd7VsUlAwSc3tFbg+pSUJJsXUmiK/tn6trj/Xgj0od31w+1FOW7pmTdEwTlzWuPahYbvvcWttIGCQpJxKYkQlfqcWMpkV8HetSYm15NMWcvXEiJ8Wy+TL5AHjvdOr5DF5cwZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcPSHsYf; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b97539a4a5so3176809eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718123575; x=1718728375; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4xBvCLscNy4YUa29ei3FsIjxDWpzTmRoOerBpLD1P4=;
-        b=qLd0phHNv1lZYJU+KCPtfLnW27S9VcZvh31IhDtCElrYfr19En09w3FgB1w6szsVH+
-         uIFNIXIlrNpoVVQgI+L7PueLBrF3EcECmsqY+VM6qTL4N9N0aq//FFRndn/bD+fJ2Wx3
-         aq5M6Ba1kmyaU3jRg5hVsx3CqEbJKYPY/2QRmaxMHqeml1PIkBh8s3IGb/oDBxgDRkSv
-         Nr0Jx8FgDopvRVSBvjDRSp7L0yk5Y6NXlWJEN534WZB9G09JVCe8DtiHbz+XmrXxt4Us
-         fU44963FMEBV0Zv4ZqD6nEzkgLZs11NxL05lj9+bxaXwEvz3CWGqwPDdsKRru7sUB9fZ
-         /+Pw==
+        d=gmail.com; s=20230601; t=1718123587; x=1718728387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WDlO2YjOSVSSgyeqWjNamYw1STHKmx/Pjf3CpiwkrYs=;
+        b=EcPSHsYfVpXpbla2NWQ7jXNr0Qguh1qt/6RyR/p4WmaxRhww130TCb2PgrvyDB03CH
+         vMap8ioetlQDrLE5Wj7NtdDCDIozRGt+Km3MWMKOXJBSuZTP+5sffUPn/A4CmeXjziMX
+         I4whaVrNvwpYHChnypLL+S+0u1SDx/cY+ZkPqaSpFemLElRj3xo2WMYlEFxmcIhzoKsy
+         FXGZWP8w7zTu63Ylx8uxjK31oZyI57SjxFMCZvjJTzv3KZS5NxOnv5EBpMDx2hHHyQXx
+         mniJdKJ08LA3IpbMOQlv1paz4TBqBbB/LRz2kQeUHxn9SXxIGAsFwS5321m+h+eqk8R/
+         AvYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718123575; x=1718728375;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4xBvCLscNy4YUa29ei3FsIjxDWpzTmRoOerBpLD1P4=;
-        b=JfWug30N3QXl1JL67z9w5IxNUlUwfPkkR7K38z9A9GCzHCg4nPMWbzOVYc0g1E4tao
-         U+QxG9Y1SXrwGl31Y6vXpKrtNYs+x9LoZyJGRPtlTRNEGcsd9iv30JaVfAD421uteyf5
-         H6w31gL65744xboCnwus1PI/o/l2KYjTijUW8fOdxv1hrcuM2IngxwYUS/vMuzKN80tb
-         UfkUG5wTYry1Wa+BVLEtBKHymvph9ig6GcA1BH2Cao+H+ELKnXLd/V2JJ69IePqA7+7l
-         TYvohRqWk9ZkFjKLy9VXw4oU0GV0vmuuJ8Fko+0omqA5crKZSMQcyTndS6Blcw6qJ5c9
-         rHSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/p45mtXFM9pdVEfblB54VpOLqf8CWEJvgMbPkm/foS2k5DdxSLmgUsA7mYhz2DoVkDGIl50QWtld7Tx7nCHudE2DE2lpnWYUveW4o
-X-Gm-Message-State: AOJu0YyHcdH/nH1l75Dr6gfoySUgtWij43P30FQshh8z6ouePrXrOaQp
-	8ls0YdKucRVEfP4p+dNJrEUsvnrBtgV0tY/Y1iVuHGg7ka9rN1zZG91e7bNKXOx1qVyGOxRAYrZ
-	+5w==
-X-Google-Smtp-Source: AGHT+IE50t/ZHsq1AIZB33K6XZDZtywKxE9M5cylfsZLOz1Oan4m5rBZ+Vk8rt4fL4gs+UygXTLU7vZVMGE=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:3342:0:b0:6f8:2594:7ca6 with SMTP id
- 41be03b00d2f7-6f825947dbdmr3071a12.2.1718123574775; Tue, 11 Jun 2024 09:32:54
- -0700 (PDT)
-Date: Tue, 11 Jun 2024 09:32:53 -0700
-In-Reply-To: <ZmhaRr5Lr4pOHcm7@chao-email>
+        d=1e100.net; s=20230601; t=1718123587; x=1718728387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WDlO2YjOSVSSgyeqWjNamYw1STHKmx/Pjf3CpiwkrYs=;
+        b=AcYEVQu0ahaGIoaRc0j6yeDMqHKl8uiG7GZ4d++DPORk5sJ9JWN7+gictY069QZEvi
+         j+gc8amhJWG0dh4XhYEBsk2jBDOwET+5FgC3CzPgbxcTxp1BaKGJfqrBrdSfuNFc9SFB
+         +lt7q0eEhAQEfGOyWqNFjON2rYgmTQn4dw1ZN34w86kVV8pu8HFBaSNwbVG9Dp1sFxKz
+         GhYTH1oZM/klDGZFWtO3huwgx6F2hOk8HynQ8wRHzeSi6HYgPVisLC1SwgZM38vKp7q0
+         5WbiPdS1KZ7y3H7ccVQ6QlMDFTfLFLg5oqAtT/rYz1qdvLUTUgRtts9FFOk2X6Bzl3N3
+         zaIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjjQ9w9nW0B4pubKxzxRj/Jcnhr425MQ5nCz0vkOSLSWqM30l0P55wroGE9W4EEcXqMiFcT1Wr7pgU+bPfFsqxKB0J0jm7BW6sBip2
+X-Gm-Message-State: AOJu0Yxy18SxrvP5PSVAr9amoclXBwtg8u/HrCcmqMFcD2y1ehqrCQN9
+	aX354PNhZAIItgUz06DeG/eGBDqAZ8aVg+VTsjMlxsjBfh1+RBWMP8ghLT8gLcJqCF4PQ4XiOeM
+	L0+RieBwF8Kpx7IF+Gfpgk7SgG9E=
+X-Google-Smtp-Source: AGHT+IHKy2kKJu7lLa44h5138CPHNVyiUkGxGWBZQONRY3V8yRql/hmDtBfr8vyACzy7zPU3H7G6Jwu+z+gc4DxfQEc=
+X-Received: by 2002:a05:6358:71c8:b0:19f:4c4e:d3c2 with SMTP id
+ e5c5f4694b2df-19f4c4ed5b2mr898974355d.15.1718123586898; Tue, 11 Jun 2024
+ 09:33:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240410143446.797262-1-chao.gao@intel.com> <20240410143446.797262-10-chao.gao@intel.com>
- <ZmepkZfLIvj_st5W@google.com> <ZmgrkMLuComwPl1X@chao-email>
- <ZmhSeZpyoYxACs-n@google.com> <ZmhaRr5Lr4pOHcm7@chao-email>
-Message-ID: <Zmh8NSzd5xK-6urr@google.com>
-Subject: Re: [RFC PATCH v3 09/10] KVM: VMX: Advertise MITI_CTRL_BHB_CLEAR_SEQ_S_SUPPORT
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com, 
-	Zhang Chen <chen.zhang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240611024516.1375191-1-yosryahmed@google.com> <20240611024516.1375191-2-yosryahmed@google.com>
+In-Reply-To: <20240611024516.1375191-2-yosryahmed@google.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 11 Jun 2024 09:32:56 -0700
+Message-ID: <CAKEwX=OatEx57bOFBb5KNwvDhp4gMZhpjKw356fj4xzanqMJHw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] mm: zswap: add zswap_never_enabled()
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Barry Song <21cnbao@gmail.com>, 
+	Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024, Chao Gao wrote:
-> On Tue, Jun 11, 2024 at 06:34:49AM -0700, Sean Christopherson wrote:
-> >> As said, this requires some tweaks to KVM_CAP_FORCE_SPEC_CTRL, such as making
-> >> the mask and shadow values adjustable and applicable on a per-vCPU basis. The
-> >> tweaks are not necessarily for Intel-defined virtual MSRs; if there were other
-> >> preferable interfaces, they could also benefit from these changes.
-> >> 
-> >> Any objections to these tweaks to KVM_CAP_FORCE_SPEC_CTRL?
-> >
-> >Why does KVM_CAP_FORCE_SPEC_CTRL need to be per-vCPU?  Won't the CPU bugs and
-> >mitigations be system-wide / VM-wide?
-> 
-> Because spec_ctrl is per-vCPU and Intel-defined virtual MSRs are also per-vCPU.
+On Mon, Jun 10, 2024 at 7:45=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> Add zswap_never_enabled() to skip the xarray lookup in zswap_load() if
+> zswap was never enabled on the system. It is implemented using static
+> branches for efficiency, as enabling zswap should be a rare event. This
+> could shave some cycles off zswap_load() when CONFIG_ZSWAP is used but
+> zswap is never enabled.
+>
+> However, the real motivation behind this patch is two-fold:
+> - Incoming large folio swapin work will need to fallback to order-0
+>   folios if zswap was ever enabled, because any part of the folio could
+>   be in zswap, until proper handling of large folios with zswap is
+>   added.
+>
+> - A warning and recovery attempt will be added in a following change in
+>   case the above was not done incorrectly. Zswap will fail the read if
+>   the folio is large and it was ever enabled.
+>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-I figured that was the answer, but part of me was hopeful :-)
-
-> i.e., a guest __can__ configure different values to virtual MSRs on different
-> vCPUs even though a sane guest won't do this. If KVM doesn't want to rule out
-> the possibility of supporting Intel-defined virtual MSRs in userspace or any
-> other per-vCPU interfaces, KVM_CAP_FORCE_SPEC_CTRL needs to be per-vCPU.
-> 
-> implementation-wise, being per-vCPU is simpler because, otherwise, once userspace
-> adjusts the hardware mitigations to enforce, KVM needs to kick all vCPUs. This
-> will add more complexity.
-
-+1, I even typed up as much before reading this paragraph.
-
-> And IMO, requiring guests to deploy same mitigations on vCPUs is an unnecessary
-> limitation.
-
-Yeah, I can see how it would make things weird for no good reason.
- 
-So yeah, if the only thing stopping us from letting userspace deal with the virtual
-MSRs is converting to a vCPU-scoped ioctl(), then by all means, lets do that.
+This LGTM.
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
