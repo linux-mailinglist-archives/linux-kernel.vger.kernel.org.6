@@ -1,245 +1,431 @@
-Return-Path: <linux-kernel+bounces-209534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986A3903743
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7119A90374B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4116828A44E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092CA28A95C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC96176227;
-	Tue, 11 Jun 2024 08:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961C8176241;
+	Tue, 11 Jun 2024 08:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jKzzt7P/"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2068.outbound.protection.outlook.com [40.107.215.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDTgesuQ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5A617557E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718096210; cv=fail; b=kcuPQJTNVq81de+fLOE4jir2p2PlHuTOYzDADANQeV1Df+P4AayMuA6el2PTugbsnYkyjCbX7/EXSCDiWhaftEb1KjvrFyWILY3m/9U6HxDxctrOQrtQVgLGimmS4Y7BvI5yrWoN6rlmt0TspMLgQMVNHapKtDcOqhkbyv7uJYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718096210; c=relaxed/simple;
-	bh=RVyURmoeXZIp4B85tUH39SG6CHcL6Sx/0e8Axiw0bIQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CIrUyjmu2S4bLP9bUY1T2n/6HnjSnYS7UC7HQC1wPDP0Na6HuPopUiPQPsncuCKzzv7GNNx0Ol41SyaK+LSgMFR9a38QWumrda6rVMTQnM2KDz1vbN4TCg3WsW0cbZIQ04WBVGSShcf7uUgk7PQe02Z2ISQFEZAtzHfqah8KyYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jKzzt7P/; arc=fail smtp.client-ip=40.107.215.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VE2S+KLAjiji+Hqx5WKh7Tsjk4QG9VEi5e+xKbnEOmTPAW17eNsjthypEPHRK6qQfE3JEAMYYFOBhTc2bs4ETm/6huzsUHHP69uC8sdEUVjKWUvHBlWsISuciVPIIZEkuRYvqifKTjRNIHH7ZXnycoPabffh1Owsb6MCNC5oXpdALJPciRJz7trqe2+4LUPCjm2vvOwatOo6+jOpzkk41MMX/jvKHUXByNlZxTQ8ckNehW6y1GUw0fphE3eQqx6h5JH/7ee/bZDt6jtSsMxvoPqnoTSu0mz42erH8eoxqLkdpLB3oAne5Pp7/fiVVBNt7PODvXtN8kIdqP1nqYCVbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ERo6iNzYR8gGMDOMiAjuaEX1EaLcBOfNZOofX3ovnns=;
- b=RVUiNqBzxpt/+c4yQM/OQnY7eJ6l+y2cuXqWKu3wL88NyKRP17WIlGXZwTBCJC1HkkfhxEQWrXCPrnalyxY+d52D2uN9Mn1614md3WX+dkI7BeBg1pVC3LbTxPSk4K+ycv5iu72D9dcSUXBoouNrieOT8ospCf1SxOYxRNgOUykGTtW8y3UbWCohmmeRzTNAd1FFGhVg7Belxkd//+eYqTOMdIcQIBlyMaWsHtOfuVifTCdrt0b60KlHsuadyrw3hvCsWt9YFBjzr8FLnJLw+6RNwzJwmJj+6+sXj00agFA3/OJRMOlGJKi+u3ShGzB6Jz/O4J4JarWCcuu10Mjouw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ERo6iNzYR8gGMDOMiAjuaEX1EaLcBOfNZOofX3ovnns=;
- b=jKzzt7P/0W15yfU4NlOFGP0mXSb3Ta3nN6vgQpbvjEenLy9cdunp8cNWK50pn9twzeicSTm7dkFGJLbTtuz0xlqSGBRmLc/kjlS8cXERtrZLJv/yyuzuvEop1T5D23folqd/ZCkNodtjgKRn0sXVEcOOERfve85OWD9wedk7S6JhDOyP+K3nx4y0MPM6ACXHxersV9rK3LBBsSnoQIfzOgAq3iiJxguCmr7zUkn5sj4IBcW1RE6qdE5zd/9k2y2BjFSaC7QIOd5aQDNcbMUMHV4brCPM4uatarZxNH8SV9UbkrXd8YtNZYYrIU+7ncx2pmaskP+s6bQLiHudeAZ8Bw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5624.apcprd06.prod.outlook.com (2603:1096:101:c8::14)
- by PUZPR06MB5827.apcprd06.prod.outlook.com (2603:1096:301:e9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 08:56:43 +0000
-Received: from SEZPR06MB5624.apcprd06.prod.outlook.com
- ([fe80::e837:10e3:818e:bdfd]) by SEZPR06MB5624.apcprd06.prod.outlook.com
- ([fe80::e837:10e3:818e:bdfd%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 08:56:42 +0000
-From: Lei Liu <liulei.rjpt@vivo.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Lei Liu <liulei.rjpt@vivo.com>
-Subject: [PATCH] binder_alloc: replace kcalloc with kvcalloc to mitigate OOM issues
-Date: Tue, 11 Jun 2024 16:56:28 +0800
-Message-Id: <20240611085629.25088-1-liulei.rjpt@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0269.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:455::20) To SEZPR06MB5624.apcprd06.prod.outlook.com
- (2603:1096:101:c8::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE8F174EEB;
+	Tue, 11 Jun 2024 08:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718096343; cv=none; b=TLJ9p288APe+qUV12N4LjBd1ZByXVrKw7adzPWEs71/xhu5xv7WTNJ5VajQbfCMYXjy3jChD/I12E3YbEKWwOeEpF8ctkXcMhdVLMEGmRPSuVfEmx7u7loyR41Jek0UAiOXivC1BsJHBXOI2BTSUvQLW5ZLxcX9lEbUIaMbXtG4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718096343; c=relaxed/simple;
+	bh=7qdVuppVYC28bq9ftKsexVE1MdCnmqhCkcPqyPRINqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kkZOqlB54iQA83G4qVhm4arC+7gn6RtcjGIsrXNMoG2CRrwRmxfCT0w6cjvvnNwCtA/sa3iwB9uBvK6DCjjNY3B6EVNJTTB1CsCJccdMlteXrY7onbWpr4VFhUG4fI7grsu1RxdWJwthT2ApJnSvwVUSPVc4iOvV+uMNx/OnXDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDTgesuQ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c681dd692so3932082a12.3;
+        Tue, 11 Jun 2024 01:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718096340; x=1718701140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ta5gs6XiSzNP6Nqlq/7WpwLKj34EW0SB5yZl9DbAxWA=;
+        b=XDTgesuQjOmsBnSN7CZtOLYY5WgvLeFhdWfhNV7FbPUNe+Rykppl1yod38rEb2DNBi
+         Da9D82TbPlgg7VSqJu1TPxsnZSecYKXM/WEr/78HfSmpjjPqPoBdP3GzGwIAtva3sRYM
+         9Fj+shRYsPpVLaSwXeNwfdOCLk8UFqOIZVxhLdAz86PB2INN74zzzIJ6ZeHtvHuMJmzg
+         8hjZG9yHSBeim7eneQeeDPu9PJmHw2DTjveVgfRaglaw9PBYPTIRjpVMkgrAUpPfnAIB
+         CSTGibxPbAOYJoWan6+PFtF+kWA8SFQGdv9J0xXGavc+Zj1oR9sZrxtv7bYZQqPaV6uj
+         yGXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718096340; x=1718701140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ta5gs6XiSzNP6Nqlq/7WpwLKj34EW0SB5yZl9DbAxWA=;
+        b=EnlyUsEaz/tp1Gh79/r/HUYBsb8fVcWvJJ/xwnxocHhDMG2qUeFZFjzTc0l6YXkBSC
+         UIW1f/2mbrcrtHKdf/R3RWXTPTKAIbVfqv+MUBPKfXilhdF0DdJD0FEAmYCDb+WxUJCE
+         hawG9Qq2GNoHBN+tL+GQ09hPsxTVRXlmEy3PMab++z7UyVEkrxZe5mITlBNGOjJ6ELBH
+         5oEPrAVnVWzB4Td+7M7HZ3JZvyrMqcPvt6e9+D0cMMRPalJz1P3x5Ft9I5eGGGcxwWSB
+         GnXVDbUcJvy5HmYlK+vii2a4ciwwe6OSES0Ktl8EMEOjf94eCTIBfYOvJg0M+gj1Kcp0
+         WKeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeMiMJluuyU/euBljWa/GCozjIK4HtmiDA6ms7rr9qE0NjqZksV4IyTT6c0YDJImM2/Bnn2N4pKmYaJPgeu91O8OYVbA3LwVOcSZzjTw2N/zxNAcN+rszHKhtNxBU5JpHYQ78lgnHrKjWLvkkH+bASsMB0jcleyVeh0Q==
+X-Gm-Message-State: AOJu0Yzvuw/FuSrTJdWgoCbJwQcG8YDOg6MeY2fuos0Tbi17u1gbj+YN
+	AlgzjSg/YBGuUJKc8UzCmZ42WZGx/9a7Riz0I2/JuwpC1KWCV6FwTwFNm5Sy03OiShSWADd8qqI
+	QSU78mE4DsmMiE/Kw91gi/Buox88=
+X-Google-Smtp-Source: AGHT+IEo5DhDHwQd10uwT+cXN3yc9yNMwVncY2l6k8Hog93c5mTUPs5asV+L5bNs6vwj+PAnYC30zmEbmh5kjuwerQo=
+X-Received: by 2002:a50:9e4b:0:b0:57c:5637:b2ae with SMTP id
+ 4fb4d7f45d1cf-57c5637c846mr7035785a12.12.1718096339374; Tue, 11 Jun 2024
+ 01:58:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5624:EE_|PUZPR06MB5827:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4d30235-2e8c-4944-d053-08dc89f469df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|52116005|376005|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QnIvcjdIbVAwMWhaMUFqbHl2UlFlVjF6WFRHZzlJVmFvYmcyOXJkVk9DSmM3?=
- =?utf-8?B?Nmh2UGxYL28yUWk5MUFKWGkwSDlPazF1Qnl4dDdqWnl3aDdDQTJxM2RIOUVw?=
- =?utf-8?B?cXVCbGh4MFMySURWK3NmbUp0R1FMMUV5ZkZtNmNEVkJiTVY3ak1qVzdBZE9v?=
- =?utf-8?B?L1ppbTVhRkIwbHdHNFhWR0RQbjVoZ25QK25NTzlyanlKcThnL1lSVUo1dGNu?=
- =?utf-8?B?K2t3bUZFd083VXo2OFkvMWdrRHNCcVYyQWkyWjEzSis4MVNPSVlCalJWNzVx?=
- =?utf-8?B?Tmt5UzBHY1NrVWczcWtObi9vdTJjQzY3SWRWcFF3U2FYeFlkazVJbnJjYlVL?=
- =?utf-8?B?bzJGTmRUQWF1cGk1cUljYzhIMjM1VEt3eHMzWFBKS3Q2R1Rycjg4NTFBcjlt?=
- =?utf-8?B?S2doWHBDaG5mbVhPaXN3SVZoRnFjSGtRZW5WSVJId3dzenordnNSem5XRkhn?=
- =?utf-8?B?Ull4a1FiajVSQ2wrbzVoNGJ2dUI5eEx1T0pSdGM1TVNISEkxTFhVNUhJZWYr?=
- =?utf-8?B?Vm9kYmJtakFpTTNHOGRrdFVGSkNzYnJZZXNXVzBoOWthbzFtVXRKSlZFWXdy?=
- =?utf-8?B?RzRzR0NyUS9EY1ljZVM2SkY5WjhDWVhRUWpWYVZMSDRDTHdCNk5Yb3k2aXlt?=
- =?utf-8?B?cEh2ZXgyQ3BERGJDbHQ2RG5kMkxkVFd3djhub1NEeVVqTm1ORlFVL1l6V1cv?=
- =?utf-8?B?cmErUVhLVG9nTzlwYStqOEhIeEVvSm5oWnhwVWFRVzVCeEpVN09lZ3V1WTFF?=
- =?utf-8?B?U0JxaG4yNjRUK1phNG11WUtUT3FtTFdMaFlwNEpOSjYzWThZTlhydzBQcWlD?=
- =?utf-8?B?ak5sTCtCS2RLNjlvVEFOZlErVmNwYUVzZUxVOUpkbVUrNnQ2bENHSTRIYUhy?=
- =?utf-8?B?cHM0NkRNdUhmcjVRNmtlTXBoUHB1Z25oL1VtcGlROHp0QmZibU9hMmV2OG5l?=
- =?utf-8?B?aGs0TkJjUjRSaHg1NkJZVTBBNnhIK05aQkhoTzg0RnVLN2tpQ085Qi9sN3ZM?=
- =?utf-8?B?c2NUVEJmbitLVHZlMDl0d2U5eUNsNGs3cngrSjFIZHZsZnMxd25TdHBhNk5m?=
- =?utf-8?B?Q1F3REZFa2JxVStnc2VPVGxtVFEyajFmazAxTi9rbWF6d0VuVGZ2VnhUTFZ2?=
- =?utf-8?B?WEt5Wml5Slh1K29iVmEwTVRGSS9PUS9JRDhXUTVkaGM1WVZEKzRhZXpaUk1y?=
- =?utf-8?B?UTVRTlRjZzBlOXAzcHVEVzhUVkZjQ2xzckl1NlUzL05SYnB6ZEk4TGlSbkNp?=
- =?utf-8?B?SmhuMzc0MHRZWEQ4a0JBeU5FbzBqaStXNmFReVVISisyV0h5VFlXbmZwK24r?=
- =?utf-8?B?UElRRlh2VGk3d3hqTktxdXY5T1NoNEI0ejN0eFVPekJXT0hmUXBvN3BDU2hJ?=
- =?utf-8?B?N3ZtQ0RhUWo1N2RLbFZxd04vNzlUa1Fkdkc1ZUZNVUV5dXhHWmlTdXJBeVNi?=
- =?utf-8?B?bGRjNEdqMU9pS1IyOXdEVFk2SUo2OGVKQUdNOG5mMDZnc2dTanc4eXc2Wm1K?=
- =?utf-8?B?OXRFSGM5VUgrM2lZU0s0bGJQWmtzaFdycWwrZm5raUtzeVROYjdEZWd5ZXlO?=
- =?utf-8?B?dUU1Z1loTUNaenI1UkdCcFVwWnpnZnYycDJJNmQ5dm1sQmhITHVSaEtGeTcr?=
- =?utf-8?B?RG9QQkVpaHdvN2FsNjVlcUNNcUNDVEwzS2JFZEsxOXowejBaakJ1Z3U0QmpV?=
- =?utf-8?B?R25iWm9GTUw2UGxHSjdPUjV5WlVMdFI4VjZPd0F1dWpzQmFTUXNqcUYvdG11?=
- =?utf-8?B?enZ3dVpqUXNjVWhkTStFRU5zMUxGYSs4YUtBNkdrcGpoQU9WQWpHM2xIeXU5?=
- =?utf-8?Q?quQtoq1HPjH5QlEJK4J2Hh/EZ5nNDN1NkHyq8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5624.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RzBKYWRQOFM5Z01mU0lLYXMxVUN4NVJYL1dSanB3bDc0RzFLdjdlNEVYMFlG?=
- =?utf-8?B?WnBuQ1h3L2FDZEJ5N25vYmlIL3o4RzdObld2NE4xSFBRdVRxVURUM3cxNEcx?=
- =?utf-8?B?WXRMSWI0NFR5UEpOY2t3SGdHUGcyaTRSTUEvUEgwTlN4MmlBYVFRQ3FrZ3Vq?=
- =?utf-8?B?ZmN3SHlFUi82bDlyWHNXanR0VkRvaEIzYW5xaUMrN2lSSE9KTGhTT0oxVG1F?=
- =?utf-8?B?NTZoS1JEaWdxKzU1RlFHOWZNaFZmR2Q5ek9xSzVudUtUT1dWaDlZSUloUkZQ?=
- =?utf-8?B?TjJNVDZETFAvcDNCQzkyTlVsTGp2RkFBMXM5T2ozVWFMNlJjMXJianZ0YXgx?=
- =?utf-8?B?ZlRzNktlZXBkNWsyODI5NkpUVFM1Z1daNWZaN2lYOHAyTCt4RkV0b0hHQkRm?=
- =?utf-8?B?em9EenE5R29EdmpIUkg0U21kVXB3VmtLTHFDY3lydW5Bek9FTklEbmlPYlBV?=
- =?utf-8?B?Sk1HaTgyaHc2ZGpFQ3BqbEdMd1gzK082bG00RXVhWU0yN2JxZDdGZ296Vnpu?=
- =?utf-8?B?UktSN2pkVkUvRG5NTExpbEhzUkpQbjlCTk9TU2dEWjMySXE5L0tMOWxHK28r?=
- =?utf-8?B?bnFka3pmVXpST3FPTGlnWHdYQzZxVzIxbXJKYlRGMEd5SXhETitrN0ZHaWtj?=
- =?utf-8?B?Q1JYNXVjWlVRSU5WWG8wYUVNOWV2RFJocHlIc1NQbG1SeTBRNU00Z0I5TTFV?=
- =?utf-8?B?aXZqZXRZN2NmYytkTS9jSWlmclIvQ3RreEVzaTZoVFBmbmtxeHRNWjJOdDk1?=
- =?utf-8?B?dWJQUG83T21jN21Vek1hT0VxWXQ0VDZwc3R0ZTJGTnFoQVdKTnJRdnlCKytW?=
- =?utf-8?B?aTdNWFRyZTNWYWRYRXlLRlJXYzlEV0Fid2JYRU16UDY0MzFUeDJwU1VwUHgx?=
- =?utf-8?B?bVUzWWtBK0xNdFRtOUVId0c0SDNVRTJGb29HL0JFeGtsL0hDZ0JxamNUcDN5?=
- =?utf-8?B?Y2s5S2VjT0VJcXRvN0hwZUdZanlGQURiZzhCeEJjZ2c1bTNQK0dnL2wvRjhh?=
- =?utf-8?B?YmsvK2cwSTF6Z2lzTjg0WXAvZHdrRWFDY0FreWpOMGRaNEpiQXBzYzhoaDE2?=
- =?utf-8?B?a0R2Vjc4T1lFVXlPVTh2b041NTZ2T0gwSWdKZUlIY29yUGx6ZzlZMzBIbXNz?=
- =?utf-8?B?bHJ3OVpNV0hnNTZSbkw1Lzl2MFluZFljOUxINUhOdTZFcmxxdjAvdlB6MFFs?=
- =?utf-8?B?dURqRHd3a25HMHlBRXBybTRhRXRUYWhoZzJmQ0FCY0hDd0hRYjFDdmFKa1Fo?=
- =?utf-8?B?dzk1MjFmVHpYem81cUhyZ1JsWWRUb2VzamtwcnphRlNsZnBIUXgyK2FrY1Bu?=
- =?utf-8?B?bmVla2hsL0JuRnlzL1Rka0lPS2syOHVWSE1xdzB6djdwdnEvZmF1WFNjRjho?=
- =?utf-8?B?ZFJVSHUxTzNCLzZLcFFPWkl3a1hpTHpDSzRrT1NKV2ExZTdjREpqYWU3WlBk?=
- =?utf-8?B?Q3pFQW9XREhJaWl1ekk3STdRV3laMFVXNFF6OHRqSGxhdVRJc2xLOStEbFo4?=
- =?utf-8?B?b3BqY0ZGRFZqRGVCVGZIbFJLdWFlNGRHMmhXMTAyZmZKSTg3cEhhMFpCdUdK?=
- =?utf-8?B?cmxkVjV4eEh1dmZxcW4va2pUdVBCckdtUmJUVklueERKVHJwYmRsaWNRNGlH?=
- =?utf-8?B?d2JmcnpyU1U5dzcrY3MyVVRFNUthVUthTEFpOUVNZ3B0UXh1Vy9mc0RrVk1O?=
- =?utf-8?B?dnd1Z3VOTGtybldDd2xPYmpvYnhmL1RJZzh1NHh1aXhEVFNrUmllSCs0VTFr?=
- =?utf-8?B?YTlPZk5IZWQ1dU4wTDJBdUNwakhGclFwZndVZEFhK3NXUUU0OFN5SnAxaFFS?=
- =?utf-8?B?Sk12K1ZEbGxkUWZ4TEZtUUtsN1pPK0hpUzRTQmovbWdJRXFabW9aaE9wL0J0?=
- =?utf-8?B?dHByYzFCOCtsWHYxVG1mYjYwdEVUQURqSEJLWk9yQzJod3ZncEJ3ZDhKY3dG?=
- =?utf-8?B?eGFwZ2xRcXZiVWgwWE4rY1RQNlZBMFJwYkdTd0F5eThkdGlsS1RidHhianZh?=
- =?utf-8?B?S2hRSTc2UVAxMGppYjNhVG9NK29YK3RmdXpBN251aDFNVUpXRloySFdLdUk4?=
- =?utf-8?B?aVNMNE0zOTY4RkhPTkJYd0NsVllQckROYzFwcjF4dDcvN0gvK0xBRm5FTDMw?=
- =?utf-8?Q?CSRokSz4AbjtZebZsLc4x1RdN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4d30235-2e8c-4944-d053-08dc89f469df
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5624.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 08:56:42.2952
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6/EU5b655p7GjCgNjErNH4ojri5jq0ExzjhGNYBZhgyRAWlCZaPCtmrazHjgI7php3eW4nP8SsTHKDGGrFAl6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5827
+References: <20240610125713.86750-1-fgriffo@amazon.co.uk> <20240610125713.86750-3-fgriffo@amazon.co.uk>
+ <20240610133207.7d039dab.alex.williamson@redhat.com>
+In-Reply-To: <20240610133207.7d039dab.alex.williamson@redhat.com>
+From: Frederic Griffoul <griffoul@gmail.com>
+Date: Tue, 11 Jun 2024 09:58:48 +0100
+Message-ID: <CAF2vKzMnr7LGvo6T3mrNoLQxXr3o04PQjiosNEcQfce2DgDM1g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] vfio/pci: add msi interrupt affinity support
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Fred Griffoul <fgriffo@amazon.co.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Brown <broonie@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton <jeremy.linton@arm.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Eric Auger <eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In binder_alloc, there is a frequent need for order3 memory allocation,
-especially on small-memory mobile devices, which can lead to OOM and
-cause foreground applications to be killed, resulting in flashbacks.
+On Mon, Jun 10, 2024 at 8:32=E2=80=AFPM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> On Mon, 10 Jun 2024 12:57:08 +0000
+> Fred Griffoul <fgriffo@amazon.co.uk> wrote:
+>
+> > The usual way to configure a device interrupt from userland is to write
+> > the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+> > vfio to implement a device driver or a virtual machine monitor, this ma=
+y
+> > not be ideal: the process managing the vfio device interrupts may not b=
+e
+> > granted root privilege, for security reasons. Thus it cannot directly
+> > control the interrupt affinity and has to rely on an external command.
+> >
+> > This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data fla=
+g
+> > to specify the affinity of interrupts of a vfio pci device.
+> >
+> > The CPU affinity mask argument must be a subset of the process cpuset,
+> > otherwise an error -EPERM is returned.
+> >
+> > The vfio_irq_set argument shall be set-up in the following way:
+> >
+> > - the 'flags' field have the new flag VFIO_IRQ_SET_DATA_AFFINITY set
+> > as well as VFIO_IRQ_SET_ACTION_TRIGGER.
+> >
+> > - the variable-length 'data' field is a cpu_set_t structure, as
+> > for the sched_setaffinity() syscall, the size of which is derived
+> > from 'argsz'.
+> >
+> > Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+> > ---
+> >  drivers/vfio/pci/vfio_pci_core.c  | 27 +++++++++++++++++----
+> >  drivers/vfio/pci/vfio_pci_intrs.c | 39 +++++++++++++++++++++++++++++++
+> >  drivers/vfio/vfio_main.c          | 13 +++++++----
+> >  include/uapi/linux/vfio.h         | 10 +++++++-
+> >  4 files changed, 80 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_p=
+ci_core.c
+> > index 80cae87fff36..2e3419560480 100644
+> > --- a/drivers/vfio/pci/vfio_pci_core.c
+> > +++ b/drivers/vfio/pci/vfio_pci_core.c
+> > @@ -1192,6 +1192,7 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pc=
+i_core_device *vdev,
+> >  {
+> >       unsigned long minsz =3D offsetofend(struct vfio_irq_set, count);
+> >       struct vfio_irq_set hdr;
+> > +     cpumask_var_t mask;
+> >       u8 *data =3D NULL;
+> >       int max, ret =3D 0;
+> >       size_t data_size =3D 0;
+> > @@ -1207,9 +1208,22 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_p=
+ci_core_device *vdev,
+> >               return ret;
+> >
+> >       if (data_size) {
+> > -             data =3D memdup_user(&arg->data, data_size);
+> > -             if (IS_ERR(data))
+> > -                     return PTR_ERR(data);
+> > +             if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY) {
+> > +                     if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
+> > +                             return -ENOMEM;
+> > +
+> > +                     if (copy_from_user(mask, &arg->data, data_size)) =
+{
+> > +                             ret =3D -EFAULT;
+> > +                             goto out;
+> > +                     }
+> > +
+> > +                     data =3D (u8 *)mask;
+>
+> Seems like this could just use the memdup_user() path, why do we care
+> to copy it into a cpumask_var_t here?  If we do care, wouldn't we
+> implement something like get_user_cpu_mask() used by
+> sched_setaffinity(2)?
+>
 
-We use kvcalloc to allocate memory, which can reduce system OOM
-occurrences, as well as decrease the time and probability of failure for
-order3 memory allocations. Additionally, it can also improve the
-throughput of binder (as verified by Google's binder_benchmark testing
-tool).
+A valid cpu_set_t argument could be smaller than a cpumask_var_t so we
+have to allocate a cpumask_var_t and zero it if the argument size is smalle=
+r.
+Moreover depending on the kernel configuration the cpumask_var_t could
+be allocated on the stack, avoiding an actual memory allocation.
 
-We have conducted multiple tests on an 8GB memory phone, and the
-performance of kvcalloc is better. Below is a partial excerpt of the
-test data.
+Exporting get_user_cpu_mask() may be better, although here the size
+is checked in a separate function, as there are other explicit user
+cpumask handling (in io_uring for instance).
 
-throughput = (size * Iterations)/Time
-Benchmark-kvcalloc	Time	CPU	Iterations	throughput(Gb/s)
-----------------------------------------------------------------
-BM_sendVec_binder-4096	30926 ns	20481 ns	34457	4563.66↑
-BM_sendVec_binder-8192	42667 ns	30837 ns	22631	4345.11↑
-BM_sendVec_binder-16384	67586 ns	52381 ns	13318	3228.51↑
-BM_sendVec_binder-32768	116496 ns	94893 ns	7416	2085.97↑
-BM_sendVec_binder-65536	265482 ns	209214 ns	3530	871.40↑
+> > +
+> > +             } else {
+> > +                     data =3D memdup_user(&arg->data, data_size);
+> > +                     if (IS_ERR(data))
+> > +                             return PTR_ERR(data);
+> > +             }
+> >       }
+> >
+> >       mutex_lock(&vdev->igate);
+> > @@ -1218,7 +1232,12 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_p=
+ci_core_device *vdev,
+> >                                     hdr.count, data);
+> >
+> >       mutex_unlock(&vdev->igate);
+> > -     kfree(data);
+> > +
+> > +out:
+> > +     if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY && data_size)
+> > +             free_cpumask_var(mask);
+> > +     else
+> > +             kfree(data);
+> >
+> >       return ret;
+> >  }
+> > diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_=
+pci_intrs.c
+> > index 8382c5834335..fe01303cf94e 100644
+> > --- a/drivers/vfio/pci/vfio_pci_intrs.c
+> > +++ b/drivers/vfio/pci/vfio_pci_intrs.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/vfio.h>
+> >  #include <linux/wait.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/cpuset.h>
+> >
+> >  #include "vfio_pci_priv.h"
+> >
+> > @@ -675,6 +676,41 @@ static int vfio_pci_set_intx_trigger(struct vfio_p=
+ci_core_device *vdev,
+> >       return 0;
+> >  }
+> >
+> > +static int vfio_pci_set_msi_affinity(struct vfio_pci_core_device *vdev=
+,
+> > +                                  unsigned int start, unsigned int cou=
+nt,
+> > +                                  struct cpumask *irq_mask)
+>
+> Aside from the name, what makes this unique to MSI vectors?
+>
 
-Benchmark-kvcalloc	Time	CPU	Iterations	throughput(Gb/s)
-----------------------------------------------------------------
-BM_sendVec_binder-4096	39070 ns	24207 ns	31063	3256.56
-BM_sendVec_binder-8192	49476 ns	35099 ns	18817	3115.62
-BM_sendVec_binder-16384	76866 ns	58924 ns	11883	2532.86
-BM_sendVec_binder-32768	134022 ns	102788 ns	6535	1597.78
-BM_sendVec_binder-65536	281004 ns	220028 ns	3135	731.14
+Actually nothing, I had a use case for VFIO msi and msi-x based devices onl=
+y.
 
-Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
----
- drivers/android/binder_alloc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> > +{
+> > +     struct vfio_pci_irq_ctx *ctx;
+> > +     cpumask_var_t allowed_mask;
+> > +     unsigned int i;
+> > +     int err =3D 0;
+> > +
+> > +     if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
+> > +             return -ENOMEM;
+> > +
+> > +     cpuset_cpus_allowed(current, allowed_mask);
+> > +     if (!cpumask_subset(irq_mask, allowed_mask)) {
+> > +             err =3D -EPERM;
+> > +             goto finish;
+> > +     }
+> > +
+> > +     for (i =3D start; i < start + count; i++) {
+> > +             ctx =3D vfio_irq_ctx_get(vdev, i);
+> > +             if (!ctx) {
+> > +                     err =3D -EINVAL;
+> > +                     break;
+> > +             }
+> > +
+> > +             err =3D irq_set_affinity(ctx->producer.irq, irq_mask);
+> > +             if (err)
+> > +                     break;
+> > +     }
+>
+> Is this typical/userful behavior to set a series of vectors to the same
+> cpu_set_t?  It's unusual behavior for this ioctl to apply the same data
+> across multiple vectors.  Should the DATA_AFFINITY case support an
+> array of cpu_set_t?
+>
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 2e1f261ec5c8..5dcab4a5e341 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -836,7 +836,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
- 
- 	alloc->buffer = vma->vm_start;
- 
--	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
-+	alloc->pages = kvcalloc(alloc->buffer_size / PAGE_SIZE,
- 			       sizeof(alloc->pages[0]),
- 			       GFP_KERNEL);
- 	if (alloc->pages == NULL) {
-@@ -869,7 +869,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
- 	return 0;
- 
- err_alloc_buf_struct_failed:
--	kfree(alloc->pages);
-+	kvfree(alloc->pages);
- 	alloc->pages = NULL;
- err_alloc_pages_failed:
- 	alloc->buffer = 0;
-@@ -939,7 +939,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 			__free_page(alloc->pages[i].page_ptr);
- 			page_count++;
- 		}
--		kfree(alloc->pages);
-+		kvfree(alloc->pages);
- 	}
- 	spin_unlock(&alloc->lock);
- 	if (alloc->mm)
--- 
-2.34.1
+My main use case is to configure NVMe queues in a virtual machine monitor
+to interrupt only the physical CPUs assigned to that vmm. Then we can
+set the same cpu_set_t to all the admin and I/O queues with a single ioctl(=
+).
 
+I reckon another usage would be to assign a specific CPU for each interrupt
+vector: with this interface it requires multiple ioctl().
+
+I'm worried about the size of the argument if we allow an array of cpu_set_=
+t
+for a device with many interrupt vectors.
+
+> > +
+> > +finish:
+> > +     free_cpumask_var(allowed_mask);
+> > +     return err;
+> > +}
+> > +
+> >  static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+> >                                   unsigned index, unsigned start,
+> >                                   unsigned count, uint32_t flags, void =
+*data)
+> > @@ -713,6 +749,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci=
+_core_device *vdev,
+> >       if (!irq_is(vdev, index))
+> >               return -EINVAL;
+> >
+> > +     if (flags & VFIO_IRQ_SET_DATA_AFFINITY)
+> > +             return vfio_pci_set_msi_affinity(vdev, start, count, data=
+);
+> > +
+> >       for (i =3D start; i < start + count; i++) {
+> >               ctx =3D vfio_irq_ctx_get(vdev, i);
+> >               if (!ctx)
+> > diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> > index e97d796a54fb..e75c5d66681c 100644
+> > --- a/drivers/vfio/vfio_main.c
+> > +++ b/drivers/vfio/vfio_main.c
+> > @@ -1505,23 +1505,28 @@ int vfio_set_irqs_validate_and_prepare(struct v=
+fio_irq_set *hdr, int num_irqs,
+> >               size =3D 0;
+> >               break;
+> >       case VFIO_IRQ_SET_DATA_BOOL:
+> > -             size =3D sizeof(uint8_t);
+> > +             size =3D hdr->count * sizeof(uint8_t);
+> >               break;
+> >       case VFIO_IRQ_SET_DATA_EVENTFD:
+> > -             size =3D sizeof(int32_t);
+> > +             size =3D size_mul(hdr->count, sizeof(int32_t));
+>
+> Why use size_mul() in one place and not the other?
+>
+
+Right. The DATA_BOOL cannot overflow this `hdr->count` has been checked
+already but it would be more consistent to use it there too.
+
+> > +             break;
+> > +     case VFIO_IRQ_SET_DATA_AFFINITY:
+> > +             size =3D hdr->argsz - minsz;
+> > +             if (size > cpumask_size())
+> > +                     size =3D cpumask_size();
+>
+> Or just set size =3D (hdr->argsz - minsz) / count?
+>
+> Generate an error if (hdr->argsz - minsz) % count?
+>
+> It seems like all the cpumask'items can be contained to the set affinity
+> function.
+>
+
+Ok. Indeed we can just copy the hdr->argz - minsz, then allocate and copy
+the cpumask_var_t only in the set affinity function. It only costs 1 memory
+allocation but the patch will be less intrusive in the generic ioctl()) cod=
+e.
+
+> >               break;
+> >       default:
+> >               return -EINVAL;
+> >       }
+> >
+> >       if (size) {
+> > -             if (hdr->argsz - minsz < hdr->count * size)
+> > +             if (hdr->argsz - minsz < size)
+> >                       return -EINVAL;
+> >
+> >               if (!data_size)
+> >                       return -EINVAL;
+> >
+> > -             *data_size =3D hdr->count * size;
+> > +             *data_size =3D size;
+> >       }
+> >
+> >       return 0;
+> > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> > index 2b68e6cdf190..5ba2ca223550 100644
+> > --- a/include/uapi/linux/vfio.h
+> > +++ b/include/uapi/linux/vfio.h
+> > @@ -580,6 +580,12 @@ struct vfio_irq_info {
+> >   *
+> >   * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) w=
+hile
+> >   * ACTION_TRIGGER specifies kernel->user signaling.
+> > + *
+> > + * DATA_AFFINITY specifies the affinity for the range of interrupt vec=
+tors.
+> > + * It must be set with ACTION_TRIGGER in 'flags'. The variable-length =
+'data'
+> > + * array is a CPU affinity mask 'cpu_set_t' structure, as for the
+> > + * sched_setaffinity() syscall argument: the 'argsz' field is used to =
+check
+> > + * the actual cpu_set_t size.
+> >   */
+>
+> DATA_CPUSET?
+>
+> The IRQ_INFO ioctl should probably also report support for this
+> feature.
+>
+
+Ok, I will do it in the next revision.
+
+> Is there any proposed userspace code that takes advantage of this
+> interface?  Thanks,
+>
+
+Not yet but I will work on it.
+
+Thanks for your review.
+
+Fred
+
+
+> Alex
+>
+> >  struct vfio_irq_set {
+> >       __u32   argsz;
+> > @@ -587,6 +593,7 @@ struct vfio_irq_set {
+> >  #define VFIO_IRQ_SET_DATA_NONE               (1 << 0) /* Data not pres=
+ent */
+> >  #define VFIO_IRQ_SET_DATA_BOOL               (1 << 1) /* Data is bool =
+(u8) */
+> >  #define VFIO_IRQ_SET_DATA_EVENTFD    (1 << 2) /* Data is eventfd (s32)=
+ */
+> > +#define VFIO_IRQ_SET_DATA_AFFINITY   (1 << 6) /* Data is cpu_set_t */
+> >  #define VFIO_IRQ_SET_ACTION_MASK     (1 << 3) /* Mask interrupt */
+> >  #define VFIO_IRQ_SET_ACTION_UNMASK   (1 << 4) /* Unmask interrupt */
+> >  #define VFIO_IRQ_SET_ACTION_TRIGGER  (1 << 5) /* Trigger interrupt */
+> > @@ -599,7 +606,8 @@ struct vfio_irq_set {
+> >
+> >  #define VFIO_IRQ_SET_DATA_TYPE_MASK  (VFIO_IRQ_SET_DATA_NONE | \
+> >                                        VFIO_IRQ_SET_DATA_BOOL | \
+> > -                                      VFIO_IRQ_SET_DATA_EVENTFD)
+> > +                                      VFIO_IRQ_SET_DATA_EVENTFD | \
+> > +                                      VFIO_IRQ_SET_DATA_AFFINITY)
+> >  #define VFIO_IRQ_SET_ACTION_TYPE_MASK        (VFIO_IRQ_SET_ACTION_MASK=
+ | \
+> >                                        VFIO_IRQ_SET_ACTION_UNMASK | \
+> >                                        VFIO_IRQ_SET_ACTION_TRIGGER)
+>
 
