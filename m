@@ -1,201 +1,149 @@
-Return-Path: <linux-kernel+bounces-209850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F3F903BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:23:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DF5903BDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9144A1F20C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90321283D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F3217C216;
-	Tue, 11 Jun 2024 12:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF01C17C213;
+	Tue, 11 Jun 2024 12:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWS+OsQX"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3mv2TCWf"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9CE17BB02;
-	Tue, 11 Jun 2024 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8103D16F839;
+	Tue, 11 Jun 2024 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718108592; cv=none; b=l+TL3A3LX3Y9s0WRAX3aRqFzsNraM0GArD0OuuCOlfTzMh+WCebydFEpZQc2JY71kCC6T5kIUzv5356o+iL1n2u9XPwvawCoSpzUD4ifcUUpEp8Vr2cG5kVRwHWqjnu8jNmGltylaYTsOo60W7Ex/O9qla9oJBbULWat+F74g/I=
+	t=1718108889; cv=none; b=Xw0eXn7yWcXuSGZ1xvstS460WVH4sCXt6cKK+uKWeiL6yQnURY0Luntz9FonX8FLqausmXMULw6mzM2fCVNHIclNqMF+05MkZktYRi2s3/HsezIuz0tBjCvolibSNSsR3jw+tgzyGA6ythZm6/ZjjVT5JONz6P2I4gMkfG3VCSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718108592; c=relaxed/simple;
-	bh=jz2lKdoLAmywAiVh90VRZ7zihAdGB/Mjfd4CdnLtpFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YYswy10EjUz4ve4CDKDpjSmxA51BLsXYJ7RDg42JefzMKCf9CAueAT0KO4EF3b2b2N/erDpfyeRWW6qCJloV6gZWWw4YSr5H4jSZyucDOV1wlzZpc2J0SLB4Mblm5aTCVUiLTSIHuqm2/v4ljVtDAXpCn5fL0/QTmaaX1EG8Bes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWS+OsQX; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso832175a12.3;
-        Tue, 11 Jun 2024 05:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718108591; x=1718713391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOZTRxupDtWwJHuRilUyPeK4CR8nu2TIfIZfSy2nBSs=;
-        b=RWS+OsQXPHRjxLaZcO02Tm2x6kKRuHMMkZoYvkK9wId+9LNd8YJZg097EPKKjZ29MC
-         +rzngZ5xx+OmeZzQ7FNyCV1buUfyl+Yc9c3erKtczCSoBuE08WmgsNXGVkSQ24MBM2AR
-         2k3WOCVCc6q0DqZvC8csl0S4bKKDuXdsMNdCvyqgHty1hpEFwSXAm/Uaf1Y9btIpgh+g
-         E9YPi/PFLcblK6D38zP5it2LGJMO+b+ijc2g9+h9IPz2KwjnS2aDMo4XY2tqW3IYOT8/
-         EOUgfZ5k2z9z5XTiyPP+e7zkd34S0nwvGy4/a57cg7xjSAAVtji7Wk0JRF0jfTKBuJ8R
-         U6HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718108591; x=1718713391;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EOZTRxupDtWwJHuRilUyPeK4CR8nu2TIfIZfSy2nBSs=;
-        b=TrI4ulhWp1UBOozYNHXWYcchhh2ElRTKOn23HnNkjtfp1o/OxlwFHlxr+Ul81NsZif
-         1pZF/EzD8NkvM5zGZde7rXKoRU/glD167Gwz2wFwFl8bvtISb3Eil+0QP6Uo1pP4VHZo
-         5Df4Z0cJmbl830G6cmSEmkFeCml/hAT5QULw2l+io9dfZqnoJgaHFlUhz3T+eOJkQGbi
-         z+5HuEaERIiRBuRblu+hpZvUWQW0UXkBiUAq/mcdY+vwVlPIQvYXifcG4dfO4TP6eWYx
-         wmxqJBhvahNlgI2Xt1SJesQ/0LHMLdETSIXinOZl5AkVmcRGuxipB62R1bCqKfylc8Ng
-         QaZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+0KSpaboV58Aa25knhy/URr/uMXwAgYV9RKsiI5qpDfar2oqgb53zkVpNtmREj+4ta7qeFytLNtxiX602Fmmvku5VougbPFwiqh4q9RCy2pKjG4g0hThwNnzgcm0r1aKAjFrRhINhIQf4ftCVDorbGPBil8++VCNC+P7UpnK/QKscSdUX
-X-Gm-Message-State: AOJu0YxkmuhwpgpoD8nL9VOyOY+oV1y1epBlsGDwsbf4iW1Y/m+E3L9Q
-	bND5YFhlnKd4PiV79Gk0hDyqRGKcbBmWe+7KzbRchHUHU8EZorbA
-X-Google-Smtp-Source: AGHT+IEhPFNtb9nmKI5y+NJ+LmMngE9cDpDPrayFaEAYgV3CtqI2Gk9PBOTf6M5x55DhupPbOR5C0w==
-X-Received: by 2002:a05:6a21:1a2:b0:1b5:2fbb:2d84 with SMTP id adf61e73a8af0-1b52fbb307amr9428335637.28.1718108590480;
-        Tue, 11 Jun 2024 05:23:10 -0700 (PDT)
-Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6f88c51aec4sm328663a12.86.2024.06.11.05.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 05:23:10 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: animeshagarwal28@gmail.com,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: dt-bindings: wlf,wm8804: Convert to dtschema
-Date: Tue, 11 Jun 2024 17:52:51 +0530
-Message-ID: <20240611122258.47406-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1718108889; c=relaxed/simple;
+	bh=MVhJd/IENmXCGf1wjGGZDAf+X3LDJ+2yYb11vSE6vbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=koYxcjj/V8rRI1l3JFhelcQR1QPNgFKXBkn3ItXVDlbjl6iXWsN/GXd4zlTYR0w5ubTvd3zfWk7RasF2edSWMSpO4ruN3zWvAHIX/mEvloWJfFGN1X9+5Y5CORNKWG+tiAr+QRJdZrGMbX67uH94qlj2pZi6UbaT+dy5Xj5mN3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3mv2TCWf; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718108885;
+	bh=MVhJd/IENmXCGf1wjGGZDAf+X3LDJ+2yYb11vSE6vbk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=3mv2TCWfFFFoA4aVNFbile1CCpI/1foRu2oCEMK8nxCxS1XSykZshhVjCZixM1K9z
+	 PS51So12AEX7IXftLZZqK1rarIS7pEjdqJ+FCOvxTJmS8JyQIQpC2f74YfCgjtHJlz
+	 8Gt5aNPjFE0XGuQWtQ7b8m9/d9JH8iXMPfVgMiFbaz4xXbkfyHufTiknNP+IjFiG8X
+	 wKBoL8ltCh4Q96I0JIhn2AB/0nh0VQcSfCKmTDI9MgAbT5HtroqXZtQMqRCDpMP3y6
+	 IrywMyLiOunRMybtHNZUM1fxvfCWFC9pNFa/s83W0FYET+P115JCLlPpUmUflFDo7y
+	 rnlQKD6xJWzpQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 98D593780EC6;
+	Tue, 11 Jun 2024 12:28:04 +0000 (UTC)
+Message-ID: <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+Date: Tue, 11 Jun 2024 14:28:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+ Thorsten Leemhuis <regressions@leemhuis.info>, Rob Herring
+ <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
+ <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
+ <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
+ <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Convert the WM8804 audio codec bindings to DT schema.
+Il 11/06/24 13:38, Arınç ÜNAL ha scritto:
+> On 11/06/2024 14:30, Thorsten Leemhuis wrote:
+>> On 07.06.24 16:15, Thorsten Leemhuis wrote:
+>>> On 07.06.24 16:03, Paolo Abeni wrote:
+>>>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
+>>>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
+>>>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
+>>>>>>> [adding Paolo, who committed the culprit]
+>>>>>
+>>>>> /me slowly wonders if the culprit should be reverted for now (see below)
+>>>>> and should be reapplied later together with the matching changes from
+>>>>> Arınç ÜNAL.
+>>>>
+>>>> FWIS I think a revert should be avoided, given that a fix is available
+>>>> and nicely small.
+>>>
+>>> Yeah, on one hand I agree; but on the other it seems that the
+>>> maintainers that would have to take care of the dt changes to fix this
+>>> until now remained silent in this thread, apart from Rob who sent the
+>>> mail regarding the warnings.
+>>>
+>>> I put those maintainers in the To: field of this mail, maybe that might
+>>> lead to some reaction.
+>>
+>> Still no reply from the DRS folks or any other progress I noticed. Guess
+>> that means I will soon have no other choice than to get Linus involved,
+>> as this looks stuck. :-( #sigh
+> 
+> Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
+> of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
+> ARM maintainers that can apply the fix to their tree?
+> 
+> Arınç
 
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
----
- .../devicetree/bindings/sound/wlf,wm8804.yaml | 58 +++++++++++++++++++
- .../devicetree/bindings/sound/wm8804.txt      | 25 --------
- 2 files changed, 58 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8804.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/wm8804.txt
+You have feedback from two people on the series that you mentioned, and noone
+is going to apply something that needs to be fixed.
 
-diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8804.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8804.yaml
-new file mode 100644
-index 000000000000..3c060179f06e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/wlf,wm8804.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/wlf,wm8804.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: WM8804 audio codec
-+
-+description: |
-+  This device supports both I2C and SPI (configured with pin strapping on the
-+  board).
-+
-+maintainers:
-+  - patches@opensource.cirrus.com
-+
-+properties:
-+  compatible:
-+    const: wlf,wm8804
-+
-+  reg:
-+    description:
-+      The I2C address of the device for I2C, the chip select number for SPI.
-+    maxItems: 1
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+  PVDD-supply:
-+    description: PLL core supply
-+
-+  DVDD-supply:
-+    description: Digital core supply
-+
-+  wlf,reset-gpio:
-+    description: A GPIO specifier for the GPIO controlling the reset pin.
-+    maxItems: 1
-+
-+required:
-+  - reg
-+  - compatible
-+  - PVDD-supply
-+  - DVDD-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        codec@1a {
-+            compatible = "wlf,wm8804";
-+            reg = <0x1a>;
-+            PVDD-supply = <&pvdd_reg>;
-+            DVDD-supply = <&dvdd_reg>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/wm8804.txt b/Documentation/devicetree/bindings/sound/wm8804.txt
-deleted file mode 100644
-index 2c1641c17a91..000000000000
---- a/Documentation/devicetree/bindings/sound/wm8804.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--WM8804 audio CODEC
--
--This device supports both I2C and SPI (configured with pin strapping
--on the board).
--
--Required properties:
--
--  - compatible : "wlf,wm8804"
--
--  - reg : the I2C address of the device for I2C, the chip select
--          number for SPI.
--
--  - PVDD-supply, DVDD-supply : Power supplies for the device, as covered
--    in Documentation/devicetree/bindings/regulator/regulator.txt
--
--Optional properties:
--
--  - wlf,reset-gpio: A GPIO specifier for the GPIO controlling the reset pin
--
--Example:
--
--wm8804: codec@1a {
--	compatible = "wlf,wm8804";
--	reg = <0x1a>;
--};
--- 
-2.45.1
+I'm giving you the possibility of addressing the comments in your patch, but
+I don't want to see any mention of the driver previously ignoring this or that
+as this is irrelevant for a hardware description. Devicetree only describes HW.
 
+Adding up, in commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of 
+switch from device tree"),
+you have created a regression.
+
+Regressions should be fixed - as in - if the driver did work before with the old
+devicetrees, it shall still work. You can't break ABI. Any changes that you do
+to your driver must not break functionality with old devicetrees.
+
+So...
+
+------> Fix the driver that you broke <------
+
+After you've fixed it - and I repeat - only after, *and* after someone (Frank?)
+validates that the old devicetrees do work with the fixed driver, I will take
+the device tree fixes for that MDIO address (as those are, again, fixing a
+description of the hardware on those boards, so I agree that those must be fixed
+AS WELL).
+
+
+Regards,
+Angelo
 
