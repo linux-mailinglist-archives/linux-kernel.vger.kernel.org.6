@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-209152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B138B902DEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:21:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D675B902DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30BAFB2093B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849CB28505B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA018C04;
-	Tue, 11 Jun 2024 01:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FE3A932;
+	Tue, 11 Jun 2024 01:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O4Np/Qh7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB0E574;
-	Tue, 11 Jun 2024 01:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="oABGaXWl"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3132863CB;
+	Tue, 11 Jun 2024 01:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718068883; cv=none; b=Lm1hgtDgGwijvmZN10QmkXJe0U30tQDt6n+AAuml7Y1PezXdNEZivm3NiD/i46zyOKjr699eWRxz6TEKTX4TFHLKROByjkNoLywi/80oZmTWgO5GYdcVVXTYd9GCy593TFYZdPyr0U6BgyATGUpQvdXUG2sfZFhXdq1MdHRWYEo=
+	t=1718069069; cv=none; b=jjegp2ns70l4axnbqN2iKgSDinyvIeYMy//wq5MFzzRqTjnjzlZWCBWGjhLyrh+MkfBy25smaafe53QCHx8f7rG4pueV1X2/7Lwm3go5H6fdYT20enKRXrOsTFZEvInar7RSgtucEdtAeUQtIFPL7hb0yobN0mvM1uIx0klybpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718068883; c=relaxed/simple;
-	bh=ziA4GEXPGVP/ZuWwx2ngxGPwva+R10QqvAr0aHW90uM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nHw/GahfJ+Io4fIYk84Oor3HKQYTfIvDWV1jevED8H7UUV4g0mfrwnWmBXmAQA3EnfY1jfsrjWduLPq5iCb28MXbLrR/mhKnFYclG8QMEsvj0oVIhTDpOn6cSJZQCcvO9maCM95P1jDFd0uXZK1VWHo+bGy8ALcjj3dV+cTaT2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O4Np/Qh7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ADjgRL029937;
-	Tue, 11 Jun 2024 01:21:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=s/LOV7p9oalQRhbSNfugW4
-	CFWJbZeIawxPRY2AK7TQ0=; b=O4Np/Qh71fh0PAZXXGGeyT5pMrP9sbV+0qni31
-	cPW5i8PtFS6bmV3oOuBEsOGSJ0d3/2P20w8SNgDKiPvZcisYJW3/2UttpP/ZxJuA
-	ETc0cbA9IeaYIyPoRfGJQ9y5ne2eU/nSw6MnNpIJPjNe7fvTJ1SiDcI4irwqbz/J
-	kmm4n8Rch1KhPho22pmG+Y08+uBAPqSVBps1nH2JrlBgeUq1cYTVekounjkSHMyR
-	2u3MYpXGA2+GW4pxVnz27M/UwFggXPnPMziK6Nz8u54P6GKQaqjytlN9NYiPJkeS
-	+tFzcWhHcOiWVfhH+SWG2/pqefvFPnXouxEZTV+ynaulubRw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0edkev-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 01:21:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B1LH1K008357
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 01:21:17 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 18:21:17 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 18:21:16 -0700
-Subject: [PATCH] PCI: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718069069; c=relaxed/simple;
+	bh=zcXPl8Bzw642ICLfe5n+Eho01OwCsEZ/yr9ByuFu5Vw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=JIGM/CjvlSrV9T5Y1oR2ItDEXTme6u1y3/zI0avBArm8nnmIYAlTQbaiMXXQ39+sG5dv3kA73Zxvpn3YQ5/Ie3bAc0JxBSEVv39K9a/38Rl65SaEQAUwgaj3iTXIEGhFTJE7nUM8LFTNxbKOprBrnqkHP19dYC9m28M+8VClOPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=oABGaXWl reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=JhawUknh1K4zYhm3WAOKPcVdF6zkQAYSoT/mXFi0W6I=; b=o
+	ABGaXWlKJJiXpTt4ksJWYZaldwHf9eCF4gHxwQwIGYAB2sq4pDhM9fZyLR0W51Jt
+	dAC34n9BV7A/uDHf0/wXoc241qQsWerdt+O/FRPTD9pAKXUN5IbyS+lvunYJSzgg
+	2RV6I67mDKG9kGmHkbtxapHzcthwQtBmoKpEHalJzo=
+Received: from slark_xiao$163.com ( [223.104.68.135] ) by
+ ajax-webmail-wmsvr-40-148 (Coremail) ; Tue, 11 Jun 2024 09:24:07 +0800
+ (CST)
+Date: Tue, 11 Jun 2024 09:24:07 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Jeffrey Hugo" <quic_jhugo@quicinc.com>, 
+	"Sergey Ryazanov" <ryazanov.s.a@gmail.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org, 
+	quic_qianyu@quicinc.com, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v1 1/2] bus: mhi: host: Import link_id item
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <4370ae55-9521-d2da-62b9-42d26b6fbece@quicinc.com>
+References: <20240607100114.452979-1-slark_xiao@163.com>
+ <4370ae55-9521-d2da-62b9-42d26b6fbece@quicinc.com>
+X-NTES-SC: AL_Qu2aCvydtkgv4SWZZOkfmk8Sg+84W8K3v/0v1YVQOpF8jCHrxgkRXXVJP2bq0du3MRiqkxKdVzhnxtxTR5BccI0hp8AONAKtLIDoHtsNI7/Tkg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-pci-v1-1-139c135853ea@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIumZ2YC/x3MwQqDMAyA4VeRnBdodYxurzJ2SNuoAe0kcSKI7
- 75ux+/w/wcYq7DBozlAeROTd6nwlwbSSGVglFwNrWuv7uYdzhmzysZquCTB0PkUQ9+5QHeo0aL
- cy/4fPl/VkYwxKpU0/jaTlM+OM9nKCuf5BXiAAr9/AAAA
-To: Bjorn Helgaas <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _EvmJxNROH0H0hv8Lu_sL0nD5LG_bz08
-X-Proofpoint-ORIG-GUID: _EvmJxNROH0H0hv8Lu_sL0nD5LG_bz08
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_08,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=911
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110009
+Message-ID: <38a9c3af.1408.19004e530de.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDXP8g3p2dmWAg8AA--.24639W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRwP5ZGV4JtK1gQACsG
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-stub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-pf-stub.o
-
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/pci/pci-pf-stub.c | 1 +
- drivers/pci/pci-stub.c    | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/pci/pci-pf-stub.c b/drivers/pci/pci-pf-stub.c
-index 45855a5e9fca..04815fcb0ce7 100644
---- a/drivers/pci/pci-pf-stub.c
-+++ b/drivers/pci/pci-pf-stub.c
-@@ -39,4 +39,5 @@ static struct pci_driver pf_stub_driver = {
- };
- module_pci_driver(pf_stub_driver);
- 
-+MODULE_DESCRIPTION("Simple stub driver for PCI SR-IOV PF device");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pci/pci-stub.c b/drivers/pci/pci-stub.c
-index d1f4c1ce7bd1..d4fec791b321 100644
---- a/drivers/pci/pci-stub.c
-+++ b/drivers/pci/pci-stub.c
-@@ -92,5 +92,6 @@ static void __exit pci_stub_exit(void)
- module_init(pci_stub_init);
- module_exit(pci_stub_exit);
- 
-+MODULE_DESCRIPTION("Simple stub driver to reserve a PCI device");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Chris Wright <chrisw@sous-sol.org>");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-pci-831cb8f308a9
-
+CitNb3JlIG1haW50YWluZXIgdG8gdGhpcyBmaXJzdCBwYXRjaCBsaXN0LgoKQXQgMjAyNC0wNi0w
+NyAyMzowMTowMCwgIkplZmZyZXkgSHVnbyIgPHF1aWNfamh1Z29AcXVpY2luYy5jb20+IHdyb3Rl
+Ogo+JFN1YmplY3Qgc2F5cyB0aGlzIGlzIHBhdGNoIDEgb2YgMiwgYnV0IEkgZG9uJ3Qgc2VlIGEg
+c2Vjb25kIHBhdGNoIG5vciBhIAo+Y292ZXIgbGV0dGVyLgo+Cj5PbiA2LzcvMjAyNCA0OjAxIEFN
+LCBTbGFyayBYaWFvIHdyb3RlOgo+PiBGb3IgU0RYNzIgTUJJTSBtb2RlLCBpdCBzdGFydHMgZGF0
+YSBtdXggaWQgZnJvbSAxMTIgaW5zdGVhZCBvZiAwLgo+PiBUaGlzIHdvdWxkIGxlYWQgdG8gZGV2
+aWNlIGNhbid0IHBpbmcgb3V0c2lkZSBzdWNjZXNzZnVsbHkuCj4+IEFsc28gTUJJTSBzaWRlIHdv
+dWxkIHJlcG9ydCAiYmFkIHBhY2tldCBzZXNzaW9uICgxMTIpIi4KPj4gU28gd2UgYWRkIGEgbGlu
+ayBpZCBkZWZhdWx0IHZhbHVlIGZvciBTRFg3Mi4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJr
+IFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4KPj4gLS0tCj4+ICAgZHJpdmVycy9idXMvbWhpL2hv
+c3QvcGNpX2dlbmVyaWMuYyB8IDMgKysrCj4+ICAgaW5jbHVkZS9saW51eC9taGkuaCAgICAgICAg
+ICAgICAgICB8IDEgKwo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCj4+IAo+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZl
+cnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gaW5kZXggMGI0ODNjN2M3NmExLi4xZjlk
+ZTI3MzA3NjYgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmlj
+LmMKPj4gKysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiBAQCAtNTMs
+NiArNTMsNyBAQCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyB7Cj4+ICAgCXVuc2lnbmVkIGludCBk
+bWFfZGF0YV93aWR0aDsKPj4gICAJdW5zaWduZWQgaW50IG1ydV9kZWZhdWx0Owo+PiAgIAlib29s
+IHNpZGViYW5kX3dha2U7Cj4+ICsJdW5zaWduZWQgaW50IGxpbmtfZGVmYXVsdDsKPj4gICB9Owo+
+PiAgIAo+PiAgICNkZWZpbmUgTUhJX0NIQU5ORUxfQ09ORklHX1VMKGNoX251bSwgY2hfbmFtZSwg
+ZWxfY291bnQsIGV2X3JpbmcpIFwKPj4gQEAgLTQ2OSw2ICs0NzAsNyBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NzJfaW5mbyA9IHsKPj4gICAJ
+LmRtYV9kYXRhX3dpZHRoID0gMzIsCj4+ICAgCS5tcnVfZGVmYXVsdCA9IDMyNzY4LAo+PiAgIAku
+c2lkZWJhbmRfd2FrZSA9IGZhbHNlLAo+PiArCS5saW5rX2RlZmF1bHQgPSAxMTIsCj4+ICAgfTsK
+Pj4gICAKPj4gICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jaGFubmVsX2NvbmZpZyBtaGlfbXYz
+eF9jaGFubmVsc1tdID0gewo+PiBAQCAtMTAzNSw2ICsxMDM3LDcgQEAgc3RhdGljIGludCBtaGlf
+cGNpX3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpwZGV2LCBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9p
+ZCAqaWQpCj4+ICAgCW1oaV9jbnRybC0+cnVudGltZV9nZXQgPSBtaGlfcGNpX3J1bnRpbWVfZ2V0
+Owo+PiAgIAltaGlfY250cmwtPnJ1bnRpbWVfcHV0ID0gbWhpX3BjaV9ydW50aW1lX3B1dDsKPj4g
+ICAJbWhpX2NudHJsLT5tcnUgPSBpbmZvLT5tcnVfZGVmYXVsdDsKPj4gKwltaGlfY250cmwtPmxp
+bmtfaWQgPSBpbmZvLT5saW5rX2RlZmF1bHQ7Cj4+ICAgCj4+ICAgCWlmIChpbmZvLT5lZGxfdHJp
+Z2dlcikKPj4gICAJCW1oaV9jbnRybC0+ZWRsX3RyaWdnZXIgPSBtaGlfcGNpX2dlbmVyaWNfZWRs
+X3RyaWdnZXI7Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21oaS5oIGIvaW5jbHVkZS9s
+aW51eC9taGkuaAo+PiBpbmRleCBiNTczZjE1NzYyZjguLjRkYTEwYjk5Yzk2ZSAxMDA2NDQKPj4g
+LS0tIGEvaW5jbHVkZS9saW51eC9taGkuaAo+PiArKysgYi9pbmNsdWRlL2xpbnV4L21oaS5oCj4+
+IEBAIC00NDUsNiArNDQ1LDcgQEAgc3RydWN0IG1oaV9jb250cm9sbGVyIHsKPj4gICAJYm9vbCB3
+YWtlX3NldDsKPj4gICAJdW5zaWduZWQgbG9uZyBpcnFfZmxhZ3M7Cj4+ICAgCXUzMiBtcnU7Cj4+
+ICsJdTMyIGxpbmtfaWQ7Cj4+ICAgfTsKPj4gICAKPj4gICAvKioKPgo+Tm9uZSBvZiB0aGlzIGlz
+IGFjdHVhbGx5IHVzZWQuICBEZWFkIGNvZGUgaXMgZ2VuZXJhbGx5IG5vdCBhY2NlcHRlZC4KPgo+
+LUplZmYK
 
