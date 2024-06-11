@@ -1,217 +1,138 @@
-Return-Path: <linux-kernel+bounces-210381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FC0904303
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:00:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75B8904306
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E25283A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:00:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BD33B226DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851535B5B6;
-	Tue, 11 Jun 2024 17:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A8464A98;
+	Tue, 11 Jun 2024 18:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QEbshTHg"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UiLZmZ1A"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E0C58ADD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026D15FB8A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128706; cv=none; b=phhsV2ERmcfn2ZL7DNIm+MVcuTPKF0Xi3/hS4V3nA7L4hsWMhnWDZv0hicwRjaeOdO9u4YKt9j54OzFOc7vOZ5rv5A9fk64iLYmgHaQOo1CrzVYRGkTCLuk8SgQN2FvJNWV1b1fAZZodmK/LZvhJtMR/xizAcVfIb2S7QI97XY8=
+	t=1718128819; cv=none; b=iD8YoZur93EXzGnRMbayaaW6Iq3SH5O0hvzAdaN2ltagLJ75lTbzaoCIAIioAluRr/8NKKkO1gljV5qIyFriew0Gqz+WjjDVXCtD6P3OPZ1fWFxMdopTngq1xEZ3VG2CihowDcPNK89aML3JECXJyre30e/bfitz7kor2hq2Kw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128706; c=relaxed/simple;
-	bh=CR0Oj0XOoZ7y22JghqczjZrf/GTITEydKBz1s5DymH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uJKMk7msDTNy4oDgqYmcGq7Yg6opncqlgAB+Y+Il/0+s2s51Q+iAe6XCJ6V4nHMH187BZT+VCyszAGCEzFEQVpK0J4LgHMHs6C7dbvxMsmcUwvQHITJKupZBF/kQ5c3Ll+mKVzBywMlQ3dvZco2DosXJQeLs/q/3eVVhTCteygg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QEbshTHg; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7046e87e9afso1158514b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:58:24 -0700 (PDT)
+	s=arc-20240116; t=1718128819; c=relaxed/simple;
+	bh=nwpZTn8pFzGOwf4ZB/VvlBs8EE7Mx/yz85WdIMLghPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HGyPP50KKkYKB3sgRRilzuEEK6OE2naZZBOpvEL4m4XD8acLngprXO31BqS2Zb/4zGvS/aL9yLq9/oF4QPAG2THrBib2wIHDfE7qo+W92zdTlNz9P2FdqKZ97S9IKP1EwaENwhllpVWezyTw36PY5vgl1+md8iOFdUBVwuANnZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UiLZmZ1A; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c94cf4c9bso1242250e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718128704; x=1718733504; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1mU4E5MR7G8MdpFb909SPM49zIumrpDBhQvKM4R8Il0=;
-        b=QEbshTHgnRoRzO62I5ZjBteygGo7Ma9Rv7YYUkIDX8V5NMAGcQ6hgWBEh4FCK+PTpo
-         Wr0vC1IvsvxX7L7jqgdY0qsneRjX/xAXvnRXSr2JWasK75fOOFIf2QczxOn5m5KM/xxT
-         Wdn0Tk5qzg7mFR7F/IpMovSvZirwySfPrDjbBtlnsx/VThHsJEouCqGFjPD5sQNAsNVs
-         VdwYE/ls6VMOpYjbcE4Zy6uvVg3txsVOuWzKxnjtifQ/Z7PdeIsXS/4ZZdQ6atYnRsRy
-         I05t+0/UwWVR/YDqWsm4lFWfii0Icb6mT69BVKr/PHGjlH3xVlwdveOI+QyWFE9bGHVR
-         Tqgw==
+        d=linux-foundation.org; s=google; t=1718128815; x=1718733615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfppZ4J9iItfp/zeqA6eCwjM7fUz1YkqRKfl9RCRvzw=;
+        b=UiLZmZ1ABvT2swqdEKyDedzRudERfQm8u9YYGQJPaC1dsQVNtdDHmZQp88I1GCIwmK
+         U3LfuiDtCRWao/fW8QlAoCxk55G14pR5wHdJsMEYxLDGR8JK2YkDy7DhorQ3EEERJOi3
+         dBa8np3BTsZpUqLTv8bHYhGAoZ/GOlgZ7Bobc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718128704; x=1718733504;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mU4E5MR7G8MdpFb909SPM49zIumrpDBhQvKM4R8Il0=;
-        b=pBFSbnHXy1sJqoou2oxFBdNdxbFTO6j8GdtR7K5ohS/IMq1vH7Y9LU+qRAqodU9pB6
-         p7XWyoCoQdZYn9RizHKMsEJnsvNhZd+amDDtYkm9vxyWue10wHhQNBoHeeioKk/g/ZUa
-         RSsZRxj+QHg6vIgAz146pg0hVt8rjx+bRFJDbBdJYfAtOLoBPOyu+fGngkqOKOquSZ8f
-         NrX56j7AJVK4vvTqOO3ZddLD6SFs9+7XjngWFgC2rsZe8fhRbKjNwm1phidTB1YbiM6A
-         TI85v/Hn0V6xcsPO7xC3emmskcDhYAhB+QZkBnE/88NTU6QDsCbbURY+tqCqrUx8sHhU
-         qRuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4elvOlT0rwdI2PZozmljVGW1YSWCZ6UWsV60bUjcYjufEFjGaTPADBYK00ODUcxXQrGTEt+hUCPUaZ7JGyWzCI1S1ulb/mKaRblGe
-X-Gm-Message-State: AOJu0YxYQrZsQG09sg9duVlngfdSuJCw9VRGRHXN1lI7AH9VHTmuPQq+
-	D0ExFJURyToeEblG2gv816jk2ONjo7mBa0VBSd6TnQycujhoiXCW2UJBL+jez+Q=
-X-Google-Smtp-Source: AGHT+IGV99rF9+F+Cf1PyBfibxQMwpPQeXSdH+G1wwDCeMYhzDOe4MWoLKpCLo8WlpBJQZWUdPTHOg==
-X-Received: by 2002:a05:6a00:cc5:b0:705:964e:d9f3 with SMTP id d2e1a72fcca58-705964ee540mr7310001b3a.11.1718128704355;
-        Tue, 11 Jun 2024 10:58:24 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:74af:2f2d:5f50:e6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd512e3esm8763123b3a.201.2024.06.11.10.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 10:58:23 -0700 (PDT)
-Date: Tue, 11 Jun 2024 11:58:21 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] remoteproc: da8xx: Use devm action to release
- reserved memory
-Message-ID: <ZmiQPSvdkGzt6/sB@p14s>
-References: <20240610151721.189472-1-afd@ti.com>
- <20240610151721.189472-5-afd@ti.com>
+        d=1e100.net; s=20230601; t=1718128815; x=1718733615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dfppZ4J9iItfp/zeqA6eCwjM7fUz1YkqRKfl9RCRvzw=;
+        b=RaD2ZwuvQTVI5vMM7GCWCMig9ZhOOABa5SCwqALqb/ddLwbhY9GqzO4z6Q5+uD/kax
+         R6erpLWpuRUvmCwqF+4rry/0uPg/OzKfaYreBdxvhEZS+IZA1aK9n+GmJ3tY0Wuf+9ZX
+         rIqAVjaJRrQoyzs8iq84BxkJCYzIBb5PiRyAN+ftiu9jjLBlN0UH5ZlsQuyLArL9+9hg
+         TW4rWNMnUlWy7bWmBYTCVUIQxo1DEJI4/q/pM45Zoc2AYEcmFmneiqBYwEYoCoONsJuV
+         ghMVfKd/bEgEYesBvHDH7kIh2ihqg+cngcPwjYzCKSkyAEvv20TVDojhTvGegnuoB5VA
+         vweQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWEuAcNZ/oWXOAZ9Uq3sYf119/xJ7I9xACOqukm3QgrkY8nQNHsJBEMStJRHOml0enxIbYe9sJw/PzGWglExI8s90VRiBMUHu2/rRP
+X-Gm-Message-State: AOJu0Yzji6v3ALJ6/RHxWDDCqKFQFwZFt93K898VngxJPtiyyNHCyvnZ
+	Uadpsc60HzLuIrjUL54eN6PFdLMHVudqaVmO7UoY4wd49A5SXeh4qSrcRlQlpwV7yxqzdpkestm
+	akB4=
+X-Google-Smtp-Source: AGHT+IH4uKB3qd+yxQPA01T38eIpFoTiWsk5CmQhyL55Cv3PU9JLLz06GLvMK73/MNE57kThKKoDWw==
+X-Received: by 2002:a19:5e45:0:b0:52c:890e:bf23 with SMTP id 2adb3069b0e04-52c890ebff7mr5540802e87.21.1718128815002;
+        Tue, 11 Jun 2024 11:00:15 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f4108d502sm35464366b.135.2024.06.11.11.00.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 11:00:13 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c68c3f8adso1777182a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:00:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5sfqWm5pjyu6CwJEQQzsp3uNIKM9+zFo5IolEoHlFU0meM0BJ499xr7/AkXx1ZN71e6WfU0/AOvA+Bu3zDISvSjhuSPRCgzQRK2/g
+X-Received: by 2002:a50:d69c:0:b0:57c:5f7e:d0f1 with SMTP id
+ 4fb4d7f45d1cf-57c5f7ed498mr8641041a12.38.1718128812554; Tue, 11 Jun 2024
+ 11:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610151721.189472-5-afd@ti.com>
+References: <20240610204821.230388-1-torvalds@linux-foundation.org>
+ <20240610204821.230388-5-torvalds@linux-foundation.org> <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
+ <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com> <ZmiN_7LMp2fbKhIw@J2N7QTR9R3>
+In-Reply-To: <ZmiN_7LMp2fbKhIw@J2N7QTR9R3>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 11 Jun 2024 10:59:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
+Message-ID: <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+On Tue, 11 Jun 2024 at 10:48, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> Fair enough if that's a pain on x86, but we already have them on arm64, and
+> hence using them is a smaller change there. We already have a couple of cases
+> which uses MOVZ;MOVK;MOVK;MOVK sequence, e.g.
+>
+>         // in __invalidate_icache_max_range()
+>         asm volatile(ALTERNATIVE_CB("movz %0, #0\n"
+>                                     "movk %0, #0, lsl #16\n"
+>                                     "movk %0, #0, lsl #32\n"
+>                                     "movk %0, #0, lsl #48\n",
+>                                     ARM64_ALWAYS_SYSTEM,
+>                                     kvm_compute_final_ctr_el0)
+>                      : "=r" (ctr));
+>
+> ... which is patched via the callback:
+>
+>         void kvm_compute_final_ctr_el0(struct alt_instr *alt,
+>                                        __le32 *origptr, __le32 *updptr, int nr_inst)
+>         {
+>                 generate_mov_q(read_sanitised_ftr_reg(SYS_CTR_EL0),
+>                                origptr, updptr, nr_inst);
+>         }
+>
+> ... where the generate_mov_q() helper does the actual instruction generation.
+>
+> So if we only care about a few specific constants, we could give them their own
+> callbacks, like kvm_compute_final_ctr_el0() above.
 
-On Mon, Jun 10, 2024 at 10:17:20AM -0500, Andrew Davis wrote:
-> This helps prevent mistakes like freeing out of order in cleanup functions
-> and forgetting to free on error paths.
-> 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 29 +++++++++++++--------------
->  1 file changed, 14 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index c8b7576937733..1ce91516fc6e5 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -233,6 +233,13 @@ static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +static void da8xx_rproc_mem_release(void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	of_reserved_mem_device_release(dev);
-> +}
-> +
->  static int da8xx_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -293,14 +300,13 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  				ret);
->  			return ret;
->  		}
-> +		devm_add_action_or_reset(&pdev->dev, da8xx_rproc_mem_release, &pdev->dev);
->  	}
->  
->  	rproc = devm_rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
->  				 sizeof(*drproc));
-> -	if (!rproc) {
-> -		ret = -ENOMEM;
-> -		goto free_mem;
-> -	}
-> +	if (!rproc)
-> +		return -ENOMEM;
->  
->  	/* error recovery is not supported at present */
->  	rproc->recovery_disabled = true;
-> @@ -313,7 +319,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  
->  	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
->  	if (ret)
-> -		goto free_mem;
-> +		return ret;
->  
->  	platform_set_drvdata(pdev, rproc);
->  
-> @@ -323,7 +329,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  					rproc);
->  	if (ret) {
->  		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
-> -		goto free_mem;
-> +		return ret;
->  	}
->  
->  	/*
-> @@ -333,7 +339,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	 */
->  	ret = reset_control_assert(dsp_reset);
->  	if (ret)
-> -		goto free_mem;
-> +		return ret;
->  
->  	drproc->chipsig = chipsig;
->  	drproc->bootreg = bootreg;
-> @@ -344,15 +350,10 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	ret = rproc_add(rproc);
->  	if (ret) {
->  		dev_err(dev, "rproc_add failed: %d\n", ret);
-> -		goto free_mem;
-> +		return ret;
->  	}
->  
->  	return 0;
-> -
-> -free_mem:
-> -	if (dev->of_node)
-> -		of_reserved_mem_device_release(dev);
-> -	return ret;
->  }
->  
->  static void da8xx_rproc_remove(struct platform_device *pdev)
-> @@ -369,8 +370,6 @@ static void da8xx_rproc_remove(struct platform_device *pdev)
->  	disable_irq(drproc->irq);
->  
->  	rproc_del(rproc);
-> -	if (dev->of_node)
-> -		of_reserved_mem_device_release(dev);
+I'll probably only have another day until my mailbox starts getting
+more pull requests (Mon-Tue outside the merge window is typically my
+quiet time when I have time to go through old emails and have time for
+private projects).
 
+So I'll look at doing this for x86 and see how it works.
 
-This patch gives me the following compilation warning:
+I do suspect that even then it's possibly more code with a
+site-specific callback for each case, but maybe it would be worth it
+just for the flexibility.
 
-  CC      kernel/module/main.o
-  CC      drivers/remoteproc/da8xx_remoteproc.o
-  AR      drivers/base/firmware_loader/built-in.a
-  AR      drivers/base/built-in.a
-remoteproc/kernel/drivers/remoteproc/da8xx_remoteproc.c: In function ‘da8xx_rproc_remove’:
-remoteproc/kernel/drivers/remoteproc/da8xx_remoteproc.c:363:24: warning: unused variable ‘dev’ [-Wunused-variable]
-  363 |         struct device *dev = &pdev->dev;
-      |                        ^~~
-  AR      drivers/remoteproc/built-in.a
-
-which is then fixed in the following patch with the introduction of
-devm_rproc_add().  I suggest doing the opposite, i.e introduce devm_rproc_add()
-and then get rid of da8xx_rproc_remove() by introducing
-da8xx_rproc_mem_release().
-
-No need to resend the omap set, I have them.
-
-Thanks,
-Mathieu
-
->  }
->  
->  static const struct of_device_id davinci_rproc_of_match[] __maybe_unused = {
-> -- 
-> 2.39.2
-> 
+                   Linus
 
