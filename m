@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-210574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183DB9045B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:27:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF769045BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934A71F24A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:27:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35619B21907
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F61150992;
-	Tue, 11 Jun 2024 20:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6201514D8;
+	Tue, 11 Jun 2024 20:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cd0nQ7H7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KXdwrwqc"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7143380607
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2E514F9F7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137622; cv=none; b=WrcXiXjl0xNtJ1kfxy3olBH5+Npg9rNRslPPVHAslPJw3fKFZTE84D15lNO0eUbvnZQsUL4KOH3uSLo2/ffaqkyeaeX/qFxqUdh1aMGPMOZjKQUU8ArdJ4ZPfoAHZ9iVpHd7FHy6Q5Ey0rJ5/t7CnDYJ36vi7HLNXQ+4IHz5QXk=
+	t=1718137677; cv=none; b=mSi0tUenvpDIBfOpueajASw+KhotvzgFc9hCipuajTOhEieVnBpTyJrdai6CaP4WSwrw3lEB7T035oeJKVTZaLnJo0RgXKL1Zb9GR2PD3any/uwllu9JIR5cFN6JdOhDzJEvh4Oibgq3Nvq1+dRBfLs+V9L4wCxYoXv3vR6AXyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137622; c=relaxed/simple;
-	bh=m6u0TEW+to/kS5lz7pac+0GlCH2b5cvGTQl95Wz9HHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yaoc+wfizOkk6HmV3J88jcy7QSR5JVXtUJh5npreXSToKWm5C/Z5+MbQm0DQ6IEOVGRlczNAICF4e169RCxnsFc1S8LymUNRgknxC9a5CxXVvs8tFoHuM81OjppT65Ebzb/Pti7tAjPdWknBtSViJJUJk3ObFiwsPTMrjTypJeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cd0nQ7H7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	s=arc-20240116; t=1718137677; c=relaxed/simple;
+	bh=ugUCm9Yr68u8EX9EKbsRWgLfIOOy1JUUSq6pq9fS/gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJ6dXj38P5Q0mNSNG6F8YYzUk7i2YfIdgwTvlbmdd1ab+JeEcu7ExZpoQ3030+0zWYXldESm+4ggnDvbE+0ddDWo/AmXVjg0XR2jCpWzKwfTPSmTx6TeopQPqrTXUTR7R0IKPeo9kaUWJjVbT+86IOPe1n9pqhLGQn/K79rLm3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KXdwrwqc; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbf73f334so4511626e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:27:00 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfb16f9b047so359887276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718137618; x=1718742418; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fwLXpsWWWKNNMe2wfaY/7uDw2Z9xjWpxzliXTIklXvE=;
-        b=cd0nQ7H7JbhmUgWVkcDjzJ7JTA13XhoCmern7cYCwG8/s7dObmEonhahA9jaSMx4tE
-         o5qXl0CAfYV0FXLOarXH2ZuhzOge3eSjznKzt5Lq0KvpXaeSCNWIsYzgSj+IY3DTu7mb
-         ZDzfEe2oI0h3O0TP10tXcQWSdSPe8ad/KKk5o=
+        d=linuxfoundation.org; s=google; t=1718137674; x=1718742474; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=th6eKAq/LATBnFfZ8l1OQ1G8HtkktsMhv2cX9FNr94k=;
+        b=KXdwrwqcCk5M6iChGThNz+ZKUxbkCpNfhpt17o6xLSYtIVnfdMW0SmceNSwOmSeFI1
+         a1F48Q1Rqa6qvDfCyeJ4oLySMBN5LyIaRs5B5jsIQF3SYuU636z5E5tMUIBXuTW/c9oG
+         pA/jpipkotPZcy5RcG3cOukp//cCtHuzaiFEk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718137618; x=1718742418;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fwLXpsWWWKNNMe2wfaY/7uDw2Z9xjWpxzliXTIklXvE=;
-        b=gIofWK+iilbrYH78oaWtuY4P8hSWOCtTX1jmqUq0Rs+OnMHq/wZaXiVYOAiQJjvV+W
-         iTNdsmUvx7/abW75HcYKiEnp6sWadKuAVi8e+11qFod+U0qKTRqAk8pWQqRy7S8V04d8
-         M6mrwBmRkTLL+AnUoG63ygWBvWwB9P4MrxF/CDeHOVISMQTDXrNqZGqX8pFvuy5eHp3W
-         P7XEsEbnNPw7xrUoXs5mpdgOc/zmDBxHDJ4o7XvSr7MJYgdd5Kq5uvViIHqpWOfVKFaT
-         5dR7kcCldK105QItXhXma2iaZMqG0A8qiT98O788IoHUKH4ZltulgYPdY8N50r/bn7F0
-         lFKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF0fB5CZVOgLi7qQpzTSiymtbwqpQ8uJU8tKOgtMj8Fd3pj3B2b5HMgyGHsJGt+NnZYkNmbLr2C1XBPiPHxtzjjKgwEzKmVGb1G8xI
-X-Gm-Message-State: AOJu0Yw/9ZIkkUCbmZHI+fMQrWfSNjnB5+T/hgQaM7uLt2cnHGrqWYBa
-	pU28szjr4G5MeErEayvcc1qjebBGRr0HKuIsCTTYutHmKrBmV+O6sT/73k3SEJxvU2TV7MTQrHU
-	ch6mfsg==
-X-Google-Smtp-Source: AGHT+IH2FOirSSch5FcGEGDoCjFKs74e4uclTkdsjyahRh+/pCJTXsu9Ub6OnV81qa7/VvgIt16JMg==
-X-Received: by 2002:ac2:5607:0:b0:52c:8a88:54c with SMTP id 2adb3069b0e04-52c8a88077emr3697613e87.7.1718137618393;
-        Tue, 11 Jun 2024 13:26:58 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c84a258e0sm1387726e87.98.2024.06.11.13.26.57
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1718137674; x=1718742474;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=th6eKAq/LATBnFfZ8l1OQ1G8HtkktsMhv2cX9FNr94k=;
+        b=rLIyqUtEmoDGzrc+KhqoMBiVp20ntVH9f8WYr2Vm7g3eQm/saUL/wPyYHm7ZCQDAJy
+         D3dESgsZg90wo9Ui6T1CP69ekKNh5XBQG/jeYQJw5RUPoJEUr/ADfZcki/WKIFcqeNzm
+         34HaBRGCb8opd9DZnSoicKgU0sj+kHZxVJzrD8gPBF52IAk2N6h/SuiQtj0M6B8FTdEK
+         UGyAcdHCH+HBY5AXWYu+GfPGmlFSxuKmih5DTmMflXFPad4ryYFAYJ+fmTgF9pWeRnck
+         T9UAhPPc0souWA5dsvJX0nTCwlIRh2vmu7ko2L3cRjunDXx/dHz0x4lyumzDdr6lS5kf
+         S0mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYmBihi+GEHYMrXCuHS/ObEsc81Jwco6vxBSScPTOc+gE9porBaDhkKC+PRvXw6G+NFjjWED3wsRpLpX7zp8m6UVZSm85rz3iFwinh
+X-Gm-Message-State: AOJu0YykfQqh/AjGweA3eTEzoeF3+4KkkZ93eYD3Rya1e63cUb5NKxMl
+	KS+v8aJFVclz6GXX3XhyIEE1gqxuj4lmyNyA29E7x8EmDPLNE9AhKdxl/XYIqR0=
+X-Google-Smtp-Source: AGHT+IGTW02Hlw4hL7bwC4c8R5pzfb1VoGT9mdqeIkhRdG7AQbO2+vTAHG0mI8vT422bk0QHPx7l6w==
+X-Received: by 2002:a05:6902:b27:b0:dfa:6f65:f068 with SMTP id 3f1490d57ef6-dfaf64befe7mr10269563276.2.1718137673572;
+        Tue, 11 Jun 2024 13:27:53 -0700 (PDT)
+Received: from [172.20.14.19] (ool-6c3a3e1d.static.optonline.net. [108.58.62.29])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06cd275b7sm38092216d6.62.2024.06.11.13.27.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 13:26:57 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebdfe262feso34867831fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:26:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfTE+wWSgIuDI0DtPdgAkCPKkG/kgnAm8UGtIol1EZ201+iaJhxkRLY+mR3YN/FYAFopFogB5lAaAUN290i+j8MzHJO3ZgL/5xRm48
-X-Received: by 2002:a05:6512:b9f:b0:52c:785f:ae23 with SMTP id
- 2adb3069b0e04-52c785faf05mr7126558e87.24.1718137616651; Tue, 11 Jun 2024
- 13:26:56 -0700 (PDT)
+        Tue, 11 Jun 2024 13:27:53 -0700 (PDT)
+Message-ID: <1f46ef8d-2435-4c73-88b0-f954d685d1a9@linuxfoundation.org>
+Date: Tue, 11 Jun 2024 14:27:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net> <f967d835-d26e-47af-af35-c3c79746f7d9@rasmusvillemoes.dk>
- <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com> <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
-In-Reply-To: <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 11 Jun 2024 13:26:39 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj+1kOrg3H7wDBEVG2nw2xeB0F_YBqrw=bMBo0nRNtCKw@mail.gmail.com>
-Message-ID: <CAHk-=wj+1kOrg3H7wDBEVG2nw2xeB0F_YBqrw=bMBo0nRNtCKw@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: Add information about TAP conformance in tests
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240610083245.1938001-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240610083245.1938001-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Jun 2024 at 13:16, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> I just had an idea how to clearly make this type-safe as a benefit.
+On 6/10/24 02:32, Muhammad Usama Anjum wrote:
+> Although "TAP" word is being used already in documentation, but it hasn't
+> been defined in informative way for developers that how to write TAP
+> conformant tests and what are the benefits. Write a short brief about it.
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   Documentation/dev-tools/kselftest.rst | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
+> index dcf634e411bd9..b579f491f3e97 100644
+> --- a/Documentation/dev-tools/kselftest.rst
+> +++ b/Documentation/dev-tools/kselftest.rst
+> @@ -228,6 +228,14 @@ In general, the rules for selftests are
+>    * Don't cause the top-level "make run_tests" to fail if your feature is
+>      unconfigured.
+>   
+> + * The output of tests must conform to the TAP standard to ensure high
+> +   testing quality and to capture failures/errors with specific details.
+> +   The kselftest.h and kselftest_harness.h headers provide wrappers for
+> +   outputting test results such as pass, fail, or skip etc. These wrappers
+> +   should be used instead of reinventing the wheel or using raw printf and
 
-You mean exactly like my patch already is, because I use the section name?
+When there are multiple tests supported by a test suite, it doesn't
+make sense to convert every single print statement. That is the reason
+why we have the run_tests wrapper that prints the summary in TAP format.
 
-Christ people. I am throwing down the gauntlet: if you can't make a
-patch that actually *improves* on what I already posted, don't even
-bother.
+I would rephrase this to say "should be used for pass, fail, exit, and
+skip messages".
 
-The whole "it doesn't scale" is crazy talk. We don't want hundreds -
-much less thousands - of these things. Using one named section for
-each individual constant is a *good* thing.
+This rule is applicable to only the tests that are in the selftests Makefile
+and included in the default run.
 
-So really: take a good hard look at that final
+There is no need to convert every single print statement in tests.
 
-  [PATCH 3/7] x86: add 'runtime constant' support
+> +   exit statements. CI systems can easily parse TAP output messages to
+> +   detect test failures.
 
-at
+I would rather see people spending energy writing new tests and fixing
+warnings. TAP conversions need to be focused if they add value.
 
-  https://lore.kernel.org/lkml/20240610204821.230388-4-torvalds@linux-foundation.org/
-
-and only if you can *improve* on it by making it smaller or somehow
-actually better.
-
-Seriously. There's one line in that patch that really says it all:
-
- 2 files changed, 64 insertions(+)
-
-and that's with basically optimal code generation. Improve on *THAT*.
-
-No more of this pointless bikeshedding with arguments that make no
-actual technical sense.
-
-             Linus
+thanks,
+-- Shuah
 
