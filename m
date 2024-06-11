@@ -1,253 +1,198 @@
-Return-Path: <linux-kernel+bounces-209648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7EF9038E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:33:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBA69038E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8489D2879DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31239285EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1AE178397;
-	Tue, 11 Jun 2024 10:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZbRsF+5b"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A308E17625F;
+	Tue, 11 Jun 2024 10:34:28 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0557407C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C227407C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101972; cv=none; b=iBISPk3Dm3cJxWpXZkYGoMwh0qlWSCmoqkJZaG18lImiviMsMqvmbbu+gBL2fH70ImEhgvTXeaUes4rPovyR1bmsOSYLXrT2F0/MenFnjkiTDTSOFjm/HtQyeCszOHYAWPqggTRgb08MMKIR4yue7q/GC96+WOO/a4j+gJHeenI=
+	t=1718102068; cv=none; b=kINHusqpYArX4cw35CyhoIqFoJAJgIkq9xyNfaDdDKMY2AWllxYPGIuQ32taU6YuF+nKdj2JLEdE6wl3CJw9VWEaiGE2YNiODBPOpi4/4gJPCnYuHEKwyZEscXHv/SsuGLqrGk+Y5jHN7y+qkpaDTPOKXxr/OL0KuTPTWYgVvkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101972; c=relaxed/simple;
-	bh=ocXWZLZt4vRGWQexMoBknOG7B28MXYu3HXsM4wdDmWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G+oP84MCCJLGbMl3WLE3q3+4rlk4FVkaIkwAiMlk2yAvh1VsYNt1m7XOQtWXiJ1U4tyyyvai4vq+O0Zl4GvssYYk2PP/pbOMqFuustTKF4NWL+WjGZZi16W1vxCAH1n2csmy94nkEUJycQwBnkHSEfKf48cjC/zWaXmUBvOwftw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZbRsF+5b; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718101970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8IJjvPlYTgGby4QteaSEpbc44xLD1xUOwtVSJzbAX64=;
-	b=ZbRsF+5bjHXIhuSUqLVybtaqyuan8sPrLZU4fZPxRh6qWIJt4F1c/FD9PYbJWsmz4gdwnv
-	J+EGuq35ndVSZR+VCTq43baIjQ+v+bm7W649zofkkUyOwMSbqWkR4N3rzzJ4L1QcmgwacX
-	80YPcm5MTVi4iXU7ZPVuShL+A7wCIQQ=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-354-ogmibgVEPAi6VHrNidoQwA-1; Tue, 11 Jun 2024 06:32:48 -0400
-X-MC-Unique: ogmibgVEPAi6VHrNidoQwA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebd5d5e151so25739861fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:32:48 -0700 (PDT)
+	s=arc-20240116; t=1718102068; c=relaxed/simple;
+	bh=CKyWflBnZp0xDghv0Z1IUjrrDkT30bvZHVx8eX8fasQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jWRuW0R4rp6acXBZbYu3Ik/0oXl7ewQ4aVBSTo/5GwXhz41+Bem+gDzoS2gtw/NUcsMRuBnYa5w+OfPBF0VbRnIprR1pWRhBjCRmQfU4Z3Tf64fJ+C4mi4UZeWIy+hlpvHMZrFX284BCmvaLXDjbWSDfb5CdtiXxp/uIswz4CbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7ebc15850c0so39467539f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:34:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718101967; x=1718706767;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8IJjvPlYTgGby4QteaSEpbc44xLD1xUOwtVSJzbAX64=;
-        b=jYy9kTgyCxReuGW2dbUsFXXPTez7dFj4xJJ/6hdSY5Vf2PcMurr8AmDxlxpN7/fPe/
-         cErk8DSOLVDH4op0505CLDLrgJzRmoTVdsd1CRIT+V4EvG9YdQnznMMEuqkYOraOZVzQ
-         Iw82ZhxTjB9wP1vzvVHkhgjhWDajMTB27ZP1Wx+O5bJnshm308QfojMEFH23sBXXnjvl
-         jLBk6BPzp5BPsvbWYfATNgvPFXq94m5K6mtPIkjSj8xyTzwrz+Eb7vSQpPqHebwjftLr
-         dexbymciegkkFAPsdb6SVEg5Rxhe+zg8R3LIuqFvraPcyWA0Iy+s+V0x0qDpNBF3E312
-         5KaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAnVGQnywzjWlIa/YxeWesbw3HII9J9UNvjGiRWALpzxK3VDTV06yaqrPwkmh/qxLOJUezpMt2a8SWAUqqHA7P4j3LsB8MMWbl8yuJ
-X-Gm-Message-State: AOJu0Yxzo8Vy/fFjpOf6EpKdSeSug2bJJyn9HPukrgieY9VErHA6p/PU
-	9f7Wxb4PblZrHfc7/WoflC3wz1HL6Cgi+ngCBbo3heDSJ5ACx2cKMSnqQ9MWzU55rb0L6oQ5PXW
-	3r2U1wvo2fYbeC+nxqkIuZ8qkTlHCjPudl7CDdwdbe2+gYte+ByRYj7LexTxkxA==
-X-Received: by 2002:a2e:8086:0:b0:2eb:f7a4:7289 with SMTP id 38308e7fff4ca-2ebf7a47357mr3010131fa.51.1718101967291;
-        Tue, 11 Jun 2024 03:32:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCS1UWr/Lav9vU3zkbBMu6I34lHIPbNjgCjn12ARLt40UU4azZziKE3ue0rx4T0xu5wLLNBQ==
-X-Received: by 2002:a2e:8086:0:b0:2eb:f7a4:7289 with SMTP id 38308e7fff4ca-2ebf7a47357mr3009921fa.51.1718101966743;
-        Tue, 11 Jun 2024 03:32:46 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4223da03f46sm26935365e9.23.2024.06.11.03.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:32:46 -0700 (PDT)
-Message-ID: <e8c10a52-61f9-4b46-bc50-e2c267b1aa56@redhat.com>
-Date: Tue, 11 Jun 2024 12:32:44 +0200
+        d=1e100.net; s=20230601; t=1718102065; x=1718706865;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K0IQqv9KqFj11BocG4s0Pz4yp+q9Far854P6moXfG1o=;
+        b=pPuvAyAwWe2I6qjScvjdbV9Qi8Zr1coUiLiXQ8ftCvTV/MzphpOidwXE/+tUXfonG2
+         i//MVpGoM6cBbymdBzwK1xw2HSaRpL2GOoJjEHMYj7zH5CmHPvkzkKnR8Z6l6Du4HbJR
+         h87rUW2HzU/s+9rVtIzI+r9l6XN1RSPrgl67Bl2iW2gWJb1IW9QU1OVIA3OWtS84NCAR
+         UWz24T9I+KFMtnBQxlvLlMl24jhUBZZDE7NgHKh2Rndl9aru4PhzAvp9IHJvAucjDIkc
+         eDRTacoe+Vdf6gqdi1msoOzJA/ONHfWxjtgSPjqTjPoLfAEN/skbi083XO1RK6EDx4to
+         SI2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUETy1fu/Xa4PsYnVBuk2GWB2maaQEQBapGRdGBrn4G9S9KC+6xd5b3fkcKrfgw9hPTu/zQwLqJB39XokIFkVDjXQ7DnXQQUoBYcJyv
+X-Gm-Message-State: AOJu0YyE0Tb+FBTIAUx8rlJzvCS8keFpdgNervGsKbNDIbml4LMUmm2U
+	1h5yVmfo9ySiBw8oXELeMnctp0qmL+F7+9bdD/LsMrBHGftrmRrRQi8m16rOPCLUGnKA6cQ1J3e
+	RlB3sLUlQ4pxDMhL4VCl/vgxbGsI9aAtlHPlNAl3J5bz85dxXDIaHVc0=
+X-Google-Smtp-Source: AGHT+IE1jKA6jRl5lFabUppzbVmpAkrc/Htj2NFMHxp6Jdd45yLPOX/S1ZuGnkYIQAT/D0BX+vYqlqYBGDLj9gvCPEVCzELSsYLP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline
- 6.10.rc3
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
- lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <baohua@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Anders Roxell <anders.roxell@linaro.org>
-References: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1487:b0:36c:4b17:e05d with SMTP id
+ e9e14a558f8ab-375803cf3abmr7259195ab.4.1718102065609; Tue, 11 Jun 2024
+ 03:34:25 -0700 (PDT)
+Date: Tue, 11 Jun 2024 03:34:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f12bb061a9acf07@google.com>
+Subject: [syzbot] [mm?] general protection fault in dequeue_hugetlb_folio_nodemask
+ (2)
+From: syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11.06.24 12:14, Naresh Kamboju wrote:
-> The kernel panic was noticed while running LTP syscalls fork13 (long running) on
-> the mainline master 6.10.rc3 kernel on arm64 rk3399-rock-pi-4 device.
-> 
-> Please find detailed logs in the links,
-> 
-> As you know fork13 is a stress test case trying to generate a maximum number
-> of PID's in a 100,000 loop.
-> 
-> This device is running via NFS mounted filesystem.
-> 
-> I have tried to reproduce this problem in a loop but failed to reproduce the
-> crash.
-> 
-> 
-> Crash flow:
-> ------
-> fork13 run started
-> BUG: Bad page map in process fork13
-> BUG: Bad rss-counter state mm:
-> Unable to handle kernel paging request at virtual address
-> Internal error: Oops: 0000000096000046
-> run for 800 secs ( 13 minutes) and more.
-> fork14 run started and completed
-> 
-> fpathconf01 run started and completed
-> sugov:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 
-> Insufficient stack space to handle exception!
-> end Kernel panic - not syncing: kernel stack overflow
-> 
-> I have tried to decode stack dump by not being useful [1].
-> [1] https://people.linaro.org/~naresh.kamboju/output-rk3399.txt
-> 
-> Test log :
-> --------
-> tst_test.c:1733: TINFO: LTP version: 20240524
-> tst_test.c:1617: TINFO: Timeout per run is 0h 15m 00s
-> [  904.280569] BUG: Bad page map in process fork13  pte:2000000019ffc3
-> pmd:80000000df55003
-> [  904.281397] page: refcount:1 mapcount:-1 mapping:0000000000000000
-> index:0x0 pfn:0x19f
+Hello,
 
-Mapcount underflow on a small folio (head: not printed).
+syzbot found the following issue on:
 
-[...]
+HEAD commit:    d35b2284e966 Add linux-next specific files for 20240607
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=161352e2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+dashboard link: https://syzkaller.appspot.com/bug?extid=569ed13f4054f271087b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eb5e86980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15db597e980000
 
-> [  904.294564] BUG: Bad page map in process fork13  pte:200000002e4fc3
-> pmd:80000000df55003
-> [  904.295275] page: refcount:2 mapcount:-1 mapping:000000007885152f
-> index:0x6 pfn:0x2e4
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e0055a00a2cb/disk-d35b2284.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/192cbb8cf833/vmlinux-d35b2284.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/57804c9c9319/bzImage-d35b2284.xz
 
-Another mapcount underflow on a small folio (head: not printed).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000489: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000000002448-0x000000000000244f]
+CPU: 1 PID: 5095 Comm: syz-executor603 Not tainted 6.10.0-rc2-next-20240607-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:zonelist_zone_idx include/linux/mmzone.h:1613 [inline]
+RIP: 0010:next_zones_zonelist include/linux/mmzone.h:1644 [inline]
+RIP: 0010:first_zones_zonelist include/linux/mmzone.h:1670 [inline]
+RIP: 0010:dequeue_hugetlb_folio_nodemask+0x193/0xe40 mm/hugetlb.c:1362
+Code: 93 7a a0 ff c7 44 24 14 00 00 00 00 83 7c 24 40 00 0f 85 97 0c 00 00 48 83 7c 24 20 00 0f 85 45 09 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 58 09 00 00 44 8b 33 44 89 f7 8b 5c 24
+RSP: 0018:ffffc900035bf720 EFLAGS: 00010002
+RAX: 0000000000000489 RBX: 0000000000002448 RCX: ffff88807651bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900035bf858 R08: ffffffff81f5e800 R09: fffff520006b7ee8
+R10: dffffc0000000000 R11: fffff520006b7ee8 R12: 00000000ffffffff
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055558f377380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 000000001cfda000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ alloc_hugetlb_folio_nodemask+0xae/0x3f0 mm/hugetlb.c:2603
+ memfd_alloc_folio+0x15e/0x390 mm/memfd.c:75
+ memfd_pin_folios+0x1066/0x1720 mm/gup.c:3864
+ udmabuf_create+0x658/0x11c0 drivers/dma-buf/udmabuf.c:353
+ udmabuf_ioctl_create drivers/dma-buf/udmabuf.c:420 [inline]
+ udmabuf_ioctl+0x304/0x4f0 drivers/dma-buf/udmabuf.c:451
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb1c16b4ab9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff21e63e48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb1c16b4ab9
+RDX: 0000000020000000 RSI: 0000000040187542 RDI: 0000000000000003
+RBP: 00007fb1c17275f0 R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:zonelist_zone_idx include/linux/mmzone.h:1613 [inline]
+RIP: 0010:next_zones_zonelist include/linux/mmzone.h:1644 [inline]
+RIP: 0010:first_zones_zonelist include/linux/mmzone.h:1670 [inline]
+RIP: 0010:dequeue_hugetlb_folio_nodemask+0x193/0xe40 mm/hugetlb.c:1362
+Code: 93 7a a0 ff c7 44 24 14 00 00 00 00 83 7c 24 40 00 0f 85 97 0c 00 00 48 83 7c 24 20 00 0f 85 45 09 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 58 09 00 00 44 8b 33 44 89 f7 8b 5c 24
+RSP: 0018:ffffc900035bf720 EFLAGS: 00010002
+RAX: 0000000000000489 RBX: 0000000000002448 RCX: ffff88807651bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900035bf858 R08: ffffffff81f5e800 R09: fffff520006b7ee8
+R10: dffffc0000000000 R11: fffff520006b7ee8 R12: 00000000ffffffff
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055558f377380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 000000001cfda000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	93                   	xchg   %eax,%ebx
+   1:	7a a0                	jp     0xffffffa3
+   3:	ff c7                	inc    %edi
+   5:	44 24 14             	rex.R and $0x14,%al
+   8:	00 00                	add    %al,(%rax)
+   a:	00 00                	add    %al,(%rax)
+   c:	83 7c 24 40 00       	cmpl   $0x0,0x40(%rsp)
+  11:	0f 85 97 0c 00 00    	jne    0xcae
+  17:	48 83 7c 24 20 00    	cmpq   $0x0,0x20(%rsp)
+  1d:	0f 85 45 09 00 00    	jne    0x968
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 58 09 00 00    	jne    0x98f
+  37:	44 8b 33             	mov    (%rbx),%r14d
+  3a:	44 89 f7             	mov    %r14d,%edi
+  3d:	8b                   	.byte 0x8b
+  3e:	5c                   	pop    %rsp
+  3f:	24                   	.byte 0x24
 
 
-> [  904.309309] BUG: Bad page map in process fork13  pte:20000000cc6fc3
-> pmd:80000000df55003
-> [  904.310031] page: refcount:1 mapcount:-1 mapping:0000000000000000
-> index:0x6 pfn:0xcc6
-> [  904.310728] head: order:3 mapcount:-1 entire_mapcount:0
-> nr_pages_mapped:8388607 pincount:0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Mapcount underflow on a large folio.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-...
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> [  904.326666] BUG: Bad page map in process fork13  pte:20000000268fc3
-> pmd:80000000df55003
-> [  904.327390] page: refcount:1 mapcount:-1 mapping:00000000f0624181
-> index:0x1b pfn:0x268
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Another mapcount underflow on a small folio (head: not printed).
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-> [  904.328094] memcg:ffff0000016b4000
-> [  904.328401] aops:nfs_file_aops ino:8526e6 dentry
-> name:"libgpg-error.so.0.36.0"
-> [  904.329051] flags:
-> 0x3fffe000000002c(referenced|uptodate|lru|node=0|zone=0|lastcpupid=0x1ffff)
-> [  904.329878] raw: 03fffe000000002c fffffdffc0009a48 fffffdffc022f3c8
-> ffff00000688bd60
-> [  904.330561] raw: 000000000000001b 0000000000000000 00000001fffffffe
-> ffff0000016b4000
-> [  904.331240] page dumped because: bad pte
-> [  904.331590] addr:0000aaaad9afe000 vm_flags:00000075
-> anon_vma:0000000000000000 mapping:ffff0000300d4188 index:2e
-> [  904.332476] file:fork13 fault:filemap_fault mmap:nfs_file_mmap
-> read_folio:nfs_read_folio
-> [  904.333245] CPU: 5 PID: 22685 Comm: fork13 Tainted: G    B
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
-Are these maybe side-effects due to
-
-https://lkml.kernel.org/r/20240607103241.1298388-1-wangkefeng.wang@huawei.com
-
-
-How reproducible is this?
-
--- 
-Cheers,
-
-David / dhildenb
-
+If you want to undo deduplication, reply with:
+#syz undup
 
