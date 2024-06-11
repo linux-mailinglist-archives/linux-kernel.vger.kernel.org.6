@@ -1,100 +1,145 @@
-Return-Path: <linux-kernel+bounces-209917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2867E903CE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E281903CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9113B24695
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748821C221EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7C917C7C6;
-	Tue, 11 Jun 2024 13:16:20 +0000 (UTC)
-Received: from mail.andestech.com (59-120-53-16.hinet-ip.hinet.net [59.120.53.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA61517D35E;
+	Tue, 11 Jun 2024 13:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="t1v78wLD"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F5024211;
-	Tue, 11 Jun 2024 13:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=59.120.53.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF017C7CD;
+	Tue, 11 Jun 2024 13:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111779; cv=none; b=K4bOxYMY6/rvsUgtri7UCWq4haNm0d4FxHiqtowo0vn/ZNuHDltHZb1lrHwoWUo0b6neYqTcj8RRmo3K2Ap3JAN7iSMOGTT1ltla0znjxGioM0s/c8SdxuP2wrZ47g229YK190fL6oCmuSOOL8f4tB1p4aS0PzVR4vnuy2Vr+rs=
+	t=1718111651; cv=none; b=T+QkEws28atmD05G28AWHDighPvf4hFJ3k6WlRWXD3+8x5rh/0PnlA4rJO+Q+SF178xWayJfd9Pu9QtCLLn+gq7Ea+UOu2DUSwPl+N40fv5Hat5sbjozz/osUAklhuWgt9U4mco6onSGqZ3l6aWkJC/v2OTiPg0FrDh0HDthP+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111779; c=relaxed/simple;
-	bh=A8/SxLeo0g/QJrVx1kZZfMcvIx9lsikrYLFelitJ4Hg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eKncQzlagRoCh+QoJYemT4dCA81cMqf2r1Y4/yRXNOZKFrM2i/d4iu67K9Zdn9SUTbUeRR4j3LcUPjfpQLc96eD9P2eDQ/apfjLlB9HleHCc9LRvy8krLRLmUqVGq4CxDPYzyiFJzHWgm5sZurlfp2wnn6Oa2ykiiCWC1kr9jPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=59.120.53.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Tue, 11 Jun
- 2024 21:13:06 +0800
-From: Leo Yu-Chi Liang <ycliang@andestech.com>
-To: <akpm@linux-foundation.org>, <urezki@gmail.com>, <hch@infradead.org>,
-	<lstoakes@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <rick.p.edgecombe@intel.com>
-CC: <patrick@andestech.com>, Leo Yu-Chi Liang <ycliang@andestech.com>
-Subject: [RFC PATCH 1/1] mm/vmalloc: Modify permission reset procedure to avoid invalid access
-Date: Tue, 11 Jun 2024 21:13:01 +0800
-Message-ID: <20240611131301.2988047-1-ycliang@andestech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718111651; c=relaxed/simple;
+	bh=1px+pBBKwT/kT5Nl3k339zWLK3XeVGSfRfAFkwQM8u0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L3xWR02TMUJ7062oz0dX/hpd248BmJXXYd05jYqFT7P9B+4u9ehIxpRZPEGeSpLB/N4lbeFSN046k7ApemyNjl+i0UX/CsmCjcza0BRhvkPE/rWFOPcjHYClDgADvZBkG1jG5n7OiySuvJs+8/Q0hp9xXCAqwxAs4HRXkwq+RKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=t1v78wLD; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BCUnRS012090;
+	Tue, 11 Jun 2024 15:14:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	5IHnpbmUpj49Nn64F1e9zeYA5D+TVXazrWvkh/paJ8k=; b=t1v78wLDWtTfw8mu
+	7MBgnI05q8pF4ynt4ihNaiIRMv0k/4o22f/lxfwrCffE84APqMyCg482VVBleRmF
+	jVhufqLYNP24cYDAk0uMcg2WMJWo0W1q2ZfbpTUNHnaWipex0ZXUg+F+cPdGmnJB
+	MWOSmoxbYA7hCAvHUeBbkgNpRtqqFwNJPqVfh7a+h8a04hDFp3k13DGEkvmWlfU7
+	LUZGU14v99r+5v4TF98nSFFrn4MsFSZEIiSwCGizUVtTVp9hxjeQFPqV9/wTuoVW
+	ngWuoolT+IVbnm6Cbqv5PXOst958BiGSyYfCOD1q7H5fzPDS1/yxb3zyYXEUIDC5
+	sMrv/Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp3u0b6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 15:14:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E3C744002D;
+	Tue, 11 Jun 2024 15:13:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B105216842;
+	Tue, 11 Jun 2024 15:13:19 +0200 (CEST)
+Received: from [10.130.72.241] (10.130.72.241) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
+ 2024 15:13:18 +0200
+Message-ID: <02daa868-17d6-44c8-8508-555ab258f77d@foss.st.com>
+Date: Tue, 11 Jun 2024 15:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] media: vgxy61: Add MODULE_ALIAS()
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240610150815.228790-1-benjamin.mugnier@foss.st.com>
+ <20240610150815.228790-4-benjamin.mugnier@foss.st.com>
+ <ZmgI8nET4sdhdwQx@kekkonen.localdomain>
+ <76fd2e25-3a9c-49fa-994f-6a392e42a6bb@foss.st.com>
+ <ZmhM9mAcQqMGKnzw@kekkonen.localdomain>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <ZmhM9mAcQqMGKnzw@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
 
-The previous reset procedure is
-1. Set direct map attribute to invalid
-2. Flush TLB
-3. Reset direct map attribute to default
+On 6/11/24 15:11, Sakari Ailus wrote:
+> Hi Benjamin,
+> 
+> On Tue, Jun 11, 2024 at 01:57:24PM +0200, Benjamin Mugnier wrote:
+>> Hi Sakari,
+>>
+>> On 6/11/24 10:21, Sakari Ailus wrote:
+>>> Hi Benjamin,
+>>>
+>>> On Mon, Jun 10, 2024 at 05:08:15PM +0200, Benjamin Mugnier wrote:
+>>>> Preserve user space retro compatibility after the device rename.
+>>>>
+>>>> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>>>> ---
+>>>>  drivers/media/i2c/vgxy61.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+>>>> index ca3b43608dad..c85f356946ca 100644
+>>>> --- a/drivers/media/i2c/vgxy61.c
+>>>> +++ b/drivers/media/i2c/vgxy61.c
+>>>> @@ -1898,3 +1898,4 @@ MODULE_AUTHOR("Mickael Guene <mickael.guene@st.com>");
+>>>>  MODULE_AUTHOR("Sylvain Petinot <sylvain.petinot@foss.st.com>");
+>>>>  MODULE_DESCRIPTION("VGXY61 camera subdev driver");
+>>>>  MODULE_LICENSE("GPL");
+>>>> +MODULE_ALIAS("platform:st-vgxy61");
+>>>
+>>> Perhaps just "st-vgxy61" so that the module still loads if someone loads it
+>>> explicitly? That's what you'd want, right, as the old compatible string
+>>> will remain?
+>>>
+>>
+>> Yes it is for explicit loading. I'll remove the "platform" prefix.
+>>
+>> But maybe I'm overthinking and I could just remove the MODULE_ALIAS()
+>> completely from this series. What do you think ?
+> 
+> Most of the time the modules are loaded based on devices found, so this
+> would likely not change things much.
+> 
+> Up to you.
+> 
 
-It is possible that kernel forks another process
-on another core that access the invalid mappings after
-sync_kernel_mappings.
+Then I'd rather remove it entirely. The less legacy code the better.
+Thank you.
 
-We could reproduce this scenario by running LTP/bpf_prog
-multiple times on RV32 kernel on QEMU.
-
-Therefore, the following procedure is proposed
-to avoid mappings being invalid.
-1. Reset direct map attribute to default
-2. Flush TLB
-
-Signed-off-by: Leo Yu-Chi Liang <ycliang@andestech.com>
----
- mm/vmalloc.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 45e1506d58c3..58ef2fc51e43 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3248,14 +3248,9 @@ static void vm_reset_perms(struct vm_struct *area)
- 		}
- 	}
- 
--	/*
--	 * Set direct map to something invalid so that it won't be cached if
--	 * there are any accesses after the TLB flush, then flush the TLB and
--	 * reset the direct map permissions to the default.
--	 */
--	set_area_direct_map(area, set_direct_map_invalid_noflush);
--	_vm_unmap_aliases(start, end, flush_dmap);
-+	/* Reset direct map permissions to default, then flush the TLB */
- 	set_area_direct_map(area, set_direct_map_default_noflush);
-+	_vm_unmap_aliases(start, end, flush_dmap);
- }
- 
- static void delayed_vfree_work(struct work_struct *w)
 -- 
-2.34.1
+Regards,
 
+Benjamin
 
