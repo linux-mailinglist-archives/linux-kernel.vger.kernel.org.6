@@ -1,125 +1,183 @@
-Return-Path: <linux-kernel+bounces-209806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8757E903B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F85903B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0613CB27744
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DF42889E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C604C17C20E;
-	Tue, 11 Jun 2024 11:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3504C17C212;
+	Tue, 11 Jun 2024 11:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzRT4DcN"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AH4VMQoF"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CB017E917;
-	Tue, 11 Jun 2024 11:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC45E17B4E7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718106395; cv=none; b=jvevskr3INqM6k6jccSf7bi9cU3s1WMJ5kAfLIf7/b98HXR6/gk8zi4KQLs0g7z5kLsU02IlzMTbhk7YWK8AkdtmzLCHx3CRL5qiQTFypkp9m4ej7jdaoHZVXZHKWCUmRnaEAEkmS6ZHk7Glzh0Xs0i7YoCrU+maBtu1+ICimQg=
+	t=1718106574; cv=none; b=DHuyGm05mskzL36xZcm7DFJgXFHeBoJJSk42nZgv9nSeJvX0YAa+bS0P0a/ynzLc2CLneQAFSL+ev9JvnwNR7s6izeUTYuPqKNkOlC0WdzhthQtV4g15XexQ2ODmcKnsFXxJxyY9iaOz9FL5V0L/WlTA6qS84rgmo5uG3jh5Ouc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718106395; c=relaxed/simple;
-	bh=AINinorpPKyxWmfo82lnRkRi9te8sFDsBLq3LrFlYxs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cF/ZnYS5AFo0lrqWS92L2U5nS1tyFY6ecIbomJGR9xBqHMNSBgYAaWdeq8RsBPYwCqwmG5zlesOD1Hyxx3X92zM2H7rOFIjEkzCEI161uS8oR2FiY8fUcLUAoKqwPUDXQKulKL9IopQWjPKuTY9SKpBRqVZYF8TJuUhPda6rReo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hzRT4DcN; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1718106574; c=relaxed/simple;
+	bh=ewWyf1JfY3LyL1pjAMWp9/aI1mRNEwZhQAt+DO/D7YU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A+F8AKeZZphkl95sxVIDiyngwYZ5v3IfzINwYfluPPop17J1Tw2X86f4gH9TY3Zs//5+XTKl6V9SHR3A3hg0YExIT8PuQYFxMUCcIeX/F4xFZF7hkYxB1gNFo4a2GA2Ib8Myyy1ubyIid2geFfuTd6oT7qU59BYyfmoLt0e7vDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AH4VMQoF; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f60a17e3e7so4898115ad.1;
-        Tue, 11 Jun 2024 04:46:33 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-797e2834c4eso32100385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:49:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718106393; x=1718711193; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b5+FNsgFTzouaSii0B2x8nVgKa1T/D7rNb0Lvm5+9HA=;
-        b=hzRT4DcNNVzgW3yYdaBbyK+2kLrhDg7xEpPmcNhjzQ6e4oaPyhqyJkvsB502JgXkgO
-         jwL7kKZEo7W5nWxD43PZIGUPWmVRNAfwQ9TNYukxeGkT17Jyn/hekVJ3lZwnFqpjP0PS
-         G/+CX7hVtPQl5wpfvjpz6SPb+jFiVCpbBh2vNjIJsvZSMHprq5+iDzvzYKzoNV9fgi20
-         cpYmwCrt2XefZsoUKe/ubL56i5R4K8PduC8rhO0oB3G1HpPB5Pe/h+GzgO6gtAJ9I022
-         XOn0rvjls5H4RQaJZHkHHEZBdy0OEaU25H7noAcmNQ4NvRPsHhaSjEY5QegAZ95POD6X
-         Hepw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718106393; x=1718711193;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=gmail.com; s=20230601; t=1718106571; x=1718711371; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=b5+FNsgFTzouaSii0B2x8nVgKa1T/D7rNb0Lvm5+9HA=;
-        b=sY6QnZn9TIeXXyYTLZFvuMf2CCcupt9jqO0wajMDaOyzO7AQJ1erSB2073KjtAaQQJ
-         Ns32pg9mz3UMtBWqGnxjZxLsyFgmcr7fS/aJE42SdtqrIoGwac35emYry2O3knqYcckU
-         EE91oqCjmfIKrOMbbNlBKesDA/tNZrLrVMAlVlyZ8ANST4bBC8ERqDeI/srAdBXD+G7+
-         Rt8n+xrQ5sbgf3DPeHBGOTV06grvnGOXOSFcmm3H+ezEdtW97tI+Qa+IxnsNqWmw5Uh+
-         neuzB3ksxNkhg5zLDuOQC7z+1y6r24hkBWeIoum+tJ2mMIIp+sXzg3sLO6Zp+BZJzboM
-         XO5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWHJdwKDrC7d65bQU0NN5U4tgclLxcML24RGtY/nZlQoWgwX0c3gokUwcHmbfT988bVpkMF45nqkD+crlfucX/2MCqb8iCrM8emuVn8Qel3B3EIIhMknnQCIQFPgOl89PA0f1qVJ68gVkZ/qt8=
-X-Gm-Message-State: AOJu0YzV515j5qljYvUv+J3QLQ9h6MysPURUfcrKdUyGdPX27B4Po3c0
-	V3UriPLeT7FBKLaFdRwS3RcxabdyPnCpDMBx/OaD2UZSPTPAy3awFejg5wHeM5sBM/vdSg5vu9J
-	m6IkNnBEzcRsR3tw/uulmrxQY0811KFEMB58=
-X-Google-Smtp-Source: AGHT+IG4eXRgpJ8C7f3o6MsPUI8tsMGcL7PTbaVxi0noEQCHuFzMJNY7rIVvw6l6mGjycuMGAC/vt8a3Qe25+etqouA=
-X-Received: by 2002:a17:903:2349:b0:1f7:12c9:9426 with SMTP id
- d9443c01a7336-1f712c9974fmr58237965ad.3.1718106392986; Tue, 11 Jun 2024
- 04:46:32 -0700 (PDT)
+        bh=zM6sCCNyz3zbF+OseHVD84e8m7rxxZxvUuiGGqpJ9HQ=;
+        b=AH4VMQoFmUKrPxx4iJHx/vNnFohEIlRvKIUKANIInLg4YoVpSiolPiyII2aS7FYELK
+         GE0IAjLYPL3XTMT+7aoJ8oOG1xsWcfnLxiyndXQOOiyv585pb17APkMKKisYL/pRq9pS
+         X9IzI5MBUSmMDYo7aDn4FUP4t0323KP7U3MZpBLDcRFcmNOBLISZPj0c6T6O54DOuBgK
+         jd9s2RR1reEWnddfDENjXQ6KV9kNDh3pF10BhaCZOENIOU/8SAtLVpu0WcG5uyXg2zaM
+         auUjMr619ZndkQeyAyGwbQp25sL8Xh6ImTyEVaYs1pw2JbddTf2g0Zecr9+v9Vyv80wT
+         2lUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718106571; x=1718711371;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zM6sCCNyz3zbF+OseHVD84e8m7rxxZxvUuiGGqpJ9HQ=;
+        b=hlUmEYXac5Lo+31GtWJmsJ9szOw8VC9eF0vG7KzvI84g88v4soxZpAcE8EbOjVOnHv
+         dgrafIi2qpLZsXu7FkSLi4Alfyn27kJxxj1fc9QTrJkNuVG5MGYBwDjAzUKN6AkuNkyR
+         PnTmuqlr2AnDN6hz3CN8cMq+ge7Bpl5EywvhqBYTw5hy2Pb8n4c9Ve+movBl1V7rtFgk
+         9RrhnhpjmtMAn7D33N9EuYrTjXjPwnTd8pHGgLjA4wtgGJJN7z3ym9ww7GAzw9NfhPQM
+         e/+cDbMGpqy4d4aPum3UocJdD9cYLW3uBL6UzN4at5XlD2+e9Pk8jkL+8N8ReR8NVS2B
+         J5iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS/IQ7eLtqJwL1HTjHQHy9uJeYtqPDHZCXS6f+3SPv0H6PoY3SDD8uZWqsxiT3QMEpyDSqVhvupbAGBqEDW9dZPPC4C3E3kBqJMkKb
+X-Gm-Message-State: AOJu0Yx4rSng7LOVaA2m0RNfY4wV8L07Jo8PwB5mI9OWUTXr974BWDyG
+	SDttTTESH9nXwCTt34om95My23JAZ1UO1VZl7egXuCo9H/jfFDon
+X-Google-Smtp-Source: AGHT+IFuaZm4PTedWMppwN/psDVDjWpYw00uONK9hGyy3bG0MxfKy7XPv6flRcWLbA6h3RpenoRhkQ==
+X-Received: by 2002:a05:620a:191a:b0:795:5de4:6625 with SMTP id af79cd13be357-797c2d6271emr434035585a.5.1718106571390;
+        Tue, 11 Jun 2024 04:49:31 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:57b4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-797ee6619ddsm17525485a.99.2024.06.11.04.49.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 04:49:31 -0700 (PDT)
+Message-ID: <9ddfe544-636d-4638-ae0e-053674e47322@gmail.com>
+Date: Tue, 11 Jun 2024 12:49:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 11 Jun 2024 08:46:21 -0300
-Message-ID: <CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
-Subject: iwlwifi: Regression after migrating to 6.6.32
-To: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, 
-	johannes.berg@intel.com
-Cc: Jakub Kicinski <kuba@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Yosry Ahmed <yosryahmed@google.com>, 21cnbao@gmail.com
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
+ ying.huang@intel.com, hughd@google.com, willy@infradead.org,
+ nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Shakeel Butt <shakeel.butt@linux.dev>
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
+ <20240610121820.328876-2-usamaarif642@gmail.com>
+ <CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com>
+ <d822ec8b-3b7d-4e5c-ac96-b6fda63da5d4@gmail.com>
+ <CAJD7tkZoaM=dWim7GPqEERDZyxp3PqMNctzXQCPDMO=8kQSwfw@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJD7tkZoaM=dWim7GPqEERDZyxp3PqMNctzXQCPDMO=8kQSwfw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+@@ -515,8 +600,11 @@ void swap_read_folio(struct folio *folio, bool 
+synchronous,
+>>>>                   psi_memstall_enter(&pflags);
+>>>>           }
+>>>>           delayacct_swapin_start();
+>>>> -
+>>>> -       if (zswap_load(folio)) {
+>>>> +       if (swap_zeromap_folio_test(folio)) {
+>>>> +               folio_zero_fill(folio);
+>>>> +               folio_mark_uptodate(folio);
+>>>> +               folio_unlock(folio);
+>>> We don't currently support swapping in large folios, but it is a work
+>>> in progress, and this will break once we have it.
+>>> swap_zeromap_folio_test() will return false even if parts of the folio
+>>> are in fact zero-filled. Then, we will go read those from disk swap,
+>>> essentially corrupting data.
+>> So yes, with this patch I tested swap out of large zero folio, but when
+>> swapping in it was page by page. My assumption was that swap_read_folio
+>> (when support is added) would only pass a large folio that was earlier
+>> swapped out as a large folio. So if a zero filled large folio was
+>> swapped out, the zeromap will be set for all the pages in that folio,
+>> and at large folio swap in (when it is supported), it will see that all
+>> the bits in the zeromap for that folio are set,  and will just
+>> folio_zero_fill.
+>>
+>> If even a single page in large folio has non-zero data then zeromap will
+>> not store it and it will go to either zswap or disk, and at read time as
+>> all the bits in zeromap are not set, it will still goto either zswap or
+>> disk, so I think this works?
+>>
+>> Is my assumption wrong that only large folios can be swapped in only if
+>> they were swapped out as large? I think this code works in that case.
+> I think the assumption is incorrect. I think we would just check if
+> contiguous PTEs have contiguous swap entries and swapin the folio as a
+> large folio in this case. It is likely that the swap entries are
+> contiguous because it was swapped out as a large folio, but I don't
+> think it's guaranteed.
 
-After upgrading from kernel 5.10.y to 6.6.32 on an i.MX8MM IoT Gateway board,
-I started seeing the following storm of iwlwifi warnings (these warnings
-keep coming in a loop):
+Yes, makes sense. Thanks for explaining this.
 
-[    6.995391] ------------[ cut here ]------------
-[    7.373564] WARNING: CPU: 3 PID: 136 at
-/drivers/net/wireless/intel/iwlwifi/pcie/rx.c:269
-iwl_pcie_rxmq_restock+0x158/0x178 [iwlwifi]
-[    7.385677] Modules linked in: iwlmvm(+) mac80211 libarc4
-openvswitch nsh nf_conncount nf_nat iwlwifi edt_ft5x06 cfg80211 rfkill
-fuse nfnetlink ipv6
-[    7.399053] CPU: 3 PID: 136 Comm: irq/209-iwlwifi Tainted: G
-W          6.6.32-stable-standard-00001-ga9f741529938 #1
-[    7.410285] Hardware name: CompuLab i.MX8MM IoT Gateway (DT)
-[    7.415951] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    7.422921] pc : iwl_pcie_rxmq_restock+0x158/0x178 [iwlwifi]
-[    7.428648] lr : iwl_pcie_rxmq_restock+0x40/0x178 [iwlwifi]
-[    7.434285] sp : ffff800081f6bd30
-[    7.437605] x29: ffff800081f6bd30 x28: 0000000000000000 x27: 0000000000000000
-[    7.444761] x26: 0000000000000000 x25: ffff0000c0c0ae70 x24: ffffffffffffe844
-[    7.451913] x23: ffff0000c0c0b62c x22: 0000000000000001 x21: ffff0000c0c08080
-[    7.459066] x20: ffff0000c0c0c078 x19: ffff0000c0c0c000 x18: 0000000000000000
-[    7.466220] x17: 000000040044ffff x16: 00500072b5503510 x15: ffff0000ff7a22c0
-[    7.473374] x14: 0000000000000000 x13: 000001308d5fa082 x12: 00000000000001da
-[    7.480525] x11: 0000000000000000 x10: 0000000000000a30 x9 : ffff800081f6bd10
-[    7.487677] x8 : ffff0000c02b4590 x7 : dead000000000122 x6 : dead000000000100
-[    7.494829] x5 : ffff0000c0c09e70 x4 : ffff0000c4ed4290 x3 : ffff0000c4ed42a8
-[    7.501981] x2 : 00000000fb645800 x1 : ffff0000c4ed42b8 x0 : 0000000000000fff
-[    7.509134] Call trace:
-[    7.511585]  iwl_pcie_rxmq_restock+0x158/0x178 [iwlwifi]
-[    7.516965]  iwl_pcie_irq_msix_handler+0x38c/0x444 [iwlwifi]
-[    7.522690]  irq_thread_fn+0x2c/0xa8
-[    7.526281]  irq_thread+0x160/0x248
-[    7.529782]  kthread+0x110/0x114
-[    7.533021]  ret_from_fork+0x10/0x20
-[    7.536607] ---[ end trace 0000000000000000 ]---
-[    7.541357] ------------[ cut here ]------------
+>
+> For example, here is a patch that implements large swapin support for
+> the synchronous swapin case, and I think it just checks that the PTEs
+> have contiguous swap entries:
+> https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.com/
+>
+> This makes a lot of sense because otherwise you'd have to keep track
+> of how the folios were composed at the time of swapout, to be able to
+> swap the same folios back in.
 
-Does anyone have any suggestions on how to fix this for 6.6.y?
+I think the solution to large folio swap-in for this optimization and 
+zswap is not in swap_read_folio in this patch-series or any call further 
+down the stack, as its too late by the time you reach here, but in 
+Barrys' patch. This needs to happen much earlier when deciding the size 
+of the folio at folio creation in alloc_swap_folio, after Barry checks
 
-Thanks,
+     if (is_zswap_enabled())
+         goto fallback;
 
-Fabio Estevam
+once the order is decided, we would need to check the indexes in the 
+zeromap array starting from swap_offset(entry) and ending at 
+swap_offset(entry) + 2^order are set. If no bits are set, or all bits 
+are set, then we allocate large folio. Otherwise, we goto fallback.
+
+I think its better to handle this in Barrys patch. I feel this series is 
+close to its final state, i.e. the only diff I have for the next 
+revision is below to remove start/end_writeback for zer_filled case. I 
+will comment on Barrys patch once the I send out the next revision of this.
+
+
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 2cac1e11fb85..08a3772ddcf7 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -274,9 +274,7 @@ int swap_writepage(struct page *page, struct 
+writeback_control *wbc)
+
+         if (is_folio_zero_filled(folio)) {
+                 swap_zeromap_folio_set(folio);
+-               folio_start_writeback(folio);
+                 folio_unlock(folio);
+-               folio_end_writeback(folio);
+                 return 0;
+         }
+         swap_zeromap_folio_clear(folio);
+
+
 
