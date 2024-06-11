@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-210650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D979046C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4739046C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A0C1F2668B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115F8284AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051441552E1;
-	Tue, 11 Jun 2024 22:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BB8155308;
+	Tue, 11 Jun 2024 22:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d97d9fIL"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="C+9rKeQk"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E670720314;
-	Tue, 11 Jun 2024 22:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CC7154C00
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143725; cv=none; b=RY1Bob4Zpe2962tBH/AMumpQvDN0LhXaktIvwdX9RVBaeq8SUkhSZGMowAkhsxv859+E1zFeBaZekVkS3t6ydu3jWWPa/rjpCljPpiGmEWb1QqUNV6yWycGQy7oUb75XCjCL/FiJGh8lLx5rLDkoDBtrbgFBbR6Svtij0DzyxmU=
+	t=1718143986; cv=none; b=h/aLHRXmfqpJIwCWkt9FL+wZwOnRm6jTKYHRjTYC78JB79CYST8pvvZz68AEH3ONDJ/IcI2fPFHslEexh7DBT6ccmRKAMozXD9gYJ2PUTzHAdIAYgetoyQ23ywHAGzZB9YPN14KlqsWsM4LwjWSIO6bcyH95vFgklu+jzQxRLNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143725; c=relaxed/simple;
-	bh=xDAi/LehtiGuKcebgCW9P5JNBdnm/nWvTWG7gETgqwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JboyArTcYeYbD7RyWpxieveFi9ORlVOfUX4VB9lzRovbk6vEPibb87eOf2Ugb5pj4vMPvqYiQxsCvpwO13XtuGNfbBg+dt301UtEvGh9kmTIKDWwZCfU3vDY/3Cg6uKz3mk2OPnZYxDH54FRcYqDd6cUQmRi5P1bbOMSnaBnsEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d97d9fIL; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c2eb98a64fso2909834a91.2;
-        Tue, 11 Jun 2024 15:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718143723; x=1718748523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDAi/LehtiGuKcebgCW9P5JNBdnm/nWvTWG7gETgqwU=;
-        b=d97d9fILkRIyxIF0DgpOnwUEgsr/e8B3bvA0GJhmf9FJQm5CZNyvjQa62hZMOqTvNj
-         QtiypAhnzdMELMRM8/0sMF2sgn5aAQxmDKXWheXyfl2MStDrKPGE2Vpi+hf3duBofoB4
-         GgGy73BE+U/NianoMS6wkJ5EUH11CSJF3kFT71DQDxSXVcE1VwSx2m8QZhCvdRvlnGMi
-         1SoCtJip8OpKvORvdkC1Fy1xV+k2883jMnpu4cI1ztEVfn4JL/DFMw80bP35/DM5KyG3
-         OpBamcmpzc5ak9gP/VG+yHSVE8gkOo/rfER8P4YGY8IuoMb+peuR4zn9EdX8BzzA4tJS
-         3wOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718143723; x=1718748523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDAi/LehtiGuKcebgCW9P5JNBdnm/nWvTWG7gETgqwU=;
-        b=co5yYr4vzJ8uViJh4eL8tyVhhfG+5BrOfjw6lSwnBWuMFpcFCpGVOLOO6Uxxd3qIez
-         7zeZUARu0hCpCsu1cHrchO87IE10zn5ZK4my10+HeYKQXS6VvmrQraFwklEabGbLMhwa
-         GTE4NOEuEzt+EzgBNo6yBmLl/NruG/Rlradaw4puDJ+LG5I6UmJPyyMf54LUdY3zcdRg
-         QG5EqTqk1Sz4SERvNPnEuJiYfOQdpG6Tiuf1lsHR4vfr2fs81IT+PYhZzYtjgPDj9m4e
-         ERKIFw2k06y2hQgAc4McX8NbnHQ3Wh+7JbNWvrEcEFBBhZHes4Eg8/+to+5PikVyx3ou
-         7yPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVpP4YwB3lcgcl0XrLAoeeWEsNBd8BnV/cA1wTqfQfTh7S0buD9d3jJ/bmszKnAk722VrxXbXEyEYBwhAItYK2MCu8PEyFP23MOmspbQHHgcM6cIyoUvKfWgI/ekhlksHWfs7GMvM2YTrIgaw=
-X-Gm-Message-State: AOJu0YyNZjcn7U4AZzmS0n5AXHKJ80NDtHSUBv5CTzzdQy1Flis4e5Ia
-	SG96VnJOCPdZXy4AEhzuNiu+vM3/SXObNiEGVtwKUGBh8tXeQh1mPEwEYJtGs6Gf3ep7ERiR7t/
-	C0akD6e4wke1bI0/tOAyvMQd5HGg=
-X-Google-Smtp-Source: AGHT+IFBHffem54xLZczBJ5Xe/oS4MPcXIdYx89tohNq89Cp7pMB4O45YjeNBKL1s1OfEMOCHqgJQtN9Pa89PVrrbZU=
-X-Received: by 2002:a17:90b:b06:b0:2bd:8378:af81 with SMTP id
- 98e67ed59e1d1-2c4a7602018mr213853a91.4.1718143723147; Tue, 11 Jun 2024
- 15:08:43 -0700 (PDT)
+	s=arc-20240116; t=1718143986; c=relaxed/simple;
+	bh=ntignwSd5BkQDAoVuBygKbCneHpXi8rp0ewb5JbG+YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kPdwoKXQxzRsn4bsOXun6z4y6z64Fc19pJg6hKVgfCu6CacKPT540BquKYZpVpNIsEgiVcl9alhcKKRMc9Un370tCxiqR5U7Wd4rjuZXIk5Mrqi3GrO07XjfSf26lj5voPdz/RkuEB4U6mEVTme/AA18lyv+U0YIf9GVqHJ1YQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=C+9rKeQk; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=9IZI
+	pdPzR9DR3MCp+AyrdUtLauredv0OWoF1WwgDZ50=; b=C+9rKeQklbHFCmWU7lCN
+	bd8ThpgmhSUQLC44BUTfUIFi1T9mP5KlAvXOtTzCHelbdlfqPj5hvilEzhXrxgl4
+	hUy75vkRoK1CUGXJx8D4RVm/EI6XGDfe6RftoFbE8H+rEJs5pF1x3fn+4ASgDy1N
+	44u1quA9f3LqtE2ervu7TH49wlNaQfre15O4lJ0btF9sIhbri3Zk+vl+jYPzvbdt
+	u2tELFsDEem2FFj9tLB4pO9RjnpbnSwTllvJNM+B5mb8FMQMwUFLrsyNe/0e1A+2
+	vDv+kywG35AuhNozt5g2fhsz6gcHqf2ntk84/EjuFRVzNMFF/o3ciAcDo7/Lpix+
+	Bw==
+Received: (qmail 574999 invoked from network); 12 Jun 2024 00:12:59 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2024 00:12:59 +0200
+X-UD-Smtp-Session: l3s3148p1@bqWOkaQaeIxehhrL
+Date: Wed, 12 Jun 2024 00:12:59 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] Add Mule I2C multiplexer support
+Message-ID: <ijj3xp5oacsyhygobi4nynerd6dxgfjxh5uzj6quvzraqrkf7x@eejujooa6odi>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Farouk Bouabid <farouk.bouabid@cherry.de>, Peter Rosin <peda@axentia.se>, 
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org
+References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529093336.4075206-1-davidgow@google.com>
-In-Reply-To: <20240529093336.4075206-1-davidgow@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 12 Jun 2024 00:08:30 +0200
-Message-ID: <CANiq72mXWERtFSqQRtcgP28aLokwZmXaBiqcrn_zoASawjfdsQ@mail.gmail.com>
-Subject: Re: [PATCH] arch: um: rust: Use the generated target.json again
-To: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, x86@kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bkvmb62faawxzci5"
+Content-Disposition: inline
+In-Reply-To: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
 
-On Wed, May 29, 2024 at 11:33=E2=80=AFAM David Gow <davidgow@google.com> wr=
-ote:
->
-> The Rust compiler can take a target config from 'target.json', which is
-> generated by scripts/generate_rust_target.rs. It used to be that all
-> Linux architectures used this to generate a target.json, but now
-> architectures must opt-in to this, or they will default to the Rust
-> compiler's built-in target definition.
->
-> This is mostly okay for (64-bit) x86 and UML, except that it can
-> generate SSE instructions, which we can't use in the kernel. So
-> re-instate the custom target.json, which disables SSE (and generally
-> enables the 'soft-float' feature). This fixes the following compile
-> error:
->
-> error: <unknown>:0:0: in function _RNvMNtCs5QSdWC790r4_4core3f32f7next_up=
- float (float): SSE register return with SSE disabled
->
-> Fixes: f82811e22b48 ("rust: Refactor the build target to allow the use of=
- builtin targets")
-> Signed-off-by: David Gow <davidgow@google.com>
 
-I guess this should go through UML, but please let me know otherwise
-(I don't see it in next).
+--bkvmb62faawxzci5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+Hi Farouk,
 
-Should this have a
+first of all, thanks for the patches and tackling this problem. I have
+to say that I have many concerns on high-level, though. I hope to be
+able to give helpful recommendations.
 
-Cc: stable@vger.kernel.org
+> Mule is an mcu that emulates a set of I2C devices which are reachable
+> through an I2C-mux.
 
-too?
+I am not 100% convinced this is really a mux. Another possible DT
+representation could be (pseudo-code):
 
-Thanks!
+	i2c-bus {
+		mpu@42 {
+			comptible = "mule";
+			reg = <0x42>;
 
-Cheers,
-Miguel
+			subdev@0 {
+				compatible = "subdev"
+				reg = <0x00>;
+			}
+
+			subdev@1 {
+
+			...
+
+		}
+
+	}
+
+Dunno if MFD can handle that. Maybe someone else knows?
+
+If all fails, I think you could write an I2C mux-driver which uses the
+above DT snippet. It should then do:
+
+- write the mule config register according to 'reg' of the subdev
+- replace 'addr' in all 'i2c_msgs' to the addr of the parent mule device
+- i2ctransfer
+- restore 'addr' in all 'i2c_msgs' to the original addr
+
+A little simiar of what i2c-atr.c does, check
+Documentation/i2c/i2c-address-translators.rst
+
+> The emulated devices share a single I2C address with the mux itself
+> where the requested register is what determines which logic is executed
+> (muxing logic or device logic):
+
+This design is... unfortunate, if you ask me. But well, things happen.
+
+> The current I2C-mux implementation does not allow the mux to use the
+> I2C address of a child device. As a workaround, A new I2C-adapter quirk is
+> introduced to skip the check for conflict between a child device and the
+> mux core I2C address when adding the child device.
+
+Not acceptable, sorry. The adapter itself is fine, so this is clearly
+not an adapter quirk. The client is what is quirky. I don't want to
+maintain patch 1 because of this one "creative" design of a client. I
+think we can handle it outside of the I2C core.
+
+So far understandable?
+
+Happy hacking,
+
+   Wolfram
+
+--bkvmb62faawxzci5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZoy+cACgkQFA3kzBSg
+Kba3axAAgZhZa5f9hUe4bSz0GKDi69RP0Z8Vz038So0ej0oN/S6UtQikhS+zh1Gb
+ZJqvCEfw2Gzm6dK8QgpLNg8FsUCpiT1m2ZIQItoKUELSzGaL1R3svGj1cZuR268D
+Zr6gdsbFDjZwg+Fa8roHfCB6+dyIyYuvcHPgckpFtNB24knAN7l13wlW+1Z32/xP
+1OEOpThyD+Wq4R6gvJ3Yg0ZnJIJEu+qH+9Pm2ItalPsHgoZNtVTEKkCyLbki2dzZ
+5j+d3sl7avBP6mEeOFSCO+cJtf+D6Z8VPx/SlA7A+iSCJugU4t03u/OJyyDDvmhj
+bynHKAh6CHdzVlNdFvEjP4Hk5wPpqqcvzGDgNt+4zjq1zSf19hlaSS0fVfgT8QsN
+IjRMH/5nsHEadFlOwTkSKIbG5RTM3WFbAdtnWrh6UgYVZyDAClm4AsC1esxgNOOm
+kWCJV8yrc82BFovMQs0fTwZT2fMaLZoQNGGtySg9wtz+SyQfXTAkM59W2QuXzxpb
+S4OUDgdv1lOuW9PG2tG0rdLlwkG0qTYKzwDrdcKoSMNjbWJcRC++/c9++juwPJv0
+fM9oS0/wZjRGiDZkXMbKhdaQ5EoJOZGJxsZylgeHt8G77Rqy06nAkVqZBXRb1CP0
+VWeWBqaEGvpliLkVTp7Psfd6G0TaMza0/geIiOxw/puIBHVMbfU=
+=guh5
+-----END PGP SIGNATURE-----
+
+--bkvmb62faawxzci5--
 
