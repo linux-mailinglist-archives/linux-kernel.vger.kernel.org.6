@@ -1,112 +1,196 @@
-Return-Path: <linux-kernel+bounces-210667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83679046FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7919A904712
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F1D285007
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CED01F243F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8E415539A;
-	Tue, 11 Jun 2024 22:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwDqETpD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16AB1553B4;
+	Tue, 11 Jun 2024 22:36:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39B715278E;
-	Tue, 11 Jun 2024 22:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6587B15278E;
+	Tue, 11 Jun 2024 22:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718145260; cv=none; b=OBSdnU6jBUD39uCf6R2bUC8gkEPxiKOKSeb2jaFKxgPCpIOL+7c718mlHnw5sRR9FnaeVvuuhF4EOhGjBVWH84DyzLY+PUyN1qKJF1iJBseS329TTAovIh5Ht1zMz2emF19uN7BwTrSRMa2x02Q3+CqZPYrSknwMODfLoSCZRWI=
+	t=1718145390; cv=none; b=QvqWY8o4LD+R9K536C8FBySfbkMh+CZQI0x+9VLb+ox32XZFH1IHMDaz+F0cjF5mMezFupaR5Tb0lk032RHn0ys05r36CiyB7Z0A9EiEkv9OqPyUue2zXgv3SLKqEBb7YYdXKnndSceHqwX11AdGqgWoHmpwdzdkZy6RBYKP0lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718145260; c=relaxed/simple;
-	bh=6GordRBuWLTh8oc2MWZSDiy0M1wmL4hf/uHeNjmS/ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YebBnHKSi5v94dqZWCraWtdgh5satUW4dL+2sYQdtVUAXVtTbTDM2VCSdXkgyjhfH8LwIardUUyzcQpt/vVLjMQmcmqcGURSrsvu1+MuBXvHd9XiZNpHjfJ9FaB22rLF8DkMXw1WUiUb5rFxjYZxB01ZAhtAMXfFCIbTa/1IWuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwDqETpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04546C2BD10;
-	Tue, 11 Jun 2024 22:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718145260;
-	bh=6GordRBuWLTh8oc2MWZSDiy0M1wmL4hf/uHeNjmS/ro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BwDqETpDWwUBovAPWXpDW0NWycNLHqut/W54RAkDadU2ysbnSKfG8jfuPWiOxC9RT
-	 fihJ7LbCHoeS8bDWXwxEEsHeE2Qfk4yS9B42OcNlPWy+rTCKuU5YfkqIJp/OE/GYsa
-	 87KR+LgL7ZecOBrpudO1rRMvyYdjEbXgRYRw6PVHZpKmSZanRBWN5sCQfr9tKegf8A
-	 4t+hlUbPvq0ZSpiOvA9agaOkeI29qb0e71OJohWUsaFADjYZyY/k06IxSjcqlP/uDh
-	 KF94o4U27nN5yvWu2q/7i68L10Eb5KLsoFtqQgUgLox94fvA/RQaukzntOSMxb1kF3
-	 rSBh7eArWpcMw==
-Date: Tue, 11 Jun 2024 17:34:18 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Songyang Li <leesongyang@outlook.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH]  PCI: Cancel compilation restrictions on function
- pcie_clear_device_status
-Message-ID: <20240611223418.GA1005201@bhelgaas>
+	s=arc-20240116; t=1718145390; c=relaxed/simple;
+	bh=oz2WDd+8rgQTA6tAKBoiy2olZlmCeF6niFRohD0MmbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E0XhJKvPyJw5iLnbc45REMKpieL6CYNwqEWOp5vdcR8v+GdAtZrrTFcSsTciu35UW7OegBeTMW985PTGoC9QsZh5HOopMfWfFjvydDZM1dXYTR3Ubf8rgFVi6oVPoe9rqtU6/TeFxQ0dVKZFBs7ga1LwjDHO32Nc5A3PHj9HTDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E625CC2BD10;
+	Tue, 11 Jun 2024 22:36:26 +0000 (UTC)
+Date: Tue, 11 Jun 2024 18:36:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
+ <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
+ Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, Ross
+ Zwisler <zwisler@google.com>, wklin@google.com, Vineeth Remanan Pillai
+ <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Linus Torvalds
+ <torvalds@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Mike
+ Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH v4 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240611183643.0327ef5b@gandalf.local.home>
+In-Reply-To: <d6c55ff7-91ac-4505-b821-1416d57edda9@roeck-us.net>
+References: <20240611215610.548854415@goodmis.org>
+	<20240611215801.443593152@goodmis.org>
+	<d6c55ff7-91ac-4505-b821-1416d57edda9@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY3P286MB2754E7F2E61B266F610E8876B4C72@TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 11:15:10PM +0800, Songyang Li wrote:
->     Some PCIe devices do not have AER capabilities, but they have device
->     status registers.
+On Tue, 11 Jun 2024 15:26:05 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
+
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index d09136e040d3..044ddce8f085 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -2244,6 +2244,121 @@ void __init memblock_free_all(void)
+> >   	totalram_pages_add(pages);
+> >   }
+> >   
+> > +/* Keep a table to reserve named memory */
+> > +#define RESERVE_MEM_MAX_ENTRIES		8
+> > +#define RESERVE_MEM_NAME_SIZE		16
+> > +struct reserve_mem_table {
+> > +	char			name[RESERVE_MEM_NAME_SIZE];
+> > +	phys_addr_t		start;
+> > +	phys_addr_t		size;
+> > +};
+> > +static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+> > +static int reserved_mem_count;
+> > +
+> > +/* Add wildcard region with a lookup name */
+> > +static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+> > +				   const char *name)
+> > +{
+> > +	struct reserve_mem_table *map;
+> > +
+> > +	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
+> > +		return -EINVAL;
+> > +  
 > 
->     Signed-off-by: Songyang Li <leesongyang@outlook.com>
+> I know I am picky, but name is never NULL, and strlen(name) is guaranteed to be > 0.
+> Personally I'd suggest to check for strlen(name) >= RESERVE_MEM_NAME_SIZE together
+> with !strlen(name) and drop the duplicate checks here (and, as side effect, avoid
+> the pointless memory allocation if the name is invalid).
 
-Unindent this.
+Yeah, it's now checked before hand. I'll remove it for v5.
 
-Add "()" after function names.
-
-Please explain what this patch does and why we want it.  I can see
-from the patch that it makes it so pcie_clear_device_status() is
-always compiled, but the commit log should say that and should say why
-we need that.
-
-> ---
->  drivers/pci/pci.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->  mode change 100644 => 100755 drivers/pci/pci.c
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> old mode 100644
-> new mode 100755
-> index 35fb1f17a589..e6de55be4c45
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2263,7 +2263,12 @@ int pci_set_pcie_reset_state(struct pci_dev *dev, enum pcie_reset_state state)
->  }
->  EXPORT_SYMBOL_GPL(pci_set_pcie_reset_state);
->  
-> -#ifdef CONFIG_PCIEAER
-> +/**
-> + * pcie_clear_device_status - Clear device status.
-> + * @dev: the PCI device.
-> + *
-> + * Clear the device status for the PCI device.
-> + */
->  void pcie_clear_device_status(struct pci_dev *dev)
->  {
->  	u16 sta;
-> @@ -2271,7 +2276,6 @@ void pcie_clear_device_status(struct pci_dev *dev)
->  	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
->  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
->  }
-> -#endif
->  
->  /**
->   * pcie_clear_root_pme_status - Clear root port PME interrupt status.
-> -- 
-> 2.34.1
+> > +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+> > +		return -1;
+> > +
+> > +	map = &reserved_mem_table[reserved_mem_count++];
+> > +	map->start = start;
+> > +	map->size = size;
+> > +	strscpy(map->name, name);
+> > +	return 0;
+> > +}
+> > +
+
+
+> > +/*
+> > + * Parse reserve_mem=nn:align:name
+> > + */
+> > +static int __init reserve_mem(char *p)
+> > +{
+> > +	phys_addr_t start, size, align;
+> > +	char *name;
+> > +	char *oldp;
+> > +	int err;
+> > +
+> > +	if (!p)
+> > +		return -EINVAL;
+> > +
+> > +	oldp = p;
+> > +	size = memparse(p, &p);
+> > +	if (!size || p == oldp)
+> > +		return -EINVAL;
+> > +
+> > +	if (*p != ':')
+> > +		return -EINVAL;
+> > +
+> > +	align = memparse(p+1, &p);
+> > +	if (*p != ':')
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * memblock_phys_alloc() doesn't like a zero size align,
+> > +	 * but it is OK for this command to have it.
+> > +	 */
+> > +	if (align <= SMP_CACHE_BYTES)  
 > 
+> Any reason for using <= instead of < ?
+
+Nope. Not sure why I did that. :-/
+
+I'll fix that too.
+
+Thanks,
+
+-- Steve
+
+> 
+> Guenter
+> 
+> > +		align = SMP_CACHE_BYTES;
+> > +
+> > +	name = p + 1;
+> > +	if (!strlen(name))
+> > +		return -EINVAL;
+> > +
+> > +	/* Make sure that name has text */
+> > +	for (p = name; *p; p++) {
+> > +		if (!isspace(*p))
+> > +			break;
+> > +	}
+> > +	if (!*p)
+> > +		return -EINVAL;
+> > +
+> > +	start = memblock_phys_alloc(size, align);
+> > +	if (!start)
+> > +		return -ENOMEM;
+> > +
+> > +	err = reserved_mem_add(start, size, name);
+> > +	if (err) {
+> > +		memblock_phys_free(start, size);
+> > +		return err;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +__setup("reserve_mem=", reserve_mem);
+> > +
+> >   #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+> >   static const char * const flagname[] = {
+> >   	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",  
+
 
