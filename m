@@ -1,193 +1,276 @@
-Return-Path: <linux-kernel+bounces-209588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D8390380D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:42:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C28D903814
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990461C211B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E87EB22AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D02178360;
-	Tue, 11 Jun 2024 09:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73819178360;
+	Tue, 11 Jun 2024 09:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="d95O85Gn"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWtA8+nt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99BA17623B;
-	Tue, 11 Jun 2024 09:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF29317624A;
+	Tue, 11 Jun 2024 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098914; cv=none; b=E/aCZCoSkAAvQBpcSpYPbSduT3UA9DqGw4CVpWAkcii/QU8lFqX6cGpl7D/9gb+Jp+K+Im4YpJ1YvPVqMeuGHTnXH+A9WL/O0iB1VbW2eJ3VzUVaPqtk4o9Mvwakh2pEJmkZZUr8fdNHdKB/LBkU5syr2sFi6Lwclbq1rOsNnns=
+	t=1718098952; cv=none; b=hwOFjkiH/49nRPmx6TE+fNO8RrEhm6jbA0q6EoNPFZk8mrCP8lDazG39HdbZ+SeijjuzVjDq8UA/ZV8o78KSuyVj+ztli0kzE9EX9bOJVvOLW88cE0bZfIQDMwXLCe5n2WJ83OgGSGxJZ7YVBAXSCTNsDjDEznfaA8nLKqxv2Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098914; c=relaxed/simple;
-	bh=37YAOyLbzHAe/CTu+jh14G55K4UoZ2Y4wMYFT0xQ7uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqF6AEQusZnFDivrRx01G+ppY77D9c5tGwJ6xJkwhiNcvT9YCn0Gl2BX75p1ewHS1jHXssci0mJ9e7PubEBvKwwANBrQ6Lmh7WExtGzRGpS5RNDf8Ekpz9dcjBTZi9IRFYevJEd04CyHmBcZzvuGhA/Z0EMXp7FmMKSEyiwED5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=d95O85Gn; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vz3bV1zx3z9sGf;
-	Tue, 11 Jun 2024 11:41:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718098902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zbkiOeCEyPQu0nf19vXRe22PR52sb7jygcpNN/dtAno=;
-	b=d95O85GnokMrBOReY4l/P1SXMB5K0c089lZGv3kW963gYYVhEPxc4qUr4cnBcUibeImrTy
-	4dmvTMoKr96fPVR6lU6b6nEdupU/yE88lTZfIzJzUl0kK60oWw5MT0S6p/oUUeLAMLHnZx
-	eXOvUop11JoBAKgsWMEX+mqJoneMBs5tQZFWYOtaSQyntZUr51DFhjmdXkAsXENbkjtl3Z
-	ZbZQqEWx1tI9pKSLYFEYpmVhuLq1/+WqqPQeMkK/kM/1VhDgQKspLucK1INMEIl3i2cnE7
-	5GIouw9U+4n5+sxPh6Iv1SvVFrSCMmyZWL04TVpYPrcp3d3ieFeoS2vNHcYgPg==
-Date: Tue, 11 Jun 2024 09:41:37 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
-	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com
-Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240611094137.vxuhldj4b3qslsdj@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-8-kernel@pankajraghav.com>
- <4c6e092d-5580-42c8-9932-b42995e914be@oracle.com>
+	s=arc-20240116; t=1718098952; c=relaxed/simple;
+	bh=vmcw0LoEb2KYPpqCFEmI5BlvDCI6GwFkzcgF2Y7u/DA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orMPhfum8fnY8u76az57XTsqjI0rm5rCs+aIM6vbx418v7Rus9nDTtdiCMZUJfaLWwOhItfu+rit2KMVI/PipeO/XgL1OOSycwEKXAvFnGABYrZsxJ7kzfZ+Q27KAplENGqgDLKOwMgZ6HGnCPvbA3cvcj53HiUYw/m5uw8GvvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWtA8+nt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B2qdon024313;
+	Tue, 11 Jun 2024 09:42:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=4cDv83/EReSbO2bcNeU4T7lO
+	TBkKY0tXj81oN6i5QT0=; b=FWtA8+ntrlZ2+XgaDmj30WDTL1gGuL0A5i2g1l0V
+	Ahkh4VntEJujQ0veP8uxja+RzPDdwwzM/N+zOfJ+NxBcAZYrerqNsFw6jvnBF4On
+	swYr22huRTU/cOXDk5GuH0Gl4h66AHX6tt7BP3FUOJ+udaptzd1yPQcky+KR2gaF
+	eyOtwQp0Bcc+SOI++6Z+IVyD/DmifxyMu/yfUSKGHnD6m8OdIL3FX1eoSR9QsBjJ
+	0sDZCokn8knOxqabSp2ASMP+wg2TuNrH/Vb6qf0tq9V2ydZyukuABOioHdfkoyE6
+	ojQ4WEMQK0hM/+FGanQLJIcca30EI8KXId24xbJ7k4gKPw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0eehk2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 09:42:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B9gPk6009672
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 09:42:25 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 02:42:20 -0700
+Date: Tue, 11 Jun 2024 15:12:16 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Georgi Djakov
+	<djakov@kernel.org>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+Message-ID: <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
+ <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+ <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+ <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+ <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+ <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+ <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <4c6e092d-5580-42c8-9932-b42995e914be@oracle.com>
+In-Reply-To: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _-L6S3pVII9ef9_o7MLi0E3pCivFMPxi
+X-Proofpoint-ORIG-GUID: _-L6S3pVII9ef9_o7MLi0E3pCivFMPxi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_05,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110073
 
-> > index 49938419fcc7..9f791db473e4 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1990,6 +1990,12 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
-> >   static int __init iomap_init(void)
-> >   {
-> > +	int ret;
-> > +
-> > +	ret = iomap_dio_init();
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >   	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-> >   			   offsetof(struct iomap_ioend, io_bio),
-> >   			   BIOSET_NEED_BVECS);
-> 
-> I suppose that it does not matter that zero_fs_block is leaked if this fails
-> (or is it even leaked?), as I don't think that failing that bioset_init()
-> call is handled at all.
+On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
+> On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
+> > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+> > <quic_varada@quicinc.com> wrote:
+> >>
+> >> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+> >>> Hi Varada,
+> >>>
+> >>> Thank you for your work on this!
+> >>>
+> >>> On 2.05.24 12:30, Varadarajan Narayanan wrote:
+> >>>> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+> >>>>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+> >>>>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> >>>>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
+> >>>>>>>> there is no NoC scaling. Linux itself handles these clocks.
+> >>>>>>>> However, these should not be exposed as just clocks and align
+> >>>>>>>> with other Qualcomm SoCs that handle these clocks from a
+> >>>>>>>> interconnect provider.
+> >>>>>>>>
+> >>>>>>>> Hence include icc provider capability to the gcc node so that
+> >>>>>>>> peripherals can use the interconnect facility to enable these
+> >>>>>>>> clocks.
+> >>>>>>>>
+> >>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>>>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>
+> >>>>>>> If this is all you do to enable interconnect (which is not the case,
+> >>>>>>> as this patch only satisfies the bindings checker, the meaningful
+> >>>>>>> change happens in the previous patch) and nothing explodes, this is
+> >>>>>>> an apparent sign of your driver doing nothing.
+> >>>>>>
+> >>>>>> It appears to do nothing because, we are just enabling the clock
+> >>>>>> provider to also act as interconnect provider. Only when the
+> >>>>>> consumers are enabled with interconnect usage, this will create
+> >>>>>> paths and turn on the relevant NOC clocks.
+> >>>>>
+> >>>>> No, with sync_state it actually does "something" (sets the interconnect
+> >>>>> path bandwidths to zero). And *this* patch does nothing functionally,
+> >>>>> it only makes the dt checker happy.
+> >>>>
+> >>>> I understand.
+> >>>>
+> >>>>>> This interconnect will be used by the PCIe and NSS blocks. When
+> >>>>>> those patches were posted earlier, they were put on hold until
+> >>>>>> interconnect driver is available.
+> >>>>>>
+> >>>>>> Once this patch gets in, PCIe for example will make use of icc.
+> >>>>>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+> >>>>>>
+> >>>>>> The 'pcieX' nodes will include the following entries.
+> >>>>>>
+> >>>>>>         interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+> >>>>>>                         <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+> >>>>>>         interconnect-names = "pcie-mem", "cpu-pcie";
+> >>>>>
+> >>>>> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+> >>>>
+> >>>> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
+> >>>> clock. Hence, interconnect is not specified there.
+> >>>>
+> >>>> MEMNOC to System NOC interfaces seem to be enabled automatically.
+> >>>> Software doesn't have to turn on or program specific clocks.
+> >>>>
+> >>>>>>> The expected reaction to "enabling interconnect" without defining the
+> >>>>>>> required paths for your hardware would be a crash-on-sync_state, as all
+> >>>>>>> unused (from Linux's POV) resources ought to be shut down.
+> >>>>>>>
+> >>>>>>> Because you lack sync_state, the interconnects silently retain the state
+> >>>>>>> that they were left in (which is not deterministic), and that's precisely
+> >>>>>>> what we want to avoid.
+> >>>>>>
+> >>>>>> I tried to set 'sync_state' to icc_sync_state to be invoked and
+> >>>>>> didn't see any crash.
+> >>>>>
+> >>>>> Have you confirmed that the registers are actually written to, and with
+> >>>>> correct values?
+> >>>>
+> >>>> I tried the following combinations:-
+> >>>>
+> >>>> 1. Top of tree linux-next + This patch set
+> >>>>
+> >>>>     * icc_sync_state called
+> >>>>     * No crash or hang observed
+> >>>>     * From /sys/kernel/debug/clk/clk_summary can see the
+> >>>>       relevant clocks are set to the expected rates (compared
+> >>>>       with downstream kernel)
+> >>>>
+> >>>> 2. Top of tree linux-next + This patch set + PCIe enablement
+> >>>>
+> >>>>     * icc_sync_state NOT called
+> >>>
+> >>> If sync_state() is not being called, that usually means that there
+> >>> are interconnect consumers that haven't probed successfully (PCIe?)
+> >>> or their dependencies. That can be checked in /sys/class/devlink/.../status
+> >>> But i am not sure how this works for PCI devices however.
+> >>>
+> >>> You can also manually force a call to sync_state by writing "1" to
+> >>> the interconnect provider's /sys/devices/.../state_synced
+> >>>
+> >>> Anyway, the question is if PCIe and NSS work without this driver?
+> >>
+> >> No.
+> >>
+> >>> If they work, is this because the clocks are turned on by default
+> >>> or by the boot loader?
+> >>
+> >> Initially, the PCIe/NSS driver enabled these clocks directly
+> >> by having them in their DT nodes itself. Based on community
+> >> feedback this was removed and after that PCIe/NSS did not work.
+> >>
+> >>> Then if an interconnect path (clock) gets disabled either when we
+> >>> reach a sync_state (with no bandwidth requests) or we explicitly
+> >>> call icc_set_bw() with 0 bandwidth values, i would expect that
+> >>> these PCIe and NSS devices would not function anymore (it might
+> >>> save some power etc) and if this is unexpected we should see a
+> >>> a crash or hang...
+> >>>
+> >>> Can you confirm this?
+> >>
+> >> With ICC enabled, icc_set_bw (with non-zero values) is called by
+> >> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
+> >> values.
+> >>
+> >> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
+> >> NSS:    ppe_icc_init -> icc_set_bw
+> >>
+> >> I believe sync_state is not getting called since there is a
+> >> non-zero set bandwidth request. Which seems to be aligned with
+> >> your explanation.
+> >
+> > This doesn't look correct. sync_state is being called once all
+> > consumers are probed. It doesn't matter whether those consumers have
+> > non-zero bandwidth requests or no.
+>
+> /sys/kernel/debug/devices_deferred may have some useful info, too
 
-If bioset_init fails, then we have even more problems than just a leaked
-64k memory? ;)
+/sys/kernel/debug/devices_deferred seems to be empty
 
-Do you have something like this in mind?
+	# mount | grep -w debugfs
+	none on /sys/kernel/debug type debugfs (rw,relatime)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 30217f0ff4c6..def96c7ed9ea 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -39,6 +39,7 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
-  * iomap/direct-io.c
-  */
- int iomap_dio_init(void);
-+void iomap_dio_exit(void);
- 
- /*
-  * char_dev.c
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 9f791db473e4..8d8b9e62201f 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1994,10 +1994,16 @@ static int __init iomap_init(void)
- 
-        ret = iomap_dio_init();
-        if (ret)
--               return ret;
-+               goto out;
- 
--       return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-+       ret = bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-                           offsetof(struct iomap_ioend, io_bio),
-                           BIOSET_NEED_BVECS);
-+       if (!ret)
-+               goto out;
-+
-+       iomap_dio_exit();
-+out:
-+       return ret;
- }
- fs_initcall(iomap_init);
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index b95600b254a3..f4c9445ca50d 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -69,6 +69,12 @@ int iomap_dio_init(void)
-        return 0;
- }
- 
-+void iomap_dio_exit(void)
-+{
-+       __free_pages(zero_fs_block, ZERO_FSB_ORDER);
-+
-+}
-+
- static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
-                struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
- {
+	# cat /sys/kernel/debug/devices_deferred  | wc -l
+	0
 
-> 
-> > +
-> >   static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
-> >   		struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
-> >   {
-> > @@ -236,17 +253,22 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> >   		loff_t pos, unsigned len)
-> >   {
-> >   	struct inode *inode = file_inode(dio->iocb->ki_filp);
-> > -	struct page *page = ZERO_PAGE(0);
-> >   	struct bio *bio;
-> > +	/*
-> > +	 * Max block size supported is 64k
-> > +	 */
-> > +	WARN_ON_ONCE(len > ZERO_FSB_SIZE);
-> 
-> JFYI, As mentioned in https://lore.kernel.org/linux-xfs/20240429174746.2132161-1-john.g.garry@oracle.com/T/#m5354e2b2531a5552a8b8acd4a95342ed4d7500f2,
-> we would like to support an arbitrary size. Maybe I will need to loop for
-> zeroing sizes > 64K.
+Added the following print to icc_sync_state,
 
-The initial patches were looping with a ZERO_PAGE(0), but the initial
-feedback was to use a huge zero page. But when I discussed that at LSF,
-the people thought we will be using a lot of memory for sub-block
-memory, especially on architectures with 64k base page size.
+	@@ -1096,6 +1096,7 @@ void icc_sync_state(struct device *dev)
+		struct icc_node *n;
+		static int count;
 
-So for now a good tradeoff between memory usage and efficiency was to
-use a 64k buffer as that is the maximum FSB we support.[1]
+	+	printk("--> %s: %d %d\n", __func__, providers_count, count);
+		count++;
 
-IIUC, you will be using this function also to zero out the extent and
-not just a FSB?
+		if (count < providers_count)
+			return;
 
-I think we could resort to looping until we have a way to request
-arbitrary zero folios without having to allocate at it in
-iomap_dio_alloc_bio() for every IO.
+icc_sync_state seems to be called once,
 
-[1] https://lore.kernel.org/linux-xfs/20240529134509.120826-8-kernel@pankajraghav.com/
+	# dmesg | grep icc_sync_state
+	[   12.260544] --> icc_sync_state: 2 0
 
---
-Pankaj
+Since 'providers_count' is greated than 'count' icc_sync_state
+seems to return before doing anything.
+
+Thanks
+Varada
 
