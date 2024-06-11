@@ -1,200 +1,210 @@
-Return-Path: <linux-kernel+bounces-210497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172DD904488
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98CF904498
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D7B1F245CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1751C2332F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162F781AC8;
-	Tue, 11 Jun 2024 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U5m/6k/F"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABC014AD3F;
+	Tue, 11 Jun 2024 19:28:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782C88004E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 19:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8B82628D;
+	Tue, 11 Jun 2024 19:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718133936; cv=none; b=JeTQATXuOamWwE7teJ89KuUQEBjLDKjq5PDN/zk2M8MpFEy69M2co5Bvj7jRuU3IcFzQ1XMWqIsCP96vvjOFYwlpRA1HsFuoLnzLkTEiny0sfBU30cjku8hASzFtQ4YpM8aODOXmHepc2W+ZFQ2ZVqUEzhR8pm+hIG2qo4cVs5o=
+	t=1718134131; cv=none; b=P8ws9dEugkyfNBOtbmrtIRH0Vyifx5jAuOpySEUA9+n/kzbe/84ndg5lslnJ7khuA6tNMBQc9qV3cwTv1ixqbGjDi5CMiPPW14Aj2isYhXikqf2Oxvc4UxPBz3UFJK/t8DAZSOTGc6V41ekC+jquTle9G9xNClEWmNmLZhPqTrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718133936; c=relaxed/simple;
-	bh=Ymp+DR9Tt14kZL2jrAdEJecNjjZSBNN/lyGEmd259pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1JW2vtqLS2aBpSFqO05Z6UjO+CvzClN+LGBAX7bKe0aIgyQLbwPvujFDkEppV2TC7Z3U7Z8FBAu+m2eVkKqRgy3RIU/wrHSNB3skZ5GqGzEXdrzcrywVBVFs6OsedQnt4xUnBKYc+dsCkDQqrFYTM7Z5eKPhsvZw00ehqPS4zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U5m/6k/F; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: findns94@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718133931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HHX4czqVnKBAHHkY7DkzRLGWyI8lBYat9UvV74uCHE8=;
-	b=U5m/6k/FSCGoNcJDsu7J7cbq3oMNJQTCeyoGCy8ucoPF30Flv6V6WBMaPuw2ABlJ+yub5u
-	o5+y02lHLqw2MgS74XKeN/yMyfZLc7YMI2lvNCRzGxhwsCDQtDm5DYuQI5QKMg1WdziIKg
-	G8GZQj7JbvRr4mvJhQAJou3ja510ARc=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: shakeelb@google.com
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: david@redhat.com
-X-Envelope-To: chrisl@kernel.org
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: wangkefeng.wang@huawei.com
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: findns94@gmail.com
-X-Envelope-To: hughd@google.com
-X-Envelope-To: schatzberg.dan@gmail.com
-Date: Tue, 11 Jun 2024 12:25:24 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yue Zhao <findns94@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeelb@google.com>, Muchun Song <muchun.song@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Yue Zhao <findns94@gmail.com>, Hugh Dickins <hughd@google.com>, 
-	Dan Schatzberg <schatzberg.dan@gmail.com>
-Subject: Re: [PATCH v6 0/2] Add swappiness argument to memory.reclaim
-Message-ID: <htpurelstaqpswf5nkhtttm3vtbvga7qazs2estwzf2srmg65x@banbo2c5ewzw>
-References: <20240103164841.2800183-1-schatzberg.dan@gmail.com>
+	s=arc-20240116; t=1718134131; c=relaxed/simple;
+	bh=uDLUKFPJSd5Ts6o6hGD63umwFj6mprrLN/7tCjM1/K8=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=VSWWDJamnWGDQ1Qr7a2I3xXfzX2xmlsMJRhq4BSTtHnsxJP6y3N4Phe+scH0Bfbw0bRQViGQM1PY5ImNRb7jnA4o71ZuankIxLocmA5D+4iH55oXNP49PJSA0MmF7RY7hEIoVGc3I4zKr5dthhR9oRC0DNGp+NtxWNyTg/qhgnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104D6C4AF1C;
+	Tue, 11 Jun 2024 19:28:51 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sH7B5-00000001TpV-1ZZq;
+	Tue, 11 Jun 2024 15:29:07 -0400
+Message-ID: <20240611192828.691638177@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 11 Jun 2024 15:28:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ suleiman@google.com,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ David Howells <dhowells@redhat.com>,
+ Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Tony Luck <tony.luck@intel.com>,
+ Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>,
+ Kees Cook <keescook@chromium.org>
+Subject: [PATCH v4 00/13] tracing: Persistent traces across a reboot or crash
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240103164841.2800183-1-schatzberg.dan@gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-Hi folks,
+This is a way to map a ring buffer instance across reboots.
+The requirement is that you have a memory region that is not erased.
+I tested this on a Debian VM running on qemu on a Debian server,
+and even tested it on a baremetal box running Fedora. I was
+surprised that it worked on the baremetal box, but it does so
+surprisingly consistently.
 
-This series has been in the mm-unstable for several months. Are there
-any remaining concerns here otherwise can we please put this in the
-mm-stable branch to be merged in the next Linux release?
+This series does not require the ring buffer mapping, but simply
+takes a physical address that has been reserved via memmap (on x86 only)
+An example of the kernel command line is:
 
-On Wed, Jan 03, 2024 at 08:48:35AM GMT, Dan Schatzberg wrote:
-> Changes since V5:
->   * Made the scan_control behavior limited to proactive reclaim explicitly
->   * created sc_swappiness helper to reduce chance of mis-use
-> 
-> Changes since V4:
->   * Fixed some initialization bugs by reverting back to a pointer for swappiness
->   * Added some more caveats to the behavior of swappiness in documentation
-> 
-> Changes since V3:
->   * Added #define for MIN_SWAPPINESS and MAX_SWAPPINESS
->   * Added explicit calls to mem_cgroup_swappiness
-> 
-> Changes since V2:
->   * No functional change
->   * Used int consistently rather than a pointer
-> 
-> Changes since V1:
->   * Added documentation
-> 
-> This patch proposes augmenting the memory.reclaim interface with a
-> swappiness=<val> argument that overrides the swappiness value for that instance
-> of proactive reclaim.
-> 
-> Userspace proactive reclaimers use the memory.reclaim interface to trigger
-> reclaim. The memory.reclaim interface does not allow for any way to effect the
-> balance of file vs anon during proactive reclaim. The only approach is to adjust
-> the vm.swappiness setting. However, there are a few reasons we look to control
-> the balance of file vs anon during proactive reclaim, separately from reactive
-> reclaim:
-> 
-> * Swapout should be limited to manage SSD write endurance. In near-OOM
->   situations we are fine with lots of swap-out to avoid OOMs. As these are
->   typically rare events, they have relatively little impact on write endurance.
->   However, proactive reclaim runs continuously and so its impact on SSD write
->   endurance is more significant. Therefore it is desireable to control swap-out
->   for proactive reclaim separately from reactive reclaim
-> 
-> * Some userspace OOM killers like systemd-oomd[1] support OOM killing on swap
->   exhaustion. This makes sense if the swap exhaustion is triggered due to
->   reactive reclaim but less so if it is triggered due to proactive reclaim (e.g.
->   one could see OOMs when free memory is ample but anon is just particularly
->   cold). Therefore, it's desireable to have proactive reclaim reduce or stop
->   swap-out before the threshold at which OOM killing occurs.
-> 
-> In the case of Meta's Senpai proactive reclaimer, we adjust vm.swappiness before
-> writes to memory.reclaim[2]. This has been in production for nearly two years
-> and has addressed our needs to control proactive vs reactive reclaim behavior
-> but is still not ideal for a number of reasons:
-> 
-> * vm.swappiness is a global setting, adjusting it can race/interfere with other
->   system administration that wishes to control vm.swappiness. In our case, we
->   need to disable Senpai before adjusting vm.swappiness.
-> 
-> * vm.swappiness is stateful - so a crash or restart of Senpai can leave a
->   misconfigured setting. This requires some additional management to record the
->   "desired" setting and ensure Senpai always adjusts to it.
-> 
-> With this patch, we avoid these downsides of adjusting vm.swappiness globally.
-> 
-> Previously, this exact interface addition was proposed by Yosry[3]. In response,
-> Roman proposed instead an interface to specify precise file/anon/slab reclaim
-> amounts[4]. More recently Huan also proposed this as well[5] and others
-> similarly questioned if this was the proper interface.
-> 
-> Previous proposals sought to use this to allow proactive reclaimers to
-> effectively perform a custom reclaim algorithm by issuing proactive reclaim with
-> different settings to control file vs anon reclaim (e.g. to only reclaim anon
-> from some applications). Responses argued that adjusting swappiness is a poor
-> interface for custom reclaim.
-> 
-> In contrast, I argue in favor of a swappiness setting not as a way to implement
-> custom reclaim algorithms but rather to bias the balance of anon vs file due to
-> differences of proactive vs reactive reclaim. In this context, swappiness is the
-> existing interface for controlling this balance and this patch simply allows for
-> it to be configured differently for proactive vs reactive reclaim.
-> 
-> Specifying explicit amounts of anon vs file pages to reclaim feels inappropriate
-> for this prupose. Proactive reclaimers are un-aware of the relative age of file
-> vs anon for a cgroup which makes it difficult to manage proactive reclaim of
-> different memory pools. A proactive reclaimer would need some amount of anon
-> reclaim attempts separate from the amount of file reclaim attempts which seems
-> brittle given that it's difficult to observe the impact.
-> 
-> [1]https://www.freedesktop.org/software/systemd/man/latest/systemd-oomd.service.html
-> [2]https://github.com/facebookincubator/oomd/blob/main/src/oomd/plugins/Senpai.cpp#L585-L598
-> [3]https://lore.kernel.org/linux-mm/CAJD7tkbDpyoODveCsnaqBBMZEkDvshXJmNdbk51yKSNgD7aGdg@mail.gmail.com/
-> [4]https://lore.kernel.org/linux-mm/YoPHtHXzpK51F%2F1Z@carbon/
-> [5]https://lore.kernel.org/lkml/20231108065818.19932-1-link@vivo.com/
-> 
-> Dan Schatzberg (2):
->   mm: add defines for min/max swappiness
->   mm: add swapiness= arg to memory.reclaim
-> 
->  Documentation/admin-guide/cgroup-v2.rst | 18 +++++---
->  include/linux/swap.h                    |  5 ++-
->  mm/memcontrol.c                         | 58 ++++++++++++++++++++-----
->  mm/vmscan.c                             | 39 ++++++++++++-----
->  4 files changed, 90 insertions(+), 30 deletions(-)
-> 
-> -- 
-> 2.39.3
-> 
+  memmap=12M$0x285400000  trace_instance=boot_mapped@0x285400000:12M
+
+The above will reserve 12M at physical address 0x285400000 (done by the
+existing memmap command line option), and then the trace_instance option was
+extended to take an address and size (@0x285400000:12M). It will then vmap()
+that address and allocate a ring buffer in it. If a ring buffer already
+exists, it will use it and expose the contents to user space.
+
+The memory reserved is used by the ring buffer of this instance.
+It acts like a memory mapped instance so it has some limitations. It does not
+allow snapshots nor does it allow tracers which use a snapshot buffer (like
+irqsoff and wakeup tracers).
+
+On boot up, when setting up the ring buffer, it looks at the current
+content and does a vigorous test to see if the content is valid.
+It even walks the events in all the sub-buffers to make sure the
+ring buffer meta data is correct. If it determines that the content
+is valid, it will reconstruct the ring buffer to use the content
+it has found.
+
+If the buffer is valid, on the next boot, the boot_mapped instance
+will contain the data from the previous boot. You can cat the
+trace or trace_pipe file, or even run trace-cmd extract on it to
+make a trace.dat file that holds the date. This is much better than
+dealing with a ftrace_dump_on_opps (I wish I had this a decade ago!)
+
+There are still some limitations of this buffer. One is that it assumes
+that the kernel you are booting back into is the same one that crashed.
+At least the trace_events (like sched_switch and friends) all have the
+same ids. This would be true with the same kernel as the ids are determined
+at link time.
+
+Module events could possible be a problem as the ids may not match.
+
+This version of the patch series saves a text function and a data
+string address in the persistent memory, and this is used to calculate
+the delta between text and data addresses of the new boot up. Now
+function tracing and "%pS" still work across boots. Even the RCU
+trace events that point to static strings work as well!
+
+The delta is exported by a new file in the instance called "last_boot_info"
+that has something like this:
+
+     # cat last_boot_info
+     text delta:    -268435456
+     data delta:    -268435456
+
+This can be used by trace-cmd that reads the trace_pipe_raw data and
+now can figure out how to map the print_formats and kallsyms to the raw
+data in the buffers.
+
+This can be used to debug kernel shutdown. I ran the following:
+
+  # trace-cmd start -B boot_mapped -p function
+  # reboot
+
+[after reboot]
+
+  # trace-cmd show -B boot_mapped | tail -20
+       swapper/0-1       [000] d..1.    63.479667: preempt_count_add <-delay_tsc
+       swapper/0-1       [000] d..2.    63.479669: preempt_count_sub <-delay_tsc
+       swapper/0-1       [000] d..1.    63.479671: disable_local_APIC <-native_stop_other_cpus
+       swapper/0-1       [000] d..1.    63.479673: clear_local_APIC.part.0 <-disable_local_APIC
+       swapper/0-1       [000] d..1.    63.479716: mcheck_cpu_clear <-native_stop_other_cpus
+       swapper/0-1       [000] d..1.    63.479718: mce_intel_feature_clear <-native_stop_other_cpus
+       swapper/0-1       [000] d..1.    63.479720: lmce_supported <-mce_intel_feature_clear
+       swapper/0-1       [000] d..1.    63.479732: lapic_shutdown <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479735: disable_local_APIC <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479736: clear_local_APIC.part.0 <-disable_local_APIC
+       swapper/0-1       [000] d..1.    63.479763: restore_boot_irq_mode <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479763: native_restore_boot_irq_mode <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479764: disconnect_bsp_APIC <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479777: hpet_disable <-native_machine_shutdown
+       swapper/0-1       [000] d..1.    63.479778: iommu_shutdown_noop <-native_machine_restart
+       swapper/0-1       [000] d..1.    63.479779: native_machine_emergency_restart <-__do_sys_reboot
+       swapper/0-1       [000] d..1.    63.479779: tboot_shutdown <-native_machine_emergency_restart
+       swapper/0-1       [000] d..1.    63.479790: acpi_reboot <-native_machine_emergency_restart
+       swapper/0-1       [000] d..1.    63.479791: acpi_reset <-acpi_reboot
+       swapper/0-1       [000] d..1.    63.479791: acpi_os_write_port <-acpi_reboot
+
+Enjoy...
+
+Changes since v3: https://lore.kernel.org/all/20240606211735.684785459@goodmis.org/
+
+- Removed an unused variable
+
+- Fixed enable_instances() as the path without memory using the memory location
+  in the command line parameter passed in "tok" where it now needs to be
+  "name" for creating the snapshot buffer, otherwise it would pass in NULL
+  which could crash the kernel on boot.
+
+Changes since v2: https://lore.kernel.org/all/20240411012541.285904543@goodmis.org/
+
+- Rebased on top of 6.10-rc2 that has the memory mapped ring buffer code.
+
+- Added hard coded address to map to (from memmap=nn$ss), instead of relying
+  on using reserve_mem (which I still want to add).
+
+- Updated comments
+
+- Restructured the validate code as the previous version broke the ring
+  buffer timestamp validation code.
+
+
+Steven Rostedt (Google) (13):
+      ring-buffer: Allow mapped field to be set without mapping
+      ring-buffer: Add ring_buffer_alloc_range()
+      ring-buffer: Add ring_buffer_meta data
+      tracing: Implement creating an instance based on a given memory region
+      ring-buffer: Add output of ring buffer meta page
+      ring-buffer: Add test if range of boot buffer is valid
+      ring-buffer: Validate boot range memory events
+      tracing: Add option to use memmapped memory for trace boot instance
+      ring-buffer: Save text and data locations in mapped meta data
+      tracing/ring-buffer: Add last_boot_info file to boot instance
+      tracing: Handle old buffer mappings for event strings and functions
+      tracing: Update function tracing output for previous boot buffer
+      tracing: Add last boot delta offset for stack traces
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |   9 +
+ include/linux/ring_buffer.h                     |  20 +
+ kernel/trace/ring_buffer.c                      | 853 +++++++++++++++++++++---
+ kernel/trace/trace.c                            | 242 ++++++-
+ kernel/trace/trace.h                            |   8 +
+ kernel/trace/trace_output.c                     |  12 +-
+ 6 files changed, 1036 insertions(+), 108 deletions(-)
 
