@@ -1,160 +1,173 @@
-Return-Path: <linux-kernel+bounces-209764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8C7903A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A80903A72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6B7285DCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1501C239DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075717B51D;
-	Tue, 11 Jun 2024 11:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B211B17C220;
+	Tue, 11 Jun 2024 11:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7aiwTj0"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8HUEhkd"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B5171644;
-	Tue, 11 Jun 2024 11:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8800A17B4E5;
+	Tue, 11 Jun 2024 11:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105668; cv=none; b=BaUCKflApIa1jdKvZU0RsQtglp20KN4YSMb6Zk38Eg3n8b3qnoPlsyAKYcd0xAcNqlrlJjO0EGHbUGTidMr4Mz3ARV9tit3KWrWdxLA4+yRTSERm+nmz5CHpbjZJ3X8tqkJ2RssRAEZyNS40uSAbtlzcFb00vKbjpi+qZDp3c90=
+	t=1718105758; cv=none; b=dJvaW6lFG1ZnvyqlMyf+5Ugxy/Ne5bNGQ8n6iROKO88WVyInPc2EO3UZvYaybrufbCLJ6tzYWoamGHRQpftGj+PAXWLZrurc17dMK67qixreUgWxIkECIjGH9J6E5U1NZxsG23WXuYRAbbN5OrypOrAug4Ifbf9xfdCO7hkxVE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105668; c=relaxed/simple;
-	bh=lgMdaGmCPRH+3LfLApnRp+QzYV7UGkzgZMXXTOVZe9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qd8Eh9rEV8eUlcd3YkBwUoERGUGwxlEl3V3cNsRDdEF8zACJ5WNhDxCUvUQFbQ2PAkta2ytjdIPOUSGkFu07ZI/g2XhjaliyqMcRzPyrdUNka/I5HfMmscf2j/8rSv+4ZwJRw0ggZV3Gp3XkUm6hPj34OIKE7ZCcrKVft0X0jWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7aiwTj0; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1718105758; c=relaxed/simple;
+	bh=yDoO24qvTuhgGUdfFrkXbWtuRpVXIVPpmbEWjoEiwGk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S3NhMZ6JZLJBz/2pH8K1c33b1Raps97MC3ttoC5bispTKi2GKq6ORFYlf5vlJ0xQz/B/E14Bm9q+OD4bCkp6NCafWUHGYWJlpxgmGz9XAJQruy8TDAoa8CQ25jFpzYpu8ttVcxQSdovkYFlz2VYqmsMQ42LXeIM+BO2PaD/K77k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8HUEhkd; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f0f4746c2so702895f8f.3;
-        Tue, 11 Jun 2024 04:34:26 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso788209a12.3;
+        Tue, 11 Jun 2024 04:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105665; x=1718710465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HlD8loeKV8w1EBghL7dw9jtTM30qBeXBqWr6znCZpWo=;
-        b=O7aiwTj0fYojdlF8pjAgHyc7zrGs0PyS6xQQq13ygSAEmJYhJs2xXS/OitXjjCkkz/
-         xh+fZsa3zZ3MD2CDQO9+iXBoMK9cMSy9nZxOq6l4vqVpsgN3gBPhWenYm0HznTuejwnn
-         rPjVgjuR4L6Qzcofc1mWR8A/VtLtzV7TVuq6pXi2LNzqAJvCgE+Ot/lGrBUyQmO1V3PJ
-         08g0GNbGtsSovfi8gzzuiIhavdgFkst/wIpEN4foh92u6TYDuYcq78tr0usHdua3IeKC
-         EFSJma76Gryjea/wxfffPEuc9JAlbmhPnevucLrwVd9RUvunZxLfypiZ8vDUWz9rwZ/c
-         hgew==
+        d=gmail.com; s=20230601; t=1718105757; x=1718710557; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xthA1neqtAIy1s+U3YwosG2Zu0DE+Lu75xci6R4A3mM=;
+        b=e8HUEhkd9uos5msCL/AdUR31xuPjRllib7ze3O+E8hFbmTQHXg4i8rfGH/jMwqIHyC
+         06Y2b547U7Gxwo89oJ67dWke3wTsTr+++sJpzC34AAiM7mGi3Ujm+MsProsq+C3vG+lG
+         i6sdFGurHF+4QOJ+tS8HLutuCq2zHW24pAxZZjj2ReFrlHLXssuzgFTXJ3U+sdWx4JHg
+         YcohUghidqpohz36oBiQI5oBidhUzsPar+4fWkOSlrNveEv2QqurSP7S+EUtN/YR6UeC
+         Hb8j7xvvT+ACDhXQGDbthtuh8n2mJPxnIVtNL+KZ8tU3qUMUCLCNNuWtUts4LGsxzLmV
+         DzrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105665; x=1718710465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlD8loeKV8w1EBghL7dw9jtTM30qBeXBqWr6znCZpWo=;
-        b=SGoihm+DcjKMPwWimti0/46oLosYRGMrxnquWgv/8XhwK0aIYs0Ey2VM4Prl57UjZz
-         AoWlflAIO8IO7lSZDJGHjqy5nerIAoDh7GzfJzR47+Q5dfZ6H+g+WXxEXt2j55+MrHMJ
-         cI+S+OGh7m3K6YO8BoymV0s3HF1VgrKQzd81tOAIGw1VLyuLjFyVu9tlp9X/r5FYv5lf
-         oPzEy/oxbq4I8nzI8eP61UpTlqvXS+ZhqA7BsnN8i+8uVZkZ/MkI/05HViYIyqb7vlCC
-         hTr9cxBWoqsCpxbGL1UhsUJ/iAIepIHCWhe9fV3GVSpndGDbY3k6Br61tEAogsyQeJqx
-         UC0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCdDVPkEjXcw0pYwUJWovlP+h6qNW9G0JFkepHajAlWJuURxDqEnoeODXhuL5QoERy6st8pB76SSL72yfIds7B/NON8ey4Jl0XXK5cB5gsTsaUEp1E13QhNKgl4RmqxB7J3LfmpL61u+3mPg==
-X-Gm-Message-State: AOJu0Yx59Sg8VHishIzyVoJaW0kKZzKC7J4knjVzvtmSPH/42QK++Jfl
-	Px3ssnfuOOq9+YLPC8Z0ljCD7OSl7LcEuEaEz7KKa/Z5ydUFRvOp
-X-Google-Smtp-Source: AGHT+IEtoKBTY3mWsQ0cFYgh5+pGCUHk1MHqLMF4DKj5V7rLcmoHSGA20A8XC8fy4FRRbpKhSCrq0Q==
-X-Received: by 2002:a5d:6482:0:b0:35f:2256:1722 with SMTP id ffacd0b85a97d-35f225617aamr5468205f8f.33.1718105665379;
-        Tue, 11 Jun 2024 04:34:25 -0700 (PDT)
-Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f27c8a444sm3876601f8f.53.2024.06.11.04.34.23
+        d=1e100.net; s=20230601; t=1718105757; x=1718710557;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xthA1neqtAIy1s+U3YwosG2Zu0DE+Lu75xci6R4A3mM=;
+        b=BOwxc/GIUVwX7qh4RFhZzvmfJZ+wcpMuNnjvr1J25Y9VjAgF9dbBvdDznv9s71Gjsj
+         KpIHbHry2mdMSXPmQuH7h0o6iOPA+cwGwL08tBY3nDdLt+ravEzmeLHERHzAbRqhNWxy
+         FMhodSI4cGerSfxWOq83kaiutkWiKISHqdvikHbLI0Vn2/+aJCYOdhDrCK6oAN1r4jCg
+         DyNoGH25LXy79R7AC4P0BsFhWgDGssmgWVR955wG5YYm2FdvIPRv/YqPIh3NSs3bg6ST
+         H3WgbtwjRwj6VtoiaHr41r0sGfE4voaDncT/PE3eWOulN4w5c+o6rbOb7h/b13kdIJf6
+         4VeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyYkeUoNsXlJMGe/Sn835iN/Ijdp8aEeSBXxJ5TSoHmCYcDLjVuVbQe3XUtnuYO2y/SUUb8S9ZabYgicDa78Z2ljr8cLUuByWkNS/GgtI24/9uHEepts1jeEYDnyezdJxveUPNoP0Ny1rS4d+HhRNxTwhfD4RSXgrJm1bARGdQc4VjFpk=
+X-Gm-Message-State: AOJu0YzRByLxOiZ+XBFHkuwwtrUO0j0jYSQwgUpuaqImR90TvEEMPCUA
+	jigtmbTmq4TLT9mBNu1JhEhV1M1+TATuzX0vZvu2vCX7Muvgd8aq
+X-Google-Smtp-Source: AGHT+IHWp1gLj32s/xAykHc3SASs/OqspJIgVNxZedMkIVemf9JK5cY34s3FhhQOh9pO04hMEdpJug==
+X-Received: by 2002:a17:90b:1bc9:b0:2c3:16f8:b57b with SMTP id 98e67ed59e1d1-2c316f8b5b1mr3537795a91.25.1718105756605;
+        Tue, 11 Jun 2024 04:35:56 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c2dd785762sm6705086a91.37.2024.06.11.04.35.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:34:24 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:34:18 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, david@fromorbit.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <7tl2j4usjuf7bl4l4ikhy5nz3ssars6w4jq3esjluteex5o6tc@en4qbkcpdgiu>
-References: <20240611041540.495840-1-mjguzik@gmail.com>
- <20240611100222.htl43626sklgso5p@quack3>
- <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
- <20240611110505.udtzfwgj3o4vxrxl@quack3>
+        Tue, 11 Jun 2024 04:35:55 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+	linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/5] mips: bmips: improve handling of RAC and CBR addr
+Date: Tue, 11 Jun 2024 13:35:32 +0200
+Message-ID: <20240611113538.9004-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240611110505.udtzfwgj3o4vxrxl@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 01:05:05PM +0200, Jan Kara wrote:
-> On Tue 11-06-24 12:23:59, Mateusz Guzik wrote:
-> > On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
-> > > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
-> > > > new_inode used to have the following:
-> > > > 	spin_lock(&inode_lock);
-> > > > 	inodes_stat.nr_inodes++;
-> > > > 	list_add(&inode->i_list, &inode_in_use);
-> > > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
-> > > > 	inode->i_ino = ++last_ino;
-> > > > 	inode->i_state = 0;
-> > > > 	spin_unlock(&inode_lock);
-> > > > 
-> > > > over time things disappeared, got moved around or got replaced (global
-> > > > inode lock with a per-inode lock), eventually this got reduced to:
-> > > > 	spin_lock(&inode->i_lock);
-> > > > 	inode->i_state = 0;
-> > > > 	spin_unlock(&inode->i_lock);
-> > > > 
-> > > > But the lock acquire here does not synchronize against anyone.
-> > > > 
-> > > > Additionally iget5_locked performs i_state = 0 assignment without any
-> > > > locks to begin with and the two combined look confusing at best.
-> > > > 
-> > > > It looks like the current state is a leftover which was not cleaned up.
-> > > > 
-> > > > Ideally it would be an invariant that i_state == 0 to begin with, but
-> > > > achieving that would require dealing with all filesystem alloc handlers
-> > > > one by one.
-> > > > 
-> > > > In the meantime drop the misleading locking and move i_state zeroing to
-> > > > alloc_inode so that others don't need to deal with it by hand.
-> > > > 
-> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > 
-> > > Good point. But the initialization would seem more natural in
-> > > inode_init_always(), wouldn't it? And that will also address your "FIXME"
-> > > comment.
-> > > 
-> > 
-> > My point is that by the time the inode is destroyed some of the fields
-> > like i_state should be set to a well-known value, this one preferably
-> > plain 0.
-> 
-> Well, i_state is set to a more or less well defined value but it is not
-> zero. I don't see a performance difference in whether set it to 0 on
-> freeing or on allocation and on allocation it is actually much easier to
-> find when reading the code.
-> 
+Hi,
 
-I was thinking more about assertion potential, not anything
-perf-related, but it is a moot subject now.
+this simple series improve handling of RAC and CBR address and try to
+upstream these simple patch we have in OpenWrt for a while.
 
-> > I did not patch inode_init_always because it is exported and xfs uses it
-> > in 2 spots, only one of which zeroing the thing immediately after.
-> > Another one is a little more involved, it probably would not be a
-> > problem as the value is set altered later anyway, but I don't want to
-> > mess with semantics of the func if it can be easily avoided.
-> 
-> Well, I'd consider that as another good reason to actually clean this up.
-> Look, inode_init_always() is used in bcachefs and xfs. bcachefs sets
-> i_state to 0 just before calling inode_init_always(), xfs just after one
-> call of inode_init_always() and the call in xfs_reinit_inode() is used
-> only from xfs_iget_recycle() which sets i_state to I_NEW. So I claim that
-> moving i_state clearing to inode_init_always() will not cause any issue and
-> is actually desirable.
-> 
+The first patch fix a straight kernel panic where some Bootloader might
+enable RAC but misconfigure the CBR address. The current logic only
+check if RAC is enabled but doesn't verify if the CBR address is usable.
 
-Ok, see my reply to Dave's e-mail.
+The DMA sync function cause a kernel panic for invalid write. (as CBR is
+0 or something like 0xa)
 
-Just tell me how to ship this and I'll do the needful(tm).
+The second is preparation for making the CBR address configurable in DT.
+Since this address doesn't change, we can cache it and reference it with
+a local variable instead of calling the register to access the value.
+
+The 4th patch make it configurable with 2 DT property, one to actually
+set the reg and the other to force set it.
+
+The first property is used when CBR is set to 0. The second property is
+to force it if the Bootloader sets it to something wrong.
+
+If the CBR value is not 0 and is not forced with the second property a
+WARN is printed and the DT value is ignored.
+
+The 4th patch enable RAC on BMIPS4350.
+
+These has been tested on BCM6358 (HG556a) and BCM6368 (VH4032N) and
+reported correct functionality.
+
+Changes v7:
+- Add ACK and Reviewed-by tag for dt patch from v5
+Changes v6:
+- Add missing patch that got lost in v5
+- Fix missing header for legacy bcm47xx
+- Fix compilation error with gcc 10.2.1
+Changes v5:
+- Add Ack tags
+- Improve DT descriptions as suggested by Conor
+Changes v4:
+- Fix compilation error with legacy brcm target
+- Improve property description in DT commit (give
+  CBR meaning and drop reference to linux functions)
+- Use only __read_mostly as we can't add variable to
+  multiple data sections
+- In patch 4 use local cbr variable instead of global
+  one.
+Changes v3:
+- Drop broken-cbr-reg property
+- Fix anyOf+const with enum
+Changes v2:
+- Prefix brcm vendor in the added property
+- Drop last patch (cpu switch from DMA sync)
+- Validate CBR addr from DT to be outside DRAM
+- Reduce indentation in DT CBR check
+- Reduce delta and use local variable for CBR where possible
+- Fix and improve typo and spelling mistake
+- Use 0xf instead of 0xa for BCM6358 RAC enable
+
+Christian Marangi (4):
+  mips: bmips: BCM6358: make sure CBR is correctly set
+  mips: bmips: rework and cache CBR addr handling
+  dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
+  mips: bmips: setup: make CBR address configurable
+
+Daniel González Cabanelas (1):
+  mips: bmips: enable RAC on BMIPS4350
+
+ .../devicetree/bindings/mips/brcm/soc.yaml    | 24 +++++++++++++++
+ arch/mips/bcm47xx/prom.c                      |  3 ++
+ arch/mips/bcm63xx/prom.c                      |  3 ++
+ arch/mips/bmips/dma.c                         |  2 +-
+ arch/mips/bmips/setup.c                       | 29 +++++++++++++++++--
+ arch/mips/include/asm/bmips.h                 |  1 +
+ arch/mips/kernel/smp-bmips.c                  | 28 ++++++++++++++++--
+ 7 files changed, 85 insertions(+), 5 deletions(-)
+
+-- 
+2.43.0
+
 
