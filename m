@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-210674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14ED90472C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:44:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983BC90472F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596B41F24DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A43728583E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E2D1553B9;
-	Tue, 11 Jun 2024 22:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28E315575F;
+	Tue, 11 Jun 2024 22:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/WPQiCj"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwzQXKBx"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435E718EAB;
-	Tue, 11 Jun 2024 22:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447CA495E5;
+	Tue, 11 Jun 2024 22:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718145844; cv=none; b=AXjyWRhMLW/Vp3nd/XVC839r4jBi7lFNJwM0n2pQwKYUigqsdQKUdvkR5bnbmNRDkRY8pmJfy9+R7RZwzHWUA6NTjYkmz3y9LAEKDJ0ysiNnDHupbY++05dgqLEI4tDEWRknLp5Ndu/TS3TPAvECRDEoxhgtsEtd/TD+QnfvoUk=
+	t=1718145963; cv=none; b=i68/xodT+nUFzXeY4eyMpW9MU534K44PSJQOGNBmqqw0K0tYSUmEeh90UE+nhWGQnD56q8O8wPstwNPfF6cqN7CoO1S4sV88pHCs3VvYtdwUa2yaXGvxdOLRAyRl3pi6nab1AwMiTgc7c7mlfyLq/n+y15Q2K03bpukSC//r+tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718145844; c=relaxed/simple;
-	bh=jkgGX6JhTSKc2JQ9lobIrsZ6+J2wG4/W1YxnzTSYc0M=;
+	s=arc-20240116; t=1718145963; c=relaxed/simple;
+	bh=8a5e6jI6LD77T7UiwIQsyyR5CriP4XU8Bwe7mMBynno=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jB4CqV1Q/n+3sJCiquo+60JZlRsTVugO+LJp95cNZsiPbL+Yze+Wd3Pss1eQXPBlzFEZpPDIp+qDxgUSBDpikbsXc98rQpPxDxjGVsLYIoDGCngtcg3T85C/z1QwI2ShZk5aBl8WJwSdL4whfvjEsUG+wjhRnmQv8c78qn0um20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/WPQiCj; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	 In-Reply-To:Content-Type; b=SNwnEl+nu4DKIMuIyK8k9iMcawCdWWWPOV0q3ItXAC+PvUrln2Xcm7sKvPIhxrnhPhOX2w+ldtgLieSznLpZKI2a/IndNqB16XZHN+jQflOOIZWKIZkg3sZQWbxTv+SpmOlka0j8o/YyZGvwd5OqcOqFSqKcpdoLWaGpm/C2RW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwzQXKBx; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7046211e455so2189226b3a.3;
-        Tue, 11 Jun 2024 15:44:03 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42165f6645fso14129735e9.2;
+        Tue, 11 Jun 2024 15:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718145842; x=1718750642; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JjJgoNErYdG8LWeuzJrz+S/8auNsee/95pEsFxHhxCY=;
-        b=c/WPQiCjsaq+IstRIAk0LJcO6vQi1XDo/zCq+TxVNdwRS++x9Fk2B3TDmjz6W9BxY1
-         ADZhT48qQ1GjO/Le/0xWgO2YSLsRP2HrfDcnuNRlBB4goi1PlWT3KztOj+4fWs6jb42k
-         S513tOdilHNojRIk7+LW1B1/Kk2fpuusDDuhtfcaHhmGk5JOoHwtCqSufd2OjjEqeD+H
-         4m9h1/uj/G64i3gviDoV3OK+mgdktke55GWsLe3pInKKYIrMQQdP2L6HyQeyfs0/ZC82
-         df5XUX7DmPnfOgme70YRGo2OQdaBTnOgvbd4RDJ+TkZz9tfzzdYNp673jKYQMqOgailw
-         SWZQ==
+        d=gmail.com; s=20230601; t=1718145960; x=1718750760; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cDt7JzP/wsVoWXx6U+apUWSbCYtUPbPCYm2lOF3PwfU=;
+        b=EwzQXKBxhHYx7YtG7FOE7lggixfJVqkj2uK1h/tuqfkF/h/+KjcTEu4OOrrXz5ZJg5
+         McTmIGUP0V760AlW/bJc4d2ScGYloDYRAP2jgbCuuhGEAVG69kJUmXrJrdQATlMI/Rcj
+         GSjnjT5zh7iCHbvgZJI1mKp0Iauqaa5N6TbK7ikdNUyk8yzI4O0PVgcfEr+sjy4MsolU
+         X/SDplxxi0S+RLRdo5eBiM+lexgUZenDM1iC0ZXuyKMkYMhWWATXdCR9BjRAu7CEY8GG
+         JVDsQa4KTkl3IgqDNw8VUn064Jp4JFncCOadQWv5CjQtN0699LeK200carB7o8cSA1UP
+         lR0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718145842; x=1718750642;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JjJgoNErYdG8LWeuzJrz+S/8auNsee/95pEsFxHhxCY=;
-        b=Yu0dULZzb5vTXERNhiccFgJsRoDQ661yTSbkuIkzArySRE8z2jLfAD+NyAqHY1yN9a
-         31qbNakEZWjPBiGk7p0lPNGIPqzH9elkMqD8p+VYSgQYP87nO/51tMi5M8CUJkf7YDah
-         6PsjnIK/UeJaUfmG01xg4VPNWG47m9xKv/9RG/nfvjyMilC8/sVQzrSS/nMal2ajTFp7
-         flmi+jvcG1w6MiruvxnB/YxQdhynxSqqp5OEEM2Cyo7QairXcNxRVBUROl/uDzwUzeDs
-         PBNxSD6k8xd7QUzbjx6gRaI2Vy6EU6rSlk9c5Qg6LqN2otE+AkdO01JldHqMuBdJ33+C
-         rUWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZVTlLi943Jvw9uveKhI4zLuiUPCCuMryroofOxjxAruLyo3m3lYsJifHaQiJFnlHHuhpDEAjHfeNFMSiNuxGG30kTrpk6dOGZchYABkM/SAWsGRSQaY2q18QzB4ML5thtW2Q8Y5eVArHqS8QUPQ3+
-X-Gm-Message-State: AOJu0YxCCytsTvJ7W6ID/f+2AMTMQ/RCvo6iq6/fiJX2XJ/23NVu8A7T
-	hAWHhjRkGHoMA35iZKvUUNovGVwBgGyqu8jSl6IPG2gTRIybVbnW
-X-Google-Smtp-Source: AGHT+IGnLqi75Z/wHEDBUWw1sXcMM5rmPSC0suOzMOmoeKFxDMDTOT3vEN7ZBINJJvpS3DV/wu0faQ==
-X-Received: by 2002:a05:6a00:22cd:b0:704:1932:5604 with SMTP id d2e1a72fcca58-705bce75f56mr236329b3a.15.1718145842384;
-        Tue, 11 Jun 2024 15:44:02 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70432977fe4sm5185237b3a.59.2024.06.11.15.44.00
+        d=1e100.net; s=20230601; t=1718145960; x=1718750760;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cDt7JzP/wsVoWXx6U+apUWSbCYtUPbPCYm2lOF3PwfU=;
+        b=gwo3T89Rhb8f+S1TeMGsNQkt9w29es5W6O4tXyvsHgOKF/a5tIS08G2dpIeg1nr6R9
+         rz9hzJ3eBLAQvMoWb+mQXevdi6E8sMyaP4dMgIsP68+MHy7YgG74HOANNTfPOY4xMwYr
+         6l+v8jCIBLVkXpjqmK0Wo9lNKkVeGaQYqZO70NR7cf6GDpGBUcf67/zdvOUlUdVOA7GI
+         xqtur+5u6AYgZYrtJh9UK5n2ws850bZrZRXniumwCjyStd9fbmGmn2bciPMFdDCxN3QQ
+         qUFmYJPEHupj7u8GtYFu9+A1UaGdR1saTDADDRpr/rYdRssEVKNfXVlY4/UsCxatYHFs
+         HApQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWccNK1rwLrcxNuxDMEYRvKvU6QNi3mn3oOPXmJG6OXO59mx5kjXgMn5aCcSl0dc0D0ovdimen4o60777KFPvvhkLOnIvPtD1fMBaiJzv1whYjFCDTcUG4PDmLkGcc2BEode9ZyGpRwZvEI74Jt2OD7JJR9wH1wez7QQ0HxEYqZUSULiw==
+X-Gm-Message-State: AOJu0YzQ85W7JK9l0iux+JaX0bOwofvmzLH6QpbN4m2rfhijhe/QCL8d
+	AS5SJYKj58s9tUMjF5gsJPKgsXDqIbad101sjNVblKs2c5SSnLun
+X-Google-Smtp-Source: AGHT+IF+oobXt92lcfFLWV10Dxh5c7Wni6UQC6z2b4c6YM5u+M0APmT3j3qqiW3ERqliDhJEARuKLg==
+X-Received: by 2002:a05:600c:1d21:b0:421:9cb0:77cb with SMTP id 5b1f17b1804b1-422866bedc3mr2705325e9.40.1718145960308;
+        Tue, 11 Jun 2024 15:46:00 -0700 (PDT)
+Received: from [192.168.0.5] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e6b63sm2544005e9.39.2024.06.11.15.45.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 15:44:01 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5178e22b-0c00-48d2-8a6e-85510706f145@roeck-us.net>
-Date: Tue, 11 Jun 2024 15:43:59 -0700
+        Tue, 11 Jun 2024 15:45:59 -0700 (PDT)
+Message-ID: <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
+Date: Wed, 12 Jun 2024 01:46:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,149 +75,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/13] ring-buffer: Allow mapped field to be set
- without mapping
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- suleiman@google.com, Thomas Gleixner <tglx@linutronix.de>,
- Vineeth Pillai <vineeth@bitbyteword.org>,
- Youssef Esmat <youssefesmat@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>, Alexander Graf <graf@amazon.com>,
- Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, David Howells
- <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
- Ross Zwisler <zwisler@google.com>, Kees Cook <keescook@chromium.org>
-References: <20240611192828.691638177@goodmis.org>
- <20240611192907.402447387@goodmis.org>
+Subject: Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
+To: Slark Xiao <slark_xiao@163.com>, quic_jhugo@quicinc.com,
+ Qiang Yu <quic_qianyu@quicinc.com>
+Cc: loic.poulain@linaro.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+ "mhi@lists.linux.dev" <mhi@lists.linux.dev>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+References: <20240607100309.453122-1-slark_xiao@163.com>
+ <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
+ <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240611192907.402447387@goodmis.org>
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/11/24 12:28, Steven Rostedt wrote:
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On 11.06.2024 04:36, Slark Xiao wrote:
+> +More maintainer to this second patch list.
 > 
-> In preparation for having the ring buffer mapped to a dedicated location,
-> which will have the same restrictions as user space memory mapped buffers,
-> allow it to use the "mapped" field of the ring_buffer_per_cpu structure
-> without having the user space meta page mapping.
-> 
-> When this starts using the mapped field, it will need to handle adding a
-> user space mapping (and removing it) from a ring buffer that is using a
-> dedicated memory range.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->   kernel/trace/ring_buffer.c | 11 ++++++++---
->   1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 28853966aa9a..78beaccf9c8c 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -5224,6 +5224,9 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->   {
->   	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
->   
-> +	if (!meta)
-> +		return;
-> +
->   	meta->reader.read = cpu_buffer->reader_page->read;
->   	meta->reader.id = cpu_buffer->reader_page->id;
->   	meta->reader.lost_events = cpu_buffer->lost_events;
-> @@ -6167,7 +6170,7 @@ rb_get_mapped_buffer(struct trace_buffer *buffer, int cpu)
->   
->   	mutex_lock(&cpu_buffer->mapping_lock);
->   
-> -	if (!cpu_buffer->mapped) {
-> +	if (!cpu_buffer->mapped || !cpu_buffer->meta_page) {
->   		mutex_unlock(&cpu_buffer->mapping_lock);
->   		return ERR_PTR(-ENODEV);
->   	}
-> @@ -6359,12 +6362,13 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->   	 */
->   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->   	rb_setup_ids_meta_page(cpu_buffer, subbuf_ids);
-> +
+> At 2024-06-08 06:28:48, "Sergey Ryazanov" <ryazanov.s.a@gmail.com> wrote:
+>> Hello Slark,
+>>
+>> without the first patch it is close to impossible to understand this
+>> one. Next time please send such tightly connected patches to both
+>> mailing lists.
+>>
+> Sorry for this mistake since it's my first commit about committing code to 2
+> difference area: mhi and mbim. Both the maintainers are difference.
+> In case a new version commit would be created, I would like to ask if
+> should I add both side maintainers on these 2 patches ?
 
-Picky again. Is that a leftover from something ? I don't see an immediate reason
-for the added newline.
+No worries. We finally got both sides of the puzzle. BTW, looks like the 
+first patch still lacks Linux netdev mailing list in the CC.
 
->   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->   
->   	err = __rb_map_vma(cpu_buffer, vma);
->   	if (!err) {
->   		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> -		cpu_buffer->mapped = 1;
-> +		cpu_buffer->mapped++;
->   		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->   	} else {
->   		kfree(cpu_buffer->subbuf_ids);
-> @@ -6403,7 +6407,8 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
->   	mutex_lock(&buffer->mutex);
->   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->   
-> -	cpu_buffer->mapped = 0;
-> +	WARN_ON_ONCE(!cpu_buffer->mapped);
-> +	cpu_buffer->mapped--;
+Usually maintainers are responsible for applying patches to their 
+dedicated repositories (trees), and then eventually for sending them in 
+batch to the main tree. So, if a work consists of two patches, it is 
+better to apply them together to one of the trees. Otherwise, it can 
+cause a build failure in one tree due to lack of required changes that 
+have been applied to other. Sometimes contributors even specify a 
+preferred tree in a cover letter. However, it is still up to maintainers 
+to make a decision which tree is better when a work changes several 
+subsystems.
 
-This will wrap to UINT_MAX if it was 0. Is that intentional ?
+>> On 07.06.2024 13:03, Slark Xiao wrote:
+>>> For SDX72 MBIM device, it starts data mux id from 112 instead of 0.
+>>> This would lead to device can't ping outside successfully.
+>>> Also MBIM side would report "bad packet session (112)".
+>>> So we add a link id default value for these SDX72 products which
+>>> works in MBIM mode.
+>>>
+>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+>>
+>> Since it a but fix, it needs a 'Fixes:' tag.
+>>
+> Actually, I thought it's a fix for common SDX72 product. But now I think
+> it should be only meet for my SDX72 MBIM product. Previous commit
+> has not been applied. So there is no commit id for "Fixes".
+> But I think I shall include that patch in V2 version.
+> Please ref:
+> https://lore.kernel.org/lkml/20240520070633.308913-1-slark_xiao@163.com/
 
->   
->   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->   
+There are nothing to fix yet. Great. Then you can resend the Foxconn 
+SDX72 introduction work as a series that also includes these mux id 
+changes. Just rename this specific patch to something less terrifying. 
+Mean, remove the "Fix" word from the subject, please.
 
+Looks like "net: wwan: mhi: make default data link id configurable" 
+subject also summarize the reason of the change.
+
+>>> ---
+>>>    drivers/net/wwan/mhi_wwan_mbim.c | 3 ++-
+>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
+>>> index 3f72ae943b29..4ca5c845394b 100644
+>>> --- a/drivers/net/wwan/mhi_wwan_mbim.c
+>>> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
+>>> @@ -618,7 +618,8 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
+>>>    	mbim->rx_queue_sz = mhi_get_free_desc_count(mhi_dev, DMA_FROM_DEVICE);
+>>>    
+>>>    	/* Register wwan link ops with MHI controller representing WWAN instance */
+>>> -	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, 0);
+>>> +	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim,
+>>> +		mhi_dev->mhi_cntrl->link_id ? mhi_dev->mhi_cntrl->link_id : 0);
+>>
+>> Is it possible to drop the ternary operator and pass the link_id directly?
+>>
+>>>    }
+>>>    
+>>>    static void mhi_mbim_remove(struct mhi_device *mhi_dev)
+
+--
+Sergey
 
