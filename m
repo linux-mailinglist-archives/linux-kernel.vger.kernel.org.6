@@ -1,406 +1,160 @@
-Return-Path: <linux-kernel+bounces-210689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E6904779
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7325E90477F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879F3B238F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 254941F233D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8F1155CA0;
-	Tue, 11 Jun 2024 23:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB4155C9D;
+	Tue, 11 Jun 2024 23:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dh07i8Le"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nI7ie6oS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A8E153580
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C92152DF1;
+	Tue, 11 Jun 2024 23:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718147127; cv=none; b=CX0hLliWGF62dIrK2bbaDy9R7a7Qk+dTWbA7RoNln9Z8XbmuN1olZ6QPdonBjXC4mm/TZbgjRkk+xGFxX8wq9aiSaXrIan5CGM6arhU1MFT1lfArDYluWGnyLv7UDKHmWORpJII8qyi854iiy5VZtYaMhOzHv9KlyMHWjM84ObI=
+	t=1718147168; cv=none; b=BlOpfOzElLQvAgXjo470w1uzNdFpTTkC89C3M/fNeItl1Djh4cr77im2TkqGV9P+7mGMLZeEtFekL7EbAS5njwiz7HWl3ybaI6XPRCJyv/89q8uBY5889pDG7yTMGqVX38vPmEW7b8N4627BhQNHhqOoN1N0yjTBxkJhLIvdo8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718147127; c=relaxed/simple;
-	bh=BoPidXd0qEL/VN+p66VMqndM+I9E6zuVNAGk0ln/hwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eYcQi2GNzOSmLbdnR3HZShp69LzmIpNl7URSkn04BBWdW3+5T5wgiYd8gx2ntyaqrfxgBmpf6FP/as0p3jIPHWXibn68gsk38u/5DbEzpYKPGPsVlPjbBaQtQ7Xxa4Vn/Cuot4vQKWJRCelBmiYPD5KW1ZfzjrhP+2J9FT+q6+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dh07i8Le; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4405dffca81so36171cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718147124; x=1718751924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pz/3hS9rvEm8ISFTbesB06oUlpFYSPujM05j9EdyaiQ=;
-        b=Dh07i8LeMTi1P/XiU8mOuGUnSW7YxOF575760j5BaYylEjPLGK2VdM5i77VxT2OEhK
-         qtUauoNk0lWDctYB/6BiO0u4ly9jQ0JD0iX9RKY18q/tQqu3vHsv33PfUmLj+RRqo90a
-         +EhSOc2tElTufMtRFxi2aoZKc9ZHzeUwJa1uPakME1Nu9uyFQahnASrFS27O3aSa8sgQ
-         yWzIsprMDS1x2BhH/OKalXoMm7V8mBW/JBiLaL2D/GUoVxlFvmLMaqVXgKcIVVKQNyUM
-         7WNPT/PyRxoCuGWKx60vTi/qPzFkTFqfKiaq46aaX85wyCY9ZEZb3/GBgttedpIPtsqY
-         3gnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718147124; x=1718751924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pz/3hS9rvEm8ISFTbesB06oUlpFYSPujM05j9EdyaiQ=;
-        b=kXEE/HCz4yCs5GaxzsFivggvn0qyRij8I2t4qF1eSoLkq9/vnxWD49DbFGAmw4B//Q
-         dbNZLeF1Wn8NApSEY22FbqXofCDW/B+FRGfdlMwe1G0Uja/hNuViXj2D82E/cNHwMNwA
-         buufFyl3Q/dyzxHzGInWLB+a2IpWhGAetWgH6O8OgBemfZYYB8EeUZ+xTlNz6kOBgA/r
-         fr9zz+B9dW+uk7LOqxcAqnLn3OFz65OhWSPI2UnHjgv1wXaDu+nxzX2VlGOTAW5Oj+Sy
-         PuTRuMn/Elkm54j4EkIoPV+0dmOb8IqOasSSenC17PmnCZ7pMksAnGFl+1v4iye9qVb9
-         Om+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMuNTE8vcB5uonsnQ5b3czg5VLczisFMpd3baQS078yx2DzcXHL3u6fC7KvWFuzyG8Qp/jF2WiPjcx6Ep7rXejMoYMkrZbhPEOd5p9
-X-Gm-Message-State: AOJu0Yw1tS3HR3uvIwAz281RE5KO9EIcbHvytx3dWgwjJ7TzPmRONHmR
-	42mUlf0uvG1asGlKCWXR8TTEbqF9Ei/yi7oQP/PyQCUNd8YU45zu9vUYNwYNZeJo28WuMDgWVA0
-	GJhLmryBEwxrpNEqCKtpinB4aTdh3PCCmnIhC
-X-Google-Smtp-Source: AGHT+IE52oInjAZCB3WBMhaUU5ZrU3GZGDMx8kQzX/bSZjmjZyyxSH/FDIuluJ0bSVsR8b8JvGhmRRklaeYoppeG6VQ=
-X-Received: by 2002:a05:622a:4015:b0:440:331b:59f7 with SMTP id
- d75a77b69052e-44158bbdd7cmr1206381cf.6.1718147123716; Tue, 11 Jun 2024
- 16:05:23 -0700 (PDT)
+	s=arc-20240116; t=1718147168; c=relaxed/simple;
+	bh=0sJE9lCi9yl51IYl52WCu2bf9BONc1ovIPmUL9NAx5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hfDWpEMbwc0qTzY5PH+BQe4GMApG4ILjcqrlL6aKayyeX7iq8V40voM1ZvxjgkXG/EGVlcg1hw40WytpTMv8sbQuhnrLTaG5nIDpfxU2d8F2iMxI8tCH3KTWhP+pwfLUGJyUMsohGswMbV4pnBcn1gwdtAzX0I5ZYJdlkvqn0E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nI7ie6oS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BL0gmb013157;
+	Tue, 11 Jun 2024 23:05:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sag2Db5U+ssq0Mfo5pmsGP9cW/zUXlRRoUs7slLtsIo=; b=nI7ie6oSlbdTO2FQ
+	SwGpAdyBoyd+O2Ts3UFownm6NeY2x6dc8txG4FfjsXSGoE4bIu5g7GH9xDMaSUEi
+	hpO1l3cImHIJswQBnGReLO1G8w4Kn3U3rNlrc3PZbF8y1RBYC821pOZtW1iKsxiF
+	Dl1PjeQ4VVC8Zv6bCqSK/sSoLqCOhDRoDFdNBns0g9mCR/FoqCHTbxypC3//GKMi
+	B06kBt1EphSqfx94xPtPTpU4Z3BbS3QnEUAA5gS7YgXjVRfkR/bVXKfe5XVXlDXt
+	Bx4UGhU/A3deqJOBSNvdK5wW1n1CHgF+CcHDjmRfCgFDXktWrWzUlsVWR2hBWRod
+	eJlTCQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm459urd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 23:05:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BN5pvN024820
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 23:05:51 GMT
+Received: from [10.71.115.211] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 16:05:51 -0700
+Message-ID: <0318b0c2-5686-4565-b75b-fa1ecfe61740@quicinc.com>
+Date: Tue, 11 Jun 2024 16:05:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611002145.2078921-1-jthoughton@google.com>
- <20240611002145.2078921-5-jthoughton@google.com> <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
- <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com> <ZmioedgEBptNoz91@google.com>
-In-Reply-To: <ZmioedgEBptNoz91@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Tue, 11 Jun 2024 16:04:47 -0700
-Message-ID: <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
-Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] soc: qcom: smp2p: Introduce tracepoint support
+To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <quic_deesin@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>
+References: <20240611123351.3813190-1-quic_sudeepgo@quicinc.com>
+ <20240611123351.3813190-3-quic_sudeepgo@quicinc.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240611123351.3813190-3-quic_sudeepgo@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: x3EwQRm8v1oJDPQnkUiTux5N50AmAKth
+X-Proofpoint-ORIG-GUID: x3EwQRm8v1oJDPQnkUiTux5N50AmAKth
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_11,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=784 phishscore=0 malwarescore=0 suspectscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110156
 
-On Tue, Jun 11, 2024 at 12:42=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
->
-> On Tue, Jun 11, 2024, James Houghton wrote:
-> > On Mon, Jun 10, 2024 at 10:34=E2=80=AFPM Yu Zhao <yuzhao@google.com> wr=
-ote:
-> > >
-> > > On Mon, Jun 10, 2024 at 6:22=E2=80=AFPM James Houghton <jthoughton@go=
-ogle.com> wrote:
-> > > >
-> > > > This new notifier is for multi-gen LRU specifically
-> > >
-> > > Let me call it out before others do: we can't be this self-serving.
-> > >
-> > > > as it wants to be
-> > > > able to get and clear age information from secondary MMUs only if i=
-t can
-> > > > be done "fast".
-> > > >
-> > > > By having this notifier specifically created for MGLRU, what "fast"
-> > > > means comes down to what is "fast" enough to improve MGLRU's abilit=
-y to
-> > > > reclaim most of the time.
-> > > >
-> > > > Signed-off-by: James Houghton <jthoughton@google.com>
-> > >
-> > > If we'd like this to pass other MM reviewers, especially the MMU
-> > > notifier maintainers, we'd need to design a generic API that can
-> > > benefit all the *existing* users: idle page tracking [1], DAMON [2]
-> > > and MGLRU.
-> > >
-> > > Also I personally prefer to extend the existing callbacks by adding
-> > > new parameters, and on top of that, I'd try to consolidate the
-> > > existing callbacks -- it'd be less of a hard sell if my changes resul=
-t
-> > > in less code, not more.
-> > >
-> > > (v2 did all these, btw.)
-> >
-> > I think consolidating the callbacks is cleanest, like you had it in
-> > v2. I really wasn't sure about this change honestly, but it was my
-> > attempt to incorporate feedback like this[3] from v4. I'll consolidate
-> > the callbacks like you had in v2.
->
-> James, wait for others to chime in before committing yourself to a course=
- of
-> action, otherwise you're going to get ping-ponged to hell and back.
 
-Ah yeah. I really mean "I'll do it, provided the other feedback is in
-line with this".
 
->
-> > Instead of the bitmap like you had, I imagine we'll have some kind of
-> > flags argument that has bits like MMU_NOTIFIER_YOUNG_CLEAR,
-> > MMU_NOTIFIER_YOUNG_FAST_ONLY, and other ones as they come up. Does
-> > that sound ok?
->
-> Why do we need a bundle of flags?  If we extend .clear_young() and .test_=
-young()
-> as Yu suggests, then we only need a single "bool fast_only".
-
-We don't need to. In my head it's a little easier to collapse them
-(slightly less code, and at the callsite you have a flag with a name
-instead of a true/false). Making it a bool SGTM.
-
-> As for adding a fast_only versus dedicated APIs, I don't have a strong pr=
-eference.
-> Extending will require a small amount of additional churn, e.g. to pass i=
-n false,
-> but that doesn't seem problematic on its own.  On the plus side, there wo=
-uld be
-> less copy+paste in include/linux/mmu_notifier.h (though that could be sol=
-ved with
-> macros :-) ).
-
-I think having the extra bool is cleaner than the new fast_only
-notifier, definitely.
-
->
-> E.g.
->
-> --
-> diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> index 7b77ad6cf833..07872ae00fa6 100644
-> --- a/mm/mmu_notifier.c
-> +++ b/mm/mmu_notifier.c
-> @@ -384,7 +384,8 @@ int __mmu_notifier_clear_flush_young(struct mm_struct=
- *mm,
->
->  int __mmu_notifier_clear_young(struct mm_struct *mm,
->                                unsigned long start,
-> -                              unsigned long end)
-> +                              unsigned long end,
-> +                              bool fast_only)
->  {
->         struct mmu_notifier *subscription;
->         int young =3D 0, id;
-> @@ -393,9 +394,12 @@ int __mmu_notifier_clear_young(struct mm_struct *mm,
->         hlist_for_each_entry_rcu(subscription,
->                                  &mm->notifier_subscriptions->list, hlist=
-,
->                                  srcu_read_lock_held(&srcu)) {
-> -               if (subscription->ops->clear_young)
-> -                       young |=3D subscription->ops->clear_young(subscri=
-ption,
-> -                                                               mm, start=
-, end);
-> +               if (!subscription->ops->clear_young ||
-> +                   fast_only && !subscription->ops->has_fast_aging)
-> +                       continue;
+On 6/11/2024 5:33 AM, Sudeepgoud Patil wrote:
+> This commit introduces tracepoint support for smp2p,
+> enabling logging of communication between local and remote processors.
+> The tracepoints include information about the remote processor ID,
+> remote subsystem name, negotiation details, supported features,
+> bit change notifications, and ssr activity.
+> These tracepoints are valuable for debugging issues between subsystems.
+> 
+> Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+> ---
+...
+> diff --git a/drivers/soc/qcom/trace-smp2p.h b/drivers/soc/qcom/trace-smp2p.h
+> new file mode 100644
+> index 000000000000..833782460b57
+> --- /dev/null
+> +++ b/drivers/soc/qcom/trace-smp2p.h
+> @@ -0,0 +1,116 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
 > +
-> +               young |=3D subscription->ops->clear_young(subscription,
-> +                                                       mm, start, end);
-
-KVM changing has_fast_aging dynamically would be slow, wouldn't it? I
-feel like it's simpler to just pass in fast_only into `clear_young`
-itself (and this is how I interpreted what you wrote above anyway).
-
->         }
->         srcu_read_unlock(&srcu, id);
->
-> @@ -403,7 +407,8 @@ int __mmu_notifier_clear_young(struct mm_struct *mm,
->  }
->
->  int __mmu_notifier_test_young(struct mm_struct *mm,
-> -                             unsigned long address)
-> +                             unsigned long address,
-> +                             bool fast_only)
->  {
->         struct mmu_notifier *subscription;
->         int young =3D 0, id;
-> @@ -412,12 +417,15 @@ int __mmu_notifier_test_young(struct mm_struct *mm,
->         hlist_for_each_entry_rcu(subscription,
->                                  &mm->notifier_subscriptions->list, hlist=
-,
->                                  srcu_read_lock_held(&srcu)) {
-> -               if (subscription->ops->test_young) {
-> -                       young =3D subscription->ops->test_young(subscript=
-ion, mm,
-> -                                                             address);
-> -                       if (young)
-> -                               break;
-> -               }
-> +               if (!subscription->ops->test_young)
-> +                       continue;
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM qcom_smp2p
 > +
-> +               if (fast_only && !subscription->ops->has_fast_aging)
-> +                       continue;
+> +#if !defined(__QCOM_SMP2P_TRACE_H__) || defined(TRACE_HEADER_MULTI_READ)
+> +#define __QCOM_SMP2P_TRACE_H__
 > +
-> +               young =3D subscription->ops->test_young(subscription, mm,=
- address);
-> +               if (young)
-> +                       break;
->         }
->         srcu_read_unlock(&srcu, id);
-> --
->
-> It might also require multiplexing the return value to differentiate betw=
-een
-> "young" and "failed".  Ugh, but the code already does that, just in a bes=
-poke way.
+> +#include <linux/tracepoint.h>
+> +
+> +#define SMP2P_FEATURE_SSR_ACK 0x1
 
-Yeah, that is necessary.
+Now that I see it, redefining the the feature flag here seems a bit out 
+of place. I'm not sure if it's worth kicking off a header file for this 
+single define though.
 
-> Double ugh.  Peeking ahead at the "failure" code, NAK to adding
-> kvm_arch_young_notifier_likely_fast for all the same reasons I objected t=
-o
-> kvm_arch_has_test_clear_young() in v1.  Please stop trying to do anything=
- like
-> that, I will NAK each every attempt to have core mm/ code call directly i=
-nto KVM.
+> +
+> +TRACE_EVENT(smp2p_ssr_ack,
+> +	TP_PROTO(unsigned int remote_pid, char *irq_devname),
+> +	TP_ARGS(remote_pid, irq_devname),
+> +	TP_STRUCT__entry(
+> +		__field(u32, remote_pid)
+> +		__string(irq_devname, irq_devname)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->remote_pid = remote_pid;
+> +		__assign_str(irq_devname, irq_devname);
+> +	),
+> +	TP_printk("%d: %s: SSR detected, doing SSR Handshake",
+> +		__entry->remote_pid,
+> +		__get_str(irq_devname)
+> +	)
+> +);
+> +
 
-Sorry to make you repeat yourself; I'll leave it out of v6. I don't
-like it either, but I wasn't sure how important it was to avoid
-calling into unnecessary notifiers if the TDP MMU were completely
-disabled.
+I don't think we need to pass remote_pid into all of the traces if we 
+have a unique name "irq_devname" to identify the remote now. We could 
+remove remote_pid from all the trace event arguments.
 
-> Anyways, back to this code, before we spin another version, we need to ag=
-ree on
-> exactly what behavior we want out of secondary MMUs.  Because to me, the =
-behavior
-> proposed in this version doesn't make any sense.
->
-> Signalling failure because KVM _might_ have relevant aging information in=
- SPTEs
-> that require taking kvm->mmu_lock is a terrible tradeoff.  And for the te=
-st_young
-> case, it's flat out wrong, e.g. if a page is marked Accessed in the TDP M=
-MU, then
-> KVM should return "young", not "failed".
-
-Sorry for this oversight. What about something like:
-
-1. test (and maybe clear) A bits on TDP MMU
-2. If accessed && !should_clear: return (fast)
-3. if (fast_only): return (fast)
-4. If !(must check shadow MMU): return (fast)
-5. test (and maybe clear) A bits in shadow MMU
-6. return (slow)
-
-Some of this reordering (and maybe a change from
-kvm_shadow_root_allocated() to checking indirect_shadow_pages or
-something else) can be done in its own patch.
-
-> If KVM is using the TDP MMU, i.e. has_fast_aging=3Dtrue, then there will =
-be rmaps
-> if and only if L1 ran a nested VM at some point.  But as proposed, KVM do=
-esn't
-> actually check if there are any shadow TDP entries to process.  That coul=
-d be
-> fixed by looking at kvm->arch.indirect_shadow_pages, but even then it's n=
-ot clear
-> that bailing if kvm->arch.indirect_shadow_pages > 0 makes sense.
->
-> E.g. if L1 happens to be running an L2, but <10% of the VM's memory is ex=
-posed to
-> L2, then "failure" is pretty much guaranteed to a false positive.  And ev=
-en for
-> the pages that are exposed to L2, "failure" will occur if and only if the=
- pages
-> are being accessed _only_ by L2.
->
-> There most definitely are use cases where the majority of a VM's memory i=
-s accessed
-> only by L2.  But if those use cases are performing poorly under MGLRU, th=
-en IMO
-> we should figure out a way to enhance KVM to do a fast harvest of nested =
-TDP
-> Accessed information, not make MGRLU+KVM suck for a VMs that run nested V=
-Ms.
-
-This makes sense. I don't have data today to say that we would get a
-huge win from speeding up harvesting Accessed information from the
-shadow MMU would be helpful. Getting this information for the TDP MMU
-is at least better than no information at all.
-
->
-> Oh, and calling into mmu_notifiers to do the "slow" version if the fast v=
-ersion
-> fails is suboptimal.
-
-Agreed. I didn't like this when I wrote it. This can be easily fixed
-by making mmu_notifier_clear_young() return "fast" and "young or not",
-which I will do.
-
-> So rather than failing the fast aging, I think what we want is to know if=
- an
-> mmu_notifier found a young SPTE during a fast lookup.  E.g. something lik=
-e this
-> in KVM, where using kvm_has_shadow_mmu_sptes() instead of kvm_memslots_ha=
-ve_rmaps()
-> is an optional optimization to avoid taking mmu_lock for write in paths w=
-here a
-> (very rare) false negative is acceptable.
->
->   static bool kvm_has_shadow_mmu_sptes(struct kvm *kvm)
->   {
->         return !tdp_mmu_enabled || READ_ONCE(kvm->arch.indirect_shadow_pa=
-ges);
->   }
->
->   static int __kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range,
->                          bool fast_only)
->   {
->         int young =3D 0;
->
->         if (!fast_only && kvm_has_shadow_mmu_sptes(kvm)) {
->                 write_lock(&kvm->mmu_lock);
->                 young =3D kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
->                 write_unlock(&kvm->mmu_lock);
->         }
->
->         if (tdp_mmu_enabled && kvm_tdp_mmu_age_gfn_range(kvm, range))
->                 young =3D 1 | MMU_NOTIFY_WAS_FAST;
-
-I don't think this line is quite right. We might set
-MMU_NOTIFY_WAS_FAST even when we took the mmu_lock. I understand what
-you mean though, thanks.
-
->
->         return (int)young;
->   }
->
-> and then in lru_gen_look_around():
->
->         if (spin_is_contended(pvmw->ptl))
->                 return false;
->
->         /* exclude special VMAs containing anon pages from COW */
->         if (vma->vm_flags & VM_SPECIAL)
->                 return false;
->
->         young =3D ptep_clear_young_notify(vma, addr, pte);
->         if (!young)
->                 return false;
->
->         if (!(young & MMU_NOTIFY_WAS_FAST))
->                 return true;
->
->         young =3D 1;
->
-> with the lookaround done using ptep_clear_young_notify_fast().
->
-> The MMU_NOTIFY_WAS_FAST flag is gross, but AFAICT it would Just Work with=
-out
-> needing to update all users of ptep_clear_young_notify() and friends.
-
-Sounds good to me.
-
-Thanks for all the feedback!
+We can probably drop the "doing SSR Handshake" part of this print. I 
+think it can be assumed that we're doing the handshake once we've 
+detected SSR.
 
