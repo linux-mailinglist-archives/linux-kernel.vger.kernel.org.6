@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-210071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D2B903EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFD9903EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2661F23C03
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E7C1F23C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EA417D8BF;
-	Tue, 11 Jun 2024 14:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8905717DE0E;
+	Tue, 11 Jun 2024 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P/2jVEzS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F152176ABA;
-	Tue, 11 Jun 2024 14:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZvnjD6af"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E77E17D898;
+	Tue, 11 Jun 2024 14:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718116797; cv=none; b=QU/DOPFK0hfQjwgYuYIXP//eMNwlljXY/+Hdsq6K2G9NORLQWH/pOa4eLlR5aObgE6zlD35rpuTfKfUBOE+BhcFFvIJTshO1D9xfjqix+ntRqNBK4Oj1aPX7kW0CSzSfvmppfQ8S+Ry6IqpQjhZP+KUhia2LHkZzEh7DdFoG9sw=
+	t=1718116813; cv=none; b=Wd9tvTZymhPSx+43nYQfJYT1w1uB3H9KzDdoukcM+j/LBQQZ5/HTfglf6eGmsQ9itdABCktiFuCGvyELxX3vzYEbxziDvPIesOXFnwqMVMeGn3C6yzjmnxkd3dCyx77YgLQfZVNCbYHZ2aTlYmY+DGIiOd7BXSQehcvGNt26RWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718116797; c=relaxed/simple;
-	bh=ot7CZ7HwJaowjCZaeb71NVNfkvqVVfWH0xnchWOcjzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLZdL9Njo0XV3RDYoKGls8w1YJ/JZ5tCKXyUGbI8ATxSM+nVHeHeeTEG3bHCGMo1qvpLWfD8Q7qY3vZXx+hRaSyNowISpe/ug7FH7DQEQ/Zr7AUWCTyxDC3PgehyHbcT2/cjT5EiDpNTeqWdBTu9QBwB21fkTjsV71ggy169l64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P/2jVEzS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB7FE40E016E;
-	Tue, 11 Jun 2024 14:39:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KotdDfLUrY6I; Tue, 11 Jun 2024 14:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718116789; bh=L+boU97tCCJX8neAbB/hea4OMvumD6JJl9Ec8iYQ7sc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P/2jVEzSKyO1GmOUnPBGSXA1cL3GBo+CrOnRdrARo2rFCjFr+FJAH2W2JNJd93tSL
-	 pozI3mIzIlnZQLiPfVC3mgfaTDrRCsm3mOUNhybfp1pZYmMahJXVXbLg0GTr5AFbrx
-	 oeroAqbkqpAjlQM5+2R1sUx1KRJ9GN3oijGPS1hmj32jdEDqopd3/4YDTS2R84V9Qo
-	 Hz8Jkn2kT1ORLFBbdQsMgURoZwUiX8jQiRLF6x87tmvHqyJGBuSjE6c4zYeLvpV2aA
-	 FLZRIYmTo/W/M8J1PMlYwihv9/142svf/Yf7SKDYvnfu0V6/+++1VampnIaJ9PUd5F
-	 C7yhJoA+nnkbWTx8Cof9tFDx8Cv3FLYvRZ99+8xr1WC0mt/cp06+dCoXFMadgWrRYu
-	 ztmsZhM68gBwQxHshhx2gbb8P1+SaltPLZHf72dejhaOycIYQnnqKj2bGFeRRhG/YM
-	 odGoMK80eLuOMMGWRB09MEw/9PXkMW0L9GsSD1rhrYFpmlgZti2zmSudS9B3FYZAP2
-	 VyY6qeT5JkWjJ6mmDhdyTWHXG6KG0jsDOYzhne9ABl/ohuzGyjqRm0DSNaPaIoSbfV
-	 lyzG5OeF5N1Ri6Z8yxsGqq8EMnGZDOxo6P9LburNuuvTqhVV/WGHsfZvM15EOR3mYt
-	 0GfX47+tdDlo+MSNeDJiyJ4Y=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB82E40E0031;
-	Tue, 11 Jun 2024 14:39:37 +0000 (UTC)
-Date: Tue, 11 Jun 2024 16:39:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>, gautham.shenoy@amd.com,
-	rafael.j.wysocki@intel.com, viresh.kumar@linaro.org,
-	Ray.Huang@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
-	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/10] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Message-ID: <20240611143929.GEZmhhoW1qCvIWS0SK@fat_crate.local>
-References: <cover.1718095377.git.perry.yuan@amd.com>
- <7a2817ce6e8e6a2787bed8285dba8d81423d8414.1718095377.git.perry.yuan@amd.com>
- <20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local>
- <e41fd460-6b50-4792-9328-3eda370672e4@amd.com>
+	s=arc-20240116; t=1718116813; c=relaxed/simple;
+	bh=A1FEg7ltx3koVJ0637jaDye1tYyR+9Rknil/cpFqJK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SKCJiJItd14X4QWwsSzIsuSApIrNU5WlmJsM1HohHt5hscLjqSpoDHb4ve61pgi8JzlUMaTyNJxreKKRJyFEOSg8FRi5tmZ+VDJDEQ1jLnB5nRP98f8hk1SZZvtp8dHovRsFJo1FSRUyYVuJ3tTy9hn0x4aI+kkXFtr+7AZvw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZvnjD6af; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DCB6020693FF;
+	Tue, 11 Jun 2024 07:40:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DCB6020693FF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718116806;
+	bh=a9CAv3s1qYotxGwtMJnrvJEe5hLreWZBGAxAb4s8gn0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZvnjD6afhGDk2GmULYFhxmz04NhcOOEoxvJDet8SrNI3Q4M/Q6VKN38VxszQy1f7Y
+	 4gOCRQb/+pd308jL2/KYUBIKmeARbeUJYUGiTnBRIVFgEmr+TVSvrk6xQGBs68tPUC
+	 kDRnmKiCvXehq2hUvwvjwi46UiEf3bkSGXWMmUSk=
+Message-ID: <be1a6a4c-252e-468b-be67-1ddd158ba957@linux.microsoft.com>
+Date: Tue, 11 Jun 2024 07:40:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e41fd460-6b50-4792-9328-3eda370672e4@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] drivers/pci/hyperv/arm64: vPCI MSI IRQ domain from
+ DT
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Saurabh Singh Sengar <ssengar@linux.microsoft.com>, arnd@arndb.de,
+ bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
+ dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
+ hpa@zytor.com, kw@linux.com, kys@microsoft.com, lenb@kernel.org,
+ lpieralisi@kernel.org, mingo@redhat.com, mhklinux@outlook.com,
+ rafael@kernel.org, robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
+ will@kernel.org, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240607195501.GA858122@bhelgaas>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20240607195501.GA858122@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 09:31:54AM -0500, Mario Limonciello wrote:
-> Another option is to upload it a non ephemeral location like a kernel
-> Bugzilla and link to that.  I do recall there is a bug already opened for
-> this purpose in the past.
 
-You mean, after what, 30 years of search engine technology they can't do
-one simple thing of finding a doc on the web after indexing its new
-location each time the corporate website decides to update to the latest
-fancy CRM glue?
 
-:-P
+On 6/7/2024 12:55 PM, Bjorn Helgaas wrote:
+> On Wed, May 15, 2024 at 01:12:38PM -0500, Bjorn Helgaas wrote:
+>> On Wed, May 15, 2024 at 09:34:09AM -0700, Roman Kisel wrote:
+>>>
+>>>
+>>> On 5/15/2024 2:48 AM, Saurabh Singh Sengar wrote:
+>>>> On Tue, May 14, 2024 at 03:43:53PM -0700, Roman Kisel wrote:
+>>>>> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration
+>>>>> on arm64 thereby it won't be able to do that in the VTL mode where
+>>>>> only DeviceTree can be used.
+>>>>>
+>>>>> Update the hyperv-pci driver to discover interrupt configuration
+>>>>> via DeviceTree.
+>>>>
+>>>> Subject prefix should be "PCI: hv:"
+> 
+> I forgot to also suggest that the subject line begin with a verb,
+> e.g., "Get vPCI MSI IRQ domain from DT" or similar, again so it reads
+> consistently with previous commits.
+> 
+> Oh, I see patch 5/6, "Get the irq number from DeviceTree" is also very
+> similar.  It would be nice if they matched, e.g., both used "IRQ" and
+> "DT".
+> 
+> Bjorn
+
+Will update, thanks! Going to send another version during the next week 
+most likely.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thank you,
+Roman
 
