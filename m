@@ -1,169 +1,82 @@
-Return-Path: <linux-kernel+bounces-210251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0246590415D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F22F90415F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6445FB26120
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:31:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDB59B24FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C9B43AD5;
-	Tue, 11 Jun 2024 16:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4EdXyOx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5184C4AEE9;
+	Tue, 11 Jun 2024 16:30:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9B040862;
-	Tue, 11 Jun 2024 16:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FD43839D;
+	Tue, 11 Jun 2024 16:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718123400; cv=none; b=MZbJPB3k33t3Mr+5CmbbjECJ2T56xQveZQblkdtnfbKISXN/8NvRNliNrajNtdV9eKQRfPpH8xDF4I4N2wOgLEVKMbeyJLSEqUAdp/eg6TVd/gqA2FHJKtzNW8vnzYx991JRDQpKyBbt/NJN3zElOlBm3B86cyp18OJ/r4TxaSQ=
+	t=1718123434; cv=none; b=sMIRmh+aXPVbsqigzU1Fqt3pnry5G/kr+b37cF97C6mwLRGWVX5U+uUkMYhLiykt0MeMK44Bbd8zcK6tlglB4C+zJ/18c3+VBf1m6ahhNYQWkD19LJz0gshASy7IRkeDvBy8+FoPeMvNGmuXALXRecBPzDAuRqIlPKAzEmywMsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718123400; c=relaxed/simple;
-	bh=x88vPd67F51bwNIvdn5aIPG/KAt9yYbLHZCemaaxtC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RMmJ+/5rubiJu6Pn5KQwYwbOdwHqDXTfL/scLnFqrqF2pUn+owWbsPFrYTvYJ6cZJjS7KhqjEdm4BgadjE2S77i9vPbolvmAX0/VBVZtpdVMIODw00ftp18GDnMYyYH1/myXrL+pgCf1CEU6kW2rPhEEFTsRECLgZA1Rqs7sqUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4EdXyOx; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718123398; x=1749659398;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=x88vPd67F51bwNIvdn5aIPG/KAt9yYbLHZCemaaxtC8=;
-  b=B4EdXyOxXUO14hMQIRPCURkZyzyOxxoo3Utl+tiWmNNgimDe+HPqXzgP
-   5mVmkENePu9P0k2ipTQiv4G3WJYxsWStodn9W/3EDPsQXvH3kJQBpKyc5
-   D5tzT6TH5gOB2FqKyakQQ4VwM74BWW6SMZn+/V7/yv0CclKDbTTDx1pGV
-   /vYU9UH9FSW4GHgRBBYf8BW3NbLM1kGQTtu3u43juWe24lUEir9MU67mv
-   I0vFAFPsIj4Eb+edf386n2erGNQket0jGhCEEw+cXIG9qKBOXRjnjmLgz
-   gnt0O92MX9t6uC23vGnSHvYQjmIB6kWuPaKnO1ELyTkDa/GRpjmYkENlx
-   w==;
-X-CSE-ConnectionGUID: XEHyzu6XShuEjS96yVZ3cg==
-X-CSE-MsgGUID: HLnwBWRWSHCKx2JHlARiyw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15018212"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="15018212"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:29:58 -0700
-X-CSE-ConnectionGUID: aW9cfQpQSjqJjDLJ6LBtXA==
-X-CSE-MsgGUID: 0uVim8UwQsCsM1J9UsyyeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="40204656"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:29:54 -0700
-Message-ID: <9dedd378-ce85-4329-b770-de47548bf380@intel.com>
-Date: Tue, 11 Jun 2024 19:29:49 +0300
+	s=arc-20240116; t=1718123434; c=relaxed/simple;
+	bh=5cpAqCueMiul15O4cnq2Z/clOXb3h3yGx7cGR9jOKg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acnjW9bJ8WDWDdd+6PFuYPehxnpgfP8dqtAoc2Q53Ksj3K1TfjtcnPIoHE0NK1/qXmMCB+hWw1O6Tl6yw6xBL7QSwfczKNhZuT5Ds2/EsDSkdGCAdZ42tu8puzKdGCXel9Go0/yEdfk8jd3LfVjVnbTEENCaLAVtC/nPk41S5UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A34C2BD10;
+	Tue, 11 Jun 2024 16:30:30 +0000 (UTC)
+Date: Tue, 11 Jun 2024 17:30:28 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Maxwell Bland <mbland@motorola.com>
+Cc: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>,
+	Will Deacon <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Zi Shen Lim <zlim.lnx@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Puranjay Mohan <puranjay12@gmail.com>
+Subject: Re: [PATCH bpf-next v5 1/3] cfi: add C CFI type macro
+Message-ID: <Zmh7pIpTlexcCyOL@arm.com>
+References: <mafwhrai2nz3u4wn4fu72kvzjm6krs57klc3qqvd2sz2mham6d@x4ukf6xqp4f4>
+ <cwhnmpn5yvg6ma7mvjviy4p7z6gdoba57daeprpc4zcokfhpv2@44gvdmcfuspt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 11/14] tools/perf: Add support to use libcapstone in
- powerpc
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Segher Boessenkool <segher@kernel.crashing.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-perf-users <linux-perf-users@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>,
- disgoel@linux.vnet.ibm.com
-References: <20240601060941.13692-1-atrajeev@linux.vnet.ibm.com>
- <20240601060941.13692-12-atrajeev@linux.vnet.ibm.com>
- <CAP-5=fXGPHMF+5cUu42ns0=qm9QCPg0LNUveLLnjdGHPCnVg3w@mail.gmail.com>
- <c383b404-727c-4564-a66e-0906348891b3@intel.com>
- <81ED04E0-23B5-44AE-B84D-5766346F1D32@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <81ED04E0-23B5-44AE-B84D-5766346F1D32@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cwhnmpn5yvg6ma7mvjviy4p7z6gdoba57daeprpc4zcokfhpv2@44gvdmcfuspt>
 
-On 10/06/24 15:20, Athira Rajeev wrote:
+On Mon, Jun 10, 2024 at 01:06:33PM -0500, Maxwell Bland wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
 > 
+> Currently x86 and riscv open-code 4 instances of the same logic to
+> define a u32 variable with the KCFI typeid of a given function.
 > 
->> On 3 Jun 2024, at 10:28 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 3/06/24 19:30, Ian Rogers wrote:
->>> On Fri, May 31, 2024 at 11:10 PM Athira Rajeev
->>> <atrajeev@linux.vnet.ibm.com> wrote:
->>>>
->>>> Now perf uses the capstone library to disassemble the instructions in
->>>> x86. capstone is used (if available) for perf annotate to speed up.
->>>> Currently it only supports x86 architecture. Patch includes changes to
->>>> enable this in powerpc. For now, only for data type sort keys, this
->>>> method is used and only binary code (raw instruction) is read. This is
->>>> because powerpc approach to understand instructions and reg fields uses
->>>> raw instruction. The "cs_disasm" is currently not enabled. While
->>>> attempting to do cs_disasm, observation is that some of the instructions
->>>> were not identified (ex: extswsli, maddld) and it had to fallback to use
->>>> objdump. Hence enabling "cs_disasm" is added in comment section as a
->>>> TODO for powerpc.
->>>>
->>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>>> ---
->>>> tools/perf/util/disasm.c | 148 ++++++++++++++++++++++++++++++++++++++-
->>>> 1 file changed, 146 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
->>>> index d8b357055302..915508d2e197 100644
->>>> --- a/tools/perf/util/disasm.c
->>>> +++ b/tools/perf/util/disasm.c
->>>> @@ -1540,12 +1540,18 @@ static int open_capstone_handle(struct annotate_args *args, bool is_64bit,
->>>> {
->>>>        struct annotation_options *opt = args->options;
->>>>        cs_mode mode = is_64bit ? CS_MODE_64 : CS_MODE_32;
->>>> +       int ret;
->>>>
->>>>        /* TODO: support more architectures */
->>>> -       if (!arch__is(args->arch, "x86"))
->>>> +       if ((!arch__is(args->arch, "x86")) && (!arch__is(args->arch, "powerpc")))
->>>>                return -1;
->>>>
->>>> -       if (cs_open(CS_ARCH_X86, mode, handle) != CS_ERR_OK)
->>>> +       if (arch__is(args->arch, "x86"))
->>>> +               ret = cs_open(CS_ARCH_X86, mode, handle);
->>>> +       else
->>>> +               ret = cs_open(CS_ARCH_PPC, mode, handle);
->>>> +
->>>> +       if (ret != CS_ERR_OK)
->>>>                return -1;
->>>
->>> There looks to be a pretty/more robust capstone_init function in
->>> print_insn.c, should we factor this code out and recycle:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/print_insn.c?h=perf-tools-next#n40
->>
->> On a slightly related note, there is a compile error
->> been around for a while in util/disasm.c on Ubuntu 22.04
->>
->> In file included from /usr/include/capstone/capstone.h:279,
->>                 from util/disasm.c:1354:
->> /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong
->> kind of tag
->>   94 | typedef enum bpf_insn {
->>      |              ^~~~~~~~
->>
+> Replace the duplicate logic with a common macro.
 > 
-> Hi Adrian
-> 
-> I tried compilation on Ubuntu 22.04, but didn’t face this issue.
-> The libcapstone version I have is libcapstone4 which doesn’t have the include for “bpf.h”
-> What is the version of libcapstone in the setup where you are seeing this issue ?
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 
-Yes, sorry. I got confused.  Ubuntu was OK.  The original issue
-was with Fedora 40, but even then it requires binutils-devel
-and BUILD_NONDISTRO=1
+This patch is missing your signed-off-by (the same with the second
+patch). Since you are submitting it, you should also add yours in
+addition to the author's s-o-b.
 
+-- 
+Catalin
 
