@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-210410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08AB904352
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF76D904354
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18891C21D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B541F2339A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF766F301;
-	Tue, 11 Jun 2024 18:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435EC6EB7C;
+	Tue, 11 Jun 2024 18:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="cohNJ7To"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H7sTyp+y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9235249E5;
-	Tue, 11 Jun 2024 18:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113421D555;
+	Tue, 11 Jun 2024 18:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129762; cv=none; b=GXzCAObZLkfzdUEmisQyNMKTWUD8scn4dPdU+zWYodm6OiHxHkGW9QhKd/quthWVqzOWjMZbeBIehhsgwZJxPXMSQmem1BRYdw50moqJYjIZjDJ/eqSOFnDRWrKbCT/LfAK8LXS0WI+kEmpLEyxXaW3BW/Jb1NgXOF57TCqOcN8=
+	t=1718129770; cv=none; b=chdzpjCpMblRSXOIY/svoBr3PfjonyadkaAZwgdY9dv8AYRshyp6C+XrNfdldP90E8aIE3PkRKGJqY7MyrN9AV/r1SB0+KHwm4JD2W1Rcl0KTcc+ZqgzBTt0BVlQbh6+GQVzKcxg+O9pNt2TpttUdNKW+Ge6UkE7rFjo+SG4vJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129762; c=relaxed/simple;
-	bh=WSVt5TuM3v51vEobXM6W+vqUjan4uWl+GRpcWofmP8k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AxjEzwr5qahr4iEPr/wiooZ+XO5l7dvhp2cABAzcDa/pkIoDAfjXo3ExDW/C10trJ1A7cOBbuzHxd/IjVvI3d+oMLKs81opUnM/aplTfC42BL7Iz0n7SnFH79edYe4UCN93dbqyQNMouzAeYtKREIp/JwzyGw5gLqYwzLN+tBZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=cohNJ7To; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9AD7C20007;
-	Tue, 11 Jun 2024 18:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1718129758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rg+NohawaTXFK1Fhif7XHyzzS0tstlbs6exoV45k748=;
-	b=cohNJ7ToVC/jNm/iqicKhPbz/PNrGQEIPHhKIYDkQHrpkEGTrnxRJbtoKNWrItNX1hmGSR
-	kJiAdD4eaTgg4NYHz36ovV9RrM7t51okkaXVRtNvWrOrmFCf/kUq+e2yP2Xybaoa/32kDV
-	hLBJgdXie0o4AqSqzhMcUWFUtiDINqUQblTDQx7noZwEUwsvGNsMZlVBgdWJWCc4Qnb/8m
-	ID9lDKfgzvLHmeCM8U/LJzsVaGh+HY9HfguxTKKCOCa5CzQyGnOTKrwef75j3b5Z+1chaL
-	3r+nuBdBPYnTI0krgM6l3H1ZlyJY+ZjIgdE1loo2B+P689i6B9j+e41ErgLphQ==
-Message-ID: <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
-Date: Tue, 11 Jun 2024 21:15:48 +0300
+	s=arc-20240116; t=1718129770; c=relaxed/simple;
+	bh=L4mlXHmPgmTdHq37fhVTMJA9++Qb0x4oHaEe0le8dEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P9NH3M8JL/bBLbMGWKeKHVmKEdkVy7t7CbOcJ4sXr2A7jmA7TMHmuFcKR4Kg8lrs+P38vVRHLMJl4bYur6r7CT4Ag3nB2d28X5v3jdAtqEKceNxmbad4BHJwWrou/wFyBjwg2kgRMP1FYuSumcjex87CjLn/06VljlaTTAll+RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H7sTyp+y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BClV2A008099;
+	Tue, 11 Jun 2024 18:15:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9lAOe/MTNKXIcRfw4OLEZdwYeoSOv3urLU5CVFUEk9s=; b=H7sTyp+yyN+IIgxe
+	NZDKD4RwPb2UFKAe5uE+b1gfRl12Jg/giVYuzGG/wxQvgT0j+mV2rMiXn6EESnA7
+	aKMwNFhKP4yGYP1AsZgJ8NwexyTOFBBq3tKzeoMl/5u2QxTo3JghhCkNRovNAxuW
+	XU1Y2+VTSBbo6u8/Q2QcPYGDvNFKAldN+hyvasIX5pg6fmOLZneXoQjQWrmrsIUD
+	ro0G6S+2q7oft4jbHrnl5K54w5OFJ40QWd/Q/rrWFjkVlsKncbgZuP3E8qFNZ++q
+	SRI6+gxMO5z+CN1kpix2VGXrVcUs9hl2UT5PftpgJZ/Ydoscc4xN2pebz/63IGsi
+	ekr45A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmy3m1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 18:15:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BIFvwW005391
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 18:15:57 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 11:15:57 -0700
+Message-ID: <66e7c762-8bbc-447a-8e06-c2616c305a5d@quicinc.com>
+Date: Tue, 11 Jun 2024 11:15:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,141 +64,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Thorsten Leemhuis <regressions@leemhuis.info>, Rob Herring
- <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
- <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
- <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+Subject: Re: [PATCH v2 01/14] drm/msm/hdmi: move the alt_iface clock to the
+ hpd list
 Content-Language: en-US
-In-Reply-To: <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+ <20240522-fd-hdmi-hpd-v2-1-c30bdb7c5c7e@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-1-c30bdb7c5c7e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Qi4IxX2dDs28nvQ2jtxuUAn4IueEIEKx
+X-Proofpoint-ORIG-GUID: Qi4IxX2dDs28nvQ2jtxuUAn4IueEIEKx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110125
 
-On 11/06/2024 16:03, AngeloGioacchino Del Regno wrote:
-> Il 11/06/24 14:56, Arınç ÜNAL ha scritto:
->> On 11/06/2024 15:28, AngeloGioacchino Del Regno wrote:
->>> Il 11/06/24 13:38, Arınç ÜNAL ha scritto:
->>>> On 11/06/2024 14:30, Thorsten Leemhuis wrote:
->>>>> On 07.06.24 16:15, Thorsten Leemhuis wrote:
->>>>>> On 07.06.24 16:03, Paolo Abeni wrote:
->>>>>>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
->>>>>>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>>>>>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
->>>>>>>>>> [adding Paolo, who committed the culprit]
->>>>>>>> 
->>>>>>>> /me slowly wonders if the culprit should be reverted for now (see below)
->>>>>>>> and should be reapplied later together with the matching changes from
->>>>>>>> Arınç ÜNAL.
->>>>>>> 
->>>>>>> FWIS I think a revert should be avoided, given that a fix is available
->>>>>>> and nicely small.
->>>>>> 
->>>>>> Yeah, on one hand I agree; but on the other it seems that the
->>>>>> maintainers that would have to take care of the dt changes to fix this
->>>>>> until now remained silent in this thread, apart from Rob who sent the
->>>>>> mail regarding the warnings.
->>>>>> 
->>>>>> I put those maintainers in the To: field of this mail, maybe that might
->>>>>> lead to some reaction.
->>>>> 
->>>>> Still no reply from the DRS folks or any other progress I noticed. Guess
->>>>> that means I will soon have no other choice than to get Linus involved,
->>>>> as this looks stuck. :-( #sigh
->>>> 
->>>> Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
->>>> of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
->>>> ARM maintainers that can apply the fix to their tree?
->>>> 
->>>> Arınç
->>> 
->>> You have feedback from two people on the series that you mentioned, and noone
->>> is going to apply something that needs to be fixed.
->>> 
->>> I'm giving you the possibility of addressing the comments in your patch, but
->>> I don't want to see any mention of the driver previously ignoring this or that
->>> as this is irrelevant for a hardware description. Devicetree only describes HW.
->>> 
->>> Adding up, in commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch from device tree"),
->>> you have created a regression.
->>> 
->>> Regressions should be fixed - as in - if the driver did work before with the old
->>> devicetrees, it shall still work. You can't break ABI. Any changes that you do
->>> to your driver must not break functionality with old devicetrees.
->>> 
->>> So...
->>> 
->>> ------> Fix the driver that you broke <------
->> 
->> The device tree ABI before the change on the driver:
->> 
->> The reg value represents the PHY address of the switch.
->> 
->> The device tree ABI after the change on the driver:
->> 
->> The reg value represents the PHY address of the switch.
->> 
->> I see no device tree ABI breakage. What I see instead is the driver
->> starting enforcing the device tree ABI. No change had been made on the
->> device tree ABI so any non-Linux driver that controls this switch continues
->> to work.
->> 
->> These old device tree source files in question did not abide by the device
->> tree ABI in the first place, which is why they don't work anymore as the
->> Linux driver now enforces the ABI. Device tree source files not conforming
->> to the ABI is not something to maintain but to fix. The patch series that
->> fixes them are already submitted.
+
+
+On 5/22/2024 3:50 AM, Dmitry Baryshkov wrote:
+> According to the vendor kernel [1] , the alt_iface clock should be
+> enabled together with the rest of HPD clocks, to make HPD to work
+> properly.
 > 
-> As I said, the devicetree MUST describe the hardware correctly, and on that I do
-> agree, and I, again, said that I want to take the devicetree fix.
+> [1] https://git.codelinaro.org/clo/la/kernel/msm-3.18/-/commit/e07a5487e521e57f76083c0a6e2f995414ac6d03
 > 
-> However, the driver regressed, and this broke functionality with old device trees.
-> Old device trees might have been wrong (and they are, yes), but functionality was
-> there and the switch was working.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Hi Dmitry,
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+Thanks,
+
+Jessica Zhang
+
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> I repeat, driver changes MUST be retro-compatible with older device trees, and your
-> driver changes ARE NOT; otherwise, this wouldn't be called *regression*.
-
-I'm going to argue that what caused the regression is the broken device
-tree. The recent change on the driver only worked towards exposing the
-broken device tree. The device tree files hosted on the Linux repository is
-not only for use with the Linux drivers. Other projects use these device
-tree files as well, as hardware description is not supposed to differ by
-project. And for any non-Linux driver that would use this broken device
-tree, there would be a regression.
-
-So I don't understand why you demand a change on a Linux driver to be made
-before applying the fix for a broken device tree.
-
-That said, I don't understand the old device tree sentiment here. The
-driver, after the change, still does support old device trees. Never in the
-existence of this switch bindings, the PHY address was supposed to be
-described a value other than the PHY address the switch listens on. Yes,
-the driver now doesn't work with old and broken device trees. Which is why
-we're fixing the said device trees. I don't see why it is necessary to make
-the driver support broken device trees just because they used to work for a
-certain range of time. This isn't about preserving ABI.
-
-Arınç
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> index 24abcb7254cc..108c86925780 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> @@ -235,9 +235,9 @@ static const struct hdmi_platform_config hdmi_tx_8960_config = {
+>   };
+>   
+>   static const char *pwr_reg_names_8x74[] = {"core-vdda", "core-vcc"};
+> -static const char *pwr_clk_names_8x74[] = {"extp", "alt_iface"};
+> -static const char *hpd_clk_names_8x74[] = {"iface", "core", "mdp_core"};
+> -static unsigned long hpd_clk_freq_8x74[] = {0, 19200000, 0};
+> +static const char *pwr_clk_names_8x74[] = {"extp"};
+> +static const char *hpd_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
+> +static unsigned long hpd_clk_freq_8x74[] = {0, 19200000, 0, 0};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8974_config = {
+>   		HDMI_CFG(pwr_reg, 8x74),
+> 
+> -- 
+> 2.39.2
+> 
 
