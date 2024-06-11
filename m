@@ -1,115 +1,116 @@
-Return-Path: <linux-kernel+bounces-210333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2E590426C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E96590426A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFE11C24DFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74821F23CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812054CDF9;
-	Tue, 11 Jun 2024 17:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UaF4ZQK5"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951194F5F9;
+	Tue, 11 Jun 2024 17:29:16 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A7D4C634
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAC74D8AB;
+	Tue, 11 Jun 2024 17:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126981; cv=none; b=h02HbZxHzU+ossot4uGvlr7axVhvIueFtnWGhB2DyXa8QRLGnMIDQO6AUWpQlberD4V17qf2FIeAfaAnC9O52mQumtddaRqt2LJdAj4uPf+0xoa40YTj7T4ND8H97azZ+tnkFA7u7pNLW2A9Dr4rkDltX6OLSUD9/DJioxHr0TQ=
+	t=1718126956; cv=none; b=s9J2x0cOVu3dxBIaVmbPgz30wgcfWbIeJWaT5uwrKnP+PhQ++wSoNg0Chemf3zPYyf8QSFjHZ/2FhjqaRVPEOg8HD7nPfEGqh7oKWLKMSKm4UuCrjVWMfsAn3aBgXOppWupM4TtbPpnHMJIUCH5TRd9D/pN00L6w1G4cGtUQozE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126981; c=relaxed/simple;
-	bh=yp8LNB0GKkmC9XyBsr9Fvc4xrn1FcALdJ82VET9mehc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IUOo0eUfVCZCzzjXAX5L13sTEz0s4ENPMEROeMHbusJGQtwDECjy+6XAcSXx8io6ck9vd8VJ9t6p7WBnPuEDXUQhgn3dmw5r/IfF3vYUJ49r9WO+kSCTz5OyN6XDu9iz3zhmtH08qk7PqsqxodT4ISDCld0euBBGznKZMY743Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UaF4ZQK5; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c525257feso4366918e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718126978; x=1718731778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yp8LNB0GKkmC9XyBsr9Fvc4xrn1FcALdJ82VET9mehc=;
-        b=UaF4ZQK5uzvo61KcZcvhfZGFcILV1mzGc+kEzBfRj2ykk8OEwhvgD3HvJhzBnAVPAJ
-         z9Ka7zWeywzlktMXD/4DxWAWZqyE4qa2c9eEq4qVmSJH6tFVUREuWH9kTX+TT5kUahjo
-         obBUe2ktSS52QUYHhbP+nX/Di8NsAci4jgrxmzMWD3BhRjkOBZRE0l7VeDwIPVzaLos2
-         +l5sjCgbis08YBScXoujWpiB3yQn6vPHKe3HUH/3wx9ZdklY06fpiLFfpq9tcLcVW/0L
-         JkEcSEwYcaFxYArvReleVE37Qb9BSHQ4IwKbYyZCGYf9eLqkYn1FO9zCOQ7+kELkRjiO
-         ds7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718126978; x=1718731778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yp8LNB0GKkmC9XyBsr9Fvc4xrn1FcALdJ82VET9mehc=;
-        b=GthINqVt+k/sRS4Ah07PQnKBzuxc/bP/UOkwXUuqzYN46pW/qNyhET0XWzDV8du12/
-         qThDuSjNyl6SakY6cHGVf0Ol983wOr6Q7pWBGKwgnNCoWip6lROaaonbBwVahNcCbcAP
-         5sXgyFft4CVSiSHRPPO8KRLt5wx3Jwd2klNiTrccyEDKxyWXABvpqCyHSHXMvZh8NruZ
-         Nlek6ZmQIAtaMe3WcAAKByP6MEo/Ienou/9osz6aIsqBoTOdTyZbe1JLPx0YibRqQVX9
-         vi1/57XW3aQZYFIImdlWAw6zPknXjuDzm0Vwuhh2HfAZ3eqkqRxgqyu2kRURLDDtgfFt
-         p06A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8fsJguUqrmb4FGwO+SQJN6mVe/GgRTVZiDGb+JO8ElpIdhLkWGdHpsQ8cPRhQYpZtu+wHP15vrtRkOHnJDso3GGM/fhG6ZUhmTia/
-X-Gm-Message-State: AOJu0YwAGQx4cVnkUYsY51AhxaQDamkOjcAJerdjvsPXj4vEVXY6csKq
-	U3ymO9x1U89ygz1d8Jr8kZ3YImlrRCbLEebk8G3UZXbhPWBB7ko+OTR5Qrloai/24Fo3UUCuFXo
-	LhbVZGMckYxviIGkT5zyWC8SfpM6TH8DouRtf
-X-Google-Smtp-Source: AGHT+IHL1hLDhEaq3Esy5ZXWYpAWtACT5oztAwPrX67iPYV+FLA+aPsYxkzmVK/KOCK9+1FjZWc3fJTdN63zzKzI6XI=
-X-Received: by 2002:ac2:4989:0:b0:52c:7fc9:954e with SMTP id
- 2adb3069b0e04-52c7fc9976fmr5385958e87.41.1718126977999; Tue, 11 Jun 2024
- 10:29:37 -0700 (PDT)
+	s=arc-20240116; t=1718126956; c=relaxed/simple;
+	bh=mxsgjXODlhD8yQ8oI/Bqh1Xv3piPGgXIqnVcMLMxt0Y=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kt9JRbW8XL9bJ6nUwYhy1HwIxcTtZ+PxOPskDr1yiSslWUWH7KB7IIdQ2kNrnrWqypTqlX0fWlMGcVYRy//hNqmWdZIJPrYalXVqqE8PeMJrMxgAX5Fw3tYiVa/prYfXm700FDvgQJCJklBcfJv9Jmm8H1xkEXC+RB8e07NXTy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFsD6Zz0z6K73N;
+	Wed, 12 Jun 2024 01:24:16 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id DE8D9140A70;
+	Wed, 12 Jun 2024 01:29:11 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
+ 2024 18:29:11 +0100
+Date: Tue, 11 Jun 2024 18:29:10 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: =?ISO-8859-1?Q?Jo=E3o?= Paulo =?ISO-8859-1?Q?Gon=E7alves?=
+	<jpaulo.silvagoncalves@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Francesco Dolcini
+	<francesco@dolcini.it>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, =?ISO-8859-1?Q?Jo?=
+ =?ISO-8859-1?Q?=E3o?= Paulo =?ISO-8859-1?Q?Gon=E7alves?=
+	<joao.goncalves@toradex.com>, <linux-kernel@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, Francesco Dolcini
+	<francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads1119: Add driver
+Message-ID: <20240611182910.000008f1@Huawei.com>
+In-Reply-To: <20240610132629.xjj32vzrekpl356w@joaog-nb>
+References: <20240606163529.87528-1-francesco@dolcini.it>
+	<20240606163529.87528-3-francesco@dolcini.it>
+	<20240609115234.20e08840@jic23-huawei>
+	<20240610132629.xjj32vzrekpl356w@joaog-nb>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610143037.812955-1-usamaarif642@gmail.com> <ohcrgrlmcl7ym6dlfy524g3ht63pask2qjeqy5m242xrvxojt2@36gqaboyzmn2>
-In-Reply-To: <ohcrgrlmcl7ym6dlfy524g3ht63pask2qjeqy5m242xrvxojt2@36gqaboyzmn2>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 11 Jun 2024 10:28:59 -0700
-Message-ID: <CAJD7tkYxtfxwmVXxiDUacaPenDLU9v_MZo7vEqquA_1fVdB2wA@mail.gmail.com>
-Subject: Re: [PATCH] mm: Do not start/end writeback for pages stored in zswap
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
-	hannes@cmpxchg.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, Jun 11, 2024 at 10:16=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Mon, Jun 10, 2024 at 03:30:37PM GMT, Usama Arif wrote:
-> > start/end writeback combination incorrectly increments NR_WRITTEN
-> > counter, eventhough the pages aren't written to disk. Pages successfull=
-y
-> > stored in zswap should just unlock folio and return from writepage.
-> >
-> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->
-> If Andrew has not picked this up, send a v2 with more detailed commit
-> message, particularly why it is safe apply this change. You can use the
-> explanation given by Yosry in response to my email. Also add text
-> answering the other questions raised by Yosry.
->
-> If Andrew has already picked it up, just request him to update the
-> commit message.
+On Mon, 10 Jun 2024 10:26:29 -0300
+Jo=E3o Paulo Gon=E7alves <jpaulo.silvagoncalves@gmail.com> wrote:
 
-Yes please, thanks Shakeel. I wanted to ask for this but got derailed :)
+> Hi Jonathan,
+>=20
+> Thanks for the review!
+>=20
+> > > +
+> > > +static int ads1119_validate_gain(struct ads1119_state *st, int scale=
+, int uscale)
+> > > +{
+> > > +	int gain =3D 1000000 / ((scale * 1000000) + uscale);
+> > > +
+> > > +	switch (gain) {
+> > > +	case 1:
+> > > +	case 4:
+> > > +		return gain; =20
+> > Odd to calculate it if we don't need it
+> > 		return MICRO / (scale * MICRO + uscale);
+> > use constants as it's easy to drop a 0 in these without anyone noticing.
+> > =20
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> > > + =20
+>=20
+> Just a minor. I do use the calculated value on write_raw() by storing it =
+as the
+> new channel gain and would still need to validate it as scale/uscale come=
+s from
+> userspace. Maybe I can just remove the validate_gain function and do the =
+check
+> directly on write_raw(). What do you think?
 
-With the updated commit log feel free to add:
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+If that's the only caller, sure, move it to write raw.
 
->
-> You can add:
->
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->
+Jonathan
+
+>=20
+> Regards,
+> Jo=E3o Paulo Gon=E7alves
+>=20
+
 
