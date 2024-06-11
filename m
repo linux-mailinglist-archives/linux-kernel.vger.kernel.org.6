@@ -1,140 +1,179 @@
-Return-Path: <linux-kernel+bounces-210210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4829040D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 758C49040DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA84D1C23895
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A5D1C21D16
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18744C81;
-	Tue, 11 Jun 2024 16:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D975F3A28D;
+	Tue, 11 Jun 2024 16:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3FxDznW"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mCNKSnt2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EC743AC5;
-	Tue, 11 Jun 2024 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87002383B2;
+	Tue, 11 Jun 2024 16:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718121851; cv=none; b=HbRjfuUQeUfiJ1cvpz0+1ONX8dkCbiuZoukcypOBtCYzbQtXQE1va0E5p5Pex5uS65Ui23+s3Fwm8Vf3JM3AFM/LDFG2JRdeHQ8bxDT4vnend7a8OMTPuqBc+0QWybRwwdUq1k7NiAYkK5oB3Wp5jmfwm0Q7az02kRLcdR95Vvk=
+	t=1718122007; cv=none; b=tW11jfZdI49vSdx6krd2zl51AQ6mnCb1WMyAmx3+8q/xbL6V/mwokunTth4ldmtbsj7c1xl76rfKqFrazK0hqrhy/laCieacfQ+UwvCdmH+0XxJaZNKeH0G1UegcmVuqZtefPH6QkWAlZT3K2In6Lw9C0StvB9zSADPS86ilMUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718121851; c=relaxed/simple;
-	bh=OnTkHejPNw3tngPD/gLNuIdXyEPXReQ7Og4rR03tJUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXjqk6xzCpXFkODmH2sDHY56pUCl/SfbBV7J4NMKGOs65zGL7cfGHL5b7XLUsiSE+iBCdz3QP+cXx1eziTFNLE1o+3O/OZHJJyGCEAPwlEEPS+WdSnb+gvYSPakdUGVYNNFlM6bEwDRTAwXQGNveQuUd1htAOWKjkDcx6GCfLBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3FxDznW; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f188e09a8so2589575f8f.2;
-        Tue, 11 Jun 2024 09:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718121848; x=1718726648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A7OxeEGQvtZSHolpPtCDm/Oc1t2xdqPNsViOQEbQvYo=;
-        b=Y3FxDznWQnY/DlmkqbIvfxgWrT7ToMPIPIy79BjpQvNz4bCM587yDrZUpJWCo7OqsA
-         zSPUdZAAKEn5yPVcuVRnWe3gflnyDqia0GERna9fOVGGFQeeGx6jbwGoQ+2rvZ0D4XNt
-         SS9pIRMpBM/FVsJJ+zE3eR2crSXiRv66iICm9+0YB8jlpQr+E7NcqKvr5XL8czNcBSXQ
-         J/B0q0Xot3fhxcyI/W+roE+BJVVVK7jidPpYjYflHb8ptsU9arWK5z0lKzz5BAC2rsoO
-         2QrFB0PL74kGnzrxqZBiouk4rY8WFSy5E6MrCvAcC+aKxC60aSIqudxjHP72+CWc9eAn
-         GFpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718121848; x=1718726648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A7OxeEGQvtZSHolpPtCDm/Oc1t2xdqPNsViOQEbQvYo=;
-        b=iCM/+kmQ/z0ro2vMgxluhX5GukcuZ+wGGPevbS9xbMyx0xzrFm+zUqTs5YMPYulVjY
-         MYZcAoc1mJnG9n8y8hNJ+vuxNi8UXsaS6fA6a+7zSzaXgVH3oGMssd4I3a1Y9sfRV2uZ
-         OtVr4pv3PCunsGSECmmsDZEjKSTtGTjdJ1EE3ZEylIr00zX4pFGeqraVH2qSbzEj+hgq
-         p2GMLz+3n2sVIvpe6hhWZHJTHTnbzWkzTNy5gGd9EJwEJRpalmsC3z+UgfBUREmPsIBn
-         6wSPwxFqKMDz1Eo5tQmrFGZxlVvQ3DaKA4bTGLFiJXEMYMazBMMc8R0bz6tMA4qBPEn6
-         UvUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7P7vMTpC1fvoEhMlc0iQE6ijGjN5aTcORAM8TivAXlcKkON8uwviNnfi3LiQtUWDPZLv7sy1yqMS9eboDvjL52NbhBjoaBNgvHKxjwJEm8+NUR8HUTEPHOIxFpvCL/7b+xkqsp16Ccqederohv6V1dMg+kIC2fgnilAUkNdmN/EOq
-X-Gm-Message-State: AOJu0YwxIw7ogwH9ZUfZgOaJKVGZKlw6ji9CuQXVX1tb3fxlGDMVcYru
-	18bJlsI3iEf7SUcx1RPEq8A6oMc/RFNqjU0BlEvi1L2vUTSQWBpPva8lR39CUmG2bO/p0LdRqY4
-	0r6nPDWJW4Yy1VBCwOe/FIRkL3XE=
-X-Google-Smtp-Source: AGHT+IGgf1ls3cDJ6B8jZSckjsi3R4ehKyK6BuvWyiUq1Q0BRGfbAUe6LlHVpdwqmLIfrHbT/2TI3nOOqIIwwdeGhAY=
-X-Received: by 2002:a5d:6608:0:b0:354:f7a4:7862 with SMTP id
- ffacd0b85a97d-35efed2baacmr8566577f8f.19.1718121847806; Tue, 11 Jun 2024
- 09:04:07 -0700 (PDT)
+	s=arc-20240116; t=1718122007; c=relaxed/simple;
+	bh=ScPhGOCO3bV0NanOK0AuSPnSG3scE/Ty0BObPsnla4Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g++Q1+NLeRJlpPapMy6FFyw2HImEEuq1Ih5dUlrH27eaXlz2EZlR0XBTFGfa+ybY6oBkCistMpqsFc9GlpyTngKODXgoY6RsOkcTFPImW6Y5gsbH+WFa00kIht90NQ+sEc4UyZb5Gh1U2uTFKO3HnKPtA0/njiEL7dgIyZOuM4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mCNKSnt2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BF2Uaa006245;
+	Tue, 11 Jun 2024 16:06:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=vB9b8QKV3SVGrr7bVXaqXKJ2
+	pGDDkhNCdZ1weSNZecg=; b=mCNKSnt2TFzL55c2N8JLz6ygtLTFTmGfeRDjsgA1
+	gNx2cakRa4HVjVmgq0zmvh7jg0lX4MDyeIx6bfQxJC7Osgc1RU0w3aqlzL/zI9Fe
+	l66A8gOuptaisXuEGKHVFQTWwEFA/wd2VMhBpHRPzDeypnmqM1HWuyY1mcqEeEEv
+	rg/O9vXgKNrQtYlVD0aCFbw00ipdUbM3UdLM4E0UxX0yXnX8AJP8SmeqUe3gqtgb
+	ud2TFJ9Mj4IUbStIGkao6jZbwunyUN2U6sRukYiopV9FGw/AxkjpFbhCKmn/J6wH
+	XTQmZtyRkJIt13a+kf3w9UDSJy97PuqEPeHlL8Oq3FfNFQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmxt9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 16:06:40 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BG6bu5021825
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 16:06:37 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 09:06:37 -0700
+Date: Tue, 11 Jun 2024 09:06:35 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+CC: <andersson@kernel.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <quic_deesin@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH V2 1/2] soc: qcom: smp2p: Add remote name into smp2p irq
+ devname
+Message-ID: <Zmh2CzGpJrmzs+6K@hu-bjorande-lv.qualcomm.com>
+References: <20240611123351.3813190-1-quic_sudeepgo@quicinc.com>
+ <20240611123351.3813190-2-quic_sudeepgo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1717881178.git.dxu@dxuuu.xyz> <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
- <Zmb52Qp__CBzbgDh@krava> <chydnuotqnmamlfmgzgnwurj5flaegp2bjebxldqwc2y2ngs5x@3h4blknbqhlw>
-In-Reply-To: <chydnuotqnmamlfmgzgnwurj5flaegp2bjebxldqwc2y2ngs5x@3h4blknbqhlw>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 11 Jun 2024 09:03:56 -0700
-Message-ID: <CAADnVQJdt5K3o6SrnVzzBVf+5BmJ3Wo5TTLvULE7rKJPkKqmbQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix bpf_session_cookie()
- kfunc prototype
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Quentin Monnet <quentin@isovalent.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240611123351.3813190-2-quic_sudeepgo@quicinc.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mawu2I00unrM5ytr6-6jesIUueA_YenB
+X-Proofpoint-ORIG-GUID: mawu2I00unrM5ytr6-6jesIUueA_YenB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110115
 
-On Tue, Jun 11, 2024 at 8:54=E2=80=AFAM Daniel Xu <dxu@dxuuu.xyz> wrote:
->
-> Hi Jiri,
->
-> On Mon, Jun 10, 2024 at 03:04:25PM GMT, Jiri Olsa wrote:
-> > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
-> > > The prototype defined in bpf_kfuncs.h was not in line with how the
-> > > actual kfunc was defined. This causes compilation errors when kfunc
-> > > prototypes are generated from BTF.
-> > >
-> > > Fix by aligning with actual kfunc definition.
-> > >
-> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > > ---
-> > >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 =
-+-
-> > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 =
-+-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing=
-/selftests/bpf/bpf_kfuncs.h
-> > > index be91a6919315..3b6675ab4086 100644
-> > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dy=
-nptr *data_ptr,
-> > >                                   struct bpf_key *trusted_keyring) __=
-ksym;
-> > >
-> > >  extern bool bpf_session_is_return(void) __ksym __weak;
-> > > -extern long *bpf_session_cookie(void) __ksym __weak;
-> > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
-> >
-> > the original intent was to expose long instead of __u64 :-\
-> >
-> > could we rather change the bpf_session_cookie function to return long?
-> > should be just return value type change
->
-> Sounds reasonable to me. I don't think the kfunc has made it to a
-> release yet, so perhaps if we extract this commit out as a fix to bpf
-> tree it can still make it into 6.10. That way we won't have to worry
-> about any ABI changes.
+On Tue, Jun 11, 2024 at 06:03:50PM +0530, Sudeepgoud Patil wrote:
+> Add smp2p irq devname which fetches remote name from respective
+> smp2p dtsi node, which makes the wakeup source distinguishable
+> in irq wakeup prints.
+> 
+> Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+> ---
+>  drivers/soc/qcom/smp2p.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index a21241cbeec7..a77fee048b38 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -122,6 +122,7 @@ struct smp2p_entry {
+>   * @ssr_ack_enabled: SMP2P_FEATURE_SSR_ACK feature is supported and was enabled
+>   * @ssr_ack: current cached state of the local ack bit
+>   * @negotiation_done: whether negotiating finished
+> + * @irq_devname: poniter to the smp2p irq devname
+>   * @local_pid:	processor id of the inbound edge
+>   * @remote_pid:	processor id of the outbound edge
+>   * @ipc_regmap:	regmap for the outbound ipc
+> @@ -146,6 +147,7 @@ struct qcom_smp2p {
+>  	bool ssr_ack;
+>  	bool negotiation_done;
+>  
+> +	char *irq_devname;
+>  	unsigned local_pid;
+>  	unsigned remote_pid;
+>  
+> @@ -614,10 +616,16 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+>  	/* Kick the outgoing edge after allocating entries */
+>  	qcom_smp2p_kick(smp2p);
+>  
+> +	smp2p->irq_devname = kasprintf(GFP_KERNEL, "%s", pdev->dev.of_node->name);
 
-kfunc-s can be changed at any time. Keep targeting bpf-next for everything.
+That's a lot of extra instructions for copying a string, which doesn't
+need to be copied because of_node->name is const char and the argument
+to devm_request_threaded_irq() is const char.
+
+So, kstrdup_const() is what you're looking for.
+
+You can then go devm_kstrdup_const() and avoid the kfree() (then
+kfree_const()) below.
+
+
+That said, looking at /proc/interrupts, I think it would make sense to
+make this devm_kasprintf(..., "smp2p-%s", name);
+
+Regards,
+Bjorn
+
+> +	if (!smp2p->irq_devname) {
+> +		ret = -ENOMEM;
+> +		goto unwind_interfaces;
+> +	}
+> +
+>  	ret = devm_request_threaded_irq(&pdev->dev, irq,
+>  					NULL, qcom_smp2p_intr,
+>  					IRQF_ONESHOT,
+> -					"smp2p", (void *)smp2p);
+> +					smp2p->irq_devname, (void *)smp2p);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to request interrupt\n");
+>  		goto unwind_interfaces;
+> @@ -650,6 +658,8 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+>  	list_for_each_entry(entry, &smp2p->outbound, node)
+>  		qcom_smem_state_unregister(entry->state);
+>  
+> +	kfree(smp2p->irq_devname);
+> +
+>  	smp2p->out->valid_entries = 0;
+>  
+>  release_mbox:
+> @@ -677,6 +687,8 @@ static void qcom_smp2p_remove(struct platform_device *pdev)
+>  
+>  	mbox_free_channel(smp2p->mbox_chan);
+>  
+> +	kfree(smp2p->irq_devname);
+> +
+>  	smp2p->out->valid_entries = 0;
+>  }
+>  
+> -- 
+> 
 
