@@ -1,158 +1,93 @@
-Return-Path: <linux-kernel+bounces-210175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C03904071
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5D4904075
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71752860D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD52282C52
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E85383A3;
-	Tue, 11 Jun 2024 15:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EA73839C;
+	Tue, 11 Jun 2024 15:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FUxVeja1"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYrmGG+V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E446125A9
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FAB125A9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120872; cv=none; b=HSTHayN/YQp5HuGOVl7/9DcpG8H8pwXERsUsc/EzjoH8vgBer9vVI1NM8h3BhbktQGvoM3xtDPCQ4w8NV3cR+sjzcYSCejTsfmKPXABlBx5UZascW8hQoqbqE7Sxu2zE1xilCS0umolFDOYgC3nW7aAXD4Nu14iOXM4wGTJ/aC0=
+	t=1718121044; cv=none; b=iYScSqHC4mXTH08ezC5Hb8KYOdkFw5+oiCWzm4f5nnCJO6Nx7Nc8SDnH8DfGvcVs28qAz2bWEJ8I1NkzSMpvA49QbAYft3mTVdWgsb74XIKJukXdXbqJagGCkKk/f5J68bQfuOOKKvbI6T2A+nvmpvYKdQCjUhivgo+rcd+4DyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120872; c=relaxed/simple;
-	bh=9geANwTIsJXpD5TdTNQhyt0cAYwzG1X84sh66DYrpYM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zyw+FPLm4/BtmlRWoFg2pAq6wwqIe2BnOFCxAiE0TAccGHai2q/j42dOr5/He3uydviRlPVtmFcS1IWs1F52ESD7ar9OiKCoJcLBZ9o6i4Dmk2wCvIGUgsamIFuu62UhUPpDCkVaEbe9QoU/0OcNPOTQYj9t6fDjSs6XQDWb7oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FUxVeja1; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d218ea7750so708750b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718120870; x=1718725670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jpM+X0foseE+HCoQOOJMRUvbhVQW/GLwLX9rUTKHX0Q=;
-        b=FUxVeja1De5C64/CTv2YzLuvK6RUFYgLqeJff8Ff0B3m/+hrutMp2sl1tsC4ZTGy4O
-         e1jx9iDDKXycCqZkpkCanFP5OaJ5Bqy4OEkONtuCLEDRtMqM6TWoxJ44CDEYFtGwJx/4
-         glYOAYdTCfrcG9HxZUqByBh4+OuNLltTIh9Yqvrs1W0obbvfxE7vCv7Tej14pwPh7c30
-         Q6JTCg0Bo5v0C2me6e5vgHqAE4sShzBN0A/EjpV1TfIsi/5lX2ITDj/4PPtOv2NakAU6
-         Xr4y2LyQVAizoTTIxb7qTUyQWg6Zt5kG6gV3N4dMLhKK+kAeNLw9iTs6UjWKG0+FVaFY
-         T8VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718120870; x=1718725670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jpM+X0foseE+HCoQOOJMRUvbhVQW/GLwLX9rUTKHX0Q=;
-        b=ASqdnMbzQYfvhamEIp22UHAM23Axud08shMYo38jcOeKCwF1YedtlWrxlxZLD6Xmz1
-         2Ll63LoX0e+l1QajjsC6zXLmrrB0gYtFIzujAyVZXZradO4kXZapKCxOzVdZY70NdCUs
-         VZTBhhG6eJHta2Jho1L4fUehZOrLzZow3h8vOPzi7mA3EfvmVhvp/9q05/DNBo1KEjBo
-         o/q+TbOArAIbllxzWe1zvGiZObTPM6wWAaKmCuIjIAjpFHaQkLrI8M04ePa2Bh+9w2ql
-         nROwzdf4DXPbX5+ORMUmm/BHScHcHr6RyFH4PKpQTzdifHvLKJVMZubAmYhY6sDtMGai
-         G7pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGYrxfjN0sZLlbTLj1x22f+lnRQg0TCCYdUZ/5+dOxF09r/LbTPeV9Ea3a+oFnIFSZqyevFr5jW8RNTaLNjIN6uJn50qhasir5Dv6W
-X-Gm-Message-State: AOJu0Yw3gmNSXoP7/HkmJ3fQOZM+WrpaBbGP4fcBXLZiOoCuNUEVmUiT
-	npHxANlL1keU5VzlKLSL9v3x6jqTJT+lybLHncS2J8Oz6kQlifgiiJGTDNPV44lloPHyKXa0g8l
-	Ad+TvuelYNld2v5OZGt9cwczzERrGJBbcJ3Zj
-X-Google-Smtp-Source: AGHT+IGsUm8uoXy2Frod9+g47BSX/WQwflOqQo3V7ZvgfN5VWQw8m8zz9XQk2EJ6h60boQrBDC7OiaZYSjlc+6BkQ24=
-X-Received: by 2002:a05:6808:3196:b0:3d2:314b:cd0f with SMTP id
- 5614622812f47-3d2314bd006mr4312540b6e.3.1718120870066; Tue, 11 Jun 2024
- 08:47:50 -0700 (PDT)
+	s=arc-20240116; t=1718121044; c=relaxed/simple;
+	bh=jI5NwtYOV0N7nO4N65St6X+X54gw21IY5Jfh68MvKFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SWBI89aC5vcZ7K/+BXKfJyEldVJSV+klbCGK7ePZPR/lCxdMpA8bt+wOpgtz0NyWJR9M0NmSm8KCRrEjd8MgxMusmRTsLkKfAhZb2dbMG+fB2J4uYnWmxuanGPVoVtdskN6HTvGJq0XVbzgwTcQpn+3AuDFjDo3rquFfghBs1Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYrmGG+V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54342C2BD10;
+	Tue, 11 Jun 2024 15:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718121043;
+	bh=jI5NwtYOV0N7nO4N65St6X+X54gw21IY5Jfh68MvKFc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cYrmGG+VOiG6F1oIC4PjKOeTRoG9mBdxYDYssNT0OBR+iPB3Rc1sm7gawmmu/GyZv
+	 LNTZ+61jUVnWtOsWn0T+JcOEniZNnyqLai4LqJvZCzskRl6i1adksxDE0R2fnyg1Ts
+	 hIcjD7tX9KIWQYng1N6aXsj3Szci5/yifH/yZThbSULOMaR7G5W76lnVK6jTjPVy5a
+	 wgqzGZdldEIDM4PMCmhtx6YM4KGRLV8+POTyz7HbiVhsXW/mkT6CeM6mBlrDFBASLo
+	 uzBQj2TDAZOQfHOZiOxwD3ZrErTlTtsym6V4nkec9KR4t+pc+T58VqmF8cmWQDaGly
+	 vvOMH7R9oD51g==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
+Date: Tue, 11 Jun 2024 09:50:12 -0600
+Message-ID: <20240611155012.2286044-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608023654.3513385-1-yosryahmed@google.com>
- <2821278f-bc94-c147-d0fe-8cc52dbdccb1@redhat.com> <CAJD7tkYepf6z1Q7HiSRAc7-S9OwYCphx=9NcyHxtW0YrkFv0sQ@mail.gmail.com>
- <811778e4-6af4-563a-757e-83fec207e79f@redhat.com>
-In-Reply-To: <811778e4-6af4-563a-757e-83fec207e79f@redhat.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 11 Jun 2024 08:47:10 -0700
-Message-ID: <CAJD7tkZ60Ru7b_BYZZy_hZtp=Tmz=KwQy28tqn-kHMkEKwbiFQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>, 
-	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 9:14=E2=80=AFPM Mika Penttil=C3=A4 <mpenttil@redhat=
-.com> wrote:
->
->
-> On 6/10/24 20:35, Yosry Ahmed wrote:
-> > On Fri, Jun 7, 2024 at 9:08=E2=80=AFPM Mika Penttil=C3=A4 <mpenttil@red=
-hat.com> wrote:
-> >> On 6/8/24 05:36, Yosry Ahmed wrote:
-> >>> diff --git a/mm/zswap.c b/mm/zswap.c
-> >>> index b9b35ef86d9be..ebb878d3e7865 100644
-> >>> --- a/mm/zswap.c
-> >>> +++ b/mm/zswap.c
-> >>> @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
-> >>>
-> >>>       VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> >>>
-> >>> +     /*
-> >>> +      * Large folios should not be swapped in while zswap is being u=
-sed, as
-> >>> +      * they are not properly handled. Zswap does not properly load =
-large
-> >>> +      * folios, and a large folio may only be partially in zswap.
-> >>> +      *
-> >>> +      * If any of the subpages are in zswap, reading from disk would=
- result
-> >>> +      * in data corruption, so return true without marking the folio=
- uptodate
-> >>> +      * so that an IO error is emitted (e.g. do_swap_page() will sig=
-fault).
-> >>> +      *
-> >>> +      * Otherwise, return false and read the folio from disk.
-> >>> +      */
-> >>> +     if (folio_test_large(folio)) {
-> >>> +             if (xa_find(tree, &offset,
-> >>> +                         offset + folio_nr_pages(folio) - 1, XA_PRES=
-ENT)) {
-> >>> +                     WARN_ON_ONCE(1);
-> >>> +                     return true;
-> >>> +             }
-> >> How does that work? Should it be xa_find_after() to not always find
-> >> current entry?
-> > By "current entry" I believe you mean the entry corresponding to
-> > "offset" (i.e. the first subpage of the folio). At this point, we
-> > haven't checked if that offset has a corresponding entry in zswap or
-> > not. It may be on disk, or zwap may be disabled.
->
-> Okay you test if there's any matching offset in zswap for the folio.
->
->
-> >> And does it still mean those subsequent entries map to same folio?
-> > If I understand correctly, a folio in the swapcache has contiguous
-> > swap offsets for its subpages. So I am assuming that the large folio
-> > swapin case will adhere to that (i.e. we only swapin a large folio if
-> > the swap offsets are contiguous). Did I misunderstand something here?
->
-> Yes I think that is fair assumption for now. But also saw your v3 which
-> doesn't depend on this.
+If the user has requested a counting threshold for the CPU cycles event,
+then the fixed cycle counter can't be assigned as it lacks threshold
+support. Currently, the thresholds will work or not randomly depending
+on which counter the event is assigned.
 
-Yeah Barry pointed out that we want to warn if a large folio reaches
-zswap and there is a chance that it is in zswap (i.e. zswap was
-enabled), even if it happens that the folio is not in zswap during
-swapin. This gives wider coverage and is cheaper when zswap is
-disabled than the lookups.
+While using thresholds for CPU cycles doesn't make much sense, it can be
+useful for testing purposes.
 
-We will also need to check if zswap was ever enabled in the large
-folio swapin series anyway, so the helper introduced in v3 should be
-helpful there as well.
+Fixes: 816c26754447 ("arm64: perf: Add support for event counting threshold")
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/perf/arm_pmuv3.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index 23fa6c5da82c..2612be29ee23 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -939,9 +939,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+ 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
++	bool has_threshold = !!(hwc->config_base & ARMV8_PMU_EVTYPE_TH);
+ 
+ 	/* Always prefer to place a cycle counter into the cycle counter. */
+-	if (evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
++	if ((evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) && !has_threshold) {
+ 		if (!test_and_set_bit(ARMV8_IDX_CYCLE_COUNTER, cpuc->used_mask))
+ 			return ARMV8_IDX_CYCLE_COUNTER;
+ 		else if (armv8pmu_event_is_64bit(event) &&
+-- 
+2.43.0
+
 
