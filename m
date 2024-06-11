@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-210298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1C7904206
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF72390420B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7EE1C24BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6630C1F26989
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B9A4DA00;
-	Tue, 11 Jun 2024 16:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA16A5B1FB;
+	Tue, 11 Jun 2024 16:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R/4NmU+W"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brD3ms6z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E72948CCD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7654F8C;
+	Tue, 11 Jun 2024 16:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124999; cv=none; b=pOj2IWNYykXKwcV5Bw6mafes1ImiN70UXUcM/L/I8Dizmu1yb94JoCReEwKRqmPlQencHL4U5yAqtiWqmgGoVzEM/5xz3D9PGUeHfWnbgpvIjByDu2DgRQMaOw9+ToQlxECAGCWSqj+NxqgVl9WnwmEtHmBfSRAMZh7SC0Sv2XE=
+	t=1718125042; cv=none; b=ZlvJJKdpti2kh7TGw30MwyYA7w93bSAaR3eCufIXfSzWEapsxQdeUDQhLyjgOr/2gL9juX+5KQpj8YaaMeUP4c8DNzz2RARcRHereBqpZTs7QrW+3sDH+WvElBer7HfIL/NUkitz5N33OU5PkFrwIseMOkbf4R4VTFTNXPcBKo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124999; c=relaxed/simple;
-	bh=o29lQlHY6pBB5D1miRHhOsA44JWXgR9MvIZMXmk7GOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJCwEkM4eI1SKRbaGbPIo0V8w8gaCeG4cf/D6XrV81PZ+POnl80SuCkS2shYAXeimWaC8sYY8JGS86p34nq7acXEVR/vH+41d0RL0pxbwb+3RLKlugM0+cyoB46lwQJAZnSkBcbJ0jCmNcasWqmoPo1T+/ckrRKn2y0dOS2NzEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R/4NmU+W; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c714a1e24so1567773a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:56:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718124995; x=1718729795; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9fd3UL80BMA34VQCo8tmKRzc+M7L8fT8pwxngoicvPg=;
-        b=R/4NmU+Wuz/rBDw2TOarfy0eq39D/abecawkkTiTcgiObG8r+NmdI4/uOH9fOkCOI9
-         aBAq+c/z+6+dYBngFmBUl8WIOqM3wVDs+Yz9/k5ER+T88utxsRZTDHXhWcSsUF1B79xY
-         05I2NgVzJDRnGduGMoSzLNvNIL+Isv7VnRtSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718124995; x=1718729795;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fd3UL80BMA34VQCo8tmKRzc+M7L8fT8pwxngoicvPg=;
-        b=R8sJIMVEnoXFiuO/Ba+ZU8qsWL0CvB5LSSHeTefPgorfRrxirRKpUAjXKrQXJazzv+
-         PfCk4SvLVQdYbFhSjrFZoi9IGY5+CnJtsvE2Z55Yk657ohLzLaxcpWWb3gb578TER5m2
-         ijSxmJn3RmYMJDUVHw19LZdrkpC25LtQZuRuy2VeozO2ZRL8s0y/uiAJvIkjIJvR3T7G
-         lhfYwEOU4cWsCEoOTo0Ljj48j5BZO0ysoyzEsp7hjJoPrlu2ksS8ppOeVygVFpLFaaVr
-         HDBZLyb4bddzEtKYNd6vR6op28AtbHVjaysQ+qLfrh0hQ+zIKztHQsNUJ6qImCBGTzUT
-         xm5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVB5FdNeKtVsu00Jr3R1ooYTm0xWWh2g1tpu2CaOu6FbNPwIPriERn4ooCFJRhE4GNQb+Ow9i3T9YRvUq54eAUM1F9GMnGIfSlNRqPI
-X-Gm-Message-State: AOJu0YylFGDBs365mc9rAb2Nzsw5AnWFh1s6snKLZy7GGHwZL5Q1RGJ4
-	u6uFpbtRSZRI5uA23BSh8U8QeitgK/kF02a+s9KOgn3TZ1SyqtzAiaMQy29/C0QmzVKlTcJY1+Y
-	nb0k=
-X-Google-Smtp-Source: AGHT+IHaWVGr2vHVhPlAZAy2LAvs1fNVb/si+x1K1Pr4aQ2g6MxIy6wsEJlkvjIDIaJm0K7Uo/BM6Q==
-X-Received: by 2002:a50:8719:0:b0:57c:8022:a3d9 with SMTP id 4fb4d7f45d1cf-57c8022a9demr4562505a12.20.1718124995362;
-        Tue, 11 Jun 2024 09:56:35 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c9d5e29e9sm809232a12.2.2024.06.11.09.56.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 09:56:34 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f0dc80ab9so181249866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:56:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/i8DLcSLU1NKy+BxXAJH1qkQBITpfM9qF1pqwpvU/59t+a7lezSz9yYwJLsum3MG215ZUisDa3L/6SaNGkZgw3VT48kWkkPpeTukh
-X-Received: by 2002:a17:907:72d3:b0:a6f:1f4a:dfba with SMTP id
- a640c23a62f3a-a6f1f4ae1eamr427237266b.43.1718124993806; Tue, 11 Jun 2024
- 09:56:33 -0700 (PDT)
+	s=arc-20240116; t=1718125042; c=relaxed/simple;
+	bh=tHF+I96GJM1DzMeNe73SXmMclgaDAk6heGWpVzWBfTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g5vDwyonZ9qyHwYs3NFVB5tw4FtJivTcZU5lP4mfasMmTX6Shjkt/JGhJiQ5mWZIB83X5TYLhhvSHyucGQCjlJdNRb/gaf1Cay6iwN+E+OGLIJ7Ag7HbDqSiXNv5qdhlxZLnMMMbD4XFvsMYka51FxK8x4kbT8gipq90AR6TqW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brD3ms6z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5479BC2BD10;
+	Tue, 11 Jun 2024 16:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718125041;
+	bh=tHF+I96GJM1DzMeNe73SXmMclgaDAk6heGWpVzWBfTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=brD3ms6zQ1YOwd+qZdO7hJFbRuL5RewFTcIduEDgHxJi+AszN70l5plDVBVOOeGYB
+	 bPJTKc39Jll+ArjvI8Bd6q0h5ayJ22AK9QIiGO/AIFj+npQPi6g7aVEwM7wKQ5s8Et
+	 xx3yE1vcjcPCCfOPMkbumaO/uPIEeL3T3mWYPlHYiDzFsnSPaiAHRMEgIMex9w/E/4
+	 GoHGojEfMX65I+E0f+Z59Xn4OJuBuBbET0OjcYAVSR78et+FAnseJOoEXKD/qUi3Dl
+	 s5lf6xNqdFoTjLXV1B3MjBymNHKHvdgQj/X16puDSz9K933USqNV6ts7vW1pL1DJoi
+	 y3ubVi1cI0wvg==
+Date: Tue, 11 Jun 2024 18:57:16 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH HID v3 15/16] HID: bpf: rework
+ hid_bpf_ops_btf_struct_access
+Message-ID: <lqyoauxovbelrzbnohxqc7tluibn72vqlps4lz4dxsxmgpyli3@qwzt4etxntyj>
+References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
+ <20240608-hid_bpf_struct_ops-v3-15-6ac6ade58329@kernel.org>
+ <CAADnVQLCyEZMyThCH6QNopBbWbNcpR+h2AaLhT0apEO7pOWrRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610204821.230388-1-torvalds@linux-foundation.org>
- <20240610204821.230388-5-torvalds@linux-foundation.org> <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
-In-Reply-To: <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 11 Jun 2024 09:56:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
-Message-ID: <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
-Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLCyEZMyThCH6QNopBbWbNcpR+h2AaLhT0apEO7pOWrRQ@mail.gmail.com>
 
-On Tue, 11 Jun 2024 at 07:29, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> Do we expect to use this more widely? If this only really matters for
-> d_hash() it might be better to handle this via the alternatives
-> framework with callbacks and avoid the need for new infrastructure.
+On Jun 10 2024, Alexei Starovoitov wrote:
+> On Sat, Jun 8, 2024 at 2:01 AM Benjamin Tissoires <bentiss@kernel.org> wrote:
+> >
+> > The idea is to provide a list of stucts and their editable fields.
+> >
+> > Currently no functional changes are introduced here, we will add some
+> > more writeable fields in the next patch.
+> >
+> > Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> >
+> > ---
+> >
+> > changes in v3:
+> > - rewrote WRITE_RANGE macro to not deal with offset from the caller side
+> >
+> > new in v2
+> > ---
+> >  drivers/hid/bpf/hid_bpf_struct_ops.c | 91 +++++++++++++++++++++++++++---------
+> >  1 file changed, 69 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > index 056d05d96962..b14eccb121e0 100644
+> > --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/hid_bpf.h>
+> >  #include <linux/init.h>
+> >  #include <linux/module.h>
+> > +#include <linux/stddef.h>
+> >  #include <linux/workqueue.h>
+> >  #include "hid_bpf_dispatch.h"
+> >
+> > @@ -52,40 +53,86 @@ static int hid_bpf_ops_check_member(const struct btf_type *t,
+> >         return 0;
+> >  }
+> >
+> > +struct hid_bpf_offset_write_range {
+> > +       const char *struct_name;
+> > +       u32 struct_length;
+> > +       u32 start;
+> > +       u32 end;
+> > +};
+> > +
+> >  static int hid_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
+> >                                            const struct bpf_reg_state *reg,
+> >                                            int off, int size)
+> >  {
+> > -       const struct btf_type *state;
+> > -       const struct btf_type *t;
+> > -       s32 type_id;
+> > +#define WRITE_RANGE(_name, _field, _is_string)                                 \
+> > +       {                                                                       \
+> > +               .struct_name = #_name,                                          \
+> > +               .struct_length = sizeof(struct _name),                          \
+> > +               .start = offsetof(struct _name, _field),                        \
+> > +               .end = offsetofend(struct _name, _field) - !!(_is_string),
+> 
+> so it works because char name[128]; had last byte as zero
+> before prog writes into it (in addition to potentially having
+> earlier 0 bytes), so the string is guaranteed
+> to be null-terminated regardless of what prog writes into it.
+> Right?
 
-Hmm. The notion of a callback for alternatives is intriguing and would
-be very generic, but we don't have anything like that right now.
+Yeah, struct hid_device is created through hid_allocate_device(), which
+does a kzalloc. Then all operations are supposedly safe in the current
+transport layers, so the last byte should always be \0.
 
-Is anybody willing to implement something like that? Because while I
-like the idea, it sounds like a much bigger change.
+> 
+> Overall:
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-> As-is this will break BE kernels [...]
+Thanks a lot.
 
-I had forgotten about that horror. BE in this day and age is insane,
-but it's easy enough to fix as per your comments. Will do.
+I might send a v4 or not depending if I get other reviews, but I'll make
+sure to take your nitpick in 3/16 into account (cast kdata/udate in the
+beginning of the function to make the lines shorter and less verbose).
 
-> We have some helpers for instruction manipulation, and we can use
-> aarch64_insn_encode_immediate() here, e.g.
->
-> #include <asm/insn.h>
->
-> static inline void __runtime_fixup_16(__le32 *p, unsigned int val)
-> {
->         u32 insn = le32_to_cpu(*p);
->         insn = aarch64_insn_encode_immediate(AARCH64_INSN_IMM_16, insn, val);
->         *p = cpu_to_le32(insn);
-> }
-
-Ugh. I did that, and then noticed that it makes the generated code
-about ten times bigger.
-
-That interface looks positively broken.
-
-There is absolutely nobody who actually wants a dynamic argument, so
-it would have made both the callers and the implementation *much*
-simpler had the "AARCH64_INSN_IMM_16" been encoded in the function
-name the way I did it for my instruction rewriting.
-
-It would have made the use of it simpler, it would have avoided all
-the "switch (type)" garbage, and it would have made it all generate
-much better code.
-
-So I did that change you suggested, and then undid it again.
-
-Because that whole aarch64_insn_encode_immediate() thing is an
-abomination, and should be burned at the stake.  It's misdesigned in
-the *worst* possible way.
-
-And no, this code isn't performance-critical, but I have some taste,
-and the code I write will not be using that garbage.
-
-> This is missing the necessary cache maintenance and context
-> synchronization event.
-
-Will do.
-
-                 Linus
+Cheers,
+Benjamin
 
