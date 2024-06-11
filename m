@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-209529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12F490373A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:56:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB795903780
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C8228C2CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:56:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7138B2DC16
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCFF176AB8;
-	Tue, 11 Jun 2024 08:54:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56654176252;
-	Tue, 11 Jun 2024 08:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0A9178364;
+	Tue, 11 Jun 2024 08:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="q586rybk"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA5B14D714;
+	Tue, 11 Jun 2024 08:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718096088; cv=none; b=OmtRku4fhOVVCnitXLRPS7XrF/L+5k5VK2CKbtCFU1xeHvronC05bYtLsxm4IWxDNLeMrQrLJo3/DMOMk7p7v2nEl0cy1bdeVs+CaGleHMfTo6nsXI7/KrRXLfdRIiAepuZ82SvLLhURLQFcDJfiI51rtO7x0tH8J97hY5OE3Wo=
+	t=1718096107; cv=none; b=KEXvRXDRG5EoP6TBWvDSOBWBSRDTbjs+tRX74u2xhUww70/aWCEMQxBIeQNTAKNN88x1cVc8WCD5OZs9l6qCbCDTteuhqjCfB7mJlUryaEOx5BMaV60FLCIHF7FbRgNR+X+s79WZ7XCAPfT8OK/Dna3sXt/efVzzMZk542KHdS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718096088; c=relaxed/simple;
-	bh=o3eB7wJEdm3DUYd/p49zXlEgGiySZyZUDXG+2U4oMv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/+6Yqcmi85oz2N/0yjKHSZCme/xsBZfxm4p0kYeNSQQg3qjxql7BcXupxlv1ZfqFtcOehjMJlH1CO0CVAaU/jyIZulXlu2A76kgMEKz2uehG0Xre5JZmuQfmrU+NeadBhbw0eV4rmKeXfLu4hMpVecI7fkhNlzyXNMCYrRBH/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F13BA152B;
-	Tue, 11 Jun 2024 01:55:09 -0700 (PDT)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CA183F5A1;
-	Tue, 11 Jun 2024 01:54:45 -0700 (PDT)
-Date: Tue, 11 Jun 2024 09:54:43 +0100
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Riwen Lu <luriwen@hotmail.com>, beata.michalska@arm.com,
-	rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hotran@apm.com,
-	Riwen Lu <luriwen@kylinos.cn>
-Subject: Re: [PATCH v3] cpufreq/cppc: Remove the desired_perf compare when
- set target
-Message-ID: <ZmgQ06jtJBPh5wat@arm.com>
-References: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
- <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
- <20240606090737.z3qenphikjs5ijj4@vireshk-i7>
+	s=arc-20240116; t=1718096107; c=relaxed/simple;
+	bh=8NK0TQwjCqvoGf0Llref6rxWjOCcr9C4GZFcGYgSY64=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWeug6diZTY8/nxaOQYmfyfmWG5xydEW0b4ycXivWF0h1dsSGzO/PM/4VWSzmzdNToh8HA6HaWxfCqj330BP3hkeY1BhOTMmhHTrQNiwJdYqCQtU2OkFBHajcIQTVK/NzZ05nGgDULKZ7VGoDCNxITZq76oAcTphBBb/4URdlDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=q586rybk; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45B8svMg050579;
+	Tue, 11 Jun 2024 03:54:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718096097;
+	bh=O5YjB1BLz0W9hCB2cFwvm5NGx+kjpnWemL+Vm8/hoPg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=q586rybkFbp6OxGX86jrLoqJLlcLniGJjHKABxFlQwTdOlQjuUV1GhOjx3g8j/OQD
+	 xCssXrcPnT/7AYHHaQeUCnozpXOHL1xkWKrUVaJhRQKWY56WRk1sVHQpmGUwUSMYZm
+	 eeqFUv0MTrskG9JTRbRUN2D+gSI50F63q6tZHJ/g=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45B8svti005144
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Jun 2024 03:54:57 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Jun 2024 03:54:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Jun 2024 03:54:57 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45B8suuo047297;
+	Tue, 11 Jun 2024 03:54:56 -0500
+Date: Tue, 11 Jun 2024 14:24:55 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+Subject: Re: [PATCH v5 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+ am62p-j722s-common-{}.dtsi
+Message-ID: <975c90b1-6657-40c6-a336-7f1f58acf531@ti.com>
+References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+ <20240604085252.3686037-2-s-vadapalli@ti.com>
+ <92af5f36-0c21-4b6e-adde-fcf21b540291@kernel.org>
+ <902f024a-b0a1-4a0a-94e2-7cec064a91c6@ti.com>
+ <6959494a-98ba-4ccf-973c-14d079b76f27@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240606090737.z3qenphikjs5ijj4@vireshk-i7>
+In-Reply-To: <6959494a-98ba-4ccf-973c-14d079b76f27@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hey,
+On Mon, Jun 10, 2024 at 10:31:07PM +0300, Roger Quadros wrote:
 
-On Thursday 06 Jun 2024 at 14:37:37 (+0530), Viresh Kumar wrote:
-> Ionela, Beata,
+[...]
+
+> > Based on your suggestion, you seem to propose the following hierarchy:
+> > k3-am62p-{main,mcu,thermal,wakeup}.dtsi = AM62P specific data
+> > k3-am62p.dtsi = k3-am62p-j722s-common-main.dtsi +
+> > 		k3-am62p-j722s-common-mcu.dtsi +
+> > 		k3-am62p-j722s-common-wakeup.dtsi +
+> > 		k3-am62p-j722s-common-thermal.dtsi +
+> > 		k3-am62p-{main,mcu,thermal,wakeup}.dtsi +
+> > 		<delta-5>
+> > k3-am62p5.dtsi = k3-am62p.dtsi + <delta-2>
+> > k3-j722s-{main,mcu,thermal,wakeup}.dtsi = J722S specific data
+> > k3-j722s.dtsi = k3-am62p-j722s-common-main.dtsi +
+> > 		k3-am62p-j722s-common-mcu.dtsi +
+> > 		k3-am62p-j722s-common-wakeup.dtsi +
+> > 		k3-am62p-j722s-common-thermal.dtsi +
+> > 		k3-j722s-{main,mcu,thermal,wakeup}.dtsi +
+> > 		<delta-6>
 > 
-> On 30-05-24, 19:08, Riwen Lu wrote:
-> > From: Riwen Lu <luriwen@kylinos.cn>
-> > 
-> > There is a case that desired_perf is exactly the same with the old perf,
-> > but the actual current freq is not.
-> > 
-> > This happened in S3 while the cpufreq governor is set to powersave.
-> > During cpufreq resume process, the booting CPU's new_freq obtained via
-> > .get() is the highest frequency, while the policy->cur and
-> > cpu->perf_ctrls.desired_perf are in the lowest level(powersave
-> > governor). Causing the warning: "CPU frequency out of sync:", and set
-> > policy->cur to new_freq. Then the governor->limits() calls
-> > cppc_cpufreq_set_target() to configures the CPU frequency and returns
-> > directly because the desired_perf converted from target_freq is the
-> > same with cpu->perf_ctrls.desired_perf and both are the lowest_perf.
-> > Since target_freq and policy->cur have been compared in
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	  [note] below
-
-> > __cpufreq_driver_target(), there's no need to compare desired_perf
-> > and cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target()
-> > to ensure that the CPU frequency is properly configured.
-> > 
-> > Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-> > 
-> > ---
-> > v1 -> v2:
-> >  - Update commit message and email.
-> > v2 -> v3:
-> >  - Update patch subject and commit message.
-> >  - Remove the desired_perf compare logic.
-> > ---
-> >  drivers/cpufreq/cppc_cpufreq.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> > index 15f1d41920a3..337cece61ab5 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -295,9 +295,6 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
-> >  	int ret = 0;
-> >  
-> >  	desired_perf = cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
-> > -	/* Return if it is exactly the same perf */
-> > -	if (desired_perf == cpu_data->perf_ctrls.desired_perf)
-> > -		return ret;
-> >  
-> >  	cpu_data->perf_ctrls.desired_perf = desired_perf;
-> >  	freqs.old = policy->cur;
+> What is the equivalent of k3-am62p5.dtsi here?
+> That should contain k3-j722s.dtsi + CPU and OPP stuff.
 > 
-> Any objections to this change ?
+> I suppose it should be named specific to the SoC variant part number?
 
-It's alright with me.
+AM62P (https://www.ti.com/product/AM62P) has two variants:
+1. 2 Arm Cortex-A53 => AM62P3
+2. 4 Arm Cortex-A53 => AM62P5
+Both variants will share the common k3-am62p.dtsi
 
-Some "nits":
- - the "desired_perf" local variable could be removed in this case.
+J722S (https://www.ti.com/product/TDA4VEN-Q1) has only one variant:
+4 Arm Cortex-A53 => J722S
+Which is currently identical to AM62P5 w.r.t. the number of A53s.
 
- - [note] while this change helps, we'd still need policy->cur to always
-   have the latest request value (see details at [1]) for this check to
-   be made obsolete by the comparison between target_freq and policy->cur,
-   as mentioned in the commit message. But this is/can be a separate
-   matter.
+So there isn't an equivalent of AM62P5/k3-am62p5.dtsi for J722S.
+k3-j722s.dtsi is a combination of k3-am62p.dtsi and k3-am62p5.dtsi.
 
-   [1] https://lore.kernel.org/lkml/ZmB1qKucR5fXk100@arm.com/
-
-Thanks,
-Ionela.
-
-> 
-> -- 
-> viresh
+Regards,
+Siddharth.
 
