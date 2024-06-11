@@ -1,107 +1,223 @@
-Return-Path: <linux-kernel+bounces-210454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4525D9043DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:43:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EDC9043E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE791F220A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:43:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF21C252D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CACC7350E;
-	Tue, 11 Jun 2024 18:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19A59162;
+	Tue, 11 Jun 2024 18:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjDrUy5t"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm8fEhlE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED24A4644C;
-	Tue, 11 Jun 2024 18:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E22138FA1;
+	Tue, 11 Jun 2024 18:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131413; cv=none; b=YNZHTWr4punb2RwUmbN1W5IPJJrivWqND3q96WF7z9qT2N84C1AxODcXQ8oNwdtrhQQD4b4dn5FbSS9sLA0SQ0Oglm/V65Zn3RcTa4ywK7N6tth81RIiCPgFgcGSkOJfX81asbYISmA0u87vt/FaYj8RKwknXAfG0bxbh24ADKc=
+	t=1718131419; cv=none; b=Fmz10XjECiiQzmRorqhsnNTByEcx1q78gh5WR7ptKcDQpsB0nhrmT1TKZ2Gkcm3vsxLkDPFCnu2J4e74gtXzI5eJ6TFmehC0Kf/LqWJdGOZez+dj6KM+GxllIrBjjBMPdsDTgAUJDUqqJVCMZ8zOD5Fl+4yeNKI0fiSR6vd8iko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131413; c=relaxed/simple;
-	bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
+	s=arc-20240116; t=1718131419; c=relaxed/simple;
+	bh=xyfbWFD9PEoC0hy5UMfciLSU6DEIzoltYKj4K6js7RA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uJQZMqRkmuQ5PQzzNNQdAlv4bYwpB5En7Fy4eF5iQkujqNFsKZB9hPcJZFClfAXs0I70Ar0yiEpXYHY9w1X/pi0EZwf46klS6Zsj2049xd2N/sB4HP6gadOrwbBXKakfXv+h9DGIQ6d/f5HIzWiW/QMiOq+O7btjNDpN5b+hN4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjDrUy5t; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso14739731fa.1;
-        Tue, 11 Jun 2024 11:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718131410; x=1718736210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
-        b=QjDrUy5tVwBRkmvOXv+IC1Zv3EROLz3PbbToIk2Twud34vLPRaqrwGagMjByBc7/e6
-         8k2nFatesYHaMDRJS50PYresPzzNB6qyxw5I7faerv1x6skQ2JKWbGSMD89uVnVTOCTx
-         QYubWa7pg3nI8LpLsVV8dwZT3UzRDdpiuoWqbbrKzCK/bj92htSIPFm+O7lOJWeCd+4b
-         +LH1E1bZr0NH+q6LmFtJoaAq2SbQBWVLMZCk98Y+hu5TF4SnHSHia5gFGW9iEhDc3xCJ
-         GDQL4Ia2/sddI6yUbvRgEgDIGrjIlmpeKmu5RAAyIexTZ+cx2heuuwfpciv3npOI9Cye
-         W1pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718131410; x=1718736210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
-        b=FE67VUkNAxD9QNsjyA8qL17SVVxqef6IizyOIYByF3lF+B1YT+qV3uNJAhVZpXsmvu
-         eH0RupYgAXNuOnIUkDA1EYZ2a29n4cZbi8v9FJqVc51xVBit/na4vb8AdBFYKO44200b
-         pkrMQ1sYTE+rnkBpFQ7cMp0c9G/uIP17Bjizhvp+hQTofQHQiCUuCFBalf4H2evB+B5y
-         BqTGBWZ39jvtBe514aLBM5y73fZ5tj3TJRfckq84mhOQyxUofPTtMZtJzRCKkp7RS/k6
-         93LUAOUFiLeumSm8+88hP/uu3rzLh4nz1wrnKJ8qWsEpvQtcASLfWWwtOHxBjf1pKJ7k
-         p8gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwDBKQ6rmzrjlhoLfsGjrqvIOs41av5fsc0WnrufkCqewc2JJQpgBXgefZ8VV//pCJjVPgdYJL43stg/eGCVRpzXFbpb85mrJq96GNQ0vV/58YJVW+7tdpPTX4UlAWGnGYxU+k1ZyvXd6YsNy5ARQh1tauYwpFu8K+jqdIf0NPCSHDT0M=
-X-Gm-Message-State: AOJu0Yyrj4irLytVGmCtgTxVHIGRYLcQBZ+ceKnwZRUfO2iJuP6oE2l4
-	J0oHx7kFut1TaNq79tW+3RlFwWMdINNjAn/5WaQBejvg6GUXH2A5xd79rBonpmxV7mQhUY72K0X
-	6jAELrMTXbQ1QLSDqj73ud1HsiGo=
-X-Google-Smtp-Source: AGHT+IFR0HuBjjtBpGUGnC1n8m5LaRH75CZMOZaWTsBvsZhf+ocdgG8M7BZDoCW1o62xIr7F/2JeXPylHz+px3w6XMw=
-X-Received: by 2002:a2e:7d11:0:b0:2ea:9300:e136 with SMTP id
- 38308e7fff4ca-2eadce7a513mr76072841fa.42.1718131409773; Tue, 11 Jun 2024
- 11:43:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=BP6VjE3PAappFO3uy7259nTEuHoSQwZByGKpSBnjtfnknCPHL6R+58L1MLA8+Gc4YaHk1kkAdxYaVxDhwk2KpV88z+hY584hhdSE6ZgffwDw75BeaGROx+o10FTnXwkpfaKaDjad3BcR3PJ7/ytMbX+Yxk0xQUioYPt16VFrEsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm8fEhlE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22772C4AF48;
+	Tue, 11 Jun 2024 18:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718131419;
+	bh=xyfbWFD9PEoC0hy5UMfciLSU6DEIzoltYKj4K6js7RA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Zm8fEhlEWdlglYa4KZ5EuSpkNUcRkJGAd17h4EYZvvFDFSA93DTXbfIOw3w6DwtmH
+	 TGmDy/pdVlPPtsiyJGhIhn07+twJuLeGy9JPSW27dRx/+P6DJycx/PkAzZaxcAzMfG
+	 Om9EfSd/Betu8WIZAHFQvZHRQJl2gTWS2LpYi+g2kLS9ixzKOa2vJ/WEOo2h1yNzNk
+	 bIQeRIhhm4jBJPzNSsE5f7GmcQur/6W08LWVTKhG04lIUHsSlERgb1bq+ESVIMWj0j
+	 tsVG9/zHQ9qvivfs+pDVIBfyUijoGhx0M8lcOwiW3DyRg00/P2Laan8cAKVXfcVTH1
+	 YajS9ATp5ednA==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24c582673a5so242195fac.2;
+        Tue, 11 Jun 2024 11:43:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWicWQo4T0uQk8D11ME6H/BrZEUF1bkaBvV50QvJ2etpOQmAa/7ooN8ErZyVRDpOyrD+1aUpXT6py6pP29pO44luMnU8/UP/d5tswsE0lAXFl+IKIBI1i18Uobo1t/49sdrkO4D9eE=
+X-Gm-Message-State: AOJu0YxvgGYVaxb09gOPlkwPI1irMmY71kMzUjENIB6OyqZbWMTByJ5m
+	tG8a1F3P8PV+uKUfWO63KimUKPF3WKWBlCzohM1ZTt7rfRa78qyJFemUySDALnUayYcYFN4OOLa
+	pfCO7vas4+CsHMf/oAQdJCIHs8cY=
+X-Google-Smtp-Source: AGHT+IFPl+PkoahK2p0WiQw8OufLfv0QQnXJlc3eiBq9v+GXj33OITqROCuusmvJvSUvwDC2JlLd1/wPv7ppf7jivC8=
+X-Received: by 2002:a05:6870:8182:b0:254:c111:12b9 with SMTP id
+ 586e51a60fabf-254c11119dcmr7784411fac.2.1718131418437; Tue, 11 Jun 2024
+ 11:43:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611132134.31269-1-bavishimithil@gmail.com> <20240611164951.51754ffc@aktux>
-In-Reply-To: <20240611164951.51754ffc@aktux>
-From: Mithil <bavishimithil@gmail.com>
-Date: Wed, 12 Jun 2024 00:13:16 +0530
-Message-ID: <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
-Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
-	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <12458899.O9o76ZdvQC@kreacher> <2340783.ElGaqSPkdT@kreacher> <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
+In-Reply-To: <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 11 Jun 2024 20:43:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hNX03dhSO5rWBhK8Fyzu1zH-aLhrTkm_b0zhMQr_W1Sw@mail.gmail.com>
+Message-ID: <CAJZ5v0hNX03dhSO5rWBhK8Fyzu1zH-aLhrTkm_b0zhMQr_W1Sw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] thermal: trip: Make thermal_zone_set_trips() use
+ trip thresholds
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 8:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade.in=
-fo> wrote:
-> hmm, that might be board specific stuff, maybe keep them as they are in t=
-he
-> twl6030.dtsi and override them in board specific dts files if needed.
-We could do that, since we have no datasheet publicly available for
-6032, I thought it would be better to stick to values which are known
-to be working hence using downstream values. Anything mentioned in the
-BT200 kernel, we could update it with those values.
+On Mon, Jun 10, 2024 at 8:01=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 28/05/2024 18:51, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Modify thermal_zone_set_trips() to use trip thresholds instead of
+> > computing the low temperature for each trip to avoid deriving both
+> > the high and low temperature levels from the same trip (which may
+> > happen if the zone temperature falls into the hysteresis range of
+> > one trip).
+> >
+> > Accordingly, make __thermal_zone_device_update() call
+> > thermal_zone_set_trips() later, when threshold values have been
+> > updated for all trips.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v1 -> v2: Rebase.
+> >
+> > ---
+> >   drivers/thermal/thermal_core.c |    4 ++--
+> >   drivers/thermal/thermal_trip.c |   14 ++++----------
+> >   2 files changed, 6 insertions(+), 12 deletions(-)
+> >
+> > Index: linux-pm/drivers/thermal/thermal_core.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.c
+> > +++ linux-pm/drivers/thermal/thermal_core.c
+> > @@ -513,13 +513,13 @@ void __thermal_zone_device_update(struct
+> >       if (tz->temperature =3D=3D THERMAL_TEMP_INVALID)
+> >               return;
+> >
+> > -     thermal_zone_set_trips(tz);
+> > -
+> >       tz->notify_event =3D event;
+> >
+> >       for_each_trip_desc(tz, td)
+> >               handle_thermal_trip(tz, td, &way_up_list, &way_down_list)=
+;
+>
+> Would it make sense to use the for_each_trip_desc() loop here and update
+> low and high on the fly in this loop ?
+>
+> If a trip point is crossed the way up or down, then
+> handle_thermal_trip() returns a value which in turn results in updating
+> low and high. If low and high are changed then the we call
+> thermal_zone_set_trips() after the loop.
+>
+> The results for the thermal_zone_set_trips() will be the loop, the low,
+> high, prev_low_trip and prev_high_trip variables going away.
+>
+> The resulting function should be:
+>
+> void thermal_zone_set_trips(struct thermal_zone_device *tz, int low, int
+> high)
+> {
+>          int ret;
+>
+>          lockdep_assert_held(&tz->lock);
+>
+>          if (!tz->ops.set_trips)
+>                  return;
+>
+>          /*
+>
+>
+>           * Set a temperature window. When this window is left the
+> driver
+>
+>           * must inform the thermal core via thermal_zone_device_update.
+>
+>
+>           */
+>          ret =3D tz->ops.set_trips(tz, low, high);
+>          if (ret)
+>                  dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+> }
 
-> And is there any reason why you left out the pwm stuff?
-Didn't need it for espresso, but will add in v2.
+So you essentially mean moving the for_each_trip_desc() loop from
+thermal_zone_set_trips() to __thermal_zone_device_update() IIUC.
 
-> I think the twl6030.dtsi and twl6032.dtsi should be as similar as possibl=
-e.
-Agreed. But same min/max values as well?
+The caveat is that it is not necessary to run this loop at all if
+tz->ops.set_trips is NULL.
 
---=20
-Best Regards,
-Mithil
+I was thinking about folding the entire thermal_zone_set_trips() into
+the caller, but that would be a different patch.
+
+>
+> But if you consider that is an additional change, then:
+
+I do.
+
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+Thank you!
+
+>
+> > +     thermal_zone_set_trips(tz);
+> > +
+> >       list_sort(&way_up_list, &way_up_list, thermal_trip_notify_cmp);
+> >       list_for_each_entry(td, &way_up_list, notify_list_node)
+> >               thermal_trip_crossed(tz, &td->trip, governor, true);
+> > Index: linux-pm/drivers/thermal/thermal_trip.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_trip.c
+> > +++ linux-pm/drivers/thermal/thermal_trip.c
+> > @@ -88,17 +88,11 @@ void thermal_zone_set_trips(struct therm
+> >               return;
+> >
+> >       for_each_trip_desc(tz, td) {
+> > -             const struct thermal_trip *trip =3D &td->trip;
+> > -             int trip_low;
+> > +             if (td->threshold < tz->temperature && td->threshold > lo=
+w)
+> > +                     low =3D td->threshold;
+> >
+> > -             trip_low =3D trip->temperature - trip->hysteresis;
+> > -
+> > -             if (trip_low < tz->temperature && trip_low > low)
+> > -                     low =3D trip_low;
+> > -
+> > -             if (trip->temperature > tz->temperature &&
+> > -                 trip->temperature < high)
+> > -                     high =3D trip->temperature;
+> > +             if (td->threshold > tz->temperature && td->threshold < hi=
+gh)
+> > +                     high =3D td->threshold;
+> >       }
+> >
+> >       /* No need to change trip points */
+> >
+> >
+> >
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
 
