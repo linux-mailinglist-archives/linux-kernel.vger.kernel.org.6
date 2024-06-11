@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-209875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E6D903C22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC93903C28
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE11F23C4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DD4284F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412C817C213;
-	Tue, 11 Jun 2024 12:45:36 +0000 (UTC)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A224617C22D;
+	Tue, 11 Jun 2024 12:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYwP88UM"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A238DC0;
-	Tue, 11 Jun 2024 12:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8A11E86F;
+	Tue, 11 Jun 2024 12:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109935; cv=none; b=ZWkMLT2Y1TG8OFn3PAIyP2JxvFaYWakGp4XHccRBvfKxdpkr9b5aibqQtSdH8tRx8vWx1gvhT4ckjqwwND5obg3L+4VGVkhPJdfIAua3L8QAyJPI0Fs8mkI5o+oXTpbBWbSmQ/QRLLfxEMMrbLbI3mWA4VW7Sr+XQX6W2RqegFg=
+	t=1718110106; cv=none; b=Rxq3iZ6RvlFTWSoKypntHycuo/Ximk1nM0piP/FUPjXtIh54OZ5v3PpA0En/rad056H9jtjjay0h7k/k1HHDrZUKrMN582uEeGvDZPXDIAHYsER3tNeqda+t5nezI4aGi4M5BkiLMUgWvZ/SaqGxoTxHJ+rY55Ra2tRb/Olgssc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109935; c=relaxed/simple;
-	bh=nY8+G6+Wc+iKEOD8LIKa0F5xqH0+KD8ciWBL2bCrMIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IpuMAQeI9gZUvZZkC9ovyCpYrWO8EZN2KjL3z7hxJ5PoFWnwaCabC1tGXd4hNQD/UC4njdguYpoVI1xah1mmj9yD2+/HjG2L2FUILUTXuIAbfeIec37h9K6FJGjYqSIGg/WO2nEQiDg4NPNzH136WrV9qmZ+IhT2KQlRwuY6xNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1718110106; c=relaxed/simple;
+	bh=B+F4jYtueaaFeYozuVyzY6N2Tp2CTNJFcO1Ip0Jlv6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cnhpypMpBSK+f/a6IVs90Vaq0HgJTQBbeCGc4ispTpHY6iZQ489WmmHUArddaQHh1fom2+S09RsTeEGaDRlWC4xmrdNEuB1HPbxXBD9N+6kjwi69b2EEAI6NBV0c6JJl85UkbFuGxfkkGTwNUZVfP9+GiGhZ1eNhlIS/21/cwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYwP88UM; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154303276.3;
-        Tue, 11 Jun 2024 05:45:33 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57c83100c5fso1238765a12.3;
+        Tue, 11 Jun 2024 05:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718110103; x=1718714903; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a/Oo7XjX+5E7PNpg5M8THdexoQgRehQoIPwH+7NOY6E=;
+        b=eYwP88UM7W2dmme+g95CUTfjKMTaMaAIYMaj/3JvoF2zDydjCXFxxhp4X1mXgSsrQH
+         rjW9+Gz+LbFGpJgJOeNbtKmOdsLldx5azUgNIzm2tVNPNzBkF150nbzekjdPma13vq/m
+         cca9p2XacKRngWaG2QXiKSZD9KCgriN23NU60vUQyAyv1L7l6QVtQYsV0U6pg4cVEPIE
+         YsTtcUVy5v3JFCA4i2zT6w2Fm/bh/ofRgnl55TLMy2ZCd5D8gap51ttpN7f3uyB5gDoO
+         NcXjwFOsjU7phxPnYDQxx4EsEKO69mchzTwlJu+GwvsmrXzz5YADkBpEedZby4nqYxTA
+         HcmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718109930; x=1718714730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LA50fIPVA2O1q5A6lERTjC6jOEdlOMiNnypF6hx5p6s=;
-        b=YTOWC8DsqEjvA4YgO02pMEUt+TNjeDZPbhGRq2F5DJN6qz1x1t+wNd69uYd00YwbRE
-         0F100BW+6RW/mCbvlgqcJ0W/2XEw1V1ZZIb3vyv+6IsE5N3czc7xVsOxl/CMTkA0yNqH
-         dK+0yNrxONddK8C8tvOEYElpHTDkiX0B3Rch/F3ZlxYySLSJGndEJwd52EowZifRKUI7
-         orMvPA91GCAL6tWL/XS2hmeRnGGjcpgQZ+Emd9GcSo5qjYFIjjCe1AMoCmrjPqJGPsfq
-         W320Pd5gKYx2QWBXqodpxnPApRNWbT3uWe0G02S3pRFtEZXuV9TMhZf0K5zhluacuxcx
-         H3xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbdw4AHKzPp0OWazSWHKNuV4VSShYfOLsjm2NG6AQ/g6isqB2FQgNXHixETqaPl6hAHP4Po3l1uHR/uJuB5F360EaCecW91g5F2afAb6LKB30N0aeE4UUyciTnP0ss3W6BQyxH7gzw3gaFdeOosqg=
-X-Gm-Message-State: AOJu0YzzFyYBycmF3dFyxOcKigDtV3qwRoymKLPS1OxCWiWz2LZkVc4U
-	gNmkS6pXkrjkUfmy3jpf0Thm+V0vFiKHkLqhW4ZKNLuQlAOTTv1TfddVLCQ/
-X-Google-Smtp-Source: AGHT+IEaZi1qP8PiLgXfz3IwsNbouC/zw/oGMEkqXMbGzcSbS+tOupwYkTAfSrC9cre8t+5N/59xOw==
-X-Received: by 2002:a25:bfc8:0:b0:df4:d29a:6897 with SMTP id 3f1490d57ef6-dfaf65c55aemr11105864276.35.1718109929625;
-        Tue, 11 Jun 2024 05:45:29 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfb0138fd2bsm1512911276.51.2024.06.11.05.45.28
+        d=1e100.net; s=20230601; t=1718110103; x=1718714903;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a/Oo7XjX+5E7PNpg5M8THdexoQgRehQoIPwH+7NOY6E=;
+        b=iWZB7KcPgccV86QKJUYHGBE+fB/0XZ97lJP6Z+ppwpNgStD/W9DdhiU24qEDoSnS7G
+         N+QYz/kxSw/2Bduq7VdLb1aLlLKydAQGdcnBUbs4N5NOrMwse+3b5xxjUxorKOcE3Y83
+         Mov2aSSij7Xf2deO6PNG6gTOjrS2X9io6QM6cKllKmM9sJYHEV+3p/FiKXMj7gPLFQfa
+         +0Mhsd9UJbRickMHz/hzOcWLNioQlqbn3g7iDlkhoHECxH6H3ZxoCSa/z/khuztGgqmk
+         lO02gpTFvB62qPLYD4Ml/zVd6f/SCeFSTlB4UDF+BGSkfnojdPFML1dPHL1bgEIymmIw
+         G+cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOqYvOEigr7opsn3UTICAsdv7mj/tbJ3zgsA3rJXDDMzWoN5yHrP7I+t9qG3qv8jt0AtNqzo2HNke3LIxnkCpnVXU79ce4ItJAm9Mv6DWD0vurLlQzMSlux5nQEcSE0LMe1x72FJ7yHH9V7yN8Vz5ydgqogCZan6wL9q5//W46ZayvI8icGd9dqls=
+X-Gm-Message-State: AOJu0YyfkAVw/w0WwinpN8y45qMfju747fEsgNo1ZZYiTqW+MMpWKZxJ
+	QtUuHGRQ4tMEYaD+o0toK3ispf1iz+mgFBlbmGsTGeznbAtex01SwrauwEZF
+X-Google-Smtp-Source: AGHT+IFp/1CR06HJRye+2fqk8C5zPASOQlbfXCIrIAIwmwTUWtI0C1ufR5WmUqLrkAfxRNHE9HGb6Q==
+X-Received: by 2002:a50:9509:0:b0:57a:339f:1b2d with SMTP id 4fb4d7f45d1cf-57c5086e237mr8319342a12.5.1718110102611;
+        Tue, 11 Jun 2024 05:48:22 -0700 (PDT)
+Received: from [192.168.61.55] ([37.30.4.115])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c71b6dcaesm5635493a12.78.2024.06.11.05.48.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154178276.3;
-        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXPH8wW/2DKVkKayODXxO6QHartBiuUNLNIUxIBXW0u2rZuFHEcDZNggNTbSKxXkyp8lKkndgDfoVcnpOwlpt5iom6eNCQEVhE0FJZLuSGgnVgxKwRYVMlDFoIIbjf9JSMgX/0WO+leYQil8Gwj4sE=
-X-Received: by 2002:a25:744d:0:b0:dfa:528d:e8f4 with SMTP id
- 3f1490d57ef6-dfaf65c01c4mr11427597276.33.1718109927736; Tue, 11 Jun 2024
- 05:45:27 -0700 (PDT)
+        Tue, 11 Jun 2024 05:48:22 -0700 (PDT)
+Message-ID: <771bf8d4-5423-4972-ba27-615148a54c77@gmail.com>
+Date: Tue, 11 Jun 2024 14:48:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240316023932.700685-1-liuyuntao12@huawei.com>
-In-Reply-To: <20240316023932.700685-1-liuyuntao12@huawei.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Jun 2024 14:45:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
-Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
-Subject: Re: [PATCH-next v4] arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-To: Yuntao Liu <liuyuntao12@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	arnd@arndb.de, ardb@kernel.org, linux@armlinux.org.uk, afd@ti.com, 
-	akpm@linux-foundation.org, kirill.shutemov@linux.intel.com, corbet@lwn.net, 
-	rppt@kernel.org, robh@kernel.org, tglx@linutronix.de, 
-	linus.walleij@linaro.org, maskray@google.com, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Chris Brandt <Chris.Brandt@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: samsung: midas_wm1811: Fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
+Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Yuntao,
+On 8.06.2024 16:24, Dan Carpenter wrote:
+> This accidentally returns success instead of -EINVAL.
+> 
+> Fixes: c91d0c2e198d ("ASoC: samsung: midas_wm1811: Add GPIO-based headset jack detection")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On Sat, Mar 16, 2024 at 3:44=E2=80=AFAM Yuntao Liu <liuyuntao12@huawei.com>=
- wrote:
-> The current arm32 architecture does not yet support the
-> HAVE_LD_DEAD_CODE_DATA_ELIMINATION feature. arm32 is widely used in
-> embedded scenarios, and enabling this feature would be beneficial for
-> reducing the size of the kernel image.
->
-> In order to make this work, we keep the necessary tables by annotating
-> them with KEEP, also it requires further changes to linker script to KEEP
-> some tables and wildcard compiler generated sections into the right place=
-.
-> When using ld.lld for linking, KEEP is not recognized within the OVERLAY
-> command, and Ard proposed a concise method to solve this problem.
->
-> It boots normally with defconfig, vexpress_defconfig and tinyconfig.
->
-> The size comparison of zImage is as follows:
-> defconfig       vexpress_defconfig      tinyconfig
-> 5137712         5138024                 424192          no dce
-> 5032560         4997824                 298384          dce
-> 2.0%            2.7%                    29.7%           shrink
->
-> When using smaller config file, there is a significant reduction in the
-> size of the zImage.
->
-> We also tested this patch on a commercially available single-board
-> computer, and the comparison is as follows:
-> a15eb_config
-> 2161384         no dce
-> 2092240         dce
-> 3.2%            shrink
->
-> The zImage size has been reduced by approximately 3.2%, which is 70KB on
-> 2.1M.
->
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> Tested-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Good catch, thanks!
 
-Thanks for your patch, which is now commit ed0f941022515ff4 ("ARM:
-9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION") in
-arm/for-next (next-20240611).
-
-I gave this a try on my custom configs for RSK+RZA1 (RZ/A1H)
-and RZA2MEVB (RZ/A2M).  According to bloat-o-meter, enabling
-HAVE_LD_DEAD_CODE_DATA_ELIMINATION reduced kernel size by almost
-500 KiB (-8.3%).  The figures reported in "Memory: ... available"
-were even more impressive: 1032 KiB more free memory than before.
-
-As these boards have only 32 resp. 64 MiB of RAM, and some products
-even use RZ/A1H with just the 10 MiB of on-chip SRAM, this is a good
-improvement to have!
-Thanks!
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Acked-by: Artur Weber <aweber.kernel@gmail.com>
 
