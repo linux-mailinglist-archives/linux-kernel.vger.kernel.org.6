@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-209883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA7F903C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2258903C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E37411C21D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598AA281E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0869E17C7C1;
-	Tue, 11 Jun 2024 12:55:10 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D2717C224;
+	Tue, 11 Jun 2024 12:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H73y7y0+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B5B17C213;
-	Tue, 11 Jun 2024 12:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BE517C20E;
+	Tue, 11 Jun 2024 12:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718110509; cv=none; b=pAu9hPpfZW7VPLruqOjO2cFL+qxlACPjG/SU8p4NCFfDNNsT6KG2ndG+Dla2acVIlGYx2vo+03y+JZgWwhxXfhIqu14xmkQ1ZxBDrFgsrz+zFq1TkMaxjs5EnY9DQ5oCm+qXrrXrJeMNZJHi7miE0G9Na3pi07cuLjhbRV2iCk4=
+	t=1718110540; cv=none; b=U2CW+xi0x2NFoQH65pFZTDzr4oj5wy3KLyLdLJxEMn4r1x057PnsHVaGQv4JqNcQAJNY9EbhV5SIi6Z9YsLX7fW7Z8i/K6ZgyzeCBbxBO+o1EoV0GV7QHIGL1EFaTfm1LoqaWnWnYaQmWIHfQbW2NNDCD/rmQvbRltu4qPmpOEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718110509; c=relaxed/simple;
-	bh=eYrvKMxUbrYpLpniWRPV/2AluAC4D7yDbMQ8qAp2zYI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ke1SAR8d27wENgp0422MPOC4hsNrXNkTY/Un3GN5OpvcdyY07IZkgj8XkyI/qOgaAF7uxwe4y9Cm5GJGkXi3i1b2YwVv5mrKp100SJyVrJUyMtwvUgDC+DkvYa1Wsjght8H6IAyz8VvigJhlJq594ZjdEkTZRBinPpMIfY2wP6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vz7n82Tb6zmZD4;
-	Tue, 11 Jun 2024 20:50:20 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5926140156;
-	Tue, 11 Jun 2024 20:55:02 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Jun
- 2024 20:55:02 +0800
-Subject: Re: [PATCH net-next v7 00/15] First try to replace page_frag with
- page_frag_cache
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>, Alexander
- Duyck <alexander.duyck@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
- Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <bpf@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-References: <20240607123819.40694-1-linyunsheng@huawei.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <e9b01c2c-5dbb-0c43-49bc-10d31545acda@huawei.com>
-Date: Tue, 11 Jun 2024 20:55:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1718110540; c=relaxed/simple;
+	bh=t630DEduj0LmlW15BvzG4knc6MgIMMv1Lu3hCOJHSKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D8K+m+DICSPNSgkzIe61H3xfJI4FtHRk8VtoGyYndTnOi+f6S+C4K0HLMg3l0LkBT17w4KqNmWNpvAVGzTsuGDpd1DX7maU+51fYYBb7pLfjB95wIdrbq+ICZxSJMui8oHIyi0LGc9Zd1u/zK40wf1tv1Tef+MMDabZIHwsm6bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H73y7y0+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B4slbt030133;
+	Tue, 11 Jun 2024 12:55:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XfMYvsvrclLUrWlXbdiA9z3Az4igamXXYXC4Fdu3De0=; b=H73y7y0+oYSu+BFS
+	02lUXFbndviRGVqIkqPvqpDVpspZTSjTi46ybUZRR1DEKWshvqS/BjcaKYhzlj+4
+	oOReCaqNBaba2IOtIsfg9qdCKbQaw+sWtBfNTwZxnbq1FN69tBUOyOraaobsND+z
+	0SGtF8lQAozGEgor4k0UIa4eGMpqj8dlpi72CYKsZUBSWVBxsPjztWeqxVw2lNGA
+	+cbVyR51pkE3+2X9sAlcidlidf79h4U0TwOLdhozOeVFfsW+4/Uftc4GLrxbIfTG
+	NLHWt2Ertos+IvxFew15q4/f3wA7SIarxjMfh5ip9UgTD+ENByU8x9d60qiOUqWu
+	SoHJ7g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymevxefnf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 12:55:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BCtL60019055
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 12:55:21 GMT
+Received: from [10.216.51.73] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 05:55:16 -0700
+Message-ID: <0393a600-609f-45de-96de-a0b0c5d7ac85@quicinc.com>
+Date: Tue, 11 Jun 2024 18:25:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240607123819.40694-1-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] misc: fastrpc: support complete DMA pool access to
+ the DSP
 Content-Language: en-US
+To: Dylan Van Assche <me@dylanvanassche.be>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Caleb Connolly <caleb.connolly@linaro.org>, <phone-devel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <20240524161423.15392-1-me@dylanvanassche.be>
+ <20240524161423.15392-2-me@dylanvanassche.be>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <20240524161423.15392-2-me@dylanvanassche.be>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: z8sj3dswpcq14DJWDtPD5JoZ3qfBe1IF
+X-Proofpoint-GUID: z8sj3dswpcq14DJWDtPD5JoZ3qfBe1IF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 adultscore=0 phishscore=0 malwarescore=0 clxscore=1011
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110094
 
 
-On 2024/6/7 20:38, Yunsheng Lin wrote:
 
-...
-
-> 
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-
-Hi, Alexander & Networking Maintainers
-   Any suggestion or comment about this version?
-   Thanks.
-
-> 
-> 1. https://lore.kernel.org/all/20240228093013.8263-1-linyunsheng@huawei.com/
-> 
-> Change log:
-> V7: Fix doc build warning and error.
-> 
-> V6:
->    1. Fix some typo and compiler error for x86 pointed out by Jakub and
->       Simon.
->    2. Add two refactoring and optimization patches.
-> 
-> V5:
->    1. Add page_frag_alloc_pg() API for tls_device.c case and refactor
->       some implementation, update kernel bin size changing as bin size
->       is increased after that.
->    2. Add ack from Mat.
-> 
-> RFC v4:
->    1. Update doc according to Randy and Mat's suggestion.
->    2. Change probe API to "probe" for a specific amount  of available space,
->       rather than "nonzero" space according to Mat's suggestion.
->    3. Retest and update the test result.
-> 
-> v3:
->    1. Use new layout for 'struct page_frag_cache' as the discussion
->       with Alexander and other sugeestions from Alexander.
->    2. Add probe API to address Mat' comment about mptcp use case.
->    3. Some doc updating according to Bagas' suggestion.
-> 
-> v2:
->    1. reorder test module to patch 1.
->    2. split doc and maintainer updating to two patches.
->    3. refactor the page_frag before moving.
->    4. fix a type and 'static' warning in test module.
->    5. add a patch for xtensa arch to enable using get_order() in
->       BUILD_BUG_ON().
->    6. Add test case and performance data for the socket code.
-> 
-> 
+On 5/24/2024 9:44 PM, Dylan Van Assche wrote:
+> To support FastRPC Context Banks which aren't mapped via the SMMU,
+> make the whole reserved memory region available to the DSP to allow
+> access to coherent buffers.
+>
+> This is performed by assigning the memory to the DSP via a hypervisor
+> call to set the correct permissions for the Virtual Machines on the DSP.
+> This is only necessary when a memory region is provided for SLPI DSPs
+> so guard this with a domain ID check.
+>
+> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+> Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
+> ---
+Reviewed-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>  drivers/misc/fastrpc.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 4c67e2c5a82e..c06667b29055 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -2255,6 +2255,8 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  	int i, err, domain_id = -1, vmcount;
+>  	const char *domain;
+>  	bool secure_dsp;
+> +	struct device_node *rmem_node;
+> +	struct reserved_mem *rmem;
+>  	unsigned int vmids[FASTRPC_MAX_VMIDS];
+>  
+>  	err = of_property_read_string(rdev->of_node, "label", &domain);
+> @@ -2297,6 +2299,23 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  		}
+>  	}
+>  
+> +	rmem_node = of_parse_phandle(rdev->of_node, "memory-region", 0);
+> +	if (domain_id == SDSP_DOMAIN_ID && rmem_node) {
+> +		u64 src_perms;
+> +
+> +		rmem = of_reserved_mem_lookup(rmem_node);
+> +		if (!rmem) {
+> +			err = -EINVAL;
+> +			goto fdev_error;
+> +		}
+> +
+> +		src_perms = BIT(QCOM_SCM_VMID_HLOS);
+> +
+> +		qcom_scm_assign_mem(rmem->base, rmem->size, &src_perms,
+> +				    data->vmperms, data->vmcount);
+> +
+> +	}
+> +
+>  	secure_dsp = !(of_property_read_bool(rdev->of_node, "qcom,non-secure-domain"));
+>  	data->secure = secure_dsp;
+>  
 
 
