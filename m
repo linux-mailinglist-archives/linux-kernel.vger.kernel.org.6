@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-209898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F7C903CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8461903C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 907F9B24322
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9C91F22E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5434B17D353;
-	Tue, 11 Jun 2024 13:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7248A17D35E;
+	Tue, 11 Jun 2024 13:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="XgyFRk1Q"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L94lrCQd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091EB17BB2B;
-	Tue, 11 Jun 2024 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB9717D357
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111035; cv=none; b=IHnCPSffN5feRWLBz90MuuljKMGyfkE+5qErCEdyAjqHx6NnrVtqtlPepr/1m2llgK1E5JE8UBR3J1V8BkwAN3nKDMpjPye4mgYFk2FCXZVzMLMav6J0F1aLZSOXy84GmjM9/7fhOIgVuY2EQn+yty06C5GPnbhov1TRbb1EDgY=
+	t=1718110883; cv=none; b=Ja/UqgbiT0JOLh8tM/unrJujrMGgvs4FUGekxZH++h9TxNF02VykUNEVUuzFshSPM6xbXgGrdHxc/Q875qPYa2A2UjdwndLuLHtxEhwAULcs/xvQ1osZqeWJTDWg1cpP/piuoatj8ZX6HPwWC3dwSC/PVKhIcijY4kNC3o4tAW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111035; c=relaxed/simple;
-	bh=GIiD8mBBYkVKmuFLiCQc9SWoCqqgQN3ghdMmVHdOTJE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UMjdFEuNiNX/N9G3lIBA9DilmJD/UX18miQwlzp4nS5dmnnvB5rt5MuxhkEeiaYDpurRVEAtxrGk31QRmF/4R1vQ0hXRnoDB4s6AYu50WQcTFW8TBbtpER47HJVsQxEWMkyOhVWt8DpFKaV3YLMw+wfF5CVC+OA9jGRdbCuyEUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=XgyFRk1Q; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BCQIjU027505;
-	Tue, 11 Jun 2024 15:03:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=770aedpq5182TConoS3+r5
-	AzAObytUS0CGK7qabj53w=; b=XgyFRk1Qx4Cf5ZD3cl26C1XN/u2//ehCvZYwSH
-	uBoFwcst7xTeQCqCBDS6HKoiY/U/ZkYa5rNjyFFBwoOloE4AEu8j6YGXP3bYvT+e
-	9IYM7R/kHAIYxXPQ+Hfl/y90nMAKXKbAN5NkAWl3R8tFHMERZSdXlRsrUiacth/O
-	1eZIUZEbEKO6j0UBA860eVUkImayWPkFIPwZ8B+/xPrGCPcabPzM2+8lHf2YqWZ7
-	LEPX8GUjX/5CrxoNUxUXZwQiPNHgJiRBTLH87fVH85I7XMpc3XZrOle8gqPoEwkv
-	D3E3pdgrMWWgslLPJnG1b4B5Fr4YVHdY+9t2/xtwcrNhrMyg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp42y21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 15:03:15 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4F6064005B;
-	Tue, 11 Jun 2024 15:03:09 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 27955214D30;
-	Tue, 11 Jun 2024 15:01:57 +0200 (CEST)
-Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
- 2024 15:01:56 +0200
-From: Christophe Roullier <christophe.roullier@foss.st.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/3] Series DTs to deliver Ethernet for STM32MP13
+	s=arc-20240116; t=1718110883; c=relaxed/simple;
+	bh=N5PoFHKoWvFUydSF++A0qAzk4rZ0C9suWHG8tjZ6f+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D5zBT65dV+1/jHzaIOMaChA5Mekk+ybGyEfLkUzX5hk9sNwFOUoDBbtwzspjKr49MxveHaXCy5d6v/aS+quBAhZpCVtZcuUK+ElU5PMQv4I1gIICvMTF1ml/blp9LELByskijnkbumedRr8sSszvXU6BTGt+Z8Ych245NQe9qRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L94lrCQd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4195C32789;
+	Tue, 11 Jun 2024 13:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718110883;
+	bh=N5PoFHKoWvFUydSF++A0qAzk4rZ0C9suWHG8tjZ6f+E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L94lrCQdz78HEeBprwZNyKW4PCTH4eZDeUATzdbu/Kohtt2+zoLs/vWveUKQ/ha9+
+	 E0hxA6qNnW8GRIQDjMiDhx6DxvA2Psn2j40F6rEARHVnyChWXN/3XakihFpYYg0+Bc
+	 Bl6ybg23up+nyQz17TvyJ+HLoMspaaJi3bNtAQS4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH 4/6] driver core: make device_release_driver_internal() take a const *
 Date: Tue, 11 Jun 2024 15:01:07 +0200
-Message-ID: <20240611130110.841591-1-christophe.roullier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+Message-ID: <20240611130103.3262749-10-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
+References: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1411; i=gregkh@linuxfoundation.org; h=from:subject; bh=N5PoFHKoWvFUydSF++A0qAzk4rZ0C9suWHG8tjZ6f+E=; b=owGbwMvMwCRo6H6F97bub03G02pJDGkZXpPO6s/gEPJ/um4Sh1sJz2nuiQUtctnZqRP8f99// Od756PZHbEsDIJMDLJiiixftvEc3V9xSNHL0PY0zBxWJpAhDFycAjCRaRsYZrPXhpx596jiUfyn MCe7mWJmiywP72RYcCri9bZ9ChcrT1rs3KO+J9hn0j8LAwA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
 
-STM32MP13 is STM32 SOC with 2 GMACs instances
-    GMAC IP version is SNPS 4.20.
-    GMAC IP configure with 1 RX and 1 TX queue.
-    DMA HW capability register supported
-    RX Checksum Offload Engine supported
-    TX Checksum insertion supported
-    Wake-Up On Lan supported
-    TSO supported
+Change device_release_driver_internal() to take a const struct
+device_driver * as it is not modifying it at all.
 
-V2: - Remark from Marek (sort properties, typo fix in commit msg)
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/base.h | 2 +-
+ drivers/base/dd.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Christophe Roullier (3):
-  ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
-  ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-DK board
-  ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board
-
- arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi | 71 +++++++++++++++++++++
- arch/arm/boot/dts/st/stm32mp131.dtsi        | 38 +++++++++++
- arch/arm/boot/dts/st/stm32mp133.dtsi        | 31 +++++++++
- arch/arm/boot/dts/st/stm32mp135f-dk.dts     | 23 +++++++
- 4 files changed, 163 insertions(+)
-
-
-base-commit: bb678f01804ccaa861b012b2b9426d69673d8a84
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index cba8307908c7..d332b87cde9e 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -155,7 +155,7 @@ bool bus_is_registered(const struct bus_type *bus);
+ 
+ int bus_add_driver(struct device_driver *drv);
+ void bus_remove_driver(struct device_driver *drv);
+-void device_release_driver_internal(struct device *dev, struct device_driver *drv,
++void device_release_driver_internal(struct device *dev, const struct device_driver *drv,
+ 				    struct device *parent);
+ 
+ void driver_detach(struct device_driver *drv);
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 83d352394fdf..c24eca917d41 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -1284,7 +1284,7 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ }
+ 
+ void device_release_driver_internal(struct device *dev,
+-				    struct device_driver *drv,
++				    const struct device_driver *drv,
+ 				    struct device *parent)
+ {
+ 	__device_driver_lock(dev, parent);
 -- 
-2.25.1
+2.45.2
 
 
