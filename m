@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-209109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E0A902D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8E7902D76
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B176282CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1963C281DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD6E812;
-	Tue, 11 Jun 2024 00:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFA8812;
+	Tue, 11 Jun 2024 00:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvXTE/yI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0SdWZn32"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B26036D;
-	Tue, 11 Jun 2024 00:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF4E18E;
+	Tue, 11 Jun 2024 00:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718064431; cv=none; b=ERHCCMyiU91O8j2wFPJpsrd9LHsAp3wVgCeFUpSeoWsVaddgm7rjHNGdXyuurWC4zK8woHVmmZvRbqp4q/uVnrazzai5Miyn6ADtiZujJVbMzRuDEguqr2ZXStLAm5HR06MNiDOOsf7RNOQEzMNDlsqgAtbDx/mfr/fBWZNTnbQ=
+	t=1718064837; cv=none; b=RoEbR6gZktsR/56aXDmrk+RzxZ7FvpVaODAca/HqmqATi7w03Zs5JmhjBtawaOEUyWn+3fpX+t/w/LoQ/xxmddvTtBQOHd3gg00ueBljyxL/oj7BHgEay3LyshJgzczxlo7SB/3tQsaVzGR5vsphgTm1uANOFFwOLkMF4a7O3Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718064431; c=relaxed/simple;
-	bh=atyHicKZdMAHj/WLHQbktI55MDWwQjhtggNyC1vQN78=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=G7mfrPNoF0VQATAgFBhGYpGGZelGui1JJRbJDz98vIFa2/j3jXmwNH7fsH9uLDdeuxG8F56XbAadqU9Wso94DzF6ECCLdDfoiImv81aYvq+JtCDrPgke+vi+acVYES4s05bQv/N1cfHJN96cY/cYwZqD4GdFEr5D0LDtnrGNSUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvXTE/yI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18069C32786;
-	Tue, 11 Jun 2024 00:07:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718064431;
-	bh=atyHicKZdMAHj/WLHQbktI55MDWwQjhtggNyC1vQN78=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YvXTE/yI0cihdrzYnjsyqEu8vwUkGEzrvKpbBSw0ioa5sdr+SmjOG4HbeXweMmtem
-	 Du/1njQq3MdgB5O6/h0HGKhYWfaThbSIDXdbwNMZ/YGaX7CiYO1gUHhBqFSOiMQL3t
-	 idx6eVTugDbRampqLr2gPhk9i2UmiUChik8JbAOYpTiDo5AYrAsP0eSfDwPBpg1g5h
-	 Dhx/KQI1aEN7POBePyICphL4fyG/XVdhuUgn2GwuT4etcDVGUs8wuFmlMt+pP+hhC/
-	 uiYV0JDFQ3vmbldma8buDJSisRmJoCF9zY7/fUsqhdkH/5yV9N4psxF5F+7xsAolKv
-	 DjKwTkTEdialg==
-Date: Tue, 11 Jun 2024 09:07:07 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Tom Zanussi <zanussi@kernel.org>
-Subject: Re: [PATCH 2/3] tracing/kprobe: Remove unneeded WARN_ON_ONCE() in
- selftests
-Message-Id: <20240611090707.58b663bf1d8659b3b76fc136@kernel.org>
-In-Reply-To: <20240610174052.0fd280f2@gandalf.local.home>
-References: <171805478534.52471.6269290579314514778.stgit@devnote2>
-	<171805480405.52471.13982671291270977479.stgit@devnote2>
-	<20240610174052.0fd280f2@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718064837; c=relaxed/simple;
+	bh=MMoChjlubO/CbVraXX3twISoR0b4Z6eqTKCHUDdUxC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwkTwERL3pozRuty2zEQG23Y39Hr5Jthe5xi+32KHa3S9lCIhTEuD0HIhDeyeNO/G92g1Bvbyb2MfzZomIg06lvrAZQUPO2zeRsEE5mw1JECxE6UpRuctkyL6PPjKVpjAucMp0rcuX6CjbCRkIvtUy7tS1kO+SpYJqMLVZ0G1DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0SdWZn32; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6qqJ9a7fy1RSScoIqniM3oXpUHSrRaKPvWxc35OkLzU=; b=0SdWZn3202PSUPM5JzGe2tkxLj
+	i9hXcZkBqU+yZIPszxSJ736JtKiJvrjIpRHacnfgWUdnKPFL/uT8fjbIFI8TuNfvZpJZv0Ix0nslt
+	54navFKiPCmsnFvcZSmB14xoCS2MT6caLXYAxWYYJee5eCZyB9sv/nZ1Yhtmt1RZkGbg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGp8u-00HL6z-Dw; Tue, 11 Jun 2024 02:13:40 +0200
+Date: Tue, 11 Jun 2024 02:13:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	linux-kernel@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH net-next 3/3] net: xilinx: axienet: Add statistics support
+Message-ID: <7c06c9d7-ad11-4acd-8c80-fbeb902da40d@lunn.ch>
+References: <20240610231022.2460953-1-sean.anderson@linux.dev>
+ <20240610231022.2460953-4-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610231022.2460953-4-sean.anderson@linux.dev>
 
-On Mon, 10 Jun 2024 17:40:52 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Jun 10, 2024 at 07:10:22PM -0400, Sean Anderson wrote:
+> Add support for reading the statistics counters, if they are enabled.
+> The counters may be 64-bit, but we can't detect this as there's no
+> ability bit for it and the counters are read-only. Therefore, we assume
+> the counters are 32-bits.
 
-> On Tue, 11 Jun 2024 06:26:44 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Since the kprobe-events selftest shows OK or NG with the reason, the
-> > WARN_ON_ONCE()s for each place are redundant. Let's remove it.
-> 
-> Note, the ktests we run to validate commits, fail when it detects a WARN()
-> triggered.
-> 
-> If this fails in any configuration, ktest will not detect it failed.
+> +static void axienet_stats_update(struct axienet_local *lp)
+> +{
+> +	enum temac_stat stat;
+> +
+> +	lockdep_assert_held(&lp->stats_lock);
+> +
+> +	u64_stats_update_begin(&lp->hw_stat_sync);
+> +	for (stat = 0; stat < STAT_COUNT; stat++) {
+> +		u32 counter = axienet_ior(lp, XAE_STATS_OFFSET + stat * 8);
 
-Hmm, I think there are 2 options,
- - remove pr_warn() instead. (WARN_ON_ONCE + pr_warn is redundant)
- - Or, remove WARN_ON_ONCE() from each place, but add WARN_ON_ONCE() when
-   `warn` is not zero.
+The * 8 here suggests the counters are spaced so that they could be 64
+bit wide, even when only 32 bits are used. Does the documentation say
+anything about the upper 32 bits when the counters are only 32 bits?
+Are they guaranteed to read as zero? I'm just wondering if the code
+should be forward looking and read all 64 bits? 
 
-Thank you,
+>  static int __axienet_device_reset(struct axienet_local *lp)
+>  {
+>  	u32 value;
+>  	int ret;
+>  
+> +	/* Save statistics counters in case they will be reset */
+> +	if (lp->features & XAE_FEATURE_STATS) {
+> +		mutex_lock(&lp->stats_lock);
+> +		axienet_stats_update(lp);
+> +	}
 
-> 
-> -- Steve
-> 
-> 
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/trace_kprobe.c |   26 +++++++++++++-------------
-> >  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
+It is a pretty unusual pattern to split a mutex lock/unlock like this
+on an if statement. Maybe just unconditionally hold the mutex? This
+does not appear to be anyway hot path, so the overhead should not
+matter.
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+	Andrew
 
