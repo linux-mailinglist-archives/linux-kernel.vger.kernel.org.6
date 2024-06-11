@@ -1,92 +1,104 @@
-Return-Path: <linux-kernel+bounces-209644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5270F9038D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE209038DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC71C23059
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B7C284C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F53178364;
-	Tue, 11 Jun 2024 10:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUdalGxi"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380FF54750;
-	Tue, 11 Jun 2024 10:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF907175548;
+	Tue, 11 Jun 2024 10:29:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2607D54750;
+	Tue, 11 Jun 2024 10:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101680; cv=none; b=FC7eHpw1Q2cw6fIy2c+gZI0b4zLHoD8Qh6Y3rh60GqFJStWIm0GO+QDfTxcs+CIOa4VsDF9+v9EMGk6oVwwPFh+Br62HE1AWQgwfHmUjTbikwBpDdNCJJsigVMu2F1nhjvj1+wFIIRmGNG8OyBQgZW2zNKwUdczsZWn5i+b6xIQ=
+	t=1718101754; cv=none; b=I9AUI5lWMT8zHWSJKKjVMLI+FMB+yyK/NBZgxlO5KlAVqOIHOQ8Img8QnYlWgY6YgXtC4rf1GgXCXs3y2e6cj4LTxVqMXbRLDQL5ml+1z2KSfQSUaMyponLzRUgn3v6KdZ101GnnkLI+92sy27N0edZSWOvFlEjaE2zzFZEO6qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101680; c=relaxed/simple;
-	bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JpDLav+2gI1QYSy0IEsZpeXounzIC48SZEoms+PrptPzLyhibZw5yvmoegXogmATPqiA3VkFes1zEoY8gnZCdokJvRjEV8e/YgKFUawitwcSc+Svej+QCElbpToC0sSAkuarzK8IIhMvJNuL3dbrgVgc6aCaN1ksrgmfuAiwIsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUdalGxi; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f1dc06298so104794266b.1;
-        Tue, 11 Jun 2024 03:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718101677; x=1718706477; darn=vger.kernel.org;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
-        b=QUdalGxiU1wVaBLdFaJbhKunxCVfs18gsA+xFrpqRl6KTCc872zh9ut4xF4BOI9/vw
-         9yR0qLCxNhCYqP4l8067OFGqskYmGrN0b9ZchnoV/ibcPGyol+cAqg01QoqaDvIwK/rz
-         ix/VKvocXuTCFrPWmgG75WPvm4v/n8IT416THwBtGAtuW9BJhrrB2eGEZgzbzixsl3Hm
-         4teVhwRQ3BNya2NJvcuni7yOIg7OEtvBH2YWDy07snBmvOH8v6rA6I8WJ3SXY0tHxHFG
-         WuV24NMjzKCvq2wOzcL/LSi/Hw/Wmiq5apTrhqU5QV7I2l/bBIhdnHpsP/QJelSJexmL
-         NLCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718101677; x=1718706477;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
-        b=Y2UaHcsdSs0f61ZVS7K1JHT0Y7yoVowl5gKftyzilCDbmSTCteKRWWC6xNHwQrCCwQ
-         Rwuojwhm3rtlP88gWVu3PEXHsSVfZQq3gzWe990dqa4STDgdjZfbXQyCM2AX4ZJESrqW
-         f6uVl/YnCeTSeTEboAIdPkaKFviWLfB944989n3pI5mTclZlYyW18dJ2iFuYKKXfmc1u
-         wnF5qogDTB4/FtrfUnysLsDtG8FF5Vo+kn118OR8tb8vz3xyGmWNdv0OqNn0kJJ7ubJ2
-         A2FD7dZ00SmiuGrb2xgHWs9n4j3/nh0oxryRg5RQWUrSsg7OIzbDI4f7nNojGfVuqIFD
-         3Efg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg86xvgMhIWWuGN0CPLZ0MHCX4qdYmY3peQOMGGBllRT42ng2zv8sJGF0TZsg00OQcNodIKzZ9AEJ+xFQA0igTS/2GFAr16NB0KKR717EAmvUYRmpQl3xsFj+tvONGFRRuMWi5aNtxYlAMjXc1cw4rdNbmRaaNjmQA1slBw8NABVt2SkyIqZ4=
-X-Gm-Message-State: AOJu0YyFK+/UdIDKcG+ey8sv20XTq5/TIKrXHMi2ulsO9qrexpkskt/D
-	ADaqyuvil8rB/q4kseDcpHR/LKz8MTnTCLH9g7HANxyZhf0EGCOL
-X-Google-Smtp-Source: AGHT+IFRNCDtyL/Af4ehroEydEl43cOldnihNyAhV1ss3teSJsc2ehyXf6yqeG0Sbf9RDPQM+z/1Eg==
-X-Received: by 2002:a17:906:1394:b0:a6f:2153:855b with SMTP id a640c23a62f3a-a6f215385d1mr274858066b.26.1718101677247;
-        Tue, 11 Jun 2024 03:27:57 -0700 (PDT)
-Received: from michal-Latitude-5420.. ([178.217.115.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0fbfaf0bsm391105866b.7.2024.06.11.03.27.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:27:56 -0700 (PDT)
-From: =?UTF-8?q?Sebastian=20=C5=BB=C3=B3=C5=82tek?= <sebek.zoltek@gmail.com>
-To: syzbot+4fec412f59eba8c01b77@syzkaller.appspotmail.com
-Cc: jack@suse.com,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Testing if issue still reproduces
-Date: Tue, 11 Jun 2024 12:27:46 +0200
-Message-ID: <20240611102746.620599-1-sebek.zoltek@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000009dcd7705f5776af6@google.com>
-References: <0000000000009dcd7705f5776af6@google.com>
+	s=arc-20240116; t=1718101754; c=relaxed/simple;
+	bh=spQe+xwhZKKiF/RCCKP3Pjjjdr5YBWx9tejQ73rOtyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgq19yUl97nkzmJJTe5LyC/6lCLYuKhwegV84mpTwjT73rNLkvHo7QV2fFC1kXjkwPxjIMjVbA9S+ztU43EWWNZuctSR6hhcgXm9m37kLxhZkwlRLhLgY3akTiclS3k9JXrSEM4+4gcOXlLQmG4xU+EwUb69Z83Vf4p4N/UUdQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 090BF1424;
+	Tue, 11 Jun 2024 03:29:36 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 275103F5A1;
+	Tue, 11 Jun 2024 03:29:11 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:29:09 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "liwei (JK)" <liwei728@huawei.com>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, liaoyu15@huawei.com
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+Message-ID: <Zmgm9Rf0piqFqnrI@arm.com>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <ZjoBrF4bAK5ukm7H@arm.com>
+ <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
+ <ZmB1qKucR5fXk100@arm.com>
+ <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
+ <ZmgbRh+m9MmEaopK@arm.com>
+ <20240611094526.vcirawlsdefbkuhf@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Tested-by: Sebastian Zoltek sebek.zoltek@gmail.com
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611094526.vcirawlsdefbkuhf@vireshk-i7>
 
-#sys test
+On Tuesday 11 Jun 2024 at 15:15:26 (+0530), Viresh Kumar wrote:
+> On 11-06-24, 10:39, Ionela Voinescu wrote:
+> > Makes sense! But maybe we should no longer update policy->cur to the
+> > current/hardware frequency once a request comes through from a
+> > governor, and we have a first actually requested value.
+> 
+> Hmm, not sure I understood that. When the request comes from governor,
+> we only update policy->cur to the requested frequency and not the
+> actual hardware frequency. And it is very much required. policy->cur
+
+Yes, I mean we should only update policy->cur to a requested frequency
+from a governor, after we start it (cpufreq_start_governor()).
+
+But currently policy->cur gets updated to the .get() returned value in
+multiple places, via cpufreq_verify_current_freq() (for example from 
+show_cpuinfo_cur_freq() or cpufreq_get().
+
+.get() is meant to return the current frequency of the hardware and that
+can opportunistically be different from the last request made.
+
+(+ we probably should force the first request from a governor to go
+through to the driver to make sure the policy->cur obtained before,
+via .get(), did not just happen to coincide with the governor request,
+therefore making the request no longer go through to the driver: see
+__cpufreq_driver_target)
+
+> needs to be up to date all the times, it is an important part of the
+> entire working of the cpufreq core..
+> 
+
+When you say that "policy->cur must be kept up to date at all times",
+I suppose you mean that it should be kept up to date with any frequency
+change requests not with any changes happening in hardware?
+
+Thanks,
+Ionela.
+
+> -- 
+> viresh
 
