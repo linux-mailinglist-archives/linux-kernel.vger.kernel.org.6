@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-210151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D2C903FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962CD903FF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9861F24696
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A51F2471D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE69325776;
-	Tue, 11 Jun 2024 15:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D8A28DC1;
+	Tue, 11 Jun 2024 15:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="uJ0vzSkn"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ouftaKNP"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE1A219E7;
-	Tue, 11 Jun 2024 15:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E3E219E7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718119678; cv=none; b=C/VquWtlCHbj1hNCTZOoN248Y4u0wcZ+N3ukPRM71lkABqbqIZmH3809+2RDjSOWzsdQ8WXwqV9PxfHID8wZU3ml10mCcFaPBIWH9Ji5tonr7cOmIaY8U7sUm++0+0/gwyB7x8hrXCzVOmXrnAK6Lqi4klykxTx65ENhX/YHcew=
+	t=1718119740; cv=none; b=TeU/OYAKn1s9kfXTX68S51Hp3WNHjjMR3z4wgSLl46wELQpGomy9BSYA3G3RAppEIWyxQ1N0VLeA5tM4Mok9/EUjujwhIq5+VrBGnZF9wUR/qK6rXT8SucRNie8JxcgKxQ1UA31iezJ7HHbMK8K690wZT9OElCnIqLOvKmr1wm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718119678; c=relaxed/simple;
-	bh=bckD34ce3BLIg4fhivwUbxeT9ELN7t78T8hp5H2vVD4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dNU4/UZNLOEDxQSrHBrlZtJSuooD00ZFHhxK7cqa2z/ckbogDGSzA156M/bBL84OQ7Qhvd3G0S34G6Mm11/kTJ2hTgaXAJBPpcekHA7ipN9ABH0hQJspXVWyocfikKBVkBa3JMTT7kqk9gCCgrL8rFlKIhpXDDF+7a1dmxRCpGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=uJ0vzSkn; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0382EA0A9B;
-	Tue, 11 Jun 2024 17:27:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=+fcXqLCe4F1bXJgjKSJ//mKl8KYr7kb10sDPWBlrK7M=; b=
-	uJ0vzSknW5jLFMW3SUQ9qTgps1gqUv99wdY/LGus0tp97XextN81kQ6hmSHeFKl5
-	2LJljIwe05aPK07c9fv2VYs0Tb615ZBn7QmDnof1FLyoIPl1cfdUU8zCFIvLpbWD
-	koguLizVQf4QKl10YrsmsV3FPhXqTw2q513fBTKwTrjdoo8ndiAIbr4JCdxHPOJh
-	Cdg4SvIMVKZllzlR9DbX5V5XRfjbEWMUPKuTitW+rUSoiZfCw4jP/MH6/6F3ldnC
-	v0IP54NVKbEOIi/OmmC85YX3oRNdTwxLXqlS3aPbLgIPDY8HQo4VTcL9ArrwExAy
-	mnbqijlj0R4ELO4uErzfBeNAuFKV5RsW3ELMuBdMqLDm0M4GtAm4vGzKRwpqwV2f
-	QPYZ1ae4/nB0Cf8Md6HahnTUdooIBfsTWYS0YA7vvjQ954RRtcFL9DjPs6MBAJZN
-	SqZIUvZs7fYIyMX5qHIIvS6EzHyYHuNFYMOykvHQZ7GmtjqvnSKaYY6hmPuMeLFy
-	SN5KbzDso8JU36vjrylC2NOlJVbO8vl1GhGs/vkRz9aV9ja3jDOPXL2Jv0lQmKJ4
-	2JzaJqQNRi+TRRuenF7PIfDc1ZtEolFdnw1Fx0uccue622JJz7iLnOtxZhh5COgA
-	89vpUOtpn+s6XFUToQteJMQV+uJvmNr0Rd0cuk5v6us=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	<linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-Subject: [PATCH] rtc: interface: Add RTC offset to alarm after fix-up
-Date: Tue, 11 Jun 2024 17:27:00 +0200
-Message-ID: <20240611152701.685011-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718119740; c=relaxed/simple;
+	bh=2WrLQnRkJJW8PIvN+lSkf9M7nln0JfBNhjWZYvJKsAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ey5Gfnn8wqEOlKNLbYpA58konKwmnZKgctbwj47ZLJun8Ejj0/JxMke83POp6K/T3fZM8YfOdSxCM/rBMwRT+H0dOHxRGf1oE42wm+h/fsjZiCAhIZqnCWClo9SnGFWlmgg9fFkDi/LOJuPLFvE8QRd49ch3tmdHCyOxUzEvdUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ouftaKNP; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso1599747e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718119736; x=1718724536; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vX66emLSPsiCozjYEcIgCjpS44vD4TxBAyFyr2wQO6Q=;
+        b=ouftaKNP7UxCOE4g6sSn40JDBRbIK0YL9awoFAbYsdjwKS/hhDYcHouLxtKcQRf/qM
+         E2fDhUjdidGA9FEQ9g7KOX0htmyuOygZSmXU+ok9HuODZdxExOQGc5xI2FOi3xK7xfTb
+         rmwsPDg7+/k9CZSSi+T0SxSmKUa2F1UBbLnMUsauFGx3RbcAoqZsdwMUiYYKsDBVfJne
+         PmkwpZHAupjL9SouQgOyuGGIYLCZzqZUTdxkpTBI4NVmUV6D+zzzL7+0lH0s5TOVxfLD
+         o87O2DJgVvc2f/0CD1ktq763UTtavEG1MhYA8dVa4sVMaxL8i+D7Q9JwXYlKW396CEat
+         l1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718119736; x=1718724536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vX66emLSPsiCozjYEcIgCjpS44vD4TxBAyFyr2wQO6Q=;
+        b=hVUqnuBIjK+196skVLcvLCy3mDdMQtxsO0jeBycsVgWZf3E3tn3LILJbpMIgBUhsyH
+         ICqw2F4PGQbkG6sESAyerd5zHPwJXHeAEMsOOz5iIAeg94fgrkTOGG9+WyGzA2irezUb
+         0De1QtN9MlR9ZWD9WhwbU8Tc0xUAU+wkvTwJgo3dupmepn0GhrbhqLLLpByCYmzjJBW3
+         pTfRu/mJGDli5uq3zAwKvs5Orl1Cpbg0dlG9GKx93qsINYosePgWxdLJcgwqO4Qc1jUl
+         QH2X0y3rJsOzTxnpuZ6lKSBB0WZCsIqOFGw+2eoz9XATEx3fn8GvSxwKK9DMvSB4vhzA
+         gT7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqccSi6MB/X+pJwCTpzUIesTkn0HtJaVzfZqPp8QHohh/Xuto/EOrxRetVaCe7dQntCMmQrpe5Q4SY/CoEg/w5zGdgxtStQPYA1mJ9
+X-Gm-Message-State: AOJu0YxHlp/RTfa7Elib+8U/Fk9FKcvaEJiHvdsEo098M2xajBPpDz2r
+	jiWrFWtBX4t0p9ngCEXwvlgD9UnGYBHQRBOXWqsTTsLxybuEun9t8UZR868wAqk=
+X-Google-Smtp-Source: AGHT+IGvxWpypN+Q4GZLa8CZIb81/7RUuQZpYfehnYfxA1SgUhq7yrpOBlMV7ZeMcH30jRNwKRSigw==
+X-Received: by 2002:ac2:4644:0:b0:52b:c10f:995d with SMTP id 2adb3069b0e04-52bc10f9afemr8727418e87.67.1718119735587;
+        Tue, 11 Jun 2024 08:28:55 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c7e8fsm182702335e9.38.2024.06.11.08.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 08:28:55 -0700 (PDT)
+Date: Tue, 11 Jun 2024 18:28:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Joy Chakraborty <joychakr@google.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] nvmem: meson-efuse: Fix return value of nvmem callbacks
+Message-ID: <b730de08-6d92-4667-810a-613d5f2855b8@moroto.mountain>
+References: <20240611145524.1022656-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718119673;VERSION=7972;MC=2950704555;ID=512276;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29916D3B54627C65
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611145524.1022656-1-joychakr@google.com>
 
-`rtc_add_offset()` is called by `__rtc_read_time()`
-and `__rtc_read_alarm()` to add the RTC's offset to
-the raw read-outs from the device drivers. However,
-in the latter case, a fix-up algorithm is run if
-the RTC device does not report a full `struct rtc_time`
-alarm value. In that case, the offset was forgot to be
-added.
+On Tue, Jun 11, 2024 at 02:55:24PM +0000, Joy Chakraborty wrote:
+> Read/write callbacks registered with nvmem core expect 0 to be returned
+> on success and a negative value to be returned on failure.
+> 
+> meson_efuse_read() and meson_efuse_write() call into
+> meson_sm_call_read() and meson_sm_call_write() respectively which return
+> the number of bytes read or written on success as per their api
+> description.
+> 
+> Fix to return error if meson_sm_call_read()/meson_sm_call_write()
+> returns an error else return 0.
+> 
+> Fixes: a29a63bdaf6f ("nvmem: meson-efuse: simplify read callback")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
 
-Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
+Thanks!
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/rtc/interface.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 1b63111cdda2..db8dffffed91 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -275,8 +275,7 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 
- 		/* full-function RTCs won't have such missing fields */
- 		if (rtc_valid_tm(&alarm->time) == 0) {
--			rtc_add_offset(rtc, &alarm->time);
--			return 0;
-+			goto done;
- 		}
- 
- 		/* get the "after" timestamp, to detect wrapped fields */
-@@ -380,6 +379,8 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
- 			 &alarm->time);
- 
-+	rtc_add_offset(rtc, &alarm->time);
-+
- 	return err;
- }
- 
--- 
-2.34.1
-
+regards,
+dan carpenter
 
 
