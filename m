@@ -1,255 +1,165 @@
-Return-Path: <linux-kernel+bounces-210357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4719042C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:51:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BDD9042C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE7852826D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2ECB227B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3737D55E5B;
-	Tue, 11 Jun 2024 17:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4782482ED;
+	Tue, 11 Jun 2024 17:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQBQ3G5G"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zCuxTome"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B519A2570
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A311653E15
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128312; cv=none; b=kqkm0cq3I/mfThIvFT5aup9s5+VLtFERBwiiYlqQEHrcTjX7Kk2Bexwz9GEt9970vboBY9nvOohAo7jGbymyMhN6zd6986Qebv3i8HBU1pPa+1wMUFyceyqvlCHpvN1gM79CPpVL+bEfTKx5DebU2EQ5CExcPYNCcidq2lih7mI=
+	t=1718128324; cv=none; b=jowVWBOEmYXG1h6UIihqsD9dX0wKOrdMjhevqIyBQ8Qj45ifCKm/vXUvZ32ZheKliavVemiP9i35yhcLu6CqU4ANkkKJzAE21Bla+T5NZSR7+XbioVmchrQbihoKTxjDn+ctChe+7YrtDvQe3zXao5wRmmpuYPOjlynG0ArsLdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128312; c=relaxed/simple;
-	bh=6q4EMTPOffxuSPTMuJ5rzPX8KYqgMr33SytOBvfIn4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=czy+rcgbsO1N4bRgXnqOl7HkwpSBx/GIA2FvGANtBt4v9ptLlPjsrRkaBI+YlSJUdXrgaJ/AE3J9U5ppjJk2aOXR5KWg+KCSTJOyJFksfjf81aFzNswQ7iS5be1kZzYHHA0+8vYZXjYgFquwHKavqhYX17sYL0PZUYYnvs7mUDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LQBQ3G5G; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-80b7699abcaso1120088241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:51:50 -0700 (PDT)
+	s=arc-20240116; t=1718128324; c=relaxed/simple;
+	bh=j6Mw7Dc/Rmamgq8D0n3FKdWISB6Vssoz9/RfITAP4S0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlr4G5Xi5jatL9GEY5XKlMBjLk0ibbhyfaTUkpByL6i6Gk3FbjhOPEu3/B2x+ZWKkUE58UbxdUQuC6+JsRatptKE+uYYllXb9WYuhW7EoZ/0wsgGlqZK1AM+Y1LYG7AUWSSmMUBo+Ufanhp6ZeOq974qOe9NpWZQfP1FMw6CirM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zCuxTome; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f6b0a40721so42999615ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718128309; x=1718733109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AgOOvOxwqfeCMq6yLdCzK4I4GbZLJXDhNrH/6ViA8nM=;
-        b=LQBQ3G5G40P494sOqloisM7Yd+M1ua45pfo4uhRPeynJGPUSzDZKp3gqJHg4G8ceaF
-         P8aGwqZ1HdgdSd26aOi9YEc9hANVH7yqmWpSCrwDB8TXAC/AvZ19/VCMUtJ1ZPwzrLBj
-         9wqGsPZol26/M7rx5TjcmQd2lDQNYFhvAtjEL3vRfXNf49LWhYN5B56jm1a8qbWhjNqi
-         sA/YUa0PWsqt/9r315B5DW+zAafjJLNl26M0w46pnEvF4mY6CaSl6AN2af3DGSEQ38oV
-         moPyvcemd+eL51VqoggHxQVPR/kqfLq8nC6ZAThjliUy2ClwGrfRWrugpNxCeOJgJUAa
-         HScw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718128322; x=1718733122; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v+kzQ+TESmWH2rodDnJAJg+m005wAbuCyRq3fRyc+L4=;
+        b=zCuxTomerusXHn49OFrZiVcC8OlR/i02QrewLcCCtHLlKXSItsPoMxTuce7pUN1ZAW
+         I2BdcObaOaHiBFE7UGp4q+iEkREwhCAnA/ivrTXNxpuDl2tE5empr6hRpASREryjq9Fx
+         Zd7oNX/71MO02C7qQz1CcMCb+Jp0+TVo+56WmXaW7FrDwhGuhTaaRjl+njM+dA+itvNd
+         6uvmU7kxZ2cWr7eDsv4Wpz9In3bEDADlRBGJ+xos0tNzB7GQLWvReJry1M9lxjPaHR1k
+         XYVLB/Uq8Pmebhl5N8kuYnWGKQ+8cJKUNzV8uSk7J5LcWeVqMwcqgoSaQxrepF8rkk93
+         t2Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718128309; x=1718733109;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AgOOvOxwqfeCMq6yLdCzK4I4GbZLJXDhNrH/6ViA8nM=;
-        b=C09B4p2ynehy8K1evA1WVsp47CYrKYUc7FcKmgNEXuGB7Dlw1YWpydTY9tX4kR6pdD
-         XKkeNisFGAybn+aykWI2XWtfemR5G8ybuI0Qvci2Tky+5MmiEyD30pKCh0VB5wOCbuB3
-         x/j5VmbunHpRt0km6nLcQ9vD5WTUZzDdz1MOb5gBYX8C9jVuUmwL1Iz83Qq+pfWDoK1J
-         wyT6xnESEfpa+SAQHf+LhM2qAWHKISmu2FED8sF0FUjxWsZ9z3MrhdLkhoETVa6IhJOw
-         sNO8L5X3QS2RCZ0HXQkKAVyvNj0QHPrLW76Dey18uKWSZkJIeLTrpKxl2BS4OHg+FgQ7
-         XPaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfuyvTqY6DSjFnkcEcbjQMqCRjs15AXn6dTeyh//NsvIUUJTKcqv5C/mCs68jzKeHoYLOmYIf+cMZVJiZF/nnGqBrfQdnehmhoGUd9
-X-Gm-Message-State: AOJu0Yz0gjMj3Ok3sHyMm0Pk5N9o6BifTPZSCNAwJhBJsfoOvMI2Muqa
-	FE7rBY6/LSbvmjwWGBApCC/3MP9ncqP3MoyXvps9mtk24RVUm6mJrDrPzEs4JNEjpgDoWzbsQoW
-	QYCNUglLiXsTe/pmDrbtEZIE1dg+ebC9WCpre
-X-Google-Smtp-Source: AGHT+IFW69M4nfsYi29M3zBfyivmaOCONNrtXO/Vdnq3OjZCVVh12iV0VLVWjulmWfiQpP23Fs8hLe/yAlGcfs44q6o=
-X-Received: by 2002:a05:6102:833:b0:48d:8c7f:551a with SMTP id
- ada2fe7eead31-48d8dbdc025mr1300935137.21.1718128309441; Tue, 11 Jun 2024
- 10:51:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718128322; x=1718733122;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+kzQ+TESmWH2rodDnJAJg+m005wAbuCyRq3fRyc+L4=;
+        b=uNZwqQNq3R/WfWM8vADeh0NoOzFkG00VGBuyNZ2pGXTw2Um3LMMwvDmJVrpTxwKkXS
+         KRavEMbTMBM0bDY+nuFZHB39GbxnscWNUH1xVtqaSVniw/Xq4AhXIlpHxS+GLWhcJ3Xz
+         Nlmv9aVwFSCelKen4NxUQWdjh4fzMVAT4S1dEkiCxTO1fLfkZcCIDdkF6EmiQzOtEwUn
+         X1NiYuChdHmThYZcZrnrzZAohxmHaoRfqPjdlb9A3dh6wH0GLcw0n3yYc0mzojuSkHLI
+         R6qzsCAizP2bckB4qAMSLxIXSeDWMlaY3JLnr5mGVlJkCLfkkWPh9yBShEB01liR3NCS
+         KaKw==
+X-Forwarded-Encrypted: i=1; AJvYcCViHrtyv5LNmkUxBXn+TudftbXZc/PiGR9BG+7GSgm3aJu7bnyLL5yKBSeWwBwQwbyk7tGDIjyzQHn8Ju7I9cQ5VDw52qfr18+hbxxP
+X-Gm-Message-State: AOJu0YyWFISGLXVFgcRuhQjP0sIsfX4aJu2MpRVQDMsJ34J9YGtNb8RG
+	jE6HGAJrdNf86vuh7RCs+9+qkK8TJaC0g/PfXB0Ue3DK9XGHsF27lPiU9CpwhWk=
+X-Google-Smtp-Source: AGHT+IG0CXcMZTGrM4/Ht2qa5w3o4qJ6+EtsZ/LkU7bUGzv5nEqEbQ4X3YEnvEJE/XsG2nOTE7o+Wg==
+X-Received: by 2002:a17:902:e80a:b0:1f7:2490:cb69 with SMTP id d9443c01a7336-1f72490d4d6mr50156005ad.60.1718128321885;
+        Tue, 11 Jun 2024 10:52:01 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6fadca2b0sm59819315ad.206.2024.06.11.10.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 10:52:00 -0700 (PDT)
+Date: Tue, 11 Jun 2024 10:51:58 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Guo Ren <guoren@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH 01/13] dt-bindings: riscv: Add xtheadvector ISA extension
+ description
+Message-ID: <ZmiOvgabh3Rd5Vad@ghost>
+References: <20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com>
+ <20240609-xtheadvector-v1-1-3fe591d7f109@rivosinc.com>
+ <CAJF2gTTVu4ZQt+gK7pVYEDVG23Sic=jswkVvX4To=VAD0TMzxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <20240610121820.328876-2-usamaarif642@gmail.com> <CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com>
- <d822ec8b-3b7d-4e5c-ac96-b6fda63da5d4@gmail.com> <CAJD7tkZoaM=dWim7GPqEERDZyxp3PqMNctzXQCPDMO=8kQSwfw@mail.gmail.com>
- <9ddfe544-636d-4638-ae0e-053674e47322@gmail.com> <CAJD7tkY0F-Tczq4j861HxKATzEOfkVv=76m8zFcJHuh8E3VMEw@mail.gmail.com>
- <08ea43f2-13d2-4b27-ae62-42cebc185c7b@gmail.com>
-In-Reply-To: <08ea43f2-13d2-4b27-ae62-42cebc185c7b@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 11 Jun 2024 10:51:08 -0700
-Message-ID: <CAJD7tkZC8e8ZTBSOGZH-1srTeC=jqxwWchd-BjvNsV2FR0oT8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJF2gTTVu4ZQt+gK7pVYEDVG23Sic=jswkVvX4To=VAD0TMzxw@mail.gmail.com>
 
-[..]
-> >> I think its better to handle this in Barrys patch. I feel this series is
-> >> close to its final state, i.e. the only diff I have for the next
-> >> revision is below to remove start/end_writeback for zer_filled case. I
-> >> will comment on Barrys patch once the I send out the next revision of this.
-> > Sorry I did not make myself clearer. I did not mean that you should
-> > handle the large folio swapin here. This needs to be handled at a
-> > higher level because as you mentioned, a large folio may be partially
-> > in the zeromap, zswap, swapcache, disk, etc.
+On Tue, Jun 11, 2024 at 08:06:34PM +0800, Guo Ren wrote:
+> On Mon, Jun 10, 2024 at 12:45 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
 > >
-> > What I meant is that we should probably have a debug check to make
-> > sure this doesn't go unhandled. For zswap, I am trying to add a
-> > warning and fail the swapin operation if a large folio slips through
-> > to zswap. We can do something similar here if folks agree this is the
-> > right way in the interim:
-> > https://lore.kernel.org/lkml/20240611024516.1375191-3-yosryahmed@google.com/.
+> > The xtheadvector ISA extension is described on the T-Head extension spec
+> > Github page [1] at commit 95358cb2cca9.
 > >
-> > Maybe I am too paranoid, but I think it's easy to mess up these things
-> > when working on large folio swapin imo.
->
-> So there is a difference between zswap and this optimization. In this
-> optimization, if the zeromap is set for all the folio bits, then we
-> should do large folio swapin. There still needs to be a change in Barrys
-> patch in alloc_swap_folio, but apart from that does the below diff over
-> v3 make it better? I will send a v4 with this if it sounds good.
->
->
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 6400be6e4291..bf01364748a9 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -234,18 +234,24 @@ static void swap_zeromap_folio_clear(struct folio
-> *folio)
->          }
->   }
->
-> -static bool swap_zeromap_folio_test(struct folio *folio)
-> +/*
-> + * Return the index of the first subpage which is not zero-filled
-> + * according to swap_info_struct->zeromap.
-> + * If all pages are zero-filled according to zeromap, it will return
-> + * folio_nr_pages(folio).
-> + */
-> +static long swap_zeromap_folio_test(struct folio *folio)
->   {
->          struct swap_info_struct *sis = swp_swap_info(folio->swap);
->          swp_entry_t entry;
-> -       unsigned int i;
-> +       long i;
+> > Link: https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc [1]
+> >
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> >  Documentation/devicetree/bindings/riscv/extensions.yaml | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > index 468c646247aa..99d2a9e8c52d 100644
+> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > @@ -477,6 +477,10 @@ properties:
+> >              latency, as ratified in commit 56ed795 ("Update
+> >              riscv-crypto-spec-vector.adoc") of riscv-crypto.
+> >
+> > +        # vendor extensions, each extension sorted alphanumerically under the
+> > +        # vendor they belong to. Vendors are sorted alphanumerically as well.
+> > +
+> > +        # Andes
+> >          - const: xandespmu
+> >            description:
+> >              The Andes Technology performance monitor extension for counter overflow
+> > @@ -484,5 +488,11 @@ properties:
+> >              Registers in the AX45MP datasheet.
+> >              https://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev.-5.0.0-Datasheet.pdf
+> >
+> > +        # T-HEAD
+> > +        - const: xtheadvector
+> > +          description:
+> > +            The T-HEAD specific 0.7.1 vector implementation as written in
+> > +            https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc.
+> URL changed
+> https://github.com/XUANTIE-RV/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc
 
-Why long?
+Oh okay I will change.
 
->
->          for (i = 0; i < folio_nr_pages(folio); i++) {
->                  entry = page_swap_entry(folio_page(folio, i));
->                  if (!test_bit(swp_offset(entry), sis->zeromap))
-> -                       return false;
-> +                       return i;
->          }
-> -       return true;
-> +       return i;
->   }
->
->   /*
-> @@ -581,6 +587,7 @@ void swap_read_folio(struct folio *folio, bool
-> synchronous,
->   {
->          struct swap_info_struct *sis = swp_swap_info(folio->swap);
->          bool workingset = folio_test_workingset(folio);
-> +       long first_non_zero_page_idx;
->          unsigned long pflags;
->          bool in_thrashing;
->
-> @@ -598,10 +605,19 @@ void swap_read_folio(struct folio *folio, bool
-> synchronous,
->                  psi_memstall_enter(&pflags);
->          }
->          delayacct_swapin_start();
-> -       if (swap_zeromap_folio_test(folio)) {
-> +       first_non_zero_page_idx = swap_zeromap_folio_test(folio);
-> +       if (first_non_zero_page_idx == folio_nr_pages(folio)) {
->                  folio_zero_fill(folio);
->                  folio_mark_uptodate(folio);
->                  folio_unlock(folio);
-> +       } else if (first_non_zero_page_idx != 0) {
-> +               /*
-> +                * The case for when only *some* of subpages being
-> swapped-in were recorded
-> +                * in sis->zeromap, while the rest are in zswap/disk is
-> currently not handled.
-> +                * WARN in this case and return without marking the
-> folio uptodate so that
-> +                * an IO error is emitted (e.g. do_swap_page() will sigbus).
-> +                */
-> +                WARN_ON_ONCE(1);
->          } else if (zswap_load(folio)) {
->                  folio_mark_uptodate(folio);
->                  folio_unlock(folio);
->
->
+Do you know the answer to the issue I raised? https://github.com/XUANTIE-RV/thead-extension-spec/issues/52
 
-This is too much noise for swap_read_folio(). How about adding
-swap_read_folio_zeromap() that takes care of this and decides whether
-or not to call folio_mark_uptodate()?
+- Charlie
 
--static bool swap_zeromap_folio_test(struct folio *folio)
-+/*
-+ * Return the index of the first subpage which is not zero-filled according to
-+ * swap_info_struct->zeromap.  If all pages are zero-filled according to
-+ * zeromap, it will return folio_nr_pages(folio).
-+ */
-+static unsigned int swap_zeromap_folio_test(struct folio *folio)
- {
-        struct swap_info_struct *sis = swp_swap_info(folio->swap);
-        swp_entry_t entry;
-@@ -243,9 +248,9 @@ static bool swap_zeromap_folio_test(struct folio *folio)
-        for (i = 0; i < folio_nr_pages(folio); i++) {
-                entry = page_swap_entry(folio_page(folio, i));
-                if (!test_bit(swp_offset(entry), sis->zeromap))
--                       return false;
-+                       return i;
-        }
--       return true;
-+       return i;
- }
-
- /*
-@@ -511,6 +516,25 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
-        mempool_free(sio, sio_pool);
- }
-
-+static bool swap_read_folio_zeromap(struct folio *folio)
-+{
-+       unsigned int idx = swap_zeromap_folio_test(folio);
-+
-+       if (idx == 0)
-+               return false;
-+
-+       /*
-+        * Swapping in a large folio that is partially in the zeromap is not
-+        * currently handled. Return true without marking the folio uptodate so
-+        * that an IO error is emitted (e.g.  do_swap_page() will sigbus).
-+        */
-+       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
-+               return true;
-+
-+       folio_zero_fill(folio);
-+       folio_mark_uptodate(folio);
-+       return true
-+}
-+
- static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
- {
-        struct swap_info_struct *sis = swp_swap_info(folio->swap);
-@@ -600,9 +624,7 @@ void swap_read_folio(struct folio *folio, bool synchronous,
-                psi_memstall_enter(&pflags);
-        }
-        delayacct_swapin_start();
--       if (swap_zeromap_folio_test(folio)) {
--               folio_zero_fill(folio);
--               folio_mark_uptodate(folio);
-+       if (swap_read_folio_zeromap(folio)) {
-                folio_unlock(folio);
-        } else if (zswap_load(folio)) {
-                folio_mark_uptodate(folio);
+> 
+> Others, LGTM.
+> 
+> > +
+> >  additionalProperties: true
+> >  ...
+> >
+> > --
+> > 2.44.0
+> >
+> 
+> 
+> -- 
+> Best Regards
+>  Guo Ren
 
