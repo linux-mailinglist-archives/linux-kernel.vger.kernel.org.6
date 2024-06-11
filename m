@@ -1,199 +1,309 @@
-Return-Path: <linux-kernel+bounces-209297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC319031E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA0F903281
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B9F1F272A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C20287350
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFC4171092;
-	Tue, 11 Jun 2024 05:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cyEhHRmu"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4254617165E;
+	Tue, 11 Jun 2024 06:26:03 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2100.outbound.protection.partner.outlook.cn [139.219.146.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E3417085D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 05:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2756B6116;
+	Tue, 11 Jun 2024 06:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.219.146.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718085492; cv=none; b=s17swgD2EYUHLnpXrWJgpmTLqgmbVzG67luxBBequgQ1uuaa1vIu6/kzx4Jzxh9ZGbBM0dmKAoDBol/ZZyLTQwsaWJUM3jbUTVRYfHtxq9iTI8E53EakNoHlmUvFqGo58ot7QqJ9L+gr24+c2StMmsSKaZx35ShX461EZmJVHFE=
+	t=1718087162; cv=none; b=gqWLNMunjOFSyvcAhZ9YSxPaivUdZVEj1TjFGqrZbbbd3uFLzuxJ9pL+2Az3icl64LjFDctqLK4utdej8doTFI9WLtgEIqxkx+Q/L0bJ590uG9Kq07G7DaP7Fjklv44c0jJast1+Q5p93QFmMNJtX+sYeLziZUHJeRnUXwp0o1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718085492; c=relaxed/simple;
-	bh=GBB/Uk8+cudk122GvBiogfdSb49xEZ/DJt19Rw07vxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTf9lt7I72Ed6d5R7Pu9v5WHe45GnzvbXhUJZv3QbMtiLNsD2OUieqv4meveFysoU9gXGAyk+NbgHnNHfjGSSSKRpIwgxaU0+dYjPlov/jiPpJjyXcdzzFmbn3WYi+NoCcT78O0hkGqBwMcJ+D7SLSD28d/KLWAechqOdLIccqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cyEhHRmu; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jthoughton@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718085486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aqiWe39MZdeODszfKFW0wTFxaRO6NFFUSNnRgYQUTLg=;
-	b=cyEhHRmuHeeS06ZjBXNkPufgh3B8leCOaQ+2mkGJsxw/fHVbVvUbyAUlYdvNZ9xfM9HCHm
-	m4wplQ7pMuC8Dp8TGrb57W3hgjukde4F/i3k4080Q2Pj9PRiHNda6b2hjDUS8A2WB9ueZh
-	mwDKUBEjSMLvLDQO1P+3kvVaJ2uaU30=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: ankita@nvidia.com
-X-Envelope-To: axelrasmussen@google.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: dmatlack@google.com
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: rananta@google.com
-X-Envelope-To: ryan.roberts@arm.com
-X-Envelope-To: seanjc@google.com
-X-Envelope-To: shahuang@redhat.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: weixugc@google.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: yuzhao@google.com
-X-Envelope-To: yuzenghui@huawei.com
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: kvm@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-doc@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-Date: Mon, 10 Jun 2024 22:57:54 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 3/9] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-Message-ID: <ZmfnYnm3K_rHX_VB@linux.dev>
-References: <20240611002145.2078921-1-jthoughton@google.com>
- <20240611002145.2078921-4-jthoughton@google.com>
+	s=arc-20240116; t=1718087162; c=relaxed/simple;
+	bh=OgJyNscB6Zl3qoOHKw5z04aGFUiXSGJAoSWyAh6LG7U=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BM20tbI3+ZbZs0+y9WEwcp2rACY2di+kARu5+IyaOYIjllzv4I0DRQw6gNTETsW8i0Pt9MjxLtG84T0RLBiZdlQ830pBcZUSR6E6npUP9gphTYP2dAWDnlXJo8zqlQW+TnUvW5QBmAI9P3PQlw8Ge39uVHfZ2JFhu72HH6pXju0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=none smtp.client-ip=139.219.146.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15) by SHXPR01MB0861.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:26::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.39; Tue, 11 Jun
+ 2024 01:52:09 +0000
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ ([fe80::358e:d57d:439f:4e8a]) by
+ SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::358e:d57d:439f:4e8a%7])
+ with mapi id 15.20.7611.039; Tue, 11 Jun 2024 01:52:08 +0000
+From: Minda Chen <minda.chen@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Minda Chen <minda.chen@starfivetech.com>
+Subject: [PATCH v1] riscv: dts: starfive: add PCIe dts configuration for JH7110
+Date: Tue, 11 Jun 2024 09:52:00 +0800
+Message-Id: <20240611015200.40996-1-minda.chen@starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: BJXPR01CA0057.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:12::24) To SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611002145.2078921-4-jthoughton@google.com>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SHXPR01MB0863:EE_|SHXPR01MB0861:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a2ddf48-8132-4d83-5fbb-08dc89b91a99
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|366007|7416005|1800799015|41320700004|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	+3utUktzHM014MfBSU4gdBxZnQ6xCLt3JYVjv2KT3gWQPiKWqaGUDdW7rdc4+zsOeB9RVcHQYwFJT3aNHva0/0VqKOnfvYo/JZ6ttfwLffWRRZ4H7oHLzvyh0rrlhrmxKixRgYEBFRHyW/1Q9A12nYSozWJlckNuDaFFzKn8/IFx7DUpEP8FtgPK29YDr43/e3gQKeKK1YTg4BV5TENy75GqU/L5rcxT03JvdxDQU//xDcFe5soMnCssHwmE40LNXdJhUasYjfX6+hWK5FHCdIbKNp8+dA7iGBJ0VKo2SquYGs0jaffzJcJPvAwwLVfUURCkSfhBCCGLH0aBHRspGH/QUaeKqP66UWwXzcLqevfkmNoLo+f8wMtesUeht9tyJMg0okCP6bS8ZpMcbrJuIqfVMnYpMQRkH2M9EQGZ3QUyy0zb6jmGCvD1WAh1uzJp+YssjVqfE87nJAVl0vMm3VYmD4PsDSKgkC5Zoz8zNRYjwfVIFiu5j/tNO48sG+vxgxu0E/Jz0b1395P3oR5UtlR6Q/zbnW6wnn3IgFpADbNgNdmgY9NE1lmLm2MK77opTrz90EqlG2ojSLax/3Ne3289Izk9ZQfFc02wAe1oNj7CjtPLIrJNN4ommTGML8B/
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(7416005)(1800799015)(41320700004)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BKkxR6eqOWpwmUs+z74VoRMvP65jZ1X7nBYvJxZiOZXSeP0Iao2SQvs5y/HE?=
+ =?us-ascii?Q?ntClBOhlE9FTc6C9yg84wEelXxbrGZ6tBNmA018TaEEs7djVjHI7GJ1u+vzX?=
+ =?us-ascii?Q?hY3/9ikIEN14vwHhH0Gm7OBCQqHnizQfNPMQ3MEtF9FFTMPuEu3ClXlymqRd?=
+ =?us-ascii?Q?mrBlG2eYkganO9vlvNkEm7c+Vfh8tCiK+S2K9KzZdNaNjqOJy206DCxVExVG?=
+ =?us-ascii?Q?fN1+uPLLHZ5Oyl3CYlghDVmPzhoNUzzP6M/KfIJpxMxwqwtzXUDmt6i7E/WB?=
+ =?us-ascii?Q?FdkliHzNkEq4veTLlnQeyr91c+yvlnluelf0TKYlLovFax23Lhr2wWZRhshg?=
+ =?us-ascii?Q?ZV8j4cLB4eaEtI7SNJa5E8I7FEyDNSErZrC1qGVslhbTvPQ6xvCXj5eF9A5P?=
+ =?us-ascii?Q?2SYbEQgO1LNhWs8JYs5mgo2gWGrjoVoEBEB8ZpZZQBWFnHPb/iS4xm8cz1PG?=
+ =?us-ascii?Q?QpAqp5uyHx0/2S5DQManTArfs1t9aAZ7s5CWQVhtaWz3mJptkBwNACvyuieJ?=
+ =?us-ascii?Q?DVeQdolog4DK/NO38a/wpRiaNQapuM67u3iXv6edQs/HDqPRyYQc/5GKWscB?=
+ =?us-ascii?Q?ZYjBcnz5var9arY2+v980OSdgzIN6gwt36Rsx7uFs9UVepFYH+NfzktTRp90?=
+ =?us-ascii?Q?RiDq4YtctiPwGhCOmtgVgDsrK417k0oOXgkafW7G8KhBmRXGmwv1bHiZKITp?=
+ =?us-ascii?Q?xbgPfprmV5vtLgvAKi5C0qU32Ho/4pctTw8P+qKemPR4lEQaK6DJgeEPxL3y?=
+ =?us-ascii?Q?VEI/zXzq8/5K8sMcSK3nOD55YQD0So3QX6V6FdMYZUeYGi7ZUNaZh8KDki4Q?=
+ =?us-ascii?Q?yzRjyx2cZFZ5XTVq5GueJqgYjQjGc8IDwg446xbef8NhqtFd8X4ggL903ThF?=
+ =?us-ascii?Q?PEBTmBp7LQOvYB9poEX7qwwAxgaLIR1VigD0GVQ8B4bgPtDje20f+Wib+rpZ?=
+ =?us-ascii?Q?XTI9l5EjGy94X0TZyWkOcB7iz3JnQ1BQGkFNazfqzN/02tLP08ygyqNUmCF7?=
+ =?us-ascii?Q?1c7iTLv9kVgT2Ov1iRmZlOOLcmzZJZ08mp2HAYENDOKbTApoHfA6kbPcNfSQ?=
+ =?us-ascii?Q?m7y35nsZI3FxNoGqErJtM2eGWliH5Ll7//YP7cL1PfQORyhoZ+IX2iltmk/c?=
+ =?us-ascii?Q?A/YJIxuRu0oT6TZmItkZAGls9Jij1phqsimK5YZrNbEKK5XHhQcZ+PfbWQU6?=
+ =?us-ascii?Q?2vCVVXolroIjA1UyBKa/1qZAH7OWRXVxD6NssvtEwqObE3534L3+KYf8KfUC?=
+ =?us-ascii?Q?StYPYue2PQI7dOt3S6+z08nhMpc1gNAsnMxsOY8jPzoGr6wDGWi/e35FHhWR?=
+ =?us-ascii?Q?muL6B6rcQNG9dRC7Z/qxx/G4YLoqWkGw8gL3Oj1E7rzeZXJWpChfC9eNDu9T?=
+ =?us-ascii?Q?sLHA33DaY9arc8xVQWtaCMe/2MZ/AYiBJq7ucowS6E7Ez9QFlvdX5KYqVGhg?=
+ =?us-ascii?Q?ZVHJMb8p3Io+KGO8F4MxcITWn62EAnh0IViSWR/NtQskHdHwVLvVChF5ewE0?=
+ =?us-ascii?Q?W7CDRR9H/pEkORUZAbDoYVyk8fSysrMbhKHs9XvtLJFnaerSnRou7jwENJB1?=
+ =?us-ascii?Q?ImKpZUAmimZFjJxNlEe4RHLTmezbLQyEXryk/Nc/+RvYkxkiiDSqFcN8bZ3T?=
+ =?us-ascii?Q?cw=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a2ddf48-8132-4d83-5fbb-08dc89b91a99
+X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 01:52:08.9234
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d7zRagDnojUb6vxejiHQIX4blRLeLRVC1yjWsYiMK/bi7jSKY5RUvEbbqJS4XDaFQyrWjbsZ03em9wOhHLqHuuk1Av8eoBllV+SDspz5Izc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0861
 
-On Tue, Jun 11, 2024 at 12:21:39AM +0000, James Houghton wrote:
-> Replace the MMU write locks (taken in the memslot iteration loop) for
-> read locks.
-> 
-> Grabbing the read lock instead of the write lock is safe because the
-> only requirement we have is that the stage-2 page tables do not get
-> deallocated while we are walking them. The stage2_age_walker() callback
-> is safe to race with itself; update the comment to reflect the
-> synchronization change.
-> 
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> ---
->  arch/arm64/kvm/Kconfig       |  1 +
->  arch/arm64/kvm/hyp/pgtable.c | 15 +++++++++------
->  arch/arm64/kvm/mmu.c         | 26 ++++++++++++++++++++------
->  3 files changed, 30 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-> index 58f09370d17e..7a1af8141c0e 100644
-> --- a/arch/arm64/kvm/Kconfig
-> +++ b/arch/arm64/kvm/Kconfig
-> @@ -22,6 +22,7 @@ menuconfig KVM
->  	select KVM_COMMON
->  	select KVM_GENERIC_HARDWARE_ENABLING
->  	select KVM_GENERIC_MMU_NOTIFIER
-> +	select KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
->  	select HAVE_KVM_CPU_RELAX_INTERCEPT
->  	select KVM_MMIO
->  	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index 9e2bbee77491..b1b0f7148cff 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -1319,10 +1319,10 @@ static int stage2_age_walker(const struct kvm_pgtable_visit_ctx *ctx,
->  	data->young = true;
->  
->  	/*
-> -	 * stage2_age_walker() is always called while holding the MMU lock for
-> -	 * write, so this will always succeed. Nonetheless, this deliberately
-> -	 * follows the race detection pattern of the other stage-2 walkers in
-> -	 * case the locking mechanics of the MMU notifiers is ever changed.
-> +	 * This walk may not be exclusive; the PTE is permitted to change
+Add PCIe dts configuraion for JH7110 SoC platform.
 
-s/may not/is not/
+Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+---
+ .../boot/dts/starfive/jh7110-common.dtsi      | 64 ++++++++++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++++
+ 2 files changed, 150 insertions(+)
 
-> +	 * from under us. If there is a race to update this PTE, then the
-> +	 * GFN is most likely young, so failing to clear the AF is likely
-> +	 * to be inconsequential.
->  	 */
->  	if (data->mkold && !stage2_try_set_pte(ctx, new))
->  		return -EAGAIN;
-> @@ -1345,10 +1345,13 @@ bool kvm_pgtable_stage2_test_clear_young(struct kvm_pgtable *pgt, u64 addr,
->  	struct kvm_pgtable_walker walker = {
->  		.cb		= stage2_age_walker,
->  		.arg		= &data,
-> -		.flags		= KVM_PGTABLE_WALK_LEAF,
-> +		.flags		= KVM_PGTABLE_WALK_LEAF |
-> +				  KVM_PGTABLE_WALK_SHARED,
->  	};
-> +	int r;
->  
-> -	WARN_ON(kvm_pgtable_walk(pgt, addr, size, &walker));
-> +	r = kvm_pgtable_walk(pgt, addr, size, &walker);
-> +	WARN_ON(r && r != -EAGAIN);
-
-I could've been more explicit last time around, could you please tone
-this down to WARN_ON_ONCE() as well?
-
->  	return data.young;
->  }
->  
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 8bcab0cc3fe9..a62c27a347ed 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1773,25 +1773,39 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
->  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	u64 size = (range->end - range->start) << PAGE_SHIFT;
-> +	bool young = false;
-> +
-> +	read_lock(&kvm->mmu_lock);
->  
->  	if (!kvm->arch.mmu.pgt)
->  		return false;
-
-I'm guessing you meant to have 'goto out' here, since this early return
-fails to drop the mmu_lock.
-
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+index 8ff6ea64f048..1da7379f4e08 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+@@ -294,6 +294,22 @@
+ 	status = "okay";
+ };
+ 
++&pcie0 {
++	perst-gpios = <&sysgpio 26 GPIO_ACTIVE_LOW>;
++	phys = <&pciephy0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie0_pins>;
++	status = "okay";
++};
++
++&pcie1 {
++	perst-gpios = <&sysgpio 28 GPIO_ACTIVE_LOW>;
++	phys = <&pciephy1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie1_pins>;
++	status = "okay";
++};
++
+ &pwmdac {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pwmdac_pins>;
+@@ -476,6 +492,54 @@
+ 		};
+ 	};
+ 
++	pcie0_pins: pcie0-0 {
++		clkreq-pins {
++			pinmux = <GPIOMUX(27, GPOUT_LOW,
++					      GPOEN_DISABLE,
++					      GPI_NONE)>;
++			bias-pull-down;
++			drive-strength = <2>;
++			input-enable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++
++		wake-pins {
++			pinmux = <GPIOMUX(32, GPOUT_LOW,
++					      GPOEN_DISABLE,
++					      GPI_NONE)>;
++			bias-pull-up;
++			drive-strength = <2>;
++			input-enable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++	};
++
++	pcie1_pins: pcie1-0 {
++		clkreq-pins {
++			pinmux = <GPIOMUX(29, GPOUT_LOW,
++					      GPOEN_DISABLE,
++					      GPI_NONE)>;
++			bias-pull-down;
++			drive-strength = <2>;
++			input-enable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++
++		wake-pins {
++			pinmux = <GPIOMUX(21, GPOUT_LOW,
++				      GPOEN_DISABLE,
++					      GPI_NONE)>;
++			bias-pull-up;
++			drive-strength = <2>;
++			input-enable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++	};
++
+ 	pwmdac_pins: pwmdac-0 {
+ 		pwmdac-pins {
+ 			pinmux = <GPIOMUX(33, GPOUT_SYS_PWMDAC_LEFT,
+diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+index 18047195c600..5ac70759e0ab 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -1214,5 +1214,91 @@
+ 			#reset-cells = <1>;
+ 			power-domains = <&pwrc JH7110_PD_VOUT>;
+ 		};
++
++		pcie0: pcie@940000000 {
++			compatible = "starfive,jh7110-pcie";
++			reg = <0x9 0x40000000 0x0 0x1000000>,
++			      <0x0 0x2b000000 0x0 0x100000>;
++			reg-names = "cfg", "apb";
++			linux,pci-domain = <0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x82000000  0x0 0x30000000  0x0 0x30000000 0x0 0x08000000>,
++				 <0xc3000000  0x9 0x00000000  0x9 0x00000000 0x0 0x40000000>;
++			interrupts = <56>;
++			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
++			interrupt-map = <0x0 0x0 0x0 0x1 &pcie_intc0 0x1>,
++					<0x0 0x0 0x0 0x2 &pcie_intc0 0x2>,
++					<0x0 0x0 0x0 0x3 &pcie_intc0 0x3>,
++					<0x0 0x0 0x0 0x4 &pcie_intc0 0x4>;
++			msi-controller;
++			device_type = "pci";
++			starfive,stg-syscon = <&stg_syscon>;
++			bus-range = <0x0 0xff>;
++			clocks = <&syscrg JH7110_SYSCLK_NOC_BUS_STG_AXI>,
++				 <&stgcrg JH7110_STGCLK_PCIE0_TL>,
++				 <&stgcrg JH7110_STGCLK_PCIE0_AXI_MST0>,
++				 <&stgcrg JH7110_STGCLK_PCIE0_APB>;
++			clock-names = "noc", "tl", "axi_mst0", "apb";
++			resets = <&stgcrg JH7110_STGRST_PCIE0_AXI_MST0>,
++				 <&stgcrg JH7110_STGRST_PCIE0_AXI_SLV0>,
++				 <&stgcrg JH7110_STGRST_PCIE0_AXI_SLV>,
++				 <&stgcrg JH7110_STGRST_PCIE0_BRG>,
++				 <&stgcrg JH7110_STGRST_PCIE0_CORE>,
++				 <&stgcrg JH7110_STGRST_PCIE0_APB>;
++			reset-names = "mst0", "slv0", "slv", "brg",
++				      "core", "apb";
++			status = "disabled";
++
++			pcie_intc0: interrupt-controller {
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++				interrupt-controller;
++			};
++		};
++
++		pcie1: pcie@9c0000000 {
++			compatible = "starfive,jh7110-pcie";
++			reg = <0x9 0xc0000000 0x0 0x1000000>,
++			      <0x0 0x2c000000 0x0 0x100000>;
++			reg-names = "cfg", "apb";
++			linux,pci-domain = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x82000000  0x0 0x38000000  0x0 0x38000000 0x0 0x08000000>,
++				 <0xc3000000  0x9 0x80000000  0x9 0x80000000 0x0 0x40000000>;
++			interrupts = <57>;
++			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
++			interrupt-map = <0x0 0x0 0x0 0x1 &pcie_intc1 0x1>,
++					<0x0 0x0 0x0 0x2 &pcie_intc1 0x2>,
++					<0x0 0x0 0x0 0x3 &pcie_intc1 0x3>,
++					<0x0 0x0 0x0 0x4 &pcie_intc1 0x4>;
++			msi-controller;
++			device_type = "pci";
++			starfive,stg-syscon = <&stg_syscon>;
++			bus-range = <0x0 0xff>;
++			clocks = <&syscrg JH7110_SYSCLK_NOC_BUS_STG_AXI>,
++				 <&stgcrg JH7110_STGCLK_PCIE1_TL>,
++				 <&stgcrg JH7110_STGCLK_PCIE1_AXI_MST0>,
++				 <&stgcrg JH7110_STGCLK_PCIE1_APB>;
++			clock-names = "noc", "tl", "axi_mst0", "apb";
++			resets = <&stgcrg JH7110_STGRST_PCIE1_AXI_MST0>,
++				 <&stgcrg JH7110_STGRST_PCIE1_AXI_SLV0>,
++				 <&stgcrg JH7110_STGRST_PCIE1_AXI_SLV>,
++				 <&stgcrg JH7110_STGRST_PCIE1_BRG>,
++				 <&stgcrg JH7110_STGRST_PCIE1_CORE>,
++				 <&stgcrg JH7110_STGRST_PCIE1_APB>;
++			reset-names = "mst0", "slv0", "slv", "brg",
++				      "core", "apb";
++			status = "disabled";
++
++			pcie_intc1: interrupt-controller {
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++				interrupt-controller;
++			};
++		};
+ 	};
+ };
 -- 
-Thanks,
-Oliver
+2.17.1
+
 
