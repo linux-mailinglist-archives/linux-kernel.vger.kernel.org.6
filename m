@@ -1,92 +1,119 @@
-Return-Path: <linux-kernel+bounces-209765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72273903A6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5AF903A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286641F213EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF00F281CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463C417C20D;
-	Tue, 11 Jun 2024 11:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8FD17C7B9;
+	Tue, 11 Jun 2024 11:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGeAbiLO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBuiQGnO"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8717B4E5;
-	Tue, 11 Jun 2024 11:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC0017B4F1;
+	Tue, 11 Jun 2024 11:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105744; cv=none; b=cjg+TJpVOEUiYNK2VLgS7Mb0Zpr1qwwJriKGTAJdDERXwVfxwXmGamFmCNGX26uc7kTJnvrlEDyvaarMSjshjR0KPpKfnD76LlRNwMYkTi5JIpBFw3YfTOzsr5BBjJ59xOtn3ufZFp3RQrLDvUnx4uiVa3Jto2EqkTg9GDPkpxE=
+	t=1718105836; cv=none; b=pg351mDv+tFRgxMrAo9qRP25Lws2FxmP9ze8W+Ymx3i7T2bdEUmDmBM53VLcIkbvSBbcwhMor8TEzR3sF6vqS7yw8F+6vvvqFXyMrkAqV1hv4ZgA+oGIZY2qkMj0S4HyW1avsrj48E30wGgK6daownQcvofS9ZSFcS4efe7fBak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105744; c=relaxed/simple;
-	bh=vIaLVeSYJywYPlUcMLIYwb/jAbrcLibb815/nDIAGBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLeH7/Nq8LWZqsefIL5As4tLCMqXK8NILm93hrwlej/Lov8QRbQ4Jy3iGnzcHjfFPAl1gNtcUWdsbAIgT5bsOKVuPY76UIwWtVs+PJQnxD5nKNtqLnrngjOblbdMhdFuMlsgYgbMrx3GRwOjKv2HbuvGHMbR+gpvMhSG6b2VJNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGeAbiLO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F19C2BD10;
-	Tue, 11 Jun 2024 11:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718105744;
-	bh=vIaLVeSYJywYPlUcMLIYwb/jAbrcLibb815/nDIAGBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGeAbiLOO3DqDwHlEs/APyA1y1dEWYbCwpzafcNR/tGNz0bvVdTtqhVi8kncr81HZ
-	 8fljverjE72HAzzi4aT9b0MUf5vh3gRejleNYPLm7LcjrpWV0PgWYxmtWScT8Z34dH
-	 wMmo+HziDKICuEUmC/GXseLNJ3IwLldp+iiwKM6WkND+++R45Lob56f/8IrwsJCFMT
-	 Jp1iWn2909ijRn81+K9hpvAOkGYwejKopGBHAND/lOT0kAci83ubIGgSyEl9gf8XiJ
-	 Tex3N45V4jv8d0EJnnsFMKkQNefyYEBpPsXJRk0XmREr/QxSTeoQQ823C17TPHU4gG
-	 P7yucmuEf+gTg==
-Date: Tue, 11 Jun 2024 11:35:39 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dustin Howett <dustin@howett.net>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Rajas Paranjpe <paranjperajas@gmail.com>,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	Matt Hartley <matt.hartley@gmail.com>
-Subject: Re: [PATCH v3 3/5] platform/chrome: cros_ec_proto: Introduce
- cros_ec_cmd_versions()
-Message-ID: <Zmg2iwOWRZdCybxw@google.com>
-References: <20240610-cros_ec-charge-control-v3-0-135e37252094@weissschuh.net>
- <20240610-cros_ec-charge-control-v3-3-135e37252094@weissschuh.net>
+	s=arc-20240116; t=1718105836; c=relaxed/simple;
+	bh=FepTHKh4sGeAm/GXcpX4c1WyjmPJrBoituMivVedRxU=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REfCjHfHwlMWYG1K0OYOgLykYd78j3qvLExYu2pE3TMD5bgU4KSVFkr6OWc5oWrNkhtWQM2bGzFQsf1PiGjtAIm+ICNZMlNts46CoI/Piwcy/2EFeeaT/UrnwDCwZQCkL93yyqbcQ5FoU6skzGZI6I/EInp8dFMgia8jQeOzrBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBuiQGnO; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so9052891fa.2;
+        Tue, 11 Jun 2024 04:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718105833; x=1718710633; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lyMlg+Sg02crgNZFrVTdDwmie6O/X88kwR2hhITnEkk=;
+        b=lBuiQGnODUaDNe44H0l+vnTeGkU/NxZRbuBsQNtG1SItl5OYKnJTPNQYbQeNTobl6Q
+         kRcR4/mDseZFMZoAW4DvjVjicaevVyTbE7PSRZB19VXKPpkMe2Ng0LnSVqgCudvQzw2p
+         6yyEqXC5n5iVe67vHJIbmMrKA433Dir5TIUvIkfFSw608b5iEXb31081kmIPH+oFz+61
+         Yhnf6X3tLbcmTibWEnBDTRbwOaWGNeJvwAbx0sD8WiLseXw+VOhvoIfrX+ZNf99kcl/M
+         PFEEEE6a9jUHoBkNS/Ojbxhwh3Njr39ZQtPNrX/D2W6Wrl5ERMbUhnn5E420B1R7NI81
+         iOig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718105833; x=1718710633;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lyMlg+Sg02crgNZFrVTdDwmie6O/X88kwR2hhITnEkk=;
+        b=DdlPzif1Y2EjFj+y8rwPM3t2nE6Ma2nAN6/QNsP9LMJ8c49GoS/kwNlsPmR0puFxsu
+         2ooWMQnGl1LTUHuMtb+l/DSABqiaGbbrTuidjqlCjXQhD1FLRYI3GJUd+Q+Z5JGui9wj
+         yNCQpIAEDZz/hinBX6CmmZ0jwOPi8ioUO1up1hbaY0h8pTEM3h9PeoMuEW3U+UuV1gNA
+         s+aWzeOh8fH49uyzEGdzTUPlivKphfbljHp2ueJ8ltfBHZP88K4ELQioDpyn21ocAbSS
+         pz5S2gLXeZgw4hOH7Zyx6nD19UUNavPbeyxJoRHvGylljL1v/lBYoPGkjZGbBD3QTrmw
+         aD2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXn3bxd/MUR/04ZC2nIqC1aUjiwQX8F5FVsAZ5lkiKuuv5VeB1bZ0ZQ6YHUaIYR+GEvw5VByZ83QVXMTvC6sZWKXGTTmXh32NdAe9iUh9udTuE/TZdaMbv02SPIHvA0pg15QJtn5cQTZppiCQQnsNAS2NKivwB0TKXvRJmduCZnhBcz1Ds=
+X-Gm-Message-State: AOJu0YyUs+M9aso12zBF53j87RGvsfQcqZcyZmWW+DpEhdl3EMEMylr8
+	v8SXGkQmwwT1aCZDBK5KIGDoztk3KfdhBXyB64SCv6FPD/EtLEvf
+X-Google-Smtp-Source: AGHT+IEAE5u/p4dZpDmKbSme6maU/X4vXb80n7i3PLymk8XQ84h6eACZWmKrNzkWjluS/14n/KfuJQ==
+X-Received: by 2002:a2e:97cd:0:b0:2eb:e6ff:7ddf with SMTP id 38308e7fff4ca-2ebe6fff32bmr34010971fa.25.1718105832575;
+        Tue, 11 Jun 2024 04:37:12 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421aace8288sm74410295e9.47.2024.06.11.04.37.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 04:37:11 -0700 (PDT)
+Message-ID: <666836e7.050a0220.16ed5.dd36@mx.google.com>
+X-Google-Original-Message-ID: <Zmg25smfthmZhBAl@Ansuel-XPS.>
+Date: Tue, 11 Jun 2024 13:37:10 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] mips: bmips: rework and cache CBR addr handling
+References: <20240511130349.23409-1-ansuelsmth@gmail.com>
+ <20240511130349.23409-2-ansuelsmth@gmail.com>
+ <ZmgOYI8Mj86PIart@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610-cros_ec-charge-control-v3-3-135e37252094@weissschuh.net>
+In-Reply-To: <ZmgOYI8Mj86PIart@alpha.franken.de>
 
-On Mon, Jun 10, 2024 at 05:51:08PM +0200, Thomas Weißschuh wrote:
-> +/**
-> + * cros_ec_cmd_versions - Get supported version mask.
+On Tue, Jun 11, 2024 at 10:44:16AM +0200, Thomas Bogendoerfer wrote:
+> On Sat, May 11, 2024 at 03:03:45PM +0200, Christian Marangi wrote:
+> > diff --git a/arch/mips/bmips/setup.c b/arch/mips/bmips/setup.c
+> > index 66a8ba19c287..dba789ec75b3 100644
+> > --- a/arch/mips/bmips/setup.c
+> > +++ b/arch/mips/bmips/setup.c
+> > @@ -111,7 +111,7 @@ static void bcm6358_quirks(void)
+> >  	 * because the bootloader is not initializing it properly.
+> >  	 */
+> >  	bmips_rac_flush_disable = !!(read_c0_brcm_cmt_local() & (1 << 31)) ||
+> > -				  !!BMIPS_GET_CBR();
+> > +				  !!bmips_cbr_addr;
+> 
+> this hunk doesn't apply to mips-next, please respin.
+>
 
-I guess we would like to call it something like "cros_ec_get_cmd_versions".
+Thanks for pointing this out. Indded a patch was missing and got lost in
+sending last revision. I just pushed v6 (and then right after v7 as I
+was missing some tag for the DT patch that I forgot to add) that should
+add the already reviwed patch.
 
-> + *
-> + * @ec_dev: EC device
-> + * @cmd: Command to test
-> + *
-> + * Return: version mask on success, negative error number on failure.
-> + */
-> +int cros_ec_cmd_versions(struct cros_ec_device *ec_dev, u16 cmd)
-
-Could it support a "version" parameter as existing EC_CMD_GET_CMD_VERSIONS
-usages use both versions?  An `u16 cmd` parameter and down-cast to u8 for v0
-should be fine. (ec_params_get_cmd_versions vs. ec_params_get_cmd_versions_v1)
+-- 
+	Ansuel
 
