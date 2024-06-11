@@ -1,125 +1,160 @@
-Return-Path: <linux-kernel+bounces-209925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CAE903D01
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1A5903D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BB81C238EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40F61F243FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437CC17C9F7;
-	Tue, 11 Jun 2024 13:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFEE17CA1C;
+	Tue, 11 Jun 2024 13:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwJyvK17"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DxvdD84i"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC01E49E;
-	Tue, 11 Jun 2024 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123C11E49E;
+	Tue, 11 Jun 2024 13:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112014; cv=none; b=pUtqI6y+E48EaD1G5Uzzvt4nmzbsjAngf/pw/upWTTAcZcpkTJRfAjmxr96HYeuvgJ8cZViwRrbcJmu6r1zG6CDe/tTsN8yhBmUGtdLjcHXSIrLHUXdgxzQ5EB1gOA/CQXWvjkd2h5z1doet08k/BlxsgKQxgh6ULQPLm747S5Y=
+	t=1718112083; cv=none; b=RYN1FUhQAMG2/S2vTbxfEgyrw4kqUFf3U/vsIreIvolJ2tfWFU4i/imCq5aP7+n11ZGAqIat5DdCXLdSrcLBRMKG5HxqBvgzpnyyg71GfDmIy/LRWxftQLbl/vBZNXWwt1TtMyvijD6uz2P6jhhM1fDfhkAHIODP8WuviSOo9Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112014; c=relaxed/simple;
-	bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
+	s=arc-20240116; t=1718112083; c=relaxed/simple;
+	bh=X1hSkvk6h7lhP8sMpTcZZ7DbBkJ7/im+J+Og9GUrz9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOnXIREqUEEe7jhq5cGh3J1b2fE5ax7DGSgbeUxYuztJBXatbbJicWR1pAfMRoO5jJW9Hzj9ThNUFWTkQqUAdGcCWeanehHSe8aHxl7oMadHz3VbbNfvQSyrRhv/Q2rNeBTN6Dv5Xyg1OOkWHr6vcfwaZh2drGFMNbGkQu2Sv9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwJyvK17; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718112014; x=1749648014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
-  b=bwJyvK17+Gd5T4QlDVTkPbhz8s/LSoxCHBTQucdXHzW7x7HVnE1AsLsc
-   XpYb3yYh/UmNZjZqO3eBSDOonroClXQzKIypPOlJ1KzqHinoQr/EoRQVf
-   08AhZzWEO62VGWfcriDlXS3jQLVUEDeB+R1fh0Nki7u0aqv+nMxayWQXS
-   vPCiC9ngeF1PsjGO+2toGvWKyyHliVwjh+G7SDC/ofORP+0QHMaCJ/VJb
-   wg03ZMhvyNUkVQknaBAeePyn5C2YkyRcDkON3zG1r7BT6PmH7TmvZ0du6
-   RB5gVb6Jn6beWWtcQq/0KAsZNzfQ0FVhxdhmZUBd58/1sZOv+vRS1i6nj
-   w==;
-X-CSE-ConnectionGUID: nc6+Zm4cRd+Y9El4S4bEUg==
-X-CSE-MsgGUID: Ti6hXySQROaAixZciQJPdg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14661980"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="14661980"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:13 -0700
-X-CSE-ConnectionGUID: yvfEdXfwTOGfTOhvmakTUQ==
-X-CSE-MsgGUID: 1s2C84kRRhKD11GcAk+tbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="40022762"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sH1Py-0000000FXuW-0YY5;
-	Tue, 11 Jun 2024 16:20:06 +0300
-Date: Tue, 11 Jun 2024 16:20:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
-Message-ID: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
- <8182279.JRmrKFJ9eK@diego>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9bFYjaA7buVFWnsQ5CsIgzgxIPZ0EO2eMJNTD/vv3orkNUENsOYQn88Y+e8pYWBOKinp9GmmCmUXt/aKW3EBBLN/oTITsPIgtOrRsOj1FOChAlDygDMkcrI3eZAPp0ve64OY/NTSdvV4XXB5V6zueskLEAOOOc1ZF9+pfprUU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DxvdD84i; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8AC4A40E0176;
+	Tue, 11 Jun 2024 13:21:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NZ1hmuE9M5Y4; Tue, 11 Jun 2024 13:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718112075; bh=zQ+BxX3PrQzzODbCatHqH6d2NIV0kiBDQVnXJqq7btA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DxvdD84iZ7vkwy/GvG5iLU+PF24hOVegUPStZg5nj4tulE2nolmF/5l+Jg23Mzrb5
+	 pKSKtGl5mNzmXW1VQxPq15vrql+olUD1H1M8KhNjltUoUp093Y51ig1IBgtN1lfQQE
+	 xLNjFs9Ayl547gAgAmk3p4p3ULlBgfCy/PL7V6laE062RfDkQUVAUh7atsd1BU9eIM
+	 730R8GrY2PFFPqH7xxlFzcYqyg9un7lXmf2Gg9De99JYcLejzt4X3csmYu0PVv5Ut1
+	 A+av9GKUlgUvANRvbIXCvc6XsByLhpEzigdXdK2Xzr79YOROzgrddx2Fm/M77dmn5V
+	 y4TulMB4/iPnm6hleHLUjlCBWVyF22p0OLnqEndmuOCuNo0lUeonGK5q6opIl3pw7A
+	 JojicZc0dVrVqCqlUzVfaHkwqeGbKoziUkrayZYt1KvJgfX/iu+SiYqlaCVtgBspM+
+	 cnncKbWju/zrnotRrZeTlL7NSFiIe12cNXefqF2X7x9abige97bg82tL5ButTOPnVW
+	 icFgxAZ2/thJHuzTCeE4wQc56T6eiP0f0zzK2bLMsXfs1LB5YeWcxzcSPUhpiMW+1O
+	 D1jGWI6Tsi5Mxx3JtspmXlpKIPNGE9C87SeRbd43WLotmSDQ+x7LD9nn+F5jSWVEn/
+	 4lt9FT9kKutm2+i6Gv+afIsc=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4E66540E0031;
+	Tue, 11 Jun 2024 13:21:05 +0000 (UTC)
+Date: Tue, 11 Jun 2024 15:21:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Peter Anvin <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+Message-ID: <20240611132104.GDZmhPQNZm3vOBRA32@fat_crate.local>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+ <20240610104352.GT8774@noisy.programming.kicks-ass.net>
+ <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
+ <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8182279.JRmrKFJ9eK@diego>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
 
-On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko Stübner wrote:
-> Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
+/me saves a pointer to that mail to show to eager submitters who will
+want to jump on this new thing.
 
-...
+On Mon, Jun 10, 2024 at 11:20:21AM -0700, Linus Torvalds wrote:
+> So for example, if the code could possibly be a module, it's never
+> going to be able to use runtime constants.
 
-> > -		cpuclk->rate_table = kmemdup(rates,
-> > -					     sizeof(*rates) * nrates,
-> > -					     GFP_KERNEL);
-> > +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
-> > +						   GFP_KERNEL);
+Perfectly fine with that.
+
+> If the code doesn't show up as "noticeable percentage of kernel time
+> on real loads", it will not be a valid use for runtime constants.
 > 
-> are you sure the param order is correct?
+> The reason I did __d_lookup_rcu() is that I have optimized that
+> function to hell and back before, and it *still* showed up at 14% of
+> kernel time on my "empty kernel build" benchmark. And the constant
+> load was a noticeable - but not dominant - part of that.
+
+I have seen mails from you, off and on, about __d_lookup_rcu() :-P
+
+> And yes, it shows up that high because it's all D$ misses, and the
+> machine I tested on has more CPU cores than cache, so it's all kinds
+> of broken. But the point ends up being that __d_lookup_rcu() is just
+> very very hot on loads that just do a lot of 'stat()' calls (and such
+> loads exist and aren't just microbenchmarks).
+
+Yap.
+
+> And yes, the benchmarks I run are odd ("why would anybody care about
+> an empty kernel build?") but somewhat real to me (since I do builds
+> between every pull even when they just change a couple of files).
+
+You're not the only one - I'm building every patch too so yeah, got
+a nice Threadripper for exactly that purpose too.
+
+:-)
+ 
+> And yes, to actually even see anything else than the CPU security
+> issues on x86, you need to build without debug support, and without
+> retpolines etc. So my profiles are "fake" in that sense, because they
+> are the best case profiles without a lot of the horror that people
+> enable.
+
+Right, I run with the default settings because, well, we must eat our
+own dogfood but yeah, all that zoo of config options to disable the
+mitigations wasn't added just for fun so others will run similar
+situtaions too, if they don't do that already.
+
+> Others will have other real benchmarks, which is why I do think we'd
+> end up with more uses of this. But I would expect a handful, not
+> "hundreds".
+
+That's a good rule. In talking to Peter I also didn't like the thing of
+having a single ELF section per variable but if we're doing handful,
+meh, ok, I guess.
+
+> I could imagine some runtime constant in the core networking socket
+> code, for example. Or in some scheduler thing. Or kernel entry code.
 > 
-> According to [0], it's (src, element_size, count, gfp), while above
-> (and below) element_size and count seems switched in the
-> kmemdup_array calls.
+> But not ever in a driver or a filesystem, for example. Once you've
+> gotten that far off the core code path, the "load a variable" overhead
+> just isn't relevant any more.
 
-I'm glad you asked. The parameter order is going to be fixed [1].
+Yeah, that makes sense.
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
-
-[1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
