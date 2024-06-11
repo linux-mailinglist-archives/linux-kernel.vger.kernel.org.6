@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-210028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F2F903E4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3244903E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC641C2536A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13DC31C251C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625F717D88B;
-	Tue, 11 Jun 2024 14:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844E817D37B;
+	Tue, 11 Jun 2024 14:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e86UUdKn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="D0Wm4Gej"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5431D52C;
-	Tue, 11 Jun 2024 14:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC241DFF8;
+	Tue, 11 Jun 2024 14:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114502; cv=none; b=eQBRPtBwyzkGtaerpippdZ51EeL3mmr1glJgvuuS7ghZ2r4aeoK2noIp+eeiTcSiYl4esLDDWmhGiy0AxyiOHX8VnnNP//QZWv1t+vu8ETmytKblAWEl8t6Mp57PiBVW5J6mpFe0Z0JqQYCNhaDkOjguPrs6XsYGhf8OlAbMBPs=
+	t=1718114561; cv=none; b=JilrWbqaXMQ4VWrsPvYKHoYMklwefUpQ0qKoZsjwDFw/3pOCumzYua1JdkAK+HFFG+jICoTTYBQ2tvFWvriNFuepOIy0gDoo/Rtwa18fmUKk5l9ejI8NX+F0DQygU4z9itOew4RlcjSG6gCEz1vM1/TjNGd9UCvOelEjhey6g50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114502; c=relaxed/simple;
-	bh=ZfXqe5DRStLJbbL+hA9tbL6IekOLbb51eB0k+L/00qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lXlnNo36hTmDQBowoTJFrgzb+KBL8a640HtDROjfAQdtyqngKK0bMdvAoE8krrzsCRSLk5oVs2ugF4CDPdzDPhIzo1KlPdJOmsmhTtbSrln/Da7T8lyZ7q1FHdWFaHVAAzj4uucBPHqEDtdXRWHSS3vAB02QIwEDUQFbp+I14o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e86UUdKn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B5B6Ki017540;
-	Tue, 11 Jun 2024 14:01:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UI4ZVeDijMil2oU15QweqG+lgenlo/lXYwe5MUgORM0=; b=e86UUdKnR4WPbUoi
-	n4hd07s5rfYxLjZxPXtVfxNRzvH8z8yfzoACLZChSK7HxKQAMgGw0wN51yPftVhK
-	u1IETzTCY0P4quuc0gIroZxVaio69TGa02B0wzykkbWMmArfrFuIzAnEaMcQt6PM
-	i2Dyn4tqb9WIXIGGrMqq8DQv94VC8knVeBmw/F7vGeNNmLx3N9CwYZyaSotXTB0X
-	qV3Udz30drnhIOeXph0Dbe+eYvF3+MBn3p9eRfcwZpCHMY8+TxKSYJijokLYuaxp
-	mjlJNRyS/GuVlVglm9en+qtUgpXmXiglB8e0wPMzewQ7QqjAwo3HaxC+6K9RL0n9
-	mw2Skw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2epk82-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 14:01:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BE1OYr000587
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 14:01:24 GMT
-Received: from [10.48.243.20] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 07:01:24 -0700
-Message-ID: <abef8935-3da2-4736-9ebc-1b5ad1c7e2a2@quicinc.com>
-Date: Tue, 11 Jun 2024 07:01:23 -0700
+	s=arc-20240116; t=1718114561; c=relaxed/simple;
+	bh=W2pEsKL7o7jrs2TaEo52X5dgZvZI9653hgnLFvrpWSg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=d6yH9l4wfWB65vWW1TDVQ4HaK5J1snxhK9U4gz7JVvPNL7K0ZbF6BglD1oZxIBv/8Kyfo6kqozCLZ4KqS/h3d4a3nt56580uYBScztueDw1wOtUXroDaUw2eqhhzTeCKSjFUQ58qSn0+Ewqv0JAB0DeABENZ4aZ5ZhS9hr9lVik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=D0Wm4Gej; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718114515; x=1718719315; i=markus.elfring@web.de;
+	bh=W2pEsKL7o7jrs2TaEo52X5dgZvZI9653hgnLFvrpWSg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=D0Wm4Gejk6TSeDRq9+doUX7Io3ROv8ClPa713A7kmm3ChhE6Vrkx5R67ENav3jiB
+	 v+HZkq7zNZW/1ui3mJlE7d9A7Jnb3rkNbaI3Ntq1vN88WwUogv6SufuERrGtwdlkO
+	 2aMEyqQlHCMidj4Zpou8EXO0B+Oc5JYfaAmW5X1ugehJErJ0w3T/14bmuObjfHUKR
+	 9lRAXbK2xwFDVqSXrmAuQdFMcj8+I2S1pFOsiiZKDI14AGiB1zZo9BRSARPYQ+ClF
+	 MKEB/EM3bJ1ebocSbE1SgcludIdq4+tcgcq9CAVw+BBx0vSMTwubcg/aIGQKdsBmA
+	 Se9tCmH10v+UbQ7qpw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnG2C-1sihrL0iOa-00dahS; Tue, 11
+ Jun 2024 16:01:55 +0200
+Message-ID: <010b1c91-fbde-4b01-a92e-8c14751c7699@web.de>
+Date: Tue, 11 Jun 2024 16:01:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,191 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Dragan Simic <dsimic@manjaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>,
-        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
- <8f2e755bd711b566274119762b19505d@manjaro.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <8f2e755bd711b566274119762b19505d@manjaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 34JGQQK3mHppKrcAt8ATbXVOj5XiFZAm
-X-Proofpoint-GUID: 34JGQQK3mHppKrcAt8ATbXVOj5XiFZAm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 adultscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110101
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Pavel Machek <pavel@ucw.cz>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
+Subject: Re: [PATCH] leds: mt6360: fix memory leak in
+ mt6360_init_isnk_properties()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vXEYOvaM2JhixxYml/MB3pIPwT5XHFYnYUbXKBTecMbfNFSzCAW
+ sglEHnYhxBF/QKA95KliUnr88huv3OXl/oBThbevXPvjUzrL9ptOZyioC1KoLyERAw31xRH
+ PYYKTd8TQ++HEf7YLdU7+tBTUrXTMRnG6PX70ZHo/+WWQ3PjsKw9ikG+Jm57wme+sNXBb8h
+ 9eluliCCFKTyVWamrGCUw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lvl8jcAGd20=;KMJvMO4Y+WSHny/FBJphtdHFrTK
+ BTDkJfKQvgkXEAug1o1JXvo58g2oP7YquGiQlBi4/zX1n+/ke6SGlbvAooBsnLF+Q4Q7oaJsC
+ zhU/CeXLiYFdlEzqmzb/PpjaEjixr80Sh7WhFm4Sc6grg+s5Uoj0HlM1RHPKSDSXZLu0SE/Kf
+ PFmItSaAb3esTcyundO+svoGaQDWqgHMHbcFfvvVaFDyIN/Klp3kqtBa1eW7rJLe6o9Vzb4Wm
+ I6dCBxgdtvr4mcbx+glBoGJN+2VALSFoK/QYsMK5S3Ll2z4y6W80fZAcfAOWxQdiEdxC1Dmzf
+ 9lv5xmXcmfvdgoCkpaugjtGsTckjM4T/w0L9c2GuMBNIeCjn7rQAu7a4y5hWyaoAL9NR0GcQn
+ WYYbZ0Nu/dpj1Q2T4wbwHc/28eXeLnd1ZekBiuCh/aS1cU5tFE78RMm1qmFwoc/wyhb9DPxDm
+ 3W/bE2FGYjWEQD2L1nSw0VQ1AfBOcOyp2480d2RJKZCuVrvxjKjQGmEEhEBMewv+YZT3Xl22o
+ CqI80ZrnUA+YWIt6MfdLeugOweV3Oz93UwvR7fuOktr+eG9cMkdHKCJPFlhHSY0fIn/wpVzhB
+ iJoFoRqXIpWNCfpXFZb2N1KJa5A5Yaj3rl/PO8vhW/e5pclPMrQDDxXAmqXsngt+MDGv/5UJ+
+ aYzgEE4a0i1sBhJoER1ptjqf7trZH0VA86gk+vAUXB5dY8xXdkk8xPAA42BGv4nPgzw07xOFt
+ gs04oBU0ZR4UK9gUGkqryvTQn7BsPuLBjhJr0ifUiB1pBhYfn1XdDkM7u3BALBBnrjNqirh/z
+ hlX1oRumBXo4GAWZWQVYWHrLkRrIYBA3Y0I3wAghzRnkw=
 
-On 6/11/2024 12:29 AM, Dragan Simic wrote:
-> Hello Jeff,
-> 
-> Thanks for the patch.  Please see a few comments below.
-> 
-> On 2024-06-10 16:17, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/host/of_mmc_spi.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/host/tmio_mmc_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/host/renesas_sdhi_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/mmc_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/core/pwrseq_simple.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/core/pwrseq_sd8787.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/pwrseq_emmc.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/sdio_uart.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Corrections to these descriptions are welcomed. I'm not an expert in
->> this code so in most cases I've taken these descriptions directly from
->> code comments, Kconfig descriptions, or git logs.  History has shown
->> that in some cases these are originally wrong due to cut-n-paste
->> errors, and in other cases the drivers have evolved such that the
->> original information is no longer accurate.
->> ---
->>  drivers/mmc/core/core.c              | 1 +
->>  drivers/mmc/core/pwrseq_emmc.c       | 1 +
->>  drivers/mmc/core/pwrseq_sd8787.c     | 1 +
->>  drivers/mmc/core/pwrseq_simple.c     | 1 +
->>  drivers/mmc/core/sdio_uart.c         | 1 +
->>  drivers/mmc/host/of_mmc_spi.c        | 1 +
->>  drivers/mmc/host/renesas_sdhi_core.c | 1 +
->>  drivers/mmc/host/tmio_mmc_core.c     | 1 +
->>  8 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->> index a8c17b4cd737..d6c819dd68ed 100644
->> --- a/drivers/mmc/core/core.c
->> +++ b/drivers/mmc/core/core.c
->> @@ -2362,4 +2362,5 @@ static void __exit mmc_exit(void)
->>  subsys_initcall(mmc_init);
->>  module_exit(mmc_exit);
->>
->> +MODULE_DESCRIPTION("MMC core driver");
->>  MODULE_LICENSE("GPL");
->> diff --git a/drivers/mmc/core/pwrseq_emmc.c 
->> b/drivers/mmc/core/pwrseq_emmc.c
->> index 3b6d69cefb4e..fff30330574f 100644
->> --- a/drivers/mmc/core/pwrseq_emmc.c
->> +++ b/drivers/mmc/core/pwrseq_emmc.c
->> @@ -115,4 +115,5 @@ static struct platform_driver 
->> mmc_pwrseq_emmc_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_emmc_driver);
->> +MODULE_DESCRIPTION("HW reset support for eMMC");
-> 
-> "Hardware reset support for eMMC" would read a bit better.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/pwrseq_sd8787.c 
->> b/drivers/mmc/core/pwrseq_sd8787.c
->> index 0c5808fc3206..f24bbd68e251 100644
->> --- a/drivers/mmc/core/pwrseq_sd8787.c
->> +++ b/drivers/mmc/core/pwrseq_sd8787.c
->> @@ -130,4 +130,5 @@ static struct platform_driver 
->> mmc_pwrseq_sd8787_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_sd8787_driver);
->> +MODULE_DESCRIPTION("Power sequence support for Marvell SD8787 BT + 
->> Wifi chip");
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/pwrseq_simple.c 
->> b/drivers/mmc/core/pwrseq_simple.c
->> index df9588503ad0..97f6d69d9c80 100644
->> --- a/drivers/mmc/core/pwrseq_simple.c
->> +++ b/drivers/mmc/core/pwrseq_simple.c
->> @@ -159,4 +159,5 @@ static struct platform_driver 
->> mmc_pwrseq_simple_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_simple_driver);
->> +MODULE_DESCRIPTION("Simple HW reset support for MMC");
-> 
-> "Simple power sequence management for MMC" would be more accurate.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/sdio_uart.c 
->> b/drivers/mmc/core/sdio_uart.c
->> index 575ebbce378e..6b7471dba3bf 100644
->> --- a/drivers/mmc/core/sdio_uart.c
->> +++ b/drivers/mmc/core/sdio_uart.c
->> @@ -1162,4 +1162,5 @@ module_init(sdio_uart_init);
->>  module_exit(sdio_uart_exit);
->>
->>  MODULE_AUTHOR("Nicolas Pitre");
->> +MODULE_DESCRIPTION("SDIO UART/GPS driver");
->>  MODULE_LICENSE("GPL");
->> diff --git a/drivers/mmc/host/of_mmc_spi.c 
->> b/drivers/mmc/host/of_mmc_spi.c
->> index bf54776fb26c..05939f30a5ae 100644
->> --- a/drivers/mmc/host/of_mmc_spi.c
->> +++ b/drivers/mmc/host/of_mmc_spi.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/mmc/core.h>
->>  #include <linux/mmc/host.h>
->>
->> +MODULE_DESCRIPTION("OpenFirmware bindings for the MMC-over-SPI 
->> driver");
->>  MODULE_LICENSE("GPL");
->>
->>  struct of_mmc_spi {
->> diff --git a/drivers/mmc/host/renesas_sdhi_core.c
->> b/drivers/mmc/host/renesas_sdhi_core.c
->> index 12f4faaaf4ee..d62a4ed86775 100644
->> --- a/drivers/mmc/host/renesas_sdhi_core.c
->> +++ b/drivers/mmc/host/renesas_sdhi_core.c
->> @@ -1162,4 +1162,5 @@ void renesas_sdhi_remove(struct platform_device 
->> *pdev)
->>  }
->>  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
->>
->> +MODULE_DESCRIPTION("Renesas SDHI driver");
-> 
-> "Renesas SDHI core driver" would be a bit more accurate.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/host/tmio_mmc_core.c 
->> b/drivers/mmc/host/tmio_mmc_core.c
->> index 93e912afd3ae..c1a4ade5f949 100644
->> --- a/drivers/mmc/host/tmio_mmc_core.c
->> +++ b/drivers/mmc/host/tmio_mmc_core.c
->> @@ -1319,4 +1319,5 @@ int tmio_mmc_host_runtime_resume(struct device 
->> *dev)
->>  EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
->>  #endif
->>
->> +MODULE_DESCRIPTION("TMIO MMC core driver");
->>  MODULE_LICENSE("GPL v2");
->>
->> ---
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->> change-id: 20240610-md-drivers-mmc-cb5f273b5b33
+=E2=80=A6
+> Add the missing calls to fwnode_handle_put(child) to avoid memory leaks
+> in the error paths.
 
-Thank you for your clarifications. I'll incorporate them in the next version.
+I suggest to apply a goto chain for a while.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
-/jeff
+Will the application of scope-based resource management become feasible wi=
+th another delay?
+https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.h#=
+L8
+
+Regards,
+Markus
 
