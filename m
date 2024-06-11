@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-209267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86DF902FD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB999902FD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7221F233CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1061C232D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E218C170835;
-	Tue, 11 Jun 2024 05:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2367117085A;
+	Tue, 11 Jun 2024 05:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wbrbn+Kv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vi2fgt6n"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8698C04;
-	Tue, 11 Jun 2024 05:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2569A170844;
+	Tue, 11 Jun 2024 05:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718083113; cv=none; b=hy58aRiVqiBG9uD1k3YOas5T2XBR6I3avdRiLmuSen2iPNK08bnKpZxHrrJjJ2AeP+Br8HPy+B8Q6mZ3V4rP4/e/xe09AS3KeXbKFsOn878/bnLXcXMei6Xux4oofOeLNAO/SYCGYd1iIjUfpdbUUO5rk+uYpAWToqB2WnJp5DU=
+	t=1718083123; cv=none; b=K083jOWjL3/1IIdEllhjhuSIwj6FBLhotr0+TMn+pzYwvKCxlf5plNcD+B8iJRVe5RKU8ry4jt5bi9udNOqcBH+jQj1ZOyzcogb/Fos0owRwb/QfgaUsCJuClcImR7ak4V76fWJoPALZtNVxWfi+w2hT13/KFHc5IUzohpFpjPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718083113; c=relaxed/simple;
-	bh=hxIzNsI/4HZB+box96h7x/1yVdI1GpGf7t7URJ0loGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mshWIzBMw+dFuDbSbU+GkDFngkMqfviwark/4qEMJvAX18I5HKDTxK7+OnBLxxkegXz6qnaUJjQt6/WLn++e6JW47pkiE+ZGrT+Wcg3CZMSCXAEgiywWaEGs0MdC2QF8Dvon1A3+gqJL1plau1dzOsDcs5nwLuf0jn80SPFBE0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Wbrbn+Kv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718083107;
-	bh=nJ0V5If3rTGQEPhOZbB6hCYkW+fOL1CffbrEfeLVsBA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Wbrbn+Kv4nvN93fm1S9CoZvbd2TKJGuIsPZPmg84K1Nm9hSi7Gbmt9b18DFYnyWu4
-	 NfE4z3u+IwHjMUB7/QnrnCQB5+j5YQgMueWgc74QA9hJZNmXlHHtKT1Ydp0dufTBaF
-	 sksqDeERv/c4LQjDB/epIjWRgca1cZuGJpROF6wSfiqBaIh05musgmLv21ppOxkjY4
-	 AuDuj+/G5raWbqtjUn9ZXMgPE/t6qYv7ld/0erQ2r2aZGw2e0oAvE9wvxlhFhxmHqI
-	 U96GBsyEjrHXyCse9M8d8CGnc5bspK/TW+fm4dMlpi4DBOpiNdTP+4c6V3GqPMS4Rw
-	 0JZeG5W4NPxCQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vyxlj6kMdz4wb0;
-	Tue, 11 Jun 2024 15:18:22 +1000 (AEST)
-Date: Tue, 11 Jun 2024 15:18:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ke Sun <sunke@kylinos.cn>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the iio tree
-Message-ID: <20240611151820.63a404bc@canb.auug.org.au>
+	s=arc-20240116; t=1718083123; c=relaxed/simple;
+	bh=YstzfgNOOOBumGQqgNHf30RBk+xS5QlP/PqWB/aeQBg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=kpFGc+L4kGJFpLPhVSj5V5JF9SbIQ9wYUPEOYnc+kFcDsv1ahQ5+iiDX7ES/+3bW7UpFlTn/pGbHToPom4F6OtJ5+yusvyEzRBVviEqEHG5mpKQOA8D6hyrvtrQEPunsQYxkUmH44/nY/hTy0W+SDRdWsKScY2DuxXzfLQOjlGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vi2fgt6n; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2c2db1fc31fso470123a91.0;
+        Mon, 10 Jun 2024 22:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718083121; x=1718687921; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAqq1AZbfLB4KlIns+O0fAjIRvY03AK8sH1SBKEy40M=;
+        b=Vi2fgt6nZlvedK6wiIMda/kVj54J4gzCegSM+ZAn3e7zSoIqF0qmzRbsmu9Z/wUCDN
+         vuqyw0JxomCr61QJtq8U4zZcW4fCSZRTHLGMphq5zlVqzPHYq5zvI59RgeTGhLIQOFTJ
+         pdbyRj00dsKrgWm841RgK23viTxAg0n9rKYhMF6nmXjT95klxlOPKe6y/tkUDmCDjEHM
+         Q+JSguLQhImo/Pp9CqvdgkmAEHqKPuaj5uo3umDrXuRaqf1netfe66xtmKZwL/S0IZ2w
+         VUhZ9k4mwSA2d4n2kxEBgYW5++s9J55KjQJTPbGjGoBLwdUNnEWd9xlmXbHazHkbMZnv
+         8wIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718083121; x=1718687921;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AAqq1AZbfLB4KlIns+O0fAjIRvY03AK8sH1SBKEy40M=;
+        b=OUixWXHi7T/NR3D5JVgfrvIDAnoTruu+lQ4ohmDgOcZalK2LIjJlT8+cIb6C//8m8f
+         kgorUTkGe8mVnq+W7ZNJPlRGHtKNOcKqnCqrBXPqfzRVXrdy5k8VqeHAU3wLKH55vcuR
+         vll5b1I+EMUf9pO2lAhg7hK8ED5JrMm39N29BVjtpaOsnliwmsPvsfhuvqxXET4fhFri
+         4yqnHk92az1A04BcZIKY+ZMT+BCnG6X8oKUrV1xPk7i6Rtl8/JiiKlAqikuxGnhYdUhp
+         /s/sxWIu/O5pHnU1fmznQ3DVNrOp4ZF1L2BC+ldZiKC7h7P9jo8Fo+AGcunntxB5MlDV
+         AZtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1AvlsNuiexjkQj+s8kpmSoi7MPjklA6HfLxmCpy0RsAyGw+MoJozTc/aTM7Ht7OsXMjba2JIt2n+72gk+EU2+eFfBvlPDdjyLnNN2
+X-Gm-Message-State: AOJu0YwugJtsEIA5KZ+efytaSrAdl91WQ59CvmHb4RkprE+I50thtl2A
+	uHbFOEFFdW5MoKiJ7+5HiPCZbQs40GLqkICPsp7HDv0Q90/HW77RIhrhJPWhkKM97Q==
+X-Google-Smtp-Source: AGHT+IHhiwb2Z1ce+DjKS+OfZ1A/APv6F1fEZZXYhFtflxOoMOPSDYKSt0oNuUd0F4WbiJo8xGdaqQ==
+X-Received: by 2002:a17:902:d503:b0:1f3:10e8:1e0 with SMTP id d9443c01a7336-1f6d02e22d3mr124228485ad.2.1718083121094;
+        Mon, 10 Jun 2024 22:18:41 -0700 (PDT)
+Received: from localhost.localdomain ([117.147.90.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7171ea36esm26564005ad.114.2024.06.10.22.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 22:18:40 -0700 (PDT)
+From: aigourensheng <shechenglong001@gmail.com>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aigourensheng <shechenglong001@gmail.com>
+Subject: [PATCH] selftests/sched: fix code format issues
+Date: Tue, 11 Jun 2024 01:18:34 -0400
+Message-Id: <20240611051834.2885-1-shechenglong001@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CfDRsgY6wqNZTr1oTBWixvQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/CfDRsgY6wqNZTr1oTBWixvQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+There are extra spaces in the middle of #define. It is recommended
+to delete the spaces to make the code look more comfortable.
 
-Hi all,
+Signed-off-by: aigourensheng <shechenglong001@gmail.com>
+---
+ tools/testing/selftests/sched/cs_prctl_test.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The following commits are also in the iio-fixes tree as different
-commits (but the same patches):
+diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
+index 62fba7356af2..52d97fae4dbd 100644
+--- a/tools/testing/selftests/sched/cs_prctl_test.c
++++ b/tools/testing/selftests/sched/cs_prctl_test.c
+@@ -42,11 +42,11 @@ static pid_t gettid(void)
+ 
+ #ifndef PR_SCHED_CORE
+ #define PR_SCHED_CORE			62
+-# define PR_SCHED_CORE_GET		0
+-# define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
+-# define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
+-# define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
+-# define PR_SCHED_CORE_MAX		4
++#define PR_SCHED_CORE_GET		0
++#define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
++#define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
++#define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
++#define PR_SCHED_CORE_MAX		4
+ #endif
+ 
+ #define MAX_PROCESSES 128
+-- 
+2.17.1
 
-  f8a5217d06e2 ("iio: dac: ad9739a: drop COMPILE_TEST option")
-
-This is commit
-
-  75183e461ce0 ("iio: dac: fix ad9739a random config compile error")
-
-in the iio-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CfDRsgY6wqNZTr1oTBWixvQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZn3hwACgkQAVBC80lX
-0Gw/Pgf9Gb+2AWqDNDy6wsjFfBsw+Ffab2no/Flk4R/RRQTW0bFdZnT8znnnYykf
-Uub+lZjdVlZyvxn4UNNQn0DHJ1Nr62a4uoLCC/Rh9r1FoV0SG1HcY3xSvWDiLQ0d
-hbSK7gOeWK+Ac0AgE9tue4EAUHwq8JczGpsvlAHmwH9dBE+/reyOytzJaUJpud2B
-0lzhlwrtRoWiRH1uSk8E5tDOWetmzX56VXXSlWzi34IiU1vn/o4LyuxmSWrO7/IP
-JkDhRa3EC8YR15NIZp3bNflARtsoc4OBCysSMs5cnlDYDd+w45opAPH5/LJjw0uN
-LwKEXGuVMdRiLnmSrelJ0txcG6U83Q==
-=SxQn
------END PGP SIGNATURE-----
-
---Sig_/CfDRsgY6wqNZTr1oTBWixvQ--
 
