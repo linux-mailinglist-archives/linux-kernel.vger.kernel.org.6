@@ -1,166 +1,276 @@
-Return-Path: <linux-kernel+bounces-210400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602AC90432C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:09:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E50C904333
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC346284FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:09:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B926CB2382B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00FB71B30;
-	Tue, 11 Jun 2024 18:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ORBH1T28"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800A6D1D7;
+	Tue, 11 Jun 2024 18:10:23 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4138FA1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690F86D1B2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129374; cv=none; b=pf8b5ExAcJAC6nMd3/pSrm2gBx39ApWOa9MWTuwOv0LCH5HSoSJgdo6wHARcgq1pJJs/oM6WnMAE/AwcYYF6XoDnyENp38weRmkjHumxeabhP184mYRc149324tsgRci1f3neXka3ld97cTEb/T8kJRuzQzMsKHhDRfRCdpJiyM=
+	t=1718129423; cv=none; b=MSk6qQD/BLpFNDT9sFrbnqghFZ8ZYKvP/+Ns5QlUEHdSMuElNiFqBdBJvenA/N47II4JRtdvX5ziivi4JN0X+4jGOP77BeuMq6uNka2u6DTzKmPgfk7HVHfNRa9cY/N8gimee/feme9FdP8qg4n+5PWcLfbiZe7FtyxG8Ckf1Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129374; c=relaxed/simple;
-	bh=+lxPetrPpHvENSTokBRC6xognbIAj4RmicEAyuXDxTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQM6KKznUHizFz6FOsjxLcbkk3rXmZV/rk3jSZY6SBfvHgb6fuYC2mHDaXrWImcOLgf+XpCgR26tu06G97HwamPfWt8D4iWhsX/jzUb9x/lSCZ5B2xGE+3/SxlQIdXzQMvuzEXEaS3HaEkJ3Petb0zVPCIq0oS0NBTQLXcHFo1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ORBH1T28; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso347239366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718129370; x=1718734170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+lxPetrPpHvENSTokBRC6xognbIAj4RmicEAyuXDxTU=;
-        b=ORBH1T28Kv+Gm9vfDRFh0o9KoHNuPBRhIxafHB3qgyANZSEAx+9LLa6Wv5Iv2FulVM
-         1C4r4QsMP/tolax4DaWy4QrJlMTPTRDUpbMg8JdQqiADkwRyXa1Iy11Ylt5B7YbjRIRq
-         OctBI7JiWrNqmKnqBVdhpMRueuExFqKOmwSK+7OfBSrsjK4SgORfTkvjgaMoS3DMo0Q7
-         FkTsN8QksrcUNYzFDEG1UmAfTCd8yxst6SYakYd6YSlIZ9FEq+7SBeD6XMUjZNk9BCcy
-         Wrv4JJvkiSqmCMz3b9EpLjg4cplFB6acY4gYixvwk4VoXVVCe+PzWeGjji2mognTN5AY
-         C0/A==
+	s=arc-20240116; t=1718129423; c=relaxed/simple;
+	bh=vjwA2Wok040zzVZKo9uLs1c0qCD7WK2bUs+XerRBhsY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m1LtpeQvY5kIgPwoVe2eoehnKCZkaOvKrH+w5JZM6LZCbXefYukx0BabAfv10JvP6yt+IV7tdcmen5PbVo0zG3dQKm8I9eFqkhWMOZqAWs7+NqTzHdmceE7O1A+6Ra3TMYx/wFXXpCR1SuJSOsmAgNNcRHrdz9S+iiMB86fs2v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e91ad684e4so705855039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:10:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718129370; x=1718734170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+lxPetrPpHvENSTokBRC6xognbIAj4RmicEAyuXDxTU=;
-        b=hXUE8SAlpJMy4b5zUYylQBPxqKYAsYXTDPZsuEEkLbQTdSSkq9vwCrrkHy+bkJOStW
-         AsEPEyAvHuoHKbhJj4lXL+24GEdqy//zF/OgXYhCPt9WqnKdz74fQ+tMzjpG/HzZ+Xc7
-         2ataEoakrEdEQRYbk9TKjOmL7oUobXcCZxthED3JNKZEpBVI/zC9R1kETSFiEouL7Exy
-         mnNRcxwp2pdnq8vGc/C+FOCPiUIthjL0Bi4a3crIwSN3VX3/XTwGpLSnyB0s//aexR4V
-         mwRGcxTD5PYR4zkx0nh4OdCCBy5DILUvTTUCiuPOyHrJ0ZkwExrBe8cROTqoxnzq1bVK
-         D29g==
-X-Forwarded-Encrypted: i=1; AJvYcCW7IruzCbndtvLVB/ZvqbB1ddMcqznQspFcEsBxuLqsU7bdPvYnvynGakaQzvHBMIxCuuuShxCIDI+aFK0yHYpbYA3dPHXo7UAfAxXj
-X-Gm-Message-State: AOJu0YxI9wdC/6OrBzwuMlF1/fDZFKkFMoE+TuJCHO8/iZa32oPILofn
-	aWVUZLvz6z5iT77qoenKCqmuN1DYtK+yWVwizXi2Psl0dloPv2456mX9pY1qs++m3VacHIIi/Ar
-	7YbRs5APA3k4Cx/11m4ticPmblmb2PQtxXDMf
-X-Google-Smtp-Source: AGHT+IHSnbMlQQE9x/zPWpkI90JIlOTBHgyEzLn5RoXQZyiGaSSB2YwhfXwjdqq72pgI+LQF0hGDSafJjuWqavJQlB4=
-X-Received: by 2002:a17:906:4742:b0:a6f:393a:9dea with SMTP id
- a640c23a62f3a-a6f393aa161mr132795366b.77.1718129370030; Tue, 11 Jun 2024
- 11:09:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718129420; x=1718734220;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDQFxHrZ69GwrtBel7yWdCxXld5VZHKA5oIAYvqQHAo=;
+        b=Mgea8flRo9DtPK9UMiXv02ZFtjvCcCR741thDQs9PFFcnnPs4GuLJoyjpw4uvWGAiy
+         qP8Bo+nt5Eyqz1NmJeFSCt0SFSa4h7xcRPlHBfQl1DwgI2o/JHGE9Dyzq43uyYD4VAOJ
+         fLlyugoQefx7mM8raXvVlhWaMTjlLjP5wabNnhJRl71kvCzzxKsmqv0XWrcsnVXwnjIb
+         QTyri3AG5+URW3DO23FHdU+xAxJ09o6SnZtTkbxSEgnLUMjtJBY2ZXPfU2C/wlifJmpD
+         L1xOlNigRT+0O+dan1wsHaAmlmKAouBvokJxYsYJ0SP/KRdJPyndsWnAwXMZu+b8nNBK
+         2vrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNBtCsxnJQxJdN6HF2RpNk79D2+XTdwnNYXFMLcRMzKnOr/BdhIU9vfvjZLooGIZ6n0zhoDoEvZqO1iwkVTF4cLAM21Q3+iWWdvyIp
+X-Gm-Message-State: AOJu0YwRYsOSPocvy3/KbPGkrZYwejoqQT+EJEmtWbfpMGb5FD4mj0o3
+	iO9ns41uFYPZVd1WDVg5UZrF3lWQKWQXKaVeLJhqkkun9wLmwyMkybybraqPhCOkyxZ5M1zgiAK
+	VCPeT86SnPQvSNYwy0kZ1j/83NQ4u9Ad0ljzd/KyC0yD9/S9KF6q1mAI=
+X-Google-Smtp-Source: AGHT+IFqxJT9CInXqqquCh7b1RzHFeU5HXwk86pYWutqpMT2QJMYc/z4ZMlqpbyEMPIDj+NOtqtpF/vV1+EhEGTsLpT4+nY9Qa70
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
- <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
- <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com> <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
- <20240607145247.GG791043@ziepe.ca> <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
- <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com> <20240610121625.GI791043@ziepe.ca>
- <59443d14-1f1d-42bb-8be3-73e6e4a0b683@kernel.org> <00c67cf0-2bf3-4eaf-b200-ffe00d91593b@gmail.com>
- <20240610221500.GN791043@ziepe.ca>
-In-Reply-To: <20240610221500.GN791043@ziepe.ca>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 11 Jun 2024 11:09:15 -0700
-Message-ID: <CAHS8izNRd=f=jHgrYKKfzgcU3JzkZA1NkZnbQM+hfYd8-0NyBQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
-	David Wei <dw@davidwei.uk>, Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+X-Received: by 2002:a05:6602:1602:b0:7eb:85f7:5fd with SMTP id
+ ca18e2360f4ac-7eb85f711c4mr35077739f.0.1718129420587; Tue, 11 Jun 2024
+ 11:10:20 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:10:20 -0700
+In-Reply-To: <0000000000008874480617ff1bad@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cae276061aa12d5e@google.com>
+Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
+From: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, konishi.ryusuke@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 3:15=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Mon, Jun 10, 2024 at 08:20:08PM +0100, Pavel Begunkov wrote:
-> > On 6/10/24 16:16, David Ahern wrote:
->
-> > > > There is no reason you shouldn't be able to use your fast io_uring
-> > > > completion and lifecycle flow with DMABUF backed memory. Those are =
-not
-> > > > widly different things and there is good reason they should work
-> > > > together.
-> >
-> > Let's not mix up devmem TCP and dmabuf specifically, as I see it
-> > your question was concerning the latter: "... DMABUF memory registered
-> > through Mina's mechanism". io_uring's zcrx can trivially get dmabuf
-> > support in future, as mentioned it's mostly the setup side. ABI,
-> > buffer workflow and some details is a separate issue, and I don't
-> > see how further integration aside from what we're already sharing
-> > is beneficial, on opposite it'll complicate things.
->
-> Again, I am talking about composability here, duplicating the DMABUF
-> stuff into io_uring is not composable, it is just duplicating things.
->
-> It does not match the view that there should be two distinct layers
-> here, one that provides the pages and one that manages the
-> lifecycle. As HCH pushes for pages either come from the allocator and
-> get to use the struct folio or the come from a dmabuf and they
-> don't. That is it, the only two choices.
->
-> The iouring stuff is trying to confuse the source of the pages with
-> the lifecycle - which is surely convenient, but is why Christoph is
-> opposing it.
->
+syzbot has found a reproducer for the following issue on:
 
-Just curious: in Pavel's effort, io_uring - which is not a device - is
-trying to share memory with the page_pool, which is also not a device.
-And Pavel is being asked to wrap the memory in a dmabuf. Is dmabuf
-going to be the kernel's standard for any memory sharing between any 2
-components in the future, even when they're not devices? As in you
-expect dmabuf exporters which are not devices to be added to the
-kernel? Currently the only dmabuf exporter which is not a device
-(AFAIK) is udmabuf, which is used for testing and emulation, not
-really a production thing, I think.
+HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15eb4c7a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d79afb004be235636ee8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1073d8ee980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c645e2980000
 
---=20
-Thanks,
-Mina
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-83a7eefe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c1eea9d0e321/vmlinux-83a7eefe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1a79e458e1e6/bzImage-83a7eefe.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1f873a22e09f/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: slab-use-after-free in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+BUG: KASAN: slab-use-after-free in mapping_unevictable include/linux/pagemap.h:259 [inline]
+BUG: KASAN: slab-use-after-free in folio_evictable mm/internal.h:353 [inline]
+BUG: KASAN: slab-use-after-free in lru_add_fn+0x192/0xd70 mm/swap.c:184
+Read of size 8 at addr ffff888032180b10 by task syz-executor358/5362
+
+CPU: 2 PID: 5362 Comm: syz-executor358 Not tainted 6.10.0-rc3-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ mapping_unevictable include/linux/pagemap.h:259 [inline]
+ folio_evictable mm/internal.h:353 [inline]
+ lru_add_fn+0x192/0xd70 mm/swap.c:184
+ folio_batch_move_lru+0x243/0x400 mm/swap.c:220
+ folio_batch_add_and_move+0xe5/0x160 mm/swap.c:236
+ folio_add_lru+0x37d/0x7f0 mm/swap.c:522
+ shmem_alloc_and_add_folio+0x4ae/0x790 mm/shmem.c:1722
+ shmem_get_folio_gfp+0x687/0x13d0 mm/shmem.c:2055
+ shmem_get_folio mm/shmem.c:2160 [inline]
+ shmem_write_begin+0x15a/0x360 mm/shmem.c:2743
+ generic_perform_write+0x272/0x620 mm/filemap.c:4015
+ shmem_file_write_iter+0x114/0x140 mm/shmem.c:2919
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x6b6/0x1140 fs/read_write.c:590
+ ksys_write+0x12f/0x260 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f882e62a330
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 71 9d 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007fffd60928f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fffd6092910 RCX: 00007f882e62a330
+RDX: 0000000000100000 RSI: 00007f8826000000 RDI: 0000000000000003
+RBP: 00007f8826000000 R08: 0000000000000ab9 R09: 0000000000000ab5
+R10: 00000000000007c2 R11: 0000000000000202 R12: 00007fffd6092aac
+R13: 00007fffd6092950 R14: 0000000000000003 R15: 0000000000100000
+ </TASK>
+
+Allocated by task 5360:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3941 [inline]
+ slab_alloc_node mm/slub.c:4001 [inline]
+ kmem_cache_alloc_lru_noprof+0x121/0x2f0 mm/slub.c:4020
+ nilfs_alloc_inode+0x26/0x150 fs/nilfs2/super.c:154
+ alloc_inode+0x5d/0x230 fs/inode.c:261
+ iget5_locked fs/inode.c:1235 [inline]
+ iget5_locked+0x1c9/0x2c0 fs/inode.c:1228
+ nilfs_iget_locked+0xa1/0xe0 fs/nilfs2/inode.c:606
+ nilfs_ifile_read+0x2f/0x1e0 fs/nilfs2/ifile.c:192
+ nilfs_attach_checkpoint+0x12d/0x1d0 fs/nilfs2/super.c:557
+ nilfs_fill_super fs/nilfs2/super.c:1067 [inline]
+ nilfs_get_tree+0x951/0x1000 fs/nilfs2/super.c:1211
+ vfs_get_tree+0x8f/0x380 fs/super.c:1780
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 0:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
+ __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4437 [inline]
+ kmem_cache_free+0x12f/0x3a0 mm/slub.c:4512
+ i_callback+0x43/0x70 fs/inode.c:250
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0x828/0x16b0 kernel/rcu/tree.c:2809
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+
+Last potentially related work creation:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xba/0xd0 mm/kasan/generic.c:541
+ __call_rcu_common.constprop.0+0x9a/0x790 kernel/rcu/tree.c:3072
+ destroy_inode+0x12c/0x1b0 fs/inode.c:316
+ iput_final fs/inode.c:1741 [inline]
+ iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+ iput+0x5c/0x80 fs/inode.c:1757
+ nilfs_put_root+0xae/0xe0 fs/nilfs2/the_nilfs.c:925
+ nilfs_segctor_destroy fs/nilfs2/segment.c:2788 [inline]
+ nilfs_detach_log_writer+0x5ef/0xaa0 fs/nilfs2/segment.c:2850
+ nilfs_put_super+0x43/0x1b0 fs/nilfs2/super.c:498
+ generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+ kill_block_super+0x3b/0x90 fs/super.c:1676
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888032180668
+ which belongs to the cache nilfs2_inode_cache of size 1512
+The buggy address is located 1192 bytes inside of
+ freed 1512-byte region [ffff888032180668, ffff888032180c50)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32180
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888016ad9540 ffffea0000c84e00 0000000000000002
+raw: 0000000000000000 0000000080130013 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888016ad9540 ffffea0000c84e00 0000000000000002
+head: 0000000000000000 0000000080130013 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea0000c86001 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 5215, tgid 5215 (syz-executor358), ts 206379124412, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x136a/0x2e50 mm/page_alloc.c:3420
+ __alloc_pages_noprof+0x22b/0x2460 mm/page_alloc.c:4678
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x56/0x110 mm/slub.c:2265
+ allocate_slab mm/slub.c:2428 [inline]
+ new_slab+0x84/0x260 mm/slub.c:2481
+ ___slab_alloc+0xdac/0x1870 mm/slub.c:3667
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3989 [inline]
+ kmem_cache_alloc_lru_noprof+0x2a0/0x2f0 mm/slub.c:4020
+ nilfs_alloc_inode+0x26/0x150 fs/nilfs2/super.c:154
+ alloc_inode+0x5d/0x230 fs/inode.c:261
+ iget5_locked fs/inode.c:1235 [inline]
+ iget5_locked+0x1c9/0x2c0 fs/inode.c:1228
+ nilfs_attach_btree_node_cache+0x255/0x410 fs/nilfs2/inode.c:684
+ nilfs_btree_init+0x1d6/0x2d0 fs/nilfs2/btree.c:2431
+ nilfs_bmap_read+0x3fc/0x6a0 fs/nilfs2/bmap.c:539
+ nilfs_read_inode_common+0x7c6/0x9f0 fs/nilfs2/inode.c:476
+ __nilfs_read_inode fs/nilfs2/inode.c:501 [inline]
+ nilfs_iget+0x2ae/0x850 fs/nilfs2/inode.c:621
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888032180a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888032180a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888032180b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff888032180b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888032180c00: fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
