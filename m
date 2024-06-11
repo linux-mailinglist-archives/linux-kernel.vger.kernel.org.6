@@ -1,107 +1,162 @@
-Return-Path: <linux-kernel+bounces-209624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C149903890
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6019038A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09FF1F21AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746E21F22816
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4AC178CD9;
-	Tue, 11 Jun 2024 10:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D0178381;
+	Tue, 11 Jun 2024 10:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gC2oyTXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Isd5XYl8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAD317A92F;
-	Tue, 11 Jun 2024 10:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777AE14E2FB;
+	Tue, 11 Jun 2024 10:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718100886; cv=none; b=nr+jM4/FhmmFO6KSYixKvbany9mz/fb1y/ga26xNX3RSoIpvGI8O9Zba8N1c/wIWqDH3y/JO7pWWf5cUVttCM5yZCgvKlBYucVn7g7hBmZvdgQXvATTdIV7+JuGi1UD6VIZOBC/NwPjzM8zflilbSvRuvh3zwW54eBLJR8zC0G8=
+	t=1718100919; cv=none; b=UZ3Uo+jVp9aCcRlvCiLOTvZhKZZpyKyo4lHBCv1RNWioxC+4wZalmhHutW+FDUy/yHO2FejrOdyN217n/E20fR0KNM+O3WMXDUBW8XJbQ4XFI/ziv1JBYoSvCqzc84GOCTDF5LHXBNJDQCCRZbR5ZpHnwg/URC1ZCFovGcpRYis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718100886; c=relaxed/simple;
-	bh=rFt4XS/CgSsXIcBXqKf+lWLQ7TFyTsJ3RIR+fC805gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ztr/z7z4+EvKPga3AffgxOtJMnpRbVFL8n1NfWXCLSH/6t61KRYkrYZCnvm8oe45lxVg8Hm/57BUrLsJiZo50DGWtCZi4jdygnEn3pOhPsDB7oJTyY7Sil24xbCYDL438ev5Bu5WSFqYLKr94SrUPpfHTo2a6O4w6EYDkb+Lgag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gC2oyTXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124C2C32786;
-	Tue, 11 Jun 2024 10:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718100885;
-	bh=rFt4XS/CgSsXIcBXqKf+lWLQ7TFyTsJ3RIR+fC805gY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gC2oyTXJJ93PfMa4I6COS1Yg9NWgvNdR2czNkZbCtykuuMziuG35k2lRQXsZ03s08
-	 KfIQQnswFEWvclKyGbEcLrzrEegkQC1BP5X/rsgCfh0aPrky0aCfZAPqBwj/vZBn+u
-	 0sXR4TwnyFy+c7pxsj6q0kaK7bD9Dq2m4f+C1nuBIkQDyDMxbrzwu8PnjYjYerRTMB
-	 jKX+myIF1qEgVrm5tO98eN+1f8g71nRoCz6TlDHkD05ySyflbHtT7Hv7HB5vohdD5a
-	 rYDqp6qB2JpPzxO4rj3wX1OIJSUa3+1hthCCqNWGiGHzM7mezIewYzWoKSnmBPzC+u
-	 EJAhgg5ScR99g==
-Date: Tue, 11 Jun 2024 10:14:41 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dustin Howett <dustin@howett.net>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Rajas Paranjpe <paranjperajas@gmail.com>,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	Matt Hartley <matt.hartley@gmail.com>
-Subject: Re: [PATCH v3 3/5] platform/chrome: cros_ec_proto: Introduce
- cros_ec_cmd_versions()
-Message-ID: <ZmgjkVXZEe6BkZzq@google.com>
-References: <20240610-cros_ec-charge-control-v3-0-135e37252094@weissschuh.net>
- <20240610-cros_ec-charge-control-v3-3-135e37252094@weissschuh.net>
- <ZmfvhvcjTbjOSp4f@google.com>
- <f2a361aa-a256-41a5-8100-703e40df975d@t-8ch.de>
+	s=arc-20240116; t=1718100919; c=relaxed/simple;
+	bh=9PBC8dtpkA0NxkujAAkrVatDXA1eIo0A1dxmKF1hJY0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KwEc3Wr1d+jdXGxU9ZQFXdP1bUgSIk7hK7iTPzpjXevTeIi40saj4W8GbEF4BTl8ZsYV3jJA+EZfLmuuPpHcWGzof0pOsOMXSfCl6wv0po/yPcDB0uwiBXULfGsMQVHoSEp/D+1nc8GjWgjL0PRyKksGD1SMiB9rKj9G5WRhphA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Isd5XYl8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9g7oX018393;
+	Tue, 11 Jun 2024 10:15:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=egs1P705ilN4nYwunxBmronV
+	DiqBAzk8/Wo/S8j6VJ4=; b=Isd5XYl8/r8HmEdlHdsZL6oU5imD/tXChyme/hxO
+	1Hi+kWsv61GeNXEkoV1FgCH6dIN7MEyeDwwECTC8C7qWnqZFlNLuCeKIdQtBHmPx
+	vBZWj4mFw8+Oic9SkMZ3162RbO53OvbXLMojCVUQHtYF92kpbACerSGH1fcX4gOS
+	GZEHuXDnEHS3eNftWxkTtUKjOrjTWzpeVhSYdR7VKwxF7A7mobNIp06f/5ZOgo+u
+	lD0w0fu2nLsqK+gU+W3A1j6xpSB0D7DG8IbhL5M3UpU0OZdV1MYmN9/8yi34KsWr
+	b05AO1q3suK+sbt7zCWbQN72LS0iihGGNU/hrbi+K0D87w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6b82eq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:15:13 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BAFBG0009695
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:15:11 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 03:15:08 -0700
+Date: Tue, 11 Jun 2024 15:45:04 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Komal Bajaj <quic_kbajaj@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: cache: qcom,llcc: correct QDU1000 reg
+ entries
+Message-ID: <ZmgjqJdxzrxhnsw7@hu-mojha-hyd.qualcomm.com>
+References: <20231107080436.16747-1-krzysztof.kozlowski@linaro.org>
+ <0f76a5c1-14ce-cbfa-bbd9-b2826c4bbbdb@quicinc.com>
+ <20231108-hurricane-carefully-d9d3c1348f8c@spud>
+ <ec0bb93c-30a1-bcda-a842-8cbad6ceea62@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f2a361aa-a256-41a5-8100-703e40df975d@t-8ch.de>
+In-Reply-To: <ec0bb93c-30a1-bcda-a842-8cbad6ceea62@quicinc.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CBKtBblX114i5evQuP60gYW2S5pVOAob
+X-Proofpoint-GUID: CBKtBblX114i5evQuP60gYW2S5pVOAob
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_06,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxlogscore=869 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110075
 
-On Tue, Jun 11, 2024 at 09:23:24AM +0200, Thomas Weißschuh wrote:
-> On 2024-06-11 06:32:38+0000, Tzung-Bi Shih wrote:
-> > On Mon, Jun 10, 2024 at 05:51:08PM +0200, Thomas Weißschuh wrote:
-> > > If the command is not supported at all the EC returns
-> > > -EINVAL/EC_RES_INVALID_PARAMS.
+On Thu, Nov 09, 2023 at 02:10:41PM +0530, Mukesh Ojha wrote:
+> 
+> 
+> On 11/8/2023 5:56 PM, Conor Dooley wrote:
+> > On Tue, Nov 07, 2023 at 02:25:25PM +0530, Mukesh Ojha wrote:
 > > > 
-> > > This error is translated into an empty version mask as that is easier to
-> > > handle for callers and they don't need to know about the error details.
+> > > 
+> > > On 11/7/2023 1:34 PM, Krzysztof Kozlowski wrote:
+> > > > Qualcomm QDU1000 DTSI comes with one LLCC0 base address as pointed by
+> > > > dtbs_check:
+> > > > 
+> > > >     qdu1000-idp.dtb: system-cache-controller@19200000: reg-names:2: 'llcc2_base' was expected
+> > > > 
+> > > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > > 
+> > > > ---
+> > > > 
+> > > > Recent LLCC patches were not tested on QDU1000 thus the LLCC is there
+> > > > broken.  This patch at least tries to bring some sense according to
+> > > > DTSI, but I have no clue what is here correct: driver, DTS or bindings.
+> > > > ---
+> > > >    Documentation/devicetree/bindings/cache/qcom,llcc.yaml | 2 +-
+> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+> > > > index 580f9a97ddf7..d610b0be262c 100644
+> > > > --- a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+> > > > @@ -64,6 +64,7 @@ allOf:
+> > > >            compatible:
+> > > >              contains:
+> > > >                enum:
+> > > > +              - qcom,qdu1000-llcc
+> > > >                  - qcom,sc7180-llcc
+> > > >                  - qcom,sm6350-llcc
+> > > 
+> > > Thanks, again.
+> > > 
+> > > Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > > 
-> > I'm not sure whether the behavior is what we want or not as existing
-> > EC_CMD_GET_CMD_VERSIONS usages don't have it.
+> > I'm assuming given your employer, this ack means that there is no
+> > llcc2_base on the qdu1000.
 > 
-> At least the caller of cros_ec_get_host_command_version_mask() expects
-> it:
-> 
-> ret = cros_ec_get_host_command_version_mask(..., &ver_mask);
-> if (ret < 0 || ver_mask == 0)
-> ...
-> 
-> ver_mask == 0 will never happen as in that case -EINVAL would have been
-> returned.
-> 
-> Others, like cros_ec_cec_get_write_cmd_version(), expect the current
-> semantic of ver_mask != 0 but log spurious errors in case of -EINVAL.
-> cros_pchg_cmd_ver_check(), works with both semantics, but currently also
-> logs a spurious error message.
-> 
-> To me the new semantic looks more obvious and much easier to handle.
-> For each command version a bit is set. no command versions -> no bits.
+> Yes, not even have llcc1 , just llcc0.
 
-Ack.
+Looks like i saw downstream usage and said LLCC has only one
+instance for qdu1000, it looks refactor happened during the
+same where each bank need to separately denoted in device tree.
+Change was fine a/c to its usage in device tree.
+Not an excuse, that is an ignorance from my side while acking
+the change.
+
+qdu1000 has 8 banks from llcc0-7 that need to corrected both
+in its device tree and in the binding.
+
+@komal will be sending patch for this.
+
+-Mukesh
 
