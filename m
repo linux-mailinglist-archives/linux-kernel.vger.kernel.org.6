@@ -1,109 +1,199 @@
-Return-Path: <linux-kernel+bounces-210531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DC5904539
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDC490453D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5036428264B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4488E281EA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F100215279B;
-	Tue, 11 Jun 2024 19:51:00 +0000 (UTC)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE1D153835;
+	Tue, 11 Jun 2024 19:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LIHd12/+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFBF14F9ED;
-	Tue, 11 Jun 2024 19:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260B1514D8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718135460; cv=none; b=Vvfkl/FBGR7gQYv5hw67/17JxhR4YGTZjfoITQFtxXcv+794chlCU7XgR49L7NkM4ln52mzhxSMIDvKwGuWJZmjgINiNYQH9rQaFjU3mCLGJWgqAb6oz3qGdPA8lN/p8ihQqL0mS85VqLvJPKkBwMSBD0SopXXeqCvlzPNBTM4I=
+	t=1718135462; cv=none; b=THnyAKauKhR8WRs4/kPGYlrMZDIeh3L9PkaaLSEsAc73wEqjuzQ3ksjBsqGjrwuIVR+eygrbVgGMSpGwqxSal4wzF+A/GgDsA57sVQSpfIVXzm54UDrdJu2VpeL5xZW4PgeolXD6R1feTymQ1TUv9gtNbC8a7mp4wjNYCeAiWFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718135460; c=relaxed/simple;
-	bh=TrgoARjs7ThYWQ1Zax5XgzNUc6x1JMOv/8bIggoKkyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MGHKKVkBp0tYaAyFZiNl+TbUpIInfXoGZYYqK8f8bpJmCb6YqwdFs99+Zdx8kwlKLOpMjM0NRkk+nZ7Ct9rjazDgeyZKwqb7jnbgYNnpS+eEdLEPS8VWEu/97f6HoWykBrmbx1VYOtrdulrxdkmQpxdBVYf2XYPI1EHXuysOJAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c84a21c62so3234458e87.1;
-        Tue, 11 Jun 2024 12:50:58 -0700 (PDT)
+	s=arc-20240116; t=1718135462; c=relaxed/simple;
+	bh=tLhF0gzIDb0MMKkTBdWoOAVCCwxF0E4J4wjD9vy2SBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FrwaX6TRX9Jyu+1HR8k0R68wPmdG4WIH0dO4FodW2PxEG0ESB0NWGjqbMngxeN9nuwofh4AQT45q9dQjmwjLkaNEmje6w9cg2MUFWj4IAdo+DPeKoZWIxNq+5/1MiylFJWppnj1cDoDd245FzAiMbsCEfahkbaxuwNUij+7Q1Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LIHd12/+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718135457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VC/FKQpyiv8QuT0prkiboQ+mv2U8+abllOC5cV7bqrg=;
+	b=LIHd12/+iiuaD64VAKpt0kUPqHDOin39OncI1af6A8GWSipj7qOYseukDigUEiwfZD20IY
+	KvQgDisbRAwu7xDPn+gMuGJtbsuvyRV7QRURfLzED9ZkOTqiVm/B18xWLCEc6RvIFs9lo4
+	aW6DmYh144JfkVJ9Ak4Q/qUJUWcMrEY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-MAwHma3fM5ii77aLpsyykw-1; Tue, 11 Jun 2024 15:50:56 -0400
+X-MC-Unique: MAwHma3fM5ii77aLpsyykw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-421e17ae038so18629125e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:50:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718135455; x=1718740255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7eXZ8+T5QNNII5GeGoRAsMrF7X6NWE3VbH6k9q/af+g=;
-        b=UltwJOCUOmza9Ewmv00X0SKViFajiCyilS5DbuS2ucj0BF/9IE6BHCc/wBABM50p3V
-         dW1GKjQjGdljuDLUP1WdukLnPbUFInoNCc+XASxj4E9rnjMbXBCTiczvvgVIIQqmOprU
-         rBsgEr7GMVpg8Oa3Ib9tf+XpzOZd4jTYoqQKCDLoyRX7KNi+DLMFe2KbJcASg1rX5567
-         8oVb7K2lv/gcVi2EACELcII2/+DWwg6G1NRSotrbQRqQUzgIA6G1vSDdnJzqWs4K1yCX
-         6jP7kOOUmfunXjT4T6ru8LZYTKAbhSuknxDncqqHF4zEmvMfQmUGBrZbq+xacI3VzJMj
-         AHmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ45uLCYB+E+UajH4xyZit/FC7sh72Mn1Jys+Xtrn+eVcJU9NWIzZqTiO4V/CEXa+cVyIpZt9uykFt1kXccsRiENSDU0qENVQkyDtDLFqtcC3uN+DPuIwWZwlmEdHgI4BNFunqNTrVQw==
-X-Gm-Message-State: AOJu0Yxnvrjwj5B+ODFG7YKYtZzwWNIiSJ2EUMgEKP9AHplc8LJcfxaZ
-	uAgVkbOwQ8JcP90jCubNkVQyK9O8457511LSTA7m/ckEF+8iNEWwuLyTHHfGEUs=
-X-Google-Smtp-Source: AGHT+IHbfvOLQbzltn9ppiEf4S9LdE6FO/nSopWZEZIOSQbGhM6/qe/9CWsh0eqbtGVlZZzwZOWHlA==
-X-Received: by 2002:a05:6512:12c4:b0:52c:8a12:3d3b with SMTP id 2adb3069b0e04-52c8a123eacmr5335573e87.56.1718135455348;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VC/FKQpyiv8QuT0prkiboQ+mv2U8+abllOC5cV7bqrg=;
+        b=oYejyjLrI2Lao4SHlIIqxiC78i1jOBE0djTEjqEMexDfym8FFkGkbhFuurkpDaf/SE
+         KPQmxOddKFYWVSjkZb5CCvxRKkpFuvhC2FxduO4jcEIGoIg4idp60RW0nuDKqTdkaYlZ
+         yOqPC3OkPoXLViGYG8NngkkFgXKzXeRB2TQDeJ1JQiRDqE60IG8MD0r8fPbztDWdTj0Y
+         xoolesu44eppw1DXrrKpMfDTEtE7lBMMJGdxuERNNKqsXR1gAnpclGRKZMk7VJwaJb+e
+         vFNCgumoylEPwUa2Mi9WjhKz2ycR3CWJpLLv+w7o4YeQ4CwPs1NRB1iPyD99nJMngBqo
+         7V5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4DQgDNW3NS0iwMr66x4dVbQn0D/hDMc3Whw9/340JH5BKQMVjIVWwepehNVehYTxmqRvpEfNL8l7JTtZ0tmPAl/1OI48+P6iJQW5G
+X-Gm-Message-State: AOJu0Yz65d2IVcqNrUiGCMy4HBPwRD1K+mC/cEOO8ga7j5jFJNjXbANU
+	XRpZTI8T1NsL/RED1RGgyzPcXGgXfLTvG/cQEMGv9Pc2UwAfS6UtZES9/qr+wN1JS0alo/jNbRU
+	DX5JtTioWT2sPNxmW6lRly+QD3pbYDADtNBbuUf+BItEIf1OIezr9s32yL+ZQ5g==
+X-Received: by 2002:a05:600c:1c91:b0:421:8028:a507 with SMTP id 5b1f17b1804b1-4218028a5f6mr70330335e9.18.1718135455358;
         Tue, 11 Jun 2024 12:50:55 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423db88sm2216098e87.223.2024.06.11.12.50.55
+X-Google-Smtp-Source: AGHT+IEeIZw5rvJCb1LtW+k52Hf6likkqbQ5y9zsOlyQgFY0I2VYm+kIPKpawNjMsNjEje9W3JPASg==
+X-Received: by 2002:a05:600c:1c91:b0:421:8028:a507 with SMTP id 5b1f17b1804b1-4218028a5f6mr70330165e9.18.1718135454911;
+        Tue, 11 Jun 2024 12:50:54 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42274379b83sm16254225e9.28.2024.06.11.12.50.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 12:50:55 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so65978871fa.3;
-        Tue, 11 Jun 2024 12:50:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaOPdF/oqFBuLDEgyyeuqNIT/4PZsLTSDJeFHkSD+jG48lsmY4pmMw9wxMkW1AURNDS/32MuVOlH+qLN2DheYnaNlAUpkfOebPIMUEYVF3sBHc78QjcW5frg3budzihFHI6Gpm5tiV0Q==
-X-Received: by 2002:a2e:b889:0:b0:2eb:f8ae:1cb0 with SMTP id
- 38308e7fff4ca-2ebf8ae1ce0mr12433271fa.37.1718135454888; Tue, 11 Jun 2024
- 12:50:54 -0700 (PDT)
+        Tue, 11 Jun 2024 12:50:54 -0700 (PDT)
+Message-ID: <fff6e4d3-4a11-4481-b28c-edfb072daf35@redhat.com>
+Date: Tue, 11 Jun 2024 21:50:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiK75SY+r3W5hx+Tt_bjhcSKPLdji-Zf_8HjikRPbn9wg@mail.gmail.com>
- <20240610071049.933142-1-geert@linux-m68k.org> <46c5a25-ea8c-4a1-5241-df88a9848a9@linux-m68k.org>
- <20240611173739.GB545417@ravnborg.org>
-In-Reply-To: <20240611173739.GB545417@ravnborg.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Jun 2024 21:50:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW__Uak2qkUAJc1b1eK1nOzGy=+cneRrtmj_QgBTanK-Q@mail.gmail.com>
-Message-ID: <CAMuHMdW__Uak2qkUAJc1b1eK1nOzGy=+cneRrtmj_QgBTanK-Q@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v6.10-rc3
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] mm: pass meminit_context to __free_pages_core()
+To: Tim Chen <tim.c.chen@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-hyperv@vger.kernel.org,
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+ kasan-dev@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+References: <20240607090939.89524-1-david@redhat.com>
+ <20240607090939.89524-2-david@redhat.com>
+ <80532f73e52e2c21fdc9aac7bce24aefb76d11b0.camel@linux.intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <80532f73e52e2c21fdc9aac7bce24aefb76d11b0.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sam,
+On 11.06.24 21:41, Tim Chen wrote:
+> On Fri, 2024-06-07 at 11:09 +0200, David Hildenbrand wrote:
+>> In preparation for further changes, let's teach __free_pages_core()
+>> about the differences of memory hotplug handling.
+>>
+>> Move the memory hotplug specific handling from generic_online_page() to
+>> __free_pages_core(), use adjust_managed_page_count() on the memory
+>> hotplug path, and spell out why memory freed via memblock
+>> cannot currently use adjust_managed_page_count().
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   mm/internal.h       |  3 ++-
+>>   mm/kmsan/init.c     |  2 +-
+>>   mm/memory_hotplug.c |  9 +--------
+>>   mm/mm_init.c        |  4 ++--
+>>   mm/page_alloc.c     | 17 +++++++++++++++--
+>>   5 files changed, 21 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/mm/internal.h b/mm/internal.h
+>> index 12e95fdf61e90..3fdee779205ab 100644
+>> --- a/mm/internal.h
+>> +++ b/mm/internal.h
+>> @@ -604,7 +604,8 @@ extern void __putback_isolated_page(struct page *page, unsigned int order,
+>>   				    int mt);
+>>   extern void memblock_free_pages(struct page *page, unsigned long pfn,
+>>   					unsigned int order);
+>> -extern void __free_pages_core(struct page *page, unsigned int order);
+>> +extern void __free_pages_core(struct page *page, unsigned int order,
+>> +		enum meminit_context);
+> 
+> Shouldn't the above be
+> 		enum meminit_context context);
 
-On Tue, Jun 11, 2024 at 7:37=E2=80=AFPM Sam Ravnborg <sam@ravnborg.org> wro=
-te:
-> On Mon, Jun 10, 2024 at 09:28:25AM +0200, Geert Uytterhoeven wrote:
-> > On Mon, 10 Jun 2024, Geert Uytterhoeven wrote:
-> >   + {standard input}: Error: pcrel too far: 1095, 1074, 1022, 1020, 102=
-1, 1096, 1126 =3D> 1074, 1021, 1255, 1096, 1095, 1020, 1022, 1126, 1254
-> >   + {standard input}: Error: unknown pseudo-op: `.al':  =3D> 1270
-> Hmm, strange..
+Although C allows parameters without names in declarations, this was 
+unintended.
 
-Just in case you missed that: these are not SPARC build issues,
-but SH build issues (gcc ICE).
+Thanks!
 
-Gr{oetje,eeting}s,
+-- 
+Cheers,
 
-                        Geert
+David / dhildenb
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
