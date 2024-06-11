@@ -1,88 +1,178 @@
-Return-Path: <linux-kernel+bounces-210296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50008904202
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F531904190
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066C11F23AAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8172D1C2295A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034585F873;
-	Tue, 11 Jun 2024 16:54:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5601C47F4A;
+	Tue, 11 Jun 2024 16:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mbcGSzo4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894853BBED;
-	Tue, 11 Jun 2024 16:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE763A1BF;
+	Tue, 11 Jun 2024 16:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124868; cv=none; b=afRVQV6h3qyX8MwRhUSqIhLtngxmr6SJ5D96NKlFfuOylaQR7ojvDXQTBVxdGYZltfpNgtblO/uV9c+YIDTXg1uvCggE/b/DtOlq4a0C/Ay0ivkIHFrmqdjW/tSPI//OSwBzWpG60j58a2b98nFZfr24ui8SL7gGwxd8awqzKw8=
+	t=1718124597; cv=none; b=PW5i9MopJuCw027HJpJPrUvtRDCyVI0kFkvJ5g6AD8WLrv/k6fwY28QfHkXCZ7QWtQkUuXyrumbxMcZ5AGbDqy/7ZAEsOdrkMamje5T6o8hlixGVmgsZZkV5TbbPJKVRCylRMFmwKYgls2BGJ2bpK+ZXvgA41G1ONE0cM2TgOAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124868; c=relaxed/simple;
-	bh=k1/dmpbynMnrbBscn/VmbNjjSCbrZOi5ZMoFxGslAcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aSsa/U/gWR4dRLWZVStOUkVi6UGM7phEQwb7ZXZa20s4Q16+NmhXne5CX780yctOkARlswUgT6m/UobC/RwIcxWDkDIO+J1IZ9d2WXfW9dlRRqrWkDAVJyAPU15Dtbr94IFiqFQFrTKbQUG79JSifDWADF/kljIORks0wBkqSjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4A4C2BD10;
-	Tue, 11 Jun 2024 16:54:25 +0000 (UTC)
-Date: Tue, 11 Jun 2024 12:54:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org,
- ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com,
- hao_hao.wang@unisoc.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, akailash@google.com,
- cuidongliang390@gmail.com
-Subject: Re: [PATCH v4] block: Add ioprio to block_rq tracepoint
-Message-ID: <20240611125440.6d095270@gandalf.local.home>
-In-Reply-To: <86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
-References: <20240611073519.323680-1-dongliang.cui@unisoc.com>
-	<86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718124597; c=relaxed/simple;
+	bh=1v047t35c6qLm19msLAzWgPRd+2a52vL96fVRO7TAkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JtS3AyaE6UemIpggn537lVN16oWvpBEXXz4dov0NxnMH6R3aOY/EuB5taSX7NRpkRN7igl5XKHB83f6TlpPieoI1eEO4YEX5YbA0oKhXIivtqI3Ycx2oVV19R6HKP3s6f2i9QuBh0gZe/xExTYdedfrb8jl9lGVO+3ZlaYC3rtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mbcGSzo4; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718124596; x=1749660596;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1v047t35c6qLm19msLAzWgPRd+2a52vL96fVRO7TAkE=;
+  b=mbcGSzo4cV4+wq7m7KuNrg3seQcU7NIDzNy9QqHVHiTWV4zTpkehljy7
+   GJaPWoiYSQaQIkac/Qtxy35WjrGZuBXc/8RQrRjSmlDw81/ig137hwVyJ
+   hJ6Am5bef/kf3h1wzs992cSi17941Xur3MvvmElu4Z6JLodCbZVdpWJO8
+   Zjpq+LDwJTaYYTCMYLPlKl8QyHKwT8AY64ZiTy8BSnrQWnt6r9EsZS10Q
+   q1g7HdbDbaZuG8Q4pq3X/rokMCNRSL/p+XD0BdS1GO4aSk9eNeVS92WA+
+   ZZ9bFKn+wew10R2ajftsdBBtrJ0Y3/eYpGt3yDt66NOTw43Yb8OPKDT86
+   w==;
+X-CSE-ConnectionGUID: wnav3QOqSLeqVPatec6WWg==
+X-CSE-MsgGUID: 2FUcv2OCQWSQLvQOATVvQw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="40249616"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208,223";a="40249616"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:49:55 -0700
+X-CSE-ConnectionGUID: L0C88JV3TXihXBARem94nw==
+X-CSE-MsgGUID: GJTOORIvQP248Oej/VAciA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208,223";a="40103295"
+Received: from jacob-builder.jf.intel.com ([10.54.39.125])
+  by orviesa008.jf.intel.com with ESMTP; 11 Jun 2024 09:49:55 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: X86 Kernel <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <andi.kleen@intel.com>,
+	"Xin Li" <xin3.li@intel.com>
+Subject: 
+Date: Tue, 11 Jun 2024 09:54:51 -0700
+Message-Id: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Jun 2024 09:26:54 -0700
-Bart Van Assche <bvanassche@acm.org> wrote:
+From e52010df700cde894633c45c0b364847e63a9819 Mon Sep 17 00:00:00 2001
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Date: Tue, 11 Jun 2024 09:49:17 -0700
+Subject: Subject: [PATCH v2 0/6] Add support for NMI source reporting
 
-> On 6/11/24 12:35 AM, Dongliang Cui wrote:
-> > +#define IOPRIO_CLASS_STRINGS \
-> > +	{ IOPRIO_CLASS_NONE,	"none" }, \
-> > +	{ IOPRIO_CLASS_RT,	"rt" }, \
-> > +	{ IOPRIO_CLASS_BE,	"be" }, \
-> > +	{ IOPRIO_CLASS_IDLE,	"idle" }, \
-> > +	{ IOPRIO_CLASS_INVALID,	"invalid"}  
-> 
-> Shouldn't this array be defined in a C file instead of in a header file?
+Hi Thomas and all,
 
-The way the TRACE_EVENT() macro works, this will not work in a C file.
+Non-Maskable Interrupts (NMIs) are routed to the local Advanced Programmable
+Interrupt Controller (APIC) using vector #2. Before the advent of the
+Flexible Return and Event Delivery (FRED)[1], the vector information set by
+the NMI initiator was disregarded or lost within the hardware, compelling
+system software to poll every registered NMI handler to pinpoint the source
+of the NMI[2]. This approach led to several issues:
 
-> -	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
-> +	TP_printk("%d,%d %s (%s) %llu + %u %s,%u,%u [%d]",
->  		  MAJOR(__entry->dev), MINOR(__entry->dev),
->  		  __entry->rwbs, __get_str(cmd),
-> -		  (unsigned long long)__entry->sector,
-> -		  __entry->nr_sector, 0)
-> +		  (unsigned long long)__entry->sector, __entry->nr_sector,
-> +		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
-> +				   IOPRIO_CLASS_STRINGS),
-> +		  IOPRIO_PRIO_HINT(__entry->ioprio),
-> +		  IOPRIO_PRIO_LEVEL(__entry->ioprio),  0)
->  );
->  
+1.	Inefficiency due to the CPU's time spent polling all handlers.
+2.	Increased latency from the additional time taken to poll all handlers.
+3.	The occurrence of unnecessary NMIs if they are triggered shortly
+	after being processed by a different source.
 
-It's used for __print_symbolic() which the TRACE_EVENT() macro logic (using
-header files) will expand it to something useful.
+To tackle these challenges, Intel introduced NMI source reporting as a part
+of the FRED specification (detailed in Chapter 9). This CPU feature ensures
+that while all NMI sources are still aggregated into NMI vector (#2) for
+delivery, the source of the NMI is now conveyed through FRED event data
+(a 16-bit bitmap on the stack). This allows for the selective dispatch
+of the NMI source handler based on the bitmap, eliminating the need to
+invoke all NMI source handlers indiscriminately.
 
--- Steve
+In line with the hardware architecture, various interrupt sources can
+generate NMIs by encoding an NMI delivery mode. However, this patchset
+activates only the local NMI sources that are currently utilized by the
+Linux kernel, which includes:
+
+1.	Performance monitoring.
+2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
+	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
+	self-test.
+
+Other NMI sources will continue to be handled as previously when the NMI
+source is not utilized or remains unidentified.
+
+Next steps:
+1. KVM support
+2. Optimization to reuse IDT NMI vector 2 as NMI source for "known" source.
+Link:https://lore.kernel.org/lkml/746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com/
+
+
+[1] https://www.intel.com/content/www/us/en/content-details/779982/flexible-return-and-event-delivery-fred-specification.html
+[2] https://lore.kernel.org/lkml/171011362209.2468526.15187874627966416701.tglx@xen13/
+
+
+Thanks,
+
+Jacob
+
+---
+Change logs are in individual patches.
+
+Jacob Pan (6):
+  x86/irq: Add enumeration of NMI source reporting CPU feature
+  x86/irq: Extend NMI handler registration interface to include source
+  x86/irq: Factor out common NMI handling code
+  x86/irq: Process nmi sources in NMI handler
+  perf/x86: Enable NMI source reporting for perfmon
+  x86/irq: Enable NMI source on IPIs delivered as NMI
+
+ arch/x86/Kconfig                         |  9 +++
+ arch/x86/events/amd/ibs.c                |  2 +-
+ arch/x86/events/core.c                   | 11 ++-
+ arch/x86/events/intel/core.c             |  6 +-
+ arch/x86/include/asm/apic.h              |  1 +
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/disabled-features.h |  8 +-
+ arch/x86/include/asm/irq_vectors.h       | 38 +++++++++
+ arch/x86/include/asm/nmi.h               |  4 +-
+ arch/x86/kernel/apic/hw_nmi.c            |  5 +-
+ arch/x86/kernel/apic/ipi.c               |  4 +-
+ arch/x86/kernel/apic/local.h             | 18 +++--
+ arch/x86/kernel/cpu/mce/inject.c         |  4 +-
+ arch/x86/kernel/cpu/mshyperv.c           |  2 +-
+ arch/x86/kernel/kgdb.c                   |  6 +-
+ arch/x86/kernel/nmi.c                    | 99 +++++++++++++++++++++---
+ arch/x86/kernel/nmi_selftest.c           |  7 +-
+ arch/x86/kernel/reboot.c                 |  4 +-
+ arch/x86/kernel/smp.c                    |  4 +-
+ arch/x86/kernel/traps.c                  |  4 +-
+ arch/x86/platform/uv/uv_nmi.c            |  4 +-
+ drivers/acpi/apei/ghes.c                 |  2 +-
+ drivers/char/ipmi/ipmi_watchdog.c        |  2 +-
+ drivers/edac/igen6_edac.c                |  2 +-
+ drivers/watchdog/hpwdt.c                 |  6 +-
+ 25 files changed, 200 insertions(+), 53 deletions(-)
+
+-- 
+2.25.1
+
 
