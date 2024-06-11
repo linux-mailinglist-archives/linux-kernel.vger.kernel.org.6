@@ -1,126 +1,98 @@
-Return-Path: <linux-kernel+bounces-210313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B49090423C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2FF904240
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB14B28B791
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A1028BAD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155F24CDF9;
-	Tue, 11 Jun 2024 17:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7364D8BB;
+	Tue, 11 Jun 2024 17:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PBkmswCM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OoXvvjN0"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727B482DE;
-	Tue, 11 Jun 2024 17:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F83B28F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126106; cv=none; b=rO0INVHweYQySMIVv/2/mqfHnJnTE4HXq1+enmzuJQXBzSx9Z5Wi2fz3VfcuI78R5fC/Hrcp+KJaquQMmY2f73Tsp2kvyg6r6jzm/ycpEBttfDf1bL6sJH7TSQAmF6FI0nZHxFmpCLqtAuFG9LFgSVouSlx3IvHZKVolDvKso14=
+	t=1718126189; cv=none; b=mCJlQQj4P4GmZHPqq1ieRe4QVIwvFNXhGtVGT0IksdyVgXOK5olN1ommfUOl6Czr4TYfxbCrUlDsP4lGTSB3kP4CEeExb6+PlcF22lG958S/FreyWj91wHpXnHt8V7j4pIcTlroLUOvuzFmIjEhh/EiyziPREyXMDK4U2/ZgYV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126106; c=relaxed/simple;
-	bh=K/I146tcC4iAQjRxNjYDWda/7DMkakFd+77UtYpoMoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VwL7qbf/WSYjjmEZrq7XV+zPlP/0T+3LI95MWz9MNLYmovdNmiOk4GnWrhyy94DblSBWBIQKeArl5Vk+vVLrldIkFqx/QM190QT1g0NBqBo7MG+BmB4dPmlsaqyc+CjLPIip1osHfhvdquViXncdI9UQtGuD0v3BgBN2Ftl3kFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PBkmswCM; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718126104; x=1749662104;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=K/I146tcC4iAQjRxNjYDWda/7DMkakFd+77UtYpoMoM=;
-  b=PBkmswCMKVLet+UsMG5nhfjUdIu8ftylF8Iv47TavVKxniBIch2atlQl
-   nCq6euNLr3YvXPXr3/4YfEPY8ww1/C45LCyYy12jQTmvZIjrze3d52LTG
-   oQdhcqO8Z8jhZYjcpub4AZ8F9zRlU89qom9CCt0be+wmSf9+91kxQXNKU
-   aslJ3H4DraggixdwEGzbemXJZN6RXyCZzBdt4/qMap+EFL5rkUV9Kzsq6
-   pkHjKq4GPEHINS035cSQMuAp1ch7AFk/1x+XfsKmnTXWiPy4sifBF511x
-   c9AX9vvGP12v3pN1Zzm/AxLztxClvXkY4kQFOwvK+u8XVv/6lYsbjNMOf
-   A==;
-X-CSE-ConnectionGUID: uJxu6qNySyCRqcjZ6Pd7ng==
-X-CSE-MsgGUID: vxCJS0T1S/ehWVqoNfKn2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="37376397"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="37376397"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:15:04 -0700
-X-CSE-ConnectionGUID: QylkOKhcRJSU9a0Cu6uFrQ==
-X-CSE-MsgGUID: NtG3lkUVQJuZyCGeKFw/rA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="44055568"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:15:03 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>,
-	Jithu Joseph <jithu.joseph@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH v6 04/49 RESEND] platform/x86/intel/ifs: Switch to new Intel CPU model defines
-Date: Tue, 11 Jun 2024 10:14:55 -0700
-Message-ID: <20240611171455.352536-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1718126189; c=relaxed/simple;
+	bh=rrQjB0y4241+Equ6474J4Ww1/gVentJHoCUCVZBUatI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=plmNOGUD5C163Bl04KQ+9jpGQwGqn66B5+wy67UMT+74ZHxOsNmkMP9E88+dGx2s1vPc3GRL8wnSfSDlbV8X27U60UfjbIDRToRPzP13wF1HSjMUu4FjH5AySAaMhzGgJKsk4GVEkb1xO7bWA2LpiqOZ6Yc6cXqCPgMyD5qjE3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OoXvvjN0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a08273919so87959447b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718126187; x=1718730987; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hSJk4i6CiFyTA+xiXQFolq9PrmWtX/oAjt20PA2VXO4=;
+        b=OoXvvjN0VZFTCuOiUQaFUFyD+XOiLKr5KrI71Mm/uZZefufO3qFo0TWNF1gA3AoCW+
+         uMQwWyT6ukyZ3/+n0sHd2wyT0yAhkPwr7HB+IQdZSkFC3xt4LCB/FosVocgspSIYvgDf
+         3o1BBTnf7ha8EBWn7br2ZhksaVxCVA5JBc5YscNt+Id5DAvKtYAJNpOdGeg/p63+E4QF
+         WsTzRQnupVXdAxJJB3Ln6gcE7AzfIwu7BhZ0zdwHfXqAIryk5WlUJ7gRlssqxxeCBpu6
+         vVyQt/7yJqDtrV9pZfye1Pa2HGaDRxxgj88fBFw8OKorHjLGCNmPqBQT5+IMwfo0srAe
+         0/5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718126187; x=1718730987;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hSJk4i6CiFyTA+xiXQFolq9PrmWtX/oAjt20PA2VXO4=;
+        b=dfQVO+nDFzf74IE6v1jtaz91pfOswDqdDXQdjv9GnJZ5aJzVDEbPRBv5hlXFFQM6Vk
+         0hi4gLtAA8nAz/r0nuv0CFp/j2OCoPpNxs6Cail8aAWkFTRfwixyB1Q7t8/MboVoSV4k
+         G76XF7Rq9JtsA2av8p6ZP8KX+LVVRcLBx7JhNzFnwZ1SO0qcKIddXU1njNuEF6+sTlCg
+         5qkT4miEscid0AHg2KXAHt/pm737mlOXtnnQWg7M/R17AFielxJEZPqsCycOfydC+CIC
+         ZQiBzBEglw5e42ZMK5SrBQzR87DYPzsOKARTbxOuckwfuZhZFMPAgfo+wGdfJgz9c+NO
+         rMdw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5OX8VdJIFm5mwfspkxdfU6l6MH3iXdMR1wZ3dVAohR+prAbWPX6YK20NolPFd7nfkHauaX0YPhtgZOrz1TM7OZm+seE+t2XwUKnWQ
+X-Gm-Message-State: AOJu0YzhvjC5otkAyeW169OwW0ZqEZoua8MveNy0yg63Xkt74IsMoV9y
+	/xaVG1dFhCYQH0u192912THaau0PIVOLNzOQ45h6EuM0XvahSXvoSY+tRcM7gv4itBfxfYlbQkj
+	KSWyFoyLHg/yOQz1/74qbBkIpGQ==
+X-Google-Smtp-Source: AGHT+IEY+40hETMkg0kKm8Yl23Q7Oxp2FMPvAjMasenOB2rn5gy1l4SMxnz3rEEaTtldeQnZVDv6905q+FxpRkCKOos=
+X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
+ (user=aniketmaurya job=sendgmr) by 2002:a81:4cd5:0:b0:62c:de24:c501 with SMTP
+ id 00721157ae682-62cde24c97fmr19335417b3.8.1718126187008; Tue, 11 Jun 2024
+ 10:16:27 -0700 (PDT)
+Date: Tue, 11 Jun 2024 17:15:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240611171600.1105124-1-aniketmaurya@google.com>
+Subject: [PATCH 0/2] i3c: dw: Add APB clk
+From: Aniket <aniketmaurya@google.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Aniket <aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-New CPU #defines encode vendor and family as well as model.
+The patches add APB clk aka pclk to the
+dw i3c driver and the binding doc.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Jithu Joseph <jithu.joseph@intel.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Hans de Goede <hdegoede@redhat.com>
----
+Aniket (2):
+  dt-bindings: i3c: dw: Add clock binding
+  i3c: dw: Add optional apb clock
 
-Ilpo: I missed this one from the set of new CPU family patches
-that I sent to you earlier.  Can you apply it please.
+ .../bindings/i3c/snps,dw-i3c-master.yaml      | 19 ++++++++++++++++++-
+ drivers/i3c/master/dw-i3c-master.c            | 12 ++++++++++++
+ drivers/i3c/master/dw-i3c-master.h            |  1 +
+ 3 files changed, 31 insertions(+), 1 deletion(-)
 
- drivers/platform/x86/intel/ifs/core.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/platform/x86/intel/ifs/core.c b/drivers/platform/x86/intel/ifs/core.c
-index 7b11198d85a1..33412a584836 100644
---- a/drivers/platform/x86/intel/ifs/core.c
-+++ b/drivers/platform/x86/intel/ifs/core.c
-@@ -11,16 +11,15 @@
- 
- #include "ifs.h"
- 
--#define X86_MATCH(model, array_gen)				\
--	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6,	\
--		INTEL_FAM6_##model, X86_FEATURE_CORE_CAPABILITIES, array_gen)
-+#define X86_MATCH(vfm, array_gen)				\
-+	X86_MATCH_VFM_FEATURE(vfm, X86_FEATURE_CORE_CAPABILITIES, array_gen)
- 
- static const struct x86_cpu_id ifs_cpu_ids[] __initconst = {
--	X86_MATCH(SAPPHIRERAPIDS_X, ARRAY_GEN0),
--	X86_MATCH(EMERALDRAPIDS_X, ARRAY_GEN0),
--	X86_MATCH(GRANITERAPIDS_X, ARRAY_GEN0),
--	X86_MATCH(GRANITERAPIDS_D, ARRAY_GEN0),
--	X86_MATCH(ATOM_CRESTMONT_X, ARRAY_GEN1),
-+	X86_MATCH(INTEL_SAPPHIRERAPIDS_X, ARRAY_GEN0),
-+	X86_MATCH(INTEL_EMERALDRAPIDS_X, ARRAY_GEN0),
-+	X86_MATCH(INTEL_GRANITERAPIDS_X, ARRAY_GEN0),
-+	X86_MATCH(INTEL_GRANITERAPIDS_D, ARRAY_GEN0),
-+	X86_MATCH(INTEL_ATOM_CRESTMONT_X, ARRAY_GEN1),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, ifs_cpu_ids);
 -- 
-2.45.0
+2.45.2.505.gda0bf45e8d-goog
 
 
