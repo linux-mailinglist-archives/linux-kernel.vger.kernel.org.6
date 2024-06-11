@@ -1,192 +1,89 @@
-Return-Path: <linux-kernel+bounces-209956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E5D903D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E9C903D5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87EC61F21BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E87C1C235DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BEB17CA1D;
-	Tue, 11 Jun 2024 13:30:17 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7580217CA10;
+	Tue, 11 Jun 2024 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEDnJwrG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8326172BDB;
-	Tue, 11 Jun 2024 13:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53BF17C21D;
+	Tue, 11 Jun 2024 13:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112617; cv=none; b=R9QqbZPc9oKKuj1/S8M5xUD7lqoiG0BOsUXlj7E8zN9v2NfLqW8V7WmdGEYdeKXCycgn87GNlBt6XFU4iN7HzF0yYdgVZWoK5/0wL1nfl2FqNFeJ23H2MmmJA1qGHvlT4fUlgpxQNZIvVG/jKMwvm6bFsrMj6+/9CoPIKBbUlhU=
+	t=1718112632; cv=none; b=WW+0nMstfzQyMkJjEfo2XofNjAqSW2FZyUTAPl6W2bZN5VH0oRk2hMAPpMr3qICqJEDoyfTviuKE3GCJOzN3ERPsi1z2DkkZ0eS9Lg9qtz/NqLBIRJ2nXdsXulDi+7OjTTzhKF0xgr1+/ogwdzkeuo216SrEZQhxOf6hJChP0HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112617; c=relaxed/simple;
-	bh=H20fbMfgohGyo4yey5vALGzeXJ8MBMbZ1q9Hn9FTCfw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iW1+uyskNIdhnz3/AD25R+MOj2pTRIZAhZ/ZcLYow5kuAdPrDOxM7jxA91oidtNFN65RhVnqYHyqfPsLwlnz0oHimB4QsHRvI9SiOROfAlJ2AyiQrRx1KWPr42Wyfz4UMmoVlXhrAPqq+f4Y81aE6WIs3YOuTOUWDwcnBT+0yXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vz8fy3FFpz4f3jsW;
-	Tue, 11 Jun 2024 21:30:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6E5ED1A0181;
-	Tue, 11 Jun 2024 21:30:12 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g5iUWhmdMbEPA--.26115S3;
-	Tue, 11 Jun 2024 21:30:12 +0800 (CST)
-Subject: Re: [PATCH 02/12] md: add a new enum type sync_action
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, l@damenly.org, dm-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240603125815.2199072-1-yukuai3@huawei.com>
- <20240603125815.2199072-3-yukuai3@huawei.com>
- <20240611103126.00003ee0@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <4e8fcdc7-3494-df1d-8654-28ce248850df@huaweicloud.com>
-Date: Tue, 11 Jun 2024 21:30:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1718112632; c=relaxed/simple;
+	bh=NXb3HaeTQ1KSXRxrj4kItzQB2kuaUrDr2uem270lec0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UU3JQfS9G2KZeK/M9aeZubNwOaoSIlg4XCwmp39lyuiUKjKlNcKBO+FIBSWrIy6NzbN+/hhsyd9gEdr0uehMU81/ZOfzuf1hY6VFxayZNe1+QPciK0yq271v5Eq01wzgPzWtv5/mnIHAhlps6CKHHcqvZ48FwTBovz/v7163YmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEDnJwrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97F6C2BD10;
+	Tue, 11 Jun 2024 13:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718112632;
+	bh=NXb3HaeTQ1KSXRxrj4kItzQB2kuaUrDr2uem270lec0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OEDnJwrGBNr6hbsmpAoAXAWUpZGjjYpFBrc+50yKl1jX36RxXdA2uQd8ipk6tz6uk
+	 dOLHFZAPEuG7Fdj+Hh3KDkI4pjU5jAy7IKrg/ue1nc8F8TndBYN0em2wHV6wjJvZ5C
+	 ux9ooe6z91cxQEF+JI8r3k8dUAPW0RTidzPav6+jRnys51BwsGXZ6mpFHXBwS+6H8C
+	 tpnQ66CdOkAEmAoeeEbMkfohjlloYdw1kWUiL/hsSgb0L8fvNuVPqeRzTz1DRx3rlh
+	 qJ+qow+wUht6T6mfMoZc9cFXxVoGOgih7bnCQHiGwBeI5inaWZeUUDfT+akgo9vCOR
+	 EbGUXoJ+5Fqzg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH v3 0/3] tracing: Fix some selftest issues
+Date: Tue, 11 Jun 2024 22:30:28 +0900
+Message-Id: <171811262833.85078.12421348187962271050.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240611103126.00003ee0@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g5iUWhmdMbEPA--.26115S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF43XFWkuFW7Xr48KFWxZwb_yoW5CFWfpF
-	W8Ga4rJr4DArn7Aw1Sq34fJ393u340qrWUGry3Kw18Ar9Ik3Z3CFWrC34DCayktrn8Kw1j
-	qFWUtFn8uFZ0vrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9S14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5Jw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Wr1j
-	6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr
-	1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 Hi,
 
-ÔÚ 2024/06/11 16:31, Mariusz Tkaczyk Ð´µÀ:
-> On Mon, 3 Jun 2024 20:58:05 +0800
-> Yu Kuai <yukuai3@huawei.com> wrote:
-> 
->> In order to make code related to sync_thread cleaner in following
->> patches, also add detail comment about each sync action. And also
->> prepare to remove the related recovery_flags in the fulture.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/md.h | 57 ++++++++++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 56 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/md.h b/drivers/md/md.h
->> index 170412a65b63..6b9d9246f260 100644
->> --- a/drivers/md/md.h
->> +++ b/drivers/md/md.h
->> @@ -34,6 +34,61 @@
->>    */
->>   #define	MD_FAILFAST	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT)
->>   
->> +/* Status of sync thread. */
->> +enum sync_action {
->> +	/*
->> +	 * Represent by MD_RECOVERY_SYNC, start when:
->> +	 * 1) after assemble, sync data from first rdev to other copies, this
->> +	 * must be done first before other sync actions and will only execute
->> +	 * once;
->> +	 * 2) resize the array(notice that this is not reshape), sync data
->> for
->> +	 * the new range;
->> +	 */
->> +	ACTION_RESYNC,
->> +	/*
->> +	 * Represent by MD_RECOVERY_RECOVER, start when:
->> +	 * 1) for new replacement, sync data based on the replace rdev or
->> +	 * available copies from other rdev;
->> +	 * 2) for new member disk while the array is degraded, sync data from
->> +	 * other rdev;
->> +	 * 3) reassemble after power failure or re-add a hot removed rdev,
->> sync
->> +	 * data from first rdev to other copies based on bitmap;
->> +	 */
->> +	ACTION_RECOVER,
->> +	/*
->> +	 * Represent by MD_RECOVERY_SYNC | MD_RECOVERY_REQUESTED |
->> +	 * MD_RECOVERY_CHECK, start when user echo "check" to sysfs api
->> +	 * sync_action, used to check if data copies from differenct rdev are
->> +	 * the same. The number of mismatch sectors will be exported to user
->> +	 * by sysfs api mismatch_cnt;
->> +	 */
->> +	ACTION_CHECK,
->> +	/*
->> +	 * Represent by MD_RECOVERY_SYNC | MD_RECOVERY_REQUESTED, start when
->> +	 * user echo "repair" to sysfs api sync_action, usually paired with
->> +	 * ACTION_CHECK, used to force syncing data once user found that
->> there
->> +	 * are inconsistent data,
->> +	 */
->> +	ACTION_REPAIR,
->> +	/*
->> +	 * Represent by MD_RECOVERY_RESHAPE, start when new member disk is
->> added
->> +	 * to the conf, notice that this is different from spares or
->> +	 * replacement;
->> +	 */
->> +	ACTION_RESHAPE,
->> +	/*
->> +	 * Represent by MD_RECOVERY_FROZEN, can be set by sysfs api
->> sync_action
->> +	 * or internal usage like setting the array read-only, will forbid
->> above
->> +	 * actions.
->> +	 */
->> +	ACTION_FROZEN,
->> +	/*
->> +	 * All above actions don't match.
->> +	 */
->> +	ACTION_IDLE,
->> +	NR_SYNC_ACTIONS,
->> +};
-> 
-> I like if counter is keep in same style as rest enum values, like ACTION_COUNT.
+Here is v3 of a series of some fixes/cleanups for the test modules and
+boot time selftest of kprobe events. The previous version is here;
 
-Thanks for the review, however, I didn't find this style "xxx_COUNT" in
-md code, AFAIK, "NR_xxx" style is used more, for example:
+https://lore.kernel.org/all/171805478534.52471.6269290579314514778.stgit@devnote2/
 
-enum stat_group {
-         STAT_READ,
-         STAT_WRITE,
-         STAT_DISCARD,
-         STAT_FLUSH,
+In this version, I updated the 2nd patch to integrate WARN_ON_ONCE() and
+pr_warn() instead of removing WARN_ONCE() because this warning messages
+are needed to ktest to handle errors.
 
-         NR_STAT_GROUPS
-};
+Thank you,
 
-Just to let you know, I'll keep this style in the next version. :)
+---
 
-Thanks,
-Kuai
-> 
-> Anyway LGTM.
-> 
-> Mariusz
-> .
-> 
+Masami Hiramatsu (Google) (3):
+      tracing: Build event generation tests only as modules
+      tracing/kprobe: Integrate test warnings into WARN_ONCE
+      tracing/kprobe: Remove cleanup code unrelated to selftest
 
+
+ kernel/trace/Kconfig        |    4 ++-
+ kernel/trace/trace_kprobe.c |   54 ++++++++++++++-----------------------------
+ 2 files changed, 19 insertions(+), 39 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
