@@ -1,110 +1,218 @@
-Return-Path: <linux-kernel+bounces-210418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0FB90436B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740FF9043E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320351C23021
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010691F220D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377A571B30;
-	Tue, 11 Jun 2024 18:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD2F73473;
+	Tue, 11 Jun 2024 18:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G+EiwD4G"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qeF2Gg3q"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C539A376E9
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3597738FA1;
+	Tue, 11 Jun 2024 18:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718130127; cv=none; b=d+BXq1omxR6dyOFvL7WbtJ1IZ3+WDHjuuODSaPNazQeiIEbWhZrfwd+c0x55VeSY0yolSKWsOQ9khuCpS5LqklxgO+/VPqhsUO36cgEXtJNtxuXp4CIirhkmYyC0YvdEW9J3wnlgydHOofVaqY6AnF2gL0GvGYPrVCwax8wlQsU=
+	t=1718131456; cv=none; b=I0ILCpgmaNEqJQo9c8iIN3TCsdRtkpGFuiZ8bnWLhgIVFPUd0k0bmXM8hdgkE1mnpiTtlot24VPKck30nbo3EZnTqWsaNRugK//u8ioUHoNDjHVCYp6cnHBJPSDw8jDBkZmTesPh0/H3L80yL7LhUTCG9JtLK3g5odngtgYF6h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718130127; c=relaxed/simple;
-	bh=aZIw2wIw6HZncUZ9BiHGTY56QThK53FOhX5SS3cSeC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW9t6WEzQpctRHfuPeeRlhdNm5x/E4ArhjM7A1drc+d25F03UyUEreqCKmrOlBASKTUMRqk/bEcLF/MjdaxOFUkYetQAwfMVVzYN9jiARoiW2bFX0UZLZdbe5gqXnj6S24s8L8MsAVPELVkKgYIAArHoGlOqy/DH5Lqx+e2/v5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G+EiwD4G; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=v+biT19hMk3zmDJ0JM4Tlgb3u1aCfIc9jRZYIonIyMw=; b=G+EiwD4GDC9cHvXeCq1YHv7ti/
-	IlYTLigKWg5uv1EP0m2ybhYhGX9h/GnK3Hq5lwa2LxVKZDbmMrx+ifr/gJD1jXzUu9Nn7REYTzNJz
-	CIeTPq+SURoWmu7zjSItVG/hbpeDrAbHF6GgqvufLdPYB+c9PHtctRqIcjYqPf/xD8YBKpt03+b65
-	VS1AwqXwbhM4Az0f0HjF68guIUL4sj11S3+ONs2WpSLuPfRvgAPR3KptfXUYnvicH+oYupZhxnEk5
-	JtdTIvo2npekB4qU11ivs6xb9vLohXCzoj/vAbxDoXiWdmfu20hjbIlQhpIFf8JoO4djRr0qnPRdj
-	R5zIZyjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sH68B-0000000Dwm0-2FcS;
-	Tue, 11 Jun 2024 18:22:03 +0000
-Date: Tue, 11 Jun 2024 19:22:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Bresticker <abrestic@rivosinc.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
-Message-ID: <ZmiVy8iE93HGkBWv@casper.infradead.org>
-References: <20240611153216.2794513-1-abrestic@rivosinc.com>
- <8040793f-e9e9-4a2e-807c-afcb310a48f5@redhat.com>
- <20240611110622.8e9892e92618ddc36bca11b7@linux-foundation.org>
+	s=arc-20240116; t=1718131456; c=relaxed/simple;
+	bh=g1Q7qhG14yUPW9rk+97eEEMsOIkCtIcGn38GoRYuZSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qa569DxaucX2GkIRSX9O+pfUSQhs7tS89ZfI5vJcqoMu9jcsDqXERiOO/O6NFCgIKw/XJvp5d5cagg8w5TttUSmDSg7yt6mzgIs7a7v9xr946T+bHasF2d5kg8yhvJp0rHdNxbghXb281ojc3NXJHOQeZW5zLWFUH588B+jIWJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qeF2Gg3q; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8002:4640:7285:c2ff:fefb:fd4] ([IPv6:2601:646:8002:4640:7285:c2ff:fefb:fd4])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45BIMaUu3409249
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Jun 2024 11:22:37 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45BIMaUu3409249
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718130158;
+	bh=3mnT2Bwkk0vQJgnckDkHQNv+VtpPWp5qOEVzxmzIxI4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qeF2Gg3qVflPKKclkjRTOBCOM/fqAUAO37scpIV5HUO7ia+egHSHYeaqjigZtI1Ce
+	 On1u308bBkJB3xoX3lKeU4nz9j0E7Mel0Frwxpbe/x28yKYDsAH5oWeA2bIxQwDgAN
+	 zhVPged9gzWdCPLznRUmnE45KmYRRhgNp6gJSl1Dde1k3qaZOT68jkQVOqhTDZmLaU
+	 uAQywa2fnm+Cp07NacwmXf/d1VihLnGcesvfZK8gqNHzcBCk+kBECEYtZ2an4lKMZA
+	 r19zG8VyHgjCaVUz6CK301py09Ujezshi0i1hUnzOpPoEX32aJKaXGiFmToyCLrD4Z
+	 DZ2eTm8vf068Q==
+Message-ID: <c380a87d-a5b2-4782-8bb0-2a10ed4fb9ad@zytor.com>
+Date: Tue, 11 Jun 2024 11:22:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611110622.8e9892e92618ddc36bca11b7@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+ <20240610104352.GT8774@noisy.programming.kicks-ass.net>
+ <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
+ <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
+ <71FE7A14-62F6-45D3-9BC4-BE09E06F7863@zytor.com>
+ <CAHk-=wjTzFYo2+eQJpb56Df8sNDW7JEV=_6Di2v-M5x2kv06_g@mail.gmail.com>
+ <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 11:06:22AM -0700, Andrew Morton wrote:
-> On Tue, 11 Jun 2024 17:33:17 +0200 David Hildenbrand <david@redhat.com> wrote:
+On 6/10/24 18:24, Linus Torvalds wrote:
+> On Mon, 10 Jun 2024 at 18:09, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Doing it in general is actually very very painful. Feel free to try -
+>> but I can almost guarantee that you will throw out the "Keep It Simple
+>> Stupid" approach and your patch will be twice the size if you do some
+>> "rewrite the whole instruction" stuff.
+>>
+>> I really think there's a fundamental advantage to keeping things simple.
 > 
-> > On 11.06.24 17:32, Andrew Bresticker wrote:
-> > > The requirement that the head page be passed to do_set_pmd() was added
-> > > in commit ef37b2ea08ac ("mm/memory: page_add_file_rmap() ->
-> > > folio_add_file_rmap_[pte|pmd]()") and prevents pmd-mapping in the
-> > > finish_fault() and filemap_map_pages() paths if the page to be inserted
-> > > is anything but the head page for an otherwise suitable vma and pmd-sized
-> > > page.
-> > > 
-> > > Fixes: ef37b2ea08ac ("mm/memory: page_add_file_rmap() -> folio_add_file_rmap_[pte|pmd]()")
-> > > Signed-off-by: Andrew Bresticker <abrestic@rivosinc.com>
-> > > ---
-> > >   mm/memory.c | 3 ++-
-> > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index 0f47a533014e..a1fce5ddacb3 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -4614,8 +4614,9 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
-> > >   	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
-> > >   		return ret;
-> > >   
-> > > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
-> > > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
-> > >   		return ret;
-> > > +	page = &folio->page;
-> > >   
-> > >   	/*
-> > >   	 * Just backoff if any subpage of a THP is corrupted otherwise
-> > 
-> > Acked-by: David Hildenbrand <david@redhat.com>
+> I guess the KISS approach would be to have a debug mode that just adds
+> an 'int3' instruction *after* the constant. And then the constant
+> rewriting rewrites the constant and just changes the 'int3' into the
+> standard single-byte 'nop' instruction.
 > 
-> You know what I'm going to ask ;) I'm assuming that the runtime effects
-> are "small performance optimization" and that "should we backport the
-> fix" is "no".
+> That wouldn't be complicated, and the cost would be minimal. But I
+> don't see it being worth it, at least not for the current use where
+> the unrewritten constant will just cause an oops on use.
+> 
 
-We're going to stop using PMDs to map large folios unless the fault is
-within the first 4KiB of the PMD.  No idea how many workloads that
-affects, but it only needs to be backported as far as v6.8, so we
-may as well backport it.
+A general enough way to do it would be to put an int $3 and replace it 
+with a ds: dummy prefix.
+
+The issue there is "current use". I'm really, really worried about 
+someone in the future putting this where it won't get properly patched 
+and then all hell will be breaking loose.
+
+Perhaps a better idea would be to provide the initial value as part of 
+the declaration, so that the value is never "uninitialized" (much like a 
+static variable can be initialized at compile time)?
+
+In other words:
+
+runtime_const_ptr(sym,init)
+
+Unfortunately gas doesn't seem to properly implement the {nooptimize} 
+prefix that is documented. This does require some gentle assembly hacking:
+
+- Loading a pointer/long requires using the "movabs" mnemonic on x86-64. 
+Combining that with
+
+  (but not on x86-32 as there are no compacted forms of mov immediate; 
+on x86-32 it is also legit to allow =rm rather than =r, but for an 8-bit 
+immediate "=qm" has to be used.)
+
+A size/type-generic version (one nice thing here is that init also ends 
+up specifying the type):
+
+#define _RUNTIME_CONST(where, sym, size) 				\
+	"\n\t"							\
+	".pushsection \"runtime_const_" #sym "\",\"a\"\n\t"	\
+	".long (" #where ") - (" #size ") - .\n\t"		\
+	".popsection"
+
+extern void __noreturn __runtime_const_bad_size(void);
+
+#define runtime_const(_sym, _init) ({ 				\
+	typeof(_init) __ret; 					\
+	const size_t __sz = sizeof(__ret); 			\
+	switch (__sz) { 					\
+	case 1:							\
+		asm_inline("mov %[init],%[ret]\n1:"		\
+		    _RUNTIME_CONST(1b, _sym, 1)			\
+		    : [ret] "=qm" (__ret)			\
+		    : [init] "i" (_init));			\
+		break;						\
+	case 8:							\
+		asm_inline("movabs %[init],%[ret]\n1:"		\
+		    _RUNTIME_CONST(1b, _sym, 8)			\
+		    : [ret] "=r" (__ret)			\
+		    : [init] "i" (_init));			\
+		break;						\
+	default:						\
+		asm_inline("mov %[init],%[ret]\n1:"		\
+		    _RUNTIME_CONST(1b, _sym, %c[sz])		\
+		    : [ret] "=rm" (__ret)			\
+		    : [init] "i" (_init), [sz] "n" (__sz)));	\
+		break;						\
+	}							\
+	__ret; })
+
+
+- For a shift count, it is unfortunately necessary to explicitly stitch 
+together the instruction using .insn to avoid truncating the case where 
+the operand is 1.
+
+Size- and operand-generic version:
+
+#define _runtime_const_shift(_val, _sym, _init, _op2) ({ 	\
+	typeof(_val) __ret = (_val); 				\
+	switch (sizeof(__ret)) {				\
+	case 1:							\
+		asm_inline(".insn 0xc0/%c[op2],%[ret],%[init]{:u8}\n1:" \
+			_RUNTIME_CONST(1b, _sym, 1)		\
+			: [ret] "+qm" (__ret)			\
+			: [init] "i" ((u8)(_init)),		\
+		 	  [op2] "n" (_op2));			\
+		break; 						\
+	default:						\
+		asm_inline(".insn 0xc1/%c[op2],%[ret],%[init]{:u8}\n1:" \
+			_RUNTIME_CONST(1b, _sym, 1)		\
+			: [ret] "+rm" (__ret)			\
+			: [init] "i" ((u8)(_init)),		\
+		  	  [op2] "n" (_op2));			\
+		break;						\
+	}							\
+	__ret; })						\
+
+#define runtime_const_rol(v,s,i) _runtime_const_shift(v,s,i,0)
+#define runtime_const_ror(v,s,i) _runtime_const_shift(v,s,i,1)
+#define runtime_const_shl(v,s,i) _runtime_const_shift(v,s,i,4)
+#define runtime_const_shr(v,s,i) _runtime_const_shift(v,s,i,5)
+#define runtime_const_sar(v,s,i) _runtime_const_shift(v,s,i,7)
+
+I am not sure if I'm missing something, but there really isn't a reason 
+to use different section names for the shift counts specifically, is there?
+
+NOTE: if we are *not* making these type-generic there is no reason 
+whatsoever to not make these inlines...
+
+	***
+
+
+Also: one thing I would *really* like to see this being used for is 
+cr4_pinned_bits, in which case one can, indeed, safely use a zero value 
+at init time as long as cr4_pinned_mask is patched at the same time, 
+which very much goes along with the above.
+
+Again, this is a slightly less minimal versus what I had which was a 
+maximal solution.
+
+My approach would pretty much have targeted doing this for nearly all 
+instances, which I eventually felt called for compiler support (or C++!) 
+as adding a bunch of static_imm_*() macros all over the kernel really 
+felt unpleasant.
+
+	-hpa
 
