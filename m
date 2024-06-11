@@ -1,223 +1,272 @@
-Return-Path: <linux-kernel+bounces-210455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EDC9043E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:43:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5039043E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF21C252D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA701C254FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19A59162;
-	Tue, 11 Jun 2024 18:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D88474432;
+	Tue, 11 Jun 2024 18:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm8fEhlE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkDd2u3G"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E22138FA1;
-	Tue, 11 Jun 2024 18:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3D838FA1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131419; cv=none; b=Fmz10XjECiiQzmRorqhsnNTByEcx1q78gh5WR7ptKcDQpsB0nhrmT1TKZ2Gkcm3vsxLkDPFCnu2J4e74gtXzI5eJ6TFmehC0Kf/LqWJdGOZez+dj6KM+GxllIrBjjBMPdsDTgAUJDUqqJVCMZ8zOD5Fl+4yeNKI0fiSR6vd8iko=
+	t=1718131426; cv=none; b=oBz/X4mLDxZ6pTXdeTwtzD3MWSf6XqsQBY6YeDKWAL9Fq9MFyzeHOwkn6eRTOHxGuHjnlzB7/ohDmRMLJrBm/b5d6WiW7FerMuvBTHSG8Exg/asG0dnVLrthXe4w6vzcFKHq0vuYOeo1kPa4lWlSRoafgNhVqlrFTlLcJ8uwLos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131419; c=relaxed/simple;
-	bh=xyfbWFD9PEoC0hy5UMfciLSU6DEIzoltYKj4K6js7RA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BP6VjE3PAappFO3uy7259nTEuHoSQwZByGKpSBnjtfnknCPHL6R+58L1MLA8+Gc4YaHk1kkAdxYaVxDhwk2KpV88z+hY584hhdSE6ZgffwDw75BeaGROx+o10FTnXwkpfaKaDjad3BcR3PJ7/ytMbX+Yxk0xQUioYPt16VFrEsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm8fEhlE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22772C4AF48;
-	Tue, 11 Jun 2024 18:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718131419;
-	bh=xyfbWFD9PEoC0hy5UMfciLSU6DEIzoltYKj4K6js7RA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zm8fEhlEWdlglYa4KZ5EuSpkNUcRkJGAd17h4EYZvvFDFSA93DTXbfIOw3w6DwtmH
-	 TGmDy/pdVlPPtsiyJGhIhn07+twJuLeGy9JPSW27dRx/+P6DJycx/PkAzZaxcAzMfG
-	 Om9EfSd/Betu8WIZAHFQvZHRQJl2gTWS2LpYi+g2kLS9ixzKOa2vJ/WEOo2h1yNzNk
-	 bIQeRIhhm4jBJPzNSsE5f7GmcQur/6W08LWVTKhG04lIUHsSlERgb1bq+ESVIMWj0j
-	 tsVG9/zHQ9qvivfs+pDVIBfyUijoGhx0M8lcOwiW3DyRg00/P2Laan8cAKVXfcVTH1
-	 YajS9ATp5ednA==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24c582673a5so242195fac.2;
-        Tue, 11 Jun 2024 11:43:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWicWQo4T0uQk8D11ME6H/BrZEUF1bkaBvV50QvJ2etpOQmAa/7ooN8ErZyVRDpOyrD+1aUpXT6py6pP29pO44luMnU8/UP/d5tswsE0lAXFl+IKIBI1i18Uobo1t/49sdrkO4D9eE=
-X-Gm-Message-State: AOJu0YxvgGYVaxb09gOPlkwPI1irMmY71kMzUjENIB6OyqZbWMTByJ5m
-	tG8a1F3P8PV+uKUfWO63KimUKPF3WKWBlCzohM1ZTt7rfRa78qyJFemUySDALnUayYcYFN4OOLa
-	pfCO7vas4+CsHMf/oAQdJCIHs8cY=
-X-Google-Smtp-Source: AGHT+IFPl+PkoahK2p0WiQw8OufLfv0QQnXJlc3eiBq9v+GXj33OITqROCuusmvJvSUvwDC2JlLd1/wPv7ppf7jivC8=
-X-Received: by 2002:a05:6870:8182:b0:254:c111:12b9 with SMTP id
- 586e51a60fabf-254c11119dcmr7784411fac.2.1718131418437; Tue, 11 Jun 2024
- 11:43:38 -0700 (PDT)
+	s=arc-20240116; t=1718131426; c=relaxed/simple;
+	bh=W6u7PIhX5knHCDdAk1xxEbG7NBM76Nhk0BJW4zS9M6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=te7W8axOOyKvXN1H/RoSW65+sz1rJBGHGn5LqN8S89EWNwSawDxSXN0uV7w29DZ8WfSTsC3KvOItPTsc8R759dXv2VopehiZX5CEXDge6+Uxak4dgapxfT1VEpRkqHgIxMi241FsknLsE8z+n+2rCJVOMo2s0ARY/OZwtBXV8yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkDd2u3G; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c60b13a56so5232568a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718131422; x=1718736222; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3B4dRZiAZKLlssSkuibM6VAi10SgS6TbPgd/0zmbDxc=;
+        b=YkDd2u3GcT+fPLhCfaRNDe/2UaCJ1hLINto4gANqaDTTGP6M7HENnB9SBVwdOPyktf
+         x4XuDfj2hgVbLedKcCx0FMU3zBw9AaHprE+jOTrZacx7JrkIjP5PuusKwSfv3Fq9gCxh
+         ENKMgqdHdDUCjo49WAWFd+Peh1pOlTkWwDKqMln9y6dj7goI/sfsFjB6OritODiEDQyx
+         eqoJiyUMG/cfB34wXwCVY2aVqCyAsH3sm5DHtY4IEGAi06ENAowpEo4SHoNMJ6Wp1vsT
+         11lx5qDnagYlLJPsHOp23lYBwwsiUXzMmcDQAZJCoxtBBp1C/Q+DeAAGuo501ueNhPuA
+         Uypw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718131422; x=1718736222;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3B4dRZiAZKLlssSkuibM6VAi10SgS6TbPgd/0zmbDxc=;
+        b=VpoHR6LuqjnzeXG0ynIIGlFeVqsSn8Hwfq3uFbNpERJCWJ9ly191tw+2haBihECZEJ
+         35Lbje99u2c12DFf99fwEnydp4cRZDAN9tMkqSw6Z1U+xXkrtQTP5eAMMESlUy2s0ebf
+         D1ZxGlVGzr2xu5iHHj1RLGDtIl6wlKLghN2K3s2eLXQeQ35W+eRRniCdeyCHmxAnw05/
+         Z7IqRR3BBSFtTif/72aOVVK99rIdKYaVH/0k8hlUZTEXq9AOH1ns3gXNbwRhwOVsHhue
+         Ysicyt43Up8e3LCRXZMrVxO1ri4A6aQPdijlVEWwvene5kFsn+SwcpVlJCH0TfrEMGc1
+         ku8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWg3WhOYB/S/2Q9/Gat2qX3qIWIawCOeFf45UyUhzktwVgLxngBxISsW6jQyW4tBVG5mcj1IWFjDuV7lOHTefLLlxZKAaJZQlhrRQUI
+X-Gm-Message-State: AOJu0Yz0M+6I9QDmbzwt6zPYclV5N7t0pEFGcaXliymd9wEUR1ShzALw
+	2r3XEFevl0nZVmPJLNQCSFdVNvC4kdwHE2sdfCaiEhMshDZqckj7
+X-Google-Smtp-Source: AGHT+IE3zSTRh8xAH8Py1sMJDx/BjKoKZNHDkSiAjCEUIwefZi48SYXnfFRQ122iGGSTZAIEXbm/XA==
+X-Received: by 2002:a50:8e11:0:b0:57c:8049:a9a with SMTP id 4fb4d7f45d1cf-57c80490adfmr4008291a12.2.1718131422174;
+        Tue, 11 Jun 2024 11:43:42 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:57b4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7fcfc67fsm4635790a12.31.2024.06.11.11.43.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 11:43:41 -0700 (PDT)
+Message-ID: <622bc591-ad14-448e-a9f3-988976fbb98a@gmail.com>
+Date: Tue, 11 Jun 2024 19:43:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12458899.O9o76ZdvQC@kreacher> <2340783.ElGaqSPkdT@kreacher> <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
-In-Reply-To: <e0a9f173-1abf-4faa-9a2d-b8310e72ef28@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 11 Jun 2024 20:43:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hNX03dhSO5rWBhK8Fyzu1zH-aLhrTkm_b0zhMQr_W1Sw@mail.gmail.com>
-Message-ID: <CAJZ5v0hNX03dhSO5rWBhK8Fyzu1zH-aLhrTkm_b0zhMQr_W1Sw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] thermal: trip: Make thermal_zone_set_trips() use
- trip thresholds
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, hannes@cmpxchg.org,
+ david@redhat.com, ying.huang@intel.com, hughd@google.com,
+ willy@infradead.org, nphamcs@gmail.com, chengming.zhou@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Shakeel Butt <shakeel.butt@linux.dev>
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
+ <20240610121820.328876-2-usamaarif642@gmail.com>
+ <CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com>
+ <d822ec8b-3b7d-4e5c-ac96-b6fda63da5d4@gmail.com>
+ <CAJD7tkZoaM=dWim7GPqEERDZyxp3PqMNctzXQCPDMO=8kQSwfw@mail.gmail.com>
+ <9ddfe544-636d-4638-ae0e-053674e47322@gmail.com>
+ <CAJD7tkY0F-Tczq4j861HxKATzEOfkVv=76m8zFcJHuh8E3VMEw@mail.gmail.com>
+ <08ea43f2-13d2-4b27-ae62-42cebc185c7b@gmail.com>
+ <CAJD7tkZC8e8ZTBSOGZH-1srTeC=jqxwWchd-BjvNsV2FR0oT8Q@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJD7tkZC8e8ZTBSOGZH-1srTeC=jqxwWchd-BjvNsV2FR0oT8Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 8:01=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 28/05/2024 18:51, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Modify thermal_zone_set_trips() to use trip thresholds instead of
-> > computing the low temperature for each trip to avoid deriving both
-> > the high and low temperature levels from the same trip (which may
-> > happen if the zone temperature falls into the hysteresis range of
-> > one trip).
-> >
-> > Accordingly, make __thermal_zone_device_update() call
-> > thermal_zone_set_trips() later, when threshold values have been
-> > updated for all trips.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v1 -> v2: Rebase.
-> >
-> > ---
-> >   drivers/thermal/thermal_core.c |    4 ++--
-> >   drivers/thermal/thermal_trip.c |   14 ++++----------
-> >   2 files changed, 6 insertions(+), 12 deletions(-)
-> >
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -513,13 +513,13 @@ void __thermal_zone_device_update(struct
-> >       if (tz->temperature =3D=3D THERMAL_TEMP_INVALID)
-> >               return;
-> >
-> > -     thermal_zone_set_trips(tz);
-> > -
-> >       tz->notify_event =3D event;
-> >
-> >       for_each_trip_desc(tz, td)
-> >               handle_thermal_trip(tz, td, &way_up_list, &way_down_list)=
-;
->
-> Would it make sense to use the for_each_trip_desc() loop here and update
-> low and high on the fly in this loop ?
->
-> If a trip point is crossed the way up or down, then
-> handle_thermal_trip() returns a value which in turn results in updating
-> low and high. If low and high are changed then the we call
-> thermal_zone_set_trips() after the loop.
->
-> The results for the thermal_zone_set_trips() will be the loop, the low,
-> high, prev_low_trip and prev_high_trip variables going away.
->
-> The resulting function should be:
->
-> void thermal_zone_set_trips(struct thermal_zone_device *tz, int low, int
-> high)
-> {
->          int ret;
->
->          lockdep_assert_held(&tz->lock);
->
->          if (!tz->ops.set_trips)
->                  return;
->
->          /*
->
->
->           * Set a temperature window. When this window is left the
-> driver
->
->           * must inform the thermal core via thermal_zone_device_update.
->
->
->           */
->          ret =3D tz->ops.set_trips(tz, low, high);
->          if (ret)
->                  dev_err(&tz->device, "Failed to set trips: %d\n", ret);
-> }
 
-So you essentially mean moving the for_each_trip_desc() loop from
-thermal_zone_set_trips() to __thermal_zone_device_update() IIUC.
+On 11/06/2024 18:51, Yosry Ahmed wrote:
+> [..]
+>>>> I think its better to handle this in Barrys patch. I feel this series is
+>>>> close to its final state, i.e. the only diff I have for the next
+>>>> revision is below to remove start/end_writeback for zer_filled case. I
+>>>> will comment on Barrys patch once the I send out the next revision of this.
+>>> Sorry I did not make myself clearer. I did not mean that you should
+>>> handle the large folio swapin here. This needs to be handled at a
+>>> higher level because as you mentioned, a large folio may be partially
+>>> in the zeromap, zswap, swapcache, disk, etc.
+>>>
+>>> What I meant is that we should probably have a debug check to make
+>>> sure this doesn't go unhandled. For zswap, I am trying to add a
+>>> warning and fail the swapin operation if a large folio slips through
+>>> to zswap. We can do something similar here if folks agree this is the
+>>> right way in the interim:
+>>> https://lore.kernel.org/lkml/20240611024516.1375191-3-yosryahmed@google.com/.
+>>>
+>>> Maybe I am too paranoid, but I think it's easy to mess up these things
+>>> when working on large folio swapin imo.
+>> So there is a difference between zswap and this optimization. In this
+>> optimization, if the zeromap is set for all the folio bits, then we
+>> should do large folio swapin. There still needs to be a change in Barrys
+>> patch in alloc_swap_folio, but apart from that does the below diff over
+>> v3 make it better? I will send a v4 with this if it sounds good.
+>>
+>>
+>> diff --git a/mm/page_io.c b/mm/page_io.c
+>> index 6400be6e4291..bf01364748a9 100644
+>> --- a/mm/page_io.c
+>> +++ b/mm/page_io.c
+>> @@ -234,18 +234,24 @@ static void swap_zeromap_folio_clear(struct folio
+>> *folio)
+>>           }
+>>    }
+>>
+>> -static bool swap_zeromap_folio_test(struct folio *folio)
+>> +/*
+>> + * Return the index of the first subpage which is not zero-filled
+>> + * according to swap_info_struct->zeromap.
+>> + * If all pages are zero-filled according to zeromap, it will return
+>> + * folio_nr_pages(folio).
+>> + */
+>> +static long swap_zeromap_folio_test(struct folio *folio)
+>>    {
+>>           struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>>           swp_entry_t entry;
+>> -       unsigned int i;
+>> +       long i;
+> Why long?
 
-The caveat is that it is not necessary to run this loop at all if
-tz->ops.set_trips is NULL.
 
-I was thinking about folding the entire thermal_zone_set_trips() into
-the caller, but that would be a different patch.
+folio_nr_pages returns long, but I just checked that 
+folio->_folio_nr_pages is unsigned int, but that will probably be 
+typecasted to long :). I will switch to unsigned int as its not really 
+going to go to long for CONFIG_64BIT
+
+>>           for (i = 0; i < folio_nr_pages(folio); i++) {
+>>                   entry = page_swap_entry(folio_page(folio, i));
+>>                   if (!test_bit(swp_offset(entry), sis->zeromap))
+>> -                       return false;
+>> +                       return i;
+>>           }
+>> -       return true;
+>> +       return i;
+>>    }
+>>
+>>    /*
+>> @@ -581,6 +587,7 @@ void swap_read_folio(struct folio *folio, bool
+>> synchronous,
+>>    {
+>>           struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>>           bool workingset = folio_test_workingset(folio);
+>> +       long first_non_zero_page_idx;
+>>           unsigned long pflags;
+>>           bool in_thrashing;
+>>
+>> @@ -598,10 +605,19 @@ void swap_read_folio(struct folio *folio, bool
+>> synchronous,
+>>                   psi_memstall_enter(&pflags);
+>>           }
+>>           delayacct_swapin_start();
+>> -       if (swap_zeromap_folio_test(folio)) {
+>> +       first_non_zero_page_idx = swap_zeromap_folio_test(folio);
+>> +       if (first_non_zero_page_idx == folio_nr_pages(folio)) {
+>>                   folio_zero_fill(folio);
+>>                   folio_mark_uptodate(folio);
+>>                   folio_unlock(folio);
+>> +       } else if (first_non_zero_page_idx != 0) {
+>> +               /*
+>> +                * The case for when only *some* of subpages being
+>> swapped-in were recorded
+>> +                * in sis->zeromap, while the rest are in zswap/disk is
+>> currently not handled.
+>> +                * WARN in this case and return without marking the
+>> folio uptodate so that
+>> +                * an IO error is emitted (e.g. do_swap_page() will sigbus).
+>> +                */
+>> +                WARN_ON_ONCE(1);
+>>           } else if (zswap_load(folio)) {
+>>                   folio_mark_uptodate(folio);
+>>                   folio_unlock(folio);
+>>
+>>
+> This is too much noise for swap_read_folio(). How about adding
+> swap_read_folio_zeromap() that takes care of this and decides whether
+> or not to call folio_mark_uptodate()?
+
+Sounds good, will do as below. Thanks!
 
 >
-> But if you consider that is an additional change, then:
-
-I do.
-
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-Thank you!
-
+> -static bool swap_zeromap_folio_test(struct folio *folio)
+> +/*
+> + * Return the index of the first subpage which is not zero-filled according to
+> + * swap_info_struct->zeromap.  If all pages are zero-filled according to
+> + * zeromap, it will return folio_nr_pages(folio).
+> + */
+> +static unsigned int swap_zeromap_folio_test(struct folio *folio)
+>   {
+>          struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>          swp_entry_t entry;
+> @@ -243,9 +248,9 @@ static bool swap_zeromap_folio_test(struct folio *folio)
+>          for (i = 0; i < folio_nr_pages(folio); i++) {
+>                  entry = page_swap_entry(folio_page(folio, i));
+>                  if (!test_bit(swp_offset(entry), sis->zeromap))
+> -                       return false;
+> +                       return i;
+>          }
+> -       return true;
+> +       return i;
+>   }
 >
-> > +     thermal_zone_set_trips(tz);
-> > +
-> >       list_sort(&way_up_list, &way_up_list, thermal_trip_notify_cmp);
-> >       list_for_each_entry(td, &way_up_list, notify_list_node)
-> >               thermal_trip_crossed(tz, &td->trip, governor, true);
-> > Index: linux-pm/drivers/thermal/thermal_trip.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_trip.c
-> > +++ linux-pm/drivers/thermal/thermal_trip.c
-> > @@ -88,17 +88,11 @@ void thermal_zone_set_trips(struct therm
-> >               return;
-> >
-> >       for_each_trip_desc(tz, td) {
-> > -             const struct thermal_trip *trip =3D &td->trip;
-> > -             int trip_low;
-> > +             if (td->threshold < tz->temperature && td->threshold > lo=
-w)
-> > +                     low =3D td->threshold;
-> >
-> > -             trip_low =3D trip->temperature - trip->hysteresis;
-> > -
-> > -             if (trip_low < tz->temperature && trip_low > low)
-> > -                     low =3D trip_low;
-> > -
-> > -             if (trip->temperature > tz->temperature &&
-> > -                 trip->temperature < high)
-> > -                     high =3D trip->temperature;
-> > +             if (td->threshold > tz->temperature && td->threshold < hi=
-gh)
-> > +                     high =3D td->threshold;
-> >       }
-> >
-> >       /* No need to change trip points */
-> >
-> >
-> >
+>   /*
+> @@ -511,6 +516,25 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>          mempool_free(sio, sio_pool);
+>   }
 >
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+> +static bool swap_read_folio_zeromap(struct folio *folio)
+> +{
+> +       unsigned int idx = swap_zeromap_folio_test(folio);
+> +
+> +       if (idx == 0)
+> +               return false;
+> +
+> +       /*
+> +        * Swapping in a large folio that is partially in the zeromap is not
+> +        * currently handled. Return true without marking the folio uptodate so
+> +        * that an IO error is emitted (e.g.  do_swap_page() will sigbus).
+> +        */
+> +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> +               return true;
+> +
+> +       folio_zero_fill(folio);
+> +       folio_mark_uptodate(folio);
+> +       return true
+> +}
+> +
+>   static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
+>   {
+>          struct swap_info_struct *sis = swp_swap_info(folio->swap);
+> @@ -600,9 +624,7 @@ void swap_read_folio(struct folio *folio, bool synchronous,
+>                  psi_memstall_enter(&pflags);
+>          }
+>          delayacct_swapin_start();
+> -       if (swap_zeromap_folio_test(folio)) {
+> -               folio_zero_fill(folio);
+> -               folio_mark_uptodate(folio);
+> +       if (swap_read_folio_zeromap(folio)) {
+>                  folio_unlock(folio);
+>          } else if (zswap_load(folio)) {
+>                  folio_mark_uptodate(folio);
 
