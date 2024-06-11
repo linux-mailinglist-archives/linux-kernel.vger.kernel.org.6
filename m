@@ -1,101 +1,108 @@
-Return-Path: <linux-kernel+bounces-209823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BCA903B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5CE903B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A73C1F20F1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:01:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A55B29954
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8421791FC;
-	Tue, 11 Jun 2024 12:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7530717B500;
+	Tue, 11 Jun 2024 12:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OjrT0zA6"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJJ/zKWv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F114F9E4;
-	Tue, 11 Jun 2024 12:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE2017623D;
+	Tue, 11 Jun 2024 12:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107286; cv=none; b=gYP/MEXwLKuGzBOj4nDIC8hbeBX7Pm3zGjUouzjAgjmAKHiG+QpX5EViZmKGU28Lsms1NYb9hUdAKmpwV/vXwdvfmMvobA8MRxbP4JbXjPUJa6vkXn1s4czYWhlPB9GuPhcYX70jD+L/bb2EZ8cMa5K0o0uZ3yXArsWahF8QKLc=
+	t=1718107341; cv=none; b=TYcmAWF7HlArEzlhTOKTzW7Qdy5GR7ryZodbnEdKvVsgGTl35j/Na1UnY2VuXF9TCKmFvGgZp+zvSrm24f6oVPTNavJ51Bt9sMut2RGx17/SiyCgdHYwwzwxipb457nCEd9IJowDyV4uSEiKkJaWErXZSm0A0Ie4j59sKQ493DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107286; c=relaxed/simple;
-	bh=Zix90JJZPkY0LLrFX9F0TYZzTEx6XBUzy2tS9s+6vZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JDObJLpx3BN/i5B5ePXoZS5oDPs7Buu72PyNQtivz+E7vHqTEU/7GHnIcRkzCPjTxpfNvFxFccS2AenfyZT20h8qcJQe2eUfUf88AQoLNMPvaCqBFejJzRSw5VEnO608cfhX7kbXCHrAyYL2rq3UtvX0xNRjaprnFv7S/i/PkfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OjrT0zA6; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F24A41C0005;
-	Tue, 11 Jun 2024 12:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718107276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zix90JJZPkY0LLrFX9F0TYZzTEx6XBUzy2tS9s+6vZo=;
-	b=OjrT0zA6QibB5CusNH85occjMBlrP6MQKaCMNyIoKNt05KrYw2oRXDKkXX7nlW3/H97wm/
-	8tWXFFiTzcjy4LL8I5HJCP80rBkyYlDOYHIZI+/9/58+MNDrxosShqzMx7fRBwiiXXUreb
-	zhj0eowSnq1BJY4lpZDTendl8jk5r3D/flE6RBDYRy0Sj6qstnxVGCWbdR8oJlJdWEp5dm
-	ZyQiYocC5cLciRPgyWaB7R2D2XeaNlkq0ftCY7b0grhixvojDBn77hSZHJ/qMW3fbdTGP7
-	ckZwfe0vKBOvL3yQMTz81rdIedkCpoy+9ocjynct4iyNvUrGSRVM4qhnGmSV+g==
-Date: Tue, 11 Jun 2024 14:01:15 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dent Project
- <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
- status with class, power and extended state
-Message-ID: <20240611140115.4e857e46@kmaincent-XPS-13-7390>
-In-Reply-To: <ZmgFLlWscicJmnxX@pengutronix.de>
-References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
- <20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
- <ZmaMGWMOvILHy8Iu@pengutronix.de>
- <20240610112559.57806b8c@kmaincent-XPS-13-7390>
- <ZmgFLlWscicJmnxX@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718107341; c=relaxed/simple;
+	bh=CVnXtj7dn7R4jP36tYffAg5QjTJwaLN8wgb/nx5uVVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhcCuMXijHDKG1B6fS9Lr4fMELpFuhA0snUbiF2Kh4CIsyN/Cz6BSpTbF6ES0LBK3MF1uAZo4J12qFHBnC3LVjKjVXGRoVyil38exOZVytVDK/axhZ0TWRGU03lKspssbhpfdpTzKvo9XPLVxIWEIcF/1VkRTt0fskLfZSZTN3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJJ/zKWv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB0BC32789;
+	Tue, 11 Jun 2024 12:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718107341;
+	bh=CVnXtj7dn7R4jP36tYffAg5QjTJwaLN8wgb/nx5uVVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XJJ/zKWvRiyqgeI+ApQhnRndzGu9PygAixIX0q/qDR8eRcwJG0wY1hW+Osb/iuqbq
+	 lDotrOT+lklfU6UGVcKy4bfqPhyXHW9tgEBi5QWPV8xeI/VTn3t34Ufmy0AoPzsoQ+
+	 c0g3rdr9IHuGozdVDEzk2Wbq/fgf4Ul7Y+1Q5tFZ4riDaH75fH8Cc/JQR2oNkaqmf/
+	 N4ysbZ5rBYb2OmBi38sB9tHrKVPW7+IHZ9QwaZiMdsPa/7P0ZaeeGz/N4JyuLbnzR1
+	 fM/Cji6L+TAX48aJqIKG9oDazxcNYO3bltbrn7U+y2428eiRmqjxVXfyUn1iZIQ5lS
+	 3aZ4x3x7gE2PQ==
+Received: from johan by theta with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sH0Cd-000000008k4-1zj5;
+	Tue, 11 Jun 2024 14:02:15 +0200
+Date: Tue, 11 Jun 2024 14:02:15 +0200
+From: Johan Hovold <johan@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Steev Klimaszewski <steev@kali.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: cpufreq/thermal regression in 6.10
+Message-ID: <Zmg8x6JXQW1dqOr4@hovoldconsulting.com>
+References: <ZmVfcEOxmjUHZTSX@hovoldconsulting.com>
+ <CAJZ5v0gVnjVyd_O6KgXy2sXr3b3M3vyTLyUCasyxP0GrAXro4Q@mail.gmail.com>
+ <CAJZ5v0iz7gwhpvT53CH0ZEA_q3U=dnn6XR8HdLk6LpP3ye4Zkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0iz7gwhpvT53CH0ZEA_q3U=dnn6XR8HdLk6LpP3ye4Zkg@mail.gmail.com>
 
-On Tue, 11 Jun 2024 10:05:02 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On Tue, Jun 11, 2024 at 12:54:25PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Jun 10, 2024 at 1:17 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Sun, Jun 9, 2024 at 9:53 AM Johan Hovold <johan@kernel.org> wrote:
 
-> On Mon, Jun 10, 2024 at 11:25:59AM +0200, Kory Maincent wrote:
-=20
-> > The enum errors I wrote is a bit subjective and are taken from the PD69=
-2x0
-> > port status list. Go ahead to purpose any change, I have tried to make
-> > categories that make sense but I might have made wrong choice. =20
->=20
-> Here is my proposal aligned with IEEE 802.3-2022 33.2.4.4:
+> > > Steev reported to me off-list that the CPU frequency of the big cores on
+> > > the Lenovo ThinkPad X13s sometimes appears to get stuck at a low
+> > > frequency with 6.10-rc2.
+> > >
+> > > I just confirmed that once the cores are fully throttled (using the
+> > > stepwise thermal governor) due to the skin temperature reaching the
+> > > first trip point, scaling_max_freq gets stuck at the next OPP:
+> > >
+> > >         cpu4/cpufreq/scaling_max_freq:940800
+> > >         cpu5/cpufreq/scaling_max_freq:940800
+> > >         cpu6/cpufreq/scaling_max_freq:940800
+> > >         cpu7/cpufreq/scaling_max_freq:940800
+> > >
+> > > when the temperature drops again.
 
-Hello Oleksij,
+> If this is the step-wise governor, the problem might have been
+> introduced by commit
+> 
+> 042a3d80f118 thermal: core: Move passive polling management to the core
+> 
+> which removed passive polling count updates from that governor, so if
+> the thermal zone in question has passive polling only and no regular
+> polling, temperature updates may stop coming before the governor drops
+> the cooling device states to the "no target" level.
+> 
+> So please test the attached partial revert of the above commit when you can.
 
-Wow! You fully rewrite the netlink UAPI.
-Thanks, this is more standard complaint than my proposal!
-I will remove the PD692x0 specific description and update my patch series
-accordingly.
+Thanks for the quick fix. The partial revert seems to do the trick:
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
