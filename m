@@ -1,78 +1,71 @@
-Return-Path: <linux-kernel+bounces-210057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75FE903E9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCC4903E9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947D71F233B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0502822B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D287C17DE18;
-	Tue, 11 Jun 2024 14:24:05 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6840F17D894;
+	Tue, 11 Jun 2024 14:24:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC85174EC9;
-	Tue, 11 Jun 2024 14:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0021C17C7DA;
+	Tue, 11 Jun 2024 14:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718115845; cv=none; b=HdQQNg5SKAtSw0HkjSySQgKFlXf0Lrswg/42bTUCvQKmKvFUQHxC1geUbZNZlhTJZm04/0ALRcZe527beJXKVKIp39/ZxQ/+X+rgy6yjNgK0PPsi814F9IMNfjVtO3uH8hhs71yaIBgTczOoFdDszsDbMKzZpiEIsMVtRt1iDCU=
+	t=1718115840; cv=none; b=EJBh0gT65Td58urjlmATXJflOvqrthii5SPRnKo2ISVNS4pJFqMid5s1Qchhp6KbLtcoEtqmxIPudXq12gBbXNlu2W+tB7S+cQ7nwyomH7ScA0JzdTN/oeh++bJavRkfBt87WBL7NCXL82rEUwtPwpWKsISt2draD1B0+cKjrhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718115845; c=relaxed/simple;
-	bh=HQTvWBn7mIOw13b3k/z/rr/G6016XCcqCgFHAJfi/Ws=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fz5fl02HA7Lsp34L0DPHQPgIoLMAoj2OLKHtMn5ePcsm46hJXXy/DyOmsK+tePnH900f/e1AhbtsRdIV8DK0T/Ohn77uJ1Jv3sLKgXBXceITtGhING9+yFzpf9nFm//8EREOjrJpK4RpLy1ZB79Q2a1jiU1d//lkde8Y65CBtFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from msexch01.omp.ru (10.188.4.12) by msexch02.omp.ru (10.188.4.13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 11 Jun
- 2024 17:23:48 +0300
-Received: from msexch01.omp.ru ([fe80::485b:1c4a:fb7f:c753]) by
- msexch01.omp.ru ([fe80::485b:1c4a:fb7f:c753%5]) with mapi id 15.02.1258.012;
- Tue, 11 Jun 2024 17:23:48 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: "axboe@kernel.dk" <axboe@kernel.dk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>
-CC: Karina Yankevich <k.yankevich@omp.ru>, "lvc-patches@linuxtesting.org"
-	<lvc-patches@linuxtesting.org>, Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [bug report] block: integer overflow in __bvec_gap_to_prev()
-Thread-Topic: [bug report] block: integer overflow in __bvec_gap_to_prev()
-Thread-Index: AQHavAr58l5gsx+jFUKOz/Vibcz91g==
-Date: Tue, 11 Jun 2024 14:23:48 +0000
-Message-ID: <9d8ac82ab63a64583f753878dd03e3503c68ffbe.camel@omp.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: msexch02.omp.ru, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 6/11/2024 10:46:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: InTheLimit
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <158CCA59EAA81C45B9E45B96D7FCE8F4@omp.ru>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718115840; c=relaxed/simple;
+	bh=zQSUZDf9BA6axvEmuxkge4ZvqblG70QClCm0SBwZzhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SGbG0sz6246ye1zQS+Zdcy3xzphLaI163tPhkE1NxHD7F0jxBDJk44/X2Rfa77rJ+g+3Ww93mPzUHZMVlEGTYzeEHqHU6ImRzryaoS4Fs+SVS14LBoA3DNONlZXTu77twd5yy00J8i/d2HaTBYgDCUEVgHHxRrrM0D41itaD3MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3763C2BD10;
+	Tue, 11 Jun 2024 14:23:58 +0000 (UTC)
+Date: Tue, 11 Jun 2024 10:24:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Tom Zanussi <zanussi@kernel.org>
+Subject: Re: [PATCH v3 2/3] tracing/kprobe: Integrate test warnings into
+ WARN_ONCE
+Message-ID: <20240611102414.203b95bd@gandalf.local.home>
+In-Reply-To: <171811264685.85078.8068819097047430463.stgit@devnote2>
+References: <171811262833.85078.12421348187962271050.stgit@devnote2>
+	<171811264685.85078.8068819097047430463.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-SGVsbG8uDQoNClRoZXJlIGlzIGEgY2FzZSBvZiBpbnRlZ2VyIG92ZXJmbG93IGluIF9fYnZlY19n
-YXBfdG9fcHJldigpOg0KDQoJKChicHJ2LT5idl9vZmZzZXQgKyBicHJ2LT5idl9sZW4pICYgbGlt
-LT52aXJ0X2JvdW5kYXJ5X21hc2spOw0KDQpiaW9fdmVjIGNhbiBjcm9zcyBtdWx0aXBsZSBwYWdl
-czoNCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDE5MDIxNTExMTMyNC4zMDEyOS0x
-LW1pbmcubGVpQHJlZGhhdC5jb20vdC8NCg0KU28sIGluIGNhc2UgYmlvIGhhcyBvbmUgYmlvX3Zl
-YyBidl9sZW4gY2FuIGhhdmUgYSBtYXhpbXVtIHZhbHVlIG9mIFVJTlRfTUFYLg0KVGhlIGNoZWNr
-IGhhcHBlbnMgaW4gYmlvX2Z1bGwoKS4gSW4gdGhlIGNhc2Ugd2hlbiBidl9sZW4gaXMgZXF1YWwg
-dG8NClVJTlRfTUFYIGFuZCBidl9vZmZzZXQgaXMgZ3JlYXRlciB0aGFuIHplcm8sIGFuIG92ZXJm
-bG93IG1heSBvY2N1ci4NCg0KRm91bmQgYnkgTGludXggVmVyaWZpY2F0aW9uIENlbnRlciAobGlu
-dXh0ZXN0aW5nLm9yZykgd2l0aCBTdmFjZS4NCg==
+On Tue, 11 Jun 2024 22:30:46 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Cleanup the redundant WARN_ON_ONCE(cond) + pr_warn(msg) into
+> WARN_ONCE(cond, msg). Also add some WARN_ONCE() for hitcount check.
+> These WARN_ONCE() errors makes it easy to handle errors from ktest.
+> 
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v3:
+>   - integrate WARN_ON_ONCE() and pr_warn() instead of remove
+>     WARN_ONCE().
+
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
 
