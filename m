@@ -1,310 +1,203 @@
-Return-Path: <linux-kernel+bounces-209608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1C790385B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C6490385E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C81EBB23328
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3F41F233AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF15C178375;
-	Tue, 11 Jun 2024 10:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BAD17836F;
+	Tue, 11 Jun 2024 10:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Vsd3mMsu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="B+lpaBY+"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J5bglAl2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A5178364;
-	Tue, 11 Jun 2024 10:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0118EE57E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718100351; cv=none; b=Oc6Qnd922iEbW7O5CshgpXTFnGEL5LtZ0AQ11fSFZCAv/FKmwtK6Z0jloFUrlG4HbqP83f7L+jCB24ZjCOlrrLa5lC01uRZDpsj4m1bQWgliu4XBifx+/sdaTANtVgkQIES1sYGstlJKcdXSr9kDsnTIbpDJT8mEUm0cD2X504Q=
+	t=1718100424; cv=none; b=I+LOamKWcsaCcCT3/dCpX/n0yO7ZUrUOXyGuM5A5+U4/aONOvlvHRMzcQeS75LX8Rar0K/fdpnFdi3fRgGLNcCXImlnen82ZJDicKMAOzyZn7ptEUjLVz2pfUzAYf0SsEfRork12kuks8MjG6i0QcyBFBgEvVyCn/xg9tSsLMJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718100351; c=relaxed/simple;
-	bh=Efn05NVXQ8LL12SEOgebkSabzxCq2BMNBnhaIh464Dk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LzQhZdruymaHkpoiAmPPQynmOZbuxutSsW5wrz5k0VVu8jJoXUCRzqvQOTau0XWJ0EHAbBKYZYQYq+hMePYja7Npm4UdkD4ko4zJatK2aC7+/68mhYZ2cnaXF3CifVQNUB1i0swqPVtBH1xw9Dn+5It0baUogfBg9b0h4uY7gcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Vsd3mMsu; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=B+lpaBY+ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718100348; x=1749636348;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=IpeC1QAyGp7/ecmPqLy+8ePCuBDPCsaQb8tByibuhG4=;
-  b=Vsd3mMsuvLcrMtLCGYuG5BlsfKvEUCycM7BYMtK1ln/NGBC42K/dn9Cm
-   2LWZRdcpM5OIoC/k2jkErTY31knN9qOdwkDQjRdImQwvq8QqPU3xK3rTO
-   i06UnZXrKjZbcgDuof1r8RJMkDfhv0Mm7TIqC052rE+UXKQ3Pv7iMkwlw
-   pYCiZ7eAgbisa/h7dZ+W6jSSb9EQJkI49p7DqflPmBcvtcMPWlPmKPWPi
-   JpLv4rFKRhr7TVSXjI9YJezN49eWSeAAfyIBEJA1mcMStHZviWNuX0tHe
-   jERpGGKXfWZw5Go7ZAs+uSFGCqHIq5Oy4oLei9RjwMQfcTsKga3/A2AjB
-   A==;
-X-CSE-ConnectionGUID: 1P99VBzoRRaTc8rrIT8Wsw==
-X-CSE-MsgGUID: vPHOmii7R1+khm3rIbi4Rg==
-X-IronPort-AV: E=Sophos;i="6.08,229,1712613600"; 
-   d="scan'208";a="37329397"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 11 Jun 2024 12:05:39 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 468ED163947;
-	Tue, 11 Jun 2024 12:05:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718100335;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=IpeC1QAyGp7/ecmPqLy+8ePCuBDPCsaQb8tByibuhG4=;
-	b=B+lpaBY+5PQduUy26+YMD3o23CtOQFLQsz5x6J4Bt41aIzZw2yep1fBN9tF4XmrU3x84Mg
-	AT+P7LWVDCPZxxfSli8hNWh3rI/T6pF0nxH4eRTMuuBfxQUR2sDYTFaZm+POUCx7MliTn/
-	Zk8kcDj0RolsedtKYfgHMw2sCKl7Qpm0xwZY6OMG8hx0HZU1sJE/U4cbPXcw21aKB8XDZk
-	qz1GdbGMnMIZmC3+1B1p+wnnQ1DbexlkunLL8axoxwTmxPH15a/m1LQMkhDeQNITQVDGBr
-	ThRuSVUFwwBuLkocjKXqSSzlo/T2uccWpUxv/PQmDfgsLQMiOJt6DwcYtG6evg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/9] arm64: dts: imx8: add basic lvds and lvds2 subsystem
-Date: Tue, 11 Jun 2024 12:05:35 +0200
-Message-ID: <5792284.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240610-imx8qm-dts-usb-v2-1-788417116fb1@nxp.com>
-References: <20240610-imx8qm-dts-usb-v2-0-788417116fb1@nxp.com> <20240610-imx8qm-dts-usb-v2-1-788417116fb1@nxp.com>
+	s=arc-20240116; t=1718100424; c=relaxed/simple;
+	bh=pzWOboj2SdczWO97ibV1x/fRKpOO+i16TZis1aetObU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLZl3h/bQCYpSBfkE61sJSDWQIRIOOBgeTR/gXD2C3eiwvyFfId9ua0XVX5dH++fmxohWlVMkRGf8uX0QQQjsCPiIDUI6ZaVZ6NBNuiA6MpgYcVSO4sRHakkWgWv4YGrLR16Z9jCasY20t7imQw0hRYix/qrX497vFFmYz/GRa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J5bglAl2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718100422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F/H/c4fGsFUdJRDofZpCfuHa+2bAf+RkO1DuZv3WdgI=;
+	b=J5bglAl2hbB6QyihHx/iMZNYmTt9BOqhSfI+fqWpV3xws3ysg0Pe1Ph7nSdR+HbvLfoBCf
+	GSrF+C8pzOS5Ww554eN9YO9HVwDDH2qEmzc3oOztT+LBQotUByMaP96537Nr4F13c0bEyv
+	SRxWoiSXL9N+hoKxBMqYZbolEsRSwA0=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-373-3Kqkv3oTMlOtjGPzyPyNCg-1; Tue, 11 Jun 2024 06:07:00 -0400
+X-MC-Unique: 3Kqkv3oTMlOtjGPzyPyNCg-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ebddcae207so18807191fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:07:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718100419; x=1718705219;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F/H/c4fGsFUdJRDofZpCfuHa+2bAf+RkO1DuZv3WdgI=;
+        b=ewzHQEz9Vqyna+jpaauO8Ou4RjeDfYwzha5lbK3I9GF991zDqHHK+8fxAYCMYP0YRD
+         5chpBySWIu9NngC3i5CsZ+S6SXrzyCDTUVHvkVh89W6QjRKl4pTrt1/941TbzNy9fw2y
+         uHv1pVXgfLOwU3R+ULXb+qtQzBexSuLB0At9nRVXNgUeiC7xz1u21mVMXrqIFzfXMdcm
+         pcFuxTYsq7bEy1rrTo9kbtJ3GnTROo9D/rc43FoHJy6xxe4/sKnfBZIXCYFwvawc5MGz
+         EJ9nmu/avs9sXNYDD9yA1ogOOzPuDPJLMGwDB3H5oivC+F+33M1+ux93jIR1J6XWJOOL
+         91Gg==
+X-Gm-Message-State: AOJu0Yx6pFgR0TIyA7NgPCxCL+ZmfJWk9hIxqJnqq00snSGIZsnAEJEl
+	AiVP8naEq+Xaqt/UjTtiUSQJblnoKVPr71droYnFwU6IMGTl11UICUB6Ta66evbGtgrrOTYaYkf
+	4Gsi0dNyzjXnK8kxKaIpNMPAKOUszuMmsh9SgS9cOijYKCa8Iq8HGq6gL+/jGOGZ3AXct/UqbKn
+	cxyMmHHad4jE6BkqYMIdj7nJ0g0pJ5qZ8SmeV2dYP6Dw==
+X-Received: by 2002:a2e:908e:0:b0:2eb:ee64:1e19 with SMTP id 38308e7fff4ca-2ebee641fb3mr18566771fa.42.1718100419062;
+        Tue, 11 Jun 2024 03:06:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTPfn39pFW+4UY1ixf2NXkOeipXmnEb8MezD4IOdN3tIhaG3lKM4bAlWBQ/Nnh1BIsuQ/pCw==
+X-Received: by 2002:a2e:908e:0:b0:2eb:ee64:1e19 with SMTP id 38308e7fff4ca-2ebee641fb3mr18566441fa.42.1718100418548;
+        Tue, 11 Jun 2024 03:06:58 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421818907b6sm86762715e9.27.2024.06.11.03.06.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 03:06:57 -0700 (PDT)
+Message-ID: <2ed64218-7f3b-4302-a5dc-27f060654fe2@redhat.com>
+Date: Tue, 11 Jun 2024 12:06:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] mm: pass meminit_context to __free_pages_core()
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hyperv@vger.kernel.org,
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+ kasan-dev@googlegroups.com, Mike Rapoport <rppt@kernel.org>,
+ Oscar Salvador <osalvador@suse.de>, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+References: <20240607090939.89524-1-david@redhat.com>
+ <20240607090939.89524-2-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240607090939.89524-2-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Frank,
-
-Am Montag, 10. Juni 2024, 22:46:18 CEST schrieb Frank Li:
-> Add basic lvds and lvds2 subsystem for imx8qm an imx8qxp.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On 07.06.24 11:09, David Hildenbrand wrote:
+> In preparation for further changes, let's teach __free_pages_core()
+> about the differences of memory hotplug handling.
+> 
+> Move the memory hotplug specific handling from generic_online_page() to
+> __free_pages_core(), use adjust_managed_page_count() on the memory
+> hotplug path, and spell out why memory freed via memblock
+> cannot currently use adjust_managed_page_count().
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi |  63 +++++++++++++
->  arch/arm64/boot/dts/freescale/imx8-ss-lvds1.dtsi | 114 +++++++++++++++++=
-++++++
->  2 files changed, 177 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi b/arch/arm6=
-4/boot/dts/freescale/imx8-ss-lvds0.dtsi
-> new file mode 100644
-> index 0000000000000..55fd60446ad21
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: GPL-2.0-only and MIT
-> +
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +lvds0_subsys: bus@56240000 {
-> +	compatible =3D "simple-bus";
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <1>;
-> +	ranges =3D <0x56240000 0x0 0x56240000 0x10000>;
-> +
-> +	qm_lvds0_lis_lpcg: qxp_mipi1_lis_lpcg: clock-controller@56243000 {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x56243000 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clock-output-names =3D "mipi1_lis_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_MIPI_1>;
-> +	};
-> +
-> +	qm_lvds0_pwm_lpcg: qxp_mipi1_pwm_lpcg: clock-controller@5624300c {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x5624300c 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clock-output-names =3D "mipi1_pwm_lpcg_clk",
-> +				     "mipi1_pwm_lpcg_ipg_clk",
-> +				     "mipi1_pwm_lpcg_32k_clk";
-> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
-> +	};
-> +
-> +	qm_lvds0_i2c0_lpcg: qxp_mipi1_i2c0_lpcg: clock-controller@56243010 {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x56243010 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clock-output-names =3D "mipi1_i2c0_lpcg_clk",
-> +				     "mipi1_i2c0_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +	};
-> +
-> +	qm_pwm_lvds0: qxp_pwm_mipi_lvds1: pwm@56244000 {
-> +		compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-> +		reg =3D <0x56244000 0x1000>;
-> +		clock-names =3D "ipg", "per";
-> +		assigned-clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_PER>;
 
-Is IMX_SC_R_MIPI_1_I2C_0 actually correct? I would have assumed
-it's IMX_SC_R_MIPI_1_PWM_0.
+@Andrew, can you squash the following?
 
-> +		assigned-clock-rates =3D <24000000>;
-> +		#pwm-cells =3D <3>;
-> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
-> +		status =3D "disabled";
-> +	};
-> +
-> +	qm_i2c0_lvds0: qxp_i2c0_mipi_lvds1: i2c@56246000 {
-> +		compatible =3D "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
-> +		reg =3D <0x56246000 0x1000>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +		interrupts =3D <8>;
-> +		clock-names =3D "per", "ipg";
-> +		assigned-clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_PER>;
-> +		assigned-clock-rates =3D <24000000>;
-> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
-> +		status =3D "disabled";
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-lvds1.dtsi b/arch/arm6=
-4/boot/dts/freescale/imx8-ss-lvds1.dtsi
-> new file mode 100644
-> index 0000000000000..12ae4f48e1e1c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-lvds1.dtsi
+ From 0a7921cf21cacf178ca7485da0138fc38a97a28e Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Tue, 11 Jun 2024 12:05:09 +0200
+Subject: [PATCH] fixup: mm/highmem: make nr_free_highpages() return "unsigned
+  long"
 
-This is only for imx8qm, no?
+Fixup the memblock comment.
 
-It maybe makes sense to rename this file to imx8qm-ss-lvds1.dtsi
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  mm/page_alloc.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Alexander
-
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0-only and MIT
-> +
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +lvds1_subsys: bus@57240000 {
-> +	compatible =3D "simple-bus";
-> +	interrupt-parent =3D <&irqsteer_lvds1>;
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <1>;
-> +	ranges =3D <0x57240000 0x0 0x57240000 0x10000>;
-> +
-> +	irqsteer_lvds1: interrupt-controller@57240000 {
-> +		compatible =3D "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
-> +		reg =3D <0x57240000 0x1000>;
-> +		interrupts =3D <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-controller;
-> +		interrupt-parent =3D <&gic>;
-> +		#interrupt-cells =3D <1>;
-> +		clocks =3D <&lvds1_lis_lpcg IMX_LPCG_CLK_4>;
-> +		clock-names =3D "ipg";
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1>;
-> +		fsl,channel =3D <0>;
-> +		fsl,num-irqs =3D <32>;
-> +	};
-> +
-> +	lvds1_lis_lpcg: clock-controller@57243000 {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x57243000 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clocks =3D <&lvds_ipg_clk>;
-> +		clock-indices =3D <IMX_LPCG_CLK_4>;
-> +		clock-output-names =3D "lvds1_lis_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1>;
-> +	};
-> +
-> +	lvds1_pwm_lpcg: clock-controller@5724300c {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x5724300c 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clocks =3D <&clk IMX_SC_R_LVDS_1_PWM_0 IMX_SC_PM_CLK_PER>,
-> +			 <&lvds_ipg_clk>;
-> +		clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> +		clock-output-names =3D "lvds1_pwm_lpcg_clk",
-> +				     "lvds1_pwm_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_PWM_0>;
-> +	};
-> +
-> +	lvds1_i2c0_lpcg: clock-controller@57243010 {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x57243010 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clocks =3D <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>,
-> +			 <&lvds_ipg_clk>;
-> +		clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> +		clock-output-names =3D "lvds1_i2c0_lpcg_clk",
-> +				     "lvds1_i2c0_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_I2C_0>;
-> +	};
-> +
-> +	lvds1_i2c1_lpcg: clock-controller@57243014 {
-> +		compatible =3D "fsl,imx8qxp-lpcg";
-> +		reg =3D <0x57243014 0x4>;
-> +		#clock-cells =3D <1>;
-> +		clocks =3D <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>,
-> +			 <&lvds_ipg_clk>;
-> +		clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> +		clock-output-names =3D "lvds1_i2c1_lpcg_clk",
-> +				     "lvds1_i2c1_lpcg_ipg_clk";
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_I2C_0>;
-> +	};
-> +
-> +	pwm_lvds1: pwm@57244000 {
-> +		compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
-> +		reg =3D <0x57244000 0x1000>;
-> +		clocks =3D <&lvds1_pwm_lpcg IMX_LPCG_CLK_4>,
-> +			 <&lvds1_pwm_lpcg IMX_LPCG_CLK_0>;
-> +		clock-names =3D "ipg", "per";
-> +		assigned-clocks =3D <&clk IMX_SC_R_LVDS_1_PWM_0 IMX_SC_PM_CLK_PER>;
-> +		assigned-clock-rates =3D <24000000>;
-> +		#pwm-cells =3D <3>;
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_PWM_0>;
-> +		status =3D "disabled";
-> +	};
-> +
-> +	i2c0_lvds1: i2c@57246000 {
-> +		compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-> +		reg =3D <0x57246000 0x1000>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +		interrupts =3D <8>;
-> +		clocks =3D <&lvds1_i2c0_lpcg IMX_LPCG_CLK_0>,
-> +			 <&lvds1_i2c0_lpcg IMX_LPCG_CLK_4>;
-> +		clock-names =3D "per", "ipg";
-> +		assigned-clocks =3D <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>;
-> +		assigned-clock-rates =3D <24000000>;
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_I2C_0>;
-> +		status =3D "disabled";
-> +	};
-> +
-> +	i2c1_lvds1: i2c@57247000 {
-> +		compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
-> +		reg =3D <0x57247000 0x1000>;
-> +		interrupts =3D <9>;
-> +		clocks =3D <&lvds1_i2c1_lpcg IMX_LPCG_CLK_0>,
-> +			 <&lvds1_i2c1_lpcg IMX_LPCG_CLK_4>;
-> +		clock-names =3D "per", "ipg";
-> +		assigned-clocks =3D <&clk IMX_SC_R_LVDS_1_I2C_0 IMX_SC_PM_CLK_PER>;
-> +		assigned-clock-rates =3D <24000000>;
-> +		power-domains =3D <&pd IMX_SC_R_LVDS_1_I2C_0>;
-> +		status =3D "disabled";
-> +	};
-> +};
->=20
->=20
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e0c8a8354be36..fc53f96db58a2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1245,7 +1245,7 @@ void __free_pages_core(struct page *page, unsigned int order,
+  		debug_pagealloc_map_pages(page, nr_pages);
+  		adjust_managed_page_count(page, nr_pages);
+  	} else {
+-		/* memblock adjusts totalram_pages() ahead of time. */
++		/* memblock adjusts totalram_pages() manually. */
+  		atomic_long_add(nr_pages, &page_zone(page)->managed_pages);
+  	}
+  
+-- 
+2.45.2
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
 
+-- 
+Cheers,
+
+David / dhildenb
 
 
