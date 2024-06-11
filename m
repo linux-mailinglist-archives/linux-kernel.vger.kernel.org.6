@@ -1,181 +1,169 @@
-Return-Path: <linux-kernel+bounces-210250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7123A90415C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0246590415D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F4428A97D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6445FB26120
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5942743AB4;
-	Tue, 11 Jun 2024 16:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C9B43AD5;
+	Tue, 11 Jun 2024 16:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIIKn4CC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4EdXyOx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD6040862;
-	Tue, 11 Jun 2024 16:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9B040862;
+	Tue, 11 Jun 2024 16:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718123380; cv=none; b=PDsQ6lSkFEN+4kPO1ivlP4tX0P3x9Mibi5BCm5Hibsoi9Z2/pNbm/CqS4W/TR1OXOKD09CIqaD0eRuK0NbcdramFsYFQ4ThBNGSKqnYHHNguSya7IEvwHxbHmyNoPInn29OMmkW0+L/fcrgHHoNoZWHL2fsyD7orVXS5KTGU7Bw=
+	t=1718123400; cv=none; b=MZbJPB3k33t3Mr+5CmbbjECJ2T56xQveZQblkdtnfbKISXN/8NvRNliNrajNtdV9eKQRfPpH8xDF4I4N2wOgLEVKMbeyJLSEqUAdp/eg6TVd/gqA2FHJKtzNW8vnzYx991JRDQpKyBbt/NJN3zElOlBm3B86cyp18OJ/r4TxaSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718123380; c=relaxed/simple;
-	bh=hmGhqBlLYFKjIhkdShLu8DnQifC7QyeNbKPHY5y8jUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ri6vSJPoPAENHucUsCn9rEXpDGBDjNxEcE5yMjJZ0hiRp3EqsShTeA3Q6oD++LbnH/h98hot56R72k0p6Lg6cdRElcj2YSJODmzF0eYZkG60Zov+mQC/hyUYG0pPXz0A65LBBSFAlIKWU1B3Ec0AfHZ7+f2baNP16tFR+yBt0HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIIKn4CC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1FAC2BD10;
-	Tue, 11 Jun 2024 16:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718123379;
-	bh=hmGhqBlLYFKjIhkdShLu8DnQifC7QyeNbKPHY5y8jUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIIKn4CCQGaVdHYyf4j/HaIkw2TwSecW2j/wp+EkhDZIy6PiDP3rvrF3fgKh8VwWu
-	 +hTHZNGc3TA+9G8fu+PS13SMciC+8ZBDklx/GJhc0srsrK/9ubw49cd9i9easUiDih
-	 9xKu+NkyyS9mq6YDF28OccQ32JdYD9702GmbX5JNAEzCLjn2QefsxANcToHDT/fTJa
-	 YdYYeukCn5x3gON6FoSGjqt5PJ3RFRwnWP0PrOynCuXgcoGBmnvd+5VLeEI1HRcMX9
-	 o21m1mBO3t9RDtfiooHphGJFN0d4eDmNbP5wOCsv3LS/ZuRigAB4E9CV63roVM6ZvR
-	 kpTXgLXRlaraQ==
-Date: Tue, 11 Jun 2024 21:59:36 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Jonathan Corbet <corbet@lwn.net>, Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v10 1/6] dmaengine: Add API function
- dmaengine_prep_peripheral_dma_vec()
-Message-ID: <Zmh7cFgKSamZmT4c@matsya>
-References: <20240605110845.86740-1-paul@crapouillou.net>
- <20240605110845.86740-2-paul@crapouillou.net>
+	s=arc-20240116; t=1718123400; c=relaxed/simple;
+	bh=x88vPd67F51bwNIvdn5aIPG/KAt9yYbLHZCemaaxtC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RMmJ+/5rubiJu6Pn5KQwYwbOdwHqDXTfL/scLnFqrqF2pUn+owWbsPFrYTvYJ6cZJjS7KhqjEdm4BgadjE2S77i9vPbolvmAX0/VBVZtpdVMIODw00ftp18GDnMYyYH1/myXrL+pgCf1CEU6kW2rPhEEFTsRECLgZA1Rqs7sqUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4EdXyOx; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718123398; x=1749659398;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=x88vPd67F51bwNIvdn5aIPG/KAt9yYbLHZCemaaxtC8=;
+  b=B4EdXyOxXUO14hMQIRPCURkZyzyOxxoo3Utl+tiWmNNgimDe+HPqXzgP
+   5mVmkENePu9P0k2ipTQiv4G3WJYxsWStodn9W/3EDPsQXvH3kJQBpKyc5
+   D5tzT6TH5gOB2FqKyakQQ4VwM74BWW6SMZn+/V7/yv0CclKDbTTDx1pGV
+   /vYU9UH9FSW4GHgRBBYf8BW3NbLM1kGQTtu3u43juWe24lUEir9MU67mv
+   I0vFAFPsIj4Eb+edf386n2erGNQket0jGhCEEw+cXIG9qKBOXRjnjmLgz
+   gnt0O92MX9t6uC23vGnSHvYQjmIB6kWuPaKnO1ELyTkDa/GRpjmYkENlx
+   w==;
+X-CSE-ConnectionGUID: XEHyzu6XShuEjS96yVZ3cg==
+X-CSE-MsgGUID: HLnwBWRWSHCKx2JHlARiyw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15018212"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="15018212"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:29:58 -0700
+X-CSE-ConnectionGUID: aW9cfQpQSjqJjDLJ6LBtXA==
+X-CSE-MsgGUID: 0uVim8UwQsCsM1J9UsyyeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="40204656"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:29:54 -0700
+Message-ID: <9dedd378-ce85-4329-b770-de47548bf380@intel.com>
+Date: Tue, 11 Jun 2024 19:29:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605110845.86740-2-paul@crapouillou.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 11/14] tools/perf: Add support to use libcapstone in
+ powerpc
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-perf-users <linux-perf-users@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>,
+ disgoel@linux.vnet.ibm.com
+References: <20240601060941.13692-1-atrajeev@linux.vnet.ibm.com>
+ <20240601060941.13692-12-atrajeev@linux.vnet.ibm.com>
+ <CAP-5=fXGPHMF+5cUu42ns0=qm9QCPg0LNUveLLnjdGHPCnVg3w@mail.gmail.com>
+ <c383b404-727c-4564-a66e-0906348891b3@intel.com>
+ <81ED04E0-23B5-44AE-B84D-5766346F1D32@linux.vnet.ibm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <81ED04E0-23B5-44AE-B84D-5766346F1D32@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 05-06-24, 13:08, Paul Cercueil wrote:
-> This function can be used to initiate a scatter-gather DMA transfer,
-> where the address and size of each segment is located in one entry of
-> the dma_vec array.
+On 10/06/24 15:20, Athira Rajeev wrote:
 > 
-> The major difference with dmaengine_prep_slave_sg() is that it supports
-> specifying the lengths of each DMA transfer; as trying to override the
-> length of the transfer with dmaengine_prep_slave_sg() is a very tedious
-> process. The introduction of a new API function is also justified by the
-> fact that scatterlists are on their way out.
 > 
-> Note that dmaengine_prep_interleaved_dma() is not helpful either in that
-> case, as it assumes that the address of each segment will be higher than
-> the one of the previous segment, which we just cannot guarantee in case
-> of a scatter-gather transfer.
+>> On 3 Jun 2024, at 10:28 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 3/06/24 19:30, Ian Rogers wrote:
+>>> On Fri, May 31, 2024 at 11:10 PM Athira Rajeev
+>>> <atrajeev@linux.vnet.ibm.com> wrote:
+>>>>
+>>>> Now perf uses the capstone library to disassemble the instructions in
+>>>> x86. capstone is used (if available) for perf annotate to speed up.
+>>>> Currently it only supports x86 architecture. Patch includes changes to
+>>>> enable this in powerpc. For now, only for data type sort keys, this
+>>>> method is used and only binary code (raw instruction) is read. This is
+>>>> because powerpc approach to understand instructions and reg fields uses
+>>>> raw instruction. The "cs_disasm" is currently not enabled. While
+>>>> attempting to do cs_disasm, observation is that some of the instructions
+>>>> were not identified (ex: extswsli, maddld) and it had to fallback to use
+>>>> objdump. Hence enabling "cs_disasm" is added in comment section as a
+>>>> TODO for powerpc.
+>>>>
+>>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>>>> ---
+>>>> tools/perf/util/disasm.c | 148 ++++++++++++++++++++++++++++++++++++++-
+>>>> 1 file changed, 146 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+>>>> index d8b357055302..915508d2e197 100644
+>>>> --- a/tools/perf/util/disasm.c
+>>>> +++ b/tools/perf/util/disasm.c
+>>>> @@ -1540,12 +1540,18 @@ static int open_capstone_handle(struct annotate_args *args, bool is_64bit,
+>>>> {
+>>>>        struct annotation_options *opt = args->options;
+>>>>        cs_mode mode = is_64bit ? CS_MODE_64 : CS_MODE_32;
+>>>> +       int ret;
+>>>>
+>>>>        /* TODO: support more architectures */
+>>>> -       if (!arch__is(args->arch, "x86"))
+>>>> +       if ((!arch__is(args->arch, "x86")) && (!arch__is(args->arch, "powerpc")))
+>>>>                return -1;
+>>>>
+>>>> -       if (cs_open(CS_ARCH_X86, mode, handle) != CS_ERR_OK)
+>>>> +       if (arch__is(args->arch, "x86"))
+>>>> +               ret = cs_open(CS_ARCH_X86, mode, handle);
+>>>> +       else
+>>>> +               ret = cs_open(CS_ARCH_PPC, mode, handle);
+>>>> +
+>>>> +       if (ret != CS_ERR_OK)
+>>>>                return -1;
+>>>
+>>> There looks to be a pretty/more robust capstone_init function in
+>>> print_insn.c, should we factor this code out and recycle:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/print_insn.c?h=perf-tools-next#n40
+>>
+>> On a slightly related note, there is a compile error
+>> been around for a while in util/disasm.c on Ubuntu 22.04
+>>
+>> In file included from /usr/include/capstone/capstone.h:279,
+>>                 from util/disasm.c:1354:
+>> /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong
+>> kind of tag
+>>   94 | typedef enum bpf_insn {
+>>      |              ^~~~~~~~
+>>
+> 
+> Hi Adrian
+> 
+> I tried compilation on Ubuntu 22.04, but didn’t face this issue.
+> The libcapstone version I have is libcapstone4 which doesn’t have the include for “bpf.h”
+> What is the version of libcapstone in the setup where you are seeing this issue ?
 
-This looks good to me, but is missing Documentation changes for this
-API, pls add that
+Yes, sorry. I got confused.  Ubuntu was OK.  The original issue
+was with Fedora 40, but even then it requires binutils-devel
+and BUILD_NONDISTRO=1
 
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
-> 
-> ---
-> v3: New patch
-> 
-> v5: Replace with function dmaengine_prep_slave_dma_vec(), and struct
->     'dma_vec'.
->     Note that at some point we will need to support cyclic transfers
->     using dmaengine_prep_slave_dma_vec(). Maybe with a new "flags"
->     parameter to the function?
-> 
-> v7:
->   - Renamed *device_prep_slave_dma_vec() -> device_prep_peripheral_dma_vec();
->   - Added a new flag parameter to the function as agreed between Paul
->     and Vinod. I renamed the first parameter to prep_flags as it's supposed to
->     be used (I think) with enum dma_ctrl_flags. I'm not really sure how that API
->     can grow but I was thinking in just having a bool cyclic parameter (as the
->     first intention of the flags is to support cyclic transfers) but ended up
->     "respecting" the previously agreed approach.
-> 
-> v10:
->   - Add kernel doc to dmaengine_prep_peripheral_dma_vec()
->   - Remove extra flags parameter
-> ---
->  include/linux/dmaengine.h | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index 752dbde4cec1..9fc03068cabc 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -160,6 +160,16 @@ struct dma_interleaved_template {
->  	struct data_chunk sgl[];
->  };
->  
-> +/**
-> + * struct dma_vec - DMA vector
-> + * @addr: Bus address of the start of the vector
-> + * @len: Length in bytes of the DMA vector
-> + */
-> +struct dma_vec {
-> +	dma_addr_t addr;
-> +	size_t len;
-> +};
-> +
->  /**
->   * enum dma_ctrl_flags - DMA flags to augment operation preparation,
->   *  control completion, and communicate status.
-> @@ -910,6 +920,10 @@ struct dma_device {
->  	struct dma_async_tx_descriptor *(*device_prep_dma_interrupt)(
->  		struct dma_chan *chan, unsigned long flags);
->  
-> +	struct dma_async_tx_descriptor *(*device_prep_peripheral_dma_vec)(
-> +		struct dma_chan *chan, const struct dma_vec *vecs,
-> +		size_t nents, enum dma_transfer_direction direction,
-> +		unsigned long flags);
->  	struct dma_async_tx_descriptor *(*device_prep_slave_sg)(
->  		struct dma_chan *chan, struct scatterlist *sgl,
->  		unsigned int sg_len, enum dma_transfer_direction direction,
-> @@ -973,6 +987,25 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_slave_single(
->  						  dir, flags, NULL);
->  }
->  
-> +/**
-> + * dmaengine_prep_peripheral_dma_vec() - Prepare a DMA scatter-gather descriptor
-> + * @chan: The channel to be used for this descriptor
-> + * @vecs: The array of DMA vectors that should be transferred
-> + * @nents: The number of DMA vectors in the array
-> + * @dir: Specifies the direction of the data transfer
-> + * @flags: DMA engine flags
-> + */
-> +static inline struct dma_async_tx_descriptor *dmaengine_prep_peripheral_dma_vec(
-> +	struct dma_chan *chan, const struct dma_vec *vecs, size_t nents,
-> +	enum dma_transfer_direction dir, unsigned long flags)
-> +{
-> +	if (!chan || !chan->device || !chan->device->device_prep_peripheral_dma_vec)
-> +		return NULL;
-> +
-> +	return chan->device->device_prep_peripheral_dma_vec(chan, vecs, nents,
-> +							    dir, flags);
-> +}
-> +
->  static inline struct dma_async_tx_descriptor *dmaengine_prep_slave_sg(
->  	struct dma_chan *chan, struct scatterlist *sgl,	unsigned int sg_len,
->  	enum dma_transfer_direction dir, unsigned long flags)
-> -- 
-> 2.43.0
-
--- 
-~Vinod
 
