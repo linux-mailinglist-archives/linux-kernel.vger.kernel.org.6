@@ -1,140 +1,88 @@
-Return-Path: <linux-kernel+bounces-210179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7564A90407B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4881904085
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BAAA1C23838
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B62B281F53
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C638839AEB;
-	Tue, 11 Jun 2024 15:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZCcpyX5"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A433987B;
+	Tue, 11 Jun 2024 15:53:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF7C3BBEB;
-	Tue, 11 Jun 2024 15:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9483D3839C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718121076; cv=none; b=cqsQWx71L+C4XXrbsRMZaVqtZBr0v98BVPWqYxaxgDEi1z7CCzDpVVkHLvKM2kTmvWURedfhnWemTJZb0Xvr8EsBStSEvxOJq59bLmZY1ulCMgztoMi6HjygnSig9gRqVuPObdKaGYR63dUCsS83lffMkPY19gcoGLGUuEv/syo=
+	t=1718121185; cv=none; b=UDZLE3eHNPsYILw0tmceWUo9s8fwXq8W7bUcJKOZV6dghvd57JihXJf2gHh5J837dM9bDLulNdVHGVd9HSuutqJP98zPks4sl49K1GtHXHl5NDOn1TdBFCsIqEr4OAUeZFsbfFdbVW+jIfG+epI8sPH+vhlZ9FqgZ/PHF8HyPSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718121076; c=relaxed/simple;
-	bh=pgGuDE+XrbAgHUHE3XCxL9tGB/eU0RinDylZrRbr6yM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pGd6aVSYGQtjHlUw3ePVkgX83+KnttMxoskBIPH9VZgsms3fJu7ZKPuIvpS3QhZ1meH2xg8Z+FpjMC9e2hkBSMTjcDsgmCdfls3CM+M/1kSAuaEvjQ7ZAs1TNHCS4Q8W1u3uARieiZR24HbqXzohVkL04FqUVurWWktXT1fy5lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZCcpyX5; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df771959b5bso5817931276.1;
-        Tue, 11 Jun 2024 08:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718121073; x=1718725873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pgGuDE+XrbAgHUHE3XCxL9tGB/eU0RinDylZrRbr6yM=;
-        b=nZCcpyX5G6f0IdSUW3uLZ9up63jEtgCHUCMWkgHtuEpmkC1EKk6RpMW5PKkZcDcCrv
-         WqrhOFOVaCJ5TD+RHHnanoAmDBTmT4PIghwLiwxtWdkYhVspSWI6FQ/YblZykoOnaYoa
-         uuyikdSOQTILpZmeRG2YPcBIQH7no1ppRZqcyUB7q0q0GlO7RYW5MpOYwarQgtaf4s7f
-         vHYeN8UACp5EibbcrGDOQmVrQHkAEiN9CRWG2yYRZvfyZP/n3GsFH6MgQT4rrMPcp1FC
-         riC/AQwbpsvjMHqYWs5Pg8uKhI62dwDC5nI1gkO+GkQw4JDYsTAp46zv3NmKrL2D2oWg
-         fbvw==
+	s=arc-20240116; t=1718121185; c=relaxed/simple;
+	bh=4YWTAY4k/NT07i2PrAMgV8Tt2wCvS+q0e0VohlzadUM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=n3n8xup4yq1R8uMTQHjX5but+zw6KxjgeMOh8RqtDouJxkEO2pFCBioeO64j/vpjHBqhc6fWwOfextyaJyLFC10dzLL7xCVsYNUXoFuWo1cuQsTcNqIZaOw5Rm2HtCLWaJH3X9YdLcoJtIhPNUVjvR0H81HbjahRTmX2RXxt8SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3745fb76682so60978525ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:53:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718121073; x=1718725873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pgGuDE+XrbAgHUHE3XCxL9tGB/eU0RinDylZrRbr6yM=;
-        b=szgT7Giugph8OtF1IGcFg+1MVWKTTuchTA4R/lAEJB8hi/CmPqIdeNX30EUPSJKhFT
-         CiLGiQYKV+UxUxq4sLlix1ci6vdPzvmtkCswXur6ddyQlka9tEE03jIpKZp5B/UcSt4O
-         62K6hyDgCS0HyYzszixchbcCps57QhYA+Co6QBhXeX/uSj0DR5q++Bm3ddITYLlrmAIx
-         QZdGo7IeZlaQJzRG6yhAmrUz9wSnaBmPbgKfW+wod/6LbS7LS867cFzFTjAZVQbsMr+P
-         gQD1Jn7+GRaptdjHg7T3lZD+CeaYBm4hjkyCMaFpM15FJzXWJld8nUVcK/+5s+jmejfV
-         DUEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ8WtLJxfxuvqXfsgA+YuWoaGbA8nJrw5fhmt7lcPaIiNt6P9Akm+kwG/LX0jmImoOZWa2ddlGMxo5caBeW69onHzH4BfCDDhn5Y/wjQC39Jb4sYHDDa92GUfROPXE2+z6saZftpCf
-X-Gm-Message-State: AOJu0YyT9tfsdvvuvpDe21pfFMg1EOO2Wy3yl8eQl7pPoaQ2+FAC4pkh
-	YAvfFWW/qDYhYm6pTxbI25/7yak3xk/d1IdpcgkrRjglJsYXaOJI/1CDRYH07/VThmgvAlIjbkA
-	6NX61JAkDkYds1/hjpHkm6DTs/jfZ+okV
-X-Google-Smtp-Source: AGHT+IHNNEtnsE4csjfuwepPpDKNjhB/oWwbjvYHlUleiX67QfVK6AwXQmjdNC8kRnlAGwWx3GMQw0USiyj3gZlMLaI=
-X-Received: by 2002:a25:ef45:0:b0:df7:695a:1cee with SMTP id
- 3f1490d57ef6-dfaf66d1473mr12865314276.50.1718121073472; Tue, 11 Jun 2024
- 08:51:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718121182; x=1718725982;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XFjbHNvcgSLNXhJqn3uZ0hKKgUPVLUjPjtWE4E1qJgU=;
+        b=CpVlzZeoKF7CSGO/KXVP+1UP6mUDPV/VS/vJS1c7pT8eExIWTQ+Bdv3nyO9so8Fd2k
+         C+DO/AVOJDisLqHTEhmkPrwfYBRx2zm/2mbena40h0DCXTilOM6do7yVSFujO+7XheM1
+         bKkdp/AQ5vgZj3YulLp/Xvwb0I7ZqJGePopVDzdgGJyg5gAiAwZAeSb/0tJmDxcY3ixs
+         FQ90Gqyt8QGQlo4iQk8R511uiw0tHOWWJNKy6ni8YC5yC/YXSWwzDK4CZ0Du7UosOU34
+         T3p4YZhPM6Vu1BnnYzltSVk9CRWzPN9d26th3lGv/CCddFnl+LP7tT985mY4FUTDGLjB
+         CuOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ15qONh0orpzDoYlC9pyYZtf9wbKngG8bBQkAcXZK1yhZNE6Sdl8E/6sj0Tkk/t33aFwA9+fsRWbSLYl1AaRdHN4ZFMgpDJWL1z0n
+X-Gm-Message-State: AOJu0Yyhj+l2jSflGS07Uf2BjZgTmA9x61oRQExj0oC/OcabdAfiT++K
+	fNA3kJ4obASpPERkJ1V2BL6RW7vpgX7BNbne3Ta6rNS3oxmVS5YmWrifmWo8VCUsUkOpXeOeUmk
+	QRbseZgtlZRzrc3qyLNc1KURee6e7jv4VqkFIBaD8ZhLCgQQESG711DU=
+X-Google-Smtp-Source: AGHT+IGX4GhvZg4jJi7qIRxkQJLJsCVxY7kkD2G+PAaxGMOK9zdGU2RuivPQudvigA1TlgfuRyax4v+kmchvaBlro09kIzvP63XE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-3-flintglass@gmail.com>
- <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com> <CAPpoddf0ysCG=s5ixbOZkXjmcB0t_eqLOs9xhdqZHiWnYY4_Wg@mail.gmail.com>
-In-Reply-To: <CAPpoddf0ysCG=s5ixbOZkXjmcB0t_eqLOs9xhdqZHiWnYY4_Wg@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 11 Jun 2024 08:51:02 -0700
-Message-ID: <CAKEwX=NSaRAjiKjGtYxPwh9ByBZ_DK+h3T6LS5-eNpxS4s4zPA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] mm: zswap: fix global shrinker error handling logic
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:cd82:0:b0:374:a16b:6f7e with SMTP id
+ e9e14a558f8ab-375803c4cd0mr8494635ab.4.1718121182777; Tue, 11 Jun 2024
+ 08:53:02 -0700 (PDT)
+Date: Tue, 11 Jun 2024 08:53:02 -0700
+In-Reply-To: <23b1962c-044d-4dbd-a705-58754f0914cb@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c7e169061a9f42e8@google.com>
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
+From: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 8:21=E2=80=AFAM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
->
-> Since shrink_worker evicts only one page per tree walk when there is
-> only one memcg using zswap, I believe this is the intended behavior.
+Hello,
 
-I don't think this is the intended behavior :) It's a holdover from
-the old zswap reclaiming behaviors.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-1. In the past, we used to shrink one object per shrink worker call.
-This is crazy.
+Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
 
-2. We then move the LRU from the allocator level to zswap level, and
-shrink one object at a time until the pool can accept new pages (i.e
-under the acceptance threshold).
+Tested on:
 
-3. When we separate the LRU to per-(memcg, node), we keep the
-shrink-one-at-a-time part, but do it round-robin style on each of the
-(memcg, node) combination.
+commit:         8867bbd4 mm: arm64: Fix the out-of-bounds issue in con..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bcfa36980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17790922980000
 
-It's time to optimize this. 4th time's the charm!
-
-> Even if we choose to break the loop more aggressively, it would only
-> be postponing the problem because pool_limit_hit will trigger the
-> worker again.
->
-> I agree the existing approach is inefficient. It might be better to
-> change the 1 page in a round-robin strategy.
-
-We can play with a bigger batch.
-
-1. Most straightforward idea is to just use a bigger constant (32? 64? 128?=
-)
-
-2. We can try to shrink until accept for each memcg, hoping that the
-round robin selection maintains fairness in the long run - but this
-can be a bad idea in the short run for the memcg selected. At the very
-least, this should try to respect the protected area for each lruvec.
-This might still come into conflict with the zswap shrinker though
-(since the protection is best-effort).
-
-3. Proportional reclaim - a variant of what we're doing in
-get_scan_count() for page reclaim?
-
-scan =3D lruvec_size - lruvec_size * protection / (cgroup_size + 1);
-
-protection is derived from memory.min or memory.low of the cgroup, and
-cgroup_size is the memory usage of the cgroup. lruvec_size maybe we
-can substitute with the number of (reclaimable/unprotected?) zswap
-objects in the (node, memcg) lru?
+Note: testing is done by a robot and is best-effort only.
 
