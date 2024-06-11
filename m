@@ -1,138 +1,175 @@
-Return-Path: <linux-kernel+bounces-210100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67258903F4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC605903F4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6774A1C208BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4CFB1C20FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF981CAA6;
-	Tue, 11 Jun 2024 14:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C40171A5;
+	Tue, 11 Jun 2024 14:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NmNFzDOF"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72AD1C680
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="exDTxE1x"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283C71CD06;
+	Tue, 11 Jun 2024 14:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117735; cv=none; b=WeBhIDAmSltoZjGfBWWfuxoqL4Y+PXuJq+eE6Yj2tJXjb5jtxI/5fIFjcSbjVmFmv7NhXg2eyZgOYVTkEVi0BNBVfz6w3fvQ5pHVtwZ/FomR/g+8tekwZZV2aceEKvfnhHcro137Dvad2i4HeAWmIIAw2P67E5y33VcTqkw2Oc4=
+	t=1718117729; cv=none; b=mCOolQZGRs/dgYvI2Z4V9n0yP2EgEVZuprZ0Sa3A9vh2o0GbrbiE3zqu0tDF36+XWCslPToLZ1U04iYT+Tq9IIPGplKf/x+dc0XaUR4yfLp2g48q4ep+pEZDJwwcWvUWezsR/TXbArzEDSQOA3KH9VwnzyPibHWKGSD9LTt5pL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117735; c=relaxed/simple;
-	bh=f6Q3qEkJz+8prAqwo+YT+sHWBk2z/q9w7kLssxRRdqc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hf7vWJrDFScT5DlsYY/mb5LOXLYhCZOaoK5C/eHxVG+u4mc7Qn2lw2Of4pP37R2wj2A4EstSDyhwX48/8gvi7jMKh3J5yXRv9ENuNSDze1Yu9VMZ7eEL5QOsJurWaWycJGAipiiiVPDjaw8gvD2yMKrJI8ijKLy7jYu/6EJzib0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NmNFzDOF; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfa77d54cd2so9038780276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718117732; x=1718722532; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MTug23NVW5smTBIbInLHVPug/iFJLDfAzzZ2mui8rNM=;
-        b=NmNFzDOF59Mxf/KxH596ng7n/MjhJGfVV+hsIOmeZ03noz459cOeS7uHb3FLiMY8a2
-         RGXkhxnoPns6K/cQ9W9rvjhQRcqrzxwvfhAUWDHLrADaVL+utcVCKCFQJfv5c0slTuX6
-         SooQtrwpEiwWx7pwHqtlHZtwUgEt9PviwLr/QRLRuiFv1y+VCgqF03lDjfhxMOW4wFN3
-         D02yuH1bGzXyL5w78zSTvs+D5MELpGAMqoQ8oJR7GWla0k7dl6TM6Qc49u8alQgWUD/I
-         l+CMjp5cinPwztoLFWFiR9zz9XHhn4hebhbX83IsyPPtRQhlEw+bJf0xjREbNeDrkvHr
-         cFlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718117732; x=1718722532;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MTug23NVW5smTBIbInLHVPug/iFJLDfAzzZ2mui8rNM=;
-        b=HzYgWuFqfHzFHyFDUz8xk8OdsnDID2xWtiuHZ/rw56WwV2vzki8N9qfIoOcNzBWPHO
-         mrpZPbwgy5vQXaZpZKP6f4VNyqBAR4xyHH2LyJUu2Mma9yLrKebYk7MYzZ0QHEW/lJzN
-         IkiZjSa5ihhC9U2Sa5Sp48usGNymMsosiRAOTKVITdsA4iItseb/dA/TaROTskGZdOJg
-         mcB8Da1bn1BxRnH8x8OmsZ2U4MYwdbNkWeMlPTCDvLjRyU/6o8g6kzlxCCsIRz0mjTQy
-         Blbwteg7AlALQkwhSzjkboOJd7s+C6ldxyblXmQuNqGW/zTaMPWXWjNoiSc1DGa+iuaF
-         kU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWf5dHFNy7QiNp5jPRcGeYLdWS+twsn7Av9GN4Gy9qDOQO8ZIeD0Hi59IGcCFRpV2/AH2Qa0o07x91Z2v2GDrlI2Oo9ezJmb70hsdOr
-X-Gm-Message-State: AOJu0YzblnL6Cgq9414y/zrD5+JDbXtjCS3nuj8+P7MIzn7HguGF9Zxp
-	BlZIUOLXGgF+MbkUqEpaTvgcGC5EDfkl8I30R/wJt5O6SRYLxW6z+LNjP/ILSfDylQBIdjJEoEz
-	PFvZ95mnIYg==
-X-Google-Smtp-Source: AGHT+IHiOkeOvIjfZ6wUrcER+iWZsILYAZCJ9J9uHIeGqPk6NP5zJj3D5rPgY6hwnMYRfIhfkqi1mMAvYXYIig==
-X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:6902:1207:b0:dfb:168d:c02e with SMTP
- id 3f1490d57ef6-dfb168dc4e9mr780657276.3.1718117731956; Tue, 11 Jun 2024
- 07:55:31 -0700 (PDT)
-Date: Tue, 11 Jun 2024 14:55:24 +0000
+	s=arc-20240116; t=1718117729; c=relaxed/simple;
+	bh=J4/ayyLGqnKOpSY8Vsl0gKx6xzXbJEQ8q+XBBrW/y4c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c/pKfXnObrzXPqbJVwjKzpcoBUh7ZEv2dRYkM9gjYSx6OA4HO+p1Pt8gu8gLlclIdLjpmZmhGZuN93Iy1Tx/DaRyTJgROekgmzUqgwoxNeTLjHRd7aDkgf/rgC+qM5iMxL+dFK5wg5jdwEjKEeqJ/aUZggmKO449H5VrrGiGEDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=exDTxE1x; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 812BE20B915A;
+	Tue, 11 Jun 2024 07:55:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 812BE20B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718117727;
+	bh=L0IblayJGQQH54z8YFXxWE7kt2MKTh/ndqQcpq05IiU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=exDTxE1xvYEpv8rWgh1O1gd7OMG674Eol5SF2Xq1WYQfTSVyYsTHgfT6/S/FjVf/s
+	 LuT8Q+Nx2uNmAdlDn+sTQNyvg4GbIVSRVq94THmUffInrmjHEFO7IcdEQTS/E7sdQW
+	 mSYdHoL5tdvD+mutSHXNtVsNBVfMYV1JbGJ92b5k=
+Message-ID: <11566639-f3cc-4376-a6c4-e46e65da5f83@linux.microsoft.com>
+Date: Tue, 11 Jun 2024 07:55:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240611145524.1022656-1-joychakr@google.com>
-Subject: [PATCH] nvmem: meson-efuse: Fix return value of nvmem callbacks
-From: Joy Chakraborty <joychakr@google.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Joy Chakraborty <joychakr@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] arm64/hyperv: Support DeviceTree
+From: Roman Kisel <romank@linux.microsoft.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
+ haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com,
+ mhklinux@outlook.com, rafael@kernel.org, robh@kernel.org,
+ tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-2-romank@linux.microsoft.com>
+ <20240515143359142-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <9b216f16-a2ea-48d7-8986-f0c2e3f3d009@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <9b216f16-a2ea-48d7-8986-f0c2e3f3d009@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Read/write callbacks registered with nvmem core expect 0 to be returned
-on success and a negative value to be returned on failure.
 
-meson_efuse_read() and meson_efuse_write() call into
-meson_sm_call_read() and meson_sm_call_write() respectively which return
-the number of bytes read or written on success as per their api
-description.
 
-Fix to return error if meson_sm_call_read()/meson_sm_call_write()
-returns an error else return 0.
+On 5/16/2024 8:27 AM, Roman Kisel wrote:
+> 
+> 
+> On 5/15/2024 3:02 PM, Elliot Berman wrote:
+>> On Tue, May 14, 2024 at 03:43:48PM -0700, Roman Kisel wrote:
+>>> The Virtual Trust Level platforms rely on DeviceTree, and the
+>>> arm64/hyperv code supports ACPI only. Update the logic to
+>>> support DeviceTree on boot as well as ACPI.
+>>
+>> Could you use Call UID query from SMCCC? KVM [1] and Gunyah [2] have
+>> been using this to identify if guest is running under those respective
+>> hypervisors. This works in both DT and ACPI cases.
+>>
+>> [1]: https://lore.kernel.org/all/20210330145430.996981-2-maz@kernel.org/
+>> [2]: 
+>> https://lore.kernel.org/all/20240222-gunyah-v17-4-1e9da6763d38@quicinc.com/
+> 
+> That would be very neat indeed, thanks! Talking to the hypervisor folks.
+> 
+We have that now. Will send out the revised patches sometime during the 
+next week most likely.
 
-Fixes: a29a63bdaf6f ("nvmem: meson-efuse: simplify read callback")
-Cc: stable@vger.kernel.org
-Signed-off-by: Joy Chakraborty <joychakr@google.com>
----
- drivers/nvmem/meson-efuse.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+>>>
+>>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>>> ---
+>>>   arch/arm64/hyperv/mshyperv.c | 34 +++++++++++++++++++++++++++++-----
+>>>   1 file changed, 29 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+>>> index b1a4de4eee29..208a3bcb9686 100644
+>>> --- a/arch/arm64/hyperv/mshyperv.c
+>>> +++ b/arch/arm64/hyperv/mshyperv.c
+>>> @@ -15,6 +15,9 @@
+>>>   #include <linux/errno.h>
+>>>   #include <linux/version.h>
+>>>   #include <linux/cpuhotplug.h>
+>>> +#include <linux/libfdt.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/of_fdt.h>
+>>>   #include <asm/mshyperv.h>
+>>>   static bool hyperv_initialized;
+>>> @@ -27,6 +30,29 @@ int hv_get_hypervisor_version(union 
+>>> hv_hypervisor_version_info *info)
+>>>       return 0;
+>>>   }
+>>> +static bool hyperv_detect_fdt(void)
+>>> +{
+>>> +#ifdef CONFIG_OF
+>>> +    const unsigned long hyp_node = of_get_flat_dt_subnode_by_name(
+>>> +            of_get_flat_dt_root(), "hypervisor");
+>>> +
+>>> +    return (hyp_node != -FDT_ERR_NOTFOUND) &&
+>>> +            of_flat_dt_is_compatible(hyp_node, "microsoft,hyperv");
+>>> +#else
+>>> +    return false;
+>>> +#endif
+>>> +}
+>>> +
+>>> +static bool hyperv_detect_acpi(void)
+>>> +{
+>>> +#ifdef CONFIG_ACPI
+>>> +    return !acpi_disabled &&
+>>> +            !strncmp((char *)&acpi_gbl_FADT.hypervisor_id, 
+>>> "MsHyperV", 8);
+>>> +#else
+>>> +    return false;
+>>> +#endif
+>>> +}
+>>> +
+>>>   static int __init hyperv_init(void)
+>>>   {
+>>>       struct hv_get_vp_registers_output    result;
+>>> @@ -35,13 +61,11 @@ static int __init hyperv_init(void)
+>>>       /*
+>>>        * Allow for a kernel built with CONFIG_HYPERV to be running in
+>>> -     * a non-Hyper-V environment, including on DT instead of ACPI.
+>>> +     * a non-Hyper-V environment.
+>>> +     *
+>>>        * In such cases, do nothing and return success.
+>>>        */
+>>> -    if (acpi_disabled)
+>>> -        return 0;
+>>> -
+>>> -    if (strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8))
+>>> +    if (!hyperv_detect_fdt() && !hyperv_detect_acpi())
+>>>           return 0;
+>>>       /* Setup the guest ID */
+>>> -- 
+>>> 2.45.0
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
-diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
-index 52ed9a62ca5b..d7f9ac99a212 100644
---- a/drivers/nvmem/meson-efuse.c
-+++ b/drivers/nvmem/meson-efuse.c
-@@ -18,18 +18,24 @@ static int meson_efuse_read(void *context, unsigned int offset,
- 			    void *val, size_t bytes)
- {
- 	struct meson_sm_firmware *fw = context;
-+	int ret;
- 
--	return meson_sm_call_read(fw, (u8 *)val, bytes, SM_EFUSE_READ, offset,
--				  bytes, 0, 0, 0);
-+	ret = meson_sm_call_read(fw, (u8 *)val, bytes, SM_EFUSE_READ, offset,
-+				 bytes, 0, 0, 0);
-+
-+	return ret < 0 ? ret : 0;
- }
- 
- static int meson_efuse_write(void *context, unsigned int offset,
- 			     void *val, size_t bytes)
- {
- 	struct meson_sm_firmware *fw = context;
-+	int ret;
-+
-+	ret = meson_sm_call_write(fw, (u8 *)val, bytes, SM_EFUSE_WRITE, offset,
-+				  bytes, 0, 0, 0);
- 
--	return meson_sm_call_write(fw, (u8 *)val, bytes, SM_EFUSE_WRITE, offset,
--				   bytes, 0, 0, 0);
-+	return ret < 0 ? ret : 0;
- }
- 
- static const struct of_device_id meson_efuse_match[] = {
 -- 
-2.45.2.505.gda0bf45e8d-goog
-
+Thank you,
+Roman
 
