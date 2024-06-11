@@ -1,225 +1,208 @@
-Return-Path: <linux-kernel+bounces-210621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6288290464F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 839A2904651
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57DD51C2335D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891711C234BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD98153580;
-	Tue, 11 Jun 2024 21:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB7A153835;
+	Tue, 11 Jun 2024 21:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kN10IZGs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="chsqhaSj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9C62CCB7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718142014; cv=none; b=l+SdKDR6z4J9PiCrFIN5Z/UySEhf/qRGIVcbWxnWpOEYf8bmVogcDboPb/omdkA6s4OIvjLbdk4Yz8jJ/crp+MVy66SjJmCoilGUlnm8HAsGfWc8dWn5l8YFO0U8Y5GkSbJ1GeHAV2z/BweL3nFmRbj8YpqXC28wNwWyacK9sq0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718142014; c=relaxed/simple;
-	bh=Irn/IlTZ08UrjK8r8d2mNuX+TDh9nHHJEf8c6Wpri58=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oUErhlNTiZO+3lTP1pQtQksRMupr35E5GVvN9FTRfJdX7k5LPkwcJzPbwTby8wtVMp8m/wneHkQLg9G5kaetXtPXleSzGq5aFW5+kILAiL+ELS1uS3xOAfgKoXeK7KrBDQlNkCYsGHboTA0PfTSHash5v6KqZOS5BGdaicxISS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kN10IZGs; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48992CCB7;
+	Tue, 11 Jun 2024 21:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718142073; cv=fail; b=JKRdXXVKY2EqSadPbz5RXf/8w4bidVP4YU04JPIGBrTj7hnShb1fszc+EQBf6zFR/0Ko3rEjiZSEmAVJbpAgfv3DE36t2/uwnaTkWCYOUXlUeHrbpvupnOsYd0MEGuU/eSRwUaA8QBKuNcBs7uuSvI2Vy/laY+i6on7qX2qRVFM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718142073; c=relaxed/simple;
+	bh=TOgy5TJSdrlD4hQl8rTM8VL2r0/WhNmlJ4SExJLZYCc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TC6fDzSF2YdBw4BtnLwf8uCRKncQgcidiV9Qo+o9OyvU4vK02/rrmU9RF48dggr/0j29yo/5cH0dQmSG958oseoeHWf6P1bqvYcIK+T+ZQ5FXOhlkynypMQVe8neVW7zIBj4+p3/zss2DNVa9wZERF2dkdoqHAQLyYr5fbb9PSY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=chsqhaSj; arc=fail smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718142012; x=1749678012;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Irn/IlTZ08UrjK8r8d2mNuX+TDh9nHHJEf8c6Wpri58=;
-  b=kN10IZGsE2FxcFtq98x/0gcarS+mTcGro919cOpUROh80+iv2KFbpH6a
-   LyEE9wm8F7pH3pJAOzbjZlWQexSsk+hj6B/LwY+aqKF7xHxsKzEdBC/h2
-   xhZVZvrGc8IyFGWHYuqJzGxnDrkWivzKbwG5hx1C5APtdrVAva3QCQ2F/
-   P0JhW4URKy5h9WTLXNmcPRDBWC4iUTKiFh2NFn8v2Ff5jPiLcKpHK41OV
-   CQVQcB6eirO8QfPx8UeJyq40s+nQdaVZeW7mM4yR7C8XOckar9HUC4NYq
-   fvNDcQKhTW6Z/UQM9xW0WqikATEWoylRrZwGPfqsJVvN+eRVt6xh/AsEN
+  t=1718142072; x=1749678072;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=TOgy5TJSdrlD4hQl8rTM8VL2r0/WhNmlJ4SExJLZYCc=;
+  b=chsqhaSjaO556qusoBkq/CQvwei9ub9I404ce9z3yQcPNrejBM8eoMnf
+   acSCSeUgxuKKNeP5nqRFiy/ih3xj4gSTD/ulX4mz4kYo5+Q+HD6vF0frl
+   Sukn6j03pastUG0haQLuSm0qcH6C9yziIU6+BpGfxiYvfYD4j4TMMzhDW
+   iMYmiuGWFtnoC6+7GQOlQ4RZ6wOnnvlukCzl4qJyDdbXwY829KY0MUgZC
+   wxTqCH24izxBsrmmuIYHwWEaXYHWsNh1/94k4D+vvVyY0f+ZI87rOGm+P
+   y5Yc+X4KKcDD22dXCpQRWGvN78ykucPwJCIMLyQ2IrPL2rTV3X7ywRDs3
    g==;
-X-CSE-ConnectionGUID: /2E3+Z/3R3qZz9Ccj0BGtQ==
-X-CSE-MsgGUID: MgHpZVmfSEqK5wL0Tfk1WA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14713741"
+X-CSE-ConnectionGUID: uqanmUWhTLycuMH9PMFxQA==
+X-CSE-MsgGUID: CU1XxWHbSEWOsRl8s5tzlQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14840966"
 X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="14713741"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 14:40:12 -0700
-X-CSE-ConnectionGUID: ifmBDoYzSZmt1jT4U9wWJA==
-X-CSE-MsgGUID: bJ+YggVCRDeL0st6BxkqWA==
+   d="scan'208";a="14840966"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 14:41:12 -0700
+X-CSE-ConnectionGUID: GH9dLGSrQRKH0aDQtDyChw==
+X-CSE-MsgGUID: RFfdkfoXQfmRSpX5J7CdMQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="70767055"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 11 Jun 2024 14:40:08 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sH9Dq-0000uq-0D;
-	Tue, 11 Jun 2024 21:40:06 +0000
-Date: Wed, 12 Jun 2024 05:39:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning
- (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary
- #address-cells/#size-cells without "ranges" or child "reg" property
-Message-ID: <202406120539.ABh1Khs3-lkp@intel.com>
+   d="scan'208";a="39630263"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jun 2024 14:41:11 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 11 Jun 2024 14:41:10 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 11 Jun 2024 14:41:10 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Jun 2024 14:41:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BK2Kgh4yHtn9WHA9bKnTSHfO5uqqBPvDuiP4eWI0PQuQh/z5aRRtQ1KXM87s8LqcfMcdA85/+DVFHHnMl5jS1IqPLWioARx3i+askB+NTI7+QIq2DCFz29MZE4dfzodPbcF8cqS0cy0dVBkK4uB/n7MIAzzZX3n2WHYM6kuB0qxVyXuFrx8NTZhvcRjULfd8w1r9+cLwNB5J/lxLiHiGTNP/cbPMVcKk3+oDq6ZsM3ygptkCwDbexaEL2/swJq02wLndLVR8KIHsClmWoV7PgsJw3ZrzTNLyoM6PYJ4UV4VCEcknLMeExn3n3/FfmVIUAnFrtapvzKfu5WjitDM7gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4+2J+CKIadg4Gfp4HzUW+q2RissSyW97KrB+BZCBIS8=;
+ b=gcWlxdpqOj/Dadj0ItT0IaXOpsHWsOlUTvJeMlhUZe7+U6lax8A8rkDBxtUCZ0yp3PWoIlCXU6zi+UTc/QJbGFbsUxd04qhGRjgr8z/oXlCHGOrRPWplM4KWY5yHJiyUpaHPw1QOejxxEqNILFeLSCcmMPUKE7siEA1j+mopL5+Fmiax5FKqdF+Q2+ogEPhFx+DJFQhnuKWVIMNGW08H+mRcrvVGpbK6P6KPFVSClbRxON9Khl6tAFy52U2bb6JHkK9Rq0ED34fySxXRi8yhLxhthepmyZnGxc4sinZphthQ+tMled21uS+cz63fl17g6nWqGwJMEt/V08w4waTCnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB7164.namprd11.prod.outlook.com (2603:10b6:303:212::6)
+ by DS0PR11MB6374.namprd11.prod.outlook.com (2603:10b6:8:ca::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.36; Tue, 11 Jun 2024 21:41:08 +0000
+Received: from MW4PR11MB7164.namprd11.prod.outlook.com
+ ([fe80::a972:1395:dd49:1dc5]) by MW4PR11MB7164.namprd11.prod.outlook.com
+ ([fe80::a972:1395:dd49:1dc5%5]) with mapi id 15.20.7633.037; Tue, 11 Jun 2024
+ 21:41:08 +0000
+Message-ID: <78767fce-6625-4760-9443-5779247ca2da@intel.com>
+Date: Tue, 11 Jun 2024 14:41:06 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/14] crypto: x86/aes - Prepare for new AES-XTS
+ implementation
+To: <ebiggers@kernel.org>, <linux-crypto@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, <bernie.keany@intel.com>
+References: <20230603152227.12335-1-chang.seok.bae@intel.com>
+ <20240329015346.635933-1-chang.seok.bae@intel.com>
+ <20240329015346.635933-14-chang.seok.bae@intel.com>
+Content-Language: en-US
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+In-Reply-To: <20240329015346.635933-14-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0025.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::38) To MW4PR11MB7164.namprd11.prod.outlook.com
+ (2603:10b6:303:212::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB7164:EE_|DS0PR11MB6374:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf3bdc76-7366-4b81-e402-08dc8a5f33ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230032|376006|1800799016|366008;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VCtEVTlDRUNuWi8wL1J4UExUK2JaaWNSMVI3QWtTdlpLbHZPdE5LemNxT2dh?=
+ =?utf-8?B?L0R4b1VrUWFiVjB3cDNJUEZ1M3lPODM4bFE0R3ZhUHBzVDFaMStYZkhxWERO?=
+ =?utf-8?B?bGVMYTBGR3BibVFRTG5aWGhDb3dJajVZa2ZiU01pcTJ1RVVtMGtGbE1paVRs?=
+ =?utf-8?B?K0tzOS9GTFM3RmVqV2grMlFXWW4zYWFrRE1GTU4rV0tEczFMUVhKWWtnOWpL?=
+ =?utf-8?B?eElNQkRnV3Nud25BVEhBY2t6UkxKQUo1L0Z0dzF6cWs5VFIzRG5FZWhZWHhO?=
+ =?utf-8?B?SVc5djlHT1J6c0Z5SWtWbGlMZGRGakFMOGl5ak4vbkVsb0FsenZnb0JsaVNm?=
+ =?utf-8?B?RGtob0Y5TS9LNW1mVS9qTjZFT1FXcTdtQVZoclh3UjFpbmtzU0JMVjlneHNG?=
+ =?utf-8?B?UDRnUVhHcDd0UGNGUGsxTUNMQVM0Ris2VXYrdUMwb0M4K3lsVElJUnNPWkNx?=
+ =?utf-8?B?UFp6SmxNQlJ5ZCt2T1RxYWEreUpXbm1wWkFFWS9iTnRtalh2VEMvU0RuOTVW?=
+ =?utf-8?B?ZSttbEw1WElnV3VVaDFpb2ROemxSS2RDd3JUampsVmVWT2trVjV4K3B2a2tZ?=
+ =?utf-8?B?cVQyS3FIM0UzS0VoYmx0ZUdnOTdyOHlRSGFFU0JCbXV5U3FtMXVadW5KWUdn?=
+ =?utf-8?B?R3BsRjE5UkpKZW43NjlxcWNlSGZRNDUyWHVqeUFheWlFeW82TDIyQ0oxc0xO?=
+ =?utf-8?B?VHNTWEdhUytRQmRuRko1Q2FQR1p3Zm1ENWdSM203dCtBeWM3dmhPdVpObjJI?=
+ =?utf-8?B?UWZDa1Z3ZVlhaTNFMU9ZMWVTVTl0djVXTXd1VVFKVEE0eVMzeHdpamJkZHd0?=
+ =?utf-8?B?b1NyR1dQSGtoZkUrVmVwMHZMYjhhRG9pWStGM1FET3lUNW55NVdiL05nTkUr?=
+ =?utf-8?B?QWFZVC91RGl3V0ZxQU5yMVBFaHZUdmM4anhOLy9FbzRDWkxOdFVaaTBiRjY1?=
+ =?utf-8?B?ZmtWVmpvZGYxQkNmdElxWlZxZjJ2OG1sb3d6RkE1TnJNU0pRTFNLRzhwNGdD?=
+ =?utf-8?B?eTVSK1dqSm1kMHF0Z2hUejhKWm5ralFWU0ZnV0U0ckc0MW13UmhBUzZNWUhW?=
+ =?utf-8?B?cjd2WUFGUTRqWTdyMGdMbk8wWTF3TzA1d24xYklNMTBKT1RlWXJiZGlWTkt4?=
+ =?utf-8?B?OXp5YVM0Mk9wdDg3cDNMejRERml5UE95TWJXMXQxaEtjQ3g0bjJ0SkxCdTZu?=
+ =?utf-8?B?N1NCNEo1aGdxOUF3alhHcDhjVHJSTXJrbXBraEo3NDRDU3ZZQXRhN3ZSU2tQ?=
+ =?utf-8?B?QzREclBXVnNXL2x3bEtsa2MrWEhVeUtuQzhTcmVqeVhUN2hnWjNHNlZRWFVP?=
+ =?utf-8?B?Z1ZTTnRid2JvWFErYmQyMDd0anBhbnoxbTE3UStNMU8xWVVENW92QkpVMWFi?=
+ =?utf-8?B?QVZleGxRUk01RW5ndVFQMmRzM0tvTHMvaUUvamYrVGRzdnlTdHZJM280ckx3?=
+ =?utf-8?B?dDQxRTFYWldhM25wY2JaM2R2ZGV0NkYzbFNPVXh1UGh3SnRCWVhiYWRvYjZi?=
+ =?utf-8?B?MjVxbmpkTHVja3p1SDM4enFpa2IzMGhqTkRXVmI0cVBLWkFZYTFFa21jcktP?=
+ =?utf-8?B?YUl6b0R0K0tlRzFRMVBnRXJTTEQvWktoRFZJY1NjVDlPZEhsa0VPYTJIZGtt?=
+ =?utf-8?B?WGo0UldOWUNraTkybWJ5KzNlSE02amlOM1hNdngrVExLUGE2bkZKR29FRE1T?=
+ =?utf-8?B?UDU0M3lBUFlLbGxWLzZQSlJLUk0yOFZpSVhCMFFLSDdRdWxoTWRtbDl3VDNs?=
+ =?utf-8?Q?qqtgzzHT4s2WOJ1guQ=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB7164.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(1800799016)(366008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M0tGY3BSVTZyS0hvZnlYb05CTzVLaUV4ZVloaDNmbDFZNUZ5RnJjVE4reExp?=
+ =?utf-8?B?UVViN2FEZVJFelZ0bTRMQnIyZFhoNmk1ZVhpV1JYRDd2Tkh5eGcvVjJXN2Fs?=
+ =?utf-8?B?eXlQQ1VtRnNvb1h2SGpPc1lNMTByNndPR2xWL0lpVkh1QU1YempuYXNvRGxI?=
+ =?utf-8?B?T2hUQUttejhnVUJabTMzZkZ5VXhmd2J5T094OENGb3lXblJkUzg0RG9rZGZh?=
+ =?utf-8?B?UWFMUnltbFhQeEhjWmpYUTR3WjlrQVpOTEdaNlV5clM0QkZ6dVpmZFdyakp6?=
+ =?utf-8?B?SlZOaXhKcmVROThCOWV3QlZYSGROc2FLRG1GRzFrL1loMFM2cklJam8xZDZK?=
+ =?utf-8?B?UTR6ZWNBUU4wR0Y2K0JaNkQ4VVRRR0F1Q2pDRTBqSURSbldURzFvVXBOLzk4?=
+ =?utf-8?B?cE9pd3ZqN0kxWkRLUzVRbFgxaUVYRVhYdnNJSlh5MUx4QjBYeXc5YnFMTFEr?=
+ =?utf-8?B?Q1pVY2RMR1MwNGpmeHR1bnp4bkNWWGNubXhLcVpTUngrdFZKK3pYUE1ISVhm?=
+ =?utf-8?B?TTF5d0UrZTJRdmFIUW5Iczd0VVMzOExTb2F2ejEvdXRDR0wvRjBpUkdnZGZo?=
+ =?utf-8?B?eDY1UFFkQWxUaHlVYm9FWmpBL2hETTVOZE01U2NBbUdWUjcrT0tJcnk3a0No?=
+ =?utf-8?B?MENQejczTlNJVW0zeUN3b1BLV3B6SE9aQ0tSdCtmUXBzeU1qeDBxL21Yd0Zz?=
+ =?utf-8?B?aEd4NHlEY3dTOHVXa0JYazVKQmlHTHpiTmVJOE9QdDdubmpJeVBRZ2dnUnpm?=
+ =?utf-8?B?RjBqNk5rTmlndGhMeDJOZk5IaVc4d2RZY0dXQUhDOWVUaWswZm5EY1ZYUDc5?=
+ =?utf-8?B?Y3VZaGl5Q0pjOFdKMmJqUGIzbkF4L3hjbkxlZGlpQUtZODRGT2NKTlg3amRI?=
+ =?utf-8?B?alJiSEczSGhaWkxOWFZsSVBqbXlsNGJFVkNEeUgrS0pYNlhPNHpzZFVTdGt3?=
+ =?utf-8?B?N01GdFp6WXV0aVRJSEJpR1ZDUWhXTHhhNjBjNmdmQ2xBS3AxTnptOG40eHRq?=
+ =?utf-8?B?VFpIdHRRSi9YRWFiZDA0RE9uVFN5NkpqdHZrbkg3UVVzQkdOVEs0QWxXd2I1?=
+ =?utf-8?B?bTM4NjA4ck9scmlsVXcxQzBCQk8rTG9aRmJpYW5CSVFLZXZkY1JGZ3JJT0NC?=
+ =?utf-8?B?UmxDYy8xaEY5TllOVHRuN1h5TEtrMjVpbTdvbEkzdmFidUZocmxmWXQ4Yjdp?=
+ =?utf-8?B?TU1YL3VGaFpuTzFta0pidnUrZkIyZVAzb2tydGVxS0pvbnY0TXRSR2VDa05J?=
+ =?utf-8?B?aGR6S3pWUG9mNXdRRThBcTZHbjc0VjUwWjM2UEtiNGxQSjhVM1M5UXExTHQx?=
+ =?utf-8?B?akdBM0YzZDBYN1dJWTRLRTBKZ0JnbXJuL0JDMFc0c2VIN3RSR3lOdFRXMmJ4?=
+ =?utf-8?B?QVlrdkRNRjBPQXBEMDVxU1BxUGpnbTlKVXYzT0RQTXl6SnJEWElJNGp3OTFw?=
+ =?utf-8?B?N01Qd3cvN2ZQdHVsVkkwOUVNenY0RnZ3RThkaUpXZ285UDJLaHdMbWpwSm8z?=
+ =?utf-8?B?MmM2bXhTUFExd08wUllKWUtzOEhXQW1FSE5nMFM0Q1NaTUhoZlprbXNKWi9D?=
+ =?utf-8?B?SzNldzU1bzRnbHQ2Yy92UjAyZjR5Rm93Y0hZQ0NBdTZCZE4vYWpEK1R0UTAr?=
+ =?utf-8?B?SmRMdnl2bitSRExablJlSGVSOW45dnZiVm9WRVFKOUFkM3JSQjdrdk43NVI3?=
+ =?utf-8?B?VE14VDRFWURqd3NwM1R1d2gwR1JwR1pMN3NrWnhwVkxaVGJZamtiRXg4YlA1?=
+ =?utf-8?B?VlB2allJb1czTnRUYWNyOEFSVTVud3RORGk4MzB1VFNYb2x6T3lkV2NIMXB1?=
+ =?utf-8?B?dXRoN2tRT0ZZbEs3bzlkcFc2Zm01R3JnbENydWY5Sk8vbEQ4SEU3RHVIdWlr?=
+ =?utf-8?B?VERtSUNLS2xYMTEzNGNnRjJYMUFZcnBhcWRpamdhd0FPbGc2ek93aGcyN0dC?=
+ =?utf-8?B?L2ltQmp0UGk5Zmk0UlAyamF6aUdLcEtUbHBDRUpuamsrVmR6T2NUdUVHNlVt?=
+ =?utf-8?B?aWJIN20rdmxPcitwM2k2Z3dtQk5CVVkvMHNyWUZPZ3AyR0ROVkJodHdpTUpx?=
+ =?utf-8?B?TXZQaUZlaWtIK1BMbXRTVmR0NEdTVklNQmJFejk4RVZUQmM2eDA2ckt4N0FD?=
+ =?utf-8?B?QmdCK0hBS2JnYjQzd3dXN0hLNUxiZ0o1TUYwNXVjbEVxYTJqenZ3cVcveXB1?=
+ =?utf-8?B?N0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf3bdc76-7366-4b81-e402-08dc8a5f33ec
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB7164.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 21:41:07.9819
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zkcCJsg/X1CWzfAvO7QKI5prqnTZe32lkye8YFSObPhjdZoLI9rekakdwTeDOoAKV2PVc9hDctCSImbk8oMoYB4r4/Uv6NdDsAw1eFP0H2g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6374
+X-OriginatorOrg: intel.com
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-commit: 24f0f6a8059c7108d4ee3476c95db1e7ff4feb79 arm64: dts: qcom: msm8994: correct SPMI unit address
-date:   1 year, 1 month ago
-config: arm64-randconfig-r113-20240606 (https://download.01.org/0day-ci/archive/20240612/202406120539.ABh1Khs3-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce: (https://download.01.org/0day-ci/archive/20240612/202406120539.ABh1Khs3-lkp@intel.com/reproduce)
+This patch is no longer needed, as the rework leads more destructive 
+code changes in the AES-NI side.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406120539.ABh1Khs3-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:628.28-644.5: Warning (avoid_unnecessary_addr_size): /soc/i2c@f9928000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
---
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
->> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
---
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
->> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/memory@6c00000)
---
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
->> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/hole2@6c00000)
-   arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dts:112.29-115.5: Warning (unique_unit_address_if_enabled): /reserved-memory/audio@cb400000: duplicate unit-address (also used in node /reserved-memory/qseecom@cb400000)
-
-vim +132 arch/arm64/boot/dts/qcom/pm8994.dtsi
-
-38757eb3ca3436 Stephen Boyd        2015-11-17   32  
-38757eb3ca3436 Stephen Boyd        2015-11-17   33  	pmic@0 {
-38757eb3ca3436 Stephen Boyd        2015-11-17   34  		compatible = "qcom,pm8994", "qcom,spmi-pmic";
-38757eb3ca3436 Stephen Boyd        2015-11-17   35  		reg = <0x0 SPMI_USID>;
-38757eb3ca3436 Stephen Boyd        2015-11-17   36  		#address-cells = <1>;
-38757eb3ca3436 Stephen Boyd        2015-11-17   37  		#size-cells = <0>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17   38  
-27414e41ba5f14 Bjorn Andersson     2017-02-17   39  		rtc@6000 {
-27414e41ba5f14 Bjorn Andersson     2017-02-17   40  			compatible = "qcom,pm8941-rtc";
-27414e41ba5f14 Bjorn Andersson     2017-02-17   41  			reg = <0x6000>, <0x6100>;
-27414e41ba5f14 Bjorn Andersson     2017-02-17   42  			reg-names = "rtc", "alarm";
-27414e41ba5f14 Bjorn Andersson     2017-02-17   43  			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
-27414e41ba5f14 Bjorn Andersson     2017-02-17   44  		};
-27414e41ba5f14 Bjorn Andersson     2017-02-17   45  
-da3a82e35e4b24 Gustave Monce       2021-01-31   46  		pm8994_pon: pon@800 {
-2f74b3db92bef4 Vinod Koul          2018-09-10   47  			compatible = "qcom,pm8916-pon";
-2f74b3db92bef4 Vinod Koul          2018-09-10   48  			reg = <0x800>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   49  			mode-bootloader = <0x2>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   50  			mode-recovery = <0x1>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   51  
-2f74b3db92bef4 Vinod Koul          2018-09-10   52  			pwrkey {
-2f74b3db92bef4 Vinod Koul          2018-09-10   53  				compatible = "qcom,pm8941-pwrkey";
-2f74b3db92bef4 Vinod Koul          2018-09-10   54  				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   55  				debounce = <15625>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   56  				bias-pull-up;
-2f74b3db92bef4 Vinod Koul          2018-09-10   57  				linux,code = <KEY_POWER>;
-2f74b3db92bef4 Vinod Koul          2018-09-10   58  			};
-2f74b3db92bef4 Vinod Koul          2018-09-10   59  
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   60  			pm8994_resin: resin {
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   61  				compatible = "qcom,pm8941-resin";
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   62  				interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   63  				debounce = <15625>;
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   64  				bias-pull-up;
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   65  				status = "disabled";
-f7342c7d2902b7 Konrad Dybcio       2021-02-28   66  			};
-2f74b3db92bef4 Vinod Koul          2018-09-10   67  		};
-2f74b3db92bef4 Vinod Koul          2018-09-10   68  
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   69  		pm8994_temp: temp-alarm@2400 {
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   70  			compatible = "qcom,spmi-temp-alarm";
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   71  			reg = <0x2400>;
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   72  			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   73  			io-channels = <&pm8994_vadc VADC_DIE_TEMP>;
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   74  			io-channel-names = "thermal";
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   75  			#thermal-sensor-cells = <0>;
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   76  		};
-4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   77  
-183d4cafa711ac Konrad Dybcio       2020-10-05   78  		pm8994_vadc: adc@3100 {
-183d4cafa711ac Konrad Dybcio       2020-10-05   79  			compatible = "qcom,spmi-vadc";
-183d4cafa711ac Konrad Dybcio       2020-10-05   80  			reg = <0x3100>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   81  			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   82  			#address-cells = <1>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   83  			#size-cells = <0>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   84  			#io-channel-cells = <1>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   85  
-183d4cafa711ac Konrad Dybcio       2020-10-05   86  			adc-chan@7 {
-183d4cafa711ac Konrad Dybcio       2020-10-05   87  				reg = <VADC_VSYS>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   88  				qcom,pre-scaling = <1 3>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   89  				label = "vph_pwr";
-183d4cafa711ac Konrad Dybcio       2020-10-05   90  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05   91  			adc-chan@8 {
-183d4cafa711ac Konrad Dybcio       2020-10-05   92  				reg = <VADC_DIE_TEMP>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   93  				label = "die_temp";
-183d4cafa711ac Konrad Dybcio       2020-10-05   94  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05   95  			adc-chan@9 {
-183d4cafa711ac Konrad Dybcio       2020-10-05   96  				reg = <VADC_REF_625MV>;
-183d4cafa711ac Konrad Dybcio       2020-10-05   97  				label = "ref_625mv";
-183d4cafa711ac Konrad Dybcio       2020-10-05   98  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05   99  			adc-chan@a {
-183d4cafa711ac Konrad Dybcio       2020-10-05  100  				reg = <VADC_REF_1250MV>;
-183d4cafa711ac Konrad Dybcio       2020-10-05  101  				label = "ref_1250mv";
-183d4cafa711ac Konrad Dybcio       2020-10-05  102  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05  103  			adc-chan@e {
-183d4cafa711ac Konrad Dybcio       2020-10-05  104  				reg = <VADC_GND_REF>;
-183d4cafa711ac Konrad Dybcio       2020-10-05  105  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05  106  			adc-chan@f {
-183d4cafa711ac Konrad Dybcio       2020-10-05  107  				reg = <VADC_VDD_VADC>;
-183d4cafa711ac Konrad Dybcio       2020-10-05  108  			};
-183d4cafa711ac Konrad Dybcio       2020-10-05  109  		};
-183d4cafa711ac Konrad Dybcio       2020-10-05  110  
-c95243eeae587c Krzysztof Kozlowski 2022-09-08  111  		pm8994_gpios: gpio@c000 {
-8939304880dee9 Konrad Dybcio       2020-10-05  112  			compatible = "qcom,pm8994-gpio", "qcom,spmi-gpio";
-0804308fdd3cf5 Stephen Boyd        2015-11-17  113  			reg = <0xc000>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  114  			gpio-controller;
-8939304880dee9 Konrad Dybcio       2020-10-05  115  			gpio-ranges = <&pm8994_gpios 0 0 22>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  116  			#gpio-cells = <2>;
-8939304880dee9 Konrad Dybcio       2020-10-05  117  			interrupt-controller;
-8939304880dee9 Konrad Dybcio       2020-10-05  118  			#interrupt-cells = <2>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  119  		};
-0804308fdd3cf5 Stephen Boyd        2015-11-17  120  
-0804308fdd3cf5 Stephen Boyd        2015-11-17  121  		pm8994_mpps: mpps@a000 {
-58d92e6e73250a Dmitry Baryshkov    2021-10-08  122  			compatible = "qcom,pm8994-mpp", "qcom,spmi-mpp";
-0804308fdd3cf5 Stephen Boyd        2015-11-17  123  			reg = <0xa000>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  124  			gpio-controller;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  125  			#gpio-cells = <2>;
-58d92e6e73250a Dmitry Baryshkov    2021-10-08  126  			gpio-ranges = <&pm8994_mpps 0 0 8>;
-8f48ceef5db929 Dmitry Baryshkov    2021-10-08  127  			interrupt-controller;
-8f48ceef5db929 Dmitry Baryshkov    2021-10-08  128  			#interrupt-cells = <2>;
-0804308fdd3cf5 Stephen Boyd        2015-11-17  129  		};
-38757eb3ca3436 Stephen Boyd        2015-11-17  130  	};
-38757eb3ca3436 Stephen Boyd        2015-11-17  131  
-38757eb3ca3436 Stephen Boyd        2015-11-17 @132  	pmic@1 {
-
-:::::: The code at line 132 was first introduced by commit
-:::::: 38757eb3ca3436e503a1ab675aad4eb10a65ae0c arm64: dts: qcom: Add pm8994, pmi8994, pm8004 PMIC skeletons
-
-:::::: TO: Stephen Boyd <sboyd@codeaurora.org>
-:::::: CC: Andy Gross <andy.gross@linaro.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Chang
 
