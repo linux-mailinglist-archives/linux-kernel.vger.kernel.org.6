@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-209701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B53D903992
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:04:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E66F903994
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274891F2587A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:04:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12163288A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE9B17C203;
-	Tue, 11 Jun 2024 11:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07617C218;
+	Tue, 11 Jun 2024 11:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RBPI+5fi"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L0BPhBOh"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418C1179967
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8403D17BB24
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103789; cv=none; b=gohORmLrY96mkmcYQ8LszwUI/sPSco4YFPou47XL2JvyS7H5AI/TTbTlClqaKvqiBifumq+HmtsFoGEjpjcA+leEnUnRNGj3u8ccj+xxkkJmIQAVGTPr5/44LjQ/61jfe8T2EeeCj7Z1H9qBhkoiZ7wy3sW5JwEgbUFGY0EBoI4=
+	t=1718103790; cv=none; b=FCQE4J+s3Ldl96KayXH1T7xaqiREMdiJ3AnbmncnbcNS130hcto5AlSh8D5vx3wJUt40+hT0nuIG5St9QMo2Y/bsbkjltmHOqb37oY+eh/7QDUru6mGUFFBt8RN7gR2BcRY64nb7rOVIom5ROHwRlPwshTp0ZUEY4XH1L5L1nOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103789; c=relaxed/simple;
-	bh=axQU43Aml76H/iOKeENoFQKWJ7/gXB7cHl8R20BADw0=;
+	s=arc-20240116; t=1718103790; c=relaxed/simple;
+	bh=z/3u4/mWtXaPcqUEJIVVVhgfYJkjuHSN+7Gt1mr2kZU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c8v0sbCzUPFNVIl8+bwcZoH01H9dqAVz6XCeFwuH5CyhfDh3F2ZvCHs5VuPZ30uIkxzcZlYh0cr0JoaptrKglFwNo9RJrOCc/h1W3cnaNGKKqgB6+ab8f1HQXVYuDNxNnM59rJWvVKcs/maLn+MNUIxG75OEE3HGo9IhZKdA9rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RBPI+5fi; arc=none smtp.client-ip=209.85.128.172
+	 In-Reply-To:To:Cc; b=HZmrQUbO29ijvYRNSU8/4+izphSYDg+kKA/pE1wFRW6M+Du4QdTmC5E7AKQ3Aye3TgkUfs7iUuO9hQsIiAvL+G0gtAminMYqkBkeiRjBuyEEOxirrFeGW5yyL6iaS6msDLwterTjrbgDmf1dQDFz5xX/Y9cKOTsOc7zlRRUgUPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L0BPhBOh; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a0873c6e4so10901847b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:03:07 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62cf4d32c68so11189717b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718103786; x=1718708586; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718103787; x=1718708587; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ImkowAObGGvWARM8qyLmBbLia+4Yl3rwgPb+hZwmCUk=;
-        b=RBPI+5fi+7ZtMQlr8m+cof2zBRR1hqx/EWUmps6wAv/Fg5AYKOj73UnB22sTrKSiG8
-         IBdUVb8iawNejjSzj2wF6IXvmN3mk7RlXQ/l0HoWoAYHaSwHD3o83LwdSxRYqNzF69Mq
-         lX3CTDy+ci3KdBSMdyTa58+jvRTLZlrvbOQeM=
+        bh=MzS9f1WNBiNXaOeMPoSMQIzT/9CqhSNtVDMpqgWPH5g=;
+        b=L0BPhBOh0I1GV8CWvJsX4am0HYFH0l+mhazYRotbgzxUPkUBU7IwIX0d0FOKGV2gkI
+         tB933JVT3+K6X27dAV8wxfhrjTI1a64/kZCBWlp5BE8cF68pU6rhuiQcvvJeyZXCTi7p
+         OMRaZzpyCSscbiuuf7t8eFpqc+K9lbKRtupRA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103786; x=1718708586;
+        d=1e100.net; s=20230601; t=1718103787; x=1718708587;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ImkowAObGGvWARM8qyLmBbLia+4Yl3rwgPb+hZwmCUk=;
-        b=k+/7xBwnOF+BVbXrL/nEFrhPuULaMfbYTnryLtIghzoZeqI+Wom45g1pn0p7LE95L+
-         dDlf7C/JJw3EUVrv3+LQ55zpanRMp7xGqkBBGX8F8BbhAleT5XwuFrTyPOtO+pLu5ooL
-         9MBKjUBFkpOX3vs1nhbXRLwdWdLYMyVHgEIhX2bVsW7SBbyM4yzdwSEBijEMmHObLpj4
-         cW8iH4s1493vXbmj+Utc0A3nSaRwEbn8uYeyHGCUHTo0Aw56jXbIRH2nG1cKmbaG2YrK
-         THRavvaaryifKxqlrcrsbpMdTU4ahI35sFivbppJ4lw8X/8n/tkWCRNnkReZV2N7aic2
-         g0zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViU2nUK2iM8kblelAQj01hYsj1DFJ0aNq26MKU2SE7HUh3loudwZn57+94vWH6aZF5VUbeknExcrpmhb47DPW1KEDW1b6alZHMiTnC
-X-Gm-Message-State: AOJu0YzQavUezt3WLFVKkl4wizs2tdLj6AbcWRoNkpwbljD21g94E3N8
-	pgRVnkBHMxQYJ/LRg+U6RI8iNvnSD3P09mGAWUHo2xDnNqgB4aEz1FGd3Dk6jkTni58KS6Dt+yT
-	z3I1c
-X-Google-Smtp-Source: AGHT+IGKfgJjl5AbFdYEmHwgB4UA+CO9/L0Ej5JUQlX4Aq+awTo2bU562C9zspGvacUwumd87j7oSA==
-X-Received: by 2002:a0d:d442:0:b0:615:4e88:c02d with SMTP id 00721157ae682-62cd55f46c1mr126934237b3.23.1718103785263;
-        Tue, 11 Jun 2024 04:03:05 -0700 (PDT)
+        bh=MzS9f1WNBiNXaOeMPoSMQIzT/9CqhSNtVDMpqgWPH5g=;
+        b=aZUs1GP7btyeuFdEYdqBaHXIwkqpk7HYT+3EMV0jxiHmoL+cwSYh3Q/e5z2W2FtSGf
+         D5BZSmO8ExyVNG2pdO4cna/WJ6MRAsjoWOBKwt0BFJhP3tBH4CW0NXKr6ug+e2Glz3si
+         /ceRKiOYCgvPB0M1xDJo0KnfbUQSPNlmzPccgGdTkuR5Ih8GDaL64GgBS7zYEL9WI7BG
+         nhybzmhys0w5u/6y8UllTmaPE/AyPGyf8zBY3GiyKu7tWRPEkoaY6CQgvZU9ucChc0X4
+         S5wWmMa0HXTaQ+cqiXCyBQ4dmlwcP2zEL9GrlQM0YG13BhVnV7BxkUHaggVvffylnqKv
+         2vQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVWjnfektR0Y8B5uRxV417gHZoVLkzEXOkAzWdVJKG6zFHCu+12vGFcayixDO/jdp5byLdMf+zYLcCr8Z60WXAKTPei1XV4+B4yPic
+X-Gm-Message-State: AOJu0YyIlcAEQ/emnbxevFNfhaBE4Rc8P5nwrFSnQ+JvMnSnGogikr7N
+	DVxuIxuuANqEvOAz2CKqzLfhLCIKeNzfKCau3Z188RllEKPzGp8sVUIGv4zN7A==
+X-Google-Smtp-Source: AGHT+IFyq6p5dM3GRR26JfJcXHtL1hQfZTEfRKi/7qD6W4L5jN1i3I7FjtVlsJJcSDOGRawrkNvnyw==
+X-Received: by 2002:a81:830e:0:b0:617:d864:7e0b with SMTP id 00721157ae682-62cd56afba9mr111896707b3.47.1718103786021;
+        Tue, 11 Jun 2024 04:03:06 -0700 (PDT)
 Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b08bf006f4sm6392076d6.90.2024.06.11.04.03.04
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b08bf006f4sm6392076d6.90.2024.06.11.04.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:03:04 -0700 (PDT)
+        Tue, 11 Jun 2024 04:03:05 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 11 Jun 2024 11:02:57 +0000
-Subject: [PATCH 1/2] media: drivers/media/dvb-core: Split
- dvb_frontend_open()
+Date: Tue, 11 Jun 2024 11:02:58 +0000
+Subject: [PATCH 2/2] media: drivers/media/dvb-core: Refactor
+ dvb_frontend_open locking
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-coccinelle-followup-v1-1-df2de9c2f320@chromium.org>
+Message-Id: <20240611-coccinelle-followup-v1-2-df2de9c2f320@chromium.org>
 References: <20240611-coccinelle-followup-v1-0-df2de9c2f320@chromium.org>
 In-Reply-To: <20240611-coccinelle-followup-v1-0-df2de9c2f320@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>
@@ -85,59 +84,94 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Move the actual opening to its own function.
+Split out the wait function, and introduce some new toys: guard and
+lockdep.
 
-Not intended code change. This is a preparation for the next patch.
+This fixes the following cocci warnings:
+drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2776
+drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2786
+drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2809
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/dvb-core/dvb_frontend.c | 143 +++++++++++++++++-----------------
- 1 file changed, 70 insertions(+), 73 deletions(-)
+ drivers/media/dvb-core/dvb_frontend.c | 59 ++++++++++++++++++++++-------------
+ 1 file changed, 38 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 4f78f30b3646..e81b9996530e 100644
+index e81b9996530e..a7739f5e78cb 100644
 --- a/drivers/media/dvb-core/dvb_frontend.c
 +++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -2760,80 +2760,13 @@ static __poll_t dvb_frontend_poll(struct file *file, struct poll_table_struct *w
- 	return 0;
+@@ -30,6 +30,7 @@
+ #include <linux/kthread.h>
+ #include <linux/ktime.h>
+ #include <linux/compat.h>
++#include <linux/lockdep.h>
+ #include <asm/processor.h>
+ 
+ #include <media/dvb_frontend.h>
+@@ -2826,6 +2827,34 @@ static int __dvb_frontend_open(struct inode *inode, struct file *file)
+ 	return ret;
  }
  
--static int dvb_frontend_open(struct inode *inode, struct file *file)
-+static int __dvb_frontend_open(struct inode *inode, struct file *file)
++static int wait_dvb_frontend(struct dvb_adapter *adapter,
++			       struct dvb_device *mfedev)
++{
++	struct dvb_frontend *mfe = mfedev->priv;
++	struct dvb_frontend_private *mfepriv = mfe->frontend_priv;
++	int mferetry = (dvb_mfe_wait_time << 1);
++	int ret = 0;
++
++	lockdep_assert_held(&adapter->mfe_lock);
++
++	if (mfedev->users == -1 && !mfepriv->thread)
++		return 0;
++
++	mutex_unlock(&adapter->mfe_lock);
++
++	while (mferetry-- && (mfedev->users != -1 || mfepriv->thread)) {
++		if (msleep_interruptible(500))
++			if (signal_pending(current)) {
++				ret = -EINTR;
++				break;
++			}
++	}
++
++	mutex_lock(&adapter->mfe_lock);
++
++	return ret;
++}
++
+ static int dvb_frontend_open(struct inode *inode, struct file *file)
  {
  	struct dvb_device *dvbdev = file->private_data;
- 	struct dvb_frontend *fe = dvbdev->priv;
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
--	struct dvb_adapter *adapter = fe->dvb;
- 	int ret;
+@@ -2840,19 +2869,17 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
+ 	if (!adapter->mfe_shared)
+ 		return __dvb_frontend_open(inode, file);
  
--	dev_dbg(fe->dvb->device, "%s:\n", __func__);
--	if (fe->exit == DVB_FE_DEVICE_REMOVED)
--		return -ENODEV;
--
--	if (adapter->mfe_shared == 2) {
++
++	guard(mutex)(&adapter->mfe_lock);
++
+ 	if (adapter->mfe_shared == 2) {
 -		mutex_lock(&adapter->mfe_lock);
--		if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
--			if (adapter->mfe_dvbdev &&
+ 		if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
+ 			if (adapter->mfe_dvbdev &&
 -			    !adapter->mfe_dvbdev->writers) {
 -				mutex_unlock(&adapter->mfe_lock);
--				return -EBUSY;
++			    !adapter->mfe_dvbdev->writers)
+ 				return -EBUSY;
 -			}
--			adapter->mfe_dvbdev = dvbdev;
--		}
--	} else if (adapter->mfe_shared) {
+ 			adapter->mfe_dvbdev = dvbdev;
+ 		}
+ 	} else {
 -		mutex_lock(&adapter->mfe_lock);
 -
--		if (!adapter->mfe_dvbdev)
--			adapter->mfe_dvbdev = dvbdev;
--
--		else if (adapter->mfe_dvbdev != dvbdev) {
--			struct dvb_device
--				*mfedev = adapter->mfe_dvbdev;
--			struct dvb_frontend
--				*mfe = mfedev->priv;
--			struct dvb_frontend_private
--				*mfepriv = mfe->frontend_priv;
+ 		if (!adapter->mfe_dvbdev) {
+ 			adapter->mfe_dvbdev = dvbdev;
+ 		} else if (adapter->mfe_dvbdev != dvbdev) {
+@@ -2862,34 +2889,24 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
+ 				*mfe = mfedev->priv;
+ 			struct dvb_frontend_private
+ 				*mfepriv = mfe->frontend_priv;
 -			int mferetry = (dvb_mfe_wait_time << 1);
 -
 -			mutex_unlock(&adapter->mfe_lock);
@@ -148,126 +182,32 @@ index 4f78f30b3646..e81b9996530e 100644
 -						return -EINTR;
 -				}
 -			}
--
+ 
 -			mutex_lock(&adapter->mfe_lock);
--			if (adapter->mfe_dvbdev != dvbdev) {
--				mfedev = adapter->mfe_dvbdev;
--				mfe = mfedev->priv;
--				mfepriv = mfe->frontend_priv;
--				if (mfedev->users != -1 ||
++			ret = wait_dvb_frontend(adapter, mfedev);
++			if (ret)
++				return ret;
++
+ 			if (adapter->mfe_dvbdev != dvbdev) {
+ 				mfedev = adapter->mfe_dvbdev;
+ 				mfe = mfedev->priv;
+ 				mfepriv = mfe->frontend_priv;
+ 				if (mfedev->users != -1 ||
 -				    mfepriv->thread) {
 -					mutex_unlock(&adapter->mfe_lock);
--					return -EBUSY;
++				    mfepriv->thread)
+ 					return -EBUSY;
 -				}
--				adapter->mfe_dvbdev = dvbdev;
--			}
--		}
--	}
--
--	if (dvbdev->users == -1 && fe->ops.ts_bus_ctrl) {
--		if ((ret = fe->ops.ts_bus_ctrl(fe, 1)) < 0)
--			goto err0;
--
--		/* If we took control of the bus, we need to force
--		   reinitialization.  This is because many ts_bus_ctrl()
--		   functions strobe the RESET pin on the demod, and if the
--		   frontend thread already exists then the dvb_init() routine
--		   won't get called (which is what usually does initial
--		   register configuration). */
--		fepriv->reinitialise = 1;
--	}
--
- 	if ((ret = dvb_generic_open(inode, file)) < 0)
- 		goto err1;
+ 				adapter->mfe_dvbdev = dvbdev;
+ 			}
+ 		}
+ 	}
  
-@@ -2871,8 +2804,6 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
+ 	ret = __dvb_frontend_open(inode, file);
+-	mutex_unlock(&adapter->mfe_lock);
  
- 	dvb_frontend_get(fe);
- 
--	if (adapter->mfe_shared)
--		mutex_unlock(&adapter->mfe_lock);
- 	return ret;
- 
- err3:
-@@ -2891,9 +2822,75 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- err1:
- 	if (dvbdev->users == -1 && fe->ops.ts_bus_ctrl)
- 		fe->ops.ts_bus_ctrl(fe, 0);
--err0:
--	if (adapter->mfe_shared)
--		mutex_unlock(&adapter->mfe_lock);
-+
-+	return ret;
-+}
-+
-+static int dvb_frontend_open(struct inode *inode, struct file *file)
-+{
-+	struct dvb_device *dvbdev = file->private_data;
-+	struct dvb_frontend *fe = dvbdev->priv;
-+	struct dvb_adapter *adapter = fe->dvb;
-+	int ret;
-+
-+	dev_dbg(fe->dvb->device, "%s:\n", __func__);
-+	if (fe->exit == DVB_FE_DEVICE_REMOVED)
-+		return -ENODEV;
-+
-+	if (!adapter->mfe_shared)
-+		return __dvb_frontend_open(inode, file);
-+
-+	if (adapter->mfe_shared == 2) {
-+		mutex_lock(&adapter->mfe_lock);
-+		if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
-+			if (adapter->mfe_dvbdev &&
-+			    !adapter->mfe_dvbdev->writers) {
-+				mutex_unlock(&adapter->mfe_lock);
-+				return -EBUSY;
-+			}
-+			adapter->mfe_dvbdev = dvbdev;
-+		}
-+	} else {
-+		mutex_lock(&adapter->mfe_lock);
-+
-+		if (!adapter->mfe_dvbdev) {
-+			adapter->mfe_dvbdev = dvbdev;
-+		} else if (adapter->mfe_dvbdev != dvbdev) {
-+			struct dvb_device
-+				*mfedev = adapter->mfe_dvbdev;
-+			struct dvb_frontend
-+				*mfe = mfedev->priv;
-+			struct dvb_frontend_private
-+				*mfepriv = mfe->frontend_priv;
-+			int mferetry = (dvb_mfe_wait_time << 1);
-+
-+			mutex_unlock(&adapter->mfe_lock);
-+			while (mferetry-- && (mfedev->users != -1 ||
-+					      mfepriv->thread)) {
-+				if (msleep_interruptible(500)) {
-+					if (signal_pending(current))
-+						return -EINTR;
-+				}
-+			}
-+
-+			mutex_lock(&adapter->mfe_lock);
-+			if (adapter->mfe_dvbdev != dvbdev) {
-+				mfedev = adapter->mfe_dvbdev;
-+				mfe = mfedev->priv;
-+				mfepriv = mfe->frontend_priv;
-+				if (mfedev->users != -1 ||
-+				    mfepriv->thread) {
-+					mutex_unlock(&adapter->mfe_lock);
-+					return -EBUSY;
-+				}
-+				adapter->mfe_dvbdev = dvbdev;
-+			}
-+		}
-+	}
-+
-+	ret = __dvb_frontend_open(inode, file);
-+	mutex_unlock(&adapter->mfe_lock);
-+
  	return ret;
  }
- 
 
 -- 
 2.45.2.505.gda0bf45e8d-goog
