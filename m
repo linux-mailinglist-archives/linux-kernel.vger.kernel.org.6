@@ -1,225 +1,215 @@
-Return-Path: <linux-kernel+bounces-209168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56803902E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE39902E32
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE12284DA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2EE284E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52319B662;
-	Tue, 11 Jun 2024 02:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FD7BA5E;
+	Tue, 11 Jun 2024 02:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t/b2HW8t"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mqvnjKrG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC94A94B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718071486; cv=none; b=ZhaNW9VOIawJxewXZgAUC2ijxewXzeNDh+oBFhBgkDQUwiWf9Q8fW33YrqCaOw/p7oDYfnzG+2t6kZmpWHnJu/JyOdKYKt/pR+voQo4OB7oaAepww7F8uWfNitTO6oY0VPeGKSY4CHvIwcqI0l0MzHtFfKyLbikTIdoHFQXIsHo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718071486; c=relaxed/simple;
-	bh=KHMWCLwiS57Nz16itqOWI3JbubOZ0uAVAJGTbNUd2Iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fBd6bONdAX0alAM4fkgF2i8MsFCkQj0crZC8au3ft0pBqqXUdLaPXAfpE0Ya7UMRll6If64dDNofdsyYOjuSG/Pm6JONvPQXj/hQ8NFy6W7T1Lp01YtK8TzoxfQ3y69SzUjPF1dA4utoHrP5GsRpu17/kcnTf2iLqXUR8E9lKbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t/b2HW8t; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718071474; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=7j4g4SdK/dgS0J/c8Twl0jOBteQXn2uqyypbDOrvpVM=;
-	b=t/b2HW8t/Wflliv86LLSBqZpwduSb1VCrfnnUln9w/tmvS/8L7nNGOcrxa+S2U7nLfeGcMaXnX/hKST3LiskawF83M16TVkLQ5tQ5n39WYM6XYyTRIp6oWqwdtVSi13Tuc33P+whfzZy8+heTLAZfE1giXdpaRVN7/FzF3Y+3ZM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8EY.xP_1718071471;
-Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8EY.xP_1718071471)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Jun 2024 10:04:32 +0800
-Message-ID: <6c7a8602-5b88-424c-a8c4-8a9502865d94@linux.alibaba.com>
-Date: Tue, 11 Jun 2024 10:04:31 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055EAD21;
+	Tue, 11 Jun 2024 02:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718071568; cv=fail; b=r+sVXSZBuxiWjHNb9o3vldb2+PSk0P86afBIzTFxmE7FuC/+WL3Fwgh5lI9ipDjqkePKJSyDQtJN/wWWc15tQgOtUNeB9qCdCIX2JmCIMNK0hiizG0GaFemCTPFC0WtEC0lTAyRa+2ldT9fEENgYQDRPy02QK77SXyiMF4yhhmk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718071568; c=relaxed/simple;
+	bh=vwAw/JDkeroc5Xf2NNRHz+G46PtWj9RhtAGgVeKa8pw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aLcK71gHXzro+/v0Edlt0oxPJbKzSNJiqhW2MZ8hdQWg5So+SKfnfKjZQYgE5OqhL26YHaKt5rI3N2rD2oVnBSPSW17sBy7h7mW7RseFugpjGxvIe801tYsb3IlRj8xnAPHAkEWNTh+zK+zsLBE+DlxWymYSLGMsXjIm7Xsldl8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mqvnjKrG; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718071567; x=1749607567;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=vwAw/JDkeroc5Xf2NNRHz+G46PtWj9RhtAGgVeKa8pw=;
+  b=mqvnjKrGxzmPyPD0LF1LU0LXQsXolZFe5YzR5q7O2tn/EoYk2nK9vKbV
+   9smDJAGaid0RcqlFnrr14iwxS/dPPrydBm2wXPYl05aF8ZrdeSyPb0djm
+   jpUwwo7F2eUhMQzv0lg0w67zLFfwH1zGuPmzkfzuiRsshQQ6OTuiIwrOx
+   ZEDeU7el2Eff43XpqQL/Gf7xQXLeGRYEcYVtBkL8+cfZtTDWR2kD4QKGz
+   jKBQYJiOlqShKjwrz7X/W2n8mHvsReuUcPA2pCGgFZGHipe2o7XdI1mDu
+   GzgrQj5LJ4U/CT6Voq1SiwM5tMtWy4lTNpOY7W6b0u1HgVs5kmlNvVjyD
+   A==;
+X-CSE-ConnectionGUID: LsPURc5bS3+Ke3Gy/RLzxA==
+X-CSE-MsgGUID: n9fkHV7pRK+2aCnnA37seg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="32244767"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="32244767"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 19:06:07 -0700
+X-CSE-ConnectionGUID: oZKZkmHwSDaY7bTFT5kwiQ==
+X-CSE-MsgGUID: Phx9oLifTdeZzcVt5rTtrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="44394288"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Jun 2024 19:06:06 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 10 Jun 2024 19:06:05 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 10 Jun 2024 19:06:05 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 10 Jun 2024 19:06:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FpxW2gOh8KSplwxNTZ9hTtPN7LTmhSNFa+vojxqu0EPXShmy41UtDKxfDHA3sJHLWIuCS/RJ1Ih9vBNR5o7oGyr7O5OFM9DeyHfiHrkqjb5IA4vulWwL3pPf7Ch4z19hBsCWIexmC9OaTJd3qQ4nge8ieA6KpQRxP66XGPTYucgrwJeCN2/L8+TnyQ939YGhxHIpeiLy5nDZPW5GT52hcmqCEwVCpIdDFiSESthGe58PFqtiRzzAgPB52vHtBC7F173B8R93ZODll2N4oaW/yLDdBe1s6NsFcYfwE2wGGWL1rciPn1QAt77pbMeF68Wlt0gc6veDdbVL7fkR7Lxntg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IaYPCrcI5sKk1qkmNp0UCD1iMkwHuKIwkYwxvMypfPo=;
+ b=f+8xKnm1JG4UmIEGOZFAtINFZoeoPypF3J209P528lmLqwPogqiEHeFI7Xp0gpOz1eRgqZRpXxcXn/5mZoxeu/AN/jm2buBfWEIlmCfNuOF4tV7Cuxb3YX1KM8Ym7iItz62IcDTp9fyfMoxDkuCzUPX7DzivRwzubV22qHxtKEkDJaSr8c3EfOGRrCPZayvcg/iwwEySyMrwPdG+hkwFX/kRkuqrdIudk+htPRDx7oVnSaUI3w/lUHVeuRGkalsooZDOJXz6MHf+w4F0XXkjwDQEDYIhwLAvVN2uoujh7tyh2j1IyqJEAZEmTwC/uU61B1FPy/xVjIy4XeUB4ggQGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com (2603:10b6:510:34::7)
+ by IA0PR11MB8377.namprd11.prod.outlook.com (2603:10b6:208:487::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 02:05:59 +0000
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4]) by PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4%7]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 02:05:58 +0000
+Message-ID: <32b8a82f-d65f-4c4a-8cfd-e69eea5e1efe@intel.com>
+Date: Tue, 11 Jun 2024 10:05:51 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs
+ support
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <mlevitsk@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240509075423.156858-1-weijiang.yang@intel.com>
+ <ZmeijsBo4UluT-7M@google.com>
+Content-Language: en-US
+From: "Yang, Weijiang" <weijiang.yang@intel.com>
+In-Reply-To: <ZmeijsBo4UluT-7M@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SGBP274CA0023.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::35)
+ To PH0PR11MB4965.namprd11.prod.outlook.com (2603:10b6:510:34::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] mm: shmem: add multi-size THP sysfs interface for
- anonymous shmem
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "david@redhat.com" <david@redhat.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
- <119966ae28bf2e2d362ae3d369ac1a1cd27ba866.1717495894.git.baolin.wang@linux.alibaba.com>
- <CGME20240610122305eucas1p21bfd8a8c999b3fc8bfce04e5feea7bf7@eucas1p2.samsung.com>
- <denilwdvfb772l432ezexwmy46rzv7disxhryf2ktqmtfk5khe@ghq3sohl5z3w>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <denilwdvfb772l432ezexwmy46rzv7disxhryf2ktqmtfk5khe@ghq3sohl5z3w>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB4965:EE_|IA0PR11MB8377:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3082da71-254a-4c11-c287-08dc89bb092a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VnV2RHNGQnRlcUNGRklOb2N4czVnMkVPYkdkZ0lVZ0pnSmN5dHFtOEhHdzU3?=
+ =?utf-8?B?VlNITVZSQTd2bUlkOUNSVDNlTCtTWVkrczFwWXZBeko1Z2JycDNYdFFGV0U1?=
+ =?utf-8?B?SXhYSTVDbUpYUmtNTWNEdGYrVStMRHBYd0VRMDVXMkRod3dwY0xDdm9RTENS?=
+ =?utf-8?B?QmVoeThZK1RlN2tXUmNZVHRVZC9NcEluK2E4b1JiQys3UDd3Y3ZiT3RRT0tM?=
+ =?utf-8?B?ek1UL0RRVGtiQjVOcDV6Y3VsUXhGejYwWnZPOEtTYjZnWUQySmpGejd1eUhw?=
+ =?utf-8?B?aVBFN3ZnOHVaOXgxOURmWG80VXl4VnNPcWxpdnNNVzY3bEQwNFVtV251ek5l?=
+ =?utf-8?B?dk5lOVNGbHVGbktZcFY5VUc1U2lMSWc3K2k0OEVCa3lvTXB3Zi9sSUFVYmVT?=
+ =?utf-8?B?eU1UODlpZW1icC9LdGxxSHVVN2h3NEhwOEsrRytPRkRpODV4dFl4RjRXRVNn?=
+ =?utf-8?B?b29QVDlrN0FHbDBCQlludlRIM1ZkNmZTQXdBZ1ZrVXZzdWY0c2dYV0ZiMmYy?=
+ =?utf-8?B?VUtDcXdwRFhGRHExUzlWa1VJK3hCSFNHY0MwS1pQM3U5TlF4UGF0UHhSeHcz?=
+ =?utf-8?B?MmJvbVViaTJ6V1JNSE1PREVLNmlnempKTktDOHVwRjIxeE1YVloxaVVUV0Jo?=
+ =?utf-8?B?bHgzNlJuaVVSeXNnR1o1dTE5TTk3aklkQUE0OVhkTEJwajA1TGZFbnVoMnph?=
+ =?utf-8?B?eW5ORWE5WW4wdzc5TFFqWURYeXl6MjgzSXZxQ0M0MkFhRHlLMDJDT0tNRHFt?=
+ =?utf-8?B?bTR4YVZBNTE0Z0JqT3NWa2YvQS94Ty9DQlg3bm5FdE9na3Q1UXB0TUEwL0tu?=
+ =?utf-8?B?T2JDK2JTQTZFSlo5WEcxTXhaVnhjZG5xbWVzcEppd1htWjhtM0xMaHNENzVC?=
+ =?utf-8?B?OEw1SFRtTkhiT3dLRzVSTXdCMHkwN3l1RlFWRmlBSTMyREhLVTErUndESTky?=
+ =?utf-8?B?NGprZThaZEEvcnBrdm8xVDhwaEdZbnVJV05xVGdKSmdsLzVGMWE4YjN6d2gw?=
+ =?utf-8?B?NFd5OFdVSlRSYm53NmhUSGo2QjVvemtsZXdkOG9Rbjl1a0ZvT0lxR2tIclpY?=
+ =?utf-8?B?aFBKNXdZMU5UdEpSQW1BZ21ZU2lCNDZuSUErb3hwN1JaWDRBUE9GU1VTRm0y?=
+ =?utf-8?B?Snp5c0NIcnJUZzhERU9uK1FkU1cydDdNYXp3QVNPVTQ0OW51d1pLNStTb1Rl?=
+ =?utf-8?B?NWZjd0xmYU1wTThYOHhtTGxkbnVYRXIwelBNOHFlNlRwYXhRVnFiNlQreVBi?=
+ =?utf-8?B?OUtnNHNsKzlNcDllRkNISmVSOFQvTFc1MzBZeXpOazhBWUxkQmFWUlFkb0da?=
+ =?utf-8?B?cjFpM004RkhHZzJqd3JTako1Wm9tUElYZm1ZMG8zaGRlQktIZy9IclUyQ0FU?=
+ =?utf-8?B?UGI4NFM4Z28zV0RhL0xSaE5QaHNVVVJUblUyNWFLZkZnQjNyajlXNFlSNU9y?=
+ =?utf-8?B?V1JIOW9kMTROcU40aW8weCtnUy9qNTY2TGRSUjZJS0lDV2V3M3FCSFVpNHBZ?=
+ =?utf-8?B?NGJnL0JOTnVBWXMwenc2RXdBaUJBMUxtTFhDeFVDL3M4VWNITXUwYjhZb2hm?=
+ =?utf-8?B?Q3U0MVpINmkrQ3VGTy8wK25XcE9DUERoNmE3NUJ4dkpOT1VxUklIb3oya1RL?=
+ =?utf-8?B?d0xyaldQcS81MUVJUEp3Y0E0ckY3Rno1NjBSMzNSaUhtRUhxeUlicnRBZzgr?=
+ =?utf-8?B?RjVUU2VCVGIyOGJZa1FvWExQNFdEcWUwUnU5MnVzTCthRmFNeFMvc1ZNQ3hL?=
+ =?utf-8?Q?F3xfBtRmqRQ5odYqWnDsTAcEepQaKppAF1/tzdd?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V25kMkY4VDhIVzBlRWpOZjlKYkY2QVl1dFoxUkY2bjVQVTM5UyttaVM3NEZw?=
+ =?utf-8?B?SkZweEhTTXJQaGVZL3VnY2tFOVpEamVMQkQwYTFTRkVMUHZXUjZHUElOeGxV?=
+ =?utf-8?B?Nit0VmdFSzVvWHh5bEFMWG1KMzQ2dmhmMXZ6enluK3R1OUN4bWwrUnFUT1M4?=
+ =?utf-8?B?WjhmQ1BUQ1VRRjVXMVJCQ1VDRWJ2NSt4aENvQ3hVS1JpdEZoeGd6ckp0bVBV?=
+ =?utf-8?B?V2VvMWcrU2E0aFhYL3ZMdld3THNoUkpKcVBBRGN0RmsvTjRzMnJ0blQ2cW9s?=
+ =?utf-8?B?b3p6MUwyNnlwL25PM2NCamwvTkNIakVSQ28vTTVNRFBvWWJ4cWZqYytiWGE2?=
+ =?utf-8?B?Q1ZVUzRFbXhlMXpwejRuN0xTZWZZOEtwaFBjeW0wN1ZpM0tUbC82UVBOT2pv?=
+ =?utf-8?B?a3FpTDNFZjl5YXVaY1pQd01rRTVrVGZFS2ExSU44Zm5ZZUpQelBZZ1A2WTFv?=
+ =?utf-8?B?ZEVlVkFMMC9id1E5eDgwTGxyL3FKbW1vVzU4ZHJ1MHFEUmF5ZS81NG1DZlZJ?=
+ =?utf-8?B?UGxRT3BCajJqT0I4R3p1cyswcEJDMWIyU3FzSXl0TGVhM2EwWXo5R1VQaEJD?=
+ =?utf-8?B?MzIyN2Y3UXlWMGl2SXVuWVFkajloOUZ4L1FrTEhuSTcwbDVNc2pSdkZLV0oz?=
+ =?utf-8?B?SGZ0UEp1dVRmVlM3N3h5V2o2Sk5MYkFKVHk4SzJrVFRBNnpKNTNGTm1wYU5u?=
+ =?utf-8?B?citiTkJuYTBrMk8vQzQvS3NOTFFRQ2NZT1lUdWdaRVFndjVDUkQ0dzNFdU5y?=
+ =?utf-8?B?WWhhTWN3YW0wS2lzSVdSMFFBckFnTk0yd2tua2JiSnNpc1hhT25kZE9TY2NB?=
+ =?utf-8?B?ZHlvL0l1MGs2WFRHRjRGNGhkNHpvVW13YkY1RHVHVERITWxEWjdyWEhocjNY?=
+ =?utf-8?B?WWp3bTFuaE03eWNzbTlpaUgzckdaeG4ydHY5NDNvdmU3QVFUWHpWQTZNTU1J?=
+ =?utf-8?B?aTBWNko5enhUMWtWWHo1b3QwN1QrT2hmRjBwc0ZpV3pWVW9JMnA3ZGd3VGxr?=
+ =?utf-8?B?N21IM3dQc1cvaFNYV3dxT2pUTXdjckZLTXkwQTM1V0NXOTMyWHBwWVpIcG9Q?=
+ =?utf-8?B?Q09XM2dzaUJJV1hVYUlGRXhVNzdCZkFET0dSUzRpeS9IUzdrVGdtSnQzenhv?=
+ =?utf-8?B?M2FDTHAxcGh6ZVBtSlRZQ0NpU1gzU0FEWGRNRTBKSWFYRVdLYzR5R0V5dEZE?=
+ =?utf-8?B?bTY2L0pSRU1iYW9FQkNybUlVSERVVit5Y3I3WFBYdDlJVnJJbEFRR0lhd3pM?=
+ =?utf-8?B?NHg1bkJ1OEozVGxLVGdJRS9tbGlCSkZUQ2xqd3N4cnUzMDVnbUlLWEt1aDh5?=
+ =?utf-8?B?K2FVVWFZdnNiNkVhSndkNlQ3RE9UZTVFaUlPUkFBcGxDNEtZSjZYRkQrQ1Ex?=
+ =?utf-8?B?RjN6eHN1V2RMTE4rNG43ZS8rbXhWcVE2b0U0NVFOTkxQUjA4dzVxOFFoQnV3?=
+ =?utf-8?B?M2dPQWo5NnBTdDdQdGc1YTNueHNkQkxMdktTUjJDR2pGRG4wUEFhSStXdFRX?=
+ =?utf-8?B?U2hjWmwvYjlHRVFBN0ZZblZsYkRlMXRFdkRldEVhR0FTTWNmR1FhazE4bDFP?=
+ =?utf-8?B?U2JaUCtKQllNUGlOY2E1NThoZXVOcGJFNWpXU0NuUlFMVTNySit3RFBNOGZO?=
+ =?utf-8?B?TWNaendDL2FnVGdwUnk3YWpvYTU5SEp3RFpja3BIYWV6dUdrR1FBQWdhYnJ4?=
+ =?utf-8?B?c0Q0dUtqendHeU0vVnYyTitXRHVQalgyb2w0ZjQ4VDBWZHhXUzMrT2Y0cjlj?=
+ =?utf-8?B?SThzZjZpOGhudDAyY2p1U0RlZHJtNjVNUlh6TENjWTVMbStGc0RxNWViYWsx?=
+ =?utf-8?B?bkdtcGRoclFjdTJPOXQwbE1ibHRHVko2cXNqeTBaTXZ5TGgxRjFteVN0VXNM?=
+ =?utf-8?B?Zyt4OGZoWmVNSS9XMUN6MHdTOFpZaTFPRXd1ZlpHYVJrRWY1R2lFK0dNOCtk?=
+ =?utf-8?B?d2owM0pZS2JZdE1tSmR1NnlrWjd1VXNjZisrMHRDZDNtcVJDbFhwYnczQ01H?=
+ =?utf-8?B?em8yN0JNZnVCVm1zVmtCaDF4SHNnNTY4aTY4TkFIRjQwTWt1U0lNbmF0M1NN?=
+ =?utf-8?B?b0drVUNnWFZBVmRXVTNyUGxzYzYyODFhSG9RMmRvT0ZWY0tuMlJXUGtSaStq?=
+ =?utf-8?B?by9aM2lSazBwbkoySVZUaVVSbGNXcXZDVmw0eWtBOG1XbWZ0dmxyemYvd2Yz?=
+ =?utf-8?B?Nnc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3082da71-254a-4c11-c287-08dc89bb092a
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4965.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 02:05:58.8883
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b+QK8MD/5KRbdrqnxF+WDjSrOVxQLlVu0Lv3WQacyvFqcB7yJnncFx4yObppuvgJnVEkxlPSCKcfdb39HJ9LTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8377
+X-OriginatorOrg: intel.com
 
-
-
-On 2024/6/10 20:23, Daniel Gomez wrote:
-> Hi Baolin,
-> On Tue, Jun 04, 2024 at 06:17:47PM +0800, Baolin Wang wrote:
->> To support the use of mTHP with anonymous shmem, add a new sysfs interface
->> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
->> directory for each mTHP to control whether shmem is enabled for that mTHP,
->> with a value similar to the top level 'shmem_enabled', which can be set to:
->> "always", "inherit (to inherit the top level setting)", "within_size", "advise",
->> "never". An 'inherit' option is added to ensure compatibility with these
->> global settings, and the options 'force' and 'deny' are dropped, which are
->> rather testing artifacts from the old ages.
->>
->> By default, PMD-sized hugepages have enabled="inherit" and all other hugepage
->> sizes have enabled="never" for '/sys/kernel/mm/transparent_hugepage/hugepages-xxkB/shmem_enabled'.
->>
->> In addition, if top level value is 'force', then only PMD-sized hugepages
->> have enabled="inherit", otherwise configuration will be failed and vice versa.
->> That means now we will avoid using non-PMD sized THP to override the global
->> huge allocation.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   Documentation/admin-guide/mm/transhuge.rst | 23 ++++++
->>   include/linux/huge_mm.h                    | 10 +++
->>   mm/huge_memory.c                           | 11 +--
->>   mm/shmem.c                                 | 96 ++++++++++++++++++++++
->>   4 files changed, 132 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index d414d3f5592a..b76d15e408b3 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -332,6 +332,29 @@ deny
->>   force
->>       Force the huge option on for all - very useful for testing;
->>   
->> +Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to control
->> +mTHP allocation: '/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
->> +and its value for each mTHP is essentially consistent with the global setting.
->> +An 'inherit' option is added to ensure compatibility with these global settings.
->> +Conversely, the options 'force' and 'deny' are dropped, which are rather testing
->> +artifacts from the old ages.
->> +always
->> +    Attempt to allocate <size> huge pages every time we need a new page;
->> +
->> +inherit
->> +    Inherit the top-level "shmem_enabled" value. By default, PMD-sized hugepages
->> +    have enabled="inherit" and all other hugepage sizes have enabled="never";
->> +
->> +never
->> +    Do not allocate <size> huge pages;
->> +
->> +within_size
->> +    Only allocate <size> huge page if it will be fully within i_size.
->> +    Also respect fadvise()/madvise() hints;
->> +
->> +advise
->> +    Only allocate <size> huge pages if requested with fadvise()/madvise();
->> +
->>   Need of application restart
->>   ===========================
->>   
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 020e2344eb86..fac21548c5de 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -6,6 +6,7 @@
->>   #include <linux/mm_types.h>
->>   
->>   #include <linux/fs.h> /* only for vma_is_dax() */
->> +#include <linux/kobject.h>
->>   
->>   vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
->>   int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->> @@ -63,6 +64,7 @@ ssize_t single_hugepage_flag_show(struct kobject *kobj,
->>   				  struct kobj_attribute *attr, char *buf,
->>   				  enum transparent_hugepage_flag flag);
->>   extern struct kobj_attribute shmem_enabled_attr;
->> +extern struct kobj_attribute thpsize_shmem_enabled_attr;
->>   
->>   /*
->>    * Mask of all large folio orders supported for anonymous THP; all orders up to
->> @@ -265,6 +267,14 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->>   	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+On 6/11/2024 9:04 AM, Sean Christopherson wrote:
+> On Thu, May 09, 2024, Yang Weijiang wrote:
+>> @@ -5859,6 +5884,11 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
+>>   	}
 >>   }
 >>   
->> +struct thpsize {
->> +	struct kobject kobj;
->> +	struct list_head node;
->> +	int order;
->> +};
->> +
->> +#define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
->> +
->>   enum mthp_stat_item {
->>   	MTHP_STAT_ANON_FAULT_ALLOC,
->>   	MTHP_STAT_ANON_FAULT_FALLBACK,
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 8e49f402d7c7..1360a1903b66 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -449,14 +449,6 @@ static void thpsize_release(struct kobject *kobj);
->>   static DEFINE_SPINLOCK(huge_anon_orders_lock);
->>   static LIST_HEAD(thpsize_list);
->>   
->> -struct thpsize {
->> -	struct kobject kobj;
->> -	struct list_head node;
->> -	int order;
->> -};
->> -
->> -#define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
->> -
->>   static ssize_t thpsize_enabled_show(struct kobject *kobj,
->>   				    struct kobj_attribute *attr, char *buf)
->>   {
->> @@ -517,6 +509,9 @@ static struct kobj_attribute thpsize_enabled_attr =
->>   
->>   static struct attribute *thpsize_attrs[] = {
->>   	&thpsize_enabled_attr.attr,
->> +#ifdef CONFIG_SHMEM
->> +	&thpsize_shmem_enabled_attr.attr,
->> +#endif
->>   	NULL,
->>   };
->>   
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index ae358efc397a..643ff7516b4d 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -131,6 +131,14 @@ struct shmem_options {
->>   #define SHMEM_SEEN_QUOTA 32
->>   };
->>   
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +static unsigned long huge_anon_shmem_orders_always __read_mostly;
->> +static unsigned long huge_anon_shmem_orders_madvise __read_mostly;
->> +static unsigned long huge_anon_shmem_orders_inherit __read_mostly;
->> +static unsigned long huge_anon_shmem_orders_within_size __read_mostly;
->> +static DEFINE_SPINLOCK(huge_anon_shmem_orders_lock);
->> +#endif
-> 
-> Since we are also applying the new sysfs knob controls to tmpfs and anon mm,
-> should we rename this to get rid of the anon prefix?
+>> +static int kvm_translate_synthetic_msr(u32 *index)
+>> +{
+>> +	return 0;
+> This needs to be -EINVAL.
 
-Sure. I want to do this in the patch set of mTHP support tmpfs 
-originally, but yes, I can just drop the 'anon' prefix as a preparation.
+OK, I'll change it, thanks!
 
