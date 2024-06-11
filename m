@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-209904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F31903CB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:07:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F332A903CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55BC1C2345A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:07:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733E11F22F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2031D17C7BB;
-	Tue, 11 Jun 2024 13:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E23717C7D2;
+	Tue, 11 Jun 2024 13:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JBqFnHx9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9sVYOAsA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SZzkxRsE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bIb3aeQG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DEuOBgTt"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A02D38DD1;
-	Tue, 11 Jun 2024 13:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30B017BB24;
+	Tue, 11 Jun 2024 13:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111250; cv=none; b=mojtX+ad1spma7xv/pKkpm2f8TTxrN4slCCBVqYHo6d2eua551Q9mp1n/2c080iRN4QnJYy/mZEVhmeWIqrThIVEeZmsMnuAzOmlmFBdkap7c/DzHGGmt7FyJV8eg3kaY9NS/E4Yg6fkOiuqH4ujJ9n0iFKErs92ZZZHuX4TsDU=
+	t=1718111325; cv=none; b=YeyBp3ZA/4n8Psx4sWo9pU4467nOsSR/wydmyE2Lj/Ap1QJK3UZ9O6ZDdFyUF2mUTVbDSLrG8wjcky8oGtcLoK6SKm+mYTfFF9JeSB3XDQbdqntguKGOsOAIFUvnFn9waxy/nW2BvY1nU8n8Zr7aAHHyFXpVdC0uRy42gr6IIio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111250; c=relaxed/simple;
-	bh=TiufPwcD+MiVP7R2PeMqQFOCqMXMLza3kq63kojmmWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KRwjHMa2c83BAxQHfK3ELreYyg/bVk9y4znyD3d6fVAX8cETPzr3A09Ifc/AiaLUvP3W9rg7jJNLsvavy31XPshBdjYAKPn4sdF3dyAakS5qI700DvZnmv2TqNSwM7L771k0FlL4YrNM+8q2lxIYzUsBUPk7Nu66X2hQlWutgn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JBqFnHx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9sVYOAsA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SZzkxRsE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bIb3aeQG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 75AEC33770;
-	Tue, 11 Jun 2024 13:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718111246; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AvHghk5W41aXrn/xcNR8gSHWU+lJDEG1qFqjEFD0lyE=;
-	b=JBqFnHx99FiyB0P2DN7IE3QJh9qMv9g9ihF0crMAVaSbim5PeY5Ye+Grvw5UZiaS8jb3M/
-	MuwJklpcPOJZevlOKX2D/7KlRe5+XjEWNLzwaob4Pq5sxYELPkvI0zrQbGLW1e4vzBPQVv
-	7Jsnb2qLumYEuX14VBF7PT25MG1C1R8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718111246;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AvHghk5W41aXrn/xcNR8gSHWU+lJDEG1qFqjEFD0lyE=;
-	b=9sVYOAsAYpsI7bUOKimNGbBySpdLRjSG72EYpVc76L2AUv5uMjpMdSmgGc42/kkIpI8YN7
-	DVX+Sb/njDAiFICw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718111245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AvHghk5W41aXrn/xcNR8gSHWU+lJDEG1qFqjEFD0lyE=;
-	b=SZzkxRsE7HRGMUBDzYLMcD9rhuRjFaKVEyCqncvCvDArA8beWseJcDimWqKs9T8LuHmxfW
-	MLUoKVHlwfUl/d0QOw8hXLVJmeysPzUSlf2lcLBDOT7rEVD/d4in+S3h3jd1aF0JTcQIqN
-	3BYbjTLNsefrRMDAlXT2XZjz2Jx/MwI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718111245;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AvHghk5W41aXrn/xcNR8gSHWU+lJDEG1qFqjEFD0lyE=;
-	b=bIb3aeQGyNz87w+Lf26YuUPg4Q/ULIo6okKARRgniCiEmj915RZ8FNVfktHNbNPH4jJKeB
-	VMbV47Z1nCI/LBBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DBBF137DF;
-	Tue, 11 Jun 2024 13:07:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bC6RFg1MaGYQNwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 11 Jun 2024 13:07:25 +0000
-Message-ID: <65842230-cb75-441a-b2e7-2d4942bfdab1@suse.cz>
-Date: Tue, 11 Jun 2024 15:07:25 +0200
+	s=arc-20240116; t=1718111325; c=relaxed/simple;
+	bh=RBXIIMQFGgjhWjPSF2j6pQP/VP+rBTgY2xxLTrIS/iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ag61a5dhM+iQkDQXZbv655bC6yTZCHki9LSZNN+cQ2mZZv5HdqzZSmornQrNVcTtcRFu/6sbW4uoqocGlMSIEsNcksAuCw8dvfPabFoWgOZWR7zCyXYa+wrGzOtTsMvmvIRwme2B13D2LVMlWJE87dGvhkHGr6DFND+ewCL/2Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DEuOBgTt; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BBZ44P016764;
+	Tue, 11 Jun 2024 15:08:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	KPKiv/4s/k/v6qSTDKufLgo3SaRNC45wOYFv8SveObU=; b=DEuOBgTtMVWZXCab
+	ZhBw2CY7dZanzEEyh8ErLRmvycHiFJlhXmIRakLWkOlJ7OeX5T71saq1tStbsZlR
+	2bWjGQ8KTZVuIWpEC3Rpzevef4KCg7aNKFmsta3Qd/9N4d0FjFM8nM1ahcNvLQT8
+	P9tLmbVLO1Hrexx5ZPexOWmZGPTSFxJKIDk5QxIRXlcJUb71FNvmk5JV53hnsef8
+	wnlIZ+qB6YHG9BV0LyBlZSN6c0vAyuNZ6+ALJ0bEPTIPC74VtE+rKIEp9KldcXoI
+	HKuwxril4C/uIeIhFtpFwlhFiMbYJL0fLMDFloLzrKkavO9kvI7AlT5c/UnXFBh/
+	Y5A2Rw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp4b332-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 15:08:34 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E4EBD4002D;
+	Tue, 11 Jun 2024 15:08:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9DEEC216ECA;
+	Tue, 11 Jun 2024 15:07:42 +0200 (CEST)
+Received: from [10.130.72.241] (10.130.72.241) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
+ 2024 15:07:42 +0200
+Message-ID: <11cb5143-3c0e-4e7d-bcdb-6e8371bb1c0c@foss.st.com>
+Date: Tue, 11 Jun 2024 15:07:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,152 +66,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm: convert page type macros to enum
+Subject: Re: [PATCH 2/3] media: vgxy61: Add legacy compatible string
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240610150815.228790-1-benjamin.mugnier@foss.st.com>
+ <20240610150815.228790-3-benjamin.mugnier@foss.st.com>
+ <b4de42ba-d884-44b1-9f0e-12f5818c6781@kernel.org>
+ <ZmgIiaqJy1tWL4Yz@kekkonen.localdomain>
+ <b7514285-7a05-4874-a0fd-59ef16d5bce1@kernel.org>
+ <458f8b1c-d750-424c-99dd-d31fde036314@foss.st.com>
+ <4fd73e81-4573-4e1c-9623-c2f7f153d43a@kernel.org>
 Content-Language: en-US
-To: Stephen Brennan <stephen.s.brennan@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- Omar Sandoval <osandov@osandov.com>, David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Hao Ge <gehao@kylinos.cn>,
- linux-debuggers@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <4fd73e81-4573-4e1c-9623-c2f7f153d43a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kvack.org,gmail.com,osandov.com,redhat.com,infradead.org,kylinos.cn,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.79
-X-Spam-Level: 
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
 
-On 6/7/24 10:29 PM, Stephen Brennan wrote:
-> Changing PG_slab from a page flag to a page type in commit 46df8e73a4a3
-> ("mm: free up PG_slab") in has the unintended consequence of removing
-> the PG_slab constant from kernel debuginfo. The commit does add the
-> value to the vmcoreinfo note, which allows debuggers to find the value
-> without hardcoding it. However it's most flexible to continue
-> representing the constant with an enum. To that end, convert the page
-> type fields into an enum. Debuggers will now be able to detect that
-> PG_slab's type has changed from enum pageflags to enum pagetype.
-> 
-> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
-> 
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+Hi Krzysztof,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
-> v3 -> v4: rename to enum pagetype, avoiding conflict in f2fs.h and matching
->           the name of enum pageflags
-> v2 -> v3: rebase on mm-unstable
-> v1 -> v2: include PAGE_TYPE_BASE and PAGE_MAPCOUNT_RESERVE
+On 6/11/24 14:17, Krzysztof Kozlowski wrote:
+> On 11/06/2024 13:57, Benjamin Mugnier wrote:
+>> Hi Sakari and Krzysztof,
+>>
+>> On 6/11/24 10:38, Krzysztof Kozlowski wrote:
+>>> On 11/06/2024 10:19, Sakari Ailus wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> On Tue, Jun 11, 2024 at 08:47:25AM +0200, Krzysztof Kozlowski wrote:
+>>>>> On 10/06/2024 17:08, Benjamin Mugnier wrote:
+>>>>>> As the driver has been renamed from 'st-vgxy61' to 'vgxy61', its
+>>>>>> compatible string has been updated to reflect this change. Therefore old
+>>>>>> device trees will not work anymore.
+>>>>>> Add the old driver name as another compatible name to handle the
+>>>>>> retro compatibility.
+>>>>>>
+>>>>>> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>>>>>> ---
+>>>>>>  drivers/media/i2c/vgxy61.c | 5 +++++
+>>>>>>  1 file changed, 5 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+>>>>>> index 30378e962016..ca3b43608dad 100644
+>>>>>> --- a/drivers/media/i2c/vgxy61.c
+>>>>>> +++ b/drivers/media/i2c/vgxy61.c
+>>>>>> @@ -1867,6 +1867,11 @@ static void vgxy61_remove(struct i2c_client *client)
+>>>>>>  }
+>>>>>>  
+>>>>>>  static const struct of_device_id vgxy61_dt_ids[] = {
+>>>>>> +	{ .compatible = "st,vgxy61" },
+>>>>>> +	/*
+>>>>>> +	 * Previously the driver was named 'st-vgxy61' instead of simply
+>>>>>> +	 * 'vgxy61', keep it for retrocompatibility purposes.
+>>>>>
+>>>>> NAK.
+>>>>
+>>>> Is that because the comment says "driver" rather than "device"?
+>>>>
+>>
+>> You're correct, I'll replace all occurrences for the series.
+>>
+>>>> Please try to express clearer what you'd expect from the patch author.
+>>>
+>>> There is almost never a need to rename compatible or add new compatible
+>>> matching existing one. There are exceptions, like development or work in
+>>> progress with no users at all (and really no users!).
+>>>
+>>> The commit did not provide any rationale for binding change.
+>>>
+>>> Additionally, it does not make any sense. There is no point in doing it
+>>> at all. No benefit.
+>>>
+>>
+>> Thanks, here is a draft of a new commit message for v2 highlighting the
+>> rationale :
+>>
+>> The previous binding 'st,st-vgxy61' did not reflect the actual device
+>> name : vgxy61 (and not st-vgxy61 as ST is the vendor prefix), and was
+>> changed to 'st,vgxy61'.
 > 
->  include/linux/page-flags.h | 31 +++++++++++++++++--------------
->  1 file changed, 17 insertions(+), 14 deletions(-)
+> That's not really a reason to change binding.
 > 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index f04fea86324d9..32722c6e8397b 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -945,20 +945,23 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
->   * mistaken for a page type value.
->   */
->  
-> -#define PAGE_TYPE_BASE	0x80000000
-> -/*
-> - * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-> - * allow owners that set a type to reuse the lower 16 bit for their own
-> - * purposes.
-> - */
-> -#define PG_buddy	0x40000000
-> -#define PG_offline	0x20000000
-> -#define PG_table	0x10000000
-> -#define PG_guard	0x08000000
-> -#define PG_hugetlb	0x04000000
-> -#define PG_slab		0x02000000
-> -#define PG_zsmalloc	0x01000000
-> -#define PAGE_MAPCOUNT_RESERVE	(~0x0000ffff)
-> +enum pagetype {
-> +	/*
-> +	 * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-> +	 * allow owners that set a type to reuse the lower 16 bit for their own
-> +	 * purposes.
-> +	 */
-> +	PG_buddy	= 0x40000000,
-> +	PG_offline	= 0x20000000,
-> +	PG_table	= 0x10000000,
-> +	PG_guard	= 0x08000000,
-> +	PG_hugetlb	= 0x04000000,
-> +	PG_slab		= 0x02000000,
-> +	PG_zsmalloc	= 0x01000000,
-> +
-> +	PAGE_TYPE_BASE	= 0x80000000,
-> +	PAGE_MAPCOUNT_RESERVE	= ~0x0000ffff,
-> +};
->  
->  #define PageType(page, flag)						\
->  	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+>> Still some device trees uses the old binding. This commit adds back the
+>> 'st,vgxy61' binding in addition to the new one to ensure retro
+>> compatibility.
+> 
+> "Adds back"? This means it was there but was removed, so please document
+> it with commit references.
+> 
 
+My bad, patch 1/3 on this series changes the binding, only to be added
+back by this one (2/3).
+I'll do it the other way around : patch 1/3 will *not* change the
+binding, and patch 2/3 will add the new binding instead. Way cleaner.
+
+>>
+>> Will this be ok for you ? Tell me your thoughts.
+> 
+> It seems you are making some changes assuming there is some error to be
+> fixed, but there is none. Compatible is just some unique string, so the
+> original compatible, although unfortunate, is okay and must not be
+> changed. I already explained that adding new compatibles for such cases
+> is only for exceptions. Is this exception? No. You provided no rationale
+> to make it an exception.
+
+Thank you. I think I failed to provide some details :
+
+The change is motivated by a will of consistency in naming.
+As you correctly mentioned in the vd56g3 series [1], bindings should be
+'vendor,device'. This will be changed for the vd56g3 series v3 by
+Sylvain, but the vgxy61 binding is already badly named.
+We will then have these 2 bindings in the wild : st,vd56g3 and
+st,st-vgxy61, for very similar sensors. Hence the will to add a
+st,vgxy61 binding for consistency.
+This also prepares the ground for new camera sensor drivers we plan to
+submit later on, and that will respect the st,device binding naming scheme.
+
+Is it the correct way to go ?
+
+I will add something along these lines to the commit message.
+
+
+[1] https://lkml.org/lkml/2024/5/27/670
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+Regards,
+
+Benjamin
 
