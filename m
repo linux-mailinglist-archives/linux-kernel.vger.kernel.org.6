@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-209633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CF09038B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:18:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5059038A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE8C8B265F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06C21C236D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8894C17B509;
-	Tue, 11 Jun 2024 10:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxp//18r"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020E558A5;
-	Tue, 11 Jun 2024 10:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D9C17838E;
+	Tue, 11 Jun 2024 10:16:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC7514F109;
+	Tue, 11 Jun 2024 10:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101009; cv=none; b=O4WJ+1nO+jJQu6M2rcndPlNxN0wjNvHYvtsQqYgMth2JFytxoG6/bIeFCDGREbzECVewgOqmcGG9XQxVUgFO+YV2QTN+Y4saodEUFWzqiu2sb/vJSoN7MTshh3miNfXRyoID57AL1IcYTwxyqElMH74IOD48Pf/75M9St3j4Ylw=
+	t=1718101005; cv=none; b=k1j9BQ/Yx3kjSNKaiISgByTiNi6vINw8DTpgySlvSHgfOWo3lwsqG0FwIkke37i6F7yZ/8fHKhGWQviW0HzAbiWfpRC8ZDrOVViBMAOjYoWMT5MnqrcHqlpvfcIEphvOhxBf3yi+a/Tgp3pr7IuWgbG+fp74KdhUEQxjso1dXxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101009; c=relaxed/simple;
-	bh=MQRPna/48QhZ1v0/gMd7kyf8YGX6lSvsn1kVRPs5xA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o9fkSig/N8oIfdW9cPn7od5rwBdE9LcB6d/KvQygH7tk35V9YL0BJbBIDHQwMAAuTPcjeTi+ltPbDRIy0kVtmC1YfWsiHl2dKmR91hozJVg2pUMR97CGFOXZob4JEL2NEfR2BrksmCZgNtX/EJEe3CY9TDOANQaUPIiN2cB66d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxp//18r; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebed33cb67so10101651fa.0;
-        Tue, 11 Jun 2024 03:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718101006; x=1718705806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MBXDKgjyA4bti1zoOZEiYHZlT+/fD+8yvyhyrG3GC+0=;
-        b=dxp//18rW0ewoZtrFiET76ROU7tdDKsWbeZ4BfVcluN8X140MAlKqfjsH0yiWpdN1i
-         qDGklu1aXX9izwXNJvTy0iROCug873Sq05OQFz1yqCfwb52EkDhsHn9XobdBjzV4tmZD
-         9Yfb42T7tiXdwj7KuaN/YpqC2iW/xsI2f+0u+rNA95+WF3Mq8IisprKJhmDR8E7kJGE8
-         B8fw2bGARx4MooKDCe1c2Ell9hpUeCWIDSHjknOTiRky1WKfe29qd5EktLCftKwc6a9r
-         lBgGvhd0hWa6Tqlm3jrXwaMXL2WknmBhEg8P9HhDeP7eByNIe4euv4bLF7AOj6FSAy4y
-         1eNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718101006; x=1718705806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MBXDKgjyA4bti1zoOZEiYHZlT+/fD+8yvyhyrG3GC+0=;
-        b=YlGO1QylrAebxPoxyPHm/E4xv9DQlE8Nx8c4Tr2Svu+nrJ6ehCGpcSTqLSVP0DjQ98
-         D8raocHkEqIA1/9IepfSsGVYw6iQ5uLW56Bate7spGbf87YcznT7f2Z7/eyqYbSGNrEo
-         QrGYgvAUPOOWt1WUyWtdzPV6bESeJnppucTSXr8ObwRbMqyuVegUSbkIeM5MPVPgy258
-         hIwsk8fYpVSwl0GVDkpHi2W2oN/+83/W+fkR0Aui6xPuyFRVtpjIGAjQNisBBg0+JStW
-         0O+yLurEldXEyscNqy2ZvNL95l0RFEBl78msTn9hQX+NbCFvxjMpAxvcMN7EKWO6OBR4
-         iMSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpY8VOT1QD7n8DSg64cOPoyhVZrBKRla9NIzSUFFg5DWSwcWuAL9sH41hc1MkE8Xvblsn4zvCc+3en21TJrEuxNhxFMdLVAVXV/iY6rYtlxJJeoZ46HftMTc/9niHX+wDWDpmEYyDwed2mVcQLQXxT4vzN3ctyXs0ArLhxCrberiDBVmCpkF+q
-X-Gm-Message-State: AOJu0YwgkUvOFK2c9/LgRlJfVBPSIKSy3FpTcmVIgLBNMQCMI3yIRs12
-	A/MpeRQW7cYUtd0zT4Aqdpp7TaqxF1F5Z9DQwUQumGieA0Z77cVc
-X-Google-Smtp-Source: AGHT+IF0VrjbGIbQhYRCMf5xKuAStpvCpyCTUseU0aJVLNkpwIUPOJqRq3CzC+nvJ0hAxLInKiGKeA==
-X-Received: by 2002:a2e:a443:0:b0:2e9:768a:12ae with SMTP id 38308e7fff4ca-2eadce33be3mr78826211fa.22.1718101006134;
-        Tue, 11 Jun 2024 03:16:46 -0700 (PDT)
-Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm173481275e9.11.2024.06.11.03.16.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:16:45 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	josef@toxicpanda.com,
-	hch@infradead.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3 2/2] btrfs: use iget5_locked_rcu
-Date: Tue, 11 Jun 2024 12:16:32 +0200
-Message-ID: <20240611101633.507101-3-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240611101633.507101-1-mjguzik@gmail.com>
-References: <20240611101633.507101-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1718101005; c=relaxed/simple;
+	bh=h+k2rER/h3tpIRHo81rNO5HpHNpTKoFhhrcxfBCglf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XV5KHpPvxXZW1ypNhTvpC05nx6DuaVkusXq+s531D5Q1ofIt4uCeyhZ/EPnAVUIinuIpQLaChWlydSYMc0XSPNMj9Mh7eZ9n8vJPPxtAM5e5Zp2KdfE2vNxXJpt+d7+OawJn3aN8lLpgxV0anFTZUiuUWieiXAYMUesGytS8Ri0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B35771424;
+	Tue, 11 Jun 2024 03:17:06 -0700 (PDT)
+Received: from [10.162.41.16] (e116581.arm.com [10.162.41.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CDAD3F5A1;
+	Tue, 11 Jun 2024 03:16:38 -0700 (PDT)
+Message-ID: <13fd02ce-ed18-4499-9b55-367ea69cbe31@arm.com>
+Date: Tue, 11 Jun 2024 15:46:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Add ARM64 for reserving ZONE_MOVABLE
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+ will@kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+ suzuki.poulose@arm.com, broonie@kernel.org, James.Morse@arm.com,
+ Anshuman.Khandual@arm.com
+References: <20240604052856.546183-1-dev.jain@arm.com>
+ <8c3db3d5-8ddc-427c-8db2-980b14afb258@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <8c3db3d5-8ddc-427c-8db2-980b14afb258@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-With 20 threads each walking a dedicated 1000 dirs * 1000 files
-directory tree to stat(2) on a 32 core + 24GB ram vm:
 
-before: 3.54s user 892.30s system 1966% cpu 45.549 total
-after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
+On 6/7/24 17:04, Ryan Roberts wrote:
+> On 04/06/2024 06:28, Dev Jain wrote:
+>> kernelcore and movablecore kernel command line works for ARM64. Update
+>> the Documentation to reflect the same.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   Documentation/admin-guide/kernel-parameters.txt | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index b600df82669d..7282d6057e32 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -2544,7 +2544,7 @@
+>>   
+>>   	keepinitrd	[HW,ARM] See retain_initrd.
+>>   
+>> -	kernelcore=	[KNL,X86,IA-64,PPC,EARLY]
+>> +	kernelcore=	[KNL,X86,IA-64,PPC,ARM64,EARLY]
+> Given these are both arch-agnostic parameters, wouldn't the correct change be to
+> remove all the arch-specific labels, i.e. [KNL,EARLY]? In fact, wasn't IA-64
+> removed from the kernel?
 
-Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/btrfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Indeed, the handling of these parameters completely resides in
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 4883cb512379..457d2c18d071 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5588,7 +5588,7 @@ static struct inode *btrfs_iget_locked(struct super_block *s, u64 ino,
- 	args.ino = ino;
- 	args.root = root;
- 
--	inode = iget5_locked(s, hashval, btrfs_find_actor,
-+	inode = iget5_locked_rcu(s, hashval, btrfs_find_actor,
- 			     btrfs_init_locked_inode,
- 			     (void *)&args);
- 	return inode;
--- 
-2.43.0
+generic mm; I'll send a separate patch and CC Andrew. And yes,
 
+IA-64 was removed, but still has some mentions remaining
+
+throughout the tree :)
+
+>
+>>   			Format: nn[KMGTPE] | nn% | "mirror"
+>>   			This parameter specifies the amount of memory usable by
+>>   			the kernel for non-movable allocations.  The requested
+>> @@ -3612,7 +3612,7 @@
+>>   	mousedev.yres=	[MOUSE] Vertical screen resolution, used for devices
+>>   			reporting absolute coordinates, such as tablets
+>>   
+>> -	movablecore=	[KNL,X86,IA-64,PPC,EARLY]
+>> +	movablecore=	[KNL,X86,IA-64,PPC,ARM64,EARLY]
+>>   			Format: nn[KMGTPE] | nn%
+>>   			This parameter is the complement to kernelcore=, it
+>>   			specifies the amount of memory used for migratable
 
