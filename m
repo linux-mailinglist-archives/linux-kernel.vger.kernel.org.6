@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-210609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80206904633
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:19:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB2D90463C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F4F2886C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35AAF282A55
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA47153580;
-	Tue, 11 Jun 2024 21:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D63153505;
+	Tue, 11 Jun 2024 21:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="ZZXTUq5D"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ed1cFV8V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4054A1534EC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13FABA34
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718140777; cv=none; b=LOhEIjHcMviPUOP/CLbn7mFWPYb0OT75BvmTxz2k+RJjYX1uIlq8P+SM+4ZI8TEzzR19dSdZgGIwZRWv0TKRv9HKO3T7ro9KzoBHtcSrZO68HFsVczdmB+PXf2CXJ1Ukt2ipUskzwcZIZVru8oOy9ldtdWfCb5h2qdZQ7khaKag=
+	t=1718141075; cv=none; b=Bzf1bOnEVNnKSvDpSDQXsxmRHBE9Lg5pGJhhNZacMwpB2qlrA4f9xXtFnF3g51VjsJelCxq5Ve3bjKoOtA2be80qM5lOiSel1IttTBCmhqDyTeERjl4HaEeBbckt3cpWOXTopABbgM2QoBjX95jv8Bblv177don3OuUrfbK6amA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718140777; c=relaxed/simple;
-	bh=ELCydqjpdFo4e5YLr2TqZB1sj47Z8XFwUvs0m0bOxMk=;
+	s=arc-20240116; t=1718141075; c=relaxed/simple;
+	bh=t8ha1Ix597he6gsoFoWlFRBk6jIyCdsIGXRbcqyWEys=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JPhAWSoUZQ039rm/zbKTp0a80Fli4xda2B7abcsDUj2qMPT7NoW314BFD27f9zf/EGkBAy2M141FqlEksX68nebM6MedUiX1ruzu75WmxTCGXFEgkZ3IHxItebIUw+bwPJPUoLZScjiW1k5TOieRJDHF1Ctr8LHM8RbKGt54nWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=ZZXTUq5D; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-254c22faf4cso1202514fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1718140775; x=1718745575; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kIrp8qzhxU8e7FrceQyxypKcph7vNSgb2Uumfdyvzas=;
-        b=ZZXTUq5DSYPqKc7X1syAQURklKwKIu4veTOWNmvnbazNSr/X9ggmYT7UHia8VThni9
-         gp0nMJKuTUCzZRQfJ71ZcREljadWQmYHCRcT2XU3Vnx7a6tFM5YzjeE1iQCYsAkblqd7
-         BIpggKAVtm0kg+cs34nYT4QDKfk1pSFFoOTdGeITrcGWKiO3zErCyy4KDqKyh++lt7J1
-         eVocFQPMou+TB79OuyIcXuTwzwQGKwOYnhlIpXdxswQRvvoSuL9s1h3efoWBFGnx3gE4
-         gAwtNNFuublJxvw2FTiNdi/39vALV8DbVInxv+nA4aUzY0wlDKH3I1mTF6INSkswXvZ5
-         IpOw==
+	 In-Reply-To:Content-Type; b=XL/r73d3skINIV+os8ECrtvWklijp5zrEawkRdOslpf7l8bLHmE1Hvzik+h01xfNj3lswMMrPSzChBLzMGos29Ul7kKXNEI2jSu0nJCKywEnYiz+RINYXDpASHPT+WWda7B8qR0s/9bo2X39Y5+Vcv/0Ecy0tACumk5buOOpxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ed1cFV8V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718141072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kwi6qR7i5j222N4J5ge6XLRF/OTcTMPoCLriE5Gui2Q=;
+	b=ed1cFV8V+7tPpcspR5ARKiLxDXt9JR8OYiG9IjQgQ+PdyjNR+whBTenq+2ik/BthuxwSr8
+	DPfdXUTmus6wbKBCffql4ddzs0DcSSCjknWYMVhajw0brCpZ47otNNXvblZw2xmYW3Cv8X
+	dlHfUnB5qb+H+ic4S831p5b9lnk8D0A=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-281-NyyIqchjP72YI9iXCV3REQ-1; Tue, 11 Jun 2024 17:24:31 -0400
+X-MC-Unique: NyyIqchjP72YI9iXCV3REQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35f1fcd3bbcso1704209f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:24:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718140775; x=1718745575;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kIrp8qzhxU8e7FrceQyxypKcph7vNSgb2Uumfdyvzas=;
-        b=WozLBKvoewIzKt7RPvjfQyLYL+lzdg11fEPxe04ni88AcJlyLN/vbYGgVhLMN07ssw
-         IX+RboxIv9be4vpQVtnj2sJ8I2ogNJLFe+1dYrOTUz9nk3sEEamXyf8qWKeKVeIMC8bu
-         Y2KgtdFh47PuZk8wll3M5jHqSQZehgnZx3y5eSmNl/O+g/AQXj+xPVRZqzj3J2+YhVTw
-         yUpBuvnFf8KW7EftluhZ34pZAApt+OtAPqwBQwNAGHHf4kUWcY2+khToq+LOeovImDgK
-         pH1hgOsW6p+tooNotUTbkBqdA0j4boXFjkqpJHtZPw+eH3SRGC7mNUaQIHl3gcZB+6ts
-         NOgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuBDWQDKQ/rwvAljeNPEKGa2RUt06ct6SDTOsDJHTxqAJf5zs17IjilY8FZAGRSKfyruhdwFNvgPxFYeL8yxATjAVC3ukoyhdFSknx
-X-Gm-Message-State: AOJu0YxdtSXMLQJgFEgvkafwTa5gzHYhHgqTUFahg6JuYNW/4s3LcfDL
-	sIueqe7TaD2kiDnDNvXZKWwoDvIwNkj2gtPrx+krLYmaoPUMhdtIl3dzN9T0YNE=
-X-Google-Smtp-Source: AGHT+IEspAynUq6bEDt0FQbYW3uXgAn4JXj6JpZ/+Vmr9hn7HqhaGFU2dhDx1yYp9Pq3vY+Wts3Rlw==
-X-Received: by 2002:a05:6870:f113:b0:24f:c7cf:17fb with SMTP id 586e51a60fabf-25514c037f9mr50908fac.22.1718140775044;
-        Tue, 11 Jun 2024 14:19:35 -0700 (PDT)
-Received: from [192.168.1.98] (104-48-214-220.lightspeed.snantx.sbcglobal.net. [104.48.214.220])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f9d9a98e74sm616426a34.72.2024.06.11.14.19.33
+        d=1e100.net; s=20230601; t=1718141070; x=1718745870;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kwi6qR7i5j222N4J5ge6XLRF/OTcTMPoCLriE5Gui2Q=;
+        b=RknKPj18Z95p/HCtC15XbMBd/2GsU3YwlPUTujz6PQXsdFQ/Qd7s/P4VSzrKtdX5wo
+         /kpPV54/FSGQGOD8RdcGlvWz7EHzjBQfBuc/9g5atzGRynETPc5E3cZ9JRIeYsn/oLbz
+         +uWhtuZTs6JXWzA+Bw+cJlyy9n2nwKAQmoefY4zsTIrSuit6zvWAnRhgbHwEU5kvFvJ1
+         iWjeF/zBMJXIzMbtSw/kJ4/UYFqkcNRvqr7R0106fX9ShoL86DlDIZAdRD2av0lwOB+u
+         ziXZpz5FCHGXqydFKCBBRLhELA6tsTJu2KN5U9VLwyJkt5lG2yAPmjuL9wgi7crkRUGd
+         mDEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOa+0JMt0SI6QrO72r40QSd2EUSpOzS21ZI+3E9GoFTpiFgdx/Lh9dywne4za5NaZo+V4Cmq/9cHjG4EUIQxh6YY7ROsJ5y1bfcGnH
+X-Gm-Message-State: AOJu0YxIfTxCjyJocZH1fSTNvpvomtea/5gE/5NeFranE7VRPeCqywSR
+	bz2mgHm+e/bUSDauE9RzGhX0lPBIAs/O2wa5F5AK0VfRNXcdA7PU6As3bv4Aiylxa67/yJJYTrw
+	6AMQDql4c/gOXFJQ/vuECXdecCHbuKTYNQPqjO288kCoZCu/h1m+cCo7nVPfUZg==
+X-Received: by 2002:adf:ee0d:0:b0:35f:1f80:1fa8 with SMTP id ffacd0b85a97d-35f1f802197mr5672712f8f.34.1718141069918;
+        Tue, 11 Jun 2024 14:24:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHBBTWZibR1MV4vH2a0NLkyidmwyfZ12S/ifHe7Sk/bckt//fu9s+WNF25Hd6AqZ58+o6TGA==
+X-Received: by 2002:adf:ee0d:0:b0:35f:1f80:1fa8 with SMTP id ffacd0b85a97d-35f1f802197mr5672705f8f.34.1718141069543;
+        Tue, 11 Jun 2024 14:24:29 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2c3fd63fsm3019565f8f.51.2024.06.11.14.24.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 14:19:34 -0700 (PDT)
-Message-ID: <f288cbb9-af88-4c4e-94d4-60b0829bd0dc@kali.org>
-Date: Tue, 11 Jun 2024 16:19:32 -0500
+        Tue, 11 Jun 2024 14:24:28 -0700 (PDT)
+Message-ID: <37402257-fbcb-449a-82a7-4acf878bb09d@redhat.com>
+Date: Tue, 11 Jun 2024 23:24:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,61 +82,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: cpufreq/thermal regression in 6.10
-To: Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-References: <ZmVfcEOxmjUHZTSX@hovoldconsulting.com>
- <CAJZ5v0gVnjVyd_O6KgXy2sXr3b3M3vyTLyUCasyxP0GrAXro4Q@mail.gmail.com>
- <CAJZ5v0iz7gwhpvT53CH0ZEA_q3U=dnn6XR8HdLk6LpP3ye4Zkg@mail.gmail.com>
- <Zmg8x6JXQW1dqOr4@hovoldconsulting.com>
+Subject: Re: [PATCH 2/6] drm/nouveau: remove unused struct 'init_exec'
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: daniel@ffwll.ch, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kherbst@redhat.com, lyude@redhat.com
+References: <20240517232617.230767-1-linux@treblig.org>
+ <de79f41d-3a9b-4f15-b270-246af8b4c5b0@redhat.com>
+ <Zmgo8leSWpsjVVBS@gallifrey>
 Content-Language: en-US
-From: Steev Klimaszewski <steev@kali.org>
-In-Reply-To: <Zmg8x6JXQW1dqOr4@hovoldconsulting.com>
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <Zmgo8leSWpsjVVBS@gallifrey>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-On 6/11/24 7:02 AM, Johan Hovold wrote:
-> On Tue, Jun 11, 2024 at 12:54:25PM +0200, Rafael J. Wysocki wrote:
->> On Mon, Jun 10, 2024 at 1:17 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>> On Sun, Jun 9, 2024 at 9:53 AM Johan Hovold <johan@kernel.org> wrote:
->>>> Steev reported to me off-list that the CPU frequency of the big cores on
->>>> the Lenovo ThinkPad X13s sometimes appears to get stuck at a low
->>>> frequency with 6.10-rc2.
->>>>
->>>> I just confirmed that once the cores are fully throttled (using the
->>>> stepwise thermal governor) due to the skin temperature reaching the
->>>> first trip point, scaling_max_freq gets stuck at the next OPP:
->>>>
->>>>          cpu4/cpufreq/scaling_max_freq:940800
->>>>          cpu5/cpufreq/scaling_max_freq:940800
->>>>          cpu6/cpufreq/scaling_max_freq:940800
->>>>          cpu7/cpufreq/scaling_max_freq:940800
->>>>
->>>> when the temperature drops again.
->> If this is the step-wise governor, the problem might have been
->> introduced by commit
+On 6/11/24 12:37, Dr. David Alan Gilbert wrote:
+> * Danilo Krummrich (dakr@redhat.com) wrote:
+>> On 5/18/24 01:26, linux@treblig.org wrote:
+>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>>>
+>>> 'init_exec' is unused since
+>>> commit cb75d97e9c77 ("drm/nouveau: implement devinit subdev, and new
+>>> init table parser")
+>>> Remove it.
+>>>
+>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 >>
->> 042a3d80f118 thermal: core: Move passive polling management to the core
+>> Acked-by: Danilo Krummrich <dakr@redhat.com>
 >>
->> which removed passive polling count updates from that governor, so if
->> the thermal zone in question has passive polling only and no regular
->> polling, temperature updates may stop coming before the governor drops
->> the cooling device states to the "no target" level.
+>> To which series does this patch belong?
+> 
+> Actually all of them were independent patches on drm
+> some of which are all in, so it can be taken by itself.
+> 
+>> Need me to apply it?
+> 
+> Yes please!
+
+Applied to drm-misc-fixes, thanks!
+
+> 
+> Thanks,
+> 
+> Dave
+> 
+>> - Danilo
 >>
->> So please test the attached partial revert of the above commit when you can.
-> Thanks for the quick fix. The partial revert seems to do the trick:
->
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
->
-> Johan
-
-I can also confirm that it's working here!
-
-Tested-by: Steev Klimaszewski <steev@kali.org>
+>>> ---
+>>>    drivers/gpu/drm/nouveau/nouveau_bios.c | 5 -----
+>>>    1 file changed, 5 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
+>>> index 79cfab53f80e..8c3c1f1e01c5 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
+>>> @@ -43,11 +43,6 @@
+>>>    #define BIOSLOG(sip, fmt, arg...) NV_DEBUG(sip->dev, fmt, ##arg)
+>>>    #define LOG_OLD_VALUE(x)
+>>> -struct init_exec {
+>>> -	bool execute;
+>>> -	bool repeat;
+>>> -};
+>>> -
+>>>    static bool nv_cksum(const uint8_t *data, unsigned int length)
+>>>    {
+>>>    	/*
+>>
 
 
