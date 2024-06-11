@@ -1,51 +1,46 @@
-Return-Path: <linux-kernel+bounces-209775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B5F903A8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B94903A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9CA3B20F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:40:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34AADB22E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1263C176222;
-	Tue, 11 Jun 2024 11:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E3117C20D;
+	Tue, 11 Jun 2024 11:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="LVuCUskT"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="F585devi"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552BE17BB05;
-	Tue, 11 Jun 2024 11:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A026617C200
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105947; cv=none; b=qKBbnfZGEHxFhRmvzqV9VP8E6hHIlRdPS3Qex1tqfPsT8kQEKWymandL+gfrfXkiSXiWUSJ/X5M5HZ+cvjGbm7NuI1aj0pexrHc3Esnw/Q8U7bmOB+siR2HAUwq57A3KqapbYrx97qHgJcGaQHS9KCoyr5dEUZt+ZKS0oUNXoWs=
+	t=1718105985; cv=none; b=S5Qbm+3xTlGPUpCeNwAu7XdKiWHk8dSGQRY2hEkxO8yLXy2cAoT3d8lBII/17uQWweIIz3J7/tYE3ZJUct2P/NVgd4/lY2W9Bv7iHesb3UB3uQamkB9q/4EBeomvnoECeRWZ5IoYafMsouTohtLqUt9bdmZYxq5RhkHreuPlMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105947; c=relaxed/simple;
-	bh=Y2sDcAge7Bu3Wtz1t6V7WSD8HLdZvIUD8koGgmacsQQ=;
+	s=arc-20240116; t=1718105985; c=relaxed/simple;
+	bh=KqONxeNIMsezUH/vByN9ckLxEs1MQv3fWFXbHJsEV9E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJc3Qy5HpRtVrEzgg7fuDvn9511dd2fw8dlQwGajyTY11n2pXXFtIXFbF8QX1KKdO8OndQ0TdegYh8yvnU0ov0Df0XnVu2kFBDxmlvL1T+sHiw9/QHwD5O73qPAecjM2jHkCAt8/Bux8JTuoWDC9cpOkDqdeaGlr9fOW2m6+p4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=LVuCUskT; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1E1451BF204;
-	Tue, 11 Jun 2024 11:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1718105938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BV2L6/8bPOL7cOUoC1lbeRAI9Vo72rK02ENTNfh2Nps=;
-	b=LVuCUskTc/h0Xz58HncRdqc4hXrgEo0ZCzMewq1unRwEoUAYEKDRyQSbu7BLzm7P2GOvsR
-	omItKbet19uhCDXXv47KrbxNffGpvVq+ykHd359A5ZqA/Tt0K6mCOyVuA+asbRVzczytb8
-	KhEJj4sGwftHFuuH/d1TbnyvxXDEwUrucAva0CRyiJdy4UAYdXft8hzqNvMvcvUOGycEX4
-	tC3yeJRDnwjt3lJrWMlBs/KMRJXJvy2OA+lL2ONLjM3R3F3QCCgHh/XAW49NBGlABl7B47
-	f3neQZguGFuRBAv1JiZW6WeOKDAZBeMJrqy6Od8R3tfBBBLNhYAIonv28+SqMw==
-Message-ID: <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
-Date: Tue, 11 Jun 2024 14:38:53 +0300
+	 In-Reply-To:Content-Type; b=lBWDstQd1vGRjIuq+4mrbgspQV4g8nPC1C282MDyn70zjYQ+fFf3YVXoymBlIotW4+nzGW1RPKsWCIXrz37b5FprQYAykv78xJWYBSk8pkSuJ+dDrCrwA9bVPqAkrGTowtkuyJmmmvCHMBYWDPv+lg2CgH7mtH/HVFNuRSJWohc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=F585devi; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718105980; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=OVUFDlMITzMq7x7Jd4SoAFKf9m70eZxH5vbvcK8ja40=;
+	b=F585devi7FVEzp3LiNVPfTmfHgjbtciynQ6JNBshzvDj97w0iFEGbY9T7+NgY6IS6HwJfzq1Kg8o7hYRASS6rIqYRhHl5ohApWVRuu7Z2uwQc3mMNJ9EPRPNsal9CJVdy/Mn4WVXZop5Oeqrb9PXMnKhPoBvw6u10txcjzfB7KE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R711e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8GL.6F_1718105977;
+Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8GL.6F_1718105977)
+          by smtp.aliyun-inc.com;
+          Tue, 11 Jun 2024 19:39:38 +0800
+Message-ID: <80a05784-21dd-4f20-b441-1e2a2be0e0ff@linux.alibaba.com>
+Date: Tue, 11 Jun 2024 19:39:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,64 +48,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+Subject: Re: LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline
+ 6.10.rc3
+To: David Hildenbrand <david@redhat.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <baohua@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
+ <e8c10a52-61f9-4b46-bc50-e2c267b1aa56@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <e8c10a52-61f9-4b46-bc50-e2c267b1aa56@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
 
-On 11/06/2024 14:30, Thorsten Leemhuis wrote:
-> On 07.06.24 16:15, Thorsten Leemhuis wrote:
->> On 07.06.24 16:03, Paolo Abeni wrote:
->>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
->>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
->>>>>> [adding Paolo, who committed the culprit]
->>>>
->>>> /me slowly wonders if the culprit should be reverted for now (see below)
->>>> and should be reapplied later together with the matching changes from
->>>> Arınç ÜNAL.
->>>
->>> FWIS I think a revert should be avoided, given that a fix is available
->>> and nicely small.
+
+
+On 2024/6/11 18:32, David Hildenbrand wrote:
+> On 11.06.24 12:14, Naresh Kamboju wrote:
+>> The kernel panic was noticed while running LTP syscalls fork13 (long 
+>> running) on
+>> the mainline master 6.10.rc3 kernel on arm64 rk3399-rock-pi-4 device.
 >>
->> Yeah, on one hand I agree; but on the other it seems that the
->> maintainers that would have to take care of the dt changes to fix this
->> until now remained silent in this thread, apart from Rob who sent the
->> mail regarding the warnings.
+>> Please find detailed logs in the links,
 >>
->> I put those maintainers in the To: field of this mail, maybe that might
->> lead to some reaction.
+>> As you know fork13 is a stress test case trying to generate a maximum 
+>> number
+>> of PID's in a 100,000 loop.
+>>
+>> This device is running via NFS mounted filesystem.
+>>
+>> I have tried to reproduce this problem in a loop but failed to 
+>> reproduce the
+>> crash.
+>>
+>>
+>> Crash flow:
+>> ------
+>> fork13 run started
+>> BUG: Bad page map in process fork13
+>> BUG: Bad rss-counter state mm:
+>> Unable to handle kernel paging request at virtual address
+>> Internal error: Oops: 0000000096000046
+>> run for 800 secs ( 13 minutes) and more.
+>> fork14 run started and completed
+>>
+>> fpathconf01 run started and completed
+>> sugov:
+>>
+>> Unable to handle kernel NULL pointer dereference at virtual address
+>>
+>> Insufficient stack space to handle exception!
+>> end Kernel panic - not syncing: kernel stack overflow
+>>
+>> I have tried to decode stack dump by not being useful [1].
+>> [1] https://people.linaro.org/~naresh.kamboju/output-rk3399.txt
+>>
+>> Test log :
+>> --------
+>> tst_test.c:1733: TINFO: LTP version: 20240524
+>> tst_test.c:1617: TINFO: Timeout per run is 0h 15m 00s
+>> [  904.280569] BUG: Bad page map in process fork13  pte:2000000019ffc3
+>> pmd:80000000df55003
+>> [  904.281397] page: refcount:1 mapcount:-1 mapping:0000000000000000
+>> index:0x0 pfn:0x19f
 > 
-> Still no reply from the DRS folks or any other progress I noticed. Guess
-> that means I will soon have no other choice than to get Linus involved,
-> as this looks stuck. :-( #sigh
+> Mapcount underflow on a small folio (head: not printed).
+> 
+> [...]
+> 
+>> [  904.294564] BUG: Bad page map in process fork13  pte:200000002e4fc3
+>> pmd:80000000df55003
+>> [  904.295275] page: refcount:2 mapcount:-1 mapping:000000007885152f
+>> index:0x6 pfn:0x2e4
+> 
+> Another mapcount underflow on a small folio (head: not printed).
+> 
+> 
+>> [  904.309309] BUG: Bad page map in process fork13  pte:20000000cc6fc3
+>> pmd:80000000df55003
+>> [  904.310031] page: refcount:1 mapcount:-1 mapping:0000000000000000
+>> index:0x6 pfn:0xcc6
+>> [  904.310728] head: order:3 mapcount:-1 entire_mapcount:0
+>> nr_pages_mapped:8388607 pincount:0
+> 
+> Mapcount underflow on a large folio.
+> 
+> ...
+> 
+>> [  904.326666] BUG: Bad page map in process fork13  pte:20000000268fc3
+>> pmd:80000000df55003
+>> [  904.327390] page: refcount:1 mapcount:-1 mapping:00000000f0624181
+>> index:0x1b pfn:0x268
+> 
+> Another mapcount underflow on a small folio (head: not printed).
+> 
+>> [  904.328094] memcg:ffff0000016b4000
+>> [  904.328401] aops:nfs_file_aops ino:8526e6 dentry
+>> name:"libgpg-error.so.0.36.0"
+>> [  904.329051] flags:
+>> 0x3fffe000000002c(referenced|uptodate|lru|node=0|zone=0|lastcpupid=0x1ffff)
+>> [  904.329878] raw: 03fffe000000002c fffffdffc0009a48 fffffdffc022f3c8
+>> ffff00000688bd60
+>> [  904.330561] raw: 000000000000001b 0000000000000000 00000001fffffffe
+>> ffff0000016b4000
+>> [  904.331240] page dumped because: bad pte
+>> [  904.331590] addr:0000aaaad9afe000 vm_flags:00000075
+>> anon_vma:0000000000000000 mapping:ffff0000300d4188 index:2e
+>> [  904.332476] file:fork13 fault:filemap_fault mmap:nfs_file_mmap
+>> read_folio:nfs_read_folio
+>> [  904.333245] CPU: 5 PID: 22685 Comm: fork13 Tainted: G    B
+> 
+> 
+> Are these maybe side-effects due to
+> 
+> https://lkml.kernel.org/r/20240607103241.1298388-1-wangkefeng.wang@huawei.com
 
-Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
-of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
-ARM maintainers that can apply the fix to their tree?
+IIUC, the rk3399-rock-pi-4b device has no NUMA nodes (6 arm64 cores), so 
+I don't think the numa balancing will cause this issue.
 
-Arınç
+Anyway, I will run fork13 test case on my arm64 server to try.
 
