@@ -1,157 +1,187 @@
-Return-Path: <linux-kernel+bounces-209231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41113902F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:52:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68501902F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1548B22A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36C31F2386E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E79516F916;
-	Tue, 11 Jun 2024 03:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893C616F915;
+	Tue, 11 Jun 2024 03:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kYqshQHG"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2155.outbound.protection.outlook.com [40.92.62.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFNhhsbB"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9018764B;
-	Tue, 11 Jun 2024 03:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.155
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718077940; cv=fail; b=u5T3dQjdKJs0qo/NwFhFzb4BEDwP2A3afpPsKOO7kLzBE9NlkJeyhaYjERBJLRjLNUAg8tNbm7I0qgRoqJa7fHIEQbgEwMT+trHPN2WP4sjD5Be8ctkHecFRdMAOCjRvogZhNcKp8GBG5ki/hyMYbMhBLDJtT/Ha5a6ANUs7Z9Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718077940; c=relaxed/simple;
-	bh=FRineXL3ewsuHRFSCaUZzblmAmpxJIsYLuJy+YE88dI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bsPHV7qn99UN51spVXWpuuL8+ny28FKqPW5QUDwlNc3IkLelIFx4ciYduDt4PeWLUFy5+3WisfTdPSEbF9y6FH9fAcn57kYSbR/j+9hisAevfkF2rSdEVrCvQjTo2Uk4urrR6DEnHvMhntzHTlbzkMxdlRr+MDHJIV2jzCRIweY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kYqshQHG; arc=fail smtp.client-ip=40.92.62.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k+j9t/1orjc6Vi79Wi5QRA6oV09w48m09Hv0KmAtAkkj77llXIaTAlKVa+o5BuG0xMFMDPCsVq0LtgwJnxNHPVuLrVUJbdTGBswekbvWvwNvC6R3VrAMuJSq7vXctcST+n3f8aKwKXp8shQCmIHly6SBURTKwiRt/Yi3HfXEYROTQNbwnHHI0lzho67lgcN23O8V0e4DEQgIvNmR8HZ1EQn5jYmO8mbZj9sSX2XU95EbtCvNbk/VXSmz9WBeR+v1694TbYlQ/6NMSRzi+nlzPc682JEsKkC1GF/PCftwWXXShUWqU57K/aPv0wRKyZyEpLyZ+R8lhIjjpwccuT5DXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g8ZAoDwRPI3x/AIyFd0MQa/2e5enD6haWpvBAA21fqA=;
- b=Lczw1JYeNy8Cx/riYOKML1Oc0LoV6yF8mAHzuaj45oYF6ku4cWsi2Mdn/pE7jZ4VftpvFAFJUXUpsAU88IdtQ5suGcRtRCNH0u7vd+E5N7ucm2WrZI7ub4eCuzkDqMGDS4FERiwq8aeg7/586OgCdSicq2RoMiHd+0YBtXZprvBN3P+WYTu9tGiVDFYt753eRc3F/PfujDvLjqKmyF0V9nR6el0sZN77CxdYsuzF7v81yOihWkKkei8GNtZnH4rUDvsPL5bUA8xejUwTbV3zaxPNIyELHU74e48GFVI6CMcARKfRUn7ic20omoDekgqIdvnArcDgj4E1HFz+u6m1MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8ZAoDwRPI3x/AIyFd0MQa/2e5enD6haWpvBAA21fqA=;
- b=kYqshQHGthKa72gfwUPyiiAjPkRzThVdo/bWGJgVNs0TOa+jivGVfH7HZoyfJmcsvSlbQnjPpgLhNyC5AT/MFA2nm8kbNmB5B/GReX/xqGMocT6K4Gvk/Fv1stepP6qJRTxJgjkFg6C7B6VKA1xTt5TAPi6xm8I7unId/WIoO13UKqrrfXCPZA7znW/VNczpWaUCfQO6PtR4xvazHskjLSCQe47Qm77vUbQovmV4Xg0+NOtA4dMJ9AtHzZKxfR12M8PVQCvkfPIRpYlk9fUsOdoZUdMETeYAk/TE6Mfk9lXg1qLFuWxNN3QPUfMc6Mu7+z8ap+UW9i3/hOsuXdNL1w==
-Received: from ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:186::10)
- by MEYP282MB1639.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:c7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 03:52:14 +0000
-Received: from ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ef09:453a:38f:15d9]) by ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ef09:453a:38f:15d9%3]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 03:52:14 +0000
-From: Gui-Dong Han <hanguidong02@outlook.com>
-To: justin@coraid.com,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Gui-Dong Han <hanguidong02@outlook.com>
-Subject: [PATCH] aoe: consolidate flags update to prevent race condition
-Date: Tue, 11 Jun 2024 11:52:04 +0800
-Message-ID:
- <ME3P282MB3617DAD141ACDD21170355E0C0C72@ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [V3bLihkrbbRRIeXTwI1pdOFhKHVuI9suIqLdPYefBx0YbCPJlk75L/oggdRqhUVC]
-X-ClientProxiedBy: SGBP274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::22)
- To ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:186::10)
-X-Microsoft-Original-Message-ID:
- <20240611035204.9238-1-hanguidong02@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAA564B;
+	Tue, 11 Jun 2024 03:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718078057; cv=none; b=GIomLdhYP/hBMFOiwYO2SlRkesRybJU0ha0kRDe875Qgw+TIhpEfmnGr5D2qzXAId8LTOTIAC4PBjFd2mw0l9OQ92FOFJV4sUDU6WW2ytPDn6UaQ4F9/vZEbCDrv42cp+X1C5tyXWp60Y+UVSaBkHizUj3EXBx/IYnV5zRCsmZU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718078057; c=relaxed/simple;
+	bh=P/JlWkj1d4lbqMVcIecB6nL36p87uwx5huDvmxRLP50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=POHZFuaLWPFFMMCwHYH0gGrx5FsS0BeK9nbBvDQvk4Ztd4SiR/Ou1/g2gviPl8IOgUikzjB1aQdMvULAherbM1tMoT6uZfx7Wc2s2l6tHagS/sSRptt4H57yBmxcMptSYMOSGKEpyV0Ud97ghPEUphettRJ2orOSQRJPAVee7No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFNhhsbB; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-375ae697214so3095095ab.1;
+        Mon, 10 Jun 2024 20:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718078055; x=1718682855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZOXFTXYUG3Q3znuwbPKJY/6pkvj0jJfwfifudPkm/g=;
+        b=QFNhhsbB0KXPiglzELpfBKtQTsCdgjvjRM2rfU4Zbmrz+tkamdgw6R9PqN8Sq4rtUi
+         W5BNDLzRhmh+RLzKHyyPAxXH8vnbrPqPTat5Hy16SBS2z4rdwVCVJhAwb29453Swuj6O
+         9tsEZRNub/q2ul2sSLL/ydLxyRg+yUE/lwzZ+LzVrqDPZ2MNXTeSVW85/Ggpbz+nQrmc
+         X1hXkNlrqXZtF9lwXI455y/u/qjuIsircBtxUVe54fY0A7d/XpZKbQEqOP/0RCy/aQry
+         JQcoXkS0XTbBwU2JQdw/Tyam+nlHtOS8EMEN+iBhqQ3U6rNdZNgxiTRFe8ZlsU1DHHHj
+         8eDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718078055; x=1718682855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JZOXFTXYUG3Q3znuwbPKJY/6pkvj0jJfwfifudPkm/g=;
+        b=RJDtmjK3sp8BIbLBQ8Pv1qBfDKyFrEG+5/ZQnV7f/vizsVbYFJd6e5/XZMqjGYax9L
+         gbht15kzXkhttR/y+z9bGUpZjwlRctQejq6QP45l/APYG01oyoMEhTGpf4yxJF/uRDDw
+         XJLjcYgoRExLGIp6aBQC7MCQhSWhaImSj0h2qhFA4yQ8cQyS/RuK87sZmiOdyqDEZ/sK
+         lgaxAB2a22DGFQztZOJZSTqZ8hDqrl3bgRuI153YE7dgUBJUY1SLMhLHmxlVKYXc2F/d
+         G92yxrVOtP40s3yvM6xHVOTrmfmoEG8jPJQbXFjBnxgrQs7yOf7Xw+YEajoaWYu5JanA
+         7eEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW23Nf1/Q7CDz/1jv398IaBzQF0/vn2OdEOzGu3698hlwgChRSXEaVTs9thYSurIaxfbcItmBeTxnS5oWjrTSUASFHxWgJaPqihjwNzuuqVjuZHFdBNWiiDYKopQ6TpRGi1adeIcgXJPQ==
+X-Gm-Message-State: AOJu0YzHGqSl2kNGMCKZl7YCYogaESnY4m3k6/MbDMUDrQhH7eEU5AEv
+	YuSkGV1QgGoUmoaLTIReA1YtFqn1TmIPyv+DWnzmOKYfD+AXQ0T2
+X-Google-Smtp-Source: AGHT+IHvVho54m9hVhHxrAOmzVD1b15JqFTjH/MROr8cx0rEmOV1us0+bFPZHq5JZQE63gPj2sWKdQ==
+X-Received: by 2002:a92:c244:0:b0:374:a176:e26e with SMTP id e9e14a558f8ab-375803a4565mr125901145ab.31.1718078055139;
+        Mon, 10 Jun 2024 20:54:15 -0700 (PDT)
+Received: from ga401ii.SRMIST.EDU.IN ([59.152.80.69])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-6eb420e918esm3005937a12.2.2024.06.10.20.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 20:54:14 -0700 (PDT)
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+To: 
+Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	William Zhang <william.zhang@broadcom.com>,
+	Anand Gore <anand.gore@broadcom.com>,
+	Kursad Oney <kursad.oney@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: reset: brcm,bcm63138-pmb: convert to yaml
+Date: Tue, 11 Jun 2024 09:23:23 +0530
+Message-ID: <20240611035329.33648-2-kanakshilledar@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ME3P282MB3617:EE_|MEYP282MB1639:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a579dce-833e-4413-e51f-08dc89c9e19d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3430499023|3412199016|440099019|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	4t3GqZDKo6YqOXgJ90yR1zo5AUiAK8Mbo564BueFANQSNFqxRY/c5xUTt9aIQOT9TRevQuttq/9UVuM92Yc/n3ZF50JQZ26zR1akwZxBZe5BHvGGbi0a8O7ZalxnJR2EJ7WO/52yhEN711DHe9W6ziGfwC4zML9U0UFouabrjbXaSbxgHzuNXuPTLmH7I3Yic1SEcb/zWrQGZtazznVcQTwnMhSsIsr+/SviBkHJBYfvM+OWcwqfZ0HNNkm9QvwgwnsE8XSGEVfN1mp7o0FDeFKw3Kdk33aD34+GPSVBspmW7X3oUX2mtduD9I4fJAjOqtBeIzOvIdgcOXqlJ0ouMlp6QsNJnufV5cDWdX1fcilFzoD1xaIxcNTvGlp8J4164s1z66VRzQTPI+omLMCg9kpI8JeHuSBSltQ/t4kz+j6AOaMpNInbgE2GUOEvrBnOFsjjPhJD++EZA6GuuEU+sp1hUrqe4O3aAIrc9tFCn+zONwAQP4+4u8fh4RZKKTuv014+LKZmfFlOV7UycuDJNIxnHxxbOo+xROHQXbwhSssOXfoAabxZ2HtEEPkek63cnNOwJEzJQTr9V/a+Rtvh7QbxivTetcEr4/zedpdSDnq4ONY3l0Z4Lx5k1Xd/PCGk
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DE3LecUxnWuas0fwapjWkRsCZ4u0UtjDR7gSjeHwurki0W3NxJO8dnonzs0I?=
- =?us-ascii?Q?oebkas3AuQfJsfNpF9kJheRmWbm14icQabXzoi1C0UBI5WSbMOaYWZ/dDgPs?=
- =?us-ascii?Q?pv+RObOk/HKXAcR5moAJKRkxt0aChJ9yaE8a9PuRET3BkTfK/3srHtWGsoq8?=
- =?us-ascii?Q?sc5mtXdVRYpLzTDhSd8pdQql9mC/Oky9P1DXmgcnjppkpwFSjHR7DEo1ePMi?=
- =?us-ascii?Q?dz+w5Fss5IyZ10+4onNe+DW1HRZtlwG02JWjHJSKOKuPe4IEiiBIFBZpuAja?=
- =?us-ascii?Q?VRwD+2qsvWWfo0ugCGj9mEpTbL1EgdhFgqozcK5xTwSxRVKBFrLTXkl/c/pX?=
- =?us-ascii?Q?4BvVcTsbKIIBo0p9Ek0JLBldaZVWG9zxkJy2l8FxRCnF0jHO+WJPQuVDTrCG?=
- =?us-ascii?Q?5wYBF1bOIGd9QnM8TswX+SE2yiUqUxnWKoOH6YEzEQSUIRx5T598VHmT0TZu?=
- =?us-ascii?Q?dS8jqNaiCxcp8NR9kxXJflRBGzpgfNBxIuaIKM6Zk3gZG/UcuEeR+9kTd0L4?=
- =?us-ascii?Q?C1vgzqPOEgOkt74OHdgpeH4xNRZ86P84OxqUrgtoOYVhfQr6brMRggd0Ogxu?=
- =?us-ascii?Q?G086E1FQtBWggphmraX0anByXB6AjwIcy4wterzhnRgbwNEBzwmBZQjqK2UD?=
- =?us-ascii?Q?7Afp4dYAB2nPPLcaukugQJl8rOzbMnyw5RNYsD6+sLvOEeOquPzYfM91xWuM?=
- =?us-ascii?Q?ibh0FzOP4UdeyCpghVgiSadl37YCiYVbC7aYwQ/2JquFzGsr9owOe8IxSb2m?=
- =?us-ascii?Q?eb84Bpt9u8SeKQbRH4TfvcFNAZi9F81nmFPW8yO1PKrrzSe3iI1suhdpX6Gd?=
- =?us-ascii?Q?+4RmQDmpAIY6uWcUmZhOSWgCsVNCDTqgOE0ZoMZ7pVxc28ERfgqBvZ+Ae61G?=
- =?us-ascii?Q?3fheiDUBAOSZjSLFw3xvvS0Y/955UyE2w7yBgiXBSlxgzfuSjzCQQvjnOlE6?=
- =?us-ascii?Q?9DlenYpH1bIxev63nqHAGrfvS9lc2ExDU7BJlUr7qoTmsJAhDdAYD8mppLv7?=
- =?us-ascii?Q?mb8OTV+VqwcIF0CSfi7P/9HDmUhk67o6A7Hzx0CA9MkOXQu7FL+1Dvx97V2w?=
- =?us-ascii?Q?HnQc9cv+6ou21HYEvKhn2E1PXwZxDBcNkJRgAlA8ld9puGBLGR/HvJ8n6npR?=
- =?us-ascii?Q?O28i2X6vgwnhaL/ssEaZSAq5mFp2awMUz/3iIx07SQLrQcBkv+cnGcbIPmtt?=
- =?us-ascii?Q?x6nbplfMxj05eRhyCB4YjR8QmYLVmYyrpwzxqzmNVp0SArdyGwbSNf4v+gAv?=
- =?us-ascii?Q?iSSOBO70qa+Bix4ItJ27qJx4C9tOJeYTAwNbOS39yGBg48T7fJjT+95BRDDM?=
- =?us-ascii?Q?JjdqU6hOGR3MBOAjMmykqXSY?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a579dce-833e-4413-e51f-08dc89c9e19d
-X-MS-Exchange-CrossTenant-AuthSource: ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 03:52:14.8965
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MEYP282MB1639
+Content-Transfer-Encoding: 8bit
 
-In aoecmd_sleepwork, there is a race condition caused by two consecutive
-writes to the 'flags' variable within a critical section. If a read 
-operation occurs between these writes, an intermediate state may be 
-read, potentially causing bugs.
+Convert the Broadcom BCM63138 Processor Monitor Bus to newer DT
+schema. Created DT schema based on the .txt file which had `compatible`,
+`reg` and `"#reset-cells" as required properties.
+Added one line description which was missing in the original .txt file.
+Added Philipp Zabel as the maintainer (took from MAINTAINERS file).
 
-To address this issue, the 'flags' variable should be updated in a 
-single operation to ensure atomicity and prevent any intermediate state
-from being read.
-
-Fixes: 3ae1c24e395b ("[PATCH] aoe [2/8]: support dynamic resizing of AoE devices")
-Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
+Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
 ---
- drivers/block/aoe/aoecmd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../bindings/reset/brcm,bcm63138-pmb.txt      | 19 --------
+ .../bindings/reset/brcm,bcm63138-pmb.yaml     | 43 +++++++++++++++++++
+ 2 files changed, 43 insertions(+), 19 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.txt
+ create mode 100644 Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.yaml
 
-diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-index cc9077b588d7..37d556f019c0 100644
---- a/drivers/block/aoe/aoecmd.c
-+++ b/drivers/block/aoe/aoecmd.c
-@@ -897,8 +897,7 @@ aoecmd_sleepwork(struct work_struct *work)
- 		set_capacity_and_notify(d->gd, d->ssize);
- 
- 		spin_lock_irq(&d->lock);
--		d->flags |= DEVFL_UP;
--		d->flags &= ~DEVFL_NEWSIZE;
-+		d->flags = (d->flags | DEVFL_UP) & ~DEVFL_NEWSIZE;
- 		spin_unlock_irq(&d->lock);
- 	}
- }
+diff --git a/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.txt b/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.txt
+deleted file mode 100644
+index a98872d27872..000000000000
+--- a/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Broadcom BCM63138 Processor Monitor Bus binding
+-===============================================
+-
+-Please also refer to reset.txt in this directory for common reset
+-controller binding usage.
+-
+-Require properties:
+-
+-- compatible: must be "brcm,bcm63138-pmb"
+-- reg: base register address and size for this bus controller
+-- #reset-cells: must be 2 first cell is the address within the bus instance designated
+-  by the phandle, and the second is the number of zones for this peripheral
+-
+-Example:
+-	pmb0: reset-controller@4800c0 {
+-		compatible = "brcm,bcm63138-pmb";
+-		reg = <0x4800c0 0x10>;
+-		#reset-cells = <2>;
+-	};
+diff --git a/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.yaml b/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.yaml
+new file mode 100644
+index 000000000000..162b4c472c18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/brcm,bcm63138-pmb.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/brcm,bcm63138-pmb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM63138 Processor Monitor Bus
++
++description: This document describes the BCM63138 processor monitor bus.
++
++maintainers:
++  - Philipp Zabel <p.zabel@pengutronix.de>
++  - Kanak Shilledar <kanakshilledar111@protonmail.com>
++
++properties:
++  compatible:
++    const: brcm,bcm63138-pmb
++
++  reg:
++    description: base register address and size for this bus controller
++    maxItems: 1
++
++  "#reset-cells":
++    description: |
++      must be 2 first cell is the address within the bus instance
++      designated by the phandle, and the second is the number of zones
++      for this peripheral.
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    pmb0: reset-controller@4800c0 {
++        compatible = "brcm,bcm63138-pmb";
++        reg = <0x4800c0 0x10>;
++        #reset-cells = <2>;
++    };
 -- 
-2.34.1
+2.45.2
 
 
