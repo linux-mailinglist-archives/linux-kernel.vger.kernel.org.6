@@ -1,189 +1,200 @@
-Return-Path: <linux-kernel+bounces-209413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B599790344A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:49:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5E4903449
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B1A1F29339
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DBD1C227FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A3173342;
-	Tue, 11 Jun 2024 07:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D984117332A;
+	Tue, 11 Jun 2024 07:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jUrIstYK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v5CHyl/Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jUrIstYK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v5CHyl/Z"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqNWeP+2"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF417278D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B5C172BC1;
+	Tue, 11 Jun 2024 07:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092150; cv=none; b=juUyLKRAPwxi8FmvZCI0oXcfMCxUh/XHa1GUKBaBKeSH9ILcW8AMU7bebzMWEi1LzoQDUurX8qrhgSkK5S4AvszR9CZ2QwtEPPYwzxsHpzbRkYWoBUdOXD1jSmKczoQ/+SVZGIcFBPMKDiFQgB0pF/8PufWrgq4kET9BacZEmHM=
+	t=1718092150; cv=none; b=ZTiLn66I+AUAb4OmWYB+Y1B6sxCkTfugnOpZfmzoaUrioyfA33IWSNtl4br9ksP1Kk7bAgNewxsy7Ag7QjV2hOET95iFbalCZlYAMOY+KsvnVyn2jj+zkcuOAxNxn+icDgi4L9ZQpks/G8fPiKlvddebkEsc9MWYMnz4+gsfnSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718092150; c=relaxed/simple;
-	bh=3T1usxu2rF5SNBrquIbomMZjVzisbkX0qMq70UIQGKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpJjKDts89kS4XCT/x4EoKTDSruehLA3cCCgQp4Iem2/dUF/UXfdkeTkU45z7LfuFcxW0DEe/23lbNqG4jgH0OIsFbYHsLItC8QK9Wqp3+s4JGQBtihmkT6cqiwikhEs1r2bdyrOSHcc4NmGgLMl3BtgEKGMWYOWc9IDUMq1ez0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jUrIstYK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v5CHyl/Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jUrIstYK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v5CHyl/Z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3DC161F8AB;
-	Tue, 11 Jun 2024 07:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718092146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SQY+gjyxZXwlts02npl3vzqyLScD2MomXyvFp4aFM0=;
-	b=jUrIstYKMGtKxTBSYhMlPFlZ4ecNe51n34r8Df4PZAWFJKEaXlaaPhlp1XD9GzwaMCKabC
-	9qiRnnVbuFvBgEbcOmFygyfFV9HUm4VtLFvCMSitKgDA+uKEnVcthXr71lPV3C+HAadR6W
-	JTKgOVuOT0IPpdzPKUUyLrMtPBvbfAQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718092146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SQY+gjyxZXwlts02npl3vzqyLScD2MomXyvFp4aFM0=;
-	b=v5CHyl/ZPJ+EnmVJJUtf35CF9m8qPvH0L6LuqoP4o2dOuTX6ETHi2x3PLsp7KW3mHjHtaN
-	NDhN9Sy1xvL++7Ag==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jUrIstYK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="v5CHyl/Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718092146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SQY+gjyxZXwlts02npl3vzqyLScD2MomXyvFp4aFM0=;
-	b=jUrIstYKMGtKxTBSYhMlPFlZ4ecNe51n34r8Df4PZAWFJKEaXlaaPhlp1XD9GzwaMCKabC
-	9qiRnnVbuFvBgEbcOmFygyfFV9HUm4VtLFvCMSitKgDA+uKEnVcthXr71lPV3C+HAadR6W
-	JTKgOVuOT0IPpdzPKUUyLrMtPBvbfAQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718092146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2SQY+gjyxZXwlts02npl3vzqyLScD2MomXyvFp4aFM0=;
-	b=v5CHyl/ZPJ+EnmVJJUtf35CF9m8qPvH0L6LuqoP4o2dOuTX6ETHi2x3PLsp7KW3mHjHtaN
-	NDhN9Sy1xvL++7Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E20813A55;
-	Tue, 11 Jun 2024 07:49:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kws8C3IBaGbhUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Jun 2024 07:49:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CE530A0889; Tue, 11 Jun 2024 09:48:50 +0200 (CEST)
-Date: Tue, 11 Jun 2024 09:48:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Roman Smirnov <r.smirnov@omp.ru>
-Cc: Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-	Sergey Shtylyov <s.shtylyov@omp.ru>, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] udf: balloc: prevent integer overflow in
- udf_bitmap_free_blocks()
-Message-ID: <20240611074850.tiaieba2bswwck6d@quack3>
-References: <20240610072523.12002-1-r.smirnov@omp.ru>
+	bh=hiTi2Z2kFvgoVOSPubuhZsugltW45Q0GMSzZrbstP/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmnSZtXIgyx9CLmVyACQWNB5zRBRkr8rbw2JbXpLMFGe6j2Ah1fqT7jnszwVzr0OtndwodQ9Ey5rnc47nvGxFPrhmFYYg/7drJwrcQLX1gfKViMD1Sc+/jS46u0SPkId2yOD9PB+ZpFJjODmRlvrXnR2/2GyZnJLjBeTuWhbaao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqNWeP+2; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68b41ef3f6so585001966b.1;
+        Tue, 11 Jun 2024 00:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718092146; x=1718696946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kecLidF3g75Y0M4dgmXIi2U7qv7nfX0gCWhXKA3lhlo=;
+        b=kqNWeP+25IMcqBz/PPTvHXgNcexBiD0qWmKen69qLb0yyE0NErMIiuDNtPNGjHfo6s
+         OVVjfE2NzYTWjqFtZUc0rja2vWHLSLKCNUBfHUPJG+ZoTDgc9cp0DTXb1qq7+CFsIWDH
+         1EskANF9CgiWXHeQAZdT/+C4JKbfwYiPAsJiEK1AxRuzO6da3qEJS+pD6CJb+xIPy7CH
+         jSzmwYRDyYGibhlMIUlgMqNOYV/nvX7PceMK8tI2dpDtxl3znFqt9LpoHU0RPfhjaUlL
+         9r6kwFIhPNBfGWJEbv4wXkelI0cpN7hR7B+NW6IWYsccIPrkB246Ba8BP2LjFyd7wM0z
+         5afg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718092146; x=1718696946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kecLidF3g75Y0M4dgmXIi2U7qv7nfX0gCWhXKA3lhlo=;
+        b=pEdjEGt/8iFuAYBM1FR9QELYNHivsRnSpvckMU+R2itFa7kkcPcq8AJOYBSswPgczG
+         gKqI6cgsAP/dq1ESS4VD81IfUXAs8lipY52Qr0BJUiK5zC7+DVbSc03DE2whpG/1/v6o
+         GYjADjreGHYKOYQvHw1oMa4tUR7CrL8Do+ZJJXfkGkr4kjDuyikIwb1LzKp2k5T6vsh8
+         Q+sHPPSZjVf+l3ZF9yl3t4lB/N+gLP/pQpbapMiQyW1mNEWdPhJeIjfb7XgnaQ07CKpb
+         43vGc8Ex5gSPGgGCqA+VROAEju8zjxhaqPPkYCSJps5rwR4zu0JmBoycxPbPgqVsrfyA
+         o5kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNGNFJj4EfjytCOvm7rju+YJzBlmOonL7ec0xLfAQssBh2hOB17EpcMuDAjSH+1HfGcuA+OO+a/5hnKoL22fRBcc5DU4at2bXBaVFHU0ton6cFjHHtMNwWchn/9RHbKoK0/G5mVIYebTxvCXAqjcJkZXOlLxZ6R0vFvkULjmWg4GOi9/njWo06SWCehsuxAPpZ6FntVRlB1JcxTlvslWgk+UdZuksOpyIvLA04Psih93sJa96U
+X-Gm-Message-State: AOJu0YwXgCgbmqwNr11Ijs1S3o9R14BymHtIiakaMydN7yTbAaeXSewh
+	9gp5GRHwNnv9qCrXVbFzm2GxFZFEMOi3+TCQfi6B0/iYWb1vZieX
+X-Google-Smtp-Source: AGHT+IFzcNCL4DB7c7G7kLyb+7UFm4o2GGJXJ/lKj59bEb2GT+3Qy+R5dFmfo0Jxs1fqaAcSpOVYtA==
+X-Received: by 2002:a17:906:6a0a:b0:a6f:1d19:c0b1 with SMTP id a640c23a62f3a-a6f1d19c496mr372629566b.18.1718092146075;
+        Tue, 11 Jun 2024 00:49:06 -0700 (PDT)
+Received: from [10.16.124.60] ([212.227.34.98])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f2942b02fsm145877166b.167.2024.06.11.00.49.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 00:49:05 -0700 (PDT)
+Message-ID: <900d1d56-28ea-4c6d-b8c7-749a952e5f4b@gmail.com>
+Date: Tue, 11 Jun 2024 09:49:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610072523.12002-1-r.smirnov@omp.ru>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3DC161F8AB
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to two steps
+To: "Zeng, Oak" <oak.zeng@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Brost, Matthew" <matthew.brost@intel.com>,
+ "Hellstrom, Thomas" <thomas.hellstrom@intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Yishai Hadas <yishaih@nvidia.com>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ "Tian, Kevin" <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ Bart Van Assche <bvanassche@acm.org>,
+ Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+ Amir Goldstein <amir73il@gmail.com>,
+ "josef@toxicpanda.com" <josef@toxicpanda.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "Williams, Dan J" <dan.j.williams@intel.com>, "jack@suse.com"
+ <jack@suse.com>, "Bommu, Krishnaiah" <krishnaiah.bommu@intel.com>,
+ "Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
+References: <cover.1709635535.git.leon@kernel.org>
+ <SA1PR11MB6991CB2B1398948F4241E51992182@SA1PR11MB6991.namprd11.prod.outlook.com>
+ <20240503164239.GB901876@ziepe.ca>
+ <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+ <20240610161826.GA4966@unreal>
+ <PH7PR11MB7004A071F27B4CF45740B87E92C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+ <20240610172501.GJ791043@ziepe.ca>
+ <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Zhu Yanjun <zyjzyj2000@gmail.com>
+In-Reply-To: <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon 10-06-24 10:25:22, Roman Smirnov wrote:
-> An overflow may occur if the function is called with the last
-> block and an offset greater than zero. It is necessary to add
-> a check to avoid this.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
 
-Thanks for the patch! Actually there are overflow checks just a few lines
-above the place you modify:
+On 10.06.24 23:28, Zeng, Oak wrote:
+> Hi Jason, Leon,
+>
+> I was able to fix the issue from my side. Things work fine now.
 
-        if (bloc->logicalBlockNum + count < count ||
-            (bloc->logicalBlockNum + count) > partmap->s_partition_len) {
+Can you enlarge the dma list, then make tests with fio? Not sure if the 
+performance is better or not.
 
-So please update those to take 'offset' into account instead. Also please
-use check_add_overflow() for the integer overflow check.
+Thanks,
 
-								Honza
+Zhu Yanjun
 
-> ---
->  fs/udf/balloc.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
-> index ab3ffc355949..cd83bbc7d890 100644
-> --- a/fs/udf/balloc.c
-> +++ b/fs/udf/balloc.c
-> @@ -151,6 +151,13 @@ static void udf_bitmap_free_blocks(struct super_block *sb,
->  	block = bloc->logicalBlockNum + offset +
->  		(sizeof(struct spaceBitmapDesc) << 3);
->  
-> +	if (block < offset + (sizeof(struct spaceBitmapDesc) << 3)) {
-> +		udf_debug("integer overflow: %u + %u + %zu",
-> +			  bloc->logicalBlockNum, offset,
-> +			  sizeof(struct spaceBitmapDesc) << 3);
-> +		goto error_return;
-> +	}
-> +
->  	do {
->  		overflow = 0;
->  		block_group = block >> (sb->s_blocksize_bits + 3);
-> -- 
-> 2.34.1
-> 
+> I got two questions though:
+>
+> 1) The value returned from dma_link_range function is not contiguous, see below print. The "linked pa" is the function return.
+> I think dma_map_sgtable API would return some contiguous dma address. Is the dma-map_sgtable api is more efficient regarding the iommu page table? i.e., try to use bigger page size, such as use 2M page size when it is possible. With your new API, does it also have such consideration? I vaguely remembered Jason mentioned such thing, but my print below doesn't look like so. Maybe I need to test bigger range (only 16 pages range in the test of below printing). Comment?
+>
+> [17584.665126] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 18ef3f000
+> [17584.665146] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190d00000
+> [17584.665150] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190024000
+> [17584.665153] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 178e89000
+>
+> 2) in the comment of dma_link_range function, it is said: " @dma_offset needs to be advanced by the caller with the size of previous page that was linked + DMA address returned for the previous page".
+> Is this description correct? I don't understand the part "+ DMA address returned for the previous page ".
+> In my codes, let's say I call this function to link 10 pages, the first dma_offset is 0, second is 4k, third 8k. This worked for me. I didn't add the previously returned dma address.
+> Maybe I need more test. But any comment?
+>
+> Thanks,
+> Oak
+>
+>> -----Original Message-----
+>> From: Jason Gunthorpe <jgg@ziepe.ca>
+>> Sent: Monday, June 10, 2024 1:25 PM
+>> To: Zeng, Oak <oak.zeng@intel.com>
+>> Cc: Leon Romanovsky <leon@kernel.org>; Christoph Hellwig <hch@lst.de>;
+>> Robin Murphy <robin.murphy@arm.com>; Marek Szyprowski
+>> <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
+>> Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
+>> Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
+>> <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>; Jens
+>> Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
+>> Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
+>> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian, Kevin
+>> <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
+>> Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
+>> foundation.org>; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
+>> iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
+>> kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
+>> <bvanassche@acm.org>; Damien Le Moal
+>> <damien.lemoal@opensource.wdc.com>; Amir Goldstein
+>> <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
+>> <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
+>> <dan.j.williams@intel.com>; jack@suse.com; Zhu Yanjun
+>> <zyjzyj2000@gmail.com>; Bommu, Krishnaiah
+>> <krishnaiah.bommu@intel.com>; Ghimiray, Himal Prasad
+>> <himal.prasad.ghimiray@intel.com>
+>> Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
+>> two steps
+>>
+>> On Mon, Jun 10, 2024 at 04:40:19PM +0000, Zeng, Oak wrote:
+>>> Thanks Leon and Yanjun for the reply!
+>>>
+>>> Based on the reply, we will continue use the current version for
+>>> test (as it is tested for vfio and rdma). We will switch to v1 once
+>>> it is fully tested/reviewed.
+>> I'm glad you are finding it useful, one of my interests with this work
+>> is to improve all the HMM users.
+>>
+>> Jason
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best
+
 
