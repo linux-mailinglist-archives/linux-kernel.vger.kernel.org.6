@@ -1,203 +1,172 @@
-Return-Path: <linux-kernel+bounces-209134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69D6902DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 897F9902DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6520D1F22601
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:44:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F021F23412
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2B4A3C;
-	Tue, 11 Jun 2024 00:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7D36FC5;
+	Tue, 11 Jun 2024 01:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZpDUzgVN"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
+	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="XhB5QTbi"
+Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F3236D;
-	Tue, 11 Jun 2024 00:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718066665; cv=fail; b=BDT1YyeHhayxJB5WAVyeaYjoyWiziP/jlwT4DqfBrmnMzSr6rqQvSigKOi/QjPs8AgxglAZTg3LdhL3rhFAriqEW2P0bIAeiGb90iSU7djZrcQJhV4jnV+B41YLd8M2FTEDtL3YPyS30BZ4+EKSvPniURA/FrP4AxXKIhqC2IzM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718066665; c=relaxed/simple;
-	bh=z6cRzR04BsxTYB5H+MKj3lnD+n07MgirDUHhcz78x+A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEu6i82P5wwZOURiMaL11pXgbNp+IkLGIH7vozTubbM3OrLGK3WkzvTQ7tyT+pnVJPJDpFCMZQHkVesO0pDx09D5qp8dPiRHPWqweaxkZC2DFnsl6F/r5Zc6vKodgSd9fWheOaKzTV6h/94Vh6FOGR1/ApIBuh1S46AP0vvQDdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZpDUzgVN; arc=fail smtp.client-ip=40.107.244.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KzAwnyGY/kThhDq4rkTcm/w0JA6BLKbCzwJOilLWhnG7K5Cpz1lLBHzzvZEkQgfOkV9ljSspxZKqSmRgS5+XP50ysy5r478VJfHPxIGWQsV03lmByzXM2bXVL9IydUDBEAHCpFJ071jJy4ykBZLv6aA3uRnGW3W+6BchvNNDWQ32HYzql7DNq4xNxV64X+KoDAd3h62oqe5glkxZayrer7dXwL9Z+THwNf0jROO8O7MNnXYYd0dJcXPB4Km2tj+PlilAgP38Oy0dXrMiRZ5Q6oB/kyaUyH0BQDvtGmD1ug/I7wwvummyr9JrIMr1ocONH9XwoQCwAnJjEI9NcTuM5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YzkT1zxDp4tl112WeeT8NsZq3lzEskZqMEmKEJWnL4E=;
- b=W3273b0ZiooVvS/aHKUwB2sGaZ0YG/qN0CGpgnLSIQn9yahcGwjzdEDd7Foh4KB/rygvhEellYa1utX+0oadG73XnV8YIgAmsLekCR2BQaJ3Z8+df7df7Gk/UKeB8I1veroP2iPWMVv0XWV2edQV7wNnY7Ca3E//5r9Yj6rkS3yjf3CI1QsMxpgd7az+F+5uub3iSMK0wDSWY4A+bEyfoIQLshgFXjLtMo0rLS3GeL0So/DLuudJNLKxfnFOKjGgMO2FbaJpF3PpUs403wPrjRu6zb68RfLiwSm3mJWwlhTuLW3wV/HhdV96t9la+6m9DAHdnoCcOcyqX78N0yifdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YzkT1zxDp4tl112WeeT8NsZq3lzEskZqMEmKEJWnL4E=;
- b=ZpDUzgVNpKSMBIb944TULUmMikM+JTGLTVgxzXrPRyso9NTj3Z17BmsbEV8lXlcugmP0Ubrc+Pk9WExc2FuBdQobRTVZ9GIU+eZhtG2CjGiN+n2/VmSS43NlTHtdUCDEVtqm+rrDnDyvOFrmpXqEwS9WLBNkYiVQpYl6nk0lH/CDP9bdTqCltb+ix84aSRJ74IAznbB6T89idtaT6ZetN83cVVtn3wh299UXH4JkGzDPQaSZEaseTLTYaBdZ+l88XXO+c6eftiBLQZDq4YOltv3gELcAF0BfTMb6UqDzr4Zc0011b19nY6c2P1LoaVV9Xa1jTHY4708ytFDJt2ieHA==
-Received: from SA9PR13CA0097.namprd13.prod.outlook.com (2603:10b6:806:24::12)
- by CY5PR12MB6203.namprd12.prod.outlook.com (2603:10b6:930:24::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 00:44:20 +0000
-Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
- (2603:10b6:806:24:cafe::2a) by SA9PR13CA0097.outlook.office365.com
- (2603:10b6:806:24::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.16 via Frontend
- Transport; Tue, 11 Jun 2024 00:44:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 11 Jun 2024 00:44:20 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 10 Jun
- 2024 17:44:19 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 10 Jun 2024 17:44:18 -0700
-Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Mon, 10 Jun 2024 17:44:18 -0700
-Date: Mon, 10 Jun 2024 17:44:16 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: "Tian, Kevin" <kevin.tian@intel.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <Zmed4AtFjuF7+lWd@Asurada-Nvidia>
-References: <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
- <20240607002707.GJ19897@nvidia.com>
- <BN9PR11MB527604637EC37B3B03FBBE468CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240607144917.GK19897@nvidia.com>
- <ZmN5WZkvDeIS7RRH@Asurada-Nvidia>
- <20240610120446.GP19897@nvidia.com>
- <ZmdbnGnp73yR36N5@Asurada-Nvidia>
- <20240610220110.GQ19897@nvidia.com>
- <ZmeGfqp26c3sGBmF@Asurada-Nvidia>
- <20240611002839.GS19897@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7313163B8;
+	Tue, 11 Jun 2024 01:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718067836; cv=none; b=JLhHQkmExdLZlK1zCAQHNaPrXELF6xuavrl0nmx/DdGm2MJ62H9Ij16I/cAfv0NKRxMJnt2Q165kUScX0nPRH9llKfSqTfxe3TG3uudB8QKL4iH+4X5pnSyMX1IpZW9gdi18518sNIuLw/xNnp3lSTUJWR45U+OiTprSMc1ySiE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718067836; c=relaxed/simple;
+	bh=dhKRHtF4SgAN+8QKhbvAqBOVF8bJZ+pKcc9susdjNyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iioirkBRVa4U3JeUVqfeDXwR5cWiwO5fH+zHq59QJIapETrzHNCRe+ZUPBA4gorNnHxGBxL5YYgyj8BTYyAcF+FMwS5HVrGFMf7kFD5LF6gYLZbZaYClx0cJg5YTFBduIQRKfQLpN8krvDnrAMe3j8+pxXHzlQNTVOmP38zDoz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=XhB5QTbi; arc=none smtp.client-ip=78.46.137.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+	s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=jWkaSxfNx+pzsfSK1fY94WQ4Jtn8QLkhhm2QngdCkpA=; b=XhB5QTbiDTZ0gTP04i5yOGIXAj
+	14BvTDKEOtr0ApCPNT/sfFqCixnn8O9csTMMUXe2pQy1YADBClpCkgjyF/RnF46cVMgNg6++tfIqH
+	JlorxJ5baLZ05f3TI+akEBTuq46ojoty1UE+HJC2IMglqjvNFP/tgT96+rj7yfM6u0EQj7B7Qjye0
+	dRvx7PwFExfMuR4ccyJn56ugKioQwRhfbFZZ9I6K2DLpN0S+C6y2RynWEURzdyL3FYpALb/Ee1gVM
+	XjCJcJOIa0S7qXed0Gzm3e1HHZuNuETOMMCSN6aJaFPfHWyMq9DOfAlncGXNfz8Wn50drVwX9mbfK
+	rzY/EU8A==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <lars@metafoo.de>)
+	id 1sGpe8-000MIq-UQ; Tue, 11 Jun 2024 02:45:56 +0200
+Received: from [136.25.87.181] (helo=[192.168.86.26])
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <lars@metafoo.de>)
+	id 1sGpe8-000ME2-2Z;
+	Tue, 11 Jun 2024 02:45:56 +0200
+Message-ID: <3557bd0f-86b4-4dce-90dd-59303f4f1154@metafoo.de>
+Date: Mon, 10 Jun 2024 17:45:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240611002839.GS19897@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|CY5PR12MB6203:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57a6151f-d794-41d8-372c-08dc89afa194
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|7416005|1800799015|376005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wR81qUD8b65xPqAD+u4BcPKyzW1Ku4Zuh7cfigEqXH1OmmcpF+dfrT0rM/8I?=
- =?us-ascii?Q?a6tnW873TnVAXNIX9X/AzDpyY9vz8k8/HZT8wp6tsicF8r14NZ4PVK6EoOnl?=
- =?us-ascii?Q?WwXaATM5DuznnVh+HoLDroyFcsY9NFApkIrY1vRIXPxT3xalKZ9Lgi68X2A2?=
- =?us-ascii?Q?/vsEBCXyoehnikTJ6ewfPlWPqel6dzu+DEJR6b0wE0iYa9d35EpXOwJAFN1M?=
- =?us-ascii?Q?V2k6I9AWCs334+dzKASk1yyaDSZLuWzK4UnVMtqFxG8E450TDcRrKXzCPaps?=
- =?us-ascii?Q?O7ai22nTPQk+ZM2JqjG9Os2wo7AQl0KDZDA/VZAtn+Frxm9ZvBoCyATBe6oA?=
- =?us-ascii?Q?2QqtAdcZIAmWRYRI2qdqYapSsUJHzUJJ1eecwCpYm6r7lJssvUmJQUfO2xEJ?=
- =?us-ascii?Q?JJZridtEedtV6re1uO1kf3W+uXn+heZFDkJwcMJuoUALbEtEeOOQoKDdAGPO?=
- =?us-ascii?Q?UVnd0WhF55Wc/H+Sq6knb1iaxdot8/r6ytDIWfPdfmFOBeVFpG9a2O3JnNNe?=
- =?us-ascii?Q?MRSiBxQBbPaRYeHjnHbB5ZZj23KU9PKvS4ZnMcorw3P9e6ARAWVP6Bzsgh2k?=
- =?us-ascii?Q?QjEfp80+CP2vqUZ8jKGablNoJqRs4isjGj2WZjngBd4bX1berpu6j3DMXSc+?=
- =?us-ascii?Q?+66yIbOiAK9dJKL6jYtPSdZRQFNb/Rrg0T41c4nfq9rW8Ipb0KYRiDSkAeUQ?=
- =?us-ascii?Q?JxIsVdRXuiBuZrs+gdgu0eN+ln9W9E05v4DNOGFNMbKCEdVFOz/XOrzIS9iJ?=
- =?us-ascii?Q?Azo+RzoSKXX7voaRFvJDUzRzEQ3vaCisy15dzTcnpc/uc4DUkaAe5Pct6rYi?=
- =?us-ascii?Q?PSW/E97dNy9U1fgnU9NBM1PMrtdSoqLrC9xYgyI53bDbfF+kaEIYiG4TTpRO?=
- =?us-ascii?Q?vfbHSeUFga7fImVrXgKq6+jqjB3nXbRx7i3qy6h+tcBrrtLhm8NK6fVsv5Kt?=
- =?us-ascii?Q?B5Grp6Uy3RzP8HALGrp7RrCDFME21VNLm3VuG+gvWiZ5z5664Gp31l1UkOft?=
- =?us-ascii?Q?jJZ+aNJMISCkRnOE7hIcMAI1DZ3yVl8llyuGJF/H3giPq6lytOgyj/lScEuP?=
- =?us-ascii?Q?0JLdV8WX0sCQUgqRBr/feY8dKT6tJTYQTFgytr6cK7/5WLIKBNpc9QUOueZp?=
- =?us-ascii?Q?9zj7Dn3xtDp4N0rBe3wHDq08L12sJq1UHK9cJVroh9tWHnZNaK7Lav5Ipp27?=
- =?us-ascii?Q?XV8zGU+aZQ5DMWM1MKRByBFw7NR2VIDLmEKxlXdrdEIsNfRyIgwfdDL7N40M?=
- =?us-ascii?Q?EEOlnqZy1bB5OOzWO98NmkfozpHG5vid4hA+X1tuYKQ6UBjLkbydgKIwOU9K?=
- =?us-ascii?Q?CsCWOmq9ETqCdX/tciqidyAn6fLQdLU6yHY4aIsBx5lFCodtV+kCrE1m6XlX?=
- =?us-ascii?Q?YrsqeNVVAvvSoGJd+3XhLdTrSrm7sg8IF2ZT2s2Q6duhkVH7sg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(1800799015)(376005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 00:44:20.1488
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57a6151f-d794-41d8-372c-08dc89afa194
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6203
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] ALSA: dmaengine: Synchronize dma channel in
+ prepare()
+To: Jai Luthra <j-luthra@ti.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>
+References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
+ <20240610-asoc_next-v2-1-b52aaf5d67c4@ti.com>
+Content-Language: en-US
+From: Lars-Peter Clausen <lars@metafoo.de>
+In-Reply-To: <20240610-asoc_next-v2-1-b52aaf5d67c4@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27302/Mon Jun 10 10:25:43 2024)
 
-On Mon, Jun 10, 2024 at 09:28:39PM -0300, Jason Gunthorpe wrote:
-> On Mon, Jun 10, 2024 at 04:04:30PM -0700, Nicolin Chen wrote:
-> 
-> > > > Actually, even now as we put a dispatcher in VMM, VMM still does
-> > > > decode the CD table to link ASID to s1_hwpt. Otherwise, it could
-> > > > only broadcast a TLBI cmd to all pSMMUs.
-> > > 
-> > > No, there should be no CD table decoding and no linking ASID to
-> > > anything by the VMM.
-> > > 
-> > > The ARM architecture is clean, the ASID can remain private to the VM,
-> > > there is no reason for the VMM to understand it.
-> > 
-> > But a guest-level TLBI command usually has only ASID available to
-> > know which pSMMU to dispatch the command. Without an ASID lookup
-> > table, how could VMM then dispatch a command to the corresponding
-> > pSMMU?
-> 
-> It can broadcast. The ARM architecture does not expect a N:1 mapping
-> of SMMUs. This is why I think it is not such a good idea..
+On 6/10/24 03:56, Jai Luthra wrote:
+> Sometimes the stream may be stopped due to XRUN events, in which case
+> the userspace can call snd_pcm_drop() and snd_pcm_prepare() to stop and
+> start the stream again.
+>
+> In these cases, we must wait for the DMA channel to synchronize before
+> marking the stream as prepared for playback, as the DMA channel gets
+> stopped by snd_pcm_drop() without any synchronization.
 
-Hmm, I thought we had an agreed idea that we shouldn't broadcast
-a TLBI (except global NH_ALL/VAA) for invalidation performance?
 
-> Yes the VMM could walk the CD tables too and build up a bitmap of what
-> ASIDs are being used by what pSMMUs, and that would be fine for the
-> VMM to do, but I wouldn't necessarily recommend it :)
+We should really implement the sync_stop() PCM callback and let the ALSA 
+core let care of the sync.
 
-CD table walkthrough would be always done only by VMM, while the
-lookup table could be created/maintained by the kernel. I feel a
-vasid table could make sense since we maintain the vdev_id table
-in the kernel space too.
 
-Anyway, it is still an implementation choice, as Kevin remarked.
+> Reviewed-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> ---
+>   include/sound/dmaengine_pcm.h         |  1 +
+>   sound/core/pcm_dmaengine.c            | 10 ++++++++++
+>   sound/soc/soc-generic-dmaengine-pcm.c |  8 ++++++++
+>   3 files changed, 19 insertions(+)
+>
+> diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+> index c11aaf8079fb..9c5800e5659f 100644
+> --- a/include/sound/dmaengine_pcm.h
+> +++ b/include/sound/dmaengine_pcm.h
+> @@ -36,6 +36,7 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer_no_residue(struct snd_pcm_substream
+>   int snd_dmaengine_pcm_open(struct snd_pcm_substream *substream,
+>   	struct dma_chan *chan);
+>   int snd_dmaengine_pcm_close(struct snd_pcm_substream *substream);
+> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream);
+>   
+>   int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
+>   	dma_filter_fn filter_fn, void *filter_data);
+> diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
+> index 12aa1cef11a1..dbf5c6136d68 100644
+> --- a/sound/core/pcm_dmaengine.c
+> +++ b/sound/core/pcm_dmaengine.c
+> @@ -349,6 +349,16 @@ int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
+>   }
+>   EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_open_request_chan);
+>   
+> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream)
+> +{
+> +	struct dmaengine_pcm_runtime_data *prtd = substream_to_prtd(substream);
+> +
+> +	dmaengine_synchronize(prtd->dma_chan);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_prepare);
+> +
+>   /**
+>    * snd_dmaengine_pcm_close - Close a dmaengine based PCM substream
+>    * @substream: PCM substream
+> diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+> index ea3bc9318412..078fcb0ba8a2 100644
+> --- a/sound/soc/soc-generic-dmaengine-pcm.c
+> +++ b/sound/soc/soc-generic-dmaengine-pcm.c
+> @@ -318,6 +318,12 @@ static int dmaengine_copy(struct snd_soc_component *component,
+>   	return 0;
+>   }
+>   
+> +static int dmaengine_pcm_prepare(struct snd_soc_component *component,
+> +				 struct snd_pcm_substream *substream)
+> +{
+> +	return snd_dmaengine_pcm_prepare(substream);
+> +}
+> +
+>   static const struct snd_soc_component_driver dmaengine_pcm_component = {
+>   	.name		= SND_DMAENGINE_PCM_DRV_NAME,
+>   	.probe_order	= SND_SOC_COMP_ORDER_LATE,
+> @@ -327,6 +333,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component = {
+>   	.trigger	= dmaengine_pcm_trigger,
+>   	.pointer	= dmaengine_pcm_pointer,
+>   	.pcm_construct	= dmaengine_pcm_new,
+> +	.prepare	= dmaengine_pcm_prepare,
+>   };
+>   
+>   static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
+> @@ -339,6 +346,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
+>   	.pointer	= dmaengine_pcm_pointer,
+>   	.copy		= dmaengine_copy,
+>   	.pcm_construct	= dmaengine_pcm_new,
+> +	.prepare	= dmaengine_pcm_prepare,
+>   };
+>   
+>   static const char * const dmaengine_pcm_dma_channel_names[] = {
+>
 
-Thanks
-Nicolin
 
