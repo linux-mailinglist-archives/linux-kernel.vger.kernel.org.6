@@ -1,182 +1,95 @@
-Return-Path: <linux-kernel+bounces-209258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7894902FAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A32902FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E02191C228ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D36EF285263
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA0E170832;
-	Tue, 11 Jun 2024 04:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106BA170847;
+	Tue, 11 Jun 2024 04:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Iwz7e8sU"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bw18CTVz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34FF273FD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061EF14290;
+	Tue, 11 Jun 2024 04:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718081530; cv=none; b=lHQEYTCUF3azf5egJIUH0V6grjSLeCob7thbxgsSU6lfifRh2TEbUtoS/sAm5I5RrQrbwIJ6I0ERU1A+HGwvTEINbkuce1k/Vr/pUHDKvV+mDYTg0K9WRm6SI36iZKCQbmwhNjAa1IavYy7vs+TBXzUw5a5jWE80caAzAHwLHfg=
+	t=1718081984; cv=none; b=aIRkw8/LLqrUDyuBXbR7BPmYbdu4e9+9+xqM42QalWSK6r+iP8Og4m5hUzRBlm+7WSQpPZcnOf3CIMNClbH+0MoMxImfc6sbcAlcThat9KcxpCcy7RzwxP01KJ65uVosyI1Buh+3V09WpyYfWvkXWFEP5q8KazKSTYc2VBcVnCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718081530; c=relaxed/simple;
-	bh=XVLIZfIJnnMN/EUq8/G3t+XkuGYTj4SvgWh/gJs9dMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQ9myq2iF9wfeDGEdhbeqLHFcEaCaiCyxDC9l+SLvI6XlqFGVdfXfDUTjQLCAW2oZ19KROlm0cluBrSDvUqJ50KAe7+o450NdzyWUn5kWoWr+JRe1gQRDDX+yY9TZ8Uuwiy1SA4MoLFun6WV8siQ8CQ/Qb9JTw0B6IZpaGyIL8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Iwz7e8sU; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6ef46d25efso394773666b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718081526; x=1718686326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ehRXid+5yEA0xT7TzSIt1MaimTqtIHWJl33gJuDzaKE=;
-        b=Iwz7e8sUv/wWwB05SpXWDstXjC1Tu/idaYJjOsfaKVX6cEbVGrapchtyB0O10L3fqY
-         jCEqQr7Qh3+F187z3kTKJX6siR1JuDSQThOu5gwxxnMyUHtvseeVgId2wU4n/6/6W1Qz
-         7rQqLjI83GhMDMCJBEtnGbEWJJ0nzzfJazepA92jD7acqB4dumENWCLAfC4XNK2Pgfjc
-         8YL+HooTw2fQCplPsl8Bm+D3JZ88/e/6b3tTBL6d4raBRAFHgBw/aDmEH9nbfLn56Ouu
-         5XokSUy/8e7yYey4lC9/bq1VcbJixtaLVam7/ZAH1O42SYeA0/HyND/P19NDceE/VuzM
-         c6/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718081526; x=1718686326;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ehRXid+5yEA0xT7TzSIt1MaimTqtIHWJl33gJuDzaKE=;
-        b=WP4AQqFhcAONq9CELMbcy4uUzKn/53oTtshmsg7OUMCxkg+dvFGBVfZ8Q2YquN9iGv
-         L/OdKh/Zsrc42ZeytG2cJWeIfAR1kNmCSUvbCwPJMaM/D56SZFqFZhPzIednhw+02BHC
-         PrlFEQlODCKczf0e7iQmpAIVIsQiV+cEkD9xbFAjWf1VOgzP7fc8G2caUE0OoPs70Ams
-         LBThrqaXEYmQw+sXnrrPNlm5UvhSWoudPGm2OBUKuW7y2JzLMd76IYnv3cdRstLbqO6m
-         lpxmBe62v6ZwpGw1wm+0ZGvYB03Lf6iyqoXZKWFwvyWyr1fDZ0XW0SmQHm3aGOt3ncB0
-         qh3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1QW3wJJc2SP+ydG1K/7xgrVKhxsztC8lzHxSauF7s+SAtGf+/Tq4C0XjVUqIsQqKTDVuv/LD6r2gb3fk/FXIr5nX+8ghjzbs+Cx+C
-X-Gm-Message-State: AOJu0YwekMepkt5OF1x3EfgfyzdPTOP8lhrnj46pNxoGeyB4O6gsE/cb
-	oeL3gFC43fOWBVfa7E8v9ltoP8mU8/cA+YfPigt8KaKEAlWxH9pOGXPHFSaJ/GU=
-X-Google-Smtp-Source: AGHT+IH0lC83vmNja8AE71i3TrZcd5JzYAtGnU7Kfaw3qewnJANh1AFZkh4ihNNhebHCy9pOqJbXDQ==
-X-Received: by 2002:a17:906:2e82:b0:a68:379d:d623 with SMTP id a640c23a62f3a-a6cd7a84203mr640846366b.36.1718081525789;
-        Mon, 10 Jun 2024 21:52:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f17561c3dsm286452366b.217.2024.06.10.21.52.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 21:52:05 -0700 (PDT)
-Message-ID: <b9c97dc4-b5d6-4886-967c-6b7d331d27a7@tuxon.dev>
-Date: Tue, 11 Jun 2024 07:52:03 +0300
+	s=arc-20240116; t=1718081984; c=relaxed/simple;
+	bh=accUI4Ob47/mGnG38ZHmlsUndsefVIHJj7mN8QZs4oU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLL54E9CvVYjQfwe+DCWatZw+YOJs3n2eluSjKKrM78Gf+rGgYtvd9JrYGi+udFhbFyqQ+6cTLjIzK1Q143kGHNiOtB0p2J/tGOOZYntdQffXz9vqQVh6qy/Pf/d/QmEe780cc88UU2TOInR6LgLjO9gjuhLBEtl6cclNLNqYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bw18CTVz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WNevOOm63bNyWQcozMtSXtp0dk1N2fSRps5B0mWi8Lc=; b=Bw18CTVzsoMhcxtU1jfh7ZMRi2
+	Uv0U4JYPI+MweNs1IG28JZ3/oBF5H8hd7n2/x5I5wo3pR5YGAzsEBDxDLLqGw2LBaI7poPBXtF+S6
+	1NkopJ/GqEG3vg7qs/sxdp6y5WBwkEMm6N8WO2562gB1RP9LOaKzcG2wjznRKVqSHaks3LMhFyCGK
+	JKs3qrqnUueJPxwRwB+bnoYSQO2VQeveQIw28cFtEQIRdWVf0qzCvU5JSq5k8GBO1WXJjkh9J5CSb
+	+R/cneH1rywoMnVaUWQb5CDA+JwYkmlO9RjBDbbiARt1rWGtTvkfDZUNyEh/efpe3S+UbQglR6ba4
+	iMlzboyQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGtbe-00000007OZd-3XLk;
+	Tue, 11 Jun 2024 04:59:38 +0000
+Date: Mon, 10 Jun 2024 21:59:38 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, josef@toxicpanda.com
+Subject: Re: [PATCH v2 1/2] vfs: add rcu-based find_inode variants for iget
+ ops
+Message-ID: <ZmfZukP3a2atzQma@infradead.org>
+References: <20240610195828.474370-1-mjguzik@gmail.com>
+ <20240610195828.474370-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH/RFC 0/3] pmdomain: renesas: rmobile-sysc: Remove serial
- console handling
-Content-Language: en-US
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Peng Fan <peng.fan@nxp.com>, linux-pm@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1716811405.git.geert+renesas@glider.be>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <cover.1716811405.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610195828.474370-2-mjguzik@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi, Geert,
+> +EXPORT_SYMBOL(iget5_locked_rcu);
 
-On 27.05.2024 15:41, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> Since commit a47cf07f60dcb02d ("serial: core: Call
-> device_set_awake_path() for console port"), the serial driver properly
-> handles the case where the serial console is part of the awake path, and
-> it looked like we could start removing special serial console handling
-> from PM Domain drivers like the R-Mobile SYSC PM Domain driver.
-> Unfortunately the devil is in the details, as usual...
-> 
-> Earlycon relies on the serial port to be initialized by the firmware
-> and/or bootloader.  Linux is not aware of any hardware dependencies that
-> must be met to keep the port working, and thus cannot guarantee they
-> stay met, until the full serial driver takes over.
-> 
-> E.g. all unused clocks and unused PM Domains are disabled in a late
-> initcall.  As this happens after the full serial driver has taken over,
-> the serial port's clock and/or PM Domain are no longer deemed unused,
-> and this is typically not a problem.
-> 
-> However, if the serial port's clock or PM Domain is shared with another
-> device, and that other device is runtime-suspended before the full
-> serial driver has probed, the serial port's clock and/or PM Domain will
-> be disabled inadvertently.  Any subsequent serial console output will
-> cause a crash or system lock-up.  E.g. on R/SH-Mobile SoCs, the serial
-> ports share their PM Domain with several other I/O devices.  After the
-> use of pwm (Armadillo-800-EVA) or i2c (KZM-A9-GT) during early boot,
-> before the full serial driver takes over, the PM Domain containing the
-> early serial port is powered down, causing a lock-up when booted with
-> "earlycon".
-> 
-> This RFC patch series aims to provide a mechanism for handling this, and
-> to fix it for the PM Domain case:
->   1. The first patch provides a mechanism to let the clock and/or PM
->      Domain subsystem or drivers handle this, by exporting the clock and
->      PM Domain dependencies for the serial port, as available in the
->      system's device tree,
->   2. The second patch introduces a new flag to handle a PM domain that
->      must be kept powered-on during early boot, and by setting this flag
->      if the PM Domain contains the serial console (originally I handled
->      this inside rmobile-sysc, but it turned out to be easy to
->      generalize this to other platforms in the core PM Domain code).
->   3. The third patch removes the no longer needed special console
->      handling from the R-Mobile SYSC PM Domain driver.
-> 
-> I did not fix the similar clock issue, as it is more complex (there can
-> be multiple clocks, and each clock provider can have its own value of
-> #clock-cells), and I do not need it for Renesas ARM platforms.
-> 
-> This has been tested on the APE6-EVM, Armadillo-800-EVA, and KZM-A9-GT
-> development boards, with and without earlycon, including s2ram with and
-> without no_console_suspend.
-> 
-> Notes:
->   - This should not be needed on RZ/G3S, where each serial port device
->     has its own PM Domain,
+EXPORT_SYMBOL_GPL for rcu APIs.
 
-For the record, I've tested this series on RZ/G3S. All good with it.
-If any, you can add my:
+> +static void __wait_on_freeing_inode(struct inode *inode, bool locked)
+>  {
+>  	wait_queue_head_t *wq;
+>  	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
+>  	wq = bit_waitqueue(&inode->i_state, __I_NEW);
+>  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+>  	spin_unlock(&inode->i_lock);
+> -	spin_unlock(&inode_hash_lock);
+> +	rcu_read_unlock();
+> +	if (locked)
+> +		spin_unlock(&inode_hash_lock);
 
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The conditional locking here is goign to make sparse rather unhappy.
+Please try to find a way to at least annotate it, or maybe find
+another way around like, like leaving the schedule in finish_wait
+in the callers.
 
-Thank you,
-Claudiu Beznea
+> +extern struct inode *ilookup5_nowait_rcu(struct super_block *sb,
+> +		unsigned long hashval, int (*test)(struct inode *, void *),
+> +		void *data);
 
->   - drivers/clk/imx/clk.c and drivers/pmdomain/imx/scu-pd.c have special
->     handling for the of_stdout device, but is probably not affected, as
->     each serial port seems to share its PM Domain only with the serial
->     port's clock controller.
-> 
-> Thanks for your comments!
-> 
-> Geert Uytterhoeven (3):
->   earlycon: Export clock and PM Domain info from FDT
->   pmdomain: core: Avoid earlycon power-down
->   pmdomain: renesas: rmobile-sysc: Remove serial console handling
-> 
->  drivers/pmdomain/core.c                 | 24 ++++++++++++++++--
->  drivers/pmdomain/renesas/rmobile-sysc.c | 33 +------------------------
->  drivers/tty/serial/earlycon.c           | 14 ++++++++++-
->  include/linux/pm_domain.h               |  4 +++
->  include/linux/serial_core.h             | 10 ++++++++
->  5 files changed, 50 insertions(+), 35 deletions(-)
-> 
+No need for the extern here (or down below).
+
 
