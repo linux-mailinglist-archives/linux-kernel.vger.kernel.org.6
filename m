@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-209733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F60903A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:27:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE45E903A09
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7549C1C21D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F7B1F234B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF90917B42F;
-	Tue, 11 Jun 2024 11:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F56117B50A;
+	Tue, 11 Jun 2024 11:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgV5M1cC"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yR3r7+xn"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7040617A930;
-	Tue, 11 Jun 2024 11:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D2617B41F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105217; cv=none; b=mruRQl1EtuX8gPArvFWteTF8UaCouY6gbnLdI4pDoWEIM7n7Ry24yZIUOWqmjZ1WI16QP67toKzoYrFD3YcRM/Rc2Q46fUWllsav+/Zqz8uz6DxF+jqkCtjcnpExHFssB6z4TLCmrgbjB03P6fyzM0c/gjXQNltLbt0JRaYpUH4=
+	t=1718105218; cv=none; b=SYuNhF4Orr/d6pLH0L++zwuYy8lnZMRD0MrYRLXI6HCFprUOu4IROrszXaat2jj2zC80gl5pdVB5HORGU+es4+lu9Rm6dBpP3M2cUA7IUxdZrgfvhhUXBHgKgjJIzwcXFhD60Vrb++z6aejZjPiGltQ1ywdE0V9CtiTTmDeSOpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105217; c=relaxed/simple;
-	bh=0vttU6plmC/ACJPGa8Cko9Nk6HM7dRc0+cN+OvUCcGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mi2Xqiy0opMEiuAwciNN+saBo18vTaUebMqzjymq/Bu2N9zDH1LfhmUt3soIpWcDuEG3R7tth55R1bVLkG4FE4HQYxcJn22WJ+EMZE69dJGFipP/WpHW7t5TxCwz/j27PqpxiLxFhU5t74ZM3J4vaEm+taYFRHg8hgGxZea9ac0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WgV5M1cC; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so49008711fa.3;
-        Tue, 11 Jun 2024 04:26:55 -0700 (PDT)
+	s=arc-20240116; t=1718105218; c=relaxed/simple;
+	bh=pbRlDuabOT8nyBwfQKvsyClHBBDYEiD147x9jPMMr+U=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mMf0Jm9ScN6Mf1kXhUBWQEmgeo8FMhkvnekMxUjKHZ5JiXGLQyZ1rE0B/2QZE4pjD8RijZcZCVbpAKnz8hzKJEuLwbk+6mnCKsgU9/u5lW360VcSP+NuANbQztfyl9GUgXM1L0G0/D6kkMlCtCJE1TEUaCveQa+ZqXXmoSCMvsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yR3r7+xn; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df79945652eso1573270276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105213; x=1718710013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ct2faOqflrZfkFZbWfpkQItxoF/ht0542akQkf4ySIY=;
-        b=WgV5M1cC0afnhw5hOemidlXmsBNy/WPVGm9UmP7o5v9JmSNYZCD0qxFRN5MT5ZChln
-         1UGv3eogE0U9rcabdYCKgapEJIX6zK22vkYt1SqitWeEMk0k85g+M1hlwy3htgTzjhY0
-         0F4G7xuR3SYnFu+OBJDwj3Eg/V9sT7CAP/Ev0OnA7MwG++d5SzeZbbSkH+zMPL4tQVXg
-         SABAi+BC0aWFj9zwU/JzBFsYQ2ZX/eBYe/6QJreHtoFP4IPAShX1L2RiexEbrJYSUWKW
-         x0qGa0xA0Gh+iq7BDNhXzat8I2RU5RWY6eng9euATLpk9815rIcOkZ6Kb8XqgAk9jb8u
-         Gsxw==
+        d=google.com; s=20230601; t=1718105216; x=1718710016; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MaYjj3o2ALLcKToV9N4PUJjf27yiK1Wwgvm7Ar9oqEc=;
+        b=yR3r7+xnQupdgaB2CRM4lXzCHNaZHTIEVMtnl0RyeygmeL7hGLoIpFyY6HeRFCsyZq
+         eYxfhcLuRtstCNHxBU4uOzGNzEOiuJtfQETZJkXJKH+sJh9BSI6hjL/8A5mGstUwpjzA
+         63A5pD4quU03JG0VjFIdkNUGxMr31KYz5LS7DrXKMmWxg6HFQDR4a5n3i//2EWG+tZin
+         lICeEkS4MUmWOndQZKr1C6dCsvxCwux9hq9O0OEZnpuNt0gcEqLk9sbfB3UuWwRtoVbx
+         F+BlbA7XkwhghU96Z4Vcyz90huO5qnu+s+5829KFABrJDuZRF9dq1xjp61RxxiN6JmUY
+         zIfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105213; x=1718710013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ct2faOqflrZfkFZbWfpkQItxoF/ht0542akQkf4ySIY=;
-        b=ju6U4cpcH6LmvdiYxU2um/SEYkwslVdGZ7JCgthg60i1CGkJI++x9t6JCY7JpmRUJT
-         T96p8/ITAnL57Hf3HCnqT1WR8Zz7v3Bh3ANz4F6qWE/6vcOYlrVjKVRRkrrxI7rC8tbm
-         D1wziP4PhaWxbAA9vuFCdxE9X71QyRX3flr1m10fR0HJiddfVHjYiYYTKHQShpk/AkJM
-         3DzZIcBWmIoo+VkIUkwcoPoq/lEQ4plWwcwq0VJIZRb3Pg5QWept3maWCWweR4C7ckfp
-         oEG3k7IHuAeRf3A6jmtUSCB0wNCLgt87FC9EFkJsF4Gk4vIhjS6Z2iP/S/lycNXj+b0Z
-         AVNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+3upz1aXTJnp4TmphPCCajjkFdvjFlS0k0oDiNwohugUsVaLuhOnUIt7YD/ht5LnhlYMpndhMd/zduEEvwJCg9yBOWet8beUgzOmc5W3SSwk5k7TiQ3kPar41LEru7051IQnTE4I2n1xMrQ==
-X-Gm-Message-State: AOJu0Yx9R9NZywxSCXlHV/49eFFQMG6d8kxlrg+x/kQh5BuWChtXABAv
-	zFTef+D1e1VW/Cj8dF0JgsX8Iw4ubwSj0ZORTPGfYvswMZjSwMMV
-X-Google-Smtp-Source: AGHT+IE3P08IT2hRBHsTqRhuv0QKHHCpAJ8Z9VeZ+FU2dD5sgpFhSKahAInBi3AaJDmjs7NkNfUuXQ==
-X-Received: by 2002:a2e:a988:0:b0:2ea:ea80:5328 with SMTP id 38308e7fff4ca-2eaea8057ebmr71681461fa.45.1718105213204;
-        Tue, 11 Jun 2024 04:26:53 -0700 (PDT)
-Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1a7c663asm8277814f8f.115.2024.06.11.04.26.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:26:52 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:26:45 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <q5xcdmugfoccgu2cs5n7ku6asyaslunm2tty6r757cc2jkqjnm@g6cl4rayvxcq>
-References: <20240611041540.495840-1-mjguzik@gmail.com>
- <20240611100222.htl43626sklgso5p@quack3>
- <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
- <ZmgtaGglOL33Wkzr@dread.disaster.area>
+        d=1e100.net; s=20230601; t=1718105216; x=1718710016;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MaYjj3o2ALLcKToV9N4PUJjf27yiK1Wwgvm7Ar9oqEc=;
+        b=JD0a/E3+bYbwg8KsvgegBf20HAjA/hC7B1Y4iwl/FAN7pW/Za3QLG44k03sDiVjVZj
+         /vlP/mZ1GtOxJsc1RsSB/TykbswQYWNzJIyGuGtDbvyH1KKG13/pxA11vaBvgEHQIs7/
+         o61M8wOg2LGWtkTHawdd2LJKgkUUgP393X03BiCQeaE+eLmnInJ5YuitziI5rdTHvxXl
+         QK6TEge0sFNXArFYiK185W3om3jTnLbdf6dnv6a/VOGrHfr7XSvenHHTqYl7wmfo0Uyx
+         g1OO5sb0/U+NFUu8ecXO/Fw32b6csFM0TNUpVcVcTLLUT/siiC1j71RcUPzAOBWUJ0HV
+         kkqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaRFzPaMTrWVCOtp22iv0Xxcxk6DlTkO1IiZO1N/MYvCFi2JM9+Q6nM/L4KAKAkWz3RsydNgE++5ZIo+ORDTErhlq7N+hRh3ck/skD
+X-Gm-Message-State: AOJu0Yx/o0UJZ4qGgxNbryLiMSN70P9MUe4sMO/KvRGyQijhflHYFLpO
+	BC8mX8cCb4wOpGbgBCWhM+uRSpJk1KaF6c7/i1BrTnKpfsVsea/Mo6GYabDQ3S3wb/kBfCQJ7G+
+	cjb4BEyN54LRijmtVXSmMkFakAg==
+X-Google-Smtp-Source: AGHT+IElcMdi3wlvSVhWoNYrNzkONnlxS4SEerVIJykNzoKLbDz1/mE4KxfpG2CZvaHhQRvKrrqTLgiDAqi33MqtNN8=
+X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
+ (user=aniketmaurya job=sendgmr) by 2002:a05:6902:2b8b:b0:dfa:849d:3a59 with
+ SMTP id 3f1490d57ef6-dfaf667471bmr4157407276.13.1718105216433; Tue, 11 Jun
+ 2024 04:26:56 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:26:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmgtaGglOL33Wkzr@dread.disaster.area>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240611112650.411214-1-aniketmaurya@google.com>
+Subject: [PATCH] i3c: dw: Fix clearing queue thld
+From: Aniket <aniketmaurya@google.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Aniket <aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 11, 2024 at 08:56:40PM +1000, Dave Chinner wrote:
-> On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
-> > I did not patch inode_init_always because it is exported and xfs uses it
-> > in 2 spots, only one of which zeroing the thing immediately after.
-> > Another one is a little more involved, it probably would not be a
-> > problem as the value is set altered later anyway, but I don't want to
-> > mess with semantics of the func if it can be easily avoided.
-> 
-> Better to move the zeroing to inode_init_always(), do the basic
-> save/restore mod to xfs_reinit_inode(), and let us XFS people worry
-> about whether inode_init_always() is the right thing to be calling
-> in their code...
-> 
-> All you'd need to do in xfs_reinit_inode() is this
-> 
-> +	unsigned long	state = inode->i_state;
-> 
-> 	.....
-> 	error = inode_init_always(mp->m_super, inode);
-> 	.....
-> +	inode->i_state = state;
-> 	.....
-> 
-> And it should behave as expected.
-> 
+QUEUE_THLD_CTRL_IBI_STAT_MASK is repeated twice.
+Replace with QUEUE_THLD_CTRL_IBI_DATA_MASK.
 
-Ok, so what would be the logistics of submitting this?
+Signed-off-by: Aniket <aniketmaurya@google.com>
+---
+ drivers/i3c/master/dw-i3c-master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can I submit one patch which includes the above + i_state moved to
-inode_init_always?
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 03911a5c0264..77a2a1c3fd1d 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -631,7 +631,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
+ 	thld_ctrl = readl(master->regs + QUEUE_THLD_CTRL);
+ 	thld_ctrl &= ~(QUEUE_THLD_CTRL_RESP_BUF_MASK |
+ 		       QUEUE_THLD_CTRL_IBI_STAT_MASK |
+-		       QUEUE_THLD_CTRL_IBI_STAT_MASK);
++		       QUEUE_THLD_CTRL_IBI_DATA_MASK);
+ 	thld_ctrl |= QUEUE_THLD_CTRL_IBI_STAT(1) |
+ 		QUEUE_THLD_CTRL_IBI_DATA(31);
+ 	writel(thld_ctrl, master->regs + QUEUE_THLD_CTRL);
+-- 
+2.45.2.505.gda0bf45e8d-goog
 
-Do I instead ship a two-part patchset, starting with the xfs change and
-stating it was your idea?
-
-Something else?
-
-Fwiw inode_init_always consumer rundown is:
-- fs/inode.c which is automagically covered
-- bcachefs pre-zeroing state before even calling inode_init_always
-- xfs with one spot which zeroes immediately after the call
-- xfs with one spot which possibly avoids zeroing
 
