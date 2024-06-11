@@ -1,548 +1,292 @@
-Return-Path: <linux-kernel+bounces-209599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADB2903834
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:57:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45F290384E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEAF284944
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27E64B23C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4B5178364;
-	Tue, 11 Jun 2024 09:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4EE178381;
+	Tue, 11 Jun 2024 10:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dMPogvZj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hX7Q3KAr";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="x/GLDBxC"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4F9219E7;
-	Tue, 11 Jun 2024 09:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718099824; cv=none; b=mBZNae7qypEqYbsv1T/V4fFdQR6XVlcTsY/w25im1kYUKldNzfwo9YhXBuJFGUkyNNypq08llfHgip0uG3oG39C3OHDCbUoNyryWiRYRkvCVebgnauKWAAmD2yVhNRHB6muXx4dBfeZXPtqL/YzkYsNh4oIt+7miKHIo/lHT4lk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718099824; c=relaxed/simple;
-	bh=k+AxkPwC3F0KRkHdz95anWOmfG7UQnILv4pKX0P9aQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRwmYGJfwTsZZsFuFlG2SPsxLbg4E3dITZ++inO/tOHHirrdFGmdxJxPcWR74wgTNimvYWfZ5tzXWkOfksE5KE2UtzJ09JWKN57HcfiV/QoxXy+GAf8oQ/LpyktKEplHiQ9jBuiX7D/ZTBwy4Qa8vAt6u3UZZ2s3ahlhOX0+7SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dMPogvZj; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718099823; x=1749635823;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k+AxkPwC3F0KRkHdz95anWOmfG7UQnILv4pKX0P9aQM=;
-  b=dMPogvZjsqD+M6oS6PBMgznF/alFrWcwTJ+IHJ0nPXtKgJ3hQ3TMEsEz
-   Q9yd33AL3q1W5jw6UW34Cb6qSj5aodc3937UCx7efTnO4HXoVlGOuBp5+
-   q3UvCDgRw3DtAdABM9H/SexMikZwZIv6VjXTHgOMoObmIx71ThKQPjQZs
-   epJtPTFxfem9FBG9RXJqH+aRk5yteEi+IyOC2jvQ/u5p0M+Cl2dkiJ0iz
-   3ME8+8eEiZNOr/JXDRnvINYVmFzhRZq71g8Z6xk5nK5SrZ4Eb1eQjVa3t
-   Pt7A5k44al1IMoqBU0p5cupA9EPdDND3CayGVnOJ5f2uZ/86NmpDotA0i
-   w==;
-X-CSE-ConnectionGUID: rFY3BcCeS/Suw6hqSMafFA==
-X-CSE-MsgGUID: gYcMyj/oTgmZ37CB81tr9A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="32282234"
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="32282234"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 02:57:02 -0700
-X-CSE-ConnectionGUID: OnFUihg7TKaqGjaZjY54kA==
-X-CSE-MsgGUID: CiOEjktwTMe9B2aanNPjrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="39830126"
-Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.195])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 02:56:58 -0700
-Date: Tue, 11 Jun 2024 12:56:54 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] printk: Track command line console positions to fix
- console order
-Message-ID: <ZmgfZr5ccHATnkAA@tlindgre-MOBL1>
-References: <20240606114149.118633-1-tony.lindgren@linux.intel.com>
- <ZmgIB2lQaW9oqn3O@pathway.suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321CF156E4;
+	Tue, 11 Jun 2024 10:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718100122; cv=fail; b=k1sfaL3qQo5+sY7Cdv/xuVyISclTy8fKge2EPbyUy9UO9sH+e7tOBadKzOPRamFkGYPXZ6wGoLglORImxCnuItqhxgFZTXaOBxf1/P6zJO+wJAfHLEEduqXvuPRzGIOY5Bu3CDqbYYvjgqbmfZpg0JU1Z9cXxBPwb8ltC0ni9Jk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718100122; c=relaxed/simple;
+	bh=VjHgBBzk2ukjyFZwNXAR7/yERJvzsgzzDN0ZF31sAu4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MKOv2nH1fsmRehPFI1lf/JoLUrYzzZkUaM2Ce3+aZDkrGtS/ms7L9KIqVxcu+coQNdadjOzJkEC63J5cck+YoidsccKUW5nkNvuk2EzlQ1VDIf3ekXIeGbQgzamhXZkukqMoH1TQOVEMkAnDUHfS3pN9+H/e86conGR6DkzboLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hX7Q3KAr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=x/GLDBxC; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B7fjMT006260;
+	Tue, 11 Jun 2024 10:01:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=WZxJK0KitjFsNbI46ijt4PwHXcRqbytXHT9xXCM8QRM=; b=
+	hX7Q3KArfpFdszkEf3ex5Gmmo88RVY5yC34P9QZ3s4aQWb0sCxF6EjhTTKUowKKA
+	/m5cJi0fdjTCXXGld1xpKqQTzp1cA+g/9fXbM5J1khkd9l5TPiv9uFDbuImH+Yas
+	19QlSRIbSh/62QmWz5AhKuY30jaHO3xuOXpFAvqTKNFd8BjA6JhZOhCFrGYThdaI
+	PSImvSub7w1k/ax5IGv4Z1iZWCoT81q7e2wiFTo+sJK3l8uJFujbjzgjvotPV4JG
+	VQtgbSzKuOtG3DteteAj7PVLwpvYirasDMX9+PVt/hCmfqhK+MPdS4HeugxM1Jxx
+	qIgHCioJM5Kd8HR8SwkTPg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh3p4f8p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Jun 2024 10:01:19 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45B8UhlV014235;
+	Tue, 11 Jun 2024 10:01:18 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yncetqcn9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Jun 2024 10:01:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G7lKb5WZadP07RzOjTflJg39o4n7FYz+758Q8hsf2ZTVBI2vp6yIHMC8U47jXHmDTkFVdxU6/pdWjhDb79LmpBlVhOCzEmsW9lwhalKZ18wFbhzR8OXTaKfaKqvMeKv9lGZ5rN7AJemUlTNIkuXmpcWuW0bHHLIEoaUs1razU5L7sCygnVjAh1edXbDTLXVAFQQTjwJTD7thgEhtdCzsVFReTNSHYkhF2lVbFa7Dkbbtduk9xBPqX/kv6TlaQcwK7qLpeJherzukUJeJEKnMzvCiOfJHEvFcNxOHVPkx8p8hUyAa5TzAp2UpAF0q/H9GNkJDAV3u7ZxGAH5t9Rq59Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WZxJK0KitjFsNbI46ijt4PwHXcRqbytXHT9xXCM8QRM=;
+ b=llJ0fP7CF5Ako6FdtJI3IrApsalt7u3uk4mqZxhUBiMhxvps2ZVXNbn40BhhTLEixU6PwBTSnhirTFw1YDYG2JyXv8t7wlt3pt6TBtyAp06UiI8n78R1JA3X2i95kGYleYO1+FEHd0xw5tLC647orM2Cwya0h+WLJGfzaZbBlrt71IuoXID/UWvIGPIHLxygcdTDi/noGzFbOcPi8SS+8nMViQFMnkVd2TAVFOihe9paVGi+PwDyl5iRULN/nHiibwYNbEvtlmJcK3uZBbR4TlQFNO98YHnYKtSHtTNI28m5Fst4iHtjtveqLs+fjfLL70t9pkkWub66ZkkQjpmYXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WZxJK0KitjFsNbI46ijt4PwHXcRqbytXHT9xXCM8QRM=;
+ b=x/GLDBxCn2VVRksfqc+yGz5zH+TR6HEZLV1sGDfxFsbv1bH2NBCq3ALd2pPmv2mNi7BGfdx+GjC5F6B3BqE5LHqJkvXJQPJnRqCLC7VopbZZXETfVKRSBS34tdZFq99MRGHLb8DRUN5OgXZC5kaqyxdUg6fucbhRWAjpWNnFiEw=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB7143.namprd10.prod.outlook.com (2603:10b6:208:3f1::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 10:00:49 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 10:00:49 +0000
+Message-ID: <f922b3e8-eecb-42c9-8dba-f17f9bdd31b0@oracle.com>
+Date: Tue, 11 Jun 2024 11:00:43 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+        brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
+        mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
+        linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+        Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+        p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+        gost.dev@samsung.com, cl@os.amperecomputing.com
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-8-kernel@pankajraghav.com>
+ <4c6e092d-5580-42c8-9932-b42995e914be@oracle.com>
+ <20240611094137.vxuhldj4b3qslsdj@quentin>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240611094137.vxuhldj4b3qslsdj@quentin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM4PR05CA0024.eurprd05.prod.outlook.com (2603:10a6:205::37)
+ To DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmgIB2lQaW9oqn3O@pathway.suse.cz>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB7143:EE_
+X-MS-Office365-Filtering-Correlation-Id: dffcef7b-d3c2-4f66-d5ef-08dc89fd5f21
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|7416005|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?cThEVGlwQjZtV1hIdWMvMEQwUHA5bzJhc0RWWUsxMHArZTJJVDlJUThlSnh3?=
+ =?utf-8?B?anR2Z0w4dDU0UW8raytSRUkxdjFTZ3VVNTB6NWhTTTNndHl3dHFwUG8va1p6?=
+ =?utf-8?B?MytIajZJK3JtTmxJMUtOZGVGdGlTWkZHWnpPbHEyUlJNZmdwck9KWjAydHZs?=
+ =?utf-8?B?MS9tWVV6YWZDMUNMdTVIQnJzSWVCbmhZMmdYN0FTd2VnYk12a3dsYnVEbjk1?=
+ =?utf-8?B?eFUxdnNITlNvVWhKeXkwcnFiQWJZeGwyYmtNQTIyYXpmMmNOa3NmOFpsRWJG?=
+ =?utf-8?B?WHZucUxPajRVVnRWVUtSSFVoTER1YWVnL2s5a2gxMVhNaGk4cWp2OTRqZDN3?=
+ =?utf-8?B?enRMMStGdFcyQllwRHloalpsNU9YQ1dTZ2FSQUY5QUJJQzNOMHJLdVluK2dw?=
+ =?utf-8?B?c1FaMVVLVUhRMW9QSllHZFlUdUFvSTkyWkgwRWNoOGlwTmNmQUUvZmN3K1VR?=
+ =?utf-8?B?Qk9NYmIxeDNTbFJUY2QvUE1zaFJlZzVKNE5ueVloMEUvNTV4WW4rMjFManNl?=
+ =?utf-8?B?cGw0TFRrb1IrZmpjb01kWTVsOEtvU3huSTlLazdLOHVXTkxwSmloNWNXVldF?=
+ =?utf-8?B?U09XaWhiSC9LWVRaa1FEL2tlekNYeVVwMmVGUjkvcll6cmkvejZiQ0tHOGpB?=
+ =?utf-8?B?SWkvY1RKaS93elV2RERiUWt5L3NTWWMxZ0V5TDVpbEVxMzlGUkR4Ykg2bHpm?=
+ =?utf-8?B?S2pCSDBsaUdxS0huZStGajFELzA4UWVpY0M1YU5tc3VZY29idnJQRmFvS0xl?=
+ =?utf-8?B?MWJDYkJUcndPS1BkaGJlZzk4M3J2b0RxQXR5c0hGTGFoVTRrKzE0USszakJK?=
+ =?utf-8?B?cXZDY1Fob3R6c3JzekQvTW12SlhVK1NjaHp6Z2tVQUhMeWNPMDV5RGoxWFh4?=
+ =?utf-8?B?M3creUtXemVWNzJua3Z2YndHcmtlYUNOQkxPamxHdVc5cVl2K0QxNVlZVUJl?=
+ =?utf-8?B?cVpydVNNM0tmT0l0VzJDc2tLdVVWMVVhTmNSUE9sRkNOK1ZCRWJuL295OStN?=
+ =?utf-8?B?OHZlYy8xclg1djgvWVkrNjJNYXNZaEdtSk04d1o3TjRrNDlMSjFWNXVkWFRQ?=
+ =?utf-8?B?cGZYVkRueFBwZjJYMHFDSVRGSjl0d2tsaDVUci81c2VrdGxYL0hIZlNBbmRM?=
+ =?utf-8?B?WWtYK2RRcEhWaklDcHcxK0g5dzE3Q1c1b3JKL0dyVmVLRGJqTjd3c2xuS1dT?=
+ =?utf-8?B?T3BsRk5PbDNURVNaTzljL3RIdkd3QllFZm1SZnJ4dFF4Nm5iZWM4dmlTakEw?=
+ =?utf-8?B?cWh6cmdrdm5WdEJZeDg4Tm5WZzJwM25ETXVNUExwWFZHVzJTZTV0SFVyeDNk?=
+ =?utf-8?B?alFGeXoySnR2NTZkMW8vcUZzTEdCZWpBaVcwcE95L0t0UlY3bFVINC84Nmx4?=
+ =?utf-8?B?MUxLdENVUGRsU0M2QVAvZXVRdEZKenQxaEwvazd5ZXJaakxRRjFrKzFHVmJW?=
+ =?utf-8?B?ZSt1RDJIekt3T0NJVlV2N3hDMkU3MktqKzQwVFNJNGlGVHU4L2NGS1lHQWhr?=
+ =?utf-8?B?eSt2d25zUmplSUozMTh5M0E1ZmdtYUplL1NqckNHaElZMEFCT2VHUG11SVgv?=
+ =?utf-8?B?a0RSWnkxbEZXQWJlR2xZUUpwZXhDYm50Mmo4Y0tEeE05NXZCdzZTQXdwMDJD?=
+ =?utf-8?B?Ti8wQ2Vzc3pqdGpXR012T3lZOXhBT0g0YTZVVEhuODNsTVZubU14V282d05l?=
+ =?utf-8?B?TjJYblpoZDJzSldWdyt3VGd2T1AzTXlJZjJKTFI0L05uRjJrbVFzL3hBPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?NFU5eTlSeUpaOGc5TG12bHdqbUwrS1hHZzhrNnFlb3VjWTFvZGVaa010dVUy?=
+ =?utf-8?B?RlBMczhYbnVLL2thYmNidFpsYkkyN05xcDYrNTAweFV4d2pkRmRNOVA1TTJU?=
+ =?utf-8?B?bkJQZUlET0RJS0FHaGxXak04ck1MN3JwcWhVRVV6Z3FHRzZTT0hPem5MMXhy?=
+ =?utf-8?B?djg3R01Xd0FIUG53NDRSLzh0bmFUdTMxbGtnbjNLN2NxQlJ0SC9Peko4OUcz?=
+ =?utf-8?B?T2Q0RnFqTXFNeE95c0FwSVRPVnpjTi9pUHlnOS9MdENraEZxZ0ErQVl4ejI4?=
+ =?utf-8?B?VXdnb1Jjd0JTUncwcVROOFBVS2ljNFA2TmQvWFdiWUphaTh2Zjhrb0FaMW9J?=
+ =?utf-8?B?dzQ4L2lJTmYrUHgvS25xUTNvZU1oTWgwajdtcHVZcXBJZWtLK1YvWkQ2RXc4?=
+ =?utf-8?B?RkxjaGhEcUZMTGtWRXZxa1VaSmQ2ZHFKVStpYUJoek5lUWF2cXNEUElBOXNk?=
+ =?utf-8?B?bHpSZWVoSWJac2JpVVd4SktTdlYyUEtMWDByOUQxaE02YlBHcy9FTGMzaXdw?=
+ =?utf-8?B?cHl2K0cyWDZQWVJSSW9oNnJ0Q0hETjh3VkMvQzV5Q0djYy9CNVVSdDE1L2JQ?=
+ =?utf-8?B?WUx2NG1semozL3lKcWtrVTl3aFhKSC9WYitxbU1VVFl1SlFEd2FtMzhkTytz?=
+ =?utf-8?B?Rk94ZDZWSlNlVUs1Y2J0Y3cwRDVHYitDNGJUb2ZuaXZqMkhpeGMrSkFXbFIz?=
+ =?utf-8?B?V1M4cXg3WlpSUDhuNEM3N3AzVXNBSU5VVG8vRVVSdHk0eW1ZdDFTN05tNjFS?=
+ =?utf-8?B?QjlDVkx2bjVINGNKR0ExaTNxWjM5OWs3QjdtTWNFZjFlbURqSUhFYURCK2k0?=
+ =?utf-8?B?QWFHcFFjMkg0TE5EL2tQS2E0cmJ1RENCc3dzWGtGV0NRRVRnVFp4U2FXRzRD?=
+ =?utf-8?B?NUxYUHhQTE1zQ21kOFdPSEJaVjAybUE2eFQyVWdrSU5jQlViNE80MUhsaTlX?=
+ =?utf-8?B?L3NtSlNDR0FGNDFmWDhLMUw2L2MyVWk5VFNrY0VFcVJTZkRVMklrdlVIektl?=
+ =?utf-8?B?UzIrR0VSaFUySFhDYWJnOVVrOEtyMGVBS1JSZDdzVWZ5K0dUR2xhR3Q5K3pW?=
+ =?utf-8?B?Z2J2SWkxakROdytDY1ZBNi9TdjNIR01jeGJrcks1d2R1aDBSNGRtK2hqaEd0?=
+ =?utf-8?B?NlArWmFhOVFRQzZiSnFSZW9BTVZlM0RDNUFIM0p6YzZMOS91YUlaNjUwSW1k?=
+ =?utf-8?B?ayszWlVVUnIxQmlqREJyeDMyd0dReDVFNGNndktiVWQ0cmp1ZGYxSXVQdTBp?=
+ =?utf-8?B?TWg4MWd5TEVJMXJBM01uWkRBakdqTitySVI0UVk1WE5RbXVMdXhCRzI1ak9j?=
+ =?utf-8?B?MGZkUFQ4MUtpY01VRW1NN1dXdnU3SWRYczNDSys2MTVkanFCYzNlSGwrdnNV?=
+ =?utf-8?B?UGdPWkNIRHdaMitzN1FrT2IxTFlOdm54TllCNWVMcHFnbmV2SEZDbGpLYlJU?=
+ =?utf-8?B?b0l5K0EzMTUwTmhTMmJaRjd6QldwQ3VzV3JieXNJbWRmc0pKdExKTXRHNmxB?=
+ =?utf-8?B?c0Nld3BPZ1p0VTY5SkQ2bTRlQi9lUUJZUExtbXB0SVFVU2NQZ0ljblVWMVdV?=
+ =?utf-8?B?V2FhbTJHa29OeXgrVnFlY2M0ZTFGakhteWRUbjFyUzlVUHoyZVY3ZThWVkRR?=
+ =?utf-8?B?ZE8zTDlvTWl0cVdiNTdUemluZUZ3YXA1N3RORGtTMmhQWmZnWkxQSGVHenUx?=
+ =?utf-8?B?bGQ1SUgxTU5VdVBTVVNkZms2Sm5rYlhSMUdKYXUvYjNLdEJocURveHY5YUFo?=
+ =?utf-8?B?bUhqT01jRmVDZWZsR25YYWNCc1hSTXlncnkreW04ekNuYjUzbE1ySjM2VWRK?=
+ =?utf-8?B?bXpoR3l6MlQ2RmxmQjJVd0xGaC8yYTdRSXdCY0wzTVZ1dXB3Q055K1kvMWN3?=
+ =?utf-8?B?YVpwWEJPWVhOdElBb25EWGpZTVRsb1cxbjdrZ0tuaWtPdDFxa3grcnJmQVNO?=
+ =?utf-8?B?MDZWYVBWY0Q2cDloLzZjZ1dsalY3TlRKNGZwUmgxVFZ0QXRNOWZEMHhicnlH?=
+ =?utf-8?B?aExrc0NuaFlqdXRySkRtdkV2UE40ZnF1NDY0ZnpBM3J1VVg2M2ZwUHRkSmkx?=
+ =?utf-8?B?R0xPUkJ3WUxBQmZTYndybmMxdjBBZWpXZVFqUS9sVm9NN0N2dnFLR1NMbitS?=
+ =?utf-8?B?NkErUGlnaXpsYzZFdE56K05JemFzbUVpalhCME54VzExSzFIN0NINnFNdHhp?=
+ =?utf-8?B?dEE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	S8HPbD0mwgwdaqoWzRyAocClSMjnNWH50awCbiA/fYqUYkssW0UudCdhREB4X87pduggHpC8VN4FWJ9PE2hsR1Pm6L8uG5GuGRBllDrnYYHwFBFvZYGjab7SYRaRQBey/FUmNFHVAIJintRd8RUeoD4feNQw3DOG9RzcipkMrfMuoPnyQPSsder2NNlFQfSYtgg7w7Cqug0HqCjaOFijnesBl7wuIpUTtnyqT/Gee86H+X5Vd02SvAl2S7F7udAby/lULEY06P2fXVzvqHL0yxsyZ1l37ssBkXni4n5xhZT6msOEEbR/7d9XoKa5WjDRvyD9OD3A5BhzvcZt73crY2ds0GKrkPh1WvJXpy3qEcfURUWxvNnHU+C1FS0y04WeAjvzvReHRwC0VygefMwkh7ikvpRDwxGKRKnxDzX2Wl9dp/CI5T2rmW+TKTwaSsm140F/29Pijwhdn63xgETajsGKLTaYlz9o2ZFPCm4adWcufEUp0K2XtG3RqxOn87O5DfaxUgyl5pgErUD/EkHLDAi6tSla6SgLGDtJNBoWMPNC5lI+9oUs6UulCfuAaStWZOieX5BMoM6Pagii/zks4G9qQMdaJl5LVdFRMZ+NoV4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dffcef7b-d3c2-4f66-d5ef-08dc89fd5f21
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 10:00:49.7789
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ua9b0fy2vOfBb+nNIDDSL1cY28whTBy8eulO/TJA5TdvGxF23f6o6OBOvZKbH5BQ2ohazB1R8bJu1BUPDmTgkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7143
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_05,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406110075
+X-Proofpoint-GUID: ntS48cbn-ouqc5gaS09vIqC25Ly8BKq3
+X-Proofpoint-ORIG-GUID: ntS48cbn-ouqc5gaS09vIqC25Ly8BKq3
 
-On Tue, Jun 11, 2024 at 10:17:11AM +0200, Petr Mladek wrote:
-> On Thu 2024-06-06 14:41:46, Tony Lindgren wrote:
-> > Recent changes to allow using DEVNAME:0.0 style console names caused a
-> > regression to the kernel command line handling for the console options.
+On 11/06/2024 10:41, Pankaj Raghav (Samsung) wrote:
+>>> 8419fcc7..9f791db473e4 100644
+>>> --- a/fs/iomap/buffered-io.c
+>>> +++ b/fs/iomap/buffered-io.c
+>>> @@ -1990,6 +1990,12 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
+>>>    static int __init iomap_init(void)
+>>>    {
+>>> +	int ret;
+>>> +
+>>> +	ret = iomap_dio_init();
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>    	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+>>>    			   offsetof(struct iomap_ioend, io_bio),
+>>>    			   BIOSET_NEED_BVECS);
+>> I suppose that it does not matter that zero_fs_block is leaked if this fails
+>> (or is it even leaked?), as I don't think that failing that bioset_init()
+>> call is handled at all.
+> If bioset_init fails, then we have even more problems than just a leaked
+> 64k memory? 😉
 > 
-> Sigh, I have missed that it has already ended in the mainline via
-> the tty tree :-/
-> 
-> Honestly, I would prefer to revert it and implement it a clean way.
-> I see a lot of existing and possible problems:
 
-Naturally no objection from me for reverting if there are issues that are
-unfixable from the printk point of view. I'll update the fix along the
-lines you're suggesting below though, let's see if that's enough for the
--rc cycle.
+Right
 
-> 1. Where and how is DEVNAME:0.0 defined?
-> 
->    The only documentation seems to be in
->    Documentation/admin-guide/kernel-parameters.txt for the console=
->    parameter:
-> 
-> <paste>
->                <DEVNAME>:<n>.<n>[,options]
->                         Use the specified serial port on the serial core bus.
->                         The addressing uses DEVNAME of the physical serial port
->                         device, followed by the serial core controller instance,
->                         and the serial port instance. The options are the same
->                         as documented for the ttyS addressing above.
-> 
->                         The mapping of the serial ports to the tty instances
->                         can be viewed with:
-> 
->                         $ ls -d /sys/bus/serial-base/devices/*:*.*/tty/*
->                         /sys/bus/serial-base/devices/00:04:0.0/tty/ttyS0
-> 
->                         In the above example, the console can be addressed with
->                         console=00:04:0.0. Note that a console addressed this
->                         way will only get added when the related device driver
->                         is ready. The use of an earlycon parameter in addition to
->                         the console may be desired for console output early on.
-> </paste>
-> 
->    This seems to be a brand new bus.
-> 
->    Is it stable?
->    Is it documented in Documentation/ABI/stable/?
+ > Do you have something like this in mind?
 
-I think the DEVNAME originates from udev to be used for various rules. Yes
-it should be documented somewhere though. I'd say it's stable as it's been
-in use for years :)
+I wouldn't propose anything myself. AFAICS, we don't gracefully handle 
+bioset_init() failing and iomap_ioend_bioset not being initialized properly.
 
->    It seems that the feature will cover "only" serial consoles.
->    But DEVNAME is a generic name. It might make more sense to
->    call it "SERIAL_BASE_DEVNAME" or "SERIAL_DEVNAME" or "SBASE_DEVNAME" or so.
+>   static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+>                  struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
+>   {
 > 
->    Anyway, console= is an interface with the user space. We will need to
->    maintain the backward compatibility "forever".
+>>> +
+>>>    static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+>>>    		struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
+>>>    {
+>>> @@ -236,17 +253,22 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>>>    		loff_t pos, unsigned len)
+>>>    {
+>>>    	struct inode *inode = file_inode(dio->iocb->ki_filp);
+>>> -	struct page *page = ZERO_PAGE(0);
+>>>    	struct bio *bio;
+>>> +	/*
+>>> +	 * Max block size supported is 64k
+>>> +	 */
+>>> +	WARN_ON_ONCE(len > ZERO_FSB_SIZE);
+>> JFYI, As mentioned inhttps://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240429174746.2132161-1-john.g.garry@oracle.com/T/*m5354e2b2531a5552a8b8acd4a95342ed4d7500f2__;Iw!!ACWV5N9M2RV99hQ!MTwVaC6oueHR_vgmDfOvgBX8bPdeTSRPcRcw5-CqtHnFEH-Ya1sUeZwaF-xrBF5XZ_8lJw5l-riq4t8IkfBhf2Q$  ,
+>> we would like to support an arbitrary size. Maybe I will need to loop for
+>> zeroing sizes > 64K.
+> The initial patches were looping with a ZERO_PAGE(0), but the initial
+> feedback was to use a huge zero page. But when I discussed that at LSF,
+> the people thought we will be using a lot of memory for sub-block
+> memory, especially on architectures with 64k base page size.
 > 
->       => we should think twice about the interface !!!
+> So for now a good tradeoff between memory usage and efficiency was to
+> use a 64k buffer as that is the maximum FSB we support.[1]
+> 
+> IIUC, you will be using this function also to zero out the extent and
+> not just a FSB?
 
-I think we want to keep it generic with DEVNAME, I don't see why we'd want
-make it serial console specific, at least in the code. For the documentation,
-I think the kernel parameters example  is clear on the serial port usage?
- 
-> 2. On my test system (kvm) I get
-> 
-> 	# ls -d -1 /sys/bus/serial-base/devices/*:*.*/tty/* | sort -t. -k 2n
-> 	/sys/bus/serial-base/devices/00:00:0.0/tty/ttyS0
-> 	/sys/bus/serial-base/devices/serial8250:0.1/tty/ttyS1
-> 	/sys/bus/serial-base/devices/serial8250:0.2/tty/ttyS2
-> 	/sys/bus/serial-base/devices/serial8250:0.3/tty/ttyS3
-> 	[...]
-> 	/sys/bus/serial-base/devices/serial8250:0.30/tty/ttyS30
-> 	/sys/bus/serial-base/devices/serial8250:0.31/tty/ttyS31
-> 
->    So, the DEVNAME:X.Y to ttySZ mapping is:
-> 
-> 	00:00:0.0	-> ttyS0
-> 	serial8250:0.1	-> ttyS1
-> 	serial8250:0.2	-> ttyS2
-> 	serial8250:0.3	-> ttyS3
-> 	[...]
-> 	serial8250:0.30	-> ttyS30
-> 	serial8250:0.31	-> ttyS31
-> 
->     Why is ttyS0 associated with "so ugly" DEVNAME "00:00"
->     while the rest uses "nice" DEVNAME "serial8250"?
+Right. Or more specifically, the FS can ask for the zeroing size. 
+Typically it will be inode i_blocksize, but the FS can ask for a larger 
+size to zero out to extent alignment boundaries.
 
-Because ACPI serial driver takes over the serial8250 port. Yes we are
-recycling the preallocated serial8250 ports for the hardware specific
-drivers.. That always adds some extra confusion on the top :)
+> 
+> I think we could resort to looping until we have a way to request
+> arbitrary zero folios without having to allocate at it in
+> iomap_dio_alloc_bio() for every IO.
+> 
 
->     I would expect:
-> 
-> 	serial8250:0.0	-> ttyS0
-> 	serial8250:0.1	-> ttyS1
-> 	serial8250:0.2	-> ttyS2
-> 	[...]
- 
-I believe this would be the situation if you make CONFIG_ACPI is not set
-in the .config.
- 
-> 3. The delimiter between "DEVNAME" and X.Y numbers is ":".
->    But ":" is also part of the sample DEVNAME "00:00"
-> 
->    Is it a good idea?
-> 
->    Is the current naming scheme a well known historic one
->    or something invented for the new bus?
+ok
 
-PCI and USB use a ":" already for the device naming. Also a "-" can be used
-by the device names, many platform devices do that. I don't think we can
-pick any better limiter here, at least out of the ":", "-" and "." options.
- 
-> 4. /sys/bus/serial-base/devices/ contains few more entries:
-> 
-> 	# ls -d -1 /sys/bus/serial-base/devices/* | sort -t. -k 2n
-> 	/sys/bus/serial-base/devices/00:00:0
-> 	/sys/bus/serial-base/devices/00:00:0.0
-> 	/sys/bus/serial-base/devices/serial8250:0
-> 	/sys/bus/serial-base/devices/serial8250:0.1
-> 	/sys/bus/serial-base/devices/serial8250:0.2
-> 	/sys/bus/serial-base/devices/serial8250:0.3
-> 	[...]
-> 	/sys/bus/serial-base/devices/serial8250:0.30
-> 	/sys/bus/serial-base/devices/serial8250:0.31
-> 
-> 
->     Are "00:00:0", "00:00:0.0", and "serial8250:0" pointing to
->     the same device?
+> [1]https://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240529134509.120826-8-kernel@pankajraghav.com/__;!!ACWV5N9M2RV99hQ!MTwVaC6oueHR_vgmDfOvgBX8bPdeTSRPcRcw5-CqtHnFEH-Ya1sUeZwaF-xrBF5XZ_8lJw5l-riq4t8Ij2hl9yU$  
 
-Not pointing to the same device, we now have serial port controller
-devices. Each serial port controller device may have one or more serial
-port devices. So in your example above, only "00:00:0.0" is a serial port
-device, the others are serial port controller devices.
-
-So above you have these:
-
-- 00:00:0 is the first ACPI 8250 serial controller device
-
-- 00:00:0.0 is the first serial port instance for controller 00:00:0 above
-
-- serial8250:0 is the first serial8250 controller instance
-
-On startup (and if ACPI is disabled) ttyS0 maps to the first serial8250
-controler port instance as mapped in arch/x86/include/asm/serial.h. Then
-the ACPI using serial driver (or whatever hardware specific driver) may
-take over the serial8250 port instance.
-
->     Could all 3 device names be used for console=DEVNAME:0.0?
-
-No
-
->     Why the "expected" serial8250:0.0 is missing?
-
-Because the serial8250 port instance got taken over by the ACPI using
-hardware specific driver :)
- 
-> 5. The code on the printk side seems to be much more complicated
->    than it might be, see below.
-
-OK thats good to hear.
- 
-> > The last preferred console added gets used for init. This is documented
-> > in the comments for add_preferred_console(). Now the kernel command line
-> > options for console=ttyS0,115200 console=tty0 are wrongly handled and
-> > cause the /dev/console to be associated with ttyS0 instead of tty0.
-> > 
-> > This happens because we are calling __add_preferred_console() later on
-> > from serial8250_isa_init_ports() after console_setup() and the console
-> > gets treated as the last added preferred console. As the DEVNAME:0.0 style
-> > console device is not known at console_setup() time, and we need to call
-> > __add_preferred_console() later.
-> > 
-> > Let's fix the issue by reserving a position in console_cmdline for a
-> > deferred console, and then populate the reserved entry before calling
-> > __add_preferred_console().
-> 
-> Honestly, this looks like a hack.
-> 
-> The original patchset added:
-> 
-> 	struct console_option {
-> 		char name[CONSOLE_NAME_MAX];
-> 		char opt[CONSOLE_OPT_MAX];
-> 		char brl_opt[CONSOLE_BRL_OPT_MAX];
-> 		u8 has_brl_opt:1;
-> 	};
-> 
-> 	/* Updated only at console_setup() time, no locking needed */
-> 	static struct console_option conopt[MAX_CMDLINECONSOLES];
-> 
-> 
-> to keep DEVNAME entries from:
-> 
-> 	struct console_cmdline
-> 	{
-> 		char	name[16];			/* Name of the driver	    */
-> 		int	index;				/* Minor dev. to use	    */
-> 		bool	user_specified;			/* Specified by command line vs. platform */
-> 		char	*options;			/* Options for the driver   */
-> 	#ifdef CONFIG_A11Y_BRAILLE_CONSOLE
-> 		char	*brl_options;			/* Options for braille driver */
-> 	#endif
-> 	};
-> 
-> 	/*
-> 	 *	Array of consoles built from command line options (console=)
-> 	 */
-> 	static struct console_cmdline console_cmdline[MAX_CMDLINECONSOLES];
-> 
-> Note that the structures include similar elements except that:
-> 
->   + @name in console_option is "DEVNAME" style while
->     @name in console_cmdline is "ttyS" style name
-> 
->        => confusing
-> 
->     it is even more confusing after this patch which added
->     @devname into console_cmdline
-> 
-> 
->   + @opt vs @options
->   + @brl_opt vs. @brl_options
->   + @has_brl_opt vs. NULL pointer semantic
-> 
->        => many inconsistencies => even more confusion
-
-OK makes sense to drop the struct console_option now in favor of
-struct console_cmdline. Will update accordingly.
-
->   + always vs. CONFIG_A11Y_BRAILLE_CONSOLE
-> 
->        => inconsistent, prone to even compilation bugs
-
-Maybe we should just drop the ifdef in struct console_cmdline.h to avoid
-the ifdef.
-
->   + nothing vs. @user_specified
-> 
->        => inconsistent, another complexity, solved hacky way in this patch
-> 
-> 
-> OK, it made some sense in the original patchset because you wanted
-> to keep DEVNAME aside.
-> 
-> But it seems that it just adds complications now.
-
-Seems these will go away by dropping the struct console_option.
- 
-> [ Side note ]
-> 
-> I even do not line the part in drivers/tty/serial/serial_base_bus.c
-> I guess that:
-> 
-> static int serial_base_device_init(struct uart_port *port,
-> [...]
-> 		return dev_set_name(dev, "%s:%d.%d", dev_name(port->dev),
-> 				    ctrl_id, port_id);
-> 
-> 
-> is related to
-> 
-> int serial_base_add_preferred_console(struct uart_driver *drv,
-> 				      struct uart_port *port)
-> {
-> 	port_match = kasprintf(GFP_KERNEL, "%s:%i.%i", dev_name(port->dev),
-> 			       port->ctrl_id, port->port_id);
-> 
-> 
-> The code should create matching strings => ideally, it should be
-> shared. But there is not even comment. And it does not even use
-> the same integer printf format (%d vs. %i) => it can't be
-> grepped easily.
-
-OK that should be unified.
-
-> IMHO, all these small details together create a maintenance nightmare[*].
-> 
-> [*] "Nightmare" might look like a too strong word. Well, there
->     were added many "features" to the console registration
->     code over the few decades. And it became a real nightmare
->     to understand the "rules" and maintain it. You see it yourself.
->     Any changes in this area easily create regressions.
-
-Yes I've seen parts of that nightmare :) Never expected this to spread
-into printk in the first place..
- 
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -2426,6 +2426,24 @@ static void set_user_specified(struct console_cmdline *c, bool user_specified)
-> >  	console_set_on_cmdline = 1;
-> >  }
-> >  
-> > +/* Checks if a console is the last user specified preferred console */
-> > +static bool is_last_user_prefcon(int position)
-> > +{
-> > +	struct console_cmdline *c = console_cmdline;
-> > +	int last_user_specified = -1;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < MAX_CMDLINECONSOLES; i++, c++) {
-> > +		if (!c->name[0] && !c->devname[0])
-> > +			break;
-> > +
-> > +		if (c->user_specified || c->devname[0])
-> 
-> What is the logic behind this, please?
-> 
-> c->user_specified should be set for all entries which were
-> added by console= parameter. It should be set by
-> reserve_deferred_console() for the allocated slot
-> in console_cmdline[]. And if we set the flag there
-> then this function should not be needed.
-
-OK makes sense.
-
-> > +			last_user_specified = i;
-> > +	}
-> > +
-> > +	return position == last_user_specified;
-> > +}
-> > +
-> >  static int __add_preferred_console(const char *name, const short idx, char *options,
-> >  				   char *brl_options, bool user_specified)
-> >  {
-> > @@ -2542,9 +2581,26 @@ static int __init console_setup(char *str)
-> >  __setup("console=", console_setup);
-> >  
-> >  /* Only called from add_preferred_console_match() */
-> > -int console_opt_add_preferred_console(const char *name, const short idx,
-> > -				      char *options, char *brl_options)
-> > +int console_opt_add_preferred_console(const char *devname, const char *name,
-> > +				      const short idx, char *options,
-> > +				      char *brl_options)
-> >  {
-> > +	struct console_cmdline *c = console_cmdline;
-> > +	int i;
-> > +
-> > +	/* Populate a reserved console based on devname */
-> > +	for (i = 0; i < MAX_CMDLINECONSOLES; i++, c++) {
-> > +		if (!c->name[0] && !strcmp(c->devname, devname)) {
-> > +			strscpy(c->name, name);
-> > +			c->index = idx;
-> > +			c->options = options;
-> > +#ifdef CONFIG_A11Y_BRAILLE_CONSOLE
-> > +			c->brl_options = brl_options;
-> > +#endif
-> > +			break;
-> 
-> Is there any advantage to have both console_cmdline[] and
-> conopt[] arrays, please?
-
-No need for conopt[] if we can use console_cmdline[].
-
-> reserve_deferred_console() already reserved the slot in
-> console_cmdline[] by filling c->devname[]. It could have
-> saved also c->options, c->brl_options there. Then we would not need
-> to copy them here.
-> 
-> I would prefer to just delete kernel/printk/conopt.c.
-
-Yes no need for it if things are handled directly in printk.c.
-
-> Instead, we should re-use __add_preferred_console() also for adding
-> entries where "SERIAL_BASE_DEVNAME" is defined instead of
-> "name", "index".
-> 
-> Something like (not even compile tested):
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 8b746eeb77fa..c69cd7605836 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2444,18 +2444,23 @@ static bool is_last_user_prefcon(int position)
->  	return position == last_user_specified;
->  }
->  
-> -static int __add_preferred_console(const char *name, const short idx, char *options,
-> +static int __add_preferred_console(const char *name, const short idx,
-> +				   const char *sbase_devname, char *options,
->  				   char *brl_options, bool user_specified)
->  {
->  	struct console_cmdline *c;
->  	int i;
->  
-> +	if (!name && !sbase_devname)
-> +		return -EINVAL;
-> +
->  	/*
->  	 * We use a signed short index for struct console for device drivers to
->  	 * indicate a not yet assigned index or port. However, a negative index
-> -	 * value is not valid for preferred console.
-> +	 * value is not valid when the console name and index are defined on
-> +	 * the command line. 
->  	 */
-> -	if (idx < 0)
-> +	if (name && idx < 0)
->  		return -EINVAL;
->  
->  	/*
-> @@ -2463,9 +2468,10 @@ static int __add_preferred_console(const char *name, const short idx, char *opti
->  	 *	if we have a slot free.
->  	 */
->  	for (i = 0, c = console_cmdline;
-> -	     i < MAX_CMDLINECONSOLES && (c->name[0]);
-> +	     i < MAX_CMDLINECONSOLES && (c->name[0] || c->sbase_devname[0]);
->  	     i++, c++) {
-> -		if (strcmp(c->name, name) == 0 && c->index == idx) {
-> +		if ((name && strcmp(c->name, name) == 0 && c->index == idx) ||
-> +		    (devname && strcmp(c->name, name) == 0)) {
->  			if (!brl_options)
->  				preferred_console = i;
->  			set_user_specified(c, user_specified);
-> @@ -2476,7 +2482,10 @@ static int __add_preferred_console(const char *name, const short idx, char *opti
->  		return -E2BIG;
->  	if (!brl_options)
->  		preferred_console = i;
-> -	strscpy(c->name, name, sizeof(c->name));
-> +	if (name)
-> +		strscpy(c->name, name, sizeof(c->name));
-> +	if (sbase_devname)
-> +		strscpy(c->sbase_devname, sbase_devname, sizeof(c->sbase_devname));
->  	c->options = options;
->  	set_user_specified(c, user_specified);
->  	braille_set_options(c, brl_options);
-> 
-> 
-> The function matching sbase_devname in serial_base_bus.c should
-> iterate over entries in console_cmdline and ignore entries
-> with !c->sbase_devname[0].
-> 
-> On success, the function should just set @name to "ttyS" and
-> @index to the matching one.
-> 
-> On the contrary, the cycles in register_console() would ignore
-> entries with !c->name[0].
-> 
-> And we are done. There should not be needed any special changes in
-> the logic for preferred console.
-
-OK sounds good to me.
-
-> If the users defines a non-existing console=SBASE_DEVNAME:X.Y then
-> c->name and c->index will never be set. But it is OK. It will be
-> the same as when user defines a non-existing console=blabla
-> on the command line.
-
-OK. I think we should keep it as DEVNAME though as it should not be
-limited to serial consoles.
-
-> PS: I am sorry that I did not pay more attention to the original
->     patchset. I was overloaded, had healthy issues, and it was
->     not easy to balance the priorities.
-
-No worries, I was wondering what happened after you initial comments.
-Good to hear your're able to look at these changes now :)
-
-Regards,
-
-Tony
+Thanks,
+John
 
