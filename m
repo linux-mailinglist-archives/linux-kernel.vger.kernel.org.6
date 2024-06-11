@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-209919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD961903CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFE2903C40
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F2DB217AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A93C282D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8608B17C7D8;
-	Tue, 11 Jun 2024 13:18:00 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDDD17BB35;
-	Tue, 11 Jun 2024 13:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA8E17C23A;
+	Tue, 11 Jun 2024 12:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sF/FWSJt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1F21E86F;
+	Tue, 11 Jun 2024 12:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111880; cv=none; b=CrtpvHRZiuyrC8O0uGIf5jywUhU9OEtsQzNGmgxYwKaWD1mIUTVVEr3cCo35WcEAGmc2Z/byzJ4+AczaCB/K51fieo4ivtJxSkrRi6n7n9KmZ0EZcSHwq4zZ7gDIZBIC9ZjIFY8RadMd7n9NPxBXjpL9d6rSk+qvx+C07vc8JTI=
+	t=1718110320; cv=none; b=opsmv9KuxOrM/oS15E9pnOZgCK+79CvOqtngFDnBIt15uRlnT9hAofUddA8W/9KcxD+M5CSyFb3lwufuBW7GqAZ91kgI2uYuzgPeg6XuV6L8+1vdouj7HanQxn4rvyBs9zA7iBRJxmcmC2IumsOd/clkvGI7fWjw7vOk4BL9Vds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111880; c=relaxed/simple;
-	bh=CMvPaJMNzqJ2ABA/65OndPTd+VEs+PSjVlrkxkmztoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMlDyESiQoGppaN8YRUC0Tz+wAPRSFn3Lkym8lJAzlD3uKGad1qR++p3glj8QRNwfj8x9V7F6xGxc+WrybmvpacZzbcjPdyhGhe2qiOhsLhMr407FsNfUBqEsWznmSr8jb+fSkTJ3FDOsZtZyABRQLECJYVylfmkybMBOQb8w5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sH1NZ-0002ZW-00; Tue, 11 Jun 2024 15:17:37 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id DC806C0120; Tue, 11 Jun 2024 14:49:07 +0200 (CEST)
-Date: Tue, 11 Jun 2024 14:49:07 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] mips: bmips: BCM6358: make sure CBR is correctly
- set
-Message-ID: <ZmhHw5QZCQ6G6EbK@alpha.franken.de>
-References: <20240611113538.9004-1-ansuelsmth@gmail.com>
- <20240611113538.9004-2-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1718110320; c=relaxed/simple;
+	bh=XHrBjFoYko9UAaT8tZQIEHqbp8GqsjyvWzgXJ7PXR9A=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=NbSh2rUwOvmTkAgm2TjwfD398G/hqkTauvhqAcDZ58LuXRt9uJNf3P/jqRLx2ZRFHDPY3oURdtOgdTepcyl5A3GR0zhMIXBbUhHP+GiQaepJ4Vu6VT4HVfbVfMS1cLnqFQSG7PE1Rx3nC/vBdw2POGMylXE4AnHc87d3HxQNZNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sF/FWSJt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF92C2BD10;
+	Tue, 11 Jun 2024 12:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718110320;
+	bh=XHrBjFoYko9UAaT8tZQIEHqbp8GqsjyvWzgXJ7PXR9A=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=sF/FWSJt7xAsi3jeJ/VE2Ukk92VC6RullSODoTuBbUkl1C+s2zfTxNu7Q/dScW71T
+	 NJSCBEI4AGTfnyghHf4GbIcJbosHjf2DITOoptwqYu5/1ZRxlXOitjezy8i3XO9r8H
+	 MWjFaDsX9lMIYpLneCjK2cigaF+gMv9UPZLWFxz7lcjQkutWCkey81ohHTWtTsO1zQ
+	 z72ND1wmpJjbMxMq7PVA1qSlQ7FPGXyvqXVfSQymWowEHgDkpyGNLaYMbINwzQ7FMh
+	 SMWkOP9J1F6MwmK9speF2EaONVch8oOWOBTBGmBoh03Q4LHOUzuYk3NgR5qukr1feo
+	 8T6F4wZCW0itw==
+Date: Tue, 11 Jun 2024 06:51:58 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611113538.9004-2-ansuelsmth@gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: hauke@hauke-m.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, edumazet@google.com, andrew@lunn.ch, 
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+ netdev@vger.kernel.org, f.fainelli@gmail.com, devicetree@vger.kernel.org, 
+ olteanv@gmail.com, martin.blumenstingl@googlemail.com
+In-Reply-To: <20240611114027.3136405-2-ms@dev.tdt.de>
+References: <20240611114027.3136405-1-ms@dev.tdt.de>
+ <20240611114027.3136405-2-ms@dev.tdt.de>
+Message-Id: <171811031870.1486987.3222041734647742398.robh@kernel.org>
+Subject: Re: [PATCH net-next v4 01/13] dt-bindings: net: dsa: lantiq,gswip:
+ convert to YAML schema
 
-On Tue, Jun 11, 2024 at 01:35:33PM +0200, Christian Marangi wrote:
-> It was discovered that some device have CBR address set to 0 causing
-> kernel panic when arch_sync_dma_for_cpu_all is called.
+
+On Tue, 11 Jun 2024 13:40:15 +0200, Martin Schiller wrote:
+> Convert the lantiq,gswip bindings to YAML format.
 > 
-> This was notice in situation where the system is booted from TP1 and
-> BMIPS_GET_CBR() returns 0 instead of a valid address and
-> !!(read_c0_brcm_cmt_local() & (1 << 31)); not failing.
+> Also add this new file to the MAINTAINERS file.
 > 
-> The current check whether RAC flush should be disabled or not are not
-> enough hence lets check if CBR is a valid address or not.
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> ---
+>  .../bindings/net/dsa/lantiq,gswip.yaml        | 195 ++++++++++++++++++
+>  .../bindings/net/dsa/lantiq-gswip.txt         | 146 -------------
+>  MAINTAINERS                                   |   1 +
+>  3 files changed, 196 insertions(+), 146 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq-gswip.txt
 > 
-> Fixes: ab327f8acdf8 ("mips: bmips: BCM6358: disable RAC flush for TP1")
 
-should I apply it to mips-fixes ? If not could you just ammend
-it with the following patch, where this is changed again ?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thomas.
+yamllint warnings/errors:
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: ports:port@6: 'phy-mode' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: ports:port@6: 'oneOf' conditional failed, one must be fixed:
+	'fixed-link' is a required property
+	'phy-handle' is a required property
+	'managed' is a required property
+	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.example.dtb: switch@e108000: Unevaluated properties are not allowed ('dsa,member', 'ports' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240611114027.3136405-2-ms@dev.tdt.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
