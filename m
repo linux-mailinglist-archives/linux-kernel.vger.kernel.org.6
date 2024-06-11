@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-210041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E5A903E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733EA903E6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F74F1F213FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A91A1C22659
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F05217DE1C;
-	Tue, 11 Jun 2024 14:11:46 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E60617D88D;
+	Tue, 11 Jun 2024 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CGmDUaKy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5254317D887;
-	Tue, 11 Jun 2024 14:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646AC1DDF4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718115106; cv=none; b=R0ZhqzbxFPh1jexdJlWvXexUC8CtkLuOGwlrUmkqKDZnD1V5qYkDkn+vD2zmUvBR7//rvPsvN7v7QyS90bJMGo1N88FNcTyxnmN1TNqUIw5EzsRu8kzoupuqN5zxbGWdyPPppMwroqIIGEFQtfA7RZgUJl5OqfX79fOaBj7Ejas=
+	t=1718115101; cv=none; b=MBG5yhfYkftJu/mtucKELRBiaZmVoYbJZ3CrvnmAwYz5SBk5Cexju/P1knQMRcY62jFHneKivDxQm/4/mjzrt7OadG4xTbTzVttBrmIkRgYWrVO0+K6x2Xld4KuDR/hvTWLrLaWeSdlgoWafFs1Crx20ZL9pHo5ZTvsE0umlAA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718115106; c=relaxed/simple;
-	bh=ogJBOT3jxjmLFCMjRiIfHExdGIpJwUHEgc3x+6zuUyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l99m/KYSLuRW23S3g9xtyHmKeUO1bmZ/26bts2THq3FJiDRa0AdiwU+bfN2HonrV2GAc4tMEHnZMxHGQD4+pIfY0uaoPxlALVPYu6NgEMvpwQwh4FolAhkzvnKJH6yLak/m61qoSxxTOffKcvetyB8NZeI4/FfWLpMufGUzMc2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 253BA61E5FE05;
-	Tue, 11 Jun 2024 16:10:33 +0200 (CEST)
-Message-ID: <12441f87-6e61-4618-a2f5-a2b2b202b26e@molgen.mpg.de>
-Date: Tue, 11 Jun 2024 16:10:32 +0200
+	s=arc-20240116; t=1718115101; c=relaxed/simple;
+	bh=pIcYc7qj+KGZTsXvqC+Dyfy5a8D1ol5MLnz6Q2+/6T0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i5YUBjHWgyKuQF2YfWYCvbIulg4TV4nSMSQCm4C8oqhr8rdyj2/HDtaK7Xfi9RHYeo+zAbNT/Q0cqSZIN4X8PLe7p7DYdh8ciRmyIIwd1U9xgPlNBKQd5MGWSrjxu5cMWC25nFNEvHKYsXBr8Y/pdSSTQA4nzsClmHhfOm/IxYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CGmDUaKy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718115099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RpDAWqVGKOY605xFCvj/GBOlGGRTneCE6rG1ivSak+k=;
+	b=CGmDUaKyDS+MXAIOAB2TebwVwrUtllmxzvMDMzE7Fa004x0ITqiEo2+vN/zCthFPqhC1g7
+	MMPG0cQs1ED+z3Jjyi4jhA/Kv53i4Q+zkiBj2Dv8E9WqZK2LGkzspoj0x6pj9PNx9xzq1z
+	GpxOHZnqKVlyPHCn4ZXrG47p3/XKQqg=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-294-ui_OQuWEMWWAyXh20vg2Aw-1; Tue, 11 Jun 2024 10:11:37 -0400
+X-MC-Unique: ui_OQuWEMWWAyXh20vg2Aw-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebdc5ccb17so20649211fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:11:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718115095; x=1718719895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RpDAWqVGKOY605xFCvj/GBOlGGRTneCE6rG1ivSak+k=;
+        b=iv/esMmNkJtifLtGiW8dXrBLxbf6O2GjyheHBSS0b2gE+i1WO6h8dnpfaeUzKBI0m5
+         QsK1bO3LXjAUgUsHgJzF538+254uXzfr/qGFUI56EbBf7SnK6QFvmbXPPIw1KHyE4oiT
+         xJW+rId6Nvem+KbSEiA2c7Rbf+Xt+ZcLoRJUHc5PWSTKNbTh+wUGYT5mnhfGtfM32du2
+         jVDfy4912EJNhONeQXahjr3bZESaWgyoHddyjG4vwtks+mfyRXv4jZxYB6SPucxQ6+Rf
+         /paaHe9HEgQvvhKdL6MKBB7c4Wbz2Xc2KFbF7xDKLQdSINwV+CFM83eufvc1PI4EjXta
+         GXug==
+X-Forwarded-Encrypted: i=1; AJvYcCU4FyQf+6CRCjs9mBIOsfeHoUo3Fn6PGAhK40gUrHWU9vdhE+KhQotbYRKmoUnqO+/bJd7bnZRMgu6ydJKGPdVF7XAf6ZNDOPuk+ZAR
+X-Gm-Message-State: AOJu0YzwAXC99sGb3vA7hKcwy+LMRibOI8IjNl0a1uYs8zV+muAzpwN6
+	u9mVhr+xSecVifFIosgnjeDWxAY65lVgKAivDi9kjy81iFjpLnZs22QG+uI3ehZ4vqiYEwjjylY
+	T4VlFmy97fc1o4guF43A56sZs+9k/5FMBuGDhWHUWl7/zw9mCKdEXXlzz6XWxMNMCymmtgsC4Gd
+	1dQPPmjehJSrSpUNUJALWNK61ZJDDNMFLiIfUi
+X-Received: by 2002:a2e:9b95:0:b0:2eb:dc60:6ca9 with SMTP id 38308e7fff4ca-2ebdc6071f1mr44281981fa.21.1718115095636;
+        Tue, 11 Jun 2024 07:11:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdNr89xOFxsu/OE+Qb/AhaeTb6Ok/589nDo93/+gKXMC8huDBP4tutt942gwRvE3O+A/NcNjdibu2XZ8tiX8Y=
+X-Received: by 2002:a2e:9b95:0:b0:2eb:dc60:6ca9 with SMTP id
+ 38308e7fff4ca-2ebdc6071f1mr44281841fa.21.1718115095310; Tue, 11 Jun 2024
+ 07:11:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 md-6.11 00/12] md: refacotor and some fixes related to
- sync_thread
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, mariusz.tkaczyk@linux.intel.com, dm-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20240611132251.1967786-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240611132251.1967786-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <9c4547ea234a2ba09ebe05219f180f08ac6fc2e3.1708933498.git.isaku.yamahata@intel.com>
+ <ZiJ3Krs_HoqdfyWN@google.com> <aefee0c0-6931-4677-932e-e61db73b63a2@linux.intel.com>
+In-Reply-To: <aefee0c0-6931-4677-932e-e61db73b63a2@linux.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 11 Jun 2024 16:11:23 +0200
+Message-ID: <CABgObfb9DC744cQeaDeP5hbKhgVisCvxBew=pCP5JB6U1=oz-A@mail.gmail.com>
+Subject: Re: [PATCH v19 116/130] KVM: TDX: Silently discard SMI request
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, isaku.yamahata@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com, erdemaktas@google.com, 
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>, chen.bo@intel.com, 
+	hang.yuan@intel.com, tina.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Yu,
+On Tue, Jun 11, 2024 at 3:18=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel.co=
+m> wrote:
+> >>   }
+> >>
+> >> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+> >> index ed46e7e57c18..4f3b872cd401 100644
+> >> --- a/arch/x86/kvm/vmx/main.c
+> >> +++ b/arch/x86/kvm/vmx/main.c
+> >> @@ -283,6 +283,43 @@ static void vt_msr_filter_changed(struct kvm_vcpu=
+ *vcpu)
+> >>      vmx_msr_filter_changed(vcpu);
+> >>   }
+> >>
+> >> +#ifdef CONFIG_KVM_SMM
+> >> +static int vt_smi_allowed(struct kvm_vcpu *vcpu, bool for_injection)
+> >> +{
+> >> +    if (is_td_vcpu(vcpu))
+> >> +            return tdx_smi_allowed(vcpu, for_injection);
+> > Adding stubs for something that TDX will never support is silly.  Bug t=
+he VM and
+> > return an error.
+> >
+> >       if (KVM_BUG_ON(is_td_vcpu(vcpu)))
+> >               return -EIO;
+>
+> is_td_vcpu() is defined in tdx.h.
+> Do you mind using open code to check whether the VM is TD in vmx.c?
+> "vcpu->kvm->arch.vm_type =3D=3D KVM_X86_TDX_VM"
 
+I'd move it to some place that main.c can see. Or vmx.c as Sean says
+below, but I am not sure I like the idea too much.
 
-Thank you for your series.
+Paolo
 
+> > And I wouldn't even bother with vt_* wrappers, just put that right in v=
+mx_*().
+> > Same thing for everything below.
 
-Am 11.06.24 um 15:22 schrieb Yu Kuai:
-> From: Yu Kuai <yukuai3@huawei.com>
+If it's a KVM_BUG_ON()
 
-It’d be great if you wrote a small summary, what the same fixes are, are 
-what patches are that.
-
-Nit: Small typo in the summary/title: refacotor → refactor.
-
-> Changes from v1:
->   - respin on the top of md-6.11 branch
-> 
-> Changes from RFC:
->   - fix some typos;
->   - add patch 7 to prevent some mdadm tests failure;
->   - add patch 12 to fix BUG_ON() panic by mdadm test 07revert-grow;
-> 
-> Yu Kuai (12):
->    md: rearrange recovery_flags
->    md: add a new enum type sync_action
->    md: add new helpers for sync_action
->    md: factor out helper to start reshape from action_store()
->    md: replace sysfs api sync_action with new helpers
->    md: remove parameter check_seq for stop_sync_thread()
->    md: don't fail action_store() if sync_thread is not registered
->    md: use new helers in md_do_sync()
-
-hel*p*ers
-
->    md: replace last_sync_action with new enum type
->    md: factor out helpers for different sync_action in md_do_sync()
->    md: pass in max_sectors for pers->sync_request()
->    md/raid5: avoid BUG_ON() while continue reshape after reassembling
-> 
->   drivers/md/dm-raid.c |   2 +-
->   drivers/md/md.c      | 437 ++++++++++++++++++++++++++-----------------
->   drivers/md/md.h      | 124 +++++++++---
->   drivers/md/raid1.c   |   5 +-
->   drivers/md/raid10.c  |   8 +-
->   drivers/md/raid5.c   |  23 ++-
->   6 files changed, 388 insertions(+), 211 deletions(-)
-
-
-Kind regards,
-
-Paul
 
