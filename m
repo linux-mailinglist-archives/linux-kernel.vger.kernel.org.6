@@ -1,95 +1,100 @@
-Return-Path: <linux-kernel+bounces-210006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EE9903E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5B6903DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4571C234DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93CA1C21F63
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B2517D37C;
-	Tue, 11 Jun 2024 13:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124F617D881;
+	Tue, 11 Jun 2024 13:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1UEv8Cc6"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="g0320USq"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A3917D35F;
-	Tue, 11 Jun 2024 13:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E286F17D35F;
+	Tue, 11 Jun 2024 13:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114071; cv=none; b=tQ+1C3G/g9anLEUIg+nIfJxIF5yttS2d4jSyJQO7P9Xfty9TG5zyPIhiNMbFxwISU/oBlZNArd/YyxlzTD1q+Kh9nCdf9FKb7TD9ZceJ6j20cBfjaSsFlfMlw46I2nOxZrpEjP7YTaFCmtsBZgVlUVpFKbb9iWPdXHAkgs/ImrY=
+	t=1718114062; cv=none; b=im2qvnihqdpsCC0DMIvkfj+TkJGJ7wz+f+DzAcdChkYox5doJv6AZY1XTUlRa1JQxLhf/IEjIIyVc8pEmU+9PZ53owb7xmjtUCdwbNnFxfuQ6Jyw/idw8s7RoWMWmKa4cTqL2uVfsB4PHPJ/H0fCsFyUqxTFhj+G/xu6IX+Tbs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114071; c=relaxed/simple;
-	bh=z6Xlm3Myzf0XENt1mtEjLarR3vUfPV0dcq85A+bZWyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cIquz7TL3cGyNASRVQsxEK/defYvcfA162sD2+yDH+Kli2MSH/Unm2CsD+q9lTJa+iNstPCuVmuxI7+OUcF1g1YsRsi6cqVyXAysICDAckr63GvHps6xoo9xgTbZclufQPMymc/vLfHvO4TIIJGqOY+Uz7Ha1QDsRRxsf5P7uus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1UEv8Cc6; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vz9C352Vjz6CmSMs;
-	Tue, 11 Jun 2024 13:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1718114058; x=1720706059; bh=z6Xlm3Myzf0XENt1mtEjLarR
-	3vUfPV0dcq85A+bZWyw=; b=1UEv8Cc60gybweEB3Y0s2R2ymDfOnYql7xo5mesA
-	fjWjqASreJqTfoY2zA+3eUixDtM9X6KN/0nJgM41GCBOsBoTLqecBsvzSQNfgiAD
-	x1KmkAWF1qVy7ZJVqawLbI3OeOGVJrYvOlqL1Xql/3mI7Of3oShFxussQA3Wounx
-	1CsUtQErv9FiogRloxZtjJY1ZSSt49v1zMldT1oksKk82HoexGFmlOzLGq2TRtt2
-	XxfqUw8GotKoxMyAT2h2owlG2g6KP2D/gq9eqFxgyvULyHaKgRJalIv0MihrMygo
-	opfuwiC9Kb4WMcy537yI+SEUGF83GHW6EKHgmmL/BUWFAw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id TAXE9hSNYuj5; Tue, 11 Jun 2024 13:54:18 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vz9Bv1SMsz6Cnv3Q;
-	Tue, 11 Jun 2024 13:54:14 +0000 (UTC)
-Message-ID: <8005e95f-069c-4cbd-8330-c1395a238b86@acm.org>
-Date: Tue, 11 Jun 2024 06:54:12 -0700
+	s=arc-20240116; t=1718114062; c=relaxed/simple;
+	bh=2UrUxNi+bMQB1JygFOWiEiOyAXps9fRZhWY9jaLZb8c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bcS52XwRU4L0rvIgNoElXiNIEqYZJGlTHrXCe1rcuH6ewhd56NZrWibVBBDBHS+nzw58XVB5NtrqxFuojXcaR3PEkTObpglE+HbBvBdFyM7EIhzal3Rw62zFOZgeUUia6Ylicele9pmUAdXKXDKUovdgkk90cSvYa3OAPadAvAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=g0320USq; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=tRijnAHcosKtI4xo+uB32Jb7iLe726hGK7jy+SHjT44=;
+	t=1718114061; x=1719323661; b=g0320USqhdrXiF0suv82ucQB0mzvJDPqKEev29gN6jz/C0y
+	P35a2kiQOJlriGy0eacKl0Y0Aq8xc8RsDhtZ0RxWliFV5U6PCExrXGrst2waGq+5E4MQThW4JHP0y
+	pp4BGHpZ2Kzn5okm22aCPfQwWnvyW/jTidkwugJrwn3DRjpCaG4kkTssRm4HhneJYtxcTrHyGi6kn
+	ACMdnePRaQWwyOs2Kk28qB0pbLYL46YoZTYVdKqnY2rfmMk1Lawc80RQOqCmWpitim1Wn+Ytt4NM7
+	fyKcuvbW6Pgpht1QP1hylsWZHQyjjBxlpXvI8/VOk4Ze7uHmK6S/CLx4o9UC8+VA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sH1x4-00000008h5l-00Ha;
+	Tue, 11 Jun 2024 15:54:18 +0200
+Message-ID: <95163ee547da95964c16f87a38d3326ae4da3253.camel@sipsolutions.net>
+Subject: Re: iwlwifi: Regression after migrating to 6.6.32
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, Jakub Kicinski
+	 <kuba@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, 
+ linux-kernel <linux-kernel@vger.kernel.org>
+Date: Tue, 11 Jun 2024 15:54:16 +0200
+In-Reply-To: <CAOMZO5Aufe7zAE7TFVprvRreamYd9=RHjybjaEz2O9WaPksV=Q@mail.gmail.com>
+References: 
+	<CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
+	 <3fbb5317d9ff33ef1b60ca8297537335ce86a79d.camel@sipsolutions.net>
+	 <CAOMZO5Aufe7zAE7TFVprvRreamYd9=RHjybjaEz2O9WaPksV=Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
- pending cmds
-To: Ziqi Chen <quic_ziqichen@quicinc.com>, quic_cang@quicinc.com,
- mani@kernel.org, beanhuo@micron.com, avri.altman@wdc.com,
- junwoo80.lee@samsung.com, martin.petersen@oracle.com,
- quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
- quic_rampraka@quicinc.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- Peter Wang <peter.wang@mediatek.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Maramaina Naresh <quic_mnaresh@quicinc.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-On 6/7/24 03:06, Ziqi Chen wrote:
-> Fix this race condition by quiescing the request queues before calling
-> ufshcd_pending_cmds() so that block layer won't touch the budget map
-> when ufshcd_pending_cmds() is working on it. In addition, remove the
-> scsi layer blocking/unblocking to reduce redundancies and latencies.
+Hi Fabio,
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>=20
+> I did as suggested:
+>=20
+> --- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+> @@ -266,7 +266,8 @@ static void iwl_pcie_rxmq_restock(struct iwl_trans *t=
+rans,
+>                 list_del(&rxb->list);
+>                 rxb->invalid =3D false;
+>                 /* some low bits are expected to be unset (depending on h=
+w) */
+> -               WARN_ON(rxb->page_dma & trans_pcie->supported_dma_mask);
+> +               WARN_ONCE(rxb->page_dma & trans_pcie->supported_dma_mask,
+> +                         "rxb->offset is %d trans_pcie->rx_buf_bytes
+> is %d\n", rxb->offset, trans_pcie->rx_buf_bytes);
+>=20
+
+> [    5.038174] rxb->offset is 0 trans_pcie->rx_buf_bytes is 4096
+
+so that looks pretty normal?
+
+Might be useful to see rx->page_dma too, supported_dma_mask should be
+4095 or 2047 depending on the device, but I'm not sure how you could end
+up with a DMA mapping for a page that's not at least 11 bit aligned?
+
+johannes
 
