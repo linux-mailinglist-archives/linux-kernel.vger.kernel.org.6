@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-209237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64947902F6C
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27B4902F6D
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B911F281EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444291F23485
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1674316FF38;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3393916FF39;
 	Tue, 11 Jun 2024 04:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XhRgb+xk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJfBtdjF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B2616F90F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AE816F915
 	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718078829; cv=none; b=jvPj8IlJM4U01IgcNoRzvSOVT1Z9T/iZudMJKW8DBNKGRD2CduSN9+qDV2cTkMQETmJuZXUxlQMAvRlCd9W0giysBNS0nJ5uh22okIDyIZbEKjoZOqT8TR5K1fe9ig4Zz1pCeF3O0+F1BW5vmeeaedozz/Ry8M6M21vWqIfvvAE=
+	t=1718078829; cv=none; b=dbyTpj/gFmB0sFfyTbzgiNsGqhG8xqiWJCDwfrLdnyyhZdA/fIFhYAGseqroEYqBfbKxpK3/QKPm9reKLLdgE5Tsux6UgSAzLleA/2IccIE2EQnebawxVKUD3IBwSHXqXvkXfDh60NEPTRfqz5S0gu5nK7G7xh0RkGOEdwl48qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718078829; c=relaxed/simple;
-	bh=kdoYuWFuR1WNiTggH/Th+gxDKdPDgYlVhPBlnY/yaqc=;
+	bh=382c2n/oqBfIXSeCvbK2QkQWCsbMu1v407p5wGZs8i4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SKWBkVzv5dLbBlGNkMmBe3Yte0m+s1Kr18C7mV6ZnNC7zBxxhwaOiK4Nbixa+r07Cj5kmBkUxu3j0SYDqaIogVB6Hw10s7otCsX3bH+BwL1PfAfehehDIAcnL+IPkTjj8kt2RGeM9hCSBKRWYTOtzVDMkvhl7yzAT456mxIvHHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XhRgb+xk; arc=none smtp.client-ip=192.198.163.8
+	 Content-Disposition; b=I3vEEt/oI93Rrtdl4/TDbMryGCCb28nuUWWG0WJ8fGrTaIqCVJaMZiO3BH9As5fAJAk5v++H7Ohva1OvQY2+dTUs9KzjYlABPjAmh3zOxvh/TcJffSP/MqBHsTezO73KmAjla36+YE8iO44+J2NNPyOrp/LWX306fFoDk8Fq1YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJfBtdjF; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1718078827; x=1749614827;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=kdoYuWFuR1WNiTggH/Th+gxDKdPDgYlVhPBlnY/yaqc=;
-  b=XhRgb+xksK/4Xlff6VyRgCgmPl13PV+RNjGrK6rYtRSlZAaSkstBPTZB
-   Dqk7tX7ttlHvqtf//2tPWSJ0EzAz4snPhkFP7/lTPo0sBXXg9NbDHhVA6
-   ZTaNcJI6nC3qr/Q8LYA273aVKU2YHFhPdy4df4llylH2tWBXEgJt1W6X6
-   scW15pvkIQ0d5BcPfofj6u78fUQzmAoN8ssn8eITSxJCQsHuQlXqcMDZO
-   GUG+mCdLxtbTl6hqfz5cRhMfP2SonJmZyoB8Pw9TBfBU3+mwq13wwKpPt
-   AcBTvd5PnARP31xFpkLwUZQQVwstgeLDtVWUkERHBci2snFPk20nuUMb9
-   g==;
-X-CSE-ConnectionGUID: QGYwynZxQXebXdqQE3L5Xw==
-X-CSE-MsgGUID: CG4nlj/ZQAOK12lCCmeL1w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="32303765"
+  bh=382c2n/oqBfIXSeCvbK2QkQWCsbMu1v407p5wGZs8i4=;
+  b=HJfBtdjFxWFLm4FyUXFCtHnhFhwKu6BOWrX35AsML2PksxnwQfFZ39XT
+   CTHM8dobQyVBoXm5ExBUPD5ZlLlcwoOKZS3o75N8twsyHnAI3ewoSwr3/
+   HZip8I9yPH7ykySgLa23vgWuYcymGIqJ0z5DgNUvb5dQFRQxebJ3hj3O7
+   0kVMo3i2w1uD8pfc41b4adW100ltuQmbabq5pJroYnr0dQzWIun4uo/ok
+   3OxnDcuRGWTQg4lIkVdsYE2FA/iGSaTHhfUHPd/DtIFwgPtxYLvqk5SP7
+   f+RviPzvARC5YRDeoWDRxLAUpJGn+TMnIPlDIoNfq7PElkYmH8ju11dg5
+   Q==;
+X-CSE-ConnectionGUID: NMZwc2teTvu2yb4lo5A1Uw==
+X-CSE-MsgGUID: eDokRuQGSNGihzIqalZWbg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14894104"
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="32303765"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 21:07:07 -0700
-X-CSE-ConnectionGUID: uN/l4wzFSAGmYeGlkLEnNg==
-X-CSE-MsgGUID: 8wXWaXf/Qjq5atO97jrXgA==
+   d="scan'208";a="14894104"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 21:07:06 -0700
+X-CSE-ConnectionGUID: IkouQQR4Tz2q+m2ryFpH/g==
+X-CSE-MsgGUID: nziitK3MQo68nLy6W/4PNA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="62455100"
+   d="scan'208";a="39853709"
 Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 10 Jun 2024 21:07:05 -0700
+  by orviesa008.jf.intel.com with ESMTP; 10 Jun 2024 21:07:05 -0700
 Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sGsmk-0002nF-2w;
+	id 1sGsmk-0002nI-37;
 	Tue, 11 Jun 2024 04:07:02 +0000
 Date: Tue, 11 Jun 2024 12:06:38 +0800
 From: kernel test robot <lkp@intel.com>
@@ -69,7 +69,7 @@ Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
 	Sakari Ailus <sakari.ailus@linux.intel.com>
 Subject: ERROR: modpost: "i2c_acpi_new_device_by_fwnode"
  [drivers/media/pci/intel/ipu-bridge.ko] undefined!
-Message-ID: <202406111148.Jbw7a5GF-lkp@intel.com>
+Message-ID: <202406111229.jRCzCI7H-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,14 +83,14 @@ tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git maste
 head:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
 commit: c70281cc83d666d8c064b4c82cc94b6dc9e9f310 media: intel/ipu6: add Kconfig and Makefile
 date:   6 weeks ago
-config: x86_64-randconfig-016-20240611 (https://download.01.org/0day-ci/archive/20240611/202406111148.Jbw7a5GF-lkp@intel.com/config)
+config: x86_64-randconfig-016-20240611 (https://download.01.org/0day-ci/archive/20240611/202406111229.jRCzCI7H-lkp@intel.com/config)
 compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240611/202406111148.Jbw7a5GF-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240611/202406111229.jRCzCI7H-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406111148.Jbw7a5GF-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406111229.jRCzCI7H-lkp@intel.com/
 
 All errors (new ones prefixed by >>, old ones prefixed by <<):
 
