@@ -1,128 +1,173 @@
-Return-Path: <linux-kernel+bounces-210260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7994690417A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A41DA90417F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE239B22A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:36:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D11DDB24305
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C010C43AB4;
-	Tue, 11 Jun 2024 16:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iEcwFhol"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DA54205D;
+	Tue, 11 Jun 2024 16:37:29 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785938FA0;
-	Tue, 11 Jun 2024 16:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEE63D556
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718123785; cv=none; b=ixXAJAZUkZklWBBGAKn2ZAPHjEIL+N8RDXNdTa/LOUQT/Eo47AaLDELOiqNRqTFxO1bh+AMXfaBUUpdqCfla/8ivul1Rq9aUjev0RPOrEBM7A/xbXM3GcdQG2Gfpq1GauIHh0ozI7HkqIUfhrfbjBAZYIX86/W3TtwXQvpyaOvs=
+	t=1718123849; cv=none; b=f12clxr+hh23n3EPF4rxtSzx35eaj6zJWmCZ0yOHXioFlFEB4TYfSLEBzlIx4NWxOwASmn4UbYdn/+rZ0qGbJZUx86g4Gx6Y1vwG7FWx2BKLU0tzKM/Qwm2cwoP3glyyVoq/AWM21mtWNfWqOawq8tPfaocXm5rX/a2Br+douFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718123785; c=relaxed/simple;
-	bh=Br185Yo6/5F9RMGQZLgDnvgMIisyh5/Lt78nH4PPTx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pypDZpGAzO8tV/saQAfZ8D4ktvPH889NN+69tkxbDnlUx1tDwGHsJK3Zgg9Y/ugkZ6R8cvWlgCWID1SbRxnEzSe9PWrBhc4TTC28nwxs4voo4vwAqBXrl3Ahnfo+jM/AoT9gYMgw1OQefF4at0t+Rlq3pNZUhXG3DUZR+Wzbojc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iEcwFhol; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718123785; x=1749659785;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Br185Yo6/5F9RMGQZLgDnvgMIisyh5/Lt78nH4PPTx0=;
-  b=iEcwFholf5zxy2o5jRt3qBaCJl60883B4G52pAE13rjGnTidDFWxTJ0/
-   aQIbvxVmCFC5r2kwbizKzFQzEzVXfDG0MuZyzYPdEBuhlfTLtyzr0ozje
-   McwFAcpxonQIGszBEwCjGkTGqNG9RApMOKCz2uLTrOMHfE1stCZKMXlld
-   /9qudHZh6d5Hrn0XiWuPKidxgKsZ6IXwDksQqmxwcti1+0XJOI0VJBUMj
-   a+uJNta+zf+5gYARwIbsJI4Dj/eCUneNnJJyhc0vzMnAi//4cjgR2B+ry
-   +X1ge6rYDVZxb3bpE3+HK1ssLrpaKi7Cmrv/0u12chLkpdDMBKcXIFngd
-   w==;
-X-CSE-ConnectionGUID: zUmtaTvQRJWgFp6fdT9KOw==
-X-CSE-MsgGUID: 3rdMKXsRRviQDme3gS9NWw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14972723"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="14972723"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:36:24 -0700
-X-CSE-ConnectionGUID: /4QubWDsTIu0IhSnxowjIw==
-X-CSE-MsgGUID: G72oLDd2TbeBRHeyQp/7cQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="39959470"
-Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
-  by orviesa006.jf.intel.com with ESMTP; 11 Jun 2024 09:36:22 -0700
-From: matthew.gerlach@linux.intel.com
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	joyce.ooi@intel.com,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: [PATCH v6 2/2] PCI: altera: support dt binding update
-Date: Tue, 11 Jun 2024 11:35:25 -0500
-Message-Id: <20240611163525.4156688-2-matthew.gerlach@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240611163525.4156688-1-matthew.gerlach@linux.intel.com>
-References: <20240611163525.4156688-1-matthew.gerlach@linux.intel.com>
+	s=arc-20240116; t=1718123849; c=relaxed/simple;
+	bh=zmsOm5zVkjm7xTUsdVu8daBXMwaoTvNYKt6UYD7v+ks=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bIZsCZP+6DMptl3k/BTpz4XHKsmcDdsIP3FmwZcvVxX/gEfq4EWhv5OZ2WyePW47klzKYIsXeJKvCZyKlxOTyTkE2QEyW3W2YAEwrOqUM6vYZAC0k9sKovxzeAzDiQoUEz0HrG8Qkjd1vm/SEng4fsx9dZS9U1EuueMigzsJNK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eb1d659c76so704443239f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:37:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718123847; x=1718728647;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yaVN3PXLUvhLaNmZS/WM/UFUx9n6em9c+6ETvsCf4bo=;
+        b=sO/7lZCe9AY60+6ML+5tPFqIh+SaasWHN//0twe3f7tPk2lyJOHKCVu7mY9sivXqAt
+         /LFrTHy6RP+Nz7VksSetSYdvdQrNGa3gJahqpprMmvGc56Wbv9zQ11lo9IvMN4DlmTU6
+         O8kpaBFTHRNb/fObttBM14C6sAqzAzGAw0HKFXGv4+pDmbE3ZGX3rlfCviJpztgk9VS8
+         rIJZvTJxblpQBsYG58VvPmqYBhJXkvbj1cxIjRwy4IPU4O5Cws+Vl57gJmMnf9wdSgaj
+         SI60rOwGxWjIU773akqVWlCqFIYpl27TxsFT3xiHsoCnf4ylY2/4P4MO2QFiMpGbdxaq
+         +l0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUO3AvcBYo3GGGafNeXEljr78MQaipNa+5U+lH6EqJN7UsxKsnwz5rhwVsJQWQMv1yCoVAAYM/cymI1uFcqsjzMJ7wFaXwchyezQwND
+X-Gm-Message-State: AOJu0YxtglmsacAo1+b7GZthu5QoI8KtC/G987PgYxM69UBiGZnsMsJz
+	ta7y/tMx1DVNaSKllhs2+5Ei9EaP631fosGy4UHmwJcf9bvTzFXd2L+D6I/de9/zYR0VcTytk4g
+	iV2vOJ5vxwvWrZk3xjRwO4nvblQxMghMLoBQbvOmRO/x7Rg+MZNKCtlU=
+X-Google-Smtp-Source: AGHT+IEf0JjTnlLcFctIEWKpZnmyQYtD2CsSU33V+LKNAGYPG3adHPUEu+oAQoeKn/QRwhkj4bpoS9LntDQmNv8IOehHNepsguy0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:4121:b0:4b7:ca39:5869 with SMTP id
+ 8926c6da1cb9f-4b7ca395b64mr651611173.6.1718123846730; Tue, 11 Jun 2024
+ 09:37:26 -0700 (PDT)
+Date: Tue, 11 Jun 2024 09:37:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009096d3061a9fe1ac@google.com>
+Subject: [syzbot] [wireless?] WARNING in rdev_scan
+From: syzbot <syzbot+cd6135193ba6bb9ad158@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, ilan.peer@intel.com, 
+	johannes.berg@intel.com, johannes@sipsolutions.net, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	miriam.rachel.korenblit@intel.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Hello,
 
-Add support for the device tree binding update. As part of
-converting the binding document from text to yaml, with schema
-validation, a device tree subnode was added to properly map
-legacy interrupts. Maintain backward compatibility with previous binding.
+syzbot found the following issue on:
 
-Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+HEAD commit:    c44711b78608 liquidio: Adjust a NULL pointer handling path..
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=164c2762980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
+dashboard link: https://syzkaller.appspot.com/bug?extid=cd6135193ba6bb9ad158
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=105b4602980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163c3b32980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47ff53e982e7/disk-c44711b7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7b10dcb52f35/vmlinux-c44711b7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b4a6bf6f87c5/bzImage-c44711b7.xz
+
+The issue was bisected to:
+
+commit f7a8b10bfd614d7a9a16fbe80d28ead4f063cb00
+Author: Johannes Berg <johannes.berg@intel.com>
+Date:   Fri May 10 09:37:38 2024 +0000
+
+    wifi: cfg80211: fix 6 GHz scan request building
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13500a36980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d00a36980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17500a36980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cd6135193ba6bb9ad158@syzkaller.appspotmail.com
+Fixes: f7a8b10bfd61 ("wifi: cfg80211: fix 6 GHz scan request building")
+
+warning: `syz-executor368' uses wireless extensions which will stop working for Wi-Fi 7 hardware; use nl80211
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5094 at net/wireless/rdev-ops.h:462 rdev_scan+0x188/0x300 net/wireless/rdev-ops.h:462
+Modules linked in:
+CPU: 1 PID: 5094 Comm: syz-executor368 Not tainted 6.10.0-rc2-syzkaller-00228-gc44711b78608 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:rdev_scan+0x188/0x300 net/wireless/rdev-ops.h:462
+Code: e8 0d a8 01 00 89 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 17 35 c1 f6 90 0f 0b 90 e9 23 ff ff ff e8 09 35 c1 f6 90 <0f> 0b 90 bb ea ff ff ff eb d1 e8 f9 34 c1 f6 c6 05 42 dd c2 04 01
+RSP: 0018:ffffc900034778d8 EFLAGS: 00010293
+RAX: ffffffff8ad4f177 RBX: ffff888022a50000 RCX: ffff88807ea21e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8ad4f033 R09: 1ffffffff1f5a965
+R10: dffffc0000000000 R11: fffffbfff1f5a966 R12: dffffc0000000000
+R13: ffff888022a50000 R14: ffff88807c98c000 R15: ffff88807c98c000
+FS:  0000555573837380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 0000000029ce0000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ cfg80211_wext_siwscan+0xcbf/0x10d0 net/wireless/scan.c:3509
+ ioctl_standard_iw_point+0x788/0xcb0 net/wireless/wext-core.c:867
+ ioctl_standard_call+0xc7/0x290 net/wireless/wext-core.c:1052
+ wext_ioctl_dispatch+0x58e/0x640 net/wireless/wext-core.c:1016
+ wext_handle_ioctl+0x15f/0x270 net/wireless/wext-core.c:1077
+ sock_ioctl+0x17f/0x8e0 net/socket.c:1275
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb389e893a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc48732138 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffc48732308 RCX: 00007fb389e893a9
+RDX: 0000000020000000 RSI: 0000000000008b18 RDI: 0000000000000003
+RBP: 00007fb389efc610 R08: 0000000000000000 R09: 00007ffc48732308
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc487322f8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
 ---
- drivers/pci/controller/pcie-altera.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index a9536dc4bf96..88511fa2f078 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -667,11 +667,20 @@ static void altera_pcie_isr(struct irq_desc *desc)
- static int altera_pcie_init_irq_domain(struct altera_pcie *pcie)
- {
- 	struct device *dev = &pcie->pdev->dev;
--	struct device_node *node = dev->of_node;
-+	struct device_node *node, *child;
- 
- 	/* Setup INTx */
-+	child = of_get_next_child(dev->of_node, NULL);
-+	if (child)
-+		node = child;
-+	else
-+		node = dev->of_node;
-+
- 	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
--					&intx_domain_ops, pcie);
-+						 &intx_domain_ops, pcie);
-+	if (child)
-+		of_node_put(child);
-+
- 	if (!pcie->irq_domain) {
- 		dev_err(dev, "Failed to get a INTx IRQ domain\n");
- 		return -ENOMEM;
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
