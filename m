@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-209181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45001902E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0509902E71
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4341F216D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D95F2851F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6B15ADAA;
-	Tue, 11 Jun 2024 02:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908016F851;
+	Tue, 11 Jun 2024 02:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="izBso0nU"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="d4CCwgxD"
+Received: from out203-205-251-59.mail.qq.com (out203-205-251-59.mail.qq.com [203.205.251.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9EC15AAC1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737D614F9FA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718072807; cv=none; b=PrGw7oLG2w2tCjOcfBWo9utSAjykzxmhvb2P1vLT4mrPEYHxTBTHilx4UDTyPaFUdbyPvGq3vFc2FgPEV+/+EO1ZACpFq5TUQpAzP0LSTM1IAZ4vXqakvHQ48aT8YO5uPxsIs9mGQIIRCYSV1xOmcTBpA+r3C5EbIFpsGPgzrVc=
+	t=1718073294; cv=none; b=e9Q4R7oX4d5M4apWsNb3cg7hv2kbVcv2BB0ojbKTiy0HtMx2KLmbioJ/IonTuOs+dOBj06u+WqWXOC2lmXFYw0SCC+TwoAf35udHg5CcGqcZsynTCs3Xt3h9B06Pk6rSXNgJU1rhr6mhR9PYMT47LrRGd1IqkCgYRTSRmuCUsO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718072807; c=relaxed/simple;
-	bh=1SjQU7XDrESMzGlE8GU2J8XuZ6lEmXSGB8C0miWDHFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mA9FP8+Wpc2HykGwee26phaSx5uDf+mYknsK6eYS4wfAk0yCiAOQ9yobrsy3Son9Szdu2LWEUvQq0Omoer+dh4fzvE2hlycoU+2JDgjaKHCgZQnNvxdTynsRXyX4JNiUHneugO44r6m14nJRY20PawU1L0Z1SHMEhECEZRTCsb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=izBso0nU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4216d9952d2so32185e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718072804; x=1718677604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1SjQU7XDrESMzGlE8GU2J8XuZ6lEmXSGB8C0miWDHFM=;
-        b=izBso0nU+S3wFnwV3S7US3+wI2ovpRs8fMAUGLCx8G01F1mE4ccsJb7rUHg6/peB2T
-         6sUwrE307IopZjPr4SE7D3tfdnz1bWmCxrEv1P4Cj5qC/UdxBnYFOhnA/NVuUslzhRG5
-         WOEydQnl0/lS20CfIW8FTKuWQ8apKpw7/p0r3XpQNGLuTEqjsjPzEQaWOupnzKdb+C/j
-         6vjmnNj8d9lXe5nBbTq4mwoR0V64ntfyTXJkvkpx+oDjJObZthGIOg/U+0Xz5Xpzf9z9
-         JDuXW1us022JbuD6w4WWRcx9KGCxVRysCXI8x5w+F66DD984ecCfMzwuAvKh0T00YlA2
-         Ah/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718072804; x=1718677604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1SjQU7XDrESMzGlE8GU2J8XuZ6lEmXSGB8C0miWDHFM=;
-        b=HQvcEffZO6KHKxG2qcshSBJwoScn/hfKSC3tUc34Do6PSUKWMEJ2rlI4SBa0AWQzB/
-         SCs6IVkkLOgTRrkMZkAdQHTmN9MvX8z48wxdTFnK8gXjuJhBlWv7yATorYvXM3Tdbmk8
-         06J/xSxtsF80EWfn9lfshxvFlV/vg45DJpa6PMaEYcJR+6LOj8nA4WFtWuw+wcbrIbFH
-         v/RanoZ+z2irX4Zq5DMAbUxiCSlYBPgVuCUK9Kf1fWaRYkRVfyfvxSDPbrFKcCIZV9AQ
-         LPWKbxsHVPM0ZUU5pI38UDKqMsAoCsJkP4X1oSvE09U/42zOWYPvcqQg7oKnvRKUJqQW
-         ciFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuFrNKR8ezhDs7ErDxiRMHRHfHEU4FaHDqdgDYb2wCAqZWu2sJuLaR7TIpbpE5x5p5U2of2+sjZtGKOz8LFSLufCaMbvrjvj7GMBMT
-X-Gm-Message-State: AOJu0YyqRDqx0U0j+N5HxwIwkEnHNDE9S0QHi3JGwnp2V1g6uDW4Tmf5
-	ufM5aAPPgTrnBWdvAmLPuuRg27XQh5Am9F5bPJrooND0qiIooB4uX0jSi7pKjhgc6de6liFa75s
-	ryWOMzcdkmX+fSH7fVT3Z24cBon8N5VCqLWKj
-X-Google-Smtp-Source: AGHT+IEwOpUvdhG0m/MyGTks1/kGUd7I7XxowtIPTkFYilBU+DbYF7lNxvZksYVsfOaQc5P+IvU6HzPUSuX/+vmMsVs=
-X-Received: by 2002:a05:600c:b93:b0:421:75af:e66f with SMTP id
- 5b1f17b1804b1-42244b2c8bamr880375e9.2.1718072803818; Mon, 10 Jun 2024
- 19:26:43 -0700 (PDT)
+	s=arc-20240116; t=1718073294; c=relaxed/simple;
+	bh=KnAmKro879fRFq+RiQ5LefGpzSwBeLfGvMuFjATxW2E=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=gFmmWNXwQMP1NQCpWENfSh3XBWvTcdzbB51n2gICT/4TuvVfaXwpW2xuhRuUcKGqwVWPFFUCQpIM+eUA7b0Mn0zWUeXp8heEQ03pFkIYPoVmssDOfSFLnbALZXqt93jcsDKkg+PuVp1WBnnofzXCJWPVbshoBMYd/sStrjGzfek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=d4CCwgxD; arc=none smtp.client-ip=203.205.251.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718073285; bh=RqDYlNEj89LVooht78uM6N9w3lcGxiYS1Vsrlw1PlCQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=d4CCwgxDBm2ARJXRMLW+zBIMvfgFdxQB0sKXvu6gRqe5YPgzO5wGisuDIpsWb8z2z
+	 dSaGM1wKGi+Ir3XvlZh4NQVFJ/Q4JMaLAcaQyQNGJAsgPdzv5j8BXnpbfGsschBkof
+	 Cb/II2bJehaO/bhCxdjspoq2I+MbSC+EPASa8IvQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 7209947C; Tue, 11 Jun 2024 10:28:32 +0800
+X-QQ-mid: xmsmtpt1718072912tb3d1endf
+Message-ID: <tencent_DC337C9ECD1BAD4BFC1B4C25ACBAF1BB7E08@qq.com>
+X-QQ-XMAILINFO: N7/wgsuYk0Vx7zKEW34DSnHyfNSWFmm4pwThrtf0saieUV8rdGNVzRA/u/Etfi
+	 reQ+rVGrftYSvNnCjhcZj1o6m5Oa6vCRshwAyACiLFp8UWB/L+jO/rVd2Ur6zJOR9RxXtYyG+3SN
+	 mTn9o6Exo7IdrgWup4oCg7AhNpBBIKFDBjfN2owJb610sTtE6rv5Hyi3bTmxAdenI7i8a5MKQC1l
+	 9eaFvjy8ED72h90jQ0HIqHKFMM076kdtsM7uDb+/GC6DG2uwcVKBpihXBDgoo8vKEB29IdNQ7rKo
+	 Pm3eaT+SOBL0RF3GdRRjUK0DTtIMzdIX4Mx7z8QkLZNyfHCAVQJknjwvxvhkepDoRsFPvTJG+sF5
+	 nPB44nYE1QYLfIbZzVYIn9TyGk6EaFwDiHxQxgaS+1I735twTuyim8jQ8VmR8pN05IckY+bTcp4H
+	 4IgSkJLh04tR4nP0YgOkf6JIjPC0XeiM1GLnblQEkk0JHkKAQYhZpKXx92jzUOI2qtoBRfaLzjSh
+	 w4HR3JgLEUmiKuOV4+KGryumlTUPd+XmW01LclCr02Y1CIeIDfR7uAYEnkHuDPy6RQ26L6Wr2pyN
+	 o3mox7VCN9SUFag8G96RzhVJfAySxt8qOOoFNAylVoHa/SNC/EgqriuKYF/vUZweqkXFAixxtE0x
+	 ust1h0bya1x9x2qn9Dn3CGtdASwbBbzA3iMceMdaLObrDchoeIRdfOO1irqZ7a7V6OWe8aMzmQH5
+	 iF8FmP1NkUnfQ+0CEMdU43hzZZs1QO409UkllmGpujcmVnI/GsQqmdJu1JRwzInNymUwj4B0oYt5
+	 rIS0cICv/5P+mW4ejGzO04HBszqCRtu3b+Tuo1xz7laTodnh+QXwNbj3fi3Vfmhks2MRv2a4PCaO
+	 l4CLhKl3L5Z44YWeb7AeYUxbthEcx7WEqQoQkPE+4tvgfJh7SAowhvMbMRwvATgA==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] general protection fault in l2cap_sock_recv_cb
+Date: Tue, 11 Jun 2024 10:28:33 +0800
+X-OQ-MSGID: <20240611022832.1419703-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b0906d061a468b93@google.com>
+References: <000000000000b0906d061a468b93@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607060958.2789886-1-joshwash@google.com> <20240610225729.2985343-1-joshwash@google.com>
- <20240610172720.073d5912@kernel.org>
-In-Reply-To: <20240610172720.073d5912@kernel.org>
-From: Joshua Washington <joshwash@google.com>
-Date: Mon, 10 Jun 2024 19:26:32 -0700
-Message-ID: <CALuQH+UtX2xqDCghHqPBckzC4k-GGi58NmOd4FNfeqOr+C4jWw@mail.gmail.com>
-Subject: Re: [PATCH net v3] gve: ignore nonrelevant GSO type bits when
- processing TSO headers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, stable@kernel.org, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Andrei Vagin <avagin@gmail.com>, Jeroen de Borst <jeroendb@google.com>, 
-	Shailend Chand <shailend@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Rushil Gupta <rushilg@google.com>, Catherine Sullivan <csully@google.com>, Bailey Forrest <bcf@google.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-My apologies. I'll send an updated patch tomorrow without --in-reply-to.
+please test null ptr defref in l2cap_sock_recv_cb
 
-On Mon, Jun 10, 2024 at 5:27=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 10 Jun 2024 15:57:18 -0700 joshwash@google.com wrote:
-> > v2 - Remove unnecessary comments, remove line break between fixes tag
-> > and signoffs.
-> >
-> > v3 - Add back unrelated empty line removal.
->
-> Read the maintainer info again, please:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-> we prefer no in-reply to postings.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cc8ed4d0a848
 
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 6db60946c627..6f01920586e6 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1486,6 +1486,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ 	int err;
+ 
+ 	lock_sock(sk);
++	l2cap_chan_hold(chan);
++	l2cap_chan_lock(chan);
+ 
+ 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
+ 		err = -ENOMEM;
+@@ -1534,6 +1536,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ 	}
+ 
+ done:
++	l2cap_chan_unlock(chan);
++	l2cap_chan_put(chan);
+ 	release_sock(sk);
+ 
+ 	return err;
 
-
---=20
-
-Joshua Washington | Software Engineer | joshwash@google.com | (414) 366-442=
-3
 
