@@ -1,316 +1,220 @@
-Return-Path: <linux-kernel+bounces-210166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC2990403A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:39:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AD5904033
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C486B21ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9B91C21778
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C883987D;
-	Tue, 11 Jun 2024 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512AF36AF8;
+	Tue, 11 Jun 2024 15:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WeVRuVmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FAXcNqXS"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415D036AF5;
-	Tue, 11 Jun 2024 15:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C3C28E37
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120351; cv=none; b=UgnFzsbLh6ugygmjskKiue+KqsmMpLIY1WmeW41Wo/ITTzLzNO15mKJggt9hk6RJ0O/n3Hbpr/hFOkP1nAJ//CH1XKojVYmapdaHMGthFA/stVmmZH9a8o4AO1KYrce7LmJnO+89x0YpaXMPb6p70Q1P4VVlkeqUyOmJl0hHGQY=
+	t=1718120350; cv=none; b=SvDpEjOVNQNFA5nHQsVFHdo27obPaOCcrlBKTfWSaOVH+fWAj/Sz17srGy6SdK7iLVEOYh67HNS1xHrAvr2PykrE+dKCjXfYXqyvSmjLMhEvUfQA0VomINrY+dtcwJA7n1NvzWYcV8RabYjuNnd2yJ5gPsUGTPdyPwZyawC4dXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120351; c=relaxed/simple;
-	bh=bbs0nZfYQResOgy6lgmjK0ssfkYQtU/jorgr5vVQcy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BthZYYjlrwo4QQQsDvdsL/QNQobqBq6bpdNOzgCqi47/N1utTSezulcJCkLxRZVJoHQuImWmsbLBhhc6cR4bjIHpdm1J71hw9CqYPswfJMGpiZozK7uJ49msz/+YRR5rEfJ7orUwFSEO5lbH663tUGuEXY7yGStDvsoZHbPefvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WeVRuVmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1846C4AF50;
-	Tue, 11 Jun 2024 15:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718120350;
-	bh=bbs0nZfYQResOgy6lgmjK0ssfkYQtU/jorgr5vVQcy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WeVRuVmZNJeBvFynafLllgaQ1sTe/TVDnO5VctQIcUSYQOEU6L/J/vJOIjwNzo3A7
-	 3Dtzy1al9A2/Tr6AlxBQt4JBTgsYowYoL2Bv6Z/KtfTMP8dSDRFtWh0392Fmf3JF2k
-	 fKMz6OPHX2kvVcFojWdEXOXyw1HagFioPBsKsg65MLpyRx/2GOiSJx0A+nqbPJbV3u
-	 A95bFHYsXOdOXRQyF3QNS9yP76xBy7lpFSCBIR/2jJ1QAeLiUXqF71va2CbrHX8VKl
-	 uDjBRTCBn4VAxYQHsvExW6kvFQKq+NKp70xE3plLwPZSkFgB4mIj/paMAwzoxmxS3u
-	 c+uVU5d1JvTpg==
-Date: Tue, 11 Jun 2024 18:39:05 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Zeng, Oak" <oak.zeng@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Brost, Matthew" <matthew.brost@intel.com>,
-	"Hellstrom, Thomas" <thomas.hellstrom@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"jack@suse.com" <jack@suse.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	"Bommu, Krishnaiah" <krishnaiah.bommu@intel.com>,
-	"Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
-Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to two steps
-Message-ID: <20240611153905.GB4966@unreal>
-References: <cover.1709635535.git.leon@kernel.org>
- <SA1PR11MB6991CB2B1398948F4241E51992182@SA1PR11MB6991.namprd11.prod.outlook.com>
- <20240503164239.GB901876@ziepe.ca>
- <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
- <20240610161826.GA4966@unreal>
- <PH7PR11MB7004A071F27B4CF45740B87E92C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1718120350; c=relaxed/simple;
+	bh=OTaL90AXV5eLd7cwrRGQ6YBQCVQKp35jIqJFQ1iMDAc=;
+	h=From:Date:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HG68+mcvE3FmPH/VXIGcA3fnJoHT80ec8DwSS8KwkfeyKos6yrjZERElLWiaQX52WMwNja0VRMYsEkuUEZQrzfHRXtnDIhRN0yOCBUSaYudIhq1l7M+g5fwjf3awycYmbbvGkcjIOp5HfBRiLsBtbbd2c1T4Zxm5MgOhx6X+9Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FAXcNqXS; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso8491777a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718120346; x=1718725146; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :mail-followup-to:message-id:subject:to:date:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hLG3B4Y+fGWVVVSqMDpP2O4ocS16RJ3mfLQLjDGSKMU=;
+        b=FAXcNqXSV5pzEq2B9cnkll0/geRAUviZ7LxQF8B4EfZk1vZ/uRHgmzrrbftN8h1xJI
+         gqXFEFJS1cppmNBgWZoTKr77URR+GxTnn+flLC55oPLfhXrbGtEMeUhMbDUJkxhKt9bF
+         BXkuRfgXa5jUDr6bUzVhMggF7LbTzI08LscuGazw4DHWUk3hCJ7a5Xgh8Os40tu+YT45
+         vcWTjyPXvQ1E8Dge8X7tsr9AVMyXb8jL6x6nnIwLBGdJ3yyAK1Hmb6kon1woeh6zXvqp
+         NkVvOyJ5hqL+hfzKYANWv4zcgo4j2F0aekkm0TeHOfmEhLl58nAjyd0jPlDWAUh/lKFy
+         QL3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718120346; x=1718725146;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :mail-followup-to:message-id:subject:to:date:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hLG3B4Y+fGWVVVSqMDpP2O4ocS16RJ3mfLQLjDGSKMU=;
+        b=K4LL+eIUFlwRRNFHP+c03TOW0ghkAQ2RPCGjcplj2q3ArGSOn6FaOKfWIE7p9f/PJk
+         oaEiLmQ+tyBFgasAVGg4Yp9sBs7d4a50sZNfHFsiHGfsXbOEJ7VzF4KkTDK3n1W/lcKU
+         yjg4L3qk/IIg6Ht4F3Wl6w/CgJ9F6xNlPq85WcJBGSz6cjG4d5EqTIt9hYgNqzNjpLBK
+         emPvkY/hvgoJa1Ue6d1t1EzEWrL0/EEtenCuGxMuNJ4tAsUR7gLBSmUEAEyFS8WyFYpZ
+         3zz4XuGyAhJY7uyt862+rTxCRfzX6NAEDvD57A5MQ/Pks7BYokrp1sICiTGHAzwzqR3o
+         mkww==
+X-Forwarded-Encrypted: i=1; AJvYcCUYTIxpHY9loFuUQJ0sBm1HpBVlUeU11WGhr8b9JkdsjXg47biO962w1hT1c0IVfSQnebO4FaaHvIsgqyKb4JIEg3VPXbyhFcF3duNh
+X-Gm-Message-State: AOJu0YxVx7HmrpuW14hVx1VOdRpumr1Bh9NaEnxPgEXjn5qn24i3TJry
+	wEL9wkIfyVyc+Ri99CUDsVr/o6g2V19Z/t6lOSrkXiMHLqAx+grpN7h5BbLo83v9YeJ44j/Wv4x
+	F
+X-Google-Smtp-Source: AGHT+IGAiKP4S1ta0ypfd8GPYxs98AzoX0FvmrkDa7V2d9yDAJ1SdodaZM4gcGz3kq8Xk2Ny5tPKCw==
+X-Received: by 2002:a17:906:128d:b0:a6f:40d5:e287 with SMTP id a640c23a62f3a-a6f40d5e332mr58510666b.74.1718120346331;
+        Tue, 11 Jun 2024 08:39:06 -0700 (PDT)
+Received: from localhost (host-79-27-228-9.retail.telecomitalia.it. [79.27.228.9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef7913eb8sm537255666b.178.2024.06.11.08.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 08:39:06 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 11 Jun 2024 17:39:23 +0200
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Lizhi Hou <lizhi.hou@amd.com>, clement.leger@bootlin.com
+Subject: Raspberry Pi5 - RP1 driver - RFC
+Message-ID: <ZmhvqwnOIdpi7EhA@apocalypse>
+Mail-Followup-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Lizhi Hou <lizhi.hou@amd.com>, clement.leger@bootlin.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH7PR11MB7004A071F27B4CF45740B87E92C62@PH7PR11MB7004.namprd11.prod.outlook.com>
 
-On Mon, Jun 10, 2024 at 04:40:19PM +0000, Zeng, Oak wrote:
-> Thanks Leon and Yanjun for the reply!
-> 
-> Based on the reply, we will continue use the current version for test (as it is tested for vfio and rdma). We will switch to v1 once it is fully tested/reviewed.
-
-Sounds good, if v0 fits your need, the v1 will fit it too.
-
-From HMM perspective, the change is minimal between them.
-In v0, I called to dma_link_page() here and now it is called
-dma_hmm_link_page().
-
-https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/diff/drivers/infiniband/hw/mlx5/odp.c?h=dma-split-v1&id=a0d719a406133cdc3ef2328dda3ef082a034c45e
+Hi,
+I'm on the verge of reworking the RP1 driver from downstream in order for it to be
+in good shape for upstream inclusion.
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting a pletora
+of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, etc.) whose registers
+are all reachable starting from an offset from the BAR address.
+The main point here is that while the RP1 as an endpoint itself is discoverable via
+usual PCI enumeraiton, the devices it contains are not discoverable and must be
+declared e.g. via the devicetree. This is an RFC about the correct approach to use
+in integrating the driver and registering the subdevices.
 
 
-> 
-> Thanks,
-> Oak
-> 
-> > -----Original Message-----
-> > From: Leon Romanovsky <leon@kernel.org>
-> > Sent: Monday, June 10, 2024 12:18 PM
-> > To: Zeng, Oak <oak.zeng@intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Christoph Hellwig <hch@lst.de>; Robin
-> > Murphy <robin.murphy@arm.com>; Marek Szyprowski
-> > <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
-> > Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
-> > Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
-> > <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>; Jens
-> > Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
-> > Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
-> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian, Kevin
-> > <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
-> > Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
-> > foundation.org>; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
-> > iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
-> > kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
-> > <bvanassche@acm.org>; Damien Le Moal
-> > <damien.lemoal@opensource.wdc.com>; Amir Goldstein
-> > <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
-> > <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
-> > <dan.j.williams@intel.com>; jack@suse.com; Zhu Yanjun
-> > <zyjzyj2000@gmail.com>; Bommu, Krishnaiah
-> > <krishnaiah.bommu@intel.com>; Ghimiray, Himal Prasad
-> > <himal.prasad.ghimiray@intel.com>
-> > Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
-> > two steps
-> > 
-> > On Mon, Jun 10, 2024 at 03:12:25PM +0000, Zeng, Oak wrote:
-> > > Hi Jason, Leon,
-> > >
-> > > I come back to this thread to ask a question. Per the discussion in another
-> > thread, I have integrated the new dma-mapping API (the first 6 patches of
-> > this series) to DRM subsystem. The new API seems fit pretty good to our
-> > purpose, better than scatter-gather dma-mapping. So we want to continue
-> > work with you to adopt this new API.
-> > 
-> > Sounds great, thanks for the feedback.
-> > 
-> > >
-> > > Did you test the new API in RDMA subsystem?
-> > 
-> > This version was tested in our regression tests, but there is a chance
-> > that you are hitting flows that were not relevant for RDMA case.
-> > 
-> > > Or this RFC series was just some untested codes sending out to get
-> > people's design feedback?
-> > 
-> > RFC was fully tested in VFIO and RDMA paths, but not NVMe patch.
-> > 
-> > > Do you have refined version for us to try? I ask because we are seeing
-> > some issues but not sure whether it is caused by the new API. We are
-> > debugging but it would be good to also ask at the same time.
-> > 
-> > Yes, as an outcome of the feedback in this thread, I implemented a new
-> > version. Unfortunately, there are some personal matters that are preventing
-> > from me to send it right away.
-> > https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-
-> > rdma.git/log/?h=dma-split-v1
-> > 
-> > There are some differences in the API, but the main idea is the same.
-> > This version is not fully tested yet.
-> > 
-> > Thanks
-> > 
-> > >
-> > > Cc Himal/Krishna who are also working/testing the new API.
-> > >
-> > > Thanks,
-> > > Oak
-> > >
-> > > > -----Original Message-----
-> > > > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > > > Sent: Friday, May 3, 2024 12:43 PM
-> > > > To: Zeng, Oak <oak.zeng@intel.com>
-> > > > Cc: leon@kernel.org; Christoph Hellwig <hch@lst.de>; Robin Murphy
-> > > > <robin.murphy@arm.com>; Marek Szyprowski
-> > > > <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
-> > > > Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
-> > > > Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
-> > > > <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>;
-> > Jens
-> > > > Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
-> > > > Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
-> > > > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian,
-> > Kevin
-> > > > <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
-> > > > Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
-> > > > foundation.org>; linux-doc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org;
-> > > > linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
-> > > > iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
-> > > > kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
-> > > > <bvanassche@acm.org>; Damien Le Moal
-> > > > <damien.lemoal@opensource.wdc.com>; Amir Goldstein
-> > > > <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
-> > > > <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
-> > > > <dan.j.williams@intel.com>; jack@suse.com; Leon Romanovsky
-> > > > <leonro@nvidia.com>; Zhu Yanjun <zyjzyj2000@gmail.com>
-> > > > Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
-> > > > two steps
-> > > >
-> > > > On Thu, May 02, 2024 at 11:32:55PM +0000, Zeng, Oak wrote:
-> > > >
-> > > > > > Instead of teaching DMA to know these specific datatypes, let's
-> > separate
-> > > > > > existing DMA mapping routine to two steps and give an option to
-> > > > advanced
-> > > > > > callers (subsystems) perform all calculations internally in advance and
-> > > > > > map pages later when it is needed.
-> > > > >
-> > > > > I looked into how this scheme can be applied to DRM subsystem and
-> > GPU
-> > > > drivers.
-> > > > >
-> > > > > I figured RDMA can apply this scheme because RDMA can calculate the
-> > > > > iova size. Per my limited knowledge of rdma, user can register a
-> > > > > memory region (the reg_user_mr vfunc) and memory region's sized is
-> > > > > used to pre-allocate iova space. And in the RDMA use case, it seems
-> > > > > the user registered region can be very big, e.g., 512MiB or even GiB
-> > > >
-> > > > In RDMA the iova would be linked to the SVA granual we discussed
-> > > > previously.
-> > > >
-> > > > > In GPU driver, we have a few use cases where we need dma-mapping.
-> > Just
-> > > > name two:
-> > > > >
-> > > > > 1) userptr: it is user malloc'ed/mmap'ed memory and registers to gpu
-> > > > > (in Intel's driver it is through a vm_bind api, similar to mmap). A
-> > > > > userptr can be of any random size, depending on user malloc
-> > > > > size. Today we use dma-map-sg for this use case. The down side of
-> > > > > our approach is, during userptr invalidation, even if user only
-> > > > > munmap partially of an userptr, we invalidate the whole userptr from
-> > > > > gpu page table, because there is no way for us to partially
-> > > > > dma-unmap the whole sg list. I think we can try your new API in this
-> > > > > case. The main benefit of the new approach is the partial munmap
-> > > > > case.
-> > > >
-> > > > Yes, this is one of the main things it will improve.
-> > > >
-> > > > > We will have to pre-allocate iova for each userptr, and we have many
-> > > > > userptrs of random size... So we might be not as efficient as RDMA
-> > > > > case where I assume user register a few big memory regions.
-> > > >
-> > > > You are already doing this. dma_map_sg() does exactly the same IOVA
-> > > > allocation under the covers.
-> > > >
-> > > > > 2) system allocator: it is malloc'ed/mmap'ed memory be used for GPU
-> > > > > program directly, without any other extra driver API call. We call
-> > > > > this use case system allocator.
-> > > >
-> > > > > For system allocator, driver have no knowledge of which virtual
-> > > > > address range is valid in advance. So when GPU access a
-> > > > > malloc'ed/mmap'ed address, we have a page fault. We then look up a
-> > > > > CPU vma which contains the fault address. I guess we can use the CPU
-> > > > > vma size to allocate the iova space of the same size?
-> > > >
-> > > > No. You'd follow what we discussed in the other thread.
-> > > >
-> > > > If you do a full SVA then you'd split your MM space into granuals and
-> > > > when a fault hits a granual you'd allocate the IOVA for the whole
-> > > > granual. RDMA ODP is using a 512M granual currently.
-> > > >
-> > > > If you are doing sub ranges then you'd probably allocate the IOVA for
-> > > > the well defined sub range (assuming the typical use case isn't huge)
-> > > >
-> > > > > But there will be a true difficulty to apply your scheme to this use
-> > > > > case. It is related to the STICKY flag. As I understand it, the
-> > > > > sticky flag is designed for driver to mark "this page/pfn has been
-> > > > > populated, no need to re-populate again", roughly...Unlike userptr
-> > > > > and RDMA use cases where the backing store of a buffer is always in
-> > > > > system memory, in the system allocator use case, the backing store
-> > > > > can be changing b/t system memory and GPU's device private
-> > > > > memory. Even worse, we have to assume the data migration b/t
-> > system
-> > > > > and GPU is dynamic. When data is migrated to GPU, we don't need
-> > > > > dma-map. And when migration happens to a pfn with STICKY flag, we
-> > > > > still need to repopulate this pfn. So you can see, it is not easy to
-> > > > > apply this scheme to this use case. At least I can't see an obvious
-> > > > > way.
-> > > >
-> > > > You are already doing this today, you are keeping the sg list around
-> > > > until you unmap it.
-> > > >
-> > > > Instead of keeping the sg list you'd keep a much smaller datastructure
-> > > > per-granual. The sticky bit is simply a convient way for ODP to manage
-> > > > the smaller data structure, you don't have to use it.
-> > > >
-> > > > But you do need to keep track of what pages in the granual have been
-> > > > DMA mapped - sg list was doing this before. This could be a simple
-> > > > bitmap array matching the granual size.
-> > > >
-> > > > Looking (far) forward we may be able to have a "replace" API that
-> > > > allows installing a new page unconditionally regardless of what is
-> > > > already there.
-> > > >
-> > > > Jason
+--- CURRENT DOWNSTREAM APPROACH ---
+
+The DTS shows something like this (see [1] and [2]):
+
+pcie {
+	compatible = "brcm,bcm2712-pcie";
+	#address-cells = <0x03>;
+	#size-cells = <0x02>;
+	ranges = <0x2000000 0x00 0x00   0x1f 0x00   0x00 0xfffffffc>;
+	...
+
+	rp1 {
+		compatible = "simple-bus";
+		#address-cells = <0x02>;
+               	#size-cells = <0x02>;
+
+		ranges = <0xc0 0x40000000   0x2000000 0x00 0x00   0x00 0x400000>;
+		...
+
+		serial@34000 {
+			compatible = "arm,pl011-axi";
+			reg = <0xc0 0x40034000   0x00 0x100>;
+			...
+		};
+	};
+};
+
+The PCI bar address here is at CPU physical address 0x1f00000000 and the RP1 driver
+probe function calls of_platform_populate() on the 'rp1' node to register the platform
+drivers for each subdevices (e.g. in the above example: 'serial@34000').
+
+Pros:
+- quite straightforward to implement
+- RP1's dts resides in the directory it should (possibly but not necessarily) belong to,
+  e.g. somewhere under arch/*/boot/dts/...
+
+Cons:
+- the board dts must manually override 'pcie' ranges (in this case 0x1f00000000)
+  depending on the BAR address value, while it should be retrieved by reading the PCI
+  config register instead
+- the probe() function retieves a reference to 'rp1' node via of_find_node_by_name(NULL, 
+  "rp1"), harcoding the node name. This is not desirable since the node name is then set
+  in stone, or otherwise if the node name needs to be changed it must be changed either
+  in the dts *and* in driver code.
+
+
+--- ROB HERRING, LIZHI HOU (et al.) PROPOSED APPROACH ---
+
+A proposal (see [3]) presented at  LPC advise to create a PCI bridge DT node ('pcie') leveraging
+the current OF dynamic infrastructure, adding a dtb overlay ('rpi1' node in the example
+above) on top of it during probe and rearranging the 'ranges' mapping dynamically.
+This sounds like the correct approach and is somewhat used in at least a couple of drivers
+(namely for Alveo U50 card and MicroChip LAN9662 SoC) but AFAIK none of them made their way
+to mainline, leaving some doubts about the applicability of this paradigm.
+
+Pros:
+- no need to provide the BAR address manually since it will be discovered and automatically
+  amended into the 'ranges' property
+- no harcoded reference to 'rp1' node since the endpoint node will be reparented to the 'pcie'
+  node automatically
+- the core OF dynamic infrastructure on which to base these changes are basically already in 
+  mainline (see [4] for discussions)
+
+Cons (albeit I'd consider them minor ones):
+- CONFIG_PCI_DYNAMIC_OF_NODES must be enabled
+- the dtb should probably reside somewhere near the driver source code, e.g. in drivers/mfd/...
+
+
+--- AUXILIARY BUS APPROACH ---
+
+The thread in [5] seems to advise to use the auxiliary bus for this kind of devices. In this
+case, here's the drawbacks:
+
+- as stated in kernel docs for aux bus (cit.) "need a mechanism to connect and provide access
+  to a shared object allocated by the auxiliary_deviceâ€™s registering driver...", and again 
+  (cit.) "A key requirement for utilizing the auxiliary bus is that there is no dependency on
+  a physical bus...These individual devices split from the core cannot live on the platform
+  bus as they are not physical devices that are controlled by DT/ACPI". Those statements are
+  of course at the opposite of how RP1 behaves
+- subdevices drivers may need rework in order to cope with the auxiliary bus, while we need to
+  use the already existing drivers without modifications
+
+so, for all of the above (and probably other cons I'm not aware of right now), the auxiliary bus
+does not seems feasible to be used, but I'm mentioning it just because of the discussionin in [5]
+that let me wonder whether I may be missing something relevant here.
+
+
+CONCLUSIONS
+
+All in all, I'd say Rob's approach should be the way to go, any thoughts about it will be
+greatly appreciated.
+
+Many thanks,
+Andrea della Porta
+
+Link:
+- [1]: https://github.com/raspberrypi/linux/blob/rpi-6.6.y/arch/arm/boot/dts/broadcom/rp1.dtsi
+- [2]: https://github.com/raspberrypi/linux/blob/rpi-6.6.y/drivers/mfd/rp1.c
+- [3]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [4]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [5]: https://lore.kernel.org/lkml/Y862WTT03%2FJxXUG8@kroah.com/
 
