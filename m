@@ -1,178 +1,117 @@
-Return-Path: <linux-kernel+bounces-209987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BAD903DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:42:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16F5903DA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67E1C28575D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EECD51C23583
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9560517E8E7;
-	Tue, 11 Jun 2024 13:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CBB17D88F;
+	Tue, 11 Jun 2024 13:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ETJtlXqv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fDM5ZIK1"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6577D17D8A3;
-	Tue, 11 Jun 2024 13:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DD017D88E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718113203; cv=none; b=qZSvsdkDU3WWtFEKGYMYx+Rkeu25uWH77HAlX/QO8b9XWn+vCTvejQOcsrbkbcSyyIQqhYhrsYvJvkQcH+klsU8tcGypMflVaJLFKzsSf/ZXW+wL/6ny2pvVaFegTGM2ebmMGoJRqB/XWq6tpP+ZLsycxH+Q2I0s2dw0xTlwMNM=
+	t=1718113167; cv=none; b=WGO4nSQjx4/4U4JBZ55wNgwESAekbTLDY8lzwk7jMmwsywBAwPtoPQkY02UisAatvq22gv9+VyOyJH/C7aWwGaJsTy6RtopMX/q+3GNK9djLamLdpJ0qLobV89s/KgrAM+GTmJ/t9LpHKS0+6/W3DUtTP2I35IeZibNmFN40mk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718113203; c=relaxed/simple;
-	bh=vDGZgQ7d5Q+m3KmN0tfKVcSqnjvHGILwo3+BDQbQtZI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F5hG2UGsSiOaK9wYJkPmM4hKhquQiBwyidcoj0+Ubc7mHOpHYjjuD5UFNLJaGaOfuhIyA/yQaZcfd3lr3ZtdCEK236QrpHs266FsL50ffZoAVjrdkbPy+sUQe35cJhkanjiQ+SMGgadV58Ag3Qrv2BGL+CcZSp89cUL0VmqsyGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ETJtlXqv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B6wK0R001684;
-	Tue, 11 Jun 2024 13:39:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pcy6dURWO36Am+KzTv+fEfO8f+AJqgoWh9CdkLC0kxs=; b=ETJtlXqvg9lr2edw
-	P8uF8oTcAsFdgqiX35pVAxskVwm50LqEtJWhi1tVt6wARUmipozuOLVNj7TowNPO
-	+gO3mvp/SMC6rdRrBe7FibtJkUWroNrQVK2KXJ4+wbERNoAr6JMrw5TEe5EYWdu9
-	tdDnDL7FDaZo9Y/QrBjUpDIxXF/XLc6fWZ+b076dga7yLKwCtIRJG7ilfbWsZ+OU
-	GcRpijdkCT/mTI9XhCfDwqXBvPJHeFCektz6OZ1qt53Ehu+hAdKJ/tcpwta5x4/i
-	KlE8QwXGvsnvmsTzIfp6SKWY6+xX7A8yGy/CpAF8UVQ4pLkt35iFROZ9Xq94LI30
-	oMn3tg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yphsas1n2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 13:39:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BDdwWH001470
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 13:39:58 GMT
-Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 06:39:52 -0700
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
-Date: Tue, 11 Jun 2024 19:07:52 +0530
-Message-ID: <20240611133752.2192401-9-quic_ajipan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
-References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+	s=arc-20240116; t=1718113167; c=relaxed/simple;
+	bh=Oxe7PJjgp7An0AFVi5O4Owg2GH2Uw/6+OtjVK2JHGMI=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=dE0LN1GFkBejIhYUDE68e2JiBe4OxGYlPvA8W6eSKU4UgFp6vcjmxhR0Vs1rYccfYX5rPwgd1E5s1Wvq6GbSUoNRhclOUXfzkZfsobuxFogsEoWKTCPVSoAHBScy7EoNYjTPySx2zVRUNSEX6Av6KdPe5n2051uCPe8m5ZuIC50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fDM5ZIK1; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: dzm91@hust.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718113161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oxe7PJjgp7An0AFVi5O4Owg2GH2Uw/6+OtjVK2JHGMI=;
+	b=fDM5ZIK1eSuXv0KAdEaRTW498x+rXXy3uG8P0EnDPBZb2uhTE9WBMScpMoNmndIK5ceR+9
+	3lcIuL0vrNA2dWW6gqyYKNQkXNR4V5mTUgbqspDswoFIrN7a3s0gZgdoi9T5vllT+fg8yv
+	WXeeGHu2OGABUFNvsSXKa4bfbvlO/PU=
+X-Envelope-To: alexs@kernel.org
+X-Envelope-To: siyanteng@loongson.cn
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: hust-os-kernel-patches@googlegroups.com
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: chengziqiu@hust.edu.cn
+X-Envelope-To: linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FKZeT07I3VVxaplddcgpC83T0QELm1Ba
-X-Proofpoint-GUID: FKZeT07I3VVxaplddcgpC83T0QELm1Ba
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- adultscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406110099
+Date: Tue, 11 Jun 2024 13:39:17 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: si.yanteng@linux.dev
+Message-ID: <2e4f9b46821d4f40eadca253496816060c862156@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v2] scripts: add scripts/checktransupdate.py
+To: "Dongliang Mu" <dzm91@hust.edu.cn>, "Alex Shi" <alexs@kernel.org>,
+ "Yanteng Si" <siyanteng@loongson.cn>, "Jonathan Corbet" <corbet@lwn.net>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ "Dongliang Mu" <dzm91@hust.edu.cn>, "Cheng Ziqiu"
+ <chengziqiu@hust.edu.cn>, linux-kernel@vger.kernel.org
+In-Reply-To: <20240611131723.53515-1-dzm91@hust.edu.cn>
+References: <20240611131723.53515-1-dzm91@hust.edu.cn>
+X-Migadu-Flow: FLOW_OUT
 
-Add device node for camera, display and graphics clock controller on
-Qualcomm SM4450 platform.
+2024=E5=B9=B46=E6=9C=8811=E6=97=A5 21:17, "Dongliang Mu" <dzm91@hust.edu.=
+cn> =E5=86=99=E5=88=B0:
 
-Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm4450.dtsi | 38 ++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm4450.dtsi b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-index 9c9919e78fbd..1e05cd00b635 100644
---- a/arch/arm64/boot/dts/qcom/sm4450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-@@ -4,7 +4,10 @@
-  */
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm4450-camcc.h>
-+#include <dt-bindings/clock/qcom,sm4450-dispcc.h>
- #include <dt-bindings/clock/qcom,sm4450-gcc.h>
-+#include <dt-bindings/clock/qcom,sm4450-gpucc.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-@@ -422,6 +425,41 @@ tcsr_mutex: hwlock@1f40000 {
- 			#hwlock-cells = <1>;
- 		};
- 
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,sm4450-gpucc";
-+			reg = <0x0 0x03d90000 0x0 0xa000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,sm4450-camcc";
-+			reg = <0x0 0x0ade0000 0x0 0x20000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sm4450-dispcc";
-+			reg = <0x0 0x0af00000 0x0 0x20000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK_A>,
-+				 <&gcc GCC_DISP_AHB_CLK>,
-+				 <&sleep_clk>,
-+				 <0>,
-+				 <0>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sm4450-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
--- 
-2.25.1
 
+>=20
+>=20The checktransupdate.py script helps track the translation status of
+>=20
+>=20the documentation in different locales, e.g., zh_CN and verify if
+>=20
+>=20these documenation is up-to-date. More specially, it uses `git log`
+>=20
+>=20commit to find the latest english commit from the translation commit
+>=20
+>=20(order by author date) and the latest english commits from HEAD. If
+>=20
+>=20differences occur, report the file and commits that need to be update=
+d.
+>=20
+>=20Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>=20
+>=20Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
+>=20
+>=20---
+>=20
+>=20v1->v2: revise the output format of git commits
+>=20
+>=20 add some description and usage of this script
+>=20
+>=20 scripts/checktransupdate.py | 203 ++++++++++++++++++++++++++++++++++=
+++
+>=20
+>=20 1 file changed, 203 insertions(+)
+>=20
+>=20 create mode 100755 scripts/checktransupdate.py
+>=20
+
+
+Reviewed-by:=20Yanteng Si <siyanteng@loongson.cn>
+
+
+Thanks,
+Yanteng
 
