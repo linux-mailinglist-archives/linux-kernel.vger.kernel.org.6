@@ -1,117 +1,173 @@
-Return-Path: <linux-kernel+bounces-209154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC38B902DF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331DB902DFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58875B21F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9596EB21ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCEB10A3D;
-	Tue, 11 Jun 2024 01:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B1A934;
+	Tue, 11 Jun 2024 01:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J0tcoW/K"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lfpWBALP"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBB3DDB8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA87F8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718069080; cv=none; b=k0qm5LcCbYTp8v2DMShRB/lS/GheDkvCn8npT9kgBUdwF71APgFkA5GS6VXbQrvgtS7t2NbHa6kPTa7+4c33t4U+vBukJAodB0BN2tLVwtob11eA9XtZa1H2vAxcszHTnfcJwfd16v7Lz2YOkil6gc6b8DEOqpshrwnti9yrtkQ=
+	t=1718069653; cv=none; b=lXcsOJndvPETRga2lcSGkFUAVVRN1iNahX2Fw489oQsxmUqdCmqDAG7TxstekmoiqF3LVFwnx9I+J7g/lDiVmR1WcybU2KVgYdSkUUsXyl2/Deag+YLt3SBxMEeWYnTIsg5FiDaba8RaTDPKPJ9nI5cBZk2hWKXPu+7xYjaN07w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718069080; c=relaxed/simple;
-	bh=D2mY0PxworDetejFBvMMJPM3s8A1YQGEEiK9nq7hZKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z9FtAvht/z0prZA7L+FHYCPJaCMHY/wObTCETNTdF6Q7xeDy4zka+p597ubD95HWIVWQQk0hK1kto/pN08LXS2ReAkLIE/m3ot3D/zBmpRbmNAe5N4kO7s4yiHh/iUESVNW1UffzlYryjRrPZLItDydQoaXZj9d+Y1iuk0fxZsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J0tcoW/K; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c83100c5fso482852a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:24:38 -0700 (PDT)
+	s=arc-20240116; t=1718069653; c=relaxed/simple;
+	bh=rb7uB0KSLonwOCypbMgQCXHkOIQyUrxXAXZTMWGn8N8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UuUYT2K0d7AqYTLqq9AJ9fA+0XKpVc6CuN1LwtCp9P5C4m0rlEPRx2XK2+vNPuWSR+RC/Toze3Sytvcuquae8JjVyB7cwWmrCZy3kmp43WXWvpq4FJcrkTssul4shPUGT4UfrLj3WSQ8F/dcSfrDAA9i69qfPwELu21BX6TXj/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lfpWBALP; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6716094a865so4232389a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718069077; x=1718673877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c7ZYubABZSpYrLP7RVmTG2Pj59U8OWIrsQrqs7DlbNY=;
-        b=J0tcoW/KBgdMPuLf7Gk4WmnYQAOFKXVunxkAsMJYjh2x36jYBITHxO7+7gOFPqY+l0
-         hZ8AClvwKoXmhAmPaLHHcwElxx4ZTnaMN5c89+iapkjfTUwL5EmDlYiIZx9s1G/Doek8
-         VUB5QDxbGAEzvn/CXrEXaqBo3El431zCe/3Wo=
+        d=google.com; s=20230601; t=1718069651; x=1718674451; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5baEhBF9sOr8kVhYoFhuMjx/1QvP9In6UP3EAvA/gw=;
+        b=lfpWBALPKKbJ0nvNnAafLHdtC3vkR9fjFuZirGDnppApei9avDemevenEJYvBPxMqs
+         OVWiPFirV4+Ksvnr4DsWrSF2edU+8V4Xwu5gLTQzlxEV1XssXK5m1DFJDjomNzY3Fruw
+         g1IVBakk5NynOgXOcaPXylBCvyjgdxBM8Ylbc0lon+eKUoqO75k/FyXMbs0H52bAABlT
+         zS09UbVOj4RYIibkRpKW0qwhh6e5SoLYxYGBtw2NAGiuO08MLonNo7id/RffQ+ndDPBd
+         XgoD0FAF2jpi21U261nzLvUNhGv/RbZDM8xZTQgNblCKO8waWPOEDME0kVXPob6tcr0y
+         rxqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718069077; x=1718673877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c7ZYubABZSpYrLP7RVmTG2Pj59U8OWIrsQrqs7DlbNY=;
-        b=oSkd37u0vJRak7CpzDQBIY0X+ZcwyIMVdF7P9bGl8Hv97C7tNo9cDJU2bC+COug31H
-         EDOFs7Roa7RGg+LojbzuS9GbhFZF5JPkloKeglrRA/u153Wfv1L67kx836iziEAV5Q4E
-         AFlu/K+htT28gUYNDU19kxDzGdg324Xo0fKbLGmRrj1dKAlRkxHZBgJsJR9ZuE9xUi8B
-         QsjZ1cct9ZOMIguCoDdVytGoUOLFW8qvuPnGi03mzTaEMUObrwKHXd4t1K4driCx6iyg
-         AnuM2wXT5c15713JeN313lbCyWCbl/Hi3+zsb89F7I5SsqihZ1UtcpNOEFoB4MSenHQX
-         mGYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFpnwHouH0MrSYJMOAZdCTpb3HAjS87idaeHOn6f5d7vmBlyvonC6xibKrmzWbdy9B/xkKzW1YZWWA61ES5UHCvix7uF8pLQ1HA7Y0
-X-Gm-Message-State: AOJu0YwSxGUdnZVrVTShC7ZNTsUid69B4+OV52CiLubX4ztdDzQ2devX
-	muapD/XEsrcDstyh5yi5R9gihFvjRDDS1aQvMzjoPuNixEqZVV63XlHHO+0+NHefJJeVIEb05QF
-	Knjs=
-X-Google-Smtp-Source: AGHT+IF68fM3oOAMvVRDOkXvK/L7NfQxyS9O078pTujWqe92bWsUETPM/2M/BMK1MaX0rdPpLgRm5A==
-X-Received: by 2002:a50:cd1c:0:b0:57c:73ff:d13e with SMTP id 4fb4d7f45d1cf-57c73ffd1b2mr3801166a12.31.1718069077182;
-        Mon, 10 Jun 2024 18:24:37 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7d3d5efbsm3510348a12.64.2024.06.10.18.24.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 18:24:36 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so528086a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:24:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9TxJEiciPT2Lf9BJbM65VcAcWYAFCSJY8A8RNBy2/wLjphINfdkgEQ2K1es8LqQxARIxsTX2hqu6fWrY83dWPfvXRKzT9pksqnW9n
-X-Received: by 2002:a50:d648:0:b0:57c:8c45:74ff with SMTP id
- 4fb4d7f45d1cf-57c8c45751cmr1347189a12.41.1718069076241; Mon, 10 Jun 2024
- 18:24:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718069651; x=1718674451;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5baEhBF9sOr8kVhYoFhuMjx/1QvP9In6UP3EAvA/gw=;
+        b=kmS0W2oiKqN4kccH6/AthEyUJ9cgFumZ8fV6QpTmO5aKyBwqoYmn0ISm7AwtZ3nsRk
+         tIiRx5nHdRhpnvJjSjKjjNUu4Gh4CwcJsmk+RX1i/iUBbcwKbEP4rMgbAO/XiN/P9Q49
+         ZFDNu2mjeGftX6HRsrDDZV6fsCREm38JGE/puxOFbgzWXDqUDYORrKzecuXGicbsdqj7
+         05FdhvCY5aqM4a+Wf0StcRqOPQrGCjLtKNinedaUNXQqmTdbcaTGA1nzmQTevJE7/UHT
+         EKbGP7IUJvfgI+eQbPr9qJ9WBJgZzZRCHuNWi8RzHR/Rzv0SOdAJesSNkKhgED4PFN06
+         HCVA==
+X-Forwarded-Encrypted: i=1; AJvYcCULJmyLIUK/0SUfn8pH3WgG1z1DhZzI6NVuvLT82E1dOsb7TJeJzuKVX1uNIAcb7b4Ch/CDV85IzubAN+6fmv03kW63wDUDWT0udPC9
+X-Gm-Message-State: AOJu0Yzi1YGft4VYtSPA/ZpoBiAfWMWuP+W7HPZm0ongQitdQSgpVBPK
+	StlsftM2Gs5sNM/BhG7a8M3ICYDpcysAf/eUyrtzMYb9Vvzeyql1zt8cFhs9fCf+aL8tme5SXqE
+	b+g==
+X-Google-Smtp-Source: AGHT+IFMaS9Am3bSlTU0F3mWYL1AS7eAnC4jgCiDVFw71uqftz9MC4EnYM40IdvQeCJizG9IRIDTSD2POts=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e54c:b0:1f6:21e5:c6e5 with SMTP id
+ d9443c01a7336-1f6d02e0820mr8602725ad.5.1718069651014; Mon, 10 Jun 2024
+ 18:34:11 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:34:09 -0700
+In-Reply-To: <20240410143446.797262-10-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net> <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
- <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
- <71FE7A14-62F6-45D3-9BC4-BE09E06F7863@zytor.com> <CAHk-=wjTzFYo2+eQJpb56Df8sNDW7JEV=_6Di2v-M5x2kv06_g@mail.gmail.com>
-In-Reply-To: <CAHk-=wjTzFYo2+eQJpb56Df8sNDW7JEV=_6Di2v-M5x2kv06_g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Jun 2024 18:24:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
-Message-ID: <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240410143446.797262-1-chao.gao@intel.com> <20240410143446.797262-10-chao.gao@intel.com>
+Message-ID: <ZmepkZfLIvj_st5W@google.com>
+Subject: Re: [RFC PATCH v3 09/10] KVM: VMX: Advertise MITI_CTRL_BHB_CLEAR_SEQ_S_SUPPORT
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com, 
+	Zhang Chen <chen.zhang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 10 Jun 2024 at 18:09, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Doing it in general is actually very very painful. Feel free to try -
-> but I can almost guarantee that you will throw out the "Keep It Simple
-> Stupid" approach and your patch will be twice the size if you do some
-> "rewrite the whole instruction" stuff.
->
-> I really think there's a fundamental advantage to keeping things simple.
+On Wed, Apr 10, 2024, Chao Gao wrote:
+> From: Zhang Chen <chen.zhang@intel.com>
+> 
+> Allow guest to report if the short BHB-clearing sequence is in use.
+> 
+> KVM will deploy BHI_DIS_S for the guest if the short BHB-clearing
+> sequence is in use and the processor doesn't enumerate BHI_NO.
+> 
+> Signed-off-by: Zhang Chen <chen.zhang@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index cc260b14f8df..c5ceaebd954b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1956,8 +1956,8 @@ static inline bool is_vmx_feature_control_msr_valid(struct vcpu_vmx *vmx,
+>  }
+>  
+>  #define VIRTUAL_ENUMERATION_VALID_BITS	VIRT_ENUM_MITIGATION_CTRL_SUPPORT
+> -#define MITI_ENUM_VALID_BITS		0ULL
+> -#define MITI_CTRL_VALID_BITS		0ULL
+> +#define MITI_ENUM_VALID_BITS		MITI_ENUM_BHB_CLEAR_SEQ_S_SUPPORT
+> +#define MITI_CTRL_VALID_BITS		MITI_CTRL_BHB_CLEAR_SEQ_S_USED
+>  
+>  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
+>  {
+> @@ -2204,7 +2204,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  	struct vmx_uret_msr *msr;
+>  	int ret = 0;
+>  	u32 msr_index = msr_info->index;
+> -	u64 data = msr_info->data;
+> +	u64 data = msr_info->data, spec_ctrl_mask = 0;
+>  	u32 index;
+>  
+>  	switch (msr_index) {
+> @@ -2508,6 +2508,31 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  		if (data & ~MITI_CTRL_VALID_BITS)
+>  			return 1;
+>  
+> +		if (data & MITI_CTRL_BHB_CLEAR_SEQ_S_USED &&
+> +		    kvm_cpu_cap_has(X86_FEATURE_BHI_CTRL) &&
+> +		    !(host_arch_capabilities & ARCH_CAP_BHI_NO))
+> +			spec_ctrl_mask |= SPEC_CTRL_BHI_DIS_S;
+> +
+> +		/*
+> +		 * Intercept IA32_SPEC_CTRL to disallow guest from changing
+> +		 * certain bits if "virtualize IA32_SPEC_CTRL" isn't supported
+> +		 * e.g., in nested case.
+> +		 */
+> +		if (spec_ctrl_mask && !cpu_has_spec_ctrl_shadow())
+> +			vmx_enable_intercept_for_msr(vcpu, MSR_IA32_SPEC_CTRL, MSR_TYPE_RW);
+> +
+> +		/*
+> +		 * KVM_CAP_FORCE_SPEC_CTRL takes precedence over
+> +		 * MSR_VIRTUAL_MITIGATION_CTRL.
+> +		 */
+> +		spec_ctrl_mask &= ~vmx->vcpu.kvm->arch.force_spec_ctrl_mask;
+> +
+> +		vmx->force_spec_ctrl_mask = vmx->vcpu.kvm->arch.force_spec_ctrl_mask |
+> +					    spec_ctrl_mask;
+> +		vmx->force_spec_ctrl_value = vmx->vcpu.kvm->arch.force_spec_ctrl_value |
+> +					    spec_ctrl_mask;
+> +		vmx_set_spec_ctrl(&vmx->vcpu, vmx->spec_ctrl_shadow);
+> +
+>  		vmx->msr_virtual_mitigation_ctrl = data;
+>  		break;
 
-I guess the KISS approach would be to have a debug mode that just adds
-an 'int3' instruction *after* the constant. And then the constant
-rewriting rewrites the constant and just changes the 'int3' into the
-standard single-byte 'nop' instruction.
+I continue find all of this unpalatable.  The guest tells KVM what software
+mitigations the guest is using, and then KVM is supposed to translate that into
+some hardware functionality?  And merge that with userspace's own overrides?
 
-That wouldn't be complicated, and the cost would be minimal. But I
-don't see it being worth it, at least not for the current use where
-the unrewritten constant will just cause an oops on use.
+Blech.
 
-                Linus
+With KVM_CAP_FORCE_SPEC_CTRL, I don't see any reason for KVM to support the
+Intel-defined virtual MSRs.  If the userspace VMM wants to play nice with the
+Intel-defined stuff, then userspace can advertise the MSRs and use an MSR filter
+to intercept and "emulate" the MSRs.  They should be set-and-forget MSRs, so
+there's no need for KVM to handle them for performance reasons.
+
+That way KVM doesn't need to deal with the the virtual MSRs, userspace can make
+an informed decision when deciding how to set KVM_CAP_FORCE_SPEC_CTRL, and as a
+bonus, rollouts for new mitigation thingies should be faster as updating userspace
+is typically easier than updating the kernel/KVM.
 
