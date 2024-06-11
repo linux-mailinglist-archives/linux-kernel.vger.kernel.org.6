@@ -1,116 +1,157 @@
-Return-Path: <linux-kernel+bounces-210528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D31E90452E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A2990453B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7EE2839D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808B31C227C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2AA147C86;
-	Tue, 11 Jun 2024 19:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2459A1527AC;
+	Tue, 11 Jun 2024 19:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psDrwT0a"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvD5/ojr"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492561CD06
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 19:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A641509A6;
+	Tue, 11 Jun 2024 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718135393; cv=none; b=szECHKURvCcCAYZf6B1tOWzqQ43r9/9Vm0BitQQAMvsko+0Uu9KWEXLgq5ZU55PCNgyqzQU1bKLfxRIuzU9JYNhY4kpbUA1DhDwsWgQiSImEROHPw9dPK8qDIObR+N1/AuXgu6bSOZ3OHt8QCo+FNifpbzZUZWwHeBr7u6fEigo=
+	t=1718135460; cv=none; b=hGrz5BR4qw0D6qT1XAa8fBkfqkyCbwBseZ4Ze2+N5YtR8rGW+58o2j6+IYw1gevGxMWjHGgtsTyzoULxah36n7IilVu95eBKtPc3BFjmLga2PFhl3TfnQUMw2hqeBaTM2PjVdjnQPdZTaLkJQcq3d6qfc/ZTQv4fjoEJGYppgNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718135393; c=relaxed/simple;
-	bh=/NwHUZCZvevcGs9AY7lN4MhT6WOwaqpKh7KDLpz5U4w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z8F6aZC39QHEwgDN9om0ToaG7Y8JvPyvQmGQw+yl7r6tGjadXuXcoeori4qMxretRN5b3Jmg4xwBgL3/bJi6YUduVzhpUTXfoXCGMNyyK903iMFZ55NbU8iPv05JzU0HiPjpl4R7ePjfW+1d4tcmMRmSrRQDt9n2j+tMSTIop+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psDrwT0a; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a3dec382eso2138377b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:49:52 -0700 (PDT)
+	s=arc-20240116; t=1718135460; c=relaxed/simple;
+	bh=HzqcVLgLFPi42NaNdIhRWUIJxrsIoPw50BWUznbNunY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NAMR+bneLERYbIOiF8dvVwXztnapG2PWyxQFaMQIAWkBdma49jNcQFrJ2+naZomQpXAbWAejmyoBlS6djgbIFFvJweooSARotj3L88lZnYxMM1kNpggBroyRU/qTFDpgsRDuC2E2saW5UMMMC3uXt+kg76N9IHjgRt41TETL74I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvD5/ojr; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c525257feso4529618e87.1;
+        Tue, 11 Jun 2024 12:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718135391; x=1718740191; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsScqjx9mfx0RxKgLYLDE8PLKJt3i+CjnwDIOhR5gSU=;
-        b=psDrwT0aT/+zOWt7TodmD8clrHhJGj0QJNuitdF9JFwwFohoyYco0Rx8Kn66EBTbPS
-         f2nxYuWSycH/oQZJmu+e3NE3idLxOKo3e98Ld+o+DvlK4DHfP16wYnpenX3DpbuzqyGh
-         fSXMNgEckdMNyVIYf0VeELQdZNJYzNxpSC9pKC3gh9mDImV31wWcku6W+QSME/2tHxuj
-         X4R0YW3kdp77qVPukRwQ7DRO65e9bcg+Bdjv8i1fLqjrButL4e6aFb5ykpJ1T8SZtXyY
-         lg46tK6/Z4NJrEtnA3M1/P1AJss0hVT8oM/o++D5LGgB3W41FSFLFHt9AmAucUAkXUlh
-         QsXg==
+        d=gmail.com; s=20230601; t=1718135456; x=1718740256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+DQW8mEWgMpkm6H9SEcHthcwoLYLPs2cBM5ZY3afc4=;
+        b=UvD5/ojrWxYryxvtpOONe7NtJHHC5fp3Ok9n6sTGxEqvAzeezam6AQ4ECwc5xm8iuH
+         zzU7GRPp8kW1D0ghd926iHuetMI+oydDEv5R770bRcs15BXxGtKHLTrH2OvnlUZ/P1nT
+         xe4vfk9jfy04SQWeaZGHSgxC0OCFial9qSgUBjo2PX/Ypujx6TaV4CGeNG73dpPQQTyU
+         YiCTNFRiEexVL8HiK9GQ7TWrTByDoJ7Aj+c7mtYli6LXJ1FB8rzxQpq6uKgxyxNOMbx2
+         VmY8n0TOhmsBOQIv7b+aqd47Cl9+hLBOKXy1Wo7AL8v9+FgqoBaWP7Q7Nk5oRwEOHmAb
+         xihg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718135391; x=1718740191;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsScqjx9mfx0RxKgLYLDE8PLKJt3i+CjnwDIOhR5gSU=;
-        b=KoQhToNvkrg6Gx3wzGiis1xdaTMsV828BJljXBdDMOAJ0yXxLq11hucD6zF3yyy+Rt
-         iIhlXhTvg7aHQ3mtZyg1U0X3LinzugFgyKJS6Miom9r25uPQJGkVvpPxFWOWwbHbDC+2
-         RLIPAkU+W07qFgOe54Wv5tZ/tUVMg176B24LaE6SxGIttFP+m6QQgkIFyjqLRWHuXRod
-         2LIAooCd0wrfIhBkoKVZMn/sqOhm8SVMvcq/XQJRk+bzH3L2pkvCIR3bZHFxsTFN9EmF
-         iaF3f87mYi6MO35Qk1km6+KAnNet2JSQOzSfc5Y0x3ruWdzKsC73RxzNUddY5N5a87dV
-         09xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF7huB0SjdZCVKBvB0APV8YsiUQO4Ba7AMTQ3WGuO9IbFtDnP+VPczFcJkoWEfelhdA6GRNZ5kv5m9NnfbCU9FRf31n2jQAixMUzn7
-X-Gm-Message-State: AOJu0Ywv942pnimVw/n6t998+XOVaa2nQhJeIQKdXbBMEJf11hGIGFiA
-	SX8mZr+NqY2AnBqO3nZXQX1QZvv7HL1ep5cytY8C3rDrVB84CHJLJIrFyvTzk2XBbrO+EGzeaSV
-	rJg==
-X-Google-Smtp-Source: AGHT+IHKfAK7pE+6MrNjEhC62+VdpwmGAN149yNl7QeE40CZzlXANYBAeDvy6+hs91vFlM0KeuUkc8js0Mw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:ca09:0:b0:627:edcb:cbe2 with SMTP id
- 00721157ae682-62f171e8601mr6018567b3.5.1718135391323; Tue, 11 Jun 2024
- 12:49:51 -0700 (PDT)
-Date: Tue, 11 Jun 2024 12:49:49 -0700
-In-Reply-To: <ZmidYAWKU1HANKU6@linux.dev>
+        d=1e100.net; s=20230601; t=1718135456; x=1718740256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+DQW8mEWgMpkm6H9SEcHthcwoLYLPs2cBM5ZY3afc4=;
+        b=hwuWNr4iz8zR/sQaT2/nIEePzZxK7cXXlYo6ASRohKpZOd2Fcj6JoyCZMAiDnNsgsG
+         Zx9TzP2D86oVauYEZyZ6G4WqOFBptXm/IYkwPtw/OPbRSdtf2tFss/G8tX91x+JEurzq
+         +674BIn/mS2avQEk8rerpG2E3hDu1A1PCpNLVuxscIjVD479G3qp+ACxFlvioORoFkXb
+         IAZQK8lCrzkKCi6ONwGHSfd9mp4fVElNaApDll7g9HiknQ0JBjEN05o/zEd0zYxD5N3T
+         kdIXEgy5AJyzPwtglVvEOAMY3dXVMAQWOktARIU1hfUZFkmSmBSu/JTV1p2RcvDl2rjH
+         Ah+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWLiaOCRvgT12fLU/hpI6Vh52ZAh83k1vsNRht9xiukXmwzWNwGNApxqlA80wfVTnrGENFdZ4pX1oY5JuEF4XHibsOo/JkLraGg/mp3
+X-Gm-Message-State: AOJu0Yz1O/B5i7ymgbmSj+aOQbPMMZ5yt8P/flARHhfppoFwRfaiiqrz
+	Np49OI5H/7KPqdwqNGRl3bh1Hr9RMFC6HdXtNLLD2fTIlxcswARAnvdlsT7ThrQ=
+X-Google-Smtp-Source: AGHT+IGxx+GedmwUCdxuIKlFvLE8lRy7drxxAwBYA7ggKBPqJarKQdP2QW/N98aL0bmQa5x+WXSeOw==
+X-Received: by 2002:ac2:4e0b:0:b0:52c:896c:c10f with SMTP id 2adb3069b0e04-52c896cc334mr4751992e87.53.1718135456111;
+        Tue, 11 Jun 2024 12:50:56 -0700 (PDT)
+Received: from WBEC325.dom.lan ([185.188.71.122])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7650b371sm5286737a12.76.2024.06.11.12.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 12:50:55 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 00/12] net: dsa: vsc73xx: Implement VLAN operations
+Date: Tue, 11 Jun 2024 21:49:52 +0200
+Message-Id: <20240611195007.486919-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240611002145.2078921-1-jthoughton@google.com>
- <20240611002145.2078921-5-jthoughton@google.com> <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
- <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com> <ZmidYAWKU1HANKU6@linux.dev>
-Message-ID: <ZmiqXUwMXtUGanQc@google.com>
-Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Houghton <jthoughton@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024, Oliver Upton wrote:
-> On Tue, Jun 11, 2024 at 09:49:59AM -0700, James Houghton wrote:
-> > I think consolidating the callbacks is cleanest, like you had it in
-> > v2. I really wasn't sure about this change honestly, but it was my
-> > attempt to incorporate feedback like this[3] from v4. I'll consolidate
-> > the callbacks like you had in v2.
-> 
-> My strong preference is to have the callers expectations of the
-> secondary MMU be explicit. Having ->${BLAH}_fast_only() makes this
-> abundantly clear both at the callsite and in the implementation.
+This patch series is a result of splitting a larger patch series [0],
+where some parts was merged before.
 
-Partially agreed.  We don't need a dedicated mmu_notifier API to achieve that
-for the callsites, e.g. ptep_clear_young_notify() passes fast_only=false, and a
-new ptep_clear_young_notify_fast_only() does the obvious.
+The first patch implements port state configuration, which is required
+for bridge functionality. STP frames are not forwarded at this moment.
+BPDU frames are only forwarded from/to the PI/SI interface.
+For more information, see chapter 2.7.1 (CPU Forwarding) in the
+datasheet.
 
-On the back end, odds are very good KVM is going to squish the "fast" and "slow"
-paths back into a common helper, so IMO having dedicated fast_only() APIs for the
-mmu_notifier hooks doesn't add much value in the end.
+Patches 2, 7-9 and 11 provide a basic implementation of tag_8021q
+functionality with QinQ support, without VLAN filtering in
+the bridge and simple VLAN awareness in VLAN filtering mode.
 
-I'm not opposed to dedicated hooks, but I after poking around a bit, I suspect
-that passing a fast_only flag will end up being less cleaner for all parties.
+Patches 3-6 came from Vladimir Oltean. They prepare for making
+tag8021q more common. VSC73XX uses very similar tag recognition,
+and some code from tag_sja1105 could be moved to tag_8021q for
+common use.
+
+Patch 10 is preparation for use tag_8021q bridge functions as generic
+implementation of the 'ds->ops->port_bridge_*()'.
+
+Patch 12 is required to avoid problem with learning on standalone ports.
+
+[0] https://patchwork.kernel.org/project/netdevbpf/list/?series=841034&state=%2A&archive=both
+
+Pawel Dembicki (8):
+  net: dsa: vsc73xx: add port_stp_state_set function
+  net: dsa: vsc73xx: Add vlan filtering
+  net: dsa: vsc73xx: introduce tag 8021q for vsc73xx
+  net: dsa: vsc73xx: Implement the tag_8021q VLAN operations
+  net: dsa: Define max num of bridges in tag8021q implementation
+  net: dsa: prepare 'dsa_tag_8021q_bridge_join' for standalone use
+  net: dsa: vsc73xx: Add bridge support
+  net: dsa: vsc73xx: start treating the BR_LEARNING flag
+
+Vladimir Oltean (4):
+  net: dsa: tag_sja1105: absorb logic for not overwriting precise info
+    into dsa_8021q_rcv()
+  net: dsa: tag_sja1105: absorb entire sja1105_vlan_rcv() into
+    dsa_8021q_rcv()
+  net: dsa: tag_sja1105: prefer precise source port info on SJA1110 too
+  net: dsa: tag_sja1105: refactor skb->dev assignment to
+    dsa_tag_8021q_find_user()
+
+ drivers/net/dsa/Kconfig                |   2 +-
+ drivers/net/dsa/sja1105/sja1105_main.c |   8 +-
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 668 ++++++++++++++++++++++++-
+ drivers/net/dsa/vitesse-vsc73xx.h      |  42 ++
+ include/linux/dsa/8021q.h              |   8 +-
+ include/net/dsa.h                      |   2 +
+ net/dsa/Kconfig                        |   6 +
+ net/dsa/Makefile                       |   1 +
+ net/dsa/tag_8021q.c                    |  86 +++-
+ net/dsa/tag_8021q.h                    |   7 +-
+ net/dsa/tag_ocelot_8021q.c             |   2 +-
+ net/dsa/tag_sja1105.c                  |  72 +--
+ net/dsa/tag_vsc73xx_8021q.c            |  68 +++
+ 13 files changed, 874 insertions(+), 98 deletions(-)
+ create mode 100644 net/dsa/tag_vsc73xx_8021q.c
+
+-- 
+2.34.1
+
 
