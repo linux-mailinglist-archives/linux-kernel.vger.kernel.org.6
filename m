@@ -1,123 +1,240 @@
-Return-Path: <linux-kernel+bounces-209382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BDA9033D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:36:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9797D9033DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C324A1C22B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:36:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04ADCB25F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E572172791;
-	Tue, 11 Jun 2024 07:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aKd5cXl5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB964172794;
+	Tue, 11 Jun 2024 07:36:34 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD98171E7C;
-	Tue, 11 Jun 2024 07:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5A8172773
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091366; cv=none; b=CJlsyWksYazfmxLVdX1XbRMfj9/fxOCh2gIKK0ZqnYwKr3Bim4b4XnOIuKcTlD0mTDMQUORTs3L/zfw4aaIkbSkY68Y3xQk0BYsU3yTbZko5FkQWB+HDF5X9/2072///T8MEXVRSO7qeAJ1rzK7PlvKiOsaS+0jP7+ak/wqBQkA=
+	t=1718091394; cv=none; b=sGxwA0jzUQJKpny+fnge2HY3xM35tUHkr5+S5VIU+p0bEsKUn0aJflcrJt0/0y5jAOdECcyPdEkk8fsrHb226jOrWyfy2er1YCFZo5DWtzDETcu+KJ3WgyYaekc+l6xGj2iClLPUPnbyiFopW35G998eiR7AKYblOKTKlJu7wKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091366; c=relaxed/simple;
-	bh=h5lWjlmg4j2trX70zrGXvV0gKEBmsyN3kR6SWh2/Xik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDqM3V/qdOkrF0Di58BDsibAY8El4SjYBt3vmwwcog96ktcJ0fwmfRkNXpqYswZ7Opykj215M1OKK+JAFcn4hoh0ZHQ47JLg76bIVutTU4yM2CqxIzt7BcelQBMy5oTlTFsXLc0JIIK/Fh/A7ajpP2/5NNkYsi8VHr3UqdP/6bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aKd5cXl5; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718091364; x=1749627364;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h5lWjlmg4j2trX70zrGXvV0gKEBmsyN3kR6SWh2/Xik=;
-  b=aKd5cXl58N/2m+3heoUmgZ6qN920lDq3wvuKJAaL7XaSVFPb9OAqZAnF
-   RXD1JqAAw6zN9QFmRLvfzP+dLubVxe4e/tSOGpoGalU98aNiY/b1r+Vsm
-   w0U6baCB+ois+1l2KnWSZATmzlYWOek6d8UUxwGG1FQqRrS+CpyYVU5Ra
-   bFnx6bNva/tZ4utYa6C/ft+7ZnIoTzz/YYUzhBvYjtNst2x9YVJtWGlVX
-   Ze4zD+kGXhFRpLUQTS2OUnMUqsNGzpILJU05KwxR53fGdl+kWzzB8eoUO
-   7gn1Jz/4B57qRIkCQkrF/diSAPec1gORJycYoacHwIXYILogSPxNczQNg
-   w==;
-X-CSE-ConnectionGUID: qTOGRrSLSpKA3Cz0JchD2g==
-X-CSE-MsgGUID: bwHUADkWTjulqxbyxbgS3Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="25448850"
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="25448850"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 00:36:04 -0700
-X-CSE-ConnectionGUID: WFtqwmd2SqGqXWeXlVpBrQ==
-X-CSE-MsgGUID: fGQrY9XXROaEisoh+KQgPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="44282695"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Jun 2024 00:36:00 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGw2v-0000Bd-2E;
-	Tue, 11 Jun 2024 07:35:57 +0000
-Date: Tue, 11 Jun 2024 15:35:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Beleswar Padhi <b-padhi@ti.com>, nm@ti.com, vigneshr@ti.com
-Cc: oe-kbuild-all@lists.linux.dev, kristo@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vaishnav.a@ti.com, j-choudhary@ti.com,
-	u-kumar1@ti.com
-Subject: Re: [PATCH 1/3] arm64: dts: ti: Add R5F and C7x remote processor
- nodes
-Message-ID: <202406111537.bNPc0hYx-lkp@intel.com>
-References: <20240607090433.488454-2-b-padhi@ti.com>
+	s=arc-20240116; t=1718091394; c=relaxed/simple;
+	bh=uJnDfuouCf0ofiaadXE2js0RA0ImI73q/IfYZIwKOkg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l1rUNRUSbt0DYcLfnG+Qb/gDKh+3ojGSrS81fZAggvlHPK6+NhHWrSWTs6YZF+Yq73ApeerIBKyM6XHxi/4iUoDeiFLLL2msZm+UJhpBg2zaSlFSl3gOQk02fGjZ6P1jFs7RrXLnzLR8C30OYCtcSBjNxN9SdOvxOLfm+R3tSEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 45B7ZQWO082600;
+	Tue, 11 Jun 2024 15:35:26 +0800 (+08)
+	(envelope-from Dongliang.Cui@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vz0hx41q6z2RdZvm;
+	Tue, 11 Jun 2024 15:31:13 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Tue, 11 Jun 2024 15:35:21 +0800
+From: Dongliang Cui <dongliang.cui@unisoc.com>
+To: <axboe@kernel.dk>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+        <mathieu.desnoyers@efficios.com>, <ebiggers@kernel.org>
+CC: <ke.wang@unisoc.com>, <hongyu.jin.cn@gmail.com>, <niuzhiguo84@gmail.com>,
+        <hao_hao.wang@unisoc.com>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <akailash@google.com>,
+        <cuidongliang390@gmail.com>, Dongliang Cui <dongliang.cui@unisoc.com>
+Subject: [PATCH v4] block: Add ioprio to block_rq tracepoint
+Date: Tue, 11 Jun 2024 15:35:19 +0800
+Message-ID: <20240611073519.323680-1-dongliang.cui@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607090433.488454-2-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 45B7ZQWO082600
 
-Hi Beleswar,
+Sometimes we need to track the processing order of requests with
+ioprio set. So the ioprio of request can be useful information.
 
-kernel test robot noticed the following build warnings:
+Example：
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.10-rc3 next-20240607]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+block_rq_insert: 8,0 RA 16384 () 6500840 + 32 be,0,6 [binder:815_3]
+block_rq_issue: 8,0 RA 16384 () 6500840 + 32 be,0,6 [binder:815_3]
+block_rq_complete: 8,0 RA () 6500840 + 32 be,0,6 [0]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Beleswar-Padhi/arm64-dts-ti-Add-R5F-and-C7x-remote-processor-nodes/20240607-170843
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240607090433.488454-2-b-padhi%40ti.com
-patch subject: [PATCH 1/3] arm64: dts: ti: Add R5F and C7x remote processor nodes
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20240611/202406111537.bNPc0hYx-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240611/202406111537.bNPc0hYx-lkp@intel.com/reproduce)
+Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+---
+Changes in v4:
+ - Use macros to split ioprio.
+ - Print ioprio hint.
+ - Only storage ioprio in __entry.
+---
+---
+ include/trace/events/block.h | 77 +++++++++++++++++++++++-------------
+ 1 file changed, 50 insertions(+), 27 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406111537.bNPc0hYx-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
->> arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: dsp@7e000000: reg: [[0, 2113929216, 0, 2097152]] is too short
-   	from schema $id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
->> arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: dsp@7e000000: reg-names: ['l2sram'] is too short
-   	from schema $id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
->> arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: dsp@7e200000: reg: [[0, 2116026368, 0, 2097152]] is too short
-   	from schema $id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
->> arch/arm64/boot/dts/ti/k3-j722s-evm.dtb: dsp@7e200000: reg-names: ['l2sram'] is too short
-   	from schema $id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
-
+diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+index 0e128ad51460..209d54dc9dce 100644
+--- a/include/trace/events/block.h
++++ b/include/trace/events/block.h
+@@ -9,9 +9,17 @@
+ #include <linux/blkdev.h>
+ #include <linux/buffer_head.h>
+ #include <linux/tracepoint.h>
++#include <uapi/linux/ioprio.h>
+ 
+ #define RWBS_LEN	8
+ 
++#define IOPRIO_CLASS_STRINGS \
++	{ IOPRIO_CLASS_NONE,	"none" }, \
++	{ IOPRIO_CLASS_RT,	"rt" }, \
++	{ IOPRIO_CLASS_BE,	"be" }, \
++	{ IOPRIO_CLASS_IDLE,	"idle" }, \
++	{ IOPRIO_CLASS_INVALID,	"invalid"}
++
+ #ifdef CONFIG_BUFFER_HEAD
+ DECLARE_EVENT_CLASS(block_buffer,
+ 
+@@ -79,27 +87,32 @@ TRACE_EVENT(block_rq_requeue,
+ 	TP_ARGS(rq),
+ 
+ 	TP_STRUCT__entry(
+-		__field(  dev_t,	dev			)
+-		__field(  sector_t,	sector			)
+-		__field(  unsigned int,	nr_sector		)
+-		__array(  char,		rwbs,	RWBS_LEN	)
+-		__dynamic_array( char,	cmd,	1		)
++		__field(  dev_t,		dev			)
++		__field(  sector_t,		sector			)
++		__field(  unsigned int,		nr_sector		)
++		__field(  unsigned short,	ioprio			)
++		__array(  char,			rwbs,	RWBS_LEN	)
++		__dynamic_array( char,		cmd,	1		)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->dev	   = rq->q->disk ? disk_devt(rq->q->disk) : 0;
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
++		__entry->ioprio    = rq->ioprio;
+ 
+ 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
+ 		__get_str(cmd)[0] = '\0';
+ 	),
+ 
+-	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
++	TP_printk("%d,%d %s (%s) %llu + %u %s,%u,%u [%d]",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		  __entry->rwbs, __get_str(cmd),
+-		  (unsigned long long)__entry->sector,
+-		  __entry->nr_sector, 0)
++		  (unsigned long long)__entry->sector, __entry->nr_sector,
++		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
++				   IOPRIO_CLASS_STRINGS),
++		  IOPRIO_PRIO_HINT(__entry->ioprio),
++		  IOPRIO_PRIO_LEVEL(__entry->ioprio),  0)
+ );
+ 
+ DECLARE_EVENT_CLASS(block_rq_completion,
+@@ -109,12 +122,13 @@ DECLARE_EVENT_CLASS(block_rq_completion,
+ 	TP_ARGS(rq, error, nr_bytes),
+ 
+ 	TP_STRUCT__entry(
+-		__field(  dev_t,	dev			)
+-		__field(  sector_t,	sector			)
+-		__field(  unsigned int,	nr_sector		)
+-		__field(  int	,	error			)
+-		__array(  char,		rwbs,	RWBS_LEN	)
+-		__dynamic_array( char,	cmd,	1		)
++		__field(  dev_t,		dev			)
++		__field(  sector_t,		sector			)
++		__field(  unsigned int,		nr_sector		)
++		__field(  int	,		error			)
++		__field(  unsigned short,	ioprio			)
++		__array(  char,			rwbs,	RWBS_LEN	)
++		__dynamic_array( char,		cmd,	1		)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -122,16 +136,20 @@ DECLARE_EVENT_CLASS(block_rq_completion,
+ 		__entry->sector    = blk_rq_pos(rq);
+ 		__entry->nr_sector = nr_bytes >> 9;
+ 		__entry->error     = blk_status_to_errno(error);
++		__entry->ioprio    = rq->ioprio;
+ 
+ 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
+ 		__get_str(cmd)[0] = '\0';
+ 	),
+ 
+-	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
++	TP_printk("%d,%d %s (%s) %llu + %u %s,%u,%u [%d]",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		  __entry->rwbs, __get_str(cmd),
+-		  (unsigned long long)__entry->sector,
+-		  __entry->nr_sector, __entry->error)
++		  (unsigned long long)__entry->sector, __entry->nr_sector,
++		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
++				   IOPRIO_CLASS_STRINGS),
++		  IOPRIO_PRIO_HINT(__entry->ioprio),
++		  IOPRIO_PRIO_LEVEL(__entry->ioprio), __entry->error)
+ );
+ 
+ /**
+@@ -176,13 +194,14 @@ DECLARE_EVENT_CLASS(block_rq,
+ 	TP_ARGS(rq),
+ 
+ 	TP_STRUCT__entry(
+-		__field(  dev_t,	dev			)
+-		__field(  sector_t,	sector			)
+-		__field(  unsigned int,	nr_sector		)
+-		__field(  unsigned int,	bytes			)
+-		__array(  char,		rwbs,	RWBS_LEN	)
+-		__array(  char,         comm,   TASK_COMM_LEN   )
+-		__dynamic_array( char,	cmd,	1		)
++		__field(  dev_t,		dev			)
++		__field(  sector_t,		sector			)
++		__field(  unsigned int,		nr_sector		)
++		__field(  unsigned int,		bytes			)
++		__field(  unsigned short,	ioprio			)
++		__array(  char,			rwbs,	RWBS_LEN	)
++		__array(  char,			comm,   TASK_COMM_LEN	)
++		__dynamic_array( char,		cmd,	1		)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -190,17 +209,21 @@ DECLARE_EVENT_CLASS(block_rq,
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 		__entry->bytes     = blk_rq_bytes(rq);
++		__entry->ioprio	   = rq->ioprio;
+ 
+ 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
+ 		__get_str(cmd)[0] = '\0';
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
+ 	),
+ 
+-	TP_printk("%d,%d %s %u (%s) %llu + %u [%s]",
++	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u [%s]",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		  __entry->rwbs, __entry->bytes, __get_str(cmd),
+-		  (unsigned long long)__entry->sector,
+-		  __entry->nr_sector, __entry->comm)
++		  (unsigned long long)__entry->sector, __entry->nr_sector,
++		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
++				   IOPRIO_CLASS_STRINGS),
++		  IOPRIO_PRIO_HINT(__entry->ioprio),
++		  IOPRIO_PRIO_LEVEL(__entry->ioprio), __entry->comm)
+ );
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
