@@ -1,92 +1,140 @@
-Return-Path: <linux-kernel+bounces-210209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CE09040D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4829040D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1DD1C237D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA84D1C23895
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6608B40867;
-	Tue, 11 Jun 2024 16:03:39 +0000 (UTC)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18744C81;
+	Tue, 11 Jun 2024 16:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3FxDznW"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967F22B9DD;
-	Tue, 11 Jun 2024 16:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EC743AC5;
+	Tue, 11 Jun 2024 16:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718121819; cv=none; b=GNlJcteGcHkYqTbqIlVETeiU3/IpauvyS8+JAN8cYeMvcuz7H+f8i/6nLsV0/noySZS29soakQ4HEbxOlxeeL63t53N+uH6qitLxJActyI0drlBA9a9vjTh8488UffMUN5sNpfeAnxIeackr1A8ceBicZxsAHCg7iZVmwLBRMwU=
+	t=1718121851; cv=none; b=HbRjfuUQeUfiJ1cvpz0+1ONX8dkCbiuZoukcypOBtCYzbQtXQE1va0E5p5Pex5uS65Ui23+s3Fwm8Vf3JM3AFM/LDFG2JRdeHQ8bxDT4vnend7a8OMTPuqBc+0QWybRwwdUq1k7NiAYkK5oB3Wp5jmfwm0Q7az02kRLcdR95Vvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718121819; c=relaxed/simple;
-	bh=QOmpk5JLZ6uslcuqiWbyefS2HUNhd02h+M9Gsm9Qv0s=;
+	s=arc-20240116; t=1718121851; c=relaxed/simple;
+	bh=OnTkHejPNw3tngPD/gLNuIdXyEPXReQ7Og4rR03tJUM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g/bbZCxs5epY1JxDRnMebCsFPG0pzMIF0is16Wzk7jNCpTYXF0OyQ7/Skeq5t0AGa3/SdN583QKdAaRMXBgYoAEcwxDo/GkKxpHpR4iK6fJ6Jg90Hdc3fAXtSVRJ8JeRU+YXvIoUM7q4tKBAtcumspP549mQffemYAaeCsd+jIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	 To:Cc:Content-Type; b=OXjqk6xzCpXFkODmH2sDHY56pUCl/SfbBV7J4NMKGOs65zGL7cfGHL5b7XLUsiSE+iBCdz3QP+cXx1eziTFNLE1o+3O/OZHJJyGCEAPwlEEPS+WdSnb+gvYSPakdUGVYNNFlM6bEwDRTAwXQGNveQuUd1htAOWKjkDcx6GCfLBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3FxDznW; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7041053c0fdso3078824b3a.3;
-        Tue, 11 Jun 2024 09:03:37 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f188e09a8so2589575f8f.2;
+        Tue, 11 Jun 2024 09:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718121848; x=1718726648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A7OxeEGQvtZSHolpPtCDm/Oc1t2xdqPNsViOQEbQvYo=;
+        b=Y3FxDznWQnY/DlmkqbIvfxgWrT7ToMPIPIy79BjpQvNz4bCM587yDrZUpJWCo7OqsA
+         zSPUdZAAKEn5yPVcuVRnWe3gflnyDqia0GERna9fOVGGFQeeGx6jbwGoQ+2rvZ0D4XNt
+         SS9pIRMpBM/FVsJJ+zE3eR2crSXiRv66iICm9+0YB8jlpQr+E7NcqKvr5XL8czNcBSXQ
+         J/B0q0Xot3fhxcyI/W+roE+BJVVVK7jidPpYjYflHb8ptsU9arWK5z0lKzz5BAC2rsoO
+         2QrFB0PL74kGnzrxqZBiouk4rY8WFSy5E6MrCvAcC+aKxC60aSIqudxjHP72+CWc9eAn
+         GFpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718121817; x=1718726617;
+        d=1e100.net; s=20230601; t=1718121848; x=1718726648;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QOmpk5JLZ6uslcuqiWbyefS2HUNhd02h+M9Gsm9Qv0s=;
-        b=VQZddW3G+auGb5ODXXXvfmnmM1xVszRHQ8Dr3+rsiWubmfMReAd8rfV+shzv7DQ38w
-         7Sm2QZeCjxxG4bZ/jYYW/qmRMmuufxWiQpNdmXM+zBNxhSYUSnXJV+c54NZiUxlxc3Rt
-         HVfrldPsqLai48kLBphJ7axe8UIgLovpissO7CGLPKed/QOiDdQmoIB58Oi+2h5evg2l
-         RYW/BlxaNSGnUqeBZnffAqMonmaIH0D6HTeOQB+pWkSpeKp6VTLlmUfAR/ibTL4SeIsJ
-         3ObDRAuMERiGnzX//zx0C+uWKFt14Y2fIeXOSYWAO6VzGTWQ9TX1eDdV06AmqdaykhSc
-         XpMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzOcKBKVXNTvInjFmuX5goZpsYUK5NvKiYD0Edo0wBzRG5PSkSHopFaqssy1IjHUgZ8i/T1ReDm+fWTzNFuA2aRWSox0TQ6bN69PnIg4f7mLmowCvf/84KwdTsQkSptJ8csZkRKaFqGxTeGxqb4w==
-X-Gm-Message-State: AOJu0Yz486b4ZW/iXNIXW99SqQTkZi/ZrH08PxXllklXlSORgm2BD1G+
-	J0Wzb9mHU7XVrB1/ktdaQHBw1J8voaNeBCKgclW+ErCRkhnny9DEqC/YHywrXJFUgG7eE8ePf1f
-	aBHzQ5FJPCK9WZDcMPnJa6z2rln8=
-X-Google-Smtp-Source: AGHT+IGXDv1FPSpMzUHJGlIVNMuTkPreMewvl2JFTAd/3QehAidEF3D40lSOViix9U8zZ0p5AIWnrqUx+N3ukkl2nTM=
-X-Received: by 2002:a17:90a:6b43:b0:2bd:dce4:8f90 with SMTP id
- 98e67ed59e1d1-2c2bcadfcb5mr11942400a91.6.1718121816689; Tue, 11 Jun 2024
- 09:03:36 -0700 (PDT)
+        bh=A7OxeEGQvtZSHolpPtCDm/Oc1t2xdqPNsViOQEbQvYo=;
+        b=iCM/+kmQ/z0ro2vMgxluhX5GukcuZ+wGGPevbS9xbMyx0xzrFm+zUqTs5YMPYulVjY
+         MYZcAoc1mJnG9n8y8hNJ+vuxNi8UXsaS6fA6a+7zSzaXgVH3oGMssd4I3a1Y9sfRV2uZ
+         OtVr4pv3PCunsGSECmmsDZEjKSTtGTjdJ1EE3ZEylIr00zX4pFGeqraVH2qSbzEj+hgq
+         p2GMLz+3n2sVIvpe6hhWZHJTHTnbzWkzTNy5gGd9EJwEJRpalmsC3z+UgfBUREmPsIBn
+         6wSPwxFqKMDz1Eo5tQmrFGZxlVvQ3DaKA4bTGLFiJXEMYMazBMMc8R0bz6tMA4qBPEn6
+         UvUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7P7vMTpC1fvoEhMlc0iQE6ijGjN5aTcORAM8TivAXlcKkON8uwviNnfi3LiQtUWDPZLv7sy1yqMS9eboDvjL52NbhBjoaBNgvHKxjwJEm8+NUR8HUTEPHOIxFpvCL/7b+xkqsp16Ccqederohv6V1dMg+kIC2fgnilAUkNdmN/EOq
+X-Gm-Message-State: AOJu0YwxIw7ogwH9ZUfZgOaJKVGZKlw6ji9CuQXVX1tb3fxlGDMVcYru
+	18bJlsI3iEf7SUcx1RPEq8A6oMc/RFNqjU0BlEvi1L2vUTSQWBpPva8lR39CUmG2bO/p0LdRqY4
+	0r6nPDWJW4Yy1VBCwOe/FIRkL3XE=
+X-Google-Smtp-Source: AGHT+IGgf1ls3cDJ6B8jZSckjsi3R4ehKyK6BuvWyiUq1Q0BRGfbAUe6LlHVpdwqmLIfrHbT/2TI3nOOqIIwwdeGhAY=
+X-Received: by 2002:a5d:6608:0:b0:354:f7a4:7862 with SMTP id
+ ffacd0b85a97d-35efed2baacmr8566577f8f.19.1718121847806; Tue, 11 Jun 2024
+ 09:04:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611050626.1223155-1-irogers@google.com>
-In-Reply-To: <20240611050626.1223155-1-irogers@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 11 Jun 2024 09:03:25 -0700
-Message-ID: <CAM9d7chyxF5LMz+-RQevD5N-vtg-VwaRq3+0kugeN8-vwLzHuA@mail.gmail.com>
-Subject: Re: [PATCH v2] perf record: Ensure space for lost samples
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Milian Wolff <milian.wolff@kdab.com>
+References: <cover.1717881178.git.dxu@dxuuu.xyz> <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
+ <Zmb52Qp__CBzbgDh@krava> <chydnuotqnmamlfmgzgnwurj5flaegp2bjebxldqwc2y2ngs5x@3h4blknbqhlw>
+In-Reply-To: <chydnuotqnmamlfmgzgnwurj5flaegp2bjebxldqwc2y2ngs5x@3h4blknbqhlw>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 11 Jun 2024 09:03:56 -0700
+Message-ID: <CAADnVQJdt5K3o6SrnVzzBVf+5BmJ3Wo5TTLvULE7rKJPkKqmbQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix bpf_session_cookie()
+ kfunc prototype
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Quentin Monnet <quentin@isovalent.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
-
-On Mon, Jun 10, 2024 at 10:06=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
-ote:
+On Tue, Jun 11, 2024 at 8:54=E2=80=AFAM Daniel Xu <dxu@dxuuu.xyz> wrote:
 >
-> Previous allocation didn't account for sample ID written after the
-> lost samples event. Switch from malloc/free to a stack allocation.
+> Hi Jiri,
 >
-> Reported-by: Milian Wolff <milian.wolff@kdab.com>
-> Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@mili=
-an-workstation/
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> On Mon, Jun 10, 2024 at 03:04:25PM GMT, Jiri Olsa wrote:
+> > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
+> > > The prototype defined in bpf_kfuncs.h was not in line with how the
+> > > actual kfunc was defined. This causes compilation errors when kfunc
+> > > prototypes are generated from BTF.
+> > >
+> > > Fix by aligning with actual kfunc definition.
+> > >
+> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > ---
+> > >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 =
++-
+> > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 =
++-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing=
+/selftests/bpf/bpf_kfuncs.h
+> > > index be91a6919315..3b6675ab4086 100644
+> > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dy=
+nptr *data_ptr,
+> > >                                   struct bpf_key *trusted_keyring) __=
+ksym;
+> > >
+> > >  extern bool bpf_session_is_return(void) __ksym __weak;
+> > > -extern long *bpf_session_cookie(void) __ksym __weak;
+> > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
+> >
+> > the original intent was to expose long instead of __u64 :-\
+> >
+> > could we rather change the bpf_session_cookie function to return long?
+> > should be just return value type change
+>
+> Sounds reasonable to me. I don't think the kfunc has made it to a
+> release yet, so perhaps if we extract this commit out as a fix to bpf
+> tree it can still make it into 6.10. That way we won't have to worry
+> about any ABI changes.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
+kfunc-s can be changed at any time. Keep targeting bpf-next for everything.
 
