@@ -1,82 +1,146 @@
-Return-Path: <linux-kernel+bounces-210138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CBD903FD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:15:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86946903FD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6642B2819B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F901F22B75
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5826D364A9;
-	Tue, 11 Jun 2024 15:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B966F1DA4E;
+	Tue, 11 Jun 2024 15:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxbSlKoC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgLvUuAW"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937F02C69B;
-	Tue, 11 Jun 2024 15:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C79922331;
+	Tue, 11 Jun 2024 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718118935; cv=none; b=iIwnAc2KHzWePXrvwkBE4aTrqjI2zZHXPK6Tx+uJIb9b8sa51RYGydN21uG66xaw8YMyFnsthzxUdHfsOHIgNZPdIQETPc2FOtX+1wQt324u5XfY2WSwqNNxu3bw1KSLIp8ISiVJxh5dHbeoI1rFZ73oDAvX+m6xxO8kWbDyssk=
+	t=1718119040; cv=none; b=gfD/+1C1sYnRPe++K9MgGLVMtclTsJHK+cHPXPIgpbz9ZMiKP3Et8lfZws7zZZCgIGAc/r3/+WvhlhL38X7o7BULUsrJnoyPqtFiXhLni6UtikFUSGMUpwW48CuyM+o7NYYtue/zM/vpOa4l7lGYcFjatH8RK1idDFmCq174H4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718118935; c=relaxed/simple;
-	bh=xMLV2sd8FsrG6JWqA4Eoeeg1GA6HduhpKbcLiHnUZ7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BT+/cODbt/PL8T3m27cmYh4IgvD1ZESDMKOpaGdPtFqc8Q/eY3tm/F4FEWKDvoMwyLUhgTknsKztGfiYlg0hZ+sfkNTLtxTXFDzBWxUbC8gTACgBQ+cFCVozZtybu5+6+H0DybNl5ZFKqLGto9qzZDrSu+u2j+f/9bkEgRk3XcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxbSlKoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931C3C2BD10;
-	Tue, 11 Jun 2024 15:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718118935;
-	bh=xMLV2sd8FsrG6JWqA4Eoeeg1GA6HduhpKbcLiHnUZ7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pxbSlKoCtG+T4zqh3yYeHSTBNVU+KKPf5mzgeyyJ/yqkaMcmpAUk4S0jPBTX+eEpP
-	 Etx38DHXSu0Kyc0Jck+DeWuc2lXIL/aR9zfSkr5IRhs9uRJvwfy++8sdBLQTEVu17O
-	 SsLjDpz1CofxuG4bzCQrI9XwGg6jN6E6nIYBbf0/Pkm7uCmZqVFN+LXwt3/ifSfyr+
-	 w0KXyqjZfpiQVIt899j60zcmAVo1fAVJVU9+hqnr99zwXZ7pEQbWL3PL5johehutMa
-	 uQ2IWmAyx7PgWc0TiGFqnXWtP5uHl2CzopF6C4udcTs9hmi4PxXcvu4cw4EESSNnDu
-	 ZVJ8roq3AV2KQ==
-Date: Tue, 11 Jun 2024 09:15:32 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Roman Smirnov <r.smirnov@omp.ru>
-Cc: "axboe@kernel.dk" <axboe@kernel.dk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	Karina Yankevich <k.yankevich@omp.ru>,
-	"lvc-patches@linuxtesting.org" <lvc-patches@linuxtesting.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [bug report] block: integer overflow in __bvec_gap_to_prev()
-Message-ID: <ZmhqFLdCW6aXriqP@kbusch-mbp.dhcp.thefacebook.com>
-References: <9d8ac82ab63a64583f753878dd03e3503c68ffbe.camel@omp.ru>
+	s=arc-20240116; t=1718119040; c=relaxed/simple;
+	bh=hBDZsMo7XS37/WDuKhGZamh2Y8ndhFFxERQL6K36UXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ha87SV/ZfCqiWtypmJH7HzFKt7hKUVqhUbmCLZXO1UzeO1qHjHBI3qXEHbx28jTrpMOB+gRQ6m6Eqgu86f1canxrnQXixbXLsyj3W4JFc8zo0lzMZT/2arhcjolEA4KVvfjH/LYvIl+OM7X+u1jhmn57D5jsX3zrBnnhlb8nt88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgLvUuAW; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-375932c94f0so5991305ab.0;
+        Tue, 11 Jun 2024 08:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718119038; x=1718723838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nm8XxZQUI/HGBg0dmgtwj323sJEbBxn99UO8Ys/CJ9E=;
+        b=VgLvUuAW3hoQynsupjdqD9j89X5YIcLvcrikcLl80qOqooqgXbgTzy7CSga3IyBtkC
+         Y79USyklvNidMOO9BFmQiWdwkHA8pfIwcqQWVSkYykLQSwIMo9KcLlLk1HEQNmzTWNOg
+         1pySgk+L6LXcBTURG4tTB4O3UVpqzYlwnPavahwcgbD0VgcX4hS5bBV1TWfGAPoC5qLU
+         KinXhly2Da9cudCl4gAtKMDH3wTKZaGkKgIfB/QFf7uR1knJsYqk5JQd+DQYZ7HpxrDU
+         73Ak8ouahfVb4aU0bIBncED/8mUylAGCcqJJ5blnCJ7Kf/3GBN/YD7GTXg2dxL/oQDgm
+         wlrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718119038; x=1718723838;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nm8XxZQUI/HGBg0dmgtwj323sJEbBxn99UO8Ys/CJ9E=;
+        b=jqxcJARRl/+2dEPCTBDscAsQfzqZBv+qHMqB5DYEF2rvy5kRmvMMgsRJzDCSGe1ol8
+         SNBO69zPakYnsSOfBFnkRoVXOuY58HDn4qkfWdcgndyRk8A8mM4+kLZu+O8+mUvdSLTs
+         DyUrtgJsZgRUaNce/7Z3V21da7iNfxeMCEWMgbj5cK5BIlrZ7D3UG1g5sWt8VT9KR/8x
+         uZyBWmtMmaownRQZEBe5tUTyykyD4DFf+sPfwRpLYYBMHTjKqWsFtvC+qEYmwdspOHNB
+         uBfjz4rlmkoRi1S5eB4fh1SS37DgbZVOuBClK9yhQoLXQbe7B67iaTfX66FCUB79nMcC
+         mnUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBuc4YAnpap3saxLecuCxYoyMm49Kj9QigNRjqfyXFA/dhcgamQPo3pdU49k70XMUl6clbObryT70L8lKfX4Nv+Dqdk8bZSSGTxUWl+FjyvmVBqyYppt2Hj49MSjRqoxBSOm9jIndD1UUbGqyK
+X-Gm-Message-State: AOJu0YyQKL5HIwlGboqclLaHDfgnyHiDnsz7xkAACZh+RxzhKiiAMVEI
+	tx5Hoviol075duR6VSGb1HiWcZoaLmKGQZfqDLtFbcvKKR2F4HHj
+X-Google-Smtp-Source: AGHT+IExm5GtDuYDkONfdjBbLVN8LHjWknlg7VwmafjrbNWIyXPsbRtYVK9WGAtqfWsQ86KMykmh4w==
+X-Received: by 2002:a05:6e02:2169:b0:375:a535:f7c7 with SMTP id e9e14a558f8ab-375a535fbdemr67209805ab.0.1718119037631;
+        Tue, 11 Jun 2024 08:17:17 -0700 (PDT)
+Received: from xps-15.. ([91.90.123.30])
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4b7cbacb0d1sm2001416173.4.2024.06.11.08.17.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 08:17:17 -0700 (PDT)
+From: Amer Al Shanawany <amer.shanawany@gmail.com>
+To: Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Amer Al Shanawany <amer.shanawany@gmail.com>
+Subject: [PATCH v3] selftests: seccomp: fix format-zero-length warnings
+Date: Tue, 11 Jun 2024 17:16:08 +0200
+Message-ID: <20240611151638.5767-1-amer.shanawany@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <43e24489-a3af-4e53-afc6-ff1dd9462ee2@linuxfoundation.org>
+References: <43e24489-a3af-4e53-afc6-ff1dd9462ee2@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d8ac82ab63a64583f753878dd03e3503c68ffbe.camel@omp.ru>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 02:23:48PM +0000, Roman Smirnov wrote:
-> Hello.
-> 
-> There is a case of integer overflow in __bvec_gap_to_prev():
-> 
-> 	((bprv->bv_offset + bprv->bv_len) & lim->virt_boundary_mask);
-> 
-> bio_vec can cross multiple pages:
-> 
-> https://lore.kernel.org/lkml/20190215111324.30129-1-ming.lei@redhat.com/t/
-> 
-> So, in case bio has one bio_vec bv_len can have a maximum value of UINT_MAX.
-> The check happens in bio_full(). In the case when bv_len is equal to
-> UINT_MAX and bv_offset is greater than zero, an overflow may occur.
+fix the following errors by using string format specifier and an empty
+parameter:
 
-Does it matter? The lower bits checked against the mask should be the
-same regardless of overflow.
+seccomp_benchmark.c:197:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  197 |         ksft_print_msg("");
+      |                        ^~
+seccomp_benchmark.c:202:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  202 |         ksft_print_msg("");
+      |                        ^~
+seccomp_benchmark.c:204:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  204 |         ksft_print_msg("");
+      |                        ^~
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202312260235.Uj5ug8K9-lkp@intel.com/
+Suggested-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
+---
+v1 -> v2: removed empty print statements
+v2 -> v3: used Kees's suggestion
+---
+ tools/testing/selftests/seccomp/seccomp_benchmark.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/seccomp/seccomp_benchmark.c b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+index b83099160fbc..94886c82ae60 100644
+--- a/tools/testing/selftests/seccomp/seccomp_benchmark.c
++++ b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+@@ -194,14 +194,14 @@ int main(int argc, char *argv[])
+ 	ksft_set_plan(7);
+ 
+ 	ksft_print_msg("Running on:\n");
+-	ksft_print_msg("");
++	ksft_print_msg("%s", "");
+ 	system("uname -a");
+ 
+ 	ksft_print_msg("Current BPF sysctl settings:\n");
+ 	/* Avoid using "sysctl" which may not be installed. */
+-	ksft_print_msg("");
++	ksft_print_msg("%s", "");
+ 	system("grep -H . /proc/sys/net/core/bpf_jit_enable");
+-	ksft_print_msg("");
++	ksft_print_msg("%s", "");
+ 	system("grep -H . /proc/sys/net/core/bpf_jit_harden");
+ 
+ 	affinity();
+-- 
+2.43.0
+
 
