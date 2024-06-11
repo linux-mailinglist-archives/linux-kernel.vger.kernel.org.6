@@ -1,163 +1,180 @@
-Return-Path: <linux-kernel+bounces-210301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347AD904211
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:59:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89836904203
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7F91C25346
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0381F25BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE6B47F53;
-	Tue, 11 Jun 2024 16:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC446444;
+	Tue, 11 Jun 2024 16:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="HNtxPS6+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GMEzhY5L"
-Received: from flow5-smtp.messagingengine.com (flow5-smtp.messagingengine.com [103.168.172.140])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bkSgyzZm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A618017578;
-	Tue, 11 Jun 2024 16:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437440861;
+	Tue, 11 Jun 2024 16:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125113; cv=none; b=IT6S1momMkxjGP3+GCAx0TbzdhQvbw/b5IB4LEA17VaY3AK0MgaSmqkKQfDluEZz+0FpPPzIaCnvthy2wfgoDPmnQnAByZB5R0yXJTJCFiDqjpkxnlM33eQfj3ZvP8YuoJl4L2sEA4gy2HWbMi969dcJxkFU4aI1Krz22zPmFuA=
+	t=1718124949; cv=none; b=VIaSMBXZaQPjW5KK2WXzTTgfaYUMcWgEjIoAeoWqUVySNmxkLKd6RUOamKr207nAfsTjNLG1Jsf7bnkyjcQ1JrW7YWOe4kCh+RG9AtWBTutHXU2EXr4UHTh9LR3S7A00NjO3OXxdSo9nEQkbawok9NlGeGmyV7Qf4gFpM4MWRgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125113; c=relaxed/simple;
-	bh=8SY4dECWglq57tFvEFA6sQZdC/024FgtdpPZQqJybcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+Xh7pDPfVWWgmde+8dJ42exvDzMJOMTBWzpi+NM5boymp4qGHpuwQZKYmbqrrXaaaU5xs64BT7W/d2Nd8Dpd59QNT87jIHaUt+VW3DDrxqQGOtW/Th7JlEc51czBrInpyXTligqC1H2XY9KAKEeP47PjgU/fy4DFEHbPfTlqlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=HNtxPS6+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GMEzhY5L; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 8382F2002AF;
-	Tue, 11 Jun 2024 12:58:29 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 11 Jun 2024 12:58:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1718125109; x=1718132309; bh=kTsf/XjG12
-	FVk17WuA7d1tL6MKxw/YBHpNOowUqpZbY=; b=HNtxPS6+iCZ8+1cfY/sSZ9/ZXF
-	1LGHuCUvt7fcxZptXUMepaOnq6oloZQL5QQ5lYITEwc+t7OGBlscIZ6vcSDTPAjX
-	DffAB4D9d15G8SXoloFnaqYzP8S3zOBEiWtsf6tFCTDt7I0PbylnQ2zcK+AsIYUW
-	CIbLPLpJljyZKf+1SbkveJg4jT02SkZH/eDfTK39P0WpemggYhQ7nzifkZBS3Krm
-	wQptVOAvf48gu+iweeV+PIySbDrkOegngkpZW12fafUWEHqcPPdAAaYfM8N1b2BP
-	fR1ErsJZmlsCioybyE8WUR0VKn+0PsMNAwFGtg7Y/3/rqHyuV86Aphqn+F5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718125109; x=1718132309; bh=kTsf/XjG12FVk17WuA7d1tL6MKxw
-	/YBHpNOowUqpZbY=; b=GMEzhY5LVS51kXJlSwbADAeUgsXzI+lP1nAdPnU6CZtv
-	KrLVpLhAjPFLpbE29GO3hNGm4G8TJwRJGBotWW3AIMcv7y/z6R5JQhrFEv2GQFt3
-	xuwza32TGSptHqX1k3F9meZF68IBSnoXfiOa4J58GwjnNxmG3HAYIC2O2ViAH4sg
-	sn7ZZ0FiY5cJ8JZxSSAYnKdqQhSiCYARmwrPQapRZ+zRS4reRQzNcaBAOlSvNMnP
-	WiEgG/axJmyvKBUityiHIrsy3vguZed7ecK2gL7LsYTUdomDkPQ+75xqWVeL/yIE
-	e+oSB07ou/DhjgvqpoR7enNMxzo1UcNIdwTaaNZVRw==
-X-ME-Sender: <xms:NYJoZkVtsmI9UE_5Ce1q1cC6FgvLfGDaRhx602DPw50Ucofyj8-yuQ>
-    <xme:NYJoZomgti10pZ2RaBjjyeXoWs5GzSE7k1LFzfL9sah-Rx0E1PdbliGPpwxlfYSgK
-    X04DpU3sOtL7HdvJQ>
-X-ME-Received: <xmr:NYJoZobIqU5CKd6mWbjxUZN_1TY_eBPgc1YEr6pHkIdTnzjKPnAZNf3F2TW40Fb5g7-e99lyvEj9bXjbJ4st8jdmA-r00EGItw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enfghrlhcuvffnffculdejtddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdt
-    tddtvdenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihusegugihuuhhurdighiiiqe
-    enucggtffrrghtthgvrhhnpedvfeekteduudefieegtdehfeffkeeuudekheduffduffff
-    gfegiedttefgvdfhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpegugihusegugihuuhhurdighiii
-X-ME-Proxy: <xmx:NYJoZjUx3lzU5hr4G3Z7pP1IIfHMRXQVYn-HGRZYnxU5ELp7av2PWQ>
-    <xmx:NYJoZulV8Lkn0Uc0c5MiS3-6oN7nd3Rsv8TTMgVs3OL17RnCYKl84A>
-    <xmx:NYJoZoeGNtrJacC1w1GDL6SXLfHe7_tqF3CpeNYYCgDktxLwGEvzAA>
-    <xmx:NYJoZgEjJm8QGAoxV94augFby2UHmxYIskbrGcWyRRy3rvwQMx6M9A>
-    <xmx:NYJoZtedwF1u9vgxn3g7M2RCV5JVvw96N8fC1cQdUBpzUhbDiQAt6eu3>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 12:58:27 -0400 (EDT)
-Date: Tue, 11 Jun 2024 10:58:26 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: shuah@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	eddyz87@gmail.com, ast@kernel.org, quentin@isovalent.com, alan.maguire@oracle.com, 
-	acme@kernel.org, martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com, haoluo@google.com, 
-	mykolal@fb.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v4 03/12] bpf: selftests: Fix fentry test kfunc
- prototypes
-Message-ID: <gwrlw7wtc72vz3ky2pltvpoadtjlezv6kdrs6wf3ptsecyu2sh@aexbk4rotm3x>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <1f493cb7a7e5349f99e2badf0880b75dd6681898.1717881178.git.dxu@dxuuu.xyz>
- <Zmb_hJQqxi44Nj5B@krava>
+	s=arc-20240116; t=1718124949; c=relaxed/simple;
+	bh=5ERFtRjM8yegnkIXt+aiMFY0d7KS90qT1YmOd8VczYc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XdT2bisF6/fZClKbPQTzampvB6wQXLAx+Z99apq1kxaQQnSj8PfN/yQr4DtJyW60RVrJc8wV5he4f1l3MvbPFac0PajS/sMmMmvN0WbZqpD7LOzdTBjH8HTo8czVAgMeshtqTCVhpdgRQk6IHsD104g38Z/ZXQiFqeTRTjSmu3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bkSgyzZm; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718124947; x=1749660947;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5ERFtRjM8yegnkIXt+aiMFY0d7KS90qT1YmOd8VczYc=;
+  b=bkSgyzZmCLrxnUi6bsaWV5SvI7U2DbjEmCVq5oYRsGu35Fh0EAZmhVYi
+   CEAMbwR7jYNp4lsza/GN/SeMHx3xudvrMUbYVA3wo+3ZaMh6ixc9MHtmW
+   h6R0CrY9cu79EWnbxHqHaYxp/sYpKufhf+jUR5HY6KHbtSEJiu+ajg5GH
+   oKA/dXO/US84rpQEZn0iIcy6gDPo7Oiz9ucxX6GR5IOv8SwEg4LT8Kl6C
+   XzHQKFdK6EHg/umiKlNy6TFoRbHt/Lb4JwOtOsKpIAtmdSIvpaiPhhB7R
+   Zrtsm0EcFGBWRLfA5TstiJQ1QP6iZJ2dtfQ1WBv3CzZunk7C2BYHefkwq
+   g==;
+X-CSE-ConnectionGUID: Knj/QHz7Ts2gPKjN6D5YSA==
+X-CSE-MsgGUID: 7UY5LepnT2KRh76YzbwOeA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15076535"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208,223";a="15076535"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:55:44 -0700
+X-CSE-ConnectionGUID: RMHZ/v6RTYOQA3ifLydOEw==
+X-CSE-MsgGUID: mwUi/uFsScip/MaHellHOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208,223";a="70299105"
+Received: from jacob-builder.jf.intel.com ([10.54.39.125])
+  by orviesa002.jf.intel.com with ESMTP; 11 Jun 2024 09:55:44 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: X86 Kernel <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <andi.kleen@intel.com>,
+	"Xin Li" <xin3.li@intel.com>
+Subject: 
+Date: Tue, 11 Jun 2024 10:00:46 -0700
+Message-Id: <20240611170046.156806-1-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zmb_hJQqxi44Nj5B@krava>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 03:28:36PM GMT, Jiri Olsa wrote:
-> On Sat, Jun 08, 2024 at 03:15:59PM -0600, Daniel Xu wrote:
-> > The prototypes in progs/get_func_ip_test.c were not in line with how the
-> > actual kfuncs are defined in net/bpf/test_run.c. This causes compilation
-> > errors when kfunc prototypes are generated from BTF.
-> > 
-> > Fix by aligning with actual kfunc definitions.
-> > 
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  .../testing/selftests/bpf/progs/get_func_ip_test.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > index 8956eb78a226..a89596f7585d 100644
-> > --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > @@ -5,13 +5,13 @@
-> >  
-> >  char _license[] SEC("license") = "GPL";
-> >  
-> > -extern const void bpf_fentry_test1 __ksym;
-> > -extern const void bpf_fentry_test2 __ksym;
-> > -extern const void bpf_fentry_test3 __ksym;
-> > -extern const void bpf_fentry_test4 __ksym;
-> > -extern const void bpf_modify_return_test __ksym;
-> > -extern const void bpf_fentry_test6 __ksym;
-> > -extern const void bpf_fentry_test7 __ksym;
-> > +extern int bpf_fentry_test1(int a) __ksym;
-> 
-> hum, the only registered one as kfunc is bpf_fentry_test1, to allow fmodret
-> also there's bpf_fentry_test9 as kfunc, which AFAICS is not really needed
+From e52010df700cde894633c45c0b364847e63a9819 Mon Sep 17 00:00:00 2001
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Date: Tue, 11 Jun 2024 09:49:17 -0700
+Subject: [PATCH v2 0/6] Add support for NMI source reporting
 
-I think bpf_modify_return_test() is also registered. But otherwise yeah,
-I think I was overaggressive here. Are you thinking something like this?
+Hi Thomas and all,
+
+(resend cover letter)
+
+Non-Maskable Interrupts (NMIs) are routed to the local Advanced Programmable
+Interrupt Controller (APIC) using vector #2. Before the advent of the
+Flexible Return and Event Delivery (FRED)[1], the vector information set by
+the NMI initiator was disregarded or lost within the hardware, compelling
+system software to poll every registered NMI handler to pinpoint the source
+of the NMI[2]. This approach led to several issues:
+
+1.	Inefficiency due to the CPU's time spent polling all handlers.
+2.	Increased latency from the additional time taken to poll all handlers.
+3.	The occurrence of unnecessary NMIs if they are triggered shortly
+	after being processed by a different source.
+
+To tackle these challenges, Intel introduced NMI source reporting as a part
+of the FRED specification (detailed in Chapter 9). This CPU feature ensures
+that while all NMI sources are still aggregated into NMI vector (#2) for
+delivery, the source of the NMI is now conveyed through FRED event data
+(a 16-bit bitmap on the stack). This allows for the selective dispatch
+of the NMI source handler based on the bitmap, eliminating the need to
+invoke all NMI source handlers indiscriminately.
+
+In line with the hardware architecture, various interrupt sources can
+generate NMIs by encoding an NMI delivery mode. However, this patchset
+activates only the local NMI sources that are currently utilized by the
+Linux kernel, which includes:
+
+1.	Performance monitoring.
+2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
+	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
+	self-test.
+
+Other NMI sources will continue to be handled as previously when the NMI
+source is not utilized or remains unidentified.
+
+Next steps:
+1. KVM support
+2. Optimization to reuse IDT NMI vector 2 as NMI source for "known" source.
+Link:https://lore.kernel.org/lkml/746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com/
 
 
-diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-index a89596f7585d..2011cacdeb18 100644
---- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-+++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-@@ -6,12 +6,11 @@
- char _license[] SEC("license") = "GPL";
+[1] https://www.intel.com/content/www/us/en/content-details/779982/flexible-return-and-event-delivery-fred-specification.html
+[2] https://lore.kernel.org/lkml/171011362209.2468526.15187874627966416701.tglx@xen13/
 
- extern int bpf_fentry_test1(int a) __ksym;
--extern int bpf_fentry_test2(int a, __u64 b) __ksym;
--extern int bpf_fentry_test3(char a, int b, __u64 c) __ksym;
--extern int bpf_fentry_test4(void *a, char b, int c, __u64 d) __ksym;
- extern int bpf_modify_return_test(int a, int *b) __ksym;
--extern int bpf_fentry_test6(__u64 a, void *b, short c, int d, void *e, __u64 f) __ksym;
--extern int bpf_fentry_test7(struct bpf_fentry_test_t *arg) __ksym;
-+
-+extern const void bpf_fentry_test2 __ksym;
-+extern const void bpf_fentry_test3 __ksym;
-+extern const void bpf_fentry_test4 __ksym;
 
- extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
+Thanks,
+
+Jacob
+
+---
+Change logs are in individual patches.
+
+Jacob Pan (6):
+  x86/irq: Add enumeration of NMI source reporting CPU feature
+  x86/irq: Extend NMI handler registration interface to include source
+  x86/irq: Factor out common NMI handling code
+  x86/irq: Process nmi sources in NMI handler
+  perf/x86: Enable NMI source reporting for perfmon
+  x86/irq: Enable NMI source on IPIs delivered as NMI
+
+ arch/x86/Kconfig                         |  9 +++
+ arch/x86/events/amd/ibs.c                |  2 +-
+ arch/x86/events/core.c                   | 11 ++-
+ arch/x86/events/intel/core.c             |  6 +-
+ arch/x86/include/asm/apic.h              |  1 +
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/disabled-features.h |  8 +-
+ arch/x86/include/asm/irq_vectors.h       | 38 +++++++++
+ arch/x86/include/asm/nmi.h               |  4 +-
+ arch/x86/kernel/apic/hw_nmi.c            |  5 +-
+ arch/x86/kernel/apic/ipi.c               |  4 +-
+ arch/x86/kernel/apic/local.h             | 18 +++--
+ arch/x86/kernel/cpu/mce/inject.c         |  4 +-
+ arch/x86/kernel/cpu/mshyperv.c           |  2 +-
+ arch/x86/kernel/kgdb.c                   |  6 +-
+ arch/x86/kernel/nmi.c                    | 99 +++++++++++++++++++++---
+ arch/x86/kernel/nmi_selftest.c           |  7 +-
+ arch/x86/kernel/reboot.c                 |  4 +-
+ arch/x86/kernel/smp.c                    |  4 +-
+ arch/x86/kernel/traps.c                  |  4 +-
+ arch/x86/platform/uv/uv_nmi.c            |  4 +-
+ drivers/acpi/apei/ghes.c                 |  2 +-
+ drivers/char/ipmi/ipmi_watchdog.c        |  2 +-
+ drivers/edac/igen6_edac.c                |  2 +-
+ drivers/watchdog/hpwdt.c                 |  6 +-
+ 25 files changed, 200 insertions(+), 53 deletions(-)
+
+-- 
+2.25.1
+
 
