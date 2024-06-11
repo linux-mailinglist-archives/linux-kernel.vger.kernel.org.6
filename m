@@ -1,304 +1,159 @@
-Return-Path: <linux-kernel+bounces-210420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C00904374
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EB39043ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93A721C2326E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FB11C2429D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16D571B30;
-	Tue, 11 Jun 2024 18:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1051F79B7E;
+	Tue, 11 Jun 2024 18:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nk1JWX39"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="okEtiCOV"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30832249E5;
-	Tue, 11 Jun 2024 18:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B604157CB5;
+	Tue, 11 Jun 2024 18:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718130386; cv=none; b=Pe4flBs0dg5PnKod2WdMAUSxz1beTlQ74qQndhk3oshHTMy8QsOO3XR0FNJZwZMpXFylII9IVQGXOkDke/0oWnrZvg76+pH0AsmFsGiYjO9fmjkP2JtUFvoflSYQbx20HOKpPBUdMN5yM5TKY5RYUL+/Q0uuUVYd0ykqnVoBgag=
+	t=1718131487; cv=none; b=mzQXsULubCZLU17byRNMgXkxPL6MPnanMlqV5ZC0z1yZiASQeGO3aJDz1GrFp0++CKEBOWjEyIJioOogNRhDUrDYfODW2iFY0NwDAv0EtzGMUF8AANotiPKUq5rDf5roUhyORnOaT2+K7uMwNx6dDxZ2KgFz4ozat3I90vRprKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718130386; c=relaxed/simple;
-	bh=AxAmbeCFEiVm4XUbvZswX7cyf3ah2tphneIRKbd0Q1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R7MgtkfT6qXYjILhUiDwxbWb0hV3CKaetZ+Tr9Z8zpclm8JtBeO/rpCp2xDSFzPGJlN6oywLsPPSe+TssZ0ULESR4h57zsaSV4+mdzg620HJqNpXUH1Vjx4UVXMoFVVw/sV5BxUp/5m59lCpoafuLKjzAXnQDRDEu4aCtcXzwqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nk1JWX39; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44051a577easo23514621cf.2;
-        Tue, 11 Jun 2024 11:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718130383; x=1718735183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rx/97KVP+3IrA7BDYOY/vWXjIAWDZj39a6aZjMqO+Qw=;
-        b=Nk1JWX399xvBJEpMm2lxaANCPt8KrJO3fgQIHX4/hbjL8gZTeD4ttO4NN2wv0HM+lQ
-         yESGdZ3NHSm6NhP69U0q1CD/GiZs0VD9xnW6qnm9Zpb/ryr2QKzmWYNMhbOu2hI24cUZ
-         PeHma36Af5K6FI0LRw4mFfsHbbncN4xci/MdrckA+8p1Inr3HTQ4H178rcxKfN8/tgai
-         BGiATgv16vmZ3Ze6cPC951Rmfr/lIwMlnQIgL6dks2GiAYXKERVgQnG8UsgyjdrEhngg
-         juS5W+bMG1hsDWZoOmQEQH+wFKU/T1geOJdYUCPRQgbyUQnXYaeqA6aszb2tFhAs9gXB
-         R2Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718130383; x=1718735183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rx/97KVP+3IrA7BDYOY/vWXjIAWDZj39a6aZjMqO+Qw=;
-        b=hBphZRn5hDLhCgOgWNjOATuCQtEyQY1tr4Fu+0GxmwmTF8AuPUoDEBA2pjdvFoBRdg
-         vKBiYHdwWmktHmMWQuYoEazlhhlPJS1wuapb3YMav9+objY7zs/8uvCokRtBj0L/aFqG
-         h+Se1U0rGlDhbqgDqzMwSiY4oOBmDfqyGRTAGRgVYclS0o4mfAp+3X8h0HQyVRbdmLRC
-         T64Nvo92/cWvNhjg/vtVuLunVDLTgr+LXUy/R2i+43dJz457LFADn+Bx+j7+GEe5zT2N
-         Ak+koA8R8ZD68zl4ZYtyQrF0oQCHGDcknIeK7yLBCxBvW0TZTY7xraPqB/jKf5i2GcS1
-         r2Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCX96M3WXSK6eRZVVICJcjMTtCt+W4sDEeSzN3IalAxWyJCxfhqY8yICzIMGiDquA+aLPp2KP/fyYZibPEuuiCuDVRIzZEme61sMHVrz0PCSc+KkxsCf2dgIIGsvgy8W/d7Ooa4Reh1z
-X-Gm-Message-State: AOJu0YxrlmIuV9rZFlRaiAljIaLKIdOtluADa4g2gNTxYebxFz+FfnPD
-	0Q99xEA7D/XVTcdRaHu1XC5g10aGvvpFoxyT7XfZ+90QEceTHEtmvWBKPKgG4chPuQnz9rDUZQD
-	4mtThqiu+TMeKxe9xOJ8Wh94O9Lg=
-X-Google-Smtp-Source: AGHT+IHFN6sVSYA40zzZBqCr8PAU+d9mRS6vS72srGcbMmX/Mq5CHxpjucNAE1JbeD0EBCqKlVBjM84vdcJ2zUa2AOs=
-X-Received: by 2002:a05:6214:2d42:b0:6b0:82a9:936a with SMTP id
- 6a1803df08f44-6b082a995d2mr57151716d6.2.1718130382913; Tue, 11 Jun 2024
- 11:26:22 -0700 (PDT)
+	s=arc-20240116; t=1718131487; c=relaxed/simple;
+	bh=yWm+CV/ol6Yb0FRVj/f//Za7SwasM3ugj7xYp1INfAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZN9+ADkh7hO/oQXjq/iG5PRcbq/NCch5CrolkDmsEKdKzonsCdsPqeGDlpWwHn1Hhh5IvE+sMrEvCu5O5I02AdlIeTJtxRNhK8xLSv8HOlwiLZ/rmrbuxUWmWosCway00Wq6SBHyP24WluzkGWTpdt4ix5Xy4h2jMarZudpqujU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=okEtiCOV; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8002:4640:7285:c2ff:fefb:fd4] ([IPv6:2601:646:8002:4640:7285:c2ff:fefb:fd4])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45BIQOXg3417874
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Jun 2024 11:26:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45BIQOXg3417874
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718130387;
+	bh=OHa9DhySlaaVhhVOAe30IsVHYFteIibUy4qxaCqMzfc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=okEtiCOVX3HdSiQvDxNYgYr+0HqgJLKnG2m/rlhjGnPh3XRakqH86Oe0HdFjQ8vb8
+	 lCLlJW7zSBSPM1bA8ax15thRrIwWFaFPa+o+EdL0rZXm/4/srmUbr6CHP65bznGV6W
+	 /KqQ2D4aqxtZUQuY/R1ri1KUYKGzgNTcj5gKCQDmB9GzuFD1tce5uDmWNtkEv67UBQ
+	 IMwXQ4AT2ur45vH1k3ay4KEUOfF1/sbHVKDC6HZDl/Rr6CAEEJOpoq0nP6p/4NCCle
+	 bBvwdvwS9QuAK9Xc12EimU7dTn6UCMfkGN+YTd5x4KhT3RxS5dyR7XQZEkI5pnsssf
+	 IW/2FxDzYYpCw==
+Message-ID: <5c8b3ee9-64c2-4ff3-9cca-ba2672b9635e@zytor.com>
+Date: Tue, 11 Jun 2024 11:26:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
-In-Reply-To: <20240608155316.451600-2-flintglass@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 11 Jun 2024 11:26:12 -0700
-Message-ID: <CAKEwX=P1Ojb71AEJ2gzQTrfWidFPcJZmoNxEwji7TceBN-szCg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc: Nikolay Borisov <nik.borisov@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kalra, Ashish"
+ <ashish.kalra@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Baoquan He <bhe@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+        linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+ <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
+ <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com>
+ <20240604091503.GQZl7bF14qTSAjqUhN@fat_crate.local>
+ <ehttxqgg7zhbgty5m5uxkduj3xf7soonrzfu4rfw7hccqgdydl@afki66pnree5>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <ehttxqgg7zhbgty5m5uxkduj3xf7soonrzfu4rfw7hccqgdydl@afki66pnree5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jun 8, 2024 at 8:53=E2=80=AFAM Takero Funaki <flintglass@gmail.com>=
- wrote:
->
-> This patch fixes an issue where the zswap global shrinker stopped
-> iterating through the memcg tree.
->
-> The problem was that `shrink_worker()` would stop iterating when a memcg
-> was being offlined and restart from the tree root.  Now, it properly
-> handles the offlining memcg and continues shrinking with the next memcg.
->
-> This patch also modified handing of the lock for offlined memcg cleaner
-> to adapt the change in the iteration, and avoid negligibly rare skipping
-> of a memcg from shrink iteration.
->
-> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+On 6/4/24 08:21, Kirill A. Shutemov wrote:
+> 
+>  From b45fe48092abad2612c2bafbb199e4de80c99545 Mon Sep 17 00:00:00 2001
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Date: Fri, 10 Feb 2023 12:53:11 +0300
+> Subject: [PATCHv11.1 06/19] x86/kexec: Keep CR4.MCE set during kexec for TDX guest
+> 
+> TDX guests run with MCA enabled (CR4.MCE=1b) from the very start. If
+> that bit is cleared during CR4 register reprogramming during boot or
+> kexec flows, a #VE exception will be raised which the guest kernel
+> cannot handle it.
+> 
+> Therefore, make sure the CR4.MCE setting is preserved over kexec too and
+> avoid raising any #VEs.
+> 
+> The change doesn't affect non-TDX-guest environments.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > ---
->  mm/zswap.c | 87 ++++++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 68 insertions(+), 19 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 80c634acb8d5..d720a42069b6 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -827,12 +827,27 @@ void zswap_folio_swapin(struct folio *folio)
->         }
->  }
->
-> +/*
-> + * This function should be called when a memcg is being offlined.
-> + *
-> + * Since the global shrinker shrink_worker() may hold a reference
-> + * of the memcg, we must check and release the reference in
-> + * zswap_next_shrink.
-> + *
-> + * shrink_worker() must handle the case where this function releases
-> + * the reference of memcg being shrunk.
-> + */
->  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
->  {
->         /* lock out zswap shrinker walking memcg tree */
->         spin_lock(&zswap_shrink_lock);
-> -       if (zswap_next_shrink =3D=3D memcg)
-> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
-rink, NULL);
-> +
-> +       if (READ_ONCE(zswap_next_shrink) =3D=3D memcg) {
-> +               /* put back reference and advance the cursor */
-> +               memcg =3D mem_cgroup_iter(NULL, memcg, NULL);
-> +               WRITE_ONCE(zswap_next_shrink, memcg);
-> +       }
-> +
->         spin_unlock(&zswap_shrink_lock);
->  }
-
-As I have noted in v0, I think this is unnecessary and makes it more confus=
-ing.
-
->
-> @@ -1401,25 +1416,44 @@ static int shrink_memcg(struct mem_cgroup *memcg)
->
->  static void shrink_worker(struct work_struct *w)
->  {
-> -       struct mem_cgroup *memcg;
-> +       struct mem_cgroup *memcg =3D NULL;
-> +       struct mem_cgroup *next_memcg;
->         int ret, failures =3D 0;
->         unsigned long thr;
->
->         /* Reclaim down to the accept threshold */
->         thr =3D zswap_accept_thr_pages();
->
-> -       /* global reclaim will select cgroup in a round-robin fashion. */
-> +       /* global reclaim will select cgroup in a round-robin fashion.
-> +        *
-> +        * We save iteration cursor memcg into zswap_next_shrink,
-> +        * which can be modified by the offline memcg cleaner
-> +        * zswap_memcg_offline_cleanup().
-> +        *
-> +        * Since the offline cleaner is called only once, we cannot aband=
-one
-> +        * offline memcg reference in zswap_next_shrink.
-> +        * We can rely on the cleaner only if we get online memcg under l=
-ock.
-> +        * If we get offline memcg, we cannot determine the cleaner will =
-be
-> +        * called later. We must put it before returning from this functi=
-on.
-> +        */
->         do {
-> +iternext:
->                 spin_lock(&zswap_shrink_lock);
-> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
-rink, NULL);
-> -               memcg =3D zswap_next_shrink;
-> +               next_memcg =3D READ_ONCE(zswap_next_shrink);
-> +
-> +               if (memcg !=3D next_memcg) {
-> +                       /*
-> +                        * Ours was released by offlining.
-> +                        * Use the saved memcg reference.
-> +                        */
-> +                       memcg =3D next_memcg;
-> +               } else {
-> +                       /* advance cursor */
-> +                       memcg =3D mem_cgroup_iter(NULL, memcg, NULL);
-> +                       WRITE_ONCE(zswap_next_shrink, memcg);
-> +               }
-
-I suppose I'm fine with not advancing the memcg when it is already
-advanced by the memcg offlining callback.
-
->
->                 /*
-> -                * We need to retry if we have gone through a full round =
-trip, or if we
-> -                * got an offline memcg (or else we risk undoing the effe=
-ct of the
-> -                * zswap memcg offlining cleanup callback). This is not c=
-atastrophic
-> -                * per se, but it will keep the now offlined memcg hostag=
-e for a while.
-> -                *
->                  * Note that if we got an online memcg, we will keep the =
-extra
->                  * reference in case the original reference obtained by m=
-em_cgroup_iter
->                  * is dropped by the zswap memcg offlining callback, ensu=
-ring that the
-> @@ -1434,16 +1468,25 @@ static void shrink_worker(struct work_struct *w)
->                 }
->
->                 if (!mem_cgroup_tryget_online(memcg)) {
-> -                       /* drop the reference from mem_cgroup_iter() */
-> -                       mem_cgroup_iter_break(NULL, memcg);
-> -                       zswap_next_shrink =3D NULL;
-> +                       /*
-> +                        * It is an offline memcg which we cannot shrink
-> +                        * until its pages are reparented.
-> +                        *
-> +                        * Since we cannot determine if the offline clean=
-er has
-> +                        * been already called or not, the offline memcg =
-must be
-> +                        * put back unconditonally. We cannot abort the l=
-oop while
-> +                        * zswap_next_shrink has a reference of this offl=
-ine memcg.
-> +                        */
->                         spin_unlock(&zswap_shrink_lock);
+>   arch/x86/kernel/relocate_kernel_64.S | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> index 085eef5c3904..9c2cf70c5f54 100644
+> --- a/arch/x86/kernel/relocate_kernel_64.S
+> +++ b/arch/x86/kernel/relocate_kernel_64.S
+> @@ -5,6 +5,8 @@
+>    */
+>   
+>   #include <linux/linkage.h>
+> +#include <linux/stringify.h>
+> +#include <asm/alternative.h>
+>   #include <asm/page_types.h>
+>   #include <asm/kexec.h>
+>   #include <asm/processor-flags.h>
+> @@ -145,14 +147,15 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>   	 * Set cr4 to a known state:
+>   	 *  - physical address extension enabled
+>   	 *  - 5-level paging, if it was enabled before
+> +	 *  - Machine check exception on TDX guest, if it was enabled before.
+> +	 *    Clearing MCE might not be allowed in TDX guests, depending on setup.
+> +	 *
+> +	 * Use R13 that contains the original CR4 value, read in relocate_kernel().
+> +	 * PAE is always set in the original CR4.
+>   	 */
+> -	movl	$X86_CR4_PAE, %eax
+> -	testq	$X86_CR4_LA57, %r13
+> -	jz	.Lno_la57
+> -	orl	$X86_CR4_LA57, %eax
+> -.Lno_la57:
 > -
-> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
-> -                               break;
-> -
-> -                       goto resched;
-> +                       goto iternext;
+> -	movq	%rax, %cr4
+> +	andl	$(X86_CR4_PAE | X86_CR4_LA57), %r13d
+> +	ALTERNATIVE "", __stringify(orl $X86_CR4_MCE, %r13d), X86_FEATURE_TDX_GUEST
+> +	movq	%r13, %cr4
+>   
 
-Hmmm yeah in the past, I set it to NULL to make sure we're not
-replacing zswap_next_shrink with an offlined memcg, after that zswap
-offlining callback for that memcg has been completed..
+If this is the case, I don't really see a reason to clear MCE per se as 
+I'm guessing a machine check here will be fatal anyway? It just changes 
+the method of death.
 
-I suppose we can just call mem_cgroup_iter(...) on that offlined
-cgroup, but I'm not 100% sure what happens when we call this function
-on a cgroup that is currently being offlined, and has gone past the
-zswap offline callback stage. So I was just playing it safe and
-restart from the top of the tree :)
+Also, is there a reason to save %cr4, run code, and *then* clear the 
+relevant bits? Wouldn't it be better to sanitize %cr4 as soon as possible?
 
-I think this implementation has that behavior right? We see that the
-memcg is offlined, so we drop the lock and go to the beginning of the
-loop. We reacquire the lock, and might see that zswap_next_shrink =3D=3D
-memcg, so we call mem_cgroup_iter(...) on it. Is this safe?
-
-Note that zswap_shrink_lock only orders serializes this memcg
-selection loop with memcg offlining after it - there's no guarantee
-what's the behavior is for memcg offlining before it (well other than
-one reference that we manage to acquire thanks to
-mem_cgroup_iter(...), so that memcg has not been freed, but not sure
-what we can guarantee regarding its place in the memcg hierarchy
-tree?).
-
-Johannes, do you have any idea what we can expect here? Let me also cc Shak=
-eel.
-
-
-
-
-
->                 }
-> +               /*
-> +                * We got an extra memcg reference before unlocking.
-> +                * The cleaner cannot free it using zswap_next_shrink.
-> +                *
-> +                * Our memcg can be offlined after we get online memcg he=
-re.
-> +                * In this case, the cleaner is waiting the lock just beh=
-ind us.
-> +                */
->                 spin_unlock(&zswap_shrink_lock);
->
->                 ret =3D shrink_memcg(memcg);
-> @@ -1457,6 +1500,12 @@ static void shrink_worker(struct work_struct *w)
->  resched:
->                 cond_resched();
->         } while (zswap_total_pages() > thr);
-> +
-> +       /*
-> +        * We can still hold the original memcg reference.
-> +        * The reference is stored in zswap_next_shrink, and then reused
-> +        * by the next shrink_worker().
-> +        */
->  }
->
->  /*********************************
-> --
-> 2.43.0
->
+	-hpa
 
