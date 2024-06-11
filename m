@@ -1,164 +1,162 @@
-Return-Path: <linux-kernel+bounces-209705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5BD9039A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:06:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD94D903964
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93A21C213E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:06:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17ED8B20C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AEE17A930;
-	Tue, 11 Jun 2024 11:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D82E179957;
+	Tue, 11 Jun 2024 10:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.it header.i=@yahoo.it header.b="jsTF1bkN"
-Received: from sonic312-25.consmr.mail.ir2.yahoo.com (sonic312-25.consmr.mail.ir2.yahoo.com [77.238.178.96])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="c1weGvuO"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB1D14F9F3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.178.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07238178385
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103961; cv=none; b=URCAo6OXbnwF5tVRN3czM/ms2baHfZxRK4Nna4U0wYLL6f4TJr1mFArzg2LRejvIiWP6MtnvkR7n4UhHHe5UFMKKqzld7xnrr0VEARa/01m8B2bVNA5qxbQS93BcZ/ajQsVvm1c9hovZ2yoUxKL4jBJAbXo07aBt59DzCBe4v/s=
+	t=1718103406; cv=none; b=AxtkWERpBE3i5MtdFbJdbMcjPYknmBJwvKPU1QUtaTSQ+D3dGNxBnWvslz3aXW3BXcAHQtfDplN5qEE21Wfo9PltbwrEwRcMMF4PlqRGF04mYyI5QZhBhy0MQcRuQUWzW8jEMCAFaKKtlE6tjwWJTQkK5DAM4YdOmPUjvefITqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103961; c=relaxed/simple;
-	bh=1NA9dzz8vModzUUzJwmum583xk1rUpj2Io8NVU7QGBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UQ008GpZnKxK1MyCff2IGMZfU2tuTgMgZ+MjdxyC1BI36lFsHST4yHuqu7O5Z4CzoLNtdNUj5L8niL4HwXbArIKFpc5QoWB7ETwbw/Btlgz5dMiEd94tXHJd49U0K+3+ErA7Ds1izF7HoAr48eflGXqUEorrOs820K+Ly+DBd4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.it; spf=pass smtp.mailfrom=yahoo.it; dkim=pass (2048-bit key) header.d=yahoo.it header.i=@yahoo.it header.b=jsTF1bkN; arc=none smtp.client-ip=77.238.178.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.it
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.it; s=s2048; t=1718103958; bh=p8JQgWGBCmtY8OiiUiT7+jtSYPgsSwI6b+DA+z+dfd0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=jsTF1bkN20qwceUn5q3oOBtSxx15IJWLPjJ7KNCpVax8RoBvCmjPRDmIg8V1cfwF2q5QSXROY7OgbGJzf3hqMXdzyq9UhDHZBRlb85RN0uaghLk85y9jRGZgAHxDkP3tOMGgV7dOq5Ur/M2POoUlzGs4XM7zihDB0ca1krfHLn2LqR38ryU4vZ8TVmU1y1+icQXWXGCJ9VPeWGSPxrA7I68c6a0TbqENvZDncHhUIGNpVHWUju+BH881Tb52f/WqjiOXnM9emNBReaAKtR5JDKnpD0ex7yrUiqOdsknDA6rVcbc9U+Wl2nOjZq0cv20dmhCg1370IKSXeCux2Ni5qw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718103958; bh=uXx2cEtME1GYpeyrtEZuE0Vzgyxk7PMfOtk4akljBdg=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=C785vSFD8LTiXUgNwCIv0pppJRQdDJQi1rAQOrT7B+5viJ3Nil11JhEqQ8+LVODaW+0fbDhA8LCkbbHMbpkzH1mbP9c+Tr8na7oZQA2PVNOw2qSt15zbtbgKJ4Lz7FytGtfSUEzxTdFn2PMoqrzrBwX99NaNWSKTtHUehv23HtQffvkxsb7U0RLvBMA/MAVC6RCDzwmdDyf3hJLlcu/AvF+lrmC99/E/br7CsNv/CxGM2Gci2/y/VQhk8TjlkXByvwJfsWnggTBtL1mME+3b5qws8DAMi1uCmOEVfaAk42oekYBMyGEtYW+WtTg+Rzl1kl80QENAZWEyLpWqD7HUjA==
-X-YMail-OSG: PDgjmSkVM1kSaqfCasnFWFQexruKTxhWu_A9ZdZaIegzQhAgU6NdYuVq_E3BbOs
- jL47mJyxTO.Qbo6oqJ0dh9A3erg4Yas.eh7FbsUBAiRCRdNzW.w5BC5l4VHmwMSFy61aUmY8K0fS
- oy7ESXRWaGQKDdkSkrBoSETprLcBHE7OZAJOLZyQBIFTR0UHsTH5CKrWuTfzEPK6hvl3DWqYAzpz
- O2JLwOhz9wDuuiKE__bAH4H56XkLf7qJVUR5tzKhbB7z.tiPDPOwQfWhBsuQQGqnGjKZ.QkUXs97
- dfLe96GhPdL6SqF9dobHJS9wXqWt4S2yKFZhgOXA84qVX2ZN77AJ30O19nLUfmNPpb9HmkXvBdAS
- zbLs5fWC5TySj82Ady9yedyRgHUq7Lj.w__emdYGaB4QpPLpwWLDwvfO3nisq7g7tLm9ziN8NzeQ
- agNj15M4Ofz08OI7ipq1h84cC09oRmeKuwCK9L1VjFn2FUE332zCtlkUW_uh61UutVTztxNjf7fe
- kITdYNTVmScHKe4Mfd0ucneiewTZi_NMmDneCafxqX_E1zngNQkRw8zPpFNqhR56GjYNGn0dwDuk
- SY4E9cfoI7l557JF8ChatlyfA44KvkX1BMPJ98IT963UEauaq2HPJs58bC_kKO5ts24qQDxpjFsF
- 4uufGOKxeI2KwYZR_N1ERaQVIlS66aea7ItQeggr32DWStwN_U_DYWlIz6t8fXTLXZ6xVtQa_S39
- 8tN0pSaV1ZmJdexcT06nWbpD1yrJMOGr.JGaBA0_VhRfma7lFOMKtmLiJ1H5qmw_iX_oAOEBanff
- 4GNV0HLuwr5C7u.Pyk1VxeIAwZJCbH6XxDLln4OjYQHYRqQg2AeP7VDG5RK1gh9xtsUCzeYbfc0M
- YCSypbIOlFLEh_6Q5jFyC.0jeuarNL1SmGRkCneQCdGLgEdG5x1jzMhBYMxmoHPZNPw2b68FyNJ5
- up_K2F_hJrnwkDmn3oIholbSeHj.nATwLQr_.V1ItgROnSHWhEQVLpPmaydMttKWaY86e4Pr58PF
- BjDsc6Q1zpxhp9g_cVqCyYFMAqM6KjkF0aIAxV1DaPUQPLKsh8P9FjgMTF05K45w5jObHH177.kh
- ZdVTtIZvVDbi23inB_W_ShIRrw2hgUAfkVsLjOikqaE851.bTPT5Eay824KnEFP.Nt_KVXyI7_wv
- RM1FRRIsC9jk7AZJ9UDT3HPbC1dJkjXDMhYz0hzecgOSS3kINqitbeKqoY0g3gA362x4EJ.0LHYB
- mmCkKBa9AQZb7gwGIOpI0dtqPDKZnxQgJUMR3.YPR41OPlSE2xtttTX3rVbJQgG5cmCaD5QF6U6w
- Ztg3Yc64HOmMoGIrAbFh4hdynOVhgdhF9zOQWDfm.L0lpqYhLacoQ0WPdlCoZnwytaP5K8CDZWwD
- HiTpVG6D2071AwD1qJrEGH3_wztVVDhhgUY4xDusKqdx0S1AP1FCVs8iA.Wj3HFjcxk3L0DmR0Lj
- IaPjbvLpQkCiacJoCrYwXHiox5QEnCWM.l23Dkz0fP7HwpB1QOjG5GVc_J4T3P_Kpqmq3zNA0u2p
- R9aLiqFt5JPDN0JlCsWdo304QblkHeCFCR7VruUc7ajYDLaWyzEEQTQOq.76G3WgX6PHm_m5Emsw
- EBSyhQJ0CVug97hVnnbxV9UtCk4KRrH9tyyQJ7Y7QApVOcLM6lmHODL0K2WK1mafMRH8MImTyepZ
- gNEhRDLgsfxnL.T3WnrtKj90x8EUuksnis0WfHK_BVX_7AfriTlsvc2twNVV99PkqZdwaMc86KPV
- nRrLFniOvCwv5cEdp8exrmzvpmRT2AejJVOaHzZ5BdcCW7TtYRXZeJD8vEZlZ75lymXJnemtqyAU
- 1GlvKIA5wParSWHAB.TVOPsyVhhc9PSk7undmIPczucgdp5y6TNcszdkb6OWxIWQahSdbvfJzpES
- DNAeCeatU8VuZ65r8ZY8vbnqLI3BnAWa8Rg2CvU8YjNvF079.PTKsF_3mgk9AM6BH5ID23kHC0PM
- FBZmspX1Xp6jdoCE0iBDbUUUnUclrNV.FhDyx8_kO95HvkQpPPzvXe9fyAsHHDGcgxUySwxcmD9O
- CFS7lmFlRux_UVAhBZvLer2SihSx8sBuM8u0aNjqCClSANUPcSEpEyiyWgsfA3E1DPqswMe1nlPJ
- 7DYB3D.JXu.fkxhtccnAJnKF8V0NZg7gw.uQu0BsoNT.Vkx6nfP5Lx0jeEKcSBVFWq7wJ.BiIWoH
- IGN9AX3itopmAxVTGuWfuWaKnZXV7gEl0BDsvqksarO7je.znvk.OKpTs35mowuZds9s-
-X-Sonic-MF: <giovannisantini93@yahoo.it>
-X-Sonic-ID: a6298b29-922e-48d7-8f78-4ba4019e25c8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ir2.yahoo.com with HTTP; Tue, 11 Jun 2024 11:05:58 +0000
-Received: by hermes--production-ir2-7b99fc9bb6-wsvcw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9323fb76226d7e80b4f18f94c07a8a98;
-          Tue, 11 Jun 2024 10:55:48 +0000 (UTC)
-Message-ID: <bed7da51-cf89-422d-84f7-cb3d89ffbe40@yahoo.it>
-Date: Tue, 11 Jun 2024 12:55:44 +0200
+	s=arc-20240116; t=1718103406; c=relaxed/simple;
+	bh=VS52WzltTszbYB/0AuS6XbIVZSd6jF210Ln2FEwF98Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkxfLThUAGDyeAYLvhj6lC3Gqj8LpLtOFnE7x8VAs1OfpRA4nOKo1uuqd6bkqNkEZ+V1AtJpxmbuTMwbqb2hTwnOYP2edEznn1KcOl6VvnIeUf+09JShEMpVFvrLRnW/sPORSGzZDNrbJf5JroYjcl1CazmM42+A25nRHbDCjPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=c1weGvuO; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e54287a719so710496a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718103403; x=1718708203; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
+        b=c1weGvuOhkgH6T8P2IUfWxB75718lNZNTsEpzWY3NPoGV2GDM2M79UtUIhuHhFOukY
+         cu1JcQ3QW6v46IslS2T96lw9+o5EcCZrBqdl5nyo3Krhc1jZVBF80bSocz+dIu9wNOdr
+         IFPDx9s+QwZgJFN12fBqsW+Im9bP86LwndPDgorbRNU4pQkvUILGiqvWsfu5a92HIJcY
+         1haQcUC8MIMkt/HDU+eKdawPU/cOb+Tlbm0Ueh2b8j97AX8ixbb9m6PxWSK6hqLsT2zl
+         8J/EMdT9XKOgonVEOgiMMKGKybargDKpiAGx/Msyv7SfvsmyGl75po5S4x8SsTCjysch
+         ML9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718103403; x=1718708203;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
+        b=K+goUdiRg8BurACRy+zBwBeMsGoXyNtRNLL+ese6bbqABPBI545nU5RlrCzDwGS8eM
+         8tL4JQlIEDQrxK2WtDH+1C8pMv6PQ4wbv2+0aiHa2W5cfeJOQc473viYxf3dy9uvqXxX
+         CRtSyeb04f4uEB3mjWGdNkOVhl6CssoIQdn4nNxcG9wINlhigLYQV4KR6xJg1A98LXEg
+         tttmVeoI+REGkkU4XMWMBdRp+KLxcmSHSC1Q4D9pHbLy+qwDnn9cl2VvPBLQ4ZMrAgWO
+         317HlESEApAzRlQuE6utiCRRmc9Sut4mxtx94fFkuvvEX5tE3jMDbvPDBlHtbIy9/y2d
+         9ExA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyvhjeLN+ayCbOr7BpKl+iMGVJVAM5i8AlJ36CXG/ieKJsxPRccSDPFSZrOrMJ+ZFpbGiJXFRq+O3Kq7cO98uTvb5TnKZmDYTNdOkp
+X-Gm-Message-State: AOJu0YyPfQmF/49iYoi4Ga84kbGEcDlDbiHdEN0IaYJXT1DI4debUu6b
+	BE2/Kt7MNyDEdPc0yzwkj2+TpUHfAe/3sGtWhmEhAof8BlcPkygj7vDithcU/Yg=
+X-Google-Smtp-Source: AGHT+IHK8K2V7kQymm38HJCYaowY5rCw46Jeqv5NKPUtVcg9MLXbwyJNHKJq2OnyYuNzXkS/aVN5kQ==
+X-Received: by 2002:a05:6a20:4310:b0:1b7:406c:1086 with SMTP id adf61e73a8af0-1b85ac05febmr3167116637.6.1718103403178;
+        Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042f5584e9sm4812995b3a.12.2024.06.11.03.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:56:42 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sGzBA-00C5re-0c;
+	Tue, 11 Jun 2024 20:56:40 +1000
+Date: Tue, 11 Jun 2024 20:56:40 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
+Message-ID: <ZmgtaGglOL33Wkzr@dread.disaster.area>
+References: <20240611041540.495840-1-mjguzik@gmail.com>
+ <20240611100222.htl43626sklgso5p@quack3>
+ <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Segfault running a binary in a compressed folder
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- stable@vger.kernel.org
-Cc: ntfs3@lists.linux.dev, almaz.alexandrovich@paragon-software.com,
- LKML <linux-kernel@vger.kernel.org>
-References: <08d7de3c-d695-4b0c-aa5d-5b5c355007f8.ref@yahoo.it>
- <08d7de3c-d695-4b0c-aa5d-5b5c355007f8@yahoo.it>
- <0936a091-7a3a-40d7-8b87-837aed43966b@leemhuis.info>
-Content-Language: en-US
-From: Giovanni Santini <giovannisantini93@yahoo.it>
-Autocrypt: addr=giovannisantini93@yahoo.it; keydata=
- xsBNBFWGlaoBCACcYYy4p5OpFH/zYyJ+DYGfr8m712ai0GpJ3hrY4ncmt+cHVYw0pHeR01j9
- t+dtJTwP3Br84E5z/0/mpg5J+LLEHDbAa5Gtal+ykIwtmfZ9N/GEEQvYAU691sCkk+hLSbDw
- vIKOZSMMCV2Ee5R1gY/cM+UBJVFy/DJi75crugb/Fs9OL19YPBR9YqOb1eoE99/5WTbJ8EFm
- Nq+oqSnp3O/7Uln96be3A3ri0a+njr6j1OXneE9NBLQbQx0VJnrTK0pv1oHJFT6fqs3Ar8BT
- tgvaTQ50Q7rBYeZE6o2m+A6tBeC2JGZYCIXXQBirHVktrsmIqy9pnfHxN7hyPuRM6qy7ABEB
- AAHNLUdpb3Zhbm5pIFNhbnRpbmkgPGdpb3Zhbm5pc2FudGluaTkzQHlhaG9vLml0PsLAfAQT
- AQgAJgIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheABQJYLYzQAhkBAAoJEE20cJYvrev1
- D2sH/R4girMykZt+hh6TdYl2RQCZnGd3+aFiL5bKWQH61uMPp2J/DU5ZarxVPBQVGW7vTRZB
- cgceYoC8lnzkWUzlLG9I0pU8VaY87CvwSauRg98L+6eiX42Hz+3xLKbzVT6azewmR47d4WcH
- CF59lin52O3MhMBSY7VoBEPI7w5tJAF80hzXACqi8cnt/yPI/jRE+NFiD+dUiDj0rRecKr5Q
- 9z9+aEjfNiFNI8gkrjGwGerlDso7iOjmGlENY3hv0sP+9/Rq58J1Y+Wg4ACTj6s/vjpgcTQ1
- oJxkyoJbEtUVa+B6R6yc2BHECl+JdkDNohxfRMIN3IzJpIQzGaKNATVbaDLOwE0EWDdW/QEI
- AMvkCk1fA/6fXBRuNscDnDYRLSPoMx7tnjOv1Uub9iyFxr2v8B7DKrQq4R0WS4b2vITnsPZA
- WTWJQ4SE0Sx54QGPVjdMzJTMN2cw7y35lS5anYJlY31O89eMpCPDwp88jtq7LKE0Knq5pu/+
- pWFvfysSJkjrFOAKEGn2GEuT8G9BOplafmjyLXv6bwFViUGmNpaTrztlhBaunMDsluoVGg2F
- LPdCdBJpE/vzAOzxg8WkyV+LzPMrz178WTlM0YSCJ/9Ad7QlX0r0rpG3n+HGlhB2Y2hFQM2C
- SlyEstTvMuHQ0Oe5rjnSHxo3FjESknl0csmQmGkPed/DsKigVTeWiC0AEQEAAcLAXwQYAQgA
- CQUCWDdW/QIbDAAKCRBNtHCWL63r9aSjB/wNUBdHtV2j9UQgCpXVcHHA0VSVYSRfvDs0rVOk
- 1whAHlg62TKQv2uTFlvn8/lml/Wp7gyW2RKTC9ZIpn3vbgjbW7DuwvjSqCvEt83czRime2jM
- h8URlFRrSFwfNifGxSXsERaH0b7/ae2zfIKRLGhep+/wikTYrItwmW+xXumBVRpkoaKDPy4d
- lhdUxx3EulaWJJgfywYWoieN1jMRcvBWsuexdMFODMPt872NDZhkqrOo+A3fneaELitZdjKq
- NpmY6C9etaRkDnjm70l2cP+RjWY1ahxFuwaOB3ZmNRe3VGyvPTUvdkwZdxaycLgVjEWUJEyq
- H3BYrE7EWk47q50Q
-In-Reply-To: <0936a091-7a3a-40d7-8b87-837aed43966b@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
 
-Hi Thorsten, nice to chat again!
-I am sorry for the lack of information, this is my second bug report to 
-the kernel; the first one was via Bugzilla and I filled more information.
-
-Now, the missing information is:
-
-OS: ArchLinux
-
-Tested kernels: both latest Linux stable (6.9.3) and mainline (6.10rc3)
-
-Regression: no, I believe that this issue has been present forever.
-I realized it may have been compression-related only recently.
-I do remember testing ntfs3 long ago and having the same issues with a 
-Ruby vendoring folder.
-
-Please let me know if you need more information!
-
-Bests,
-
-Giovanni
-
-On 2024-06-11 12:04, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 11.06.24 11:19, Giovanni Santini wrote:
->> I am writing to report the issue mentioned in the subject.
->>
->> Essentially, when running an executable from a compressed folder in an
->> NTFS partition mounted via ntfs3 I get a segfault.
->>
->> The error line I get in dmesg is:
->>
->> ntfs3: nvme0n1p5: ino=c3754, "hello" mmap(write) compressed not supported
->>
->> I've attached a terminal script where I show my source, Makefile and how
->> the error appears.
-> You CCed the regression and the stable list, but that looks odd, as you
-> don't even mention which kernel version you used (or which worked).
-> Could you clarify? And ideally state if mainline (e.g. 6.10-rc3) is
-> affected as well, as the answer to the question "who is obliged to look
-> into this" depends on it.
+On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
+> On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
+> > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
+> > > new_inode used to have the following:
+> > > 	spin_lock(&inode_lock);
+> > > 	inodes_stat.nr_inodes++;
+> > > 	list_add(&inode->i_list, &inode_in_use);
+> > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
+> > > 	inode->i_ino = ++last_ino;
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode_lock);
+> > > 
+> > > over time things disappeared, got moved around or got replaced (global
+> > > inode lock with a per-inode lock), eventually this got reduced to:
+> > > 	spin_lock(&inode->i_lock);
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode->i_lock);
+> > > 
+> > > But the lock acquire here does not synchronize against anyone.
+> > > 
+> > > Additionally iget5_locked performs i_state = 0 assignment without any
+> > > locks to begin with and the two combined look confusing at best.
+> > > 
+> > > It looks like the current state is a leftover which was not cleaned up.
+> > > 
+> > > Ideally it would be an invariant that i_state == 0 to begin with, but
+> > > achieving that would require dealing with all filesystem alloc handlers
+> > > one by one.
+> > > 
+> > > In the meantime drop the misleading locking and move i_state zeroing to
+> > > alloc_inode so that others don't need to deal with it by hand.
+> > > 
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > 
+> > Good point. But the initialization would seem more natural in
+> > inode_init_always(), wouldn't it? And that will also address your "FIXME"
+> > comment.
+> > 
+> 
+> My point is that by the time the inode is destroyed some of the fields
+> like i_state should be set to a well-known value, this one preferably
+> plain 0.
 >
-> Ciao, Thorsten
+> I did not patch inode_init_always because it is exported and xfs uses it
+> in 2 spots, only one of which zeroing the thing immediately after.
+> Another one is a little more involved, it probably would not be a
+> problem as the value is set altered later anyway, but I don't want to
+> mess with semantics of the func if it can be easily avoided.
 
+Better to move the zeroing to inode_init_always(), do the basic
+save/restore mod to xfs_reinit_inode(), and let us XFS people worry
+about whether inode_init_always() is the right thing to be calling
+in their code...
+
+All you'd need to do in xfs_reinit_inode() is this
+
++	unsigned long	state = inode->i_state;
+
+	.....
+	error = inode_init_always(mp->m_super, inode);
+	.....
++	inode->i_state = state;
+	.....
+
+And it should behave as expected.
+
+-Dave.
 -- 
-Giovanni Santini
-
+Dave Chinner
+david@fromorbit.com
 
