@@ -1,54 +1,80 @@
-Return-Path: <linux-kernel+bounces-209647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D7E9038E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7EF9038E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1F41C239F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8489D2879DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE2C179675;
-	Tue, 11 Jun 2024 10:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1AE178397;
+	Tue, 11 Jun 2024 10:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ibbu4awM"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZbRsF+5b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F3E7407C;
-	Tue, 11 Jun 2024 10:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0557407C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101938; cv=none; b=CGdtOFj7ipHb0EFIssIsVAUpnqcOToja/tJiFCXSIaCiPwikzSCjNIHICte0honB33BnwXfuIhJFjHgyASo+JUiy23OWS2RkJPUyyfXJHhpcrt7q81Prp43qWddfdqpEM//yySWpkQ0FQVXZdKmX0HIxZ+EW/x+PaXhF643WBLo=
+	t=1718101972; cv=none; b=iBISPk3Dm3cJxWpXZkYGoMwh0qlWSCmoqkJZaG18lImiviMsMqvmbbu+gBL2fH70ImEhgvTXeaUes4rPovyR1bmsOSYLXrT2F0/MenFnjkiTDTSOFjm/HtQyeCszOHYAWPqggTRgb08MMKIR4yue7q/GC96+WOO/a4j+gJHeenI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101938; c=relaxed/simple;
-	bh=4gUX2Nkdvr4uMueRlF1MAsWgrpQGIDfwlHWqe7a4zYA=;
+	s=arc-20240116; t=1718101972; c=relaxed/simple;
+	bh=ocXWZLZt4vRGWQexMoBknOG7B28MXYu3HXsM4wdDmWo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1i9/KOYFxO0smRMIO4hWi/sRQi/NC/8WI1QGIQLBm/TIwu2nqG/9MD/24y6mal8B0Ttpc9WkT+ahc19L+uDTbW0OYh4svfGU+RiwCV+aRe7/bxsSBh3PApyLsB+MYKEzVdD66/fR8KcYCDZUdCJFwiWqz/aWTnY4x2xn6S/RkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ibbu4awM; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8D74940EA5;
-	Tue, 11 Jun 2024 10:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718101929;
-	bh=FuWU3S8T9H1PCw3M7cNRUYssP1wgq9lP4eO/D5Buewg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=Ibbu4awMvEK8bDBSzFvSHo4KysoyHDSyJogL3aDOGrmK/MndkQdB/FuBdhc8tuDnC
-	 3wctX7vJraevcHXU3Wd7UK85ESPsj32CzAkVctpUHFdvUoJ2gDRozSTgudiZ/zrCC6
-	 omsvQWGMY7VyU8Lc/xnGO/sEABQpOjRn4c04bIPSNLHPGLkN0ivNFTFpWFMKvlJrdL
-	 17HDFJWIoMRdpBMpMAR2hfROvTtRSH8HnVdSc1p37+UOWn7rD5z3kob4LbBtQOzs+5
-	 GMm+Ek3VTPPblZHYvGOtdt2oqGZ6m6XpTEqOjtbdVrqU3NYcw9O5Zk9CW03FQG3mEq
-	 KVatTldgzoVNA==
-Message-ID: <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
-Date: Tue, 11 Jun 2024 03:31:59 -0700
+	 In-Reply-To:Content-Type; b=G+oP84MCCJLGbMl3WLE3q3+4rlk4FVkaIkwAiMlk2yAvh1VsYNt1m7XOQtWXiJ1U4tyyyvai4vq+O0Zl4GvssYYk2PP/pbOMqFuustTKF4NWL+WjGZZi16W1vxCAH1n2csmy94nkEUJycQwBnkHSEfKf48cjC/zWaXmUBvOwftw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZbRsF+5b; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718101970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8IJjvPlYTgGby4QteaSEpbc44xLD1xUOwtVSJzbAX64=;
+	b=ZbRsF+5bjHXIhuSUqLVybtaqyuan8sPrLZU4fZPxRh6qWIJt4F1c/FD9PYbJWsmz4gdwnv
+	J+EGuq35ndVSZR+VCTq43baIjQ+v+bm7W649zofkkUyOwMSbqWkR4N3rzzJ4L1QcmgwacX
+	80YPcm5MTVi4iXU7ZPVuShL+A7wCIQQ=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-354-ogmibgVEPAi6VHrNidoQwA-1; Tue, 11 Jun 2024 06:32:48 -0400
+X-MC-Unique: ogmibgVEPAi6VHrNidoQwA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebd5d5e151so25739861fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:32:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718101967; x=1718706767;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8IJjvPlYTgGby4QteaSEpbc44xLD1xUOwtVSJzbAX64=;
+        b=jYy9kTgyCxReuGW2dbUsFXXPTez7dFj4xJJ/6hdSY5Vf2PcMurr8AmDxlxpN7/fPe/
+         cErk8DSOLVDH4op0505CLDLrgJzRmoTVdsd1CRIT+V4EvG9YdQnznMMEuqkYOraOZVzQ
+         Iw82ZhxTjB9wP1vzvVHkhgjhWDajMTB27ZP1Wx+O5bJnshm308QfojMEFH23sBXXnjvl
+         jLBk6BPzp5BPsvbWYfATNgvPFXq94m5K6mtPIkjSj8xyTzwrz+Eb7vSQpPqHebwjftLr
+         dexbymciegkkFAPsdb6SVEg5Rxhe+zg8R3LIuqFvraPcyWA0Iy+s+V0x0qDpNBF3E312
+         5KaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAnVGQnywzjWlIa/YxeWesbw3HII9J9UNvjGiRWALpzxK3VDTV06yaqrPwkmh/qxLOJUezpMt2a8SWAUqqHA7P4j3LsB8MMWbl8yuJ
+X-Gm-Message-State: AOJu0Yxzo8Vy/fFjpOf6EpKdSeSug2bJJyn9HPukrgieY9VErHA6p/PU
+	9f7Wxb4PblZrHfc7/WoflC3wz1HL6Cgi+ngCBbo3heDSJ5ACx2cKMSnqQ9MWzU55rb0L6oQ5PXW
+	3r2U1wvo2fYbeC+nxqkIuZ8qkTlHCjPudl7CDdwdbe2+gYte+ByRYj7LexTxkxA==
+X-Received: by 2002:a2e:8086:0:b0:2eb:f7a4:7289 with SMTP id 38308e7fff4ca-2ebf7a47357mr3010131fa.51.1718101967291;
+        Tue, 11 Jun 2024 03:32:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCS1UWr/Lav9vU3zkbBMu6I34lHIPbNjgCjn12ARLt40UU4azZziKE3ue0rx4T0xu5wLLNBQ==
+X-Received: by 2002:a2e:8086:0:b0:2eb:f7a4:7289 with SMTP id 38308e7fff4ca-2ebf7a47357mr3009921fa.51.1718101966743;
+        Tue, 11 Jun 2024 03:32:46 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4223da03f46sm26935365e9.23.2024.06.11.03.32.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 03:32:46 -0700 (PDT)
+Message-ID: <e8c10a52-61f9-4b46-bc50-e2c267b1aa56@redhat.com>
+Date: Tue, 11 Jun 2024 12:32:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,146 +82,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
- hooks
-To: Jonathan Calmels <jcalmels@3xx0.net>, Paul Moore <paul@paul-moore.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+Subject: Re: LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline
+ 6.10.rc3
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <baohua@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 6/11/24 01:09, Jonathan Calmels wrote:
-> On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
->> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
->>>
->>> This patch allows modifying the various capabilities of the struct cred
->>> in BPF-LSM hooks. More specifically, the userns_create hook called
->>> prior to creating a new user namespace.
->>>
->>> With the introduction of userns capabilities, this effectively provides
->>> a simple way for LSMs to control the capabilities granted to a user
->>> namespace and all its descendants.
->>>
->>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
->>> namespaces and checking the resulting task's bounding set.
->>>
->>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
->>> ---
->>>   include/linux/lsm_hook_defs.h                 |  2 +-
->>>   include/linux/security.h                      |  4 +-
->>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
->>>   security/apparmor/lsm.c                       |  2 +-
->>>   security/security.c                           |  6 +-
->>>   security/selinux/hooks.c                      |  2 +-
->>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
->>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
->>>   8 files changed, 76 insertions(+), 14 deletions(-)
->>
->> I'm not sure we want to go down the path of a LSM modifying the POSIX
->> capabilities of a task, other than the capabilities/commoncap LSM.  It
->> sets a bad precedent and could further complicate issues around LSM
->> ordering.
+On 11.06.24 12:14, Naresh Kamboju wrote:
+> The kernel panic was noticed while running LTP syscalls fork13 (long running) on
+> the mainline master 6.10.rc3 kernel on arm64 rk3399-rock-pi-4 device.
 > 
-> Well unless I'm misunderstanding, this does allow modifying the
-> capabilities/commoncap LSM through BTF. The reason for allowing
-> `userns_create` to be modified is that it is functionally very similar
-> to `cred_prepare` in that it operates with new creds (but specific to
-> user namespaces because of reasons detailed in [1]).
+> Please find detailed logs in the links,
 > 
-yes
-
-> There were some concerns in previous threads that the userns caps by
-> themselves wouldn't be granular enough, hence the LSM integration.
-
-> Ubuntu for example, currently has to resort to a hardcoded profile
-> transition to achieve this [2].
+> As you know fork13 is a stress test case trying to generate a maximum number
+> of PID's in a 100,000 loop.
 > 
+> This device is running via NFS mounted filesystem.
+> 
+> I have tried to reproduce this problem in a loop but failed to reproduce the
+> crash.
+> 
+> 
+> Crash flow:
+> ------
+> fork13 run started
+> BUG: Bad page map in process fork13
+> BUG: Bad rss-counter state mm:
+> Unable to handle kernel paging request at virtual address
+> Internal error: Oops: 0000000096000046
+> run for 800 secs ( 13 minutes) and more.
+> fork14 run started and completed
+> 
+> fpathconf01 run started and completed
+> sugov:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address
+> 
+> Insufficient stack space to handle exception!
+> end Kernel panic - not syncing: kernel stack overflow
+> 
+> I have tried to decode stack dump by not being useful [1].
+> [1] https://people.linaro.org/~naresh.kamboju/output-rk3399.txt
+> 
+> Test log :
+> --------
+> tst_test.c:1733: TINFO: LTP version: 20240524
+> tst_test.c:1617: TINFO: Timeout per run is 0h 15m 00s
+> [  904.280569] BUG: Bad page map in process fork13  pte:2000000019ffc3
+> pmd:80000000df55003
+> [  904.281397] page: refcount:1 mapcount:-1 mapping:0000000000000000
+> index:0x0 pfn:0x19f
 
-The hard coded profile transition, is because the more generic solution
-as part of policy just wasn't ready. The hard coding will go away before
-it is upstreamed.
+Mapcount underflow on a small folio (head: not printed).
 
-But yes, updating the cred really is necessary for the flexibility needed
-whether it is modifying the POSIX capabilities of the task or the LSM
-modifying its own security blob.
+[...]
 
-I do share some of Paul's concerns about the LSM modifying the POSIX
-capabilities of the task, but also thing the LSM here needs to be
-able to modify its own blob.
+> [  904.294564] BUG: Bad page map in process fork13  pte:200000002e4fc3
+> pmd:80000000df55003
+> [  904.295275] page: refcount:2 mapcount:-1 mapping:000000007885152f
+> index:0x6 pfn:0x2e4
 
-I have a very similar patch I was planning on posting once the
-work to fix the hard coded profile transition is done.
+Another mapcount underflow on a small folio (head: not printed).
 
 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7cd4c5c2101cb092db00f61f69d24380cf7a0ee8
-> [2] https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/commit/?id=43a6c29532f517179fea8c94949d657d71f4fc13
+> [  904.309309] BUG: Bad page map in process fork13  pte:20000000cc6fc3
+> pmd:80000000df55003
+> [  904.310031] page: refcount:1 mapcount:-1 mapping:0000000000000000
+> index:0x6 pfn:0xcc6
+> [  904.310728] head: order:3 mapcount:-1 entire_mapcount:0
+> nr_pages_mapped:8388607 pincount:0
+
+Mapcount underflow on a large folio.
+
+...
+
+> [  904.326666] BUG: Bad page map in process fork13  pte:20000000268fc3
+> pmd:80000000df55003
+> [  904.327390] page: refcount:1 mapcount:-1 mapping:00000000f0624181
+> index:0x1b pfn:0x268
+
+Another mapcount underflow on a small folio (head: not printed).
+
+> [  904.328094] memcg:ffff0000016b4000
+> [  904.328401] aops:nfs_file_aops ino:8526e6 dentry
+> name:"libgpg-error.so.0.36.0"
+> [  904.329051] flags:
+> 0x3fffe000000002c(referenced|uptodate|lru|node=0|zone=0|lastcpupid=0x1ffff)
+> [  904.329878] raw: 03fffe000000002c fffffdffc0009a48 fffffdffc022f3c8
+> ffff00000688bd60
+> [  904.330561] raw: 000000000000001b 0000000000000000 00000001fffffffe
+> ffff0000016b4000
+> [  904.331240] page dumped because: bad pte
+> [  904.331590] addr:0000aaaad9afe000 vm_flags:00000075
+> anon_vma:0000000000000000 mapping:ffff0000300d4188 index:2e
+> [  904.332476] file:fork13 fault:filemap_fault mmap:nfs_file_mmap
+> read_folio:nfs_read_folio
+> [  904.333245] CPU: 5 PID: 22685 Comm: fork13 Tainted: G    B
+
+
+Are these maybe side-effects due to
+
+https://lkml.kernel.org/r/20240607103241.1298388-1-wangkefeng.wang@huawei.com
+
+
+How reproducible is this?
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
