@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-209743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAF9903A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37194903A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 644771C21DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495D61C23473
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7445E17B42D;
-	Tue, 11 Jun 2024 11:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TaOvJfi9"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBCB171644;
-	Tue, 11 Jun 2024 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4A17E46D;
+	Tue, 11 Jun 2024 11:33:35 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0F017E45B;
+	Tue, 11 Jun 2024 11:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105537; cv=none; b=UDihHFFiigH+RuRqebJjkWCq2wAvRwSW7A3lCpHbj5WZ33XvAJmsRlVzemO44pZxP/UQ3bou42fbjwuevhrsbogwEsXGEiMRzHysAJMzhEiW/LFRyWF7I8AGqU/MmO28D4TRwGk01ftXVEB7VW716jDy4oVH1xl0ZCP8OcTkOGc=
+	t=1718105615; cv=none; b=cdpWAHIP1rFweSZ3NjTKMf+ahAU4BzqukddPdDQshInIox09FVrHEr3U9P0US5FIwX1V2JfU0MvwMWxTFR/f5qiI9Fil0hzflezS8AwUxCQ4f4f8tgUjrKwXeRe3AUUf6VMPxHO81UH2V3UcJHVGSFvs5bbi5qZ3lDqSTJ1xzEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105537; c=relaxed/simple;
-	bh=R5AWGqF7+0BvYL3AmgE6VyRPPP37Za3cS2p/DkO8jjw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EnTugtMHr3qZWlc1MOKom6tZUoD8WGLL4Sb9cEqEgzDVPvKyhKxooLQGEu97UeuJ7vfjavw4RKUC4AI4MtlLV8vvI97D5fVDqka0qrqqSCAejYkphu2g//vSJaO3zsW6miiS+SuCyYxziQigqGP768qG5POgv9CLU63RFm5Jugk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TaOvJfi9; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421a1b834acso17601485e9.3;
-        Tue, 11 Jun 2024 04:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105534; x=1718710334; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAmwsFns9JAnMUeW6MOSQ6NrqNWyIGTK87/ABQlpO6A=;
-        b=TaOvJfi9aYox+64Pu4BTmwCn5ceMRpM+2NGx+vdMXIZmzxvGMH9TAoemM2TjXlsB37
-         PT60YsKKSHe10vNvAm8lp6LB3d45sEOxKbkMTPpZR1V/Yi+bq3u9wCjl0fjXuWzWKMWQ
-         hSqNivu/hAQW9a89LBT74J5iFzpQjexJSS/GJEmURi54M6w2DAYtWZM1F18jfDdGcp0o
-         ZfwHh75Ao7S0KhyZdKwo5D1+EktcdbaWVH3ZoXMMseNQ6g0uTAmtCGLl7YveV2nFhyWD
-         4y/DI9mIG6QVOnEranJTgBhljGdX1W1L1nDzw/gUQ8Cm7j+xgQK+sJp/3yfaOAx9bwkQ
-         MARQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105534; x=1718710334;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAmwsFns9JAnMUeW6MOSQ6NrqNWyIGTK87/ABQlpO6A=;
-        b=MkWHDA2nzbMBZptw/M3hMREYkZvaRPy2LYWgxkVHgOjUzKq5KkBfz+szA7IGfOAyNh
-         mZqwuiThdBCo2pYXCpMmYKmwwUBgHJTt+bDM1Ftj9XbwgKej0cCKq7oPTBDGxD7hx5Of
-         iLGzRhysnz6JGuIQWYvy6FJk2xsVI0iHzQmo3CcPzh6QGYFy+8NCIyQWBZLl9nZ+gon+
-         4p+u6MXuco8gnN8PgFwyoSuzbWjAsVQSYsMhP2UVvvzmahrb61pP2U0Xw8Y6MKUg2IEw
-         Rhv48yuZWjrwmb/TrrhJ7clYqjMIYaqTzPMHNUwRIIQfHeLMj/OLRzXRNGEmajTbXAIA
-         CTDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmsD7hb47a0GBBt7NjCO5OnvzZSLyACFcxC7oK0wc1RxFd87QKogd4EUFs3zxJWcefaocw+dd2dss/Jp2/pFkE/nhqKJZi/1htpY6U6LFsk6u7Y23foTUYTko8+lsdwAvjn70Qnnn0PJxQUACdg0tm2a6ztdBDaaMjyytITYglvdf2f54=
-X-Gm-Message-State: AOJu0YwsF1sXL5RtIsU3AjlIE2v5WTpZEzcHA7/o13Vdp+nWKWkBBN1b
-	UuYyQ0D5s92mZ9b23plkpyo4wKpF2CHsAZhe1If06Czc4eMtd3Fq
-X-Google-Smtp-Source: AGHT+IGLBnPl5dIR7IwVCK3ZBa00jbrkeJrUN1XCn7y9FxUH8UbesX6JRCJmiWP+MXr/tDMzkJCfUA==
-X-Received: by 2002:a05:600c:3ba0:b0:421:78c3:9d11 with SMTP id 5b1f17b1804b1-42178c39f55mr71836115e9.1.1718105534028;
-        Tue, 11 Jun 2024 04:32:14 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4227467990csm2473505e9.1.2024.06.11.04.32.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:32:13 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	s=arc-20240116; t=1718105615; c=relaxed/simple;
+	bh=PZ/qgo1iYhsepWwiQ2x0fwZsLK3jpsjhbyJ39AjPBF4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XBuLEVCfIuRTTpqw/uFzj9EoF5D1mzgCboAs7wwV9hXHS8owN0AmVoMESvft1NxoquWEM598xJXxnNhflUZC2YtU9ZZ089r4KBHV+JDTdHWwRiecVaPbuGKVM/pP8Thl/JTxPVM2eQng9Q1YC092F9zJXKR8ulJhPSFST7n2Zfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,229,1712588400"; 
+   d="scan'208";a="207491491"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Jun 2024 20:33:32 +0900
+Received: from renesas-deb12.mshome.net (unknown [10.226.92.82])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D5BEC4008C4F;
+	Tue, 11 Jun 2024 20:33:27 +0900 (JST)
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
-	linux-mips@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/5] mips: bmips: improve handling of RAC and CBR addr
-Date: Tue, 11 Jun 2024 13:32:03 +0200
-Message-ID: <20240611113209.8142-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH v2 9/9] arm64: dts: renesas: rzg2ul: Set Ethernet PVDD to 1.8V
+Date: Tue, 11 Jun 2024 12:32:03 +0100
+Message-Id: <20240611113204.3004-10-paul.barker.ct@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
+References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+On the RZ/G2UL & RZ/Five SMARC SOMs, the RGMII interface between the SoC
+and the Ethernet PHY operates at 1.8V.
 
-this simple series improve handling of RAC and CBR address and try to
-upstream these simple patch we have in OpenWrt for a while.
+The power supply for this interface may be correctly configured in
+u-boot, but the kernel should not be relying on this. Now that the
+RZ/G2L pinctrl driver supports configuring the Ethernet power supply
+voltage, we can simply specify the desired voltage in the device tree.
 
-The first patch fix a straight kernel panic where some Bootloader might
-enable RAC but misconfigure the CBR address. The current logic only
-check if RAC is enabled but doesn't verify if the CBR address is usable.
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Changes v1->v2:
+  * Picked up Geert's Reviewed-by tag.
 
-The DMA sync function cause a kernel panic for invalid write. (as CBR is
-0 or something like 0xa)
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi     | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-The second is preparation for making the CBR address configurable in DT.
-Since this address doesn't change, we can cache it and reference it with
-a local variable instead of calling the register to access the value.
-
-The 4th patch make it configurable with 2 DT property, one to actually
-set the reg and the other to force set it.
-
-The first property is used when CBR is set to 0. The second property is
-to force it if the Bootloader sets it to something wrong.
-
-If the CBR value is not 0 and is not forced with the second property a
-WARN is printed and the DT value is ignored.
-
-The 4th patch enable RAC on BMIPS4350.
-
-These has been tested on BCM6358 (HG556a) and BCM6368 (VH4032N) and
-reported correct functionality.
-
-Changes v6:
-- Add missing patch that got lost in v5
-- Fix missing header for legacy bcm47xx
-- Fix compilation error with gcc 10.2.1
-Changes v5:
-- Add Ack tags
-- Improve DT descriptions as suggested by Conor
-Changes v4:
-- Fix compilation error with legacy brcm target
-- Improve property description in DT commit (give
-  CBR meaning and drop reference to linux functions)
-- Use only __read_mostly as we can't add variable to
-  multiple data sections
-- In patch 4 use local cbr variable instead of global
-  one.
-Changes v3:
-- Drop broken-cbr-reg property
-- Fix anyOf+const with enum
-Changes v2:
-- Prefix brcm vendor in the added property
-- Drop last patch (cpu switch from DMA sync)
-- Validate CBR addr from DT to be outside DRAM
-- Reduce indentation in DT CBR check
-- Reduce delta and use local variable for CBR where possible
-- Fix and improve typo and spelling mistake
-- Use 0xf instead of 0xa for BCM6358 RAC enable
-
-Christian Marangi (4):
-  mips: bmips: BCM6358: make sure CBR is correctly set
-  mips: bmips: rework and cache CBR addr handling
-  dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
-  mips: bmips: setup: make CBR address configurable
-
-Daniel González Cabanelas (1):
-  mips: bmips: enable RAC on BMIPS4350
-
- .../devicetree/bindings/mips/brcm/soc.yaml    | 24 +++++++++++++++
- arch/mips/bcm47xx/prom.c                      |  3 ++
- arch/mips/bcm63xx/prom.c                      |  3 ++
- arch/mips/bmips/dma.c                         |  2 +-
- arch/mips/bmips/setup.c                       | 29 +++++++++++++++++--
- arch/mips/include/asm/bmips.h                 |  1 +
- arch/mips/kernel/smp-bmips.c                  | 28 ++++++++++++++++--
- 7 files changed, 85 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+index 417f49090b15..79443fb3f581 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+@@ -144,6 +144,7 @@ adc_pins: adc {
+ 	eth0_pins: eth0 {
+ 		txc {
+ 			pinmux = <RZG2L_PORT_PINMUX(1, 0, 1)>; /* ET0_TXC */
++			power-source = <1800>;
+ 			output-enable;
+ 		};
+ 
+@@ -161,14 +162,19 @@ mux {
+ 				 <RZG2L_PORT_PINMUX(3, 2, 1)>, /* ET0_RXD0 */
+ 				 <RZG2L_PORT_PINMUX(3, 3, 1)>, /* ET0_RXD1 */
+ 				 <RZG2L_PORT_PINMUX(4, 0, 1)>, /* ET0_RXD2 */
+-				 <RZG2L_PORT_PINMUX(4, 1, 1)>, /* ET0_RXD3 */
+-				 <RZG2L_PORT_PINMUX(5, 1, 7)>; /* IRQ2 */
++				 <RZG2L_PORT_PINMUX(4, 1, 1)>; /* ET0_RXD3 */
++			power-source = <1800>;
++		};
++
++		irq {
++			pinmux = <RZG2L_PORT_PINMUX(5, 1, 7)>; /* IRQ2 */
+ 		};
+ 	};
+ 
+ 	eth1_pins: eth1 {
+ 		txc {
+ 			pinmux = <RZG2L_PORT_PINMUX(7, 0, 1)>; /* ET1_TXC */
++			power-source = <1800>;
+ 			output-enable;
+ 		};
+ 
+@@ -186,8 +192,12 @@ mux {
+ 				 <RZG2L_PORT_PINMUX(9, 1, 1)>, /* ET1_RXD0 */
+ 				 <RZG2L_PORT_PINMUX(9, 2, 1)>, /* ET1_RXD1 */
+ 				 <RZG2L_PORT_PINMUX(9, 3, 1)>, /* ET1_RXD2 */
+-				 <RZG2L_PORT_PINMUX(10, 0, 1)>, /* ET1_RXD3 */
+-				 <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
++				 <RZG2L_PORT_PINMUX(10, 0, 1)>; /* ET1_RXD3 */
++			power-source = <1800>;
++		};
++
++		irq {
++			pinmux = <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
+ 		};
+ 	};
+ 
 -- 
-2.43.0
+2.39.2
 
 
