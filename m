@@ -1,236 +1,191 @@
-Return-Path: <linux-kernel+bounces-209628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2EC9038A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93BB9038AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD2C1F218D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8331C2363B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6CB17A920;
-	Tue, 11 Jun 2024 10:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3098317A930;
+	Tue, 11 Jun 2024 10:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCcERj+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpKEnRi3"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3E4174EE2;
-	Tue, 11 Jun 2024 10:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828FE171093;
+	Tue, 11 Jun 2024 10:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718100940; cv=none; b=l4GtfwUBA/ivfNCXzqEZm2u6BkhcTpStK/oi8fpzEixmm9JaH+2USlYMBe1xXKWTQM3QpM3Ie7/FMNRie3Lw7ImS8r2wD50y0XXw3ASFtq7l8GLvktOgSOc7CyBY2fdlknIBAW1saq61nrqDpZ+E6g5ivHsjjhRLNX2u4/6gQos=
+	t=1718101006; cv=none; b=Tx/0DbBGzuBqLTVhvrZjeaDT3dNfOwN663f3puMSBFW7XZyHfnY+sFOzatAqHkVN512BURcAKp9ELTq0HneLqPjhkKWiqf/Q990olwpEbfXBkerL96ewzhtTss+VSRs4KyInTcvutRCGZnk3pQNWT88BI/V2vCYOn46L6wGm5CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718100940; c=relaxed/simple;
-	bh=lwtvF8TxyoK5ymJEUqL+Fdnx72KICz4bi8hcR1ZN2pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uBK9ri1mFDNK2vC/yVIJchG+Qyydw4S4RWqrml7r4tZcPsJlmT1EiFJbxJl1M/DDqtg71PTnkUKGvmRc43VbxE4uwFV2SR4mNhIzip/M3v21U0xTODIaCXiWK3fLfmS8WVY8Lb5LcPY1T/YtA+6XnPXKNAVYbf3+Phz/1TiW9Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCcERj+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EAA0C2BD10;
-	Tue, 11 Jun 2024 10:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718100940;
-	bh=lwtvF8TxyoK5ymJEUqL+Fdnx72KICz4bi8hcR1ZN2pk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WCcERj+iqpu+bZrTYQgOyGthvcZ/X2gu2+GqD1bh3N3awgteDMG9mU+ACV+3pLH4R
-	 XskRK+Cwj2BK6OmWFJ2prqWvoXbpWi/fv0AAcF5SCxPI5dvLkplU1gG5bF4BquXc48
-	 3FdozzoIzVNDlT4MU0bfZCi6cy9FWQp16bUJNxTf/CQs380s3QWDQw7ZXKShlr6mv1
-	 +roaCUeCOoUwe03l9bXJIY26YI51b0e/VuqHM45uIb/tLDkv4kJi9AVCWPUCkv24aG
-	 48WWBZQ34zOGhJhiuJ5Ot9doIBsmw89AEGSiNn1Mvbca22RkVbLntiBFZI4A/C/Evd
-	 oo0NoeTHwe1rQ==
-Message-ID: <6cd2897f-a61d-4351-abac-714bae2ab154@kernel.org>
-Date: Tue, 11 Jun 2024 12:15:31 +0200
+	s=arc-20240116; t=1718101006; c=relaxed/simple;
+	bh=FcUhVZtywOK9kxMvai7/GZE1mImBUHiulyedco8utXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PbTtXo5yFp/DqWP6hERLm/HQV7uhjSDdNNgkeB9L1QuHGF9LDMseftcYoJynXiBZmy5YNR/e6cDP+2d46A/jlRjHS55Tcdnpc3r/dCJa95PyawC6GtLw6GlU05Xmu+IyL1M8yBcYsoHgmyXwHmxnjghLCCQ9NkwnE6n3bzQW7Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpKEnRi3; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217990f997so26316335e9.2;
+        Tue, 11 Jun 2024 03:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718101003; x=1718705803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vIVgHslHc8mGThRF1qcVmrN54UHgjwK8zdf0VtH82oY=;
+        b=bpKEnRi3rf1Xq9qA2HpR4k0Nbbinl90mykjY2wEWJTlTZ6tQkk7kF1HSFamgI06VyX
+         4e9dPd75djQP+emq5rSoIDUKeNWQRT/NmpS/LWzZZm73Y9oEwHJgujV5Od6YjT2BFLC4
+         GIoTmm5fdJicJ6zFasWKBjHM2jn6HaGV2lCFc5T/xWaoC3leh+uONUiwQ9mktudaN8B6
+         ghKTG86MzBlRcm0X2DNxC61wPbUpnFfPW9bqP1lKvsNdhVRcIBJg+cQgZRskaZXsfcYm
+         ABKflNHAKWfiNTGz1TyaH7Q3rQArEUw2IivN8Lrabh+5V/iUfoobrI4yr7Cl3rqapzUR
+         lN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718101003; x=1718705803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vIVgHslHc8mGThRF1qcVmrN54UHgjwK8zdf0VtH82oY=;
+        b=VVaNJZAG7iecq0L39XYVyJhRGvoq/fyaI+OMLk+05uareabRWNGrrkT7lCsP6EQhsW
+         gKc8Mhykduv51rKZRF8psxGVgUf7sS7sP0JmZaGNhxrfOF7s7YqMXgGPGxhynZMxaXox
+         Jn1CbnnMYikYMrPDADKdMLNvwgdWw3kU2zJXgKCn8eNazFvPKhZ7hgnE17wdqNT5kBNs
+         tYYy8YKVPbPX35eFJVHf/X+dnNZ5xUZ2Inbqc00PmcqnBF6wM5bxESs9OL8tYRc+4bKG
+         42T4C5j8kh+LdVZ2N28TsDPgYlXLqNy4UT8NITkkUDSAte+2kkgGGuIcNuVpGis8wLrP
+         Dqjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXFqG36BOEGBrcU325y136AFQii8pPfEfxHB9YNWZUG33QDyYixlpj76gQmsg0UGYgowO/CIpkyvkE0KhatfpfR6NqAqKf+N3PpQNa3RRiN1Il5MJw8esa3Kn3d6rY2VXQq7NT5pDfeq4Y8eYOEFJnOLIbp3EVwGH4Lp3U7IHPp94eJAbMOdXQ
+X-Gm-Message-State: AOJu0YwR0d2rfEJ5zZBpIkqYLWkyGEPNqem1BK0RJNSL92W2BsNNqWyj
+	a5QtFowMRc7kXLv9GtabsW/743cjy/tF55QFIRdDNMH7xc/nNZeK
+X-Google-Smtp-Source: AGHT+IGY+tQhKFR0ODWsDOkTiMXY3X5Pqt9XtBWT52Crt4Ny8EiS1x+SsdHticwZh2BhNaGZoS/B8w==
+X-Received: by 2002:a05:600c:4e8a:b0:421:7ee4:bbe8 with SMTP id 5b1f17b1804b1-4217ee4be2dmr61477055e9.19.1718101002500;
+        Tue, 11 Jun 2024 03:16:42 -0700 (PDT)
+Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm173481275e9.11.2024.06.11.03.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:16:41 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	josef@toxicpanda.com,
+	hch@infradead.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3 0/2] rcu-based inode lookup for iget*
+Date: Tue, 11 Jun 2024 12:16:30 +0200
+Message-ID: <20240611101633.507101-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 1/2] ASoC: fsl: Add i2s and pcm drivers for LPC32xx
- CPUs
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- Russell King <linux@armlinux.org.uk>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Chancel Liu <chancel.liu@nxp.com>,
- Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <[PATCH] ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs>
- <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/06/2024 11:47, Piotr Wojtaszczyk wrote:
-> This driver was ported from an old version in linux 2.6.27 and adjusted
-> for the new ASoC framework and DMA API.
-> 
-> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> ---
-> Changes for v2:
-> - Coding Style cleanup
-> - Use dev_err_probe() for error handling in probe function
-> - Removed unneded err_clk_disable label
-> - Removed empty function
-> - Droped of_match_ptr in lpc32xx_i2s_match DT match table
-> - ASoC struct adjustmes for the latest 6.10-rc3 kernel
-> 
->  MAINTAINERS                            |   7 +
+I think the appropriate blurb which needs to land here also needs to be
+in the commit message for the first patch, so here it is copy pasted
+with some modifications at the end:
 
-1:
->  arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi |   4 +
+[quote]
+Instantiating a new inode normally takes the global inode hash lock
+twice:
+1. once to check if it happens to already be present
+2. once to add it to the hash
 
-2:
->  arch/arm/mach-lpc32xx/phy3250.c        |  60 ++++
+The back-to-back lock/unlock pattern is known to degrade performance
+significantly, which is further exacerbated if the hash is heavily
+populated (long chains to walk, extending hold time). Arguably hash
+sizing and hashing algo need to be revisited, but that's beyond the
+scope of this patch.
 
-3:
->  sound/soc/fsl/Kconfig                  |   7 +
->  sound/soc/fsl/Makefile                 |   2 +
->  sound/soc/fsl/lpc3xxx-i2s.c            | 383 +++++++++++++++++++++++++
->  sound/soc/fsl/lpc3xxx-i2s.h            |  94 ++++++
->  sound/soc/fsl/lpc3xxx-pcm.c            |  75 +++++
+A long term fix would introduce finer-grained locking. An attempt was
+made several times, most recently in [1], but the effort appears
+stalled.
 
-Three separate subsystems, so three separate patches.
+A simpler idea which solves majority of the problem and which may be
+good enough for the time being is to use RCU for the initial lookup.
+Basic RCU support is already present in the hash. This being a temporary
+measure I tried to keep the change as small as possible.
 
->  8 files changed, 632 insertions(+)
->  create mode 100644 sound/soc/fsl/lpc3xxx-i2s.c
->  create mode 100644 sound/soc/fsl/lpc3xxx-i2s.h
->  create mode 100644 sound/soc/fsl/lpc3xxx-pcm.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aacccb376c28..7616f61d6327 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8909,6 +8909,13 @@ S:	Maintained
->  F:	sound/soc/fsl/fsl*
->  F:	sound/soc/fsl/imx*
->  
-> +FREESCALE SOC LPC32XX SOUND DRIVERS
-> +M:	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> +L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> +L:	linuxppc-dev@lists.ozlabs.org
-> +S:	Orphan
+iget_locked consumers (notably ext4) get away without any changes
+because inode comparison method is built-in.
 
-Not sure if we want it in the first place. Why would we like to support
-orphaned drivers? Sorry, if there is no one to care about it, then it
-should not be merged.
+iget5_locked and ilookup5_nowait consumers pass a custom callback. Since
+removal of locking adds more problems (inode can be changing) it's not
+safe to assume all filesystems happen to cope.  Thus iget5_locked_rcu,
+ilookup5_rcu and ilookup5_nowait_rcu get added, requiring manual
+conversion.
 
-...
+In order to reduce code duplication find_inode and find_inode_fast grow
+an argument indicating whether inode hash lock is held, which is passed
+down should sleeping be necessary. They always rcu_read_lock, which is
+redundant but harmless. Doing it conditionally reduces readability for
+no real gain that I can see. RCU-alike restrictions were already put on
+callbacks due to the hash spinlock being held.
 
-> +
-> +static int lpc32xx_i2s_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct lpc3xxx_i2s_info *i2s_info_p;
-> +	struct resource *res;
-> +	void __iomem *iomem;
-> +	int ret;
-> +
-> +	i2s_info_p = devm_kzalloc(dev, sizeof(*i2s_info_p), GFP_KERNEL);
-> +	if (!i2s_info_p)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, i2s_info_p);
-> +	i2s_info_p->dev = dev;
-> +
-> +	iomem = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(iomem))
-> +		return dev_err_probe(dev, PTR_ERR(iomem), "Can't map registers\n");
-> +
-> +	i2s_info_p->regs = devm_regmap_init_mmio(dev, iomem, &lpc32xx_i2s_regconfig);
-> +	if (IS_ERR(i2s_info_p->regs))
-> +		return dev_err_probe(dev, PTR_ERR(i2s_info_p->regs),
-> +				     "failed to init register map: %d\n", ret);
-> +
-> +	i2s_info_p->clk = devm_clk_get(dev, "i2s_clk");
-> +	if (IS_ERR(i2s_info_p->clk))
-> +		return dev_err_probe(dev, PTR_ERR(i2s_info_p->clk), "Can't get clock\n");
-> +
-> +	i2s_info_p->clkrate = clk_get_rate(i2s_info_p->clk);
-> +	if (i2s_info_p->clkrate == 0)
-> +		return dev_err_probe(dev, -EINVAL, "Invalid returned clock rate\n");
-> +
-> +	mutex_init(&i2s_info_p->lock);
-> +
-> +	ret = devm_snd_soc_register_component(dev, &lpc32xx_i2s_component,
-> +					      &lpc3xxx_i2s_dai_driver, 1);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Can't register cpu_dai component\n");
-> +
-> +	i2s_info_p->playback_dma_config.addr = (dma_addr_t)(res->start + I2S_TX_FIFO);
-> +	i2s_info_p->playback_dma_config.maxburst = 4;
-> +	i2s_info_p->playback_dma_config.filter_data = "i2s-tx";
-> +	i2s_info_p->capture_dma_config.addr = (dma_addr_t)(res->start + I2S_RX_FIFO);
-> +	i2s_info_p->capture_dma_config.maxburst = 4;
-> +	i2s_info_p->capture_dma_config.filter_data = "i2s-rx";
-> +
-> +	ret = lpc3xxx_pcm_register(pdev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Can't register pcm component\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int lpc32xx_i2s_remove(struct platform_device *pdev)
-> +{
-> +	return 0;
-> +}
+There is a real cache-busting workload scanning millions of files in
+parallel (it's a backup server thing), where the initial lookup is
+guaranteed to fail resulting in the 2 lock acquires.
 
-You did not respond to comment about this. Drop.
+Implemented below is a synthehic benchmark which provides the same
+behavior. [I shall note the workload is not running on Linux, instead it
+was causing trouble elsewhere. Benchmark below was used while addressing
+said problems and was found to adequately represent the real workload.]
 
+Total real time fluctuates by 1-2s.
 
-Best regards,
-Krzysztof
+With 20 threads each walking a dedicated 1000 dirs * 1000 files
+directory tree to stat(2) on a 32 core + 24GB RAM vm:
+[/quote]
+
+Specific results:
+
+ext4 (needed mkfs.ext4 -N 24000000):
+before:	3.77s user 890.90s system 1939% cpu 46.118 total
+after:  3.24s user 397.73s system 1858% cpu 21.581 total (-53%)
+
+btrfs (s/iget5_locked/iget5_locked_rcu in fs/btrfs/inode.c):
+before: 3.54s user 892.30s system 1966% cpu 45.549 total
+after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
+
+btrfs bottlenecks itself on its own locks here.
+
+Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
+
+fs rundown is as follows:
+- ext4 patched implicitly
+- xfs does not use the inode hash
+- bcachefs is out of the picture as Kent decided to implement his own
+  inode hashing based on rhashtable, for now private to his fs.
+
+I have not looked at others.
+
+[1] https://lore.kernel.org/all/20231206060629.2827226-1-david@fromorbit.com/
+
+v3:
+- export new routines with _GPL
+- don't use the extern keyword
+- add ilookup5_rcu to follow iget5_locked scheme
+
+v2:
+- add argument lists to new routines
+- assert the inode hash lock is not held as applicable
+- real btrfs patch included
+
+Mateusz Guzik (2):
+  vfs: add rcu-based find_inode variants for iget ops
+  btrfs: use iget5_locked_rcu
+
+ fs/btrfs/inode.c   |   2 +-
+ fs/inode.c         | 119 ++++++++++++++++++++++++++++++++++++++-------
+ include/linux/fs.h |  10 +++-
+ 3 files changed, 112 insertions(+), 19 deletions(-)
+
+-- 
+2.43.0
 
 
