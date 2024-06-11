@@ -1,172 +1,117 @@
-Return-Path: <linux-kernel+bounces-209142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897F9902DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 761D1902DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F021F23412
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D92A1F223C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7D36FC5;
-	Tue, 11 Jun 2024 01:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB73B662;
+	Tue, 11 Jun 2024 00:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="XhB5QTbi"
-Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NB6h105A"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7313163B8;
-	Tue, 11 Jun 2024 01:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33EBAD2C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718067836; cv=none; b=JLhHQkmExdLZlK1zCAQHNaPrXELF6xuavrl0nmx/DdGm2MJ62H9Ij16I/cAfv0NKRxMJnt2Q165kUScX0nPRH9llKfSqTfxe3TG3uudB8QKL4iH+4X5pnSyMX1IpZW9gdi18518sNIuLw/xNnp3lSTUJWR45U+OiTprSMc1ySiE=
+	t=1718067055; cv=none; b=JuAlfjQMbjsmNRpJk9zRkGmoQ10q7EUI8fJ8s4ou2pIsrak88hIjC+HTteHdhzPfJzAkb7aHAQrF5GOaQrZFR3hgKILsYwR/J7nkt0v0FRA263SyRWrKxjE9PX3ftvceUhg/n++E+6KWCRPE4zInWRDaaENgObw5KwK599srDkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718067836; c=relaxed/simple;
-	bh=dhKRHtF4SgAN+8QKhbvAqBOVF8bJZ+pKcc9susdjNyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iioirkBRVa4U3JeUVqfeDXwR5cWiwO5fH+zHq59QJIapETrzHNCRe+ZUPBA4gorNnHxGBxL5YYgyj8BTYyAcF+FMwS5HVrGFMf7kFD5LF6gYLZbZaYClx0cJg5YTFBduIQRKfQLpN8krvDnrAMe3j8+pxXHzlQNTVOmP38zDoz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=XhB5QTbi; arc=none smtp.client-ip=78.46.137.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-	s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=jWkaSxfNx+pzsfSK1fY94WQ4Jtn8QLkhhm2QngdCkpA=; b=XhB5QTbiDTZ0gTP04i5yOGIXAj
-	14BvTDKEOtr0ApCPNT/sfFqCixnn8O9csTMMUXe2pQy1YADBClpCkgjyF/RnF46cVMgNg6++tfIqH
-	JlorxJ5baLZ05f3TI+akEBTuq46ojoty1UE+HJC2IMglqjvNFP/tgT96+rj7yfM6u0EQj7B7Qjye0
-	dRvx7PwFExfMuR4ccyJn56ugKioQwRhfbFZZ9I6K2DLpN0S+C6y2RynWEURzdyL3FYpALb/Ee1gVM
-	XjCJcJOIa0S7qXed0Gzm3e1HHZuNuETOMMCSN6aJaFPfHWyMq9DOfAlncGXNfz8Wn50drVwX9mbfK
-	rzY/EU8A==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <lars@metafoo.de>)
-	id 1sGpe8-000MIq-UQ; Tue, 11 Jun 2024 02:45:56 +0200
-Received: from [136.25.87.181] (helo=[192.168.86.26])
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <lars@metafoo.de>)
-	id 1sGpe8-000ME2-2Z;
-	Tue, 11 Jun 2024 02:45:56 +0200
-Message-ID: <3557bd0f-86b4-4dce-90dd-59303f4f1154@metafoo.de>
-Date: Mon, 10 Jun 2024 17:45:52 -0700
+	s=arc-20240116; t=1718067055; c=relaxed/simple;
+	bh=xW/JsFrvvdxfv6EVqr7rZU4s6vm7IMnNTV0x4eaBiKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DfnJvbau/SgCYLrq6gBIyNJb5XKRTYqmCPLE/rWHnMcM2wglN01F3Tcv8SY8wjbfnUqJNw/OEmQ0clDV5dfl+ztwds1Ax6Xr3vhNG5IwUXvQTrK0JyJpFwNauImVO/iY+InT7xTZnClO0XN/2jdhjqroVsaEXIY9oidIHhxSJos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NB6h105A; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f1dc06298so56247066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718067052; x=1718671852; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WEyzkTSmfTg9rMLE5THHkOuiUGT58uE3ZSUkLeaSyYQ=;
+        b=NB6h105A2N/KNIIlkJJVfOirnWOPxQQ+9PirqH3T+3/1esYzkyUnrMyS8fGQCahNP6
+         vHblRl+p+81xseSoD3Lf6gh1R5b6Rj0+p43C7BRuixY+L5dj1o5XibD1RrTqLs7UjhMH
+         dV9wSUjGSJjhg4uhc/yNmLgc/u8FsOOQ38Zvc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718067052; x=1718671852;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WEyzkTSmfTg9rMLE5THHkOuiUGT58uE3ZSUkLeaSyYQ=;
+        b=CbEoxHKNPPuxQ+63+ANdQoatdLYucvW4onEDcf0/Tte1JXGkEb408hmrTkOk7zQXOa
+         HfP93byK9BzmdZSaYwYs80fcM9UO7a8U5cubR35K3NUNsDvjDFEfuKf0bOuGyOXFDzMh
+         7ryf8nfraEzUHJpAGspdOYuAKbTtzwfaqfQh+pXE2y1UDJpfZ42EFePd7n6X2CwEq3YY
+         dOuz6UQlUBPv1YaS1Z9T3KzIKjYVJdxJ3ZWitfoF4jRN3gYpkhPNy6mGw1d8Ygg3tC6o
+         DtPV/oX3TtrctqV4UpMXkzqmz4u/GuzBFM1wrrm/L/LxIz6XYjv0Q3aAZg22L8cZhb3O
+         zxpg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ZyfhUBCTNnVyxLN8J/3cYgwUwLwIdybzvKpeDYri68q/gLxTa+/odrmOea41FkaeIOnQPEZqYDo4hKu1FheYhb7+DPFUj1rYUO4+
+X-Gm-Message-State: AOJu0YzL/4tkGs2lyZkM1+NE7P9HKGZLgBcqSUaaW68+5JevQhsW7U5h
+	PNgdbcqdfwy+tC3O4Ecl4tlooYFJb9IFsqKUSEr6VGmopexEWWxPkOZZUi9dtGB0RsWHegsRGxS
+	f+RY=
+X-Google-Smtp-Source: AGHT+IEYjXjxCE5vyBCgn4fKX3gFp2/0/KAcgafutCZ2pi14DL9fUQsFfMMbEJyjTtNaExlvqtzIpw==
+X-Received: by 2002:a17:907:2d89:b0:a6f:d1d:75f4 with SMTP id a640c23a62f3a-a6f0d1d76b4mr478760366b.55.1718067052084;
+        Mon, 10 Jun 2024 17:50:52 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6effd5bfc8sm393809866b.2.2024.06.10.17.50.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 17:50:48 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6f0dc80ab9so56844966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:50:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaOxN9CQwGJ7PsYX9TjAqtK7gD/MWSqDyTPAJdaIj3XU9fFlsYHLye4EKRH1yM7OnbQoR7iPdGa46ABIrf0bFo/nZR+CgSkPAZx6u/
+X-Received: by 2002:a17:906:17c3:b0:a6f:2b19:e82f with SMTP id
+ a640c23a62f3a-a6f2b19e99dmr137168366b.28.1718067047933; Mon, 10 Jun 2024
+ 17:50:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] ALSA: dmaengine: Synchronize dma channel in
- prepare()
-To: Jai Luthra <j-luthra@ti.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>
-References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
- <20240610-asoc_next-v2-1-b52aaf5d67c4@ti.com>
-Content-Language: en-US
-From: Lars-Peter Clausen <lars@metafoo.de>
-In-Reply-To: <20240610-asoc_next-v2-1-b52aaf5d67c4@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27302/Mon Jun 10 10:25:43 2024)
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+ <20240610104352.GT8774@noisy.programming.kicks-ass.net> <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
+ <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com> <71FE7A14-62F6-45D3-9BC4-BE09E06F7863@zytor.com>
+In-Reply-To: <71FE7A14-62F6-45D3-9BC4-BE09E06F7863@zytor.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 10 Jun 2024 17:50:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjLytEj0Ccs1CsVPxmbLavf8Wk4ciDskhwy47rgyq7Oig@mail.gmail.com>
+Message-ID: <CAHk-=wjLytEj0Ccs1CsVPxmbLavf8Wk4ciDskhwy47rgyq7Oig@mail.gmail.com>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/10/24 03:56, Jai Luthra wrote:
-> Sometimes the stream may be stopped due to XRUN events, in which case
-> the userspace can call snd_pcm_drop() and snd_pcm_prepare() to stop and
-> start the stream again.
+On Mon, 10 Jun 2024 at 16:35, H. Peter Anvin <hpa@zytor.com> wrote:
 >
-> In these cases, we must wait for the DMA channel to synchronize before
-> marking the stream as prepared for playback, as the DMA channel gets
-> stopped by snd_pcm_drop() without any synchronization.
-
-
-We should really implement the sync_stop() PCM callback and let the ALSA 
-core let care of the sync.
-
-
-> Reviewed-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> ---
->   include/sound/dmaengine_pcm.h         |  1 +
->   sound/core/pcm_dmaengine.c            | 10 ++++++++++
->   sound/soc/soc-generic-dmaengine-pcm.c |  8 ++++++++
->   3 files changed, 19 insertions(+)
+> ... which can be compacted down to a single instruction:
 >
-> diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-> index c11aaf8079fb..9c5800e5659f 100644
-> --- a/include/sound/dmaengine_pcm.h
-> +++ b/include/sound/dmaengine_pcm.h
-> @@ -36,6 +36,7 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer_no_residue(struct snd_pcm_substream
->   int snd_dmaengine_pcm_open(struct snd_pcm_substream *substream,
->   	struct dma_chan *chan);
->   int snd_dmaengine_pcm_close(struct snd_pcm_substream *substream);
-> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream);
->   
->   int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
->   	dma_filter_fn filter_fn, void *filter_data);
-> diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
-> index 12aa1cef11a1..dbf5c6136d68 100644
-> --- a/sound/core/pcm_dmaengine.c
-> +++ b/sound/core/pcm_dmaengine.c
-> @@ -349,6 +349,16 @@ int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
->   }
->   EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_open_request_chan);
->   
-> +int snd_dmaengine_pcm_prepare(struct snd_pcm_substream *substream)
-> +{
-> +	struct dmaengine_pcm_runtime_data *prtd = substream_to_prtd(substream);
-> +
-> +	dmaengine_synchronize(prtd->dma_chan);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_prepare);
-> +
->   /**
->    * snd_dmaengine_pcm_close - Close a dmaengine based PCM substream
->    * @substream: PCM substream
-> diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-> index ea3bc9318412..078fcb0ba8a2 100644
-> --- a/sound/soc/soc-generic-dmaengine-pcm.c
-> +++ b/sound/soc/soc-generic-dmaengine-pcm.c
-> @@ -318,6 +318,12 @@ static int dmaengine_copy(struct snd_soc_component *component,
->   	return 0;
->   }
->   
-> +static int dmaengine_pcm_prepare(struct snd_soc_component *component,
-> +				 struct snd_pcm_substream *substream)
-> +{
-> +	return snd_dmaengine_pcm_prepare(substream);
-> +}
-> +
->   static const struct snd_soc_component_driver dmaengine_pcm_component = {
->   	.name		= SND_DMAENGINE_PCM_DRV_NAME,
->   	.probe_order	= SND_SOC_COMP_ORDER_LATE,
-> @@ -327,6 +333,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component = {
->   	.trigger	= dmaengine_pcm_trigger,
->   	.pointer	= dmaengine_pcm_pointer,
->   	.pcm_construct	= dmaengine_pcm_new,
-> +	.prepare	= dmaengine_pcm_prepare,
->   };
->   
->   static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
-> @@ -339,6 +346,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
->   	.pointer	= dmaengine_pcm_pointer,
->   	.copy		= dmaengine_copy,
->   	.pcm_construct	= dmaengine_pcm_new,
-> +	.prepare	= dmaengine_pcm_prepare,
->   };
->   
->   static const char * const dmaengine_pcm_dma_channel_names[] = {
->
+>     addq $bimm,%rax
 
+We'll burn that bridge when  we get to it. I'm not actually seeing any
+obvious for 32-bit immediates, except as part of some actual operation
+sequence (ie you might have a similar hash lookup to the d_hash() one,
+except using a mask rather than a shift).
+
+When would you ever add a constant, except when that constant is an
+address?  And those kinds of runtime constant addresses would always
+be the full 64-bit - I don't think 32-bit is interesting enough to
+spend any effort on.
+
+(Yes, you can get 32-bit rip-address constants if you start doing
+things like conditional link addresses, but that's what things like
+static_call() is for - not this runtime constant code)
+
+                Linus
 
