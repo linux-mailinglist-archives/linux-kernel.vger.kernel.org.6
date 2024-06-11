@@ -1,112 +1,214 @@
-Return-Path: <linux-kernel+bounces-210703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135269047B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:34:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368EF9047B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5134B2300E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EECC2850F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28E156228;
-	Tue, 11 Jun 2024 23:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90319155CB1;
+	Tue, 11 Jun 2024 23:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okXRkvGd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iQjnoYWs"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E667FBD2;
-	Tue, 11 Jun 2024 23:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EFD4594C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718148833; cv=none; b=iMOsVjUoBOEQxy7CZ+1mL+qUeOzMYH/SDkNOJN5pKWHDllcCIvOwHuJ2Rp8rwYaKRMs83imnkZ8W+IBFcJCfOM//uAtpVxeg+SmdXV4Nd5t6cs3svVa29U5J5T+N8+RtDk3Jiq7c/3WIV6MaMPPrk6CNDk0xsbZQyjAog1m4Vvc=
+	t=1718149077; cv=none; b=HeE8FwmnQuX7FdLyz9SE5twQx2c563HhYaqgJXIaaXI458o3oCdjuDKDUslLG5uwnZNC0fCTnmDv3V4SC4GDAWA6SaGFmg6in3t22VspMG32YDnxCFauuDGk3VvMRWebuLgCTs7LhEdpXF5G+Qlx/OHZiqyfiiYuQLxFO76tWj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718148833; c=relaxed/simple;
-	bh=PAJmKNOlaPn4rqZ+atyu5CwMxZWPwxMlxuC2B34gYBA=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=TqclPGIESqc8yFEyrksGHF9RI6GnzS1rp0Tcoah7mZgORQteC8CNSyGzZ4hrJWCw0N5+Ig8D2LH0wXUoYAS+HD3pNEYFrJPVMQGLFhL2rSoTJNzEci1hw5NsS06MeNGqNM1we0NvmQZql18UViZrZhVHnwGa5MJOwckd8MnS2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okXRkvGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40878C2BD10;
-	Tue, 11 Jun 2024 23:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718148832;
-	bh=PAJmKNOlaPn4rqZ+atyu5CwMxZWPwxMlxuC2B34gYBA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=okXRkvGdCe1XdVvPJ/B3x/XBUJKvAc+c/+bwlGU9W54Ab5gmcbKJWX54Capoo60sJ
-	 3QJpZ6tJLCd7givRILbxl7GVREwZBJF2P2jjEmADI+Vi1fGbX+C4Pz5QjmtFVx6LnR
-	 tkSHlgGrGviOwJM8a+FTVMXUf2Vug5BgOkX9Hvya/CwSqYlg0+QF1+oBMP2Kj1vezv
-	 KPd96BvLwpWBsrA/Lk4rZB1wgSSvy/p7HRu16yNadwVx6cQWnEQEr9GWv15M089tmr
-	 JnypYQy2nt56nHqiJiWGGgY94FyfmXO6AQcp5MdIi/No12URTEXg+jLJC2MLOP1NwB
-	 f9bkuf23XdKjw==
-Date: Tue, 11 Jun 2024 17:33:51 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718149077; c=relaxed/simple;
+	bh=ts2SaC5zUzYU0lD3VSl8DQyHFo7EOQkQzr0Fz/W6ogQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ihg7VOTBCRQVkdDzmW7Jo+U7HDZ/ra9lg6zYs7uWqfUraM9Hyxj+N7dubaEnACuGgzN2bjmcRW0O2C62fjqS7yK8UEhdZ/n8FHiNHXfJt6V5KnEZNUesBnL6NVbLiuwuN9jP/GtGRQa/45zCVlCGzu/jH5GqntYwuTuyyhc5rP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iQjnoYWs; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62d054b1ceeso54301167b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718149075; x=1718753875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wFURrLEu8yru5FCu/H1+vtARd6FDi8T2rnq3Ao2LjWE=;
+        b=iQjnoYWsTbiRtql1jsvHTocCQQdZdiyDux9hjbQMCDyEAAnvwgra/2NYBsBA/K4/B+
+         sVtfwvlelEy2/SXbnDTOg15fxVq8D37cfgm8wvBKZqwW1zu3dsTI00H4Bfn0YeRVrscm
+         TicJasWHPjtBKFsWRdpG0oKcG+TdvE18GJNf+CAcE1N2+rTIIL6FarD7IDO0MkgIES7O
+         yi4n51kw1Cs5AMALXxLRrCQ5AFToqv0LmgEiKGuweeO4rut9K6mFyUOTZcO4C2+rYXDm
+         eEcqsnwOlvlAfw1Ls/PC+8jZUuKI8/QwqaSwtCeDI9V0mnIrkchxGhqZAUe4S30gfnfa
+         h71g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718149075; x=1718753875;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wFURrLEu8yru5FCu/H1+vtARd6FDi8T2rnq3Ao2LjWE=;
+        b=NGr2FUOyYj10iJ3AwnFf3Nu8LRl7xFqlwNuCkDn6H/Dsssmi+LNCcoDDB7tlv2XWif
+         VRfI0aPKehihhACQyHI0O7tarGlyMXyzcQWeaD8MXPKv7ry+zfUqSxxIF0fE0s2relaP
+         0PS0slNY8WeZWgftKo9m4mYrJi5bftmH/dcQTxhq3A8I2kG7bIsWkfoK2aZWjCS2iTMI
+         7lt5t3pHPpJo114tQGbWQTfXotR1TyS7N00TJstxYaZtNGP9Cto8dJXXWhrhfreB1nXC
+         +ENxcUZBSaL/GM04mpj7jnzyaX1rFUTWIt+7VksiyvGCMppSqDo8lWZNl8pvKwO4puSP
+         FoEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyrzjsF26gDdMN6praILC1WNas83r/RNwsCLLh9AAhF2gJ2cATyndAYCXhjD9GxNV4rWkKamSdNW6/++Y0iNbQy8lyUgMiub2Kf9w+
+X-Gm-Message-State: AOJu0Yy6ahhNG8n2MzgLLy/h55Q1nsSVo9wyUTqoKk3fJtZ6osWFGGxd
+	yiq5hRhCIQasEoEaDWyMBsjr05Hhp/MZBSgjIbQ8JQI2PI/gNxccWvuhtcsrBcGTwjhFzCIZvrc
+	c2AmJhgGccht4JVUMhQ==
+X-Google-Smtp-Source: AGHT+IFTAoZnT4eXyEEesCaHsE31DKaQg2+GUzj1w/L2OSqhBitgxDfMEMrBoLNLHf/s7pg80CybVr1XyhqKyqQu
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a05:690c:3810:b0:61b:ec22:8666 with
+ SMTP id 00721157ae682-62fb6c1f4damr829967b3.0.1718149075136; Tue, 11 Jun 2024
+ 16:37:55 -0700 (PDT)
+Date: Tue, 11 Jun 2024 23:37:52 +0000
+In-Reply-To: <CAGsJ_4xAHR-fMP6c8w6Xf5cVF2OJYwChiGn5Y66qvM_qiEnEDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: tzimmermann@suse.de, konrad.dybcio@linaro.org, 
- dmitry.baryshkov@linaro.org, krzk+dt@kernel.org, mripard@kernel.org, 
- daniel@ffwll.ch, robdclark@gmail.com, dri-devel@lists.freedesktop.org, 
- quic_rmccann@quicinc.com, freedreno@lists.freedesktop.org, 
- devicetree@vger.kernel.org, airlied@gmail.com, quic_abhinavk@quicinc.com, 
- sean@poorly.run, marijn.suijten@somainline.org, conor+dt@kernel.org, 
- swboyd@chromium.org, neil.armstrong@linaro.org, 
- linux-kernel@vger.kernel.org, quic_khsieh@quicinc.com, 
- quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, jonathan@marek.ca, 
- maarten.lankhorst@linux.intel.com
-In-Reply-To: <20240611223743.113223-4-danila@jiaxyga.com>
-References: <20240611223743.113223-1-danila@jiaxyga.com>
- <20240611223743.113223-4-danila@jiaxyga.com>
-Message-Id: <171814883103.3303009.2789653537051980409.robh@kernel.org>
-Subject: Re: [PATCH 3/4] dt-bindings: display/msm: Add SM7150 DPU
+Mime-Version: 1.0
+References: <20240611024516.1375191-1-yosryahmed@google.com>
+ <20240611024516.1375191-2-yosryahmed@google.com> <CAGsJ_4w3LDE1OuDiX_LAeTxEGUFPVOwqMxoOF+Dr55bdLUZQ7w@mail.gmail.com>
+ <CAJD7tkY6h1RkbYHbaQcTuVXOsY-t=arytf5HtcKfx7A75x06bg@mail.gmail.com> <CAGsJ_4xAHR-fMP6c8w6Xf5cVF2OJYwChiGn5Y66qvM_qiEnEDQ@mail.gmail.com>
+Message-ID: <Zmjf0Dr8s9xSW41X@google.com>
+Subject: Re: [PATCH v3 2/3] mm: zswap: add zswap_never_enabled()
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 12, 2024 at 10:19:58AM +1200, Barry Song wrote:
+> On Wed, Jun 12, 2024 at 9:55=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
+> >
+> > On Tue, Jun 11, 2024 at 2:53=E2=80=AFPM Barry Song <21cnbao@gmail.com> =
+wrote:
+> > >
+> > > On Tue, Jun 11, 2024 at 2:45=E2=80=AFPM Yosry Ahmed <yosryahmed@googl=
+e.com> wrote:
+> > > >
+> > > > Add zswap_never_enabled() to skip the xarray lookup in zswap_load()=
+ if
+> > > > zswap was never enabled on the system. It is implemented using stat=
+ic
+> > > > branches for efficiency, as enabling zswap should be a rare event. =
+This
+> > > > could shave some cycles off zswap_load() when CONFIG_ZSWAP is used =
+but
+> > > > zswap is never enabled.
+> > > >
+> > > > However, the real motivation behind this patch is two-fold:
+> > > > - Incoming large folio swapin work will need to fallback to order-0
+> > > >   folios if zswap was ever enabled, because any part of the folio c=
+ould
+> > > >   be in zswap, until proper handling of large folios with zswap is
+> > > >   added.
+> > > >
+> > > > - A warning and recovery attempt will be added in a following chang=
+e in
+> > > >   case the above was not done incorrectly. Zswap will fail the read=
+ if
+> > > >   the folio is large and it was ever enabled.
+> > > >
+> > > > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> > > > ---
+> > > >  mm/zswap.c | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > >
+> > > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > > index a8c8dd8cfe6f5..7fcd751e847d6 100644
+> > > > --- a/mm/zswap.c
+> > > > +++ b/mm/zswap.c
+> > > > @@ -83,6 +83,7 @@ static bool zswap_pool_reached_full;
+> > > >  static int zswap_setup(void);
+> > > >
+> > > >  /* Enable/disable zswap */
+> > > > +static DEFINE_STATIC_KEY_MAYBE(CONFIG_ZSWAP_DEFAULT_ON, zswap_ever=
+_enabled);
+> > > >  static bool zswap_enabled =3D IS_ENABLED(CONFIG_ZSWAP_DEFAULT_ON);
+> > > >  static int zswap_enabled_param_set(const char *,
+> > > >                                    const struct kernel_param *);
+> > > > @@ -136,6 +137,11 @@ bool zswap_is_enabled(void)
+> > > >         return zswap_enabled;
+> > > >  }
+> > > >
+> > > > +static bool zswap_never_enabled(void)
+> > > > +{
+> > > > +       return !static_branch_maybe(CONFIG_ZSWAP_DEFAULT_ON, &zswap=
+_ever_enabled);
+> > > > +}
+> > >
+> > > Will we "extern" this one so that mm-core can use it to fallback
+> > > to small folios?
+> > > or you prefer this to be done within the coming swapin series?
+> >
+> > My intention was to keep it static for now, and expose it in the
+> > header when needed (in the swapin series). If others think it's better
+> > to do this now to avoid the churn I am happy to do it as well.
+>=20
+> Personally, I'd vote for exposing it now to avoid one more patch which mi=
+ght
+> come shortly. And this patchset serves the clear purpose of drawing atten=
+tion
+> from mm-core to fallback to small folios.
 
-On Wed, 12 Jun 2024 01:37:42 +0300, Danila Tikhonov wrote:
-> Document the DPU hardware found on the Qualcomm SM7150 platform.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  .../bindings/display/msm/qcom,sm7150-dpu.yaml | 145 ++++++++++++++++++
->  1 file changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
-> 
+Sure. Andrew, unless anyone objects, could you please squash the
+following diff and add the following sentence to the commit log:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+"Expose zswap_never_enabled() in the header for the swapin work to use
+it later."
 
-yamllint warnings/errors:
+diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+index ce5e7bfe8f1ec..bf83ae5e285d4 100644
+--- a/include/linux/zswap.h
++++ b/include/linux/zswap.h
+@@ -36,6 +36,7 @@ void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg=
+);
+ void zswap_lruvec_state_init(struct lruvec *lruvec);
+ void zswap_folio_swapin(struct folio *folio);
+ bool zswap_is_enabled(void);
++bool zswap_never_enabled(void);
+ #else
+=20
+ struct zswap_lruvec_state {};
+@@ -65,6 +66,11 @@ static inline bool zswap_is_enabled(void)
+ 	return false;
+ }
+=20
++static inline bool zswap_never_enabled(void)
++{
++	return false;
++}
++
+ #endif
+=20
+ #endif /* _LINUX_ZSWAP_H */
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 505f4b9812891..a546c01602aaf 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -137,7 +137,7 @@ bool zswap_is_enabled(void)
+ 	return zswap_enabled;
+ }
+=20
+-static bool zswap_never_enabled(void)
++bool zswap_never_enabled(void)
+ {
+ 	return !static_branch_maybe(CONFIG_ZSWAP_DEFAULT_ON, &zswap_ever_enabled)=
+;
+ }
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.example.dts:24:18: fatal error: dt-bindings/clock/qcom,sm7150-dispcc.h: No such file or directory
-   24 |         #include <dt-bindings/clock/qcom,sm7150-dispcc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240611223743.113223-4-danila@jiaxyga.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>=20
+> Thanks
+> Barry
 
