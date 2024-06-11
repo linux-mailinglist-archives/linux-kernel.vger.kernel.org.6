@@ -1,216 +1,120 @@
-Return-Path: <linux-kernel+bounces-209496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B189036D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599169036D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A351F21646
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF351C2337F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD95176ACD;
-	Tue, 11 Jun 2024 08:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B74174EFF;
+	Tue, 11 Jun 2024 08:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Frno7iWp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IjgjKKe7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmziEpvV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B571B17B512;
-	Tue, 11 Jun 2024 08:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91296171070;
+	Tue, 11 Jun 2024 08:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718095164; cv=none; b=N5CuhUxXcv+YqjQk2+L+w0zVAEAeFAVE+u4V9mf1xAwxkR/YRkOgSjkt4Ij9XK75pON4GfYZatkpVP2ZvWFow2rZucX1vwn0ukm2B5DYFmcB3uzW2P7akPs5PRKDEDhk+cR2lCn5PydjfPrbVgdnAUF59/n7bvkkRU3fjmn0BNw=
+	t=1718095253; cv=none; b=mNeF7mp5wgIRMIrtmW2lawzxX+1PFh9qYROpdSgLa+S1K+/PjYv42mzWYELD5javkcHFQDlXusp5bl5AGnFgyLdDvplP9E7ms6GA+PhbXDnj4lwmeJnfs+GrLsOgQObfpUa69iglmkTHK9hXG++Z70ztV1c4gH9UA8q+93SHBdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718095164; c=relaxed/simple;
-	bh=1h24dx2JKVjERM1QFoE+eH8jakyUv1BrkTo7u7Cy1mc=;
+	s=arc-20240116; t=1718095253; c=relaxed/simple;
+	bh=3RHFDRFQ2fBe11TJd37EQZmdJ2dcrT7TBQWPPzeHKiQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DcSka17IjBTtGnMJ9XvKPlU3bgyFAqyxe04H2rBnx6glJ7AsSFTCYjkSkRydOL75wplXzBz4CmaH643LQT5h1dmdjAC2uNFglG0a/5JdW/5jbZAEMHGol4a5ZiIUWChVAbS7ToUum3ZJ/eDZyDFF6ZbyrnoKWdomIp7rNzQ+EAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Frno7iWp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IjgjKKe7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Jun 2024 10:39:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718095160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuXplidRVKDZsJB5bk5rseBUPZqBqoh+LVXPB8Cujkk=;
-	b=Frno7iWpRpQcFkYJT4zVH82bPmWO9D4syoqcbYICV1B9X6BdEK26OvmZiDQt4X96TJQqNu
-	rjuJKpP9MxJbHqEWnWz9T4UAsM4uPkm6mUQQRDypZz2LG3TWurTQQWMSccuJ/0jdKgUoEx
-	n2cRMvY+w+rkHRHGSVdX1CBiIpvZYyXdMM5D2DIFXQ6BwW4/Gv/keDyXK1tHQeek+jLCMp
-	sFYodGZ4kON3mJp1KgDWWyvJyxfctiGcRoUZSbFa1jKkwwUEBPTtcS3CvMBaZrbyBvzXDd
-	X66aHOfb36YVeaTO+uWfV2rsX2fKh8DOhpCTfKU98o+TSw3dhvVb6Nc9bSQu1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718095160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuXplidRVKDZsJB5bk5rseBUPZqBqoh+LVXPB8Cujkk=;
-	b=IjgjKKe7IawJ4noewwKXmuCDbEdTRZBn5m43lPRy2ZCuZWwvDh6HUY0DPpXwS8YWPWtuJS
-	rR2yAxB3OF7kofAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH v5 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-Message-ID: <20240611083918.fJTJJtBu@linutronix.de>
-References: <20240607070427.1379327-1-bigeasy@linutronix.de>
- <20240607070427.1379327-15-bigeasy@linutronix.de>
- <045e3716-3c3a-4238-b38a-3616c8974e2c@kernel.org>
- <20240610165014.uWp_yZuW@linutronix.de>
- <18328cc2-c135-4b69-8c5f-cd45998e970f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e8X8e7xty1XDiWiwV/rd6bl192QmlXBA6k8zI94B3XKeS1ue2XYi/m+KeFD45pIa3gl8phOANKx4xNpoGZCnIDEgvIIXqMpoYZzYTL7B2efktNVUlAqIDa4NJuyTMcV9ibDKEXoCW/KFD4Lv5ZJx2/SdihS734v8h8hn36aN8MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmziEpvV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9DAC2BD10;
+	Tue, 11 Jun 2024 08:40:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718095253;
+	bh=3RHFDRFQ2fBe11TJd37EQZmdJ2dcrT7TBQWPPzeHKiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dmziEpvVoBiTc6obitVD6iaEUXpJ9QyIi6DS8GzorQC8IhhmpGbJXJTNO9clOOdGl
+	 B9Ry9d7h6yFRcRXSyQ9FPXFonA5GoTVxgWN9FOCaj7ZtdUF921V5cJgNb4unJ7LrrN
+	 1XPNEHYrnrvjH5PJkqpnZW912nFXf0lNeCHIPZjziGcUTkp6GVyMNBzjrkYp1ySnu7
+	 dMZxjS4S6113ywdEPr5vL6ZJkimtlIpJDqAl6GxwhR64ON9GvPwL+7i2cVIvGIH5IU
+	 CjT23fcVCMuou1K1yl98dwYI5Gfiu0H5oUkh1fML4jNp5DYLd6dyTXUMWat6HnnDpp
+	 kXjMeZh2LX15Q==
+Date: Tue, 11 Jun 2024 10:40:48 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: TJ Adams <tadamsjr@google.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Igor Pylypiv <ipylypiv@google.com>
+Subject: Re: [PATCH 2/3] scsi: pm80xx: Do not issue hard reset before NCQ EH
+Message-ID: <ZmgNkK8haUisJ5-b@ryzen.lan>
+References: <20240607175743.3986625-1-tadamsjr@google.com>
+ <20240607175743.3986625-3-tadamsjr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <18328cc2-c135-4b69-8c5f-cd45998e970f@kernel.org>
+In-Reply-To: <20240607175743.3986625-3-tadamsjr@google.com>
 
-On 2024-06-11 09:55:11 [+0200], Jesper Dangaard Brouer wrote:
-> > For gcc the stosq vs movq depends on the CPU settings. The generic uses
-> > movq up to 40 bytes, skylake uses movq even for 64bytes. clang=E2=80=A6
-> > This could be tuned via -mmemset-strategy=3Dlibcall:64:align,rep_8byte:=
--1:align
-> >=20
->=20
-> Cool I didn't know of this tuning.  Is this a compiler option?
-> Where do I change this setting, as I would like to experiment with this
-> for our prod kernels.
+Hello Igor, TJ,
 
-This is what I play with right now, I'm not sure it is what I want=E2=80=A6=
- For
-reference:
+On Fri, Jun 07, 2024 at 05:57:42PM +0000, TJ Adams wrote:
+> From: Igor Pylypiv <ipylypiv@google.com>
+> 
+> v6.2 commit 811be570a9a8 ("scsi: pm8001: Use sas_ata_device_link_abort()
 
----->8-----
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a1883e8..b35b7b21598de 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -775,6 +775,9 @@ config SCHED_OMIT_FRAME_POINTER
-=20
- 	  If in doubt, say "Y".
-=20
-+config X86_OPT_MEMSET
-+	bool "X86 memset playground"
-+
- menuconfig HYPERVISOR_GUEST
- 	bool "Linux guest support"
- 	help
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 801fd85c3ef69..bab37787fe5cd 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -151,6 +151,15 @@ else
-         KBUILD_AFLAGS +=3D -m64
-         KBUILD_CFLAGS +=3D -m64
-=20
-+	ifeq ($(CONFIG_X86_OPT_MEMSET),y)
-+		#export X86_MEMSET_CFLAGS :=3D -mmemset-strategy=3Dlibcall:64:align,rep_=
-8byte:-1:align
-+		export X86_MEMSET_CFLAGS :=3D -mmemset-strategy=3Dlibcall:-1:align
-+	else
-+		export X86_MEMSET_CFLAGS :=3D
-+	endif
-+
-+        KBUILD_CFLAGS +=3D $(X86_MEMSET_CFLAGS)
-+
-         # Align jump targets to 1 byte, not the default 16 bytes:
-         KBUILD_CFLAGS +=3D $(call cc-option,-falign-jumps=3D1)
-=20
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 215a1b202a918..d0c9a589885ef 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -121,6 +121,7 @@ KBUILD_CFLAGS_32 :=3D $(filter-out -m64,$(KBUILD_CFLAGS=
-))
- KBUILD_CFLAGS_32 :=3D $(filter-out -mcmodel=3Dkernel,$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 :=3D $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 :=3D $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
-+KBUILD_CFLAGS_32 :=3D $(filter-out $(X86_MEMSET_CFLAGS),$(KBUILD_CFLAGS_32=
-))
- KBUILD_CFLAGS_32 :=3D $(filter-out $(RANDSTRUCT_CFLAGS),$(KBUILD_CFLAGS_32=
-))
- KBUILD_CFLAGS_32 :=3D $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_3=
-2))
- KBUILD_CFLAGS_32 :=3D $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+Do not specify kernel version (it is irrelevant), SHA1 is enough.
 
 
----->8-----
+> to handle NCQ errors") removed duplicate NCQ EH from the pm80xx driver
+> and started relying on libata to handle the NCQ errors. The PM8006
+> controller has a special EH sequence that was added in v4.15 commit
+> 869ddbdcae3b ("scsi: pm80xx: corrected SATA abort handling sequence.").
 
-I dug this up in the gcc source code and initially played on the command
-line with it. The snippet compiles the kernel and it boots so=E2=80=A6
+Do not specify kernel version (it is irrelevant), SHA1 is enough.
 
-> My other finding is, this primarily a kernel compile problem, because
-> for userspace compiler chooses to use MMX instructions (e.g. movaps
-> xmmword ptr[rsp], xmm0).  The kernel compiler options (-mno-sse -mno-mmx
-> -mno-sse2 -mno-3dnow -mno-avx) disables this, which aparently changes
-> the tipping point.
+Since the code added in 869ddbdcae3b still exists in the pm80xx driver,
+I think that you should mention the commits in chronological order.
+(Right now you mention the oldest still existing code last, which seems
+a bit backwards.)
 
-sure.
 
->=20
-> > I folded this into the last two patches:
-> >=20
-> > diff --git a/include/linux/filter.h b/include/linux/filter.h
-> > index d2b4260d9d0be..1588d208f1348 100644
-> > --- a/include/linux/filter.h
-> > +++ b/include/linux/filter.h
-> > @@ -744,27 +744,40 @@ struct bpf_redirect_info {
-> >   	struct bpf_nh_params nh;
-> >   };
-> > +enum bpf_ctx_init_type {
-> > +	bpf_ctx_ri_init,
-> > +	bpf_ctx_cpu_map_init,
-> > +	bpf_ctx_dev_map_init,
-> > +	bpf_ctx_xsk_map_init,
-> > +};
-> > +
-> >   struct bpf_net_context {
-> >   	struct bpf_redirect_info ri;
-> >   	struct list_head cpu_map_flush_list;
-> >   	struct list_head dev_map_flush_list;
-> >   	struct list_head xskmap_map_flush_list;
-> > +	unsigned int flags;
->=20
-> Why have yet another flags variable, when we already have two flags in
-> bpf_redirect_info ?
+> The special EH sequence issues a hard reset to a drive before libata EH
+> has a chance to read the NCQ log page. Libata EH gets confused by empty
+> NCQ log page which results in HSM violation. The failed command gets
+> retried a few times and each time fails with the same HSM violation.
+> Finally, libata decides to disable NCQ due to subsequent HSM vioaltions.
 
-Ah you want to fold this into ri member including the status for the
-lists? Could try. It is splitted in order to delay the initialisation of
-the lists, too. We would need to be careful to not overwrite the
-flags if `ri' is initialized after the lists. That would be the case
-with CONFIG_DEBUG_NET=3Dy and not doing redirect (the empty list check
-initializes that).
+s/vioaltions/violations/
 
-Sebastian
+I'm not an expert in libsas EH, but I think that your commit message fails
+to explain why this change actually fixes anything. You do not mention the
+relationship between the code that you add pm8001_work_fn() and the
+existing code in pm8001_abort_task(), and the order in which the functions
+get executed.
+
+Does calling sas_execute_internal_abort_dev() from pm8001_work_fn() ensure
+that the libsas EH is never invoked? Or does it cancel the hard reset that
+is part of the "special EH sequence" in pm8001_abort_task() ?
+
+Wouldn't it be better if this was fixed in pm8001_abort_task() or similar
+instead? It appears that the code you add to pm8001_work_fn() (that has a
+very ugly if (pm8006)) is only there to undo or avoid the hard reset that
+is done in pm8001_abort_task() (which also has a very ugly if (pm8006)).
+
+Now we have this ugly if (pm8006) in two different functions... which
+makes my "this could be solved in a nicer way" detector go off.
+
+If this patch (as is) is really the way to go, then I think there should
+be a more detailed reasoning why this change is the most sensible one.
+
+
+Kind regards,
+Niklas
 
