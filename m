@@ -1,164 +1,128 @@
-Return-Path: <linux-kernel+bounces-209555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45FE9037AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D559037B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D98AB2209C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8AB1F236B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23593176AC1;
-	Tue, 11 Jun 2024 09:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D392178375;
+	Tue, 11 Jun 2024 09:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Din4qqCL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="da8muCxR"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B362917624A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAE3176AA5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097547; cv=none; b=SqBNbaXk/Kue8AtoK9VSEEoo2R0fJOpuTKbmawUuuCcDg7ZsQknm84jef93FqtZzJe3C/LHGepMG9PmZnGi/+ke9Ic/2EHc9B28b2uGGLz+MszzDwXETP5mEGIkdRuy8yA31vn4ZIOIqiWXFnM2WGyo3OqC00+Be6gLefwVwrtE=
+	t=1718097563; cv=none; b=mAxMH4XvOQB3CrZrthbonZTiZJEidqWIJ6w7uNuks/chwKwzpVN7HWD6AMf7pfOoTPskcdYcbK4gk1E4s+MxDalO9iMubLUX7fE5COGm/tssaP1Ou+DqhajygSg+B8YB1SoENxyj5StKJ3xGIoER3/DSSyTzBUdM/X77DboNnjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097547; c=relaxed/simple;
-	bh=h9mB6JOkfiuYUHIoFddpH6zwD+eYp90mVVEYcj5srVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMwOMZowCTlSm7lz06wHaNLKjKMDH5FgbLwbpFlIPtHM9TRobpmJtBdHSSKZ3YkxJJPseMoU0HZPWjUa2Xru3BSYhzkE7+VBjlK9m/YIbinLtxg+6syi9OBXuiJLQkbXYqJukz0HxkILy7o46U23V/1SwMWXZpBUxajydQMhGA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Din4qqCL; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f1c490c13so2844522f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:19:05 -0700 (PDT)
+	s=arc-20240116; t=1718097563; c=relaxed/simple;
+	bh=kXlUklN20Q8eUu9WxiS+OZ+JObXF15mPXqfLY0fCwxk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oslKObf/ZS6anHSsLQ4ullLLC7wcEsDGkZX2uahp0PtTGefEuiXM0gcnNpxhTSy0LvUO2vHp/vil2i20nnQkSklasldeIboGpgobyBN5A92fDOAjqGALhAfsJHOOfOmULRDCDNUsmRTVniq4cStDYPhGmRKdu2H1MTwJHiDpx/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=da8muCxR; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35dc1d8867eso4221622f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:19:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718097544; x=1718702344; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ps2N1Am+eO68AysV/PVFcrJRz34VjfFRtWBoGRzfhpw=;
-        b=Din4qqCL5ROnGRtf1skv93gsYajaq93yOEJdxyWZ+hTRokCYa2MFffzhqaTBT15rG7
-         HeDC07/EUYZLFY1c+8RsED6giKl3xg9rQJKqBYWh9eNtKC7hZxV8DTq29hbqxjxzSWQt
-         qVNaXBNDWDYGD2vvc+ZZJDWjMphlOXJy1xh0wT6wE61fCjqY4phszswwC1r3PnZ5F6Id
-         xTiEcoAAMZoBteAtLZQh/E5If08EDfRQhUbhjiatrQ8mytk22T+0mxrVQS3DfmGa2JAZ
-         9m0y2w5lkfZHaF1dPfaCnxjqD95s23hEjQ3W45VsHmtnnnqJjfdJ59LFFXG1N7uO45aJ
-         XgAQ==
+        d=linaro.org; s=google; t=1718097560; x=1718702360; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vi/zJoTaekHU+/osjmDHmN4bmVrKAfe+svHOjhmObm8=;
+        b=da8muCxRGTWyRD+kyFxo+SiZ1pLavOh6/trQn6tB8Jmy7uXAzKKJg72c3mrlYtL/IX
+         nZUaDaJXLux5xyz5Eqj4QugPPfxuj6++pMdohDSU6DibwA02bZmxZxGXwVN/9/fW70qh
+         bjEZYq3Jzb9gDGW+WuHbrf6ee12fODPaTXT9bfMnE68S8mBatGhkbXBiZx0pZZuPWqHE
+         BhK6nKDtjiNR+UrmmbrFq//G0LfqnaOWa8k5XLzy6MvSjsD0zw/6q6Ms6tsgZID2/xy4
+         LzA21ahh3BuFcOCLkWKQku+fa/L8eTCH6Tu6V4nZeIHF4VWErjeyEBgWOHMoCKWlOy9p
+         QXFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718097544; x=1718702344;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ps2N1Am+eO68AysV/PVFcrJRz34VjfFRtWBoGRzfhpw=;
-        b=Qzyu9ZfoDr1jntyY70FTzUr+LyNho73Ci15gaXhMxxVKbcpfUwhwBNKRmGkizkaXSX
-         ewOHyZTx7hHGsA01aufwO2AYfbQJ85gPk9bRCYxluvkFBybhw07CWbVdJWuDSwRzgbrr
-         7uRKmchtb3+QeOJEaZq/39m0vhK5mTrWkajd0zWDQDERAjqYpvtA5kDxzVrbPs1UCG4v
-         xzBVL1ezdBlaZaGXyp30DKlGchO/oBmO/xDUs+ck5atJhxiniZ9yEpPB7h6smVDZ/Eb9
-         rFsgNKx6nZDfyAUD3qIEpO34Gm9kMfizFv3LgGyQhfKiPHiQXgMrYJ4IBxTZ3QITHkfE
-         8LnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3j9o5OxaOmsFz8eWh46qs9IjRi3/Thz2wAjx/Su2gNPBSWMzo3AmCdonlyBE9SiKaruDH2aCCH6GcykSxwsBWptZeITI71H1qkSJU
-X-Gm-Message-State: AOJu0YwA6tsPoipWX4imSbQOJoX652aSIxUw7ta4nHdBYpLRWpPDvz1f
-	nOEnS7iGONpjpaUa23AHhuzH7EthU8kCcG0EEB2tRYN5s+nknUe2GH2IheXNYQ==
-X-Google-Smtp-Source: AGHT+IFvw9AoMpMLtxSAEwVADz1EUNN8lzkMo5ne0b71vkTSoYSsb3umTlTGDpHAaueebUmL9Y86JA==
-X-Received: by 2002:a5d:634d:0:b0:35f:1d3b:4f7e with SMTP id ffacd0b85a97d-35f1d3b5004mr5003652f8f.26.1718097543845;
-        Tue, 11 Jun 2024 02:19:03 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:9c:201:7a2:184:b13b:60d8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1e20664esm6703606f8f.52.2024.06.11.02.19.02
+        d=1e100.net; s=20230601; t=1718097560; x=1718702360;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vi/zJoTaekHU+/osjmDHmN4bmVrKAfe+svHOjhmObm8=;
+        b=NvSHjaI5eqmU/shW5UuRFWZX263JCg9v1+ouY04s2u6423q1+/f0g2n4nprmdhbe5p
+         DxkYodno1Lp2QpjIdoaX2WJXMTDEJQzpIjnJaFGYqKzA4KvlYp+qKIptXLjW8KZv3/TC
+         Dy4sgQoOJb8Vy56Ezltk3fFGM1U3EXeuzXtUrquX++iGAZiRu3ttiEFZYx7OMQ6aZS/v
+         Hu0C3JEdi4R00tLWQkm5CbbeOilbO89JtMTZhGExiH3fXXuUnGMMPJWiz4YU/K/D11X8
+         /dhVzQ5vHRMJnko8rzp8LbIF7CB4b2eFV3iS58rRptUwb/cM05F53lJtRols5gSxRItp
+         sHrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBPXWpNoV2ReVHXa1e0DZ133uRl0Ws8uL8dgtaZkqx4Bo00uKE8riMkpEP+gtdPXAA7bzXOzKLEMXdqi088BfaknerywxQnBGG1Jpg
+X-Gm-Message-State: AOJu0Ywf88dJTOXWWiYKGncDBq7Dh35WDR6R0UAgHPYFZGKRVezlsAsl
+	KU0mz8rNNvqQX2hkT3s7VVZpmzN6nnRbOWMx/yO5eX1AEflaD5EVuMibQwGhG4E=
+X-Google-Smtp-Source: AGHT+IHQSTbevIphGHCvbrOMQjG9ACIHi9SFdQoe+sA54Qnbx7zzX31Uv88M+9SOlhZj8f5WihFAeQ==
+X-Received: by 2002:a05:6000:a84:b0:35f:1f3c:b62a with SMTP id ffacd0b85a97d-35f1f3cb667mr4223027f8f.58.1718097559838;
+        Tue, 11 Jun 2024 02:19:19 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc3197sm13334619f8f.101.2024.06.11.02.19.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 02:19:03 -0700 (PDT)
-Date: Tue, 11 Jun 2024 11:18:57 +0200
-From: Marco Elver <elver@google.com>
-To: Marco Elver <elver@google.com>
-Cc: peterz@infradead.org, alexander.shishkin@linux.intel.com,
-	acme@kernel.org, mingo@redhat.com, jolsa@redhat.com,
-	mark.rutland@arm.com, namhyung@kernel.org, tglx@linutronix.de,
-	glider@google.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
-	christian@brauner.io, dvyukov@google.com, jannh@google.com,
-	axboe@kernel.dk, mascasa@google.com, pcc@google.com,
-	irogers@google.com, oleg@redhat.com, kasan-dev@googlegroups.com,
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] Add support for synchronous signals on perf
- events
-Message-ID: <ZmgWgcf3x-vQYCon@elver.google.com>
-References: <20210408103605.1676875-1-elver@google.com>
+        Tue, 11 Jun 2024 02:19:19 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/2] ASoC: dt-bindings: convert everest,es7134.txt &
+ everest,es7241.txt to dt-schema
+Date: Tue, 11 Jun 2024 11:19:16 +0200
+Message-Id: <20240611-topic-amlogic-upstream-bindings-convert-everest-v1-0-a7f9b4c9005c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210408103605.1676875-1-elver@google.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJQWaGYC/x2NQQrDIBBFrxJm3QENJotepXRh448daFQcGwIhd
+ 6908z5v899JiipQug8nVeyiklMXextoefsUwRK602hGZ2ZrueUiC/vtk2Pfb9FW4Td+SQqSovK
+ S047aGJ3Qxi5MfjYWDutE/bVUrHL8i4/ndf0AD/EKGYEAAAA=
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=899;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=kXlUklN20Q8eUu9WxiS+OZ+JObXF15mPXqfLY0fCwxk=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmaBaVzg33iyMvF9EviNJegXkWD7JUrsT/u5Nycm9r
+ lTpqliiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZmgWlQAKCRB33NvayMhJ0bbID/
+ 9NPSONOA42tIRng3nhZEKZPYGZ8Qdz8lXwd1AC7mmo3ri603pUmJ+vq/+KE668TrM9Y8jImbnm/PGn
+ aMZcM9eNlQI1Vm/Z8YjSCkWFeOFeUbX0JdVINQd5WUgupYUxz/pVLv+WMcnyeVYZ7FSB+BZQo7flYc
+ f6bsAllTCUjBC3xOXFVtK1ijFRoq++pjh4ciYD/Vb5cM66KzIp3un/m0fObrHQayHcVf0ug4XN5qJn
+ +9GzGKBa+hgt6In3FUBcJWJ2J8STIq85V4XoAPsL3c3DqqQk/od8ZW/DBm3DJGYa7g2P2Rs1IYnBsZ
+ RXpZLprDhFKqrQA8qSaB2Zh9j5G/smvqUsSSuQBBBw3/R5/X+wTYmBzjQaSgUmfLYPqdl5mh6jh3Dj
+ AJG7OtQFEMUYgAKanvCgxiYnB6gQMWwCoqUxJFUtnKBQI0VNQLmKrT2b4vhpGRC2WpcJWA/IG7VKAL
+ 2TholFfMyEsWhYMpyBt8TMbDmJZmF4B/D5sa6VyjtLUBtTTDgb9RlHzP9wvIsbu5CBmF49WEJJC1oq
+ 79nqfxMgFIP7Uag9MjCxvZgtiYx3h1ChiG+1pXNC9lyGocC50gsYw7oFUeOBPDYdKnAb2diTSbn6HH
+ w/XroLHBnNbtys+MUGLselm2HoUsQRdSbQTOO/9SXj/QmkovkZ6E4IiGzpRA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Thu, Apr 08, 2021 at 12:35PM +0200, Marco Elver wrote:
-[...]
-> Motivation and Example Uses
-> ---------------------------
-> 
-> 1. 	Our immediate motivation is low-overhead sampling-based race
-> 	detection for user space [1]. By using perf_event_open() at
-> 	process initialization, we can create hardware
-> 	breakpoint/watchpoint events that are propagated automatically
-> 	to all threads in a process. As far as we are aware, today no
-> 	existing kernel facility (such as ptrace) allows us to set up
-> 	process-wide watchpoints with minimal overheads (that are
-> 	comparable to mprotect() of whole pages).
-> 
-> 2.	Other low-overhead error detectors that rely on detecting
-> 	accesses to certain memory locations or code, process-wide and
-> 	also only in a specific set of subtasks or threads.
-> 
-> [1] https://llvm.org/devmtg/2020-09/slides/Morehouse-GWP-Tsan.pdf
-> 
-> Other ideas for use-cases we found interesting, but should only
-> illustrate the range of potential to further motivate the utility (we're
-> sure there are more):
-> 
-> 3.	Code hot patching without full stop-the-world. Specifically, by
-> 	setting a code breakpoint to entry to the patched routine, then
-> 	send signals to threads and check that they are not in the
-> 	routine, but without stopping them further. If any of the
-> 	threads will enter the routine, it will receive SIGTRAP and
-> 	pause.
-> 
-> 4.	Safepoints without mprotect(). Some Java implementations use
-> 	"load from a known memory location" as a safepoint. When threads
-> 	need to be stopped, the page containing the location is
-> 	mprotect()ed and threads get a signal. This could be replaced with
-> 	a watchpoint, which does not require a whole page nor DTLB
-> 	shootdowns.
-> 
-> 5.	Threads receiving signals on performance events to
-> 	throttle/unthrottle themselves.
-> 
-> 6.	Tracking data flow globally.
+Convert the text bindings of the Everest ES7241/ES7134/7144/7154 2 channels
+I2S analog to digital converter to dt-schema.
 
-For future reference:
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (2):
+      ASoC: dt-bindings: convert everest,es7241.txt to dt-schema
+      ASoC: dt-bindings: convert everest,es7134.txt to dt-schema
 
-I often wonder what happened to some new kernel feature, and how people
-are using it. I'm guessing there must be other users of "synchronous
-signals on perf events" somewhere by now (?), but the reason the whole
-thing started was because points #1 and #2 above.
+ .../devicetree/bindings/sound/everest,es7134.txt   | 15 -----
+ .../devicetree/bindings/sound/everest,es71x4.yaml  | 62 ++++++++++++++++++++
+ .../devicetree/bindings/sound/everest,es7241.txt   | 28 ---------
+ .../devicetree/bindings/sound/everest,es7241.yaml  | 66 ++++++++++++++++++++++
+ 4 files changed, 128 insertions(+), 43 deletions(-)
+---
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+change-id: 20240611-topic-amlogic-upstream-bindings-convert-everest-4d5a601e4ef5
 
-Now 3 years later we were able to open source a framework that does #1
-and #2 and more: https://github.com/google/gwpsan - "A framework for
-low-overhead sampling-based dynamic binary instrumentation, designed for
-implementing various bug detectors (also called "sanitizers") suitable
-for production uses. GWPSan does not modify the executed code, but
-instead performs dynamic analysis from signal handlers."
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-Documentation is sparse, it's still in development, and probably has
-numerous sharp corners right now...
-
-That being said, the code demonstrates how low-overhead "process-wide
-synchronous event handling" thanks to perf events can be used to
-implement crazier things outside the realm of performance profiling.
-
-Thanks!
-
--- Marco
 
