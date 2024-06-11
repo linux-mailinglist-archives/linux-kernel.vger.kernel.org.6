@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-210619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C21990464D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:36:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5181B904661
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036E0288F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7446B22687
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8587315383D;
-	Tue, 11 Jun 2024 21:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4B3153835;
+	Tue, 11 Jun 2024 21:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ilJ4Ps5L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A907171C4;
-	Tue, 11 Jun 2024 21:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jQlQvzNU"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F2B2F2C;
+	Tue, 11 Jun 2024 21:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718141773; cv=none; b=pTS4e4Memxver3qQt3NGtEN7r4LHoQaVnUKYWBzvU0dISiooMI6e+kt+uNx/bfEpjSzxszItol6ddcCEkygOK1Ebdg/P8EDPR4N96VCxyymLotLzLq75Kpx3NGgRgVfh7Wq+Ijx4yUitHp1Wmnx0c5HMmGm+vK4t/FQ4iuJPkvc=
+	t=1718142465; cv=none; b=DuPJsQDKaZsIOQrYNOyAgmle0pGE4shgOoyQD0TcQedJ48RR6BaxxdxCsF+DYsBpMoBcX5RjzZqcWRWP97MWnD43gk7t/VNjKu2A2hHAuf34TIRf7AAVxVuKH3jWq3gYidXS8QdzGEJxX5m1qLd22HMZjXLKeTGLP2qejhJ4XPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718141773; c=relaxed/simple;
-	bh=mK7u4g6d/FI3I+GEvjf9//kaQbqPpB8MdX7WJi8RqPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sBIYrYYIRM6gkHK6zr3jB6Qu1OME58b5nVeoyfLIdFKzoUTM9J1vJJEcyqMKEWW6B4OR4nN6kIxdn9ycuz9LIFrnnlGT4l4hKfJ8oLh9lSvAEo2TmXNzGyepb6rCEbC2hxjNgwIfBqyAa6mSBuUhivft0YYk4ie63W26pvKtnqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ilJ4Ps5L; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718141772; x=1749677772;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mK7u4g6d/FI3I+GEvjf9//kaQbqPpB8MdX7WJi8RqPU=;
-  b=ilJ4Ps5LxZVtRFV2eIcql0keGyLajegz2XyHporx8/FzjNOKdwA4nHa3
-   2r+KCUlbGAlnCWmhcO2lvR+XgDbp9QG+kJlxYJsgaI43Io5AvLcN2aUna
-   riNnquya+PyunOTywyXOcbbT9MZnapNAPJAuqrHYmFw1EokvfK+WwE3ka
-   h9MskPsMwMSiYG5Q/7dOAtm7KHkrlckWJRJxVqiA8K3HGBQMoi5DbaGdQ
-   dsoAQhaS6I2peFOMCAU88QJe7/AZDVNxfxYYlPkhP/A2rL5mR2qnIdt2e
-   M9KlookXYbr2/zsq6wv3k+MCvZSAHuBuXPODRaPxc8QBJC1QHu3+QZDgW
-   w==;
-X-CSE-ConnectionGUID: oUTCdiiBSOuiMX3knd/6SA==
-X-CSE-MsgGUID: A0P77sSXTsCoCP6nb8J4yA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="32418501"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="32418501"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 14:36:11 -0700
-X-CSE-ConnectionGUID: FGVX40QAQWq/aqGRgohnqA==
-X-CSE-MsgGUID: aDbVzrA0Txqqvl36OVnTIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="62744724"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.132.58])
-  by fmviesa002.fm.intel.com with ESMTP; 11 Jun 2024 14:36:10 -0700
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: ebiggers@kernel.org,
-	linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bernie.keany@intel.com,
-	chang.seok.bae@intel.com
-Subject: [PATCH v9b 12/14] x86/Kconfig: Add symbols for Key Locker
-Date: Tue, 11 Jun 2024 14:36:09 -0700
-Message-Id: <20240611213609.253115-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240329015346.635933-13-chang.seok.bae@intel.com>
-References: <20240329015346.635933-13-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1718142465; c=relaxed/simple;
+	bh=2I1tHmbp82p4i0lqosKETBKEgxq2gJiVR+S18NV8Cm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRsw5zdA3tBTYy6Rk2yKXcrcV02va45T9ggjjPuXRO3fpS/tcInP3weds2skw34VH8CEkC1RHKhNkHa73QZ0pu/J1sN+EwVV8Lcb04SM8z6RebcJC5l+wh/t9MR5415LOZztce0nAevNF2ZeSV+5hhgRuRvUGz35mQeCTRGoTLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jQlQvzNU; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 0CA8A14C1E1;
+	Tue, 11 Jun 2024 23:38:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1718141905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SkG8r/ezxubJtJGFN02+piiW7O8HV16/3VEHvWIhVI4=;
+	b=jQlQvzNUsGTH+DR/bkCcW0PnaMBJwKoabsSR6kw739Mo3ilOcI6cZr/cbQ4bLvsdW/gasF
+	BP3GYfX+2GI6z2ws04M633S9Mvu0srnlFCDOdJ2MrtTsYISWQQ6fcn2xOd7Wrl/A5Vaz3g
+	Bb3UKBm6NQtcjucNLcpfDC+vMX+HoYZ2Ae4c3GMONmxE+l28D8SkLz/AiuA+ywXF1RZbnE
+	aSiAJx86N9kcGdyqQ4AW6xQrSUFRqKANxA5VwYh5Oyub8kSkCIxoZUYFtkt3orweVisTsA
+	QQEQByz+fSfGSquI0iXratb0jS5HwgRjzYlXFp2/gTFNp/9WZqJxGK4LJOygwA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 18dd1f79;
+	Tue, 11 Jun 2024 21:38:17 +0000 (UTC)
+Date: Wed, 12 Jun 2024 06:38:02 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: dwarves@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
+	Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
+	Matthias Schwarzott <zzam@gentoo.org>,
+	Viktor Malik <vmalik@redhat.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Jan Alexander Steffens <heftig@archlinux.org>,
+	Domenico Andreoli <cavok@debian.org>,
+	Dominique Leuenberger <dimstar@opensuse.org>,
+	Daniel Xu <dxu@dxuuu.xyz>, Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: ANNOUNCE: pahole v1.27 (reproducible builds, BTF kfuncs)
+Message-ID: <ZmjDuv_zuhA3Xp2m@codewreck.org>
+References: <ZmjBHWw-Q5hKBiwA@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmjBHWw-Q5hKBiwA@x1>
 
-Add CONFIG_X86_KEYLOCKER to control whether Key Locker is initialized at
-boot. Additionally, add the AS_KEYLOCKER config symbol to indicate
-whether the assembler supports Key Locker.
+Hi,
 
-The former will be selected, and the latter will be referenced by the Key
-Locker cipher module CRYPTO_AES_KL, to be added in a later patch.
+Arnaldo Carvalho de Melo wrote on Tue, Jun 11, 2024 at 06:26:53PM -0300:
+> 	The v1.27 release of pahole and its friends is out, supporting
+> parallel reproducible builds and encoding kernel kfuncs in BTF, allowing
+> tools such as bpftrace to enumerate the available kfuncs and obtain its
+> function signatures and return types.
+> 
+> Main git repo:
+> 
+>    https://git.kernel.org/pub/scm/devel/pahole/pahole.git
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
----
-Changes from v9:
-* Include AS_KEYLOCKER symbol (Eric Biggers).
-* Revoke the earlier tag.
----
- arch/x86/Kconfig           | 3 +++
- arch/x86/Kconfig.assembler | 5 +++++
- 2 files changed, 8 insertions(+)
+It looks like the v1.27 tag has not been pushed to the git repos (either
+this or github), we're using git snapshots for nixpkgs, so it'd be great
+if a tag could be pushed out.
+(I think some release monitoring tools left and right also use tags,
+even if that's less important if you Cc other distro maintainers... I
+just happened to see the mail on bpf@vger.)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a1883e..ce4e4c1641da 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1881,6 +1881,9 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
- 
- 	  If unsure, say y.
- 
-+config X86_KEYLOCKER
-+	bool
-+
- choice
- 	prompt "TSX enable mode"
- 	depends on CPU_SUP_INTEL
-diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
-index 59aedf32c4ea..e6ce80d23113 100644
---- a/arch/x86/Kconfig.assembler
-+++ b/arch/x86/Kconfig.assembler
-@@ -35,6 +35,11 @@ config AS_VPCLMULQDQ
- 	help
- 	  Supported by binutils >= 2.30 and LLVM integrated assembler
- 
-+config AS_KEYLOCKER
-+	def_bool $(as-instr,encodekey256 %eax$(comma)%eax)
-+	help
-+	  Supported by binutils >= 2.36 and LLVM integrated assembler >= V12
-+
- config AS_WRUSS
- 	def_bool $(as-instr,wrussq %rax$(comma)(%rbx))
- 	help
+Thanks,
 -- 
-2.34.1
-
+Dominique Martinet | Asmadeus
 
