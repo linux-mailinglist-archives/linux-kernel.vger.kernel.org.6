@@ -1,232 +1,204 @@
-Return-Path: <linux-kernel+bounces-209801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1339F903B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34A1903B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BEE2883EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0DC0B20FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689417DE03;
-	Tue, 11 Jun 2024 11:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2645417E468;
+	Tue, 11 Jun 2024 11:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="Itd3BEoW"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2097.outbound.protection.outlook.com [40.107.22.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="dtej5ZfY"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A9C17CA16;
-	Tue, 11 Jun 2024 11:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718106285; cv=fail; b=WlNVGjFXQ7nuruAxO3n5tly+hV30mvx9iuSlbdvS7cP5Bph+rnHcX63Gsbcso2v1uXVRwc3+ymiEelrek6k1KEIUm7LbonRaOW87+JLssWHYuvunHIHKMzl5VlYuWdGphAz/aHjV+suNqeca5iZPNACnbiE1eexdPB6Dg4obxQE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718106285; c=relaxed/simple;
-	bh=zf31fsPc+ejLzxXrCAK6u9pJqrI0f27LctCLqZ9aV1U=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=lqmTlGP3+r1k9eaPbad46i2nlW5ertXtst/Y9rKUGw9mId2kVeiUguiiYF6FQQZKuotSXvRabkP6M8IGx2YbFI3SdP3dbR+iq1R6yBLk8/Erxfjt3Z+VQp+aMMKwN4ENOzmhydiW2fkNli4PJ3nlti+ukGefXd9qNKJ80L0Pyms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=Itd3BEoW; arc=fail smtp.client-ip=40.107.22.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mCmt61iTfjyROrRe2dEs01j1GSUzZhpch62MeLNkU/0kZEhoP/rRKKdd/xfqLgqdeMgq7+glv3218GLIGNb66ubagYPVlcvVEGr7vbTa7xzwuXW78pl5HPaWSMnEHpqmQGmlZgpyjGR2w79v7CSxAKl0NTtFyft2CthGH1FmxJHk7VK77GfQff85w/HcnbqKGbKWeuRQlzFZC66CJXkqwX4E1q8okPYC0LW3uDR6ibonn/t/LPLYRM5OgNvpuB3uL96hND1yhOsxSWZ9i69JSpYzjDRlfgRnshA7TprG4UqdtqYY6sQgogzIrQ6W8hqHYubmYvk/f16u0dj1SN6LKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+YOMp5PxtEIH32WPrIdAw5ibx7RIknJ01VIcy1JYLmg=;
- b=QlpzMpBnZOW8fkZpcDMGBg9wGc2jxuSJks/Sgc2LRVOfpe8vzIzJUK/C5mkNURtCq+PgAqOQdbOMX706wtECwf5QrrraO9LGFOg4lMGFBuazGNrYXW7Q+rMdFAVS3+dB3BdOYU+pZkMU8hReOWDnewKzGi8hYz2WmZNARkIs+jgMKI7WZA/tDwcbok6qj5k1pIONhSOVge69d33OYhyabviMdVyctj9OXR8CUt0/yikrfqk1ep8sF2y0pxOhHUt5a12Mn03dz5gscTBvbPgGlZSjl/Z/ClzCKtExqMYsDXWdyryicj9yoAkmUgCpe3tZ6UoSH2adjFBn+aeX7MKHWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+YOMp5PxtEIH32WPrIdAw5ibx7RIknJ01VIcy1JYLmg=;
- b=Itd3BEoW8CSnNxwYcTAmR8DC48I9xulHvkW3wLj1PGkkdM9b3tQDcy9zJTq6uUtNXWkXj2rI0eDx+byVVPMQryI0nHKGd9vSsjeBHj6H1r9+sdDDV+hS8xNGg6+4Ja5Al1vJQK28EbD+p2FFuIKOMrBaxZhWlRTZlG14rsHtvjc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com (2603:10a6:803:122::31)
- by GVXPR04MB10301.eurprd04.prod.outlook.com (2603:10a6:150:1dd::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 11:44:34 +0000
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6]) by VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 11:44:34 +0000
-From: Farouk Bouabid <farouk.bouabid@cherry.de>
-Date: Tue, 11 Jun 2024 13:43:58 +0200
-Subject: [PATCH v3 7/7] arm64: dts: rockchip: add mule i2c mux (0x18) on
- rk3588-jaguar
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-dev-mule-i2c-mux-v3-7-08d26a28e001@cherry.de>
-References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
-In-Reply-To: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Farouk Bouabid <farouk.bouabid@cherry.de>, 
- Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: VI1PR0902CA0050.eurprd09.prod.outlook.com
- (2603:10a6:802:1::39) To VE1PR04MB6382.eurprd04.prod.outlook.com
- (2603:10a6:803:122::31)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7806314F9E4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718106372; cv=none; b=Xff1XyT9/EmKEcc8WbkI19LKGBcjzV6ApIGxCYTx0NXhLMeiOaPlAJC7Yl5rKrhuormFY6yi5/IPmTZmV2eWf+CHxOjJNKYCYGoOD2zoa2QPYMe7B39OSifSxtmnNyS3sKjOPx86+fEAx05mI7c00ro8+h9wX1TBm/tETafGww4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718106372; c=relaxed/simple;
+	bh=b3NGj7oL6Jv0SejkdL5Ni5oUGz6hL0S7RKz9eET4iBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YVqx3plD4GQALEEtMyBnkd5xYq/tC7k+h54dSJb4pTx+29dLoWevxBv9DAPJhTPhGWoLS9c/tczsq5kqPX1lldfxksoApmQgy6swDutgQ+1w+ZAlXgL7iQcrQtZqISyzqTcI42tUezNFkBg8H8xWyxkITCEv4257ZP5D39r9+Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=dtej5ZfY; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6f176c5c10so100925066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1718106369; x=1718711169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAkMV8dOReDwzeJM6A6yM+HS2q42IbWrPAmzhy7HUmU=;
+        b=dtej5ZfYwzoeE/0R7zbBd+A8yqpyEZzJcl4cjjbvxiKs5Q7wI7l7pROdLZPxlYYEoQ
+         xFAXoIT917FDdbG7bS5b6NYn1G49ySs9YJTG6X1CTllvRjxFyrME9x6nq+HIVjQPt/U4
+         rOkTaMJbiNVK0uKT8xfk5wMBmmQM0e0W7Vg+GWuISmzeRMZLF7fzI0grFCxS4fTsPxO8
+         2IPXxIrW0jPUqbHqrVX4YFkS1mzlXSrGo8sWKgljLBpcSAm763SwZW+6zRm417uXkRpd
+         2gIOaTZ0p5GUh9q7K03rsfLmqaaexFIQb2Fx9emNPrKQmGqTCOoPzmxokaNiJVVocqri
+         6NvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718106369; x=1718711169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAkMV8dOReDwzeJM6A6yM+HS2q42IbWrPAmzhy7HUmU=;
+        b=L2wfhkhd/mtqGt2CCcu/dk031EyjPGKDY0+ZTImpJPllkLkCYs4dWAIaXRUjK/9e97
+         zKWz90M0dHUzLuv5YZzEkKEOZTaIHuUiuDaruq0H/5eHdkLF9C6kqBSFBEH+aT9pkWIE
+         dNuHKaNYVyk8VGMveZ8tpCuNNJAzfsbIGZTE+Tgkm2OxO6kfhgpxuYem/jp2pn6AqYw9
+         mzhn4CgrSGm2a8c/fvoa8KRlMLffavAlKlJrb3/bhrN9ll4fvMyCS8JoLqOsTBuCID0/
+         /Cg1kuzrEnu8e6LmFEJS0P0EZDln8Vozfbpy5D50MJhnHUM9VXs+Dlw4TaP217bYxEzB
+         91qA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2s04/0IryEz4o38DJrAgrG3jBDmlvvnD3IUIMC28BgF5bQCftO2sq5LglhFHCZ2QgYlm8Hy5UPPKwSdHIwcRuwd1QVW6thKp/ePmv
+X-Gm-Message-State: AOJu0YxtSwhdMPg9SMCMfccq/MY3yVMi+vuxZBcKoi1cyu2zivafiN07
+	0js/9MoWb+Zy6ZTElB12y7b7KDaeiBtiqGlvWPWDQxlGEoMyampdq7sehLxWmFQ=
+X-Google-Smtp-Source: AGHT+IFl2q2onMUUXk9QqKpsWKHTXHyxa4wuk2b6Y4wX75ZliOJXw4eHqe7iyC+vhCnnecOBQTDihg==
+X-Received: by 2002:a17:906:2a99:b0:a6f:e36:abae with SMTP id a640c23a62f3a-a6f0e36ace7mr553579266b.42.1718106368615;
+        Tue, 11 Jun 2024 04:46:08 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f2e7eb1f9sm144962466b.221.2024.06.11.04.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 04:46:08 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Ming Lei <ming.lei@redhat.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yexuan Yang <1182282462@bupt.edu.cn>,
+	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>,
+	Joel Granados <j.granados@samsung.com>,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Niklas Cassel <Niklas.Cassel@wdc.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Conor Dooley <conor@kernel.org>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	=?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>,
+	open list <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: [PATCH v6 0/3] Rust block device driver API and null block driver
+Date: Tue, 11 Jun 2024 13:45:48 +0200
+Message-ID: <20240611114551.228679-1-nmi@metaspace.dk>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1PR04MB6382:EE_|GVXPR04MB10301:EE_
-X-MS-Office365-Filtering-Correlation-Id: a65233ff-df6d-4f97-08b8-08dc8a0bdcf8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|1800799015|376005|7416005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QlgxbmFEMmlzUko3NmE3Tm5aMWtsU1VYY01YaWVGaUlTMUFrNmFEUFdPdVEv?=
- =?utf-8?B?ZFQ4bDJsRDh0d2lNbU1ackhybVFXWmN5YWhkdzZiakxVbUZndGFRRGhITzdu?=
- =?utf-8?B?NWZsK2hKYnJGeDNoek9oNVNCUUJjYTF6YWt2OGJLRGlrZjZhR3VObktJRFNv?=
- =?utf-8?B?eVhLckoxWDhTODg2cEhHQ0VYNllMaURhSUw2ZmhLMmduUkNKWTcybi9MTWJ5?=
- =?utf-8?B?MXpqN3ZOWkNSemRFWk9iWWYxdEpoa3pSdldYRmhMU3ErRHNSOWU1c1MwWnhl?=
- =?utf-8?B?UXdCV1JMUWdVeitYYnV3TDRZYUNOL2dlbmUyY3RhODIrSGhXK0NMZG00c2Er?=
- =?utf-8?B?alhITEt0ZlNjeDZVN0ZENC80QWN4R3pwQnp0aGVwWHJVbEprWGlnR0UremJL?=
- =?utf-8?B?TVYwT1hqSXRRcHNMKytSY2xWTXlEczhWTGlmZm9IdzNLTnZUVkFJYWFjSEpQ?=
- =?utf-8?B?bTBOZGpzL0tzUUQ3OEc3bnZSYUk4MDFrREQvUDlLaHA4MXV2WlJBek0yd1NE?=
- =?utf-8?B?RytreWJiUWE4bEJ6VXRvVHhmbUpRcUVNcE9Xd1ZkODhSaC9aWVhHd0I2NFg0?=
- =?utf-8?B?dU9WbmFuaGZmSjYvZmRqRzZEa0FleVpPbkYxbHhRRWNwOVF4UmRqOGtrRS9k?=
- =?utf-8?B?K082TVJMOFJGUFMrNjl5RjlLaExoZG84Lzd0TlM5NGJoU25MUXpKWlZUZ1pY?=
- =?utf-8?B?TWFwa2JHa08xVFFkeUZBZUZabXpCQXQrdmx1YUk3WlZYMThxN2M4ajc2L2g4?=
- =?utf-8?B?Q3doZ0Y3OWlmcC8rSWpaT29PMURCb2ZzZmhxeVc4cVUrNDF4UVdEbDcvV2hy?=
- =?utf-8?B?dnZhRXFRdHQ0c21hbXUyQXNFVkp5bUsxOERLMVhwUjFiVjJEcGQxNk53MWNh?=
- =?utf-8?B?WS9RdHJ0QzZIUldQS1pJWjRLZkY0VjJvVFdXM2VMbU1LcldNSmYvTmtJRjJC?=
- =?utf-8?B?SW56S3lQQTZXY3JOd1RKZVljS1FyUVBLMHd0R3dUT3NnYkZ5WkxkQTNTaS85?=
- =?utf-8?B?R3M5WEgraXVkUzdUbjZJbDdBODFlUFB6YldDUlZqbWI0MkJua0JmL0NKaXov?=
- =?utf-8?B?dWJwMTZoOGJLNTBEQlZDSXcvRCtJMmdCLzcreGxxK2lIamFrUGxoU0FZRlJB?=
- =?utf-8?B?RldiOURrazlCMzlacWRnTzg2WFlWQVR3NGl2SzRlTDZZWUFDb1N0aHlndk1E?=
- =?utf-8?B?WUpIdEY5VGZoWll4cUd0Q3MreEVHRmNOYlZ5aXdmbk5yTE5zSWZ4Z2xmMEdV?=
- =?utf-8?B?bWx3STZmOGNKbE4zeGNVNkJBaldOL2ROZU5zTFdiaVhOQmtWdG9oNW5HS2hP?=
- =?utf-8?B?bXViRGFSajZiWCs4Q3R1SVVrTVJCaGZoSTRkNlJwdHVMbEM5QzRTTTU0eE9T?=
- =?utf-8?B?Sit6WW1reXo4U0lTL3lzdlZtejZpYmhhK0N1dkZHK2JML29yaTZmbE5hdnh2?=
- =?utf-8?B?cVRHeE9aaVRjcElXaGRnZzhnenJ4TS9LNnBXbmJNSEtYaU9SbUZWcEhXeWN2?=
- =?utf-8?B?VG1VUVloS01WY1RWRVFtRWZXRmhqek5rZEV1M0h5bHFIWTROZ2RtZUhZczI5?=
- =?utf-8?B?T2ZFdDFIcnRuSlQvb0lLejY2ZEZGOVkvN2ZSbUxGWHAzd0VNZ2luUS9XQXd6?=
- =?utf-8?B?dmZORzZZTmJBVGYwNGJpOThWWWVYR2pOL1pVYVhQZy9LSXlXaHpKYlZHR3Q1?=
- =?utf-8?B?RFZoeDQ4NGQ2bGpLTXd3RXd2Q2FFODlEK0IxdnNCeXloejFHNEt3NXBPR29T?=
- =?utf-8?B?Yk80SFUwUW83VWZLUlVHQ1lMQ2JQQmM4eU1HaVo1ZjFhQ0VyTlpZOWphZXVU?=
- =?utf-8?Q?jt/dyHClhOkATYAiZsUkLoTk0H+O606DyvAa8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB6382.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(1800799015)(376005)(7416005)(366007)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXByN0Q5bFJrK3hhZWlacGE3d0RqUlRSOXZrcEgvV0VvOGFBdGN5NjZSNnZv?=
- =?utf-8?B?MVYwVGZHOHFkZkpVdFpWSzFTT2ZjU0haN2s0M2lxYVdqblNLaUF0ZzlSdlhO?=
- =?utf-8?B?ZUJ3WUtXS015S05Rc2Z6VG4yVXZBZjV5aHg3UjZweTVqMWJyYjFQUWhIWDlO?=
- =?utf-8?B?eEZZVjdIZ28wbGVKYTE4YnN6QUoxbzdaRllETDBFT3MwY3hpcitDSDlVZW1z?=
- =?utf-8?B?dTJjS2VDMVUyV04yUkxNdWFaUDFySnBZb3pzZXJEOWdmSTBFamtJSXZVVlZW?=
- =?utf-8?B?SWRycVBMZlN6UE1BSzUveStabFpuNWV3dUpUTDZYL0s5R1JXOEl2YkQyYlZN?=
- =?utf-8?B?T3A3QmcwcmRNMitvYkZCdlIrTXJwN29SczV5RHVEM2ZqUU5VOGJLRDN0b3ZP?=
- =?utf-8?B?Mi9yWEIzYTUyRmpqTVpaVy9LSy9uZG1ZTTltWGc0Tjl0eXl6emorNVhsenNN?=
- =?utf-8?B?SS9ubWxVTzBjVkxmMml3RE11YmxZdU05bjdiQjM0a0lOUzRUZUhsL0xTbjR1?=
- =?utf-8?B?bkJ0OTZ1bEpQaHdzK1g4V3V3K2FXSEV4UDVoRDllMnRVZXF5cFcyZklzbVFL?=
- =?utf-8?B?dFpVYWJaYUxWMDh6eUZDeFhNRkpyNEhDVDArWm1aQTFXWkF2SmRGa2o3bStl?=
- =?utf-8?B?SnNjWWxSdk1EWG9FM1hSQmNCVnF1WG9raVBtRHdNUmtYQW44RjBhQlMrY2JG?=
- =?utf-8?B?aENybHNXWFk5YWJVRTQyWVZJaXoxNmNTaGZTaHUwQk9aNENQMFhUcDR5ajdx?=
- =?utf-8?B?MGNSeEdHVUZZTmUxdkVBNXd5WXJHRXViVmVKcFUvU09CV3ZDTS8yQnE3Z3hv?=
- =?utf-8?B?MFo1WUZnd1lzT1h4ZDc5eW9PaEFNRFZKTXMzanM3NkRqRzBFL2xSbFk1Sm10?=
- =?utf-8?B?blh0WkxZNW81UlE0S2xRR3FWN1dQMkdjTm5LM1ZKbUNKb2ZmVU14WU80ODh2?=
- =?utf-8?B?UHZBdUJ4eURicC9NUDJHa3pjVmVmc2NpaGFaeWhxVkQ2OW0yZ3kxbTd2MWkx?=
- =?utf-8?B?WGYyRWwyZE5nMnVoREljWnNaNXFIOUk2MnhCK0RIRHRNdnB1eG9OZEFjMCt4?=
- =?utf-8?B?K0ozeGQ3ZjY5OTFETGlId0lRNFlycDczcHRqUVQvSFovSDBaNjA5cjFHcFBm?=
- =?utf-8?B?MWFBYnRjVThaWkZDRkgxL0Q5M3N0ZVd3K3JIVlhqUW5wVnpnQ3FjZnRvQitw?=
- =?utf-8?B?UDlOU2Y5SjgwNUNXSGwvRlZYc0FTRWlFSlBSdVIzN2J4bFd3V3djL3ltRjNx?=
- =?utf-8?B?a2JQVkhxRTBncTZsZTJHYVFkbUJOWUx5ZktXZTZOOVBxNHR1S3kvWFcrQkgz?=
- =?utf-8?B?bHluVFdoeUVnMyt0NzZvZ2RZY21JS3pWTnJadGhmcVc3OWtDbFoyRlFGMUJL?=
- =?utf-8?B?U2Z4YllDaXBXbWg2aW8wMFRRUU1YYy9WT3VuK2s3M3B2bi8wOXQyeTBYaW96?=
- =?utf-8?B?MVNYNmhIbTBvaHUzb1A4WUtEZWx1Y3hCbFdIbmxqZFJlSjc2VDg4SFVZb0gy?=
- =?utf-8?B?QlJJMmxvNS9ZYlhQRTZTT2VFWElndS9vbzhvM2lRQWZ2eVdwNlUzeWxCbHlF?=
- =?utf-8?B?elowYWdtODZKREdpNkFldkRITjVzSGpJdS96WWhhYllhZ1RMdnFsVlUvaEF0?=
- =?utf-8?B?blUyZ3BDN2lkSEFlTEpzMzVubHUvcnlJaStFRjJhbzBqNDlIcmFLWkhBK0ZM?=
- =?utf-8?B?T2ZLRjRnL2VIYk0xQ3RQeVY2K0c5SXErRjdiZ1d2WTRsbDlRM2VucU5RQkZk?=
- =?utf-8?B?UFUxSHBtaHNraU5nenhMdzZURlhmTzlrNXNFM3lKUWJuV0tNRjVERlZHUG5k?=
- =?utf-8?B?YlIyZXlVOStlbmRtRmdBeXNNSjhpMFNRQWJMRDcwelZ0Qk11d253NXpPZmc5?=
- =?utf-8?B?dDFMZXBmazNvNTgzSzZ5ZGl0UEVaQ2MxZ28xUVVTSXQ2ODBsT3YzajM3eGR1?=
- =?utf-8?B?Q09mekJmb3lIWjNBVDdGQ3Blb25zSjRuOStYQVhjQkh4TDlHM0xwOUx1R0E4?=
- =?utf-8?B?V25pd2s5ajhOZmtObXg4RUhYUURNOTlCaVNBNFZCSFdaTTdHUlJzUU95Rmk0?=
- =?utf-8?B?Rm1XOE5VOUs5ZGxuOStPTi80eDNTZE5GUEVydkY0elRQNDg1cUE3SVcrRDEx?=
- =?utf-8?B?THdMdnYwc2d0TVdOQWRwWU9qdnluRkNmSXNsWVhPTU9LbWZoV05VMC9SL2tZ?=
- =?utf-8?B?dHc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: a65233ff-df6d-4f97-08b8-08dc8a0bdcf8
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB6382.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 11:44:34.1463
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KTN062PQ9BbsPHXktXOo/evZaF3s11xN8SOOJhiZjlsDo0tHoltmnEnrDpgpkM042XBeKIJ3wdajmzvH628t01ig4xCUSydvx8p0//rPJmk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10301
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2824; i=a.hindborg@samsung.com;
+ h=from:subject; bh=Pn9pPWG4joCwFmB/Fietx6Dc7vYUqajhD+Kxe5sk6M8=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkFGdEFwTDlrQTBEQUFvQjRiZ2FQb
+ mtvWTNjQnl5WmlBR1pvTnE5MUZmeWMxdTFkUmxBWGVrV0ZFQjlhCmRUb2RqNHhtdnh4Uml0c2xs
+ M3pxRDRrQ013UUFBUW9BSFJZaEJCTEIrVWRXdjN3cUZkYkFFdUc0R2o1NUtHTjMKQlFKbWFEYXZ
+ BQW9KRU9HNEdqNTVLR04zdEZBUC9pbWxPMWNmZEVDM0NZRkZ5RFdFV0hGeWpIQkZHTlpYc1k3Vw
+ pFKzZiaWt1NGdIOU05b21tbi9BLzVPd1FVb2E2TkZMTUR6MDUvMWgzNHBlYTJYRkJGelM2Y0d5d
+ CtKSnMrY0ZVCmw3T0FndTdsQ21jT2VqSHFZOWJmNDJwN3ZPazRDWEZtbkIyc1hCcUNsS0lXek8v
+ a0pBZWJycXJhWWhJZlp6T2gKa0JNVWx6WEsrRW5YMzRVVkpNUi80MUdDNDhwODRRWHRpQ3Y3ekN
+ 4aEZ4ZW5DZkdyaUJtd3FOTjRqQjZNd1FEMwpncEFmOTlSRGp2YjZ0M3Z3dUlLbjRaTXBwcjhGNH
+ k4RXJ0TW9QcmUzWEVtUFhNckRIR0VUR0pmeFRxamlmcFIxCnAxdWdmNnlXbVVTc1BrUUZ0U0RzM
+ 2hwZkowamlGVzFPbk51TnVZM295YzNxZjVRNkZ2RWxXYnN1TmxZMlBzUjUKMDFENlJnVk0xWVF4
+ Mk5zV1N1MEFXWTFqNERjTG44Z0lod3R1TzZLc1hqalQxQ05abFZSN0lGWndzM1lVVU1ZVgpOZmt
+ wSVZJOWZLS1ZDajV3N3NldUdsRnNKeG4vZVZFaUFpYlNOaCs5VEptUU1PS1BqZXRXbnlHeUVUUW
+ p4MVhrCndxMFZRVUd2dVNHTS9nemNxaUR0WFhyUGEwNmZnVjBxWGZGWkpTN21ERlBraHNHVnZyQ
+ zZtR21TWVl3VlJZVEYKQ3h2Uk9VcUkwdnJyck8yeHVXZFIwK1IvcVYzdHV1cWpqcVlLYWdBcXFj
+ OFNnQ21CbForV21UbmVMUDlFRFZLOQowUUQzOThOWlJTWUkzTU1SL3ZrRko3dFhIcVlXaXpvWnM
+ 2Um51V0RjZ2dxVVBibG1vMjZFdmpvdDFqS3hZNjFtCmZGb3RJSVpNNXBzaEJRPT0KPW5zRW4KLS 0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=a.hindborg@samsung.com; a=openpgp; fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Transfer-Encoding: 8bit
 
-Mule emulates an I2C mux (address 0x18). The amc6821 is exposed behind
-this bus.
+From: Andreas Hindborg <a.hindborg@samsung.com>
 
-Add the mux node and amc6821 as a default device.
+Hi,
 
-Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
----
- arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+This series provides an initial Rust block layer device driver API, and a very
+minimal null block driver to exercise the API. The driver has only one mode of
+operation and cannot be configured.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-index 39d65002add1..14f1322c162f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-@@ -32,6 +32,7 @@ button-bios-disable {
- 
- 	aliases {
- 		ethernet0 = &gmac0;
-+		i2c10 = &i2c10;
- 		mmc0 = &sdhci;
- 		mmc1 = &sdmmc;
- 		rtc0 = &rtc_twi;
-@@ -249,9 +250,23 @@ &i2c0 {
- 	pinctrl-0 = <&i2c0m2_xfer>;
- 	status = "okay";
- 
--	fan@18 {
--		compatible = "ti,amc6821";
-+	i2c-mux@18 {
-+		compatible = "tsd,mule-i2c-mux";
- 		reg = <0x18>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c10: i2c@0 {
-+			reg = <0x0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			fan: fan@18 {
-+				compatible = "ti,amc6821";
-+				reg = <0x18>;
-+				#cooling-cells = <2>;
-+			};
-+		};
- 	};
- 
- 	vdd_npu_s0: regulator@42 {
+These patches are an updated and trimmed down version of the v2 RFC [1]. One of
+the requests for the v2 RFC was to split the abstractions into smaller pieces
+that are easier to review. This is the first part of the split patches.
 
+A notable change in this patch set is that they no longer use the `ref` field of
+the C `struct request` to manage lifetime of the request structure.
+
+The removed features will be sent later, as their dependencies land upstream.
+
+Changes from v5 [2]:
+ - update `SAFETY` comments of `Operations::queue_rq_callback`
+ - update `SAFETY` comments of `Operations::init_request_callback`
+ - update `SAFETY` comments of `Operations::exit_request_callback`
+ - update `SAFETY` comments of `Request::wrapper_ptr`
+ - change `Operations::init_request_callback` implementation to use `Request::wrapper_ptr`
+ - rebased on v6.10-rc3
+
+Thanks to everyone for comments on previous version!
+
+Best regards,
+Andreas Hindborg
+
+
+Link: https://lore.kernel.org/all/20240313110515.70088-1-nmi@metaspace.dk/ [1]
+Link: https://lore.kernel.org/all/20240603191455.968301-1-nmi@metaspace.dk/ [2]
+
+
+Andreas Hindborg (3):
+  rust: block: introduce `kernel::block::mq` module
+  rust: block: add rnull, Rust null_blk implementation
+  MAINTAINERS: add entry for Rust block device driver API
+
+ MAINTAINERS                        |  14 ++
+ drivers/block/Kconfig              |   9 +
+ drivers/block/Makefile             |   3 +
+ drivers/block/rnull.rs             |  73 +++++++++
+ rust/bindings/bindings_helper.h    |   3 +
+ rust/helpers.c                     |  16 ++
+ rust/kernel/block.rs               |   5 +
+ rust/kernel/block/mq.rs            |  98 +++++++++++
+ rust/kernel/block/mq/gen_disk.rs   | 215 ++++++++++++++++++++++++
+ rust/kernel/block/mq/operations.rs | 245 ++++++++++++++++++++++++++++
+ rust/kernel/block/mq/raw_writer.rs |  55 +++++++
+ rust/kernel/block/mq/request.rs    | 253 +++++++++++++++++++++++++++++
+ rust/kernel/block/mq/tag_set.rs    |  86 ++++++++++
+ rust/kernel/error.rs               |   6 +
+ rust/kernel/lib.rs                 |   2 +
+ 15 files changed, 1083 insertions(+)
+ create mode 100644 drivers/block/rnull.rs
+ create mode 100644 rust/kernel/block.rs
+ create mode 100644 rust/kernel/block/mq.rs
+ create mode 100644 rust/kernel/block/mq/gen_disk.rs
+ create mode 100644 rust/kernel/block/mq/operations.rs
+ create mode 100644 rust/kernel/block/mq/raw_writer.rs
+ create mode 100644 rust/kernel/block/mq/request.rs
+ create mode 100644 rust/kernel/block/mq/tag_set.rs
+
+
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
 -- 
-2.34.1
+2.45.2
 
 
