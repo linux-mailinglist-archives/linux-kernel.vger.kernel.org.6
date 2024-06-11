@@ -1,280 +1,168 @@
-Return-Path: <linux-kernel+bounces-209975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3694903D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACE3903D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B5DB236AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B611F22C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEB17CA19;
-	Tue, 11 Jun 2024 13:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCD617D348;
+	Tue, 11 Jun 2024 13:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hdMk31pY"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gBHpdoUu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBCC1E535
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642F947F7A;
+	Tue, 11 Jun 2024 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718113047; cv=none; b=gCfBVGzI2Ga3e09FL4YUIri5XHJjySKc/TC+zneAhdICNWy2fRwt1FkOlQe1Riutv4gYeVdbDbCX/DoNibelIVXUhU8zTAefnr+tUq06q+Lfl/wykn+Q3uHSljJ4tgLWsjRpX0aywxg2wksRWb0VvGcIGdEeV4hbdYIXeqPmqEI=
+	t=1718113114; cv=none; b=FKhcCnGTtfX1ZCQdF+zRToExuDLC2wDwSuTBdzvNybV801L+xITEEpkTdCC0N7n3QZBKu1rBa7B1r4anzbjGlWIwzUMvm6ar5F1YYdGGxbWV5fpnL8AT0CBlhfhXvBbfaSTGD0HSbpmM7vGyg9mr1D8eks9o7vRw6FgnCWc4aik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718113047; c=relaxed/simple;
-	bh=uClWVkm9RxsLs+EfbggJIY5JpBEtxoQIUWpWC/sz2K0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBSswj7Y1/TpaeXH0zI/j93vdznX/BK3V8UEbxKKOZ8crNlVI+5jFCDRa2sQ7/gGM9fMsghhDHv6ff6VRpbuIf5ApACXPa/OpASrtlpnG00iDgmCv6cMP+c0fM4MNA+De19vPsjIY8C588eJlq0nh80YQJpkBSWQ8jOe4D8eW1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hdMk31pY; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so2170655a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718113044; x=1718717844; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MAcDNalbfcX/SooAz1XjppInJxW8mD6aEySBf2LPSno=;
-        b=hdMk31pYtLGSlgRi7MR3YBa6zWjH0WJRD7vPxC1b+83+jWvfGz0EaJsnRpjbUETTQS
-         rUYbzhVppsG7ZZfEarzZ+QyC5tqf+SZtRlqIOoJivYURivTH2knTHfaCEw5UU8VCDpNi
-         NRhtZUoe5bcCLoh0I+HzpLya63BuT118p3+rImAKQW+Q7h+DO/8aYGjWrI4nW9QoDTo9
-         CpL7eOTvkTx2X+ZnLGNwcYTyEzgj/sSJkGoS/sQslc05OUJfNwGvLnSk++tz7XNiQjvT
-         xycnwr3G3GuwTaU8KhRavJK3gkErjJcHP6GSphk9nVzk4w7lU+f/bmfGm5OwC8l9130d
-         cVHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718113044; x=1718717844;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MAcDNalbfcX/SooAz1XjppInJxW8mD6aEySBf2LPSno=;
-        b=n3Rx95UBiR+8vO44CqhU+vIIxjgXsf5p+C8kwdfYm2tlsQjDz0HV6IJ3I1uHtoEnmf
-         Z18SgwEv4uOdBZSaK1nVmRtBGCchjqGixcrvv182g1xc398bat7HnP6JewwwmqJVyjR9
-         whRBOTlxJ6FrTQWy47R6GjAhplneWRbFeYHul9Gdx+scaAN/SY9nXVh2ehyM7zDU3EIW
-         yDF1uKPkHQZAKxCl3rVAKzAIbdZN8ujkeCOaL+Un+85Fxm0LippiSPLG46Ev4fXxVVGG
-         hGMDguGUGOowpS+1/lxy73jnKXurabtX0+jyqn73N7yli1GfAsMQEpzOjzJqoG5P7+5c
-         8nqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVz0eJZp1OAK3k75EwnRT5tMO3odcivonA0unimzWeI1I308lgq6b2Y4lSdHVMeSH2gFyiBnxBoq+ZrOgm8sFSYEwXf/E3DSdJOC7tP
-X-Gm-Message-State: AOJu0Yxd826FJRiXqMDVUMc+oAcOt9Vy/nIL89HF2vPigyvti5QQiErf
-	zMNwo+uuOLyo/t1lbEkL1OZoSC9lIvw6bFwtEOqwuSCzPdaGdjEWdZ7QMrfdPnVcsBEqxgawxGJ
-	d/ldR7zFYiWwwnu9tFfqx+hO3Y6D3lj9WfSwW2Q==
-X-Google-Smtp-Source: AGHT+IFs979EGmIWLmkusI/d7SBFQhTqweYDqCK3mffDdw6Ftoj9EB//VarfNSLmbqnD3uT08/vi0tbvTUuy9HnmxdI=
-X-Received: by 2002:a17:90a:d397:b0:2c2:bd1a:4f84 with SMTP id
- 98e67ed59e1d1-2c2bd1a4fb0mr11352008a91.10.1718113044480; Tue, 11 Jun 2024
- 06:37:24 -0700 (PDT)
+	s=arc-20240116; t=1718113114; c=relaxed/simple;
+	bh=gmpbs7daVQsy3/1FXy7yuLz6FDIlj6i6xTlS8xlezPU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZaLe3VHgVhNL28jXB1A1JsdUbUeTcNSJglhefaU8ciMPb21/7T56odA1AXvQn55tMHx6o2KFVl+X/Etx6+/tVyADYwLfGn/id2MB4J4oDX8SoraD9Wte/Hnec/sQ04u1/qfMtafinvilaPeHmt0OdHJOkLOFAGIqSN7cjKZFKyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gBHpdoUu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9g8Wu018402;
+	Tue, 11 Jun 2024 13:38:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lECHIcGMhrxBkzvs8TUnS3
+	MeZMm4+W9YCpT7HYbPSsA=; b=gBHpdoUuGgQgwzDpWGblrTmYcupXYY/3arkB/l
+	d9eR2tjn263hJFZKpnYBGxSGL9omVBZwDP5c3sXvd/S+ERaFmxAr3hkV2w3fTit0
+	XqA10Rzz2kCs4AoGwwJa2lwTHRgSg5hTaiZze/uLZVAoIODiNW52CkEXgkJc8L0w
+	l4/u6GqHfmjCR35nCdr3Qw0IyGwgXAPoQ0f51csqVymt6c+XtE2aQLmi22yeB+vV
+	3zKMZGWjPFq8/mRC7hM2qOxNC68T56TIpEkXY2W5ByJrjdTUpoxNgrDKiWyjKVEM
+	Fn/+t2Cw8Yyxl861g/I0lF95g7iemNQRnBHlCD9vcro+x+gA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6b8m6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 13:38:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BDcQwI018243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 13:38:26 GMT
+Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 06:38:21 -0700
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH V4 0/8] clk: qcom: Add support for DISPCC, CAMCC and GPUCC on SM4450
+Date: Tue, 11 Jun 2024 19:07:44 +0530
+Message-ID: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611112413.1241352-1-christian.loehle@arm.com> <20240611112413.1241352-2-christian.loehle@arm.com>
-In-Reply-To: <20240611112413.1241352-2-christian.loehle@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 11 Jun 2024 15:37:12 +0200
-Message-ID: <CAKfTPtC4GZ1LJsGZJ7wie9tus=+hmg1Rg=RaBtwXZxKGL17N9A@mail.gmail.com>
-Subject: Re: [PATCHv2 1/3] Revert: "cpuidle: teo: Introduce util-awareness"
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	qyousef@layalina.io, peterz@infradead.org, daniel.lezcano@linaro.org, 
-	ulf.hansson@linaro.org, anna-maria@linutronix.de, kajetan.puchalski@arm.com, 
-	lukasz.luba@arm.com, dietmar.eggemann@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Bfop7SZxK_d8j7bFtG6_OIrudapLbDV_
+X-Proofpoint-GUID: Bfop7SZxK_d8j7bFtG6_OIrudapLbDV_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110099
 
-On Tue, 11 Jun 2024 at 13:24, Christian Loehle <christian.loehle@arm.com> wrote:
->
-> This reverts commit 9ce0f7c4bc64d820b02a1c53f7e8dba9539f942b.
->
-> Util-awareness was reported to be too aggressive in selecting shallower
-> states. Additionally a single threshold was found to not be suitable
-> for reasoning about sleep length as, for all practical purposes,
-> almost arbitrary sleep lengths are still possible for any load value.
->
-> Fixes: 9ce0f7c4bc64 ("cpuidle: teo: Introduce util-awareness")
-> Reported-by: Qais Yousef <qyousef@layalina.io>
-> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+This patch series add dt-bindings, driver and device tree support for DISPCC, CAMCC
+and GPUCC on QCOM SM4450 platform and also includes a fix related to LUCID EVO PLL
+config issue in clk-alpha-pll driver which is required for correct scaling of few
+supported frequencies in graphics clock controllers on SM4450.
 
-The spurious wakeups that I reported on my rb5, are gone with this patchset
+Changes in V4:
+- [PATCH 8/8]: Sorted nodes with address and minor updates for review comments on v2.
+- [PATCH 7/8]: Added Reviewed-by: Konrad Dybcio received in v2.
+- Link to V3: https://lore.kernel.org/all/20240528114254.3147988-1-quic_ajipan@quicinc.com/
 
-Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Changes in V3:
+- [PATCH 1/8]: Updated commit tags order and added Reviewed-by: tags
+- [PATCH 3/8]: Fixed reusing of pll0_config and added Reviewed-by: tags 
+- [PATCH 6/8]: Updated commit text and added Reviewed-by tags
+- [PATCH 8/8]: Updated node order for gpucc.
+- Link to V2: https://lore.kernel.org/all/20240416182005.75422-1-quic_ajipan@quicinc.com/ 
 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  drivers/cpuidle/governors/teo.c | 100 --------------------------------
->  1 file changed, 100 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-> index 7244f71c59c5..d8554c20cf10 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -104,56 +104,16 @@
->   *      select the given idle state instead of the candidate one.
->   *
->   * 3. By default, select the candidate state.
-> - *
-> - * Util-awareness mechanism:
-> - *
-> - * The idea behind the util-awareness extension is that there are two distinct
-> - * scenarios for the CPU which should result in two different approaches to idle
-> - * state selection - utilized and not utilized.
-> - *
-> - * In this case, 'utilized' means that the average runqueue util of the CPU is
-> - * above a certain threshold.
-> - *
-> - * When the CPU is utilized while going into idle, more likely than not it will
-> - * be woken up to do more work soon and so a shallower idle state should be
-> - * selected to minimise latency and maximise performance. When the CPU is not
-> - * being utilized, the usual metrics-based approach to selecting the deepest
-> - * available idle state should be preferred to take advantage of the power
-> - * saving.
-> - *
-> - * In order to achieve this, the governor uses a utilization threshold.
-> - * The threshold is computed per-CPU as a percentage of the CPU's capacity
-> - * by bit shifting the capacity value. Based on testing, the shift of 6 (~1.56%)
-> - * seems to be getting the best results.
-> - *
-> - * Before selecting the next idle state, the governor compares the current CPU
-> - * util to the precomputed util threshold. If it's below, it defaults to the
-> - * TEO metrics mechanism. If it's above, the closest shallower idle state will
-> - * be selected instead, as long as is not a polling state.
->   */
->
->  #include <linux/cpuidle.h>
->  #include <linux/jiffies.h>
->  #include <linux/kernel.h>
-> -#include <linux/sched.h>
->  #include <linux/sched/clock.h>
-> -#include <linux/sched/topology.h>
->  #include <linux/tick.h>
->
->  #include "gov.h"
->
-> -/*
-> - * The number of bits to shift the CPU's capacity by in order to determine
-> - * the utilized threshold.
-> - *
-> - * 6 was chosen based on testing as the number that achieved the best balance
-> - * of power and performance on average.
-> - *
-> - * The resulting threshold is high enough to not be triggered by background
-> - * noise and low enough to react quickly when activity starts to ramp up.
-> - */
-> -#define UTIL_THRESHOLD_SHIFT 6
-> -
->  /*
->   * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
->   * is used for decreasing metrics on a regular basis.
-> @@ -188,7 +148,6 @@ struct teo_bin {
->   * @next_recent_idx: Index of the next @recent_idx entry to update.
->   * @recent_idx: Indices of bins corresponding to recent "intercepts".
->   * @tick_hits: Number of "hits" after TICK_NSEC.
-> - * @util_threshold: Threshold above which the CPU is considered utilized
->   */
->  struct teo_cpu {
->         s64 time_span_ns;
-> @@ -198,28 +157,10 @@ struct teo_cpu {
->         int next_recent_idx;
->         int recent_idx[NR_RECENT];
->         unsigned int tick_hits;
-> -       unsigned long util_threshold;
->  };
->
->  static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
->
-> -/**
-> - * teo_cpu_is_utilized - Check if the CPU's util is above the threshold
-> - * @cpu: Target CPU
-> - * @cpu_data: Governor CPU data for the target CPU
-> - */
-> -#ifdef CONFIG_SMP
-> -static bool teo_cpu_is_utilized(int cpu, struct teo_cpu *cpu_data)
-> -{
-> -       return sched_cpu_util(cpu) > cpu_data->util_threshold;
-> -}
-> -#else
-> -static bool teo_cpu_is_utilized(int cpu, struct teo_cpu *cpu_data)
-> -{
-> -       return false;
-> -}
-> -#endif
-> -
->  /**
->   * teo_update - Update CPU metrics after wakeup.
->   * @drv: cpuidle driver containing state data.
-> @@ -386,7 +327,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->         int constraint_idx = 0;
->         int idx0 = 0, idx = -1;
->         bool alt_intercepts, alt_recent;
-> -       bool cpu_utilized;
->         s64 duration_ns;
->         int i;
->
-> @@ -411,32 +351,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->         if (!dev->states_usage[0].disable)
->                 idx = 0;
->
-> -       cpu_utilized = teo_cpu_is_utilized(dev->cpu, cpu_data);
-> -       /*
-> -        * If the CPU is being utilized over the threshold and there are only 2
-> -        * states to choose from, the metrics need not be considered, so choose
-> -        * the shallowest non-polling state and exit.
-> -        */
-> -       if (drv->state_count < 3 && cpu_utilized) {
-> -               /*
-> -                * If state 0 is enabled and it is not a polling one, select it
-> -                * right away unless the scheduler tick has been stopped, in
-> -                * which case care needs to be taken to leave the CPU in a deep
-> -                * enough state in case it is not woken up any time soon after
-> -                * all.  If state 1 is disabled, though, state 0 must be used
-> -                * anyway.
-> -                */
-> -               if ((!idx && !(drv->states[0].flags & CPUIDLE_FLAG_POLLING) &&
-> -                   teo_state_ok(0, drv)) || dev->states_usage[1].disable) {
-> -                       idx = 0;
-> -                       goto out_tick;
-> -               }
-> -               /* Assume that state 1 is not a polling one and use it. */
-> -               idx = 1;
-> -               duration_ns = drv->states[1].target_residency_ns;
-> -               goto end;
-> -       }
-> -
->         /* Compute the sums of metrics for early wakeup pattern detection. */
->         for (i = 1; i < drv->state_count; i++) {
->                 struct teo_bin *prev_bin = &cpu_data->state_bins[i-1];
-> @@ -560,18 +474,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->         if (idx > constraint_idx)
->                 idx = constraint_idx;
->
-> -       /*
-> -        * If the CPU is being utilized over the threshold, choose a shallower
-> -        * non-polling state to improve latency, unless the scheduler tick has
-> -        * been stopped already and the shallower state's target residency is
-> -        * not sufficiently large.
-> -        */
-> -       if (cpu_utilized) {
-> -               i = teo_find_shallower_state(drv, dev, idx, KTIME_MAX, true);
-> -               if (teo_state_ok(i, drv))
-> -                       idx = i;
-> -       }
-> -
->         /*
->          * Skip the timers check if state 0 is the current candidate one,
->          * because an immediate non-timer wakeup is expected in that case.
-> @@ -667,11 +569,9 @@ static int teo_enable_device(struct cpuidle_driver *drv,
->                              struct cpuidle_device *dev)
->  {
->         struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-> -       unsigned long max_capacity = arch_scale_cpu_capacity(dev->cpu);
->         int i;
->
->         memset(cpu_data, 0, sizeof(*cpu_data));
-> -       cpu_data->util_threshold = max_capacity >> UTIL_THRESHOLD_SHIFT;
->
->         for (i = 0; i < NR_RECENT; i++)
->                 cpu_data->recent_idx[i] = -1;
-> --
-> 2.34.1
->
+Changes in V2:
+- [PATCH 1/8]: Updated commit text adding stable kernel signoff for Fixes patch
+- [PATCH 2/8]: Updated commit msg and added Reviewed-by: Krzysztof Kozlowski tag
+- [PATCH 4/8]: Updated commit text as per review comments in v1
+- [PATCH 5/8]: Added Reviewed-by: Dmitry Baryshkov tags received in v1
+- [PATCH 7/8]: Fixed duplicate reset entries warnings
+- [PATCH 8/8]: New patch for adding dispcc, camcc and gpucc device-tree nodes
+- Link to V1: https://lore.kernel.org/all/20240330182817.3272224-1-quic_ajipan@quicinc.com/
+
+Ajit Pandey (8):
+  clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
+  dt-bindings: clock: qcom: add DISPCC clocks on SM4450
+  clk: qcom: Add DISPCC driver support for SM4450
+  dt-bindings: clock: qcom: add CAMCC clocks on SM4450
+  clk: qcom: Add CAMCC driver support for SM4450
+  dt-bindings: clock: qcom: add GPUCC clocks on SM4450
+  clk: qcom: Add GPUCC driver support for SM4450
+  arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
+
+ .../bindings/clock/qcom,sm4450-camcc.yaml     |   63 +
+ .../bindings/clock/qcom,sm4450-dispcc.yaml    |   71 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml     |    2 +
+ arch/arm64/boot/dts/qcom/sm4450.dtsi          |   38 +
+ drivers/clk/qcom/Kconfig                      |   27 +
+ drivers/clk/qcom/Makefile                     |    3 +
+ drivers/clk/qcom/camcc-sm4450.c               | 1688 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm4450.c              |  770 ++++++++
+ drivers/clk/qcom/gpucc-sm4450.c               |  805 ++++++++
+ include/dt-bindings/clock/qcom,sm4450-camcc.h |  106 ++
+ .../dt-bindings/clock/qcom,sm4450-dispcc.h    |   51 +
+ include/dt-bindings/clock/qcom,sm4450-gpucc.h |   62 +
+ 13 files changed, 3687 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-gpucc.h
+
+-- 
+2.25.1
+
 
