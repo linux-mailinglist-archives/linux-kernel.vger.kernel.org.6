@@ -1,229 +1,460 @@
-Return-Path: <linux-kernel+bounces-209189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055F0902E81
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C78902E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78EBD281DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3D9281A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3080D15B0F1;
-	Tue, 11 Jun 2024 02:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A11F16F85D;
+	Tue, 11 Jun 2024 02:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FBzd78cU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iOWC10vJ"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F9216F849
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3B415B0E2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718073481; cv=none; b=sptRbA3wzR9c8lYdiOKcZ3n3mEKM1dfX7xrZ8kx91JhCPFKRlfpyPMrq2f6sQE/ffrI4GaPaCZSoP0E9n5j35gf3Nqe8sD1s/bZw/81SaN+pdoHplUduaQj8JfqP2eUrzMciZXQvRfy924ICJhu6gMRDB2mjfwIZhBSrboQelKw=
+	t=1718073761; cv=none; b=tm0/NAeKJA7KKR7mgs4mXWvmgCjW9Fk9j1+g2Uc+Fd3SVdpPrA5vYVUIJmL6uFuNYAqTl55Hbgp5gg1KGdjDLFivh6l9JjdISroJe8a3DZsTNJNWBhUOxulaKMSKZnsguqW5BUt8N2dc0fqYjmzxzP0u7mzXZsGqEZ079DI4Eo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718073481; c=relaxed/simple;
-	bh=eVp/xa3UpkoBXz1GR7xBuSg7fs4DfxD2w1sGKh1YbSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RwzO4oaCGqf0Zi/wa8Bcjk0FT7D9UaLICSVPilH6oeuEJGpwymbzCnBR9jAduTsFL39sVYXlXySDFmwrLoNs0p4ruAxQEf7Oed5k0YF5qyVWqNOZsB7B7Ssd8K20UeK4gPvRDZV6csB0yvIJXRLsvzZxfLg9MMsX0cVeK9MPRPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FBzd78cU; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718073480; x=1749609480;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=eVp/xa3UpkoBXz1GR7xBuSg7fs4DfxD2w1sGKh1YbSc=;
-  b=FBzd78cUr76+qHO2dHIcNsTo0MkPCicVjmBtQBHobgVSqkgTa0ithX70
-   yd3rscdYmHdN6NO4W9isESPp5kAhx4f3oFrrsy0pW/svQKC7yAGYFl7GL
-   OtOLC/laUNTvAiAzInGdqDEJp1weZku5hX7+FKpYDI1TzhVljA1NR1QTT
-   ovQxA2oWVtcek9D/xvy8VbdLuojtH65+EK3s5O9IB0+MvSB0ktKUZI3n4
-   ZFdonqALULn4ucT6AyUJkYC938rLwPyJBYiLKlnIm9jjKHIHQ/HESjR2D
-   tbgsnMRPEtymp9oc09sihryVJeQRwcXq+5nCl97DbJ+rom2eqgcECTJ6D
-   Q==;
-X-CSE-ConnectionGUID: hfc/VONuRHOaQXrXT1GreA==
-X-CSE-MsgGUID: rGkDQKhTQoitrGCCian3yQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14931784"
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="14931784"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 19:37:59 -0700
-X-CSE-ConnectionGUID: QDI+IpijRhmHxGgiZTyJMg==
-X-CSE-MsgGUID: bMaWB+aLSQi4vDNlOmoQNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
-   d="scan'208";a="39942938"
-Received: from lkp-server01.sh.intel.com (HELO 8967fbab76b3) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 10 Jun 2024 19:37:57 -0700
-Received: from kbuild by 8967fbab76b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sGrOU-0002hZ-1k;
-	Tue, 11 Jun 2024 02:37:54 +0000
-Date: Tue, 11 Jun 2024 10:36:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luca Weiss <luca@z3ntu.xyz>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: arch/arm64/boot/dts/qcom/pmi632.dtsi:155.19-163.5: Warning
- (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3/pwm: unnecessary
- #address-cells/#size-cells without "ranges" or child "reg" property
-Message-ID: <202406111049.yZhTbJUJ-lkp@intel.com>
+	s=arc-20240116; t=1718073761; c=relaxed/simple;
+	bh=SmsxwSsV7uah0iJgUJjfn0+CW8WplUCs1aYYV+QODSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yp9yPHTCqc4jrpFJPb52+iJ1teXNxsIK3+os7/Sn2z6QOuMGdEttB32iz9utobZmrEA1176ECpJ8ICnFxj67DXkShcbqC4ft6cIf/It2KEs3O1Iyclq+IOh+V2SLK1qQMAgEgc3Eueg4d6IRZEiK790GQ907V6KTxc7EVd6ofq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iOWC10vJ; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718073749; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=4pLXlVR9FKPdQR7Bll9bIYZB5N2dx1NL/FBVohUtChM=;
+	b=iOWC10vJVQEL0quDoMpOT3OdJEfZir7oAyL9iK/w64ryzdph4kGAXaP6Cv03vKbKEMRYXDOt82mM/3R6WD7SJuRq2JVTmlVVbDkXmzIcs+Sv4IHoRBQrOJLQ5STVz1PgQIfjTthEvl7ScHK43reqHSkO+jPpTzOMD+10a8TAhGA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8Ek5.e_1718073746;
+Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8Ek5.e_1718073746)
+          by smtp.aliyun-inc.com;
+          Tue, 11 Jun 2024 10:42:27 +0800
+Message-ID: <83c23f2a-9ea8-4120-859e-d69d20c17647@linux.alibaba.com>
+Date: Tue, 11 Jun 2024 10:42:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] mm: shmem: add mTHP support for anonymous shmem
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hughd@google.com" <hughd@google.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "david@redhat.com" <david@redhat.com>,
+ "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+ "ying.huang@intel.com" <ying.huang@intel.com>,
+ "21cnbao@gmail.com" <21cnbao@gmail.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
+ <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
+ Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
+ <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
+ <9be6eeacd0304c82a1cb1b7487977a3e14d2b5df.1717495894.git.baolin.wang@linux.alibaba.com>
+ <CGME20240610132756eucas1p1d892ccbabdb5f8fc4cff55c662f24d75@eucas1p1.samsung.com>
+ <kzoo6v5tc44yztltdhbf2qbor3uladm3wsxvuahhkf3zdytp63@wt4hww4oj7gq>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <kzoo6v5tc44yztltdhbf2qbor3uladm3wsxvuahhkf3zdytp63@wt4hww4oj7gq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-commit: 0c4f10917d22e6f36080617bfe71de1ae854ee58 arm64: dts: qcom: sdm632-fairphone-fp3: Add notification LED
-date:   1 year, 1 month ago
-config: arm64-randconfig-r113-20240606 (https://download.01.org/0day-ci/archive/20240611/202406111049.yZhTbJUJ-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce: (https://download.01.org/0day-ci/archive/20240611/202406111049.yZhTbJUJ-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406111049.yZhTbJUJ-lkp@intel.com/
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/msm8953.dtsi:175.9-179.4: Warning (unit_address_vs_reg): /memory: node has a reg or ranges property, but no unit name
-   arch/arm64/boot/dts/qcom/msm8953.dtsi:865.22-915.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@1a00000/dsi@1a94000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm64/boot/dts/qcom/pmi632.dtsi:149.9-164.4: Warning (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->> arch/arm64/boot/dts/qcom/pmi632.dtsi:155.19-163.5: Warning (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3/pwm: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+On 2024/6/10 21:27, Daniel Gomez wrote:
+> On Tue, Jun 04, 2024 at 06:17:48PM +0800, Baolin Wang wrote:
+>> Commit 19eaf44954df adds multi-size THP (mTHP) for anonymous pages, that
+>> can allow THP to be configured through the sysfs interface located at
+>> '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
+>>
+>> However, the anonymous shmem will ignore the anonymous mTHP rule
+>> configured through the sysfs interface, and can only use the PMD-mapped
+>> THP, that is not reasonable. Users expect to apply the mTHP rule for
+>> all anonymous pages, including the anonymous shmem, in order to enjoy
+>> the benefits of mTHP. For example, lower latency than PMD-mapped THP,
+>> smaller memory bloat than PMD-mapped THP, contiguous PTEs on ARM architecture
+>> to reduce TLB miss etc. In addition, the mTHP interfaces can be extended
+>> to support all shmem/tmpfs scenarios in the future, especially for the
+>> shmem mmap() case.
+>>
+>> The primary strategy is similar to supporting anonymous mTHP. Introduce
+>> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
+>> which can have almost the same values as the top-level
+>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
+>> additional "inherit" option and dropping the testing options 'force' and
+>> 'deny'. By default all sizes will be set to "never" except PMD size,
+>> which is set to "inherit". This ensures backward compatibility with the
+>> anonymous shmem enabled of the top level, meanwhile also allows independent
+>> control of anonymous shmem enabled for each mTHP.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   include/linux/huge_mm.h |  10 +++
+>>   mm/shmem.c              | 187 +++++++++++++++++++++++++++++++++-------
+>>   2 files changed, 167 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index fac21548c5de..909cfc67521d 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -575,6 +575,16 @@ static inline bool thp_migration_supported(void)
+>>   {
+>>   	return false;
+>>   }
+>> +
+>> +static inline int highest_order(unsigned long orders)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int next_order(unsigned long *orders, int prev)
+>> +{
+>> +	return 0;
+>> +}
+>>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>   
+>>   static inline int split_folio_to_list_to_order(struct folio *folio,
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index 643ff7516b4d..9a8533482208 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -1611,6 +1611,107 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+>>   	return result;
+>>   }
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +static unsigned long anon_shmem_allowable_huge_orders(struct inode *inode,
+> 
+> We want to get mTHP orders as well for tmpfs so, could we make this to work for > both paths? If true, I'd remove the anon prefix.
 
-vim +155 arch/arm64/boot/dts/qcom/pmi632.dtsi
+Yes, I can drop the 'anon' prefix for these functions. But like I said 
+in the cover letter, this patch set is for supporting mTHP for anon 
+shmem, as a start. For supporting mTHP for tmpfs, patches will be added 
+iteratively.
 
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   40  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   41  &spmi_bus {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   42  	pmic@2 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   43  		compatible = "qcom,pmi632", "qcom,spmi-pmic";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   44  		reg = <0x2 SPMI_USID>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   45  		#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   46  		#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   47  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   48  		pmi632_temp: temp-alarm@2400 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   49  			compatible = "qcom,spmi-temp-alarm";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   50  			reg = <0x2400>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   51  			interrupts = <0x2 0x24 0x0 IRQ_TYPE_EDGE_BOTH>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   52  			#thermal-sensor-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   53  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   54  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   55  		pmi632_adc: adc@3100 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   56  			compatible = "qcom,spmi-adc5";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   57  			reg = <0x3100>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   58  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   59  			#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   60  			#io-channel-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   61  			interrupts = <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   62  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   63  			channel@0 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   64  				reg = <ADC5_REF_GND>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   65  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   66  				label = "ref_gnd";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   67  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   68  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   69  			channel@1 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   70  				reg = <ADC5_1P25VREF>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   71  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   72  				label = "vref_1p25";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   73  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   74  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   75  			channel@6 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   76  				reg = <ADC5_DIE_TEMP>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   77  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   78  				label = "die_temp";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   79  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   80  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   81  			channel@7 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   82  				reg = <ADC5_USB_IN_I>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   83  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   84  				label = "usb_in_i_uv";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   85  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   86  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   87  			channel@8 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   88  				reg = <ADC5_USB_IN_V_16>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   89  				qcom,pre-scaling = <1 16>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   90  				label = "usb_in_v_div_16";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   91  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   92  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   93  			channel@9 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   94  				reg = <ADC5_CHG_TEMP>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   95  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   96  				label = "chg_temp";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   97  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   98  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   99  			channel@4b {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  100  				reg = <ADC5_BAT_ID_100K_PU>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  101  				qcom,hw-settle-time = <200>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  102  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  103  				qcom,ratiometric;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  104  				label = "bat_id";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  105  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  106  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  107  			channel@83 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  108  				reg = <ADC5_VPH_PWR>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  109  				qcom,pre-scaling = <1 3>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  110  				label = "vph_pwr";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  111  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  112  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  113  			channel@84 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  114  				reg = <ADC5_VBAT_SNS>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  115  				qcom,pre-scaling = <1 3>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  116  				label = "vbat_sns";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  117  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  118  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  119  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  120  		pmi632_adc_tm: adc-tm@3500 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  121  			compatible = "qcom,spmi-adc-tm5";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  122  			reg = <0x3500>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  123  			interrupts = <0x2 0x35 0x0 IRQ_TYPE_EDGE_RISING>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  124  			#thermal-sensor-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  125  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  126  			#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  127  			status = "disabled";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  128  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  129  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  130  		pmi632_sdam_7: nvram@b600 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  131  			compatible = "qcom,spmi-sdam";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  132  			reg = <0xb600>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  133  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  134  			#size-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  135  			ranges = <0 0xb600 0x100>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  136  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  137  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  138  		pmi632_gpios: gpio@c000 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  139  			compatible = "qcom,pmi632-gpio", "qcom,spmi-gpio";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  140  			reg = <0xc000>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  141  			gpio-controller;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  142  			gpio-ranges = <&pmi632_gpios 0 0 8>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  143  			#gpio-cells = <2>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  144  			interrupt-controller;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  145  			#interrupt-cells = <2>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  146  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  147  	};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  148  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23 @149  	pmic@3 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  150  		compatible = "qcom,pmi632", "qcom,spmi-pmic";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  151  		reg = <0x3 SPMI_USID>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  152  		#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  153  		#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  154  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23 @155  		pmi632_lpg: pwm {
+>> +				struct vm_area_struct *vma, pgoff_t index,
+>> +				bool global_huge)
+> 
+> Why did you rename 'huge' variable to 'global_huge'? We were using 'huge' in
+> shmem_alloc_and_add_folio() before this commit. I guess it's just odd to me this
+> var rename without seen any name conflict inside it.
 
-:::::: The code at line 155 was first introduced by commit
-:::::: a1f0f2ebb044c7248c3f30b98de0f151505bd4bd arm64: dts: qcom: Add PMI632 PMIC
+This is to use the ‘inherit’ option of mTHP to be compatible with the 
+top level 'shmem_enabled' configuration (located at 
+'/mm/transparent_hugepage/shmem_enabled'). Original 'huge' can not 
+reflect the settings of the top level huge configuration. Moreover 
+'global' terminology also refers to the naming used by THP, for example, 
+hugepage_global_enabled().
 
-:::::: TO: Luca Weiss <luca@z3ntu.xyz>
-:::::: CC: Bjorn Andersson <andersson@kernel.org>
+>> +{
+>> +	unsigned long mask = READ_ONCE(huge_anon_shmem_orders_always);
+>> +	unsigned long within_size_orders = READ_ONCE(huge_anon_shmem_orders_within_size);
+>> +	unsigned long vm_flags = vma->vm_flags;
+>> +	/*
+>> +	 * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
+>> +	 * are enabled for this vma.
+>> +	 */
+>> +	unsigned long orders = BIT(PMD_ORDER + 1) - 1;
+>> +	loff_t i_size;
+>> +	int order;
+>> +
+> 
+> We can start the mm anon path here but we should exclude the ones that do not
+> apply for tmpfs.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+As I said above, this patch set is focus on the anon shmem. So we should 
+talk about this in the patch of mTHP support tmpfs.
+
+> 
+>> +	if ((vm_flags & VM_NOHUGEPAGE) ||
+>> +	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>> +		return 0;
+>> +
+>> +	/* If the hardware/firmware marked hugepage support disabled. */
+>> +	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * Following the 'deny' semantics of the top level, force the huge
+>> +	 * option off from all mounts.
+>> +	 */
+>> +	if (shmem_huge == SHMEM_HUGE_DENY)
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * Only allow inherit orders if the top-level value is 'force', which
+>> +	 * means non-PMD sized THP can not override 'huge' mount option now.
+>> +	 */
+>> +	if (shmem_huge == SHMEM_HUGE_FORCE)
+>> +		return READ_ONCE(huge_anon_shmem_orders_inherit);
+>> +
+>> +	/* Allow mTHP that will be fully within i_size. */
+>> +	order = highest_order(within_size_orders);
+>> +	while (within_size_orders) {
+>> +		index = round_up(index + 1, order);
+>> +		i_size = round_up(i_size_read(inode), PAGE_SIZE);
+>> +		if (i_size >> PAGE_SHIFT >= index) {
+>> +			mask |= within_size_orders;
+>> +			break;
+>> +		}
+>> +
+>> +		order = next_order(&within_size_orders, order);
+>> +	}
+>> +
+>> +	if (vm_flags & VM_HUGEPAGE)
+>> +		mask |= READ_ONCE(huge_anon_shmem_orders_madvise);
+>> +
+>> +	if (global_huge)
+>> +		mask |= READ_ONCE(huge_anon_shmem_orders_inherit);
+>> +
+>> +	return orders & mask;
+>> +}
+>> +
+>> +static unsigned long anon_shmem_suitable_orders(struct inode *inode, struct vm_fault *vmf,
+>> +					struct address_space *mapping, pgoff_t index,
+>> +					unsigned long orders)
+>> +{
+>> +	struct vm_area_struct *vma = vmf->vma;
+>> +	unsigned long pages;
+>> +	int order;
+>> +
+>> +	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+> 
+> This won't apply to tmpfs. I'm thinking if we can apply
+> shmem_mapping_size_order() [1] here for tmpfs path so we have the same suitable
+> orders for both paths.
+> 
+> [1] https://lore.kernel.org/all/v5acpezkt4ml3j3ufmbgnq5b335envea7xfobvowtaetvbt3an@v3pfkwly5jh2/#t
+
+Ditto.
+
+> 
+>> +	if (!orders)
+>> +		return 0;
+>> +
+>> +	/* Find the highest order that can add into the page cache */
+>> +	order = highest_order(orders);
+>> +	while (orders) {
+>> +		pages = 1UL << order;
+>> +		index = round_down(index, pages);
+>> +		if (!xa_find(&mapping->i_pages, &index,
+>> +			     index + pages - 1, XA_PRESENT))
+>> +			break;
+>> +		order = next_order(&orders, order);
+>> +	}
+>> +
+>> +	return orders;
+>> +}
+>> +#else
+>> +static unsigned long anon_shmem_allowable_huge_orders(struct inode *inode,
+>> +				struct vm_area_struct *vma, pgoff_t index,
+>> +				bool global_huge)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned long anon_shmem_suitable_orders(struct inode *inode, struct vm_fault *vmf,
+>> +					struct address_space *mapping, pgoff_t index,
+>> +					unsigned long orders)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>> +
+>>   static struct folio *shmem_alloc_folio(gfp_t gfp, int order,
+>>   		struct shmem_inode_info *info, pgoff_t index)
+>>   {
+>> @@ -1625,38 +1726,55 @@ static struct folio *shmem_alloc_folio(gfp_t gfp, int order,
+>>   	return folio;
+>>   }
+>>   
+>> -static struct folio *shmem_alloc_and_add_folio(gfp_t gfp,
+>> -		struct inode *inode, pgoff_t index,
+>> -		struct mm_struct *fault_mm, bool huge)
+>> +static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+>> +		gfp_t gfp, struct inode *inode, pgoff_t index,
+>> +		struct mm_struct *fault_mm, unsigned long orders)
+>>   {
+>>   	struct address_space *mapping = inode->i_mapping;
+>>   	struct shmem_inode_info *info = SHMEM_I(inode);
+>> -	struct folio *folio;
+>> +	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
+>> +	unsigned long suitable_orders = 0;
+>> +	struct folio *folio = NULL;
+>>   	long pages;
+>> -	int error;
+>> +	int error, order;
+>>   
+>>   	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+>> -		huge = false;
+>> +		orders = 0;
+>>   
+>> -	if (huge) {
+>> -		pages = HPAGE_PMD_NR;
+>> -		index = round_down(index, HPAGE_PMD_NR);
+>> +	if (orders > 0) {
+> 
+> Can we get rid of this condition if we handle all allowable orders in 'orders'?
+> Including order-0 and PMD-order. I agree, we do not need the huge flag anymore
+> since you have handled all cases in shmem_allowable_huge_orders().
+
+IMO, for order-0, we do not need suitable validation, so just 
+fallbacking to order 0 allocation is clear to me.
+
+> 
+>> +		if (vma && vma_is_anon_shmem(vma)) {
+>> +			suitable_orders = anon_shmem_suitable_orders(inode, vmf,
+>> +							mapping, index, orders);
+>> +		} else if (orders & BIT(HPAGE_PMD_ORDER)) {
+>> +			pages = HPAGE_PMD_NR;
+>> +			suitable_orders = BIT(HPAGE_PMD_ORDER);
+>> +			index = round_down(index, HPAGE_PMD_NR);
+>>   
+>> -		/*
+>> -		 * Check for conflict before waiting on a huge allocation.
+>> -		 * Conflict might be that a huge page has just been allocated
+>> -		 * and added to page cache by a racing thread, or that there
+>> -		 * is already at least one small page in the huge extent.
+>> -		 * Be careful to retry when appropriate, but not forever!
+>> -		 * Elsewhere -EEXIST would be the right code, but not here.
+>> -		 */
+>> -		if (xa_find(&mapping->i_pages, &index,
+>> -				index + HPAGE_PMD_NR - 1, XA_PRESENT))
+>> -			return ERR_PTR(-E2BIG);
+>> +			/*
+>> +			 * Check for conflict before waiting on a huge allocation.
+>> +			 * Conflict might be that a huge page has just been allocated
+>> +			 * and added to page cache by a racing thread, or that there
+>> +			 * is already at least one small page in the huge extent.
+>> +			 * Be careful to retry when appropriate, but not forever!
+>> +			 * Elsewhere -EEXIST would be the right code, but not here.
+>> +			 */
+>> +			if (xa_find(&mapping->i_pages, &index,
+>> +				    index + HPAGE_PMD_NR - 1, XA_PRESENT))
+>> +				return ERR_PTR(-E2BIG);
+>> +		}
+>>   
+>> -		folio = shmem_alloc_folio(gfp, HPAGE_PMD_ORDER, info, index);
+>> -		if (!folio && pages == HPAGE_PMD_NR)
+>> -			count_vm_event(THP_FILE_FALLBACK);
+>> +		order = highest_order(suitable_orders);
+>> +		while (suitable_orders) {
+>> +			pages = 1UL << order;
+>> +			index = round_down(index, pages);
+>> +			folio = shmem_alloc_folio(gfp, order, info, index);
+>> +			if (folio)
+>> +				goto allocated;
+>> +
+>> +			if (pages == HPAGE_PMD_NR)
+>> +				count_vm_event(THP_FILE_FALLBACK);
+>> +			order = next_order(&suitable_orders, order);
+>> +		}
+>>   	} else {
+>>   		pages = 1;
+>>   		folio = shmem_alloc_folio(gfp, 0, info, index);
+>> @@ -1664,6 +1782,7 @@ static struct folio *shmem_alloc_and_add_folio(gfp_t gfp,
+>>   	if (!folio)
+>>   		return ERR_PTR(-ENOMEM);
+>>   
+>> +allocated:
+>>   	__folio_set_locked(folio);
+>>   	__folio_set_swapbacked(folio);
+>>   
+>> @@ -1958,7 +2077,8 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>>   	struct mm_struct *fault_mm;
+>>   	struct folio *folio;
+>>   	int error;
+>> -	bool alloced;
+>> +	bool alloced, huge;
+>> +	unsigned long orders = 0;
+>>   
+>>   	if (WARN_ON_ONCE(!shmem_mapping(inode->i_mapping)))
+>>   		return -EINVAL;
+>> @@ -2030,14 +2150,21 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>>   		return 0;
+>>   	}
+>>   
+>> -	if (shmem_is_huge(inode, index, false, fault_mm,
+>> -			  vma ? vma->vm_flags : 0)) {
+>> +	huge = shmem_is_huge(inode, index, false, fault_mm,
+>> +			     vma ? vma->vm_flags : 0);
+>> +	/* Find hugepage orders that are allowed for anonymous shmem. */
+>> +	if (vma && vma_is_anon_shmem(vma))
+> 
+> I guess we do not want to check the anon path here either (in case you agree to
+> merge this with tmpfs path).
+
+Ditto. Should do this in another patch.
+
+> 
+>> +		orders = anon_shmem_allowable_huge_orders(inode, vma, index, huge);
+>> +	else if (huge)
+>> +		orders = BIT(HPAGE_PMD_ORDER);
+> 
+> Why not handling this case inside allowable_huge_orders()?
+
+Ditto.
+
+> 
+>> +
+>> +	if (orders > 0) {
+> 
+> Does it make sense to handle these case anymore? Before, we had the huge
+> path and order-0. If we handle all cases in allowable_orders() perhaps we can
+> simplify this.
+> 
+>>   		gfp_t huge_gfp;
+>>   
+>>   		huge_gfp = vma_thp_gfp_mask(vma);
+> 
+> We are also setting this flag regardless of the final order. Meaning that
+> suitable_orders() might return order-0 and yet we keep the huge gfp flag. Is
+> that right?
+
+If anon_shmem_suitable_orders() returns order-0, then 
+shmem_alloc_and_add_folio() will return -ENOMEM, which will lead to 
+fallback order-0 allocation with 'gfp' flag in this function.
+
+> 
+>>   		huge_gfp = limit_gfp_mask(huge_gfp, gfp);
+>> -		folio = shmem_alloc_and_add_folio(huge_gfp,
+>> -				inode, index, fault_mm, true);
+>> +		folio = shmem_alloc_and_add_folio(vmf, huge_gfp,
+>> +				inode, index, fault_mm, orders);
+>>   		if (!IS_ERR(folio)) {
+>>   			if (folio_test_pmd_mappable(folio))
+>>   				count_vm_event(THP_FILE_ALLOC);
+>> @@ -2047,7 +2174,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>>   			goto repeat;
+>>   	}
+>>   
+>> -	folio = shmem_alloc_and_add_folio(gfp, inode, index, fault_mm, false);
+>> +	folio = shmem_alloc_and_add_folio(vmf, gfp, inode, index, fault_mm, 0);
+>>   	if (IS_ERR(folio)) {
+>>   		error = PTR_ERR(folio);
+>>   		if (error == -EEXIST)
+>> @@ -2058,7 +2185,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>>   
+>>   alloced:
+>>   	alloced = true;
+>> -	if (folio_test_pmd_mappable(folio) &&
+>> +	if (folio_test_large(folio) &&
+>>   	    DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE) <
+>>   					folio_next_index(folio) - 1) {
+>>   		struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>> -- 
+>> 2.39.3
 
