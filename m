@@ -1,211 +1,150 @@
-Return-Path: <linux-kernel+bounces-209396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D15903409
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:42:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC35E90340C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0388C1C23072
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:42:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F360B2A019
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002BF172BBF;
-	Tue, 11 Jun 2024 07:42:42 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C382172791;
-	Tue, 11 Jun 2024 07:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF7C172796;
+	Tue, 11 Jun 2024 07:43:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAAF1E52F;
+	Tue, 11 Jun 2024 07:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091761; cv=none; b=pNx4NFny9lTlbNBtV2QrF3WFSiT4XymK1mZAHMAB7XYVRugukVtX9FaudQDuRcwdM+t1f1Wni+FhUxDY4EiUmVu5z4v1OGXMTBRDF05MVKMXeoHfOk5gJQ0CvHUV5CirhpHmJGQefwrIu8gnDfVwiovWRFKGAEwUqcml97UkSCs=
+	t=1718091810; cv=none; b=Tc0vjCgn4SBRR1zuo0dQR3IfIwHZjvAW263nmCdFu6zpWuNdZ6Ggzh81kXpDM//U4ldSvEEzSDwW2Ufs5xWy6m97HWxloQJMHudCYNM0Rj9ohqbstZLpTYcGxkJESZv3YZYQepZMwDG/GZU32M0zG722JYgiYYB+jO7yr3t9SJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091761; c=relaxed/simple;
-	bh=o1zahQxIWD+/98sedHnveo2KBjxi7jCNvDC5mVk0MfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVZaNO0nZdloCG60psyZBP9vDK9M+teBeoCrwRDjl4y0ojO03aAS/Ave8rB4h6tnh+bk8JPJeGgdFCxHmo8SqLypyV6eazgXxGprp0nHuy6jdii33Y43KhKm0bbAxHPj2z/cXQjLMY5Jxde0k6nLCmPYbKdAenclqh8FkNm/q80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c681dd692so3833556a12.3;
-        Tue, 11 Jun 2024 00:42:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718091758; x=1718696558;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsQWNnrH8jmRHztYPzNkoqj4xc0t7XwdNHf/EVwsa/8=;
-        b=NQ3K/J35ZHbajSYPjT0AfiJ8aYGg/PgEhz82xgc2uSmuE3kSGhuV+03v4ApBN5HqKC
-         YzJhyJyx+Ehxoc99qBaUE0EzJ6yftMzIPo2XX9PcIgiePGE4xJWoV9jzHTZGKuChk/Oj
-         NHatuksVl+oWirHNygcTCUCPBW0wkxxXene10W0VutQ5p+hbVrfQdb06Gjj3h8ZbJV1D
-         Uf/XDJtYXF93Nz+ehvFVEW7EyfTCT2uMfTt/wprLN+s6inNJcTdpmE9sN1QbMilm7uKb
-         BBc2z0dLDTU31CzSZpUgfvJDZqIMub0r6BvhvWqnEHYat5zujJvrtD0hxuVuTUVoAgH+
-         UhNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi6X7Qp5i6A2dXsns76YLD4lHKDZP8f6+b0JPQP6B1ObtAL+tYodwAQuo9N98eGEUaPd5ufX2F9sfmzxZ2oDTr+tjRbEJB5h1SsBy4
-X-Gm-Message-State: AOJu0YwoEkiMt36l6zA9Wh6/nGr9oWwR1654bejLCc77SdFqHv96rM+B
-	t1BYPj2I/f0sW/svguiC5DnQSsta5X6qyCTEeP/Mx1teeCmjZOcHpPh1E+1FNgY=
-X-Google-Smtp-Source: AGHT+IEf9G6NJ7DC44th3DnZlFQqr/OKhUOxs3hywcJPukJUxU+XaHYzyqOXwhNEIO6nlZViFMOwfA==
-X-Received: by 2002:a17:906:fe49:b0:a68:fdfd:8041 with SMTP id a640c23a62f3a-a6cd7a843f0mr983795866b.42.1718091757537;
-        Tue, 11 Jun 2024 00:42:37 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f01a060dcsm418635266b.182.2024.06.11.00.42.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 00:42:37 -0700 (PDT)
-Message-ID: <0d8da651-4e41-4af2-81cc-732f17aab403@kernel.org>
-Date: Tue, 11 Jun 2024 09:42:36 +0200
+	s=arc-20240116; t=1718091810; c=relaxed/simple;
+	bh=mUKmskpCKDSHY70SAdkuxHeROzdabXbDKLMnuzT2on8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpaHNuaEI62pIoRUk9oWu10wBKASne1lkAYltNoHdR4ueiT/eyVuQaVyr13Gm/vCegrED7KTLDz3wgBxIj58ARp60VcNVbzX5r4XmyeWqak4vdYokLUNf9btgqqbV2M6o5T3dOoEzC+o69CdWcVMNQHKi+Rk+zucKEASy4kYRg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 353A911FB;
+	Tue, 11 Jun 2024 00:43:51 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.41.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F32623F64C;
+	Tue, 11 Jun 2024 00:43:21 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	oleg@redhat.com,
+	stsp2@yandex.ru
+Cc: mingo@kernel.org,
+	tglx@linutronix.de,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com,
+	AneeshKumar.KizhakeVeetil@arm.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v2 0/2] Add test to distinguish between thread's signal mask and ucontext_t
+Date: Tue, 11 Jun 2024 13:13:05 +0530
+Message-Id: <20240611074307.812939-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] tty: mxser: serial: 8250: Relocate device IDs from
- mxser to 8250_pci
-To: Crescent Hsieh <crescentcy.hsieh@moxa.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20240607114336.4496-1-crescentcy.hsieh@moxa.com>
- <20240607114336.4496-4-crescentcy.hsieh@moxa.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
- IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
- eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
- 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
- XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
- l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
- UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
- gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
- oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
- o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
- Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
- wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
- t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
- YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
- DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
- f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
- 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
- 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
- /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
- 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
- 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
- 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
- wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
- 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
- jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
- wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
- wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
- W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
- f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
- DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
- S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <20240607114336.4496-4-crescentcy.hsieh@moxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07. 06. 24, 13:43, Crescent Hsieh wrote:
-> The devices in mxser could be supported by 8250_pci, so this patch
-> relocates these device IDs from mxser into 8250_pci.
-> 
-> Signed-off-by: Crescent Hsieh <crescentcy.hsieh@moxa.com>
-> ---
->   drivers/tty/mxser.c                | 50 ------------------------------
->   drivers/tty/serial/8250/8250_pci.c | 50 ++++++++++++++++++++++++++++++
->   2 files changed, 50 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
-> index 458bb1280ebf..b0e7ea6611bf 100644
-> --- a/drivers/tty/mxser.c
-> +++ b/drivers/tty/mxser.c
-> @@ -160,31 +160,6 @@
->   #define MXSER_CUSTOM_DIVISOR	(MXSER_BAUD_BASE * 16)
->   
->   #define PCI_DEVICE_ID_MOXA_RC7000	0x0001
-> -#define PCI_DEVICE_ID_MOXA_CP102	0x1020
-> -#define PCI_DEVICE_ID_MOXA_CP102UL	0x1021
-> -#define PCI_DEVICE_ID_MOXA_CP102U	0x1022
-> -#define PCI_DEVICE_ID_MOXA_CP102UF	0x1023
-> -#define PCI_DEVICE_ID_MOXA_C104		0x1040
-> -#define PCI_DEVICE_ID_MOXA_CP104U	0x1041
-> -#define PCI_DEVICE_ID_MOXA_CP104JU	0x1042
-> -#define PCI_DEVICE_ID_MOXA_CP104EL	0x1043
-> -#define PCI_DEVICE_ID_MOXA_POS104UL	0x1044
-> -#define PCI_DEVICE_ID_MOXA_CB108	0x1080
-> -#define PCI_DEVICE_ID_MOXA_CP112UL	0x1120
-> -#define PCI_DEVICE_ID_MOXA_CT114	0x1140
-> -#define PCI_DEVICE_ID_MOXA_CP114	0x1141
-> -#define PCI_DEVICE_ID_MOXA_CB114	0x1142
-> -#define PCI_DEVICE_ID_MOXA_CP114UL	0x1143
-> -#define PCI_DEVICE_ID_MOXA_CP118U	0x1180
-> -#define PCI_DEVICE_ID_MOXA_CP118EL	0x1181
-> -#define PCI_DEVICE_ID_MOXA_CP132	0x1320
-> -#define PCI_DEVICE_ID_MOXA_CP132U	0x1321
-> -#define PCI_DEVICE_ID_MOXA_CP134U	0x1340
-> -#define PCI_DEVICE_ID_MOXA_CB134I	0x1341
-> -#define PCI_DEVICE_ID_MOXA_CP138U	0x1380
-> -#define PCI_DEVICE_ID_MOXA_C168		0x1680
-> -#define PCI_DEVICE_ID_MOXA_CP168U	0x1681
-> -#define PCI_DEVICE_ID_MOXA_CP168EL	0x1682
->   
->   #define MXSER_NPORTS(ddata)		((ddata) & 0xffU)
->   #define MXSER_HIGHBAUD			0x0100
-> @@ -212,32 +187,7 @@ static const struct {
->   /* driver_data correspond to the lines in the structure above
->      see also ISA probe function before you change something */
->   static const struct pci_device_id mxser_pcibrds[] = {
-> -	{ PCI_DEVICE_DATA(MOXA, C168,		8) },
-> -	{ PCI_DEVICE_DATA(MOXA, C104,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP132,		2) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP114,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CT114,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP102,		2 | MXSER_HIGHBAUD) },
+This patch series is motivated by the following observation:
 
-How is this MXSER_HIGHBAUD handled in 8250_pci?
+Raise a signal, jump to signal handler. The ucontext_t structure dumped
+by kernel to userspace has a uc_sigmask field having the mask of blocked
+signals. If you run a fresh minimalistic program doing this, this field
+is empty, even if you block some signals while registering the handler
+with sigaction().
 
-> -	{ PCI_DEVICE_DATA(MOXA, CP104U,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP168U,		8) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP132U,		2) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP134U,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP104JU,	4) },
->   	{ PCI_DEVICE_DATA(MOXA, RC7000,		8) }, /* RC7000 */
+Here is what the man-pages have to say:
 
-Can you simply add this exception to mxser_get_nports() I suggested in 
-1/6 and drop the whole mxser then \o/?
+sigaction(2): "sa_mask specifies a mask of signals which should be blocked
+(i.e., added to the signal mask of the thread in which the signal handler
+is invoked) during execution of the signal handler. In addition, the
+signal which triggered the handler will be blocked, unless the SA_NODEFER
+flag is used."
 
-I had a long-term plan to mount mxser onto serial-core (or 8250). I 
-haven't managed the conversion yet. So I am glad to see this.
+signal(7): Under "Execution of signal handlers", (1.3) implies:
 
-> -	{ PCI_DEVICE_DATA(MOXA, CP118U,		8) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP102UL,	2) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP102U,		2) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP118EL,	8) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP168EL,	8) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP104EL,	4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CB108,		8) },
-> -	{ PCI_DEVICE_DATA(MOXA, CB114,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CB134I,		4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP138U,		8) },
-> -	{ PCI_DEVICE_DATA(MOXA, POS104UL,	4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP114UL,	4) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP102UF,	2) },
-> -	{ PCI_DEVICE_DATA(MOXA, CP112UL,	2) },
->   	{ }
->   };
+"The thread's current signal mask is accessible via the ucontext_t
+object that is pointed to by the third argument of the signal handler."
+
+But, (1.4) states:
+
+"Any signals specified in act->sa_mask when registering the handler with
+sigprocmask(2) are added to the thread's signal mask.  The signal being
+delivered is also added to the signal mask, unless SA_NODEFER was
+specified when registering the handler.  These signals are thus blocked
+while the handler executes."
+
+There clearly is no distinction being made in the man pages between
+"Thread's signal mask" and ucontext_t; this logically should imply
+that a signal blocked by populating struct sigaction should be visible
+in ucontext_t.
+
+Here is what the kernel code does (for Aarch64):
+
+do_signal() -> handle_signal() -> sigmask_to_save(), which returns
+&current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
+__copy_to_user(). Hence, &current->blocked is copied to ucontext_t
+exposed to userspace. Returning back to handle_signal(),
+signal_setup_done() -> signal_delivered() -> sigorsets() and
+set_current_blocked() are responsible for using information from
+struct ksignal ksig, which was populated through the sigaction()
+system call in kernel/signal.c:
+copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
+to update &current->blocked; hence, the set of blocked signals for the
+current thread is updated AFTER the kernel dumps ucontext_t to
+userspace.
+
+Assuming that the above is indeed the intended behaviour, because it
+semantically makes sense, since the signals blocked using sigaction()
+remain blocked only till the execution of the handler, and not in the
+context present before jumping to the handler (but nothing can be
+confirmed from the man-pages), the series introduces a test for
+mangling with uc_sigmask. I will send a separate series to fix the
+man-pages.
+
+The proposed selftest has been tested out on Aarch32, Aarch64 and x86_64.
+
+Changes in v2:
+- Replace all occurrences of SIGPIPE with SIGSEGV
+- Add a testcase: Raise the same signal again; it must not be queued
+- Remove unneeded <assert.h>, <unistd.h>
+- Give a detailed test description in the comments; also describe the
+  exact meaning of delivered and blocked
+- Handle errors for all libc functions/syscalls
+- Mention tests in Makefile and .gitignore in alphabetical order
+
+Dev Jain (2):
+  selftests: Rename sigaltstack to generic signal
+  selftests: Add a test mangling with uc_sigmask
+
+ tools/testing/selftests/Makefile              |   2 +-
+ .../{sigaltstack => signal}/.gitignore        |   3 +-
+ .../{sigaltstack => signal}/Makefile          |   3 +-
+ .../current_stack_pointer.h                   |   0
+ .../selftests/signal/mangle_uc_sigmask.c      | 194 ++++++++++++++++++
+ .../sas.c => signal/sigaltstack.c}            |   0
+ 6 files changed, 199 insertions(+), 3 deletions(-)
+ rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (57%)
+ rename tools/testing/selftests/{sigaltstack => signal}/Makefile (53%)
+ rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
+ create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
+ rename tools/testing/selftests/{sigaltstack/sas.c => signal/sigaltstack.c} (100%)
+
 -- 
-js
+2.34.1
 
 
