@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-209583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930879037FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFC6903801
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D010288AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F903282294
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6249179203;
-	Tue, 11 Jun 2024 09:36:58 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C8176FC9;
-	Tue, 11 Jun 2024 09:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8746176ADA;
+	Tue, 11 Jun 2024 09:39:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33E62230F;
+	Tue, 11 Jun 2024 09:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098618; cv=none; b=FD9+ClsD4SrEGaPJHzjqoppAcTFCHD69k0wVwKIjtWinPIDFOqSm0Kmo+tym5dcKoZXCGd3SGhJSAvxog0nib1LWmHevjm8iLrhUdMNgdubihGwadDI5gS/E1l6DJYuILZLaEB6CXGdrycWgfGkWWXMzmpeoStn7auUfmNKk9j4=
+	t=1718098769; cv=none; b=T4v35Pu+RsTi10WpTE1KegwiaVsQgXtfrHfUDJ1UAZYSzNAx4S1s3OhkGgt1OcDhAL9ips7fK7hMHyQglfexGraTOrtudrRI/IKb6NQgJeJYx0xonwIQUOKTPsEM2lMxLuuGLTj6g6gpc4lWroeRS9aP0+4eNppWtJ9FqrHFo4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098618; c=relaxed/simple;
-	bh=q+pnA94jVzMSLj4z6FXJf6PzzV6xwk04ttDNDlMYGio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qWsFh4p0FHaDEorGk0oAjO1AsNjxqSif4JDsR55N4uaobO5kJ0poAzP5b59lwIEchmAnrjSaIAMaaDlaYeK0uMN2AIXlo1l793RGJ1/+FDAbJNR2L4MHgnq/f3MleRA0+Lfpun1MNyRYUmfxMmkFT2+/afBeAvm/VE9tKZQ/LMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Vz3PT4NTzz3560P;
-	Tue, 11 Jun 2024 17:33:01 +0800 (CST)
-Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 161E5180065;
-	Tue, 11 Jun 2024 17:36:48 +0800 (CST)
-Received: from [10.67.111.172] (10.67.111.172) by
- dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 11 Jun 2024 17:36:47 +0800
-Message-ID: <d0743ed8-d26c-3471-ed5d-66ec9e46db5e@huawei.com>
-Date: Tue, 11 Jun 2024 17:36:47 +0800
+	s=arc-20240116; t=1718098769; c=relaxed/simple;
+	bh=Uay35M+PyQWH7p9a9tZvDrt3vXUxspGLDHd+2+fDfGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrNtvI0ayOTYZeHtwYZppoWBADvGFjOQHC8m1V19jF0H6RyKb/EGb9GrWxB0IsUY2VxMITVQZymQTrMabptnDK8aPc4FdDrobX7efeDhDsnZhKsVNFWNVP/JRu9I5Rn4QF6ykEU+NKteQRL6X0a+mEehR3XCnjwY0UhSf2fDXq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86B731424;
+	Tue, 11 Jun 2024 02:39:44 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5D063F5A1;
+	Tue, 11 Jun 2024 02:39:19 -0700 (PDT)
+Date: Tue, 11 Jun 2024 10:39:18 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "liwei (JK)" <liwei728@huawei.com>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, liaoyu15@huawei.com
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+Message-ID: <ZmgbRh+m9MmEaopK@arm.com>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <ZjoBrF4bAK5ukm7H@arm.com>
+ <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
+ <ZmB1qKucR5fXk100@arm.com>
+ <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC PATCH] ftrace: Skip __fentry__ location of overridden weak
- functions
-Content-Language: en-US
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <rostedt@goodmis.org>, <mcgrof@kernel.org>, <mhiramat@kernel.org>,
-	<mark.rutland@arm.com>, <mathieu.desnoyers@efficios.com>,
-	<jpoimboe@kernel.org>, <linux-modules@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>
-References: <20240607115211.734845-1-zhengyejian1@huawei.com>
- <20240607150228.GR8774@noisy.programming.kicks-ass.net>
- <57e499a4-e26d-148f-317d-233e873d11b4@huawei.com>
- <20240611092157.GU40213@noisy.programming.kicks-ass.net>
-From: Zheng Yejian <zhengyejian1@huawei.com>
-In-Reply-To: <20240611092157.GU40213@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500012.china.huawei.com (7.185.36.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
 
-On 2024/6/11 17:21, Peter Zijlstra wrote:
-> On Tue, Jun 11, 2024 at 09:56:51AM +0800, Zheng Yejian wrote:
->> On 2024/6/7 23:02, Peter Zijlstra wrote:
-> 
->>> Oh gawd, sodding weak functions again.
->>>
->>> I would suggest changing scipts/kallsyms.c to emit readily identifiable
->>> symbol names for all the weak junk, eg:
->>>
->>>     __weak_junk_NNNNN
->>>
->>
->> Sorry for the late reply, I just had a long noon holiday :>
->>
->> scripts/kallsyms.c is compiled and used to handle symbols in vmlinux.o
->> or vmlinux.a, see kallsyms_step() in scripts/link-vmlinux.sh, those
->> overridden weak symbols has been removed from symbol table of vmlinux.o
->> or vmlinux.a. But we can found those symbols from original xx/xx.o file,
->> for example, the weak free_initmem() in in init/main.c is overridden,
->> its symbol is not in vmlinx but is still in init/main.o .
->>
->> How about traversing all origin xx/xx.o and finding all weak junk symbols ?
-> 
-> You don't need to. ELF symbl tables have an entry size for FUNC type
-> objects, this means that you can readily find holes in the text and fill
-> them with a symbol.
-> 
-> Specifically, you can check the mcount locations against the symbol
-> table and for every one that falls in a hole, generate a new junk
-> symbol.
-> 
-> Also see 4adb23686795 where objtool adds these holes to the
-> ignore/unreachable code check.
-> 
-> 
-> The lack of size for kallsyms is in a large part what is causing the
-> problems.
+Hey,
 
-Thanks for your suggestions, I'll try it soon.
+On Thursday 06 Jun 2024 at 12:50:31 (+0530), Viresh Kumar wrote:
+> On 05-06-24, 15:26, Ionela Voinescu wrote:
+> > > > > > 		cpufreq_start_governor() // governor: performance
+> > > > > > 			new_freq = cpufreq_driver->get() // if new_freq == policy->max
+> > > > > > 			if (policy->cur != new_freq)
+> > > > > > 			cpufreq_out_of_sync(policy, new_freq)
+> > > > > > 				...
+> > > > > > 				policy->cur = new_freq
+> > > > I believe the problem is here   ^^^^^^^^^^^^^^^^^^^^^^.
+> > > > 
+> > > > cpufreq_verify_current_freq() should not update policy->cur unless a
+> > > > request to change frequency has actually reached the driver. I believe
+> > > > policy->cur should always reflect the request, not the actual current
+> > > > frequency of the CPU.
+> 
+> There are times when the core doesn't have any prior information about
+> the frequency, for example at driver probe time and resume. And so
+> needs to set policy->cur by reading it from the hardware.
+> 
 
---
+Makes sense! But maybe we should no longer update policy->cur to the
+current/hardware frequency once a request comes through from a
+governor, and we have a first actually requested value.
 
-Thanks,
-ZYJ
+> > > > Given that new_freq is the current (hardware) frequency of the CPU,
+> > > > obtained via .get(), it can be the nominal frequency, as it is in your
+> > > > case, or any frequency, if there is any firmware/hardware capping in
+> > > > place.
+> > > > 
+> > > > This causes the issue in your scenario, in which __cpufreq_driver_target()
+> > > > filters the request from the governor as it finds it equal to policy->cur,
+> > > > and it believes it's already set by hardware.
+> 
+> I am still not sure why mismatch happens at boot time here.
+> 
+> > > > This causes another issue in which scaling_cur_freq, which for some
+> > > > systems returns policy->cur, ends up returning the hardware frequency of
+> > > > the CPUs, and not the last frequency request, as it should:
+> > > > 
+> > > > "scaling_cur_freq
+> > > > Current frequency of all of the CPUs belonging to this policy (in kHz).
+> > > > 
+> > > > In the majority of cases, this is the frequency of the last P-state
+> > > > requested by the scaling driver from the hardware using the scaling
+> > > > interface provided by it, which may or may not reflect the frequency
+> > > > the CPU is actually running at (due to hardware design and other
+> > > > limitations)." [1]
+> 
+> There is discussion going on about this in another thread [1] now.
+
+Thanks for the contributions to that topic, by the way.
+
+Kind regards,
+Ionela.
+
+> 
+> > > > Therefore policy->cur gets polluted with the hardware frequency of the
+> > > > CPU sampled at that one time, and this affects governor decisions, as
+> > > > in your case, and scaling_cur_freq feedback as well. This bad value will
+> > > > not change until there's another .target() or cpufreq_out_of_sync()
+> > > > call, which will never happen for fixed frequency governors like the
+> > > > performance governor.
+> 
+> --
+> viresh
+> 
+> [1] https://lore.kernel.org/all/20240603081331.3829278-2-beata.michalska@arm.com/
 
