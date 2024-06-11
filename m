@@ -1,142 +1,170 @@
-Return-Path: <linux-kernel+bounces-210026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129CF903E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:00:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513EE903E49
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72403B25A90
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFBD28A77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6DD17D894;
-	Tue, 11 Jun 2024 13:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A748917D8BE;
+	Tue, 11 Jun 2024 14:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nLbjP9f3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H1evq0Dq"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B417D372;
-	Tue, 11 Jun 2024 13:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44361176ABA;
+	Tue, 11 Jun 2024 14:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114387; cv=none; b=fIl74YvodNhNQK4+7Pf6gS4Mr9Ip99JT51y82cClpMxEv1T0YZYCqwmKhwOm4jl8aDrYjbD6d9uYSuf4pVWxBJuADixt1KCZRmhBY7LZUZwm0pxyqJhX53DrUanHHOZpr2Bt/9fQ4+KC0lNM8Xocj56nQfTjEfRjYQHtz0/LBsQ=
+	t=1718114444; cv=none; b=ghcsUAI0Ki/tTzQPvyUTQkRe9WSMeKfMDHUmlBhkYeyivhSQQnpr9dpWa8PSd/gtK49esLrbIBio3BFRC/RtgNW4IMyv0cDJsrbe6ANxS7qqMm+8YWBRyoW3qUpLyksbirBz3aS01CNzG3WdMYfpV0S+w0kMRSPsiDSez4UQcPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114387; c=relaxed/simple;
-	bh=XAGAJPC8ncM0xNaSjZWVLtTcilFlJ3VwcdgNhF06KS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hddaIVTircSWy3AqP+6J14HKXWXuNtlSXsOnEFPC0FbJn8sUdlFltbZWUc9gnsspREXvLW5I8xToOm98yAhlb5Hlwl4laNdRlz4bnGUMuCfIXnXWW4vQTfNYvmK6WzujWHWbS31NuWuEMm7WabsmVqZbBNtQKNlHuP/2ayPIR0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nLbjP9f3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BA7qdB016879;
-	Tue, 11 Jun 2024 13:59:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dxaROFs1iF2+cQLuAxUw+KpjAAlVxc/tDaPar/eQXwk=; b=nLbjP9f3CWn3vI5m
-	0wuRdFX98e2vjfXxaCRBeGfQNalun3BH49257azkIRLfjKKe1ug/p7m5bgtGmriL
-	+7YizvDHhPAyDwfTW6PZ0dts4GAxQCB5Usl/pGvsOEB8kDegWLEtbzDWu/RiXfY7
-	rTt8yrm4WY70yhMGjkcXwb2maMoYtkw7UdjgQRJgtR5lZwPyn12lbL0qI7IczIAj
-	C89MJHSwWMFVKiZHEmzKUbw3zDUPJL4k1hmMUFGYc2UEmEX/YQn953BzNSuth5X2
-	lO76t54vSY6yaOyLvnx5uY9Ul/GR8so2/ALKo7cukRTefr5NO8QO4YBuVD7rwQTB
-	GQE7Lg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypmjarm8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 13:59:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BDxP9i010242
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 13:59:25 GMT
-Received: from [10.48.243.20] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 06:59:24 -0700
-Message-ID: <3f796712-4ab8-47d6-bb68-1a3f2d3d0ffd@quicinc.com>
-Date: Tue, 11 Jun 2024 06:59:16 -0700
+	s=arc-20240116; t=1718114444; c=relaxed/simple;
+	bh=Nn4o4q+BV9qqo5+3JXOfWLj3V0S/VMi7dVbqAdD7kd0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TkINHqSrjKcX/XxBH02DwpBy0BzZE053MuDdHg/3x2dIIKE53psgNUaokCoE37nyJ95/Tdsu7MlHFyY3/0+pxZhXU/fuu9i0bsvkS5mGJVOG0MP1n6y7LCXgo8sJ4TrORQGVOXpJ9xlnEcqVd4u2W3+sY+75Z9Q4DV0CzTDF1o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H1evq0Dq; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BE0aVY077223;
+	Tue, 11 Jun 2024 09:00:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718114436;
+	bh=UksPvX2iT5jFoUevaSSujIFfKusReYrJlUO5ZImZzJE=;
+	h=From:To:CC:Subject:Date;
+	b=H1evq0Dq7+r1lVU+TBUsSZjRTmrtz/7ql5n8LTuhfc1+wJg2fvZ/qHiyYHjfVZtIt
+	 sMrC2Kfz2395Weq+epIIQtiGNT5L2i448dffVg8VghhWO4thcybUMoPCrGtlQ5eAOm
+	 CL28OAs1Y8bgTaxRSp7vIth/7Gviqp18CTyE2QYU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BE0aIl055885
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Jun 2024 09:00:36 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Jun 2024 09:00:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Jun 2024 09:00:35 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BE0Zc9102178;
+	Tue, 11 Jun 2024 09:00:35 -0500
+From: Andrew Davis <afd@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH] dt-bindings: gpio: lsi,zevio-gpio: convert to YAML
+Date: Tue, 11 Jun 2024 09:00:34 -0500
+Message-ID: <20240611140034.24685-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Zhenyu Wang
-	<zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.wang.linux@gmail.com>,
-        Jani Nikula
-	<jani.nikula@linux.intel.com>,
-        Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        Dave Airlie <airlied@redhat.com>, Sean
- Paul <sean@poorly.run>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <intel-gvt-dev@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>
-References: <20240611-md-drivers-gpu-drm-v2-1-0b7d9347b159@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240611-md-drivers-gpu-drm-v2-1-0b7d9347b159@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kyISZegIPP9aK6hGzjx20Sn3FHfPn_k4
-X-Proofpoint-ORIG-GUID: kyISZegIPP9aK6hGzjx20Sn3FHfPn_k4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- clxscore=1015 mlxscore=0 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110101
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/11/2024 6:56 AM, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/gud/gud.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/i915/kvmgt.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/udl/udl.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> For consistency this includes drivers/gpu/drm/drm_simple_kms_helper.c
-> since it contains a MODULE_LICENSE() even though it isn't built as a
-> separate module -- it is always built as part of drm_kms_helper and
-> drm_kms_helper_common.c already provides a MODULE_DESCRIPTION for that
-> module.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> This is the last in a set of patches to drivers/gpu/drm. The
-> preceeding patches cleaned up subdirectiries that had more than one
-> issue. This patch cleans up the stragglers. Let me know if any of
-> these modifications need to segregated into separate patches.
-> ---
-> Changes in v2:
-> - Removed all references to drivers/gpu/drm/drm_mipi_dbi.c since it is already
->   being handled by:
->   https://lore.kernel.org/all/20240425125627.2275559-1-andriy.shevchenko@linux.intel.com/
-> - Link to v1: https://lore.kernel.org/r/20240609-md-drivers-gpu-drm-v1-1-89e9a316d513@quicinc.com
+Convert Zevio GPIO controller bindings to DT schema.
 
-Nevermind, as Andy pointed out my v1 has already been applied.
+Changes during conversion:
+ - Add used but undocumented interrupts property
 
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 -------
+ .../bindings/gpio/lsi,zevio-gpio.yaml         | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+deleted file mode 100644
+index a37bd9ae27307..0000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Zevio GPIO controller
+-
+-Required properties:
+-- compatible: Should be "lsi,zevio-gpio"
+-- reg: Address and length of the register set for the device
+-- #gpio-cells: Should be two. The first cell is the pin number and the
+-  second cell is used to specify optional parameters (currently unused).
+-- gpio-controller: Marks the device node as a GPIO controller.
+-
+-Example:
+-	gpio: gpio@90000000 {
+-		compatible = "lsi,zevio-gpio";
+-		reg = <0x90000000 0x1000>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+new file mode 100644
+index 0000000000000..542b5f9a495d9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/lsi,zevio-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zevio GPIO controller
++
++maintainers:
++  - Andrew Davis <afd@ti.com>
++
++properties:
++  compatible:
++    const: lsi,zevio-gpio
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    description: The first cell is the pin number and the second cell is used
++      to specify optional parameters (currently unused).
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - gpio-controller
++  - "#gpio-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio: gpio@90000000 {
++        compatible = "lsi,zevio-gpio";
++        reg = <0x90000000 0x1000>;
++        interrupts = <7>;
++        gpio-controller;
++        #gpio-cells = <2>;
++    };
+-- 
+2.39.2
 
 
