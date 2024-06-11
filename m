@@ -1,134 +1,71 @@
-Return-Path: <linux-kernel+bounces-209200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2F4902E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7047D902E9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E672834BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BA21F22B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3916F85D;
-	Tue, 11 Jun 2024 02:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0A316F8EF;
+	Tue, 11 Jun 2024 02:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nI8taSAG"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQTsI11q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FB2A2A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9FE8286B;
+	Tue, 11 Jun 2024 02:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718074408; cv=none; b=hpx1z6mlrRJ52bpe9Ta2BwVlr2zx7vpOPfG/i6A5VaAK+ykumLiXcBmCS5nPdRu9JQ4VN3UE8E6bi/Q9RWAy0GhG2FOKu62EwE8MZipJsuR/cj/SJsfIYBXVaK6gYsQOOR+3MESNTSl7S3R93tr3n8cg3AwezMrsc6XsEJh5yeY=
+	t=1718074459; cv=none; b=fx/PLyLVAmn9D5+mLAuIPHRlULe4f8TeYTeV/QS4BWy5a6FyVs/uH1TIfGNZ9BGxGySdH0/mRtrNenBeY4DibLyvy7oTLVyu7W1Rv2zNNjnTP8S9QmoE4FnV+FR8RFMG9CLzy4OQ7ID7gq77DVMRBu1lenNZRcj8Tg/sW3nKGZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718074408; c=relaxed/simple;
-	bh=ShNxA8sdFwHAawK2Hgl/KWSFDJOd4xSvXw6uCEhExP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BHk5V3ZArmL36o8iJzLu+i+jJfSJI6aqOZjX1Bpcv43+p+1iLIfJ+JZFYUUrejW4T/HtI4MfnpgSb99sjgUfuwUm4NQq6g/xynaEg6r2saQ97L3cpqonHmKDc9D1gLNwB0ClRExuUJYkCSv8oCk6FhvR58a6A3ku0RYEdKc7gd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nI8taSAG; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718074402; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Dl8n43VI8mn4utlO/CKQEcJ3bnZnLyAzO5cH3rC0sRo=;
-	b=nI8taSAG2UkV+hbuotEMv6natRFHljdrqcaMAu4hK8b6rI/7sYwkvLFxKXMONaXzpeZYfDFmth5nRWnh5STKE89nkOETNrh70N0/MtQ7jpid9ii0zKr5dHFKTBbr5BsDsXbU2BiMnnoBKwE5N5OKOZGjdchQbdhm7ErfIRRC2zw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8EobXH_1718074399;
-Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8EobXH_1718074399)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Jun 2024 10:53:20 +0800
-Message-ID: <18b99bf2-a9c9-4abe-8345-e9864502c40e@linux.alibaba.com>
-Date: Tue, 11 Jun 2024 10:53:19 +0800
+	s=arc-20240116; t=1718074459; c=relaxed/simple;
+	bh=BACHajv8XfvegwB5hT1c4hcnhBTRLgPvz/ukzBeVJGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=geE6dGHCxJ0x4LfOF4sKUGl6k1MygAc7a4Z3gJX/FzlVV3HK7AZtrn8z2fUuoqur8CWuxhYDtr7n6t4RNInwz41hFSa4EUHLjXboETdz+bYWf6M4YFl657ZZDlJlvdtODBcv47Lk63c9uc8dyxAnDAWh+pgANFyhWlpAcyIf3kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQTsI11q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804F1C2BBFC;
+	Tue, 11 Jun 2024 02:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718074459;
+	bh=BACHajv8XfvegwB5hT1c4hcnhBTRLgPvz/ukzBeVJGc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RQTsI11qBbrzc8MjOJ+YV2bzWi4FqNKyLiyaFws5E60kxRiFZt8fe4Hu50qMwnymD
+	 ZKZhIRLv42LnU55YT/ERC7Cl8lMYpR4cysJqz3gLdoMABDMsn+a8bUsPZ8GUPfCSJ0
+	 JDoDZt5bZR65MBw2w7MMrcePJRRXQOPrhfSgnl5t6anBgNCvfIeLNZs232lDWzUtMU
+	 JhpMXVdl3kD0GKUmsCjSTKhnN63YCAZP40LCBh2RHZE1vQWkdR2IpF0/UHkULTjf/J
+	 HGKAdIbL+zAdX8DNwsmMRBayvXha2C4dfRya+wlobCz2NotHc2BVJ6z0QwrBrbC25M
+	 noJEzNS0t7TFQ==
+Date: Mon, 10 Jun 2024 19:54:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Edwin Peer <edwin.peer@broadcom.com>, Michael Chan
+ <michael.chan@broadcom.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <lvc-project@linuxtesting.org>, Wojciech Drewek <wojciech.drewek@intel.com>
+Subject: Re: [PATCH net v2] bnxt_en: Adjust logging of firmware messages in
+ case of released token in __hwrm_send()
+Message-ID: <20240610195417.693fb12e@kernel.org>
+In-Reply-To: <20240609070129.12364-1-amishin@t-argos.ru>
+References: <20240609070129.12364-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] add mTHP support for anonymous shmem
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "david@redhat.com" <david@redhat.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
- <CGME20240610121040eucas1p2ad07a27dec959bf1658ea9e5f0dd4697@eucas1p2.samsung.com>
- <qmbf362n2vtjaaeqvv6ta5xets3wyo5m3lfsocsrhvqjdso3vr@okzpmdbm3ogn>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <qmbf362n2vtjaaeqvv6ta5xets3wyo5m3lfsocsrhvqjdso3vr@okzpmdbm3ogn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Sun, 9 Jun 2024 10:01:29 +0300 Aleksandr Mishin wrote:
+>  		hwrm_err(bp, ctx, "hwrm req_type 0x%x seq id 0x%x error 0x%x\n",
+> -			 req_type, token->seq_id, rc);
+> +			req_type, le16_to_cpu(ctx->req->seq_id), rc);
 
-
-On 2024/6/10 20:10, Daniel Gomez wrote:
-> Hi Baolin,
-> 
-> On Tue, Jun 04, 2024 at 06:17:44PM +0800, Baolin Wang wrote:
->> Anonymous pages have already been supported for multi-size (mTHP) allocation
->> through commit 19eaf44954df, that can allow THP to be configured through the
->> sysfs interface located at '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
->>
->> However, the anonymous shmem will ignore the anonymous mTHP rule configured
->> through the sysfs interface, and can only use the PMD-mapped THP, that is not
->> reasonable. Many implement anonymous page sharing through mmap(MAP_SHARED |
->> MAP_ANONYMOUS), especially in database usage scenarios, therefore, users expect
->> to apply an unified mTHP strategy for anonymous pages, also including the
->> anonymous shared pages, in order to enjoy the benefits of mTHP. For example,
->> lower latency than PMD-mapped THP, smaller memory bloat than PMD-mapped THP,
->> contiguous PTEs on ARM architecture to reduce TLB miss etc.
->>
->> As discussed in the bi-weekly MM meeting[1], the mTHP controls should control
->> all of shmem, not only anonymous shmem, but support will be added iteratively.
->> Therefore, this patch set starts with support for anonymous shmem.
->>
->> The primary strategy is similar to supporting anonymous mTHP. Introduce
->> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
->> which can have almost the same values as the top-level
->> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
->> additional "inherit" option and dropping the testing options 'force' and
->> 'deny'. By default all sizes will be set to "never" except PMD size, which
->> is set to "inherit". This ensures backward compatibility with the anonymous
->> shmem enabled of the top level, meanwhile also allows independent control of
->> anonymous shmem enabled for each mTHP.
->>
->> Use the page fault latency tool to measure the performance of 1G anonymous shmem
-> 
-> I'm not familiar with this tool. Could you share which repo/tool you are
-> referring to?
-
-Sure. The git repo is: https://github.com/gormanm/pft.git
-
-And I did a little changes to test anon shmem:
-diff --git a/pft.c b/pft.c
-index 3ab1457..bbcd7e6 100644
---- a/pft.c
-+++ b/pft.c
-@@ -739,7 +739,7 @@ alloc_test_memory(void)
-         int j;
-
-         if (do_shm) {
--               if (p = alloc_shm(bytes)) {
-+               if (p = valloc_shared(bytes)) {
-                         do_mbind(p, bytes);
-                         do_noclear(p, bytes);
-                 }
-
-> Also, are you running or are you aware of any other tools/tests available for
-> shmem that we can use to make sure we do not introduce any regressions?
-
-I did run the mm selftest cases, as well as some testing cases I wrote 
-for anon shmem.
+The alignment with the ( looks messed up
 
