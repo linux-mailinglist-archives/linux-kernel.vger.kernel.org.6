@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-209262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A027902FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C66902FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEC028207D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9054E1F239B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915A9171075;
-	Tue, 11 Jun 2024 05:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D8B17085C;
+	Tue, 11 Jun 2024 05:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szioNOFz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPLgoAVz"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72B763C;
-	Tue, 11 Jun 2024 05:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E63469D;
+	Tue, 11 Jun 2024 05:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718082660; cv=none; b=jmcxGIA8UMyvpPNiqfn1WCQgv6o1SIpwB/vL6e+z8H10ssvG5mt0Ma2M2oAgzPgjOZdRuchANchaYA35tyKkqK7SePZ/gqReTEPbDZOG3WfDkIB3DXCE5cqTiM2qlw1I6wWVOWJgJH5xio7wmB0SnboF8iBg6ufBMEAHA2dUz+M=
+	t=1718083077; cv=none; b=rDPkY8OkdY4CE6NP/N/J8C6FwK4pMbY/OR9lXklQrzZslZEGaAIZbhIMr6FmctFOYGYeh1TtZ3Q6GIvtFEtEubvUZWg4OVmPK8Gl2i9aMMMLOE7LF+t3ddTf7EPLwovIBhdXCvaQUC5xPnVQ9TqrkWC2Y35PM1oqbHaRUefJV3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718082660; c=relaxed/simple;
-	bh=fNglPpq1OR578DdMVdAmSf59MmLIadxgL7Jtj0YqXm8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DgSlgzVYCkYsYbQjdQs/zFYTh881syiaIuET/lnw/UndqLMMvR9RnZ/K199nD7Yow0oiaLfOnbhjZbLjxLbJqeEtpPMN19mfD1ziBIjwkObqyi2dvITCkDqkqpxhbYCHqVku5fvCDZbdwwlkLtKVdpVBfrF+AiQiBcpiPDR8v/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szioNOFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 781D1C4AF51;
-	Tue, 11 Jun 2024 05:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718082660;
-	bh=fNglPpq1OR578DdMVdAmSf59MmLIadxgL7Jtj0YqXm8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=szioNOFzEU16gF2REnhbCPQsvmebHMEDMhgN7l7rcDdPIi3BWJnTZc46OdZoUOMgz
-	 uxCw/oYU3bLzKNaBoo0JkUBO+qMr9Ma64tLaP+UXQhxNUtK3ESBd4xgIquAREdF7eF
-	 sJrM+by1SsnF+xLRSvPb9Bd5uofiF0xeyQ5ub2+EBoZnSl1XoygdpKnZunDpACL58V
-	 cjMgC+TvO/yxTHYNv/8qVCsxKJPlwoMSckc21vJlwHneXMJWpBzVtf4/T5xT1dxfzM
-	 pdpiI6waVMe3ANqi1rCpsy/aqE0eY9S+y8+AczpVm4wbZ5ca+5l8K8aZ7D1LhM+QTP
-	 Y80tJnWgau/0A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63950C25B76;
-	Tue, 11 Jun 2024 05:11:00 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 11 Jun 2024 13:10:59 +0800
-Subject: [PATCH 3/3] arm64: dts: amlogic: a4: add pinctrl node
+	s=arc-20240116; t=1718083077; c=relaxed/simple;
+	bh=AfWFA0YQaEAWvwqUx+29BJvkXlvDyjanEfD3MpXz1tY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pa3xroA0y8ZGRVT4etzSDB1I95vPXQPaSWXjaK8dnqJF/TqUxy2Koc7wIuZVHXVyLZ/UdgAXwNyceqjMwZmb+kQZu1JNC6wcQLIKZYoZjyKI+lOAeFAJ/BLLO1UnJxPoIIRghYCAkzEWT19elPlJ5DkaNBIQ5H7LiFQ1Ryn4Nmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPLgoAVz; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so775206a12.1;
+        Mon, 10 Jun 2024 22:17:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718083074; x=1718687874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=piqzYbgJkU+e1s69JwjuEdZoLPDUayYPpapi3Ayym5o=;
+        b=aPLgoAVzWQ2XWEUT9RY7KcVkO8ibXonuMNUEgtmzDVXoo/Sy+45+0qosCCV5pWKeSb
+         vGSfXnaqdsZSte87fDyZPCItpOylY6v6jZkfyS716/duvuI06CuLKrGma0nYJqbq02zP
+         EtYLl1sILQJszneDPBav1g/qiCHelvzkQrByBOG7cXpKawUCHbYFP1qOcUeimCEyIqCA
+         12tXauML4ys26/2JQUTjkP53N5bAIZ7kP9yGxLbmCm3NOZ8CvF9hnvhrpFvvJvvu4BdR
+         f8hx0OCDoH7iJ99z7XYYKHlaQAudImJui14tgVHzK01yuss6G/VWGUXGpFvJbVqBIkvK
+         ANtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718083074; x=1718687874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=piqzYbgJkU+e1s69JwjuEdZoLPDUayYPpapi3Ayym5o=;
+        b=OKheA5F1zQQXApuWf+HFk5/gTPT1/8F0I3qshdbV2xLJ9EK0PfeuYzkb3e+wyaeU4G
+         Clx3+w/RTVFBqbOrMAqXFx8XzktBEEpT7S9t98S636eUZWut5Ls/KdD7zoj+1QwjIic5
+         ivEtKaH2TllwOH3xewF6v+ZJYJFpuVVZibIEI0Y0RULTfwt2UMu1g6XynihGKt4sdxf8
+         WmbWA+y3AXjuw0KGOpQm4D34szrXsRz22W6ex00WRV263SNp4bTAA3n7gvpVWN1xNeqV
+         3LMrgXQMo+OpdKTG1Xk18zmd5Y4mGNlsMG74QUOQw2nVor2+vDYnj/SY+xyjdW2YGSFJ
+         8t9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXFwpk/rGXOVymkD6GhBXMCoXvrg7eLoT6jOt0jQp6eVBXbhm01LvgSAE08Gd8LJJekV/uKikVauUJfWUbLGo09cK+3SKe82cf4eZaJOWSeKT0PxW7QjD19NMZIMUijUqP7ws7BsGWqOhCif/CpKnEC7VieBg1RG1jU2E7EghW/ff1F24Y+iP3S
+X-Gm-Message-State: AOJu0Yz5pkD05ItHAicBZm9oBqJ4UN6BLDexZ/XwTJ+VNz6VXimk6osE
+	4wpHIKYrAFHkQaK+s3EZiyGxyMMtv/0gdkAIqWXszf10B7AUZrwCFXRPo2H56KncsbRIljGxvJM
+	oMrrtBb19iDVArE2PuuFDI831f9dAPol5
+X-Google-Smtp-Source: AGHT+IG0gbTyrx993BiiW+MsuA3vxBABCx7Y+PzZsgs9teddxdS3/i8h8NVX0MVv7EEpnBboLgYgHyF7NTwCsiFT9GA=
+X-Received: by 2002:a50:d657:0:b0:57c:6bd6:d8e5 with SMTP id
+ 4fb4d7f45d1cf-57c6bd6de01mr5139006a12.8.1718083073841; Mon, 10 Jun 2024
+ 22:17:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-a4_pinctrl-v1-3-dc487b1977b3@amlogic.com>
-References: <20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com>
-In-Reply-To: <20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718082658; l=1392;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=dK1sBro4y44HxdZ7xq97Zu8WXKXsyY0hjnlhV/Rfko0=;
- b=fPWr6+NYpqH9T8KWCXZZwBxdMkk0QoKEll2gzJAqwC8lX8rYr4earPV3u9ulD3JKWLmCCM0Er
- J/t1A1E3N49DhS0Sn5+Kwlpv/+j4TTt7DWisWrT3bHqlHN9cgK+8iQa
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+References: <20240610195828.474370-1-mjguzik@gmail.com> <20240610195828.474370-2-mjguzik@gmail.com>
+ <ZmfZukP3a2atzQma@infradead.org>
+In-Reply-To: <ZmfZukP3a2atzQma@infradead.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 11 Jun 2024 07:17:41 +0200
+Message-ID: <CAGudoHE12-7c0kmVpKz8HyBeHt8jX8hOQ7zQxZNJ0Re7FF8r6g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] vfs: add rcu-based find_inode variants for iget ops
+To: Christoph Hellwig <hch@infradead.org>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On Tue, Jun 11, 2024 at 6:59=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> > +EXPORT_SYMBOL(iget5_locked_rcu);
+>
+> EXPORT_SYMBOL_GPL for rcu APIs.
+>
 
-Add pinctrl device to support Amlogic A4.
+noted for v3, thanks
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 36 +++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> > +static void __wait_on_freeing_inode(struct inode *inode, bool locked)
+> >  {
+> >       wait_queue_head_t *wq;
+> >       DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
+> >       wq =3D bit_waitqueue(&inode->i_state, __I_NEW);
+> >       prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+> >       spin_unlock(&inode->i_lock);
+> > -     spin_unlock(&inode_hash_lock);
+> > +     rcu_read_unlock();
+> > +     if (locked)
+> > +             spin_unlock(&inode_hash_lock);
+>
+> The conditional locking here is goign to make sparse rather unhappy.
+> Please try to find a way to at least annotate it, or maybe find
+> another way around like, like leaving the schedule in finish_wait
+> in the callers.
+>
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-index de10e7aebf21..5d858bb93eb7 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-@@ -47,4 +47,40 @@ pwrc: power-controller {
- 			#power-domain-cells = <1>;
- 		};
- 	};
-+
-+	soc {
-+		aobus_pinctrl: pinctrl@fe08e700 {
-+			compatible = "amlogic,a4-aobus-pinctrl";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			ao_gpio: bank@fe08e700 {
-+				reg = <0x0 0xfe08e700 0x0 0x04>,
-+				      <0x0 0xfe08e704 0x0 0x60>;
-+				reg-names = "mux", "gpio";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&aobus_pinctrl 0 0 8>;
-+			};
-+		};
-+	};
-+};
-+
-+&apb {
-+	periphs_pinctrl: pinctrl@4000 {
-+		compatible = "amlogic,a4-periphs-pinctrl";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpio: bank@4000 {
-+			reg = <0x0 0x4000 0x0 0x0050>,
-+			      <0x0 0x40c0 0x0 0x0220>;
-+			reg-names = "mux", "gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&periphs_pinctrl 0 0 73>;
-+		};
-+	};
- };
+So I tried out sparse on my patch vs fs-next and found it emits the
+same warnings.
 
--- 
-2.37.1
+fs/inode.c:846:17: warning: context imbalance in 'inode_lru_isolate' -
+unexpected unlock
+fs/inode.c:901:9: warning: context imbalance in 'find_inode' -
+different lock contexts for basic block
+fs/inode.c:932:9: warning: context imbalance in 'find_inode_fast' -
+different lock contexts for basic block
+fs/inode.c:1621:5: warning: context imbalance in 'insert_inode_locked'
+- wrong count at exit
+fs/inode.c:1739:20: warning: context imbalance in 'iput_final' -
+unexpected unlock
+fs/inode.c:1753:6: warning: context imbalance in 'iput' - wrong count at ex=
+it
+fs/inode.c:2238:13: warning: context imbalance in
+'__wait_on_freeing_inode' - unexpected unlock
 
+The patch does not make things *worse*, so I don't think messing with
+the code is warranted here.
 
+> > +extern struct inode *ilookup5_nowait_rcu(struct super_block *sb,
+> > +             unsigned long hashval, int (*test)(struct inode *, void *=
+),
+> > +             void *data);
+>
+> No need for the extern here (or down below).
+>
+
+I agree, but this is me just copying and modifying an existing line.
+
+include/linux/fs.h is chock full of extern-prefixed func declarations,
+on top of that some name the arguments while the rest does not.
+
+Someone(tm) should definitely clean it up, but I'm not interested in
+bikeshedding about it.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
