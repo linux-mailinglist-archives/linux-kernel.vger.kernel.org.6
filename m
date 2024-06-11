@@ -1,147 +1,92 @@
-Return-Path: <linux-kernel+bounces-210208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BDE9040D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CE09040D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB01281863
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1DD1C237D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FD13D0AD;
-	Tue, 11 Jun 2024 16:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJ9vOgaf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6608B40867;
+	Tue, 11 Jun 2024 16:03:39 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AD739FD0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967F22B9DD;
+	Tue, 11 Jun 2024 16:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718121790; cv=none; b=fBtafp416SnQJkoiNrXsApDLlYUhSEuDOESdo0DXS5Ta7uR7hBqk4R05m/rTEMD7EpfXNNr5IbnRTA5Tg+eeO6kogGGt329WzN4JqygM1C+Mt61dz+hEv6Ov39rG3HJPwQInXVlI/EsxYNBtIEoVB8kuaNoU2nVzYhbJBZruWFg=
+	t=1718121819; cv=none; b=GNlJcteGcHkYqTbqIlVETeiU3/IpauvyS8+JAN8cYeMvcuz7H+f8i/6nLsV0/noySZS29soakQ4HEbxOlxeeL63t53N+uH6qitLxJActyI0drlBA9a9vjTh8488UffMUN5sNpfeAnxIeackr1A8ceBicZxsAHCg7iZVmwLBRMwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718121790; c=relaxed/simple;
-	bh=85XwKIEyD8KckQ6PkEQV+MMGpUPEf6eImQT/QBrvAe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TlU5i6A6rk4wCzXUWqCS4b4ohtpRYr2uQrJUyz1i2ILViZDYh23stn2kiZ2htV6Vsp1Z6Q0xmKz8D5PouFvqhtZxSvRhPBvGFC9rB58f8pRzA8KDWJ7A1kr7kDIrJe55HA6atAWTTPx3g+bxt31OLsFmdpCs7Lf3j1RXGtfCuJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJ9vOgaf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718121788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSREr6R5C0Ap27lAslygWCiIveFJotp7zWPFYC5XIhc=;
-	b=eJ9vOgafstTLjjFugLmh5BnRnHo2AFrarHL7DZJLXuwfnIOIz18zdlpydOpB3ypqqyaa37
-	980sniw2ELjfYsiZxusYp1Aoobj1D3HVybcoyGKHq6B0Md3PcirHD65khMwyYkKlzQyw8H
-	QmgtKi5+V4NL/i2Y69JAzg/lYSFBRbo=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-mChuvN2zN6-qX3EA4VYkNA-1; Tue, 11 Jun 2024 12:03:05 -0400
-X-MC-Unique: mChuvN2zN6-qX3EA4VYkNA-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7955b3dd735so374951985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:03:05 -0700 (PDT)
+	s=arc-20240116; t=1718121819; c=relaxed/simple;
+	bh=QOmpk5JLZ6uslcuqiWbyefS2HUNhd02h+M9Gsm9Qv0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g/bbZCxs5epY1JxDRnMebCsFPG0pzMIF0is16Wzk7jNCpTYXF0OyQ7/Skeq5t0AGa3/SdN583QKdAaRMXBgYoAEcwxDo/GkKxpHpR4iK6fJ6Jg90Hdc3fAXtSVRJ8JeRU+YXvIoUM7q4tKBAtcumspP549mQffemYAaeCsd+jIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7041053c0fdso3078824b3a.3;
+        Tue, 11 Jun 2024 09:03:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718121785; x=1718726585;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSREr6R5C0Ap27lAslygWCiIveFJotp7zWPFYC5XIhc=;
-        b=CxcPPR1D81xsUz91gLgdRu/j2/ZJFdf67pkgE+iAQZ9QBzRZQU1zUrTpYdOV8TFtIG
-         WWDBfeghNp2Val9mx99TdPuJqtQ7iw67otk1/CP0PkWUBmJAqmKvhE2PrM/9lOVOpyTm
-         DuHld+U9bJfo2oi54K2SWYK6A7hB4F4W0dwoPmgE0aWNI9UiNt+WAn/KYOyWkKEbhFzR
-         30wQLmbTRCbXxcn0/STLaoFKNhv8maivmKnMxJ80mRuQ8F3lPzumHhHPDwj1cFqkKzPw
-         5RLDnOwpZjrweCsJMLTqXb1+xzpWzxAkd2zvxpzPaRXjqYEO2/sRRGs8dsKayXeafBw2
-         Drgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQR8lANFuQIHP8hTXPfRJFUIbTDeG58UAxNQfWKpXZLbDL+RCpy7CjYlT3ofeAJd0AKY45OWBSSMBMP2R7NkdSyntr+DI6inmuMGjC
-X-Gm-Message-State: AOJu0YxyesBARraAWpubuwgw/pvoVKcXMHAMhABIEWu8Tpns0s9Q9ggL
-	+xsoXLH1JmrB+nsMhXGbEDnM+aXiXAqRnifOaawzYf65Si6/NCf9ZlVMZ/iPJsf4k3HPrWPfFuv
-	0uAK8F8B6ZE4oYyGpX1b5/ls6uU55zuAgPza3EUtRkBgMzX+L3FEsmxmT4d4uHA==
-X-Received: by 2002:a05:620a:4409:b0:795:5033:a79c with SMTP id af79cd13be357-7955033a906mr1152936985a.67.1718121784858;
-        Tue, 11 Jun 2024 09:03:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGX9IQDx0X5A/HraO373mXuCGpMD9QViO3pahJV6Ze3wwS4HkXgImRkv8Ny+AWAOUGLBc7DQ==
-X-Received: by 2002:a05:620a:4409:b0:795:5033:a79c with SMTP id af79cd13be357-7955033a906mr1152932985a.67.1718121784391;
-        Tue, 11 Jun 2024 09:03:04 -0700 (PDT)
-Received: from optiplex-fbsd (c-76-152-42-226.hsd1.nh.comcast.net. [76.152.42.226])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79558163eeasm302010785a.124.2024.06.11.09.03.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 09:03:04 -0700 (PDT)
-Date: Tue, 11 Jun 2024 12:03:01 -0400
-From: Rafael Aquini <aquini@redhat.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: rpm-pkg: fix rpmbuild warnings for kernel.spec
-Message-ID: <Zmh1NXtY5W63BmRt@optiplex-fbsd>
-References: <20240610163856.693110-1-aquini@redhat.com>
- <CAK7LNASe0q4W2cuLnLnpJbWtyoOoZ6Gi+wJw=JiRyZrT9KdNEQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1718121817; x=1718726617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QOmpk5JLZ6uslcuqiWbyefS2HUNhd02h+M9Gsm9Qv0s=;
+        b=VQZddW3G+auGb5ODXXXvfmnmM1xVszRHQ8Dr3+rsiWubmfMReAd8rfV+shzv7DQ38w
+         7Sm2QZeCjxxG4bZ/jYYW/qmRMmuufxWiQpNdmXM+zBNxhSYUSnXJV+c54NZiUxlxc3Rt
+         HVfrldPsqLai48kLBphJ7axe8UIgLovpissO7CGLPKed/QOiDdQmoIB58Oi+2h5evg2l
+         RYW/BlxaNSGnUqeBZnffAqMonmaIH0D6HTeOQB+pWkSpeKp6VTLlmUfAR/ibTL4SeIsJ
+         3ObDRAuMERiGnzX//zx0C+uWKFt14Y2fIeXOSYWAO6VzGTWQ9TX1eDdV06AmqdaykhSc
+         XpMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzOcKBKVXNTvInjFmuX5goZpsYUK5NvKiYD0Edo0wBzRG5PSkSHopFaqssy1IjHUgZ8i/T1ReDm+fWTzNFuA2aRWSox0TQ6bN69PnIg4f7mLmowCvf/84KwdTsQkSptJ8csZkRKaFqGxTeGxqb4w==
+X-Gm-Message-State: AOJu0Yz486b4ZW/iXNIXW99SqQTkZi/ZrH08PxXllklXlSORgm2BD1G+
+	J0Wzb9mHU7XVrB1/ktdaQHBw1J8voaNeBCKgclW+ErCRkhnny9DEqC/YHywrXJFUgG7eE8ePf1f
+	aBHzQ5FJPCK9WZDcMPnJa6z2rln8=
+X-Google-Smtp-Source: AGHT+IGXDv1FPSpMzUHJGlIVNMuTkPreMewvl2JFTAd/3QehAidEF3D40lSOViix9U8zZ0p5AIWnrqUx+N3ukkl2nTM=
+X-Received: by 2002:a17:90a:6b43:b0:2bd:dce4:8f90 with SMTP id
+ 98e67ed59e1d1-2c2bcadfcb5mr11942400a91.6.1718121816689; Tue, 11 Jun 2024
+ 09:03:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNASe0q4W2cuLnLnpJbWtyoOoZ6Gi+wJw=JiRyZrT9KdNEQ@mail.gmail.com>
+References: <20240611050626.1223155-1-irogers@google.com>
+In-Reply-To: <20240611050626.1223155-1-irogers@google.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 11 Jun 2024 09:03:25 -0700
+Message-ID: <CAM9d7chyxF5LMz+-RQevD5N-vtg-VwaRq3+0kugeN8-vwLzHuA@mail.gmail.com>
+Subject: Re: [PATCH v2] perf record: Ensure space for lost samples
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Milian Wolff <milian.wolff@kdab.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 12:00:18AM +0900, Masahiro Yamada wrote:
-> On Tue, Jun 11, 2024 at 1:39 AM Rafael Aquini <aquini@redhat.com> wrote:
-> >
-> > Newer revisions of rpmbuild are throwing warnings about the current
-> > kernel.spec template having an unversioned kernel-headers in the
-> > 'Obsoletes:' field and not being able to source the epoch's date from
-> > the spec's missing '%changelog' section:
-> >
-> >   $ make srcrpm-pkg
-> >     UPD     include/config/kernel.release
-> >     GEN     rpmbuild/SPECS/kernel.spec
-> >     UPD     .tmp_HEAD
-> >     ARCHIVE linux.tar.gz
-> >   rpmbuild -bs rpmbuild/SPECS/kernel.spec --define='_topdir /mnt/nfs/work/kernel/linux/rpmbuild'
-> >   warning: line 34: It's not recommended to have unversioned Obsoletes: Obsoletes: kernel-headers
-> >   warning: source_date_epoch_from_changelog set but %changelog is missing
-> >   Wrote: /mnt/nfs/work/kernel/linux/rpmbuild/SRPMS/kernel-6.10.0_rc3-1.src.rpm
-> >
-> >   RPM build warnings:
-> >       line 34: It's not recommended to have unversioned Obsoletes: Obsoletes: kernel-headers
-> >       source_date_epoch_from_changelog set but %changelog is missing
-> >
-> > This patch addresses both RPM build warnings.
-> >
-> > Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> > ---
-> >  scripts/package/kernel.spec | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
-> > index e095eb1e290e..4d58b29c03ad 100644
-> > --- a/scripts/package/kernel.spec
-> > +++ b/scripts/package/kernel.spec
-> > @@ -1,3 +1,5 @@
-> > +%global source_date_epoch_from_changelog 0
-> >
-> 
-> 
-> Another possibility might be to add %changelog section.
-> 
-> In Debian packaging, debian/changelog is a requirement.
-> 
-> scripts/package/mkdebian generates a very small
-> debian/changelog with a single log entry.
+Hi Ian,
+
+On Mon, Jun 10, 2024 at 10:06=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
+ote:
 >
+> Previous allocation didn't account for sample ID written after the
+> lost samples event. Switch from malloc/free to a stack allocation.
+>
+> Reported-by: Milian Wolff <milian.wolff@kdab.com>
+> Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@mili=
+an-workstation/
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-I'll take a stab at it, then. Thanks for the pointer!
- 
-Cheers,
--- Rafael
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
+Thanks,
+Namhyung
 
