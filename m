@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-209457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F3B903543
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8C9035D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8270B25F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9527728921F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0D1173359;
-	Tue, 11 Jun 2024 08:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF74717557E;
+	Tue, 11 Jun 2024 08:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="J/rYoVfI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="knDhbLDt"
-Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BqAJrxqW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57F03F8C7;
-	Tue, 11 Jun 2024 08:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8035A173321;
+	Tue, 11 Jun 2024 08:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093739; cv=none; b=rYX/8Juy/KVXENGvSFn6eBQPvXAdYF0Hi82IqBImV2PeWGfR9AY8hXRMVRt5y7Ymc+m7i/0Ot8mK7BmiGVwRDp3WhF7SrQ6ofEpLU9Kkrm1uv8oOInxQLh7wX+Obrwtx+m58NkEudTN6+DE8UAxw39WjUg/1UcOWchvjgdiV3nU=
+	t=1718094074; cv=none; b=kqUXJbjzQUKhUGS1lONBT1OAIfVknDo6u5jlfbJPWGEx5NGZoyO1L1fSVsgY7XIfipUC1w6sdzGWQz+wumgbKaP5onw24VZfuS1ljmzeObyg/CXTy1REZArjqNCV7rgzEVo/9iUNjRrqAa/h6ag1RFZYw8oLE15Y5xtOuJldSTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093739; c=relaxed/simple;
-	bh=z43s94CnLrweY/tQQTWD/T164eJu5lCBbRFTHO2hCys=;
+	s=arc-20240116; t=1718094074; c=relaxed/simple;
+	bh=o9R63W2h+PXHJFvU1TUtUAN5DVlFkM8X+Kj+TFyexv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGyJ1FIh+Ev3pFy8c1ZGH+Lr4ssu33UkggZZtY4z/iAjfKKo9PwKzge4os0RdFhQwCzRkP+zXzw/nMHu3Rqe7VVsLpzGJPqfubgDM3A3ddkVCQYGyG4CBjLqWSjH5v+LKd6JP6Regs6G2LUPm6JQcZx4b2r9I36oYilGp8YAhu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=J/rYoVfI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=knDhbLDt; arc=none smtp.client-ip=64.147.123.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailflow.west.internal (Postfix) with ESMTP id 57A532CC01C9;
-	Tue, 11 Jun 2024 04:15:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 11 Jun 2024 04:15:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718093733; x=1718097333; bh=FHmyaqd99K
-	ibuNFcHRNSHKPpvreyC45H6/JsNKHxzgM=; b=J/rYoVfIrIPfb3R2Z5VsoocWAy
-	9b2ZNUviqa5JVMGRCXBoiGRPeEeflfhkWFoS4xp0wjGjjSoSzjr9/Ry2HM1NQBN3
-	rGqBL30RWZBG73M3IR0nPjnmrU3Sz21PdFoKWDbMJzhPW3O6iAMidFE01i0ne35m
-	ZCifgOEBmaiySDmPBUt0jV5RVgES7tcTELewog99jLkcFGyJRB8tLQTfAuJ5fzWU
-	NvC+jd9iAPGpwbp55drVsng9u6fA/WRQbuNVFLgVl4Q6G7g9XnWXU3XoTYp415xB
-	qCvlyQPcfOV73rrJSbvTeUD+H6r87uB59hI4zB3Q1HHFT3ENM1XmjkFWtMsg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718093733; x=1718097333; bh=FHmyaqd99KibuNFcHRNSHKPpvrey
-	C45H6/JsNKHxzgM=; b=knDhbLDtDZHXqot+UutYHGqxS+ybOwLtEfM2l9Qv3Bwk
-	xRNVii1WuqbblONh3bapyi6jj+y6ihyLWa0qNKKjHiIl7XFMm7fgR+5L+xCTF92K
-	GWHUzRyxh9lghsjWzQ9gBVJ9hjKTS/HWxw2ShAhRKgm7Vm8yRx40W3qpoNsSCaGu
-	aqquX1GrReuK45wM0FrT8SBTo3nZHK/2eH89ywUAXSuW5VUSDZmD4xm60JzA6TSe
-	giAHdHgi2K8JXuiZ7rHtmgxSaDO6GemHKVygtxIh52B0oRqDmtyKfd4UH0PMBIWP
-	mYiMgkVPIG2EZJBxX48gzPmFFkCXkWkL2HNPICsi/Q==
-X-ME-Sender: <xms:pQdoZnJwpUwMJ5aSh754SMicBUig2Yo7cuxFIWBG488MykM7DOVeAg>
-    <xme:pQdoZrJohRL0fRPyBWFyomxQw_Wntfm3Hi8KpMnHjHHAFSi3UgnvVIf_nrppUfvqp
-    nbk4c5IYdmGH_HX-Us>
-X-ME-Received: <xmr:pQdoZvvXVZYadnWUMnwqdouS2UsXYPZmppj5ffgA80HwlxeFKqUKT3Tckwlj9nuA14nh00vFXkes2Lh_2rgy-v4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvdcutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhnrghthhgr
-    nhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeejkeelffeu
-    lefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:pQdoZgbk3yz2iWEH2OCd2tzORrTqUi8Xy8tlfWlgEJ7aFszfgufoNA>
-    <xmx:pQdoZuY-_ecrn57VvpsDzZQxq0DRPaeHlkGlaWPxohtt9RKsQqVRjw>
-    <xmx:pQdoZkAIRT6rZ72ReWB9WCp__6QSGkYRSShFTuVyOTissCzd__D53w>
-    <xmx:pQdoZsaUaxZf6hlV2VqKqE-kV3pGikI5Wpp7thyLHw9MpGq7NOr0AQ>
-    <xmx:pQdoZioJsRbSnszbs1P2taAhZGEiLrtjH4FHUkxUUaOwAvhnVOVqp5RG>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 04:15:29 -0400 (EDT)
-Date: Tue, 11 Jun 2024 01:20:40 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Andrew Morgan <morgan@kernel.org>, brauner@kernel.org,
- 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
- 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- KP Singh <kpsingh@kernel.org>,
- 	Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>,
- 	Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- 	Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
-Message-ID: <o5llgu7tzei7g2alssdqvy4g2gn66b73tcsir3xqktfqs765ke@wyofd2abvdbj>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-2-jcalmels@3xx0.net>
- <20240610130057.GB2193924@mail.hallyn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lN6aPUkBjpYgMlfTQZY6IWBPBMa3h7872ffKuiR7eow1ZRZGcpGWiGn018EspcbhP0RlxvYESAXxeX7cUwinplN47Z5WyqOAC3ur00HJVTCse7/Q/srkr9ZX/NvYTsEoxGmRpleCq4LjD75XXpQtV6QrwY+XTMWSXAH+D9jwyoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BqAJrxqW; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718094072; x=1749630072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o9R63W2h+PXHJFvU1TUtUAN5DVlFkM8X+Kj+TFyexv8=;
+  b=BqAJrxqWoCY9gYA3/dRpGAhXmnLm6Dhg/KIP6OI1CryqrjQ0EucPWL4A
+   VJsydrqZrJcf3BrQhCYO++4zEZcmhprFPgdOdzJQqeDABMHyweqwUKUAa
+   K6U+fH4Gap/w4NrEzsiEZqhCkA9PwcviBr8KcEaK+ntgjLn1ka8pl9HkL
+   iFOVmwT9pP1Pno5Tvh2eOSWOfo7kULyz0NkOcbl0I9OaGWNEQORsVVt48
+   70vHgK2b6fBclW5Ou0wnwIoxtX01g63KT6S4/EVwi7ZQHEp+gQkRiwkKZ
+   yV2bBcwycUa2PqbITggYMaio2MewNuMDKKpKuYfdjCcfTmwAVJQG1Uuvr
+   w==;
+X-CSE-ConnectionGUID: PhAadFqxRViDHIRPWMif8A==
+X-CSE-MsgGUID: WmaUPN6fRtex9iwCf1uNjg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14940359"
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="14940359"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 01:21:12 -0700
+X-CSE-ConnectionGUID: AZKl3105TiaPL+FtfswRXA==
+X-CSE-MsgGUID: bzNw9UUfQDCfTzhwKg3M+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="39299831"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 01:21:09 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 00D5D11F9C0;
+	Tue, 11 Jun 2024 11:21:07 +0300 (EEST)
+Date: Tue, 11 Jun 2024 08:21:06 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] media: vgxy61: Add MODULE_ALIAS()
+Message-ID: <ZmgI8nET4sdhdwQx@kekkonen.localdomain>
+References: <20240610150815.228790-1-benjamin.mugnier@foss.st.com>
+ <20240610150815.228790-4-benjamin.mugnier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610130057.GB2193924@mail.hallyn.com>
+In-Reply-To: <20240610150815.228790-4-benjamin.mugnier@foss.st.com>
 
-On Mon, Jun 10, 2024 at 08:00:57AM GMT, Serge E. Hallyn wrote:
-> 
-> Now, one thing that does occur to me here is that there is a
-> very mild form of sendmail-capabilities vulnerability that
-> could happen here.  Unpriv user joe can drop CAP_SYS_ADMIN
-> from cap_userns, then run a setuid-root program which starts
-> a container which expects CAP_SYS_ADMIN.  This could be a
-> shared container, and so joe could be breaking expected
-> behavior there.
-> 
-> I *think* we want to say we don't care about this case, but
-> if we did, I suppose we could say that the normal cap raise
-> rules on setuid should apply to cap_userns?
-> 
+Hi Benjamin,
 
-Right, good catch. If we do want to fix it, we could just check for
-setuid no? Or do we want to follow the normal root inheritance rules
-too? Essentially something like this:
+On Mon, Jun 10, 2024 at 05:08:15PM +0200, Benjamin Mugnier wrote:
+> Preserve user space retro compatibility after the device rename.
+> 
+> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> ---
+>  drivers/media/i2c/vgxy61.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+> index ca3b43608dad..c85f356946ca 100644
+> --- a/drivers/media/i2c/vgxy61.c
+> +++ b/drivers/media/i2c/vgxy61.c
+> @@ -1898,3 +1898,4 @@ MODULE_AUTHOR("Mickael Guene <mickael.guene@st.com>");
+>  MODULE_AUTHOR("Sylvain Petinot <sylvain.petinot@foss.st.com>");
+>  MODULE_DESCRIPTION("VGXY61 camera subdev driver");
+>  MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:st-vgxy61");
 
-pU' = is_suid(root) ? X : pU
+Perhaps just "st-vgxy61" so that the module still loads if someone loads it
+explicitly? That's what you'd want, right, as the old compatible string
+will remain?
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
