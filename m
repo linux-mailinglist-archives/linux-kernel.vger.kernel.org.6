@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-210139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86946903FD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2E2903FD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F901F22B75
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449CE1F2460D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B966F1DA4E;
-	Tue, 11 Jun 2024 15:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4C622334;
+	Tue, 11 Jun 2024 15:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgLvUuAW"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="G1I5g/of"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C79922331;
-	Tue, 11 Jun 2024 15:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258614A96
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718119040; cv=none; b=gfD/+1C1sYnRPe++K9MgGLVMtclTsJHK+cHPXPIgpbz9ZMiKP3Et8lfZws7zZZCgIGAc/r3/+WvhlhL38X7o7BULUsrJnoyPqtFiXhLni6UtikFUSGMUpwW48CuyM+o7NYYtue/zM/vpOa4l7lGYcFjatH8RK1idDFmCq174H4A=
+	t=1718119153; cv=none; b=onN7UJjyY2bMefNKyMoudJXzHkGIU1B/sYvQfNsGqOr81sLVsHC4d8XR0ElmtRyaXIwOl84sl/ySI/7kijdVDA986CUg9uZNoor8c7Jm+50uZOHe1ZyF8q43/ezbFrjHuP0QYgeN0gg47TadyYMentVWeNaKKHrrq13sQZ4f2eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718119040; c=relaxed/simple;
-	bh=hBDZsMo7XS37/WDuKhGZamh2Y8ndhFFxERQL6K36UXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ha87SV/ZfCqiWtypmJH7HzFKt7hKUVqhUbmCLZXO1UzeO1qHjHBI3qXEHbx28jTrpMOB+gRQ6m6Eqgu86f1canxrnQXixbXLsyj3W4JFc8zo0lzMZT/2arhcjolEA4KVvfjH/LYvIl+OM7X+u1jhmn57D5jsX3zrBnnhlb8nt88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgLvUuAW; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-375932c94f0so5991305ab.0;
-        Tue, 11 Jun 2024 08:17:18 -0700 (PDT)
+	s=arc-20240116; t=1718119153; c=relaxed/simple;
+	bh=nZBnie7/9yW63lBsCc3eXsSO8y38QNlz/K+eQllR9WI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ll1H3Z/ZZL7ihyiAvYtM7HDQKYPGUNzN7V3XrY+Fej97yfCcK5jBsCZ5HEKUrDZA0ee+EtcPNmyXCsSy7SbZLXQymBECzO9/5sCzI6qXnfIZ2B7QFO6a1jA99QDYTZlvWEC0SeLSWXfftqd/46Ij/mIXL9ZsX3WG6TtjWHqCTSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=G1I5g/of; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-627f3265898so61485207b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718119038; x=1718723838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nm8XxZQUI/HGBg0dmgtwj323sJEbBxn99UO8Ys/CJ9E=;
-        b=VgLvUuAW3hoQynsupjdqD9j89X5YIcLvcrikcLl80qOqooqgXbgTzy7CSga3IyBtkC
-         Y79USyklvNidMOO9BFmQiWdwkHA8pfIwcqQWVSkYykLQSwIMo9KcLlLk1HEQNmzTWNOg
-         1pySgk+L6LXcBTURG4tTB4O3UVpqzYlwnPavahwcgbD0VgcX4hS5bBV1TWfGAPoC5qLU
-         KinXhly2Da9cudCl4gAtKMDH3wTKZaGkKgIfB/QFf7uR1knJsYqk5JQd+DQYZ7HpxrDU
-         73Ak8ouahfVb4aU0bIBncED/8mUylAGCcqJJ5blnCJ7Kf/3GBN/YD7GTXg2dxL/oQDgm
-         wlrw==
+        d=raspberrypi.com; s=google; t=1718119150; x=1718723950; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M10CbUZmXB7Dee3D7sJ9T+X7/UYDjZpP4+Wii7wbA+4=;
+        b=G1I5g/ofopLBTUnpl6cUM9rW6fDK11dJ03MW6Qd44pfsMa2i38oGeG2gy8jz94cHvz
+         YihGr3NM7pu0Fc5Jjr8T3hYhZ/a7ANLU95XTqlq0Ep1D+uQsyDYk0pPSyk9dOpKM28M6
+         VHwG+fjoaUJVuvdnTJVFSA+IGimTenrZwnqZVHlv7W3CXYDls6CUnz57Ulyug/3FggeT
+         SAud/Cu4nGPJr2PyC9K951ZIRfvaUwNtA3Ib7ZLpAYSBpR2MZS+m5xpN2CFQr4Ks8qom
+         dGo5sH9z4w15EbWzFZ+3Igvs36CSgcAEZ/CsrqSj7Rrz1TxWSpjclSmj4Y5KSH7M9b43
+         F1Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718119038; x=1718723838;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nm8XxZQUI/HGBg0dmgtwj323sJEbBxn99UO8Ys/CJ9E=;
-        b=jqxcJARRl/+2dEPCTBDscAsQfzqZBv+qHMqB5DYEF2rvy5kRmvMMgsRJzDCSGe1ol8
-         SNBO69zPakYnsSOfBFnkRoVXOuY58HDn4qkfWdcgndyRk8A8mM4+kLZu+O8+mUvdSLTs
-         DyUrtgJsZgRUaNce/7Z3V21da7iNfxeMCEWMgbj5cK5BIlrZ7D3UG1g5sWt8VT9KR/8x
-         uZyBWmtMmaownRQZEBe5tUTyykyD4DFf+sPfwRpLYYBMHTjKqWsFtvC+qEYmwdspOHNB
-         uBfjz4rlmkoRi1S5eB4fh1SS37DgbZVOuBClK9yhQoLXQbe7B67iaTfX66FCUB79nMcC
-         mnUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBuc4YAnpap3saxLecuCxYoyMm49Kj9QigNRjqfyXFA/dhcgamQPo3pdU49k70XMUl6clbObryT70L8lKfX4Nv+Dqdk8bZSSGTxUWl+FjyvmVBqyYppt2Hj49MSjRqoxBSOm9jIndD1UUbGqyK
-X-Gm-Message-State: AOJu0YyQKL5HIwlGboqclLaHDfgnyHiDnsz7xkAACZh+RxzhKiiAMVEI
-	tx5Hoviol075duR6VSGb1HiWcZoaLmKGQZfqDLtFbcvKKR2F4HHj
-X-Google-Smtp-Source: AGHT+IExm5GtDuYDkONfdjBbLVN8LHjWknlg7VwmafjrbNWIyXPsbRtYVK9WGAtqfWsQ86KMykmh4w==
-X-Received: by 2002:a05:6e02:2169:b0:375:a535:f7c7 with SMTP id e9e14a558f8ab-375a535fbdemr67209805ab.0.1718119037631;
-        Tue, 11 Jun 2024 08:17:17 -0700 (PDT)
-Received: from xps-15.. ([91.90.123.30])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4b7cbacb0d1sm2001416173.4.2024.06.11.08.17.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 08:17:17 -0700 (PDT)
-From: Amer Al Shanawany <amer.shanawany@gmail.com>
-To: Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Amer Al Shanawany <amer.shanawany@gmail.com>
-Subject: [PATCH v3] selftests: seccomp: fix format-zero-length warnings
-Date: Tue, 11 Jun 2024 17:16:08 +0200
-Message-ID: <20240611151638.5767-1-amer.shanawany@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <43e24489-a3af-4e53-afc6-ff1dd9462ee2@linuxfoundation.org>
-References: <43e24489-a3af-4e53-afc6-ff1dd9462ee2@linuxfoundation.org>
+        d=1e100.net; s=20230601; t=1718119150; x=1718723950;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M10CbUZmXB7Dee3D7sJ9T+X7/UYDjZpP4+Wii7wbA+4=;
+        b=UoVL03/Px6IaZq0pBwi/8VREAdnsPDqkTgC7znZB1OqNn1WGAhUQW8MOtQjqShvUhc
+         sPlVeT0nQ9bOTL4ROa+j+2nfwxb9aNKQilHUdHs/mAM+v0hdJvd81m8Nha+5iCaZiPrr
+         FpB487M5iKqVQQJebYtWDhW3ZE9dbmgUCw3a6P7pgncNb6f06cqvnjGvy51uvYj8qOXt
+         brK0+Q05S1gtTfpRkmdKTPR0rWzDXXB+OTFhdM7NKajdAe4ScvV+36gU41uFKUE7EG8i
+         X77Qnnl5sEwR+J9ea2BzqsnDZAg3Z/8d7i+P0DXxuV3BwNcZ120KBE52Ce/25Yap9T/Y
+         si8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMfj42Y0ISslRTo4c279fQSazipkS5nCBtlPgK8QqZih+OT3h0kounPgTaLCrF6iqYEypd2JlMNJIVT9cPH7clpXlc/+MAe7jWDH7F
+X-Gm-Message-State: AOJu0YzrgJP8eCcQWYHTT5pd803nVanyJgSmSCLoQV5gqAJkt0EoF1Ya
+	f+A6vlITGQQ2RayEbtHMNVSC7ul00On991Gpf8DGTnSLn2JK7yBLCIoF7n3acMxH+9qTxH0JN5W
+	P6O+mXYQvHCpH4XSy3tC2I/kqKMYlAxYgHTB6yg==
+X-Google-Smtp-Source: AGHT+IGZktdb+mXNwm5zMn5WZrRMM33fN6s00SSt7So0FNfjBJkDtcWY/jhchu4Ql1yDEY/OiyCWdDlQcY7P67hPaog=
+X-Received: by 2002:a25:4982:0:b0:dfd:b3bb:ac11 with SMTP id
+ 3f1490d57ef6-dfdb3bbaedamr816466276.59.1718119149436; Tue, 11 Jun 2024
+ 08:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240510100324.5961-1-abdulrasaqolawani@gmail.com>
+In-Reply-To: <20240510100324.5961-1-abdulrasaqolawani@gmail.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 11 Jun 2024 16:18:53 +0100
+Message-ID: <CAPY8ntCWoq6UMns04W6-BmYtCHggVr4xqZjOX1bcZtwyO-2EEg@mail.gmail.com>
+Subject: Re: [PATCH] media: i2c: replacing of_node_put with __free(device_node)
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+Cc: sakari.ailus@linux.intel.com, jacopo@jmondi.org, mchehab@kernel.org, 
+	julia.lawall@inria.fr, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	javier.carrasco.cruz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-fix the following errors by using string format specifier and an empty
-parameter:
+Hi
 
-seccomp_benchmark.c:197:24: warning: zero-length gnu_printf format
- string [-Wformat-zero-length]
-  197 |         ksft_print_msg("");
-      |                        ^~
-seccomp_benchmark.c:202:24: warning: zero-length gnu_printf format
- string [-Wformat-zero-length]
-  202 |         ksft_print_msg("");
-      |                        ^~
-seccomp_benchmark.c:204:24: warning: zero-length gnu_printf format
- string [-Wformat-zero-length]
-  204 |         ksft_print_msg("");
-      |                        ^~
+Thanks for the patch.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202312260235.Uj5ug8K9-lkp@intel.com/
-Suggested-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
----
-v1 -> v2: removed empty print statements
-v2 -> v3: used Kees's suggestion
----
- tools/testing/selftests/seccomp/seccomp_benchmark.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The subject should be "media: i2c: ov5647:" or just "media: ov5647" as
+you're only touching the one driver.
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_benchmark.c b/tools/testing/selftests/seccomp/seccomp_benchmark.c
-index b83099160fbc..94886c82ae60 100644
---- a/tools/testing/selftests/seccomp/seccomp_benchmark.c
-+++ b/tools/testing/selftests/seccomp/seccomp_benchmark.c
-@@ -194,14 +194,14 @@ int main(int argc, char *argv[])
- 	ksft_set_plan(7);
- 
- 	ksft_print_msg("Running on:\n");
--	ksft_print_msg("");
-+	ksft_print_msg("%s", "");
- 	system("uname -a");
- 
- 	ksft_print_msg("Current BPF sysctl settings:\n");
- 	/* Avoid using "sysctl" which may not be installed. */
--	ksft_print_msg("");
-+	ksft_print_msg("%s", "");
- 	system("grep -H . /proc/sys/net/core/bpf_jit_enable");
--	ksft_print_msg("");
-+	ksft_print_msg("%s", "");
- 	system("grep -H . /proc/sys/net/core/bpf_jit_harden");
- 
- 	affinity();
--- 
-2.43.0
+On Fri, 10 May 2024 at 11:11, Abdulrasaq Lawani
+<abdulrasaqolawani@gmail.com> wrote:
+>
+> Replaced instance of of_node_put with __free(device_node)
+> to protect against any memory leaks due to future changes
+> in control flow.
+>
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+> ---
+>  drivers/media/i2c/ov5647.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+> index 7e1ecdf2485f..d593dba092e3 100644
+> --- a/drivers/media/i2c/ov5647.c
+> +++ b/drivers/media/i2c/ov5647.c
+> @@ -1360,23 +1360,19 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
+>         struct v4l2_fwnode_endpoint bus_cfg = {
+>                 .bus_type = V4L2_MBUS_CSI2_DPHY,
+>         };
+> -       struct device_node *ep;
+> +       struct device_node *ep __free(device_node) = of_graph_get_endpoint_by_regs(np, 0, -1);
 
+The media subsystem still requests a max line length of 80.
+https://github.com/torvalds/linux/blob/master/Documentation/driver-api/media/maintainer-entry-profile.rst#coding-style-addendum
+Break the line after the =
+
+>         int ret;
+>
+> -       ep = of_graph_get_endpoint_by_regs(np, 0, -1);
+>         if (!ep)
+>                 return -EINVAL;
+>
+>         ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
+>         if (ret)
+> -               goto out;
+> +               return ret;
+>
+>         sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
+>                               V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
+>
+> -out:
+> -       of_node_put(ep);
+> -
+>         return ret;
+
+This could be "return 0;" as you've already returned if it was non-zero.
+
+I know very little of this new mechanism, but it looks reasonable, and
+Sakari has given it a basic blessing in a previous patch set.
+With the above 3 comments addressed:
+Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+
+>  }
+
+>
+> --
+> 2.34.1
+>
 
