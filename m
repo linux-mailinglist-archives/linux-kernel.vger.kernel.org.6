@@ -1,278 +1,154 @@
-Return-Path: <linux-kernel+bounces-210273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E709590419C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:51:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1C7904206
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D47D2886D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7EE1C24BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D179B7E;
-	Tue, 11 Jun 2024 16:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B9A4DA00;
+	Tue, 11 Jun 2024 16:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JkkzD+1H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R/4NmU+W"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D6B5B1FB;
-	Tue, 11 Jun 2024 16:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E72948CCD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124602; cv=none; b=bsxgZmvBhpcLOjsU3JCfFfqwDjjPqmZE9xkcS4Px51qx8oW7mEhbm7DHWfBzWRg73phFXc1M+YL960XnRd8ROfpyAnA579zOD59+vfAvIufsgXHYK+MM06JMDGv+lQ/6+3bCY1RxRYNAPO+JJXlUykHrE08jbM2WSG8nbYMGLng=
+	t=1718124999; cv=none; b=pOj2IWNYykXKwcV5Bw6mafes1ImiN70UXUcM/L/I8Dizmu1yb94JoCReEwKRqmPlQencHL4U5yAqtiWqmgGoVzEM/5xz3D9PGUeHfWnbgpvIjByDu2DgRQMaOw9+ToQlxECAGCWSqj+NxqgVl9WnwmEtHmBfSRAMZh7SC0Sv2XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124602; c=relaxed/simple;
-	bh=IEu49Dt7QQzsOmUqadGt6DV0l4o89inV/XBfm35TbgA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IJLrYvXpXPyoGmzJxs53XTRQWqatXZgw+CsfKVUoqyixwdxiWGpC5rkFlaUmekFi25eypNQP61bMvKO+uTqR6jbirr8KGoe91y7rw1/O9bVetl5pnAFwlFZf4GWyWDiVqFMfbS4sCUI7gzk9Gud/GIdUUPclwq3cN5EAzttqyD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JkkzD+1H; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718124601; x=1749660601;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=IEu49Dt7QQzsOmUqadGt6DV0l4o89inV/XBfm35TbgA=;
-  b=JkkzD+1HvUZE+azagSLIv7Bdj9TmxBMHWKLpsS9jnmNtQsGU1xXL14M6
-   dxZ+jDOiMI5Uc2Mt7LOVKGTSCzQEKOpK43pWftThBwTIHau7FT3GmMEK6
-   tkIUbuOLRs2aAUWhmWGxdD3iHr0LwCf/b7M2RXW8CMVBH6kf1LRqaejbB
-   WYzuaL0k7eicIZkvXnIcmeJpn6+wF+qifMZ9RrpvURivTccwKEBQauKAK
-   3uF4qVYC0jqy4sUSlNBn/mU2kYsh8KXjom9BjcPeUzCwZQLfTf7SIAhkr
-   FNpro9+KjE9SN4GHEGmu+j2WCvyLfaDlHdVfDrUYVbwXZiDrHQBBROPvY
-   w==;
-X-CSE-ConnectionGUID: vWTXuX5rTQi2hV4UbG7DcQ==
-X-CSE-MsgGUID: aHsrMgFWTAKHFUXF7It3tw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="40249669"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="40249669"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:49:59 -0700
-X-CSE-ConnectionGUID: jYSDbBkqSymIm8KGfe7l5w==
-X-CSE-MsgGUID: jcBJnM4BQqGpZOaCzzwKOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="40103315"
-Received: from jacob-builder.jf.intel.com ([10.54.39.125])
-  by orviesa008.jf.intel.com with ESMTP; 11 Jun 2024 09:49:58 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: X86 Kernel <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Ingo Molnar" <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>,
-	linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>,
-	"Xin Li" <xin3.li@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 6/6] x86/irq: Enable NMI source on IPIs delivered as NMI
-Date: Tue, 11 Jun 2024 09:54:57 -0700
-Message-Id: <20240611165457.156364-7-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
-References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
+	s=arc-20240116; t=1718124999; c=relaxed/simple;
+	bh=o29lQlHY6pBB5D1miRHhOsA44JWXgR9MvIZMXmk7GOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QJCwEkM4eI1SKRbaGbPIo0V8w8gaCeG4cf/D6XrV81PZ+POnl80SuCkS2shYAXeimWaC8sYY8JGS86p34nq7acXEVR/vH+41d0RL0pxbwb+3RLKlugM0+cyoB46lwQJAZnSkBcbJ0jCmNcasWqmoPo1T+/ckrRKn2y0dOS2NzEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R/4NmU+W; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c714a1e24so1567773a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:56:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718124995; x=1718729795; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9fd3UL80BMA34VQCo8tmKRzc+M7L8fT8pwxngoicvPg=;
+        b=R/4NmU+Wuz/rBDw2TOarfy0eq39D/abecawkkTiTcgiObG8r+NmdI4/uOH9fOkCOI9
+         aBAq+c/z+6+dYBngFmBUl8WIOqM3wVDs+Yz9/k5ER+T88utxsRZTDHXhWcSsUF1B79xY
+         05I2NgVzJDRnGduGMoSzLNvNIL+Isv7VnRtSU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718124995; x=1718729795;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9fd3UL80BMA34VQCo8tmKRzc+M7L8fT8pwxngoicvPg=;
+        b=R8sJIMVEnoXFiuO/Ba+ZU8qsWL0CvB5LSSHeTefPgorfRrxirRKpUAjXKrQXJazzv+
+         PfCk4SvLVQdYbFhSjrFZoi9IGY5+CnJtsvE2Z55Yk657ohLzLaxcpWWb3gb578TER5m2
+         ijSxmJn3RmYMJDUVHw19LZdrkpC25LtQZuRuy2VeozO2ZRL8s0y/uiAJvIkjIJvR3T7G
+         lhfYwEOU4cWsCEoOTo0Ljj48j5BZO0ysoyzEsp7hjJoPrlu2ksS8ppOeVygVFpLFaaVr
+         HDBZLyb4bddzEtKYNd6vR6op28AtbHVjaysQ+qLfrh0hQ+zIKztHQsNUJ6qImCBGTzUT
+         xm5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVB5FdNeKtVsu00Jr3R1ooYTm0xWWh2g1tpu2CaOu6FbNPwIPriERn4ooCFJRhE4GNQb+Ow9i3T9YRvUq54eAUM1F9GMnGIfSlNRqPI
+X-Gm-Message-State: AOJu0YylFGDBs365mc9rAb2Nzsw5AnWFh1s6snKLZy7GGHwZL5Q1RGJ4
+	u6uFpbtRSZRI5uA23BSh8U8QeitgK/kF02a+s9KOgn3TZ1SyqtzAiaMQy29/C0QmzVKlTcJY1+Y
+	nb0k=
+X-Google-Smtp-Source: AGHT+IHaWVGr2vHVhPlAZAy2LAvs1fNVb/si+x1K1Pr4aQ2g6MxIy6wsEJlkvjIDIaJm0K7Uo/BM6Q==
+X-Received: by 2002:a50:8719:0:b0:57c:8022:a3d9 with SMTP id 4fb4d7f45d1cf-57c8022a9demr4562505a12.20.1718124995362;
+        Tue, 11 Jun 2024 09:56:35 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c9d5e29e9sm809232a12.2.2024.06.11.09.56.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 09:56:34 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f0dc80ab9so181249866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:56:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/i8DLcSLU1NKy+BxXAJH1qkQBITpfM9qF1pqwpvU/59t+a7lezSz9yYwJLsum3MG215ZUisDa3L/6SaNGkZgw3VT48kWkkPpeTukh
+X-Received: by 2002:a17:907:72d3:b0:a6f:1f4a:dfba with SMTP id
+ a640c23a62f3a-a6f1f4ae1eamr427237266b.43.1718124993806; Tue, 11 Jun 2024
+ 09:56:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240610204821.230388-1-torvalds@linux-foundation.org>
+ <20240610204821.230388-5-torvalds@linux-foundation.org> <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
+In-Reply-To: <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 11 Jun 2024 09:56:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
+Message-ID: <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
+Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Program designated NMI source vectors for all NMI delivered IPIs
-such that their handlers can be selectively invoked.
+On Tue, 11 Jun 2024 at 07:29, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> Do we expect to use this more widely? If this only really matters for
+> d_hash() it might be better to handle this via the alternatives
+> framework with callbacks and avoid the need for new infrastructure.
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- arch/x86/include/asm/irq_vectors.h | 10 ++++++++++
- arch/x86/kernel/apic/hw_nmi.c      |  3 ++-
- arch/x86/kernel/apic/ipi.c         |  4 ++--
- arch/x86/kernel/apic/local.h       | 18 ++++++++++++------
- arch/x86/kernel/cpu/mce/inject.c   |  2 +-
- arch/x86/kernel/kgdb.c             |  2 +-
- arch/x86/kernel/nmi_selftest.c     |  2 +-
- arch/x86/kernel/reboot.c           |  2 +-
- arch/x86/kernel/smp.c              |  2 +-
- 9 files changed, 31 insertions(+), 14 deletions(-)
+Hmm. The notion of a callback for alternatives is intriguing and would
+be very generic, but we don't have anything like that right now.
 
-diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
-index 7629319428e5..0b459fd2aa4e 100644
---- a/arch/x86/include/asm/irq_vectors.h
-+++ b/arch/x86/include/asm/irq_vectors.h
-@@ -133,6 +133,16 @@
- #define NMI_SOURCE_VEC_IPI_TEST		8	/* For remote and local IPIs */
- #define NR_NMI_SOURCE_VECTORS		9
- 
-+/*
-+ * When programming the local APIC, IDT NMI vector and NMI source vector
-+ * are encoded in a single 32 bit variable. The top 16 bits contain
-+ * the NMI source vector and the bottom 16 bits contain NMI_VECTOR (2)
-+ * The top 16 bits are always zero when NMI source feature is not enabled
-+ * or the caller does not use NMI source.
-+ */
-+#define NMI_VECTOR_WITH_SOURCE(src)	(NMI_VECTOR | (src << 16))
-+#define NMI_SOURCE_VEC_MASK		GENMASK(15, 0)
-+
- #ifdef CONFIG_X86_LOCAL_APIC
- #define FIRST_SYSTEM_VECTOR		POSTED_MSI_NOTIFICATION_VECTOR
- #else
-diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nmi.c
-index 9f0125d3b8b0..f73ca95d961e 100644
---- a/arch/x86/kernel/apic/hw_nmi.c
-+++ b/arch/x86/kernel/apic/hw_nmi.c
-@@ -20,6 +20,7 @@
- #include <linux/nmi.h>
- #include <linux/init.h>
- #include <linux/delay.h>
-+#include <asm/irq_vectors.h>
- 
- #include "local.h"
- 
-@@ -33,7 +34,7 @@ u64 hw_nmi_get_sample_period(int watchdog_thresh)
- #ifdef arch_trigger_cpumask_backtrace
- static void nmi_raise_cpu_backtrace(cpumask_t *mask)
- {
--	__apic_send_IPI_mask(mask, NMI_VECTOR);
-+	__apic_send_IPI_mask(mask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_BT));
- }
- 
- void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
-diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
-index 5da693d633b7..9d2b18e58758 100644
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -157,7 +157,7 @@ static void __default_send_IPI_shortcut(unsigned int shortcut, int vector)
- 	 * issues where otherwise the system hangs when the panic CPU tries
- 	 * to stop the others before launching the kdump kernel.
- 	 */
--	if (unlikely(vector == NMI_VECTOR))
-+	if (unlikely(is_nmi_vector(vector)))
- 		apic_mem_wait_icr_idle_timeout();
- 	else
- 		apic_mem_wait_icr_idle();
-@@ -174,7 +174,7 @@ void __default_send_IPI_dest_field(unsigned int dest_mask, int vector,
- 				   unsigned int dest_mode)
- {
- 	/* See comment in __default_send_IPI_shortcut() */
--	if (unlikely(vector == NMI_VECTOR))
-+	if (unlikely(is_nmi_vector(vector)))
- 		apic_mem_wait_icr_idle_timeout();
- 	else
- 		apic_mem_wait_icr_idle();
-diff --git a/arch/x86/kernel/apic/local.h b/arch/x86/kernel/apic/local.h
-index 842fe28496be..60e90b7bf058 100644
---- a/arch/x86/kernel/apic/local.h
-+++ b/arch/x86/kernel/apic/local.h
-@@ -12,6 +12,7 @@
- 
- #include <asm/irq_vectors.h>
- #include <asm/apic.h>
-+#include <asm/nmi.h>
- 
- /* X2APIC */
- void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
-@@ -26,19 +27,24 @@ extern u32 x2apic_max_apicid;
- 
- DECLARE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
- 
-+static inline bool is_nmi_vector(int vector)
-+{
-+	return (vector & NMI_SOURCE_VEC_MASK) == NMI_VECTOR;
-+}
-+
- static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
- 					 unsigned int dest)
- {
- 	unsigned int icr = shortcut | dest;
- 
--	switch (vector) {
--	default:
--		icr |= APIC_DM_FIXED | vector;
--		break;
--	case NMI_VECTOR:
-+	if (is_nmi_vector(vector)) {
- 		icr |= APIC_DM_NMI;
--		break;
-+		if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-+			icr |= vector >> 16;
-+	} else {
-+		icr |= APIC_DM_FIXED | vector;
- 	}
-+
- 	return icr;
- }
- 
-diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-index 365a03f11d06..07bc6c29bd83 100644
---- a/arch/x86/kernel/cpu/mce/inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -270,7 +270,7 @@ static void __maybe_unused raise_mce(struct mce *m)
- 					mce_irq_ipi, NULL, 0);
- 				preempt_enable();
- 			} else if (m->inject_flags & MCJ_NMI_BROADCAST)
--				__apic_send_IPI_mask(mce_inject_cpumask, NMI_VECTOR);
-+				__apic_send_IPI_mask(mce_inject_cpumask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_MCE));
- 		}
- 		start = jiffies;
- 		while (!cpumask_empty(mce_inject_cpumask)) {
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index d167eb23cf13..02198cf9fe21 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -416,7 +416,7 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
-  */
- void kgdb_roundup_cpus(void)
- {
--	apic_send_IPI_allbutself(NMI_VECTOR);
-+	apic_send_IPI_allbutself(NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_KGDB));
- }
- #endif
- 
-diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-index f014c8a66b0c..5aa122d3368c 100644
---- a/arch/x86/kernel/nmi_selftest.c
-+++ b/arch/x86/kernel/nmi_selftest.c
-@@ -76,7 +76,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
- 	/* sync above data before sending NMI */
- 	wmb();
- 
--	__apic_send_IPI_mask(mask, NMI_VECTOR);
-+	__apic_send_IPI_mask(mask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_TEST));
- 
- 	/* Don't wait longer than a second */
- 	timeout = USEC_PER_SEC;
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index acc19c1d3b4f..fb63bc0d6a0f 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -918,7 +918,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	 */
- 	wmb();
- 
--	apic_send_IPI_allbutself(NMI_VECTOR);
-+	apic_send_IPI_allbutself(NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_REBOOT));
- 
- 	/* Kick CPUs looping in NMI context. */
- 	WRITE_ONCE(crash_ipi_issued, 1);
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index f27469e40141..b79e78762a73 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -217,7 +217,7 @@ static void native_stop_other_cpus(int wait)
- 			pr_emerg("Shutting down cpus with NMI\n");
- 
- 			for_each_cpu(cpu, &cpus_stop_mask)
--				__apic_send_IPI(cpu, NMI_VECTOR);
-+				__apic_send_IPI(cpu, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_SMP_STOP));
- 		}
- 		/*
- 		 * Don't wait longer than 10 ms if the caller didn't
--- 
-2.25.1
+Is anybody willing to implement something like that? Because while I
+like the idea, it sounds like a much bigger change.
 
+> As-is this will break BE kernels [...]
+
+I had forgotten about that horror. BE in this day and age is insane,
+but it's easy enough to fix as per your comments. Will do.
+
+> We have some helpers for instruction manipulation, and we can use
+> aarch64_insn_encode_immediate() here, e.g.
+>
+> #include <asm/insn.h>
+>
+> static inline void __runtime_fixup_16(__le32 *p, unsigned int val)
+> {
+>         u32 insn = le32_to_cpu(*p);
+>         insn = aarch64_insn_encode_immediate(AARCH64_INSN_IMM_16, insn, val);
+>         *p = cpu_to_le32(insn);
+> }
+
+Ugh. I did that, and then noticed that it makes the generated code
+about ten times bigger.
+
+That interface looks positively broken.
+
+There is absolutely nobody who actually wants a dynamic argument, so
+it would have made both the callers and the implementation *much*
+simpler had the "AARCH64_INSN_IMM_16" been encoded in the function
+name the way I did it for my instruction rewriting.
+
+It would have made the use of it simpler, it would have avoided all
+the "switch (type)" garbage, and it would have made it all generate
+much better code.
+
+So I did that change you suggested, and then undid it again.
+
+Because that whole aarch64_insn_encode_immediate() thing is an
+abomination, and should be burned at the stake.  It's misdesigned in
+the *worst* possible way.
+
+And no, this code isn't performance-critical, but I have some taste,
+and the code I write will not be using that garbage.
+
+> This is missing the necessary cache maintenance and context
+> synchronization event.
+
+Will do.
+
+                 Linus
 
