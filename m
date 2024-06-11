@@ -1,233 +1,266 @@
-Return-Path: <linux-kernel+bounces-210629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EDE90466B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:51:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B77890466E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E0C28967B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:51:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FB52B21C9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244F715253B;
-	Tue, 11 Jun 2024 21:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C30515383D;
+	Tue, 11 Jun 2024 21:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j7A72MhG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="OrXkl80s"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63514150991;
-	Tue, 11 Jun 2024 21:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718142674; cv=none; b=rLeJ/CjVOi1+SPjaCPwHTXDw3cROr431Tc0Blui9shUyL2Gg6M4rscnsUZJfZtrO2U0sAR8kRecC1eYsHV6fu+hTEdH3MHKX+BQopsy8C0FxPUaxIB2ahZ/7cJtq0R+Knq6ulw9ZOE+BSkNDjoKD5M91ZcDpKsJTSonNBefEBhs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718142674; c=relaxed/simple;
-	bh=42Iml4V95zjMoBT1V5V/Ymqx61gKN29WZ3TouJ7dEK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuH59xACuWyfx49KCGZZbvWCCR9NiyuXSjIiwkKMMzx9zxngvT8WMU8jvv6OtGZs3QJzfBx8U+vGc0dOHd3QsP7wtaKlrHiXxRfPR6lIVvxu+lj0mqu5/WKfUybgBkG7HZ85VKexHTHn9XD4b+3rR6A3G4dSKePpTx/Z+6HYnWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j7A72MhG; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718142673; x=1749678673;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=42Iml4V95zjMoBT1V5V/Ymqx61gKN29WZ3TouJ7dEK8=;
-  b=j7A72MhGYnbn0KHIsKWWgL307I7gBqPWsWum3/dvj1TL0UwGyO18wFl5
-   zs031GDn9rmLJhQ4nMDzfs3z0M8JHFqSfH88NDeM7N48e/vXHHHYHGsqz
-   gqg0kp7CLHEJ8PK1Of2sZIEZAVbHYgkrKPsTu50Sb5DACarvAtS8BwXFp
-   TNQkxdR2COs9T2xJXyAm1PB8pIAvy87QwQc496F0Udi8MLQGWJnLZrhVy
-   Adc+NAx3mB6IsI22SIK02sgVuUj2o659MiQaur3gO9uPwuobgcZ8AvI9A
-   S95rcyLD9kavf8CymAN661diVoqgiug09hjuiGPfE9q2szxQObIVJGjfR
-   A==;
-X-CSE-ConnectionGUID: Db5oPGMiR6aRAs7bheZEDQ==
-X-CSE-MsgGUID: 6U7/dh7RQuK5czC7NCndTQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18661307"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="18661307"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 14:51:12 -0700
-X-CSE-ConnectionGUID: XcExuu34Qe6iRxYnIi5l5w==
-X-CSE-MsgGUID: lmcuSoDFSzahsNTh2PtImw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="40281895"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 11 Jun 2024 14:51:10 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sH9OV-0000wG-0a;
-	Tue, 11 Jun 2024 21:51:07 +0000
-Date: Wed, 12 Jun 2024 05:50:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: PoShao Chen <poshao.chen@mediatek.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, clive.lin@mediatek.com,
-	ccj.yeh@mediatek.com, ching-hao.hsu@mediatek.com,
-	poshao.chen@mediatek.com
-Subject: Re: [PATCH] cpufreq: Fix per-policy boost behavior after CPU hotplug
-Message-ID: <202406120519.mhrkBEkJ-lkp@intel.com>
-References: <20240611115920.28665-1-poshao.chen@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AF33A8E4;
+	Tue, 11 Jun 2024 21:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718142751; cv=fail; b=XoKrfiL3Pfx0s8R9NYHrqNLnJGKn4jmwUBlp3OvaNjHYTSnYyX66GxlWV15EOh/nhORcGOBqSknSBEC0UCI21pwee7c86yFG1wCriwKmj0L2MP0+UnclydLLf3s6rnZDe3211Q6xnQxPnX/VyNqis8mVXl9cLcAiklH8TuRS5q4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718142751; c=relaxed/simple;
+	bh=I2wLcrlx1fmJczRMP3pTp9ivXzdx/ltmsh9rlCa2vxA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xk3LaTp7sYwfpHxlZxWFeJfB+orVF1+GsmHF6FLulmI3rJm3YPouLxKygJO4K+ShnBCE+v7Q1TNJ+HWD9Oo2HXExBorIFhzF5C0iovGsEu7Fk+KZr8Z3GNxYJuz2kdkJc8UWONQ2exq2oIdgUWpfE0JlqCf62BOHBFmv/4Nw12Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=OrXkl80s; arc=fail smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BH7UHS002547;
+	Tue, 11 Jun 2024 14:52:18 -0700
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2048.outbound.protection.outlook.com [104.47.66.48])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yptq3h62x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 14:52:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kz+ghB3LKhzSf55g/waUKD896uwLdhZIphPwh6FY7uQPO5o2rQnRMAvwFohfYjOuu8GB8/8Trmf46QRmfNcrgd/SEITib1oFV6rV8W4EVBu/07U6itfVWngQz4mg3Dr0w9Fu5z3KQLns18M0YNpeg8h6gUfUWy/TF4r2d7Ow20v1jtX9gCYQlqZIJtbqdqUTnIDAGJ3C/LQRtG5pEJUJRDlTe//rrq67K/vDyuKESyhzMu/Rwuea685VltW8lg0dlcyghSGzJP2BJZZA5QOP8PtrPOwkqv2bVBE62y6rfaZS6qDeZsyivZynmBBiv4rPonvS+JDUy+4V1v2KFK+bMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nPYMRTtWEWW0eqjBXNXKWRY9LGrq5Be4UfWGvgTZhCo=;
+ b=ZaxJG/wMHJIXMiBbhPyZmq9AFgrMPOqsIMSEW+bDdDw0nZDfa4WGR9aoxU7JWFu07SGPucF+yEVRpxjKG7JAD5DeZRHMqs05eqEtqpDcpl3hZ9fO8f4ogHltMDxnVciWo9OWbJYCoXHcqLY+MAvq8WREix+LZW+KxjJi6JzbVP7OwvZmMRU44vbQFafawl0e1CRP9qDaPMnoJCeLd50tLvfeiaicv/jzuAm5329J1RSPK7+Zv5XWCkbutfMr9cQ6ZGwuBjmcooK23VBc+vsVv61OnSTMBPJg2CRpwRlqB4x7Sf0q3zlH2pg+SiNpJ6tsbiLbbXjYXKiSeZxloHNRZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nPYMRTtWEWW0eqjBXNXKWRY9LGrq5Be4UfWGvgTZhCo=;
+ b=OrXkl80sIALlTvCWYhk7UT/ulkXgDK975z83QjjgRz4S6mo32VYj4SOB//YiL1BqidCf/2k3o6Yx0jLuZl5Y1Da98BxJ/hvQpDMIiwpGu5G+bgl4ZPSwC2tkssU+yImJKtI6t92vUzIbo/Uvhg/ll20OX4gmdJP50vtwqIk3skQ=
+Received: from CO6PR18MB4098.namprd18.prod.outlook.com (2603:10b6:5:34b::5) by
+ PH0PR18MB4457.namprd18.prod.outlook.com (2603:10b6:510:ef::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.37; Tue, 11 Jun 2024 21:51:58 +0000
+Received: from CO6PR18MB4098.namprd18.prod.outlook.com
+ ([fe80::5331:f53:fcd:d7e1]) by CO6PR18MB4098.namprd18.prod.outlook.com
+ ([fe80::5331:f53:fcd:d7e1%3]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 21:51:58 +0000
+From: Witold Sadowski <wsadowski@marvell.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org"
+	<robh@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>,
+        "conor+dt@kernel.org"
+	<conor+dt@kernel.org>,
+        "pthombar@cadence.com" <pthombar@cadence.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v8 2/4] spi: cadence: Add Marvell xSPI IP
+ overlay changes
+Thread-Topic: [EXTERNAL] Re: [PATCH v8 2/4] spi: cadence: Add Marvell xSPI IP
+ overlay changes
+Thread-Index: AQHauO35xUH3Zn/k1UOJaBN7iNN9L7HBLaqAgAHtIRA=
+Date: Tue, 11 Jun 2024 21:51:58 +0000
+Message-ID: 
+ <CO6PR18MB4098E3DEF64621FB147BC345B0C72@CO6PR18MB4098.namprd18.prod.outlook.com>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-3-wsadowski@marvell.com>
+ <Zmcj3fZ4DF8r_qf0@finisterre.sirena.org.uk>
+In-Reply-To: <Zmcj3fZ4DF8r_qf0@finisterre.sirena.org.uk>
+Accept-Language: en-US, pl-PL
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR18MB4098:EE_|PH0PR18MB4457:EE_
+x-ms-office365-filtering-correlation-id: 41807f58-c6d4-45d7-6d4c-08dc8a60b7ca
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230032|376006|366008|1800799016|38070700010;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?zjaI/acnWxV6lpDOQtKDLm4LUmuKxB121mE9DfxFH3CnJx6CR3pRsq3Jj5MF?=
+ =?us-ascii?Q?n/L1f34WSab7A/4v0yc99/FN/ahHqZCuGKNDUudA96QbXMWcV5qO3u8Usowd?=
+ =?us-ascii?Q?/bC4yEpBswv6VMd7deOcFEyYdNZbvePpoimNGSBw1yyo2MuyI3JKB/kEyHQW?=
+ =?us-ascii?Q?z2GhpOD/D8wkYFz29hPOvq+Wc0WdPa4SMuw1G2bId2McD2ClxKcBZ0kT1Ezw?=
+ =?us-ascii?Q?57lMsMM15VRNfFxNlM90oRVI8cw7Zxb7Qfx4eUAR2pZtXRCl8+d6Pi0Ywg02?=
+ =?us-ascii?Q?LwxfwRGgVf3EoDyckNUNMY1aelKFzKBxj07Llp2NeHHQAggKzmyFngb3e/IF?=
+ =?us-ascii?Q?dqAc+qACX4JVy0SXNPF0KATjPZEdZ7c9Depf5/1HQcSxyaFw8q6WhRvblyAJ?=
+ =?us-ascii?Q?kCh/6R3N44n03tZHFw2GtT0aeVDouvGtL1/WmwQGdM95PRpz7B3LZr59vlJG?=
+ =?us-ascii?Q?m3o2h/4IwFrx9tyg3lHECwGETd6H8RJDwUhIninLiq7pMmrknoT6Jv4+BqeT?=
+ =?us-ascii?Q?I1/fn4nIjdAKRDCscXPMaQPqXsvVVex/cj5L3qilOOs0x3vo5lSKjkuMObGb?=
+ =?us-ascii?Q?xjO4PSih5Zq2+Ce560wAtdLHDbbDK+o9XTzwTDIZg+iwIkPsmdCC+g2lfbkj?=
+ =?us-ascii?Q?GJG+E56Jj0zFjDk2fxA2Nu7Iw9ke+3UE6XJ80GMMaYThEnhdn/NjCoXUOJne?=
+ =?us-ascii?Q?ZGjF/bYvgm97DNlwFTsBwqiL6qd1bW1XLulePPXPUXNgtnr/RbYeequ7wGCu?=
+ =?us-ascii?Q?pyofqC1guoD/XUXo/du6Mmm94jUyn2QHtQWzj6iSl0vMQulEheVFz/Q9vRV7?=
+ =?us-ascii?Q?Ar+nX5vRSvYWaDfb8rDq+ouD87sExFunc1ZOscMR1xKIToCi2X8ww+n5npWb?=
+ =?us-ascii?Q?RJVUFWJaJETpECwPVlPe/OllNz+uzwEIGNkgjqIxytIG1vFnwK0Hq0VmdIei?=
+ =?us-ascii?Q?GvTGkM6wQeptRUuVcry9D2AeqszK+X2Cg6mcc4CVsAorLNQS71+NZUDYJaEN?=
+ =?us-ascii?Q?fv0UJif84uGx7ezO/hH/6PNlznXiuZPAMlbG3IrBFRqXqg+dsKV1SdVodRis?=
+ =?us-ascii?Q?AA1dUEikfeWo7m5bYJSrrnGp531rkkcTXpWlvY8WQoBGRG+eC29NEnQJZsvH?=
+ =?us-ascii?Q?/MPb7Cnd/bsw5Lqo23my3QBZbMXhzMm9liLjoZrbgjEtreRvIottozknEgdQ?=
+ =?us-ascii?Q?jbLOxkFqBDzTJCzuEbGkvWnFliG/KFnYVuqOSFMV759aSVHAVRpyNdOzCvDI?=
+ =?us-ascii?Q?yvDa6+zhxfawEJlgUNdsx9FKzs9S/hD+q+jXEGrlzhLz5z/R4j6Pw2qUmXAl?=
+ =?us-ascii?Q?6Y+JiUL/8VIAFXfLxh5rhJCHeLmis31wz/Kc8YkOpdBKaf7kuTQDCMVnXitw?=
+ =?us-ascii?Q?nY87uLM=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR18MB4098.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(366008)(1800799016)(38070700010);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?O/3iPUWvSIw+Q9ZucugWBPTYqkm/TgU+n1LMLCjBFrN4yjCBIC/irk77NZIo?=
+ =?us-ascii?Q?7SSGvsORgXe6ussfb2WoDuhKgoFcma+NyUa8RrX+GiNirBX8DfNKDg8V8Ods?=
+ =?us-ascii?Q?s4pIKLP62+TvYfANx1o1kecm6SVeS1CtzbhAWvAFBztcn+/i8yKVjGydnVRf?=
+ =?us-ascii?Q?hfoi4ER6XIQgNMWC9Gg2EL7xRz4Q+dCeynDxgv4V27ZT20X5MRE/1B/EO0Ve?=
+ =?us-ascii?Q?OHXWCzeR/c1F4Qpz7Hi3ralCRZ5KSMcG6HJmYZAnNnt7a3AMfgWAYlf7xium?=
+ =?us-ascii?Q?be0mwNLhXwknCoF5xvPOOPw9uisIRV55jr9B2B9W52Sdcztgo06NB3Nyh4X4?=
+ =?us-ascii?Q?xbrB1QpMsAG0obO1LUFAqbU/R0D7WO6lTKZ1a0PdmxqsTOXUL4Rot/UZgjJi?=
+ =?us-ascii?Q?8sdR1q8OtUkMMST5UzXRjwZORHXdr1FxQ0rJsBPuKKAXV7hzSrI2i/wAbiZb?=
+ =?us-ascii?Q?zECSMzw7ldVMOtvbx4mxn3bKJnbypYS4touFpxG8b8hk1DQyFHVwFq0h2p0J?=
+ =?us-ascii?Q?yxPXQcdbE1xnO5xpb2gkAuAWBT2hQ9Zi/tK2UI5nLtCkDe8MxFw9zDP3Ekz9?=
+ =?us-ascii?Q?SRDzK/GHDohkSoxek01nig2TjXweXwdP9N/YhhZCXxgQrqJ9kcNJgFCKpAns?=
+ =?us-ascii?Q?rTtX9KS0oi6HPe9zHiYsaUH7DZdsF9L7aN3HyrTdSD8mbKXWmPhl8a5JjSBa?=
+ =?us-ascii?Q?UnDltGBc99iWAW4QIaPLdRTw8Ap6CIAW9dnUdpz9t9y+ha9KGO1mHwiM6rrI?=
+ =?us-ascii?Q?j3b79aIwfsazC8+jMLv8/ZprYZyqvWW+CMkUJ6ALCqtQLp+60t08IER21aow?=
+ =?us-ascii?Q?bp/vId53MJtOaLBRgEQXNGSAB2yMHGH5gzQg8X/Ejc8N2/FZZD9+RIcF2JSa?=
+ =?us-ascii?Q?06gEgxzhU0N0g0pOuAC8sNPafinD0vyuspsuehMufYT/dvpVgcgr+pW/O5NA?=
+ =?us-ascii?Q?PIMlpVe0sgNg1wKpEBk7CsPOee/hSS52O/1XcuRFsMd5mMneriq3yzLfvsX9?=
+ =?us-ascii?Q?mYymJSXdhXn1T8AgZSfZGLPeSbyEA8f35PILkpZ6ZsH52lG7znGzecpDvUQv?=
+ =?us-ascii?Q?VX6mlPhFM8j7TfrMGCI6yIFLQ18KCtQg8lzoNZWkwsxesbe8/Yy3W2b/qWpN?=
+ =?us-ascii?Q?2WaXosJ5k09ZV7oRcDZ2PZBwTnC18Dv+6NReVAHwM/89heQgssab0ZxC4Di2?=
+ =?us-ascii?Q?Yewa0TsGIiXdgFCkufBYA/sFrNJpa4NNrjQLdMD7/G2gR7QdYZSK/8nblsJt?=
+ =?us-ascii?Q?+Rvkl6QfvFzNSXVkMLiN5BmLH0gdzho1A4X+t1Pywxj/vRIlgYkLHWH5IsJ0?=
+ =?us-ascii?Q?cbgpGPFRWTGZ1Vtvb3XiPliCWtlxNNYE5RaL/MHw6shBxjk7g/VoPaefzPJE?=
+ =?us-ascii?Q?M1D79pQHohIUSq/MSNx1HAzItY3CWoUTszxn9VUBxegpsdvR56MHF0ULuZ7U?=
+ =?us-ascii?Q?LHO2GbnD1sEuG83YvHjc3aq3DAHZFDq2vicT0VcMUG3rieEFLxC7nAZY/XD+?=
+ =?us-ascii?Q?g5wJQaO1xbehEH9O/XyhUqZ6vLAgcBZ1KpjsjeLQuME+ysksSd3NgvZz+Ggy?=
+ =?us-ascii?Q?qR40qlReEerIxEicTHJo71vTWtMTRA/dAKqBbr2x?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611115920.28665-1-poshao.chen@mediatek.com>
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4098.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41807f58-c6d4-45d7-6d4c-08dc8a60b7ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 21:51:58.4226
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PHMoJZ/sP2CTWgNjDuvaFMdBuR2Q9CYXLuR8mMyhkkZj4QHhv6rRub8rL9kQB5OOGg0qy2aY9ab38B8KOOciXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB4457
+X-Proofpoint-GUID: gFL96voD7RpI_4zrm8fWXWSa_Pi9JdF4
+X-Proofpoint-ORIG-GUID: gFL96voD7RpI_4zrm8fWXWSa_Pi9JdF4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_11,2024-06-11_01,2024-05-17_01
 
-Hi PoShao,
+Hi
 
-kernel test robot noticed the following build errors:
+> On Fri, Jun 07, 2024 at 08:18:29AM -0700, Witold Sadowski wrote:
+> > This commit adds support for the basic v2 Marvell overlay block. Key
+> > features included are:
+> >     - Clock configuration
+> >     - PHY configuration
+> >     - Interrupt configuration (enabling)
+>=20
+> This feels like it could usefully be split up so these three bits are
+> separate, and there appear to be other changes buried in here as well.
+> I can't tell what changes either the PHY or interrupt configuration might
+> be referencing.
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc3 next-20240611]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+That changes are in single commit as, using not all of them will result in
+total xSPI failure. Configuring PHY makes no sense if clock is not enabled.
+But I can try to split that into 3 separate commits.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/PoShao-Chen/cpufreq-Fix-per-policy-boost-behavior-after-CPU-hotplug/20240611-200804
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240611115920.28665-1-poshao.chen%40mediatek.com
-patch subject: [PATCH] cpufreq: Fix per-policy boost behavior after CPU hotplug
-config: sh-defconfig (https://download.01.org/0day-ci/archive/20240612/202406120519.mhrkBEkJ-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406120519.mhrkBEkJ-lkp@intel.com/reproduce)
+>=20
+> > @@ -295,6 +450,10 @@ static void cdns_xspi_set_interrupts(struct
+> cdns_xspi_dev *cdns_xspi,
+> >  				     bool enabled)
+> >  {
+> >  	u32 intr_enable;
+> > +	u32 irq_status;
+> > +
+> > +	irq_status =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
+> > +	writel(irq_status, cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG);
+> >
+> >  	intr_enable =3D readl(cdns_xspi->iobase + CDNS_XSPI_INTR_ENABLE_REG);
+> >  	if (enabled)
+>=20
+> This seems like a separate change which applies to everything, not just
+> Marvell versions of the IP, and should be split out and explained.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406120519.mhrkBEkJ-lkp@intel.com/
+I will move that to separate commit too. It is possible that previous
+stage will not clear that register correctly, and that will lead to
+interrupt fail - at least in Marvell implementation.
 
-All error/warnings (new ones prefixed by >>):
+>=20
+> > @@ -319,6 +478,9 @@ static int cdns_xspi_controller_init(struct
+> cdns_xspi_dev *cdns_xspi)
+> >  		return -EIO;
+> >  	}
+> >
+> > +	writel(FIELD_PREP(CDNS_XSPI_CTRL_WORK_MODE,
+> CDNS_XSPI_WORK_MODE_STIG),
+> > +	       cdns_xspi->iobase + CDNS_XSPI_CTRL_CONFIG_REG);
+> > +
+>=20
+> This wasn't clearly mentioned in the changelog and is again being done
+> unconditionally for all instances of the IP, probably best to split out
+> and explain.
 
-   drivers/cpufreq/cpufreq.c: In function 'cpufreq_online':
-   drivers/cpufreq/cpufreq.c:1515:41: warning: missing terminating " character
-    1515 |                                 pr_info("%s: per-policy boost flag mirror the cpufreq_driver
-         |                                         ^
-   drivers/cpufreq/cpufreq.c:1516:48: warning: missing terminating " character
-    1516 |                                         boost\n", __func__);
-         |                                                ^
-   drivers/cpufreq/cpufreq.c:1522:48: warning: missing terminating " character
-    1522 |                                         pr_err("%s: per-policy boost flag mirror the cpufreq_driver
-         |                                                ^
-   drivers/cpufreq/cpufreq.c:1523:63: warning: missing terminating " character
-    1523 |                                                 boost failed\n", __func__);
-         |                                                               ^
->> drivers/cpufreq/cpufreq.c:3092:34: error: unterminated argument list invoking macro "pr_info"
-    3092 | core_initcall(cpufreq_core_init);
-         |                                  ^
->> drivers/cpufreq/cpufreq.c:1515:33: error: 'pr_info' undeclared (first use in this function); did you mean 'qc_info'?
-    1515 |                                 pr_info("%s: per-policy boost flag mirror the cpufreq_driver
-         |                                 ^~~~~~~
-         |                                 qc_info
-   drivers/cpufreq/cpufreq.c:1515:33: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/cpufreq/cpufreq.c:1515:40: error: expected ';' at end of input
-    1515 |                                 pr_info("%s: per-policy boost flag mirror the cpufreq_driver
-         |                                        ^
-         |                                        ;
-   ......
->> drivers/cpufreq/cpufreq.c:1515:33: error: expected declaration or statement at end of input
-    1515 |                                 pr_info("%s: per-policy boost flag mirror the cpufreq_driver
-         |                                 ^~~~~~~
->> drivers/cpufreq/cpufreq.c:1515:33: error: expected declaration or statement at end of input
->> drivers/cpufreq/cpufreq.c:1515:33: error: expected declaration or statement at end of input
->> drivers/cpufreq/cpufreq.c:1515:33: error: expected declaration or statement at end of input
->> drivers/cpufreq/cpufreq.c:1493:25: error: label 'out_destroy_policy' used but not defined
-    1493 |                         goto out_destroy_policy;
-         |                         ^~~~
->> drivers/cpufreq/cpufreq.c:1443:25: error: label 'out_offline_policy' used but not defined
-    1443 |                         goto out_offline_policy;
-         |                         ^~~~
->> drivers/cpufreq/cpufreq.c:1430:25: error: label 'out_free_policy' used but not defined
-    1430 |                         goto out_free_policy;
-         |                         ^~~~
->> drivers/cpufreq/cpufreq.c:1417:25: error: label 'out_exit_policy' used but not defined
-    1417 |                         goto out_exit_policy;
-         |                         ^~~~
->> drivers/cpufreq/cpufreq.c:1383:23: warning: unused variable 'flags' [-Wunused-variable]
-    1383 |         unsigned long flags;
-         |                       ^~~~~
-   drivers/cpufreq/cpufreq.c: At top level:
->> drivers/cpufreq/cpufreq.c:82:21: warning: '__cpufreq_get' used but never defined
-      82 | static unsigned int __cpufreq_get(struct cpufreq_policy *policy);
-         |                     ^~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:83:12: warning: 'cpufreq_init_governor' declared 'static' but never defined [-Wunused-function]
-      83 | static int cpufreq_init_governor(struct cpufreq_policy *policy);
-         |            ^~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:84:13: warning: 'cpufreq_exit_governor' declared 'static' but never defined [-Wunused-function]
-      84 | static void cpufreq_exit_governor(struct cpufreq_policy *policy);
-         |             ^~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:85:13: warning: 'cpufreq_governor_limits' declared 'static' but never defined [-Wunused-function]
-      85 | static void cpufreq_governor_limits(struct cpufreq_policy *policy);
-         |             ^~~~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:86:12: warning: 'cpufreq_set_policy' used but never defined
-      86 | static int cpufreq_set_policy(struct cpufreq_policy *policy,
-         |            ^~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:89:13: warning: 'cpufreq_boost_supported' used but never defined
-      89 | static bool cpufreq_boost_supported(void);
-         |             ^~~~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:1379:12: warning: 'cpufreq_online' defined but not used [-Wunused-function]
-    1379 | static int cpufreq_online(unsigned int cpu)
-         |            ^~~~~~~~~~~~~~
->> drivers/cpufreq/cpufreq.c:1330:13: warning: 'cpufreq_policy_free' defined but not used [-Wunused-function]
-    1330 | static void cpufreq_policy_free(struct cpufreq_policy *policy)
-         |             ^~~~~~~~~~~~~~~~~~~
-   drivers/cpufreq/cpufreq.c:1115:12: warning: 'cpufreq_init_policy' defined but not used [-Wunused-function]
-    1115 | static int cpufreq_init_policy(struct cpufreq_policy *policy)
-         |            ^~~~~~~~~~~~~~~~~~~
-   drivers/cpufreq/cpufreq.c:1077:12: warning: 'cpufreq_add_dev_interface' defined but not used [-Wunused-function]
-    1077 | static int cpufreq_add_dev_interface(struct cpufreq_policy *policy)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/cpufreq/cpufreq.c:1069:13: warning: 'remove_cpu_dev_symlink' defined but not used [-Wunused-function]
-    1069 | static void remove_cpu_dev_symlink(struct cpufreq_policy *policy, int cpu,
-         |             ^~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/cpufreq/cpufreq.c:18:
-   drivers/cpufreq/cpufreq.c:634:22: warning: 'boost' defined but not used [-Wunused-variable]
-     634 | define_one_global_rw(boost);
-         |                      ^~~~~
-   include/linux/cpufreq.h:332:30: note: in definition of macro 'define_one_global_rw'
-     332 | static struct kobj_attribute _name =            \
-         |                              ^~~~~
-   drivers/cpufreq/cpufreq.c:69:13: warning: 'cpufreq_suspended' defined but not used [-Wunused-variable]
-      69 | static bool cpufreq_suspended;
-         |             ^~~~~~~~~~~~~~~~~
+Ok, I can move to separate commit too.=20
 
+>=20
+> > +static void mrvl_ioreadq(void __iomem  *addr, void *buf, int len) {
+> > +	int i =3D 0;
+> > +	int rcount =3D len / 8;
+> > +	int rcount_nf =3D len % 8;
+> > +	uint64_t tmp;
+> > +	uint64_t *buf64 =3D (uint64_t *)buf;
+>=20
+> Any need to cast away from void * indicates a problem.
 
-vim +/pr_info +3092 drivers/cpufreq/cpufreq.c
+I will check that, but code is checking alignment of that pointer.
 
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05  3069  
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05  3070  static int __init cpufreq_core_init(void)
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05  3071  {
-8412b4563e5910 Quentin Perret        2020-06-29  3072  	struct cpufreq_governor *gov = cpufreq_default_governor();
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3073  	struct device *dev_root;
-8412b4563e5910 Quentin Perret        2020-06-29  3074  
-a7b422cda5084d Konrad Rzeszutek Wilk 2012-03-13  3075  	if (cpufreq_disabled())
-a7b422cda5084d Konrad Rzeszutek Wilk 2012-03-13  3076  		return -ENODEV;
-a7b422cda5084d Konrad Rzeszutek Wilk 2012-03-13  3077  
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3078  	dev_root = bus_get_dev_root(&cpu_subsys);
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3079  	if (dev_root) {
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3080  		cpufreq_global_kobject = kobject_create_and_add("cpufreq", &dev_root->kobj);
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3081  		put_device(dev_root);
-2744a63c1aec32 Greg Kroah-Hartman    2023-03-13  3082  	}
-8aa84ad8d6c740 Thomas Renninger      2009-07-24  3083  	BUG_ON(!cpufreq_global_kobject);
-8aa84ad8d6c740 Thomas Renninger      2009-07-24  3084  
-8412b4563e5910 Quentin Perret        2020-06-29  3085  	if (!strlen(default_governor))
-0faf84caee63a5 Justin Stitt          2023-09-13  3086  		strscpy(default_governor, gov->name, CPUFREQ_NAME_LEN);
-8412b4563e5910 Quentin Perret        2020-06-29  3087  
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05  3088  	return 0;
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05  3089  }
-d82f26925599ca Len Brown             2017-02-28  3090  module_param(off, int, 0444);
-8412b4563e5910 Quentin Perret        2020-06-29  3091  module_param_string(default_governor, default_governor, CPUFREQ_NAME_LEN, 0444);
-5a01f2e8f3ac13 Venkatesh Pallipadi   2007-02-05 @3092  core_initcall(cpufreq_core_init);
+>=20
+> > @@ -337,13 +563,11 @@ static void cdns_xspi_sdma_handle(struct
+> > cdns_xspi_dev *cdns_xspi)
+> >
+> >  	switch (sdma_dir) {
+> >  	case CDNS_XSPI_SDMA_DIR_READ:
+> > -		ioread8_rep(cdns_xspi->sdmabase,
+> > -			    cdns_xspi->in_buffer, sdma_size);
+> > +		cdns_xspi_sdma_memread(cdns_xspi, sdma_size);
+> >  		break;
+>=20
+> It's feeling like it might make sense to have an ops structure rather tha=
+n
+> sprinkling checks for the Marvell overlay everywhere.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Won't it cause big code duplication? There are some differences, but whole
+Part of SPI stig mode configuration is the same.
+
+Regards
+Witek
 
