@@ -1,210 +1,213 @@
-Return-Path: <linux-kernel+bounces-209106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC942902D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEB5902D73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E111F22E32
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6AD51C215BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED62167D82;
-	Mon, 10 Jun 2024 23:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB2C13ACC;
+	Tue, 11 Jun 2024 00:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaAhs4eC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDdf4q2T"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EAD1667CE;
-	Mon, 10 Jun 2024 23:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2495C1173F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718063938; cv=none; b=dw11Wju8P4Jg60bym9N3vfugAz/wVSm7ptRVGn1YBUuHa2Ij403L2TmtonbcT/RXWdBiCpeIscAFmvJJ3heniH6m2JxCtXvwdHE4+OlhhHhMp/ES0hiF0u+chKQHwm8X10ypmcct0YMdNfyZ6gqjvLDcqjh4ZR1ZDdnhZbW+qiU=
+	t=1718064179; cv=none; b=jwE30udNR2OESPjK11y7t65olBHkliVTjx9h2LjQwtWLcRjGRZRqea5A8f06VyFGV/MgS/qRTpDC9tPfsopYnHXbrvEURPVxj5FUzathZQFcGx8J0OJrnjw8zyLc0Dp3KEARQEsE4V4eC17hJc+YOnVFSJHAiba+Mf2p+XJ7QO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718063938; c=relaxed/simple;
-	bh=TMd9ShYqXLeevvMtmc025xx4ND5vCFYKY163BbYiDQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2u2/DYn3/xOBEFzSCAm3xixKX9UdBLqibS2EmBieBjvIEpaEeu/cEyNtVGQScRydXNX+JB2U6TfFXFzQnvnQo8r2srS/c8q71inkKs6OQ3wOfUUNYmdK74V5JA04zy7Y6mVk4M/LQb7a/Wa0m7Ce7X4U2vYrFSTpIflcKMdtCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaAhs4eC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B833C2BBFC;
-	Mon, 10 Jun 2024 23:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718063937;
-	bh=TMd9ShYqXLeevvMtmc025xx4ND5vCFYKY163BbYiDQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GaAhs4eCThrvSd04FwUkG/bwBIcHs+7/sOiGosfwJrtSzlG9OnTd54sUA0Dufw7IB
-	 PRrXr3pnvSyHCkzwvzvURpoC+m95gdK10lgNQbdb0tM1AVoxwoOj42FXCGve6b5l3I
-	 zP5JxNwaapH3H1r+afZqniAuZh+1yQtmS+uoa4QsdGsDrfA5lvOncB5PW1p3g2Eoo9
-	 l3yBC7MgTtZIX4hEFws/Eu2VrLk41RBSPDleXjSyhTmxIeqtZS6vd8mVxb+74Fg0P7
-	 SXkGZrb/a8mBecKi6rxqi38o5qMxgraiuqJqyf3tKYRb3xann34IQC39W6HIfd/FY6
-	 N/6xPzq+d92Xg==
-Date: Mon, 10 Jun 2024 16:58:55 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Wang, Weilin" <weilin.wang@intel.com>
-Cc: Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"Hunter, Adrian" <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Taylor, Perry" <perry.taylor@intel.com>,
-	"Alt, Samantha" <samantha.alt@intel.com>,
-	"Biggers, Caleb" <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v11 3/8] perf stat: Fork and launch perf record when
- perf stat needs to get retire latency value for a metric.
-Message-ID: <ZmeTP8cnK12dgJxq@google.com>
-References: <20240605052200.4143205-1-weilin.wang@intel.com>
- <20240605052200.4143205-4-weilin.wang@intel.com>
- <ZmJEP_42Ehlt-c-6@google.com>
- <CO6PR11MB56350EA26F8AD92B222C528DEEFB2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <ZmNdYwAxlXkQ8WJt@google.com>
- <CO6PR11MB5635DC04091BBE1FEC59642DEEFB2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <ZmUTLOeLcdYs-cqe@google.com>
- <CO6PR11MB5635B74E5C5FFE7182501DCBEEC52@CO6PR11MB5635.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1718064179; c=relaxed/simple;
+	bh=wb9ieqV0h0WivBtLqAOZwsq/1SKW15pq7lWIwad18Fo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8sP/Sj/fRline0BFUPe7MKCeNM660NPa/ERKRw3HRwUXxFmMP92b0iJAFJoGO7KtwiidQ0xM1T209Nv2eXOOEotjcJBSA84XX3WKfe0VXSXKI6osmcaUbvBDF7pZFannMVlzLy192czSotp5QJquk40PVTH0T3OwCIGvNEiEVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDdf4q2T; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa727d47c1so5168403276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718064177; x=1718668977; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n26t2+PmJ0hXBNFN+MS0jl8gQ+UB5BKKsd8smeb5Xfw=;
+        b=VDdf4q2TZb5q+z6WtblmFuNi6QJaSOJQwGnvj0FjEf4g94MEbN+nwOFF6Y9DUXHkYu
+         UARmRYeS5BByhONdwROd5JYgrNPLtnh5UTRxmIqnU6ghTSBrgrBYYoQVOj+NyNRwaq0R
+         WfeI9TPhgxiVyli5Y31qNnfIQYPIKnGP3zRyBpvu1bYcOMfwhwC0V4pXEMku59oW+kxL
+         zbgjZHEBvrsof4+ont9TIQ6Fgfja2Ggc9KeMUcz8xqGyytq1f8tzn3pnRq8EtcLqiP2F
+         Gna6l+MTYUA1O72YfAiL81ndvdkZz4aKomqn9AmRBNEodX6p+QvZLidFnPARzXtos81b
+         4VbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718064177; x=1718668977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n26t2+PmJ0hXBNFN+MS0jl8gQ+UB5BKKsd8smeb5Xfw=;
+        b=vg6n100W9JbvrQGv5lQIV1qajo2lgmE9L7oanSiyHWarqXvDff5YwZLRGwypVojb0P
+         rlCpb4SxkQ5JbLWQxlluyC3dUmDPRhPhcFgNJ3IUcjMamaKvGjBfmTay++F3f4n3UqNM
+         f4gcqkG3dev/H6MoCotx2XdgR/H8mjRbdgBUuCkNYTVsX0WJ5N9jpXSjUhsoeyocRQG/
+         j3Fgon40XQfFX5YID+S+TSusayO3uRze+erSmgPCVQ3oIwMmsiPVTF1mDNLiXFIRh3+c
+         DB1+veVYu/B3TiPTuuYfYKX/K7laSNBcoerYAKGOzHBrfTpTv8ULCL0Kwhol3fl1xx9G
+         KgLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcq+DlowKQSJZu1YEKSyzO7KoRsFF+fxQWU0iiPJOmYwB4H6RehLu5nHLccZPYoYw+Qxl6ouNxjGls4GbuMyUu/8YhBLQn5nBY+3MZ
+X-Gm-Message-State: AOJu0Yxk2luUYAXWiDValtiEUdgwERkryKJ4QbLvluoOLOshz/Pbju9D
+	zQHVaCnS0SHKcr8JV4980AAlxPHE+XgUuagMDvZxq8p1jZmsBcVV1YN6R5A+nOW+f6lcJv/rjaC
+	iF1n7PGI6ZOjd52xAFjVO4VhlLAk=
+X-Google-Smtp-Source: AGHT+IE3VsycMfHZ9bzfKVao8hyhW0gX2lzQBQdmfcBmuS8LEK6MztSZPYqyzbvuWf2Rr4wNUUS3flPs/0XCFZT1kv4=
+X-Received: by 2002:a25:8205:0:b0:de6:197b:ff89 with SMTP id
+ 3f1490d57ef6-dfaf65f0993mr8935828276.64.1718064176831; Mon, 10 Jun 2024
+ 17:02:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CO6PR11MB5635B74E5C5FFE7182501DCBEEC52@CO6PR11MB5635.namprd11.prod.outlook.com>
+References: <20240608023654.3513385-1-yosryahmed@google.com>
+ <CAGsJ_4yVmDKtcKKAdjPOkOMWB+=ZT5TrrWz188xJaTV4EpM1Bw@mail.gmail.com>
+ <CAJD7tkaHLVcjUgiUFfBK+ztCqxBTRfyVbSVH9vytK=5JYOw+Sw@mail.gmail.com>
+ <CAGsJ_4w-magFysq4uLBm46AzHLD+r=v6pJphwmQn+OFvECHjrA@mail.gmail.com>
+ <CAJD7tkYdq533Z7nubjFT5jQYuS4oq2u15RAz2oGHGxYSk5Oicg@mail.gmail.com>
+ <CAGsJ_4zNxC5u088RRnKeM18skEJvwTd22mB_FWSA67K3S-CKPw@mail.gmail.com>
+ <CAJD7tkb0Rv4mSPS3DXqF888iVwd++nd99N3WrZYuJhLPDN+dhA@mail.gmail.com>
+ <CAGsJ_4ztBavP+ic15V1F0-KUhoE1zh08xuOZ3jMMfuHu=JHNEw@mail.gmail.com> <CAJD7tka2e1tG6vxU2XXKrzZBUBAc1EfcvaLU+yhQbzZO2gh0=g@mail.gmail.com>
+In-Reply-To: <CAJD7tka2e1tG6vxU2XXKrzZBUBAc1EfcvaLU+yhQbzZO2gh0=g@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 11 Jun 2024 12:02:45 +1200
+Message-ID: <CAGsJ_4zCuwi52BU3sW2tFj67NsxapQoS=g76QHwRo=R1i5ZBCA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large folios
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 09, 2024 at 03:02:21AM +0000, Wang, Weilin wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Namhyung Kim <namhyung@kernel.org>
-> > Sent: Saturday, June 8, 2024 7:28 PM
-> > To: Wang, Weilin <weilin.wang@intel.com>
-> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
-> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
-> > <mingo@redhat.com>; Alexander Shishkin
-> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunter,
-> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
-> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor, Perry
-> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Biggers,
-> > Caleb <caleb.biggers@intel.com>
-> > Subject: Re: [RFC PATCH v11 3/8] perf stat: Fork and launch perf record when
-> > perf stat needs to get retire latency value for a metric.
-> > 
-> > On Fri, Jun 07, 2024 at 08:45:13PM +0000, Wang, Weilin wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Namhyung Kim <namhyung@kernel.org>
-> > > > Sent: Friday, June 7, 2024 12:20 PM
-> > > > To: Wang, Weilin <weilin.wang@intel.com>
-> > > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
-> > > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
-> > > > <mingo@redhat.com>; Alexander Shishkin
-> > > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunter,
-> > > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
-> > > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor,
-> > Perry
-> > > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>;
-> > Biggers,
-> > > > Caleb <caleb.biggers@intel.com>
-> > > > Subject: Re: [RFC PATCH v11 3/8] perf stat: Fork and launch perf record
-> > when
-> > > > perf stat needs to get retire latency value for a metric.
-> > > >
-> > > > On Fri, Jun 07, 2024 at 01:07:12AM +0000, Wang, Weilin wrote:
-> > [SNIP]
-> > > > > > > @@ -2186,6 +2240,9 @@ static int evsel__open_cpu(struct evsel
-> > *evsel,
-> > > > > > struct perf_cpu_map *cpus,
-> > > > > > >  		return 0;
-> > > > > > >  	}
-> > > > > > >
-> > > > > > > +	if (evsel__is_retire_lat(evsel))
-> > > > > > > +		return tpebs_start(evsel->evlist, cpus);
-> > > > > >
-> > > > > > As it works with evlist, I think it's better to put this code there.
-> > > > > > But it seems perf stat doesn't call the evlist API for open, then we
-> > > > > > can add this to somewhere in __run_perf_stat() directly.
-> > > > > >
-> > > > > > > +
-> > > > > > >  	err = __evsel__prepare_open(evsel, cpus, threads);
-> > > > > > >  	if (err)
-> > > > > > >  		return err;
-> > > > > > > @@ -2376,6 +2433,8 @@ int evsel__open(struct evsel *evsel, struct
-> > > > > > perf_cpu_map *cpus,
-> > > > > > >
-> > > > > > >  void evsel__close(struct evsel *evsel)
-> > > > > > >  {
-> > > > > > > +	if (evsel__is_retire_lat(evsel))
-> > > > > > > +		tpebs_delete();
-> > > > > >
-> > > > > > Ditto.
+On Tue, Jun 11, 2024 at 11:41=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> [..]
+> > > > > We can't always WARN_ON for large folios, as this will fire even =
+if
+> > > > > zswap was never enabled. The alternative is tracking whether zswa=
+p was
+> > > > > ever enabled, and checking that instead of checking if any part o=
+f the
+> > > > > folio is in zswap.
 > > > > >
-> > > > > Hi Namhyung,
-> > > > >
-> > > > > I hope both this and the one above on open could stay in evsel level
-> > because
-> > > > > these are operations on retire_latency evsel.
+> > > > > Basically replacing xa_find(..) with zswap_was_enabled(..) or som=
+ething.
 > > > >
-> > > > Then I think you need to remove the specific evsel not the all tpebs
-> > > > events.
+> > > > My point is that mm core should always fallback
 > > > >
-> > > > > At the same time, a lot of the
-> > > > > previous several versions of work was to move TPEBS code out from perf
-> > > > stat to
-> > > > > evsel to make it more generic. I think move these back to
-> > __run_perf_stat()
-> > > > are
-> > > > > opposite to that goal.
+> > > > if (zswap_was_or_is_enabled())
+> > > >      goto fallback;
 > > > >
-> > > > Oh, I meant you can have the logic in utils/intel-tpebs.c but add a call
-> > > > to tpebs_delete() in __run_perf_stat().  I think it'd better to keep it
-> > > > in evlist__close() but we don't use evlist__open() for perf stat so it's
-> > > > not symmetric. :(
-> > > >
-> > > > Anyway, all I want to say is that tpebs APIs work on evlist level.  So I
-> > > > think it's natural that they are called for the whole list, not for an
-> > > > event/evsel.
+> > > > till zswap fixes the issue. This is the only way to enable large fo=
+lios swap-in
+> > > > development before we fix zswap.
 > > >
-> > > I think we're trying to work at evsel level and open(remove) or close one
-> > > retire_latency evsel at a time. In addition to that, we put all the required
-> > retire_latency
-> > > together in one perf record launch in order to reduce overhead to fork
-> > multiple perf
-> > > record. I hope this makes sense.
-> > 
-> > Well.. I think we can do something like this in the current code.
-> > 
-> > __run_perf_stat():
-> >   ...
-> > 
-> >   tpebs__start(evlist, target);
-> > 
-> >   evlist__for_each_cpu(...) {
-> >       if (create_perf_steat_counter() < 0) {
-> >           ....
-> > 
-> > instead of doing it in the evsel__open().  What's the issue with this
-> > approach?
-> 
-> This is basically how tpebs__start() was invoked in v9 (https://lore.kernel.org/all/CAM9d7ci7tgjR8LVNx+ZrFKMGo+OZn=eFSksPL56MeP_Q84PkMw@mail.gmail.com/)
-> 
-> I changed it in v10 so that it works at evsel level. 
-> 
-> Ian, could you please let me know what do you think about this? 
+> > > I agree with this, I just want an extra fallback in zswap itself in
+> > > case something was missed during large folio swapin development (whic=
+h
+> > > can evidently happen).
+> >
+> > yes. then i feel we only need to warn_on the case mm-core fails to fall=
+back.
+> >
+> > I mean, only WARN_ON  is_zswap_ever_enabled&&large folio. there is no
+> > need to do more. Before zswap brings up the large folio support, mm-cor=
+e
+> > will need is_zswap_ever_enabled() to do fallback.
+>
+> I don't have a problem with doing it this way instead of checking if
+> any part of the folio is in zswap. Such a check may be needed for core
+> MM to fallback to order-0 anyway, as we discussed. But I'd rather have
+> this as a static key since it will never be changed.
 
-Ok, we sync-ed offline and agreed to have it in evsel level.  I still
-think it's better to handle it in evlist level (at least for TPEBS) but
-unfortunately we don't use evlist__open() consistently and there are
-places it's not called.  Probably we need to convert the all call sites
-to open evsel to be from evlist__open() then move tpebs__start() there.
+right. This is better.
 
-Thanks,
-Namhyung
+>
+> Also, I still prefer we do not mark the folio as uptodate in this
+> case. It is one extra line of code to propagate the kernel warning to
+> userspace as well and make it much more noticeable.
 
+right. I have no objection to returning true and skipping mark uptodate.
+Just searching xa is not so useful as anyway, we have to either fallback
+in mm-core or bring up large folios in zswap.
+
+>
+>
+> >
+> > diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> > index 2a85b941db97..035e51ed89c4 100644
+> > --- a/include/linux/zswap.h
+> > +++ b/include/linux/zswap.h
+> > @@ -36,6 +36,7 @@ void zswap_memcg_offline_cleanup(struct mem_cgroup *m=
+emcg);
+> >  void zswap_lruvec_state_init(struct lruvec *lruvec);
+> >  void zswap_folio_swapin(struct folio *folio);
+> >  bool is_zswap_enabled(void);
+> > +bool is_zswap_ever_enabled(void);
+> >  #else
+> >
+> >  struct zswap_lruvec_state {};
+> > @@ -65,6 +66,10 @@ static inline bool is_zswap_enabled(void)
+> >         return false;
+> >  }
+> >
+> > +static inline bool is_zswap_ever_enabled(void)
+> > +{
+> > +       return false;
+> > +}
+> >  #endif
+> >
+> >  #endif /* _LINUX_ZSWAP_H */
+> > diff --git a/mm/zswap.c b/mm/zswap.c
+> > index b9b35ef86d9b..bf2da5d37e47 100644
+> > --- a/mm/zswap.c
+> > +++ b/mm/zswap.c
+> > @@ -86,6 +86,9 @@ static int zswap_setup(void);
+> >  static bool zswap_enabled =3D IS_ENABLED(CONFIG_ZSWAP_DEFAULT_ON);
+> >  static int zswap_enabled_param_set(const char *,
+> >                                    const struct kernel_param *);
+> > +
+> > +static bool zswap_ever_enable;
+> > +
+> >  static const struct kernel_param_ops zswap_enabled_param_ops =3D {
+> >         .set =3D          zswap_enabled_param_set,
+> >         .get =3D          param_get_bool,
+> > @@ -136,6 +139,11 @@ bool is_zswap_enabled(void)
+> >         return zswap_enabled;
+> >  }
+> >
+> > +bool is_zswap_ever_enabled(void)
+> > +{
+> > +       return zswap_enabled || zswap_ever_enabled;
+> > +}
+> > +
+> >  /*********************************
+> >  * data structures
+> >  **********************************/
+> > @@ -1734,6 +1742,7 @@ static int zswap_setup(void)
+> >                 pr_info("loaded using pool %s/%s\n", pool->tfm_name,
+> >                         zpool_get_type(pool->zpools[0]));
+> >                 list_add(&pool->list, &zswap_pools);
+> > +               zswap_ever_enabled =3D true;
+> >                 zswap_has_pool =3D true;
+> >         } else {
+> >                 pr_err("pool creation failed\n");
+> >
+
+Thanks
+Barry
 
