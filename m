@@ -1,163 +1,267 @@
-Return-Path: <linux-kernel+bounces-210383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A44F904308
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:01:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824CD904309
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE978286168
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5551F21B30
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192675B5B6;
-	Tue, 11 Jun 2024 18:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B7759162;
+	Tue, 11 Jun 2024 18:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="kvXB5kpZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kHrnGfVd"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1XfzG8e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481991CD06;
-	Tue, 11 Jun 2024 18:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0260482D7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128870; cv=none; b=VRIFj20N3pGIau7RblRiEKcGQqlyH8ogqBiPZ4NmbgDZYZgUrl9jmI3db8hzlvMoY62cma0AvIAby/OPbu9UmVH30pgADTK9pjn4gbqJ7HBRO6K5I/NNQwyVpk0HJM85KzsQZuWhH8Qt8n0GPT/bdhcg+6c7VvvwkTa487Wpi1E=
+	t=1718128922; cv=none; b=RTw0mCIoX61RGTIBC1jEGPCbXsAP1OVQ1T/QHVAqza6rFGtd5rDHYsOHdpdXtP0mmOWhRJjbn4saVQhhm5HOR3g99GvSKe9MiGE9VSCj2sgEsAitplZaYBub5jo6Qh1obMQBmcf2VWU4vk7MM5DbCG/MWfECHQpiw7MRrwDCzC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128870; c=relaxed/simple;
-	bh=8QWtb6pcKPnWcVLg2JzrAry10KmxCU8luPjLBJwvgjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tsWr/8hIsmZgzXUu/LI/9ZymOOl6ioGzPIGhdQHKG5AEoThOqVCFrmCOLEnGp/10I5Jike+Iz+nBR6l29mzkeP9pGbQT10JrJjF5latqOh2zJ98lV/ZxGxNfkQSHfwlu6CPNcSbiXCTVvpsMoHbLmWx2B+/1OewJU6giACxyZho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=kvXB5kpZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kHrnGfVd; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 42EF61380087;
-	Tue, 11 Jun 2024 14:01:07 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 11 Jun 2024 14:01:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718128867;
-	 x=1718215267; bh=3TsTy4miANTIONNoIvT1RtaTHJWrsau+L4RJ3v/4SRY=; b=
-	kvXB5kpZt5ftlNR+NOZR2zGB46PyiXp4NYl/4hlvTr4JkKAl7g/d9Gf/xaS09Sbd
-	2q+bUizUBO+r9l31TNHh24BNa0tsKtsdKUfp3Q6TavlOb6bADTioee7wCt6rqzYI
-	YuQ2wcErEU79wY1uNWM02UVeu7djV0XWLZBj5FzDco5kDjhdJGOzh8ZmJYhg4SSq
-	uz+TRzWlmhMMQzYKclUcxd1lPCX+Y0kexOQlQnPJLgrr3j8nhCdA5/AD2BnnFQk8
-	zYAoxIBCWHAJuaUUFP1TW8kK6RoLahxK1qw94NBXHY+cETka+0yoMoLW4mfgtGwn
-	gbM+uKOoe/JGQkAyzmJ94g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718128867; x=
-	1718215267; bh=3TsTy4miANTIONNoIvT1RtaTHJWrsau+L4RJ3v/4SRY=; b=k
-	HrnGfVd8lxcs207atytWSbFMwCys3wj1s8VJDOV3q3dIIR5NXVlzVCTxBAk3dChc
-	ZRYXcuhHLdAbHtTDq6zl8/vc2xQQtpBVEtezY+YWxvMXB4LG8KqWM6ycgj6tVXvq
-	aeSqRIfqhQ2lKdMGrI5Fu+npXmi5bTilQeBUgUZZiIBrv+l67Tw4PNK6TIFwKvyy
-	tCfKzGiKqkkv/+WDQoYlxP39desrRUeYIz0TTS98++pwdLf+2YafR8K/028YWVm0
-	iCAZX9FJW0N9Qga+LC6Y2ibhSSA1ZvPgnntcjDCnrvaGjLGr4GJY0T+ocSh8y5ze
-	5eoSXL5G4Ym16cYYwCMiQ==
-X-ME-Sender: <xms:4pBoZiQemXit2yGSgoxA5qfe4hfknYfWVNNlNBwIHgM8C-bCOFyqdQ>
-    <xme:4pBoZnxJbDPJXwC7E4AxTPcVaI6A8PyhC9sdd-IWw60P_iMh7_zlAXvFCNdhILjr5
-    qWwy_Di35h96jvOcg>
-X-ME-Received: <xmr:4pBoZv0J0Wz-o6WhYtx-DicycDXrufNgjihD-yiV7lWUQx7pR8a5UPhKX2rvTv4ELshDjlXaHFf28_wOwXOaUmMjumv61BSkeQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enfghrlhcuvffnffculdejtddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkefs
-    tddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihii
-    eqnecuggftrfgrthhtvghrnheptdfgueeuueekieekgfeiueekffelteekkeekgeegffev
-    tddvjeeuheeuueelfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepugiguhesugiguhhuuhdrgiihii
-X-ME-Proxy: <xmx:4pBoZuD6GQSymjTm-MhH1MPoFT8r6tpqgneQkK1MOP7Ye29r1P7JuA>
-    <xmx:4pBoZrjVONmYdkVuh-Hi7DIFIxuAk2qntLK1vNEL8AFASZaVnxo4GA>
-    <xmx:4pBoZqrrvKOtx_HUWdw0J2-A4QjTUbMLq2_hCJ8gqhyFvZGJT_ODCA>
-    <xmx:4pBoZuikgJI4WNQewUCATbQkt2wtYgP-zCpDNMSYLZo1z1TSiSLDWA>
-    <xmx:45BoZuik6MDwrig-XTVp9PE013217hcG7qyUastD498nG7a2GKTIGmgT>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 14:01:05 -0400 (EDT)
-Date: Tue, 11 Jun 2024 12:01:03 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Jiri Olsa <olsajiri@gmail.com>, Quentin Monnet <quentin@isovalent.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Eddy Z <eddyz87@gmail.com>, John Fastabend <john.fastabend@gmail.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH bpf-next v4 08/12] bpf: verifier: Relax caller
- requirements for kfunc projection type args
-Message-ID: <3ys25qg63cfuxjclqjlagsasvp5bpu6oqzjeia32kg2seistbv@5t24bsw5jtij>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <e172bf47f32c6e716322bc85bb84d78b1398bd7c.1717881178.git.dxu@dxuuu.xyz>
- <CAADnVQLE=XcpZ4SnW=NARG0D5Ya6iU1-1CayTVmArnxpSzWSFA@mail.gmail.com>
+	s=arc-20240116; t=1718128922; c=relaxed/simple;
+	bh=OWF7nEj5DBu3q8/A/HxsLgxKjxJne8cXVcKM/+gUA6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qsa3KaL2/ua2MNBj4MpKLN9O+D7YBDiG09gT0+/T+D9dw99N9o/mxwztd/YgcnBacYH4bw/NDabvKx9ycIk6XfyhcM3xGB9b3mGquseJKxE5Sx718pbJwMB5+FhE5DzOppy6PObZ2frzJHxQITrCGcbin5NHxteU2Gj4ewFId7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1XfzG8e; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718128919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=boT4WhMfNiG1uf94oCjXPXPBcHUmJoyRMB9nHGWn29M=;
+	b=L1XfzG8eQpfFkUpwZCzZRuMYNqmjjixC4YAxk7dI2AgsACyHZ2R3acP2R5gtHox75pqcOB
+	9tyoZENpVOEi6fsupIZuy6dcOL1gmEhsFL+/4qJZyyszZn7TJM/VWKDJOtkcjJLQj7QX/Y
+	d7MEREn27mkLxh3L/+Z9hsQwojBljhs=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-532-1QbIF7p3MVCq-fXVdzBBpA-1; Tue,
+ 11 Jun 2024 14:01:56 -0400
+X-MC-Unique: 1QbIF7p3MVCq-fXVdzBBpA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C450195606E;
+	Tue, 11 Jun 2024 18:01:53 +0000 (UTC)
+Received: from [10.22.33.230] (unknown [10.22.33.230])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6089C1956087;
+	Tue, 11 Jun 2024 18:01:51 +0000 (UTC)
+Message-ID: <360b7a0c-6f70-42eb-b41d-b0d1325b0586@redhat.com>
+Date: Tue, 11 Jun 2024 14:01:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLE=XcpZ4SnW=NARG0D5Ya6iU1-1CayTVmArnxpSzWSFA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup 1/2] cgroup/cpuset: Fix remote root partition
+ creation problem
+To: ghostxavier@sina.com
+Cc: cgroups <cgroups@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, tj <tj@kernel.org>,
+ "lizefan.x" <lizefan.x@bytedance.com>, hannes <hannes@cmpxchg.org>
+References: <6661b33c7f1670.55086514.d793e57a@m1.mail.sina.com.cn>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <6661b33c7f1670.55086514.d793e57a@m1.mail.sina.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Jun 10, 2024 at 11:30:31AM GMT, Alexei Starovoitov wrote:
-> On Sat, Jun 8, 2024 at 2:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> >
-> > Currently, if a kfunc accepts a projection type as an argument (eg
-> > struct __sk_buff *), the caller must exactly provide exactly the same
-> > type with provable provenance.
-> >
-> > However in practice, kfuncs that accept projection types _must_ cast to
-> > the underlying type before use b/c projection type layouts are
-> > completely made up. Thus, it is ok to relax the verifier rules around
-> > implicit conversions.
-> >
-> > We will use this functionality in the next commit when we align kfuncs
-> > to user-facing types.
-> >
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  kernel/bpf/verifier.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index 81a3d2ced78d..0808beca3837 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -11257,6 +11257,8 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
-> >         bool strict_type_match = false;
-> >         const struct btf *reg_btf;
-> >         const char *reg_ref_tname;
-> > +       bool taking_projection;
-> > +       bool struct_same;
-> >         u32 reg_ref_id;
-> >
-> >         if (base_type(reg->type) == PTR_TO_BTF_ID) {
-> > @@ -11300,7 +11302,13 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
-> >
-> >         reg_ref_t = btf_type_skip_modifiers(reg_btf, reg_ref_id, &reg_ref_id);
-> >         reg_ref_tname = btf_name_by_offset(reg_btf, reg_ref_t->name_off);
-> > -       if (!btf_struct_ids_match(&env->log, reg_btf, reg_ref_id, reg->off, meta->btf, ref_id, strict_type_match)) {
-> > +       struct_same = btf_struct_ids_match(&env->log, reg_btf, reg_ref_id, reg->off, meta->btf, ref_id, strict_type_match);
-> > +       /* If kfunc is accepting a projection type (ie. __sk_buff), it cannot
-> > +        * actually use it -- it must cast to the underlying type. So we allow
-> > +        * caller to pass in the underlying type.
-> > +        */
-> > +       taking_projection = !strcmp(ref_tname, "__sk_buff") && !strcmp(reg_ref_tname, "sk_buff");
-> 
-> xdp_md/buff probably as well?
-> 
-> And with that share the code with btf_is_prog_ctx_type() ?
+On 6/6/24 09:01, Xavier wrote:
+> Hi Longman,
+>
+> I have a small question about your new patch.
+> I wonder that in cgroup v2,  will there be any overlap between valid partition roots and top_cpuset? If it is not, the section starting with 'restart:' that searches for overlapping cpusets can be skipped for cgroup v2. Otherwise, if there are any overlap, then the assignment to 'dom' may need perform an cpumask_or operation?
 
-Ack - will do.
+In cgroup v2, the top_cpuset is a non-isolating partition root by itself 
+and its partition root state cannot be changed.
+
+The reason for the introduction of the partition feature in cgroup v2 
+was to support the creation of a separate sched domain. cgroup v1 
+supports that indirectly via clever use of the cpuset.sched_load_balance 
+flag. So by definition, the presence of a non-isolating partition root 
+defines a new sched domain.
+
+Cheers,
+Longman
+
+> Best regards,
+> Xavier
+>
+>> ----- Original Message -----
+>> From: Waiman Long <longman@redhat.com>
+>> To: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Xavier <ghostxavier@sina.com>, Waiman Long <longman@redhat.com>
+>> Subject: [PATCH-cgroup 1/2] cgroup/cpuset: Fix remote root partition creation problem
+>> Date: 2024-06-06 01:19
+>>
+>> Since commit 181c8e091aae ("cgroup/cpuset: Introduce remote partition"),
+>> a remote partition can be created underneath a non-partition root cpuset
+>> as long as its exclusive_cpus are set to distribute exclusive CPUs down
+>> to its children. The generate_sched_domains() function, however, doesn't
+>> take into account this new behavior and hence will fail to create the
+>> sched domain needed for a remote root (non-isolated) partition.
+>> There are two issues related to remote partition support. First of
+>> all, generate_sched_domains() has a fast path that is activated if
+>> root_load_balance is true and top_cpuset.nr_subparts is non-zero. The
+>> later condition isn't quite correct for remote partitions as nr_subparts
+>> just shows the number of local child partitions underneath it. There
+>> can be no local child partition under top_cpuset even if there are
+>> remote partitions further down the hierarchy. Fix that by checking
+>> for subpartitions_cpus which contains exclusive CPUs allocated to both
+>> local and remote partitions.
+>> Secondly, the valid partition check for subtree skipping in the csa[]
+>> generation loop isn't enough as remote partition does not need to
+>> have a partition root parent. Fix this problem by breaking csa[] array
+>> generation loop of generate_sched_domains() into v1 and v2 specific parts
+>> and checking a cpuset's exclusive_cpus before skipping its subtree in
+>> the v2 case.
+>> Also simplify generate_sched_domains() for cgroup v2 as only
+>> non-isolating partition roots should be included in building the cpuset
+>> array and none of the v1 scheduling attributes other than a different
+>> way to create an isolated partition are supported.
+>> Fixes: 181c8e091aae ("cgroup/cpuset: Introduce remote partition")
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>> kernel/cgroup/cpuset.c | 55 ++++++++++++++++++++++++++++++++----------
+>> 1 file changed, 42 insertions(+), 13 deletions(-)
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index f9b97f65e204..fb71d710a603 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -169,7 +169,7 @@ struct cpuset {
+>> 	/* for custom sched domain */
+>> 	int relax_domain_level;
+>>
+>> -	/* number of valid sub-partitions */
+>> +	/* number of valid local child partitions */
+>> 	int nr_subparts;
+>>
+>> 	/* partition root state */
+>> @@ -957,13 +957,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>> 	int nslot;		/* next empty doms[] struct cpumask slot */
+>> 	struct cgroup_subsys_state *pos_css;
+>> 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
+>> +	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
+>>
+>> 	doms = NULL;
+>> 	dattr = NULL;
+>> 	csa = NULL;
+>>
+>> 	/* Special case for the 99% of systems with one, full, sched domain */
+>> -	if (root_load_balance && !top_cpuset.nr_subparts) {
+>> +	if (root_load_balance && cpumask_empty(subpartitions_cpus)) {
+>> single_root_domain:
+>> 		ndoms = 1;
+>> 		doms = alloc_sched_domains(ndoms);
+>> @@ -992,16 +993,18 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>> 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
+>> 		if (cp == &top_cpuset)
+>> 			continue;
+>> +
+>> +		if (cgrpv2)
+>> +			goto v2;
+>> +
+>> 		/*
+>> +		 * v1:
+>> 		 * Continue traversing beyond @cp iff @cp has some CPUs and
+>> 		 * isn't load balancing.  The former is obvious.  The
+>> 		 * latter: All child cpusets contain a subset of the
+>> 		 * parent's cpus, so just skip them, and then we call
+>> 		 * update_domain_attr_tree() to calc relax_domain_level of
+>> 		 * the corresponding sched domain.
+>> -		 *
+>> -		 * If root is load-balancing, we can skip @cp if it
+>> -		 * is a subset of the root's effective_cpus.
+>> 		 */
+>> 		if (!cpumask_empty(cp->cpus_allowed) &&
+>> 		    !(is_sched_load_balance(cp) &&
+>> @@ -1009,16 +1012,28 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>> 					 housekeeping_cpumask(HK_TYPE_DOMAIN))))
+>> 			continue;
+>>
+>> -		if (root_load_balance &&
+>> -		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
+>> -			continue;
+>> -
+>> 		if (is_sched_load_balance(cp) &&
+>> 		    !cpumask_empty(cp->effective_cpus))
+>> 			csa[csn++] = cp;
+>>
+>> -		/* skip @cp's subtree if not a partition root */
+>> -		if (!is_partition_valid(cp))
+>> +		/* skip @cp's subtree */
+>> +		pos_css = css_rightmost_descendant(pos_css);
+>> +		continue;
+>> +
+>> +v2:
+>> +		/*
+>> +		 * Only valid partition roots that are not isolated and with
+>> +		 * non-empty effective_cpus will be saved into csn[].
+>> +		 */
+>> +		if ((cp->partition_root_state == PRS_ROOT) &&
+>> +		    !cpumask_empty(cp->effective_cpus))
+>> +			csa[csn++] = cp;
+>> +
+>> +		/*
+>> +		 * Skip @cp's subtree if not a partition root and has no
+>> +		 * exclusive CPUs to be granted to child cpusets.
+>> +		 */
+>> +		if (!is_partition_valid(cp) && cpumask_empty(cp->exclusive_cpus))
+>> 			pos_css = css_rightmost_descendant(pos_css);
+>> 	}
+>> 	rcu_read_unlock();
+>> @@ -1072,6 +1087,20 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>> 	dattr = kmalloc_array(ndoms, sizeof(struct sched_domain_attr),
+>> 			      GFP_KERNEL);
+>>
+>> +	/*
+>> +	 * Cgroup v2 doesn't support domain attributes, just set all of them
+>> +	 * to SD_ATTR_INIT. Also non-isolating partition root CPUs are a
+>> +	 * subset of HK_TYPE_DOMAIN housekeeping CPUs.
+>> +	 */
+>> +	if (cgrpv2) {
+>> +		for (i = 0; i < ndoms; i++) {
+>> +			cpumask_copy(doms[i], csa[i]->effective_cpus);         /*****************************************/
+>> +			if (dattr)
+>> +				dattr[i] = SD_ATTR_INIT;
+>> +		}
+>> +		goto done;
+>> +	}
+>> +
+>> 	for (nslot = 0, i = 0; i < csn; i++) {
+>> 		struct cpuset *a = csa[i];
+>> 		struct cpumask *dp;
+>> @@ -1231,7 +1260,7 @@ static void rebuild_sched_domains_locked(void)
+>> 	 * root should be only a subset of the active CPUs.  Since a CPU in any
+>> 	 * partition root could be offlined, all must be checked.
+>> 	 */
+>> -	if (top_cpuset.nr_subparts) {
+>> +	if (!cpumask_empty(subpartitions_cpus)) {
+>> 		rcu_read_lock();
+>> 		cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+>> 			if (!is_partition_valid(cs)) {
+>> @@ -4575,7 +4604,7 @@ static void cpuset_handle_hotplug(void)
+>> 	 * In the rare case that hotplug removes all the cpus in
+>> 	 * subpartitions_cpus, we assumed that cpus are updated.
+>> 	 */
+>> -	if (!cpus_updated && top_cpuset.nr_subparts)
+>> +	if (!cpus_updated && !cpumask_empty(subpartitions_cpus))
+>> 		cpus_updated = true;
+>>
+>> 	/* For v1, synchronize cpus_allowed to cpu_active_mask */
+>> -- 
+>> 2.39.3
+
 
