@@ -1,262 +1,113 @@
-Return-Path: <linux-kernel+bounces-209576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638A59037E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA78E9037E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F9B1F26AFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2D11F260CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D117B4F1;
-	Tue, 11 Jun 2024 09:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A45178CC1;
+	Tue, 11 Jun 2024 09:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JU1nHRpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S2xshGD6"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A289317B4EA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C634502C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098303; cv=none; b=oH5fGR/nfOhwUQzMf8iSGktmqWIoErt9iwWFML6EEYzHi9x82gPjlIY1twEFRDKtanwc7fjq4SXJVNLo/nz39k0rlZtQGF/SMYQCdys9foBgg8yy9fLikqzakyY9B5sdhKRaI5C+eAVZeyrsCoAq4U+nV3MJ68vOnwSbRWNFakU=
+	t=1718098314; cv=none; b=bNWijNt7fcDuXBLYdjSKGtTt/5RkLhAiT5ZbRRK3Nqd5NFZ/fukYiltS3CJY02c6LNeIxL/UwzvaozynskxMZoS2GOAiCnJK8QnXmobHm2c4bVOJOr0u6zvLTjD3fwLHlTlyQItPgyHzZnNSM1w5vOrrLBHOtIJYyOWtwUKXUIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098303; c=relaxed/simple;
-	bh=Ynpkxfg4RKiWOD6S5grcQZ3o0u+yCzEua8zeUOqbTdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VaJXFucC/kzyRiQPOvHtn5stbQBr10MFlGyfqM9WvqzOXm1jQJYUm6NsuyrDD3LMNfodhAlqbK9k9LKxEotPGFbWsu2QMlWnNEc/AQS8kVbT11lHaZLKp0WkBGdJpCqlVtz6u1dTIq29ZAHsSZObp6cm5H1c8Go4/hYnNQQU4YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JU1nHRpj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718098300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uG737WfG6Tkr1k/786kxDcpDifeb+2U34yvKgaEkzs0=;
-	b=JU1nHRpj2sFjRPC/+ZBO8otlBo+esCc08l2cpP/pCYxoo9QFqhHdMLTmDuHKVBVqCf+QFH
-	IZxcvW1xe3IOcBZqqi66wc2zeT/vX9O6pFSxIwzqnjIJFgPxi3oM7O/KO4YYMF9u819krl
-	MYj/Y/MoncZWsQWlPCifmR9liQNyVpY=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-la6e_X7MOma4nemHXONgTQ-1; Tue, 11 Jun 2024 05:31:34 -0400
-X-MC-Unique: la6e_X7MOma4nemHXONgTQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52bc1acf1bdso3137340e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:31:34 -0700 (PDT)
+	s=arc-20240116; t=1718098314; c=relaxed/simple;
+	bh=ftgWZiqtadHCzhVB2m+D7dbu8Hr2VpGHA+tMkixI3Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLe9I3BLJ0DYBxwem25WjNjinBty/96AelwJhkCmby7oTDtilpKslFzPlQ8JqSO3eUHCo7roMwYlhjWephoyUYzViKAwnE1qonr/v1ij0kKiAI1EEhcPzy3ZLpdm4ALMA3DNDfZNbzNMKPJOMpUsAjQj7S+pGpo9B/4JbzPCU+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S2xshGD6; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc1ad11aeso1822e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718098311; x=1718703111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4o7ZRkApNXFZYUkwJrI9XiAWPg4SK4rdhZDRj0Mf6YU=;
+        b=S2xshGD6hi4uY9zdNC+u8dmZH6ppxK1zGiq8PMz//1YshJF1KElWDgkn8CZyySjxY7
+         8v4KLPko9cT/3q4yCrwHi06dn3+CSLDuCOIZ1mFUD39lMEUAXXlIf7CzfVKo1Ohynm1a
+         8Tju7KLVGWDWxIitis3hb1YsTwm3tpySwTWOf2cRNv+E2ZdqG8WyIgWphbfo6IucMUWS
+         pVWFRptu+1/s7aKX2sD/meewb8dr/Ws4vJI0elFXCMMwcwy/GQm6sXI6J44yJQUA92aV
+         KGkIVu7u4WLkN6BAy0/A4WKA5mTEIeLK6SQQsgBoKbEvQJgTbYgOefE9wgPomzhY/sgQ
+         OJcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718098293; x=1718703093;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uG737WfG6Tkr1k/786kxDcpDifeb+2U34yvKgaEkzs0=;
-        b=QDYtj06lDgkH7N2Mga3XPYFa9BYqJKm+509DqrXcP+YUZwLnsFOfqPyKm80i4hNBVO
-         D5j3kmZcARwsvFBS4rWniyucwRZ3oy+xZzdFwufmGHolCNi5/cavren788SjHCEdaicv
-         vGhKUNnDsbRbevepVTZY0M6P16EksvIQSck8aumEDArBxX//j7Fxii8RsgvToOm3NZaX
-         fsfs03lTcR04WT8im8Rd/t0B9s7E+tG+Bc2EXdxQyhJdJg597YWL7mgWS8SnyrgJTTrw
-         ALJlAFSYqQM8uqB7AeOey8XNTpNGDP6qh+FnHWrDUCsEtwQ3h3bS3snTei1SNWHSIK25
-         xQ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcG4+B5AcVpDIT5n7ir+C+BMSYe2QvWBRRMkIdh3GRDEJTz0d5lK9Q98dMflt+1VAbrylTnhi6wGQXzrSZmyg2KUjdMVbYbTUlme83
-X-Gm-Message-State: AOJu0Yy+DnS8lrpGZBWVP24s591ibWURoY0st+KDJDH2CES7XlAkpRnh
-	vw6hBwHmCb2fTTI7KplrSbQPTH8evJOiMUzbjaKbBRfkbpRzJX/K7bgtWI0B5J6eosUXTt2uoE1
-	eLCBDCrVdeY4ucFw+ZZ1qREZWoQMmOHoywkpk0JqT4+o6LMdJ6AGiNvHuX+62WQ==
-X-Received: by 2002:a05:6512:33ca:b0:52c:9421:2739 with SMTP id 2adb3069b0e04-52c94212a77mr1128623e87.9.1718098292955;
-        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwY43q16ah4tKmJLasiEw8hEatDj9bDQW7O57GFFvLqtN/5X7hzHWJoq6L0qvv09aAoMGvgA==
-X-Received: by 2002:a05:6512:33ca:b0:52c:9421:2739 with SMTP id 2adb3069b0e04-52c94212a77mr1128603e87.9.1718098292510;
-        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2cd247sm175758845e9.40.2024.06.11.02.31.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
-Message-ID: <6580fccb-cbd8-480b-9405-b6191ae87754@redhat.com>
-Date: Tue, 11 Jun 2024 11:31:30 +0200
+        d=1e100.net; s=20230601; t=1718098311; x=1718703111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4o7ZRkApNXFZYUkwJrI9XiAWPg4SK4rdhZDRj0Mf6YU=;
+        b=ncB2QZc0XUS0x27WXYoiqVWMvv+VA8jNAX3tMhViGB3nA0G0/NkhAcmqdt9h/b3iap
+         lxIx6qExTryqTsuq2bt8BL0eepm/jhrrby+0UNhw8wx72Ni1sVCuoZaSnGHxoogkjLlQ
+         aPX42YzI/g0KD68DtybKlAw/HZ8pU0I22D4kAWgyqWlIPXLmrbsXZyk+NRSCSXd1Yb1Z
+         VAl7Q9f/ltfNoi2Z1Vg8eV1DwwLfmkZDClctIrzRAxqAzLlCVEBmhKbciEH02A3Du7nK
+         +9JqU0vtzi2nXxlo4HNu66g25+T/FrZ1pJ5E7rlNYcrr5RS1vpgS8qbXZ8hdPaQ68iwd
+         ji2g==
+X-Gm-Message-State: AOJu0Ywp9DRyuz5xuT0ln0GKZCJfLz3mZGAYgf/9E6Omi8Uo9PCBInGX
+	kovgGNx26x7WTp0qqH9dCZe1FX+OvU0idBA76XyyvVLGjO28i3cI3Ob+OjR5YoHXdWFa0NKDFyX
+	Lf4MyJ8Z5IyuPuc0AXGRdAk9bTIgThjjW9ZA5ZyeKjGadT6hKRKah
+X-Google-Smtp-Source: AGHT+IF/pXibEy+6RKtWy/x+3T1h90IZS/g1zeB1zrxaCBW6zvJBR6nZzy4vnR7LxFT2eektIwbz/A54OyoRnl1mCt0=
+X-Received: by 2002:a05:6512:3d15:b0:52b:84eb:9072 with SMTP id
+ 2adb3069b0e04-52c93d73d10mr103071e87.6.1718098310488; Tue, 11 Jun 2024
+ 02:31:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
- headers"
-To: John Hubbard <jhubbard@nvidia.com>, Jeff Xu <jeffxu@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Andrei Vagin <avagin@google.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240608021023.176027-1-jhubbard@nvidia.com>
- <CABi2SkVoNyXLrfU71gnv1qVUAADpUmFXiDoKKPc54MLb5JpB+Q@mail.gmail.com>
- <a8f9d4e2-8a12-4e5d-bd22-9c92955135f4@nvidia.com>
- <CABi2SkU8=tjWhD-e=OdiVr+YeU+BZZLB_vMfkNb-VWpbP2xcng@mail.gmail.com>
- <95005e7c-3705-48c5-8ee2-3d9b0688fcbc@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <95005e7c-3705-48c5-8ee2-3d9b0688fcbc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1718092070.git.dvyukov@google.com>
+In-Reply-To: <cover.1718092070.git.dvyukov@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 11 Jun 2024 11:31:38 +0200
+Message-ID: <CACT4Y+Z=U+Y8gKBgaU76=zg=rAdq=AQ=epAq+RxDfdXsaqO_0w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] KCOV fixes
+To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com, 
+	glider@google.com, nogikh@google.com, tarasmadan@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11.06.24 08:25, John Hubbard wrote:
-> On 6/10/24 9:45 PM, Jeff Xu wrote:
->> On Mon, Jun 10, 2024 at 9:34 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>> On 6/10/24 9:21 PM, Jeff Xu wrote:
->>>> Hi
->>>>
->>>>
->>>> On Fri, Jun 7, 2024 at 7:10 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>>>>
->>>>> Eventually, once the build succeeds on a sufficiently old distro, the
->>>>> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
->>>>> after that, from selftests/lib.mk and all of the other selftest builds.
->>>>>
->>>>> For now, this series merely achieves a clean build of selftests/mm on a
->>>>> not-so-old distro: Ubuntu 23.04:
->>>>>
->>>>> 1. Add __NR_mseal.
->>>>>
->>>>> 2. Add fs.h, taken as usual from a snapshot of ./usr/include/linux/fs.h
->>>>> after running "make headers". This is how we have agreed to do this sort
->>>>> of thing, see [1].
->>>>>
->>>> What is the "official" way to build selftests/mm ?
->>>
->>>    From Documentation/dev-tools/kselftest.rst, it is:
->>>
->>>      $ make headers
->>>      $ make -C tools/testing/selftests
->>>
->>>> I tried a few ways, but it never worked, i.e. due to head missing.
->>>
->>> You are correct. Today's rules require "make headers" first. But
->>> I'm working on getting rid of that requirement, because it causes
->>> problems for some people and situations.
->>>
->>> (Even worse is the follow-up rule, in today's documentation,
->>> that tells us to *run* the selftests from within Make! This
->>> is just madness.
->>
->> That is hilarious! :)
-> 
-> :)
-> 
->>
->>>    Because the tests need to run as root in
->>> many cases. And Make will try to rebuild if necessary...thus
->>> filling your tree full of root-owned files...but that's for
->>> another time.)
->>>
->>>>
->>>> 1>
->>>> cd tools/testing/selftests/mm
->>>> make
->>>>
->>>> migration.c:10:10: fatal error: numa.h: No such file or directory
->>>>       10 | #include <numa.h>
->>>>          |          ^~~~~~~~
->>>> compilation terminated.
->>>>
->>>> 2>
->>>> make headers
->>>> make -C tools/testing/selftests
->>>>
->>>> make[1]: Entering directory
->>>> '/usr/local/google/home/jeffxu/mm/tools/testing/selftests/mm'
->>>>      CC       migration
->>>> migration.c:10:10: fatal error: numa.h: No such file or directory
->>>>       10 | #include <numa.h>
->>>>
->>>
->>> Well, actually, for these, one should install libnuma-dev and
->>> numactl (those are Ubuntu package names. Arch Linux would be:
->>> numactl).
->>>
->>> I think. The idea is: use system headers if they are there, and
->>> local kernel tree header files if the items are so new that they
->>> haven't made it to $OLDEST_DISTO_REASONABLE.
->>>
->>> Something like that.
->>>
->> But I don't want to install random packages if possible.
-> 
-> Well...keep in mind that it's not really random. If a test program
-> requires numa.h, it's typically because it also links against libnuma,
-> which *must* be supplied by the distro if you want to build. Because
-> it doesn't come with the kernel, of course.
-> 
-> So what you're really saying is that you'd like to build and run
-> whatever you can at the moment--the build should soldier on past
-> failures as much as possible.
-> 
->>
->> Can makefile rule continue to the next target in case of failure though ?
-> 
-> That could be done, in general. The question is if that's really what
-> we want, or should want. Maybe...
+On Tue, 11 Jun 2024 at 09:50, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> Fix spurious KCOV coverage from interrupts and add a test.
+> Ignore some additional files that lead to large amounts
+> of uninteresting coverage.
+> As a reference point, tracing a simple open system call
+> produces ~10K PCs with these changes instead of ~45K PCs.
+>
+> Dmitry Vyukov (4):
+>   x86/entry: Remove unwanted instrumentation in common_interrupt()
+>   kcov: add interrupt handling self test
+>   module: Fix KCOV-ignored file name
+>   x86: Ignore stack unwinding in KCOV
+>
+>  arch/x86/include/asm/hardirq.h  |  8 ++++++--
+>  arch/x86/include/asm/idtentry.h |  6 +++---
+>  arch/x86/kernel/Makefile        |  8 ++++++++
+>  kernel/kcov.c                   | 31 +++++++++++++++++++++++++++++++
+>  kernel/module/Makefile          |  2 +-
+>  lib/Kconfig.debug               |  8 ++++++++
+>  6 files changed, 57 insertions(+), 6 deletions(-)
+>
+>
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> --
+> 2.45.2.505.gda0bf45e8d-goog
 
-In cow.c, we warn if liburing is not around and build the test without 
-these test cases. check_config.sh senses support.
+Thomas, Ingo, Borislav, Dave,
 
-We could do the same for numactl (numa.h), but maybe there would not be 
-any test case to run in there without libnuma (did not check). Some 
-tests also require lcap.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Can you take this via x86 tree please?
 
