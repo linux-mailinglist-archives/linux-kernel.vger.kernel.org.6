@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-210469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E9E904405
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7B5904408
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384291C21F10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FD11C24C0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FA67F486;
-	Tue, 11 Jun 2024 18:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FDC80623;
+	Tue, 11 Jun 2024 18:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XdZ0+PDC"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ja/M6hmV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776A87D412
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588E779949;
+	Tue, 11 Jun 2024 18:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131844; cv=none; b=nwzlpxC057TzNeqqvdBTzWwULfetOtJgPdTCoZ4jvHFBYsnQpnbyNcaRrZDp2/ZkPFtcnYgtmKhTNPhnmJH/NMHgx1RqfcRaoPSrqzZFyDU8hrgp6VP6Eu+VcVjY5G0yG5Rmqsh1whcTesu1FPZWpgvOkUCNgISb7z/dAQZpUnE=
+	t=1718131865; cv=none; b=k/2M84Vhw3ijci+m6a/DA3aJMsLHZTldhReZFmqnKD7U1skTFLiRpWZ9i1616+bLJiGNQjv/Of6dYPbL7e8afAUeMABfe1GDzpIOV8QdRwtPpK7XiQDS0nI2XAR0ap0Q65PJIFikOglZbe4e3Wf9nTYNcBhxTG+/D30M6j7y8i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131844; c=relaxed/simple;
-	bh=QJqYqkyXvyEJqzCyzCjtVTtnILSZj6FSjyYeZF5lv0g=;
+	s=arc-20240116; t=1718131865; c=relaxed/simple;
+	bh=RzJp8cb00wWu9a4yoQ4JsrdL7/XwAY9pJKi6QkNRA7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdwH8f8mYQLN5zggK3RSJh/ZP59XhPl6wE+xh1zCJ+WL5iNT+AsP+6IpavJgjGPUCxPG9ADdRDs8gySBFTo62eMapcZ0xB9W2Oljp4lsdrNhG70/jubAfCH6uQLJdLKzQ/wYPSUmzYqTo+5+bPYcwMWLzw1aXTBO/iVhSeKNwE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XdZ0+PDC; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=QJqY
-	qkyXvyEJqzCyzCjtVTtnILSZj6FSjyYeZF5lv0g=; b=XdZ0+PDCvsB9qeJnMpWz
-	s5Gyi610tc9fF8xw5cx4aH+UD4nXdBERyx0eTBoJCQ8HOoJLsuy0jtFN+IjoqdN1
-	+ApJR9hG0LHfbrzOgt47WziFg3BVJTLE7OzTxM9OM0ih6lznuxxaiadOZc8466xF
-	/nTSLsejBReljD3WThHpC0p10IqGC8TyWvt1bZZlXeGdvOpcIvEhYPh4qAM34b7c
-	jrFqWXZ2PxSp3N7rCI3Q5ROKcgi0DjRvQjjw/arBYIkdjIxjw7E1FXZqGZKqVyJB
-	WncDeM8VCJ9c36bVOo3ngyyF1rk7Nw4Y4Pe+jG8h2oxfKUQtmOdyHhjTaLiApCrv
-	UQ==
-Received: (qmail 528448 invoked from network); 11 Jun 2024 20:50:37 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jun 2024 20:50:37 +0200
-X-UD-Smtp-Session: l3s3148p1@k73TvaEaPoVehhrL
-Date: Tue, 11 Jun 2024 20:50:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 3/7] i2c: muxes: add support for mule i2c multiplexer
-Message-ID: <dzou6uwvxnsgjmhzzhfui372bsan7jbjn4uraz6lgclibnih4s@l7lb55cvrr3w>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Farouk Bouabid <farouk.bouabid@cherry.de>, Peter Rosin <peda@axentia.se>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
- <20240611-dev-mule-i2c-mux-v3-3-08d26a28e001@cherry.de>
- <80883dd5-2be0-4f8b-8298-ca076e6ac558@cherry.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4SEtQFfDZQ+IAzOI38/VXSKLe3lthjqtvMEqYjQ+NIwStEtevgPXP1u04k3xt0ZfKUiywtYINA2faEQsAYsFNkHKiyHzNpvMCuQduV4zJ4x7gGX79Yb1QxISg+4z5lFTwMEu2cWnAznCE8OlaFtz0nz8ltxW2HAmss1re5//Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ja/M6hmV; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718131864; x=1749667864;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RzJp8cb00wWu9a4yoQ4JsrdL7/XwAY9pJKi6QkNRA7I=;
+  b=ja/M6hmVV1KzPYJSDXAeC6vYPxsZRlA61urVMDIVdmvB+mee4NInpO1t
+   YMMJ/FZ8DOox+r76wky2r0dedRUqbENu7VJ57b0D9szXrR/SfUZSPg6ee
+   tASLNqBur3B3FZy0Kk3ViccwzAF1C3pp0vg3PhdxKuHR+cS4oFRH98xR8
+   3ESTMMl4QBKfEUGLlMTYmBnuiO2xtHzfF9NhK/9d7FwVbQ1sQUsaIKrjR
+   xCQV0ekxHEX0fynxOclyFR54YpS62U3DqQ2CBZ0baay6E/IUzP3rMFe45
+   PLjxnc/Rw6eaKOVD72pGpqCb3lljYZvTQXBebyiFCOAdO/ajQ9KbFexEk
+   Q==;
+X-CSE-ConnectionGUID: zqFRTYeqQSarjMvqBnRwgA==
+X-CSE-MsgGUID: eTEckkh7SyuBzhQRvISPTQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18721235"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="18721235"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 11:51:03 -0700
+X-CSE-ConnectionGUID: qFaEQGGQR0yj92/nkWYFjw==
+X-CSE-MsgGUID: vVT7fhWYSwGUXsLltUGGmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="39638525"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Jun 2024 11:50:59 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sH6a9-0000nd-1G;
+	Tue, 11 Jun 2024 18:50:57 +0000
+Date: Wed, 12 Jun 2024 02:50:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH 3/3] arm64: dts: amlogic: a4: add pinctrl node
+Message-ID: <202406120256.PStYu9fX-lkp@intel.com>
+References: <20240611-a4_pinctrl-v1-3-dc487b1977b3@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l65abzh75bgiesz6"
-Content-Disposition: inline
-In-Reply-To: <80883dd5-2be0-4f8b-8298-ca076e6ac558@cherry.de>
-
-
---l65abzh75bgiesz6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240611-a4_pinctrl-v1-3-dc487b1977b3@amlogic.com>
 
+Hi Xianwei,
 
-> The class parameter was recently removed from this function but I forgot to
-> remove it. Sorry for the noise, I will send a v4 for this fix.
+kernel test robot noticed the following build warnings:
 
-Please wait for my comments to the series. Hopefully later this evening.
+[auto build test WARNING on 87501b7ca0005c533d770d37e0047a60954d986a]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Xianwei-Zhao-via-B4-Relay/dt-bindings-pinctrl-Add-support-for-Amlogic-A4-SoCs/20240611-131412
+base:   87501b7ca0005c533d770d37e0047a60954d986a
+patch link:    https://lore.kernel.org/r/20240611-a4_pinctrl-v1-3-dc487b1977b3%40amlogic.com
+patch subject: [PATCH 3/3] arm64: dts: amlogic: a4: add pinctrl node
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240612/202406120256.PStYu9fX-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406120256.PStYu9fX-lkp@intel.com/reproduce)
 
---l65abzh75bgiesz6
-Content-Type: application/pgp-signature; name="signature.asc"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406120256.PStYu9fX-lkp@intel.com/
 
------BEGIN PGP SIGNATURE-----
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi:71.32-85.4: Warning (unit_address_vs_reg): /soc/bus@fe000000/pinctrl@4000: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi:52.35-66.5: Warning (unit_address_vs_reg): /soc/pinctrl@fe08e700: node has a unit name, but no reg or ranges property
+>> arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi:71.32-85.4: Warning (simple_bus_reg): /soc/bus@fe000000/pinctrl@4000: missing or empty reg/ranges property
+>> arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi:52.35-66.5: Warning (simple_bus_reg): /soc/pinctrl@fe08e700: missing or empty reg/ranges property
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZonHcACgkQFA3kzBSg
-KbZSwg/+L3bctenTnBzk2jty+XZIdBqaYWfv/0Q9sWI38wPTRj7QOS+2CVp7IMj/
-e4HGYCQmVT1UamUF5bcdedgfQ1L4crkjzZAmqZLCZjrjut992zSwq+GHrVfX2Jdo
-V10Ow+MyykNiQVUPMzSsOwcO3lcxp82ECBSdeDgeS/c/rfGyd5Fh3VbFXjdyA/h3
-667ujGtLNYMFqKc02ghYe/LmN9c5i6l+id6DDv+Gy/UzRDjbuRfKMylotiSx8Vtv
-E+ACZ1sbe889SUV77nJ/JZ+vJ9ckF6riq2NKsfQvtxGuB4o5W42m21Ni+WKxErId
-cs/TUl6aQycoiC6rrCjIN0B3J39+nJuHUxqkhuZeO7nYIMe16svuZWgUCZYZ7VSK
-+LY0r660fBEWlXh5e0HLerw3N+Xd+7H8Y6byuRsxO2ojNp8Ta0O2o/Pyw+33/qjF
-T/yU7vvCFl1FbmgD7uR+2MMTBzDd/J0kq07JXbLZGz7XCTza2MVgrvLaaI0Ab3XJ
-e17YccZDOm3j3/0S4d4gsEDu4QPBGMBd1mDlE/9BGjdRUSt4KqojNSg+wDxCjnQ7
-EqxSZ0H7InLKgai/kI92hOT1+NY0brOByko0f/lOmfN7kX7ufJnYAxABnQojmWt5
-s66HhO1wDNMIXqkuddwJtEwyjBvic4VQlr0+o64joXxqscYecWg=
-=c19E
------END PGP SIGNATURE-----
+vim +71 arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
 
---l65abzh75bgiesz6--
+  > 52			aobus_pinctrl: pinctrl@fe08e700 {
+    53				compatible = "amlogic,a4-aobus-pinctrl";
+    54				#address-cells = <2>;
+    55				#size-cells = <2>;
+    56				ranges;
+    57	
+    58				ao_gpio: bank@fe08e700 {
+    59					reg = <0x0 0xfe08e700 0x0 0x04>,
+    60					      <0x0 0xfe08e704 0x0 0x60>;
+    61					reg-names = "mux", "gpio";
+    62					gpio-controller;
+    63					#gpio-cells = <2>;
+    64					gpio-ranges = <&aobus_pinctrl 0 0 8>;
+    65				};
+    66			};
+    67		};
+    68	};
+    69	
+    70	&apb {
+  > 71		periphs_pinctrl: pinctrl@4000 {
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
