@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-209559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF209037B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1909037BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E841F2390F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:21:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC091F29C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F8A178CFD;
-	Tue, 11 Jun 2024 09:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51C17624A;
+	Tue, 11 Jun 2024 09:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RO3ANuYT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UevoCbxA"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2B617B4E6
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6446176ADC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097609; cv=none; b=KaOTnk0HIp/uDt6vcrQN/5fxuzy8OIYzuiHdTjigE7FBUfv/1PJW7YU3PGV1w0I5RZhGvgKMqeIuTnYKoPWkwYsmuBEHK1En8pKMAQ9okYuY8kskBeaSwMiTGbadz6ecXwd9WmWeyn0QEQ9KQw6MikjmXY6jBO6epL0hh703i6E=
+	t=1718097695; cv=none; b=Pe7bXU9YLMLie5d/H9vX+SfqVz2cwVa5oZuOJyCV8ghdtGL18mjg77Y0eEuOytuRpIW66x1L80QYlebxUT7I36vdA+W8yAG14Hkm61TiIRibCbG0nzq7O8rcSMn/cr9djrkSRppsuOdHHt3sy+d01160xqFtu5U6J0cSiXmq7CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097609; c=relaxed/simple;
-	bh=+vD/9lxXIl99HyeiuvT3Vf6Ri47IwhKAs7T38qdlAfw=;
+	s=arc-20240116; t=1718097695; c=relaxed/simple;
+	bh=YDxxVy17GzQ25SND5tlc23Cufkpf/YLGDJ9a/s3A1+M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I5+/sxCFwnpQ5Erzi2o07hHtga/U2aNKUlc3UKya9/OLtQwUL3tAzoIvvNynK02/H42J/BnRNYh8Ou301vj8zXAasji31OvlDDfJQ6Aqm0FPb+4Zua/9eiaFbcPAIwQIMGNHOwJjD4vAMbsmAYTVtT3WxcYFH7Bt5j7iFrY/j6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RO3ANuYT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718097606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=19nCJ44lKFQDfYwBVoqIbLUmtzHMcoT7aSou+rcrxJk=;
-	b=RO3ANuYT53kUlH6cmEMkcyeRk9usJU8xoALP29HT9YREbdL700VswGtFEycXAlAJp4mXaD
-	QJYUDy++1MS83bZsY+GD+ESTctUbbpFGfEQeZGQOS9nU9J1e0fY92wVpHfjklfyt3o5m0f
-	lYDVlpB/Yi5xO88diGoYw5BM4STUxD8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-259-f80JTb1vNVudd-6Nj0Cvlw-1; Tue, 11 Jun 2024 05:20:04 -0400
-X-MC-Unique: f80JTb1vNVudd-6Nj0Cvlw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-421759c3556so18087245e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:20:03 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=hcKDtebYSLc+ZBuPw7pJMKw1G4GdOtjROiAmQjOq1NPQvtPfESwV6DGV7Tq9v7wepoVXu4GBuRN212WeGcCAe7d5s2IVPDdJXTuQwTJNBIXQSRHhxb/o0NtExPFCzGPQXYMLGnlL9GT2zXD8LikKhuwwWdAHkxmkec3DgQBu8mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UevoCbxA; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso6865695e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718097692; x=1718702492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLRvrux7qnuomkpefvTqVWRMw/08JADT/EH5MpXik2s=;
+        b=UevoCbxACtUFwTnzm8S8+iQ5iyDq22jJMcX0J+S9NYRuXpKtXu4GDuKccwKxg42lWX
+         T2znkLQhriivq/gsb9uE4j09LQN3BZFev2IHNHSrYErTX99dgjbNu6jFx3cfJkvzL7Xt
+         JzMT1Eo74F+FDGVa0maerXhwOU6kOrFTUs4n2HL8qaEwpRfbGg6eb93+REyN5z0EDcN5
+         /C9AcZ4krI/vQokD3RpQlMHxUCmyw4MovOdgQFUXZWhOcAhCKGjcvK/OBLtAU/sxNHVZ
+         Cw5cv3stmsSqUHvgD1mLIzmpGh+0Uw0R4o4Y6Zpq/67jaY/CAcTLgQLiO7CBTLYa6d7Z
+         i22g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718097603; x=1718702403;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=19nCJ44lKFQDfYwBVoqIbLUmtzHMcoT7aSou+rcrxJk=;
-        b=NTsz2xzJeyOl/IG1ECarN9w1ocT1tK5VulSlFGjQPfA1C55+bIkBb27Z5GOr4Eb9XP
-         kgfkwn4nchFfjWIut1MTeGvzXswNrbLek02cSxX+VnlUNrV0ls6OBlipTOUqMlEph/H2
-         3Grr1W54syebapPir3WXzVbnxzaHnlebbr6FAqlyDL2DvJTF4oOsA7i8wAljlqiAkoQL
-         rU0e1VWERRWamEQ6A9ncpcNOojWcsHJZf5m+FIWHIbcDTXTYecNyblzr448uJM0pmCk6
-         kmxpCfwuKl7IXNq3TAG9b1H8MMYFJHG3Qy6Ja2f7dHTTjmbAsPFe8UmlUvliLqZRnN34
-         VgeA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2QwCYiyinhXc4zPJeBJjBbf4Mahzlc/Pq21fQ7DqldElR/waMSHSoJkFnztKJnwfzhgnr8X4rkdar6UqFERGrS7FAVtxnTCysTUEI
-X-Gm-Message-State: AOJu0YxO9gzxvLkuyGlzSfMX8kr/H7XNSOVbQwE/fAly4g7pzfT5r4aY
-	Ta3NbjzUZEWK1DyhpBGencwpp61UtQexeNK4/30OhcjR2MIqqV1EVJ3ml0gMmgd8iCRcAuhbSAw
-	eS8hLHkEZglUPjC1ufLdVqc6qVw2suXgKAe825w3iuShyx7ENMbkx0SuQJfO0qA==
-X-Received: by 2002:a05:600c:350b:b0:421:661d:89d6 with SMTP id 5b1f17b1804b1-4223c77e2d4mr20155965e9.14.1718097602935;
-        Tue, 11 Jun 2024 02:20:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgkyg/Dv6uOSQ72rKBd1GGvkGxnXPNMKv+jDhJ3PNNoRBsRGANXBwR6+ejC0i2aCXK7VeE/Q==
-X-Received: by 2002:a05:600c:350b:b0:421:661d:89d6 with SMTP id 5b1f17b1804b1-4223c77e2d4mr20155665e9.14.1718097602456;
-        Tue, 11 Jun 2024 02:20:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158149008sm203230325e9.29.2024.06.11.02.20.01
+        d=1e100.net; s=20230601; t=1718097692; x=1718702492;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KLRvrux7qnuomkpefvTqVWRMw/08JADT/EH5MpXik2s=;
+        b=HU6ty91KK+rVoJQNjkrx5ZR+n+cHIASXPQ3Ic+EPgPKY+gU+1sNU1LOHgK6g6cng5i
+         KLM0Zv+W3ABIwIX0d0GE+DbjGEJnvLJOYcDGOB++ZoEBf1oberYL5i3Ez3IYMkj7cUhH
+         hjS/h9SdZx4rdnGrwW5Lycv5BX84aoU9VIpHvTDrhekMdnoR8fuAi6Fw5ZAnuVWlhFvU
+         6RWLYtvLVdVwmbBJrIVyiS0HXW7w+VvJS9MfdByN/ScBFIkDERgtSs0v17UEceZ6Qbqb
+         cCcpqIclWY6kGF0KHXzx94WNFcs8C02f3Dakj5Ai+2I3wlTTfqmho+S82sRb0Kt9SIF6
+         9vuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm2AUc3xvbHTMt2PqyAVG0jTzXnOQofZypvF4Das+bzvWZIeJB3bZQ6om7Jmq72S9NGpMrRElf5mvvRFTNrluE2fNho0Uj6QwWTv1L
+X-Gm-Message-State: AOJu0YyAII2oiZ08dV3vbx7hsk1HAJ+Ygk7X3nxnv6HsConzTk+o85tO
+	lf3LDawnnt8gQ9t1027PaKwZ2gTP/f6hhZC58wn6cdYJWOlo352a0n+Sqsr3Reg=
+X-Google-Smtp-Source: AGHT+IEepGFsOKuv3yoDSNT5PmXTkBEpR3DvFj7IynrBIPKJySCq5T7sECy6hhcePgMK9M6Hy943YA==
+X-Received: by 2002:a05:600c:4e08:b0:421:c65a:738 with SMTP id 5b1f17b1804b1-421c65a0db9mr43755755e9.37.1718097692133;
+        Tue, 11 Jun 2024 02:21:32 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4217de88933sm104268215e9.44.2024.06.11.02.21.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 02:20:01 -0700 (PDT)
-Message-ID: <04b3dda2-c6a8-4f26-90b8-75fe7580d63e@redhat.com>
-Date: Tue, 11 Jun 2024 11:20:00 +0200
+        Tue, 11 Jun 2024 02:21:31 -0700 (PDT)
+Message-ID: <c510fd3f-a55a-4ac9-bbc1-d2392027724c@linaro.org>
+Date: Tue, 11 Jun 2024 11:21:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,166 +76,374 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm/highmem: make nr_free_highpages() return
- "unsigned long"
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-References: <20240607083711.62833-1-david@redhat.com>
- <20240607083711.62833-3-david@redhat.com>
- <ZmZ1x6QQYPFSOd7O@localhost.localdomain>
- <99073d55-5b18-4ed2-b860-8c09e056f585@redhat.com>
- <20240611005636.g6525rkqpos43yds@master>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH V2 2/2] leds: add mp3326 driver
+To: Yuxi Wang <Yuxi.Wang@monolithicpower.com>, pavel@ucw.cz, lee@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ wyx137120466@gmail.com
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
+ <20240611083236.1609-3-Yuxi.Wang@monolithicpower.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240611005636.g6525rkqpos43yds@master>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240611083236.1609-3-Yuxi.Wang@monolithicpower.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11.06.24 02:56, Wei Yang wrote:
-> On Mon, Jun 10, 2024 at 10:22:49AM +0200, David Hildenbrand wrote:
->> On 10.06.24 05:40, Oscar Salvador wrote:
->>> On Fri, Jun 07, 2024 at 10:37:11AM +0200, David Hildenbrand wrote:
->>>> It looks rather weird that totalhigh_pages() returns an
->>>> "unsigned long" but nr_free_highpages() returns an "unsigned int".
->>>>
->>>> Let's return an "unsigned long" from nr_free_highpages() to be
->>>> consistent.
->>>>
->>>> While at it, use a plain "0" instead of a "0UL" in the !CONFIG_HIGHMEM
->>>> totalhigh_pages() implementation, to make these look alike as well.
->>>>
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ...
->>>> -static inline unsigned int nr_free_highpages(void) { return 0; }
->>>> -static inline unsigned long totalhigh_pages(void) { return 0UL; }
->>>> +static inline unsigned long nr_free_highpages(void) { return 0; }
->>>> +static inline unsigned long totalhigh_pages(void) { return 0; }
->>>
->>> Although I doubt it has any consequences, I would just leave them both with UL,
->>> so the return type is consistent with what we are returning.
->>
->> These suffixes are only required when using constants that would not fit
->> into the native (int) type, or converting from that native (int) type to
->> something else automatically by the compiler would mess things up (for example,
->> undesired sign extension). For 0 that is certainly impossible :)
->>
->>
->> That's also the reason why in include/linux we now have:
->>
->> t14s: ~/git/linux/include/linux $ git grep "return 0UL;"
->> skbuff.h:       return 0UL;
->> uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
->> t14s: ~/git/linux/include/linux $ git grep "0UL;"
->> bitmap.h:               *dst = ~0UL;
->> dax.h:          return ~0UL;
->> mtd/map.h:                      r.x[i] = ~0UL;
->> netfilter.h:    return ((ul1[0] ^ ul2[0]) | (ul1[1] ^ ul2[1])) == 0UL;
->> skbuff.h:       return 0UL;
->> uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
->>
->>
->> ... compared to a long list if "unsigned long" functions that simply "return 0;"
->>
+On 11/06/2024 10:32, Yuxi Wang wrote:
+> This commit adds support for MPS MP3326 LED driver.
+
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
 > 
-> Seems this is the current status.
+> Signed-off-by: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
 > 
-> Then my question is do we have a guide line for this? Or 0 is the special
-> case? Sounds positive value has no sign extension problem. If we need to
-> return 1, we suppose to use 1 or 1UL? I found myself confused.
-> 
-> I grepped "return 1" and do find some cases without UL:
-> 
-> backing-dev.h: wb_stat_error() return 1 for unsigned long.
-> pgtable.h: pte_batch_hint() return 1 for unsigned int.
-> 
-> So the guide line is for positive value, it is not necessary to use UL?
-
-I think when returning simple values (0/1/-1), we really don't need 
-these suffices at all. The standard says "The type of an integer 
-constant is the first of the corresponding list in which its value can 
-be represented.". I thought it would always use an "int", but that is 
-not the case.
-
-So, if we use "-1", the compiler will use an "int", and sign extension 
-to "unsigned" long will do the right thing.
-
-Simple test:
-
--1 results in: 0xffffffffffffffff
--1U results in: 0xffffffff
--1UL results in: 0xffffffffffffffff
-0xffffffff results in: 0xffffffff
-0xffffffffU results in: 0xffffffff
-0xffffffffUL results in: 0xffffffff
-~0xffffffff results in: 0x0
-~0xffffffffU results in: 0x0
-~0xffffffffUL results in: 0xffffffff00000000
-0xffffffffffffffff results in: 0xffffffffffffffff
-0xffffffffffffffffU results in: 0xffffffffffffffff
-0xffffffffffffffffUL results in: 0xffffffffffffffff
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index d721b254e1e4..3ca7be35c834 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
 
 
-I thought that "0xffffffff" could be a problem (sign-extending to 
-0xffffffffffffffff), but that does not seem to be the case -- likely 
-using "unsigned int" as type. Also, I'm surprised that 
-0xffffffffffffffffU works as expected, I would have thought the "U" 
-would make the compiler complain about the value not fitting into an 
-unsigned int.
+
+> +/*
+> + * PWM in the range of [0 255]
+> + */
+> +static int led_pwm_store(struct device *dev, struct device_attribute *attr,
+> +			     const char *buf, size_t count)
+
+Nope.
+
+...
+
+> +	}
+> +	r_val = r_val * 255 / 4095 + (r_val * 255 % 4095) / (4095 / 2);
+> +	g_val = g_val * 255 / 4095 + (g_val * 255 % 4095) / (4095 / 2);
+> +	b_val = b_val * 255 / 4095 + (b_val * 255 % 4095) / (4095 / 2);
+> +	if (led->num_colors == 1)
+> +		return sysfs_emit(buf, "0x%x\n", r_val);
+> +	else
+> +		return sysfs_emit(buf, "0x%x 0x%x 0x%x\n", r_val, g_val, b_val);
+> +}
+> +
+> +static int led_enable_store(struct device *dev,
+> +				struct device_attribute *attr, const char *buf,
+> +				size_t count)
+
+Eeeee? store to enable LED? Really?
+
+...
+
+> +{
+> +	struct led_classdev *lcdev = dev_get_drvdata(dev);
+> +	struct mp3326_led *led = container_of(lcdev, struct mp3326_led, cdev);
+> +	struct mp3326 *chip = led->private_data;
+> +	int ret;
+> +	uint val, i;
 
 
-When only returning values, the compiler usually does the right thing. 
-Only when performing operations on the constant (see ~ example above), 
-we might have to use the suffixes, depending on the intended outcome.
+> +
+> +static DEVICE_ATTR_RW(led_pwm);
+> +static DEVICE_ATTR_RW(led_enable);
+> +static DEVICE_ATTR_RO(led_short_fault);
+> +static DEVICE_ATTR_RO(led_open_fault);
 
--- 
-Cheers,
+No, for multiple reasons:
+1. Where ABI documentation?
+2. There is a standard sysfs interface. No need for most of that. Please
+explain why standard interface does not fit your needs - for each new
+interface.
 
-David / dhildenb
+> +
+> +static struct attribute *led_sysfs_attrs[] = {
+> +	&dev_attr_led_pwm.attr,
+> +	&dev_attr_led_enable.attr,
+> +	&dev_attr_led_short_fault.attr,
+> +	&dev_attr_led_open_fault.attr,
+> +	NULL,
+> +};
+> +
+> +ATTRIBUTE_GROUPS(led_sysfs);
+> +
+> +static int mp3326_add_led(struct mp3326 *chip, struct device_node *np,
+> +			  int index)
+> +{
+> +	struct mp3326_led *led = &chip->leds[index];
+> +	struct mc_subled *info;
+> +	struct device_node *child;
+> +	struct led_classdev *cdev;
+> +	struct led_init_data init_data = {};
+> +	int ret;
+> +	int i = 0;
+> +	int count;
+> +	u32 color = 0;
+> +	u32 reg = 0;
+> +
+> +	ret = of_property_read_u32(np, "color", &color);
+> +	if (ret) {
+> +		dev_err(&chip->client->dev, "Miss color in the node\n");
+> +		return ret;
+> +	}
+
+Blank line
+
+> +	led->private_data = chip;
+> +	if (color == LED_COLOR_ID_RGB) {
+> +		count = of_get_child_count(np);
+> +		if (count != 3) {
+> +			dev_err(&chip->client->dev,
+> +				"RGB must have three node.\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		info = devm_kcalloc(&chip->client->dev, 3, sizeof(*info),
+> +				    GFP_KERNEL);
+> +		if (!info)
+> +			return -ENOMEM;
+> +
+> +		for_each_available_child_of_node(np, child) {
+> +			ret = of_property_read_u32(child, "reg", &reg);
+> +			if (ret || reg > MAX_CHANNEL) {
+> +				dev_err(&chip->client->dev,
+> +					"reg must less or equal than %d\n",
+> +					MAX_CHANNEL);
+> +				return -EINVAL;
+> +			}
+> +
+> +			ret = of_property_read_u32(child, "color", &color);
+> +			if (ret) {
+> +				dev_err(&chip->client->dev,
+> +					"color must have value\n");
+> +				return ret;
+> +			}
+> +
+> +			if (color > 3 || !color) {
+> +				dev_err(&chip->client->dev,
+> +					"color must be Red, Green and Blue. The color is %d\n",
+> +					color);
+> +				return ret;
+> +			}
+> +			info[i].color_index = color;
+> +			info[i].channel = reg;
+> +			info[i].brightness = 0;
+> +			i++;
+> +		}
+> +
+> +		led->subled_info = info;
+> +		led->num_colors = 3;
+> +		cdev = &led->cdev;
+> +		cdev->max_brightness = MAX_BRIGHTNESS;
+> +		cdev->brightness_set_blocking = led_brightness_set;
+> +		cdev->groups = led_sysfs_groups;
+> +		init_data.fwnode = &np->fwnode;
+> +
+> +		ret = devm_led_classdev_register_ext(&chip->client->dev,
+> +						     &led->cdev, &init_data);
+> +
+> +		if (ret) {
+> +			dev_err(&chip->client->dev,
+> +				"Unable register multicolor:%s\n", cdev->name);
+> +			return ret;
+> +		}
+> +	} else {
+> +		ret = of_property_read_u32(np, "reg", &reg);
+> +		if (ret || reg > MAX_CHANNEL) {
+> +			dev_err(&chip->client->dev,
+> +				"reg must less or equal than %d\n",
+> +				MAX_CHANNEL);
+> +			return -EINVAL;
+> +		}
+> +		info = devm_kcalloc(&chip->client->dev, 1, sizeof(*info),
+> +				    GFP_KERNEL);
+> +		led->num_colors = 1;
+> +		info[i].color_index = LED_COLOR_ID_WHITE;
+> +		info[i].channel = reg;
+> +		info[i].brightness = 0;
+> +		led->subled_info = info;
+> +		cdev = &led->cdev;
+> +		cdev->max_brightness = MAX_BRIGHTNESS;
+> +		cdev->brightness_set_blocking = led_brightness_set;
+> +		cdev->groups = led_sysfs_groups;
+> +		init_data.fwnode = &np->fwnode;
+> +		ret = devm_led_classdev_register_ext(&chip->client->dev,
+> +						     &led->cdev, &init_data);
+> +		if (ret) {
+> +			dev_err(&chip->client->dev, "Unable register led:%s\n",
+> +				cdev->name);
+> +			return ret;
+> +		}
+> +	}
+
+Blank line
+
+> +	return ret;
+> +}
+> +
+> +static int mp3326_parse_dt(struct mp3326 *chip)
+> +{
+> +	struct device_node *np = dev_of_node(&chip->client->dev);
+> +	struct device_node *child;
+> +	int ret;
+> +	int i = 0;
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +		ret = mp3326_add_led(chip, child, i);
+> +		if (ret)
+> +			return ret;
+> +		i++;
+> +	}
+> +
+> +	ret = regmap_write(chip->regmap, MP3326_PWM_CTRL_CHANNEL_9_16, 0);
+> +	if (ret)
+> +		return ret;
+
+Blank line
+
+> +	ret = regmap_write(chip->regmap, MP3326_PWM_CTRL_CHANNEL_1_8, 0);
+> +	if (ret)
+> +		return ret;
+
+Blank line
+
+> +	return 0;
+> +}
+> +
+> +static int mp3326_leds_probe(struct i2c_client *client)
+> +{
+> +	struct mp3326 *chip;
+> +	const struct reg_field *reg_fields;
+> +	int count, i, j;
+> +
+> +	count = device_get_child_node_count(&client->dev);
+> +	if (!count) {
+
+Drop {
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+> +		return dev_err_probe(&client->dev, -EINVAL,
+> +				     "Incorrect number of leds (%d)", count);
+> +	}
+
+blank line
+
+> +	chip = devm_kzalloc(&client->dev, struct_size(chip, leds, count),
+> +			    GFP_KERNEL);
+> +	if (!chip)
+> +		return -ENOMEM;
+> +
+> +	chip->client = client;
+> +	chip->num_of_leds = count;
+> +	i2c_set_clientdata(client, chip);
+> +	chip->regmap = devm_regmap_init_i2c(client, &MP3326_regmap_config);
+> +	if (IS_ERR(chip->regmap))
+> +		return PTR_ERR(chip->regmap);
+> +
+> +	for (i = 0; i < MAX_CHANNEL; i++) {
+> +		reg_fields = channels_reg_fields[i];
+> +		for (j = 0; j < MAX_CTRL; j++) {
+> +			chip->regmap_fields[i][j] = devm_regmap_field_alloc(
+> +				&client->dev, chip->regmap, reg_fields[j]);
+> +			if (IS_ERR(chip->regmap_fields[i][j]))
+> +				return PTR_ERR(chip->regmap_fields[i][j]);
+> +		}
+> +	}
+
+Blank line
+
+> +	if (mp3326_parse_dt(chip))
+> +		return 1;
+
+What is one? This looks like some sort of user-space or downstream
+approach. That's not how it works for upstream kernel. Do not introduce
+your downstream/user-space/other-system coding style and programming
+interface.
+
+You must use Linux approach.
+
+There is no way probe function returns a "1". See other files as example.
+
+
+> +	else
+> +		return 0;
+> +}
+> +
+> +static const struct i2c_device_id mp3326_id[] = { { "mp3326", 0 }, {} };
+
+This must be formatted as kernel coding style. See other files as an
+example.
+
+> +MODULE_DEVICE_TABLE(i2c, mp3326_id);
+> +
+> +static const struct of_device_id mp3326_of_match[] = { { .compatible =
+> +								 "mps,mp3326" },
+> +						       {} };
+> +MODULE_DEVICE_TABLE(of, mp3326_of_match);
+> +
+> +static struct i2c_driver mp3326_driver = {
+> +	.probe = mp3326_leds_probe,
+> +	.driver = {
+> +			.name = "mp3326_led",
+> +			.of_match_table = mp3326_of_match,
+> +		   },
+> +	.id_table = mp3326_id,
+> +};
+> +
+> +module_i2c_driver(mp3326_driver);
+> +MODULE_AUTHOR("Yuxi Wang <Yuxi.Wang@monolithicpower.com>");
+> +MODULE_DESCRIPTION("MPS MP3326 LED driver");
+> +MODULE_LICENSE("GPL");
+
+Best regards,
+Krzysztof
 
 
