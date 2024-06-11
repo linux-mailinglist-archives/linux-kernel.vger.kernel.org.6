@@ -1,123 +1,81 @@
-Return-Path: <linux-kernel+bounces-210344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1370904296
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:41:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B26A90428B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EB21F24927
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8971C244D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9126E615;
-	Tue, 11 Jun 2024 17:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB55E4F88C;
+	Tue, 11 Jun 2024 17:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7KbS9CI"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COZUtSea"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6496EB74;
-	Tue, 11 Jun 2024 17:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1987B47F5D;
+	Tue, 11 Jun 2024 17:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718127643; cv=none; b=o6eZ4vMtlebfIispvYMHDARLJkKs7c9v9pNSJmM8LqLxI3oNoD9Isy1k15uAEA0tyVFCr5xdgzFd8XaRbEo1zLKb9zLAYnGvWrOvMVmehWXAExr4e/En6NTsVnK7wySIVxXjCaG1nJA2s4KDduWMMFI/6tTw1Mu/jzDLpv+O0wo=
+	t=1718127548; cv=none; b=jQ16gGwuR4JKNrEVkwyo0FjrCA63WIZkvndskgAh47oHamx96vZiNaNlBthuQ7Sndh3W9itY7rBAz+5JMXA3wkFUIC+goy4GA4iIfWnUCUR/rVXHzjlYhqn7HR4L31ptJCAL/bcXX1QEeXAbn4YwmjIGV4m+ZS+Am1Pflm3kL0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718127643; c=relaxed/simple;
-	bh=UnS1GN+RmVwgTfDVRx+f1OGHK29jr7UNoQi9kGafAa4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Id8ybWcA+HIsbRW5vXVXKEmW1gnPpNmYpWbVXzQUEFadoH1Zt9ixU2n83spWOWVdiU7/c+L4nnZxW7BKSqUX+Tby1DRDGyrToIGXIOUc/YmWYJ/RzmBSU3/NT9Cja+y/zIDC4pR+LYLkiOrSO2aSbXWdIpQo3qq/iJo0tuAfvHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7KbS9CI; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc1261f45so4528648e87.0;
-        Tue, 11 Jun 2024 10:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718127640; x=1718732440; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EIOb5A0u41dXH2Few4c7nOgBOybu9BYcELSZMwnL+lM=;
-        b=E7KbS9CI9CG/25lBjki/iCTWUZJ1PjiZIPtUTYN0dEBsKgrHI3i195+eLCs9YEwpYo
-         9qHMCw1fiSEaH53yG1NQ8OqGJgFy43DdNO53vUi2vFCUgos+VMFTHFGkkV4qVq5h18Fu
-         Vsbmi+Y4wyuHvYk0HrJrq1784KHK5GbeLdk0Qsbx8uRXMcTVzQalz3LixvNTmHqzmUz5
-         TKsKxhq1HUD9aHyqcXVcVU2T0MhlmhEGfdD14SxGK33MW92jTK4B5wTTwZGK/yJ5Cutq
-         tZV63lJD+PmW4RN5TM6VEHlsuMIWqcSPeNPFK5hQ34OnOoXqhber1Iy3IxGmoHj7c8Q5
-         Cxjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718127640; x=1718732440;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EIOb5A0u41dXH2Few4c7nOgBOybu9BYcELSZMwnL+lM=;
-        b=PAy9QruEIR/I64uQ0tQkwm5+b4Lyrmd5VzriDQ/E3KnIxjnAsVSGXBTctjaF0sMVMU
-         eGPmtMJ6m93e9Cz1R3OfaRN6yWga7SGAPsuttRfbG2yopgESNzcowxcDiY/8+iybmXVo
-         WTNj284C5A+lAxV2liVk1/ecO3yPTUR5T0WksHgvRXkBwwko2CQ0fYh34Lpfiphl8ZyV
-         GSwZ0eP8ph/Ee5YMZYlMSmruMP0uOOmmhNnkSJY1sQSp9ySltyYNL84Tgj7bTVeX1dw7
-         NJ2l/ORHm2f+9t3adSU80BOxw5lFPQJjO4xzu4CvD4UgGesa8th/5WHiD+3mIYDVr9Ok
-         ocyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUq9xbKFRc7YeRL7qiuFsylEBuZR8qo/EOYtFGE6TmBAzeK4jMhTXndIKZ6khgYXK1OkvQnV1nIDvJ8dIYpNQo9gNn7ZjtA4Zx0Gc3uuHxGvcOE5/qv6C3uuYWstfmFvUd8z8j5gvyDjoPBuNasFMo58iyLMHnA4Y3VH5UwhNiZmtDSFJa+nlKD
-X-Gm-Message-State: AOJu0YyAieTJCuvL3EtKNGBb3BByidP+lNHg66RAw92Y72Azo14J3Dbp
-	mTgh81VxDGf37ZnRcnsr2hKbTsazIAz8eDvqr2thn2EclKmF1pBC
-X-Google-Smtp-Source: AGHT+IHYdhIJFF4+t28qVNumSkPBzpQLGirbGaQ8gkqgr72rmGkaw0V6016CSHTlsHPEeV6rp7rJzQ==
-X-Received: by 2002:a05:6512:118a:b0:52c:8e17:cfe1 with SMTP id 2adb3069b0e04-52c8e17d527mr3349573e87.45.1718127639765;
-        Tue, 11 Jun 2024 10:40:39 -0700 (PDT)
-Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421be4f0a06sm87232435e9.21.2024.06.11.10.40.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 10:40:39 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	josef@toxicpanda.com,
-	hch@infradead.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4 2/2] btrfs: use iget5_locked_rcu
-Date: Tue, 11 Jun 2024 19:38:23 +0200
-Message-ID: <20240611173824.535995-3-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240611173824.535995-1-mjguzik@gmail.com>
-References: <20240611173824.535995-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1718127548; c=relaxed/simple;
+	bh=dv90Kmj1AVO87EkjlwVP3gspBUKICM5NEKJytZOA3yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWjxMBEx7iSIdUnm8vrLD+n8AkSyo6fbjghTGbY2KJbM45zSsoAK72GXAz7HgIPoGj/LO6+Uxzmjo5kU3naWc9psXzA2ptA89aKPGT/0t8AI87wgmGyj2HtC9kxH60Ms+4bs9U2UG0Ry5MzimXfoWK8ewv7pnuURq5xhGO8I5Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COZUtSea; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20693C32789;
+	Tue, 11 Jun 2024 17:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718127547;
+	bh=dv90Kmj1AVO87EkjlwVP3gspBUKICM5NEKJytZOA3yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=COZUtSeaBdFgnbkJqZWkD9V/v019qRMyp/hW7Wl+BgzHi8jw8YpzflhBCjjKTjvt/
+	 fKlOp5YWkoSgFzw3fTm4pRsIlqRivvEDPQ44vmk0V2m4avjd6rkGKla7Y13jWMVdj3
+	 Ko+Y04q3xxZhZLEFPds9pAFFTMM6Q5Kj3HTrnH69gUxl7ZcQ3oDAF+Syfn6LTI4LGX
+	 KTkXSQCp4AWC8FKonvzXcg29WG4KsygpuMNF+KnMr54VPOG1TQNf7ki9gUF7lMs7XA
+	 YYlm3TozC7v86iBX1U9BZu1FX5ky42eXI6+JFZoDVfhp41MXYyJ2169UccGrtyWuuW
+	 LNEEeKOw3fxMg==
+Date: Tue, 11 Jun 2024 23:09:03 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>,
+	dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Sriramakrishnan <srk@ti.com>
+Subject: Re: [PATCH] dmaengine: ti: k3-udma-glue: Fix
+ of_k3_udma_glue_parse_chn_by_id()
+Message-ID: <ZmiLt_S8_CSxY9qv@matsya>
+References: <8b2e4b7f-50ae-4017-adf2-2e990cd45a25@gmail.com>
+ <b3c8457b-f652-4f1d-a02f-e5a7325b18bb@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b3c8457b-f652-4f1d-a02f-e5a7325b18bb@web.de>
 
-With 20 threads each walking a dedicated 1000 dirs * 1000 files
-directory tree to stat(2) on a 32 core + 24GB ram vm:
+On 21-05-24, 20:22, Markus Elfring wrote:
+> …
+> > > without having incremented its reference at any point. Fix it.
+> >
+> > Acked-by: Peter Ujfalusi@gmail.com
+> 
+> Please improve the data representation for this tag.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9#n468
 
-before: 3.54s user 892.30s system 1966% cpu 45.549 total
-after:  3.28s user 738.66s system 1955% cpu 37.932 total (-16.7%)
+Please STOP wasting time of everyone. Go write some code which solves
+something!
 
-Benchmark can be found here: https://people.freebsd.org/~mjg/fstree.tgz
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/btrfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 4883cb512379..457d2c18d071 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5588,7 +5588,7 @@ static struct inode *btrfs_iget_locked(struct super_block *s, u64 ino,
- 	args.ino = ino;
- 	args.root = root;
- 
--	inode = iget5_locked(s, hashval, btrfs_find_actor,
-+	inode = iget5_locked_rcu(s, hashval, btrfs_find_actor,
- 			     btrfs_init_locked_inode,
- 			     (void *)&args);
- 	return inode;
 -- 
-2.43.0
-
+~Vinod
 
