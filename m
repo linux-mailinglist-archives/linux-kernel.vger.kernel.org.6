@@ -1,85 +1,69 @@
-Return-Path: <linux-kernel+bounces-209835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8FD903B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:11:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1D7903B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D48B8282FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44771F2041D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECB517B50C;
-	Tue, 11 Jun 2024 12:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8D917BB02;
+	Tue, 11 Jun 2024 12:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWT8Oc4g"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eu1Yarke"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA03B481B4;
-	Tue, 11 Jun 2024 12:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C6317B43A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107859; cv=none; b=vC2bPhRcGQ4VEj0Pg5kUmejF6vtAdsakva2gB9Up/MhBGwHaRDWP6L265hbPLmxe+Y/9o+Ft9BHo5z9/s1fuxlwn5UVePhxwzQXhdv+2/X67cYersQ4L7g/dsKTnI1romiXKnbhcLPtuTmDdFNOzC2/dpGrw0x5U9eGFvAM0YX4=
+	t=1718107939; cv=none; b=OSlr8jGA5YeZV1JzP96rfpoqaN3FS1a9Qy84SqcsX1rKVrftgFAPD27S3yGB9y9WLy80Dc/OxMyMP+UEIaVT/k/FPvhy/0RRwF9j1/3DL91Y2DTFSkfU7asTdzWQffTK7mI0eagyKFwBHL7l5x+0Q7em4VSPywQZdqSDhjhy1ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107859; c=relaxed/simple;
-	bh=4sJF+qZgkff6mhxsiuML1SPXQa2f0RAQarao62dDJoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ngI2Pqf4btVkCquSGezhfqf+4Zsc3RV/fHrmXw9MASIy91+U9I9bWiO/v3N7r0MwyBonygUVEPeLEmy9YhWfDgTegltjSkXnXqBnMoQTONKsxIWY+/ILLfBcT3kH+aNGPA84LsjiwBIFsKWbWBmuufn2BWYqvZKj366UDKXqcZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWT8Oc4g; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-701b0b0be38so5159451b3a.0;
-        Tue, 11 Jun 2024 05:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718107857; x=1718712657; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D5Ql3E99ts31vP7gjuJD0BPHmyWgl0tnb3i3qEJrOeA=;
-        b=iWT8Oc4gXWERTH6W/lDw8u0nMHSeVy701nGNxacukSRd8KwbYUGYeWA+cBjwtk+Rr7
-         hn9OjidCCkY4v6bVSrAX38mFiNlWhp+yyJ3CXqyRzdMjFzf4ch3aA0SytBf0iOfyD7N8
-         H58B+oqUFJV68NVa2YpHwZq7sP6oTnROvPEny++j4idAmYUW9XEKXQj29gRLgPkOlnU1
-         h31E/Krsa6U2WH8CBQNcrYwSZ+RpEr9X3nD4fBWn1OjpzpjJgWlmX3CpntLMvZIFS4EV
-         Zjvhkq25rz2BwAO0539jqsQzgVR8xtt8g8tmi1kOs+hk/YsBO1urwCk/VHSj7TPTKyJ0
-         cXsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718107857; x=1718712657;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D5Ql3E99ts31vP7gjuJD0BPHmyWgl0tnb3i3qEJrOeA=;
-        b=GSPcKo4WkNKko1+dvkjXIf6Bd5cBUsifUuJ50ak0muqCfi8mdDELu3GCXW3dVQnPmU
-         hpo0FNqgoYAN1oyqSnpmAmmekCTbWPraUE4Xfhkeihmt0+zYMM3oJ1KJJOlPcrPAKcGv
-         w5QmVUrXa/FOm5U1Qvz+RtQ58bRgrSzSVrk1mCfSI7YzxU9GOIyvez4aJ6Mjd3lNIAC8
-         VveKtSKn0W6+POG5jgANOKROhmhQh+r8Y/2luuCcPliJ6nlEUKqeE+olwcWlWjFXdm1q
-         cUE4/W/+iGFbGeZeXBURgczjX/CRFIflhgsd9YIYoi6iXoVUN8lLHJO71MqzzZpTlwXZ
-         TUXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqbktOpWe7ueVV3gge2S/wpyB3X0lP6MQN5xqtiZHYpeU/z4R2x98+FJXPu2hQrr99KogrYuTnm2yT8vILG2w53piwM690EZQRi2sQzxIjR+MbpXH1BKLfF7pA1Yv9tYJRl61nWjRj1jCVPVtlai8cQBlmLwG8K4I+z4oEatetJ334qB8SnA==
-X-Gm-Message-State: AOJu0YyHAH50RysSbdCLKmqtGsPTAUMI/Pzii5ceQ2oMABziET7BIQE1
-	AZMid5bmfzYsNDORF/E7egiK8to6Xr4p2CbJ0mefH3x+v439swref5OTicZJ
-X-Google-Smtp-Source: AGHT+IH3JgY4FxwCV8ogCWJcpmZesJGwCMt7JXMZ93/eOIkxKQav/aW2bwneP0DCcrHgK1NtfQQdeQ==
-X-Received: by 2002:a05:6a20:3d91:b0:1b2:b104:594 with SMTP id adf61e73a8af0-1b2f9a0cb23mr14517494637.21.1718107857161;
-        Tue, 11 Jun 2024 05:10:57 -0700 (PDT)
-Received: from ga401ii.. ([223.178.82.151])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70594077c64sm3644955b3a.6.2024.06.11.05.10.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 05:10:56 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kanak Shilledar <kanakshilledar111@protonmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: serial: vt8500-uart: convert to json-schema
-Date: Tue, 11 Jun 2024 17:40:43 +0530
-Message-ID: <20240611121048.225887-1-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718107939; c=relaxed/simple;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T16lWq1wOOIQ/vKSux+46K41Hc33TExI7DqzJ4PuUQQKux7sbUeJn7Cbqi+Hp3sq4M8HZ5W1ZOIAFks/oNZ4UOexYpr7unVyaEKe+j4WnNDwbfj37pKbo/7/Rzuz0Kwwx6AJ7V/UhZPvC7ANOuEDeJ4RdejiuDEncVJxokodCVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eu1Yarke; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718107937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	b=Eu1YarkeYaUqYVNiQFyiVEsyRse/z8oikboxPXgY1eUqTAfVCO6yNEa7I4o6GpUL/boTyu
+	UVhWrQbptY/70EF1S4tSIphBer+DpncHAKEcT79flG4Fju6pAVhTNMKXUBkj23KEPXlDjM
+	Y9NzZoj4A3+BhEqjsI2fRPj831bqDKE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-NjxVr9NVO4Of7-XFRCMTCQ-1; Tue,
+ 11 Jun 2024 08:12:13 -0400
+X-MC-Unique: NjxVr9NVO4Of7-XFRCMTCQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 138DB195609F;
+	Tue, 11 Jun 2024 12:12:12 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 401D11956048;
+	Tue, 11 Jun 2024 12:12:11 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Drop Wanpeng Li as a Reviewer for KVM Paravirt support
+Date: Tue, 11 Jun 2024 08:12:10 -0400
+Message-ID: <20240611121210.68242-1-pbonzini@redhat.com>
+In-Reply-To: <20240610163427.3359426-1-seanjc@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,116 +71,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Convert the VIA VT8500 and WonderMedia WM8xxx UART Controller to
-newer DT schema. Created DT schema based on the .txt file which had
-`compatible`, `reg`, `interrupts` and `clocks` as required properties.
+Queued, thanks.
 
-Additions to the original binding
-- changed the file name from vt8500-uart to via,vt8500-uart.yaml
-- removed unnecessary alias from the example.
-- added Greg and Jiri as maintainers (referred MAINTAINERS file).
+Paolo
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
- .../bindings/serial/via,vt8500-uart.yaml      | 52 +++++++++++++++++++
- .../bindings/serial/vt8500-uart.txt           | 27 ----------
- 2 files changed, 52 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
- delete mode 100644 Documentation/devicetree/bindings/serial/vt8500-uart.txt
-
-diff --git a/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
-new file mode 100644
-index 000000000000..b38925ab23a1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/via,vt8500-uart.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: VIA VT8500 and WonderMedia WM8xxx UART Controller
-+
-+maintainers:
-+  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+  - Jiri Slaby <jirislaby@kernel.org>
-+  - Kanak Shilledar <kanakshilledar111@protonmail.com>
-+
-+allOf:
-+  - $ref: serial.yaml
-+
-+properties:
-+  compatible:
-+    enum:
-+      - via,vt8500-uart
-+      - wm,wm8880-uart
-+
-+    description: |
-+      Should be "via,vt8500-uart" (for VIA/WonderMedia chips up to and
-+      including WM8850/WM8950), or "wm,wm8880-uart" (for WM8880 and later)
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - interrupts
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    serial@d8200000 {
-+        compatible = "via,vt8500-uart";
-+        reg = <0xd8200000 0x1040>;
-+        interrupts = <32>;
-+        clocks = <&clkuart0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/serial/vt8500-uart.txt b/Documentation/devicetree/bindings/serial/vt8500-uart.txt
-deleted file mode 100644
-index 2b64e6107fb3..000000000000
---- a/Documentation/devicetree/bindings/serial/vt8500-uart.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* VIA VT8500 and WonderMedia WM8xxx UART Controller
--
--Required properties:
--- compatible: should be "via,vt8500-uart" (for VIA/WonderMedia chips up to and
--	including WM8850/WM8950), or "wm,wm8880-uart" (for WM8880 and later)
--
--- reg: base physical address of the controller and length of memory mapped
--	region.
--
--- interrupts: hardware interrupt number
--
--- clocks: shall be the input parent clock phandle for the clock. This should
--	be the 24Mhz reference clock.
--
--Aliases may be defined to ensure the correct ordering of the uarts.
--
--Example:
--	aliases {
--		serial0 = &uart0;
--	};
--
--	uart0: serial@d8200000 {
--		compatible = "via,vt8500-uart";
--		reg = <0xd8200000 0x1040>;
--		interrupts = <32>;
--		clocks = <&clkuart0>;
--	};
--- 
-2.45.2
 
 
