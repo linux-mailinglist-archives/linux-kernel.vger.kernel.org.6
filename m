@@ -1,180 +1,122 @@
-Return-Path: <linux-kernel+bounces-210584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419349045DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:40:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D6B9045E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F73DB22EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18002852A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B131527B3;
-	Tue, 11 Jun 2024 20:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1451527B3;
+	Tue, 11 Jun 2024 20:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNbbr/GI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="AizaDfic"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958793839C;
-	Tue, 11 Jun 2024 20:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25917152194
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718138403; cv=none; b=N/UlgSfqhFLOs8l8sXRvrKRC7fD/2BhDBCPnEDrOSFt2H2KWIhSXv6gKI2rnkQ4WCDqVX7EzVapyQoYxO30eJpdqx+ZyxOKvGpqDsdmh1ye4znTu4fmizGp6Wip7lfw8pbnp96WY1rTsjOXpzHQNdtQUs/mLky5wMaCu81QYczw=
+	t=1718138506; cv=none; b=Dg5pM5VgVqq7UXLGQyGZ4TQXQQw/vyqMMIcEySDPTw6CaFV575srFXKyWacVkRPAsdkGBkrtXcsKpjJenL35PcNNRL46xakNtpatZI96QBvZAt8BDpxFI9LrEuuBApviwqcQVsVE+UrED2jdX/Zx579IletOWYOg+zmjLiBUp8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718138403; c=relaxed/simple;
-	bh=Fc2HEeo9okemeHUxDvZyvIytBDjmzwdqdSkla9vn06k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGLrmRpJsA0XHaOn1SP4WpJRsqaZqJiuM6cnAGobQnRfmh9iODE0Jjxb5sr9nZjAy2da2BZhQH6+2EpKFqRfN+OoSCqdSHypzD23JexMoseTv8GQW2CCdBlwBHDFlraHxKCVwQsQ7fD5qMfscEW3NrEeyfVsKuHvIgRv+69LaU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNbbr/GI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76A2C3277B;
-	Tue, 11 Jun 2024 20:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718138403;
-	bh=Fc2HEeo9okemeHUxDvZyvIytBDjmzwdqdSkla9vn06k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gNbbr/GIbov1z2/M0ZncN5ndZNY+RGEhOS3BIuFYzXKt8Ix1x4gvYDNrWS9/yq40I
-	 6lXvO+02Y5iwtyyg2Dgwgy1ZryBRF/gdz+iqST9EQ+152f+ciYHW5Qf5aUBK7W7Kzi
-	 VTD8q9PmcNkGtujnalwAQL/x6WOrxSyiplUw2qbNu//8Mk5ZZSpkP14nmgASSoZQK7
-	 pvvDqmUMcSw9B0BeHuKLeL5/GeoouKM8LvPxnorq9e3jUzQVyqihdi6ceYa78xZREu
-	 mKzMS9Xab+GFv0Jbvyrubj5oLR/zkYuW6phmvv8UYJ2QVOx9ZZgfObZkisaaFtrm3C
-	 yFV8OoRy5gYIA==
-Date: Tue, 11 Jun 2024 14:40:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Shivendra Pratap <quic_spratap@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: power: reset: Convert mode-.*
- properties to array
-Message-ID: <20240611204001.GA3026541-robh@kernel.org>
-References: <20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com>
- <20240611-arm-psci-system_reset2-vendor-reboots-v4-1-98f55aa74ae8@quicinc.com>
+	s=arc-20240116; t=1718138506; c=relaxed/simple;
+	bh=1C1JVN7pV8bQ/ukxRKGwFFcRQWzZiVMRqNTNB3nnmYU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BcbH70Iwu/xjU8BIik8RgG4apR87x0dl+1IM2alWGjyQ9SEv5I2BumEwzaW5JnSCRl6NbI0c1rzA+oXSAGD7K9qcydyhlbHnoM/WJexI2pOcg2gjrnC1ifUFb0K0tib/lTGwHDPToTBeEefCUN2WgQSByad6kmGScs+YXhdZmqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=AizaDfic; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9EFC42C0659;
+	Wed, 12 Jun 2024 08:41:40 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718138500;
+	bh=1C1JVN7pV8bQ/ukxRKGwFFcRQWzZiVMRqNTNB3nnmYU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=AizaDficE02ikCvs0EuYIZaM0Shi1sfLTFYFn+auleSMZAhl1grTGqdzmYUdsKQ7s
+	 ZFBUF1GTVQzx3gggEn4lDwUaCNYjqMeEzegN2vRecpa6LqDWGDLXNNganE5vhrZ6y3
+	 DcD9wJ6kqHgpLDdyjkwHXpi9MJDarpkxnn8Ri0XdiZRs03EzzJrEcGskwKuJIuVgzF
+	 PB/M38NjlTMNG0FGwauOdxmdYr11Z1Epw0bOkA0eFLNG+Om+eglWIcCFLTIjCAMJow
+	 f14B8gE04luFLYd3vBosikDHs0mJDbTdByW/CL5UBdq9UEZ7KmHjTa+bkbQzjGGFNt
+	 90Asa5E4T833Q==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6668b6840001>; Wed, 12 Jun 2024 08:41:40 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Wed, 12 Jun 2024 08:41:40 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.48; Wed, 12 Jun 2024 08:41:40 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Wed, 12 Jun 2024 08:41:40 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Thread-Topic: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Thread-Index: AQHau8ECnGOzFCFnUUe89YjWXGoxMrHBw8CAgAB7GIA=
+Date: Tue, 11 Jun 2024 20:41:39 +0000
+Message-ID: <f6f82e0c-5cf5-4a1c-891c-9e772f2403d4@alliedtelesis.co.nz>
+References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
+ <243d5e27-522d-408d-a551-d11073cf330b@lunn.ch>
+In-Reply-To: <243d5e27-522d-408d-a551-d11073cf330b@lunn.ch>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6330DE92D0E9DB4A877E219CC31048C1@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611-arm-psci-system_reset2-vendor-reboots-v4-1-98f55aa74ae8@quicinc.com>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=6668b684 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=tzSt9rU13RPaQMf4fiUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Tue, Jun 11, 2024 at 08:35:13AM -0700, Elliot Berman wrote:
-> PSCI reboot mode will map a mode name to multiple magic values instead
-> of just one. Convert the mode-.* property to an array. Users of the
-> reboot-mode schema will need to specify the maxItems of the mode-.*
-> properties. Existing users will all be 1.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  .../devicetree/bindings/power/reset/nvmem-reboot-mode.yaml        | 5 +++++
->  Documentation/devicetree/bindings/power/reset/qcom,pon.yaml       | 8 ++++++++
->  Documentation/devicetree/bindings/power/reset/reboot-mode.yaml    | 4 ++--
->  .../devicetree/bindings/power/reset/syscon-reboot-mode.yaml       | 5 +++++
->  4 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> index 627f8a6078c2..9b9bbc0f29e7 100644
-> --- a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> @@ -31,6 +31,11 @@ properties:
->  allOf:
->    - $ref: reboot-mode.yaml#
->  
-> +patternProperties:
-> +  "^mode-.*$":
-> +    items:
-> +      maxItems: 1
-
-Drop 'items'. Otherwise, you are defining constraints of a matrix.
-
-> +
->  required:
->    - compatible
->    - nvmem-cells
-> diff --git a/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml b/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
-> index fc8105a7b9b2..4c87ff5ecc9a 100644
-> --- a/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
-> @@ -54,6 +54,11 @@ required:
->    - compatible
->    - reg
->  
-> +patternProperties:
-> +  "^mode-.*$":
-> +    items:
-> +      maxItems: 1
-> +
->  unevaluatedProperties: false
->  
->  allOf:
-> @@ -75,6 +80,9 @@ allOf:
->          reg-names:
->            items:
->              - const: pon
-> +    else:
-> +      patternProperties:
-> +        "^mode-.*$": false
->  
->      # Special case for pm8941, which doesn't store reset mode
->    - if:
-> diff --git a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> index ad0a0b95cec1..523602fb82d2 100644
-> --- a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> @@ -28,13 +28,13 @@ description: |
->  
->  properties:
->    mode-normal:
-> -    $ref: /schemas/types.yaml#/definitions/uint32
-> +    $ref: "#/patternProperties/^mode-.*$"
-
-No need for this. The pattern schema will be applied already. Also, a 
-$ref to a regex is fragile as it won't work for some regex patterns.
-
->      description:
->        Default value to set on a reboot if no command was provided.
->  
->  patternProperties:
->    "^mode-.*$":
-> -    $ref: /schemas/types.yaml#/definitions/uint32
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->  
->  additionalProperties: true
->  
-> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
-> index b6acff199cde..e9d2e3b27885 100644
-> --- a/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
-> @@ -32,6 +32,11 @@ properties:
->  allOf:
->    - $ref: reboot-mode.yaml#
->  
-> +patternProperties:
-> +  "^mode-.*$":
-> +    items:
-> +      maxItems: 1
-> +
->  unevaluatedProperties: false
->  
->  required:
-> 
-> -- 
-> 2.34.1
-> 
+DQpPbiAxMi8wNi8yNCAwMToyMSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+IE9uIFR1ZSwgSnVuIDEx
+LCAyMDI0IGF0IDA1OjM0OjE0UE0gKzEyMDAsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+PiBUaGUg
+UmVhbHRlayBSVEw4MjI0IFBIWSBpcyBhIDIuNUdicHMgY2FwYWJsZSBQSFkuIEl0IG9ubHkgdXNl
+cyB0aGUNCj4+IGNsYXVzZSA0NSBNRElPIGludGVyZmFjZSBhbmQgY2FuIGxldmVyYWdlIHRoZSBz
+dXBwb3J0IHRoYXQgaGFzIGFscmVhZHkNCj4+IGJlZW4gYWRkZWQgZm9yIHRoZSBvdGhlciA4MjJ4
+IFBIWXMuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hh
+bUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPiBZb3UgcHJvYmFibHkgc2hvdWxkIENjOiBFcmljIFdv
+dWRzdHJhIGFuZCBNYXJlayBCZWjDum4gd2hvIGhhdmUgYm90aA0KPiB3b3JrZWQgb24gMi41RyB2
+YXJpYW50cyBvZiB0aGlzIFBIWS4NCj4NCkhtbSBnZXRfbWFpbnRhaW5lci5wbCBkaWRuJ3QgcGlj
+ayB0aGVtIHVwIGJ1dCBkb2VzIHdpdGggdGhlIC0tZ2l0IA0Kb3B0aW9uLiBEaWQgc29tZXRoaW5n
+IGNoYW5nZSB3aXRoIHRoYXQgcmVjZW50bHk/IE9yIG1heWJlIEknbSBqdXN0IA0KcnVubmluZyBp
+dCB3cm9uZy4gSSdsbCBhZGQgQ2MgdGhlbSBvbiB0aGUgb3JpZ2luYWwgcGF0Y2ggYW5kIGluY2x1
+ZGUgDQp0aGVtIGlmIHRoZXJlIGlzIGEgdjIuDQoNCj4+IE5vdGVzOg0KPj4gICAgICBJJ20gY3Vy
+cmVudGx5IHRlc3RpbmcgdGhpcyBvbiBhbiBvbGRlciBrZXJuZWwgYmVjYXVzZSB0aGUgYm9hcmQg
+SSdtDQo+PiAgICAgIHVzaW5nIGhhcyBhIFNPQy9EU0Egc3dpdGNoIHRoYXQgaGFzIGEgZHJpdmVy
+IGluIG9wZW53cnQgZm9yIExpbnV4IDUuMTUuDQo+PiAgICAgIEkgaGF2ZSB0cmllZCB0byBzZWxl
+Y3RpdmVseSBiYWNrIHBvcnQgdGhlIGJpdHMgSSBuZWVkIGZyb20gdGhlIG90aGVyDQo+PiAgICAg
+IHJ0bDgyMnggd29yayBzbyB0aGlzIHNob3VsZCBiZSBhbGwgdGhhdCBpcyByZXF1aXJlZCBmb3Ig
+dGhlIHJ0bDgyMjQuDQo+PiAgICAgIA0KPj4gICAgICBUaGVyZSdzIHF1aXRlIGEgbG90IHRoYXQg
+d291bGQgbmVlZCBmb3J3YXJkIHBvcnRpbmcgZ2V0IGEgd29ya2luZyBzeXN0ZW0NCj4+ICAgICAg
+YWdhaW5zdCBhIGN1cnJlbnQga2VybmVsIHNvIGhvcGVmdWxseSB0aGlzIGlzIHNtYWxsIGVub3Vn
+aCB0aGF0IGl0IGNhbg0KPj4gICAgICBsYW5kIHdoaWxlIEknbSB0cnlpbmcgdG8gZmlndXJlIG91
+dCBob3cgdG8gdW50YW5nbGUgYWxsIHRoZSBvdGhlciBiaXRzLg0KPiAgICAgICANCj4gSSBkb24n
+dCBzZWUgdGhpcyBhcyBiZWluZyBhIHByb2JsZW0uIEl0IHNob3VsZCBub3QgYmUgcG9zc2libGUg
+dG8NCj4gY2F1c2UgcmVncmVzc2lvbnMgYnkgYWRkaW5nIGEgbmV3IGRldmljZSBsaWtlIHRoaXMu
+IElmIGl0IHR1cm5zIG91dCB0bw0KPiBiZSBicm9rZW4sIHlvdSBjYW4gZml4IGl0IHVwIGxhdGVy
+Lg0KPg0KPiAJQW5kcmV3
 
