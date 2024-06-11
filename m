@@ -1,139 +1,188 @@
-Return-Path: <linux-kernel+bounces-210643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C519990468F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2603A9046A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768FA1F247D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E781C23436
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8ADC155350;
-	Tue, 11 Jun 2024 21:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C2215445B;
+	Tue, 11 Jun 2024 22:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A+fWh2No"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="dHb/BvRh"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5919155326;
-	Tue, 11 Jun 2024 21:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5735318EAB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143094; cv=none; b=k8p1b7879FhNmu1NzcQTnv1Sd1j+8Agkz9za9cD/bN3oxRa2bHt3+VNe27Np86oOC2GTjEmO3uyuupDbe3ktxod97YqgcrZEqbA9LPRs/jg4braXwERi1Z9QoMvcHcBCfTTzetlXHICv9utdrUre2RJbz84shhRuw0AhbbYpxYU=
+	t=1718143247; cv=none; b=M1yDk62EPBkQq3Blsur08ASx2HqVI6HlcqBeXL28YWVfa5TxpyXEfJVSsmzeqS5mcXxeqwKl1FBBmOUMizG26o8+YbmTfWtdP1Bswrk4ogT048DDzuZZC2EpWDJm8Oe5rM3MLXI80/+nyUc2mu7s5OTV/aBZjYSDyVjzWRieWE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143094; c=relaxed/simple;
-	bh=i8A1mOycYyictUdBs+EwE+ZgRyUWuOpePSI78v8mLvg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jG4YihowqO9vVtgOBNqU/vc4+n/Z83QR1mTy9GLxPINeD+2LxoLpYwsFxrpJP5eGV274vpZtM4Ye9sBl/gkSXDlH996JU4M+7aSBeEDDurrdOXMwsBT4B5c0bljznBvXbjD0+ypyZ7/yQv8Y4gfbPplaok7Tx5JkukwPa7T+vrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A+fWh2No; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317E7C3277B;
-	Tue, 11 Jun 2024 21:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718143093;
-	bh=i8A1mOycYyictUdBs+EwE+ZgRyUWuOpePSI78v8mLvg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=A+fWh2NoqZJJjVj4fF8rg8QvC7jIwkPH3GPIzAtW4ssRWajQi3GaVnamgGR1BYEVn
-	 cVViqJai3utb7cHuak+09Z7G6YuaPUdNxt49CNOWyj2P43nhTbg9Xe6ZUYzEP1dMGf
-	 zLhOBSS8MVtbIXknYv43KQKCFSipBD6FCUoC4JXE=
-Date: Tue, 11 Jun 2024 14:58:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mm tree
-Message-Id: <20240611145812.6eb6e9936388c862c168d349@linux-foundation.org>
-In-Reply-To: <b189d815-998b-4dfd-ba89-218ff51313f8@linux.alibaba.com>
-References: <20240606132353.0db5479d@canb.auug.org.au>
-	<b189d815-998b-4dfd-ba89-218ff51313f8@linux.alibaba.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718143247; c=relaxed/simple;
+	bh=FtBOiWFncM3ovOqL8hAeZj1EPtQ9g2uHQfDy21bJETg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sgvte+0vjzHY5w5X+0dMUG/mmkN/1bLTJ69MEvYYMOona1bwCqLjEq//My5ayptlJ+3uwteKLzCLydRtjYtoGKxLHt3oltASaAgAkjIaVSF5/7weT8mKIt+gQz00wihhnILACt+JBwju7xnepTflq043R82kcAB0w+0ZX0MKYiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=dHb/BvRh; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so2619693a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718143246; x=1718748046; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHrOxF5RfsfEQJHgKoGMj8t4JaNF1ExxMJOzCNX5n2s=;
+        b=dHb/BvRh/8ZNSf166kt4zvC5dYEu96yZdScsoTdMW2DV0jr2z4OTHZ0Ckgu9cf8aB+
+         MXZmpCV/bSmpQ0HiF+8obYdIOTG366o1Bj4Q7bIKrJp6u8R7xT9ifI4VRJTUVzr4FTcf
+         NfMYDlI1LjwTexZAA/T3tEL1luB62gzg1IWcJFzGXIjF/odsOukHpLKDzhAGAbydTOS+
+         ssChMgheRl3gDJE2Yy1bkAbKTmMIAj3qygdX4rOV2k7aJbK++Fhj0ugIz915J0nMC0ZY
+         cPPTgf5/n+g8BigGzoKf6gYZFGyRGvjEO29vebxksnQ8n9Rm05RfhcvYs0aXBddCxTxq
+         7bxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718143246; x=1718748046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eHrOxF5RfsfEQJHgKoGMj8t4JaNF1ExxMJOzCNX5n2s=;
+        b=NbiM8rnKeYtQk/MuVbxEaHsx1tOyWxtZd93G5K5UtrjCWh0CU8/z8nGgavZRrT6/UT
+         mLh07zF/gNiUIhAobNCNCJ+p60gC7MX7QbqDWZAl2OspMccNGWn29cwHjtUw1hGtOqaf
+         HxlhH+WF2lY24UqApuMKrOwZuIDfePX+sZcYnvtNb4PcW0f58Slq2ls1+zBA180gOxrl
+         oUZtlhomdNsG7j2B7rk2gGDkiSyh97wRyH+U2FMbJJYgLs0fM+HbBFAAoPFGVsIXkzOO
+         2n1EZ9ky5tHf853PioRpsPZEN2vxk8zO9ocU3X8Fh0q5ybMqCDU/+GPpUxuqFPv3DejX
+         BmgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkSXXtc59nq90H1bA7wnvh/Bqu3kbucrxoVu9UIv52e62udMboqpl3UjdsZB6Euye+hlyz+QQBANNQo1DzRpQuXkhGBO6OjW01OmOi
+X-Gm-Message-State: AOJu0Yw2SmCLlCRJvR6B+FPRe/UYXuAajLsxlAL5i/rTjYzOvumEpvNR
+	TXoD/gEU+I4esaEFWCfGq0PzB2NlC56MhHWT42pRhV3CFZJx++oZDr/06NXTdO62JQa6iOvEUc8
+	J
+X-Google-Smtp-Source: AGHT+IEEvku0qFLDSu5fmCz08QiHgFPcipPG93BRa/6a6lBcHoHCFRAqDEQiF6Oj6a+FswFCCBRqqw==
+X-Received: by 2002:a17:902:ab88:b0:1f4:7a5c:65d4 with SMTP id d9443c01a7336-1f83b5e7089mr1607015ad.18.1718143245491;
+        Tue, 11 Jun 2024 15:00:45 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7178d6d40sm41000115ad.212.2024.06.11.15.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 15:00:44 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sH9Xm-00CdLe-1I;
+	Wed, 12 Jun 2024 08:00:42 +1000
+Date: Wed, 12 Jun 2024 08:00:42 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
+ <ZmJqyrgPXXjY2Iem@dread.disaster.area>
+ <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
+ <ZmgkLHa6LoV8yzab@dread.disaster.area>
+ <20240611112846.qesh7qhhuk3qp4dy@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611112846.qesh7qhhuk3qp4dy@quack3>
 
-On Thu, 6 Jun 2024 13:01:50 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
-
+On Tue, Jun 11, 2024 at 01:28:46PM +0200, Jan Kara wrote:
+> On Tue 11-06-24 20:17:16, Dave Chinner wrote:
+> > Your patch, however, just converts *some* of the lookup API
+> > operations to use RCU. It adds complexity for things like inserts
+> > which are going to need inode hash locking if the RCU lookup fails,
+> > anyway.
+> > 
+> > Hence your patch optimises the case where the inode is in cache but
+> > the dentry isn't, but we'll still get massive contention on lookup
+> > when the RCU lookup on the inode cache and inserts are always going
+> > to be required.
+> > 
+> > IOWs, even RCU lookups are not going to prevent inode hash lock
+> > contention for parallel cold cache lookups. Hence, with RCU,
+> > applications are going to see unpredictable contention behaviour
+> > dependent on the memory footprint of the caches at the time of the
+> > lookup. Users will have no way of predicting when the behaviour will
+> > change, let alone have any way of mitigating it. Unpredictable
+> > variable behaviour is the thing we want to avoid the most with core
+> > OS caches.
 > 
+> I don't believe this is what Mateusz's patches do (but maybe I've terribly
+> misread them). iget_locked() does:
 > 
-> On 2024/6/6 11:23, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the mm tree, today's linux-next build (htmldocs) produced
-> > this warning:
-> > 
-> > Documentation/admin-guide/mm/transhuge.rst:342: ERROR: Unexpected indentation.
-> > 
-> > Introduced by commit
-> > 
-> >    716119bee914 ("mm: shmem: add multi-size THP sysfs interface for anonymous shmem")
-> > 
-> > from the mm-unstable branch of the mm tree.
-> > 
+> 	spin_lock(&inode_hash_lock);
+> 	inode = find_inode_fast(...);
+> 	spin_unlock(&inode_hash_lock);
+> 	if (inode)
+> 		we are happy and return
+> 	inode = alloc_inode(sb);
+> 	spin_lock(&inode_hash_lock);
+> 	old = find_inode_fast(...)
+> 	the rest of insert code
+> 	spin_unlock(&inode_hash_lock);
 > 
-> Thanks for reporting.
-> 
-> Andrew, could you help to fold below changes into this serires, which 
-> can fix the htmldocs building error? Thanks.
-> 
-> ...
->
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -338,6 +338,7 @@ and its value for each mTHP is essentially 
-> consistent with the global setting.
->   An 'inherit' option is added to ensure compatibility with these global 
-> settings.
->   Conversely, the options 'force' and 'deny' are dropped, which are 
-> rather testing
->   artifacts from the old ages.
-> +
->   always
->       Attempt to allocate <size> huge pages every time we need a new page;
+> And Mateusz got rid of the first lock-unlock pair by teaching
+> find_inode_fast() to *also* operate under RCU. The second lookup &
+> insertion stays under inode_hash_lock as it is now.
 
-That's rather whitespace mangled, but I fixed it.  I also added
+Yes, I understand that. I also understand what that does to
+performance characteristics when memory pressure causes the working
+set cache footprint to change. This will result in currently 
+workloads that hit the fast path falling off the fast path and
+hitting contention and performing no better than they do today.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm-shmem-add-multi-size-thp-sysfs-interface-for-anonymous-shmem-fix-fix
-Date: Tue Jun 11 02:56:34 PM PDT 2024
+Remember, the inode has lock is taken when inode are evicted from
+memory, too, so contention on the inode hash lock will be much worse
+when we are cycling inodes through the cache compared to when we are
+just doing hot cache lookups.
 
-reflow transhuge.rst addition to 80 cols
+> So his optimization is
+> orthogonal to your hash bit lock improvements AFAICT.
 
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+Not really. RCU for lookups is not necessary when hash-bl is used.
+The new apis and conditional locking changes needed for RCU to work
+are not needed with hash-bl. hash-bl scales and performs the same
+regardless of whether the workload is cache hot or cache-cold.
 
- Documentation/admin-guide/mm/transhuge.rst |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+And the work is almost all done already - it just needs someone with
+time to polish it for merge.
 
---- a/Documentation/admin-guide/mm/transhuge.rst~mm-shmem-add-multi-size-thp-sysfs-interface-for-anonymous-shmem-fix-fix
-+++ a/Documentation/admin-guide/mm/transhuge.rst
-@@ -332,12 +332,13 @@ deny
- force
-     Force the huge option on for all - very useful for testing;
- 
--Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to control
--mTHP allocation: '/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
--and its value for each mTHP is essentially consistent with the global setting.
--An 'inherit' option is added to ensure compatibility with these global settings.
--Conversely, the options 'force' and 'deny' are dropped, which are rather testing
--artifacts from the old ages.
-+Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to
-+control mTHP allocation:
-+'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
-+and its value for each mTHP is essentially consistent with the global
-+setting.  An 'inherit' option is added to ensure compatibility with these
-+global settings.  Conversely, the options 'force' and 'deny' are dropped,
-+which are rather testing artifacts from the old ages.
- 
- always
-     Attempt to allocate <size> huge pages every time we need a new page;
-_
+> Sure his optimization
+> just ~halves the lock hold time for uncached cases (for cached it
+> completely eliminates the lock acquisition but I agree these are not that
+> interesting) so it is not a fundamental scalability improvement but still
+> it is a nice win for a contended lock AFAICT.
 
+Yes, but my point is that it doesn't get rid of the scalability
+problem - it just kicks it down the road for small machines and
+people with big machines will continue to suffer from the global
+lock contention cycling inodes through the inode cache causes...
+
+That's kinda my point - adding RCU doesn't fix the scalability
+problem, it simply hides a specific symptom of the problem *in some
+environments* for *some worklaods*. hash-bl works for everyone,
+everywhere and for all workloads, doesn't require new APIs or
+conditional locking changes, and th work is mostly done. Why take a
+poor solution when the same amount of verification effort would
+finish off a complete solution?
+
+The hash-bl patchset is out there - I don't have time to finish it,
+so anyone who has time to work on inode hash lock scalability issues
+is free to take it and work on it. I may have written it, but I
+don't care who gets credit for getting it merged. Again: why take
+a poor solution just because the person who wants the scalability
+problem fixed won't pick up the almost finished work that has all
+ready been done?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
