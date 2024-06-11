@@ -1,154 +1,164 @@
-Return-Path: <linux-kernel+bounces-210064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF257903ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B72903ED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30CF1C2252E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A1B1F21C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3B517D8AF;
-	Tue, 11 Jun 2024 14:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A817D896;
+	Tue, 11 Jun 2024 14:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwOjPLg0"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+8SBmXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097B1176FB2;
-	Tue, 11 Jun 2024 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE9617D890;
+	Tue, 11 Jun 2024 14:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718116200; cv=none; b=Oma7ppCZo807SauwSds9eeOMWreOqAjwHzuesBoU6DFEsL0hPJE6MHYxi/uv4pdrN9z9L0mydori/Rc2BrYR/RJDWHMcCHzWKXRmhsqdOX5taIDoLnhiLcRr5ZvJvLcocyb/QGjUpXNLWBz9zDOWvwd8cEYyVsaJgbVqVQ8PVQU=
+	t=1718116230; cv=none; b=BT6G/dKxlfziz2zS0QXn6bAcr5AlzKGw1hJS4GiZaEUsuT9m0ZE0LEqgML/nWNN4P3ePNKWDrDsJbabIUmnCL8iqvysWU9R/7nkuw+h6EMWSSYrMlmVwE2n1VLrjLWygsl+Ej7lVg2hg4viyeItVEZWTWpec8KK9O7QopWzPREQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718116200; c=relaxed/simple;
-	bh=jFYH2da5XcpRBIqchmBL/ENU7P0kcVqu0RtOd05/6/k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=buDdogD+VF0eC1EX6lzNGyOh+I27Rt2Kn2/lYO8cKdFLK6xYiTjQ07nNn19tkRxV/cApZsMVWao6QmZ7KUExb2Skh8bSPbcI2+blvImPpZ04E844PXbAdb6r4L5vgHKldTsyGnPD2g3RIxBEvuevJBz7wpkWVGIsAuWbo5XwXNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwOjPLg0; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-701b0b0be38so5332915b3a.0;
-        Tue, 11 Jun 2024 07:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718116198; x=1718720998; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qw+ZTo+XND5Z/h5anzLLoBN7tIc7rhg0Cb5o5EiNfwo=;
-        b=iwOjPLg004gtdgyRJ8s1RZe4LBo5zzqYg4LvTady0aJE84OJoZJ/IgNdizTdC1p9I8
-         7icg+qDxgfMUrOkopD1tb1Tw7Br0ZAELu2pHiRct6W3pdALhvOGd65w3U2xBBk4sqyfN
-         wB5b5e7Uao/ExQRr+gVBfQuOcpYQEfcK+6O7bqVdP3cpnkj6dM8nCJfwPdM1/YeVvp0M
-         ld78OYTAVu12L3t/MQN6R23XFayclsQJF+Crlj31vJ1ifybQXKMGReFuAolcTPyb8vmC
-         nK8KsCa5QOr0QDqVTuCTzuQCi2PRXd1zeujb8gXLI9EvSIt0bLAmDCXPVfP5aGOyLgvx
-         u5Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718116198; x=1718720998;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qw+ZTo+XND5Z/h5anzLLoBN7tIc7rhg0Cb5o5EiNfwo=;
-        b=QBMa4KnHrsiwnluD9/+FoVEMQZ1k/N0Dgd55RdhBZ8n7xLzX2dVd+1sKeHAgsOMhE0
-         GHRvGGo6ZySdoUGoNtE7sG3/5xQsJBZjaNIWtXUX4w2si94j90KhJpbkuC8aXyUjNZmk
-         xbi2pK/Eu+9S8RNXCCc3aC8VQWG7llQvWl5c+GgrgskVSJg44B8PXfmsPQfu1QEX/9G1
-         2YrHBYFZkvx8gNlZUgytJHwknrf5n0zbsJLq/AWGomHzflPk9TDRiUPRZM5y5Sbccvry
-         wrBoRSOSwJy2R8yQw4bJ3lOPI0oiafu2j3P6/6BJGnkJQGL8fy7Myfj4BB3cA4Qju7W1
-         9q9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQmDy+D43HUt/9upODLIr5NmMYIpeKufUtVxH6sRLxLFlEmMTa22wGybakgzMHztJLA2U5g+Ya6DEth0eDMtYEYF8HZhHDUWEjT4m9
-X-Gm-Message-State: AOJu0YysMZtT09jFo8Rkf/bjO6C6taZ1Rn2tBAv4dyrMLe8ybwpjac5i
-	MBIq8cdI4+lZWQddviVk81Yr4Ql/Ue9TtbZrhm8qp/XGlA5Iykyy
-X-Google-Smtp-Source: AGHT+IG2mqTYdeCEXWIJR2uKPPk7Ohhj3KpLoWze21uf2Ct5dMlAtm7fMRmC869DyZet027tJbtPTQ==
-X-Received: by 2002:a05:6a21:6d8a:b0:1b5:e2c8:dd0e with SMTP id adf61e73a8af0-1b5e2c8dd9emr9718975637.9.1718116198223;
-        Tue, 11 Jun 2024 07:29:58 -0700 (PDT)
-Received: from localhost ([106.44.60.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70408c58197sm7777141b3a.129.2024.06.11.07.29.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Jun 2024 07:29:57 -0700 (PDT)
-From: joswang <joswang1221@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jos Wang <joswang@lenovo.com>
-Subject: [PATCH v3, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-Date: Tue, 11 Jun 2024 22:29:53 +0800
-Message-Id: <20240611142953.12057-1-joswang1221@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
+	s=arc-20240116; t=1718116230; c=relaxed/simple;
+	bh=+hg6mwKUT4FXKccgfxs6KTWJDqOAp3AVHYpeZy7+Brs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Dmk/mMbE2EkzxBWeUKs7b7FPvKoMqztyE6/uJ6r+2UsuEDeGfJpKdstqOsS6BfHtNjFAFxVDL774dJrMHoZ4pEPS2fUmXGIJzVAC5Al8cn5B3AbWi1e+s2hw2pSydDLS1OV1nXn0jX2CIblQLL2/ej/qNvA0p94rNkcNQuArtr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+8SBmXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73981C2BD10;
+	Tue, 11 Jun 2024 14:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718116229;
+	bh=+hg6mwKUT4FXKccgfxs6KTWJDqOAp3AVHYpeZy7+Brs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E+8SBmXg4kHbc2+kE5VdtOtyIigM64Ao0eLalvYBcyTz7+feUFW4RpyhNl09KCg+u
+	 G8qnxEPn98CKmOUDRIg+qWyUHuPAueaR63ZY7qBzjjSCAEsZ8Z4ncDiVQhOx8jQjP8
+	 WYU5EQIOBHZz85f5YNImLAba2Yh1ieUPH0M4aePuokdD2QdE9Z95LGGpFmHkYdUvty
+	 pV1FJYWQlqxmz3mf96bTtEBIFGnOQ4DlkwWF2Z4L9hXld3wLCKGY9LZVbV+EWUxrh2
+	 JoXDvFEGfN5Ckx9lAVTx7FaZi4DkiQe+PgQl0tEbqXLK/QNJeXmDNl55/x7cPamngA
+	 dzkYxoJ6jjFgA==
+Date: Tue, 11 Jun 2024 23:30:22 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Alejandro
+ Colomar <alx@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, Song Liu
+ <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
+ <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo
+ Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta
+ <debug@rivosinc.com>
+Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
+Message-Id: <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
+In-Reply-To: <20240611112158.40795-10-jolsa@kernel.org>
+References: <20240611112158.40795-1-jolsa@kernel.org>
+	<20240611112158.40795-10-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Jos Wang <joswang@lenovo.com>
+On Tue, 11 Jun 2024 13:21:58 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-This is a workaround for STAR 4846132, which only affects
-DWC_usb31 version2.00a operating in host mode.
+> Adding man page for new uretprobe syscall.
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Reviewed-by: Alejandro Colomar <alx@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-There is a problem in DWC_usb31 version 2.00a operating
-in host mode that would cause a CSR read timeout When CSR
-read coincides with RAM Clock Gating Entry. By disable
-Clock Gating, sacrificing power consumption for normal
-operation.
+This looks good to me.
 
-Signed-off-by: Jos Wang <joswang@lenovo.com>
----
-v1 -> v2:
-- add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch
-v2 -> v3:
-- code refactor
-- modify comment, add STAR number, workaround applied in host mode
-- modify commit message, add STAR number, workaround applied in host mode
-- modify Author Jos Wang
----
- drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 3a8fbc2d6b99..61f858f64e5a 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -960,12 +960,16 @@ static bool dwc3_core_is_valid(struct dwc3 *dwc)
- 
- static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- {
-+	unsigned int power_opt;
-+	unsigned int hw_mode;
- 	u32 reg;
- 
- 	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
- 	reg &= ~DWC3_GCTL_SCALEDOWN_MASK;
-+	hw_mode = DWC3_GHWPARAMS0_MODE(dwc->hwparams.hwparams0);
-+	power_opt = DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1);
- 
--	switch (DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1)) {
-+	switch (power_opt) {
- 	case DWC3_GHWPARAMS1_EN_PWROPT_CLK:
- 		/**
- 		 * WORKAROUND: DWC3 revisions between 2.10a and 2.50a have an
-@@ -998,6 +1002,20 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- 		break;
- 	}
- 
-+	/*
-+	 * This is a workaround for STAR#4846132, which only affects
-+	 * DWC_usb31 version2.00a operating in host mode.
-+	 *
-+	 * There is a problem in DWC_usb31 version 2.00a operating
-+	 * in host mode that would cause a CSR read timeout When CSR
-+	 * read coincides with RAM Clock Gating Entry. By disable
-+	 * Clock Gating, sacrificing power consumption for normal
-+	 * operation.
-+	 */
-+	if (power_opt != DWC3_GHWPARAMS1_EN_PWROPT_NO &&
-+	    hw_mode != DWC3_GHWPARAMS0_MODE_GADGET && DWC3_VER_IS(DWC31, 200A))
-+		reg |= DWC3_GCTL_DSBLCLKGTNG;
-+
- 	/* check if current dwc3 is on simulation board */
- 	if (dwc->hwparams.hwparams6 & DWC3_GHWPARAMS6_EN_FPGA) {
- 		dev_info(dwc->dev, "Running with FPGA optimizations\n");
+And this needs to be picked by linux-man@ project.
+
+Thank you,
+
+> ---
+>  man/man2/uretprobe.2 | 56 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 man/man2/uretprobe.2
+> 
+> diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
+> new file mode 100644
+> index 000000000000..cf1c2b0d852e
+> --- /dev/null
+> +++ b/man/man2/uretprobe.2
+> @@ -0,0 +1,56 @@
+> +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +uretprobe \- execute pending return uprobes
+> +.SH SYNOPSIS
+> +.nf
+> +.B int uretprobe(void)
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR uretprobe ()
+> +system call is an alternative to breakpoint instructions for triggering return
+> +uprobe consumers.
+> +.P
+> +Calls to
+> +.BR uretprobe ()
+> +system call are only made from the user-space trampoline provided by the kernel.
+> +Calls from any other place result in a
+> +.BR SIGILL .
+> +.SH RETURN VALUE
+> +The
+> +.BR uretprobe ()
+> +system call return value is architecture-specific.
+> +.SH ERRORS
+> +.TP
+> +.B SIGILL
+> +The
+> +.BR uretprobe ()
+> +system call was called by a user-space program.
+> +.SH VERSIONS
+> +Details of the
+> +.BR uretprobe ()
+> +system call behavior vary across systems.
+> +.SH STANDARDS
+> +None.
+> +.SH HISTORY
+> +TBD
+> +.SH NOTES
+> +The
+> +.BR uretprobe ()
+> +system call was initially introduced for the x86_64 architecture
+> +where it was shown to be faster than breakpoint traps.
+> +It might be extended to other architectures.
+> +.P
+> +The
+> +.BR uretprobe ()
+> +system call exists only to allow the invocation of return uprobe consumers.
+> +It should
+> +.B never
+> +be called directly.
+> +Details of the arguments (if any) passed to
+> +.BR uretprobe ()
+> +and the return value are architecture-specific.
+> -- 
+> 2.45.1
+> 
+
+
 -- 
-2.17.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
