@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-209771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE628903A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72273903A6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFAE61C21750
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:39:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286641F213EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403B117D8A5;
-	Tue, 11 Jun 2024 11:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463C417C20D;
+	Tue, 11 Jun 2024 11:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wzhjc4T8"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGeAbiLO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5217D88D;
-	Tue, 11 Jun 2024 11:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8717B4E5;
+	Tue, 11 Jun 2024 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105774; cv=none; b=jsc9iKVQ+CK6IeW2/tnLITtWIRVc75953eUQsibFHUVwD2cRlDNaFFSA9o5C0404JoSLPmsN4ELXj3BRZ6BbIefSLb1uet2n7z7Q8rYFrA+egQfvGttW8oOednWlbxBQrxMbPZ7WSgv58o1b8RzFrZuBTonyP2G/Br9sh7jrvjk=
+	t=1718105744; cv=none; b=cjg+TJpVOEUiYNK2VLgS7Mb0Zpr1qwwJriKGTAJdDERXwVfxwXmGamFmCNGX26uc7kTJnvrlEDyvaarMSjshjR0KPpKfnD76LlRNwMYkTi5JIpBFw3YfTOzsr5BBjJ59xOtn3ufZFp3RQrLDvUnx4uiVa3Jto2EqkTg9GDPkpxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105774; c=relaxed/simple;
-	bh=wTDGlpwvDV/tYVSnvnYnjRhtXn8bRII9NTQtrKlKeew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gbrXlbOszd4SgE8xnU2MVno4i0oJakTOVr3JerJJxiPHBbMjn0kF7h8gHoUn6v/rzidoRsP8DScjyZSfNMXCOdoLqZD8IqCAWxnEssZWYrCsG11SsuZ/WKcbQr6zqRcN33IHMGLxIUEfMhCQ6a5X9QcQ0g6aQl69H7uov0NeMn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wzhjc4T8; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c1def9b4b3so877489a91.0;
-        Tue, 11 Jun 2024 04:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105772; x=1718710572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUr5nSYv5tY7HQINi2nTpc/x5kG6Ztbr9RxJD3fNnUU=;
-        b=Wzhjc4T82qH4VjRs02s20i0NcFre+WGiDWRWKXncK0NY1BD5wNMxsw5AcbgYgfElbe
-         KqKhF15BGzgRKugM2l9FuK22iDBzcOKqXEc1DSiKlnPykV5BqC7xy7uBEDhqaGTjl7vs
-         EcVi4NVGUAir1Or/bL99zJa4i3fA5e02m57o9AZF7zG7F1qqcPqm7A5PvUVkt3GZvpMr
-         EXH9nK6tO8hMOIBGQjk9LGDlYZxQMcD0ClwGcyklCHTw9YB6o3KGnhA18PwRK/UP8d82
-         L+iqNXj/nEa7AbxTONI8LNsP1B+2leLaIk8hSY3P6ITsik+bVigBbT/h8xgOi5Hvbj/I
-         TZrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105772; x=1718710572;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DUr5nSYv5tY7HQINi2nTpc/x5kG6Ztbr9RxJD3fNnUU=;
-        b=UySFLjtfIyz5CFUze72ZHAS2qKmyoYhNjDzPJzkm8OGPvp+GNN9oiO+j64v1heMl/F
-         3RFpZ1HM82S3KEBudR9uPxSXQMabQTzETN5tCuvKStHJ9lekrdYnKBdLTDNODoiBVkf7
-         Qxu0hbfj8Uvbtj68RdQJ9XrJyxshxB1axIB9PXMj4gybv5gTCzx8VUnCHD9wp/ekj4Ae
-         SUzhdviBnDmcbcidxYKGsWMNcqi72vxmB/ItnRUkTXGdDq701qR7KjcZHUECXJ+z1dYF
-         J/zR2qRI81OFk/P6G1L18u+J+nkTftoLXAFp9ayyPcoHn56rEL755JAyxFSTbacMugwV
-         8Z4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWvgLPnGUjytWkA28hblAmTQwZKv+U84vEuAHh6orC0Ns1XZMzgsxeecVHfA3P5OPKlv5ejI35q7cWj1m8H1Pqqqiw2WHtZIKBLFehae19h5ko6nFvCsMj2f2hqWdplim0yNZBP6O7FmzyTHZX8S2YNicfzFZd3PBzgJJRx4OqGaGBUfYc=
-X-Gm-Message-State: AOJu0Yz+gmzSKRu7e4AA63rrC6/TAqp4e8v1wYd/bd5Y9ULvOj+P+BLO
-	eBf1bzG0Fht9c82Kf5UehXSKuZEmOevTyXVCiRDEa7UgSwkgZhsL
-X-Google-Smtp-Source: AGHT+IFUGwaFivizDf0SnGE18XoE7bi8+5EJ03/BzizEhUoZRYPWIZ4N2Kjf0iQkk+nU04BWSQDNgQ==
-X-Received: by 2002:a17:90b:4f8c:b0:2c3:195d:8cc1 with SMTP id 98e67ed59e1d1-2c3195d8deamr3897147a91.37.1718105772537;
-        Tue, 11 Jun 2024 04:36:12 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c2dd785762sm6705086a91.37.2024.06.11.04.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:36:12 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Daniel=20Gonz=C3=A1lez=20Cabanelas?= <dgcbueu@gmail.com>
-Subject: [PATCH v7 5/5] mips: bmips: enable RAC on BMIPS4350
-Date: Tue, 11 Jun 2024 13:35:37 +0200
-Message-ID: <20240611113538.9004-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240611113538.9004-1-ansuelsmth@gmail.com>
-References: <20240611113538.9004-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1718105744; c=relaxed/simple;
+	bh=vIaLVeSYJywYPlUcMLIYwb/jAbrcLibb815/nDIAGBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLeH7/Nq8LWZqsefIL5As4tLCMqXK8NILm93hrwlej/Lov8QRbQ4Jy3iGnzcHjfFPAl1gNtcUWdsbAIgT5bsOKVuPY76UIwWtVs+PJQnxD5nKNtqLnrngjOblbdMhdFuMlsgYgbMrx3GRwOjKv2HbuvGHMbR+gpvMhSG6b2VJNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGeAbiLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F19C2BD10;
+	Tue, 11 Jun 2024 11:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718105744;
+	bh=vIaLVeSYJywYPlUcMLIYwb/jAbrcLibb815/nDIAGBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eGeAbiLOO3DqDwHlEs/APyA1y1dEWYbCwpzafcNR/tGNz0bvVdTtqhVi8kncr81HZ
+	 8fljverjE72HAzzi4aT9b0MUf5vh3gRejleNYPLm7LcjrpWV0PgWYxmtWScT8Z34dH
+	 wMmo+HziDKICuEUmC/GXseLNJ3IwLldp+iiwKM6WkND+++R45Lob56f/8IrwsJCFMT
+	 Jp1iWn2909ijRn81+K9hpvAOkGYwejKopGBHAND/lOT0kAci83ubIGgSyEl9gf8XiJ
+	 Tex3N45V4jv8d0EJnnsFMKkQNefyYEBpPsXJRk0XmREr/QxSTeoQQ823C17TPHU4gG
+	 P7yucmuEf+gTg==
+Date: Tue, 11 Jun 2024 11:35:39 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dustin Howett <dustin@howett.net>,
+	Stephen Horvath <s.horvath@outlook.com.au>,
+	Rajas Paranjpe <paranjperajas@gmail.com>,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+	Matt Hartley <matt.hartley@gmail.com>
+Subject: Re: [PATCH v3 3/5] platform/chrome: cros_ec_proto: Introduce
+ cros_ec_cmd_versions()
+Message-ID: <Zmg2iwOWRZdCybxw@google.com>
+References: <20240610-cros_ec-charge-control-v3-0-135e37252094@weissschuh.net>
+ <20240610-cros_ec-charge-control-v3-3-135e37252094@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240610-cros_ec-charge-control-v3-3-135e37252094@weissschuh.net>
 
-From: Daniel González Cabanelas <dgcbueu@gmail.com>
+On Mon, Jun 10, 2024 at 05:51:08PM +0200, Thomas Wei�schuh wrote:
+> +/**
+> + * cros_ec_cmd_versions - Get supported version mask.
 
-The data RAC is left disabled by the bootloader in some SoCs, at least in
-the core it boots from.
-Enabling this feature increases the performance up to +30% depending on the
-task.
+I guess we would like to call it something like "cros_ec_get_cmd_versions".
 
-Signed-off-by: Daniel González Cabanelas <dgcbueu@gmail.com>
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-[ rework code and reduce code duplication ]
-Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/mips/kernel/smp-bmips.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> + *
+> + * @ec_dev: EC device
+> + * @cmd: Command to test
+> + *
+> + * Return: version mask on success, negative error number on failure.
+> + */
+> +int cros_ec_cmd_versions(struct cros_ec_device *ec_dev, u16 cmd)
 
-diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
-index 20e2fb10022d..e30342af8d91 100644
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -598,6 +598,7 @@ asmlinkage void __weak plat_wired_tlb_setup(void)
- void bmips_cpu_setup(void)
- {
- 	void __iomem __maybe_unused *cbr = bmips_cbr_addr;
-+	u32 __maybe_unused rac_addr;
- 	u32 __maybe_unused cfg;
- 
- 	switch (current_cpu_type()) {
-@@ -626,6 +627,23 @@ void bmips_cpu_setup(void)
- 		__raw_readl(cbr + BMIPS_RAC_ADDRESS_RANGE);
- 		break;
- 
-+	case CPU_BMIPS4350:
-+		rac_addr = BMIPS_RAC_CONFIG_1;
-+
-+		if (!(read_c0_brcm_cmt_local() & (1 << 31)))
-+			rac_addr = BMIPS_RAC_CONFIG;
-+
-+		/* Enable data RAC */
-+		cfg = __raw_readl(cbr + rac_addr);
-+		__raw_writel(cfg | 0xf, cbr + rac_addr);
-+		__raw_readl(cbr + rac_addr);
-+
-+		/* Flush stale data out of the readahead cache */
-+		cfg = __raw_readl(cbr + BMIPS_RAC_CONFIG);
-+		__raw_writel(cfg | 0x100, cbr + BMIPS_RAC_CONFIG);
-+		__raw_readl(cbr + BMIPS_RAC_CONFIG);
-+		break;
-+
- 	case CPU_BMIPS4380:
- 		/* CBG workaround for early BMIPS4380 CPUs */
- 		switch (read_c0_prid()) {
--- 
-2.43.0
-
+Could it support a "version" parameter as existing EC_CMD_GET_CMD_VERSIONS
+usages use both versions?  An `u16 cmd` parameter and down-cast to u8 for v0
+should be fine. (ec_params_get_cmd_versions vs. ec_params_get_cmd_versions_v1)
 
