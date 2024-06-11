@@ -1,228 +1,178 @@
-Return-Path: <linux-kernel+bounces-209578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858F39037EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6344D9037F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 149D3B2602E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6211C23279
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CB7176AC1;
-	Tue, 11 Jun 2024 09:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC43D176AAE;
+	Tue, 11 Jun 2024 09:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1h9kfKoU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Wyti0idM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1h9kfKoU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Wyti0idM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isSpu8Mi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE891BF2A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F22230F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098468; cv=none; b=VIB2KizszWRfJYHjM4DstMe7AGXvXXbVRBDbUqdxXNJKmnX4Mdp99a3Lv8vaERGVA/GLTBEU8HohfAu3EEElNCWHPgFPUb5NjrnxdvdFlCBjJWqzXkKXskd76ITn90Kj72zk5gXL5k6uek2GyOkQMwdPqzCweDUK5qFisYWn3Ow=
+	t=1718098577; cv=none; b=O1+K1HQjeW0tJg7OxqdmfLtjVDPnCcyotBfjScN6UdhxxEmuRLmok21dU8rJ9wYmBxIchk5H9XRyTfWpZTJlQvtFhJrKXBo0kOoiFop23zRaoYASUWSvUirvGS7IIVXMiO2uV7XjjvqOtduA4fwndHx8yQFoAmKCSBaJ8/eysQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098468; c=relaxed/simple;
-	bh=039KEOjJTO3YVS9SW6PakeGw3N0m3XJPvPkiVlagfm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1Tfui3JjGxRTZE/wim9tQiPZRl5FXmF6nk9YdlW4b7MLwHHfXS6ZI4RFWZyQoQDx8NZVY1wYKd2/ZD7b92Npi7wNc3I9ACG9EWlcCCqszB+2tYn2QQnNSg2bTqhjtJaQ7xanHAXhW/OF+P7d5cmh1vv+86cBAGQFsINO3+FuK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1h9kfKoU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Wyti0idM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1h9kfKoU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Wyti0idM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2FB9133686;
-	Tue, 11 Jun 2024 09:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718098465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXl9G+kh6CJWJjfSYdY3mI/mE/xXvq102BbFQ15gmgk=;
-	b=1h9kfKoUjzUX7Pg0FYO4/Hn86ca25G+Dw0AJG6LeaEH4SJ+Pr27qT5mX6xNgxC6+O6nlft
-	br7k3/K0BFcSDett6c63kGZre4r1PJdSH5PsMsFXqyiITD7SPqMSS1uvPAn4oCFafdgeLW
-	Px/kUM1cWdNYU4YVxTTrQ2a7A0yPIFM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718098465;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXl9G+kh6CJWJjfSYdY3mI/mE/xXvq102BbFQ15gmgk=;
-	b=Wyti0idMR4rKs3LoThTM+Y8V0nVad7j2jppVkPhnwFxzg/7HdB6YPRlKnU0DR4KISNMvTk
-	44kaEKvNEVIr0MBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718098465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXl9G+kh6CJWJjfSYdY3mI/mE/xXvq102BbFQ15gmgk=;
-	b=1h9kfKoUjzUX7Pg0FYO4/Hn86ca25G+Dw0AJG6LeaEH4SJ+Pr27qT5mX6xNgxC6+O6nlft
-	br7k3/K0BFcSDett6c63kGZre4r1PJdSH5PsMsFXqyiITD7SPqMSS1uvPAn4oCFafdgeLW
-	Px/kUM1cWdNYU4YVxTTrQ2a7A0yPIFM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718098465;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXl9G+kh6CJWJjfSYdY3mI/mE/xXvq102BbFQ15gmgk=;
-	b=Wyti0idMR4rKs3LoThTM+Y8V0nVad7j2jppVkPhnwFxzg/7HdB6YPRlKnU0DR4KISNMvTk
-	44kaEKvNEVIr0MBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A858413A55;
-	Tue, 11 Jun 2024 09:34:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Jbt2JiAaaGapdAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 11 Jun 2024 09:34:24 +0000
-Date: Tue, 11 Jun 2024 11:34:23 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 02/18] mm: Define __pte_leaf_size() to also take a PMD
- entry
-Message-ID: <ZmgaHyS0izhtKbx6@localhost.localdomain>
-References: <cover.1717955558.git.christophe.leroy@csgroup.eu>
- <172b11c93e0de7a84937af2da9f80bd17c56b8c9.1717955558.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1718098577; c=relaxed/simple;
+	bh=dDF82/WVEMJLMp6RKwaMKit1ulza66VoYaoZYIYpjww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nOgfIIay7J8RSOnhI9xCNluWyYzXr5V72hKK+PmllF7m7FHZV9DD+hCG/pKnc7eq74hRJWBK9+W0tEj2g3L/XBvzTTlEOEtmP/GPUKc0Q7GSBn9JbsCPVXGhKeL9umVXcNgmWmGg32R6jBGWRxgizRgf3BTMHpnM56uDTMZNKUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isSpu8Mi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718098574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=TlB7F7lscejzuVTo3t1wMraq8CrMqmylVI6BgXXCdcI=;
+	b=isSpu8MiUOcQPaHtS9U1RjBEp4Utj6H10cKoWUhx3hwRJGDeRsD9W4zB2rQ3zNXftWsKPH
+	cxr3aRz6FiiTatPOJYtIEWUfb3qDRjee/3fvkTJDAH3qcBHBHycTB6lVN7p/XuHkPu6Rof
+	XQp0IG9MJbv76Y92ZvbHR6fCkGVJ5cE=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-92-2Zy_113MMoysCTxrhtX7Ew-1; Tue, 11 Jun 2024 05:36:10 -0400
+X-MC-Unique: 2Zy_113MMoysCTxrhtX7Ew-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ebd7556679so24741691fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:36:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718098569; x=1718703369;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TlB7F7lscejzuVTo3t1wMraq8CrMqmylVI6BgXXCdcI=;
+        b=Feyi7nHX6TxKudO5PW/qUtSoplFkcVaqbT7N+yqoYs7WhwujcrkDJx6x8eYWALPtug
+         BlTBlvYa4dqlsH70b5s08K9yzcADcYj/up5Nx1AnwD+8EykJkgzThhGR5XQD6qUxjVPb
+         GzE6WHmLf51F8b8cFc0b2wSZK/6bL2rxO/YwvxuixW5vxukp0exYbl1rs7BVNrfquc5t
+         JveGGhGWVzSTKW0F0aY8BHT4dM/qbYpvH+pqQSXU9F52o6DEDpMWhbCmlHYw8jaPq8yi
+         rLund1rKM2eeM8Y81uSB27fAZ8qFvZF3uiA+XwU9U7/H+eyJI/Hn4/p9xCg0gsBsIa+O
+         DqYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOQsRAeL/odzGnNEkvH6W6+yLiLBplSig3prIiYf86wr1kErYxW2J0QIR6fRrsaOT2OkY6I++GlKA1v5HqE396Azyw6YzcXjftyyvj
+X-Gm-Message-State: AOJu0YwH3YKPnVjsS4eoobGi2gD6WCRbXYNAJrQirHyzMfkNDSDfi4Vs
+	g25lFLt2jfCkMXmi3SgH7MX3lINTNO3p7/U8DMkteJ5HJ6tBZtADQVUAKtSCwVaNkoLMxAJ87mm
+	Nf9bxw0BThp+bbDN0FEjFG/QR/U215tPPUaPY4LiKX9bRdGk6wxG5xxL81Wpw2w==
+X-Received: by 2002:a2e:8e97:0:b0:2eb:ee03:f5e4 with SMTP id 38308e7fff4ca-2ebee03f623mr22790771fa.26.1718098568819;
+        Tue, 11 Jun 2024 02:36:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNp2sevQyfiC69YnEOTxSqiVOgujok/h0CX14g0NhU6HUh+1k242chVMmfp1m+LeDXZiGLuA==
+X-Received: by 2002:a2e:8e97:0:b0:2eb:ee03:f5e4 with SMTP id 38308e7fff4ca-2ebee03f623mr22790591fa.26.1718098568334;
+        Tue, 11 Jun 2024 02:36:08 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c6900sm171291355e9.36.2024.06.11.02.36.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 02:36:07 -0700 (PDT)
+Message-ID: <b5dd99c7-866b-467c-9f76-d043e887394c@redhat.com>
+Date: Tue, 11 Jun 2024 11:36:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172b11c93e0de7a84937af2da9f80bd17c56b8c9.1717955558.git.christophe.leroy@csgroup.eu>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
+ headers"
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240608021023.176027-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 07:54:47AM +0200, Christophe Leroy wrote:
-> On powerpc 8xx, when a page is 8M size, the information is in the PMD
-> entry. So allow architectures to provide __pte_leaf_size() instead of
-> pte_leaf_size() and provide the PMD entry to that function.
+On 08.06.24 04:10, John Hubbard wrote:
+> Eventually, once the build succeeds on a sufficiently old distro, the
+> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
+> after that, from selftests/lib.mk and all of the other selftest builds.
 > 
-> When __pte_leaf_size() is not defined, define it as a pte_leaf_size()
-> so that architectures not interested in the PMD arguments are not
-> impacted.
+> For now, this series merely achieves a clean build of selftests/mm on a
+> not-so-old distro: Ubuntu 23.04:
+
+Wasn't the plan to rely on the tools/include headers, and pull in there 
+whatever we need?
+
 > 
-> Only define a default pte_leaf_size() when __pte_leaf_size() is not
-> defined to make sure nobody adds new calls to pte_leaf_size() in the
-> core.
+> 1. Add __NR_mseal.
+> 
 
-Hi Christophe,
+For example, making sure that tools/include/uapi/asm-generic/unistd.h is 
+updated to contain __NR_mseal?
 
-Now I am going to give you a hard time, so sorry in advance.
-I should have raised this before, but I was not fully aware of it.
+... to avoid hand-crafted defines we have to maintain for selftests.
 
-There is an ongoing effort of unifying pagewalkers [1], so hugetlb does not have
-to be special-cased anymore, and the operations we do for THP on page-table basis
-work for hugetlb as well.
-
-The most special bit about this is huge_ptep_get.
-huge_ptep_get() gets special handled on arm/arm64/riscv and s390.
-
-arm64 and riscv is about cont-pmd/pte and propagate the dirty/young bits bits, so that
-is fine as walkers can already understand that.
-s390 is a funny one because it converts pud/pmd to pte and viceversa, because hugetlb
-*works* with ptes, so before returning the pte it has to transfer all
-bits from PUD/PMD level into a something that PTE level can understand.
-As you can imagine, this can be gone as we already have all the
-information in PUD/PMD and that is all pagewalkers need.
-
-But we are left with the one you will introduce in patch#8.
-
-8MB pages get mapped as cont-pte, but all the information is stored in
-the PMD entries (size, dirtiness, present etc).
-huge_ptep_get() will return the PMD for 8MB, and so all operations hugetlb
-code performs with what huge_ptep_get returns will be performed on those PMDs.
-
-Which brings me to this point:
-
-I do not think __pte_leaf_size is needed. AFAICS, it should be enough to define
-pmd_leaf on 8xx, and return 8MB if it is a 8MB hugepage.
-
-   #define pmd_leaf pmd_leaf
-   static inline bool pmd_leaf(pmd_t pmd)
-   {
-          return pmd_val(pmd) & _PMD_PAGE_8M);
-   }
-
-   and then pmd_leaf_size to return _PMD_PAGE_8M.
-   
-This will help because on the ongoing effort of unifying hugetlb and
-getting rid of huge_ptep_get() [1], pagewalkers will stumble upon the
-8mb-PMD as they do for regular PMDs.
-
-Which means that they would be caught in the following code:
-
-        ptl = pmd_huge_lock(pmd, vma);
-        if (ptl) {
-	        - 8MB hugepages will be handled here
-                smaps_pmd_entry(pmd, addr, walk);
-                spin_unlock(ptl);
-        }
-	/* pte stuff */
-	...
-
-where pmd_huge_lock is:
-
- static inline spinlock_t *pmd_huge_lock(pmd_t *pmd, struct vm_area_struct *vma)
- {
-        spinlock_t *ptl = pmd_lock(vma->vm_mm, pmd);
-
-        if (pmd_leaf(*pmd) || pmd_devmap(*pmd))
-                return ptl;
-        spin_unlock(ptl);
-        return NULL;
- }
-
-So, since pmd_leaf() will return true for 8MB hugepages, we are fine,
-because anyway we want to perform pagetable operations on *that* PMD and
-not the ptes that are cont-mapped, which is different for e.g: 512K
-hugepages, where we perform it on pte level.
-
-So I would suggest that instead of this patch, we have one implementing pmd_leaf
-and pmd_leaf_size for 8Mb hugepages on power8xx, as that takes us closer to our goal of
-unifying hugetlb.
-
-[1] https://github.com/leberus/linux/tree/hugetlb-pagewalk-v2
-
+But maybe I am remembering something outdated.
 
 -- 
-Oscar Salvador
-SUSE Labs
+Cheers,
+
+David / dhildenb
+
 
