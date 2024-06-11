@@ -1,226 +1,117 @@
-Return-Path: <linux-kernel+bounces-209929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBF3903D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FED903D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FB81C23B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A055B28740E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB117D343;
-	Tue, 11 Jun 2024 13:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C22817CA1E;
+	Tue, 11 Jun 2024 13:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOeB5Mmt"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJvxpd51"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95DD17BB35;
-	Tue, 11 Jun 2024 13:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D6617C7C6;
+	Tue, 11 Jun 2024 13:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112114; cv=none; b=YK8xrpfIwW0FeFiCQ7HkCZJRn0Rqqbk/KcD1eBFtcS9NlSBz3adggVj85XRdFzdOxnx8U/x9i6Zh7XYiRABYVSB/01bqeD/34IuODpKBgt8NfJlfAYImj0ig4sdRHlPdmjohViGyxX8re2lPiU3WexND5kaYyLU4NQ4RJWdbm+8=
+	t=1718112161; cv=none; b=QeSr/gDBzHCYQyshOw4fDD/DYxLm7RobRq1x6cr49v/QZ1fJRyQ87TmaMo2Mqvd7eL1QEqwXq4ba4zKbvamwR/PgF0TQlbDYdCs04bR8lXeEbpWqCi21Jvcg4802Fv4pdcGc1HdPvXl0rUZBw1gNQ/ava5+ktWIxc503dk0FLNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112114; c=relaxed/simple;
-	bh=lPPPhQNOTHe+MdJPKIaXmZK6muGPdkJfgwV7F4eRo50=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e9MI8GgvCh1NTH69Za1GzFhTr/48PKQTkQkN9shU9z15mtFqaGEbneuHdY+Ux/nAu0xB4z3RHDe9FTQFhYe/S2Etb6Gr/1Qcl550KWUyC/uKdGm1WYOYCqgWQQQRMSWMWo6VHwHKPOZK8HiTDqvRWElgRFZ5D0eF/Iq5RTpj7Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOeB5Mmt; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f480624d10so49390105ad.1;
-        Tue, 11 Jun 2024 06:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718112112; x=1718716912; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E1Gm0VRJQ96IVvvubY5I30aDBQIE2W/tuhyQjRyhok8=;
-        b=LOeB5MmtnPZL4GD723WB7Wvw3OnEGTioGsfNWEBqSMFJ4ps4+Kyf2Nh6dmLdjVAAiK
-         h3txgGd4sxpcpGNVwjSSG4epBtQovW+TFCti/QbIp9Xp1uPGdFFwsdCS3UZjOUej/TWG
-         B4Ik7hHtHXm8uniFdO8J1x2W98ytjU95rKVgrKsrbYkMJIKA/Vaxa4exJMwSg+WrscL7
-         dI/qKyJjzKiJ4hYfYZ5NophJf7ml7UHIOKHfWXqpHkVA2oEdF/K6vcqrUVO+PMjwDMsu
-         xyEk917rxf0+EpKLWsy2NZfWzbu+dl0mFTFzHFfS5y74NdAFgQL1V7CzlAWGzKtwtj6w
-         kr0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718112112; x=1718716912;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E1Gm0VRJQ96IVvvubY5I30aDBQIE2W/tuhyQjRyhok8=;
-        b=qjRwDz4mHeel5RZPqHRhPjOJTrTrPXeJqV+i1zbLhxSmyLBwAacL8mW7aoJZIjtrt0
-         j6zYkySxSZdyd8gCRrFqI1lA2/65zvANVKZ3zyy0dlgqHKPS/G/v9RuCLXHyrqoYjZOe
-         GD+Yb5UCRjgvJVBy5tJYh127ExXMnn0gtFYC5sBtOy1U65an9NBQ8aPzX5YFeUsAIye8
-         BIwqeNTEsla3Su9qpZ3ogk9YluqUmdqhR8AWAKtJIYSVQteh2lpfVfvFJhWEt34XENcN
-         vvBC4DhjFzJwnKjTkWgGkZuWswbBgli7f9eXEBbCd3HZtIT4tXecv3UysNSnubj+a9gU
-         OVuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcRGkAb6JMFhDIgQhNRUBNpYTxF+eB1xTSJQ8GUz1wYh7rBjWHSyl10W+UHdGN7YypK5isj1GdoId2xwgOs4VrymEmU3Wn3GooWJ9Btul43v+1+CuimRxGNYCCWoVgsNky4bvVZGfl8/BCB05LFZAnLYV3gI7SWtcSFgc5seI55UoibWI=
-X-Gm-Message-State: AOJu0Yw1u1h5JVraS85uLH4Okt+BpNZswy2KDBsjosChdQR0csIahwIf
-	BAshhSWn6/Xt3UNPzUeJKVCfGptr5L/UXXEbNNt01j/z7fvTyJLu
-X-Google-Smtp-Source: AGHT+IGYnseK3m4sL5xhcLg4FZ+KaLEccEmH9YDJalsGIsk52tQZL7HG1vYD8weeVyCIoLFqCHNNfQ==
-X-Received: by 2002:a17:902:7207:b0:1f4:a392:ac5b with SMTP id d9443c01a7336-1f6d03bc485mr117646565ad.57.1718112111896;
-        Tue, 11 Jun 2024 06:21:51 -0700 (PDT)
-Received: from localhost.localdomain ([103.14.183.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6e787d08csm73415655ad.80.2024.06.11.06.21.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 06:21:51 -0700 (PDT)
-From: Mighty <bavishimithil@gmail.com>
-To: 
-Cc: andreas@kemnade.info,
-	Mithil Bavishi <bavishimithil@gmail.com>,
-	=?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
-Date: Tue, 11 Jun 2024 18:51:34 +0530
-Message-Id: <20240611132134.31269-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718112161; c=relaxed/simple;
+	bh=jA9dvE7L9ZJmw9za/ZknPNMPAQ+nyOtSi6kn/GimkXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g54z85g8RnxBY7o7Q2k1GWuk9F9q8BAMt2KKz/k99+luPOiKo/w7Ik97a3x3kLy9+af16mLnzWr4ChnBbjf+pxft1+uE6Chxux0kV8YGh6F0HwwSz0YEdvjZ2j/hPZZAXLJ/CEHPV0+dgX1yPtuTir1gayAEgwH3z4PH273vg7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJvxpd51; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46807C2BD10;
+	Tue, 11 Jun 2024 13:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718112160;
+	bh=jA9dvE7L9ZJmw9za/ZknPNMPAQ+nyOtSi6kn/GimkXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJvxpd51vL1fgaAMZi+67oKms4QBWh1elR9Hk7cG6nG9e9gXGeFrMfWIIAEael+i3
+	 lAkE99VPxEfh5CyATJUju6DP+t3VIiBAQTucjgQ0ijMajJBcxew3jixbWnwkA4lB3w
+	 ugE0bmKSv4ByzTWhXiqCIEtwrFfOxt+cNpxRnb5kV3Pnz4F4fIUqKNgxjQoYWWx4Qh
+	 8zpY0odtnULrAV/ck1rMQnSKWXf63qG4qt6DqqFfTrBr+8cSR+V1A2y62QjUtMw5og
+	 nm+chU1m0V08cd11shPoWB/8gBRuAnigd/2INuHL6WAuyjUDRqmNsS6XCFFfwI6dMG
+	 6+fylC4MotZmw==
+Date: Tue, 11 Jun 2024 14:22:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 1/6] auxbus: make to_auxiliary_drv accept and return a
+ constant pointer
+Message-ID: <ZmhPnQqYFXWP4heL@finisterre.sirena.org.uk>
+References: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Xh2Kj1DQz4GcFSrR"
+Content-Disposition: inline
+In-Reply-To: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
+X-Cookie: Your love life will be... interesting.
 
-From: Mithil Bavishi <bavishimithil@gmail.com>
 
-Add a dedicated DTS file for the TWL6032 PMIC (Phoenix Lite). Already
-has driver support with TWL6030 (Phoenix) since both of them are so
-similar, some nodes can be reused from TWL6030 as well.
+--Xh2Kj1DQz4GcFSrR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This can be included in the board files like twl6030.
-Example:
-...
-&i2c1 {
-    twl: twl@48 {
-        reg = <0x48>;
-        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-        interrupt-controller;
-        interrupt-parent = <&gic>;
-    };
-};
+On Tue, Jun 11, 2024 at 03:01:04PM +0200, Greg Kroah-Hartman wrote:
+> In the quest to make struct device constant, start by making
+> to_auziliary_drv() return a constant pointer so that drivers that call
+> this can be fixed up before the driver core changes.
 
-/include/ "twl6032.dtsi"
-...
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Used in devices like samsung-espresso, amazon-jem, epson-embt2ws etc.
+--Xh2Kj1DQz4GcFSrR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regulator values are found from downstream kernel for espresso.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
----
- arch/arm/boot/dts/ti/omap/twl6032.dtsi | 94 ++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 arch/arm/boot/dts/ti/omap/twl6032.dtsi
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoT5wACgkQJNaLcl1U
+h9BOJwf/aeKGbgsNQMBhINPc1+PAR8b5cph+EiF+ikcvcatJwJlRp44vA9jbRubp
+RmTlt5cENNxdSPxZ4L1agVt+lbemBcTfLZFQLj+KvZjLhC2oeXhkcbjY3eLmIsVw
+yQjm6MBnwdVo/8KD/jHCX4VMeCIcqtyTSjXqy3Q7kWlquqICAer7jB2riTxPOsUA
+AZ8DvqF1TQees1OHELAdmRRkcSOufQXeZRHCfeiDTpAFFnOazvtPmeAPcQpA5c8v
+JITj6HWMZxHRs9efcbyOOTVYnUcE3cZY3lUuqKJqzEfI08F75CJiZvb1hS/fRrPU
+6Nig9Tiir3XUu0ajZMrfXBdbm+3HOg==
+=XJxc
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm/boot/dts/ti/omap/twl6032.dtsi b/arch/arm/boot/dts/ti/omap/twl6032.dtsi
-new file mode 100644
-index 000000000..a48723a24
---- /dev/null
-+++ b/arch/arm/boot/dts/ti/omap/twl6032.dtsi
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Integrated Power Management Chip
-+ * https://www.ti.com/lit/ds/symlink/twl6032.pdf
-+ */
-+
-+&twl {
-+	compatible = "ti,twl6032";
-+	interrupt-controller;
-+	#interrupt-cells = <1>;
-+
-+	rtc {
-+		compatible = "ti,twl4030-rtc";
-+		interrupts = <11>;
-+	};
-+
-+	vana: regulator-vana {
-+		compatible = "ti,twl6030-vana";
-+		regulator-min-microvolt = <2100000>;
-+		regulator-max-microvolt = <2100000>;
-+		regulator-always-on;
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+
-+	ldo1: regulator-ldo1 {
-+		compatible = "ti,twl6032-ldo1";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-always-on;
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+
-+	ldo3: regulator-ldo3 {
-+		compatible = "ti,twl6032-ldo3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+
-+	ldo4: regulator-ldo4 {
-+		compatible = "ti,twl6032-ldo4";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-always-on;
-+	};
-+
-+	ldo5: regulator-ldo5 {
-+		compatible = "ti,twl6032-ldo5";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	ldo6: regulator-ldo6 {
-+		compatible = "ti,twl6032-ldo6";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+
-+	smps4: regulator-smps4 {
-+		compatible = "ti,twl6032-smps4";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	ldousb: regulator-ldousb {
-+		compatible = "ti,twl6032-ldousb";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	gpadc: gpadc {
-+		compatible = "ti,twl6032-gpadc";
-+		interrupts = <3>;
-+		#io-channel-cells = <1>;
-+	};
-+
-+	twl_usb_comparator: usb-comparator {
-+		compatible = "ti,twl6030-usb";
-+		interrupts = <4>, <10>;
-+	};
-+};
--- 
-2.34.1
-
+--Xh2Kj1DQz4GcFSrR--
 
