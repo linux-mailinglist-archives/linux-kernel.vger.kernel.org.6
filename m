@@ -1,215 +1,200 @@
-Return-Path: <linux-kernel+bounces-209702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E66F903994
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9242D9039A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12163288A36
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1ED1F270FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07617C218;
-	Tue, 11 Jun 2024 11:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB5317B4E8;
+	Tue, 11 Jun 2024 11:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L0BPhBOh"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zXY8LbtR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MJtPTKBW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zXY8LbtR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MJtPTKBW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8403D17BB24
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F3C179951;
+	Tue, 11 Jun 2024 11:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103790; cv=none; b=FCQE4J+s3Ldl96KayXH1T7xaqiREMdiJ3AnbmncnbcNS130hcto5AlSh8D5vx3wJUt40+hT0nuIG5St9QMo2Y/bsbkjltmHOqb37oY+eh/7QDUru6mGUFFBt8RN7gR2BcRY64nb7rOVIom5ROHwRlPwshTp0ZUEY4XH1L5L1nOs=
+	t=1718103910; cv=none; b=qysNLkFq8iN56GbOOax9x4q2TK3hoZIKSvFMI4qafm3eMCcJRITU3Qgi6Uf8vUVmpA9/ozrdDFcgf4Dtc1HOwsR1cUNs6k34ROgqV+wjy1t1CxHTVl0ItaaCnoCil+N61HHAwELqgaYUvdSCWIPsnASuIW1CHjt5LBaJwrnqalc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103790; c=relaxed/simple;
-	bh=z/3u4/mWtXaPcqUEJIVVVhgfYJkjuHSN+7Gt1mr2kZU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HZmrQUbO29ijvYRNSU8/4+izphSYDg+kKA/pE1wFRW6M+Du4QdTmC5E7AKQ3Aye3TgkUfs7iUuO9hQsIiAvL+G0gtAminMYqkBkeiRjBuyEEOxirrFeGW5yyL6iaS6msDLwterTjrbgDmf1dQDFz5xX/Y9cKOTsOc7zlRRUgUPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L0BPhBOh; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62cf4d32c68so11189717b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718103787; x=1718708587; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MzS9f1WNBiNXaOeMPoSMQIzT/9CqhSNtVDMpqgWPH5g=;
-        b=L0BPhBOh0I1GV8CWvJsX4am0HYFH0l+mhazYRotbgzxUPkUBU7IwIX0d0FOKGV2gkI
-         tB933JVT3+K6X27dAV8wxfhrjTI1a64/kZCBWlp5BE8cF68pU6rhuiQcvvJeyZXCTi7p
-         OMRaZzpyCSscbiuuf7t8eFpqc+K9lbKRtupRA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103787; x=1718708587;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzS9f1WNBiNXaOeMPoSMQIzT/9CqhSNtVDMpqgWPH5g=;
-        b=aZUs1GP7btyeuFdEYdqBaHXIwkqpk7HYT+3EMV0jxiHmoL+cwSYh3Q/e5z2W2FtSGf
-         D5BZSmO8ExyVNG2pdO4cna/WJ6MRAsjoWOBKwt0BFJhP3tBH4CW0NXKr6ug+e2Glz3si
-         /ceRKiOYCgvPB0M1xDJo0KnfbUQSPNlmzPccgGdTkuR5Ih8GDaL64GgBS7zYEL9WI7BG
-         nhybzmhys0w5u/6y8UllTmaPE/AyPGyf8zBY3GiyKu7tWRPEkoaY6CQgvZU9ucChc0X4
-         S5wWmMa0HXTaQ+cqiXCyBQ4dmlwcP2zEL9GrlQM0YG13BhVnV7BxkUHaggVvffylnqKv
-         2vQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVWjnfektR0Y8B5uRxV417gHZoVLkzEXOkAzWdVJKG6zFHCu+12vGFcayixDO/jdp5byLdMf+zYLcCr8Z60WXAKTPei1XV4+B4yPic
-X-Gm-Message-State: AOJu0YyIlcAEQ/emnbxevFNfhaBE4Rc8P5nwrFSnQ+JvMnSnGogikr7N
-	DVxuIxuuANqEvOAz2CKqzLfhLCIKeNzfKCau3Z188RllEKPzGp8sVUIGv4zN7A==
-X-Google-Smtp-Source: AGHT+IFyq6p5dM3GRR26JfJcXHtL1hQfZTEfRKi/7qD6W4L5jN1i3I7FjtVlsJJcSDOGRawrkNvnyw==
-X-Received: by 2002:a81:830e:0:b0:617:d864:7e0b with SMTP id 00721157ae682-62cd56afba9mr111896707b3.47.1718103786021;
-        Tue, 11 Jun 2024 04:03:06 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b08bf006f4sm6392076d6.90.2024.06.11.04.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:03:05 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 11 Jun 2024 11:02:58 +0000
-Subject: [PATCH 2/2] media: drivers/media/dvb-core: Refactor
- dvb_frontend_open locking
+	s=arc-20240116; t=1718103910; c=relaxed/simple;
+	bh=0maF6TePGQjOsEHBGqnzTgl9lMhx9NHYxp8R0kLCbHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5cPwT9YICEBmeeW7TT27uik3rUF9WIFKLjVsQEUq11ClLdcmbtOM4zFBTquIvyrY4gFcxYfksVuU9cEvXZtv8B2/WTfwVXhakShkqhONEWlHwaq7QOE0ImnV7oJQ8SE4UkefypdD4IvnMXnb7/z7Q8CNFxwcLcJgTvv9UxBgB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zXY8LbtR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MJtPTKBW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zXY8LbtR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MJtPTKBW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B98C1F8BA;
+	Tue, 11 Jun 2024 11:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718103906; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
+	b=zXY8LbtRdqOCxsHsZtmuWjo/7rj51WhVQVVEXZXDjgOz1LXjGxvI26zoEa03IOsJHPH8v4
+	aF+AuXtszD0gpKpfBjRsEP9mTkQPj3BPC+alF6YOIZMKbQ/7BrABeixWeGUb7SYzXXtLWD
+	IidmeoGcbk4tAcFGn6z6xEAwVcduBto=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718103906;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
+	b=MJtPTKBWV4pZLj+TdLvHfGomOUkSAy/BEGfa+zpf/lxfY4e+ewHUMzCW6kTKuWkFL04/3Q
+	F6+ops359EzwP/BA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718103906; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
+	b=zXY8LbtRdqOCxsHsZtmuWjo/7rj51WhVQVVEXZXDjgOz1LXjGxvI26zoEa03IOsJHPH8v4
+	aF+AuXtszD0gpKpfBjRsEP9mTkQPj3BPC+alF6YOIZMKbQ/7BrABeixWeGUb7SYzXXtLWD
+	IidmeoGcbk4tAcFGn6z6xEAwVcduBto=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718103906;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2eLAlMWG8GTaDX9TgGBctJjQr0bAGC82J+5dnZ/RiOk=;
+	b=MJtPTKBWV4pZLj+TdLvHfGomOUkSAy/BEGfa+zpf/lxfY4e+ewHUMzCW6kTKuWkFL04/3Q
+	F6+ops359EzwP/BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FFBC137DF;
+	Tue, 11 Jun 2024 11:05:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P3fdA2IvaGZmEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Jun 2024 11:05:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A7AD3A0880; Tue, 11 Jun 2024 13:05:05 +0200 (CEST)
+Date: Tue, 11 Jun 2024 13:05:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	david@fromorbit.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
+Message-ID: <20240611110505.udtzfwgj3o4vxrxl@quack3>
+References: <20240611041540.495840-1-mjguzik@gmail.com>
+ <20240611100222.htl43626sklgso5p@quack3>
+ <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-coccinelle-followup-v1-2-df2de9c2f320@chromium.org>
-References: <20240611-coccinelle-followup-v1-0-df2de9c2f320@chromium.org>
-In-Reply-To: <20240611-coccinelle-followup-v1-0-df2de9c2f320@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 
-Split out the wait function, and introduce some new toys: guard and
-lockdep.
+On Tue 11-06-24 12:23:59, Mateusz Guzik wrote:
+> On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
+> > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
+> > > new_inode used to have the following:
+> > > 	spin_lock(&inode_lock);
+> > > 	inodes_stat.nr_inodes++;
+> > > 	list_add(&inode->i_list, &inode_in_use);
+> > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
+> > > 	inode->i_ino = ++last_ino;
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode_lock);
+> > > 
+> > > over time things disappeared, got moved around or got replaced (global
+> > > inode lock with a per-inode lock), eventually this got reduced to:
+> > > 	spin_lock(&inode->i_lock);
+> > > 	inode->i_state = 0;
+> > > 	spin_unlock(&inode->i_lock);
+> > > 
+> > > But the lock acquire here does not synchronize against anyone.
+> > > 
+> > > Additionally iget5_locked performs i_state = 0 assignment without any
+> > > locks to begin with and the two combined look confusing at best.
+> > > 
+> > > It looks like the current state is a leftover which was not cleaned up.
+> > > 
+> > > Ideally it would be an invariant that i_state == 0 to begin with, but
+> > > achieving that would require dealing with all filesystem alloc handlers
+> > > one by one.
+> > > 
+> > > In the meantime drop the misleading locking and move i_state zeroing to
+> > > alloc_inode so that others don't need to deal with it by hand.
+> > > 
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > 
+> > Good point. But the initialization would seem more natural in
+> > inode_init_always(), wouldn't it? And that will also address your "FIXME"
+> > comment.
+> > 
+> 
+> My point is that by the time the inode is destroyed some of the fields
+> like i_state should be set to a well-known value, this one preferably
+> plain 0.
 
-This fixes the following cocci warnings:
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2776
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2786
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2809
+Well, i_state is set to a more or less well defined value but it is not
+zero. I don't see a performance difference in whether set it to 0 on
+freeing or on allocation and on allocation it is actually much easier to
+find when reading the code.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/dvb-core/dvb_frontend.c | 59 ++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+> I did not patch inode_init_always because it is exported and xfs uses it
+> in 2 spots, only one of which zeroing the thing immediately after.
+> Another one is a little more involved, it probably would not be a
+> problem as the value is set altered later anyway, but I don't want to
+> mess with semantics of the func if it can be easily avoided.
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index e81b9996530e..a7739f5e78cb 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -30,6 +30,7 @@
- #include <linux/kthread.h>
- #include <linux/ktime.h>
- #include <linux/compat.h>
-+#include <linux/lockdep.h>
- #include <asm/processor.h>
- 
- #include <media/dvb_frontend.h>
-@@ -2826,6 +2827,34 @@ static int __dvb_frontend_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+static int wait_dvb_frontend(struct dvb_adapter *adapter,
-+			       struct dvb_device *mfedev)
-+{
-+	struct dvb_frontend *mfe = mfedev->priv;
-+	struct dvb_frontend_private *mfepriv = mfe->frontend_priv;
-+	int mferetry = (dvb_mfe_wait_time << 1);
-+	int ret = 0;
-+
-+	lockdep_assert_held(&adapter->mfe_lock);
-+
-+	if (mfedev->users == -1 && !mfepriv->thread)
-+		return 0;
-+
-+	mutex_unlock(&adapter->mfe_lock);
-+
-+	while (mferetry-- && (mfedev->users != -1 || mfepriv->thread)) {
-+		if (msleep_interruptible(500))
-+			if (signal_pending(current)) {
-+				ret = -EINTR;
-+				break;
-+			}
-+	}
-+
-+	mutex_lock(&adapter->mfe_lock);
-+
-+	return ret;
-+}
-+
- static int dvb_frontend_open(struct inode *inode, struct file *file)
- {
- 	struct dvb_device *dvbdev = file->private_data;
-@@ -2840,19 +2869,17 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- 	if (!adapter->mfe_shared)
- 		return __dvb_frontend_open(inode, file);
- 
-+
-+	guard(mutex)(&adapter->mfe_lock);
-+
- 	if (adapter->mfe_shared == 2) {
--		mutex_lock(&adapter->mfe_lock);
- 		if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
- 			if (adapter->mfe_dvbdev &&
--			    !adapter->mfe_dvbdev->writers) {
--				mutex_unlock(&adapter->mfe_lock);
-+			    !adapter->mfe_dvbdev->writers)
- 				return -EBUSY;
--			}
- 			adapter->mfe_dvbdev = dvbdev;
- 		}
- 	} else {
--		mutex_lock(&adapter->mfe_lock);
--
- 		if (!adapter->mfe_dvbdev) {
- 			adapter->mfe_dvbdev = dvbdev;
- 		} else if (adapter->mfe_dvbdev != dvbdev) {
-@@ -2862,34 +2889,24 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- 				*mfe = mfedev->priv;
- 			struct dvb_frontend_private
- 				*mfepriv = mfe->frontend_priv;
--			int mferetry = (dvb_mfe_wait_time << 1);
--
--			mutex_unlock(&adapter->mfe_lock);
--			while (mferetry-- && (mfedev->users != -1 ||
--					      mfepriv->thread)) {
--				if (msleep_interruptible(500)) {
--					if (signal_pending(current))
--						return -EINTR;
--				}
--			}
- 
--			mutex_lock(&adapter->mfe_lock);
-+			ret = wait_dvb_frontend(adapter, mfedev);
-+			if (ret)
-+				return ret;
-+
- 			if (adapter->mfe_dvbdev != dvbdev) {
- 				mfedev = adapter->mfe_dvbdev;
- 				mfe = mfedev->priv;
- 				mfepriv = mfe->frontend_priv;
- 				if (mfedev->users != -1 ||
--				    mfepriv->thread) {
--					mutex_unlock(&adapter->mfe_lock);
-+				    mfepriv->thread)
- 					return -EBUSY;
--				}
- 				adapter->mfe_dvbdev = dvbdev;
- 			}
- 		}
- 	}
- 
- 	ret = __dvb_frontend_open(inode, file);
--	mutex_unlock(&adapter->mfe_lock);
- 
- 	return ret;
- }
+Well, I'd consider that as another good reason to actually clean this up.
+Look, inode_init_always() is used in bcachefs and xfs. bcachefs sets
+i_state to 0 just before calling inode_init_always(), xfs just after one
+call of inode_init_always() and the call in xfs_reinit_inode() is used
+only from xfs_iget_recycle() which sets i_state to I_NEW. So I claim that
+moving i_state clearing to inode_init_always() will not cause any issue and
+is actually desirable.
 
+								Honza
 -- 
-2.45.2.505.gda0bf45e8d-goog
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
