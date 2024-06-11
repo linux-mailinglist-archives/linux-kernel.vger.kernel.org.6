@@ -1,228 +1,180 @@
-Return-Path: <linux-kernel+bounces-209427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EED90348A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD7B903494
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF8A8B2BC0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED33DB2CEC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A1A174EFE;
-	Tue, 11 Jun 2024 07:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF117333E;
+	Tue, 11 Jun 2024 07:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuymS0Mq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VhDrpQ49"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A8E172798;
-	Tue, 11 Jun 2024 07:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6845172798;
+	Tue, 11 Jun 2024 07:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092518; cv=none; b=bvTf+3nm/FiwcvYe8ckKPqO0dME9bhjawH2K25/lQ9i6HQP72cq3gxdGadPKWhQQNPF+AM0T5LeNGVdlYT9lrEQX5S/zPJjmj3zvpeuDyWSHLmSe1XnNJ9zPYgNjIe52VOkGV3awGVh8MAjQaVeVKxjbb7EjwviZvRnNTIaPWrA=
+	t=1718092573; cv=none; b=NQcxr0hRBnvxMsVjCe0C0U/jJqoDuBpo1CNKsykKBPEZq6H75yJqEvbMf5oP7yH2MmFmLTFlCykGfwdXjE2TI090qoedvgikZ4P9dshQrFlhD248kjbpqecw4f1XZ3FhZt+IpWVHkEM8FflgI2QLJ8z23W+jW3q5CKrRgJvP27E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092518; c=relaxed/simple;
-	bh=Zi4uy1TUma6iabLgVVre8jD58HzqwP0vUE0xLv/7Wpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xr40RCX/GDLeiRjfCqsbt4ev1eA6nGzq3IQQCld42+HvBAbkVywLGZRhQT53EQ9heMB8H6x1OWYo5TCZDOezElBcxAutu8L4sKqtsPrA7SFG6BvklyuZK0hBV+NKXuhDTpconYgNMvcNiyPTB59hIT/WOsxpZgjnTI3j2ELSn+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuymS0Mq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D390C2BD10;
-	Tue, 11 Jun 2024 07:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718092518;
-	bh=Zi4uy1TUma6iabLgVVre8jD58HzqwP0vUE0xLv/7Wpk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FuymS0MqIHbqDgregRyzyDcz69F6eXl/Fo5BfNplmTGp86AAVEAMPAvf7h+mb+qO4
-	 fGS4OCL0zJNXL1MHqWQdqleAjMdklkBJf/MSuBpn4QXVv4SCf8OG0u75lvbMX1QLu+
-	 Pu61V5acO8Qfq0w+e4cvXfz+QjjlT8W+ycnaxMLUweE/0v0Tep5ys5AyYJBTxxba24
-	 qfqSPL4tCXY+e4ATgtBbX2jsAdjYCh7AfdxikFHQhVW7xe1C/wwjTVwFTkR4rPnMz1
-	 7q6pHPV68t/d3DVZh53YBKuTwpHe5nsMbmkSTw7JZq5NbjWh8C8JVK6AtHS6bX2IdS
-	 +2sCiwMbk0WYQ==
-Message-ID: <18328cc2-c135-4b69-8c5f-cd45998e970f@kernel.org>
-Date: Tue, 11 Jun 2024 09:55:11 +0200
+	s=arc-20240116; t=1718092573; c=relaxed/simple;
+	bh=onq0LibBzl0SGv/vrIqLQZvTBuzX3tSL82kn87S2vEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uS2gB6dh2frFZcYSGnXuBLaaNxksjYhUKbmOfB9vedsaJMp3Nrt/N+KmITgT5N3DCLcwFKPMkrG/04zY4tKiJzFx57zyuPcwRFSwMrVvsJuNqhndUgirwozS3LNfZXzKKCjyFat6sCXjL3pChDd77F1eke9bk7qzXcySp9+aZPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VhDrpQ49; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TLcNdhigD/3gcWPOQBhYy4GWZxU41lowHmx6XYIrLQ4=; b=VhDrpQ497BR5J+mZwqbqb2QNiG
+	RcHgVBpOq5EAJwvUz/EReo6oK6UA5f12P17TmmGsRaAHxhlN/3GDLIhdsq3B5kmzjCuvqhYgyXb9G
+	7cMJIFsf1EP8QT/NXRGPQWz4k4s2nLmcqoWtP8M6izp18ePXgtf+LK8yjU/C/DMOwrbn4rp4lHBk8
+	n6EWE4PsglyTkXrf37/GTq4Ju9pkpAe9RHsn1LyZyh86vB/UuwhkTz2NUeDZs9YDqlmF099O2bms2
+	zG+WjYEspDBieVr0aMg3BSVawImYV6141ckdskT9Jd2/gXQi7t6sNrff6Sfw5JH+SfoJzeJuWXNN/
+	v21YQxNQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGwM0-000000020Of-1xlj;
+	Tue, 11 Jun 2024 07:55:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1B99F302792; Tue, 11 Jun 2024 09:55:43 +0200 (CEST)
+Date: Tue, 11 Jun 2024 09:55:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Erick Archer <erick.archer@outlook.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <20240611075542.GD8774@noisy.programming.kicks-ass.net>
+References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202406101010.E1C77AE9D@keescook>
+ <20240610200544.GY8774@noisy.programming.kicks-ass.net>
+ <202406101438.BC43514F@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>,
- Daniel Bristot de Oliveira <bristot@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-References: <20240607070427.1379327-1-bigeasy@linutronix.de>
- <20240607070427.1379327-15-bigeasy@linutronix.de>
- <045e3716-3c3a-4238-b38a-3616c8974e2c@kernel.org>
- <20240610165014.uWp_yZuW@linutronix.de>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240610165014.uWp_yZuW@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406101438.BC43514F@keescook>
 
+On Mon, Jun 10, 2024 at 02:46:09PM -0700, Kees Cook wrote:
 
-
-On 10/06/2024 18.50, Sebastian Andrzej Siewior wrote:
-> On 2024-06-07 13:51:25 [+0200], Jesper Dangaard Brouer wrote:
->> The memset can be further optimized as it currently clears 64 bytes, but
->> it only need to clear 40 bytes, see pahole below.
->>
->> Replace memset with something like:
->>   memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
->>
->> This is an optimization, because with 64 bytes this result in a rep-stos
->> (repeated string store operation) that on Intel touch CPU-flags (to be
->> IRQ safe) which is slow, while clearing 40 bytes doesn't cause compiler
->> to use this instruction, which is faster.  Memset benchmarked with [1]
+> > I really detest this thing because it makes what was trivially readable
+> > into something opaque. Get me that type qualifier that traps on overflow
+> > and write plain C. All this __builtin_overflow garbage is just that,
+> > unreadable nonsense.
 > 
-> I've been playing along with this and have to say that "rep stosq" is
-> roughly 3x slower vs "movq" for 64 bytes on all x86 I've been looking
-> at.
+> It's more readable than container_of(), 
 
-Thanks for confirming "rep stos" is 3x slower for small sizes.
+Yeah, no. container_of() is absolutely trivial and very readable.
+container_of_const() a lot less so.
 
+(one static_assert() removed)
 
-> For gcc the stosq vs movq depends on the CPU settings. The generic uses
-> movq up to 40 bytes, skylake uses movq even for 64bytes. clang…
-> This could be tuned via -mmemset-strategy=libcall:64:align,rep_8byte:-1:align
+#define container_of(ptr, type, member) ({                              \
+        void *__mptr = (void *)(ptr);                                   \
+        ((type *)(__mptr - offsetof(type, member))); })
+
+Which is very clear indeed in what it does. Compare with:
+
+#define struct_size(p, member, count)                                   \
+        __builtin_choose_expr(__is_constexpr(count),                    \
+                sizeof(*(p)) + flex_array_size(p, member, count),       \
+                size_add(sizeof(*(p)), flex_array_size(p, member, count)))
+
+And I still have no idea :-(
+
+> IMO. "give me the struct size
+> for variable VAR, which has a flexible array MEMBER, when we have COUNT
+> many of them": struct_size(VAR, MEMBER, COUNT). It's more readable, more
+> robust, and provides saturation in the face of potential wrap-around.
+
+I'm sure you know what it does. Thing is, I don't care because I can
+trivially write it myself and not have to care and I'll have forgotten
+all about it the moment I sent this email.
+
+It just doesn't make sense to wrap something as utterly trivial as:
+
+	size = sizeof(*p) + num*sizeof(p->foo);
+
+We're going to have to agree to disagree on this.
+
+Note how I naturally get the order wrong?
+
+[[ There is the whole FMA angle to this, that is, fundamentally this is a
+multiply-accumulate, but the problem there is the same that I noted,
+there is no fixed order, a+b*c and a*b+c are both very common
+definitions -- although I lean towards the latter being the correct one,
+given the order in the naming. I suppose this is a long winded way of
+saying that:
+
+#define struct_size(p, member, num) \
+	mult_add_no_overflow(num, sizeof(p->member), sizeof(*p))
+
+would be *FAR* more readable. And then I still think struct_size() is
+less readable than its expansion. ]]
+
+> > > This provides __counted_by coverage, and I think this is important to
+> > > gain in ever place we can. Given that this is part of a ring buffer
+> > > implementation that is arbitrarily sized, this is exactly the kind of
+> > > place I'd like to see __counted_by used. This is a runtime robustness
+> > > improvement, so I don't see this a "churn" at all.
+> > 
+> > Again, mixed in with that other crap. Anyway, remind me wth this
+> > __counted_by thing actually does?
 > 
+> It provides annotation for the compiler to perform run-time bounds
+> checking on dynamically sized arrays. i.e. CONFIG_FORTIFY_SOURCE and
+> CONFIG_UBSAN_BOUNDS can actually reason about annotated flexible arrays
+> instead of just saying "oh no a flexible array, I give up".
 
-Cool I didn't know of this tuning.  Is this a compiler option?
-Where do I change this setting, as I would like to experiment with this
-for our prod kernels.
+Some day I'll have to look at this FORTIFY_SOURCE and see what it
+actually does I suppose :/
 
-My other finding is, this primarily a kernel compile problem, because
-for userspace compiler chooses to use MMX instructions (e.g. movaps
-xmmword ptr[rsp], xmm0).  The kernel compiler options (-mno-sse -mno-mmx
--mno-sse2 -mno-3dnow -mno-avx) disables this, which aparently changes
-the tipping point.
-
-
-> I folded this into the last two patches:
+> > > Peter, for patches 1 and 3, if you'd prefer not to carry them, I could
+> > > put them in the hardening tree to keep them out of your way. It seems
+> > > clear you don't want patch 2 at all.
+> > 
+> > I prefer to not have struct_size() anywhere at all. Please just write
+> > readable code.
 > 
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index d2b4260d9d0be..1588d208f1348 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -744,27 +744,40 @@ struct bpf_redirect_info {
->   	struct bpf_nh_params nh;
->   };
->   
-> +enum bpf_ctx_init_type {
-> +	bpf_ctx_ri_init,
-> +	bpf_ctx_cpu_map_init,
-> +	bpf_ctx_dev_map_init,
-> +	bpf_ctx_xsk_map_init,
-> +};
-> +
->   struct bpf_net_context {
->   	struct bpf_redirect_info ri;
->   	struct list_head cpu_map_flush_list;
->   	struct list_head dev_map_flush_list;
->   	struct list_head xskmap_map_flush_list;
-> +	unsigned int flags;
+> That ship has sailed, and it has been keeping things at bay for a while
+> now. As we make progress on making the compiler able to do this more
+> naturally, we can work on replacing struct_size(), but it's in use
+> globally and it's useful both for catching runtime mistakes and for
+> catching compile-time mistakes (the flexible array has to match the
+> variable's struct).
 
-Why have yet another flags variable, when we already have two flags in 
-bpf_redirect_info ?
+I coulnd't quickly find a single instance in the code I care about. So
+nothing is sailing afaict.
 
->   };
->   
-> +static inline bool bpf_net_ctx_need_init(struct bpf_net_context *bpf_net_ctx,
-> +					 enum bpf_ctx_init_type flag)
-> +{
-> +	return !(bpf_net_ctx->flags & (1 << flag));
-> +}
-> +
-> +static inline bool bpf_net_ctx_set_flag(struct bpf_net_context *bpf_net_ctx,
-> +					enum bpf_ctx_init_type flag)
-> +{
-> +	return bpf_net_ctx->flags |= 1 << flag;
-> +}
-> +
->   static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_context *bpf_net_ctx)
->   {
->   	struct task_struct *tsk = current;
->   
->   	if (tsk->bpf_net_context != NULL)
->   		return NULL;
-> -	memset(&bpf_net_ctx->ri, 0, sizeof(bpf_net_ctx->ri));
-> -
-> -	if (IS_ENABLED(CONFIG_BPF_SYSCALL)) {
-> -		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
-> -		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
-> -	}
-> -	if (IS_ENABLED(CONFIG_XDP_SOCKETS))
-> -		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
-> +	bpf_net_ctx->flags = 0;
->   
->   	tsk->bpf_net_context = bpf_net_ctx;
->   	return bpf_net_ctx;
-> @@ -785,6 +798,11 @@ static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
->   {
->   	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
->   
-> +	if (bpf_net_ctx_need_init(bpf_net_ctx, bpf_ctx_ri_init)) {
-> +		memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
-> +		bpf_net_ctx_set_flag(bpf_net_ctx, bpf_ctx_ri_init);
-> +	}
-> +
->   	return &bpf_net_ctx->ri;
->   }
->   
-> @@ -792,6 +810,11 @@ static inline struct list_head *bpf_net_ctx_get_cpu_map_flush_list(void)
->   {
->   	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
->   
-> +	if (bpf_net_ctx_need_init(bpf_net_ctx, bpf_ctx_cpu_map_init)) {
-> +		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
-> +		bpf_net_ctx_set_flag(bpf_net_ctx, bpf_ctx_cpu_map_init);
-> +	}
-> +
->   	return &bpf_net_ctx->cpu_map_flush_list;
->   }
->   
-> @@ -799,6 +822,11 @@ static inline struct list_head *bpf_net_ctx_get_dev_flush_list(void)
->   {
->   	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
->   
-> +	if (bpf_net_ctx_need_init(bpf_net_ctx, bpf_ctx_dev_map_init)) {
-> +		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
-> +		bpf_net_ctx_set_flag(bpf_net_ctx, bpf_ctx_dev_map_init);
-> +	}
-> +
->   	return &bpf_net_ctx->dev_map_flush_list;
->   }
->   
-> @@ -806,6 +834,11 @@ static inline struct list_head *bpf_net_ctx_get_xskmap_flush_list(void)
->   {
->   	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
->   
-> +	if (bpf_net_ctx_need_init(bpf_net_ctx, bpf_ctx_xsk_map_init)) {
-> +		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
-> +		bpf_net_ctx_set_flag(bpf_net_ctx, bpf_ctx_xsk_map_init);
-> +	}
-> +
->   	return &bpf_net_ctx->xskmap_map_flush_list;
->   }
->   
-> 
-> Sebastian
 
