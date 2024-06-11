@@ -1,180 +1,173 @@
-Return-Path: <linux-kernel+bounces-209672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B380390392D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D341903930
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0011F24B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD6C1C23A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3411B17B435;
-	Tue, 11 Jun 2024 10:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8821E52F;
+	Tue, 11 Jun 2024 10:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IGxbWm/I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hOU2iZ71"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D7617B417
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C4A174EC1;
+	Tue, 11 Jun 2024 10:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102734; cv=none; b=V5BZrwAGHKhMcp73sb/k+3z0d54cxdSr1BTSO2Si+KEfE76uTsvEln3W0AQxgq9IHH4Zc0squlw2XHQDwnOqP1wbpogM5LGefkQoFFQmvi2uBBJFAMKhRTfbU0NBLTindTnlHOYoKg+wVakxkQUCJgdFkz7VFQ/VSi4PPLy24xI=
+	t=1718102778; cv=none; b=h89lVU5C+v9AQBZKbEq20Uooveaqko1k+yARan47IKd8r2iFdJ3mV+HzYBwjV2lXO9zucvO1Tqixk00h+JU28mwkUgvwEY7Lmpq3JzmjAfN+ALRdM8ln6a9POo70lh0byZxaFUZhDvHqONoL9zWv5FyizXKXAhVeCmd3xXRofxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102734; c=relaxed/simple;
-	bh=81aQ12LJNT5wUo68VRAaJIJg+Y08vkvRunN59IdJWVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCF7+Hz4IVd+bVwMmM8o8LBd4tE5QnsO2knZXwvZuQiwXDPu3AjXLUsjAZEKV2iSK2ASUs0dImFlB8icIz6oF1slsHrGfb/X19vdvr5xiC8yuUfTHiTMWTitEX5HXuzoSOaa/OcdhhYZfZLuZzGPAAn193wHVMGFVRUogv5P1+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IGxbWm/I; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718102731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b56Xo9cU8SJGzlzzEuOUM6veXq1e4lsaNn+mMTgMXNo=;
-	b=IGxbWm/IfohpWpWVa7L3Kuxe9Lyz37GhHQYiopFiPyyuYaPvlbUf2UnU08UAnY7lOWQVYP
-	7LYyDG7MuqwMrhINChf1zRR2N+IqXcxgblkcV/IPlc2NM49aSr0r6NEwkwKFZnoi0sgVdD
-	l7N6RPtKOrbyhU63+K+PIMcqIG3FJWw=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-375-9k5_0nJxMZO-V9g08kNJ1A-1; Tue, 11 Jun 2024 06:45:29 -0400
-X-MC-Unique: 9k5_0nJxMZO-V9g08kNJ1A-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebe4b327a6so7817901fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:45:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718102728; x=1718707528;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b56Xo9cU8SJGzlzzEuOUM6veXq1e4lsaNn+mMTgMXNo=;
-        b=V7iu8ueNPw7zoinBKLbUPuPjPFqNV8sKnktUyMVDR/H9ogaBxLSPCv9MMKqBLwmEJd
-         8BHsWmIOJAkzJp3cCKErCHGPXucAvjekBAahK68ArCKl/keWmGV5+yW4ti2yAwAzvF1B
-         YvB6qfCKwXTVkf0QEZ2ccUsRzXu2duQXNqQyvoKCJIHtnHl3eI8JTq5h0mzja2/oOhUW
-         wcaGInm2fZz2GjUyIjm9XavD9M83/Ci5mSB5f8ppzG4hxu3WDp7xtGc2s2Xbu8RWyyjW
-         DPfvcqeck6mGIf8+aCilJDhTFzqRZZLawsKbAzX2jBh3o1ujiU2sikm9JIWoT8egf8u5
-         qftg==
-X-Gm-Message-State: AOJu0Yyn1qXJhb/6kM0ylsc2oSsZ26twtYlx5RZJ+8ffrD5sBRtU0pwA
-	9iYKL/SMRGZrKxAGLvjCS7QJol0Rgd6diRtjFVJNOFW8Pkp2Uaq1+AABaIQU/dcYoo7RwFxd+hZ
-	Mo9CP5ZqehglL3k/fMLdzyZDphq5HrgMBD1qNUa9Qc16OmGkvhntSdcFLRQ5Kcw==
-X-Received: by 2002:a2e:95cb:0:b0:2eb:1216:1bb9 with SMTP id 38308e7fff4ca-2eb12161d9dmr60858601fa.19.1718102727843;
-        Tue, 11 Jun 2024 03:45:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjUlDwQt6XADfNCyrepf2O0SucKhyd8S8dEWEIGbCA71G2YroE72/KoE0CQZH2rSQ8sp9IEg==
-X-Received: by 2002:a2e:95cb:0:b0:2eb:1216:1bb9 with SMTP id 38308e7fff4ca-2eb12161d9dmr60858341fa.19.1718102726442;
-        Tue, 11 Jun 2024 03:45:26 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e567sm174033245e9.1.2024.06.11.03.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:45:26 -0700 (PDT)
-Message-ID: <68292d2d-c1a4-46bf-a3a2-7fa37fe6b4f3@redhat.com>
-Date: Tue, 11 Jun 2024 12:45:25 +0200
+	s=arc-20240116; t=1718102778; c=relaxed/simple;
+	bh=4TSoFH28pB7Lu+/lE2dCqcs0oPJH8qkuGmHC1tVnGC4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcNpgZQPBxsgIP77meq8NQ+KlcK5xakNQkrmkTzSUajqvp5+vkpOfd7mLeP3DEP0x5k8SvwqQHt2BF2n1HiH2jos2rzK5PqGIgibcEwoeyEi35gA4rnQw9oCe3geTsqQitpIUpQ52e1O8nz924QdFmfl5R91kTQcRLfCZCQr8CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hOU2iZ71; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718102776; x=1749638776;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4TSoFH28pB7Lu+/lE2dCqcs0oPJH8qkuGmHC1tVnGC4=;
+  b=hOU2iZ716RHX4AcynPgbl7r92GYBAhcl1ze0vwp6vg5IOcUpFZ/oqs2j
+   0xRpG+wIVpiKXvckHJcNQtSNX7B6wyWFadSoey4EqIM+CiB+uzLVqq/9Z
+   YSmubeKmKZRr0G/qltKJP06YNpQfBKJXHk0WD1P1jAtv5h+H7npcmG60o
+   NUPj5//xvXu6R/+LXpzNv2nUgITXUFBenVarXv3SoMJgNj1//+zzEgqxn
+   EAZx1/RUO6OergVrRmKPyD8M4jGMVykLhKUowyGNEttdiLNiQRCFJYXAR
+   Bkqu82J3GiihZsx62DTYxdv/RkaRLH6tPMP4z1uMk35tx5IhHSTzqJEdj
+   w==;
+X-CSE-ConnectionGUID: HKNdurkMQ2Ggz/eZHEil9w==
+X-CSE-MsgGUID: QrJi9OqDTUWo+/GXWEgcCg==
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="27263922"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Jun 2024 03:46:15 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 11 Jun 2024 03:45:44 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 11 Jun 2024 03:45:44 -0700
+Date: Tue, 11 Jun 2024 12:45:44 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+CC: <lkp@intel.com>, <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>,
+	<bryan.whitehead@microchip.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <hkallweit1@gmail.com>, <hmehrtens@maxlinear.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
+	<lxu@maxlinear.com>, <netdev@vger.kernel.org>,
+	<oe-kbuild-all@lists.linux.dev>, <pabeni@redhat.com>, <sbauer@blackbox.su>,
+	Wojciech Drewek <wojciech.drewek@intel.com>
+Subject: Re: [PATCH net V3 0/3] net: lan743x: Fixes for multiple WOL related
+ issues
+Message-ID: <20240611104544.pjtqkx4dhdnngpaq@DEN-DL-M31836.microchip.com>
+References: <202406052200.w3zuc32H-lkp@intel.com>
+ <20240611062753.12020-1-Raju.Lakkaraju@microchip.com>
+ <20240611071051.65e5n3bn7e4zm7lq@DEN-DL-M31836.microchip.com>
+ <ZmgEUrA6xM9vtDxD@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] fs/proc/task_mmu: don't indicate PM_MMAP_EXCLUSIVE
- without PM_PRESENT
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-References: <20240607122357.115423-1-david@redhat.com>
- <20240607122357.115423-3-david@redhat.com>
- <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <ZmgEUrA6xM9vtDxD@HYD-DK-UNGSW21.microchip.com>
 
-On 10.06.24 06:38, Oscar Salvador wrote:
-> On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
->> Relying on the mapcount for non-present PTEs that reference pages
->> doesn't make any sense: they are not accounted in the mapcount, so
->> page_mapcount() == 1 won't return the result we actually want to know.
->>
->> While we don't check the mapcount for migration entries already, we
->> could end up checking it for swap, hwpoison, device exclusive, ...
->> entries, which we really shouldn't.
->>
->> There is one exception: device private entries, which we consider
->> fake-present (e.g., incremented the mapcount). But we won't care about
->> that for now for PM_MMAP_EXCLUSIVE, because indicating PM_SWAP for them
->> although they are fake-present already sounds suspiciously wrong.
->>
->> Let's never indicate PM_MMAP_EXCLUSIVE without PM_PRESENT.
+The 06/11/2024 13:31, Raju Lakkaraju wrote:
+> Hi Horatiu,
 > 
-> Alternatively we could use is_pfn_swap_entry?
+> There is no new changes except "kernel test robot" reported issue.
 
-It's all weird, because only device private fake swp entries are 
-fake-present. For these, we might want to use PM_PRESENT, but I don't 
-care enough about device private entries to handle that here in a better 
-way :)
+So there is no change in the code, you just added the tags between this
+version and the previous one where the robot complained?
+Because to me it looks like you added an extra #ifdef in 2/3 patch.
 
-Indicating PM_SWAP for something that is not swap (migration/poison/...) 
-is also a bit weird. But likely nobody cared about that for now: it's 
-either present (PM_PRESENT), something else (PM_SWAP), or nothing is 
-there (no bit set).
+> 
+> I fix the issue and sent the patch along with other old patches.
+> Also add "Reported-by" and "Closes" tags to all patches and
+> --in-reply-to=202406052200.w3zuc32H-lkp@intel.com.
+> i.e.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
 
-Thanks!
+It doesn't say to add only if you fix the issue in a separate patch and
+not just for a new version of the patch/commit.
+Or I miss reading this?
+
+> 
+> Is it sufficient? or
+> Do you need to generete new version of patches ?
+
+Every time when you do a change in your patch until is accepted, you
+will need to generate a new version.
+Don't forget about 24h rule. That you need to wait 24h before you can
+send a new version.
+
+> 
+> Thanks,
+> Raju
+> The 06/11/2024 09:10, Horatiu Vultur wrote:
+> > Hi Raju,
+> > 
+> > Is this not supposed to be v4?
+> > Because I can see v3 here:
+> > https://www.spinics.net/lists/netdev/msg1002225.html
+> > 
+> > The 06/11/2024 11:57, Raju Lakkaraju wrote:
+> > > This patch series implement the following fixes:
+> > > 1. Disable WOL upon resume in order to restore full data path operation
+> > > 2. Support WOL at both the PHY and MAC appropriately 
+> > > 3. Remove interrupt mask clearing from config_init 
+> > > 
+> > > Patch-3 was sent seperately earlier. Review comments in link: 
+> > > https://lore.kernel.org/lkml/4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch/T/
+> > > 
+> > > Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>                        
+> > > Reported-by: kernel test robot <lkp@intel.com>                                  
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
+> > 
+> > I think you should drop the 'Reported-by' and 'Closes' tags because the
+> > issue that is getting closed is the one that you introduced in one of
+> > your previous version of the patch series.
+> > 
+> > > 
+> > > Raju Lakkaraju (3):
+> > >   net: lan743x: disable WOL upon resume to restore full data path
+> > >     operation
+> > >   net: lan743x: Support WOL at both the PHY and MAC appropriately
+> > >   net: phy: mxl-gpy: Remove interrupt mask clearing from config_init
+> > > 
+> > >  .../net/ethernet/microchip/lan743x_ethtool.c  | 44 ++++++++++++--
+> > >  drivers/net/ethernet/microchip/lan743x_main.c | 46 ++++++++++++---
+> > >  drivers/net/ethernet/microchip/lan743x_main.h | 28 +++++++++
+> > >  drivers/net/phy/mxl-gpy.c                     | 58 ++++++++++++-------
+> > >  4 files changed, 144 insertions(+), 32 deletions(-)
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > > 
+> > 
+> > -- 
+> > /Horatiu
+> 
+> -- 
+> Thanks,                                                                         
+> Raju
 
 -- 
-Cheers,
-
-David / dhildenb
-
+/Horatiu
 
