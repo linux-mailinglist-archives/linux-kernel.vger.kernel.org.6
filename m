@@ -1,164 +1,206 @@
-Return-Path: <linux-kernel+bounces-210065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B72903ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFCB903EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A1B1F21C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5F21C222AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A817D896;
-	Tue, 11 Jun 2024 14:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EE617D8A1;
+	Tue, 11 Jun 2024 14:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+8SBmXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qkJSIL/6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE9617D890;
-	Tue, 11 Jun 2024 14:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718116230; cv=none; b=BT6G/dKxlfziz2zS0QXn6bAcr5AlzKGw1hJS4GiZaEUsuT9m0ZE0LEqgML/nWNN4P3ePNKWDrDsJbabIUmnCL8iqvysWU9R/7nkuw+h6EMWSSYrMlmVwE2n1VLrjLWygsl+Ej7lVg2hg4viyeItVEZWTWpec8KK9O7QopWzPREQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718116230; c=relaxed/simple;
-	bh=+hg6mwKUT4FXKccgfxs6KTWJDqOAp3AVHYpeZy7+Brs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dmk/mMbE2EkzxBWeUKs7b7FPvKoMqztyE6/uJ6r+2UsuEDeGfJpKdstqOsS6BfHtNjFAFxVDL774dJrMHoZ4pEPS2fUmXGIJzVAC5Al8cn5B3AbWi1e+s2hw2pSydDLS1OV1nXn0jX2CIblQLL2/ej/qNvA0p94rNkcNQuArtr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+8SBmXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73981C2BD10;
-	Tue, 11 Jun 2024 14:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718116229;
-	bh=+hg6mwKUT4FXKccgfxs6KTWJDqOAp3AVHYpeZy7+Brs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E+8SBmXg4kHbc2+kE5VdtOtyIigM64Ao0eLalvYBcyTz7+feUFW4RpyhNl09KCg+u
-	 G8qnxEPn98CKmOUDRIg+qWyUHuPAueaR63ZY7qBzjjSCAEsZ8Z4ncDiVQhOx8jQjP8
-	 WYU5EQIOBHZz85f5YNImLAba2Yh1ieUPH0M4aePuokdD2QdE9Z95LGGpFmHkYdUvty
-	 pV1FJYWQlqxmz3mf96bTtEBIFGnOQ4DlkwWF2Z4L9hXld3wLCKGY9LZVbV+EWUxrh2
-	 JoXDvFEGfN5Ckx9lAVTx7FaZi4DkiQe+PgQl0tEbqXLK/QNJeXmDNl55/x7cPamngA
-	 dzkYxoJ6jjFgA==
-Date: Tue, 11 Jun 2024 23:30:22 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Alejandro
- Colomar <alx@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, Song Liu
- <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
- <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo
- Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta
- <debug@rivosinc.com>
-Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
-Message-Id: <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
-In-Reply-To: <20240611112158.40795-10-jolsa@kernel.org>
-References: <20240611112158.40795-1-jolsa@kernel.org>
-	<20240611112158.40795-10-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF1B28E37;
+	Tue, 11 Jun 2024 14:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718116323; cv=fail; b=gDIaYbkBvyjr9wWHQFeuZujk5LrLN8ggfSm6BNNJJzCnsgp8m9EqzdIyLCsVc/Jtf62AAiRY9ihon6KbsvNt7Pd4a45bdp1wifjbJak+xvxJcgqOBz/2QQgeTb7P6YgBf1jx0aBaYvhzrlKYmN56bbL2Ws8a5vE30zecfWyA+BI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718116323; c=relaxed/simple;
+	bh=PrMt0/hjzn7znGNzT4sz0rQlysfM1y4RMI83w6wY7sw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ozlLglcWTEK1vIILJte1ryiz2iOCNmLAv2CZ30n/fYPA34jmX2RWZczul3sU1j6Ws5dxgcu5lzYY3sppB/G15+8aFrnQ61qsQvAfrVPs4d7GQL+pykAfjSvtkEtxj5gI+nrvMhHnMhRv0QKTWz20wCAjpOWqf/Ku7mHlFtV28ok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qkJSIL/6; arc=fail smtp.client-ip=40.107.94.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ghENoGSpS3NXks22v1vP3wuSH5PyylgAx2a9Nn103JJfAdaIifN/aS/orVqfoVsbpNKSNiA49o8SQLcciz3wYo/a1pXXjGlDcjnqVBKFKsa508WHOxUw7Ot9J9nFVgRdzlQvAF+ED2p4q+d3L9tFwUSFbz04JGii52zmrcyoYwBOejB0AApnusyOqebd308xG05SqUNN0mxPCjtW3+7LyL0ydVLaKiuuVXPVz/A0Lq9x/7JBaHFASai1BKv9fCq12kr6dvHHyPsM/c85mnIMb7qIC0U6NXPtKdt45uGSkN1krK4FnJMHyLfTkXYJ1scLY1BsOWqHokzDHoC818y/rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PdATHg0HYKLiNZz2aGMGFHgQZ6dnFttHZVh0bw0sn6c=;
+ b=LMITwYwefWB4PE5jBSx8qGqrbCH1eIr5TdihDT25Ot1t8rwjux2K56ujL51bzaWHL/uQTp82equHo2Y+hra908mEBjIlGomM9GlI6BKKuPEH38vs5nGG/38lHSZs/kA/t5op/ZXkNnCFmhEbhuh4Juqcg5ryRVE52Gdq9uX2uKRACWhH/lz0XyrpDJD8lh30mt2KnFixxBDMxtl7CozefP+oNBjkEVg/r8eacXEAm4VNn5VCULuzDdREl59hfvFTChUP8dkwE2OR+Sb/7m6TFTSc8HooOdCqp16b6M0iSj1EPo6ZNZuSScyuPeDMyPujLcZF87VedgN1ErmnoMRCMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PdATHg0HYKLiNZz2aGMGFHgQZ6dnFttHZVh0bw0sn6c=;
+ b=qkJSIL/6yQL3voNOrcZMq1C9vx9Xcm2QJ0meSmYuKYYQj5mKtVsX4es7aApJ3Cmo3pLHA6kS1Z6ajmFzsCjTSzp6HB9ZpODtuAxe+UqQDu6Ba2nKHwYUisiuZQvu6HX9eyZu6yhBAU4A+DKsmSK1XrTdsFOMlf72TXVguKp6nB0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by IA1PR12MB6138.namprd12.prod.outlook.com (2603:10b6:208:3ea::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 14:31:58 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 14:31:58 +0000
+Message-ID: <e41fd460-6b50-4792-9328-3eda370672e4@amd.com>
+Date: Tue, 11 Jun 2024 09:31:54 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/10] x86/cpufeatures: Add feature bits for AMD
+ heterogeneous processor
+To: Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>
+Cc: gautham.shenoy@amd.com, rafael.j.wysocki@intel.com,
+ viresh.kumar@linaro.org, Ray.Huang@amd.com, Alexander.Deucher@amd.com,
+ Xinmei.Huang@amd.com, Xiaojian.Du@amd.com, Li.Meng@amd.com,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718095377.git.perry.yuan@amd.com>
+ <7a2817ce6e8e6a2787bed8285dba8d81423d8414.1718095377.git.perry.yuan@amd.com>
+ <20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DS7PR05CA0092.namprd05.prod.outlook.com
+ (2603:10b6:8:56::10) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA1PR12MB6138:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0583cad3-5881-4dde-8a78-08dc8a233fbf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NHpIQ3RIVEw3N3JETTdQUFdlT1UrdDZuNmY0a0s4cFdWSy9NWGd5akJ6T2VS?=
+ =?utf-8?B?Z1o0MkV5OHlNNlEyWkpMNWRad3V2ZmxheC9IMkkxbmYwb2VsbVpoRDJJczJT?=
+ =?utf-8?B?ckhzVEo4K2xrRk9EeWU1dy9jcjMzUTJaUHZOaFFSSDJZNjhoQ2xpVVF6Q1lq?=
+ =?utf-8?B?SG40UTBGQmVDd1JuU0hSS0llMGh1T3VndHJDMDZBN1RNZ25PQ0prMzlmYnNR?=
+ =?utf-8?B?R09vc0xXSnNIcFNFMWQyYzBmRHBMTjBXMCttLzBrSVBVRklmaGphNk8rbFdH?=
+ =?utf-8?B?bzQrT0lUdGN0TEVNbUxjZkZjckxoVUhJblNxMXpHOTJteENhMnBmaUc0MHBq?=
+ =?utf-8?B?VVRVOU5seXZMdVpGL3Z4c01LalpYS1F4WUdQbWdyT2NtNXlIOTl4VjN4Mncz?=
+ =?utf-8?B?VG1MQzF3M3pBSGo1bCtIbFk0dDdoM2tHM1RlekFKaitFS3FYSnJpSHI3QzdL?=
+ =?utf-8?B?R2dMSFZvbERBK09mMUJiaWwva055MzZ4NlR3UmZJVUZaWXEvZnRtYUlmUEFI?=
+ =?utf-8?B?ZElQNHhLNm1uTnEreXNtZXU3U1ZKcitMTkF0OHFRUHpZYXRSUzJEQ0ZjR2VG?=
+ =?utf-8?B?VUhRNnNFTnlNOXp5dmtHQWgvZG12dVhIMklxSkhad2dqTVRTaGR6d1duQ2lj?=
+ =?utf-8?B?c05FUnR4bnFiU244QTI2MCtoYk9lYjd4bkJweC8yS0JsTlhMTE9saTd5b3My?=
+ =?utf-8?B?NFVib2VqbEZhWlNlVHRlSHRxWGdZM0dQelFCcm05WlA2OUQ3QkI5Zml6SzV0?=
+ =?utf-8?B?S1lvVTZIMWt6UE5qSlR3K1VwUExYMGhlUDVmSnJuMmxXd0ZiakxQTVN0QUIx?=
+ =?utf-8?B?RVVSU0t6UStNNFNuaFB6eG9ESDA0aEhtbEliRGhibXpxanp5VjNPYXVQOTht?=
+ =?utf-8?B?OEt1WjBVcG84OTU0RFN0NTBtbzJmd0RMQmNQQXExSlRkSkN5eVU3eWNzdXQv?=
+ =?utf-8?B?K3UzOFlMc2c5N29oVEZJR3VZeXF4NXhQMFd4M0lXb3ZDZXFhZWVVQUNHSDJS?=
+ =?utf-8?B?UnlWbUtrOEtRWGxjOTRreEJIZWg3eGJkYm1jcFJxZFlsS2JQSXB4R0tQa2tN?=
+ =?utf-8?B?OWpWZ3NDaHRjMWNrN1VCSDNONTFtdGVDcWdrcDNrVU4vZWVMQjBtSmptSnZH?=
+ =?utf-8?B?MlhqQ25ZaEpQeFBBeXFBWno2dVpkbnVQa2dVSGdwS1RYV0d0QnpMZ2ZRWjhR?=
+ =?utf-8?B?MVF2Ti9lYlVOTXY0a2IzdWd2d3IzV2I5T2YyRFFvZFpZTjlEZjdwZGY2VHJZ?=
+ =?utf-8?B?aVplZE5yOFVhR3hnM21QUVB4NjlZdWxKdmQvZWkwQklZM21YZnpMbTRLeE16?=
+ =?utf-8?B?aGcrOGVBMlVQM3Q0d0pJcVFiekxDSmlUUFRmYjlyakhUL2JGTnlJNDQvUEdw?=
+ =?utf-8?B?bUhvSHJPMGNiUHpKSjZ6YTZieU1rMTRzL1l1RmhGWTQweUlORmoxa1ZUeC84?=
+ =?utf-8?B?TVNuY3ZkZGFRSG9hQnljK3h5WDRZbnNBc21XVlg2Ti9HWG85aW93K2l5eGpx?=
+ =?utf-8?B?QUFSTlVKWllCYW15cXNTc3IwMXVYSXRIZjJIdDFmK2p4ZmtvQ1Fod0hXUkUy?=
+ =?utf-8?B?ZGJUNTQraUdNUkVkR0JzZFhJL251ZWh5VkY3TDBYR3N2L01ycHdYWVVHbmxn?=
+ =?utf-8?B?VUFiWU1VNUkzNVpzZlZUT1cxdXBuVmEvK3pjdUNTSG1WcFEyR20rcjF5Z2Nx?=
+ =?utf-8?B?T2RSVGxkek1wWG1TaTNEbXVpSHAvN29FSTVYUGdQUVpiRkhPeFo1TFBsZWNo?=
+ =?utf-8?Q?eC2sqBERr/9GImUQjLQvJvDSj6YgSeTydDVY34u?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MjhUZ0lFRXdsQTR6MHV6R29keFo0SDRJUVBha0h0NFlneGNKRFpYejB3RVJj?=
+ =?utf-8?B?VzRMdzRWVi9ITUZ1SGF0bFFxZ3FYMmIrK1JqdUI0cVRxNWJiUDREdVV3SWUv?=
+ =?utf-8?B?cGlWcVdIRHB5cjMyRXQrMFFwNGxBZGZIZDZKVmtnOVhSbzdDUkVFcFdpMzhZ?=
+ =?utf-8?B?VGtFZVFJYnc4cVUrUEp6RTNBa00wZ0pQVHFob2V1MFRUNXpoRWlVU0g0cVFh?=
+ =?utf-8?B?MDJkSjdjcHJoS0ErZS9rZ2lrWEZvZHRZUC82aGExNUZOU3ZUZWFJL0R4VU9H?=
+ =?utf-8?B?SkhYWWdpdVA2YktPM2YwQ2lxbDgrbmJhQnpvbTFQOVZVRldEUHRzekRkQ05O?=
+ =?utf-8?B?RFMveThtRWV1clBQNGhPeFRtV0crWVM1SldBRlBneFhEcHNFb01ieHdDSkJT?=
+ =?utf-8?B?aGc0RG9RM0R6aG9wS2JCd2R4UFVsVVcydlA4S1BtNWp1QVVKckt4cE1yWVB1?=
+ =?utf-8?B?R3NmcnZUd0wyVTQ3Rk84VDhScFVPdXFOVGZDUStrRlNHeHhLY3NSbWxpQ012?=
+ =?utf-8?B?aU1mN1JxaGk0SUcvSTZVeWNidlZKZW1hVGJwNFB6S2V5NmY5NDk2MW0rRDhj?=
+ =?utf-8?B?OEJ3Y1ptQXpkdlMwSXZCTUJSK0liZFhKRi9rMlJQdGpIdFlwb1orTlV4RmpB?=
+ =?utf-8?B?Y1RUTy9OM3doRDgyMFpiL3kxY1RTaXJLQ3FBTFo2UDFUYTNzbDJZWG1TZlg0?=
+ =?utf-8?B?K0FDcW9lWkFIWG9FU0FqWTlvRUwyakltbHlmaVBXWW5saEUzY1dFY3VKU1lZ?=
+ =?utf-8?B?b3IrV0d4SnoyY05RanE4ZG84eXBYbXowanUwUWwwMmNuczNBbElIVGNuVU5B?=
+ =?utf-8?B?V2lKZDV4VXl2V3lSQkI4WVcwVm0xc25IOHpaWHBRb05TdWZpcWNoVGVJeUhm?=
+ =?utf-8?B?QlhReW5kaFpoNEl4OXg5N2JBK0FKS2VrKzBYcGdxWVNEaHNhWnR0Vk42bU5Y?=
+ =?utf-8?B?M1RFUWtIQTE1dUtKKzVJY0ZmUUF3aG1xSUF4NGRaRERrUW0xcjNBR043YlNm?=
+ =?utf-8?B?QUJwRzNIUlBQd211SzFKWFpaTlFwZS9CVlJCMnRIZ1BmbGM4R2RJZE9tcnBx?=
+ =?utf-8?B?dlREcXc2THkzaEVoYk9oYm5pcUxNbmI5cFpDekZKYmt4S3FyeE5sbWtTRHNS?=
+ =?utf-8?B?SkZZeVRwUkJNRnd2NzBXMmlpdGZqanMrd1BRRVB1bndtdDRpRGlNd3BzRXp3?=
+ =?utf-8?B?ZVBuSnVzYUE5a0QzWWlnOGZSNUxyNTFTN3JzejdLam5QbXRpN2xEYUl5K0N4?=
+ =?utf-8?B?dmVaaG0rNEsyVTl4T2FPQ0xjRzFWSmR4NVpYOFpCUDJDT0dNT3VmU1BpSFNv?=
+ =?utf-8?B?Y2Y2SUI2SmZnWEFVeFVpc2lZakRkNjRYWFdFc3Z4ZlRtMFJDRHlpYyt4Vnhx?=
+ =?utf-8?B?N2xlbFdGci9kSGk5NG5jWm5DU3FlRzhnK0RqbkNRRU0rTVB6d2JRY2hDcmQ4?=
+ =?utf-8?B?dEFCL2orcmE1RGlkZHBJZE1FVVV3RFZGSk1mcjkzQ0ZJNUxEV2x5RnN1V0JS?=
+ =?utf-8?B?K01rbVpQK2lPalZINEc3VVJhd2tMeWdlc1MwQ05ZWllNdlJsZ3BLRjBHSEFm?=
+ =?utf-8?B?TEhaN1ZHamsybm82TDhVdUFPODc1QU1TcFFlZjBuNG9XU1ljalZlaE13bWI5?=
+ =?utf-8?B?UG5iTzh1bU8zOTRBRU1pQTA3RVUzODcvWmpKWWM3YzAwTnpxeklydVB3S0pz?=
+ =?utf-8?B?bUVPcEIwbEs3NlEzc0hHTk1jU0JHVGdnN3lEN0xMYlN3dUtOaW5oNGRzNHlu?=
+ =?utf-8?B?c3dzQ2dSUzVvbDY0WWk4Q1Y2cytMVDhycVhZcmMvaDFpY095ZDV5R1hibXdz?=
+ =?utf-8?B?VldZNmxHSDd3TC9INE5YVXJvNjVZY0lHdmhuK2FBUVQ3LzNLcXJWaFVsdUtH?=
+ =?utf-8?B?bGIwOEQzNldvcUwvNVlkVEJoNnFHbzZpOVFZa0hhSVBCSGNsNERZc3k3aGhR?=
+ =?utf-8?B?dWdraUd4N0pQWWtLY25hdVBiVit2cFRHR3FoRktqdm1pdHd1WlMwYVRkdFlV?=
+ =?utf-8?B?eE56R3NONFJsQmNQYnVuaVMxRWwxdG16c3ZBTFFZTUY1bHlOT09MWloxOW9F?=
+ =?utf-8?B?RXRRSVhnc2tubm5kZWhSMnZYYkZXSlVNdmpOeUVLUDdPSjdDTDJOZXd3ckFp?=
+ =?utf-8?Q?Ko1WKGTN4h/N9PVPokgd0/03I?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0583cad3-5881-4dde-8a78-08dc8a233fbf
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 14:31:57.9533
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: loW2nlca4860bHlmSegDVqq4gNt5UlaFYtWnO3jWPqYz33wnKG6JquH+NxhDFTcsGRGuwRBn9SCeisd9B7Py0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6138
 
-On Tue, 11 Jun 2024 13:21:58 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
-
-> Adding man page for new uretprobe syscall.
+On 6/11/2024 05:52, Borislav Petkov wrote:
+> On Tue, Jun 11, 2024 at 04:52:24PM +0800, Perry Yuan wrote:
+>> Subject: Re: [PATCH v3 08/10] x86/cpufeatures: Add feature bits for AMD heterogeneous processor
 > 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> Reviewed-by: Alejandro Colomar <alx@kernel.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-
-This looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-And this needs to be picked by linux-man@ project.
-
-Thank you,
-
-> ---
->  man/man2/uretprobe.2 | 56 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 man/man2/uretprobe.2
+> "... Add a heterogeneous core topology feature bit"
 > 
-> diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-> new file mode 100644
-> index 000000000000..cf1c2b0d852e
-> --- /dev/null
-> +++ b/man/man2/uretprobe.2
-> @@ -0,0 +1,56 @@
-> +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +uretprobe \- execute pending return uprobes
-> +.SH SYNOPSIS
-> +.nf
-> +.B int uretprobe(void)
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR uretprobe ()
-> +system call is an alternative to breakpoint instructions for triggering return
-> +uprobe consumers.
-> +.P
-> +Calls to
-> +.BR uretprobe ()
-> +system call are only made from the user-space trampoline provided by the kernel.
-> +Calls from any other place result in a
-> +.BR SIGILL .
-> +.SH RETURN VALUE
-> +The
-> +.BR uretprobe ()
-> +system call return value is architecture-specific.
-> +.SH ERRORS
-> +.TP
-> +.B SIGILL
-> +The
-> +.BR uretprobe ()
-> +system call was called by a user-space program.
-> +.SH VERSIONS
-> +Details of the
-> +.BR uretprobe ()
-> +system call behavior vary across systems.
-> +.SH STANDARDS
-> +None.
-> +.SH HISTORY
-> +TBD
-> +.SH NOTES
-> +The
-> +.BR uretprobe ()
-> +system call was initially introduced for the x86_64 architecture
-> +where it was shown to be faster than breakpoint traps.
-> +It might be extended to other architectures.
-> +.P
-> +The
-> +.BR uretprobe ()
-> +system call exists only to allow the invocation of return uprobe consumers.
-> +It should
-> +.B never
-> +be called directly.
-> +Details of the arguments (if any) passed to
-> +.BR uretprobe ()
-> +and the return value are architecture-specific.
-> -- 
-> 2.45.1
+> not "feature bits"
+> 
+>> CPUID leaf 0x80000026 advertises core types with different efficiency rankings
+>>
+>> Bit 30 indicates the heterogeneous core topology feature, if the bit
+>> set, it means not all instances at the current hierarchical level have
+>> the same core topology.
+>>
+>> For better utilization of feature words and help to identify core type,
+>> X86_FEATURE_HETERO_CORE_TOPOLOGY is added as a few scattered feature bits.
+> 
+> This sentence is not needed.
+> 
+>> PDF p274
+>>
+>> Link: https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf
+> 
+> This link will become obsolete, you can say instead
+> 
+> Search the web for "architecture programmer's manual volume 2 system
+> programming docID #25493" in order to find the official document.
 > 
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Another option is to upload it a non ephemeral location like a kernel 
+Bugzilla and link to that.  I do recall there is a bug already opened 
+for this purpose in the past.
 
