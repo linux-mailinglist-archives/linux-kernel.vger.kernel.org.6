@@ -1,293 +1,153 @@
-Return-Path: <linux-kernel+bounces-209552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7F090379E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:14:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218079037A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8111F23331
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:14:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E967B29EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18DA176AA8;
-	Tue, 11 Jun 2024 09:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4645A176AD4;
+	Tue, 11 Jun 2024 09:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HuVbkQEP"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILY4VEQl"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDCD16F8EC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC017624A
 	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097262; cv=none; b=dlXfzfxpkS2O1ne/44ggztrVmp8P1SLcC7yC9uwctAVLUjAtANcIL+uNfY+mcBS6emoYH+y3YuVmHGW9y52XXV3eQK9EMY3t6xOAZ2DIe2cBsBnWDPWAW4v8j5AIG29PdV06AA6I1VNu3S877+MVitd1rkJ4IaUo7co6ghXw/II=
+	t=1718097263; cv=none; b=mjogV+1yp5xMhj6kV317eB4obviEz7PX6EPA3TbHCrdqtWHpFCUYmIl3dLX+id8y9zOnsqQPSY5Emuhqo5lOx6O/Suyxne8bbTc2OLQ3NgPnjD4gDaogUwxX3C9cwqrPV2tu7RchJpmthR9EtTTa+eBDES1QRuy0aVWX4zt271o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097262; c=relaxed/simple;
-	bh=HfgAS0KSFZ7V+nAXdxzcCjVbvqyqtkxFmdMkxpbCKXo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hZLCACCEMMt/RzWNBCNtEd2aoUhOPMxSZ0CV+eAw1pQwaLdrfgGtzVo2UR0EjfIJ2Lr2sfwyDRzCri/0zOVz6Ects6dViHW5cgx6gdefNJCAn4ibmUsX9+J7APYTnQBig2Sl/kMkThezlkV4pLqxB+QNacnhbreTG7zRSVqbSGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HuVbkQEP; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-627f46fbe14so10210117b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:14:20 -0700 (PDT)
+	s=arc-20240116; t=1718097263; c=relaxed/simple;
+	bh=p3x3s+/tNrym5mIRofuIo7OsTZNSLkXI8ke4t4M7k2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srH+jkAgnAZHQRjp4KPxOBaFAqy0J7EofYdcuLIyatKLB1GngNArPstsmoN5A1OoCBvVZSBeDE8GwU2n1n1Gz7zaGYno9E8CFVSlfUu/l+PnwH+MyR0v8MpWrCk+rq3CMKyV8Wvv12sVPSrKEuVji9C59OlV3iEUO7iwCeqWudw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ILY4VEQl; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc1261e8fso4124789e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:14:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718097260; x=1718702060; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqcTAILBWMoM2RnR2kpmmEiseDcW1gScP97iUYXzTvE=;
-        b=HuVbkQEPEiVMw2WJR46uiv1oiAZ+UDMBrtIYTz61egHfDn87WurtkJHTYPdovXtcTe
-         BWi973lUGaCCpjEP3bEVE1pR2oWhP3dhApMzSD2Sc6z7IaFlLi9Mr9ae1pVbewwiambb
-         dgroOmp1GU0+nzmv/bcDtmmR1SXvs6f3dcN7ym67yNDvGTqo6ZH+pUK5rngbGnxPeyb3
-         lGxNccFAunk8Cr04yz8QpGl9zkuv38b8FRYHsxHr3MteytXuT9PWZVgsIOy9BuzasxJ1
-         8xhW4yryWZDVTGrNLXrevkRKDC45ksp2v5oMraNquAAD8EbqiCsAFUZyy/Xg6jE68gGg
-         ED9A==
+        d=linaro.org; s=google; t=1718097260; x=1718702060; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TXwtuKTEZj6Au0WA9Vu6/LZbbPfCoRx0dnIuFjmYP8=;
+        b=ILY4VEQlkihGnyETYtxlQs2GhP/ZIawhy6tNIfLpBOhuIDPlhijiUwBdcjhvMRXp0i
+         UdZJNRNO38SwHs8CCy7256XAoERI4/G/zKcrTdS7zPNMwDUqyZi7zxc3fQJOFfVe6kn1
+         Zii3GfxMkDgWeaA/lF2Wm4+ldJO11zrtZ+cZEHHc6YVQ6d8hGuG+XTGxOC0zvhbQ830Y
+         T71wzXW6YKaeW29lwQ+c4WxUWq1MVAHmMGdTiQ96JP61jzLEuA81xql94HhLy0wbOpew
+         Shu7gPmcA1xqe37rsOTE3NzvLLfjE6I4bMDZjFgMsXdfQlRCxjNpNPLHx3iMKfBAiRIu
+         YBlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718097260; x=1718702060;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqcTAILBWMoM2RnR2kpmmEiseDcW1gScP97iUYXzTvE=;
-        b=XbPlhwQp+AZAFhnt3n88EKIO/M4Sgd4ZC0MN5NRn7yDO4Bk1GHjfV4KEK+eQmFqTLu
-         4uDyVguKmJ4+Er76+Jbe7uPtP4YWX+ZALBPa6xQltI+NeFsgNCyiyhnLrem+286UQUuV
-         WlwjoGh/po9BW0iFNQyTjSOphCjP+1rQAtjBONhkkS6InTCss5WZjJVqm4+RuTMIbxcY
-         ZycqdQhvzSByo7ugN4gEAYtbtMEemW/tJYeqiA3e21daTotxNrB4xgfji3Cx95scc7Go
-         17O/kt3EtyvREoU3ySIxMKWI3QFl4BHOrL0ybZZCXQoA/c0C06u1IigkpJ3AgnkoAUGb
-         /x4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUto42dirnpLzQ6tfuraQ2Uoa1iIVy9gu+1Ks52Wle3C3moQGYpHOraMxJUz0B1EAlz0ofTaAWwg/fEIJ0ZpwGBIlrtidT47EqbIHST
-X-Gm-Message-State: AOJu0YwgT7vlnr+I58IPR+iGi1iZ5g5VohVACpknItPOM38if/poPVEJ
-	IXAXrYNz1o5j7JZ66epaStHOLCyTmRAZOFv5hFAujEHfsthpnB1W44hIMwa91w==
-X-Google-Smtp-Source: AGHT+IFsGRjvigUxgTTtTqGgMnNIg8YFES6i9HDNADq5rjt43maW5TChLkUemeXXADRcsznTywdH0A==
-X-Received: by 2002:a0d:c782:0:b0:62d:a29:5384 with SMTP id 00721157ae682-62d0a2954a3mr52702187b3.43.1718097258846;
-        Tue, 11 Jun 2024 02:14:18 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccacade03sm19192037b3.27.2024.06.11.02.14.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 02:14:18 -0700 (PDT)
-Date: Tue, 11 Jun 2024 02:13:59 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Yosry Ahmed <yosryahmed@google.com>
-cc: syzbot <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com>, 
-    akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
-    syzkaller-bugs@googlegroups.com, Hugh Dickins <hughd@google.com>, 
-    Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org
-Subject: Re: [syzbot] [mm?] KMSAN: uninit-value in zswap_store
-In-Reply-To: <CAJD7tkaTQU1Kxt935fmq+_BJd-VT6vKFj58o7Aq+QhoyrOtCmw@mail.gmail.com>
-Message-ID: <02a21a55-8fe3-a9eb-f54b-051d75ae8335@google.com>
-References: <000000000000d0f165061a6754c3@google.com> <CAJD7tkaTQU1Kxt935fmq+_BJd-VT6vKFj58o7Aq+QhoyrOtCmw@mail.gmail.com>
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/TXwtuKTEZj6Au0WA9Vu6/LZbbPfCoRx0dnIuFjmYP8=;
+        b=bvTOY88ZYi/TTO08lC3I1jDXwYp6AG3x5gQzCOjVLopVCANd1VFZWpEgkjtG4Ec4xz
+         yuPPIceGaZPVUpteq5+6ocJBlrx8N1MYYjkydywmSsLLgYkSz/etc8DQZNpAC7UmrIuK
+         e089+4I0zOA9vXqbtwBkBd2TMSvArzsgTdCHVIsbr30APLuLjz60sj+3hnX7KyYVMtEP
+         sFXizvFBwHes4CvlzDHfiR0ZzP6CT+rlVtvN52vTzj5jdgKnfNajOsV5ukyqhwziOQy0
+         BjyQTAf50BNao36lgSl8IciUCwzcxHD/mLdx4trKD04mm+/nZCHDw7+c4xedm/TU2Q7j
+         Fd9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0ln+PTCizEn/rhRQoYnqM5rGHnbbYAXjHe8RVis/T3ObRijhBczTX4MztKJk3KBtU33fsudOizfxRNJMhlsnqSYKvkZ9vCbRJrwvW
+X-Gm-Message-State: AOJu0Yy5s3q145Cwk8mSnOnqGKlOAKolEX/VBL2UtQ5PAJToc7Vs4lA9
+	XnKFetRg0FfaZKDSKL0OXDqGSAd/fPx+jV7lXLIZcuIvFUPyJUE+rypQe4RWSwg=
+X-Google-Smtp-Source: AGHT+IEtTVGukRTZfWCidMon/sDVDeg4VJKJjpcsHo2ctc7b2+XZN6hz836P6S+mfu7mdIMK9tQk/w==
+X-Received: by 2002:a05:6512:3d0b:b0:52c:836a:3db8 with SMTP id 2adb3069b0e04-52c836a3e68mr5771381e87.15.1718097260124;
+        Tue, 11 Jun 2024 02:14:20 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2024b1c8sm6114658f8f.39.2024.06.11.02.14.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 02:14:19 -0700 (PDT)
+Message-ID: <170c14c9-e1c7-4252-a550-4f9a8cef3a27@linaro.org>
+Date: Tue, 11 Jun 2024 11:14:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-1445972292-1718097257=:2984"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463770367-1445972292-1718097257=:2984
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/2] leds: Add a driver for MP3326
+To: Yuxi Wang <Yuxi.Wang@monolithicpower.com>, pavel@ucw.cz, lee@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ wyx137120466@gmail.com
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Jun 2024, Yosry Ahmed wrote:
-> On Sat, Jun 8, 2024 at 2:09=E2=80=AFPM syzbot
-> <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of gi=
-t:/..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D113f3fd6980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df5d2cbf3363=
-3f507
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9c1fe13fcb515=
-74b249b
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/d=
-isk-614da38e.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmli=
-nux-614da38e.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115=
-/bzImage-614da38e.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com
->=20
-> This doesn't look like a zswap bug, and perhaps not a bug at all but I
-> am not sure. Zswap is reading the data in a folio to check if it is
-> filled with a repeated pattern, and it is encountering uninitialized
-> data. I am not sure if this is expected behavior or not.
+On 11/06/2024 10:32, Yuxi Wang wrote:
+> Add the binding description and the corresponding driver for
+> the MPS MP3326.
+> 
+> Signed-off-by: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
+> 
+> Changes in V2:
+>   - Fix patch format error
 
-I agree, it doesn't look like a zswap bug: zswap is just following orders.
+Only this? So all other feedback - like 10 comments - were ignored?
 
->=20
-> Could it just be that the size of the data written by syzbot is not
-> divisible by PAGE_SIZE, so part of the final page is left
-> uninitialized? Do we keep the unwritten parts of a shmem page
-> uninitialized by any chance?
+Sorry, please go to previous discussion and implement entire feedback.
+Then document in changelog what did you do.
 
-Shmem can keep uninitialized data pages around, but should be zeroing
-what's still uninitialized before it can reach the outside world -
-in this case being written to swap.  I don't know of a shmem bug here.
+Best regards,
+Krzysztof
 
->=20
-> Hugh, do you mind taking a quick look at whether this is a real bug?
->=20
-> If this is expected behavior, perhaps there is some annotation we can
-> use in zswap that it is fine to encounter uninitialized data when
-> reading the folio.
-
-I've not been faced with a KMSAN report before, so I might well be
-misunderstanding its language: but this looks like an ext4 "bug" to me.
-
-I think the story that the three KMSAN stacks are telling is this:
-syzbot has an ext4 filesystem on a loop device on a tmpfs file (I do
-exactly that too); ext4 is doing some ext4_xattr_inode_write() business,
-in the course of which it writes back a not-fully-initialized block to
-the loop device; shmem faithfully copies that data into its pagecache,
-then later when under memory pressure that page gets "written" out to
-zswap: where zswap_is_page_same_filled() takes an interest in the data,
-and KMSAN objects because some of it was not originally initialized.
-
-If that's a correct interpretation, then it's probably not a big deal:
-it's probably the uninitialized end of a buffer that's written out,
-not any part of the "disk" which ext4 would ever show to a user; but
-I do agree with KMSAN that ext4 would do better to clear that area,
-rather than accidentally storing someone else's super-secret info.
-
-Hugh
-
->=20
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > BUG: KMSAN: uninit-value in zswap_is_page_same_filled mm/zswap.c:1481 [=
-inline]
-> > BUG: KMSAN: uninit-value in zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
-> >  zswap_is_page_same_filled mm/zswap.c:1481 [inline]
-> >  zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
-> >  swap_writepage+0x126/0x4c0 mm/page_io.c:198
-> >  shmem_writepage+0x1826/0x1f70 mm/shmem.c:1518
-> >  pageout mm/vmscan.c:660 [inline]
-> >  shrink_folio_list+0x4a55/0x7910 mm/vmscan.c:1323
-> >  evict_folios+0x9d7f/0xcc20 mm/vmscan.c:4537
-> >  try_to_shrink_lruvec+0x160e/0x1a50 mm/vmscan.c:4733
-> >  shrink_one+0x66f/0xd40 mm/vmscan.c:4772
-> >  shrink_many mm/vmscan.c:4835 [inline]
-> >  lru_gen_shrink_node mm/vmscan.c:4935 [inline]
-> >  shrink_node+0x4856/0x55f0 mm/vmscan.c:5894
-> >  kswapd_shrink_node mm/vmscan.c:6704 [inline]
-> >  balance_pgdat mm/vmscan.c:6895 [inline]
-> >  kswapd+0x1eba/0x4460 mm/vmscan.c:7164
-> >  kthread+0x3e2/0x540 kernel/kthread.c:389
-> >  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >
-> > Uninit was stored to memory at:
-> >  memcpy_from_iter lib/iov_iter.c:73 [inline]
-> >  iterate_bvec include/linux/iov_iter.h:122 [inline]
-> >  iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
-> >  iterate_and_advance include/linux/iov_iter.h:271 [inline]
-> >  __copy_from_iter lib/iov_iter.c:249 [inline]
-> >  copy_page_from_iter_atomic+0x12b7/0x2ae0 lib/iov_iter.c:481
-> >  generic_perform_write+0x4c1/0xc60 mm/filemap.c:3982
-> >  shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:2920
-> >  do_iter_readv_writev+0x7e6/0x960
-> >  vfs_iter_write+0x459/0xd00 fs/read_write.c:895
-> >  lo_write_bvec drivers/block/loop.c:246 [inline]
-> >  lo_write_simple drivers/block/loop.c:267 [inline]
-> >  do_req_filebacked drivers/block/loop.c:491 [inline]
-> >  loop_handle_cmd drivers/block/loop.c:1907 [inline]
-> >  loop_process_work+0x1502/0x3440 drivers/block/loop.c:1942
-> >  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1973
-> >  process_one_work kernel/workqueue.c:3267 [inline]
-> >  process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
-> >  worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
-> >  kthread+0x3e2/0x540 kernel/kthread.c:389
-> >  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >
-> > Uninit was created at:
-> >  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
-> >  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
-> >  alloc_pages mm/mempolicy.c:2335 [inline]
-> >  folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
-> >  filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
-> >  __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
-> >  grow_dev_folio fs/buffer.c:1042 [inline]
-> >  grow_buffers fs/buffer.c:1108 [inline]
-> >  __getblk_slow fs/buffer.c:1134 [inline]
-> >  bdev_getblk+0x39b/0xc80 fs/buffer.c:1429
-> >  __getblk include/linux/buffer_head.h:355 [inline]
-> >  sb_getblk include/linux/buffer_head.h:361 [inline]
-> >  ext4_getblk+0x3da/0xe00 fs/ext4/inode.c:843
-> >  ext4_xattr_inode_write fs/ext4/xattr.c:1421 [inline]
-> >  ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1596 [inline]
-> >  ext4_xattr_set_entry+0x574d/0x6880 fs/ext4/xattr.c:1718
-> >  ext4_xattr_block_set+0xb94/0x4fb0 fs/ext4/xattr.c:2037
-> >  ext4_xattr_move_to_block fs/ext4/xattr.c:2654 [inline]
-> >  ext4_xattr_make_inode_space fs/ext4/xattr.c:2729 [inline]
-> >  ext4_expand_extra_isize_ea+0x20bd/0x3560 fs/ext4/xattr.c:2821
-> >  __ext4_expand_extra_isize+0x5dc/0x680 fs/ext4/inode.c:5789
-> >  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5832 [inline]
-> >  __ext4_mark_inode_dirty+0x70d/0xa10 fs/ext4/inode.c:5910
-> >  ext4_delete_inline_entry+0x650/0x7d0 fs/ext4/inline.c:1753
-> >  ext4_delete_entry+0x13f/0x7d0 fs/ext4/namei.c:2719
-> >  __ext4_unlink+0x9b8/0x11b0 fs/ext4/namei.c:3273
-> >  ext4_unlink+0x226/0x630 fs/ext4/namei.c:3321
-> >  vfs_unlink+0x676/0xa30 fs/namei.c:4343
-> >  do_unlinkat+0x823/0xe10 fs/namei.c:4407
-> >  __do_sys_unlinkat fs/namei.c:4450 [inline]
-> >  __se_sys_unlinkat fs/namei.c:4443 [inline]
-> >  __x64_sys_unlinkat+0x17c/0x230 fs/namei.c:4443
-> >  x64_sys_call+0x846/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
-:264
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > CPU: 1 PID: 88 Comm: kswapd1 Not tainted 6.9.0-syzkaller-02707-g614da38=
-e2f7a #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 04/02/2024
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
->=20
----1463770367-1445972292-1718097257=:2984--
 
