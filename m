@@ -1,318 +1,382 @@
-Return-Path: <linux-kernel+bounces-209303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA44903241
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229EC90323D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6995B2707C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C739F28129E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B82171662;
-	Tue, 11 Jun 2024 06:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FBF171083;
+	Tue, 11 Jun 2024 06:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fI7sLtkg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhoPF+nR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A1D171656
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718086188; cv=fail; b=Rc2gvOp1z1J80ezAbZAOMpRqPHeMcnwD7ZtKWaOZWUrd82oJACOHvZt18yw5ebyoBgsDmWhqi5+MlpKslrDU2rn0efIk7/Ygn7gs9EMEqH3WmUwL8JkC0nfuK+9VJiDCC0ibF4Gjc8n1lCv8eWs1J/keHt83wItQ0Z22+SJq0vo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718086188; c=relaxed/simple;
-	bh=GEk6Cm+S2xfaO2fkMpXwDLhLbivD98iBHmjcf4riKqA=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=lShcPv9HOb9HeDCnTE87jbYnlFSjioaVoKV93qaSP4LM1YGG1gsmt9W9ZKdY7IOQpSNX8+f8KHpqqkNaMt2BbHt+Dh/m3hSknVvFZKM8zCMPGaYSAFTN4kTfGn/lHNlxFCxO9oP/b4SiYRHnfAeDdDxAtthuXDji/bR1KEY8vpE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fI7sLtkg; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718086186; x=1749622186;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GEk6Cm+S2xfaO2fkMpXwDLhLbivD98iBHmjcf4riKqA=;
-  b=fI7sLtkgWIL51HCSSyfYiyAqqe1Z3jsFWLuxzB0D0GKT8vp6YTtxoWc1
-   /ApVa+qh8oZv3AXpnpXqRhS4ld2sYBaLwcCc7r5JRpJnL/5K3OdPeZfpQ
-   mNQKEEyd+EyV+1lWt9GOAt70Yn7x1av2F8DAkASNRWH1WjZJrAtMGPPgJ
-   zakIz1hN8GRALFmy0yp2WhorQcb7utlmXXQN1LPtkZEIhpvOiIJKJ+lRC
-   lAVIRgF+3L4+DPMK/av5mtXDIRGhVzWeVqc1s3XV/OZXvOtXD+hxjrkIa
-   rkjL9r05TXffhL0jYySQCyARuBapfnhr9T9+JhHjEgGeSyr9dJzEecCbY
-   A==;
-X-CSE-ConnectionGUID: pYoL4916Q1mbtGx6mXYfVw==
-X-CSE-MsgGUID: vD3IAHtKQPuDomRxmbcN4g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="25354866"
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="25354866"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 23:09:45 -0700
-X-CSE-ConnectionGUID: aYmfK1EqQC27SweLcwCVQA==
-X-CSE-MsgGUID: 3NyuLsi5Q8eX5uTxf29NHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="39887155"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Jun 2024 23:09:44 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 10 Jun 2024 23:09:44 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 10 Jun 2024 23:09:43 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 10 Jun 2024 23:09:43 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 10 Jun 2024 23:09:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JhQEr8bvHl+WjV5cFYJgm1wwbDbyk7tTEhPXthM+9GexfJo79XtCbTHZM3lI11T70DYa93SGLC16mUvq/ZMbyaG5UqsvGX2En92pgt+ikTxUGCUbgNBnl1ZGMcZ96VK6J1dfTSRUg1aPdY1P05lC/sdUBut3rVYkxmHxhPWa0yM4ThAATK9borJroOaXq+jYyuB7GK6n2az6jsBj91lrpevBXHO0kwDZ7bG7f5NciUy86PyLT2EVKde+KcTQ1QNiZL6TAaHwjInZf5nVEhE1DQAKMb4oyDBb+oAFPCbQVexGyhJA9G4txxPpH36K2Hus5zWboFPyRmFbkywDJjDfWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uf5EPLBK34TJG7qFAjUkiJCkD8i9I0oeoYW3s0ATc+Y=;
- b=ms2wGgGfojQdxE2MIesCyVP97Iz8u4snf5krRatajaj1UDtnigXKsRFHThV6Fx5KfFVwjmyEeLixbZxR3Wrf3ZkVPxGHNyajFB9/akcqvGlRuOQolAacURWSVh30UKnxQ77aCt+rmVsylfYceJ7DjZ2cGXIP1TDLIVuvbg/Q643WjyEz+kARXNKWEAN8RbjOof4uQRw1vLjo3hV0ogeySrLgdvL3uOsfIZWJR0BIsY/v/ruwaGotHSbvp97Px/iyGZxVFI0LFYJmk03Jl/z2+PNhI31jH3YZHr1GEtOBv+9igXJ/kgZoo1y2ZIoudd1tDOBUIZcXlOlmPkUPSOdWew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by PH8PR11MB6609.namprd11.prod.outlook.com (2603:10b6:510:1cc::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 06:09:36 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 06:09:36 +0000
-Date: Tue, 11 Jun 2024 14:09:25 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski
-	<luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Fenghua Yu
-	<fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,
-	<oliver.sang@intel.com>
-Subject: [tip:WIP.x86/fpu] [x86/fpu]  052ffa1364:
- WARNING:at_arch/x86/mm/extable.c:#fixup_exception
-Message-ID: <202406111352.84c1bcbe-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SI1PR02CA0004.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::12) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3E717085D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718086213; cv=none; b=GG+wybcmDcS2of4uijlWLRTlzYRtx6IeTjI0zYJZAC/+g3Fefn1c8V8wzHI/Ps9UXYcHl3baXMfZa8gqyKcWoRB7gwB+lx3A2Un1GVsNZKdjOLuUfCjZoQ91ytQmc6fPjZnsnILZhmJi9tHOAbe/ougPGi/fSOWhslR8GF0bfLY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718086213; c=relaxed/simple;
+	bh=Yuw99668wOEhPSThoprKdIPZsIWjDDEClOsSI4PigHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jAR/hdRwPEeGTGcjqVPRm62tykUbpW8QY2wYxZxxxYXfBqugANCewvP6Tc2sYFiEppdvpwTUeGQCQ1QhAFLeKC3dsn9sxgOnQz900lqD8Kt368MKICd6v1r5p68GZqpFwjL5OQclVEZwcC0yRHeR+hzdP/nckvVeJyA1P9FUsMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhoPF+nR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88165C4AF49
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718086212;
+	bh=Yuw99668wOEhPSThoprKdIPZsIWjDDEClOsSI4PigHo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UhoPF+nRRgZZzSziqE0i+JjmcXcdR6t65t9nTFgGm76iOUbD/QrTbsSCQ/LFvY7BS
+	 cSdF59/Y86mjG9qSmerbAONs76vPERL/WybrSkkpQm0CKEWdpipswKPgPGFxoB/aFO
+	 MrvFj2RPn1vvjg0IINAoUkYtnFwZssb1OogZxuEFv6zgLdyQhWqvjSQ5mmUVHd3jHe
+	 gGIA8b75bgAmJomndGFUyzGII991DnjrxBX7CleUi990KN61+dWfc2Uj2HPzBcXsXf
+	 27ywXTBt0WtViMcSPL4P69v8h1J+BRcx9DX3pHRdHEHMDbG2RBT7HwuuTUeAyK1kCR
+	 1EoA77L7NAsTw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebdfe26242so24110891fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:10:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0xxQGRdI+WlESqzKxqtWzZ3/S90tTSWJjtF6VD5ZagHzpxsDfbykOu/uPvbHsfJ1mMK+5nPn+TyHBQYVUqXgdpNknM18dgCtEMDQA
+X-Gm-Message-State: AOJu0YzqNQVCgC1mCDfnNQIHO5sivqAFisQawbKv6uqNiY0EMzGNzRHW
+	Ukix8d70MTHQmD8bgpvkIM+XjWhxHhYCDzEQPMJSf26DcCLlHb+Hr7Qan7is77lm11E8YjiNFQl
+	95KpGh+hv0n1UvZ9u730d78QGYw==
+X-Google-Smtp-Source: AGHT+IFbcrFF9hiNs/fzMAfI2BxdHr4afPhgmogiOngYT0ChBvCoIRUvhEQgMWRYs5pFh7LcScHoULkfbOokIW20FWA=
+X-Received: by 2002:a2e:a410:0:b0:2eb:d77a:8508 with SMTP id
+ 38308e7fff4ca-2ebd77a88a0mr46229841fa.3.1718086211167; Mon, 10 Jun 2024
+ 23:10:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH8PR11MB6609:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb73974d-713f-4d13-ff17-08dc89dd11b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9rojuO0VRedanhRHuM1CZ2kcn3Xd+UKjPzY4Lm5NUr7Brc/va4QEvC1SsAzK?=
- =?us-ascii?Q?jUAz0HQ3F6Zr/WQi8raLmPA72I+q5YffZ/pczuI7VTOIQ6CpwhgllNypZQ0z?=
- =?us-ascii?Q?LNHRmUyI8o/pW7U64yvOUpVl5/h4BHUBRi5iWn2bGDGUAzfabTOc7JtN4pTp?=
- =?us-ascii?Q?9lUkwC4ZJIASqAs7hanvMQWXWFa+GRMzKgCxPILP1ricNg361oveb4AkBB5z?=
- =?us-ascii?Q?1Jumx9gWfexnTeFipKLBRSF7lrHlvz91jLXonU6tV+9PeyyIyMiCAByhd8el?=
- =?us-ascii?Q?j3B7kDZzAynp90pz9a8Y+hEvAkQd0YMq2XTjGjNvDCu7KxXrb6fpjFkaZcRt?=
- =?us-ascii?Q?n1fY+XIFio2P+jhf2Nr9072NgZ3ZdaGZW156WZ2bNNjnb93I4bcMAp9Ta7In?=
- =?us-ascii?Q?m0CkqkfGJoWZON4qag2c+mOYJK+8CvhVJ+PByPASPIOqkAhF8CmwqUgSAgKi?=
- =?us-ascii?Q?ApQJDvueVANAlwPl9ra19xUEY/tcYTgMbUL/Ruhbt9ygb8XwY2Gocm4Aut1o?=
- =?us-ascii?Q?NdPGh5MKagWiC6NKX9WJQqKjX7zjbaDOKzfDfx7c+VfC7GIc9a+ey6+tEyhv?=
- =?us-ascii?Q?mTNOhE3Drz11rN6pGLDc8JW5C0Wia7De4MWDau8E/QxtzvCXrvjlbLzXFTN+?=
- =?us-ascii?Q?AI5P0Oly4atWLoI5LXj7tVF/CDDbNzJTc/SrncGMvpkOE0P8+0Fujdm5sh/J?=
- =?us-ascii?Q?uMfBF+sYpBlsfQcwsnfy0fEH3gKuQP6lJZ2FFmsErj/mxlluKrPF5rIKNCdJ?=
- =?us-ascii?Q?etRsvgo2WKomAYAFi8ebUHuvan0h2SlCEHAS3WtEKReUnXMAwdeKOu2vc26I?=
- =?us-ascii?Q?yNAqzg3tCo9xcFWeGEiPtpezcDkYDb4EPA6dpuvfgUq1ZG6mzpXKONo4aHZ4?=
- =?us-ascii?Q?bO29iXMKzWUtqEiY5BIX/3Q5HFi46gxrfVDpg7oMQgSPHkKxVWbPkNryYeeM?=
- =?us-ascii?Q?PXZ4rooqdcuIL49V7nl9InTMgw8nk20fm8RezK2wmEhjTpZY1EkVf0BrXyUr?=
- =?us-ascii?Q?RrAT7/nDr+chhIhgHUWAi6A8bNYzS8Oimr0EyxNtRKXssRqK78MpysmUH1G5?=
- =?us-ascii?Q?9bs8W4TmAP1Tlsr2XscArk1RCy5/jWkdmWhxDZ6bUpfvvQzaVdw1rVwl8KIe?=
- =?us-ascii?Q?4A8xN4YTrm6ogRkLVTmX7jyjjplcw0SdPip22YB6pBEfg8PxdrvruP6mlDrJ?=
- =?us-ascii?Q?aTCcZlpShxFvP5uAM31RLBk6xgUuiWYRFlgWAiSdY3RPIQQE0VhTIbhEhVb8?=
- =?us-ascii?Q?XdvFQEEQd8aOYZFEbSbtUt8i4kqHOIYagS/TkTxadg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6dFZU7eZOMrvkJ1ZWYlGiVNA9Hzop7K/CtaICPrK2mifs5muyKzzIp0EsEpJ?=
- =?us-ascii?Q?ogn5BG9tSrlLhtIpwsVbXggT4CvxuOiauAKJgGD4vSEpKyX5ic5F+2N5KgvI?=
- =?us-ascii?Q?klPWCYqKedZUQoDigrWE25XXNeFmuouRVLDVocYg/Mq7a2MqdWEyjciVhOfE?=
- =?us-ascii?Q?AIUrt4fgjTH0M6DWcelhSBQrttgNKK1yYcEGT5difSAQz6pInEpcVNF0Gbk1?=
- =?us-ascii?Q?FFLUV/4AJV6YCEAmX3/e7fU4je+IWn5BqJvaAcOUgo3B7bU5R0fg+oRR/KKm?=
- =?us-ascii?Q?GSG3Q7Q1fr2qUzEei4pFt9Litb2ICUwu0EdDsd6aA77Y1SxLusAWue3lUys2?=
- =?us-ascii?Q?oKnt7Ub2WAH7BvJ/FAuh8CiV/0e7MxlnYnK5tP6/4Ra4lKdKiPTWUytaXf9B?=
- =?us-ascii?Q?ZqDWx2inGOM1sNwpnAVbF7KnF9o1bYX2uTu7PzY1xBTvwgzY0fp5iEFYyqT8?=
- =?us-ascii?Q?wBUYMzWjYFmnowQsjgiGCyrSfxtQ/xOuSB564vCQIAQSXCyNRyOLcjhlFtKC?=
- =?us-ascii?Q?Yf0neL7EhKgNSeX7ADFMd8bi1F4j7wjugmYTQwRZTp8h8ZTf+aZtH9KOwrQV?=
- =?us-ascii?Q?zeMb5P5EoTLrPjeEk1UlvyenCKG8lnSu3YAAsYlbOTUkrV77XHvguAjQJvbW?=
- =?us-ascii?Q?9PAzlSzeNbk0WBU8e58tBhG1GtaEWkLhBF0FezB8nwl8C9H48bvlW+PxX4Nx?=
- =?us-ascii?Q?dPD/wbC+fqKrjrV3A8K8PsxVMxc3RkuCS/o/8EPZ2aMUjkJA50aGsBGAFmah?=
- =?us-ascii?Q?5SE6XM0piMeVJ+2d3d42YKRDC7COoSJUPVVEP4ZTx0zJYoDYsdLkyE2erwiE?=
- =?us-ascii?Q?UgOqdIK39xBl/HhauDN1es4ou4nnzjsWU9kusMFJNM2peYamgLksRQdnHs58?=
- =?us-ascii?Q?kXikSdS5eI63YikMivLPh5Ps1Z3iDmDH8YKsgbhmOFju0TkajmplKLsmhWiM?=
- =?us-ascii?Q?09m/VcpYbrk0VmUbtaL/2Zj+aYDfNO7uZm00wnuKyY6yxAkmRhS9XFGufrYt?=
- =?us-ascii?Q?+o0z94G275smh8yVJz4vIT8fY+H6p+RKUfQ22zLR296Soza3E20H83mxCZ98?=
- =?us-ascii?Q?5y4Wb/Zbzcj6U7DOf6cB41w2DrmsH/5AqbdRIiG1D/0b+dANjbjqv6iVR2lV?=
- =?us-ascii?Q?XwjDhs9m2GPRX+uMa4Bu3WWrg4uEtgVpIwJIOdPFX/dfcpLQXVdgTImfkshN?=
- =?us-ascii?Q?7y4tky1wMTSXq5ZY0sKFZHV9+rOROJlGN/UvdgJIHrqY3no1l/m/t+yrFxU0?=
- =?us-ascii?Q?QpPAQ0Aet0Pk2OUBPbJefx7SsgZWo6GX56hTW7NKFDWDreHNpS4SX93Ticpq?=
- =?us-ascii?Q?RoLkmhjSg+FAMo9NZnBtDTTDtfpSNEWiY+J+PgLn2AoRzDX33vyg3dqe+0r/?=
- =?us-ascii?Q?VfgnPekY1rX04PseJi9sAb2zAidVlZsYF9dfxTrD9jzsxOacTYdD0U/Qrmns?=
- =?us-ascii?Q?SFCBDAsKKjCunEydLJyN7JSiqhYM4ULQ3qmJEa32PznSdn4PTW/zBe7BARog?=
- =?us-ascii?Q?lUb7BHqjo3wrBZD0/k+rYfs9+yQZIH7mWsHrOVvNw9ze1Awrkr0fdbhnqASY?=
- =?us-ascii?Q?+Emo++AN/hnHI6Ej7U6oZkS2WoloKJqh3HPDZnrUR3963qXxOKBfbN8MUhn/?=
- =?us-ascii?Q?uQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb73974d-713f-4d13-ff17-08dc89dd11b9
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 06:09:36.0866
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GeKrx6Uqoj2j/8o5hWotQIIUxOOmb5wIggstmYR8weIGtZa8qECBhGi2NXdMutwXKRzA0yyd+mrAlLLGWQNjmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6609
-X-OriginatorOrg: intel.com
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+ <20240524-swap-allocator-v1-2-47861b423b26@kernel.org> <edb439ea-4754-4d63-8d5f-edc116465d7b@arm.com>
+ <CANeU7Q=uT-sZjwvcL4EJUbkZ8dbhnVpQEfNndMXvhBwZOSyr0Q@mail.gmail.com> <64a5020e-72cf-49f4-89d7-833cc7a12827@arm.com>
+In-Reply-To: <64a5020e-72cf-49f4-89d7-833cc7a12827@arm.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 10 Jun 2024 23:09:58 -0700
+X-Gmail-Original-Message-ID: <CANeU7Q=HB7xiePT98DHSP_brukhU6OQ9123xaaOmz+i6aFZ1wg@mail.gmail.com>
+Message-ID: <CANeU7Q=HB7xiePT98DHSP_brukhU6OQ9123xaaOmz+i6aFZ1wg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: swap: mTHP allocate swap entries from nonfull list
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 10, 2024 at 4:18=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 07/06/2024 21:52, Chris Li wrote:
+> > On Fri, Jun 7, 2024 at 3:35=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.c=
+om> wrote:
+> > Stealing other CPU's *current* cluster is not the intent. The intent
+> > is after all current per-cpu done with this cluster(full), those full
+> > clusters are not tracked by any per-cpu struct. When those full
+> > clusters become non-full. Track it in the global nonfull cluster list.
+> > The per-cpu allocation can take a cluster from that nonfull cluster
+> > list and start allocating from it.
+> >
+> > The V1 code does not specifically check for the stealing behavior, the
+> > V2 code will prevent that from happening. Basically each cluster has 4
+> > states and owners:
+> > 1) empty, owned by a global free cluster list.
+> > 2) per cpu allocating. owned by per CPU current.
+> > 3) nonfull (also non empty). own global nonfull list.
+> > 4) full, currently not tracked, we can track it under global full list.
+> >
+> > When the per cpu runs out of free cluster, it can take a cluster from
+> > 3) and move it to 2).
+>
+> OK, sorry for my misunderstanding, and thanks for the explanaiton. I've t=
+aken a
+> proper look at the patch and with this explanation now understand the int=
+ent.
+>
+> I guess in effect, this is a scanning approach, but you are limiting the
+> clusters that you scan to those that were originally allocated for the re=
+quired
+> order and which are known to have some free space.
 
+Yes, not only some free space. When we swap in the same size as the
+swap out size, we can have the cluster dedicated to that order. Avoid
+mixing order in that cluster.
 
-Hello,
+>
+> I guess this will work more effectively with Barry's series that swaps in=
+ a
+> whole large folio in one go, because it is more likely that holes of the
+> required size will appear in the non-full clusters. But previous discussi=
+ons
 
-kernel test robot noticed "WARNING:at_arch/x86/mm/extable.c:#fixup_exception" on:
+Ack.
 
-commit: 052ffa1364f57555fad862dc2094091b7cec9b93 ("x86/fpu: Remove the thread::fpu pointer")
-https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git WIP.x86/fpu
+> concluded that it was not always going to be the right approach to swap-i=
+n large
+> folios in one go (certainly not for higer orders). So I don't think you c=
+an
 
-in testcase: boot
+We need to start from somewhere. Right now it is still too early to
+say which approach will win out. I think it is beneficial to try out
+swapin the same size as swap out, and see how the data play out. 4K is
+too small and 2M is too big. Maybe one of the mTHP size would be the
+sweet spot.
 
-compiler: gcc-13
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> (yet) rely on swap slots being freed as order-sized blocks. That said I s=
+till
+> think that your approach should improve the situation even without Barry'=
+s series.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+Agree.
 
+> In fact, why don't you put the cluster on the non-full list at cluster
+> allocation time? Then you can also allow a cpu to steal from another cpu'=
+s
 
-as below table, both 052ffa1364 and its parent have same issue such like
-kernel_BUG_at_mm/usercopy.c
-Oops:invalid_opcode:#[##]PREEMPT_SMP
-EIP:usercopy_abort
-Kernel_panic-not_syncing:Fatal_exception
+That would be the reservation approach. If we know how much swap space
+we want for that order in advance. We can make the reservation at swap
+on time, then that order will only allocate from the reserved cluster.
 
-but this commit introduces WARNING:at_arch/x86/mm/extable.c:#fixup_exception
+> current cluster (as I initially thought you were doing). I think this sho=
+uld
 
-+---------------------------------------------------+------------+------------+
-|                                                   | 4f4a9b3993 | 052ffa1364 |
-+---------------------------------------------------+------------+------------+
-| boot_failures                                     | 6          | 6          |
-| kernel_BUG_at_mm/usercopy.c                       | 6          | 6          |
-| Oops:invalid_opcode:#[##]PREEMPT_SMP              | 6          | 6          |
-| EIP:usercopy_abort                                | 6          | 6          |
-| Kernel_panic-not_syncing:Fatal_exception          | 6          | 6          |
-| WARNING:at_arch/x86/mm/extable.c:#fixup_exception | 0          | 6          |
-| EIP:fixup_exception                               | 0          | 6          |
-| EIP:restore_fpregs_from_fpstate                   | 0          | 6          |
-+---------------------------------------------------+------------+------------+
+For stealing from other cpu's current order cluster, we can have a
+global list of clusters for per_cpu[order] for the cluster. It's
+better to track it separately as the other nonfull cluster. We only
+steal from other CPU when we run out of global nonfull clusters. The
+current patch allows stealing from other CPU as well. Just might
+happen before it runs out of the nonfull cluster. Might not be too big
+a deal.
 
+> work with pretty much the same logic? And improve chances of allocation w=
+ithout
+> increasing chances of fragmentation? (more on this below).
+>
+> >
+> >>
+> >> If that's the intent, couldn't that be done just by iterating over the=
+ per-cpu,
+> >> per-order cluster pointers? Then you don't need all the linked list ch=
+urn
+> >
+> > Again, that is not the intent.
+> >
+> >> (althogh I like the linked list changes as a nice cleanup, I'm not sur=
+e the
+> >> churn is neccessary for this change?). There would likely need to be s=
+ome
+> >> locking considerations, but it would also allow you to get access to t=
+he next
+> >> entry within the cluster for allocation.
+> >>
+> >> However, fundamentally, I don't think this change solves the problem; =
+it just
+> >> takes a bit longer before the allocation fails. The real problem is
+> >> fragmentation due to freeing individual pages from swap entries at dif=
+ferent times.
+> >
+> > It definitely helps to find nonfull clusters quicker. Please take a
+> > look at my above comment and read the patch again.
+> >
+> >>
+> >> Wouldn't it be better to just extend scanning to support high order al=
+locations?
+> >> Then we can steal a high order block from any cluster, even clusters t=
+hat were
+> >
+> > Steal from higher order causes the higher order harder to allocate,
+> > that is downside.
+> > In my mind, ideally have some high order cluster reservation scheme so
+> > the high order one doesn't mix with the low order one.
+>
+> Yes, that would make sense; you could limit the number of clusters alloca=
+ted for
+> each order at any given time.
+>
+> Order-0 stealing will still cause problems. You could probably just remov=
+e that
+> and limit order-0 scanning/stealing to clusters that were originally allo=
+cated
+> for order-0 too, using the same logic.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202406111352.84c1bcbe-oliver.sang@intel.com
+Yes, that is the plan.
 
+If we reserve some space for higher order, then order-0 can't steal
+from the reserved higher order cluster.
 
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240611/202406111352.84c1bcbe-oliver.sang@intel.com
+>
+> >
+> >> previously full, just like we currently do for order-0. Given we are a=
+lready
+> >> falling back to this path for order-0, I don't think it would be any m=
+ore
+> >> expensive; infact its less expensive because we only scan once for the=
+ high
+> >> order block, rather than scan for every split order-0 page.
+> >>
+> >> Of course that still doesn't solve the proplem entirely; if swap is so
+> >> fragmented that there is no contiguous block of the required order the=
+n you
+> >> still have to fall back to splitting. As an extra optimization, you co=
+uld store
+> >
+> > Exactly. That is why I think some high order cluster reservation
+> > scheme is needed for a short term solution.
+> > The change itself is not too complicated if we can agree on this approa=
+ch.
+> >
+> >> the largest contiguous free space available in each cluster to avoid s=
+canning in
+> >> case its too small?
+> >
+> > Avoid scanning does just get to the non available high order result qui=
+cker.
+> > Does not seem to help increase the high order allocation success rate.
+> >
+> >>
+> >>
+> >>>
+> >>> There are limitations if the distribution of numbers of
+> >>> different orders of mTHP changes a lot. e.g. there are a lot
+> >>> of nonfull cluster assign to order A while later time there
+> >>> are a lot of order B allocation while very little allocation
+> >>> in order A. Currently the cluster used by order A will not
+> >>> reused by order B unless the cluster is 100% empty.
+> >>>
+> >>> This situation is best addressed by the longer term "swap
+> >>> buddy allocator", in future patches.
+> >>> ---
+> >>>  include/linux/swap.h |  4 ++++
+> >>>  mm/swapfile.c        | 25 +++++++++++++++++++++++--
+> >>>  2 files changed, 27 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> >>> index 0d3906eff3c9..1b7f0794b9bf 100644
+> >>> --- a/include/linux/swap.h
+> >>> +++ b/include/linux/swap.h
+> >>> @@ -255,10 +255,12 @@ struct swap_cluster_info {
+> >>>                                * cluster
+> >>>                                */
+> >>>       unsigned int count:16;
+> >>> +     unsigned int order:8;
+> >>>       unsigned int flags:8;
+> >>>       struct list_head next;
+> >>>  };
+> >>>  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+> >>> +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
+> >>>
+> >>>
+> >>>  /*
+> >>> @@ -297,6 +299,8 @@ struct swap_info_struct {
+> >>>       unsigned char *swap_map;        /* vmalloc'ed array of usage co=
+unts */
+> >>>       struct swap_cluster_info *cluster_info; /* cluster info. Only f=
+or SSD */
+> >>>       struct list_head free_clusters; /* free clusters list */
+> >>> +     struct list_head nonfull_clusters[SWAP_NR_ORDERS];
+> >>> +                                     /* list of cluster that contain=
+s at least one free slot */
+> >>>       unsigned int lowest_bit;        /* index of first free in swap_=
+map */
+> >>>       unsigned int highest_bit;       /* index of last free in swap_m=
+ap */
+> >>>       unsigned int pages;             /* total of usable pages of swa=
+p */
+> >>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> >>> index 205a60c5f9cb..51923aba500e 100644
+> >>> --- a/mm/swapfile.c
+> >>> +++ b/mm/swapfile.c
+> >>> @@ -363,8 +363,11 @@ static void swap_cluster_schedule_discard(struct=
+ swap_info_struct *si,
+> >>>
+> >>>  static void __free_cluster(struct swap_info_struct *si, struct swap_=
+cluster_info *ci)
+> >>>  {
+> >>> +     if (ci->flags & CLUSTER_FLAG_NONFULL)
+> >>> +             list_move_tail(&ci->next, &si->free_clusters);
+> >>> +     else
+> >>> +             list_add_tail(&ci->next, &si->free_clusters);
+> >>>       ci->flags =3D CLUSTER_FLAG_FREE;
+> >>> -     list_add_tail(&ci->next, &si->free_clusters);
+> >>>  }
+> >>>
+> >>>  /*
+> >>> @@ -486,7 +489,12 @@ static void dec_cluster_info_page(struct swap_in=
+fo_struct *p, struct swap_cluste
+> >>>       ci->count--;
+> >>>
+> >>>       if (!ci->count)
+> >>> -             free_cluster(p, ci);
+> >>> +             return free_cluster(p, ci);
+> >>> +
+> >>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
+> >>> +             list_add_tail(&ci->next, &p->nonfull_clusters[ci->order=
+]);
+> >>> +             ci->flags |=3D CLUSTER_FLAG_NONFULL;
+> >>> +     }
+> >>>  }
+> >>>
+> >>>  /*
+> >>> @@ -547,6 +555,14 @@ static bool scan_swap_map_try_ssd_cluster(struct=
+ swap_info_struct *si,
+> >>>                       ci =3D list_first_entry(&si->free_clusters, str=
+uct swap_cluster_info, next);
+> >>>                       list_del(&ci->next);
+> >>>                       spin_lock(&ci->lock);
+> >>> +                     ci->order =3D order;
+> >>> +                     ci->flags =3D 0;
+> >>> +                     spin_unlock(&ci->lock);
+> >>> +                     tmp =3D (ci - si->cluster_info) * SWAPFILE_CLUS=
+TER;
+> >>> +             } else if (!list_empty(&si->nonfull_clusters[order])) {
+>
+> You are preferring to scan the nonfull clusters over doing discard and
+> allocating a newly freed cluster; wouldn't it be better to prefer discard=
+ over
+> nonfull scanning?
 
+My consideration is that issuing a discard command takes some IO time.
+If we have an alternative path to move forward, e.g. using another
+nonfull cluster, we should do that to avoid latency penalty.
 
-[    3.372028][   T64] ------------[ cut here ]------------
-[    3.372802][   T64] Bad FPU state detected at restore_fpregs_from_fpstate+0x38/0x70, reinitializing FPU registers.
-[    3.372818][   T64] WARNING: CPU: 0 PID: 64 at arch/x86/mm/extable.c:127 fixup_exception+0x405/0x41c
-[    3.375482][   T64] Modules linked in:
-[    3.376062][   T64] CPU: 0 PID: 64 Comm: modprobe Not tainted 6.10.0-rc2-00004-g052ffa1364f5 #1
-[    3.377299][   T64] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[    3.378863][   T64] EIP: fixup_exception+0x405/0x41c
-[    3.379541][   T64] Code: c2 e9 a2 fd ff ff 0f 0b ba 48 c9 fa c2 e9 e7 fd ff ff 89 44 24 04 b2 01 c7 04 24 98 a3 77 c2 88 15 f8 7c e2 c2 e8 0f 2d 01 00 <0f> 0b eb 9a 0f 0b b8 94 e4 97 c2 e8 17 97 6e 00 cc cc cc cc cc cc
-[    3.382186][   T64] EAX: 0000005e EBX: c28cd540 ECX: 00000234 EDX: c2cad1a4
-[    3.383617][   T64] ESI: ed6cdee4 EDI: 0000000d EBP: ed6cde50 ESP: ed6cddd4
-[    3.384683][   T64] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010086
-[    3.385916][   T64] CR0: 80050033 CR2: bf9717ab CR3: 2d6ad000 CR4: 00040690
-[    3.387245][   T64] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-[    3.388306][   T64] DR6: fffe0ff0 DR7: 00000400
-[    3.389074][   T64] Call Trace:
-[    3.389688][   T64]  ? show_regs+0x72/0x7c
-[    3.390293][   T64]  ? fixup_exception+0x405/0x41c
-[    3.390961][   T64]  ? __warn+0x88/0x1a0
-[    3.391576][   T64]  ? fixup_exception+0x405/0x41c
-[    3.392323][   T64]  ? fixup_exception+0x405/0x41c
-[    3.393045][   T64]  ? report_bug+0x182/0x1ac
-[    3.393759][   T64]  ? exc_overflow+0x50/0x50
-[    3.394377][   T64]  ? handle_bug+0x2d/0x50
-[    3.394969][   T64]  ? exc_invalid_op+0x28/0x7c
-[    3.395643][   T64]  ? console_unlock+0x64/0x110
-[    3.396286][   T64]  ? handle_exception+0x150/0x150
-[    3.396987][   T64]  ? print_lock_class_header+0x157/0x180
-[    3.397979][   T64]  ? follow_phys+0x140/0x140
-[    3.398745][   T64]  ? exc_overflow+0x50/0x50
-[    3.399484][   T64]  ? fixup_exception+0x405/0x41c
-[    3.400220][   T64]  ? follow_phys+0x140/0x140
-[    3.400898][   T64]  ? exc_overflow+0x50/0x50
-[    3.401667][   T64]  ? fixup_exception+0x405/0x41c
-[    3.402424][   T64]  ? restore_fpregs_from_fpstate+0x38/0x70
-[    3.403336][   T64]  ? 0xc1000000
-[    3.403946][   T64]  ? lock_acquire+0x241/0x284
-[    3.404711][   T64]  ? should_fail+0xa/0xc
-[    3.405464][   T64]  ? _copy_to_user+0x4b/0x68
-[    3.406171][   T64]  ? create_elf_tables+0x667/0x6b8
-[    3.406961][   T64]  ? lock_release+0xe1/0x124
-[    3.407656][   T64]  ? exc_bounds+0xd4/0xd4
-[    3.408280][   T64]  exc_general_protection+0x13d/0x2f0
-[    3.409135][   T64]  ? finalize_exec+0x50/0x60
-[    3.409929][   T64]  ? exc_bounds+0xd4/0xd4
-[    3.410629][   T64]  handle_exception+0x150/0x150
-[    3.411416][   T64] EIP: restore_fpregs_from_fpstate+0x38/0x70
-[    3.412303][   T64] Code: 7d fc 89 ca eb 09 cc cc cc db e2 0f 77 db 03 3e 8d 74 26 00 8b 3d ec a1 84 c2 8b 0d e8 a1 84 c2 21 fa 8d 7b 40 21 c8 0f ae 2f <8b> 5d f8 8b 7d fc 89 ec 5d c3 8d b6 00 00 00 00 3e 8d 74 26 00 0f
-[    3.414918][   T64] EAX: 00000007 EBX: c4a7b0e0 ECX: 00000007 EDX: 00000000
-[    3.415869][   T64] ESI: c4a7b0a0 EDI: c4a7b120 EBP: ed6cdf48 ESP: ed6cdf40
-[    3.416754][   T64] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010002
-[    3.417835][   T64]  ? exc_bounds+0xd4/0xd4
-[    3.418450][   T64]  ? exc_bounds+0xd4/0xd4
-[    3.419077][   T64]  ? restore_fpregs_from_fpstate+0x35/0x70
-[    3.419844][   T64]  switch_fpu_return+0x50/0x124
-[    3.420548][   T64]  syscall_exit_to_user_mode+0x1a1/0x218
-[    3.421473][   T64]  ? call_usermodehelper_exec_async+0xbe/0x1a8
-[    3.422433][   T64]  ? call_usermodehelper+0x58/0x58
-[    3.423186][   T64]  ret_from_fork+0x23/0x44
-[    3.423881][   T64]  ? call_usermodehelper+0x58/0x58
-[    3.424616][   T64]  ret_from_fork_asm+0x12/0x18
-[    3.425367][   T64]  entry_INT80_32+0x10d/0x10d
-[    3.426064][   T64] EIP: 0xb7f6ba14
-[    3.426610][   T64] Code: Unable to access opcode bytes at 0xb7f6b9ea.
-[    3.427586][   T64] EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-[    3.428674][   T64] ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: bf9716b0
-[    3.429755][   T64] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 007b EFLAGS: 00000200
-[    3.430823][   T64] irq event stamp: 0
-[    3.431340][   T64] hardirqs last  enabled at (0): [<00000000>] 0x0
-[    3.432112][   T64] hardirqs last disabled at (0): [<c107c35b>] copy_process+0x913/0x1930
-[    3.433269][   T64] softirqs last  enabled at (0): [<c107c35b>] copy_process+0x913/0x1930
-[    3.434387][   T64] softirqs last disabled at (0): [<00000000>] 0x0
-[    3.435251][   T64] ---[ end trace 0000000000000000 ]---
-[    3.451580][   T64] modprobe (64) used greatest stack depth: 5860 bytes left
+>
+> >>> +                     ci =3D list_first_entry(&si->nonfull_clusters[o=
+rder], struct swap_cluster_info, next);
+> >>> +                     list_del(&ci->next);
+>
+> I'm struggling a bit with what the value of the nonfull_clusters linked l=
+ist is.
 
+Assume we have the swap in size the same as swap out size. The
+nonfull_clusters will get to the cluster in the desired order quicker.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> I wonder if it would be simpler to just track the number of free slots in=
+ the
+> cluster and iterate over the clusters, scanning the ones with the desired=
+ order
+> and which have at least (1 << order) free slots? I guess this list is giv=
+ing you
 
+That would be slower than this approach. We would likely repeatedly
+scan over a lot of lower order clusters which can't find a big enough
+free range. We can cache it and speed it up by avoiding repeat
+scanning the unfitting cluster over and over again, that effectively
+turns into a buddy allocator approach then. It can work but is more
+complex.
+
+> an ordering such that the cluster you pull off the list first had its fir=
+st slot
+> freed longest ago so it is most likely to have most space?
+
+Yes, that is one of the considerations as well.
+
+Chris
 
