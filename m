@@ -1,221 +1,176 @@
-Return-Path: <linux-kernel+bounces-210326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB7590425B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:25:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4072990425E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2001C23500
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97A7282161
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513E454F8C;
-	Tue, 11 Jun 2024 17:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0564F215;
+	Tue, 11 Jun 2024 17:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cNvweMGG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2suFtL5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74D850288;
-	Tue, 11 Jun 2024 17:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6006147F5D;
+	Tue, 11 Jun 2024 17:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126737; cv=none; b=rNCF59uIcM+UoliusPdXsjkkyStswdeIOKXRTFbJeVuju7CKOkFleWKzCnOFvZ9jKDsMN9HYDvlub2W3otkh35EQIhnI5QZKJk4fSJ3Lk5B+AcsDS87B8Pl22+CJ9QHyLeTlaGVNoQtjRuguzJ9I7RtZWjh2b+96fjupEHxiufM=
+	t=1718126765; cv=none; b=kfKeGubXX9dkkvYUewMu6qZW943Zv3HTcyf5Keap1xAx6oumHzdP8LcLCXUR6xe6oVtKhkSSjZ40YbeFVcuqzE/lmwx4Ayth8ESP04g0gXnaOgNhcsHAHjOONV9+OKFg7JHyzmKBb8CcKCGtWuVCjVZfXFr9kUz0WCCHrbhcr9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126737; c=relaxed/simple;
-	bh=Ax+Gp/MznoP8ncT7MOItWpqVDlmCy0Tg6yCTbxEjpJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ca1tjlnrXv8+LryA9adBq0SWF/Ar0PiAloTuxMavKJ5VpA41E08DBhowa3pZldiREkRXvlw2DkonVeK4T1fiMBT/UyG5GxWhI/e23XlZF4ZQMuT29T9HYp2yztIYdonedu1bWrKkDwfneI0zWusx5s7EpbbRSgbXzseQaf6FrqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cNvweMGG; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718126736; x=1749662736;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ax+Gp/MznoP8ncT7MOItWpqVDlmCy0Tg6yCTbxEjpJw=;
-  b=cNvweMGGX4xsYWMqc27oap8dl0bR4Cyc5cJSUD1h1D7yeDkIhTI0QQmT
-   hWnxA06dL44w1fRv0XWk+eFQVZHV9Wy5XRkWxC7HRpyW2nVkZW/aTTI6j
-   VotTMlqa/jukphQ+wPIWKIjpCUBhzXI0pMqxGHIPiaiKoZKBcRYu+Gh6L
-   lIxwKHhMRt/AyduDmL6wEF4xK5XkhymvO8rie251B0yhbngWYdZpmNxUZ
-   q4tc5XJmN39E5VFQt87ghpFzc/ZAVbdImZMCdEPqPMBiNOIhBnajKDLTI
-   LVLC2UcH0gf0MbqP7/cb+3bJw8RD/ktJD75pJRKXM23srkm15zMITKgQy
-   A==;
-X-CSE-ConnectionGUID: XD6paR1yT9GxGz+df82Txw==
-X-CSE-MsgGUID: CZOrfa81TCynQ0oeV9jXhA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="26255081"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="26255081"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:25:35 -0700
-X-CSE-ConnectionGUID: pz7D09vgT96Knz/m7OZ71w==
-X-CSE-MsgGUID: RiEpF7grThmC/ONuyoCzZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="39360864"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:25:35 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v6 41/49 RESEND] ACPI: x86: Switch to new Intel CPU model defines
-Date: Tue, 11 Jun 2024 10:25:28 -0700
-Message-ID: <20240611172528.352782-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1718126765; c=relaxed/simple;
+	bh=SQVKiWoMEQlGJzZl2xfryE32TSjR7fWPakYa+xG+jOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1dG7UpfJDzgAT01vG4M47RuSnTlUpkHxeYpayHXFxdfwUQxl4Sifji/1W8lafjk8PR5v9cJsMsaIXBpiTTjauhu1qdxNlUOWit9q8kDl96kc9VZAbFfBtNHIPbrQMABripC1omNPqmZazJIzBpJ39l+nsN53PDBX6fD2v//QO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2suFtL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECECC2BD10;
+	Tue, 11 Jun 2024 17:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718126764;
+	bh=SQVKiWoMEQlGJzZl2xfryE32TSjR7fWPakYa+xG+jOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c2suFtL5Vem76e++QV+lrZeQ7MGiZxVNYh58xkSQi2PPsLfzgMS+DIViYpPHwQIIF
+	 OQsYe+Y8zKrquo+xzNMcQu6lXzyiUATsppSouXRBdVURX2p/4tkeyTY8YA3VjNSpRq
+	 F64+77bYB6rnQpQt6afrIzUOf6dOR6B4sXGhn7UVKtUTB8MLQAEFpwkuEtLMEi5GDu
+	 HRy6oaJUJJdwjklzdWv+LgNpsX8DPiNzS9u2kLYOXfEPTvmV8CzRmlgvdhLcfUbiza
+	 CAmlUqVumeZrj5/6o682Y84/8n7jfxQeLepnQGIcQ1Xm+1hE6nkCG3V6dye3Leykmi
+	 1MBzCTM49UwkA==
+Date: Tue, 11 Jun 2024 10:26:02 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Umang Jain <umang.jain@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v4 2/2] media: i2c: Add imx283 camera sensor driver
+Message-ID: <20240611172602.GA2226028@thelio-3990X>
+References: <20240402-kernel-name-extraversion-v4-0-fb776893e4ec@ideasonboard.com>
+ <20240402-kernel-name-extraversion-v4-2-fb776893e4ec@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402-kernel-name-extraversion-v4-2-fb776893e4ec@ideasonboard.com>
 
-New CPU #defines encode vendor and family as well as model.
+Hi Umang,
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
+On Tue, Apr 02, 2024 at 03:37:51PM +0530, Umang Jain wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Add a v4l2 subdevice driver for the Sony IMX283 image sensor.
+> 
+> The IMX283 is a 20MP Diagonal 15.86 mm (Type 1) CMOS Image Sensor with
+> Square Pixel for Color Cameras.
+> 
+> The following features are supported:
+> - Manual exposure an gain control support
+> - vblank/hblank/link freq control support
+> - Test pattern support control
+> - Arbitrary horizontal and vertical cropping
+> - Supported resolution:
+>   - 5472x3648 @ 20fps (SRGGB12)
+>   - 5472x3648 @ 25fps (SRGGB10)
+>   - 2736x1824 @ 50fps (SRGGB12)
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 
-Rafael: I missed this one when picking out ACPI/pm patches to send
-to you from the patch bomb. Can you check it over and apply please?
+This change is now in -next as commit ccb4eb4496fa ("media: i2c: Add
+imx283 camera sensor driver").
 
--Tony
+> +++ b/drivers/media/i2c/imx283.c
+...
+> +/* IMX283 native and active pixel array size. */
+> +static const struct v4l2_rect imx283_native_area = {
+> +	.top = 0,
+> +	.left = 0,
+> +	.width = 5592,
+> +	.height = 3710,
+> +};
+> +
+> +static const struct v4l2_rect imx283_active_area = {
+> +	.top = 40,
+> +	.left = 108,
+> +	.width = 5472,
+> +	.height = 3648,
+> +};
+...
+> +#define CENTERED_RECTANGLE(rect, _width, _height)			\
+> +	{								\
+> +		.left = rect.left + ((rect.width - (_width)) / 2),	\
+> +		.top = rect.top + ((rect.height - (_height)) / 2),	\
+> +		.width = (_width),					\
+> +		.height = (_height),					\
+> +	}
+...
+> +		.crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
 
- drivers/acpi/x86/utils.c | 44 ++++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+This construct does not work with GCC prior to 7 and Clang prior to 17
+(where certain const structures and variables will be considered
+constant expressions for the sake of initializers and such), resulting
+in:
 
-diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
-index 7dca73417e2b..e628d969d613 100644
---- a/drivers/acpi/x86/utils.c
-+++ b/drivers/acpi/x86/utils.c
-@@ -45,37 +45,37 @@ struct override_status_id {
- 	unsigned long long status;
- };
- 
--#define ENTRY(status, hid, uid, path, cpu_model, dmi...) {		\
-+#define ENTRY(status, hid, uid, path, cpu_vfm, dmi...) {		\
- 	{ { hid, }, {} },						\
--	{ X86_MATCH_INTEL_FAM6_MODEL(cpu_model, NULL), {} },		\
-+	{ X86_MATCH_VFM(cpu_vfm, NULL), {} },				\
- 	{ { .matches = dmi }, {} },					\
- 	uid,								\
- 	path,								\
- 	status,								\
- }
- 
--#define PRESENT_ENTRY_HID(hid, uid, cpu_model, dmi...) \
--	ENTRY(ACPI_STA_DEFAULT, hid, uid, NULL, cpu_model, dmi)
-+#define PRESENT_ENTRY_HID(hid, uid, cpu_vfm, dmi...) \
-+	ENTRY(ACPI_STA_DEFAULT, hid, uid, NULL, cpu_vfm, dmi)
- 
--#define NOT_PRESENT_ENTRY_HID(hid, uid, cpu_model, dmi...) \
--	ENTRY(0, hid, uid, NULL, cpu_model, dmi)
-+#define NOT_PRESENT_ENTRY_HID(hid, uid, cpu_vfm, dmi...) \
-+	ENTRY(0, hid, uid, NULL, cpu_vfm, dmi)
- 
--#define PRESENT_ENTRY_PATH(path, cpu_model, dmi...) \
--	ENTRY(ACPI_STA_DEFAULT, "", NULL, path, cpu_model, dmi)
-+#define PRESENT_ENTRY_PATH(path, cpu_vfm, dmi...) \
-+	ENTRY(ACPI_STA_DEFAULT, "", NULL, path, cpu_vfm, dmi)
- 
--#define NOT_PRESENT_ENTRY_PATH(path, cpu_model, dmi...) \
--	ENTRY(0, "", NULL, path, cpu_model, dmi)
-+#define NOT_PRESENT_ENTRY_PATH(path, cpu_vfm, dmi...) \
-+	ENTRY(0, "", NULL, path, cpu_vfm, dmi)
- 
- static const struct override_status_id override_status_ids[] = {
- 	/*
- 	 * Bay / Cherry Trail PWM directly poked by GPU driver in win10,
- 	 * but Linux uses a separate PWM driver, harmless if not used.
- 	 */
--	PRESENT_ENTRY_HID("80860F09", "1", ATOM_SILVERMONT, {}),
--	PRESENT_ENTRY_HID("80862288", "1", ATOM_AIRMONT, {}),
-+	PRESENT_ENTRY_HID("80860F09", "1", INTEL_ATOM_SILVERMONT, {}),
-+	PRESENT_ENTRY_HID("80862288", "1", INTEL_ATOM_AIRMONT, {}),
- 
- 	/* The Xiaomi Mi Pad 2 uses PWM2 for touchkeys backlight control */
--	PRESENT_ENTRY_HID("80862289", "2", ATOM_AIRMONT, {
-+	PRESENT_ENTRY_HID("80862289", "2", INTEL_ATOM_AIRMONT, {
- 		DMI_MATCH(DMI_SYS_VENDOR, "Xiaomi Inc"),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Mipad2"),
- 	      }),
-@@ -84,18 +84,18 @@ static const struct override_status_id override_status_ids[] = {
- 	 * The INT0002 device is necessary to clear wakeup interrupt sources
- 	 * on Cherry Trail devices, without it we get nobody cared IRQ msgs.
- 	 */
--	PRESENT_ENTRY_HID("INT0002", "1", ATOM_AIRMONT, {}),
-+	PRESENT_ENTRY_HID("INT0002", "1", INTEL_ATOM_AIRMONT, {}),
- 	/*
- 	 * On the Dell Venue 11 Pro 7130 and 7139, the DSDT hides
- 	 * the touchscreen ACPI device until a certain time
- 	 * after _SB.PCI0.GFX0.LCD.LCD1._ON gets called has passed
- 	 * *and* _STA has been called at least 3 times since.
- 	 */
--	PRESENT_ENTRY_HID("SYNA7500", "1", HASWELL_L, {
-+	PRESENT_ENTRY_HID("SYNA7500", "1", INTEL_HASWELL_L, {
- 		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7130"),
- 	      }),
--	PRESENT_ENTRY_HID("SYNA7500", "1", HASWELL_L, {
-+	PRESENT_ENTRY_HID("SYNA7500", "1", INTEL_HASWELL_L, {
- 		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7139"),
- 	      }),
-@@ -104,7 +104,7 @@ static const struct override_status_id override_status_ids[] = {
- 	 * The Dell XPS 15 9550 has a SMO8110 accelerometer /
- 	 * HDD freefall sensor which is wrongly marked as not present.
- 	 */
--	PRESENT_ENTRY_HID("SMO8810", "1", SKYLAKE, {
-+	PRESENT_ENTRY_HID("SMO8810", "1", INTEL_SKYLAKE, {
- 		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9550"),
- 	      }),
-@@ -121,19 +121,19 @@ static const struct override_status_id override_status_ids[] = {
- 	 * was copy-pasted from the GPD win, so it has a disabled KIOX000A
- 	 * node which we should not enable, thus we also check the BIOS date.
- 	 */
--	PRESENT_ENTRY_HID("KIOX000A", "1", ATOM_AIRMONT, {
-+	PRESENT_ENTRY_HID("KIOX000A", "1", INTEL_ATOM_AIRMONT, {
- 		DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
- 		DMI_MATCH(DMI_BOARD_NAME, "Default string"),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Default string"),
- 		DMI_MATCH(DMI_BIOS_DATE, "02/21/2017")
- 	      }),
--	PRESENT_ENTRY_HID("KIOX000A", "1", ATOM_AIRMONT, {
-+	PRESENT_ENTRY_HID("KIOX000A", "1", INTEL_ATOM_AIRMONT, {
- 		DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
- 		DMI_MATCH(DMI_BOARD_NAME, "Default string"),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Default string"),
- 		DMI_MATCH(DMI_BIOS_DATE, "03/20/2017")
- 	      }),
--	PRESENT_ENTRY_HID("KIOX000A", "1", ATOM_AIRMONT, {
-+	PRESENT_ENTRY_HID("KIOX000A", "1", INTEL_ATOM_AIRMONT, {
- 		DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
- 		DMI_MATCH(DMI_BOARD_NAME, "Default string"),
- 		DMI_MATCH(DMI_PRODUCT_NAME, "Default string"),
-@@ -146,7 +146,7 @@ static const struct override_status_id override_status_ids[] = {
- 	 * method sets a GPIO causing the PCI wifi card to turn off.
- 	 * See above remark about uniqueness of the DMI match.
- 	 */
--	NOT_PRESENT_ENTRY_PATH("\\_SB_.PCI0.SDHB.BRC1", ATOM_AIRMONT, {
-+	NOT_PRESENT_ENTRY_PATH("\\_SB_.PCI0.SDHB.BRC1", INTEL_ATOM_AIRMONT, {
- 		DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
- 		DMI_EXACT_MATCH(DMI_BOARD_NAME, "Default string"),
- 		DMI_EXACT_MATCH(DMI_BOARD_SERIAL, "Default string"),
-@@ -158,7 +158,7 @@ static const struct override_status_id override_status_ids[] = {
- 	 * as both ACCL0001 and MAGN0001. As we can only ever register an
- 	 * i2c client for one of them, ignore MAGN0001.
- 	 */
--	NOT_PRESENT_ENTRY_HID("MAGN0001", "1", ATOM_SILVERMONT, {
-+	NOT_PRESENT_ENTRY_HID("MAGN0001", "1", INTEL_ATOM_SILVERMONT, {
- 		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
- 		DMI_MATCH(DMI_PRODUCT_FAMILY, "YOGATablet2"),
- 	      }),
--- 
-2.45.0
+  drivers/media/i2c/imx283.c:443:30: error: initializer element is not constant
+     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                                ^
+  drivers/media/i2c/imx283.c:412:11: note: in definition of macro 'CENTERED_RECTANGLE'
+     .left = rect.left + ((rect.width - (_width)) / 2), \
+             ^~~~
+  drivers/media/i2c/imx283.c:443:30: note: (near initialization for 'supported_modes_12bit[0].crop.left')
+     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                                ^
+  drivers/media/i2c/imx283.c:412:11: note: in definition of macro 'CENTERED_RECTANGLE'
+     .left = rect.left + ((rect.width - (_width)) / 2), \
+             ^~~~
+  drivers/media/i2c/imx283.c:443:30: error: initializer element is not constant
+     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                                ^
+  drivers/media/i2c/imx283.c:413:10: note: in definition of macro 'CENTERED_RECTANGLE'
+     .top = rect.top + ((rect.height - (_height)) / 2), \
+            ^~~~
+  drivers/media/i2c/imx283.c:443:30: note: (near initialization for 'supported_modes_12bit[0].crop.top')
+     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                                ^
+  drivers/media/i2c/imx283.c:413:10: note: in definition of macro 'CENTERED_RECTANGLE'
+     .top = rect.top + ((rect.height - (_height)) / 2), \
+            ^~~~
 
+  drivers/media/i2c/imx283.c:443:30: error: initializer element is not a compile-time constant
+                  .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                          ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/media/i2c/imx283.c:412:11: note: expanded from macro 'CENTERED_RECTANGLE'
+                  .left = rect.left + ((rect.width - (_width)) / 2),      \
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/media/i2c/imx283.c:492:30: error: initializer element is not a compile-time constant
+                  .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+                          ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/media/i2c/imx283.c:412:11: note: expanded from macro 'CENTERED_RECTANGLE'
+                  .left = rect.left + ((rect.width - (_width)) / 2),      \
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  2 errors generated.
+
+with these compiler versions. Usually, the values are just refactored
+with #define macros.
+
+Cheers,
+Nathan
 
