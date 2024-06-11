@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-209740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6E7903A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:30:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5084903A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 349161F21701
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9504B285DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2617B43F;
-	Tue, 11 Jun 2024 11:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264A917B419;
+	Tue, 11 Jun 2024 11:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="mM7YpBD1"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bX98tjQv"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0675C17545;
-	Tue, 11 Jun 2024 11:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC8D17545;
+	Tue, 11 Jun 2024 11:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105440; cv=none; b=MRbGXyWnTXfjJQ4ifsuNX3MKcdnwYblxiZK2wb0rzgR2OX+rUUy9fvI7sYYt88AKfdrB4g7x/vzz8PzdrhsXJWCkBrYRiWVfvk4HvpyVzGksN0D46R+j+QN21rs1Vc5fZrM6WFbXuzkvSRPagDPBEVf3kSXpvXp0pW86LwA2/Is=
+	t=1718105530; cv=none; b=uK73vhTQBvUhXv9AastNDKNd+TpEmayS+OZ53nwFjhjeZmHxts3485UNruHkoyuVa7y8xwK55LxxhmJtarVLMauDMHuZQc5FBImT74qzckJH3ldwo0e9+3uX6aqbjh6MAj2OlN8UXY2ArfMN8zSPNw0JOd55NEqjWh5SHBuRH70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105440; c=relaxed/simple;
-	bh=aE9Gg2Ds1cNqbknEdagliEq9UJsv9bvc1ITWc773ZVM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qe2xJUCRc7mA+EjqfEwg/zYI92gnLa5BjFfHYNJboCc7D0BEG/AzcLOhPn0qbFfvHLuNd/MDI0CEUBkW9s1cPtLsTpcPiGUGd1yzaQHJcgMpiprTqGC2R1cOQ2VkrhXIQKO3heJ6hyqGYeHgiMVqoIl1GQgKQEOxRx8tBrFDgpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=mM7YpBD1; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=GvDhOl1G2Z707RGHPlxQe1Kar9gOS7R/lxC7nBW4SMc=; t=1718105438;
-	x=1718537438; b=mM7YpBD1dKP76BADGPSC+P50w0D/5CrrIG6GRH1P4X9WDiRamQjKHv5s7hshk
-	7vQVxt8Lef/CfZDXsh/txO7ewo8FfcZaAh1lQd5YsJLvdeQeCWx6pxl7K7yCq3hXEIcOzjwdfz6IC
-	qcaOMvM7ipeKbxk27vCnPIpnhI8OWRM/u6+bfTLmOLQLd8gckvDOlknL5m0Sk+3fK3RXXzH5h51PG
-	zjP+lZ5+Do1NlADNQ+fCkgnYMmtFCFnHno/GRYoKxf0WU8p82wqUmQrFwDibnqNFFxFnu9P53wESN
-	RHuzcJMKXvsxHYlAmlTD4XQdyKRFULheS7ZGnrjYNlWvH2sDeg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sGzhu-0002Et-5s; Tue, 11 Jun 2024 13:30:30 +0200
-Message-ID: <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
-Date: Tue, 11 Jun 2024 13:30:29 +0200
+	s=arc-20240116; t=1718105530; c=relaxed/simple;
+	bh=5QhOS7T2ECWOrmqZP7wpgVuK7sIW+K19WolJgjf0mbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GxY+2kXvsh+Li3bogGyckoeoZ3l2s6y8VPxPFe6dooWES53cyepazyYk0EPTAWAJSuQ5OSJpdmRsCsW+hgulnjAMWdeimvFK07Qnc2BudnNHjAswxeL8gZafW78rI09M5sm5jywpkrhSkc3m2x99ZBwhMK5xT+7yV9yUWkJZsN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bX98tjQv; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b3241373adso506895eaf.2;
+        Tue, 11 Jun 2024 04:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718105528; x=1718710328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qo2PmNsaAKgRZzuMPm5GrqXgFAxK9fkcVAgK1ivuWd8=;
+        b=bX98tjQv3G1ZUs16ZruusKfyotrUlaojCEwYVHeRnX42x/830Bngw0sPHf7hSMtLTG
+         7NYLZS9VfNsOw6BRkYO+SFnnzp/LuZxUMnDXb5JgPsDC6+cOA6KxP9vSE1aUZEw3SBCm
+         g79GqcIrYGdKN1dG/iufZFXd3XX3+3T6SJZnFYY0hnake4eyF/J5juUQ4VsRAr2FPDXg
+         IZs7Dd9Gv5t53t0UUxmenJ8K7z/9k7cYkbRuDVJdASDsCwkZkZR6npDTqDgcKU9g9HGg
+         ZbziuacFvKARrL2+KkvY9rQpJ8hJ7eGsdf+nwDI4Bu0VggLZ9ipQ1PlppFWvaqZKiqMA
+         72ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718105528; x=1718710328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qo2PmNsaAKgRZzuMPm5GrqXgFAxK9fkcVAgK1ivuWd8=;
+        b=NSzzun7IN4+Oi+1pLEgJAxN0o0LgCuBiDAmJMqDZDjAKSLew/9Oa17H6H1Dkv2mjHi
+         kA/wo6UX6eCnod7klAgzCt08xdRi3j6QXpjaXlv15zXjReqUVgxzKpxagP9ku0nulYJx
+         g0/vjFdeZjWcTSlTp5B3E4Qmaa55zuUbNrhHbYNWaLGBmFcAbLYsSuc2YiOR3v7LkLpJ
+         3Qdf8IhCf5yymYXocUvpW76kodf1jjIZjVZY1Vd6Q1GSVIku4dEw2u1P/Lx2Cd3xn8bE
+         flwtUWbi/YQAVdP7m/OzJNnNADWNfvjEcOH1CTQ+9lF/bEbi9VX6BCkMIJ262N7UStMm
+         PV0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWo9ZJuMLhdIUq6yWBL8n1++SyUWiLvpnG9EmLr5wjD8mesZJyIrH3V51N0Kf0bui6b6ork+R4aPKeCwkfblq2DLnxzL5BMH9kmEIGnNw5trFTBgrJOmh+14b0GHkvhTIz17kkwj9ig
+X-Gm-Message-State: AOJu0YyBHDFO6zVrzJykf+duBgi2FV+l4xXq+Mm0bEpc/7X7VVA5q3H5
+	QZlryCa4PGk+cGZKjKzU+yyD6ES5ilNOu0mx1/KmAFgVM0F/YDraA7993B9QkzlPgsMKYRfwme+
+	0qBy4scbBnidFQCaAqBTvcNmhsuM=
+X-Google-Smtp-Source: AGHT+IEOXcemW3CJq1WccB0TeUKL64I1iCoFXp10rVnF2Ye6L9IJ6w7VZS1vjuiE1ZhFLQiRKTceR8mn+/Hpgl9lPgY=
+X-Received: by 2002:a05:6820:1506:b0:5ba:a69f:465f with SMTP id
+ 006d021491bc7-5baae8d7912mr11170277eaf.9.1718105528139; Tue, 11 Jun 2024
+ 04:32:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718105438;d59cc20a;
-X-HE-SMSGID: 1sGzhu-0002Et-5s
+References: <20240611042515.61387-1-dzm91@hust.edu.cn> <3931f2be-fe98-45ac-8a40-a474dd7ef61c@loongson.cn>
+In-Reply-To: <3931f2be-fe98-45ac-8a40-a474dd7ef61c@loongson.cn>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Tue, 11 Jun 2024 19:31:41 +0800
+Message-ID: <CAD-N9QVbU=+i2WH05-836TNB-G42R3NQWf+8OFxfsbrbFsd7cw@mail.gmail.com>
+Subject: Re: [PATCH] docs/zh_CN: add process/researcher-guidelines Chinese translation
+To: Yanteng Si <siyanteng@loongson.cn>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07.06.24 16:15, Thorsten Leemhuis wrote:
-> On 07.06.24 16:03, Paolo Abeni wrote:
->> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
->>> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
->>>>> [adding Paolo, who committed the culprit]
->>>
->>> /me slowly wonders if the culprit should be reverted for now (see below)
->>> and should be reapplied later together with the matching changes from
->>> Arınç ÜNAL.
->>
->> FWIS I think a revert should be avoided, given that a fix is available
->> and nicely small.
-> 
-> Yeah, on one hand I agree; but on the other it seems that the
-> maintainers that would have to take care of the dt changes to fix this
-> until now remained silent in this thread, apart from Rob who sent the
-> mail regarding the warnings.
-> 
-> I put those maintainers in the To: field of this mail, maybe that might
-> lead to some reaction.
+On Tue, Jun 11, 2024 at 7:11=E2=80=AFPM Yanteng Si <siyanteng@loongson.cn> =
+wrote:
+>
+> Hi all,
+>
+> =E5=9C=A8 2024/6/11 12:25, Dongliang Mu =E5=86=99=E9=81=93:
+> > Finish the translation of researcher-guidelines and add it to the
+> > index file.
+>
+> How about add a tag?  just like:
+>
+> Commit xxxxxxxxxxxx ("xxxxxxxx").
+>
+> This will reduce the effort of subsequent document updates.
+>
+> At the same time, I also noticed that Ziqiu sent an automated probe
+> tool, and I think this will be useful for running scripts in the future.
+> What do you think?
+>
 
-Still no reply from the DRS folks or any other progress I noticed. Guess
-that means I will soon have no other choice than to get Linus involved,
-as this looks stuck. :-( #sigh
+This is a good idea. Maybe I can add a sentence like this,
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+"Update to commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to
+RV docs")"
+
+It can help track the translation status of all translated documents.
+
+> See <https://lore.kernel.org/linux-doc/20240422065822.1441611-1-chengziqi=
+u@hust.edu.cn/>
+>
+> Thanks,
+> Yanteng
+>
+>
+>
 
