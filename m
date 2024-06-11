@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-209650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EB39038EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202629038EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B34C1F22C61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4B8286CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3FA179951;
-	Tue, 11 Jun 2024 10:34:34 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483B1174EF4;
+	Tue, 11 Jun 2024 10:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BefniOrG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3CD7407C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5E7407C;
+	Tue, 11 Jun 2024 10:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102074; cv=none; b=mhMjK7kAJzjldc00nsLN5Dvmtqa2lD0S17iTD9gGggeBfxyiowNsSVfaz5ZILqKjDXayV7xVrHyOzifjNXDM6nJGn5doQTsS8bFz8uDJufKQCdbLD7hCbkoNZ0OlYck80ZFDxTuwg36AjK9yTE7vRDSVB6egLBrCnizLNFnrtPk=
+	t=1718102099; cv=none; b=gz4vQ6m544LZElHP0/ZXSv96XpdZZh5zZny4iW3Atvq0MNBcln+dc/xDx3SN5nA72m4VylJ7HivUxENsYGc0JttvtN9/J448Lh9cB8nB9gKuSbAsZjOhihybyB6KhBb+dOPNMdtBmfl0KCbA+o42gVvutqTZWe15bKInHMCZ6uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102074; c=relaxed/simple;
-	bh=DiUx+fa2fiEm8dYh/SFoSIXBAOSLzwFVSfuuBFb1ZLs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcYJ4L8lEY4wajC5hCHYIBo0JMjxLvGp3r3C6qmaErdpDcQ4bvLDLfyfICMAcI9UCgJPx9sJmT9Kk2JraA/4sHDaKAsbUI1F45RDz2Tm8z/TFUg99XH3lIFbVAxGV7V1uyA9JEeOhc10zFXONwc7aTF27RYyzyjxlFkwkwsGGhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 2edfd6f0-27de-11ef-ab0f-005056bdd08f;
-	Tue, 11 Jun 2024 13:34:30 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 11 Jun 2024 13:34:29 +0300
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nuno.sa@analog.com, dlechner@baylibre.com,
-	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v3 6/6] iio: adc: Add support for AD4000
-Message-ID: <ZmgoNRkso4egGWgJ@surfacebook.localdomain>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
- <e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt@analog.com>
- <e92871489d416e4f8a350fd24fc5ed0012b3cf2b.camel@gmail.com>
- <20240609102354.02aa1128@jic23-huawei>
+	s=arc-20240116; t=1718102099; c=relaxed/simple;
+	bh=CAhk4/ZKjyN2nOCvdOqwpEapus9WeeMdkxzHYiQc//g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AOoILIzu9U+P/8vD889nVyoPZPtD6YvfkRUnM+k19+fH7QNFZol0QM9pr7LnVS45HgxyCJ7PwLR3J6rfwh4W0mKG0HwW7Xpkl5JVPWqK7RJl4rO3jtWWXHKIgeKCHUStTOdkK7lohiU1xSgmTw1vTRdNz5jGIJT6gxWUsWSrpXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BefniOrG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9bhjV013157;
+	Tue, 11 Jun 2024 10:34:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6X5Iqp2hrw705B0jD83nQH
+	KcOy/xHcrrfLBEq+DtWpE=; b=BefniOrG9ax2l2N3vxBj0W/mPXwQtqjGU3yUBX
+	7xccsy+pKR16/iztCyAd6BhUsRfXWqV/uOtMkn2Bp9kZ1+B1SydYXc8a8o5eVlfl
+	BryBYI83Z5+2Y4+UssGm3D7Eb4RlomS0sXi9lVQVGsG6eS67J5+MjwHbThxnJplO
+	T2JmyFd6+/CGoyPtzkSKNYeI8P9PXSaoWXdercvjbnUcmOqsKuzuIY3jCi3K6sJq
+	i6JwYpHAFa+RW9QV+yjYUeAA44z1YmkPktE0nhH6VrYEQY2ucFX7EobkXcE75USw
+	1o9eR60On9L3JJ3TMEWDXd4ttvjMWeVroSW9YSkw4Ug+wtGg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm45847c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:34:55 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BAYrsV027611
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:34:53 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 03:34:51 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>
+Subject: [PATCH v5 0/7] Add missing fixes to FastRPC driver
+Date: Tue, 11 Jun 2024 16:04:33 +0530
+Message-ID: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609102354.02aa1128@jic23-huawei>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l4jf8CtFOnQG_79S81aw8KM3wgvi0gHx
+X-Proofpoint-ORIG-GUID: l4jf8CtFOnQG_79S81aw8KM3wgvi0gHx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_06,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=801 phishscore=0 malwarescore=0 suspectscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110080
 
-Sun, Jun 09, 2024 at 10:23:54AM +0100, Jonathan Cameron kirjoitti:
+This patch series adds the listed bug fixes that have been missing
+in upstream fastRPC driver.
+- Fix DSP capabilities request.
+- Fix issues in audio daemon attach operation.
+- Restrict untrusted app to attach to privilegeded PD.
 
-...
+Changes in v2:
+- Added separate patch to add newlines in dev_err.
+- Added a bug fix in fastrpc capability function.
+- Added a new patch to save and restore interrupted context.
+- Fixed config dependency for PDR support.
 
-> > > +	/*
-> > > +	 * In 4-wire mode, the CNV line is held high for the entire
-> > > conversion
-> > > +	 * and acquisition process. In other modes st->cnv_gpio is NULL and
-> > > is
-> > > +	 * ignored (CS is wired to CNV in those cases).
-> > > +	 */
-> > > +	gpiod_set_value_cansleep(st->cnv_gpio, 1);  
-> > 
-> > Not sure it's a good practise to assume internal details as you're going for
-> > GPIO. I would prefer to have an explicit check for st->cnv_gpio being NULL or
-> > not.
-> 
-> Hmm. I had it in my head that this was documented behaviour, but
-> I can't find such in the docs, so agreed checking it makes sense.
-> 
-> I would be very surprised if this ever changed as it's one of the
-> things that makes optional gpios easy to work with but who knows!
+Changes in v3:
+- Dropped interrupted context patch.
+- Splitted few of the bug fix patches.
+- Added Fixes tag wherever applicable.
+- Updated proper commit message for few of the patches.
 
-Not Linus and not Bart, but we have tons of drivers that call GPIO APIs
-unconditionally as long as they want optional GPIO.
+Changes in v4:
+- Dropped untrusted process and system unsigned PD patches.
+- Updated proper commit message for few of the patches.
+- Splitted patches in more meaningful way.
+- Added helped functions for fastrpc_req_mmap.
 
-What I see here is the comment that should be rewritten to say something like
+Changes in v5:
+- Dropped PDR patch. It will be shared in a separate patch series.
+- Dropped fastrpc_req_mmap and remote_heap specific changes from this
+  series. These patches will be shared separately as a new patch series.
+- Changed patch series subject as this series is no longer carrying any
+  new feature changes.
 
-"if GPIO is defined blablabla, otherwise blablabla."
+Ekansh Gupta (7):
+  misc: fastrpc: Add missing dev_err newlines
+  misc: fastrpc: Fix DSP capabilities request
+  misc: fastrpc: Copy the complete capability structure to user
+  misc: fastrpc: Avoid updating PD type for capability request
+  misc: fastrpc: Fix memory leak in audio daemon attach operation
+  misc: fastrpc: Fix ownership reassignment of remote heap
+  misc: fastrpc: Restrict untrusted app to attach to privileged PD
 
-I.o.w. do not mention that implementation detail (being NULL, i.e. optional).
+ drivers/misc/fastrpc.c      | 51 +++++++++++++++++++++++++++----------
+ include/uapi/misc/fastrpc.h |  3 +++
+ 2 files changed, 40 insertions(+), 14 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
