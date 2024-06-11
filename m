@@ -1,288 +1,130 @@
-Return-Path: <linux-kernel+bounces-209246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B276D902F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E1902F7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB551F2361F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A391F23669
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497FD170827;
-	Tue, 11 Jun 2024 04:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE1616FF37;
+	Tue, 11 Jun 2024 04:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cKLIjBCr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l8fthV5o"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A18F12FF65;
-	Tue, 11 Jun 2024 04:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F382A16F915
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718079696; cv=none; b=s6V3m8gTuqXH6D27Bu3TfmOrdHcQfAd2Ly/n62MX5kNhMWoMpwX54BHqQo+jRJqu9m7aClevy7qatTjFqYEspd7clpdLk09Zv1RI+FPPw20BSG2M6XTDYFMDEiA0uvF6NaaJ3f1q5jhW621chc6Si9Q0MjwUijcde7QAR2Ra6WQ=
+	t=1718079687; cv=none; b=AGq0CKtfC+QL/LSCnTkmFITfAcvGLv5kZky7KFXKJp7XhwP637X4lRJA0dh9QDS4a/7xbtpFbgJqFtTSPoi6jAGBo3U7Wp7HyuDj3Umg2FGxFO0T0+ILYrZkvc6sdbV9wJ3zAJki1slRhgrwzt+NIwqQRMEPUnlosslmEw9b8Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718079696; c=relaxed/simple;
-	bh=bOlH16yoLLwDhPyqTn87CsAu23WS8AYZapZer14UFwI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FTJcnNHJDiLmy5nv9PP4UadNUElOZt+lradhh8X24+dwAILgaGi7Dce053trygq+g0//4R9doQGxr5s5fx0I5l5vjPAgJ6HFbVEYRzSuKaO0SC1KADvrUOKpum9qUKr2LfqB5L1QqIIOIocVeLabIY76bEBikatHH4di7+tS0zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cKLIjBCr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEUoEq030832;
-	Tue, 11 Jun 2024 04:21:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=9wFGZ9NsF1+ExCUmKe+vyw
-	6T9qVZ/UfBtzK4uVfJ0t0=; b=cKLIjBCr7c/jfGnoYSND/5+YymwEzwAqaU48FM
-	zUEpBDL78G/4LgaOUL3NFZce6k9kxo8zN9ISB85b/Oj1ySKuGFMuz4ChVfw3AN22
-	7JW/1mHgHmNQYZI5bNBwbITLt6SeONyIidKkrNp/KdoPjpo8MGthFDhBrLj7Ko6g
-	DlteHB2D+jEI+cYDobTrUJISBlqLFLCypTzW6kIzbz1IUPVexEsf7AsKot+q0Fg2
-	ECMB+Wpkkm/ZtC3ypRdL7JyQFIj7UvmADDV4AVe2lKW6ut5wrrtDEDM0XxyP0W2Q
-	2n1ITIkhragc1kGg7kbJMTdfhpV8TXQZMfIj0lZ6FMQWN+ww==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymevxdaye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 04:21:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B4L87l001954
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 04:21:08 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 21:21:07 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 21:21:05 -0700
-Subject: [PATCH] pinctrl: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718079687; c=relaxed/simple;
+	bh=b44GjkyNBqeujCH+NPzsvRUdiEqakkwjTTaJH94UXZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iVLZxe5gxaeIFv1jquOgOJsqHtN7wLzbvG6M5teuglq/X6panhv8fqTTbiKJrQY3EcmlDo6Jltvvv90uxURoMySn2f5MgiN1WtA8fhIXdzPTZjo1+oPq+d862Po6JM53EbfdOIRq7ezY0x2ltaLzARSHAd0RGVnOeKlq32bWjlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l8fthV5o; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6f971cb3c9cso404194a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718079685; x=1718684485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EklVdHyvDTr3/lo2FpeHs1y2+JvBE7tPTVB+SmPAdQ4=;
+        b=l8fthV5odZYqGeWe6LixQUjf3z2WeX1cN7e9dRUbkeoIv/YhzHonPGj8fqTqNXX2ft
+         k8UUV7KE4GuYtBhMIlrj5s0ZDCsY8ymYq24cF+aB2HNJN6yNbZ3LxDe9830sIcQeTRQg
+         TLWHgHwVDtrBWYCgo4ldSP5a9ELMbXoDFAItA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718079685; x=1718684485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EklVdHyvDTr3/lo2FpeHs1y2+JvBE7tPTVB+SmPAdQ4=;
+        b=ZrE7PqvZeUyrNsdYDsgjuPsknpAqSF5N3TLjxg5VJeX1CuoOar1seGCJsAxOi7f57D
+         fx6VMq5FlDUlora2HlTz3/Iyp5r4KaCVL3w8ZPm10PWYNEz6YXJ6QS6SVaCSIaSPx333
+         pBIR8fpCwHXRT9ewubqbhemz77DMbLLwTvCSfzNwDOR/oaJO0b6bwhyfLhWCYJbVZUwn
+         LdZpI8Hse7GhOUTC4Q+duAucLkzuS9zMzbneS7VOIiChBfC200Il7o9vEKIvkzugxZpJ
+         53jLN6QuDwmaAWysmtGXdxfAC/CFjAGA7vFJYCkt91blq050/1g/3T1zFM4Nqax7UJq1
+         iYHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP+rdxabUt2KjJ+JRuQHXsGAK/2BNrp3DQUYPMsRkbAyM2m4jaJep00CeQZQGNR1M4Nq5nODEgomfII+F2U37CJuLpkXfjFxYqXEUz
+X-Gm-Message-State: AOJu0YxZ4flIGr0uYikC2iiz16s2B9x7PGutRA+NWXdGCO0ubYLLIFW4
+	FJmHWKWTax48+2XmruaPxJNYA4HZ4QsB0HfJOU7oH3mNL9YyewzPKp/VNV76Bckf8mlcN5JpWzL
+	OCkYidWGCvrUJ8+dvzQ+Tlj1jIck6XJpjiL+A
+X-Google-Smtp-Source: AGHT+IEeRKtmtjxMmre/EUaXcUHS9SCDfRXDteIausMJyVW1Gdf5SYIeYK/MjKfHWpWWOOhhqHhMBUFCuUsJFlAg34E=
+X-Received: by 2002:a05:6870:231a:b0:24f:c9e3:b76f with SMTP id
+ 586e51a60fabf-2546441a4e7mr13254702fac.19.1718079685006; Mon, 10 Jun 2024
+ 21:21:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALDQZ2YC/x3MQQqDQAyF4atI1g2M1ip4ldJFnElrQEdJVATx7
- k27enyL959grMIGXXGC8i4mc3aUtwLiQPnDKMkNVajq0JQBp4RJZWc1XCTHVUdsY2jvj5p8GvD
- jovyW4x99vtw9GWOvlOPwS42StwMnspUVrusL7qzNOoMAAAA=
-To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
-        "Broadcom internal
- kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        "Kevin Hilman" <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qqrK4b4Qf9tpkGOIqUuwSD-AfAKDuLiL
-X-Proofpoint-GUID: qqrK4b4Qf9tpkGOIqUuwSD-AfAKDuLiL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_08,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- impostorscore=0 adultscore=0 phishscore=0 malwarescore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110031
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+In-Reply-To: <20240608021023.176027-1-jhubbard@nvidia.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 10 Jun 2024 21:21:13 -0700
+Message-ID: <CABi2SkVoNyXLrfU71gnv1qVUAADpUmFXiDoKKPc54MLb5JpB+Q@mail.gmail.com>
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make headers"
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Andrei Vagin <avagin@google.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, 
+	Rich Felker <dalias@libc.org>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/bcm/pinctrl-bcm4908.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/meson/pinctrl-meson.o
+Hi
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-files which have a MODULE_LICENSE().
 
-This includes many meson drivers which, although they did not produce
-a warning with the x86 allmodconfig configuration, may cause this
-warning with ARM or ARM64 configurations.
+On Fri, Jun 7, 2024 at 7:10=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> w=
+rote:
+>
+> Eventually, once the build succeeds on a sufficiently old distro, the
+> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
+> after that, from selftests/lib.mk and all of the other selftest builds.
+>
+> For now, this series merely achieves a clean build of selftests/mm on a
+> not-so-old distro: Ubuntu 23.04:
+>
+> 1. Add __NR_mseal.
+>
+> 2. Add fs.h, taken as usual from a snapshot of ./usr/include/linux/fs.h
+> after running "make headers". This is how we have agreed to do this sort
+> of thing, see [1].
+>
+What is the "official" way to build selftests/mm ?
+I tried a few ways, but it never worked, i.e. due to head missing.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Corrections to these descriptions are welcomed. I'm not an expert in
-this code so in most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.  History has shown
-that in some cases these are originally wrong due to cut-n-paste
-errors, and in other cases the drivers have evolved such that the
-original information is no longer accurate.
+1>
+cd tools/testing/selftests/mm
+make
 
-Also let me know if any changes need to be split into a separate patch
-to go through a separate maintainer tree.
----
- drivers/pinctrl/bcm/pinctrl-bcm4908.c         | 1 +
- drivers/pinctrl/meson/pinctrl-meson-a1.c      | 1 +
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 1 +
- drivers/pinctrl/meson/pinctrl-meson-axg.c     | 1 +
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1 +
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 1 +
- drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 1 +
- drivers/pinctrl/meson/pinctrl-meson-s4.c      | 1 +
- drivers/pinctrl/meson/pinctrl-meson.c         | 1 +
- drivers/pinctrl/meson/pinctrl-meson8-pmx.c    | 1 +
- drivers/pinctrl/pinctrl-mcp23s08.c            | 1 +
- drivers/pinctrl/pinctrl-mcp23s08_i2c.c        | 1 +
- drivers/pinctrl/pinctrl-mcp23s08_spi.c        | 1 +
- drivers/pinctrl/pinctrl-tb10x.c               | 1 +
- 14 files changed, 14 insertions(+)
+migration.c:10:10: fatal error: numa.h: No such file or directory
+   10 | #include <numa.h>
+      |          ^~~~~~~~
+compilation terminated.
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm4908.c b/drivers/pinctrl/bcm/pinctrl-bcm4908.c
-index cdfa165fc033..f190e0997f1f 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm4908.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm4908.c
-@@ -559,5 +559,6 @@ static struct platform_driver bcm4908_pinctrl_driver = {
- module_platform_driver(bcm4908_pinctrl_driver);
- 
- MODULE_AUTHOR("Rafał Miłecki");
-+MODULE_DESCRIPTION("Broadcom BCM4908 pinmux driver");
- MODULE_LICENSE("GPL v2");
- MODULE_DEVICE_TABLE(of, bcm4908_pinctrl_of_match_table);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-index 50a87d9618a8..d2ac9ca72a3e 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-@@ -936,4 +936,5 @@ static struct platform_driver meson_a1_pinctrl_driver = {
- };
- 
- module_platform_driver(meson_a1_pinctrl_driver);
-+MODULE_DESCRIPTION("Amlogic Meson A1 SoC pinctrl driver");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-index ae3f8d0da05f..cad411d90727 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-@@ -117,4 +117,5 @@ const struct pinmux_ops meson_axg_pmx_ops = {
- };
- EXPORT_SYMBOL_GPL(meson_axg_pmx_ops);
- 
-+MODULE_DESCRIPTION("Amlogic Meson AXG second generation pinmux driver");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 6667c9d0238f..8f4e7154b73f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -1091,4 +1091,5 @@ static struct platform_driver meson_axg_pinctrl_driver = {
- };
- 
- module_platform_driver(meson_axg_pinctrl_driver);
-+MODULE_DESCRIPTION("Amlogic Meson AXG pinctrl driver");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index 2c17891ba6a9..32830269a5b4 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -1426,4 +1426,5 @@ static struct platform_driver meson_g12a_pinctrl_driver = {
- };
- 
- module_platform_driver(meson_g12a_pinctrl_driver);
-+MODULE_DESCRIPTION("Amlogic Meson G12A SoC pinctrl driver");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index f51fc3939252..2867f397fec6 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -910,4 +910,5 @@ static struct platform_driver meson_gxbb_pinctrl_driver = {
- 	},
- };
- module_platform_driver(meson_gxbb_pinctrl_driver);
-+MODULE_DESCRIPTION("Amlogic Meson GXBB pinctrl driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 51408996255b..a2f25fa02852 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -871,4 +871,5 @@ static struct platform_driver meson_gxl_pinctrl_driver = {
- 	},
- };
- module_platform_driver(meson_gxl_pinctrl_driver);
-+MODULE_DESCRIPTION("Amlogic Meson GXL pinctrl driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-index cea77864b880..60c7d5003e8a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-@@ -1230,4 +1230,5 @@ static struct platform_driver meson_s4_pinctrl_driver = {
- };
- module_platform_driver(meson_s4_pinctrl_driver);
- 
-+MODULE_DESCRIPTION("Amlogic Meson S4 SoC pinctrl driver");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 524424ee6c4e..ef002b9dd464 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -767,4 +767,5 @@ int meson_pinctrl_probe(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(meson_pinctrl_probe);
- 
-+MODULE_DESCRIPTION("Amlogic Meson SoCs core pinctrl driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-index f767b6923f9f..7f22aa0f8e36 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-@@ -101,4 +101,5 @@ const struct pinmux_ops meson8_pmx_ops = {
- 	.gpio_request_enable = meson8_pmx_request_gpio,
- };
- EXPORT_SYMBOL_GPL(meson8_pmx_ops);
-+MODULE_DESCRIPTION("Amlogic Meson SoCs first generation pinmux driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 38c3a14c8b58..737d0ae3d0b6 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -696,4 +696,5 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- }
- EXPORT_SYMBOL_GPL(mcp23s08_probe_one);
- 
-+MODULE_DESCRIPTION("MCP23S08 SPI/I2C GPIO driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08_i2c.c b/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
-index 04e8e7d079f0..94e1add6ddd7 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
-@@ -111,4 +111,5 @@ static void mcp23s08_i2c_exit(void)
- }
- module_exit(mcp23s08_i2c_exit);
- 
-+MODULE_DESCRIPTION("MCP23S08 I2C GPIO driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08_spi.c b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-index 4a872fff5fe8..54f61c8cb1c0 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-@@ -263,4 +263,5 @@ static void mcp23s08_spi_exit(void)
- }
- module_exit(mcp23s08_spi_exit);
- 
-+MODULE_DESCRIPTION("MCP23S08 SPI GPIO driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index c3b76e6511ac..4f98f72565f4 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -830,4 +830,5 @@ static struct platform_driver tb10x_pinctrl_pdrv = {
- module_platform_driver(tb10x_pinctrl_pdrv);
- 
- MODULE_AUTHOR("Christian Ruppert <christian.ruppert@abilis.com>");
-+MODULE_DESCRIPTION("Abilis Systems TB10x pinctrl driver");
- MODULE_LICENSE("GPL");
+2>
+make headers
+make -C tools/testing/selftests
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-pinctrl-7c07354ac076
+make[1]: Entering directory
+'/usr/local/google/home/jeffxu/mm/tools/testing/selftests/mm'
+  CC       migration
+migration.c:10:10: fatal error: numa.h: No such file or directory
+   10 | #include <numa.h>
 
+Thanks!
+-Jeff
 
