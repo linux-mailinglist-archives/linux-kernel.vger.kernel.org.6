@@ -1,93 +1,150 @@
-Return-Path: <linux-kernel+bounces-209605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AFB903855
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8578F903856
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F15E1F2344C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAE91F2648B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C60178367;
-	Tue, 11 Jun 2024 10:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC18178375;
+	Tue, 11 Jun 2024 10:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="rXRkaTcZ"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YhGNiTFi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9574FE57E;
-	Tue, 11 Jun 2024 10:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0FE57E;
+	Tue, 11 Jun 2024 10:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718100251; cv=none; b=uRlDoGu9NgotTPcOET9udlxOgsT0IFevl/p98MUhLmnzDbF5dQ8/NAGjJBJTC3fvdVVrCktw28vs9Qyc/1gfubaQKH49Qo3RrjpELyW9hKehtGy9xmWE4IrD/w7RfHBRhQvvrmV3mlcopnjSLggRDDp+Rb5Ox1vD8rzq43lh2tk=
+	t=1718100320; cv=none; b=k5xieUGz/V32mT2+1Vy91vEF6G9OZYCQR/ApJhKMXQzQ6SOO1g6/45M3408A1Qfjw4QeIcJ7h1BdXGMtszURvsp9KVMTgoXxlM3jCaLwAy7rekKbS5SUgRGEWj/wLJnD0DZkrg8Pe967JpBUPpFmtShqNIwUwCh6OJSKB+fLp1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718100251; c=relaxed/simple;
-	bh=JA7fXFhBWz5d5wW447BlTNhXkv4g8AwEj63/2sbOFMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uCPRPXn4O+SNVSTT21p0QfkW9dq6+r/Dx7LP2Dds/Z1hB9MP/u0KrmkbFuVSjTwhCE36k7Sjp0uitEKiTSqo9oahg3OHdyi+SyQTUEZQJz8ul5FxNlpnsv4GZiRA7mn60abjy+50PY0RJGkyWgYTopxXBGLqEE4s/8wabiTXUUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=rXRkaTcZ; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=8F6YXkkTIEjh5AQeJ7ZK4LQi7I7Eu2h8Jzf6YsyQf/0=;
-	t=1718100249; x=1718532249; b=rXRkaTcZPOJUYzIJwxf9+VWg3iHcmHyuUn2Jx+zMo2jwwgX
-	DJ8jZibLZWQmsUquEgXP4/xGrSD3RhMgoBTXuCKRiE/2bylWs2CT3qzMxZwI4NJykKe/zyBRQ2gbQ
-	/iGtTqBm9mfpBUZSXcrT7T4ZgsejHIKRLWhA8cS44ZmJhB4u+O8+F9wf5kJxv5GhnzxItKcSXhpwy
-	2ec8xbGoeyTq3848kk86tYWozi4+wzS10SLGadAyJzVw6GN0n+aF1NcS4g9s9+BEL2J+djCY/EpXM
-	jbLvkel9JNmfTN/SmQjUr8vGuSxwRndh73mmI76fIKa+Mt4UYLYE/cmUcWufrlvQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sGyMJ-0003Iy-Cp; Tue, 11 Jun 2024 12:04:07 +0200
-Message-ID: <0936a091-7a3a-40d7-8b87-837aed43966b@leemhuis.info>
-Date: Tue, 11 Jun 2024 12:04:06 +0200
+	s=arc-20240116; t=1718100320; c=relaxed/simple;
+	bh=z7xGmJO7rnhCGOUXwfuTKI3+a9YP3yCgBsSXkvQaVaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PvDjhntNOXplnI2zfW1hMOCV7Wuzaiqe/y9fGPrBmP4hMRYhfSb+raKY/41ayd7AWKPc6SKrg9gBE7+Z8Jf79Zn14F/qmZv42D6UCtEucIQOsKueySl0k7kMX69jSyHIGRI4h6TFqsZ33frppJUPOQx9JpkYjINPxwrhgRp7kUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YhGNiTFi; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718100319; x=1749636319;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z7xGmJO7rnhCGOUXwfuTKI3+a9YP3yCgBsSXkvQaVaY=;
+  b=YhGNiTFicONEy0kjzU2FfrwnB82Y5t2mIoQ4TmHRTatD9XbA3bxZ8GH3
+   Boz/zZgGEk+/Y+chRx8ycGC4AfJSaAOeH1sHqaXsIO9o6X8DvYbiu/zBf
+   TOpuseQAqmVfmWCHslmQI64DvrhghkjxO4VPNxqGRqKjbJdxLUTLUIWvY
+   Bh1zBP2OxeCmVK4tDZ1yz+SuFa58x3tdcxOoTx+LQ2KcaN4jw6YyJkuNO
+   yUob0//sZOnrHpwPh+LlsVG23ZEjXiimchCLMDKeN16eJL25f5ltE5GmW
+   C8vVmA6m6kmmnLiv6qljo4n9+/8WY7Khpk9L99xFWvgGFiQJfkEO1n+qB
+   g==;
+X-CSE-ConnectionGUID: DhkG1XLEQZirbEh/jkR7mQ==
+X-CSE-MsgGUID: zcHgPH2LQaqnLcnIy7iKoA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14594746"
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="14594746"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 03:05:18 -0700
+X-CSE-ConnectionGUID: 5bvUzqKTTQ+bpYeibA3XFA==
+X-CSE-MsgGUID: SSE3ON8XRCGqRRkpNt+zsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="43782832"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 11 Jun 2024 03:05:13 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGyNK-0000IE-2Y;
+	Tue, 11 Jun 2024 10:05:10 +0000
+Date: Tue, 11 Jun 2024 18:05:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxwell Bland <mbland@motorola.com>,
+	"open list:BPF (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Zi Shen Lim <zlim.lnx@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Puranjay Mohan <puranjay12@gmail.com>
+Subject: Re: [PATCH bpf-next v5 1/3] cfi: add C CFI type macro
+Message-ID: <202406111716.SluzXu9X-lkp@intel.com>
+References: <cwhnmpn5yvg6ma7mvjviy4p7z6gdoba57daeprpc4zcokfhpv2@44gvdmcfuspt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Segfault running a binary in a compressed folder
-To: Giovanni Santini <giovannisantini93@yahoo.it>, stable@vger.kernel.org
-Cc: regressions@lists.linux.dev, ntfs3@lists.linux.dev,
- almaz.alexandrovich@paragon-software.com, LKML <linux-kernel@vger.kernel.org>
-References: <08d7de3c-d695-4b0c-aa5d-5b5c355007f8.ref@yahoo.it>
- <08d7de3c-d695-4b0c-aa5d-5b5c355007f8@yahoo.it>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <08d7de3c-d695-4b0c-aa5d-5b5c355007f8@yahoo.it>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718100249;5fbf9e90;
-X-HE-SMSGID: 1sGyMJ-0003Iy-Cp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cwhnmpn5yvg6ma7mvjviy4p7z6gdoba57daeprpc4zcokfhpv2@44gvdmcfuspt>
 
-On 11.06.24 11:19, Giovanni Santini wrote:
-> 
-> I am writing to report the issue mentioned in the subject.
-> 
-> Essentially, when running an executable from a compressed folder in an
-> NTFS partition mounted via ntfs3 I get a segfault.
-> 
-> The error line I get in dmesg is:
-> 
-> ntfs3: nvme0n1p5: ino=c3754, "hello" mmap(write) compressed not supported
-> 
-> I've attached a terminal script where I show my source, Makefile and how
-> the error appears.
+Hi Maxwell,
 
-You CCed the regression and the stable list, but that looks odd, as you
-don't even mention which kernel version you used (or which worked).
-Could you clarify? And ideally state if mainline (e.g. 6.10-rc3) is
-affected as well, as the answer to the question "who is obliged to look
-into this" depends on it.
+kernel test robot noticed the following build errors:
 
-Ciao, Thorsten
+[auto build test ERROR on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxwell-Bland/arm64-cfi-bpf-Support-kCFI-BPF-on-arm64/20240611-021203
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/cwhnmpn5yvg6ma7mvjviy4p7z6gdoba57daeprpc4zcokfhpv2%4044gvdmcfuspt
+patch subject: [PATCH bpf-next v5 1/3] cfi: add C CFI type macro
+config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240611/202406111716.SluzXu9X-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 4403cdbaf01379de96f8d0d6ea4f51a085e37766)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240611/202406111716.SluzXu9X-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406111716.SluzXu9X-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/riscv/kernel/cfi.c:85:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+      85 | DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
+         | ^
+         | int
+>> arch/riscv/kernel/cfi.c:85:17: error: a parameter list without types is only allowed in a function definition
+      85 | DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
+         |                 ^
+   arch/riscv/kernel/cfi.c:89:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+      89 | DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
+         | ^
+         | int
+   arch/riscv/kernel/cfi.c:89:17: error: a parameter list without types is only allowed in a function definition
+      89 | DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
+         |                 ^
+   4 errors generated.
+
+
+vim +/int +85 arch/riscv/kernel/cfi.c
+
+    81	
+    82	/* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
+    83	extern unsigned int __bpf_prog_runX(const void *ctx,
+    84					    const struct bpf_insn *insn);
+  > 85	DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
+    86	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
