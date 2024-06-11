@@ -1,203 +1,129 @@
-Return-Path: <linux-kernel+bounces-210129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C35903FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:07:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EC9903F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6AD1C24758
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3135A1C23A8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3463B2A2;
-	Tue, 11 Jun 2024 15:04:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478862C6BD;
-	Tue, 11 Jun 2024 15:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942662C6B7;
+	Tue, 11 Jun 2024 15:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="RS8balMM"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1D12628D;
+	Tue, 11 Jun 2024 15:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718118278; cv=none; b=Icsuz8O68fN0trTRntJEYP25aJhGAofHSkv/7VZOYwCuNNl23dmOgH1L1LRnDypepsgPkUO4hA7kR9ExJibf9IaxpzHUKspUBTDF9JG04+h+6+GXVJgCZqEEDB8hq1C1+SVVdVK4St08N0q70S/jY10DaHKYP0SF44pZPVK1U2Q=
+	t=1718118175; cv=none; b=HDUTSZ8YogVqAcpyLAFgVEwbgN+7WKrElbQ9EB32UjilxVPZmhk3FPW3JvuCNyA3DUWqHo2ZwoXnZ6R9qTilSSB8OrIixAwFBgmFL3rsstqI8xKhoRatFdoNvSfI4gP+TvhJsnH0uzb1FGxWBcHKooY9uFpvcJw/CbK5n4PCvt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718118278; c=relaxed/simple;
-	bh=+CPbZPwm6idt1BjhNLaLWLEAeeaJnKpKlDcqDQnTcn4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=awgq3pDBwUH/V6rCMA6JMK9itYndMiQ9hd6vL2JoKQgW5VZohtokPwHW1jtNpsv5nQccFl3AXYJ6wQlTX6BDOY3IA6ELSKJ/1IEr5uQBhiN2CETpDhF5CJws1ds/eKhFE/rfsbMlIgFsBJXx82sysvB4MOxUEMY4vJLBahyRbKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CBD3106F;
-	Tue, 11 Jun 2024 08:05:01 -0700 (PDT)
-Received: from e127643.arm.com (unknown [10.57.41.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9B2FD3F64C;
-	Tue, 11 Jun 2024 08:04:32 -0700 (PDT)
-From: James Clark <james.clark@arm.com>
-To: coresight@lists.linaro.org,
-	suzuki.poulose@arm.com,
-	gankulkarni@os.amperecomputing.com,
-	mike.leach@linaro.org,
-	leo.yan@linux.dev,
-	anshuman.khandual@arm.com
-Cc: James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v3 14/14] coresight: Make trace ID map spinlock local to the map
-Date: Tue, 11 Jun 2024 16:02:25 +0100
-Message-Id: <20240611150228.1802828-15-james.clark@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240611150228.1802828-1-james.clark@arm.com>
-References: <20240611150228.1802828-1-james.clark@arm.com>
+	s=arc-20240116; t=1718118175; c=relaxed/simple;
+	bh=+UbdLhSNYQv78MjKDiWzxOsZG+Gz2YXkxyOtDXrPCgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TS+pME7pAa8p31efc1x4edesB4vP+4WwhyK32RMpt5W2KJGYMdslVvupACXshIz5KSKAes6cIPBitG2B9ZB087YSce4h3QBoKvmiJhTp22BaBJ7oUWG4sBDdNwImrnolazC0b3XCAcrpSzi7gsL6VWBcRRKn8eDX7VBFfipiG9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=RS8balMM; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 196CEA0A9B;
+	Tue, 11 Jun 2024 17:02:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=Lfl1G8RKSgEODerdsMc2
+	QohfW3q4Aoax5ZnKXqVT58E=; b=RS8balMMGmSzN0u+cqYv75MBVl/svMTc1Tad
+	t87iAPcyrWFhi8cb17oaKlqKpC6tSxzTIkWQy76IQnUS0rRcwPO+abI3Y5Fxg0a/
+	ToLWg6O+/ADL09pY5h4sb+oVTZB3SZSgdZCr/mkW6TkMLJB+cxAZBoQHmyrrwKcg
+	ghZbdja6ACrHy0obFeNwIq+cSXKWuXqh45c8MLe86hWtdV5bDCN+PebnNoJZGTU6
+	Zf/UfeM9ju8z5hbIQgcuWxuge1M3i2CTOLYZP/vObxlnMxFPdbCRm3Bb9HA+tAec
+	ji78BrgThbTx3IQBWcVmTN+hjM3e6UsSjjrsPSPMTDga8h35utErrahrtxSLfwpy
+	tncXh8+SMXYoVaLAycdsYcd/CdF9sjkoHIqWtVFIiG3VlvZiPKFebSGHV359aUf8
+	JelA6jRZOn87QnkoRnDEc15k1h8bsITDmmn7+NOXeS/9TYoP1plPfmNuM0mr7T1W
+	JyGDbip/IU02oGgf/FVeVGigKGZTL+Y2CW21Fd2fl83KOOFCw2M9fYdD/D3BwnxR
+	VvIW9ZexnVqhcSfaYOcb+dfl0VAg1dFGVRjw6/Y0yqk2AX0lnLixkw2pZOg/YwNh
+	43j6L2i0MKGOqLbCptdANPFmpiVvJxTOtIpWNAxdiAxUof1c/ZnhsrD6H0jsyty/
+	RbfZL7Y=
+Message-ID: <7ce6bbf4-738b-4bd4-b842-7d3e97b57583@prolan.hu>
+Date: Tue, 11 Jun 2024 17:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588 being
+ cleared on link-down
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>
+References: <20240607081855.132741-1-csokas.bence@prolan.hu>
+ <46892275-619c-4dfb-9214-3bbb14b78093@lunn.ch>
+ <d6d6c080-b001-4911-83bc-4aca7701cdff@prolan.hu>
+ <c49a5e28-e030-4fc1-ab30-9afd997f03bc@lunn.ch>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <c49a5e28-e030-4fc1-ab30-9afd997f03bc@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2945A12957627C65
 
-Reduce contention on the lock by replacing the global lock with one for
-each map.
+Hi!
 
-Signed-off-by: James Clark <james.clark@arm.com>
----
- drivers/hwtracing/coresight/coresight-core.c  |  1 +
- .../hwtracing/coresight/coresight-trace-id.c  | 26 +++++++++----------
- include/linux/coresight.h                     |  1 +
- 3 files changed, 14 insertions(+), 14 deletions(-)
+On 6/11/24 15:06, Andrew Lunn wrote:
+> On Tue, Jun 11, 2024 at 10:04:39AM +0200, Csókás Bence wrote:
+>> Hi!
+>>
+>> On 6/10/24 21:13, Andrew Lunn wrote:
+>>> On Fri, Jun 07, 2024 at 10:18:55AM +0200, Csókás, Bence wrote:
+>>>> FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
+>>>> makes all 1588 functionality shut down on link-down. However, some
+>>>> functionality needs to be retained (e.g. PPS) even without link.
+>>>
+>>> I don't know much about PPS. Could you point to some documentation,
+>>> list email etc, which indicated PPS without link is expected to work.
+>>>
+>>> Please also Cc: Richard Cochran for changes like this.
+>>>
+>>> Thanks
+>>> 	Andrew
+>>
+>> This is what Richard said two years ago on the now-reverted patch:
+>>
+>> Link: https://lore.kernel.org/netdev/YvRdTwRM4JBc5RuV@hoboy.vegasvil.org
+> 
+> Thanks.
+> 
+> So when you have sync, you have a 1Hz clock, synchronised to the grand
+> master. When the link is down, or communication with the grand master
+> is lost, you get a free running clock of around 1Hz. I presume that if
+> the link does up again and communication to the grand master is
+> restored, there is a phase shift in the 1Hz clock, and a frequency
+> correction? The hardware has to cope with this.
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index c427e9344a84..ea38ecf26fcb 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -1164,6 +1164,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 
- 	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
- 	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+		spin_lock_init(&csdev->perf_sink_id_map.lock);
- 		csdev->perf_sink_id_map.cpu_map = alloc_percpu(atomic_t);
- 		if (!csdev->perf_sink_id_map.cpu_map) {
- 			kfree(csdev);
-diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-index 1e70892f5beb..82bb70c1ad73 100644
---- a/drivers/hwtracing/coresight/coresight-trace-id.c
-+++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-@@ -15,12 +15,10 @@
- /* Default trace ID map. Used in sysfs mode and for system sources */
- static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
- static struct coresight_trace_id_map id_map_default = {
--	.cpu_map = &id_map_default_cpu_ids
-+	.cpu_map = &id_map_default_cpu_ids,
-+	.lock = __SPIN_LOCK_UNLOCKED(id_map_default.lock)
- };
- 
--/* lock to protect id_map and cpu data  */
--static DEFINE_SPINLOCK(id_map_lock);
--
- /* #define TRACE_ID_DEBUG 1 */
- #if defined(TRACE_ID_DEBUG) || defined(CONFIG_COMPILE_TEST)
- 
-@@ -124,11 +122,11 @@ static void coresight_trace_id_release_all(struct coresight_trace_id_map *id_map
- 	unsigned long flags;
- 	int cpu;
- 
--	spin_lock_irqsave(&id_map_lock, flags);
-+	spin_lock_irqsave(&id_map->lock, flags);
- 	bitmap_zero(id_map->used_ids, CORESIGHT_TRACE_IDS_MAX);
- 	for_each_possible_cpu(cpu)
- 		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
--	spin_unlock_irqrestore(&id_map_lock, flags);
-+	spin_unlock_irqrestore(&id_map->lock, flags);
- 	DUMP_ID_MAP(id_map);
- }
- 
-@@ -137,7 +135,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
- 	unsigned long flags;
- 	int id;
- 
--	spin_lock_irqsave(&id_map_lock, flags);
-+	spin_lock_irqsave(&id_map->lock, flags);
- 
- 	/* check for existing allocation for this CPU */
- 	id = _coresight_trace_id_read_cpu_id(cpu, id_map);
-@@ -164,7 +162,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
- 	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
- 
- get_cpu_id_out_unlock:
--	spin_unlock_irqrestore(&id_map_lock, flags);
-+	spin_unlock_irqrestore(&id_map->lock, flags);
- 
- 	DUMP_ID_CPU(cpu, id);
- 	DUMP_ID_MAP(id_map);
-@@ -181,12 +179,12 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
- 	if (!id)
- 		return;
- 
--	spin_lock_irqsave(&id_map_lock, flags);
-+	spin_lock_irqsave(&id_map->lock, flags);
- 
- 	coresight_trace_id_free(id, id_map);
- 	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
- 
--	spin_unlock_irqrestore(&id_map_lock, flags);
-+	spin_unlock_irqrestore(&id_map->lock, flags);
- 	DUMP_ID_CPU(cpu, id);
- 	DUMP_ID_MAP(id_map);
- }
-@@ -196,10 +194,10 @@ static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *i
- 	unsigned long flags;
- 	int id;
- 
--	spin_lock_irqsave(&id_map_lock, flags);
-+	spin_lock_irqsave(&id_map->lock, flags);
- 	/* prefer odd IDs for system components to avoid legacy CPU IDS */
- 	id = coresight_trace_id_alloc_new_id(id_map, 0, true);
--	spin_unlock_irqrestore(&id_map_lock, flags);
-+	spin_unlock_irqrestore(&id_map->lock, flags);
- 
- 	DUMP_ID(id);
- 	DUMP_ID_MAP(id_map);
-@@ -210,9 +208,9 @@ static void coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
- {
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&id_map_lock, flags);
-+	spin_lock_irqsave(&id_map->lock, flags);
- 	coresight_trace_id_free(id, id_map);
--	spin_unlock_irqrestore(&id_map_lock, flags);
-+	spin_unlock_irqrestore(&id_map->lock, flags);
- 
- 	DUMP_ID(id);
- 	DUMP_ID_MAP(id_map);
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 197949fd2c35..c13342594278 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -233,6 +233,7 @@ struct coresight_trace_id_map {
- 	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
- 	atomic_t __percpu *cpu_map;
- 	atomic_t perf_cs_etm_session_active;
-+	spinlock_t lock;
- };
- 
- /**
--- 
-2.34.1
+Correct. And PTP4Linux is already capable of re-syncing (or at least it 
+would be, if it weren't for the ENET controller reset. We still need to 
+restore all the values of ATIME, ATCORR etc. registers, but that'll come 
+in a future patch, when I figure out how to get out of the locking hell).
+
+> Thanks
+> 
+> 	Andrew
+> 
+
+Bence
 
 
