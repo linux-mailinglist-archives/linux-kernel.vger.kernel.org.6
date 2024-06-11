@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-209481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42FC903685
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:31:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B74903748
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E721F22076
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4FFB25B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F02174EFA;
-	Tue, 11 Jun 2024 08:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F2F17BB05;
+	Tue, 11 Jun 2024 08:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nXPvm9Jb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=monolithicpower.com header.i=@monolithicpower.com header.b="S/e4JJWB"
+Received: from mx0b-002bf204.pphosted.com (mx0b-002bf204.pphosted.com [205.220.172.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F205B47772;
-	Tue, 11 Jun 2024 08:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1872217B41F;
+	Tue, 11 Jun 2024 08:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.172.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094696; cv=none; b=DJEpQNOwQP1AocvkWbLSrhdYEh5tX0mYPtD66IsUj5PAHxZ0LpdHkUWGaZZX3vmtHI4PcbtQYPWPaeGkGcCZ2t0OFlqixQELxsK5lMMYCipd8AE1uFar1uQ+ZBIETnooPFA+nDeGijl7NdDFvKTfomciMp57EltyOZVN9VNnjag=
+	t=1718096002; cv=none; b=Xt1ahky/vAOaiIZwwgdvmJmkYbb1BFAXiWTPIv9fIht9sk/3+875JXUTT7M6WF314eFaDUpcmF6kgx4FY93+4vc7h7AyS8anLuwoVk8xZGzJRdflAgPnKHgg5n9PCCAMfDyclTXpM6NaUt6Zyco+kOOQ1m+rnUPdHAeH1+tb3EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094696; c=relaxed/simple;
-	bh=wpXcbORh+1wj0dP3PDcCLU455xdM3PvTHmev7n0Dpi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J+vfJ35ebCPEtg8HEOLawSSLtAO8toJc0UrvKNnIVw6MmJStH7wM8TR1KvTN32EHtGZiHqmRg4wThP4Np9bZkMTSWHbQJeHWQLnBDZxPVgD8G1i2JLYzrZC0egdT3Fv3a5J5abqxpIYAIhHMf58XO6KvmuMx40WDS07yTAEwGZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nXPvm9Jb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718094696; x=1749630696;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wpXcbORh+1wj0dP3PDcCLU455xdM3PvTHmev7n0Dpi4=;
-  b=nXPvm9JbkXrJKwBhp0lFnZ1Vv5zIp6SPMxLF7SvpbBdeVlE43V/D7X46
-   mQkWqaQqgh6mI0IPzZWA5svJmC7GTOMN2heIWyCjVKSo7e9xOpR24bcgn
-   jkaJmuFFvHeYcovBhN8F1nLo8SZ+o9f5djU68fU+6Vau/5E0qN/FfSJpK
-   pkHhsaclGC2Qzs0DwY16GA6UG/0c70RYEtCB1H8U3BFz710NmeUxw5WfB
-   0Xl/Puic9TCtEje9x8YG2gjBGcZ2ciOnoYpJrVqa3dm1EvwoJgJ8Ll7sN
-   p9cGV93rhvowb01+CBZy4/S8Kgrl6Nt6JLGUkjIlVXN3LlUSfWaqzCzpt
-   A==;
-X-CSE-ConnectionGUID: q68OvUamQv+ARa9bwIoX9A==
-X-CSE-MsgGUID: IVHbXrDYR62GKa/qTnTmGw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="25369291"
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="25369291"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 01:31:35 -0700
-X-CSE-ConnectionGUID: 21/u/m45QGalCO9X+iVVNA==
-X-CSE-MsgGUID: d/bcU8KTS0il3nu5lHAZpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="39426247"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.246.38.248])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 01:31:31 -0700
-Date: Tue, 11 Jun 2024 10:31:26 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Yu Kuai <yukuai3@huawei.com>
-Cc: <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
- <song@kernel.org>, <xni@redhat.com>, <l@damenly.org>,
- <dm-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-raid@vger.kernel.org>, <yukuai1@huaweicloud.com>,
- <yi.zhang@huawei.com>, <yangerkun@huawei.com>
-Subject: Re: [PATCH 02/12] md: add a new enum type sync_action
-Message-ID: <20240611103126.00003ee0@linux.intel.com>
-In-Reply-To: <20240603125815.2199072-3-yukuai3@huawei.com>
-References: <20240603125815.2199072-1-yukuai3@huawei.com>
-	<20240603125815.2199072-3-yukuai3@huawei.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718096002; c=relaxed/simple;
+	bh=W3BHzlZ6gBSB7UmPWv3NX/0dDwzclZnZK9/Bh3qSoE8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QHQ1Kwyn5UBcn/BKgcg5YDUZTvm6AYaiznARboah6TQGyEVNjMijYwRG/b2UuiUcTDJU3d6n0TvV09E9/V/SSLKz8eQXF29UjjDMtuWbR0IWmrd7kjZAHpQzeFITMrF9X3SqbUsbR78t2RnKA4Q6Q38c+LWJ+uvOgrCSfM63/Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=monolithicpower.com; spf=pass smtp.mailfrom=monolithicpower.com; dkim=pass (2048-bit key) header.d=monolithicpower.com header.i=@monolithicpower.com header.b=S/e4JJWB; arc=none smtp.client-ip=205.220.172.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=monolithicpower.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monolithicpower.com
+Received: from pps.filterd (m0207525.ppops.net [127.0.0.1])
+	by mx0a-002bf204.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B6Zrdk002210;
+	Tue, 11 Jun 2024 01:34:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	monolithicpower.com; h=cc:content-transfer-encoding:content-type
+	:date:from:message-id:mime-version:subject:to; s=pps1; bh=bpFueT
+	IZ2r0KqeKAGmGnZxhpFCdSSLVE7SrrqSSaKYA=; b=S/e4JJWB9DshMzNhCaNhT1
+	AdZhzXBPrBKyD3IdDu8u0dFl2VYySkmLhi2G9kEfIx0Z+Xb5Q6g1A7sG580x8iqO
+	93rBEvfqXSd5yESrTDYxpr4+jBlOW3o22PJGoTiBR+zKRXZrTpupzNMXp+4x4ADZ
+	tBT/KhRhGIdVAJPoDf7rW0iHp0m1pzQ+vf7OuMWq6FgVj4Lo7LQ4UMmLAXWfyE04
+	65VgcDbLuAUMEdnEFM6RZbtn0QB24iKsuf6CQZs4vQFyaC4DJW3RFO3AEYmzq2zC
+	HKgDGBv4E3bK3zPJ3TGH8ah+i/8NK1bqTdTT0oaIrFpA5HXmUjTzSjmdxFxs9u5A
+	==
+Received: from webmail.monolithicpower.com (mps-vpn.monolithicpower.com [12.33.0.20] (may be forged))
+	by mx0a-002bf204.pphosted.com (PPS) with ESMTPS id 3ymm00mx39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 11 Jun 2024 01:34:17 -0700 (PDT)
+Received: from CD-MSH04.monolithicpower.com (10.10.70.213) by
+ MPS-MSH04.monolithicpower.com (10.10.10.206) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 11 Jun 2024 01:32:59 -0700
+Received: from smtp.gmail.com (10.10.86.102) by CD-MSH04.monolithicpower.com
+ (10.10.70.213) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 11 Jun
+ 2024 16:32:57 +0800
+From: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
+To: <Yuxi.Wang@monolithicpower.com>, <pavel@ucw.cz>, <lee@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <wyx137120466@gmail.com>
+CC: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 0/2] leds: Add a driver for MP3326
+Date: Tue, 11 Jun 2024 16:32:33 +0800
+Message-ID: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CD-MSLBN02.monolithicpower.com (192.168.86.32) To
+ CD-MSH04.monolithicpower.com (10.10.70.213)
+X-Proofpoint-ORIG-GUID: TROeet2erSYo9aZOB4Xn2vns07dkxTId
+X-Proofpoint-GUID: TROeet2erSYo9aZOB4Xn2vns07dkxTId
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_04,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=685
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110064
 
-On Mon, 3 Jun 2024 20:58:05 +0800
-Yu Kuai <yukuai3@huawei.com> wrote:
+Add the binding description and the corresponding driver for
+the MPS MP3326.
 
-> In order to make code related to sync_thread cleaner in following
-> patches, also add detail comment about each sync action. And also
-> prepare to remove the related recovery_flags in the fulture.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  drivers/md/md.h | 57 ++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 56 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 170412a65b63..6b9d9246f260 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -34,6 +34,61 @@
->   */
->  #define	MD_FAILFAST	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT)
->  
-> +/* Status of sync thread. */
-> +enum sync_action {
-> +	/*
-> +	 * Represent by MD_RECOVERY_SYNC, start when:
-> +	 * 1) after assemble, sync data from first rdev to other copies, this
-> +	 * must be done first before other sync actions and will only execute
-> +	 * once;
-> +	 * 2) resize the array(notice that this is not reshape), sync data
-> for
-> +	 * the new range;
-> +	 */
-> +	ACTION_RESYNC,
-> +	/*
-> +	 * Represent by MD_RECOVERY_RECOVER, start when:
-> +	 * 1) for new replacement, sync data based on the replace rdev or
-> +	 * available copies from other rdev;
-> +	 * 2) for new member disk while the array is degraded, sync data from
-> +	 * other rdev;
-> +	 * 3) reassemble after power failure or re-add a hot removed rdev,
-> sync
-> +	 * data from first rdev to other copies based on bitmap;
-> +	 */
-> +	ACTION_RECOVER,
-> +	/*
-> +	 * Represent by MD_RECOVERY_SYNC | MD_RECOVERY_REQUESTED |
-> +	 * MD_RECOVERY_CHECK, start when user echo "check" to sysfs api
-> +	 * sync_action, used to check if data copies from differenct rdev are
-> +	 * the same. The number of mismatch sectors will be exported to user
-> +	 * by sysfs api mismatch_cnt;
-> +	 */
-> +	ACTION_CHECK,
-> +	/*
-> +	 * Represent by MD_RECOVERY_SYNC | MD_RECOVERY_REQUESTED, start when
-> +	 * user echo "repair" to sysfs api sync_action, usually paired with
-> +	 * ACTION_CHECK, used to force syncing data once user found that
-> there
-> +	 * are inconsistent data,
-> +	 */
-> +	ACTION_REPAIR,
-> +	/*
-> +	 * Represent by MD_RECOVERY_RESHAPE, start when new member disk is
-> added
-> +	 * to the conf, notice that this is different from spares or
-> +	 * replacement;
-> +	 */
-> +	ACTION_RESHAPE,
-> +	/*
-> +	 * Represent by MD_RECOVERY_FROZEN, can be set by sysfs api
-> sync_action
-> +	 * or internal usage like setting the array read-only, will forbid
-> above
-> +	 * actions.
-> +	 */
-> +	ACTION_FROZEN,
-> +	/*
-> +	 * All above actions don't match.
-> +	 */
-> +	ACTION_IDLE,
-> +	NR_SYNC_ACTIONS,
-> +};
+Signed-off-by: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
 
-I like if counter is keep in same style as rest enum values, like ACTION_COUNT.
+Changes in V2:
+  - Fix patch format error
 
-Anyway LGTM.
+Yuxi Wang (2):
+  dt-bindings: leds: add mps mp3326 LED
+  leds: add mp3326 driver
 
-Mariusz
+ .../devicetree/bindings/leds/mps,mp3326.yaml  | 146 ++++
+ drivers/leds/Kconfig                          |   9 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-mp3326.c                    | 697 ++++++++++++++++++
+ 4 files changed, 853 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/mps,mp3326.yaml
+ create mode 100644 drivers/leds/leds-mp3326.c
+
+-- 
+2.39.2
+
 
