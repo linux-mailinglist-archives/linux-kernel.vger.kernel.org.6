@@ -1,173 +1,111 @@
-Return-Path: <linux-kernel+bounces-209155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331DB902DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:34:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07554902DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9596EB21ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C62E1C21B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B1A934;
-	Tue, 11 Jun 2024 01:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04CDAD2D;
+	Tue, 11 Jun 2024 01:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lfpWBALP"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA87F8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="h4KUG/VN"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87160EDF;
+	Tue, 11 Jun 2024 01:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718069653; cv=none; b=lXcsOJndvPETRga2lcSGkFUAVVRN1iNahX2Fw489oQsxmUqdCmqDAG7TxstekmoiqF3LVFwnx9I+J7g/lDiVmR1WcybU2KVgYdSkUUsXyl2/Deag+YLt3SBxMEeWYnTIsg5FiDaba8RaTDPKPJ9nI5cBZk2hWKXPu+7xYjaN07w=
+	t=1718069815; cv=none; b=A/y0kmFoMctbXxYgKhgrQM1VTFQXqJFpi64q9bvSjxiNpGEUgh2Ip/vyMwCkPmqoUEEe+k5eUbmiRndFB4NQvEgBHlULhtR4mMUqvMog76a1G1vRN/7gdXFCuPErBidtWgJwUCv0r5Aqbm+UJO8zIJSpTAt7cRF1673ehJ/ndFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718069653; c=relaxed/simple;
-	bh=rb7uB0KSLonwOCypbMgQCXHkOIQyUrxXAXZTMWGn8N8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UuUYT2K0d7AqYTLqq9AJ9fA+0XKpVc6CuN1LwtCp9P5C4m0rlEPRx2XK2+vNPuWSR+RC/Toze3Sytvcuquae8JjVyB7cwWmrCZy3kmp43WXWvpq4FJcrkTssul4shPUGT4UfrLj3WSQ8F/dcSfrDAA9i69qfPwELu21BX6TXj/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lfpWBALP; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6716094a865so4232389a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 18:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718069651; x=1718674451; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5baEhBF9sOr8kVhYoFhuMjx/1QvP9In6UP3EAvA/gw=;
-        b=lfpWBALPKKbJ0nvNnAafLHdtC3vkR9fjFuZirGDnppApei9avDemevenEJYvBPxMqs
-         OVWiPFirV4+Ksvnr4DsWrSF2edU+8V4Xwu5gLTQzlxEV1XssXK5m1DFJDjomNzY3Fruw
-         g1IVBakk5NynOgXOcaPXylBCvyjgdxBM8Ylbc0lon+eKUoqO75k/FyXMbs0H52bAABlT
-         zS09UbVOj4RYIibkRpKW0qwhh6e5SoLYxYGBtw2NAGiuO08MLonNo7id/RffQ+ndDPBd
-         XgoD0FAF2jpi21U261nzLvUNhGv/RbZDM8xZTQgNblCKO8waWPOEDME0kVXPob6tcr0y
-         rxqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718069651; x=1718674451;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5baEhBF9sOr8kVhYoFhuMjx/1QvP9In6UP3EAvA/gw=;
-        b=kmS0W2oiKqN4kccH6/AthEyUJ9cgFumZ8fV6QpTmO5aKyBwqoYmn0ISm7AwtZ3nsRk
-         tIiRx5nHdRhpnvJjSjKjjNUu4Gh4CwcJsmk+RX1i/iUBbcwKbEP4rMgbAO/XiN/P9Q49
-         ZFDNu2mjeGftX6HRsrDDZV6fsCREm38JGE/puxOFbgzWXDqUDYORrKzecuXGicbsdqj7
-         05FdhvCY5aqM4a+Wf0StcRqOPQrGCjLtKNinedaUNXQqmTdbcaTGA1nzmQTevJE7/UHT
-         EKbGP7IUJvfgI+eQbPr9qJ9WBJgZzZRCHuNWi8RzHR/Rzv0SOdAJesSNkKhgED4PFN06
-         HCVA==
-X-Forwarded-Encrypted: i=1; AJvYcCULJmyLIUK/0SUfn8pH3WgG1z1DhZzI6NVuvLT82E1dOsb7TJeJzuKVX1uNIAcb7b4Ch/CDV85IzubAN+6fmv03kW63wDUDWT0udPC9
-X-Gm-Message-State: AOJu0Yzi1YGft4VYtSPA/ZpoBiAfWMWuP+W7HPZm0ongQitdQSgpVBPK
-	StlsftM2Gs5sNM/BhG7a8M3ICYDpcysAf/eUyrtzMYb9Vvzeyql1zt8cFhs9fCf+aL8tme5SXqE
-	b+g==
-X-Google-Smtp-Source: AGHT+IFMaS9Am3bSlTU0F3mWYL1AS7eAnC4jgCiDVFw71uqftz9MC4EnYM40IdvQeCJizG9IRIDTSD2POts=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:e54c:b0:1f6:21e5:c6e5 with SMTP id
- d9443c01a7336-1f6d02e0820mr8602725ad.5.1718069651014; Mon, 10 Jun 2024
- 18:34:11 -0700 (PDT)
-Date: Mon, 10 Jun 2024 18:34:09 -0700
-In-Reply-To: <20240410143446.797262-10-chao.gao@intel.com>
+	s=arc-20240116; t=1718069815; c=relaxed/simple;
+	bh=mf4qVlzMUzfRL9BvC3X0oZecvghDtTV1GYZ1nErXJHc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=qUjSGmP/Fy8oVIERrIJIx24AXJXJHpmR+o5k8U9p+WIvbL03A7A/XpTXGWiWosjfZoykYCApWcek1n8wW46y8LqFTQ6C/Qyz8+vJqYLeTz1jmpxAI7F+WEv92/Y/EAAdV1/gAL7FbfaRe5NOwZ+m8Z3blkl1uxjqJOcf3duiRSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=h4KUG/VN reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=QL5dZ9wzjqu7SD+S9DX03UlVdElUpOveLiguRCC/9Zc=; b=h
+	4KUG/VNBJ/AQPAzF0E8SHvU+q42nq1TQuMSgGfXC6CkWIGAmNJjXCBLvrdEv42H6
+	jOHcCx00Gw3tiNFI+JPn/GE1AJ0Ay8yZrwWnwAaseitZ6U7nt65ebZW2lL2CJ2Rs
+	L4tCIJD4EyQsqekrQKIWjUhiVzXskAyJMZgphG6fjo=
+Received: from slark_xiao$163.com ( [223.104.68.135] ) by
+ ajax-webmail-wmsvr-40-148 (Coremail) ; Tue, 11 Jun 2024 09:36:26 +0800
+ (CST)
+Date: Tue, 11 Jun 2024 09:36:26 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Sergey Ryazanov" <ryazanov.s.a@gmail.com>, quic_jhugo@quicinc.com, 
+	"Qiang Yu" <quic_qianyu@quicinc.com>
+Cc: loic.poulain@linaro.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org, 
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Subject: Re:Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
+References: <20240607100309.453122-1-slark_xiao@163.com>
+ <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
+X-NTES-SC: AL_Qu2aCvydtk8j4CmaZukfmk8Sg+84W8K3v/0v1YVQOpF8jCHrxgkRXXVJP2bq0du3MRiqkxKdVzhnxtxTR5BccI0hd2jp34DAWcNsIPZQjnwBMQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240410143446.797262-1-chao.gao@intel.com> <20240410143446.797262-10-chao.gao@intel.com>
-Message-ID: <ZmepkZfLIvj_st5W@google.com>
-Subject: Re: [RFC PATCH v3 09/10] KVM: VMX: Advertise MITI_CTRL_BHB_CLEAR_SEQ_S_SUPPORT
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com, 
-	Zhang Chen <chen.zhang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Message-ID: <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3H+saqmdmT_16AA--.4W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRwP5ZGV4JtK1gQAFsB
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Wed, Apr 10, 2024, Chao Gao wrote:
-> From: Zhang Chen <chen.zhang@intel.com>
-> 
-> Allow guest to report if the short BHB-clearing sequence is in use.
-> 
-> KVM will deploy BHI_DIS_S for the guest if the short BHB-clearing
-> sequence is in use and the processor doesn't enumerate BHI_NO.
-> 
-> Signed-off-by: Zhang Chen <chen.zhang@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 31 ++++++++++++++++++++++++++++---
->  1 file changed, 28 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index cc260b14f8df..c5ceaebd954b 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1956,8 +1956,8 @@ static inline bool is_vmx_feature_control_msr_valid(struct vcpu_vmx *vmx,
->  }
->  
->  #define VIRTUAL_ENUMERATION_VALID_BITS	VIRT_ENUM_MITIGATION_CTRL_SUPPORT
-> -#define MITI_ENUM_VALID_BITS		0ULL
-> -#define MITI_CTRL_VALID_BITS		0ULL
-> +#define MITI_ENUM_VALID_BITS		MITI_ENUM_BHB_CLEAR_SEQ_S_SUPPORT
-> +#define MITI_CTRL_VALID_BITS		MITI_CTRL_BHB_CLEAR_SEQ_S_USED
->  
->  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->  {
-> @@ -2204,7 +2204,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	struct vmx_uret_msr *msr;
->  	int ret = 0;
->  	u32 msr_index = msr_info->index;
-> -	u64 data = msr_info->data;
-> +	u64 data = msr_info->data, spec_ctrl_mask = 0;
->  	u32 index;
->  
->  	switch (msr_index) {
-> @@ -2508,6 +2508,31 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		if (data & ~MITI_CTRL_VALID_BITS)
->  			return 1;
->  
-> +		if (data & MITI_CTRL_BHB_CLEAR_SEQ_S_USED &&
-> +		    kvm_cpu_cap_has(X86_FEATURE_BHI_CTRL) &&
-> +		    !(host_arch_capabilities & ARCH_CAP_BHI_NO))
-> +			spec_ctrl_mask |= SPEC_CTRL_BHI_DIS_S;
-> +
-> +		/*
-> +		 * Intercept IA32_SPEC_CTRL to disallow guest from changing
-> +		 * certain bits if "virtualize IA32_SPEC_CTRL" isn't supported
-> +		 * e.g., in nested case.
-> +		 */
-> +		if (spec_ctrl_mask && !cpu_has_spec_ctrl_shadow())
-> +			vmx_enable_intercept_for_msr(vcpu, MSR_IA32_SPEC_CTRL, MSR_TYPE_RW);
-> +
-> +		/*
-> +		 * KVM_CAP_FORCE_SPEC_CTRL takes precedence over
-> +		 * MSR_VIRTUAL_MITIGATION_CTRL.
-> +		 */
-> +		spec_ctrl_mask &= ~vmx->vcpu.kvm->arch.force_spec_ctrl_mask;
-> +
-> +		vmx->force_spec_ctrl_mask = vmx->vcpu.kvm->arch.force_spec_ctrl_mask |
-> +					    spec_ctrl_mask;
-> +		vmx->force_spec_ctrl_value = vmx->vcpu.kvm->arch.force_spec_ctrl_value |
-> +					    spec_ctrl_mask;
-> +		vmx_set_spec_ctrl(&vmx->vcpu, vmx->spec_ctrl_shadow);
-> +
->  		vmx->msr_virtual_mitigation_ctrl = data;
->  		break;
-
-I continue find all of this unpalatable.  The guest tells KVM what software
-mitigations the guest is using, and then KVM is supposed to translate that into
-some hardware functionality?  And merge that with userspace's own overrides?
-
-Blech.
-
-With KVM_CAP_FORCE_SPEC_CTRL, I don't see any reason for KVM to support the
-Intel-defined virtual MSRs.  If the userspace VMM wants to play nice with the
-Intel-defined stuff, then userspace can advertise the MSRs and use an MSR filter
-to intercept and "emulate" the MSRs.  They should be set-and-forget MSRs, so
-there's no need for KVM to handle them for performance reasons.
-
-That way KVM doesn't need to deal with the the virtual MSRs, userspace can make
-an informed decision when deciding how to set KVM_CAP_FORCE_SPEC_CTRL, and as a
-bonus, rollouts for new mitigation thingies should be faster as updating userspace
-is typically easier than updating the kernel/KVM.
+CgorTW9yZSBtYWludGFpbmVyIHRvIHRoaXMgc2Vjb25kIHBhdGNoIGxpc3QuCgpBdCAyMDI0LTA2
+LTA4IDA2OjI4OjQ4LCAiU2VyZ2V5IFJ5YXphbm92IiA8cnlhemFub3Yucy5hQGdtYWlsLmNvbT4g
+d3JvdGU6Cj5IZWxsbyBTbGFyaywKPgo+d2l0aG91dCB0aGUgZmlyc3QgcGF0Y2ggaXQgaXMgY2xv
+c2UgdG8gaW1wb3NzaWJsZSB0byB1bmRlcnN0YW5kIHRoaXMgCj5vbmUuIE5leHQgdGltZSBwbGVh
+c2Ugc2VuZCBzdWNoIHRpZ2h0bHkgY29ubmVjdGVkIHBhdGNoZXMgdG8gYm90aCAKPm1haWxpbmcg
+bGlzdHMuCj4KU29ycnkgZm9yIHRoaXMgbWlzdGFrZSBzaW5jZSBpdCdzIG15IGZpcnN0IGNvbW1p
+dCBhYm91dCBjb21taXR0aW5nIGNvZGUgdG8gMgpkaWZmZXJlbmNlIGFyZWE6IG1oaSBhbmQgbWJp
+bS4gQm90aCB0aGUgbWFpbnRhaW5lcnMgYXJlIGRpZmZlcmVuY2UuCkluIGNhc2UgYSBuZXcgdmVy
+c2lvbiBjb21taXQgd291bGQgYmUgY3JlYXRlZCwgSSB3b3VsZCBsaWtlIHRvIGFzayBpZgpzaG91
+bGQgSSBhZGQgYm90aCBzaWRlIG1haW50YWluZXJzIG9uIHRoZXNlIDIgcGF0Y2hlcyA/CiAKPk9u
+IDA3LjA2LjIwMjQgMTM6MDMsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+IEZvciBTRFg3MiBNQklNIGRl
+dmljZSwgaXQgc3RhcnRzIGRhdGEgbXV4IGlkIGZyb20gMTEyIGluc3RlYWQgb2YgMC4KPj4gVGhp
+cyB3b3VsZCBsZWFkIHRvIGRldmljZSBjYW4ndCBwaW5nIG91dHNpZGUgc3VjY2Vzc2Z1bGx5Lgo+
+PiBBbHNvIE1CSU0gc2lkZSB3b3VsZCByZXBvcnQgImJhZCBwYWNrZXQgc2Vzc2lvbiAoMTEyKSIu
+Cj4+IFNvIHdlIGFkZCBhIGxpbmsgaWQgZGVmYXVsdCB2YWx1ZSBmb3IgdGhlc2UgU0RYNzIgcHJv
+ZHVjdHMgd2hpY2gKPj4gd29ya3MgaW4gTUJJTSBtb2RlLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTog
+U2xhcmsgWGlhbyA8c2xhcmtfeGlhb0AxNjMuY29tPgo+Cj5TaW5jZSBpdCBhIGJ1dCBmaXgsIGl0
+IG5lZWRzIGEgJ0ZpeGVzOicgdGFnLgo+CkFjdHVhbGx5LCBJIHRob3VnaHQgaXQncyBhIGZpeCBm
+b3IgY29tbW9uIFNEWDcyIHByb2R1Y3QuIEJ1dCBub3cgSSB0aGluawppdCBzaG91bGQgYmUgb25s
+eSBtZWV0IGZvciBteSBTRFg3MiBNQklNIHByb2R1Y3QuIFByZXZpb3VzIGNvbW1pdCAKaGFzIG5v
+dCBiZWVuIGFwcGxpZWQuIFNvIHRoZXJlIGlzIG5vIGNvbW1pdCBpZCBmb3IgIkZpeGVzIi4KQnV0
+IEkgdGhpbmsgSSBzaGFsbCBpbmNsdWRlIHRoYXQgcGF0Y2ggaW4gVjIgdmVyc2lvbi4KUGxlYXNl
+IHJlZjogCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNDA1MjAwNzA2MzMuMzA4OTEz
+LTEtc2xhcmtfeGlhb0AxNjMuY29tLwoKPj4gLS0tCj4+ICAgZHJpdmVycy9uZXQvd3dhbi9taGlf
+d3dhbl9tYmltLmMgfCAzICsrLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
+IDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93d2FuL21oaV93
+d2FuX21iaW0uYyBiL2RyaXZlcnMvbmV0L3d3YW4vbWhpX3d3YW5fbWJpbS5jCj4+IGluZGV4IDNm
+NzJhZTk0M2IyOS4uNGNhNWM4NDUzOTRiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL25ldC93d2Fu
+L21oaV93d2FuX21iaW0uYwo+PiArKysgYi9kcml2ZXJzL25ldC93d2FuL21oaV93d2FuX21iaW0u
+Ywo+PiBAQCAtNjE4LDcgKzYxOCw4IEBAIHN0YXRpYyBpbnQgbWhpX21iaW1fcHJvYmUoc3RydWN0
+IG1oaV9kZXZpY2UgKm1oaV9kZXYsIGNvbnN0IHN0cnVjdCBtaGlfZGV2aWNlX2lkCj4+ICAgCW1i
+aW0tPnJ4X3F1ZXVlX3N6ID0gbWhpX2dldF9mcmVlX2Rlc2NfY291bnQobWhpX2RldiwgRE1BX0ZS
+T01fREVWSUNFKTsKPj4gICAKPj4gICAJLyogUmVnaXN0ZXIgd3dhbiBsaW5rIG9wcyB3aXRoIE1I
+SSBjb250cm9sbGVyIHJlcHJlc2VudGluZyBXV0FOIGluc3RhbmNlICovCj4+IC0JcmV0dXJuIHd3
+YW5fcmVnaXN0ZXJfb3BzKCZjbnRybC0+bWhpX2Rldi0+ZGV2LCAmbWhpX21iaW1fd3dhbl9vcHMs
+IG1iaW0sIDApOwo+PiArCXJldHVybiB3d2FuX3JlZ2lzdGVyX29wcygmY250cmwtPm1oaV9kZXYt
+PmRldiwgJm1oaV9tYmltX3d3YW5fb3BzLCBtYmltLAo+PiArCQltaGlfZGV2LT5taGlfY250cmwt
+PmxpbmtfaWQgPyBtaGlfZGV2LT5taGlfY250cmwtPmxpbmtfaWQgOiAwKTsKPgo+SXMgaXQgcG9z
+c2libGUgdG8gZHJvcCB0aGUgdGVybmFyeSBvcGVyYXRvciBhbmQgcGFzcyB0aGUgbGlua19pZCBk
+aXJlY3RseT8KPgo+PiAgIH0KPj4gICAKPj4gICBzdGF0aWMgdm9pZCBtaGlfbWJpbV9yZW1vdmUo
+c3RydWN0IG1oaV9kZXZpY2UgKm1oaV9kZXYpCg==
 
