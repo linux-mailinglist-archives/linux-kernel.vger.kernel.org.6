@@ -1,78 +1,125 @@
-Return-Path: <linux-kernel+bounces-209849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF38903BCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39142903B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555D11F224A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60CE285BEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52517C9FD;
-	Tue, 11 Jun 2024 12:22:26 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0533217C22E;
-	Tue, 11 Jun 2024 12:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E863717B505;
+	Tue, 11 Jun 2024 12:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v4UzXkw7"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23234171E60;
+	Tue, 11 Jun 2024 12:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718108546; cv=none; b=D+AV81/fCvP0v73rf/I7+JZ3xJRkwsTuEIn8RT0H2VyCxWv2l/e6FYsuNXkK5KfRXdJOZ4EOS1H23if8yeA61eDflYCgRspo17/dtCXqlZG+Ue/LXWsOj0F0ZXsyQ/LXOM5OWE6YEoC92tiRSKkDImqk4bycFT8t53R6WVhGqqI=
+	t=1718107429; cv=none; b=JzSwVYetZYhZdQVoEKoB55570RtMIKx1ECeFOr0lkeToq9siLIjoF4RymkLsoLc7gEh3Ihy3RgbKzHFLBXRHU7K9asCzm4e4GI0pbq7cKvbOmND4nwGsvCGdgtgKacx57LsISgKpJM7VF+4cq5eWDasg+8bn+bvX7rPU2BLnM7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718108546; c=relaxed/simple;
-	bh=eIWN7NRUfG25J8xTCyoCIcTUao9W0hMxtDsFna6hIvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T85sQ6xcnf2uWVZGaF0EBevC0+EdKhI5WM75bXwfGtV/jC/t8cJszWrsKsAS/a7jkVY0sAtG23/Qupb66FM6WfBSqt3/6JmBPXb8BjWhY+8c+i9hl3bLTaurBRSvFLVr3mtbkQ3iaOuIwYLSACziKmjc+Ctfrn3byCbWfhyDGJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sH0Vq-0002Bh-00; Tue, 11 Jun 2024 14:22:06 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 4838BC0A35; Tue, 11 Jun 2024 13:21:54 +0200 (CEST)
-Date: Tue, 11 Jun 2024 13:21:54 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Genjian <zhanggenjian@126.com>
-Cc: chenhuacai@kernel.org, jiaxun.yang@flygoat.com, ricardo@marliere.net,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Genjian Zhang <zhanggenjian@kylinos.cn>,
-	k2ci <kernel-bot@kylinos.cn>
-Subject: Re: [PATCH 3/3] MIPS: ip22-gio: Make ip22_gio_set_64bit() and
- ip22_gio_init() static
-Message-ID: <ZmgzUqORONkQLWoA@alpha.franken.de>
-References: <20240516115906.1224164-1-zhanggenjian@126.com>
- <20240516115906.1224164-3-zhanggenjian@126.com>
+	s=arc-20240116; t=1718107429; c=relaxed/simple;
+	bh=6iL5d5+TpVoppRR7mPjEQaHzLpdbiQSHhhT9BJKLh3I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NvvxSbtX9/7l6oyWZko3P0joa/f+1FXFszmF5krQRnj43rjXqMdnxOx0TxbXQMS7H6G+yYqWyoMyPoTfO05WGd45cDId0u4zwZUyxSq59r1CONz4BDHX9SGNdGFzoNx304OQ49Xljqfj9ot8qoWT8V8Zuq3UVo03iSCfT5x0u8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v4UzXkw7; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718107378; x=1718712178; i=markus.elfring@web.de;
+	bh=v4MG0q9MnuPY4++cJH4EjME8ABWNsolzfGyYD+ZIsYU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=v4UzXkw7bizGPdAA35we5ZahpMfu+ZtwZNGftCytLLW7WsytaCSWwTVnydrGfkf1
+	 oK/ZgNXHm3vpMwOwPNJaTR1ozrYCotWRwmkEjkvwqSxaKtXnFCdvWl7BWkUzIqFCS
+	 gIZagFE4szymyPe2/f4PTzw8l/ZSBWTr6Javsc6tAMAUPJBNgae9OxCZAV80jPYbh
+	 NaigegF64eXlcvvhNoh0riYBNQAcs9DfWfqcn5GNVlVHnCuc6XKWXtoPFQveEsvl2
+	 ywNmQI4Yqagr0EUDQODHk9pq5lLKLP27RCYJ1ytTAQJG7IzSDUY5u0ZSF4xH3Od3g
+	 ph0NW7vK707lcLT9gQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1ZT-1sq3Jt0QsJ-00jIxb; Tue, 11
+ Jun 2024 14:02:58 +0200
+Message-ID: <32303d99-c5ba-4fec-8981-9b9966dc3291@web.de>
+Date: Tue, 11 Jun 2024 14:02:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240516115906.1224164-3-zhanggenjian@126.com>
+User-Agent: Mozilla Thunderbird
+To: Kamlesh Gurudasani <kamlesh@ti.com>, devicetree@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Herbert Xu <herbert@gondor.apana.org.au>, Tero Kristo <kristo@kernel.org>,
+ Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240524-mcrc64-upstream-v3-4-24b94d8e8578@ti.com>
+Subject: Re: [PATCH v3 4/6] crypto: ti - add driver for MCRC64 engine
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240524-mcrc64-upstream-v3-4-24b94d8e8578@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TJ+M3A+ZwHBv8zbRqkd8DEM7qjVhITuWZRUhZtq7FNJIWGkAGBW
+ 3CoM26cD78kPrZKl9pVWI0m31RFhWOtge/YrCgXqxxV5jOYOmntQo7ZymX+uPbr1E54hC4g
+ 2xYdC00lN417YXdoybmTuYwz5Fszf18GbPLT86PKnchC2KQ7FeKSSpyNPzVqFKprfp7WCKK
+ iS3XbhLEABKTBCzWlaBZw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YogUS1Yz1Ys=;phEEUBQ3iH6xYdFv8skbZzBR14h
+ X+6Sz3DaRZye53CTBaNq5iAc3w2zfBrL0OMLLDI7LbCNNbCdBr/D4WTeCEoTtVjJ6Xg3Cz636
+ yXCpyBv1pv97bbuTZMENguGkw8NMIl0r1j3svqVgPM9Ga5wOd+gLLqhscwaPD0vi2gyTrWBqj
+ w2ONOFtEUdjQx7Vj3gpWrxfNDbqVklHCu5zaZX5b9OKbpKyRI5JIx0rJ5JNGRYqhC4qidhpTb
+ zQj2fIl/nIJd7l9KmtF4gvONU3TndNcRrwkGf0Vof27i6MienOPKxS4ds+a7nZ73MBIyXb/R2
+ 1w391fKmFkSuaRPjaYn8Lt1xC0NRVXS8w7j3nYT2DvEf8Yp+7i7PcE3/zYwBXBfQOo2RvKFyT
+ 3s7OHuqCJygN0ECVZ57Aiat6FL2evaSmaAvpl46VGhruRblcmRIvwNMdmo3hCz3SRlQf3VDnP
+ aO59pXvfXJvR2DbVUWPtCaCKbyww/Fi/lRfMS/J0rKEOxOz8qJ6gzaErPnBn1VZHDJUdi2KVG
+ wDHqn9Y8MKbM3GHjUv289hSAXlWFLdkND2BnKcFdoMYLAo7T2L2vVeSOgK0SYgh+cPtTrCL9u
+ Pg/A2En23qftgKq6bluP9KC1QKm3Zbj4g3azip3R2avn8d51eaMrR3S/9jhOiDvhPFctnQAD3
+ Yy3WkRkUk6KgmJAIMH+PDeZpLRObzXy+N5DUqgnXbaZwNVRh30u+GjhvAODjj10La3DRLkxOq
+ 6qN1/0vPgbsSgGmnPVzYQtiL1+WEjnexyZ+u6mBa5/KDVF9MA+AzYPfIbS7+erBP0mYnvA4zG
+ Eez1Dz4hRxH5b4QSa6kObgEBkhBJI0lV9uv4wEB1k1EmY=
 
-On Thu, May 16, 2024 at 07:59:06PM +0800, Genjian wrote:
-> From: Genjian Zhang <zhanggenjian@kylinos.cn>
-> 
-> These functions are used in only one file.
-> Made them static to fix the following build error:
-> 
-> arch/mips/sgi-ip22/ip22-gio.c:249:6: error: no previous prototype for ‘ip22_gio_set_64bit’ [-Werror=missing-prototypes]
-> arch/mips/sgi-ip22/ip22-gio.c:398:12: error: no previous prototype for ‘ip22_gio_init’ [-Werror=missing-prototypes]
-> 
-> Reported-by: k2ci <kernel-bot@kylinos.cn>
-> Signed-off-by: Genjian Zhang <zhanggenjian@kylinos.cn>
-> ---
->  arch/mips/sgi-ip22/ip22-gio.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+=E2=80=A6
+> +++ b/drivers/crypto/ti/mcrc64.c
+=E2=80=A6
+> +static int mcrc64_probe(struct platform_device *pdev)
+> +{
+=E2=80=A6
+> +	platform_set_drvdata(pdev, dev_data);
+> +
+> +	spin_lock(&mcrc64_dev_list.lock);
+> +	list_add(&dev_data->list, &mcrc64_dev_list.dev_list);
+> +	spin_unlock(&mcrc64_dev_list.lock);
+> +
+> +	mutex_lock(&refcnt_lock);
+> +	if (!refcnt) {
+> +		ret =3D crypto_register_shashes(algs, ARRAY_SIZE(algs));
+=E2=80=A6
+> +	}
+> +	refcnt++;
+> +	mutex_unlock(&refcnt_lock);
+=E2=80=A6
 
-applied to mips-next.
+Would you become interested to apply lock guards?
+https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/cleanup.h#=
+L124
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Regards,
+Markus
 
