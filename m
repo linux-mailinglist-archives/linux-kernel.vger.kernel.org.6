@@ -1,217 +1,126 @@
-Return-Path: <linux-kernel+bounces-210240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A11904134
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:26:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9793A904132
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8E0DB21C06
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9CB1C2352A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E1684D12;
-	Tue, 11 Jun 2024 16:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DB141C92;
+	Tue, 11 Jun 2024 16:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="KSqLXNk9"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAd5OW5H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740A343AB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E89143AAE;
 	Tue, 11 Jun 2024 16:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122991; cv=none; b=cumUbHGVvLK1xOao9A9ifQi6i09wHJTDr0uEzvWUU9Ev+ZLnaE7g1sKb1Cvd6iG4D7TmVpWm2K8UhdpyIQHLBDlh5uOBPXZMT4MjhXedHIepQQ4DwZzWAWDwUgqVdEoYNbjkCyfvkkJCDYjs/v3fINUrqgI9E/8ktaXLN3Fw7pg=
+	t=1718122989; cv=none; b=PfPF3eQJrU5zmdVVdNXH7YkhkZbYYfjna8/bV+UATCCde/Iya4WgsDuxhmogFznh9raDPIsYFaDBikCjt6qRIgpLBur5z6q3mDhnslMS7nRT0qrEp4pXYMfRqW9W3LEVVgXZO4WVwNSlYhpWt8sNpVD5wLoXx4+lNlZAEi/SlR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122991; c=relaxed/simple;
-	bh=m5UE1MiwSmATBLpmwbRdWhRqhM/mEKs4X2RVg6dEgsY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sUmzVByT57XQ1AuIu10waufEGkDB77by2DextCm4Si6qdhny2Yl1OWAE3JyCzbvPColYXNtz7xDevfZ0QpRStO6fiL3ICB5do2vZfTHNK4PkgAMB7Gde/6gWnuZmpNbW+hHPz6YclNisFwS5qM6QoJOWgXf3VHpEpy0Y4m+KA+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=KSqLXNk9; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BGJRiu021185;
-	Tue, 11 Jun 2024 09:22:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=y0whBG5VzxLNn5/8tDUFHBocf
-	GMBvnXU/5WiaR7V9GI=; b=KSqLXNk9hbSqap1dt2wrO0rhC4zadRkJuUx//t1pS
-	s54laxjMxsDkHOSvF/87fFJUXjdLcBaKyJPoezNlPQBeMfKqA8qrlEmZbes6LNzQ
-	wttpe80DYl1vAOlVQfNlwrJEQCaNHKvncAS0Wu0g+XqmWS7Uwz0LkpozemVQ+vpz
-	QD53u/4YQeqno+uFPe2t48I0hSyn+94+MoHV4Bx0MF3TlUCTksfV8SJPt4d/tfny
-	oYU+5gHHSQ4hZipObWfsD3wxxdQmcgMt9JJAgP8dLWq3ULvJZ2euRWz19yfMspUZ
-	BewUKYa6xoq1IjL4Hzbx8QfSrj6/chQXX1w2N0dmiSeIw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ypmq0hcu4-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 09:22:57 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 11 Jun 2024 09:22:52 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 11 Jun 2024 09:22:52 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id B51603F7059;
-	Tue, 11 Jun 2024 09:22:49 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
-        <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v5 10/10] octeontx2-pf: Add devlink port support
-Date: Tue, 11 Jun 2024 21:52:13 +0530
-Message-ID: <20240611162213.22213-11-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240611162213.22213-1-gakula@marvell.com>
-References: <20240611162213.22213-1-gakula@marvell.com>
+	s=arc-20240116; t=1718122989; c=relaxed/simple;
+	bh=yEpTP94eDr5A3s9VgS5dBduy8ufIp19ilct/d2eDhsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LndVmy8s6edFa5v/xeZF67rjIJSZoqvGvqav4gBoX9mQ3XMOtTayQU9Ci9tsuZr+7Hj0RquNVdFGtvWiqQFCD86Bx7WV5hUWOo1nhuGSGFjUiM6l5CUmKQJ9+DHq0sEyf/k/oQpcF+ODi+voNeXzA5+OfVwt99GYunq35Zb8ZCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAd5OW5H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55621C2BD10;
+	Tue, 11 Jun 2024 16:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718122988;
+	bh=yEpTP94eDr5A3s9VgS5dBduy8ufIp19ilct/d2eDhsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GAd5OW5HPNWu95j/Nh5a6vrZrlRAA4jImqvTUch1p5+DD8kOrtJHaHonbYOXoyqJG
+	 uat5emaBVryTRAqWHV9CDqTjgodJqo/gD+PL0AkQxTj8W1w8ZJsw7lvmTyElXICI/3
+	 MUlGVHy4YbkxHsU3TGNmQIEoIJttsxnk+P11wRUnGfqGno0g/44uzWMKflQRXudg2q
+	 A3H5P/GJSbNd/Ufj6BMgB4PlunQXccK0tzOz0BHVg46KQJJUQc89AQZty/tDjE1M/s
+	 qaXfei4mU3+FCTZeLBhbCwDIHdNCrg9r3YomMosOoK7a38ogkOx8GFqLGabTy51w2z
+	 r/WyyfsOBBXwQ==
+Date: Tue, 11 Jun 2024 17:23:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Shengyu Qu <wiagn233@outlook.com>
+Cc: kernel@esmil.dk, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, jszhang@kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: starfive: Set EMMC vqmmc maximum voltage to
+ 3.3V on JH7110 boards
+Message-ID: <20240611-entourage-churn-8b69966848fc@spud>
+References: <TY3P286MB2611936BD43C24D34B442E6D98C72@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-GUID: OifaibnbaQWKG9k9aLkCjNtOBACoXjZT
-X-Proofpoint-ORIG-GUID: OifaibnbaQWKG9k9aLkCjNtOBACoXjZT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5qjNIfeTE8upxu8l"
+Content-Disposition: inline
+In-Reply-To: <TY3P286MB2611936BD43C24D34B442E6D98C72@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
 
-Register devlink port for the rvu representors.
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
- .../net/ethernet/marvell/octeontx2/nic/rep.c  | 74 +++++++++++++++++++
- .../net/ethernet/marvell/octeontx2/nic/rep.h  |  2 +
- 2 files changed, 76 insertions(+)
+--5qjNIfeTE8upxu8l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-index d984b7d9dc64..2a0ec4c25c22 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-@@ -28,6 +28,73 @@ MODULE_DESCRIPTION(DRV_STRING);
- MODULE_LICENSE("GPL");
- MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
- 
-+static int rvu_rep_dl_port_fn_hw_addr_get(struct devlink_port *port,
-+					  u8 *hw_addr, int *hw_addr_len,
-+					  struct netlink_ext_ack *extack)
-+{
-+	struct otx2_devlink *otx2_dl = devlink_priv(port->devlink);
-+	int rep_id = port->index;
-+	struct otx2_nic *priv;
-+	struct rep_dev *rep;
-+
-+	priv = otx2_dl->pfvf;
-+	rep = priv->reps[rep_id];
-+	ether_addr_copy(hw_addr, rep->mac);
-+	*hw_addr_len = ETH_ALEN;
-+	return 0;
-+}
-+
-+static int rvu_rep_dl_port_fn_hw_addr_set(struct devlink_port *port,
-+					  const u8 *hw_addr, int hw_addr_len,
-+					  struct netlink_ext_ack *extack)
-+{
-+	struct otx2_devlink *otx2_dl = devlink_priv(port->devlink);
-+	int rep_id = port->index;
-+	struct otx2_nic *priv;
-+	struct rep_dev *rep;
-+
-+	priv = otx2_dl->pfvf;
-+	rep = priv->reps[rep_id];
-+	eth_hw_addr_set(rep->netdev, hw_addr);
-+	ether_addr_copy(rep->mac, hw_addr);
-+	return 0;
-+}
-+
-+static const struct devlink_port_ops rvu_rep_dl_port_ops = {
-+	.port_fn_hw_addr_get = rvu_rep_dl_port_fn_hw_addr_get,
-+	.port_fn_hw_addr_set = rvu_rep_dl_port_fn_hw_addr_set,
-+};
-+
-+static void rvu_rep_devlink_port_unregister(struct rep_dev *rep)
-+{
-+	devlink_port_unregister(&rep->dl_port);
-+}
-+
-+static int rvu_rep_devlink_port_register(struct rep_dev *rep)
-+{
-+	struct devlink_port_attrs attrs = {};
-+	struct otx2_nic *priv = rep->mdev;
-+	struct devlink *dl = priv->dl->dl;
-+	int err;
-+
-+	attrs.flavour = DEVLINK_PORT_FLAVOUR_PCI_PF;
-+	attrs.pci_vf.pf = rvu_get_pf(rep->pcifunc);
-+	attrs.pci_vf.vf = rep->pcifunc & RVU_PFVF_FUNC_MASK;
-+	if (attrs.pci_vf.vf)
-+		attrs.flavour = DEVLINK_PORT_FLAVOUR_PCI_VF;
-+
-+	devlink_port_attrs_set(&rep->dl_port, &attrs);
-+
-+	err = devl_port_register_with_ops(dl, &rep->dl_port, rep->rep_id,
-+					  &rvu_rep_dl_port_ops);
-+	if (err) {
-+		dev_err(rep->mdev->dev, "devlink_port_register failed: %d\n",
-+			err);
-+		return err;
-+	}
-+	return 0;
-+}
-+
- static int rvu_rep_get_repid(struct otx2_nic *priv, u16 pcifunc)
- {
- 	int rep_id;
-@@ -338,6 +405,7 @@ void rvu_rep_destroy(struct otx2_nic *priv)
- 	for (rep_id = 0; rep_id < priv->rep_cnt; rep_id++) {
- 		rep = priv->reps[rep_id];
- 		unregister_netdev(rep->netdev);
-+		rvu_rep_devlink_port_unregister(rep);
- 		free_netdev(rep->netdev);
- 	}
- 	kfree(priv->reps);
-@@ -380,6 +448,11 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
- 		snprintf(ndev->name, sizeof(ndev->name), "r%dp%d", rep_id,
- 			 rvu_get_pf(pcifunc));
- 
-+		err = rvu_rep_devlink_port_register(rep);
-+		if (err)
-+			goto exit;
-+
-+		SET_NETDEV_DEVLINK_PORT(ndev, &rep->dl_port);
- 		eth_hw_addr_random(ndev);
- 		err = register_netdev(ndev);
- 		if (err) {
-@@ -400,6 +473,7 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
- 	while (--rep_id >= 0) {
- 		rep = priv->reps[rep_id];
- 		unregister_netdev(rep->netdev);
-+		rvu_rep_devlink_port_unregister(rep);
- 		free_netdev(rep->netdev);
- 	}
- 	kfree(priv->reps);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-index 0cefa482f83c..d81af376bf50 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-@@ -34,10 +34,12 @@ struct rep_dev {
- 	struct net_device *netdev;
- 	struct rep_stats stats;
- 	struct delayed_work stats_wrk;
-+	struct devlink_port dl_port;
- 	u16 rep_id;
- 	u16 pcifunc;
- #define RVU_REP_VF_INITIALIZED		BIT_ULL(0)
- 	u8 flags;
-+	u8	mac[ETH_ALEN];
- };
- 
- static inline bool otx2_rep_dev(struct pci_dev *pdev)
--- 
-2.25.1
+On Tue, Jun 11, 2024 at 10:56:41PM +0800, Shengyu Qu wrote:
+> Currently, for JH7110 boards with EMMC slot, vqmmc voltage for EMMC is
+> fixed to 1.8V, while the spec needs it to be 3.3V on low speed mode and
+> should support switching to 1.8V when using higher speed mode. Since
+> there are no other peripherals using the same voltage source of EMMC's
+> vqmmc(ALDO4) on every board currently supported by mainline kernel,
+> regulator-max-microvolt of ALDO4 should be set to 3.3V.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
+> Fixes: ac9a37e2d6b6 ("riscv: dts: starfive: introduce a common board dtsi=
+ for jh7110 based boards")
 
+I don't think this fixes tag is correct, it just moved in that commit.
+It has been there since commit 7dafcfa79cc9 ("riscv: dts: starfive: enable
+DCDC1&ALDO4 node in axp15060").
+
+Thanks,
+Conor.
+
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv=
+/boot/dts/starfive/jh7110-common.dtsi
+> index 37b4c294ffcc..c7a549ec7452 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -244,7 +244,7 @@ emmc_vdd: aldo4 {
+>  				regulator-boot-on;
+>  				regulator-always-on;
+>  				regulator-min-microvolt =3D <1800000>;
+> -				regulator-max-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <3300000>;
+>  				regulator-name =3D "emmc_vdd";
+>  			};
+>  		};
+> --=20
+> 2.34.1
+>=20
+
+--5qjNIfeTE8upxu8l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmh56AAKCRB4tDGHoIJi
+0r8qAP4x+AYwI1YvlFyfOl2OTqSjrgW71fGQWfNwAfKUONuP3gEAxPVa2gMI5JtD
+zE/H/i7djgXlxQmv+nrgtuqcARn3Cww=
+=mz3Z
+-----END PGP SIGNATURE-----
+
+--5qjNIfeTE8upxu8l--
 
