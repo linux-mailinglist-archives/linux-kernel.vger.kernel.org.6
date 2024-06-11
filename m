@@ -1,219 +1,280 @@
-Return-Path: <linux-kernel+bounces-209220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39498902F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D84902F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B6EEB20F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E09EBB21100
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC483139CE2;
-	Tue, 11 Jun 2024 03:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6E816F90D;
+	Tue, 11 Jun 2024 03:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Qu5BMh5v"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TtdLMpoz"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB0423D2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAAB2A1C0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718076707; cv=none; b=tOCbpgDrrNGQGWzZ9mHmsFJMvRltL6AwJIUPxDhXc5Jk7tXglZr4dwCQMTj5yuX13w/x5386uc9Qq1af1R8CVLnXTOA+7DRJQMLYbh4QHWUVMn+YpX2rfouHQcOUPUTbtbFxEnTGSGSTy9lpWCXj3/wL0EQSVwpW8jGg5hQrLxQ=
+	t=1718076797; cv=none; b=ReWs+5Plwco5wetkjKUE4uVYcFS05WwXPEvCy/wcfAedMOPWicf5Oy+6gxnEaE5VUdsc39UCFilbCxkelqfdoe25S4s5v1FouB8dpKjD0e66CCqxeYV+KAViEWITHhY7VN2CUGq8Ba4KbymqYcLZmYwfFrXIP6zsrsFal3Br9CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718076707; c=relaxed/simple;
-	bh=XYRgPRqsUZtl/GLL2YXIuGD5Izp4hyFdPEYTD+nVN8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJvDtnokfHJs+4tw8j7lW6qw75oX/xoF9dUTbZFd/4VKFIaaMUH56H7Fv4VefX2eOtD+LpXQmkAXexOC1Cq5gSd+vVn8r70hnsrPW1cr74+PKyyNsTMhCJGIee35QVqhByZS+ExHqoK9FoZ3TrImPffBzyBlLunPp6G9t0+b4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Qu5BMh5v; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718076703; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=V4mjA+2MP8zAV5Ww2U2WGaYSldk2hCBukxkFLeMugYE=;
-	b=Qu5BMh5v85oodHnegWj1ru9uZDVvHOMCKajPzZlG9eBaaa2Ig0JGgadK/puSKD9yM2NwGaxWh7+MSKmFzi6n14LRL+RzhytXXzWgjf4JuzmTo0e2NX92QL8xzqMhRog4AbTuIMK6/3CH1QolatOKR1B5IZGO9At4zmPQ9g7Zg1Q=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W8EoriA_1718076700;
-Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8EoriA_1718076700)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Jun 2024 11:31:41 +0800
-Message-ID: <99ba4e0d-ef36-4516-a275-014cf5eb22fd@linux.alibaba.com>
-Date: Tue, 11 Jun 2024 11:31:39 +0800
+	s=arc-20240116; t=1718076797; c=relaxed/simple;
+	bh=sboedjcB+qsri74umYxpcPhwqiTNNKAEpebDcDkD6a4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MFga0Akb4Bi/b/FIHeozJpPzndeoMieAC5lWLTF9+uCP4Nx017JNi93bFKaPnDhMGY8oihM3jFmVh1DHaslHo4tFqXgs2W7ZwMvL/xq+qibLfqPs8qK9rESuPSIc6Vs0SNysgA77vjIMNcnD3Fdk8Qwbhxo8RXYHHpZDDkqCa40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TtdLMpoz; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42179480819so22035e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 20:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718076793; x=1718681593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePFKPNMhKZdDDrvKMpPDc1jN82wnN2cdCBgWMIF8/6g=;
+        b=TtdLMpozk7lWIYqXrZmvwd7JZSOa2Sa8+xyzAvZyL5OFrDqk1rzAsBlbKON6+w3HYY
+         DYi53tHWjEUbb/Vfht1vVYzsO910KHyEu9RSI5kGUN9Kkprnv14yONyy2L6C4Lw5OYbq
+         GJZpnYk3OBYSnMtwOhqNuqwWKAq6OU+M6srWsN2LfU+egu+olUMrGmJYvaS6mDA5JdVi
+         N3tjuH/LXeCmHMLZR+rioubeuzHfqEgY+dDW02QC1LMHHt/0zX2bbO4JYHDwr/Tgkk8B
+         R/CBtqvuYgvg+HDfXBtO+i3/RS1TLeVjB74wb7eOtEZK3b8ik5MAXP2FKaZOGIUBdaYu
+         LNFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718076793; x=1718681593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ePFKPNMhKZdDDrvKMpPDc1jN82wnN2cdCBgWMIF8/6g=;
+        b=JLAVSIuGi4rvi2jkxck3G3Jos40z6RXV0/3XPZKiC+GZ1P9SMjj9IgcCRIhpHbHYJx
+         tgixs1h4GGSCLjVzTaxR0DiOjf+A8cceIQl9wQWpsGtfzHSwEXOl19EerUde0KgEtN21
+         5OBDXji7vIaPq/9TkQ09B3aXY2D9Pvp9M6kc0FWMOqGPHb3voYkrmDZDJWJS3zgtxE8T
+         pLYZoGUuGrbH5YyN/yFrxgznj3QPwJUVlxVCRZnSKrxBJbZvZHd9Dx5/OCyUhiAECz10
+         VAnemcAOLXBgLacKydVfJHeyTA+9qGJSQL71iWc0/OGWp5uuySq0t7KTFMvy8iodvqt7
+         8DoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOoKiGBIV6Z4t5ugucy0D4IgzFt28zT8fefvVp9lNyIvwgBt3piXO1OlKss2u5hbWVjipZo7UcJPoWvBgi3IrK6WN7TYcqfISXqMI9
+X-Gm-Message-State: AOJu0YwTWi7im20metrn7PH9moj42xl7l4sJ+75wQ6dEbh50+493BBg5
+	gY+R6eh1qG0SKPFNeC3Gqhu3UCTGb+D8ZtmIvw+Fg6mwmK0dlcVGFIy5LcOOjIHdUrYiiET2RMf
+	BOKg5XBS9x63UHUAl7NjSD4FoP0TtQFjzL2Hx
+X-Google-Smtp-Source: AGHT+IEUcxp+C1A/Jggd8QcKnMypQqdR9xeaYlLV+2Z4rrd05nHiQ8EugdpV2M6uIdB5pd7qUtCWqPBVtG1WDOnfl0s=
+X-Received: by 2002:a05:600c:1f12:b0:421:89d4:2928 with SMTP id
+ 5b1f17b1804b1-422558cfce1mr474365e9.7.1718076792552; Mon, 10 Jun 2024
+ 20:33:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] mm: add new 'orders' parameter for find_get_entries()
- and find_lock_entries()
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "david@redhat.com" <david@redhat.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "chrisl@kernel.org" <chrisl@kernel.org>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1717673614.git.baolin.wang@linux.alibaba.com>
- <5304c4c54868336985b396d2c46132c2e0cdf803.1717673614.git.baolin.wang@linux.alibaba.com>
- <CGME20240610152307eucas1p10417f113fcc5e1729bdf638f370d54e4@eucas1p1.samsung.com>
- <v3dqmzgrfpqmfckqnl4voelofevm56q4n4lbk2fq5o5rfclylb@wmtz6ms22ep2>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <v3dqmzgrfpqmfckqnl4voelofevm56q4n4lbk2fq5o5rfclylb@wmtz6ms22ep2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240607203543.2151433-1-jeffxu@google.com> <20240607203543.2151433-2-jeffxu@google.com>
+ <0988dfae-69d0-4fbf-b145-15f6e853cbcc@infradead.org>
+In-Reply-To: <0988dfae-69d0-4fbf-b145-15f6e853cbcc@infradead.org>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 10 Jun 2024 20:32:34 -0700
+Message-ID: <CALmYWFvuRsTZSx3E1BhnwxHL3Qn-wQF9th2JkXwpFcO9at_9vw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] mm/memfd: add documentation for MFD_NOEXEC_SEAL MFD_EXEC
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: jeffxu@chromium.org, akpm@linux-foundation.org, cyphar@cyphar.com, 
+	david@readahead.eu, dmitry.torokhov@gmail.com, dverkamp@chromium.org, 
+	hughd@google.com, jorgelo@chromium.org, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, pobrn@protonmail.com, skhan@linuxfoundation.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi
 
+On Mon, Jun 10, 2024 at 7:20=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+> Hi--
+>
+> On 6/7/24 1:35 PM, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Add documentation for memfd_create flags: FMD_NOEXEC_SEAL
+>
+> s/FMD/MFD/
+>
+> > and MFD_EXEC
+> >
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > ---
+> >  Documentation/userspace-api/index.rst      |  1 +
+> >  Documentation/userspace-api/mfd_noexec.rst | 86 ++++++++++++++++++++++
+> >  2 files changed, 87 insertions(+)
+> >  create mode 100644 Documentation/userspace-api/mfd_noexec.rst
+> >
+> > diff --git a/Documentation/userspace-api/index.rst b/Documentation/user=
+space-api/index.rst
+> > index 5926115ec0ed..8a251d71fa6e 100644
+> > --- a/Documentation/userspace-api/index.rst
+> > +++ b/Documentation/userspace-api/index.rst
+> > @@ -32,6 +32,7 @@ Security-related interfaces
+> >     seccomp_filter
+> >     landlock
+> >     lsm
+> > +   mfd_noexec
+> >     spec_ctrl
+> >     tee
+> >
+> > diff --git a/Documentation/userspace-api/mfd_noexec.rst b/Documentation=
+/userspace-api/mfd_noexec.rst
+> > new file mode 100644
+> > index 000000000000..0d2c840f37e1
+> > --- /dev/null
+> > +++ b/Documentation/userspace-api/mfd_noexec.rst
+> > @@ -0,0 +1,86 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +Introduction of non executable mfd
+>
+>                    non-executable mfd
+>
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +:Author:
+> > +    Daniel Verkamp <dverkamp@chromium.org>
+> > +    Jeff Xu <jeffxu@chromium.org>
+> > +
+> > +:Contributor:
+> > +     Aleksa Sarai <cyphar@cyphar.com>
+> > +
+> > +Since Linux introduced the memfd feature, memfd have always had their
+>
+>                                              memfds
+> i.e., plural
+>
+> > +execute bit set, and the memfd_create() syscall doesn't allow setting
+> > +it differently.
+> > +
+> > +However, in a secure by default system, such as ChromeOS, (where all
+>
+>                  secure-by-default
+>
+> > +executables should come from the rootfs, which is protected by Verifie=
+d
+> > +boot), this executable nature of memfd opens a door for NoExec bypass
+> > +and enables =E2=80=9Cconfused deputy attack=E2=80=9D.  E.g, in VRP bug=
+ [1]: cros_vm
+> > +process created a memfd to share the content with an external process,
+> > +however the memfd is overwritten and used for executing arbitrary code
+> > +and root escalation. [2] lists more VRP in this kind.
+>
+>                                            of this kind.
+>
+> > +
+> > +On the other hand, executable memfd has its legit use, runc uses memfd=
+=E2=80=99s
+>
+>                                                      use:
+>
+> > +seal and executable feature to copy the contents of the binary then
+> > +execute them, for such system, we need a solution to differentiate run=
+c's
+>
+>            them. For such a system,
+>
+> > +use of  executable memfds and an attacker's [3].
+> > +
+> > +To address those above.
+>
+>                     above:
+>
+> > + - Let memfd_create() set X bit at creation time.
+> > + - Let memfd be sealed for modifying X bit when NX is set.
+> > + - A new pid namespace sysctl: vm.memfd_noexec to help applications to
+>
+>     - Add a new                                           applications in
+>
+> > +   migrating and enforcing non-executable MFD.
+> > +
+> > +User API
+> > +=3D=3D=3D=3D=3D=3D=3D=3D
+> > +``int memfd_create(const char *name, unsigned int flags)``
+> > +
+> > +``MFD_NOEXEC_SEAL``
+> > +     When MFD_NOEXEC_SEAL bit is set in the ``flags``, memfd is create=
+d
+> > +     with NX. F_SEAL_EXEC is set and the memfd can't be modified to
+> > +     add X later. MFD_ALLOW_SEALING is also implied.
+> > +     This is the most common case for the application to use memfd.
+> > +
+> > +``MFD_EXEC``
+> > +     When MFD_EXEC bit is set in the ``flags``, memfd is created with =
+X.
+> > +
+> > +Note:
+> > +     ``MFD_NOEXEC_SEAL`` implies ``MFD_ALLOW_SEALING``. In case that
+> > +     app doesn't want sealing, it can add F_SEAL_SEAL after creation.
+>
+>         an app
+>
+> > +
+> > +
+> > +Sysctl:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D
+> > +``pid namespaced sysctl vm.memfd_noexec``
+> > +
+> > +The new pid namespaced sysctl vm.memfd_noexec has 3 values:
+> > +
+> > + - 0: MEMFD_NOEXEC_SCOPE_EXEC
+> > +     memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
+> > +     MFD_EXEC was set.
+> > +
+> > + - 1: MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
+> > +     memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
+> > +     MFD_NOEXEC_SEAL was set.
+> > +
+> > + - 2: MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+> > +     memfd_create() without MFD_NOEXEC_SEAL will be rejected.
+> > +
+> > +The sysctl allows finer control of memfd_create for old-software that
+>
+>                                                        old software
+>
+> > +doesn't set the executable bit, for example, a container with
+>
+>                               bit;
+>
+> > +vm.memfd_noexec=3D1 means the old-software will create non-executable =
+memfd
+>
+>                                old software
+>
+> > +by default while new-software can create executable memfd by setting
+>
+>                     new software
+>
+> > +MFD_EXEC.
+> > +
+> > +The value of vm.memfd_noexec is passed to child namespace at creation
+> > +time, in addition, the setting is hierarchical, i.e. during memfd_crea=
+te,
+>
+>    time. In addition,
+>
+Updated in V2.
+Thanks!
+-Jeff
 
-On 2024/6/10 23:23, Daniel Gomez wrote:
-> Hi Baolin,
-> 
-> On Thu, Jun 06, 2024 at 07:58:55PM +0800, Baolin Wang wrote:
->> In the following patches, shmem will support the swap out of large folios,
->> which means the shmem mappings may contain large order swap entries, so an
->> 'orders' array is added for find_get_entries() and find_lock_entries() to
->> obtain the order size of shmem swap entries, which will help in the release
->> of shmem large folio swap entries.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/filemap.c  | 27 +++++++++++++++++++++++++--
->>   mm/internal.h |  4 ++--
->>   mm/shmem.c    | 17 +++++++++--------
->>   mm/truncate.c |  8 ++++----
->>   4 files changed, 40 insertions(+), 16 deletions(-)
->>
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 37061aafd191..47fcd9ee6012 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -2036,14 +2036,24 @@ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
->>    * Return: The number of entries which were found.
->>    */
->>   unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->> -		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices)
->> +		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices,
->> +		int *orders)
->>   {
->>   	XA_STATE(xas, &mapping->i_pages, *start);
->>   	struct folio *folio;
->> +	int order;
->>   
->>   	rcu_read_lock();
->>   	while ((folio = find_get_entry(&xas, end, XA_PRESENT)) != NULL) {
->>   		indices[fbatch->nr] = xas.xa_index;
->> +		if (orders) {
->> +			if (!xa_is_value(folio))
->> +				order = folio_order(folio);
->> +			else
->> +				order = xa_get_order(xas.xa, xas.xa_index);
->> +
->> +			orders[fbatch->nr] = order;
->> +		}
->>   		if (!folio_batch_add(fbatch, folio))
->>   			break;
->>   	}
->> @@ -2056,6 +2066,8 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->>   		folio = fbatch->folios[idx];
->>   		if (!xa_is_value(folio))
->>   			nr = folio_nr_pages(folio);
->> +		else if (orders)
->> +			nr = 1 << orders[idx];
->>   		*start = indices[idx] + nr;
->>   	}
->>   	return folio_batch_count(fbatch);
->> @@ -2082,10 +2094,12 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->>    * Return: The number of entries which were found.
->>    */
->>   unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->> -		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices)
->> +		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices,
->> +		int *orders)
->>   {
->>   	XA_STATE(xas, &mapping->i_pages, *start);
->>   	struct folio *folio;
->> +	int order;
->>   
->>   	rcu_read_lock();
->>   	while ((folio = find_get_entry(&xas, end, XA_PRESENT))) {
->> @@ -2099,9 +2113,16 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->>   			if (folio->mapping != mapping ||
->>   			    folio_test_writeback(folio))
->>   				goto unlock;
->> +			if (orders)
->> +				order = folio_order(folio);
->>   			VM_BUG_ON_FOLIO(!folio_contains(folio, xas.xa_index),
->>   					folio);
->> +		} else if (orders) {
->> +			order = xa_get_order(xas.xa, xas.xa_index);
->>   		}
->> +
->> +		if (orders)
->> +			orders[fbatch->nr] = order;
->>   		indices[fbatch->nr] = xas.xa_index;
->>   		if (!folio_batch_add(fbatch, folio))
->>   			break;
->> @@ -2120,6 +2141,8 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->>   		folio = fbatch->folios[idx];
->>   		if (!xa_is_value(folio))
->>   			nr = folio_nr_pages(folio);
->> +		else if (orders)
->> +			nr = 1 << orders[idx];
->>   		*start = indices[idx] + nr;
->>   	}
->>   	return folio_batch_count(fbatch);
->> diff --git a/mm/internal.h b/mm/internal.h
->> index 3419c329b3bc..0b5adb6c33cc 100644
->> --- a/mm/internal.h
->> +++ b/mm/internal.h
->> @@ -339,9 +339,9 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
->>   }
->>   
->>   unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->> -		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
->> +		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices, int *orders);
->>   unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->> -		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
->> +		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices, int *orders);
->>   void filemap_free_folio(struct address_space *mapping, struct folio *folio);
->>   int truncate_inode_folio(struct address_space *mapping, struct folio *folio);
->>   bool truncate_inode_partial_folio(struct folio *folio, loff_t start,
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 0ac71580decb..28ba603d87b8 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -840,14 +840,14 @@ static void shmem_delete_from_page_cache(struct folio *folio, void *radswap)
->>    * Remove swap entry from page cache, free the swap and its page cache.
->>    */
->>   static int shmem_free_swap(struct address_space *mapping,
->> -			   pgoff_t index, void *radswap)
->> +			   pgoff_t index, void *radswap, int order)
->>   {
->>   	void *old;
-> 
-> Matthew Wilcox suggested [1] returning the number of pages freed in shmem_free_swap().
-> 
-> [1] https://lore.kernel.org/all/ZQRf2pGWurrE0uO+@casper.infradead.org/
-> 
-> Which I submitted here:
-> https://lore.kernel.org/all/20231028211518.3424020-5-da.gomez@samsung.com/
-> 
-> Do you agree with the suggestion? If so, could we update my patch to use
-> free_swap_and_cache_nr() or include that here?
-
-Yes, this looks good to me. But we still need some modification for 
-find_lock_entries() and find_get_entries() to update the '*start' 
-correctly. I will include your changes into this patch in next version. 
-Thanks.
+> > +we will search from current ns to root ns and use the most restrictive
+> > +setting.
+> > +
+> > +[1] https://crbug.com/1305267
+> > +
+> > +[2] https://bugs.chromium.org/p/chromium/issues/list?q=3Dtype%3Dbug-se=
+curity%20memfd%20escalation&can=3D1
+> > +
+> > +[3] https://lwn.net/Articles/781013/
+>
+> --
+> ~Randy
 
