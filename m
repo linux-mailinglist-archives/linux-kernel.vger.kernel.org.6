@@ -1,102 +1,75 @@
-Return-Path: <linux-kernel+bounces-210677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10B1904734
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:52:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1988904735
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C641C23916
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D9A1C23497
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CC415575F;
-	Tue, 11 Jun 2024 22:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQgWri4u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676DA155726;
+	Tue, 11 Jun 2024 22:52:58 +0000 (UTC)
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF49475;
-	Tue, 11 Jun 2024 22:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B665E15532C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718146336; cv=none; b=qSuf0jDINXTC4qualrKGiqlgiGM+PTqPWJlF1F0AqF6+3mE57x5N2u25kFqv46C73kBNTL9ioKeINAXdy3/pvxfMXC/1TTm2/qhuiB07ARK9s7fu0O3rl3x1rCGfG4Kk3zLspGTKRD+5K1OYytwvVx5NhQUEBLkoI88XjUxWR3I=
+	t=1718146378; cv=none; b=HpN73S1jW0GCxdC2Bvu9mRdwc84l06MJjZ77JvTI9sGkQh+9HCOhU8/+LNzH9QhMleOOk2VSPw02+YTjqXn3rXd4wPUjXgpnSyAiAajVLmwiosdHXQNTMPtFbNX5ru/o8E4fea/1oHRyt+NgKD22pLf+Cp1QyiPAAQY6gcD/H1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718146336; c=relaxed/simple;
-	bh=zW6zU8woHSujRDru/K7WaWs9kXaIVX09P/gjbKgambA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6+5Oqr8Tu3vuoOOTQHwJN5pltX8Li0Xzv2Pw6yiG6jo8gxinxbsc2tV9iyK/JzNU/f118aVr39g1ubW6LshDeMfToAFy8kzB7Opi+jEAzhcdmY532hyStUAhJkw9k5pSrVzIUH7ZGMOtjPc7iGo+SoKW19mhxuipSrKkWjIzkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQgWri4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9A0C2BD10;
-	Tue, 11 Jun 2024 22:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718146335;
-	bh=zW6zU8woHSujRDru/K7WaWs9kXaIVX09P/gjbKgambA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iQgWri4u6xC3HNFBoO/QuYYWFChrygZbVKuv12KI9ErGVk3EQAXeM52KI4G3skTdk
-	 I6t7XH5t+RlsvvUtph0omUYesTHgCbxYfwWB5CsnQOtHXiOLLTLcZhhxVN+W5CBm+X
-	 uLnXM+G0LIl9d/4rnPoVWgjTYz6nfVS0FcEhXAit3uF1VQHC+3N0TcY3ywrRuF0w4D
-	 +HhRq3ZZhgUJF5SIOaKU2Or2/RPuhbOWaXZuH2aDyF7XSreHbNzoFOzuCyj19Je6/D
-	 WstjxNOPzpzHrFP/v8e9oeOHWZeY51zo99Idh1k+d3Vf1u8CKfn9j8P0PKuWAb4PRE
-	 Vra45qppC9E+g==
-Date: Tue, 11 Jun 2024 19:52:12 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: dwarves@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
-	Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
-	Matthias Schwarzott <zzam@gentoo.org>,
-	Viktor Malik <vmalik@redhat.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Jan Alexander Steffens <heftig@archlinux.org>,
-	Domenico Andreoli <cavok@debian.org>,
-	Dominique Leuenberger <dimstar@opensuse.org>,
-	Daniel Xu <dxu@dxuuu.xyz>, Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: ANNOUNCE: pahole v1.27 (reproducible builds, BTF kfuncs)
-Message-ID: <ZmjVHKLTP4_hnzug@x1>
-References: <ZmjBHWw-Q5hKBiwA@x1>
- <ZmjDuv_zuhA3Xp2m@codewreck.org>
+	s=arc-20240116; t=1718146378; c=relaxed/simple;
+	bh=SIT2jXM8IDEMsc9d2jfo+rlecAxKwI0P7aHxOSr5QnA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ofrFg/Ms4DZLUpJ3QrxMmslSHAAiuvVkCXP94tbKOq9jgTOhla2QghNfCX9gvgxOt2Dhygt1AJZNBUMxivmnJd98nLFXrs0wrUDlLJUTdHepvoQw+JJbJDAUbi4QaFNYMTGGhf2oXhnuLa4zjpgan/LCk30uj0HfMDfVywlPhJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 41D2640B10; Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 40D6A4093E;
+	Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
+Date: Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@linux.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Chengming Zhou <chengming.zhou@linux.dev>, 
+    Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+    zhouchengming@bytedance.com, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v3 1/3] slab: make check_object() more consistent
+In-Reply-To: <8b844d71-01f1-472b-a63a-4c9cdb26e9ef@suse.cz>
+Message-ID: <e93fc5a6-434f-376c-a819-353124da053d@linux.com>
+References: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev> <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev> <63da08b7-7aa3-3fad-55e6-9fc3928a49de@gentwo.org> <8b844d71-01f1-472b-a63a-4c9cdb26e9ef@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmjDuv_zuhA3Xp2m@codewreck.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Wed, Jun 12, 2024 at 06:38:02AM +0900, Dominique Martinet wrote:
-> It looks like the v1.27 tag has not been pushed to the git repos (either
-> this or github), we're using git snapshots for nixpkgs, so it'd be great
-> if a tag could be pushed out.
+On Mon, 10 Jun 2024, Vlastimil Babka wrote:
 
-Done.
+> Even if some security people enable parts of slub debugging for security
+> people it is my impression they would rather panic/reboot or have memory
+> leaked than trying to salvage the slab page? (CC Kees)
 
-https://git.kernel.org/pub/scm/devel/pahole/pahole.git/tag/?h=v1.27
-https://github.com/acmel/dwarves/releases/tag/v1.27
+In the past these resilience features have been used to allow the 
+continued operation of a broken kernel.
 
-> (I think some release monitoring tools left and right also use tags,
-> even if that's less important if you Cc other distro maintainers... I
-> just happened to see the mail on bpf@vger.)
+So first the Kernel crashed with some obscure oops in the allocator due 
+to metadata corruption.
 
-May I add your e-mail here:
-
-acme@x1:~/git/pahole$ cat PKG-MAINTAINERS 
-# Please let me know if I should remove/update/add more distro package maintainers here
-# I'm keeping this so that I CC them when releasing new versions, thanks!
-
-Jan Alexander Steffens <heftig@archlinux.org>
-Domenico Andreoli <cavok@debian.org>
-Matthias Schwarzott <zzam@gentoo.org>
-Dominique Leuenberger <dimstar@opensuse.org>
-acme@x1:~/git/pahole$
-
-So that on the next release I CC you?
-
-Thanks for reporting!
-
-- Arnaldo
+One can then put a slub_debug option on the kernel command line which will 
+result in detailed error reports on what caused the corruption. It will 
+also activate resilience measures that will often allow the continued 
+operation until a fix becomes available.
 
