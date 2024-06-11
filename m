@@ -1,207 +1,175 @@
-Return-Path: <linux-kernel+bounces-210408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D3690434B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:15:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8A790434C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9011C213DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6455E28D4BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1CC1CAA4;
-	Tue, 11 Jun 2024 18:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BL6/IoVb"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77FD5F47D;
+	Tue, 11 Jun 2024 18:15:32 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE99E4F5F9;
-	Tue, 11 Jun 2024 18:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0E1CAA4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129718; cv=none; b=bHRPgJ4HicIZQAJNTOfpgHfyrHcGOGMiGXmmCtHZpVoPCUBubx7lrwGp+fL2hHWnCYIdcddmJw+/m4TtWAG8nIKUAvd5D5yO9Ojn4ShwEmJNf1wpTNtAs9S3zwxgyBlVPFSYwFZ2aWxLrehZMloVLvEV0Ej2mqNfXID9lt7zwI8=
+	t=1718129732; cv=none; b=DdjQSDGwZ+67NnyT1RZxZ/sgpkAlpY+sL2p6GKTEwEoefoShDiBgR0XvpbJhp/YxUeffzm41XU9f3WCRww4VJc1L5wmprvk7BJBgwEAt66qbo1SZssp4gr8fvdzqnReJCrtqNhUIanHCO10tUkJq33OQCYzZRySDZK+QvmH5/VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129718; c=relaxed/simple;
-	bh=6ter9A29iljt2p01SMea/YwvMQNBAtZ/t4eQ1aElSTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KBPyPqgi05xSB69AiZcOQUceDp+OIOYXiCO4KH1/HhA9u0PCojWOKQDmJtdunqCHJLV/en8LouqmCJtmfa5BpCh/jkYD3MeWUfmoqJ5Svyh0mWpFtSOKH825XUddbvJo/DIqOmXR7p/gJWFFFEaG9RLOXDD5ZSgak95ASgCawpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BL6/IoVb; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-62a08091c2bso18855197b3.0;
-        Tue, 11 Jun 2024 11:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718129716; x=1718734516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=14f966zVBiKsoEm0nil8946zXnPreZZGrr2tPrKZ4I4=;
-        b=BL6/IoVbKoHzElZ3hLmJiwI3SaVIJbBP9NJ3xskgfbQdbQLO1kur/yhFgGH6vLErNN
-         JGtUoxycC13sPM/2a86Ehrpe3bvZamNwHQxeO/iTdvn6x2zfoggXhkWL76zUiYMfiVrU
-         BuNAcbTF6jvOAGcRwKReuFXju5ddcsO+fWPhjsGAQnPs6OxQwBXbqkJibn4wdDcUOs9Y
-         3v/7oYfCV3oQqNd2z+1hAovYc858kWxcMAyQT8ddW8omDc29F6Vd71V078S2d/KrMERT
-         YAD9FNrofEDg0bsSUZr/ZGTUZc6dlmdRBmqo4drqtwNZNhvtIL1a7wXm2gj/7b9nDMwY
-         HPFQ==
+	s=arc-20240116; t=1718129732; c=relaxed/simple;
+	bh=o661/g0MT1kUaXwnCHXeEjcPMPWhzYllXTFSTkxGUlM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nmaREbOGC9+MxoGHhmQcHOcD+1hbT6/3n9p2p2uDxf3VnQXFNJnleSrZlDHUmw8kEvAgF07qaPy6ppLXG54fyv517GlkBEu90UpvYRxNEK6VLHGboX9KAVAY6nvEFPb+6gd+zFeY5qJPhRW1r2gHcGjIQQ9gt21rvCsFHsI5FFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e8dc9db8deso7028939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:15:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718129716; x=1718734516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=14f966zVBiKsoEm0nil8946zXnPreZZGrr2tPrKZ4I4=;
-        b=BOT+rMn1f4YH4+LkmELcR6Meu83jILlMTcGhAarScqqeEzA1GtHK5tTu9aOImvmEXk
-         jsuQcJpjA2BjJAJQ31Pd29M0KrBTxR4SSNC0+PDEOQJ5nKnFqH9bKjhWIYr4Oak8vGYf
-         Yexb6xqQztATq5eLwwMonPaOy3lMYVXz6mlkcDgGtxv7nOCWNWyZssVRoKty0KLx9Svx
-         jt8rek8J/U4SbqPY6zLDIxLqm8Khix6fztObkHFy/HP0TavsUFpNHtLJrKOEEpkwam0D
-         pGoE6mvSnd6jeRf4pmXBuHaYSbOFFVAdjk0+o1yxKxriiln5mxkVWLhlTUhmBK0iaQGh
-         YH5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLJb32fEgvk6KON9dvuzmQ8vstWkmI9ivWBrFMTxc/niRSYC4CKLK8aGF/sz+1IcUAWziQVW9Y5ZnOii0nNFXFh3R4z3Is24Z0VKpn7CxrTwun8tdHZUShdGinXo1Rcv46glASB5Xk
-X-Gm-Message-State: AOJu0YzK9NfuqRjDVaP4JLKg26rxKcJNzNK2ZOh8BmI/ViNMrxG7/pTZ
-	6rco0b3YIiZLsdgOo6kcj31HxxajOox4NXxGpl43E+Nds1gSdKOnzekeAOe2C86esue65+NtvQW
-	jQb4keF94XRgGO49mW3Qubipn23M=
-X-Google-Smtp-Source: AGHT+IGJQzKrUtwgpXTD2YBmrKy4KAaGfAg2+NxxIhvC+ziLy+gmkCGfvVZN1Osa98tYSGutnyTwYZh+/tJEx0weIaw=
-X-Received: by 2002:a81:4f87:0:b0:627:df2a:6306 with SMTP id
- 00721157ae682-62cd55e0bb4mr127824657b3.21.1718129715813; Tue, 11 Jun 2024
- 11:15:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718129730; x=1718734530;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TuhS77VD3Lms9crhQdWUS/VbA+XXLv7Cp5Bum/O7DGQ=;
+        b=uNYexTtkLmWP8QpcO9gLn+hF9pQVoC8KwXDXFklpElNK3HL2Txmms3P2GjEXTwdSIt
+         VoKcWUIt+fSG52EgbEK69S/U111vj+KsFLTs+KSMH4GxS8dEkUWf1tN3ZU4rhIVnOFtJ
+         PHDA4OjsoeA4zd02o329aSkRaQlDYTO4+Zuat9+YPcn6lRRWoVY0DS5IQpmkhVRxpDtG
+         z8iQ7ps4k5AsyADSrKqmFgcSAb829tLoGg9jsH/+rumm+r6wYPA73N9hLFXIQh/SpNSo
+         7rl72HPf6OIKnqkqww8BEPKKpmoU74/P12vE+GsoOnMEzTf5bqZinz81sg7JtrVoAomv
+         Aolg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIzYuFoGzw2uxhR+LL+zk3JNcHRbLEsvlZnNzssjGJuWh+U70CMXIpl6sIH5Xo0X5VZ55/vJNlgRnJ0+Q95yfFE1EUEcPCPwZv0OmB
+X-Gm-Message-State: AOJu0YylO0lIlJYjrM2UFCGuLXpZGY4uTcKWkDHT5qc9VJO6K1idpsuY
+	ICL4q6KzbWM5VU434vsHnqjuIIWsAJ9pZzfzlgA+aIXE1e1v5UVFX/lqOeMIazINWwOxETrT1Xu
+	oCwTFHHS3Al3T/4XsFfNyqG7UVR2LMlvCHqk0F+oGlzYEeigj3DmUvDM=
+X-Google-Smtp-Source: AGHT+IE7XzY3MNnxoMX9Jgf8zlSJ1iMLxc3tOanwogjYXZnkkJm4UlWRFqt9le0Io1IVfGOJRWs5o5YnGUFHE1pyPPOQU0CIGO21
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-3-flintglass@gmail.com>
- <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com>
-In-Reply-To: <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 11 Jun 2024 11:15:05 -0700
-Message-ID: <CAKEwX=O4VEfO8f+GFDW_LL_=Ne6xgFEby2E+dxamhXKbFj0VAg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] mm: zswap: fix global shrinker error handling logic
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:6286:b0:4b9:c9e:2aa2 with SMTP id
+ 8926c6da1cb9f-4b92ba720cdmr196209173.0.1718129729902; Tue, 11 Jun 2024
+ 11:15:29 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:15:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003aacfb061aa140ad@google.com>
+Subject: [syzbot] [bcachefs?] WARNING in bch2_fs_ioctl
+From: syzbot <syzbot+9757fdbdabd69eae08ad@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 1:28=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Sat, Jun 8, 2024 at 8:53=E2=80=AFAM Takero Funaki <flintglass@gmail.co=
-m> wrote:
-> >
-> > This patch fixes zswap global shrinker that did not shrink zpool as
-> > expected.
-> >
-> > The issue it addresses is that `shrink_worker()` did not distinguish
-> > between unexpected errors and expected error codes that should be
-> > skipped, such as when there is no stored page in a memcg. This led to
-> > the shrinking process being aborted on the expected error codes.
-> >
-> > The shrinker should ignore these cases and skip to the next memcg.
-> > However,  skipping all memcgs presents another problem. To address this=
-,
-> > this patch tracks progress while walking the memcg tree and checks for
-> > progress once the tree walk is completed.
-> >
-> > To handle the empty memcg case, the helper function `shrink_memcg()` is
-> > modified to check if the memcg is empty and then return -ENOENT.
-> >
-> > Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> > Signed-off-by: Takero Funaki <flintglass@gmail.com>
-> > ---
-> >  mm/zswap.c | 31 ++++++++++++++++++++++++++-----
-> >  1 file changed, 26 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index d720a42069b6..1a90f434f247 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -1393,7 +1393,7 @@ static struct shrinker *zswap_alloc_shrinker(void=
-)
-> >
-> >  static int shrink_memcg(struct mem_cgroup *memcg)
-> >  {
-> > -       int nid, shrunk =3D 0;
-> > +       int nid, shrunk =3D 0, stored =3D 0;
-> >
-> >         if (!mem_cgroup_zswap_writeback_enabled(memcg))
-> >                 return -EINVAL;
-> > @@ -1408,9 +1408,16 @@ static int shrink_memcg(struct mem_cgroup *memcg=
-)
-> >         for_each_node_state(nid, N_NORMAL_MEMORY) {
-> >                 unsigned long nr_to_walk =3D 1;
-> >
-> > +               if (!list_lru_count_one(&zswap_list_lru, nid, memcg))
-> > +                       continue;
-> > +               ++stored;
-> >                 shrunk +=3D list_lru_walk_one(&zswap_list_lru, nid, mem=
-cg,
-> >                                             &shrink_memcg_cb, NULL, &nr=
-_to_walk);
-> >         }
-> > +
-> > +       if (!stored)
-> > +               return -ENOENT;
-> > +
->
-> Can't we just check nr_to_walk here and return -ENOENT if it remains as 1=
-?
->
-> Something like:
->
-> if (nr_to_walk)
->     return -ENOENT;
-> if (!shrunk)
->     return -EAGAIN;
-> return 0;
->
-> >         return shrunk ? 0 : -EAGAIN;
-> >  }
-> >
-> > @@ -1418,12 +1425,18 @@ static void shrink_worker(struct work_struct *w=
-)
-> >  {
-> >         struct mem_cgroup *memcg =3D NULL;
-> >         struct mem_cgroup *next_memcg;
-> > -       int ret, failures =3D 0;
-> > +       int ret, failures =3D 0, progress;
-> >         unsigned long thr;
-> >
-> >         /* Reclaim down to the accept threshold */
-> >         thr =3D zswap_accept_thr_pages();
-> >
-> > +       /*
-> > +        * We might start from the last memcg.
-> > +        * That is not a failure.
-> > +        */
-> > +       progress =3D 1;
-> > +
-> >         /* global reclaim will select cgroup in a round-robin fashion.
-> >          *
-> >          * We save iteration cursor memcg into zswap_next_shrink,
-> > @@ -1461,9 +1474,12 @@ static void shrink_worker(struct work_struct *w)
-> >                  */
-> >                 if (!memcg) {
-> >                         spin_unlock(&zswap_shrink_lock);
-> > -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
-> > +
-> > +                       /* tree walk completed but no progress */
-> > +                       if (!progress && ++failures =3D=3D MAX_RECLAIM_=
-RETRIES)
-> >                                 break;
->
-> It seems like we may keep iterating the entire hierarchy a lot of
-> times as long as we are making any type of progress. This doesn't seem
-> right.
->
+Hello,
 
-Ah actually, reading your comment closer then yeah the
-shrink-until-accept is the intended-ish behavior (from Domenico's
-older patches to re-work zswap reclaim). The one-page-per-attempt is
-also "intended" behavior, but not any of our's intentions - just
-something that remains from the past implementation as we rework this
-codebase one change at a time :)
+syzbot found the following issue on:
+
+HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=116b64de980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
+dashboard link: https://syzkaller.appspot.com/bug?extid=9757fdbdabd69eae08ad
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109726ee980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f2c4fe980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b45273014a8f/disk-83a7eefe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/94cd5708292e/vmlinux-83a7eefe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a89698812e8b/bzImage-83a7eefe.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2b8f6b18fd8a/mount_0.gz
+
+The issue was bisected to:
+
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
+
+    bcachefs: Ignore unknown mount options
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1538cd96980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1738cd96980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1338cd96980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9757fdbdabd69eae08ad@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5079 at mm/page_alloc.c:4654 __alloc_pages_noprof+0x36a/0x6c0 mm/page_alloc.c:4654
+Modules linked in:
+CPU: 0 PID: 5079 Comm: syz-executor354 Not tainted 6.10.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:__alloc_pages_noprof+0x36a/0x6c0 mm/page_alloc.c:4654
+Code: a9 00 00 08 00 0f 85 12 01 00 00 44 89 e9 81 e1 7f ff ff ff a9 00 00 04 00 44 0f 45 e9 e9 02 01 00 00 c6 05 82 e5 aa 0d 01 90 <0f> 0b 90 83 fb 0a 0f 86 6c fd ff ff 45 31 ed 48 c7 44 24 20 0e 36
+RSP: 0018:ffffc900032feea0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000013 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc900032fef28
+RBP: ffffc900032fefb8 R08: ffffc900032fef27 R09: 0000000000000000
+R10: ffffc900032fef00 R11: fffff5200065fde5 R12: 1ffff9200065fddc
+R13: 0000000000040dc0 R14: dffffc0000000000 R15: 1ffff9200065fdd8
+FS:  0000555582725380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000000779b6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ __kmalloc_large_node+0x8b/0x1d0 mm/slub.c:4067
+ __do_kmalloc_node mm/slub.c:4110 [inline]
+ __kmalloc_noprof+0x2aa/0x400 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ bch2_ioctl_fs_usage fs/bcachefs/chardev.c:517 [inline]
+ bch2_fs_ioctl+0xf67/0x37d0 fs/bcachefs/chardev.c:889
+ bch2_fs_file_ioctl+0x827/0x27a0 fs/bcachefs/fs-ioctl.c:539
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f142b4429b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff3b1922b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fff3b192498 RCX: 00007f142b4429b9
+RDX: 0000000020000000 RSI: 00000000c040bc0b RDI: 0000000000000004
+RBP: 00007f142b4c8610 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff3b192488 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
